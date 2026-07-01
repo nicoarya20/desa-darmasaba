@@ -10,6 +10,13 @@ import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import user from '../../_state/user/user-state';
 import { authStore } from '@/store/authStore';
 
+// Role admin yang dikelola di halaman ini. Warga publik (role "5" USER, hasil
+// login Google) sengaja tidak ditampilkan — mereka diarahkan ke /profile, bukan
+// dashboard admin. Lihat redirect_by_role.ts & user_resolver.ts.
+const ADMIN_ROLE_IDS = ["0", "1", "2", "3", "4"];
+// Role yang boleh di-assign lewat dropdown (0=DEVELOPER, 1=SUPER ADMIN dikunci).
+const ASSIGNABLE_ROLE_IDS = ["2", "3", "4"];
+
 function User() {
   const [search, setSearch] = useState("");
   return (
@@ -126,7 +133,7 @@ function ListUser({ search }: { search: string }) {
   };
 
   const filteredData = (data || []).filter((item) => {
-    return item.roleId !== "0" && item.roleId !== "1";
+    return ADMIN_ROLE_IDS.includes(item.roleId);
   });
 
   if (loading || !data) {
@@ -162,7 +169,7 @@ function ListUser({ search }: { search: string }) {
                   <Text fz="xs" fw={600} lh={1.4} ta="left">Nama User</Text>
                 </TableTh>
                 <TableTh style={{ width: '20%' }}>
-                  <Text fz="xs" fw={600} lh={1.4} ta="left">Nomor</Text>
+                  <Text fz="xs" fw={600} lh={1.4} ta="left">Email</Text>
                 </TableTh>
                 <TableTh style={{ width: '20%' }}>
                   <Text fz="xs" fw={600} lh={1.4} ta="left">Role</Text>
@@ -185,15 +192,15 @@ function ListUser({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="sm" fw={500} lh={1.5} c="gray.7">
-                        {item.nomor}
+                      <Text fz="sm" fw={500} lh={1.5} c="gray.7" truncate="end" lineClamp={1}>
+                        {item.email ?? "-"}
                       </Text>
                     </TableTd>
                     <TableTd>
                       <Select
                         placeholder="Pilih role"
                         data={stateRole.findMany.data
-                          .filter(r => r.id !== "0" && r.id !== "1")
+                          .filter(r => ASSIGNABLE_ROLE_IDS.includes(r.id))
                           .map(r => ({
                             label: r.name,
                             value: r.id,
@@ -282,9 +289,9 @@ function ListUser({ search }: { search: string }) {
                       </Text>
                     </Box>
                     <Box>
-                      <Text fz="xs" fw={600} lh={1.4}>Nomor</Text>
-                      <Text fz="sm" fw={500} lh={1.5} c="gray.7">
-                        {item.nomor}
+                      <Text fz="xs" fw={600} lh={1.4}>Email</Text>
+                      <Text fz="sm" fw={500} lh={1.5} c="gray.7" style={{ wordBreak: 'break-all' }}>
+                        {item.email ?? "-"}
                       </Text>
                     </Box>
                     <Box>
@@ -292,7 +299,7 @@ function ListUser({ search }: { search: string }) {
                       <Select
                         placeholder="Pilih role"
                         data={stateRole.findMany.data
-                          .filter(r => r.id !== "0" && r.id !== "1")
+                          .filter(r => ASSIGNABLE_ROLE_IDS.includes(r.id))
                           .map(r => ({
                             label: r.name,
                             value: r.id,
