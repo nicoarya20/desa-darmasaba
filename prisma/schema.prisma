@@ -2287,7 +2287,8 @@ model User {
   nomor          String?          @unique // nullable: user login Google tidak punya nomor HP
   email          String?          @unique // identitas dari Google OAuth
   googleId       String?          @unique // Google account ID, di-link saat login Google pertama
-  avatarUrl      String? // foto profil dari Google
+  avatarUrl      String? // foto profil dari Google — dipetakan ke Better Auth `image`
+  emailVerified  Boolean          @default(false) // Better Auth core field
   roleId         String           @default("2")
   isActive       Boolean          @default(false)
   sessionInvalid Boolean          @default(false)
@@ -2295,7 +2296,9 @@ model User {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now()) @updatedAt
   permissions    Json?
-  sessions       UserSession[] // ✅ Relasi one-to-many
+  sessions       UserSession[] // ⚠️ legacy JWT session — di-drop setelah cutover Better Auth
+  authSessions   Session[] // Better Auth session
+  accounts       Account[] // Better Auth account (provider google)
   role           Role             @relation(fields: [roleId], references: [id])
   menuAccesses   UserMenuAccess[]
 
@@ -2352,6 +2355,68 @@ model UserMenuAccess {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, menuId]) // Satu user tidak bisa punya akses menu yang sama dua kali
+}
+
+// ===================================== BETTER AUTH ===================================== //
+// Model wajib Better Auth (pola base-template2). Session store di Postgres (tanpa Redis).
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String // ID akun di provider (mis. Google sub)
+  providerId            String // "google"
+  userId                String
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String? // tak dipakai (Google-only), disimpan untuk kompat Better Auth
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model RateLimit {
+  id          String @id @default(cuid())
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+
+  @@map("rate_limit")
 }
 
 // ========================================= KEPENDUDUKAN ========================================= //
