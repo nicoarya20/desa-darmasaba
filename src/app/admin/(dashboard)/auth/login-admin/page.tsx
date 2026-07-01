@@ -14,7 +14,8 @@ function Login() {
   async function onGoogleLogin() {
     try {
       setLoading(true);
-      await authClient.signIn.social({ provider: 'google', callbackURL: '/' });
+      // callbackURL → gateway yang redirect sesuai role user (admin/profil).
+      await authClient.signIn.social({ provider: 'google', callbackURL: '/auth/callback' });
     } catch (error) {
       console.error('Error Google login:', error);
       toast.error('Gagal memulai login Google');

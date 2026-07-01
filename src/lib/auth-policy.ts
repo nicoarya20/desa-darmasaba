@@ -32,3 +32,22 @@ export function isAccountActive(
 ): boolean {
   return isActive !== false;
 }
+
+// Halaman profil publik untuk user non-admin (roleId 5+).
+export const PROFILE_PATH = "/profile";
+
+/** Tujuan redirect setelah login berdasar role (admin → dashboard, user → profil). */
+export function defaultRouteForRole(roleId: string | number | null | undefined): string {
+  switch (Number(roleId)) {
+    case 0:
+    case 1:
+    case 2:
+      return "/admin/landing-page/profil/program-inovasi";
+    case 3:
+      return "/admin/kesehatan/posyandu/list-posyandu";
+    case 4:
+      return "/admin/pendidikan/info-sekolah/jenjang-pendidikan";
+    default:
+      return PROFILE_PATH;
+  }
+}

@@ -29,6 +29,22 @@ export const auth = betterAuth({
     },
   },
 
+  // ─── Account linking ───────────────────────────────
+  // User Google lama (dibuat sistem manual sebelum migrasi) sudah ada di tabel
+  // `users` by email, tapi belum punya row `account` Better Auth. Google memverifikasi
+  // email, jadi aman dijadikan trusted provider → auto-link ke user existing
+  // (mencegah error account_not_linked untuk user lama).
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["google"],
+      // User lama dibuat sistem manual tanpa set emailVerified (=false di DB).
+      // Google sudah memverifikasi email, jadi tak perlu syarat verifikasi email
+      // LOKAL untuk meng-link — cukup email cocok + provider trusted (Google).
+      requireLocalEmailVerified: false,
+    },
+  },
+
   // ─── Session (Postgres, tanpa Redis) ───────────────
   session: {
     expiresIn: 7 * 24 * 60 * 60,
