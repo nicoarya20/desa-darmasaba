@@ -189,6 +189,39 @@ Semua hijau sebelum lapor selesai.
 
 ---
 
+## 9. STATUS EKSEKUSI (2026-07-01)
+
+Branch `feature/migrasi-better-auth-google`, versi `0.1.83`. **Migrasi inti SELESAI & typecheck bersih (0 error), test 34/34 lulus.**
+
+| Task | Status |
+|---|---|
+| Setup better-auth (auth.ts, client, handler, env) | ✅ |
+| Schema additive (session/account/verification/rate_limit + emailVerified) | ✅ migrated lokal |
+| Cutover login + guard (api-auth, middleware, me, logout, login page) | ✅ |
+| Test (auth-policy unit + requireAuth contract) | ✅ 16 test baru lulus |
+| Cleanup dead code + drop tabel | ⚠️ **DITUNDA — escalation** |
+
+### ⚠️ Kenapa cleanup/drop ditunda (AI-CONTRACT §8 Eskalasi)
+
+Audit sebelum hapus menemukan tabel/kode legacy **masih dipakai modul non-auth**:
+- `UserSession` → dipakai `user/delUser.ts` & `user/updt.ts` (manajemen user, bukan auth).
+- OTP (`apiFetchRegister`) → dipakai `registrasi-admin/page.tsx`; `sendCodeOtp`/`randomOTP` → dipakai `health/otp/route.ts`.
+- `googleId` → resolver manual Google lama.
+
+Menghapus/drop sekarang = **memutus fitur yang bekerja** demi hygiene yang tak wajib untuk fungsi. Sesuai AI-CONTRACT §12 (lebih baik tak memperburuk), legacy dibiarkan **dorman** (tak lagi dipanggil jalur auth utama). Penghapusan tuntas = pekerjaan terpisah dengan scope refactor user-management + health check.
+
+**Keputusan user diperlukan** sebelum destructive cleanup — lihat §10.
+
+## 10. Keputusan Cleanup (menunggu user)
+
+1. Hapus alur OTP + `KodeOtp` — tapi `registrasi-admin` & `health/otp` perlu di-refactor dulu. Lanjut?
+2. Drop `user_sessions` — tapi `delUser`/`updt` harus lepas dari `userSession` dulu. Lanjut?
+3. Drop kolom `googleId` + hapus `_lib/google/*` manual — aman setelah login Better Auth terverifikasi di STG. Lanjut?
+
+> Rekomendasi: verifikasi login Better Auth jalan di STG dulu, baru cleanup bertahap sebagai PR terpisah.
+
+---
+
 ## 8. Referensi Pola base-template2 (sudah diambil)
 
 Config kanonik base-template2 sudah dibaca (`auth.ts`, `auth-middleware.ts`, `auth-client.ts`, `env.ts`). Ringkas yang ditiru vs diubah:
