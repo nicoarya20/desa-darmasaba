@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.89] - 2026-07-02
+### Changed
+- Rilis staging lanjutan dari 0.1.88 (pembersihan route custom Google OAuth). Tidak ada perubahan behavior; version bump untuk deploy STG.
+
 ## [0.1.88] - 2026-07-02
 ### Removed
 - **Route custom Google OAuth** (`GET /api/auth/google` & `/api/auth/google/callback`) beserta helper `_lib/google/*` dan test-nya — kode mati sejak migrasi ke Better Auth (tidak ada caller dari UI; login admin memakai `authClient.signIn.social`). Logika redirect-by-role tetap hidup di `src/lib/auth-policy.ts` (`defaultRouteForRole`) via gateway `/auth/callback`.
