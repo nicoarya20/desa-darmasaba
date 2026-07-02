@@ -27,6 +27,9 @@ import { useProxy } from 'valtio/utils';
 
 function CreatePotensi() {
   const potensiState = useProxy(potensiDesaState.potensiDesa);
+  // Snapshot cabang kategoriPotensi agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const kategoriState = useProxy(potensiDesaState.kategoriPotensi);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
@@ -168,14 +171,14 @@ function CreatePotensi() {
           <Select
             label="Kategori"
             placeholder="Pilih kategori"
-            data={potensiDesaState.kategoriPotensi.findMany.data?.map((item) => ({
+            data={kategoriState.findMany.data?.map((item) => ({
               label: item.nama,
               value: item.id,
             })) || []}
             value={potensiState.create.form.kategoriId || null}
             onChange={(val: string | null) => {
               if (val) {
-                const selected = potensiDesaState.kategoriPotensi.findMany.data?.find(
+                const selected = kategoriState.findMany.data?.find(
                   (item) => item.id === val
                 );
                 if (selected) {
