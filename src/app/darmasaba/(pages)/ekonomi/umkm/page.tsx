@@ -64,6 +64,9 @@ function Page() {
 
 function TabProdukUmkm({ router }: { router: any }) {
   const state = useProxy(umkmState.produk);
+  // Snapshot cabang kategoriProduk agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const kategoriState = useProxy(umkmState.kategoriProduk);
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -95,7 +98,7 @@ function TabProdukUmkm({ router }: { router: any }) {
           <Select
             label="Kategori"
             placeholder="Pilih Kategori"
-            data={umkmState.kategoriProduk.findManyAll.data?.map((v) => ({
+            data={kategoriState.findManyAll.data?.map((v) => ({
               value: v.id, label: v.nama
             })) || []}
             value={selectedCategory}

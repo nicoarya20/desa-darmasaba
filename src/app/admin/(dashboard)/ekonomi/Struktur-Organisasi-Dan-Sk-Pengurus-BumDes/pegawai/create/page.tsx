@@ -16,6 +16,9 @@ function CreatePegawaiBumDes() {
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<{ preview: string; file: File } | null>(null);
   const stateOrganisasi = useProxy(stateStrukturBumDes.pegawai)
+  // Snapshot cabang posisiOrganisasi agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const statePosisi = useProxy(stateStrukturBumDes.posisiOrganisasi)
   useEffect(() => {
     stateStrukturBumDes.posisiOrganisasi.findManyAll.load();
     resetForm();
@@ -263,7 +266,7 @@ function CreatePegawaiBumDes() {
             </Text>
             <Select
               placeholder="Pilih posisi"
-              data={stateStrukturBumDes.posisiOrganisasi.findManyAll.data?.map(p => ({
+              data={statePosisi.findManyAll.data?.map(p => ({
                 value: p.id,
                 label: p.nama
               })) || []}
