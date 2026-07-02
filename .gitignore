@@ -1,3 +1,6 @@
+# Catatan diskusi (lokal, tidak untuk repo)
+.DISKUSI/
+
 # dependencies
 /node_modules
 /.pnp
