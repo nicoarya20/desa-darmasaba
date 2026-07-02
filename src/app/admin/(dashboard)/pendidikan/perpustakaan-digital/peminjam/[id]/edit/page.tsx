@@ -28,6 +28,9 @@ export type Status = "Dipinjam" | "Dikembalikan" | "Terlambat" | "Dibatalkan";
 
 function EditPeminjam() {
   const stateEdit = useProxy(perpustakaanDigitalState.peminjamanBuku);
+  // Snapshot cabang dataPerpustakaan agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const stateBuku = useProxy(perpustakaanDigitalState.dataPerpustakaan);
   const router = useRouter();
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -234,7 +237,7 @@ function EditPeminjam() {
             <Text fw="bold" fz="sm" mb={6}>Buku</Text>
             <Select
               placeholder="Pilih buku"
-              data={perpustakaanDigitalState.dataPerpustakaan.findManyAll.data?.map(p => ({ value: p.id, label: p.judul })) || []}
+              data={stateBuku.findManyAll.data?.map(p => ({ value: p.id, label: p.judul })) || []}
               value={formData.bukuId}
               onChange={(value) => value && setFormData({ ...formData, bukuId: value })}
               searchable

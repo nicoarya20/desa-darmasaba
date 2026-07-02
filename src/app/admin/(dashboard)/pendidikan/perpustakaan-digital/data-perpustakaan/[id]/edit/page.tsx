@@ -18,6 +18,9 @@ function EditPerpustakaanDigital() {
   const router = useRouter();
   const params = useParams();
   const editState = useProxy(perpustakaanDigitalState.dataPerpustakaan);
+  // Snapshot cabang kategoriBuku agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const kategoriState = useProxy(perpustakaanDigitalState.kategoriBuku);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -246,7 +249,7 @@ function EditPerpustakaanDigital() {
             onChange={(val) => handleInputChange('kategoriId', val || '')}
             label="Kategori"
             placeholder="Pilih kategori"
-            data={perpustakaanDigitalState.kategoriBuku.findMany.data?.map((v) => ({ value: v.id, label: v.name })) || []}
+            data={kategoriState.findMany.data?.map((v) => ({ value: v.id, label: v.name })) || []}
             clearable
             searchable
             required
