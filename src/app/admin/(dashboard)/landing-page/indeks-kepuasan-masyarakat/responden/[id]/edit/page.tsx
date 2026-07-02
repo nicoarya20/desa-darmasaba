@@ -38,6 +38,11 @@ function EditResponden() {
   const state = indeksKepuasanState.responden;
   // ✅ snapshot untuk re-render (read-only)
   const snapshot = useProxy(indeksKepuasanState.responden);
+  // Snapshot 3 cabang opsi agar Select re-render saat findMany.load() async
+  // selesai — JSX sebelumnya baca raw proxy (loading/data tak reaktif).
+  const snapJK = useProxy(indeksKepuasanState.jenisKelaminResponden);
+  const snapRating = useProxy(indeksKepuasanState.pilihanRatingResponden);
+  const snapUmur = useProxy(indeksKepuasanState.kelompokUmurResponden);
 
   const [formData, setFormData] = useState<FormResponden>({
     name: '',
@@ -190,9 +195,9 @@ function EditResponden() {
             label="Jenis Kelamin"
             value={formData.jenisKelaminId}
             onChange={(val) => setFormData({ ...formData, jenisKelaminId: val })}
-            options={(indeksKepuasanState.jenisKelaminResponden.findMany.data || [])
+            options={(snapJK.findMany.data || [])
               .map((v) => ({ value: v.id || '', label: v.name || 'Tanpa Nama' }))}
-            loading={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
+            loading={snapJK.findMany.loading}
             error={!formData.jenisKelaminId ? 'Pilih jenis kelamin' : undefined}
           />
 
@@ -200,9 +205,9 @@ function EditResponden() {
             label="Rating"
             value={formData.ratingId}
             onChange={(val) => setFormData({ ...formData, ratingId: val })}
-            options={(indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
+            options={(snapRating.findMany.data || [])
               .map((v) => ({ value: v.id || '', label: v.name || 'Tanpa Nama' }))}
-            loading={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
+            loading={snapRating.findMany.loading}
             error={!formData.ratingId ? 'Pilih rating' : undefined}
           />
 
@@ -210,9 +215,9 @@ function EditResponden() {
             label="Kelompok Umur"
             value={formData.kelompokUmurId}
             onChange={(val) => setFormData({ ...formData, kelompokUmurId: val })}
-            options={(indeksKepuasanState.kelompokUmurResponden.findMany.data || [])
+            options={(snapUmur.findMany.data || [])
               .map((v) => ({ value: v.id || '', label: v.name || 'Tanpa Nama' }))}
-            loading={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
+            loading={snapUmur.findMany.loading}
             error={!formData.kelompokUmurId ? 'Pilih kelompok umur' : undefined}
           />
 

@@ -32,6 +32,11 @@ interface ChartDataItem {
 
 function Kepuasan() {
   const state = useProxy(indeksKepuasanState.responden);
+  // Snapshot 3 cabang opsi agar Select re-render saat findMany.load() async
+  // selesai — JSX sebelumnya baca raw proxy (loading/data tak reaktif).
+  const snapJK = useProxy(indeksKepuasanState.jenisKelaminResponden);
+  const snapRating = useProxy(indeksKepuasanState.pilihanRatingResponden);
+  const snapUmur = useProxy(indeksKepuasanState.kelompokUmurResponden);
   const { data, loading } = state.findMany;
   const [donutDataJenisKelamin, setDonutDataJenisKelamin] = useState<ChartDataItem[]>([]);
   const [donutDataRating, setDonutDataRating] = useState<ChartDataItem[]>([]);
@@ -398,59 +403,59 @@ function Kepuasan() {
               <Select
                 key="jenisKelamin"
                 label="Jenis Kelamin"
-                placeholder={indeksKepuasanState.jenisKelaminResponden.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
+                placeholder={snapJK.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
                 value={state.create.form.jenisKelaminId || ""}
                 onChange={(val) => {
                   state.create.form.jenisKelaminId = val ?? "";
                 }}
                 data={
-                  (indeksKepuasanState.jenisKelaminResponden.findMany.data || [])
+                  (snapJK.findMany.data || [])
                     .filter(Boolean)
                     .map((item) => ({
                       value: item.id,
                       label: item.name || 'Tanpa Nama',
                     }))
                 }
-                disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
+                disabled={snapJK.findMany.loading}
                 // label typography
                 labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
               <Select
                 key="rating_responden"
                 label="Rating"
-                placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
+                placeholder={snapRating.findMany.loading ? 'Memuat...' : 'Pilih rating'}
                 value={state.create.form.ratingId || ""}
                 onChange={(val) => {
                   state.create.form.ratingId = val ?? "";
                 }}
                 data={
-                  (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
+                  (snapRating.findMany.data || [])
                     .filter(Boolean)
                     .map((item) => ({
                       value: item.id,
                       label: item.name || 'Tanpa Nama',
                     }))
                 }
-                disabled={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
+                disabled={snapRating.findMany.loading}
                 labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
               <Select
                 key="kelompokUmur"
                 label="Kelompok Umur"
-                placeholder={indeksKepuasanState.kelompokUmurResponden.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
+                placeholder={snapUmur.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
                 value={state.create.form.kelompokUmurId || ""}
                 onChange={(val) => {
                   state.create.form.kelompokUmurId = val ?? "";
                 }}
                 data={
-                  (indeksKepuasanState.kelompokUmurResponden.findMany.data || [])
+                  (snapUmur.findMany.data || [])
                     .filter(Boolean)
                     .map((item) => ({
                       value: item.id,
                       label: item.name || 'Tanpa Nama',
                     }))
                 }
-                disabled={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
+                disabled={snapUmur.findMany.loading}
                 labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
               />
               <Button 
@@ -688,58 +693,58 @@ function Kepuasan() {
             <Select
               key="jenisKelamin"
               label="Jenis Kelamin"
-              placeholder={indeksKepuasanState.jenisKelaminResponden.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
+              placeholder={snapJK.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
               value={state.create.form.jenisKelaminId || ""}
               onChange={(val) => {
                 state.create.form.jenisKelaminId = val ?? "";
               }}
               data={
-                (indeksKepuasanState.jenisKelaminResponden.findMany.data || [])
+                (snapJK.findMany.data || [])
                   .filter(Boolean)
                   .map((item) => ({
                     value: item.id,
                     label: item.name || 'Tanpa Nama',
                   }))
               }
-              disabled={indeksKepuasanState.jenisKelaminResponden.findMany.loading}
+              disabled={snapJK.findMany.loading}
               labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
             />
             <Select
               key="rating_responden"
               label="Rating"
-              placeholder={indeksKepuasanState.pilihanRatingResponden.findMany.loading ? 'Memuat...' : 'Pilih rating'}
+              placeholder={snapRating.findMany.loading ? 'Memuat...' : 'Pilih rating'}
               value={state.create.form.ratingId || ""}
               onChange={(val) => {
                 state.create.form.ratingId = val ?? "";
               }}
               data={
-                (indeksKepuasanState.pilihanRatingResponden.findMany.data || [])
+                (snapRating.findMany.data || [])
                   .filter(Boolean)
                   .map((item) => ({
                     value: item.id,
                     label: item.name || 'Tanpa Nama',
                   }))
               }
-              disabled={indeksKepuasanState.pilihanRatingResponden.findMany.loading}
+              disabled={snapRating.findMany.loading}
               labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
             />
             <Select
               key="kelompokUmur"
               label="Kelompok Umur"
-              placeholder={indeksKepuasanState.kelompokUmurResponden.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
+              placeholder={snapUmur.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
               value={state.create.form.kelompokUmurId || ""}
               onChange={(val) => {
                 state.create.form.kelompokUmurId = val ?? "";
               }}
               data={
-                (indeksKepuasanState.kelompokUmurResponden.findMany.data || [])
+                (snapUmur.findMany.data || [])
                   .filter(Boolean)
                   .map((item) => ({
                     value: item.id,
                     label: item.name || 'Tanpa Nama',
                   }))
               }
-              disabled={indeksKepuasanState.kelompokUmurResponden.findMany.loading}
+              disabled={snapUmur.findMany.loading}
               labelProps={{ style: { fontSize: '0.95rem', lineHeight: '1.4' } } as any}
             />
             <Button mt={10} bg={colors['blue-button']} onClick={handleSubmit}>
