@@ -26,6 +26,10 @@ import ApiFetch from '@/lib/api-fetch';
 export default function CreateProdukUmkm() {
   const router = useRouter();
   const state = useProxy(umkmState.produk);
+  // Snapshot cabang umkm & kategoriProduk agar Select re-render saat load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const umkmListState = useProxy(umkmState.umkm);
+  const kategoriState = useProxy(umkmState.kategoriProduk);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,7 +141,7 @@ export default function CreateProdukUmkm() {
             placeholder="Siapa pemilik produk ini?"
             required
             searchable
-            data={umkmState.umkm.findMany.data?.map(v => ({
+            data={umkmListState.findMany.data?.map(v => ({
               value: v.id, label: v.nama
             })) || []}
             value={state.create.form.umkmId}
@@ -177,7 +181,7 @@ export default function CreateProdukUmkm() {
             label="Kategori Produk"
             placeholder="Pilih kategori produk"
             required
-            data={umkmState.kategoriProduk.findManyAll.data?.map(v => ({
+            data={kategoriState.findManyAll.data?.map(v => ({
               value: v.id, label: v.nama
             })) || []}
             value={state.create.form.kategoriId}

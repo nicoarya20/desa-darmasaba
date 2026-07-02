@@ -26,6 +26,9 @@ import ApiFetch from '@/lib/api-fetch';
 export default function CreateDataUmkm() {
   const router = useRouter();
   const state = useProxy(umkmState.umkm);
+  // Snapshot cabang kategoriProduk agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const kategoriState = useProxy(umkmState.kategoriProduk);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -176,7 +179,7 @@ export default function CreateDataUmkm() {
               label="Kategori Bisnis"
               placeholder="Pilih kategori"
               required
-              data={umkmState.kategoriProduk.findManyAll.data?.map(v => ({
+              data={kategoriState.findManyAll.data?.map(v => ({
                 value: v.id, label: v.nama
               })) || []}
               value={state.create.form.kategoriId}

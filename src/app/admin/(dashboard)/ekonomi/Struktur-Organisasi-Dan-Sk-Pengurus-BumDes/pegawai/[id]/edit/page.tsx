@@ -29,6 +29,9 @@ export default function EditPegawaiBumDes() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const stateOrganisasi = useProxy(stateStrukturBumDes.pegawai);
+  // Snapshot cabang posisiOrganisasi agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const statePosisi = useProxy(stateStrukturBumDes.posisiOrganisasi);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     namaLengkap: '',
@@ -293,7 +296,7 @@ export default function EditPegawaiBumDes() {
             <Text fw="bold" fz="sm" mb={6}>Posisi</Text>
             <Select
               placeholder="Pilih posisi"
-              data={stateStrukturBumDes.posisiOrganisasi.findManyAll.data?.map(p => ({ value: p.id, label: p.nama })) || []}
+              data={statePosisi.findManyAll.data?.map(p => ({ value: p.id, label: p.nama })) || []}
               value={formData.posisiId}
               onChange={(value) => value && setFormData({ ...formData, posisiId: value })}
               searchable
