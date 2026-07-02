@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.90] - 2026-07-02
+### Fixed
+- **Dropdown Select kategori kosong / pilihan tak nyangkut (intermiten, paling sering di STG)**: 38 halaman membaca state Valtio dari **raw proxy** langsung di JSX, bukan lewat snapshot `useProxy()`. Akibatnya komponen tidak subscribe ke perubahan proxy → saat data async (`findManyAll.load()`) selesai, komponen tak re-render → dropdown kosong. Race lebih lebar di STG (fetch via Cloudflare lebih lambat) daripada localhost. Fix: setiap cabang state yang dibaca untuk display kini di-snapshot lewat `useProxy()`; assignment `onChange`/`onClick` & pemanggilan `.load()`/`.delete()` tetap di raw proxy.
+- **Halaman publik detail layanan (`desa/layanan/[id]`): kategori tampil tapi tak bisa dipilih**: options diambil dari `findManyAll` tapi `onChange` mencari item di `findMany` (sumber berbeda) → `kategoriId` tak pernah ter-set. Kini `data` & `onChange` sama-sama membaca `findManyAll` (snapshot & sumber konsisten).
+- Cakupan domain: desa, ekonomi (umkm/bumdes), pendidikan (perpustakaan/info-sekolah), ppid, landing-page, kesehatan, keamanan, lingkungan, dan cluster indeks-kepuasan-masyarakat. Frontend-only, tanpa perubahan schema/migration.
+
 ## [0.1.89] - 2026-07-02
 ### Changed
 - Rilis staging lanjutan dari 0.1.88 (pembersihan route custom Google OAuth). Tidak ada perubahan behavior; version bump untuk deploy STG.
