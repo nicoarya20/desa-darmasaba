@@ -29,7 +29,7 @@ import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import user from '../../_state/user/user-state';
 
 // Role bawaan sistem (0-5). Tidak boleh diedit/dihapus dari UI: role "5" (USER)
-// adalah default login Google (DEFAULT_USER_ROLE_ID di user_resolver.ts) —
+// adalah default login Google (ROLE_USER di src/lib/auth-policy.ts) —
 // menghapusnya akan mematahkan pembuatan user Google. Hanya role custom baru
 // (id di luar 0-5) yang boleh diubah.
 const SYSTEM_ROLE_IDS = ["0", "1", "2", "3", "4", "5"];
