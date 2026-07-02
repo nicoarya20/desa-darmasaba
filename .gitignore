@@ -78,3 +78,6 @@ xcoba*.ts
 zgen/
 test-berita-state.ts
 
+
+# Catatan diskusi (lokal, tidak untuk repo)
+.DISKUSI/
