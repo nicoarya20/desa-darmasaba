@@ -169,14 +169,20 @@ function Page() {
             <Select
               label="Kategori"
               placeholder="Pilih kategori"
-              data={stateLayananDesa.suratKeterangan.findManyAll.data?.map((item) => ({
+              // Baca via snapshot `state` (bukan raw proxy `stateLayananDesa`) agar
+              // komponen re-render saat findManyAll.load() selesai async — kalau baca
+              // raw proxy, Select tak subscribe & tetap kosong bila modal dibuka
+              // sebelum fetch kelar (race intermiten, lebih sering muncul di STG).
+              data={state.suratKeterangan.findManyAll.data?.map((item) => ({
                 label: item.name,
                 value: item.id,
               }))}
               value={stateCreate.create.form.kategoriId || null}
               onChange={(val: string | null) => {
                 if (val) {
-                  const selected = stateLayananDesa.suratKeterangan.findMany.data?.find(
+                  // Cari di findManyAll (sumber data dropdown), bukan findMany
+                  // (list berpaginasi) — sebelumnya mismatch bikin item tak ketemu.
+                  const selected = state.suratKeterangan.findManyAll.data?.find(
                     (item) => item.id === val
                   );
                   if (selected) {
