@@ -27,6 +27,9 @@ import { useProxy } from 'valtio/utils';
 export default function CreateDesaAntiKorupsi() {
   const router = useRouter();
   const stateKorupsi = useProxy(korupsiState.desaAntikorupsi);
+  // Snapshot cabang kategoriDesaAntiKorupsi agar Select re-render saat
+  // findMany.load() async selesai — JSX sebelumnya baca raw proxy (race, STG).
+  const kategoriState = useProxy(korupsiState.kategoriDesaAntiKorupsi);
   const [previewFile, setPreviewFile] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -208,14 +211,14 @@ export default function CreateDesaAntiKorupsi() {
           <Select
             label="Kategori"
             placeholder="Pilih kategori"
-            data={korupsiState.kategoriDesaAntiKorupsi.findMany.data?.map((item) => ({
+            data={kategoriState.findMany.data?.map((item) => ({
               label: item.name,
               value: item.id,
             })) || []}
             value={stateKorupsi.create.form.kategoriId || null}
             onChange={(val: string | null) => {
               if (val) {
-                const selected = korupsiState.kategoriDesaAntiKorupsi.findMany.data?.find(
+                const selected = kategoriState.findMany.data?.find(
                   (item) => item.id === val
                 );
                 if (selected) {

@@ -28,6 +28,9 @@ import { useProxy } from 'valtio/utils';
 function CreateKegiatanDesa() {
   const router = useRouter();
   const stateKegiatanDesa = useProxy(gotongRoyongState.kegiatanDesa);
+  // Snapshot cabang kategoriKegiatan agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const kategoriState = useProxy(gotongRoyongState.kategoriKegiatan);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
@@ -270,7 +273,7 @@ function CreateKegiatanDesa() {
             value={stateKegiatanDesa.create.form.kategoriKegiatanId}
             onChange={(val) => (stateKegiatanDesa.create.form.kategoriKegiatanId = val ?? '')}
             data={
-              gotongRoyongState.kategoriKegiatan.findMany.data?.map((v) => ({
+              kategoriState.findMany.data?.map((v) => ({
                 value: v.id,
                 label: v.nama,
               })) || []

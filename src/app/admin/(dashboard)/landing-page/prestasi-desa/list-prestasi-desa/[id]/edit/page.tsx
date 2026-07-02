@@ -22,6 +22,9 @@ interface FormPrestasiDesa {
 
 export default function EditPrestasiDesa() {
   const editState = useProxy(prestasiState.prestasiDesa);
+  // Snapshot cabang kategoriPrestasi agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const kategoriState = useProxy(prestasiState.kategoriPrestasi);
   const [formData, setFormData] = useState<FormPrestasiDesa>({
     name: '',
     deskripsi: '',
@@ -163,14 +166,14 @@ export default function EditPrestasiDesa() {
           <Select
            label="Kategori"
            placeholder="Pilih kategori"
-           data={prestasiState.kategoriPrestasi.findMany.data?.map((item) => ({
+           data={kategoriState.findMany.data?.map((item) => ({
              label: item.name,
              value: item.id,
            })) || []}
            value={formData.kategoriId || null}
            onChange={(val: string | null) => {
              if (val) {
-               const selected = prestasiState.kategoriPrestasi.findMany.data?.find(
+               const selected = kategoriState.findMany.data?.find(
                  (item) => item.id === val
                );
                if (selected) {

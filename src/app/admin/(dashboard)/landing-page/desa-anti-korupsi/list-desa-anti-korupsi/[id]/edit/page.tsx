@@ -24,6 +24,9 @@ interface FormDesaAntiKorupsi {
 
 export default function EditDesaAntiKorupsi() {
   const desaAntiKorupsiState = useProxy(korupsiState.desaAntikorupsi);
+  // Snapshot cabang kategoriDesaAntiKorupsi agar Select re-render saat
+  // findMany.load() async selesai — JSX sebelumnya baca raw proxy (race, STG).
+  const kategoriState = useProxy(korupsiState.kategoriDesaAntiKorupsi);
   const params = useParams();
   const router = useRouter();
 
@@ -198,7 +201,7 @@ export default function EditDesaAntiKorupsi() {
             placeholder="Pilih kategori"
             value={formData.kategoriId}
             onChange={handleSelectChange('kategoriId')}
-            data={korupsiState.kategoriDesaAntiKorupsi.findMany.data?.map((v) => ({
+            data={kategoriState.findMany.data?.map((v) => ({
               value: v.id,
               label: v.name,
             })) || []}

@@ -38,6 +38,9 @@ interface FormKegiatanDesa {
 
 export default function EditKegiatanDesa() {
   const kegiatanDesaState = useProxy(gotongRoyongState.kegiatanDesa);
+  // Snapshot cabang kategoriKegiatan agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const kategoriState = useProxy(gotongRoyongState.kategoriKegiatan);
   const params = useParams();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -218,7 +221,7 @@ export default function EditKegiatanDesa() {
           </Box>
           <Select
             label="Kategori Kegiatan"
-            data={gotongRoyongState.kategoriKegiatan.findMany.data?.map(k => ({
+            data={kategoriState.findMany.data?.map(k => ({
               value: k.id,
               label: k.nama
             })) ?? []}

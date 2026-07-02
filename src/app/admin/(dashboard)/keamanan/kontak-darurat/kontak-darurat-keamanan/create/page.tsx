@@ -23,6 +23,9 @@ import { useProxy } from 'valtio/utils';
 
 function CreateKontakDaruratKeamanan() {
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
+  // Snapshot cabang kontakDaruratItem agar MultiSelect re-render saat
+  // findMany.load() async selesai — JSX sebelumnya baca raw proxy (race, STG).
+  const itemState = useProxy(kontakDarurat.kontakDaruratItem);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -111,7 +114,7 @@ function CreateKontakDaruratKeamanan() {
             label={<Text fw={"bold"} fz={"sm"}>Kontak Item</Text>}
             placeholder='Pilih kontak item'
             data={
-              kontakDarurat.kontakDaruratItem.findMany.data?.map((v) => ({
+              itemState.findMany.data?.map((v) => ({
                 value: v.id,
                 label: v.nama
               })) || []
