@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.88] - 2026-07-02
+### Removed
+- **Route custom Google OAuth** (`GET /api/auth/google` & `/api/auth/google/callback`) beserta helper `_lib/google/*` dan test-nya — kode mati sejak migrasi ke Better Auth (tidak ada caller dari UI; login admin memakai `authClient.signIn.social`). Logika redirect-by-role tetap hidup di `src/lib/auth-policy.ts` (`defaultRouteForRole`) via gateway `/auth/callback`.
+- Env var `GOOGLE_REDIRECT_URI` tidak lagi dipakai — Better Auth merakit redirect URI dari `BETTER_AUTH_URL` (`/api/auth/callback/google`). Cukup set `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET`. Authorized redirect URI lama (`/api/auth/google/callback`) boleh dicabut dari Google Console.
+
 ## [0.1.87] - 2026-07-01
 ### Fixed
 - **`/admin/*` selalu hang/timeout di STG** (lanjutan 0.1.85/0.1.86): fetch `get-session` dari dalam middleware — baik via origin publik, loopback, maupun proxy — selalu menggantung di container. Middleware kini membaca sesi dari **cookie cache** (`getCookieCache`) yang di-decode lokal **tanpa HTTP call**. `session.cookieCache` diaktifkan (TTL 60 dtk) agar `roleId`/`isActive` tersedia di cookie; validasi penuh sesi tetap di server (`getSession`/`requireAuth`). Perubahan role/isActive berlaku maksimal ~60 dtk.
