@@ -129,7 +129,7 @@ function ListKategoriBuku({ search }: { search: string }) {
                         variant="light"
                         color="red"
                         size="xs"
-                        disabled={perpustakaanDigitalState.kategoriBuku.delete.loading}
+                        disabled={stateKategori.delete.loading}
                         onClick={() => {
                           setSelectedId(item.id)
                           setModalHapus(true)
@@ -183,7 +183,7 @@ function ListKategoriBuku({ search }: { search: string }) {
                         variant="light"
                         color="red"
                         size="xs"
-                        disabled={perpustakaanDigitalState.kategoriBuku.delete.loading}
+                        disabled={stateKategori.delete.loading}
                         onClick={() => {
                           setSelectedId(item.id)
                           setModalHapus(true)

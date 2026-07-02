@@ -185,7 +185,7 @@ function ListMitraKolaborasi({ search }: { search: string }) {
                         radius="md"
                         variant="light"
                         color="red"
-                        disabled={mitraKolaborasi.delete.loading || !item}
+                        disabled={listState.delete.loading || !item}
                         onClick={() => {
                           setSelectedId(item.id);
                           setModalHapus(true);
@@ -279,7 +279,7 @@ function ListMitraKolaborasi({ search }: { search: string }) {
                         radius="md"
                         variant="light"
                         color="red"
-                        disabled={mitraKolaborasi.delete.loading || !item}
+                        disabled={listState.delete.loading || !item}
                         onClick={() => {
                           setSelectedId(item.id);
                           setModalHapus(true);
