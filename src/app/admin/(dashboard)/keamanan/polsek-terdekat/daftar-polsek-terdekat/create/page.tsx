@@ -21,6 +21,9 @@ import statePolsekTerdekat from '../../../../_state/keamanan/polsek-terdekat';
 
 function CreatePolsekTerdekat() {
   const polsekState = useProxy(statePolsekTerdekat.polsekTerdekatState);
+  // Snapshot cabang layananPolsek agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const layananState = useProxy(statePolsekTerdekat.layananPolsek);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -199,7 +202,7 @@ function CreatePolsekTerdekat() {
           <MultiSelect
             label="Layanan Polsek"
             placeholder="Pilih layanan polsek (bisa lebih dari satu)"
-            data={statePolsekTerdekat.layananPolsek.findManyAll.data?.map((v) => ({
+            data={layananState.findManyAll.data?.map((v) => ({
               value: v.id,
               label: v.nama,
             })) || []}

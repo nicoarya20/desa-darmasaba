@@ -23,6 +23,10 @@ import { useProxy } from 'valtio/utils';
 
 function CreateFasilitasKesehatan() {
   const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
+  // Snapshot cabang dokter & tarif agar MultiSelect re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const stateDokter = useProxy(fasilitasKesehatanState.dokter);
+  const stateTarif = useProxy(fasilitasKesehatanState.tarif);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -213,7 +217,7 @@ function CreateFasilitasKesehatan() {
             label="Dokter & Tenaga Medis"
             placeholder="Pilih dokter / tenaga medis"
             data={
-              fasilitasKesehatanState.dokter.findMany.data?.map((item) => ({
+              stateDokter.findMany.data?.map((item) => ({
                 label: item.name,
                 value: item.id,
               })) || []
@@ -240,7 +244,7 @@ function CreateFasilitasKesehatan() {
             label="Layanan"
             placeholder="Pilih layanan"
             data={
-              fasilitasKesehatanState.tarif.findMany.data?.map((item) => ({
+              stateTarif.findMany.data?.map((item) => ({
                 label: item.layanan,
                 value: item.id,
               })) || []

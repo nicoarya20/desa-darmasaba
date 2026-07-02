@@ -16,6 +16,9 @@ function CreatePegawaiPPID() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai)
+  // Snapshot cabang posisiOrganisasi agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const statePosisi = useProxy(stateStrukturPPID.posisiOrganisasi)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
@@ -258,7 +261,7 @@ function CreatePegawaiPPID() {
             <Select
               label="Posisi"
               placeholder="Pilih posisi"
-              data={stateStrukturPPID.posisiOrganisasi.findManyAll.data?.map(p => ({
+              data={statePosisi.findManyAll.data?.map(p => ({
                 value: p.id,
                 label: p.nama
               })) || []}

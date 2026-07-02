@@ -28,6 +28,9 @@ export default function EditPegawaiPPID() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const stateOrganisasi = useProxy(stateStrukturPPID.pegawai);
+  // Snapshot cabang posisiOrganisasi agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const statePosisi = useProxy(stateStrukturPPID.posisiOrganisasi);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [originalData, setOriginalData] = useState({
@@ -312,14 +315,14 @@ export default function EditPegawaiPPID() {
             <Select
               label="Posisi"
               placeholder="Pilih posisi"
-              data={stateStrukturPPID.posisiOrganisasi.findManyAll.data?.map((item) => ({
+              data={statePosisi.findManyAll.data?.map((item) => ({
                 label: item.nama,
                 value: item.id,
               })) || []}
               value={formData.posisiId || null}
               onChange={(val: string | null) => {
                 if (val) {
-                  const selected = stateStrukturPPID.posisiOrganisasi.findManyAll.data?.find(
+                  const selected = statePosisi.findManyAll.data?.find(
                     (item) => item.id === val
                   );
                   if (selected) {

@@ -33,6 +33,9 @@ export default function EditKontakDaruratKeamanan() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const kontakState = useProxy(kontakDarurat.kontakDaruratKeamananState);
+  // Snapshot cabang kontakDaruratItem agar MultiSelect re-render saat
+  // findMany.load() async selesai — JSX sebelumnya baca raw proxy (race, STG).
+  const itemState = useProxy(kontakDarurat.kontakDaruratItem);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -149,7 +152,7 @@ export default function EditKontakDaruratKeamanan() {
   };
 
   // 📋 Daftar opsi kategori untuk MultiSelect
-  const kategoriOptions = (kontakDarurat.kontakDaruratItem.findMany.data || []).map((item: { id: string; nama: string }) => ({
+  const kategoriOptions = (itemState.findMany.data || []).map((item: { id: string; nama: string }) => ({
     value: item.id,
     label: item.nama,
   }));

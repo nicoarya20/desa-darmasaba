@@ -37,6 +37,9 @@ type FormData = {
 
 function EditPolsekTerdekat() {
   const polsekState = useProxy(statePolsekTerdekat.polsekTerdekatState);
+  // Snapshot cabang layananPolsek agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const layananState = useProxy(statePolsekTerdekat.layananPolsek);
   const params = useParams();
   const router = useRouter();
 
@@ -243,7 +246,7 @@ function EditPolsekTerdekat() {
             value={formData.layananPolsekId}
             onChange={(val) => handleChange('layananPolsekId', val)}
             data={
-              statePolsekTerdekat.layananPolsek.findManyAll.data?.map((v) => ({
+              layananState.findManyAll.data?.map((v) => ({
                 value: v.id,
                 label: v.nama,
               })) || []
