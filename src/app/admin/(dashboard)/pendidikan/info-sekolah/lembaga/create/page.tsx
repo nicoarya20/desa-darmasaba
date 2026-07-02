@@ -23,6 +23,9 @@ import { toast } from 'react-toastify';
 function CreateLembaga() {
   const router = useRouter();
   const stateLembaga = useProxy(infoSekolahPaud.lembagaPendidikan);
+  // Snapshot cabang jenjangPendidikan agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const stateJenjang = useProxy(infoSekolahPaud.jenjangPendidikan);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid
@@ -96,7 +99,7 @@ function CreateLembaga() {
             placeholder="Pilih jenjang pendidikan"
             searchable
             data={
-              infoSekolahPaud.jenjangPendidikan.findMany.data?.map((j) => ({
+              stateJenjang.findMany.data?.map((j) => ({
                 value: j.id,
                 label: j.nama,
               })) || []

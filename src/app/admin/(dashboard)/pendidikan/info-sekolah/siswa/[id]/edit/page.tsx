@@ -28,6 +28,9 @@ interface FormSiswa {
 
 function EditSiswa() {
   const siswaState = useProxy(infoSekolahPaud.siswa);
+  // Snapshot cabang lembagaPendidikan agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const lembagaState = useProxy(infoSekolahPaud.lembagaPendidikan);
   const params = useParams();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -148,7 +151,7 @@ function EditSiswa() {
             label={<Text fz="sm" fw="bold">Lembaga Pendidikan</Text>}
             placeholder="Pilih lembaga pendidikan"
             data={
-              infoSekolahPaud.lembagaPendidikan.findMany.data?.map((k) => ({
+              lembagaState.findMany.data?.map((k) => ({
                 value: k.id,
                 label: k.nama,
               })) ?? []

@@ -13,6 +13,9 @@ import { useProxy } from 'valtio/utils';
 
 function CreateDataPerpustakaan() {
   const createState = useProxy(perpustakaanDigitalState.dataPerpustakaan)
+  // Snapshot cabang kategoriBuku agar Select re-render saat findManyAll.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const kategoriState = useProxy(perpustakaanDigitalState.kategoriBuku)
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -126,7 +129,7 @@ function CreateDataPerpustakaan() {
             placeholder='Pilih kategori'
             value={createState.create.form.kategoriId || ""}
             onChange={(val) => { createState.create.form.kategoriId = val ?? ""; }}
-            data={perpustakaanDigitalState.kategoriBuku.findManyAll.data?.map((item) => ({
+            data={kategoriState.findManyAll.data?.map((item) => ({
               value: item.id,
               label: item.name,
             }))}

@@ -23,6 +23,9 @@ import { useProxy } from 'valtio/utils';
 function CreateSiswa() {
   const router = useRouter();
   const stateCreate = useProxy(infoSekolahPaud.siswa);
+  // Snapshot cabang lembagaPendidikan agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const lembagaState = useProxy(infoSekolahPaud.lembagaPendidikan);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid
@@ -99,7 +102,7 @@ function CreateSiswa() {
             label={<Text fw="bold" fz="sm">Lembaga</Text>}
             placeholder="Pilih lembaga"
             data={
-              infoSekolahPaud.lembagaPendidikan.findMany.data?.map((v) => ({
+              lembagaState.findMany.data?.map((v) => ({
                 value: v.id,
                 label: v.nama,
               })) || []

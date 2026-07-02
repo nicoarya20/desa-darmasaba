@@ -27,6 +27,9 @@ interface FormPengajar {
 
 function EditPengajar() {
   const pengajarState = useProxy(infoSekolahPaud.pengajar);
+  // Snapshot cabang lembagaPendidikan agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const lembagaState = useProxy(infoSekolahPaud.lembagaPendidikan);
   const params = useParams();
   const router = useRouter();
 
@@ -140,7 +143,7 @@ function EditPengajar() {
           <Select
             label="Lembaga Pendidikan"
             placeholder="Pilih lembaga"
-            data={infoSekolahPaud.lembagaPendidikan.findMany.data?.map(k => ({
+            data={lembagaState.findMany.data?.map(k => ({
               value: k.id,
               label: k.nama
             })) ?? []}

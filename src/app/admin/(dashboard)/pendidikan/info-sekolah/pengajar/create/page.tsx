@@ -23,6 +23,9 @@ import { useProxy } from 'valtio/utils';
 function CreatePengajar() {
   const router = useRouter();
   const stateCreate = useProxy(infoSekolahPaud.pengajar);
+  // Snapshot cabang lembagaPendidikan agar Select re-render saat findMany.load()
+  // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
+  const lembagaState = useProxy(infoSekolahPaud.lembagaPendidikan);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid
@@ -100,7 +103,7 @@ function CreatePengajar() {
             value={stateCreate.create.form.lembagaId}
             onChange={(val) => (stateCreate.create.form.lembagaId = val ?? '')}
             data={
-              infoSekolahPaud.lembagaPendidikan.findMany.data?.map((v) => ({
+              lembagaState.findMany.data?.map((v) => ({
                 value: v.id,
                 label: v.nama,
               })) || []
