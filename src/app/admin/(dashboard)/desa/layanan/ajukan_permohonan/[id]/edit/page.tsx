@@ -23,6 +23,9 @@ function EditAjukanPermohonan() {
   const router = useRouter();
   const params = useParams();
   const stateAjukan = useProxy(stateLayananDesa.ajukanPermohonan);
+  // Snapshot cabang suratKeterangan agar Select kategori re-render saat
+  // findManyAll.load() async selesai — JSX sebelumnya baca raw proxy (race).
+  const stateSurat = useProxy(stateLayananDesa.suratKeterangan);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -172,7 +175,7 @@ function EditAjukanPermohonan() {
           <Select
             label="Kategori"
             placeholder="Pilih kategori"
-            data={stateLayananDesa.suratKeterangan.findManyAll.data?.map((item) => ({
+            data={stateSurat.findManyAll.data?.map((item) => ({
               label: item.name,
               value: item.id,
             }))}

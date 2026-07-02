@@ -41,6 +41,9 @@ function Page() {
   const state = useProxy(stateDesaPengumuman.pengumuman);
   const totalPages = state.findMany.totalPages || 1;
   const recent = useProxy(stateDesaPengumuman.pengumuman.findRecent);
+  // Snapshot cabang category agar daftar kategori re-render saat load() async
+  // selesai — sebelumnya JSX baca raw proxy & tak subscribe (race intermiten).
+  const categoryState = useProxy(stateDesaPengumuman.category);
 
   // ✅ Baca URL saat pertama kali mount
   useEffect(() => {
@@ -175,7 +178,7 @@ function Page() {
               <Title order={3} c={colors['blue-button']}>
                 Kategori
               </Title>
-              {stateDesaPengumuman.category.findMany.data?.map((v: any, k) => {
+              {categoryState.findMany.data?.map((v: any, k) => {
                 const count = v._count?.pengumumans || 0;
                 return (
                   <UnstyledButton component={Link} href={`/darmasaba/desa/pengumuman/${v.name}`} key={k}>
