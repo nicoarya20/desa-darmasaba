@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.93] - 2026-07-03
+### Changed
+- **Menu admin UMKM kembali jadi satu entri sidebar (revert nested submenu 0.1.91)**: submenu nested (Dashboard/Data UMKM/Produk/Penjualan) di sidebar ternyata redundant — halaman UMKM (`Manajemen UMKM`) sudah punya navigasi Tabs internal sendiri (Dashboard, Data UMKM, Produk, Penjualan, Kategori Produk). Sidebar kini cukup satu item "UMKM" → membuka halaman ber-tab. Tetap konsisten antar-role (dev, admin, user dengan menuIds) karena ketiga array menu (devBar/navBar/role1) diseragamkan ke satu entri.
+- `layout.tsx` dikembalikan ke render 2-level (render grandchild 3-level dari 0.1.91 dibuang — tak terpakai lagi).
+- Frontend-only, tanpa perubahan schema/migration.
+
+## [0.1.92] - 2026-07-03
+### Changed
+- Rilis staging UMKM nested submenu (kemudian direvert di 0.1.93). Version bump untuk deploy STG.
+
 ## [0.1.91] - 2026-07-03
 ### Changed
 - **Menu admin Ekonomi > UMKM jadi sub-group nested & konsisten antar-role**: sebelumnya sub-menu UMKM tampil berbeda tergantung role yang login — dev (roleId 0) melihat satu entri "UMKM", sedangkan admin (roleId 1 / user dengan menuIds) melihat 4 entri flat sejajar ("UMKM - Dashboard", "UMKM - Data UMKM", dst). Kini seragam: UMKM adalah grup yang bisa di-expand berisi Dashboard, Data UMKM, Produk, Penjualan — sama untuk semua role. Perubahan di data menu (`list_PageAdmin.tsx`, array devBar/navBar/role1) + render sidebar 3-level (`layout.tsx`).
