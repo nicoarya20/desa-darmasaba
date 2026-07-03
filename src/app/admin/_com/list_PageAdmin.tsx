@@ -227,31 +227,9 @@ export const devBar = [
     path: "",
     children: [
       {
-        id: "Ekonomi_UMKM",
+        id: "Ekonomi_UMKM_1",
         name: "UMKM",
-        path: "",
-        children: [
-          {
-            id: "Ekonomi_UMKM_1",
-            name: "Dashboard",
-            path: "/admin/ekonomi/umkm/dashboard"
-          },
-          {
-            id: "Ekonomi_UMKM_2",
-            name: "Data UMKM",
-            path: "/admin/ekonomi/umkm/data-umkm"
-          },
-          {
-            id: "Ekonomi_UMKM_3",
-            name: "Produk",
-            path: "/admin/ekonomi/umkm/produk"
-          },
-          {
-            id: "Ekonomi_UMKM_4",
-            name: "Penjualan",
-            path: "/admin/ekonomi/umkm/penjualan"
-          }
-        ]
+        path: "/admin/ekonomi/umkm/dashboard"
       },
       {
         id: "Ekonomi_2",
@@ -700,31 +678,9 @@ export const navBar = [
     path: "",
     children: [
       {
-        id: "Ekonomi_UMKM",
+        id: "Ekonomi_UMKM_1",
         name: "UMKM",
-        path: "",
-        children: [
-          {
-            id: "Ekonomi_UMKM_1",
-            name: "Dashboard",
-            path: "/admin/ekonomi/umkm/dashboard"
-          },
-          {
-            id: "Ekonomi_UMKM_2",
-            name: "Data UMKM",
-            path: "/admin/ekonomi/umkm/data-umkm"
-          },
-          {
-            id: "Ekonomi_UMKM_3",
-            name: "Produk",
-            path: "/admin/ekonomi/umkm/produk"
-          },
-          {
-            id: "Ekonomi_UMKM_4",
-            name: "Penjualan",
-            path: "/admin/ekonomi/umkm/penjualan"
-          }
-        ]
+        path: "/admin/ekonomi/umkm/dashboard"
       },
       {
         id: "Ekonomi_2",
@@ -1131,31 +1087,9 @@ export const role1 = [
     path: "",
     children: [
       {
-        id: "Ekonomi_UMKM",
+        id: "Ekonomi_UMKM_1",
         name: "UMKM",
-        path: "",
-        children: [
-          {
-            id: "Ekonomi_UMKM_1",
-            name: "Dashboard",
-            path: "/admin/ekonomi/umkm/dashboard"
-          },
-          {
-            id: "Ekonomi_UMKM_2",
-            name: "Data UMKM",
-            path: "/admin/ekonomi/umkm/data-umkm"
-          },
-          {
-            id: "Ekonomi_UMKM_3",
-            name: "Produk",
-            path: "/admin/ekonomi/umkm/produk"
-          },
-          {
-            id: "Ekonomi_UMKM_4",
-            name: "Penjualan",
-            path: "/admin/ekonomi/umkm/penjualan"
-          }
-        ]
+        path: "/admin/ekonomi/umkm/dashboard"
       },
       {
         id: "Ekonomi_2",
