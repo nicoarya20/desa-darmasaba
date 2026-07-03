@@ -323,15 +323,108 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 href={v.path || undefined}
               >
                 {v.children?.map((child, key) => {
-                  const isChildActive = segments.includes(_.lowerCase(child.name));
+                  // Array menu untyped literal — sebagian child punya `children` (grup nested), sebagian tidak.
+                  const childNode = child as { id: string; name: string; path: string; children?: { name: string; path: string }[] };
+                  const isChildActive = segments.includes(_.lowerCase(childNode.name));
+                  const grandchildren = childNode.children;
+                  const hasGrandchildren = Array.isArray(grandchildren) && grandchildren.length > 0;
+
+                  // Grup bertingkat (mis. Ekonomi > UMKM): child punya children sendiri.
+                  // Tidak navigasi langsung (path=""), hanya expand/collapse grandchild.
+                  if (hasGrandchildren) {
+                    const isGroupActive = grandchildren!.some((gc) =>
+                      segments.includes(_.lowerCase(gc.name))
+                    ) || isChildActive;
+                    return (
+                      <NavLink
+                        key={key}
+                        defaultOpened={isGroupActive}
+                        c={mounted && isGroupActive ? tokens.colors.primary : mounted && isDark ? '#E5E7EB' : tokens.colors.text.secondary}
+                        label={
+                          <Text
+                            fw={isGroupActive ? 600 : 400}
+                            fz="sm"
+                            style={{
+                              color: mounted && isDark ? '#E5E7EB' : 'inherit',
+                              transition: 'color 150ms ease',
+                            }}
+                          >
+                            {childNode.name}
+                          </Text>
+                        }
+                        styles={{
+                          root: {
+                            borderRadius: rem(8),
+                            marginBottom: rem(2),
+                            transition: 'background 150ms ease',
+                            padding: '6px 12px',
+                            '&:hover': {
+                              backgroundColor: mounted && isDark ? 'rgba(255, 255, 255, 0.05)' : tokens.colors.bg.hover,
+                            },
+                          }
+                        }}
+                        variant="subtle"
+                      >
+                        {grandchildren!.map((grandchild, gkey) => {
+                          const isGrandchildActive = segments.includes(_.lowerCase(grandchild.name));
+                          return (
+                            <NavLink
+                              key={gkey}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleNavClick(grandchild.path);
+                              }}
+                              href={grandchild.path}
+                              c={mounted && isGrandchildActive ? tokens.colors.primary : mounted && isDark ? '#E5E7EB' : tokens.colors.text.secondary}
+                              label={
+                                <Text
+                                  fw={isGrandchildActive ? 600 : 400}
+                                  fz="sm"
+                                  style={{
+                                    color: mounted && isDark ? '#E5E7EB' : 'inherit',
+                                    transition: 'color 150ms ease',
+                                  }}
+                                >
+                                  {grandchild.name}
+                                </Text>
+                              }
+                              styles={{
+                                root: {
+                                  borderRadius: rem(8),
+                                  marginBottom: rem(2),
+                                  transition: 'background 150ms ease',
+                                  padding: '6px 12px',
+                                  '&:hover': {
+                                    backgroundColor: mounted && isDark ? 'rgba(255, 255, 255, 0.05)' : tokens.colors.bg.hover,
+                                  },
+                                  ...(mounted && isGrandchildActive && isDark && {
+                                    backgroundColor: 'rgba(59,130,246,0.15)',
+                                    borderLeft: `2px solid ${tokens.colors.primary}`,
+                                  }),
+                                  ...(mounted && isGrandchildActive && !isDark && {
+                                    backgroundColor: 'rgba(25, 113, 194, 0.1)',
+                                    borderLeft: `2px solid ${tokens.colors.primary}`,
+                                  }),
+                                }
+                              }}
+                              active={isGrandchildActive}
+                              variant="subtle"
+                              component={Link}
+                            />
+                          );
+                        })}
+                      </NavLink>
+                    );
+                  }
+
                   return (
                     <NavLink
                       key={key}
                       onClick={(e) => {
                         e.preventDefault();
-                        handleNavClick(child.path);
+                        handleNavClick(childNode.path);
                       }}
-                      href={child.path}
+                      href={childNode.path}
                       c={mounted && isChildActive ? tokens.colors.primary : mounted && isDark ? '#E5E7EB' : tokens.colors.text.secondary}
                       label={
                         <Text
@@ -342,7 +435,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             transition: 'color 150ms ease',
                           }}
                         >
-                          {child.name}
+                          {childNode.name}
                         </Text>
                       }
                       styles={{

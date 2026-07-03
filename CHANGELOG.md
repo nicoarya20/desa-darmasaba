@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.91] - 2026-07-03
+### Changed
+- **Menu admin Ekonomi > UMKM jadi sub-group nested & konsisten antar-role**: sebelumnya sub-menu UMKM tampil berbeda tergantung role yang login — dev (roleId 0) melihat satu entri "UMKM", sedangkan admin (roleId 1 / user dengan menuIds) melihat 4 entri flat sejajar ("UMKM - Dashboard", "UMKM - Data UMKM", dst). Kini seragam: UMKM adalah grup yang bisa di-expand berisi Dashboard, Data UMKM, Produk, Penjualan — sama untuk semua role. Perubahan di data menu (`list_PageAdmin.tsx`, array devBar/navBar/role1) + render sidebar 3-level (`layout.tsx`).
+- Efek samping positif: item aktif sub-menu UMKM kini ter-highlight benar. Entri flat lama (`"UMKM - Dashboard"`) tak pernah cocok dengan URL segment sehingga tak pernah aktif; nama grandchild baru ("Dashboard", "Data UMKM", dst) cocok dengan segment path → active-state jalan.
+- Frontend-only, tanpa perubahan schema/migration.
+
 ## [0.1.90] - 2026-07-02
 ### Fixed
 - **Dropdown Select kategori kosong / pilihan tak nyangkut (intermiten, paling sering di STG)**: 38 halaman membaca state Valtio dari **raw proxy** langsung di JSX, bukan lewat snapshot `useProxy()`. Akibatnya komponen tidak subscribe ke perubahan proxy → saat data async (`findManyAll.load()`) selesai, komponen tak re-render → dropdown kosong. Race lebih lebar di STG (fetch via Cloudflare lebih lambat) daripada localhost. Fix: setiap cabang state yang dibaca untuk display kini di-snapshot lewat `useProxy()`; assignment `onChange`/`onClick` & pemanggilan `.load()`/`.delete()` tetap di raw proxy.
