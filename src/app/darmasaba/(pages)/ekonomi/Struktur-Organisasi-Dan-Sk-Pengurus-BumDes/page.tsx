@@ -187,7 +187,7 @@ function StrukturOrganisasiBumDes() {
         id: pegawai?.id,
         name: pegawai?.namaLengkap || 'Belum Ditugaskan',
         title: node.nama || 'Tanpa Jabatan',
-        image: pegawai?.image?.link || '/img/default.png',
+        image: pegawai?.image?.link || '/default-avatar.svg',
       },
       children: node.children?.map(toOrgChartFormat) || [],
     }
@@ -397,7 +397,7 @@ function StrukturOrganisasiBumDes() {
 }
 
 function NodeCard({ node, router }: any) {
-  const imageSrc = node?.data?.image || '/img/default.png'
+  const imageSrc = node?.data?.image || '/default-avatar.svg'
   const name = node?.data?.name || 'Tanpa Nama'
   const title = node?.data?.title || 'Tanpa Jabatan'
   const hasId = Boolean(node?.data?.id)
@@ -455,6 +455,7 @@ function NodeCard({ node, router }: any) {
                 height={96}
                 fit="cover"
                 loading="lazy"
+                fallbackSrc="/default-avatar.svg"
                 style={{
                   objectFit: 'cover',
                 }}
