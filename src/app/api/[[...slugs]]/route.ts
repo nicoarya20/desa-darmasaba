@@ -3,6 +3,7 @@ import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
 import { requireAuth } from "@/lib/api-auth";
+import { isPublicPostPath } from "@/lib/auth-policy";
 import fs from "fs/promises";
 import path from "path";
 import Desa from "./_lib/desa";
@@ -95,8 +96,14 @@ const ApiServer = new Elysia()
         // GET paths yang hanya boleh diakses admin
         const ADMIN_ONLY_GET_PATHS = ["/api/user", "/api/role", "/api/fileStorage", "/api/imgs"];
 
+        // Form publik /darmasaba (warga anonim) boleh POST tanpa login untuk
+        // path yang di-whitelist exact-match. Master data admin bertingkat di
+        // bawahnya tetap butuh auth (tidak masuk whitelist).
+        const isPublicWrite =
+          method === "POST" && isPublicPostPath(pathname);
+
         const needsAuth =
-          ["POST", "PUT", "DELETE", "PATCH"].includes(method) ||
+          (["POST", "PUT", "DELETE", "PATCH"].includes(method) && !isPublicWrite) ||
           ADMIN_ONLY_GET_PATHS.some((p) => pathname.startsWith(p));
 
         if (!needsAuth) return;

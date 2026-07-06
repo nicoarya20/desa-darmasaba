@@ -36,6 +36,28 @@ export function isAccountActive(
 // Halaman profil publik untuk user non-admin (roleId 5+).
 export const PROFILE_PATH = "/profile";
 
+// Endpoint API yang boleh di-POST warga anonim (form publik /darmasaba),
+// tanpa login. Master data (jenislayanan/jenispengaduan) bertingkat di bawah
+// path ini & di-CRUD admin → sengaja TIDAK didaftarkan supaya tetap kena guard.
+// Karena itu pencocokan WAJIB exact-match (lihat isPublicPostPath), bukan prefix.
+export const PUBLIC_POST_PATHS: readonly string[] = [
+  "/api/inovasi/ajukanideinovatif/create",
+  "/api/inovasi/layananonlinedesa/administrasionline/create",
+  "/api/inovasi/layananonlinedesa/pengaduanmasyarakat/create",
+  // Upload gambar khusus pengaduan (image-only, tervalidasi) — bukan
+  // /api/fileStorage/create yang generik & tetap admin-only.
+  "/api/inovasi/layananonlinedesa/pengaduanmasyarakat/upload",
+];
+
+/**
+ * Apakah path ini form publik yang boleh POST tanpa login.
+ * EXACT-match by design: prefix-match akan membocorkan sub-path master data
+ * admin (mis. .../administrasionline/jenislayanan/create) yang harus tetap guard.
+ */
+export function isPublicPostPath(pathname: string): boolean {
+  return PUBLIC_POST_PATHS.includes(pathname);
+}
+
 /**
  * Origin publik (proto://host) dari header request. Di belakang proxy
  * (Cloudflare → Portainer), `nextUrl.origin` ter-resolve ke host internal container

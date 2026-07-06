@@ -4,6 +4,7 @@ import { t } from "elysia";
 import pengaduanMasyarakatDelete from "./del";
 import pengaduanMasyarakatFindMany from "./findMany";
 import pengaduanMasyarakatFindUnique from "./findUnique";
+import pengaduanMasyarakatUpload from "./upload";
 import JenisPengaduan from "./jenis-pengaduan";
 
 const PengaduanMasyarakat = new Elysia({
@@ -21,6 +22,12 @@ const PengaduanMasyarakat = new Elysia({
         deskripsiPengaduan: t.String(),
         jenisPengaduanId: t.String(),
         imageId: t.String(),
+    }),
+})
+.post("/upload", pengaduanMasyarakatUpload, {
+    body: t.Object({
+        name: t.String(),
+        file: t.File(),
     }),
 })
 .get("/find-many", pengaduanMasyarakatFindMany)

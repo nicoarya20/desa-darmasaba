@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { nanoid } from "nanoid";
-import sharp from "sharp";
 import zlib from "zlib";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
+import { storeImageAsWebp } from "./storeImage";
 
 const fileStorageCreate = async (context: Context) => {
   const body = (await context.body) as {
@@ -23,29 +23,18 @@ const fileStorageCreate = async (context: Context) => {
 
   const pathName = category === "image" ? "image" : category === "audio" ? "audio" : "document";
 
-  // Convert File ke Buffer
+  if (isImage) {
+    // Simpan sebagai WebP (logika di-share dengan upload publik pengaduan).
+    const data = await storeImageAsWebp(file);
+    return { data };
+  }
+
+  // Convert File ke Buffer (audio/dokumen)
   const buffer = Buffer.from(await file.arrayBuffer());
   let finalName = nanoid();
   let finalMimeType = file.type;
 
-  if (isImage) {
-    // Simpan sebagai WebP untuk kompresi maksimal
-    const desktopBuffer = await sharp(buffer)
-      .resize({ width: 1920, withoutEnlargement: true })
-      .webp({ quality: 80 })
-      .toBuffer();
-
-    const desktopName = `${finalName}-desktop.webp`;
-
-    // Upload to MinIO
-    await minio.putObject(MINIO_BUCKET, `${pathName}/${desktopName}`, desktopBuffer, desktopBuffer.length, {
-      "Content-Type": "image/webp",
-    });
-
-    // Simpan metadata untuk versi desktop sebagai default
-    finalName = desktopName;
-    finalMimeType = "image/webp";
-  } else if (isAudio) {
+  if (isAudio) {
     // Simpan file audio tanpa kompresi
     const ext = file.name.split(".").pop() || "mp3";
     finalName = `${finalName}.${ext}`;
