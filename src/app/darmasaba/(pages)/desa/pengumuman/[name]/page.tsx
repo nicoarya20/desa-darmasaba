@@ -2,9 +2,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
-import { Box, Center, Container, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
-import { IconCalendar } from '@tabler/icons-react';
+import { Box, Button, Center, Container, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
+import { IconArrowRight, IconCalendar } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
+import { useTransitionRouter } from 'next-view-transitions';
 import BackButton from '../../layanan/_com/BackButto';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
@@ -12,6 +13,7 @@ import { useParams } from 'next/navigation';
 const LIMIT_PER_PAGE = 5;
 
 function Page() {
+  const router = useTransitionRouter();
   const unwrappedParams = useParams();
   const kategoriState = useProxy(stateDesaPengumuman);
   const categoryName = decodeURIComponent(unwrappedParams.name as string);
@@ -104,9 +106,22 @@ function Page() {
                 ta="justify"
                 fz={{ base: 'sm', md: 'md' }}
                 lh={{ base: 1.6, md: 1.7 }}
+                lineClamp={3}
                 style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                 dangerouslySetInnerHTML={{ __html: v.deskripsi }}
               />
+              <Group justify="flex-end" mt="md">
+                <Button
+                  variant="light"
+                  color={colors['blue-button']}
+                  rightSection={<IconArrowRight size={16} />}
+                  onClick={() =>
+                    router.push(`/darmasaba/desa/pengumuman/${categoryName}/${v.id}`)
+                  }
+                >
+                  Baca Selengkapnya
+                </Button>
+              </Group>
             </Paper>
           ))
         )}
