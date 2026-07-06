@@ -75,8 +75,9 @@ function PengaduanMasyarakat() {
     }
 
     try {
-      // Upload the image first
-      const uploadRes = await ApiFetch.api.fileStorage.create.post({
+      // Upload the image first — endpoint publik khusus pengaduan (image-only,
+      // tervalidasi). Bukan /fileStorage/create yang admin-only.
+      const uploadRes = await ApiFetch.api.inovasi.layananonlinedesa.pengaduanmasyarakat.upload.post({
         file: file,
         name: file.name
       })

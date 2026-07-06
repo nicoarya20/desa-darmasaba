@@ -8,6 +8,7 @@ import {
   isAdminRole,
   isAccountActive,
   publicOriginFromHeaders,
+  isPublicPostPath,
 } from '@/lib/auth-policy';
 
 describe('resolveRoleForNewUser', () => {
@@ -95,5 +96,33 @@ describe('publicOriginFromHeaders', () => {
 
   it('default proto https bila hanya host tersedia', () => {
     expect(publicOriginFromHeaders(mk({ 'x-forwarded-host': 'a.com' }))).toBe('https://a.com');
+  });
+});
+
+describe('isPublicPostPath', () => {
+  it('3 form publik Inovasi + upload pengaduan → boleh POST tanpa login', () => {
+    expect(isPublicPostPath('/api/inovasi/ajukanideinovatif/create')).toBe(true);
+    expect(isPublicPostPath('/api/inovasi/layananonlinedesa/administrasionline/create')).toBe(true);
+    expect(isPublicPostPath('/api/inovasi/layananonlinedesa/pengaduanmasyarakat/create')).toBe(true);
+    expect(isPublicPostPath('/api/inovasi/layananonlinedesa/pengaduanmasyarakat/upload')).toBe(true);
+  });
+
+  it('master data (jenislayanan/jenispengaduan) TETAP admin → tidak bocor', () => {
+    // Bertingkat di bawah path publik; exact-match mencegah kebocoran.
+    expect(isPublicPostPath('/api/inovasi/layananonlinedesa/administrasionline/jenislayanan/create')).toBe(false);
+    expect(isPublicPostPath('/api/inovasi/layananonlinedesa/pengaduanmasyarakat/jenispengaduan/create')).toBe(false);
+  });
+
+  it('endpoint admin lain → tidak publik', () => {
+    expect(isPublicPostPath('/api/fileStorage/create')).toBe(false);
+    expect(isPublicPostPath('/api/user/delete/x')).toBe(false);
+    expect(isPublicPostPath('/api/role/create')).toBe(false);
+  });
+
+  it('prefix parsial / trailing slash / query → bukan match (exact only)', () => {
+    expect(isPublicPostPath('/api/inovasi/ajukanideinovatif')).toBe(false);
+    expect(isPublicPostPath('/api/inovasi/ajukanideinovatif/create/')).toBe(false);
+    expect(isPublicPostPath('/api/inovasi/ajukanideinovatif/create/extra')).toBe(false);
+    expect(isPublicPostPath('')).toBe(false);
   });
 });
