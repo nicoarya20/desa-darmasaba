@@ -9,6 +9,7 @@ import {
   useCallback,
   ReactNode,
 } from 'react';
+import { toast } from 'react-toastify';
 
 interface MusicFile {
   id: string;
@@ -167,7 +168,20 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   // Play song
   const playSong = useCallback(
     (song: Musik) => {
-      if (!song?.audioFile?.link || !audioRef.current) return;
+      if (!audioRef.current) return;
+
+      // Audio belum di-upload di CMS: beri feedback, jangan gagal diam-diam.
+      // Tetap set currentSong agar info lagu (judul/artis/cover) tampil.
+      if (!song?.audioFile?.link) {
+        const songIndex = musikData.findIndex(m => m.id === song.id);
+        setCurrentSongIndex(songIndex);
+        setCurrentSong(song);
+        setIsPlaying(false);
+        audioRef.current.pause();
+        audioRef.current.removeAttribute('src');
+        toast.info('Audio lagu ini belum tersedia.');
+        return;
+      }
 
       const songIndex = musikData.findIndex(m => m.id === song.id);
       setCurrentSongIndex(songIndex);
@@ -186,6 +200,11 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   // Toggle play/pause
   const togglePlayPause = useCallback(() => {
     if (!audioRef.current || !currentSong) return;
+
+    if (!currentSong.audioFile?.link) {
+      toast.info('Audio lagu ini belum tersedia.');
+      return;
+    }
 
     if (isPlaying) {
       audioRef.current.pause();

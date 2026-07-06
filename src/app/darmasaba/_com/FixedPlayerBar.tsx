@@ -188,7 +188,14 @@ export default function FixedPlayerBar() {
                 size="xl"
                 radius="xl"
                 onClick={togglePlayPause}
-                title={isPlaying ? 'Pause' : 'Play'}
+                disabled={!currentSong.audioFile?.link}
+                title={
+                  !currentSong.audioFile?.link
+                    ? 'Audio belum tersedia'
+                    : isPlaying
+                      ? 'Pause'
+                      : 'Play'
+                }
               >
                 {isPlaying ? (
                   <IconPlayerPauseFilled size={24} />
