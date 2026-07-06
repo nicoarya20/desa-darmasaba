@@ -92,6 +92,22 @@ svg {
   height: auto;
 }
 
+/* ===================================
+   6. CHART FOCUS OUTLINE RESET
+   ===================================
+   Recharts (dibungkus @mantine/charts) memberi elemen bar/sector SVG focus
+   outline biru default browser saat di-klik. Bar/sector bukan kontrol
+   interaktif (tak ada aksi keyboard), jadi outline ini murni artefak visual —
+   reset agar tak ada "garis biru" saat klik grafik. Berlaku ke SEMUA chart. */
+.recharts-surface:focus,
+.recharts-surface *:focus,
+.recharts-rectangle:focus,
+.recharts-bar-rectangle:focus,
+.recharts-sector:focus,
+.recharts-layer:focus {
+  outline: none;
+}
+
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
