@@ -33,6 +33,7 @@ export async function seedPengumuman() {
         categoryPengumumanId: p.categoryPengumumanId,
       },
       create: {
+        id: p.id,
         judul: p.judul,
         deskripsi: p.deskripsi,
         content: p.content,
