@@ -61,8 +61,17 @@
     transition: transform 0.2s ease;
   }
   
-  /* Fullscreen mode adjustments */
-  .p-organizationchart-table:fullscreen {
-    background: rgba(230, 240, 255, 0.98);
+  /* Fullscreen mode adjustments
+     Elemen yang di-fullscreen-kan adalah container (.struktur-fullscreen),
+     bukan .p-organizationchart-table. Tanpa background, browser mengisi sisa
+     layar dengan ::backdrop hitam default → layar tampak hitam. Beri bg terang
+     senada halaman + override backdrop agar tidak ada area hitam/garis putih. */
+  .struktur-fullscreen:fullscreen {
+    background: #D1D9E8;
     padding: 40px;
+    overflow: auto;
+  }
+
+  .struktur-fullscreen:fullscreen::backdrop {
+    background: #D1D9E8;
   }
