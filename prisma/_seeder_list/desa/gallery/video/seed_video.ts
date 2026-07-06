@@ -16,6 +16,7 @@ export async function seedVideo() {
         linkVideo: v.linkVideo,
       },
       create: {
+        id: v.id,
         name: v.judul,
         deskripsi: v.deskripsi,
         linkVideo: v.linkVideo,
