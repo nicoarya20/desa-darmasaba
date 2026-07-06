@@ -95,9 +95,9 @@ function Page() {
                 ta="justify"
                 fz={{ base: 'sm', md: 'md' }}
                 lh={{ base: 1.6, md: 1.7 }}
-              >
-                {v.deskripsi}
-              </Text>
+                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+              />
             </Paper>
           ))
         )}

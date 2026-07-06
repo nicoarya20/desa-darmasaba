@@ -89,7 +89,7 @@ export default function Content({ kategori }: { kategori: string }) {
                         dangerouslySetInnerHTML={{ __html: featured.deskripsi }}
                       />
                     </div>
-                    <Group justify="apart" mt="auto">
+                    <Group justify="space-between" mt="auto">
                       <Group gap="xs">
                         <IconCalendar size={18} />
                         <Text
@@ -157,10 +157,11 @@ export default function Content({ kategori }: { kategori: string }) {
                   p="lg"
                   radius="md"
                   withBorder
+                  h="100%"
                   onClick={() =>
                     router.push(`/darmasaba/desa/berita/${kategori}/${item.id}`)
                   }
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
                 >
                   <Card.Section>
                     <Image
@@ -195,7 +196,7 @@ export default function Content({ kategori }: { kategori: string }) {
                     mt="xs"
                     dangerouslySetInnerHTML={{ __html: item.deskripsi }}
                   />
-                  <Group justify="apart" mt="md" gap="xs">
+                  <Group justify="space-between" mt="auto" pt="md" gap="xs">
                     <Text
                       fz={{ base: 'xs', md: 'xs' }}
                       c="dimmed"

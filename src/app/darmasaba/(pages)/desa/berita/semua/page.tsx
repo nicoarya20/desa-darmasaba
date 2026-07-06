@@ -86,7 +86,7 @@ function Semua() {
                         lh={{ base: 1.5, md: 1.6 }}
                       />
                     </div>
-                    <Group justify="apart" mt="auto">
+                    <Group justify="space-between" mt="auto">
                       <Group gap="xs">
                         <IconCalendar size={18} />
                         <Text
@@ -136,7 +136,15 @@ function Semua() {
           ) : (
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl" verticalSpacing="xl">
               {paginatedNews.map((item) => (
-                <Card key={item.id} shadow="sm" p="lg" radius="md" withBorder>
+                <Card
+                  key={item.id}
+                  shadow="sm"
+                  p="lg"
+                  radius="md"
+                  withBorder
+                  h="100%"
+                  style={{ display: 'flex', flexDirection: 'column' }}
+                >
                   <Card.Section>
                     <Image
                       src={item.image?.link || '/images/placeholder-small.jpg'}
@@ -163,7 +171,7 @@ function Semua() {
                     lh={{ base: 1.5, md: 1.6 }}
                   />
 
-                  <Flex align="center" justify="apart" mt="md" gap="xs">
+                  <Flex align="center" justify="space-between" mt="auto" pt="md" gap="xs">
                     <Text
                       c="dimmed"
                       fz={{ base: 'xs', md: 'xs' }}

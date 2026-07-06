@@ -38,25 +38,26 @@ function Page() {
         </Group>
         
         <Stack gap="xs">
-          <Group justify="space-between" align="flex-start" wrap="wrap">
-            <Title
-              order={1}
-              c={colors['blue-button']}
-              fz={{ base: 28, md: 36 }}
-              style={{ 
-                wordBreak: 'break-word',
-                flex: '1 1 auto',
-                minWidth: 0
-              }}
-            >
-              {detail.data?.judul}
-            </Title>
-            <Paper bg={colors['blue-button']} p={8} style={{ flexShrink: 0 }}>
-              <Text c={colors['white-1']} fz={{ base: 'xs', md: 'sm' }} lh={1.2}>
-                {detail.data?.CategoryPengumuman?.name}
-              </Text>
-            </Paper>
-          </Group>
+          <Paper
+            bg={colors['blue-button']}
+            p={8}
+            style={{ alignSelf: 'flex-start' }}
+          >
+            <Text c={colors['white-1']} fz={{ base: 'xs', md: 'sm' }} lh={1.2}>
+              {detail.data?.CategoryPengumuman?.name}
+            </Text>
+          </Paper>
+          <Title
+            order={1}
+            c={colors['blue-button']}
+            fz={{ base: 28, md: 36 }}
+            style={{
+              wordBreak: 'break-word',
+              minWidth: 0
+            }}
+          >
+            {detail.data?.judul}
+          </Title>
           
           <Paper 
             bg={colors['white-1']} 
