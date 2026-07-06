@@ -33,6 +33,10 @@ export async function seedPengumuman() {
         categoryPengumumanId: p.categoryPengumumanId,
       },
       create: {
+        // id wajib di-set agar cocok dengan `where` di run berikutnya —
+        // tanpa ini Prisma bikin cuid baru & upsert tak pernah match,
+        // sehingga data ter-create ulang / numpuk tiap seed.
+        id: p.id,
         judul: p.judul,
         deskripsi: p.deskripsi,
         content: p.content,

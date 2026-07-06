@@ -2,22 +2,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
-import { Box, Container, Group, Paper, Stack, Text, Title } from '@mantine/core';
-import { IconCalendar } from '@tabler/icons-react';
+import { Box, Button, Center, Container, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
+import { IconArrowRight, IconCalendar } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
+import { useTransitionRouter } from 'next-view-transitions';
 import BackButton from '../../layanan/_com/BackButto';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
+const LIMIT_PER_PAGE = 5;
+
 function Page() {
+  const router = useTransitionRouter();
   const unwrappedParams = useParams();
   const kategoriState = useProxy(stateDesaPengumuman);
   const categoryName = decodeURIComponent(unwrappedParams.name as string);
+  const [page, setPage] = useState(1);
+  const totalPages = kategoriState.pengumuman.findMany.totalPages || 1;
+
+  // Reset ke halaman 1 saat kategori berganti
+  useEffect(() => {
+    setPage(1);
+  }, [categoryName]);
 
   useEffect(() => {
     kategoriState.category.findUnique.load(categoryName);
-    kategoriState.pengumuman.findMany.load(1, 10, '', categoryName);
-  }, [categoryName]);
+    kategoriState.pengumuman.findMany.load(page, LIMIT_PER_PAGE, '', categoryName);
+  }, [categoryName, page]);
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="md">
@@ -95,11 +106,39 @@ function Page() {
                 ta="justify"
                 fz={{ base: 'sm', md: 'md' }}
                 lh={{ base: 1.6, md: 1.7 }}
-              >
-                {v.deskripsi}
-              </Text>
+                lineClamp={3}
+                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+              />
+              <Group justify="flex-end" mt="md">
+                <Button
+                  variant="light"
+                  color={colors['blue-button']}
+                  rightSection={<IconArrowRight size={16} />}
+                  onClick={() =>
+                    router.push(`/darmasaba/desa/pengumuman/${categoryName}/${v.id}`)
+                  }
+                >
+                  Baca Selengkapnya
+                </Button>
+              </Group>
             </Paper>
           ))
+        )}
+
+        {totalPages > 1 && (
+          <Center mt="xl">
+            <Pagination
+              total={totalPages}
+              value={page}
+              onChange={setPage}
+              siblings={1}
+              boundaries={1}
+              withEdges
+              color={colors['blue-button']}
+              fz={{ base: 'xs', md: 'sm' }}
+            />
+          </Center>
         )}
       </Box>
     </Stack>
