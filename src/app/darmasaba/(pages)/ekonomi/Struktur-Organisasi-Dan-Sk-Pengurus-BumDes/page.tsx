@@ -369,6 +369,7 @@ function StrukturOrganisasiBumDes() {
       <Center style={{ width: '100%' }}>
         <Box
           ref={chartContainerRef}
+          className="struktur-fullscreen"
           style={{
             overflowX: 'auto',
             overflowY: 'auto',
