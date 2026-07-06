@@ -48,16 +48,23 @@ function Semua() {
       ) : (
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl">
           {items.map((item) => (
-            <Paper key={item.id} shadow="sm" radius="lg" withBorder style={{ overflow: 'hidden' }}>
-              {item.image?.link && (
-                <Image
-                  src={item.image.link}
-                  height={220}
-                  alt={item.judul}
-                  fit="cover"
-                  loading="lazy"
-                />
-              )}
+            <Paper
+              key={item.id}
+              shadow="sm"
+              radius="lg"
+              withBorder
+              h="100%"
+              style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+            >
+              <Image
+                src={item.image?.link || '/no-image.jpg'}
+                w="100%"
+                h={220}
+                alt={item.judul}
+                fit="cover"
+                fallbackSrc="/no-image.jpg"
+                loading="lazy"
+              />
               <Stack p="md" gap="xs">
                 <Title order={4} c={colors['blue-button']} ta="center" lineClamp={2}>
                   {item.judul}
@@ -72,7 +79,7 @@ function Semua() {
                   {item.deskripsiSingkat}
                 </Text>
               </Stack>
-              <Center pb="md">
+              <Center pb="md" mt="auto">
                 <Button variant="light" onClick={() => router.push(toDetail(item))}>
                   Detail
                 </Button>
