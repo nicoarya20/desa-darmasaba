@@ -69,12 +69,13 @@ function DetailPegawaiUser() {
         <Stack align="center" gap="md">
           {/* Foto Profil */}
           <Image
-            src={data.image?.link || '/placeholder-profile.png'}
+            src={data.image?.link || '/default-avatar.svg'}
             alt={data.namaLengkap || 'Foto Profil'}
             w={160}
             h={160}
             radius={100}
             fit="cover"
+            fallbackSrc="/default-avatar.svg"
             style={{ border: `2px solid ${colors['blue-button']}` }}
             loading="lazy"
           />
