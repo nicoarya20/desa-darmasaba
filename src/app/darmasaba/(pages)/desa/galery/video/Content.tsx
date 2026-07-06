@@ -88,7 +88,7 @@ export default function VideoContent() {
                   height={300}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  style={{ borderRadius: 8 }}
+                  style={{ border: 'none', borderRadius: 8 }}
                 />
               </Center>
 

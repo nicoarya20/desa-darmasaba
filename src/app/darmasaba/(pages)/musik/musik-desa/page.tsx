@@ -195,9 +195,11 @@ const MusicPlayer = () => {
                               <Text size="xs" c="#5A6C7D">{song.artis}</Text>
                               <Text size="xs" c="#8A9BA8">{song.durasi}</Text>
                             </Stack>
-                            {currentSong?.id === song.id && isPlaying && (
+                            {!song.audioFile?.link ? (
+                              <Badge color="gray" variant="light">Audio belum tersedia</Badge>
+                            ) : currentSong?.id === song.id && isPlaying ? (
                               <Badge color="#0B4F78" variant="filled">Memutar</Badge>
-                            )}
+                            ) : null}
                           </Group>
                         </Card>
                       </Grid.Col>
@@ -261,6 +263,8 @@ const MusicPlayer = () => {
                 size={56}
                 radius="xl"
                 onClick={togglePlayPauseHandler}
+                disabled={!currentSong?.audioFile?.link}
+                title={!currentSong?.audioFile?.link ? 'Audio belum tersedia' : undefined}
               >
                 {isPlaying ? <IconPlayerPauseFilled size={26} /> : <IconPlayerPlayFilled size={26} />}
               </ActionIcon>
