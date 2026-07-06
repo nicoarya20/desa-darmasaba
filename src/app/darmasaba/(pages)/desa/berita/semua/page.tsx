@@ -147,8 +147,10 @@ function Semua() {
                 >
                   <Card.Section>
                     <Image
-                      src={item.image?.link || '/images/placeholder-small.jpg'}
-                      height={200}
+                      src={item.image?.link || '/no-image.jpg'}
+                      fallbackSrc="/no-image.jpg"
+                      w="100%"
+                      h={200}
                       alt={item.judul}
                       fit="cover"
                       loading="lazy"

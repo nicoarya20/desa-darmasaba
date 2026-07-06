@@ -2,22 +2,31 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
-import { Box, Container, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Center, Container, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconCalendar } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../layanan/_com/BackButto';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+
+const LIMIT_PER_PAGE = 5;
 
 function Page() {
   const unwrappedParams = useParams();
   const kategoriState = useProxy(stateDesaPengumuman);
   const categoryName = decodeURIComponent(unwrappedParams.name as string);
+  const [page, setPage] = useState(1);
+  const totalPages = kategoriState.pengumuman.findMany.totalPages || 1;
+
+  // Reset ke halaman 1 saat kategori berganti
+  useEffect(() => {
+    setPage(1);
+  }, [categoryName]);
 
   useEffect(() => {
     kategoriState.category.findUnique.load(categoryName);
-    kategoriState.pengumuman.findMany.load(1, 10, '', categoryName);
-  }, [categoryName]);
+    kategoriState.pengumuman.findMany.load(page, LIMIT_PER_PAGE, '', categoryName);
+  }, [categoryName, page]);
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap="md">
@@ -100,6 +109,21 @@ function Page() {
               />
             </Paper>
           ))
+        )}
+
+        {totalPages > 1 && (
+          <Center mt="xl">
+            <Pagination
+              total={totalPages}
+              value={page}
+              onChange={setPage}
+              siblings={1}
+              boundaries={1}
+              withEdges
+              color={colors['blue-button']}
+              fz={{ base: 'xs', md: 'sm' }}
+            />
+          </Center>
         )}
       </Box>
     </Stack>

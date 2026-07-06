@@ -165,8 +165,10 @@ export default function Content({ kategori }: { kategori: string }) {
                 >
                   <Card.Section>
                     <Image
-                      src={item.image?.link}
-                      height={200}
+                      src={item.image?.link || '/no-image.jpg'}
+                      fallbackSrc="/no-image.jpg"
+                      w="100%"
+                      h={200}
                       alt={item.judul}
                       fit="cover"
                       loading="lazy"
