@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { perSatuanSuffix } from './_lib/satuan';
 
 function Page() {
   const router = useRouter()
@@ -142,7 +143,12 @@ function TabProdukUmkm({ router }: { router: any }) {
                     }}>
                       {v.umkm?.nama}
                     </Text>
-                    <Text fz="lg" fw={800} c="orange">Rp {v.harga.toLocaleString('id-ID')}</Text>
+                    <Text fz="lg" fw={800} c="orange">
+                      Rp {v.harga.toLocaleString('id-ID')}
+                      <Text component="span" fz="xs" fw={500} c="dimmed">
+                        {perSatuanSuffix(v.satuan)}
+                      </Text>
+                    </Text>
                   </Stack>
                 </Card>
               </motion.div>

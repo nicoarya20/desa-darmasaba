@@ -7,6 +7,7 @@ import { IconBrandWhatsapp, IconMapPinFilled, IconUser } from '@tabler/icons-rea
 import { useParams, useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../../desa/layanan/_com/BackButto';
+import { perSatuanSuffix } from '../_lib/satuan';
 
 function Page() {
   const router = useRouter();
@@ -108,6 +109,9 @@ function Page() {
               </Group>
               <Text size="lg" fw={700} c="blue">
                 Rp {p.harga.toLocaleString('id-ID')}
+                <Text component="span" fz="xs" fw={500} c="dimmed">
+                  {perSatuanSuffix(p.satuan)}
+                </Text>
               </Text>
               <Text size="sm" c="dimmed" mt="sm" lineClamp={2}>
                 {p.deskripsi || 'Kualitas terbaik dari UMKM lokal.'}

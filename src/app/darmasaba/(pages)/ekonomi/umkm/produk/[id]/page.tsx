@@ -35,6 +35,7 @@ import { toast } from 'react-toastify';
 import colors from '@/con/colors';
 import umkmState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm';
 import ApiFetch from '@/lib/api-fetch';
+import { jumlahLabel, perSatuanSuffix, withSatuan } from '../../_lib/satuan';
 
 interface OrderForm {
   nama: string;
@@ -119,8 +120,8 @@ function DetailProdukPasarUser() {
           `Halo *${data.umkm?.nama}*, saya ingin memesan:`,
           '',
           `*${data.nama}*`,
-          `Jumlah: ${form.jumlah}`,
-          `Harga Satuan: Rp ${data.harga?.toLocaleString('id-ID')}`,
+          `Jumlah: ${withSatuan(form.jumlah, data.satuan)}`,
+          `Harga Satuan: Rp ${data.harga?.toLocaleString('id-ID')}${perSatuanSuffix(data.satuan)}`,
           `*Total: Rp ${total.toLocaleString('id-ID')}*`,
           '',
           `Nama Pemesan: ${form.nama}`,
@@ -176,10 +177,13 @@ function DetailProdukPasarUser() {
 
               <Text fw={900} fz="xl" c="orange">
                 Rp {data.harga?.toLocaleString('id-ID')}
+                <Text component="span" fz="sm" fw={500} c="dimmed">
+                  {perSatuanSuffix(data.satuan)}
+                </Text>
               </Text>
 
               <Badge size="lg" color={data.stok > 0 ? 'green' : 'red'}>
-                {data.stok > 0 ? `Stok: ${data.stok}` : 'Stok Habis'}
+                {data.stok > 0 ? `Stok: ${withSatuan(data.stok, data.satuan)}` : 'Stok Habis'}
               </Badge>
 
               <Divider />
@@ -214,7 +218,7 @@ function DetailProdukPasarUser() {
           />
 
           <NumberInput
-            label="Jumlah"
+            label={jumlahLabel(data.satuan)}
             min={1}
             max={data.stok}
             value={form.jumlah}

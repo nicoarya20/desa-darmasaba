@@ -1,5 +1,6 @@
 'use client';
 import {
+  Autocomplete,
   Box,
   Button,
   Group,
@@ -13,6 +14,7 @@ import {
   Image,
   NumberInput
 } from '@mantine/core';
+import { SATUAN_PRESETS } from '@/app/darmasaba/(pages)/ekonomi/umkm/_lib/satuan';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto,  IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -45,6 +47,7 @@ export default function CreateProdukUmkm() {
       nama: "",
       harga: 0,
       stok: 0,
+      satuan: "",
       umkmId: "",
       deskripsi: "",
       imageId: null,
@@ -174,6 +177,14 @@ export default function CreateProdukUmkm() {
               min={0}
               value={state.create.form.stok}
               onChange={(val) => (state.create.form.stok = Number(val))}
+            />
+            <Autocomplete
+              label="Satuan"
+              placeholder="kg / ekor / pcs"
+              description="Satuan jual produk"
+              data={[...SATUAN_PRESETS]}
+              value={state.create.form.satuan}
+              onChange={(val) => (state.create.form.satuan = val)}
             />
           </Group>
 
