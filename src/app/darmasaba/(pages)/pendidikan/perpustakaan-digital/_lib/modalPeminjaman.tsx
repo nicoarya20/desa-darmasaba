@@ -16,10 +16,17 @@ import {
   TextInput,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
-import { IconArrowRight, IconBook2, IconUser } from '@tabler/icons-react';
+import { IconArrowRight, IconBook2, IconPhone, IconUser } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useSnapshot } from 'valtio';
+import {
+  isValidPhoneDigits,
+  MAX_DIGITS,
+  MIN_DIGITS,
+  toPhoneDigits,
+  toStoredPhone,
+} from './notelp';
 
 export interface ModalPeminjamanProps {
   opened: boolean;
@@ -49,11 +56,14 @@ export default function ModalPeminjaman({
     return textContent === '';
   };
 
+  // Digit nomor telepon (tanpa prefix +62) untuk input & validasi
+  const phoneDigits = toPhoneDigits(snap.create.form.noTelp);
+
   // Check if form is valid
   const isFormValid = () => {
     return (
       snap.create.form.nama?.trim() !== '' &&
-      snap.create.form.noTelp?.trim() !== '' &&
+      isValidPhoneDigits(phoneDigits) &&
       snap.create.form.alamat?.trim() !== '' &&
       snap.create.form.tanggalPinjam?.trim() !== '' &&
       !isHtmlEmpty(snap.create.form.catatan)
@@ -141,13 +151,30 @@ export default function ModalPeminjaman({
 
           <TextInput
             label="No Telp"
-            placeholder="Masukkan no telp"
-            leftSection={<IconUser size={16} />}
-            value={snap.create.form.noTelp}
+            placeholder="8123456789"
+            type="tel"
+            inputMode="numeric"
+            maxLength={MAX_DIGITS}
+            leftSection={
+              <Group gap={4} wrap="nowrap" pl={4}>
+                <IconPhone size={16} />
+                <Text fz="sm" fw={600} c="dimmed">
+                  +62
+                </Text>
+              </Group>
+            }
+            leftSectionWidth={64}
+            value={phoneDigits}
             onChange={(e) =>
               (perpustakaanDigitalState.peminjamanBuku.create.form.noTelp =
-                e.currentTarget.value)
+                toStoredPhone(e.currentTarget.value))
             }
+            error={
+              phoneDigits.length > 0 && !isValidPhoneDigits(phoneDigits)
+                ? `Nomor harus ${MIN_DIGITS + 1}–${MAX_DIGITS + 1} digit (termasuk 0 depan)`
+                : null
+            }
+            description="Tanpa angka 0 di depan — sudah diwakili +62"
             required
           />
 
