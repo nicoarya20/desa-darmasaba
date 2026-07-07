@@ -36,6 +36,36 @@ export function isAccountActive(
 // Halaman profil publik untuk user non-admin (roleId 5+).
 export const PROFILE_PATH = "/profile";
 
+// Keputusan guard middleware untuk /admin/*. Fungsi murni supaya bisa di-test.
+export type AdminAccessDecision = "allow" | "login" | "profile";
+
+/**
+ * Tentukan akses /admin dari state cookie yang tersedia di middleware.
+ *
+ * Kunci fix "tiba-tiba logout": cookie cache Better Auth TTL pendek (60 dtk),
+ * sedangkan session_token hidup 7 hari. Saat cache MISS tapi token masih ada,
+ * sesi kemungkinan masih valid → JANGAN paksa logout; loloskan & biarkan server
+ * (getSession/requireAuth) memvalidasi penuh + me-refresh cache. Redirect login
+ * hanya bila token pun tak ada (benar-benar tak ada sesi).
+ *
+ * Saat cache ADA, kita punya isActive/roleId fresh → gate lebih ketat.
+ *
+ * @param cachedUser user hasil decode cookie cache (null bila cache miss/gagal)
+ * @param hasToken   apakah session_token (7 hari) masih ada di cookie
+ */
+export function decideAdminAccess(
+  cachedUser: { roleId?: string | number | null; isActive?: boolean | null } | null,
+  hasToken: boolean,
+): AdminAccessDecision {
+  if (!cachedUser) {
+    // Cache miss/gagal decode — andalkan keberadaan token 7-hari.
+    return hasToken ? "allow" : "login";
+  }
+  if (!isAccountActive(cachedUser.isActive)) return "login";
+  if (!isAdminRole(cachedUser.roleId)) return "profile";
+  return "allow";
+}
+
 // Endpoint API yang boleh di-POST warga anonim (form publik /darmasaba),
 // tanpa login. Master data (jenislayanan/jenispengaduan) bertingkat di bawah
 // path ini & di-CRUD admin → sengaja TIDAK didaftarkan supaya tetap kena guard.
