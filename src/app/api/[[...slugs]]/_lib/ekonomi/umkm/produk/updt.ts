@@ -12,6 +12,7 @@ async function produkUmkmUpdate(context: Context) {
         nama: body.nama,
         harga: body.harga,
         stok: body.stok,
+        satuan: body.satuan || null,
         deskripsi: body.deskripsi,
         umkmId: body.umkmId,
         imageId: body.imageId,

@@ -10,6 +10,7 @@ async function produkUmkmCreate(context: Context) {
         nama: body.nama,
         harga: body.harga,
         stok: body.stok ?? 0,
+        satuan: body.satuan || null,
         deskripsi: body.deskripsi,
         umkmId: body.umkmId,
         imageId: body.imageId,

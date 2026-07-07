@@ -5,6 +5,7 @@ import colors from "@/con/colors";
 import ApiFetch from "@/lib/api-fetch";
 import {
   ActionIcon,
+  Autocomplete,
   Box,
   Button,
   Group,
@@ -19,6 +20,7 @@ import {
   NumberInput,
   Center,
 } from "@mantine/core";
+import { SATUAN_PRESETS } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/satuan";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import {
   IconArrowBack,
@@ -37,6 +39,7 @@ interface ProdukData {
   nama: string;
   harga: number;
   stok: number;
+  satuan: string | null;
   umkmId: string | null;
   deskripsi: string | null;
   imageId: string | null;
@@ -48,6 +51,7 @@ interface ProdukForm {
   nama: string;
   harga: number;
   stok: number;
+  satuan: string;
   umkmId: string;
   deskripsi: string;
   imageId: string | null;
@@ -68,6 +72,7 @@ function EditProdukUmkm() {
     nama: "",
     harga: 0,
     stok: 0,
+    satuan: "",
     umkmId: "",
     deskripsi: "",
     imageId: null,
@@ -78,6 +83,7 @@ function EditProdukUmkm() {
     nama: "",
     harga: 0,
     stok: 0,
+    satuan: "",
     umkmId: "",
     deskripsi: "",
     imageId: null,
@@ -109,6 +115,7 @@ function EditProdukUmkm() {
           nama: data.nama || "",
           harga: data.harga || 0,
           stok: data.stok || 0,
+          satuan: data.satuan || "",
           umkmId: data.umkmId || "",
           deskripsi: data.deskripsi || "",
           imageId: data.imageId || "",
@@ -181,6 +188,7 @@ function EditProdukUmkm() {
       nama: originalData.nama,
       harga: originalData.harga,
       stok: originalData.stok,
+      satuan: originalData.satuan,
       umkmId: originalData.umkmId,
       deskripsi: originalData.deskripsi,
       imageId: originalData.imageId,
@@ -335,6 +343,13 @@ function EditProdukUmkm() {
               min={0}
               value={formData.stok}
               onChange={(val) => handleChange("stok", Number(val))}
+            />
+            <Autocomplete
+              label="Satuan"
+              placeholder="kg / ekor / pcs"
+              data={[...SATUAN_PRESETS]}
+              value={formData.satuan}
+              onChange={(val) => handleChange("satuan", val)}
             />
           </Group>
 

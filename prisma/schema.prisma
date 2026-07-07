@@ -1474,6 +1474,9 @@ model PasarDesa {
   
   // Data Stok & UMKM
   stok             Int               @default(0)
+  // Satuan jual produk (mis. "kg", "ekor", "ikat", "pcs"). Nullable agar produk
+  // lama tetap valid tanpa backfill; UI fallback tanpa satuan bila kosong.
+  satuan           String?
   umkm             Umkm              @relation(fields: [umkmId], references: [id])
   umkmId           String
   
