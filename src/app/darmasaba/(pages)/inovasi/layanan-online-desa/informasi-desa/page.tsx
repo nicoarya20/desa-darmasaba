@@ -55,7 +55,6 @@ function InformasiDesa() {
             Berita terbaru dan pengumuman resmi seputar kegiatan serta pelayanan
             Desa Darmasaba.
           </Text>
-          <Box w={64} h={4} mt={6} style={{ borderRadius: 8, background: colors.orange }} />
         </Stack>
       </Box>
 
