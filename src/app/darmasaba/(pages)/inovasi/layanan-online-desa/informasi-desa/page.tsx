@@ -62,7 +62,7 @@ function InformasiDesa() {
                       radius="md"
                       fit="cover"
                       w="100%"
-                      height={280}
+                      h={280}
                       loading="lazy"
                       style={{ objectPosition: 'center' }}
                     />
@@ -123,7 +123,7 @@ function InformasiDesa() {
                           fallbackSrc="/no-image.jpg"
                           alt={item.judul}
                           w="100%"
-                          height={160}
+                          h={160}
                           fit="cover"
                           radius="sm"
                           loading="lazy"
@@ -159,7 +159,7 @@ function InformasiDesa() {
           <Divider color={colors['blue-button']} my="lg" />
 
           {/* === PENGUMUMAN === */}
-          <Grid gutter="xl" align="start">
+          <Grid gutter="xl" align="stretch">
             <GridCol span={{ base: 12, md: 6 }}>
               {dataPengumuman && (
                 <motion.div
@@ -168,8 +168,8 @@ function InformasiDesa() {
                   whileTap={{ scale: 0.95 }}
                   style={{ cursor: "pointer" }}
                 >
-                  <Paper shadow="md" radius="lg" p="lg" h="100%" withBorder>
-                    <Stack gap="xs" h="100%">
+                  <Paper shadow="md" radius="lg" p="xl" h="100%" withBorder>
+                    <Stack gap="sm" h="100%" justify="center">
                       <Title order={2} fw={800}>
                         {dataPengumuman.judul}
                       </Title>
@@ -186,7 +186,7 @@ function InformasiDesa() {
                         mt="xs"
                         fz="md"
                         lh={1.7}
-                        style={{ flex: 1, wordBreak: 'break-word', whiteSpace: 'normal', overflow: 'hidden' }}
+                        style={{ wordBreak: 'break-word', whiteSpace: 'normal', overflow: 'hidden' }}
                         dangerouslySetInnerHTML={{ __html: dataPengumuman.content }}
                       />
                     </Stack>
