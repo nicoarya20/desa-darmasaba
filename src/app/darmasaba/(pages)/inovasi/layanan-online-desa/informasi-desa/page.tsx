@@ -53,20 +53,22 @@ function InformasiDesa() {
               onClick={() => router.push(`/darmasaba/inovasi/layanan-online-desa/informasi-desa/detail-berita/${dataBerita.id}`)}
             >
               <Paper shadow="md" radius="lg" p="lg" withBorder>
-                <Grid align="center" gutter="xl">
+                <Grid align="stretch" gutter="xl">
                   <GridCol span={{ base: 12, md: 6 }}>
                     <Image
-                      src={dataBerita.image?.link || '/fallback.jpg'}
+                      src={dataBerita.image?.link || '/no-image.jpg'}
+                      fallbackSrc="/no-image.jpg"
                       alt={dataBerita.judul}
                       radius="md"
                       fit="cover"
+                      w="100%"
                       height={280}
                       loading="lazy"
                       style={{ objectPosition: 'center' }}
                     />
                   </GridCol>
                   <GridCol span={{ base: 12, md: 6 }}>
-                    <Stack gap="xs">
+                    <Stack gap="xs" h="100%" justify="center">
                       <Title order={2} fw={800}>
                         {dataBerita.judul}
                       </Title>
@@ -113,18 +115,21 @@ function InformasiDesa() {
                       radius="md"
                       withBorder
                       h="100%"
+                      style={{ display: 'flex', flexDirection: 'column' }}
                     >
                       <Card.Section>
                         <Image
-                          src={item.image?.link || '/placeholder.jpg'}
+                          src={item.image?.link || '/no-image.jpg'}
+                          fallbackSrc="/no-image.jpg"
                           alt={item.judul}
+                          w="100%"
                           height={160}
                           fit="cover"
                           radius="sm"
                           loading="lazy"
                         />
                       </Card.Section>
-                      <Stack gap={4} mt="sm">
+                      <Stack gap={4} mt="sm" style={{ flex: 1 }}>
                         <Text ta="justify"
                           size="sm"
                           c="dimmed"
@@ -140,7 +145,7 @@ function InformasiDesa() {
                             WebkitBoxOrient: "vertical",
                           }}
                           dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
-                        <Text size="xs" c="gray">
+                        <Text size="xs" c="gray" mt="auto">
                           {dayjs(item.createdAt).fromNow()}
                         </Text>
                       </Stack>
@@ -154,7 +159,7 @@ function InformasiDesa() {
           <Divider color={colors['blue-button']} my="lg" />
 
           {/* === PENGUMUMAN === */}
-          <Grid gutter="xl" align="stretch">
+          <Grid gutter="xl" align="start">
             <GridCol span={{ base: 12, md: 6 }}>
               {dataPengumuman && (
                 <motion.div
@@ -164,7 +169,7 @@ function InformasiDesa() {
                   style={{ cursor: "pointer" }}
                 >
                   <Paper shadow="md" radius="lg" p="lg" h="100%" withBorder>
-                    <Stack gap="xs">
+                    <Stack gap="xs" h="100%">
                       <Title order={2} fw={800}>
                         {dataPengumuman.judul}
                       </Title>
@@ -181,8 +186,7 @@ function InformasiDesa() {
                         mt="xs"
                         fz="md"
                         lh={1.7}
-                        lineClamp={8}
-                        style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                        style={{ flex: 1, wordBreak: 'break-word', whiteSpace: 'normal', overflow: 'hidden' }}
                         dangerouslySetInnerHTML={{ __html: dataPengumuman.content }}
                       />
                     </Stack>
@@ -192,11 +196,11 @@ function InformasiDesa() {
             </GridCol>
 
             <GridCol span={{ base: 12, md: 6 }}>
-              <Stack>
+              <Stack h="100%">
                 <Title order={3} fw={700}>
                   Pengumuman Terbaru
                 </Title>
-                <Grid gutter="lg">
+                <Grid gutter="lg" align="stretch">
                   {statePengumuman.findRecent.data.map((item) => (
                     <GridCol span={{ base: 12, sm: 6 }} key={item.id}>
                       <motion.div
@@ -211,10 +215,10 @@ function InformasiDesa() {
                           withBorder
                           h="100%"
                           p="md"
-                          style={{ transition: '0.2s ease' }}
+                          style={{ transition: '0.2s ease', display: 'flex', flexDirection: 'column' }}
                           className="hover:shadow-md"
                         >
-                          <Stack gap="xs">
+                          <Stack gap="xs" h="100%">
                             <Text fw={600} lineClamp={2}>
                               {item.judul}
                             </Text>
@@ -227,7 +231,7 @@ function InformasiDesa() {
                               style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                               dangerouslySetInnerHTML={{ __html: item.content }}
                             />
-                            <Text size="xs" c="gray">
+                            <Text size="xs" c="gray" mt="auto">
                               {dayjs(item.createdAt).fromNow()}
                             </Text>
                           </Stack>
