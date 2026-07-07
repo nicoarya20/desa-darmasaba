@@ -8,6 +8,7 @@
     "alamatUsaha": "Br. Baler Pasar, Desa Darmasaba, Kec. Abiansemal",
     "kontak": "081234567890",
     "deskripsi": "Warung tradisional yang menjual kebutuhan pokok harian seperti sembako, jajanan pasar, dan minuman.",
+    "satuan": "paket",
     "kategoriProdukId": "5c06chf7-123f-7igd-0663-5e9h76e55060"
   },
   {
@@ -19,6 +20,7 @@
     "alamatUsaha": "Jl. Raya Darmasaba, dekat Banjar Baler Pasar",
     "kontak": "082145678901",
     "deskripsi": "Menjual berbagai jajanan pasar tradisional Bali seperti laklak, klepon, dan pisang rai.",
+    "satuan": "bungkus",
     "kategoriProdukId": "4b95bge6-012e-5ged-9552-4d8g65d44959"
   },
   {
@@ -30,6 +32,7 @@
     "alamatUsaha": "Area Pasar Desa Darmasaba",
     "kontak": "087865432109",
     "deskripsi": "Lapak sayur segar yang menyediakan sayuran lokal hasil petani sekitar Desa Darmasaba.",
+    "satuan": "ikat",
     "kategoriProdukId": "5c06chf7-123f-8jhe-0663-5e9h76e55060"
   },
   {
@@ -41,6 +44,7 @@
     "alamatUsaha": "Br. Baler Pasar, Desa Darmasaba",
     "kontak": "081998877665",
     "deskripsi": "Menjual ayam potong dan daging segar untuk kebutuhan rumah tangga dan upacara adat.",
+    "satuan": "ekor",
     "kategoriProdukId": "5c06chf7-123f-9kif-0663-5e9h76e55060"
   }
 ]
