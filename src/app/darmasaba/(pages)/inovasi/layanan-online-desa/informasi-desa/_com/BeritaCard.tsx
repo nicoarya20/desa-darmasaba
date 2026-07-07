@@ -53,9 +53,10 @@ export default function BeritaCard({
             <Badge
               bg={colors['blue-button']}
               pos="absolute"
-              top={10}
-              left={10}
+              top={12}
+              left={12}
               radius="sm"
+              px={10}
               style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}
             >
               {kategori}
