@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getCookieCache } from "better-auth/cookies";
-import { isAdminRole, isAccountActive } from "./lib/auth-policy";
+import { getCookieCache, getSessionCookie } from "better-auth/cookies";
+import { decideAdminAccess } from "./lib/auth-policy";
 
 // User dari cookie cache Better Auth (additionalFields roleId/isActive ikut).
 type CachedUser = { id: string; roleId?: string; isActive?: boolean };
@@ -18,6 +18,14 @@ async function getCachedUser(request: NextRequest): Promise<CachedUser | null> {
   return (cache?.user as CachedUser | undefined) ?? null;
 }
 
+// Apakah masih ada session token Better Auth (masa hidup 7 hari) di cookie?
+// Dipakai sebagai FALLBACK saat cookie cache (TTL 60 dtk) sudah kedaluwarsa:
+// token ada = sesi kemungkinan masih valid → jangan paksa logout, biarkan
+// server (getSession/requireAuth) memvalidasi penuh & me-refresh cache.
+function hasSessionToken(request: NextRequest): boolean {
+  return Boolean(getSessionCookie(request));
+}
+
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const loginUrl = new URL("/login", request.url);
@@ -28,24 +36,23 @@ export async function middleware(request: NextRequest) {
   }
 
   // /admin/*: butuh sesi Better Auth valid + aktif + role admin (roleId <= 4).
-  // Gagal decode cookie → perlakukan sebagai tidak-terautentikasi (redirect login,
-  // bukan 500). Validasi penuh sesi tetap terjadi di server (getSession/requireAuth).
+  // Gagal decode cookie → anggap cache miss (user=null); keputusan tetap lewat
+  // decideAdminAccess dgn fallback token. Validasi penuh sesi tetap di server.
   let user: CachedUser | null = null;
   try {
     user = await getCachedUser(request);
   } catch {
-    return NextResponse.redirect(loginUrl);
-  }
-  if (!user || !isAccountActive(user.isActive)) {
-    return NextResponse.redirect(loginUrl);
+    user = null;
   }
 
-  // roleId 0-4 = admin; user biasa (5+, login Google) diarahkan ke profil.
-  if (!isAdminRole(user.roleId)) {
-    return NextResponse.redirect(new URL("/profile", request.url));
+  switch (decideAdminAccess(user, hasSessionToken(request))) {
+    case "login":
+      return NextResponse.redirect(loginUrl);
+    case "profile":
+      return NextResponse.redirect(new URL("/profile", request.url));
+    default:
+      return NextResponse.next();
   }
-
-  return NextResponse.next();
 }
 
 export const config = {
