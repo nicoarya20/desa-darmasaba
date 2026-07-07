@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.104] - 2026-07-07
+### Added
+- **Satuan produk UMKM (kg/ekor/pcs)**: produk `PasarDesa` kini punya field `satuan` (opsional). Admin mengisi satuan tiap produk lewat Autocomplete (preset kg/ons/ekor/ikat/butir/pcs/… atau ketik bebas). Tampil di halaman publik: harga `Rp X / satuan`, badge `Stok: 12 ekor`, label `Jumlah (ekor)` di modal pesan, dan pesan WhatsApp `Jumlah: 2 ekor`. Sebelumnya jumlah/stok tampil angka telanjang ("1") — ambigu untuk produk seperti ayam. Migration `add_satuan_pasar_desa` (ADD COLUMN nullable — produk lama tetap valid, UI fallback tanpa satuan bila kosong). Seeder mengisi 4 produk pasar desa (warung→paket, jajanan→bungkus, sayur→ikat, ayam→ekor).
+- **Validasi No Telp form peminjaman Perpustakaan Digital**: kolom No Telp kini prefix `+62` statis, hanya menerima digit (huruf/simbol/0-depan otomatis dibuang), dibatasi 10–13 digit (format lokal). Sebelumnya bisa diisi huruf & tanpa batas panjang.
+
+### Fixed
+- **Admin tiba-tiba logout saat masih aktif**: middleware `/admin/*` sebelumnya hanya membaca cookie cache Better Auth (TTL 60 detik) — begitu cache kedaluwarsa, user ditendang ke `/login` padahal sesi (token 7 hari + session DB) masih valid. Kini middleware fallback ke `session_token`: selama belum logout & token belum kedaluwarsa, admin tetap masuk; role/status tetap fresh 60 detik dari cookie cache. Logout hanya terjadi saat benar-benar logout, token habis 7 hari, atau akun dinonaktifkan.
+- **Redesign halaman Informasi Desa (Inovasi › Layanan Online)**: perbaiki ruang kosong & tata letak, tinggi gambar seragam (fix `height`→`h` Mantine v7), judul di card berita terbaru, tanggal Bahasa Indonesia ("2 bulan lalu"), badge kategori tak mepet tepi, loading skeleton + empty state, tombol "Baca selengkapnya".
+
 ## [0.1.93] - 2026-07-03
 ### Changed
 - **Menu admin UMKM kembali jadi satu entri sidebar (revert nested submenu 0.1.91)**: submenu nested (Dashboard/Data UMKM/Produk/Penjualan) di sidebar ternyata redundant — halaman UMKM (`Manajemen UMKM`) sudah punya navigasi Tabs internal sendiri (Dashboard, Data UMKM, Produk, Penjualan, Kategori Produk). Sidebar kini cukup satu item "UMKM" → membuka halaman ber-tab. Tetap konsisten antar-role (dev, admin, user dengan menuIds) karena ketiga array menu (devBar/navBar/role1) diseragamkan ke satu entri.
