@@ -133,7 +133,7 @@ function InformasiDesa() {
                         <Text ta="justify"
                           size="sm"
                           c="dimmed"
-                          lineClamp={3}
+                          lineClamp={2}
                           style={{
                             wordBreak: "break-word",
                             overflow: "hidden",
@@ -141,7 +141,7 @@ function InformasiDesa() {
                             whiteSpace: "normal",
                             lineHeight: 1.5,
                             display: "-webkit-box",
-                            WebkitLineClamp: 3,
+                            WebkitLineClamp: 2,
                             WebkitBoxOrient: "vertical",
                           }}
                           dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
@@ -159,7 +159,7 @@ function InformasiDesa() {
           <Divider color={colors['blue-button']} my="lg" />
 
           {/* === PENGUMUMAN === */}
-          <Grid gutter="xl" align="stretch">
+          <Grid gutter="xl" align="start">
             <GridCol span={{ base: 12, md: 6 }}>
               {dataPengumuman && (
                 <motion.div
@@ -168,8 +168,8 @@ function InformasiDesa() {
                   whileTap={{ scale: 0.95 }}
                   style={{ cursor: "pointer" }}
                 >
-                  <Paper shadow="md" radius="lg" p="xl" h="100%" withBorder>
-                    <Stack gap="sm" h="100%" justify="center">
+                  <Paper shadow="md" radius="lg" p="xl" withBorder>
+                    <Stack gap="sm">
                       <Title order={2} fw={800}>
                         {dataPengumuman.judul}
                       </Title>
