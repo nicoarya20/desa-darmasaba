@@ -3,19 +3,24 @@
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
-import { Badge, Box, Card, Divider, Grid, GridCol, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import { Badge, Box, Button, Grid, GridCol, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
+import { IconArrowRight, IconClock, IconNews, IconSpeakerphone } from '@tabler/icons-react';
+import { motion } from 'framer-motion';
+import { useTransitionRouter } from 'next-view-transitions';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../../desa/layanan/_com/BackButto';
-import { useTransitionRouter } from 'next-view-transitions';
-import { motion } from "framer-motion";
+import BeritaCard from './_com/BeritaCard';
+import { CardSkeleton } from './_com/CardSkeleton';
+import EmptyState from './_com/EmptyState';
+import PengumumanCard from './_com/PengumumanCard';
+import SectionTitle from './_com/SectionTitle';
+import { timeAgoId } from './_com/timeAgo';
 
-dayjs.extend(relativeTime);
+const BASE = '/darmasaba/inovasi/layanan-online-desa/informasi-desa';
 
 function InformasiDesa() {
-  const router = useTransitionRouter()
+  const router = useTransitionRouter();
   const stateBerita = useProxy(stateDashboardBerita.berita);
   const statePengumuman = useProxy(stateDesaPengumuman.pengumuman);
 
@@ -28,217 +33,244 @@ function InformasiDesa() {
 
   const dataBerita = stateBerita.findFirst.data;
   const dataPengumuman = statePengumuman.findFirst.data;
+  const recentBerita = stateBerita.findRecent.data;
+  const recentPengumuman = statePengumuman.findRecent.data;
+
+  const loadingBeritaRecent = stateBerita.findRecent.loading;
+  const loadingPengumumanRecent = statePengumuman.findRecent.loading;
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap={22}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap={28}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
 
+      {/* === HEADER HALAMAN === */}
       <Box px={{ base: 'md', md: 100 }}>
-        <Title ta="center" fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
-          Informasi Desa
-        </Title>
+        <Stack gap={4} align="center">
+          <Title ta="center" fz={{ base: 'h1', md: '2.5rem' }} c={colors['blue-button']} fw="bold">
+            Informasi Desa
+          </Title>
+          <Text ta="center" fz={{ base: 'sm', md: 'md' }} c="dimmed" maw={640}>
+            Berita terbaru dan pengumuman resmi seputar kegiatan serta pelayanan
+            Desa Darmasaba.
+          </Text>
+          <Box w={64} h={4} mt={6} style={{ borderRadius: 8, background: colors.orange }} />
+        </Stack>
       </Box>
 
       <Box px={{ base: 'md', md: 100 }}>
-        <Stack gap={30}>
+        <Stack gap={36}>
 
-          {/* === BERITA UTAMA === */}
+          {/* === BERITA UTAMA (HERO) === */}
           {dataBerita && (
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={{ cursor: "pointer" }}
-              onClick={() => router.push(`/darmasaba/inovasi/layanan-online-desa/informasi-desa/detail-berita/${dataBerita.id}`)}
-            >
-              <Paper shadow="md" radius="lg" p="lg" withBorder>
-                <Grid align="stretch" gutter="xl">
-                  <GridCol span={{ base: 12, md: 6 }}>
-                    <Image
-                      src={dataBerita.image?.link || '/no-image.jpg'}
-                      fallbackSrc="/no-image.jpg"
-                      alt={dataBerita.judul}
-                      radius="md"
-                      fit="cover"
-                      w="100%"
-                      h={280}
-                      loading="lazy"
-                      style={{ objectPosition: 'center' }}
-                    />
-                  </GridCol>
-                  <GridCol span={{ base: 12, md: 6 }}>
-                    <Stack gap="xs" h="100%" justify="center">
-                      <Title order={2} fw={800}>
-                        {dataBerita.judul}
-                      </Title>
-                      <Group justify='space-between'>
-                        <Badge bg={colors['blue-button']}>
-                          {dataBerita.kategoriBerita?.name}
-                        </Badge>
-                        <Text fz="sm" c="dimmed">
-                          {dayjs(dataBerita.createdAt).fromNow()}
-                        </Text>
-                      </Group>
-                      <Text
-                        ta="justify"
-                        mt="xs"
-                        fz="md"
-                        lh={1.7}
-                        lineClamp={6}
-                        style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                        dangerouslySetInnerHTML={{ __html: dataBerita.content }}
+            <Stack gap="md">
+              <SectionTitle
+                title="Berita Utama"
+                subtitle="Sorotan terbaru dari desa"
+                icon={<IconNews size={22} />}
+              />
+              <motion.div
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.99 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                style={{ cursor: 'pointer' }}
+                onClick={() => router.push(`${BASE}/detail-berita/${dataBerita.id}`)}
+              >
+                <Paper shadow="md" radius="lg" p="lg" withBorder>
+                  <Grid align="stretch" gutter="xl">
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Image
+                        src={dataBerita.image?.link || '/no-image.jpg'}
+                        fallbackSrc="/no-image.jpg"
+                        alt={dataBerita.judul}
+                        radius="md"
+                        fit="cover"
+                        w="100%"
+                        h={{ base: 220, md: 300 }}
+                        loading="lazy"
+                        style={{ objectPosition: 'center' }}
                       />
-                    </Stack>
-                  </GridCol>
-                </Grid>
-              </Paper>
-            </motion.div>
+                    </GridCol>
+                    <GridCol span={{ base: 12, md: 6 }}>
+                      <Stack gap="sm" h="100%" justify="center">
+                        {dataBerita.kategoriBerita?.name && (
+                          <Badge bg={colors['blue-button']} radius="sm" w="fit-content">
+                            {dataBerita.kategoriBerita.name}
+                          </Badge>
+                        )}
+                        <Title order={2} fw={800} lineClamp={3} c={colors['blue-button-7']}>
+                          {dataBerita.judul}
+                        </Title>
+                        <Group gap={5} c="gray">
+                          <IconClock size={15} />
+                          <Text fz="sm" c="dimmed">
+                            {timeAgoId(dataBerita.createdAt)}
+                          </Text>
+                        </Group>
+                        <Text
+                          ta="justify"
+                          fz="sm"
+                          lh={1.7}
+                          c="dimmed"
+                          lineClamp={5}
+                          style={{ wordBreak: 'break-word' }}
+                          dangerouslySetInnerHTML={{ __html: dataBerita.deskripsi || dataBerita.content }}
+                        />
+                        <Button
+                          variant="light"
+                          color="blue"
+                          radius="md"
+                          rightSection={<IconArrowRight size={16} />}
+                          w="fit-content"
+                          mt={4}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`${BASE}/detail-berita/${dataBerita.id}`);
+                          }}
+                        >
+                          Baca selengkapnya
+                        </Button>
+                      </Stack>
+                    </GridCol>
+                  </Grid>
+                </Paper>
+              </motion.div>
+            </Stack>
           )}
 
           {/* === BERITA TERBARU === */}
-          <Stack>
-            <Title order={3} fw={700}>
-              Berita Terbaru
-            </Title>
-            <Grid gutter="xl">
-              {stateBerita.findRecent.data.map((item) => (
-                <GridCol span={{ base: 12, sm: 6, md: 3 }} key={item.id}>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => router.push(`/darmasaba/inovasi/layanan-online-desa/informasi-desa/detail-berita/${item.id}`)}
-                  >
-                    <Card
-                      shadow="sm"
-                      radius="md"
-                      withBorder
-                      h="100%"
-                      style={{ display: 'flex', flexDirection: 'column' }}
-                    >
-                      <Card.Section>
-                        <Image
-                          src={item.image?.link || '/no-image.jpg'}
-                          fallbackSrc="/no-image.jpg"
-                          alt={item.judul}
-                          w="100%"
-                          h={160}
-                          fit="cover"
-                          radius="sm"
-                          loading="lazy"
+          <Stack gap="md">
+            <SectionTitle
+              title="Berita Terbaru"
+              subtitle="Kabar dan liputan kegiatan desa"
+              icon={<IconNews size={22} />}
+            />
+            <Grid gutter="lg">
+              {loadingBeritaRecent && recentBerita.length === 0
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <GridCol span={{ base: 12, sm: 6, md: 3 }} key={i}>
+                      <CardSkeleton />
+                    </GridCol>
+                  ))
+                : recentBerita.length === 0
+                  ? <GridCol span={12}><EmptyState label="Belum ada berita terbaru." /></GridCol>
+                  : recentBerita.map((item) => (
+                      <GridCol span={{ base: 12, sm: 6, md: 3 }} key={item.id}>
+                        <BeritaCard
+                          judul={item.judul}
+                          deskripsi={item.deskripsi}
+                          imageLink={item.image?.link}
+                          kategori={item.kategoriBerita?.name}
+                          createdAt={item.createdAt}
+                          onClick={() => router.push(`${BASE}/detail-berita/${item.id}`)}
                         />
-                      </Card.Section>
-                      <Stack gap={4} mt="sm" style={{ flex: 1 }}>
-                        <Text ta="justify"
-                          size="sm"
-                          c="dimmed"
-                          lineClamp={2}
-                          style={{
-                            wordBreak: "break-word",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "normal",
-                            lineHeight: 1.5,
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                          }}
-                          dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
-                        <Text size="xs" c="gray" mt="auto">
-                          {dayjs(item.createdAt).fromNow()}
-                        </Text>
-                      </Stack>
-                    </Card>
-                  </motion.div>
-                </GridCol>
-              ))}
+                      </GridCol>
+                    ))}
             </Grid>
           </Stack>
 
-          <Divider color={colors['blue-button']} my="lg" />
-
           {/* === PENGUMUMAN === */}
           <Grid gutter="xl" align="start">
-            <GridCol span={{ base: 12, md: 6 }}>
-              {dataPengumuman && (
-                <motion.div
-                  onClick={() => router.push(`/darmasaba/inovasi/layanan-online-desa/informasi-desa/detail-pengumuman/${dataPengumuman.id}`)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{ cursor: "pointer" }}
-                >
-                  <Paper shadow="md" radius="lg" p="xl" withBorder>
-                    <Stack gap="sm">
-                      <Title order={2} fw={800}>
-                        {dataPengumuman.judul}
-                      </Title>
-                      <Group justify='space-between'>
-                        <Badge bg={colors['blue-button']}>
-                          {dataPengumuman.CategoryPengumuman?.name}
-                        </Badge>
-                        <Text fz="sm" c="dimmed">
-                          {dayjs(dataPengumuman.createdAt).fromNow()}
-                        </Text>
-                      </Group>
-                      <Text
-                        ta="justify"
-                        mt="xs"
-                        fz="md"
-                        lh={1.7}
-                        style={{ wordBreak: 'break-word', whiteSpace: 'normal', overflow: 'hidden' }}
-                        dangerouslySetInnerHTML={{ __html: dataPengumuman.content }}
-                      />
-                    </Stack>
+            {/* Pengumuman utama */}
+            <GridCol span={{ base: 12, md: 5 }}>
+              <Stack gap="md">
+                <SectionTitle
+                  title="Pengumuman Utama"
+                  subtitle="Informasi resmi terkini"
+                  icon={<IconSpeakerphone size={22} />}
+                />
+                {dataPengumuman ? (
+                  <motion.div
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.99 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => router.push(`${BASE}/detail-pengumuman/${dataPengumuman.id}`)}
+                  >
+                    <Paper
+                      shadow="md"
+                      radius="lg"
+                      p="xl"
+                      withBorder
+                      style={{ borderLeft: `5px solid ${colors['blue-button']}` }}
+                    >
+                      <Stack gap="sm">
+                        {dataPengumuman.CategoryPengumuman?.name && (
+                          <Badge bg={colors['blue-button']} radius="sm" w="fit-content">
+                            {dataPengumuman.CategoryPengumuman.name}
+                          </Badge>
+                        )}
+                        <Title order={3} fw={800} lineClamp={3} c={colors['blue-button-7']}>
+                          {dataPengumuman.judul}
+                        </Title>
+                        <Group gap={5} c="gray">
+                          <IconClock size={15} />
+                          <Text fz="sm" c="dimmed">
+                            {timeAgoId(dataPengumuman.createdAt)}
+                          </Text>
+                        </Group>
+                        <Text
+                          ta="justify"
+                          fz="sm"
+                          lh={1.7}
+                          c="dimmed"
+                          lineClamp={6}
+                          style={{ wordBreak: 'break-word' }}
+                          dangerouslySetInnerHTML={{ __html: dataPengumuman.deskripsi || dataPengumuman.content }}
+                        />
+                        <Button
+                          variant="light"
+                          color="blue"
+                          radius="md"
+                          rightSection={<IconArrowRight size={16} />}
+                          w="fit-content"
+                          mt={4}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`${BASE}/detail-pengumuman/${dataPengumuman.id}`);
+                          }}
+                        >
+                          Baca selengkapnya
+                        </Button>
+                      </Stack>
+                    </Paper>
+                  </motion.div>
+                ) : (
+                  <Paper radius="lg" p="xl" withBorder>
+                    <EmptyState label="Belum ada pengumuman." />
                   </Paper>
-                </motion.div>
-              )}
+                )}
+              </Stack>
             </GridCol>
 
-            <GridCol span={{ base: 12, md: 6 }}>
-              <Stack h="100%">
-                <Title order={3} fw={700}>
-                  Pengumuman Terbaru
-                </Title>
-                <Grid gutter="lg" align="stretch">
-                  {statePengumuman.findRecent.data.map((item) => (
-                    <GridCol span={{ base: 12, sm: 6 }} key={item.id}>
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        style={{ cursor: "pointer" }}
-                        onClick={() => router.push(`/darmasaba/inovasi/layanan-online-desa/informasi-desa/detail-pengumuman/${item.id}`)}
-                      >
-                        <Card
-                          shadow="xs"
-                          radius="md"
-                          withBorder
-                          h="100%"
-                          p="md"
-                          style={{ transition: '0.2s ease', display: 'flex', flexDirection: 'column' }}
-                          className="hover:shadow-md"
-                        >
-                          <Stack gap="xs" h="100%">
-                            <Text fw={600} lineClamp={2}>
-                              {item.judul}
-                            </Text>
-                            <Text
-                              ta="justify"
-                              mt="xs"
-                              fz="md"
-                              lh={1.7}
-                              lineClamp={2}
-                              style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                              dangerouslySetInnerHTML={{ __html: item.content }}
+            {/* Pengumuman terbaru */}
+            <GridCol span={{ base: 12, md: 7 }}>
+              <Stack gap="md">
+                <SectionTitle
+                  title="Pengumuman Terbaru"
+                  subtitle="Daftar pengumuman lainnya"
+                  icon={<IconSpeakerphone size={22} />}
+                />
+                <Grid gutter="md" align="stretch">
+                  {loadingPengumumanRecent && recentPengumuman.length === 0
+                    ? Array.from({ length: 4 }).map((_, i) => (
+                        <GridCol span={{ base: 12, sm: 6 }} key={i}>
+                          <CardSkeleton withImage={false} />
+                        </GridCol>
+                      ))
+                    : recentPengumuman.length === 0
+                      ? <GridCol span={12}><EmptyState label="Belum ada pengumuman terbaru." /></GridCol>
+                      : recentPengumuman.map((item) => (
+                          <GridCol span={{ base: 12, sm: 6 }} key={item.id}>
+                            <PengumumanCard
+                              judul={item.judul}
+                              deskripsi={item.deskripsi || item.content}
+                              createdAt={item.createdAt}
+                              onClick={() => router.push(`${BASE}/detail-pengumuman/${item.id}`)}
                             />
-                            <Text size="xs" c="gray" mt="auto">
-                              {dayjs(item.createdAt).fromNow()}
-                            </Text>
-                          </Stack>
-                        </Card>
-                      </motion.div>
-                    </GridCol>
-                  ))}
+                          </GridCol>
+                        ))}
                 </Grid>
               </Stack>
             </GridCol>
