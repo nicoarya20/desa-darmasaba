@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.106] - 2026-07-08
+### Fixed
+- **Hapus data Inovasi tampak gagal (item terhapus masih muncul di daftar)**: pada 4 halaman detail Inovasi — Program Kreatif Desa, Desa Digital / Smart Village, Info Teknologi Tepat Guna, dan Kolaborasi Inovasi — tombol Hapus menjalankan proses penghapusan tanpa menunggu selesai, lalu langsung pindah ke halaman daftar. Akibatnya daftar dimuat mendahului penghapusan yang belum tuntas di server → item yang baru dihapus masih tampil (seolah gagal), padahal sebenarnya terhapus. Kini aplikasi menunggu penghapusan selesai sebelum pindah halaman; jika gagal, tetap di halaman detail dengan notifikasi error. Penghapusan Desa Digital & Info Teknologi juga kini memvalidasi respons sukses dengan benar (bukan sekadar status HTTP).
+
 ## [0.1.104] - 2026-07-07
 ### Added
 - **Satuan produk UMKM (kg/ekor/pcs)**: produk `PasarDesa` kini punya field `satuan` (opsional). Admin mengisi satuan tiap produk lewat Autocomplete (preset kg/ons/ekor/ikat/butir/pcs/… atau ketik bebas). Tampil di halaman publik: harga `Rp X / satuan`, badge `Stok: 12 ekor`, label `Jumlah (ekor)` di modal pesan, dan pesan WhatsApp `Jumlah: 2 ekor`. Sebelumnya jumlah/stok tampil angka telanjang ("1") — ambigu untuk produk seperti ayam. Migration `add_satuan_pasar_desa` (ADD COLUMN nullable — produk lama tetap valid, UI fallback tanpa satuan bila kosong). Seeder mengisi 4 produk pasar desa (warung→paket, jajanan→bungkus, sayur→ikat, ayam→ekor).
