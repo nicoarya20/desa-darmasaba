@@ -29,13 +29,14 @@ function DetailDesaDigital() {
     stateDesaDigital.findUnique.load(params?.id as string);
   }, []);
 
-  const handleHapus = () => {
-    if (selectedId) {
-      stateDesaDigital.delete.byId(selectedId);
-      setModalHapus(false);
-      setSelectedId(null);
-      router.push("/admin/inovasi/desa-digital-smart-village");
-    }
+  const handleHapus = async () => {
+    if (!selectedId) return;
+    // await delete dulu — tanpa ini, router.push berlari mendahului DELETE
+    // yang belum commit, list mount & fetch data lama → item terhapus masih tampil.
+    const ok = await stateDesaDigital.delete.byId(selectedId);
+    setModalHapus(false);
+    setSelectedId(null);
+    if (ok) router.push("/admin/inovasi/desa-digital-smart-village");
   };
 
   if (!stateDesaDigital.findUnique.data) {

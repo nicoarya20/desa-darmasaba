@@ -214,8 +214,11 @@ const kolaborasiInovasiState = proxy({
   },
   delete: {
     loading: false,
-    async byId(id: string) {
-      if (!id) return toast.warn("ID tidak valid");
+    async byId(id: string): Promise<boolean> {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return false;
+      }
 
       try {
         kolaborasiInovasiState.delete.loading = true;
@@ -232,12 +235,14 @@ const kolaborasiInovasiState = proxy({
         if (response.ok && result?.success) {
           toast.success(result.message || "Kolaborasi inovasi berhasil dihapus");
           await kolaborasiInovasiState.findMany.load(); // refresh list
-        } else {
-          toast.error(result?.message || "Gagal menghapus kolaborasi inovasi");
+          return true;
         }
+        toast.error(result?.message || "Gagal menghapus kolaborasi inovasi");
+        return false;
       } catch (error) {
         console.error("Gagal delete:", error);
         toast.error("Terjadi kesalahan saat menghapus kolaborasi inovasi");
+        return false;
       } finally {
         kolaborasiInovasiState.delete.loading = false;
       }

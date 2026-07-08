@@ -198,8 +198,11 @@ const programKreatifState = proxy({
   },
   delete: {
     loading: false,
-    async byId(id: string) {
-      if (!id) return toast.warn("ID tidak valid");
+    async byId(id: string): Promise<boolean> {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return false;
+      }
 
       try {
         programKreatifState.delete.loading = true;
@@ -216,12 +219,14 @@ const programKreatifState = proxy({
         if (response.ok && result?.success) {
           toast.success(result.message || "Program kreatif berhasil dihapus");
           await programKreatifState.findMany.load(); // refresh list
-        } else {
-          toast.error(result?.message || "Gagal menghapus program kreatif");
+          return true;
         }
+        toast.error(result?.message || "Gagal menghapus program kreatif");
+        return false;
       } catch (error) {
         console.error("Gagal delete:", error);
         toast.error("Terjadi kesalahan saat menghapus program kreatif");
+        return false;
       } finally {
         programKreatifState.delete.loading = false;
       }

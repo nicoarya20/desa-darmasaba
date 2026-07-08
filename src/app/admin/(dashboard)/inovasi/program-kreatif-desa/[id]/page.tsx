@@ -21,13 +21,14 @@ function DetailProgramKreatifDesa() {
     stateProgramKreatif.findUnique.load(params?.id as string)
   }, [params?.id])
 
-  const handleHapus = () => {
-    if (selectedId) {
-      stateProgramKreatif.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/inovasi/program-kreatif-desa")
-    }
+  const handleHapus = async () => {
+    if (!selectedId) return
+    // await delete dulu — tanpa ini, router.push berlari mendahului DELETE
+    // yang belum commit, list mount & fetch data lama → item terhapus masih tampil.
+    const ok = await stateProgramKreatif.delete.byId(selectedId)
+    setModalHapus(false)
+    setSelectedId(null)
+    if (ok) router.push("/admin/inovasi/program-kreatif-desa")
   }
 
   if (!stateProgramKreatif.findUnique.data) {
