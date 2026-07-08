@@ -119,21 +119,18 @@ const infoTeknoState = proxy({
 
       try {
         infoTeknoState.delete.loading = true;
-        const response = await fetch(`/api/inovasi/infotekno/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const result = await response.json();
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (landing-page/program-inovasi). Eden tak set Content-Type json untuk
+        // DELETE tanpa body, jadi tak memicu 400 parse-body kosong di Elysia.
+        const res = await (ApiFetch.api.inovasi.infotekno as any)["del"][id].delete();
 
-        // del.ts bisa balas { status: 404, body } dengan HTTP 200 → cek success juga.
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Info Tekno berhasil dihapus");
+        // del.ts bisa balas { status: 404, body } (tanpa success) → masuk error.
+        if (res.data?.success) {
+          toast.success(res.data.message || "Info Tekno berhasil dihapus");
           await infoTeknoState.findMany.load();
           return true;
         }
-        toast.error(result?.message || result?.body || "Gagal menghapus info tekno");
+        toast.error(res.data?.message || res.data?.body || "Gagal menghapus info tekno");
         return false;
       } catch (error) {
         console.error((error as Error).message);

@@ -207,21 +207,17 @@ const programKreatifState = proxy({
       try {
         programKreatifState.delete.loading = true;
 
-        const response = await fetch(`/api/inovasi/programkreatif/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (landing-page/program-inovasi). Eden tak set Content-Type json untuk
+        // DELETE tanpa body, jadi tak memicu 400 parse-body kosong di Elysia.
+        const res = await (ApiFetch.api.inovasi.programkreatif as any)["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Program kreatif berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Program kreatif berhasil dihapus");
           await programKreatifState.findMany.load(); // refresh list
           return true;
         }
-        toast.error(result?.message || "Gagal menghapus program kreatif");
+        toast.error(res.data?.message || "Gagal menghapus program kreatif");
         return false;
       } catch (error) {
         console.error("Gagal delete:", error);
