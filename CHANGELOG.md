@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.108] - 2026-07-08
+### Fixed
+- **Hapus data Inovasi gagal dengan error "Bad Request" (400)**: pada 4 halaman detail Inovasi — Program Kreatif Desa, Desa Digital / Smart Village, Info Teknologi Tepat Guna, dan Kolaborasi Inovasi — tombol Hapus mengirim permintaan penghapusan dengan header yang salah (mengklaim berisi data JSON padahal tidak), sehingga server menolak dengan status 400. Kini penghapusan memakai mekanisme pemanggilan API yang sama dengan halaman lain yang sudah berfungsi (Program Inovasi di Landing Page), sehingga data bisa dihapus dengan benar.
+
 ## [0.1.106] - 2026-07-08
 ### Fixed
 - **Hapus data Inovasi tampak gagal (item terhapus masih muncul di daftar)**: pada 4 halaman detail Inovasi — Program Kreatif Desa, Desa Digital / Smart Village, Info Teknologi Tepat Guna, dan Kolaborasi Inovasi — tombol Hapus menjalankan proses penghapusan tanpa menunggu selesai, lalu langsung pindah ke halaman daftar. Akibatnya daftar dimuat mendahului penghapusan yang belum tuntas di server → item yang baru dihapus masih tampil (seolah gagal), padahal sebenarnya terhapus. Kini aplikasi menunggu penghapusan selesai sebelum pindah halaman; jika gagal, tetap di halaman detail dengan notifikasi error. Penghapusan Desa Digital & Info Teknologi juga kini memvalidasi respons sukses dengan benar (bukan sekadar status HTTP).
