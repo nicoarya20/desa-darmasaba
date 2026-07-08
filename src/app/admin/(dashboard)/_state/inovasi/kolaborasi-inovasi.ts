@@ -223,21 +223,17 @@ const kolaborasiInovasiState = proxy({
       try {
         kolaborasiInovasiState.delete.loading = true;
 
-        const response = await fetch(`/api/inovasi/kolaborasiinovasi/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (landing-page/program-inovasi). Eden tak set Content-Type json untuk
+        // DELETE tanpa body, jadi tak memicu 400 parse-body kosong di Elysia.
+        const res = await (ApiFetch.api.inovasi.kolaborasiinovasi as any)["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Kolaborasi inovasi berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Kolaborasi inovasi berhasil dihapus");
           await kolaborasiInovasiState.findMany.load(); // refresh list
           return true;
         }
-        toast.error(result?.message || "Gagal menghapus kolaborasi inovasi");
+        toast.error(res.data?.message || "Gagal menghapus kolaborasi inovasi");
         return false;
       } catch (error) {
         console.error("Gagal delete:", error);
