@@ -20,13 +20,14 @@ function DetailInfoTeknologiTepatGuna() {
     stateInfoTekno.findUnique.load(params?.id as string)
   }, [])
 
-  const handleHapus = () => {
-    if (selectedId) {
-      stateInfoTekno.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/inovasi/info-teknologi-tepat-guna")
-    }
+  const handleHapus = async () => {
+    if (!selectedId) return
+    // await delete dulu — tanpa ini, router.push berlari mendahului DELETE
+    // yang belum commit, list mount & fetch data lama → item terhapus masih tampil.
+    const ok = await stateInfoTekno.delete.byId(selectedId)
+    setModalHapus(false)
+    setSelectedId(null)
+    if (ok) router.push("/admin/inovasi/info-teknologi-tepat-guna")
   }
 
   if (!stateInfoTekno.findUnique.data) {

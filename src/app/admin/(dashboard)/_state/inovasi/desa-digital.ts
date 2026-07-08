@@ -111,8 +111,11 @@ const desaDigitalState = proxy({
   },
   delete: {
     loading: false,
-    async byId(id: string) {
-      if (!id) return toast.warn("ID tidak valid");
+    async byId(id: string): Promise<boolean> {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return false;
+      }
 
       try {
         desaDigitalState.delete.loading = true;
@@ -124,15 +127,18 @@ const desaDigitalState = proxy({
         });
         const result = await response.json();
 
-        if (response.ok) {
+        // del.ts bisa balas { status: 404, body } dengan HTTP 200 → cek success juga.
+        if (response.ok && result?.success) {
           toast.success(result.message || "Desa Digital berhasil dihapus");
           await desaDigitalState.findMany.load();
-        } else {
-          toast.error(result?.message || "Gagal menghapus desa digital");
+          return true;
         }
+        toast.error(result?.message || result?.body || "Gagal menghapus desa digital");
+        return false;
       } catch (error) {
-        console.log((error as Error).message);
+        console.error((error as Error).message);
         toast.error("Terjadi kesalahan saat menghapus desa digital");
+        return false;
       } finally {
         desaDigitalState.delete.loading = false;
       }

@@ -111,8 +111,11 @@ const infoTeknoState = proxy({
   },
   delete: {
     loading: false,
-    async byId(id: string) {
-      if (!id) return toast.warn("ID tidak valid");
+    async byId(id: string): Promise<boolean> {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return false;
+      }
 
       try {
         infoTeknoState.delete.loading = true;
@@ -124,15 +127,18 @@ const infoTeknoState = proxy({
         });
         const result = await response.json();
 
-        if (response.ok) {
+        // del.ts bisa balas { status: 404, body } dengan HTTP 200 → cek success juga.
+        if (response.ok && result?.success) {
           toast.success(result.message || "Info Tekno berhasil dihapus");
           await infoTeknoState.findMany.load();
-        } else {
-          toast.error(result?.message || "Gagal menghapus info tekno");
+          return true;
         }
+        toast.error(result?.message || result?.body || "Gagal menghapus info tekno");
+        return false;
       } catch (error) {
-        console.log((error as Error).message);
+        console.error((error as Error).message);
         toast.error("Terjadi kesalahan saat menghapus info tekno");
+        return false;
       } finally {
         infoTeknoState.delete.loading = false;
       }
