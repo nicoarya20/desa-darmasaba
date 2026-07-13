@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.113] - 2026-07-13
+### Fixed
+- **Hapus data Lingkungan gagal dengan error "Bad Request" (400)**: pada 3 halaman Lingkungan — Pengelolaan Sampah, Program Penghijauan, dan Data Lingkungan Desa — tombol Hapus mengirim permintaan penghapusan dengan header yang salah (mengklaim berisi data JSON padahal tidak ada isi), sehingga server di STG menolak dengan status 400 sebelum permintaan sampai ke proses hapus. Kini penghapusan memakai mekanisme pemanggilan API yang sama dengan halaman lain yang sudah berfungsi (Inovasi Program Kreatif), sehingga data bisa dihapus dengan benar.
+
 ## [0.1.111] - 2026-07-10
 ### Added
 - **Endpoint agregat "Riwayat Kesehatan Warga"** (`GET /api/kesehatan/riwayatwarga/find-many`): satu panggilan mengambil 3 dataset sekaligus — Ibu Hamil, Balita, dan Penderita Penyakit — plus daftar banjar untuk dropdown, dengan filter banjar terpadu (`?banjarId=`), pencarian (`?search=`), dan pagination (`?page=`, `?limit=`) yang berlaku ke ketiga dataset. Dirancang untuk komponen UI 3-tab "Riwayat Kesehatan Warga". Filter banjar menyesuaikan relasi tiap model: Ibu Hamil & Balita lewat relasi posyandu (`{ posyandu: { banjarId } }`, mengikuti pola `ringkasan-kesehatan/stats.ts`), Penderita Penyakit lewat `banjarId` langsung. Saat banjar dipilih, data Ibu Hamil/Balita yang belum terhubung ke posyandu otomatis terkecuali (banjar tak dapat ditentukan) — konsisten dengan perilaku ringkasan kesehatan yang sudah ada. Kegagalan salah satu dataset tidak menggagalkan keseluruhan: blok yang gagal dikembalikan kosong dan disertai field `errors`, sisanya tetap tampil. Bersifat aditif — 3 endpoint lama (`/ibuhamil`, `/balita`, `/grafikkepuasan`) tidak diubah.

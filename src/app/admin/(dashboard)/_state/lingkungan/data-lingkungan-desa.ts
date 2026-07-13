@@ -203,20 +203,18 @@ const dataLingkunganDesaState = proxy({
       try {
         dataLingkunganDesaState.delete.loading = true;
 
-        const response = await fetch(`/api/lingkungan/datalingkungandesa/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (inovasi/program-kreatif). Eden tak set Content-Type json untuk
+        // DELETE tanpa body, jadi tak memicu 400 parse-body kosong di Elysia.
+        const res = await (ApiFetch.api.lingkungan.datalingkungandesa as any)[
+          "del"
+        ][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Data lingkungan desa berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Data lingkungan desa berhasil dihapus");
           await dataLingkunganDesaState.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus data lingkungan desa");
+          toast.error(res.data?.message || "Gagal menghapus data lingkungan desa");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
