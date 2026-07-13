@@ -1,8 +1,10 @@
 # Changelog
 
-## [0.1.116] - 2026-07-13
+## [0.1.116] - 2026-07-14
 ### Fixed
-- **Hapus kategori/data induk gagal (error 500 atau data anak jadi yatim) di 10 halaman admin**: melanjutkan perbaikan Info Sekolah (0.1.114), pola yang sama kini diterapkan ke seluruh "Grup A" — data induk yang punya data anak. Menghapus data seperti Kategori Pengumuman, Kategori Kegiatan Gotong Royong, Pendaftaran Jadwal Kegiatan, Data Kelahiran/Kematian, tiga master responden Indeks Kepuasan (Jenis Kelamin, Umur, Pilihan Rating), Kategori Desa Anti Korupsi, dan Kategori Prestasi — saat masih dipakai data lain — sebelumnya membuat server error 500 (untuk relasi wajib) atau menelantarkan data anak. Kini semua memakai mekanisme nonaktif (soft-delete) seperti Data Banjar: bila masih dipakai muncul pesan jelas seperti "tidak dapat dihapus karena masih digunakan oleh 3 pengumuman", dan bila aman data disembunyikan dari daftar. Penghapusan di frontend juga disamakan ke mekanisme API yang konsisten (Eden client). Tanpa perubahan schema/migration.
+- **Hapus kategori/master induk gagal (error 500) di 8 halaman admin**: melanjutkan perbaikan Info Sekolah (0.1.114), pola yang sama diterapkan ke kategori/master induk sejati — Kategori Pengumuman, Kategori Kegiatan Gotong Royong, Pendaftaran Jadwal Kegiatan, tiga master responden Indeks Kepuasan (Jenis Kelamin, Umur, Pilihan Rating), Kategori Desa Anti Korupsi, dan Kategori Prestasi. Menghapus data ini saat masih dipakai data lain sebelumnya membuat server error 500 (relasi wajib) atau menelantarkan data anak. Kini memakai mekanisme nonaktif (soft-delete) seperti Data Banjar: bila masih dipakai muncul pesan jelas seperti "tidak dapat dihapus karena masih digunakan oleh 3 pengumuman"; bila aman, data disembunyikan dari daftar.
+- **Hapus Data Kelahiran & Kematian error 500**: berbeda dari kategori di atas, Data Kelahiran/Kematian adalah data mentah — data statistik Persentase Kelahiran/Kematian yang menunjuk ke sana. Menghapus row yang sudah dipakai statistik sebelumnya melempar error 500. Kini penghapusan langsung menghapus data beserta baris statistik pasangannya dalam satu transaksi (atomik), sehingga angka statistik otomatis menyesuaikan — sesuai perilaku yang diharapkan ("hapus ya hapus").
+- Penghapusan di frontend untuk semua halaman di atas disamakan ke mekanisme API yang konsisten (Eden client). Tanpa perubahan schema/migration.
 
 ## [0.1.114] - 2026-07-13
 ### Fixed

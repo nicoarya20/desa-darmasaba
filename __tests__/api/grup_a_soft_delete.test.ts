@@ -1,15 +1,16 @@
 // @vitest-environment node
-// Kontrak delete handler Grup A (10 file FK-capable, rollout dari blueprint
-// info-sekolah-paud).
+// Kontrak delete handler Grup A (rollout dari blueprint info-sekolah-paud).
 //
 // Akar bug (STG): hard delete prisma.delete() pada parent ber-anak melempar
 // P2003 (FK) yang di-serialisasi Elysia jadi 500 plaintext -> frontend .json()
-// meledak SyntaxError. Fix meniru desa/banjar/del.ts: soft-delete
-// (isActive:false) + FK precheck + SELALU return Response.json.
+// meledak SyntaxError. SELALU return Response.json agar tak ada plaintext.
 //
-// Test menjamin 3 properti per handler: (1) soft-delete via update, bukan
-// delete; (2) precheck memblokir bila ada anak aktif (pesan berisi jumlah);
-// (3) semua jalur error mengembalikan body JSON-serializable, bukan plaintext.
+// DUA kontrak berbeda tergantung sifat data:
+//  - 8 kategori/master induk sejati -> soft-delete (isActive:false) + FK
+//    precheck yang memblokir bila masih dipakai anak aktif.
+//  - Kelahiran & Kematian = data mentah (FK ada di sisi statistik yang menunjuk
+//    ke sini) -> hard delete transaksional; statistik pasangan ikut dibuang,
+//    sesuai aturan bisnis "hapus ya hapus, statistik menyesuaikan".
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // vi.hoisted agar prismaMock tersedia saat vi.mock factory dievaluasi (hoisted).
@@ -20,9 +21,12 @@ const prismaMock = vi.hoisted(() => ({
   kegiatanDesa: { count: vi.fn() },
   pendaftaranJadwalKegiatan: { update: vi.fn(), delete: vi.fn() },
   jadwalKegiatan: { count: vi.fn() },
+  // Kelahiran/Kematian = data mentah -> hard delete transaksional (bukan
+  // soft-delete), statistik pasangannya ikut dihapus.
   kelahiran: { update: vi.fn(), delete: vi.fn() },
   kematian: { update: vi.fn(), delete: vi.fn() },
-  dataKematian_Kelahiran: { count: vi.fn() },
+  dataKematian_Kelahiran: { count: vi.fn(), deleteMany: vi.fn() },
+  $transaction: vi.fn(),
   jenisKelaminResponden: { update: vi.fn(), delete: vi.fn() },
   umurResponden: { update: vi.fn(), delete: vi.fn() },
   pilihanRatingResponden: { update: vi.fn(), delete: vi.fn() },
@@ -89,22 +93,6 @@ const cases = [
     child: prismaMock.jadwalKegiatan,
     childCount: 4,
     childFragment: "4 jadwal",
-  },
-  {
-    name: "kelahiran",
-    handler: kelahiranDelete,
-    parent: prismaMock.kelahiran,
-    child: prismaMock.dataKematian_Kelahiran,
-    childCount: 5,
-    childFragment: "5 data",
-  },
-  {
-    name: "kematian",
-    handler: kematianDelete,
-    parent: prismaMock.kematian,
-    child: prismaMock.dataKematian_Kelahiran,
-    childCount: 6,
-    childFragment: "6 data",
   },
   {
     name: "jenisKelaminResponden",
@@ -186,6 +174,56 @@ describe.each(cases)(
       const { status, body } = await unwrap(await handler(ctx("p1")));
       expect(status).toBe(500);
       expect(body.success).toBe(false); // body valid JSON, bukan plaintext
+    });
+  }
+);
+
+// Kelahiran & Kematian: data mentah, bukan kategori-induk. Aturan bisnis:
+// "hapus ya hapus", statistik menyesuaikan. Kontraknya BEDA dari soft-delete —
+// hard delete transaksional yang ikut membuang statistik pasangannya.
+describe.each([
+  {
+    name: "kelahiran",
+    handler: kelahiranDelete,
+    parent: prismaMock.kelahiran,
+    fkField: "kelahiranId",
+  },
+  {
+    name: "kematian",
+    handler: kematianDelete,
+    parent: prismaMock.kematian,
+    fkField: "kematianId",
+  },
+])(
+  "$name delete — hard delete transaksional (statistik ikut terbuang)",
+  ({ handler, parent, fkField }) => {
+    it("id kosong → 400, tak sentuh DB", async () => {
+      const { status, body } = await unwrap(await handler(ctx()));
+      expect(status).toBe(400);
+      expect(body.success).toBe(false);
+      expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    });
+
+    it("hapus → buang statistik terkait lalu delete row, dalam 1 transaksi", async () => {
+      prismaMock.$transaction.mockResolvedValue([{ count: 1 }, { id: "p1" }]);
+      const { body } = await unwrap(await handler(ctx("p1")));
+      expect(body.success).toBe(true);
+      // statistik pasangan dibuang via deleteMany berdasarkan FK row ini
+      expect(prismaMock.dataKematian_Kelahiran.deleteMany).toHaveBeenCalledWith({
+        where: { [fkField]: "p1" },
+      });
+      // row-nya di-hard-delete, BUKAN soft-delete
+      expect(parent.delete).toHaveBeenCalledWith({ where: { id: "p1" } });
+      expect(parent.update).not.toHaveBeenCalled();
+      // dibungkus $transaction (atomik, tak ada statistik yatim)
+      expect(prismaMock.$transaction).toHaveBeenCalledOnce();
+    });
+
+    it("prisma throw → 500 tapi tetap JSON (perisai SyntaxError)", async () => {
+      prismaMock.$transaction.mockRejectedValue(new Error("boom"));
+      const { status, body } = await unwrap(await handler(ctx("p1")));
+      expect(status).toBe(500);
+      expect(body.success).toBe(false);
     });
   }
 );
