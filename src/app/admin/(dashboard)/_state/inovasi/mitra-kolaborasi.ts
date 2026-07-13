@@ -114,18 +114,17 @@ const mitraKolaborasi = proxy({
       if (!id) return toast.warn("ID tidak valid");
       try {
         mitraKolaborasi.delete.loading = true;
-        const response = await fetch(`/api/inovasi/mitrakolaborasi/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const result = await response.json();
-        if (response.ok) {
-          toast.success(result.message || "mitraKolaborasi berhasil dihapus");
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (program-kreatif). Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.inovasi.mitrakolaborasi as any)["del"][
+          id
+        ].delete();
+        if (res.data?.success) {
+          toast.success(res.data.message || "mitraKolaborasi berhasil dihapus");
           await mitraKolaborasi.findMany.load(); // refresh list
         } else {
-          toast.error(result.message || "Gagal menghapus mitraKolaborasi");
+          toast.error(res.data?.message || "Gagal menghapus mitraKolaborasi");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
