@@ -139,9 +139,11 @@ const jenjangPendidikan = proxy({
           );
           await jenjangPendidikan.findMany.load(); // refresh list
         } else {
-          toast.error(
-            res.data?.message || "Gagal menghapus jenjang pendidikan"
-          );
+          // Eden menaruh body respons non-2xx (mis. 400 FK-block) di res.error.value,
+          // bukan res.data — baca keduanya agar pesan spesifik backend tetap tampil.
+          const msg =
+            res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus jenjang pendidikan");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -440,9 +442,11 @@ const lembagaPendidikan = proxy({
           );
           await lembagaPendidikan.findMany.load(); // refresh list
         } else {
-          toast.error(
-            res.data?.message || "Gagal menghapus lembaga pendidikan"
-          );
+          // Eden menaruh body respons non-2xx (mis. 400 FK-block) di res.error.value,
+          // bukan res.data — baca keduanya agar pesan spesifik backend tetap tampil.
+          const msg =
+            res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus lembaga pendidikan");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
