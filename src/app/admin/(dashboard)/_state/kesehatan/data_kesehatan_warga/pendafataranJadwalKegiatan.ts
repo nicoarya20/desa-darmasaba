@@ -141,27 +141,24 @@ const pendaftaranJadwalKegiatanState = proxy({
       try {
         pendaftaranJadwalKegiatanState.delete.loading = true;
 
-        const response = await fetch(
-          `/api/kesehatan/pendaftaran-jadwal-kegiatan/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body (hindari 400 parse Elysia) & content-type aware saat parse
+        // respons (hindari SyntaxError bila body non-JSON).
+        const res = await (ApiFetch.api.kesehatan as any)[
+          "pendaftaran-jadwal-kegiatan"
+        ]["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "Pendaftaran jadwal kegiatan berhasil dihapus"
+            res.data.message || "Pendaftaran jadwal kegiatan berhasil dihapus"
           );
           await pendaftaranJadwalKegiatanState.findMany.load(); // refresh list
         } else {
-          toast.error(
-            result?.message || "Gagal menghapus pendaftaran jadwal kegiatan"
-          );
+          // Eden menaruh body respons non-2xx (mis. 400 FK-block) di
+          // res.error.value, bukan res.data — baca keduanya agar pesan spesifik
+          // backend tetap tampil.
+          const msg = res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus pendaftaran jadwal kegiatan");
         }
       } catch (error) {
         console.error("Gagal delete:", error);

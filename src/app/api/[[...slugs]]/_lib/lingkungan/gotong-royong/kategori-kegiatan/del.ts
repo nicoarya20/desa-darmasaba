@@ -1,33 +1,53 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 
+// Soft-delete (isActive:false), bukan hard delete — mengikuti pola kanonik
+// desa/banjar/del.ts. FK KegiatanDesa.kategoriKegiatanId bersifat wajib
+// (required), sehingga hard delete kategori ber-anak melempar P2003 -> 500.
+// FK precheck memblokir lebih dulu; semua jalur SELALU Response.json.
 const kategoriKegiatanDelete = async (context: Context) => {
-    const id = context.params.id;
+  try {
+    const id = context.params?.id as string;
+
     if (!id) {
-        return {
-            success: false,
-            message: "ID is required",
-        }
+      return Response.json(
+        { success: false, message: "ID tidak boleh kosong" },
+        { status: 400 }
+      );
     }
 
-    const kategoriKegiatan = await prisma.kategoriKegiatan.delete({
-        where: {
-            id: id,
+    const kegiatanCount = await prisma.kegiatanDesa.count({
+      where: { kategoriKegiatanId: id, isActive: true },
+    });
+
+    if (kegiatanCount > 0) {
+      return Response.json(
+        {
+          success: false,
+          message: `Kategori kegiatan tidak dapat dihapus karena masih digunakan oleh ${kegiatanCount} kegiatan`,
         },
-    })
-
-    if(!kategoriKegiatan) {
-        return {
-            success: false,
-            message: "Kategori Kegiatan tidak ditemukan",
-        }
+        { status: 400 }
+      );
     }
 
-    return {
-        success: true,
-        message: "Sukses Menghapus kategori produk",
-        data: kategoriKegiatan,
-    }
-}
+    await prisma.kategoriKegiatan.update({
+      where: { id },
+      data: { isActive: false },
+    });
 
-export default kategoriKegiatanDelete
+    return { success: true, message: "Sukses Menghapus kategori kegiatan" };
+  } catch (error) {
+    console.error("Delete kategori kegiatan error:", error);
+    return Response.json(
+      {
+        success: false,
+        message:
+          "Gagal menghapus kategori kegiatan: " +
+          (error instanceof Error ? error.message : "Unknown error"),
+      },
+      { status: 500 }
+    );
+  }
+};
+
+export default kategoriKegiatanDelete;

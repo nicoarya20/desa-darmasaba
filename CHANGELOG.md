@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.116] - 2026-07-14
+### Fixed
+- **Hapus kategori/master induk gagal (error 500) di 8 halaman admin**: melanjutkan perbaikan Info Sekolah (0.1.114), pola yang sama diterapkan ke kategori/master induk sejati — Kategori Pengumuman, Kategori Kegiatan Gotong Royong, Pendaftaran Jadwal Kegiatan, tiga master responden Indeks Kepuasan (Jenis Kelamin, Umur, Pilihan Rating), Kategori Desa Anti Korupsi, dan Kategori Prestasi. Menghapus data ini saat masih dipakai data lain sebelumnya membuat server error 500 (relasi wajib) atau menelantarkan data anak. Kini memakai mekanisme nonaktif (soft-delete) seperti Data Banjar: bila masih dipakai muncul pesan jelas seperti "tidak dapat dihapus karena masih digunakan oleh 3 pengumuman"; bila aman, data disembunyikan dari daftar.
+- **Hapus Data Kelahiran & Kematian error 500**: berbeda dari kategori di atas, Data Kelahiran/Kematian adalah data mentah — data statistik Persentase Kelahiran/Kematian yang menunjuk ke sana. Menghapus row yang sudah dipakai statistik sebelumnya melempar error 500. Kini penghapusan langsung menghapus data beserta baris statistik pasangannya dalam satu transaksi (atomik), sehingga angka statistik otomatis menyesuaikan — sesuai perilaku yang diharapkan ("hapus ya hapus").
+- Penghapusan di frontend untuk semua halaman di atas disamakan ke mekanisme API yang konsisten (Eden client). Tanpa perubahan schema/migration.
+
 ## [0.1.114] - 2026-07-13
 ### Fixed
 - **Hapus Jenjang Pendidikan & Lembaga (Info Sekolah) gagal dengan error 500**: menghapus jenjang pendidikan yang masih memiliki lembaga (atau lembaga yang masih memiliki siswa/pengajar) membuat server error dengan status 500, dan di layar hanya muncul "Terjadi kesalahan" tanpa penjelasan. Penyebabnya penghapusan bersifat permanen sehingga ditolak database karena data masih terkait. Kini penghapusan memakai mekanisme nonaktif (soft-delete) seperti halaman Data Banjar: data disembunyikan dari daftar, dan bila masih dipakai muncul pesan jelas seperti "tidak dapat dihapus karena masih digunakan oleh 3 lembaga". Berbeda dengan perbaikan Inovasi/Lingkungan sebelumnya (yang menangani error 400 header salah), perbaikan ini menangani error 500 akibat relasi data. Penghapusan di frontend juga disamakan ke mekanisme API yang konsisten (Eden client).
