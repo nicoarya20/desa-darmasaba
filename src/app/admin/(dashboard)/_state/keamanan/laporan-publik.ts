@@ -172,21 +172,19 @@ const laporanPublikState = proxy({
 
       try {
         laporanPublikState.delete.loading = true;
-        const response = await fetch(`/api/keamanan/laporanpublik/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const result = await response.json();
 
-        if (response.ok && result?.success) {
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (inovasi/program-kreatif). Eden tak set Content-Type json untuk
+        // DELETE tanpa body, jadi tak memicu 400 parse-body kosong di Elysia.
+        const res = await (ApiFetch.api.keamanan.laporanpublik as any)["del"][id].delete();
+
+        if (res.data?.success) {
           toast.success(
-            result.message || "Laporan publik berhasil dihapus"
+            res.data.message || "Laporan publik berhasil dihapus"
           );
           await laporanPublikState.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus laporan publik");
+          toast.error(res.data?.message || "Gagal menghapus laporan publik");
         }
       } catch (error) {
         console.error("Gagal delete:", error);

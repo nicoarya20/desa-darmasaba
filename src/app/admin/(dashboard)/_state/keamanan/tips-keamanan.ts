@@ -116,21 +116,17 @@ const tipsKeamananState = proxy({
       if (!id) return toast.warn("ID tidak valid");
       try {
         tipsKeamananState.delete.loading = true;
-        const response = await fetch(
-          `/api/keamanan/menutipskeamanan/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const result = await response.json();
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Tips keamanan berhasil dihapus");
+
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (inovasi/program-kreatif). Eden tak set Content-Type json untuk
+        // DELETE tanpa body, jadi tak memicu 400 parse-body kosong di Elysia.
+        const res = await (ApiFetch.api.keamanan.menutipskeamanan as any)["del"][id].delete();
+
+        if (res.data?.success) {
+          toast.success(res.data.message || "Tips keamanan berhasil dihapus");
           await tipsKeamananState.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus tips keamanan");
+          toast.error(res.data?.message || "Gagal menghapus tips keamanan");
         }
       } catch (error) {
         toast.error("Terjadi kesalahan saat menghapus tips keamanan");
