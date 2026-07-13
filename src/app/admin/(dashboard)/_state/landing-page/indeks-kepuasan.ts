@@ -406,27 +406,24 @@ const jenisKelaminResponden = proxy({
       try {
         jenisKelaminResponden.delete.loading = true;
 
-        const response = await fetch(
-          `/api/landingpage/jeniskelaminresponden/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body (hindari 400 parse Elysia) & content-type aware saat parse
+        // respons (hindari SyntaxError bila body non-JSON).
+        const res = await (ApiFetch.api.landingpage as any).jeniskelaminresponden[
+          "del"
+        ][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "jenis kelamin responden berhasil dihapus"
+            res.data.message || "jenis kelamin responden berhasil dihapus"
           );
           await jenisKelaminResponden.findMany.load(); // refresh list
         } else {
-          toast.error(
-            result?.message || "Gagal menghapus jenis kelamin responden"
-          );
+          // Eden menaruh body respons non-2xx (mis. 400 FK-block) di
+          // res.error.value, bukan res.data — baca keduanya agar pesan spesifik
+          // backend tetap tampil.
+          const msg = res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus jenis kelamin responden");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -603,27 +600,24 @@ const pilihanRatingResponden = proxy({
       try {
         pilihanRatingResponden.delete.loading = true;
 
-        const response = await fetch(
-          `/api/landingpage/pilihanratingresponden/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body (hindari 400 parse Elysia) & content-type aware saat parse
+        // respons (hindari SyntaxError bila body non-JSON).
+        const res = await (ApiFetch.api.landingpage as any).pilihanratingresponden[
+          "del"
+        ][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "pilihan rating responden berhasil dihapus"
+            res.data.message || "pilihan rating responden berhasil dihapus"
           );
           await pilihanRatingResponden.findMany.load(); // refresh list
         } else {
-          toast.error(
-            result?.message || "Gagal menghapus pilihan rating responden"
-          );
+          // Eden menaruh body respons non-2xx (mis. 400 FK-block) di
+          // res.error.value, bukan res.data — baca keduanya agar pesan spesifik
+          // backend tetap tampil.
+          const msg = res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus pilihan rating responden");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -797,27 +791,24 @@ const kelompokUmurResponden = proxy({
       try {
         kelompokUmurResponden.delete.loading = true;
 
-        const response = await fetch(
-          `/api/landingpage/umurresponden/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body (hindari 400 parse Elysia) & content-type aware saat parse
+        // respons (hindari SyntaxError bila body non-JSON).
+        const res = await (ApiFetch.api.landingpage as any).umurresponden["del"][
+          id
+        ].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "kelompok umur responden berhasil dihapus"
+            res.data.message || "kelompok umur responden berhasil dihapus"
           );
           await kelompokUmurResponden.findMany.load(); // refresh list
         } else {
-          toast.error(
-            result?.message || "Gagal menghapus kelompok umur responden"
-          );
+          // Eden menaruh body respons non-2xx (mis. 400 FK-block) di
+          // res.error.value, bukan res.data — baca keduanya agar pesan spesifik
+          // backend tetap tampil.
+          const msg = res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus kelompok umur responden");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
