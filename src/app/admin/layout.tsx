@@ -28,9 +28,8 @@ import {
   IconChevronRight,
   IconLogout2
 } from "@tabler/icons-react";
-import _ from "lodash";
 import Link from "next/link";
-import { useRouter, useSelectedLayoutSegments } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getNavbar } from "./(dashboard)/user&role/_com/dynamicNavbar";
 
@@ -44,7 +43,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const router = useRouter();
-  const segments = useSelectedLayoutSegments().map((s) => _.lowerCase(s));
+  const pathname = usePathname();
 
   // Ensure component is mounted on client side
   useEffect(() => {
@@ -137,6 +136,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const currentNav = authStore.user
     ? getNavbar({ roleId: authStore.user.roleId, menuIds: authStore.user.menuIds })
     : [];
+
+  const pathSeg = (p: string) => p.split('?')[0].split('/').filter(Boolean);
+  const childKey = (path: string) => '/' + pathSeg(path).slice(0, 3).join('/');
+  const domainOf = (section: (typeof currentNav)[0]) =>
+    pathSeg(section.path || section.children?.[0]?.path || '')[1];
 
   const handleLogout = async () => {
     try {
@@ -277,7 +281,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <AppShell.Section p="sm">
           {currentNav.map((v, k) => {
-            const isParentActive = segments.includes(_.lowerCase(v.name));
+            const isParentActive = pathSeg(pathname)[1] === domainOf(v);
             return (
               <NavLink
                 key={k}
@@ -323,7 +327,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 href={v.path || undefined}
               >
                 {v.children?.map((child, key) => {
-                  const isChildActive = segments.includes(_.lowerCase(child.name));
+                  const isChildActive =
+                    pathname === childKey(child.path) ||
+                    pathname.startsWith(childKey(child.path) + '/');
                   return (
                     <NavLink
                       key={key}
