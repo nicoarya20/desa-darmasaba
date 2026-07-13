@@ -122,19 +122,17 @@ const infoWabahPenyakit = proxy({
       try {
         infoWabahPenyakit.delete.loading = true;
 
-        const response = await fetch(`/api/kesehatan/infowabahpenyakit/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.kesehatan.infowabahpenyakit as any)[
+          "del"
+        ][id].delete();
 
-        const result = await response.json();
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Info wabah penyakit berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Info wabah penyakit berhasil dihapus");
           await infoWabahPenyakit.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus info wabah penyakit");
+          toast.error(res.data?.message || "Gagal menghapus info wabah penyakit");
         }
       } catch (error) {
         console.error("Gagal delete:", error);

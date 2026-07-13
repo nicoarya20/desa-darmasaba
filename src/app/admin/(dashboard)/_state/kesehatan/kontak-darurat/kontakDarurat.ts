@@ -121,20 +121,18 @@ const kontakDarurat = proxy({
     async byId(id: string) {
       try {
         kontakDarurat.delete.loading = true;
-        const response = await fetch(`/api/kesehatan/kontakdarurat/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
 
-        const result = await response.json();
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.kesehatan.kontakdarurat as any)["del"][
+          id
+        ].delete();
 
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Kontak darurat berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Kontak darurat berhasil dihapus");
           await kontakDarurat.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus kontak darurat");
+          toast.error(res.data?.message || "Gagal menghapus kontak darurat");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
