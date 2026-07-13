@@ -140,20 +140,17 @@ const berita = proxy({
       try {
         berita.delete.loading = true;
 
-        const response = await fetch(`/api/desa/berita/delete/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.berita as any)["delete"][
+          id
+        ].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Berita berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Berita berhasil dihapus");
           await berita.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus berita");
+          toast.error(res.data?.message || "Gagal menghapus berita");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -443,23 +440,20 @@ const kategoriBerita = proxy({
       try {
         kategoriBerita.delete.loading = true;
 
-        const response = await fetch(`/api/desa/kategoriberita/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.kategoriberita as any)["del"][
+          id
+        ].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "Data Kategori Berita berhasil dihapus"
+            res.data.message || "Data Kategori Berita berhasil dihapus"
           );
           await kategoriBerita.findMany.load(); // refresh list
         } else {
           toast.error(
-            result?.message || "Gagal menghapus Data Kategori Berita"
+            res.data?.message || "Gagal menghapus Data Kategori Berita"
           );
         }
       } catch (error) {

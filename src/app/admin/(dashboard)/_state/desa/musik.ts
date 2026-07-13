@@ -149,20 +149,17 @@ const musik = proxy({
       try {
         musik.delete.loading = true;
 
-        const response = await fetch(`/api/desa/musik/delete/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.musik as any)["delete"][
+          id
+        ].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Musik berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Musik berhasil dihapus");
           await musik.findMany.load();
         } else {
-          toast.error(result?.message || "Gagal menghapus musik");
+          toast.error(res.data?.message || "Gagal menghapus musik");
         }
       } catch (error) {
         console.error("Gagal delete:", error);

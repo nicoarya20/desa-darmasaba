@@ -927,18 +927,18 @@ const mantanPerbekel = proxy({
       if (!id) return toast.warn("ID tidak valid");
       try {
         mantanPerbekel.delete.loading = true;
-        const response = await fetch(`/api/desa/mantanperbekel/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const result = await response.json();
-        if (response.ok) {
-          toast.success(result.message || "Mantan perbekel berhasil dihapus");
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.mantanperbekel as any)["del"][
+          id
+        ].delete();
+        // Handler del ini return { status, body } (bukan { success }),
+        // jadi sukses dideteksi dari absennya res.error (HTTP 2xx).
+        if (!res.error) {
+          toast.success("Mantan perbekel berhasil dihapus");
           await mantanPerbekel.findMany.load(); // refresh list
         } else {
-          toast.error(result.message || "Gagal menghapus mantan perbekel");
+          toast.error("Gagal menghapus mantan perbekel");
         }
       } catch (error) {
         console.error("Gagal delete:", error);

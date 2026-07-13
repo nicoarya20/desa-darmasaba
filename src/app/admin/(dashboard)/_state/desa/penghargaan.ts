@@ -120,19 +120,17 @@ const penghargaanState = proxy({
 
       try {
         penghargaanState.delete.loading = true;
-        const response = await fetch(`/api/desa/penghargaan/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const result = await response.json();
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.penghargaan as any)["del"][
+          id
+        ].delete();
 
-        if (response.ok) {
-          toast.success(result.message || "Penghargaan berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Penghargaan berhasil dihapus");
           await penghargaanState.findMany.load();
         } else {
-          toast.error(result?.message || "Gagal menghapus penghargaan");
+          toast.error(res.data?.message || "Gagal menghapus penghargaan");
         }
       } catch (error) {
         console.log((error as Error).message);

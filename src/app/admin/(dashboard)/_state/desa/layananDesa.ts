@@ -217,21 +217,18 @@ const suratKeterangan = proxy({
       if (!id) return toast.warn("ID tidak valid");
       try {
         suratKeterangan.delete.loading = true;
-        const response = await fetch(
-          `/api/desa/layanan/pelayanansuratketerangan/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const result = await response.json();
-        if (response.ok) {
-          toast.success(result.message || "Surat Keterangan berhasil dihapus");
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (
+          ApiFetch.api.desa.layanan.pelayanansuratketerangan as any
+        )["del"][id].delete();
+        // Handler del ini return { status, body } (bukan { success }),
+        // jadi sukses dideteksi dari absennya res.error (HTTP 2xx).
+        if (!res.error) {
+          toast.success("Surat Keterangan berhasil dihapus");
           await suratKeterangan.findMany.load(); // refresh list
         } else {
-          toast.error(result.message || "Gagal menghapus surat keterangan");
+          toast.error("Gagal menghapus surat keterangan");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
