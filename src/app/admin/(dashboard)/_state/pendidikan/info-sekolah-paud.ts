@@ -125,25 +125,25 @@ const jenjangPendidikan = proxy({
       try {
         jenjangPendidikan.delete.loading = true;
 
-        const response = await fetch(
-          `/api/pendidikan/infosekolahpaud/jenjangpendidikan/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — konsisten dgn create/find di file ini. Eden
+        // tak set Content-Type json untuk DELETE tanpa body (hindari 400 parse
+        // Elysia) dan content-type aware saat parse respons (hindari SyntaxError
+        // bila body non-JSON).
+        const res = await (
+          ApiFetch.api.pendidikan.infosekolahpaud.jenjangpendidikan as any
+        )["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "jenjang pendidikan berhasil dihapus"
+            res.data.message || "jenjang pendidikan berhasil dihapus"
           );
           await jenjangPendidikan.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus jenjang pendidikan");
+          // Eden menaruh body respons non-2xx (mis. 400 FK-block) di res.error.value,
+          // bukan res.data — baca keduanya agar pesan spesifik backend tetap tampil.
+          const msg =
+            res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus jenjang pendidikan");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -428,25 +428,25 @@ const lembagaPendidikan = proxy({
       try {
         lembagaPendidikan.delete.loading = true;
 
-        const response = await fetch(
-          `/api/pendidikan/infosekolahpaud/lembagapendidikan/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — konsisten dgn create/find di file ini. Eden
+        // tak set Content-Type json untuk DELETE tanpa body (hindari 400 parse
+        // Elysia) dan content-type aware saat parse respons (hindari SyntaxError
+        // bila body non-JSON).
+        const res = await (
+          ApiFetch.api.pendidikan.infosekolahpaud.lembagapendidikan as any
+        )["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "lembaga pendidikan berhasil dihapus"
+            res.data.message || "lembaga pendidikan berhasil dihapus"
           );
           await lembagaPendidikan.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus lembaga pendidikan");
+          // Eden menaruh body respons non-2xx (mis. 400 FK-block) di res.error.value,
+          // bukan res.data — baca keduanya agar pesan spesifik backend tetap tampil.
+          const msg =
+            res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus lembaga pendidikan");
         }
       } catch (error) {
         console.error("Gagal delete:", error);

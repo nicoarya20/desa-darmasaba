@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.114] - 2026-07-13
+### Fixed
+- **Hapus Jenjang Pendidikan & Lembaga (Info Sekolah) gagal dengan error 500**: menghapus jenjang pendidikan yang masih memiliki lembaga (atau lembaga yang masih memiliki siswa/pengajar) membuat server error dengan status 500, dan di layar hanya muncul "Terjadi kesalahan" tanpa penjelasan. Penyebabnya penghapusan bersifat permanen sehingga ditolak database karena data masih terkait. Kini penghapusan memakai mekanisme nonaktif (soft-delete) seperti halaman Data Banjar: data disembunyikan dari daftar, dan bila masih dipakai muncul pesan jelas seperti "tidak dapat dihapus karena masih digunakan oleh 3 lembaga". Berbeda dengan perbaikan Inovasi/Lingkungan sebelumnya (yang menangani error 400 header salah), perbaikan ini menangani error 500 akibat relasi data. Penghapusan di frontend juga disamakan ke mekanisme API yang konsisten (Eden client).
+
 ## [0.1.113] - 2026-07-13
 ### Fixed
 - **Hapus data Lingkungan gagal dengan error "Bad Request" (400)**: pada 3 halaman Lingkungan — Pengelolaan Sampah, Program Penghijauan, dan Data Lingkungan Desa — tombol Hapus mengirim permintaan penghapusan dengan header yang salah (mengklaim berisi data JSON padahal tidak ada isi), sehingga server di STG menolak dengan status 400 sebelum permintaan sampai ke proses hapus. Kini penghapusan memakai mekanisme pemanggilan API yang sama dengan halaman lain yang sudah berfungsi (Inovasi Program Kreatif), sehingga data bisa dihapus dengan benar.
