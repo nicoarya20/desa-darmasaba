@@ -128,18 +128,18 @@ const foto = proxy({
       if (!id) return toast.warn("ID tidak valid");
       try {
         foto.delete.loading = true;
-        const response = await fetch(`/api/desa/gallery/foto/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const result = await response.json();
-        if (response.ok) {
-          toast.success(result.message || "Foto berhasil dihapus");
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.gallery.foto as any)["del"][
+          id
+        ].delete();
+        // Handler del ini return { status, body } (bukan { success }),
+        // jadi sukses dideteksi dari absennya res.error (HTTP 2xx).
+        if (!res.error) {
+          toast.success("Foto berhasil dihapus");
           await foto.findMany.load(); // refresh list
         } else {
-          toast.error(result.message || "Gagal menghapus foto");
+          toast.error("Gagal menghapus foto");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -363,18 +363,18 @@ const video = proxy({
       if (!id) return toast.warn("ID tidak valid");
       try {
         video.delete.loading = true;
-        const response = await fetch(`/api/desa/gallery/video/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const result = await response.json();
-        if (response.ok) {
-          toast.success(result.message || "Video berhasil dihapus");
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.gallery.video as any)["del"][
+          id
+        ].delete();
+        // Handler del ini return { status, body } (bukan { success }),
+        // jadi sukses dideteksi dari absennya res.error (HTTP 2xx).
+        if (!res.error) {
+          toast.success("Video berhasil dihapus");
           await video.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus video");
+          toast.error("Gagal menghapus video");
         }
       } catch (error) {
         console.error("Gagal delete:", error);

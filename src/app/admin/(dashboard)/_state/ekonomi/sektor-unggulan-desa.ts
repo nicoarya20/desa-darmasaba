@@ -191,26 +191,20 @@ const grafikSektorUnggulan = proxy({
       try {
         grafikSektorUnggulan.delete.loading = true;
 
-        const response = await fetch(
-          `/api/ekonomi/sektourunggulandesa/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — DELETE tanpa body tak diberi Content-Type json,
+        // jadi tak memicu 400 parse-body kosong di Elysia (build production STG).
+        const res = await (ApiFetch.api.ekonomi.sektourunggulandesa as any)[
+          "del"
+        ][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "Grafik sektor unggulan desa berhasil dihapus"
+            res.data.message || "Grafik sektor unggulan desa berhasil dihapus"
           );
           await grafikSektorUnggulan.findMany.load(); // refresh list
         } else {
           toast.error(
-            result?.message || "Gagal menghapus grafik sektor unggulan desa"
+            res.data?.message || "Gagal menghapus grafik sektor unggulan desa"
           );
         }
       } catch (error) {

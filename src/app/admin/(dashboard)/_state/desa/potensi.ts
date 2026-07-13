@@ -119,20 +119,15 @@ const potensiDesa = proxy({
       try {
         potensiDesa.delete.loading = true;
 
-        const response = await fetch(`/api/desa/potensi/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.potensi as any)["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Potensi berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Potensi berhasil dihapus");
           await potensiDesa.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus potensi");
+          toast.error(res.data?.message || "Gagal menghapus potensi");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -362,23 +357,20 @@ const kategoriPotensi = proxy({
       try {
         kategoriPotensi.delete.loading = true;
 
-        const response = await fetch(`/api/desa/kategoripotensi/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.desa.kategoripotensi as any)["del"][
+          id
+        ].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
+        if (res.data?.success) {
           toast.success(
-            result.message || "Data Kategori Potensi berhasil dihapus"
+            res.data.message || "Data Kategori Potensi berhasil dihapus"
           );
           await kategoriPotensi.findMany.load(); // refresh list
         } else {
           toast.error(
-            result?.message || "Gagal menghapus Data Kategori Potensi"
+            res.data?.message || "Gagal menghapus Data Kategori Potensi"
           );
         }
       } catch (error) {
