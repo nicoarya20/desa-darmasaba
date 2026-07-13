@@ -134,21 +134,17 @@ const userState = proxy({
   
       try {
         userState.deleteUser.loading = true;
-  
-        const response = await fetch(`/api/user/delUser/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-  
-        const result = await response.json();
-  
-        if (response.ok && result?.success) {
-          toast.success(result.message || "User berhasil dihapus permanen");
+
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (inovasi/program-kreatif). Eden tak set Content-Type json untuk
+        // DELETE tanpa body, jadi tak memicu 400 parse-body kosong di Elysia.
+        const res = await (ApiFetch.api.user as any)["delUser"][id].delete();
+
+        if (res.data?.success) {
+          toast.success(res.data.message || "User berhasil dihapus permanen");
           await userState.findMany.load(); // refresh list user setelah delete
         } else {
-          toast.error(result?.message || "Gagal menghapus user");
+          toast.error(res.data?.message || "Gagal menghapus user");
         }
       } catch (error) {
         console.error("Gagal delete user:", error);
