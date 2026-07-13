@@ -124,22 +124,17 @@ const programKesehatan = proxy({
       try {
         programKesehatan.delete.loading = true;
 
-        const response = await fetch(
-          `/api/kesehatan/programkesehatan/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — Eden tak set Content-Type json untuk DELETE
+        // tanpa body, jadi tak memicu 400 parse-body kosong di Elysia (STG).
+        const res = await (ApiFetch.api.kesehatan.programkesehatan as any)[
+          "del"
+        ][id].delete();
 
-        const result = await response.json();
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Program kesehatan berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Program kesehatan berhasil dihapus");
           await programKesehatan.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus program kesehatan");
+          toast.error(res.data?.message || "Gagal menghapus program kesehatan");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
