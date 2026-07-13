@@ -421,23 +421,17 @@ const posisiOrganisasi = proxy({
       try {
         posisiOrganisasi.delete.loading = true;
 
-        const response = await fetch(
-          `/api/ekonomi/struktur-organisasi/posisi-organisasi/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — DELETE tanpa body tak diberi Content-Type json,
+        // jadi tak memicu 400 parse-body kosong di Elysia (build production STG).
+        const res = await (ApiFetch.api.ekonomi["struktur-organisasi"][
+          "posisi-organisasi"
+        ] as any)["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Posisi organisasi berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Posisi organisasi berhasil dihapus");
           await posisiOrganisasi.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus posisi organisasi");
+          toast.error(res.data?.message || "Gagal menghapus posisi organisasi");
         }
       } catch (error) {
         console.error("Gagal delete:", error);

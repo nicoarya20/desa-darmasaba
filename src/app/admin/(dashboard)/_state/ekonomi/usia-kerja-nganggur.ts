@@ -181,20 +181,15 @@ const grafikBerdasarkanUsiaKerjaNganggur = proxy({
       try {
         grafikBerdasarkanUsiaKerjaNganggur.delete.loading = true;
 
-        const response = await fetch(`/api/ekonomi/grafikusiakerjayangmenganggur/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — DELETE tanpa body tak diberi Content-Type json,
+        // jadi tak memicu 400 parse-body kosong di Elysia (build production STG).
+        const res = await (ApiFetch.api.ekonomi.grafikusiakerjayangmenganggur as any)["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Grafik berdasarkan usia kerja yang menganggur berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Grafik berdasarkan usia kerja yang menganggur berhasil dihapus");
           await grafikBerdasarkanUsiaKerjaNganggur.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus grafik berdasarkan usia kerja yang menganggur");
+          toast.error(res.data?.message || "Gagal menghapus grafik berdasarkan usia kerja yang menganggur");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
@@ -386,20 +381,15 @@ const grafikBerdasarkanPendidikan = proxy({
       try {
         grafikBerdasarkanPendidikan.delete.loading = true;
 
-        const response = await fetch(`/api/ekonomi/grafikmenganggurberdasarkanpendidikan/del/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Pakai Eden (ApiFetch) — DELETE tanpa body tak diberi Content-Type json,
+        // jadi tak memicu 400 parse-body kosong di Elysia (build production STG).
+        const res = await (ApiFetch.api.ekonomi.grafikmenganggurberdasarkanpendidikan as any)["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Grafik berdasarkan pendidikan yang menganggur berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Grafik berdasarkan pendidikan yang menganggur berhasil dihapus");
           await grafikBerdasarkanPendidikan.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus grafik berdasarkan pendidikan yang menganggur");
+          toast.error(res.data?.message || "Gagal menghapus grafik berdasarkan pendidikan yang menganggur");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
