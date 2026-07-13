@@ -427,23 +427,18 @@ const posisiOrganisasi = proxy({
       try {
         posisiOrganisasi.delete.loading = true;
 
-        const response = await fetch(
-          `/api/ppid/strukturppid/posisiorganisasi/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — konsisten dgn pola delete yang bekerja
+        // (inovasi/program-kreatif). Eden tak set Content-Type json untuk
+        // DELETE tanpa body, jadi tak memicu 400 parse-body kosong di Elysia.
+        const res = await (
+          ApiFetch.api.ppid.strukturppid.posisiorganisasi as any
+        )["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Posisi organisasi berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Posisi organisasi berhasil dihapus");
           await posisiOrganisasi.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus posisi organisasi");
+          toast.error(res.data?.message || "Gagal menghapus posisi organisasi");
         }
       } catch (error) {
         console.error("Gagal delete:", error);
