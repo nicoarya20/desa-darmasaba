@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Box, Button, Group, Loader, Paper, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -11,7 +11,6 @@ import { toast } from 'react-toastify';
 
 export default function CreateDataPendidikan() {
   const stateDPM = useProxy(dataPendidikan);
-  const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -32,12 +31,9 @@ export default function CreateDataPendidikan() {
       setIsSubmitting(true);
       const id = await stateDPM.create.create();
       if (id) {
-        const idStr = String(id);
-        await stateDPM.findUnique.load(idStr);
-        if (stateDPM.findUnique.data) setChartData([stateDPM.findUnique.data]);
+        resetForm();
+        router.push('/admin/pendidikan/data-pendidikan');
       }
-      resetForm();
-      router.push('/admin/pendidikan/data-pendidikan');
     } catch (error) {
       console.error("Error creating data pendidikan:", error);
       toast.error("Terjadi kesalahan saat menambahkan data pendidikan");
@@ -112,12 +108,6 @@ export default function CreateDataPendidikan() {
           </Group>
         </Stack>
       </Paper>
-
-      {chartData.length === 0 && (
-        <Text mt="md" c={colors['white-1']} ta="center">
-          Data belum tersedia. Silakan tambahkan data pendidikan baru.
-        </Text>
-      )}
     </Box>
   );
 }
