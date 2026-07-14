@@ -596,7 +596,7 @@ export const navBar = [
       {
         id: "Kesehatan_1",
         name: "Posyandu",
-        path: "/admin/kesehatan/posyandu/list-posyandu/list_posyandu"
+        path: "/admin/kesehatan/posyandu/list-posyandu"
       },
       {
         id: "Kesehatan_2",
@@ -1256,7 +1256,7 @@ export const role2 = [
       {
         id: "Kesehatan_1",
         name: "Posyandu",
-        path: "/admin/kesehatan/posyandu/list-posyandu/list_posyandu"
+        path: "/admin/kesehatan/posyandu/list-posyandu"
       },
       {
         id: "Kesehatan_2",
