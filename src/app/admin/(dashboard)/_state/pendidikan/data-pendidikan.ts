@@ -48,7 +48,8 @@ const dataPendidikan = proxy({
               name: "",
               jumlah: "",
             };
-            dataPendidikan.findMany.load();
+            // List di-refresh oleh halaman list saat mount (useShallowEffect),
+            // jadi tidak perlu load() di sini — mencegah dua fetch balapan.
             return id;
           }
         }

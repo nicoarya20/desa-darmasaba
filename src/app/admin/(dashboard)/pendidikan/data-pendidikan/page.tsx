@@ -36,7 +36,8 @@ function ListDataPendidikan({ search }: { search: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
   const [debouncedSearch] = useDebouncedValue(search, 1000); // 500ms delay
-  const { data, page, totalPages, loading, load } = dataPendidikan.findMany;
+  const { data, page, totalPages, loading } = stateDPM.findMany;
+  const { load } = dataPendidikan.findMany;
 
   const handleDelete = () => {
     if (selectedId) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.119] - 2026-07-14
+### Fixed
+- **Data Pendidikan (admin) lambat muncul setelah tambah data, harus refresh manual**: setelah menyimpan data pendidikan baru, daftar sering lama menampilkan data terbaru sampai halaman di-refresh manual. Penyebabnya alur setelah simpan memicu dua pemuatan daftar yang saling balapan (satu dari proses simpan, satu saat halaman daftar dibuka) plus satu permintaan detail yang tidak terpakai — semuanya menahan tampilan di kondisi loading. Kini setelah simpan langsung diarahkan ke halaman daftar yang memuat data segar satu kali saja, tanpa permintaan berlebih. Tanpa perubahan schema/migration.
+
 ## [0.1.118] - 2026-07-14
 ### Fixed
 - **Data duplikat di menu Prestasi Desa & APBDes**: sistem sebelumnya mengizinkan penambahan data yang sama berkali-kali tanpa validasi, sehingga terjadi redundansi. Kini saat menambah/mengubah: Prestasi Desa ditolak bila namanya sudah dipakai (tidak peduli besar/kecil huruf), dan APBDes ditolak bila tahunnya sudah punya data aktif. Muncul pesan jelas seperti "APBDes untuk tahun 2025 sudah ada". Validasi di sisi handler API; tanpa perubahan schema/migration.
