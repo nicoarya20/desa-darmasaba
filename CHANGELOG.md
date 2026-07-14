@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.118] - 2026-07-14
+### Fixed
+- **Data duplikat di menu Prestasi Desa & APBDes**: sistem sebelumnya mengizinkan penambahan data yang sama berkali-kali tanpa validasi, sehingga terjadi redundansi. Kini saat menambah/mengubah: Prestasi Desa ditolak bila namanya sudah dipakai (tidak peduli besar/kecil huruf), dan APBDes ditolak bila tahunnya sudah punya data aktif. Muncul pesan jelas seperti "APBDes untuk tahun 2025 sudah ada". Validasi di sisi handler API; tanpa perubahan schema/migration.
+
 ## [0.1.117] - 2026-07-14
 ### Fixed
 - **Halaman Kependudukan (Dashboard & Dinamika Penduduk) error / blank di STG**: kedua halaman publik gagal dirender (React error #31 — mencoba menampilkan objek data sebagai teks). Penyebabnya di endpoint dashboard summary: daftar query paralel punya satu query berlebih (data kelahiran) yang tidak terpakai, sehingga hasil setiap query setelahnya bergeser satu posisi — akibatnya angka "Pindah Masuk" justru terisi daftar data kematian, dan data agama/umur/banjar ikut tertukar. Query berlebih dihapus agar setiap angka kembali ke tempatnya. Tanpa perubahan schema/migration.

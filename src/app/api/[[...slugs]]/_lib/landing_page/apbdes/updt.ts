@@ -49,6 +49,19 @@ export default async function apbdesUpdate(context: Context) {
       };
     }
 
+    // Cegah duplikasi: tahun tidak boleh bentrok dengan APBDes aktif lain
+    const duplikat = await prisma.aPBDes.findFirst({
+      where: { tahun: body.tahun, deletedAt: null, NOT: { id } },
+      select: { id: true },
+    });
+    if (duplikat) {
+      context.set.status = 409;
+      return {
+        success: false,
+        message: `APBDes tahun ${body.tahun} sudah tersedia. Pilih tahun lain atau ubah data yang sudah ada.`,
+      };
+    }
+
     // 2. Build map untuk preserve realisasiItems berdasarkan kode
     const existingItemsMap = new Map<string, {
       id: string;

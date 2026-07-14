@@ -12,6 +12,19 @@ export default async function prestasiDesaCreate(context: Context) {
   const body = context.body as FormCreate;
 
   try {
+    // Cegah duplikasi: tolak jika sudah ada prestasi dengan nama sama (case-insensitive)
+    const duplikat = await prisma.prestasiDesa.findFirst({
+      where: { name: { equals: body.name, mode: "insensitive" } },
+      select: { id: true },
+    });
+    if (duplikat) {
+      context.set.status = 409;
+      return {
+        success: false,
+        message: `Prestasi "${body.name}" sudah terdaftar. Gunakan nama lain atau ubah data yang sudah ada.`,
+      };
+    }
+
     const result = await prisma.prestasiDesa.create({
       data: {
         name: body.name,
