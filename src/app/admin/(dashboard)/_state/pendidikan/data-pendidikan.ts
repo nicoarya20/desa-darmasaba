@@ -183,23 +183,22 @@ const dataPendidikan = proxy({
       try {
         dataPendidikan.delete.loading = true;
 
-        const response = await fetch(
-          `/api/pendidikan/datapendidikan/del/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // Pakai Eden (ApiFetch) — konsisten dgn create/find di file ini. Eden
+        // tak set Content-Type json untuk DELETE tanpa body (hindari 400 parse
+        // Elysia) dan content-type aware saat parse respons (hindari SyntaxError
+        // bila body non-JSON seperti "Bad Request").
+        const res = await (
+          ApiFetch.api.pendidikan.datapendidikan as any
+        )["del"][id].delete();
 
-        const result = await response.json();
-
-        if (response.ok && result?.success) {
-          toast.success(result.message || "Data berhasil dihapus");
+        if (res.data?.success) {
+          toast.success(res.data.message || "Data berhasil dihapus");
           await dataPendidikan.findMany.load(); // refresh list
         } else {
-          toast.error(result?.message || "Gagal menghapus data");
+          // Eden menaruh body respons non-2xx (mis. 400) di res.error.value,
+          // bukan res.data — baca keduanya agar pesan spesifik backend tetap tampil.
+          const msg = res.data?.message || (res.error?.value as any)?.message;
+          toast.error(msg || "Gagal menghapus data");
         }
       } catch (error) {
         console.error("Gagal delete data pendidikan:", error);
