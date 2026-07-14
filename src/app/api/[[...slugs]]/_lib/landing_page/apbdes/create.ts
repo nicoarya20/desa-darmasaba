@@ -37,6 +37,19 @@ export default async function apbdesCreate(context: Context) {
       throw new Error('At least one item is required');
     }
 
+    // Cegah duplikasi: hanya boleh 1 APBDes aktif per tahun
+    const duplikat = await prisma.aPBDes.findFirst({
+      where: { tahun: body.tahun, deletedAt: null },
+      select: { id: true },
+    });
+    if (duplikat) {
+      context.set.status = 409;
+      return {
+        success: false,
+        message: `APBDes untuk tahun ${body.tahun} sudah ada`,
+      };
+    }
+
     // 1. Buat APBDes + items dengan auto-calculate fields
     const created = await prisma.$transaction(async (prisma) => {
       const apbdes = await prisma.aPBDes.create({

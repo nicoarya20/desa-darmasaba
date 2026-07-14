@@ -22,6 +22,24 @@ export default async function prestasiDesaUpdate(context: Context) {
   }
 
   try {
+    // Cegah duplikasi: tolak jika nama bentrok dengan record lain (case-insensitive)
+    if (body.name) {
+      const duplikat = await prisma.prestasiDesa.findFirst({
+        where: {
+          name: { equals: body.name, mode: "insensitive" },
+          NOT: { id },
+        },
+        select: { id: true },
+      });
+      if (duplikat) {
+        context.set.status = 409;
+        return {
+          success: false,
+          message: `Prestasi Desa dengan nama "${body.name}" sudah ada`,
+        };
+      }
+    }
+
     const updated = await prisma.prestasiDesa.update({
       where: { id },
       data: {
