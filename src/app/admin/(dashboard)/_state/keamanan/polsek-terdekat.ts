@@ -200,7 +200,9 @@ const polsekTerdekatState = proxy({
             namaTempatMaps: data.namaTempatMaps,
             alamatMaps: data.alamatMaps,
             linkPetunjukArah: data.linkPetunjukArah,
-            layananPolsekId: data.layananPolsekId,
+            // API findUnique mengembalikan relasi LayananToPolsek, bukan field layananPolsekId
+            layananPolsekId:
+              data.LayananToPolsek?.map((l: any) => l.layananId) ?? [],
           };
           return data;
         } else {
