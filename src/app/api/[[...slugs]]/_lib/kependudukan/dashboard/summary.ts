@@ -45,19 +45,7 @@ export default async function dashboardSummary() {
                 where: { isActive: true, tahun: currentYear },
                 _sum: { miskin: true }
             }),
-            
-            // Kelahiran data
-            prisma.kelahiran.findMany({
-                where: {
-                    isActive: true,
-                    tanggal: {
-                        gte: new Date(`${currentYear}-01-01`),
-                        lte: new Date(`${currentYear}-12-31`),
-                    }
-                },
-                orderBy: { tanggal: 'asc' }
-            }),
-            
+
             // Kematian data
             prisma.kematian.findMany({
                 where: {
