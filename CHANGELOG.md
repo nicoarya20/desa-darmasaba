@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.122] - 2026-07-14
+### Fixed
+- **Edit Polsek Terdekat (admin) menampilkan notif ganda & data tidak tersimpan**: saat mengubah data Polsek Terdekat lalu menekan Simpan, muncul pesan error "[layananPolsekId] required" sekaligus notifikasi "berhasil diperbarui" — padahal data tidak tersimpan. Penyebabnya dua hal: (1) input yang diisi pengguna hanya masuk ke state form halaman, tetapi proses simpan memvalidasi & mengirim state form lain yang tidak pernah terisi; (2) saat memuat data untuk diedit, daftar layanan diambil dari field yang tidak ada di respons server (server mengirim relasi, bukan field langsung), sehingga validasi selalu gagal namun tombol Simpan tetap menampilkan notifikasi sukses. Kini input pengguna disinkronkan ke state yang benar sebelum disimpan, daftar layanan dibaca dari relasi yang tepat, dan notifikasi sukses/redirect hanya muncul bila penyimpanan benar-benar berhasil. Tanpa perubahan schema/migration.
+
 ## [0.1.120] - 2026-07-14
 ### Fixed
 - **Hapus Data Pendidikan (admin) gagal dengan error 400 "Bad Request"**: menekan hapus pada daftar Data Pendidikan menampilkan error dan data tidak terhapus. Penyebabnya sama seperti perbaikan Info Sekolah (0.1.114): permintaan hapus dikirim dengan header `Content-Type: application/json` padahal tanpa isi, sehingga server menolak lebih dulu (400) sebelum masuk ke proses hapus, dan respons non-JSON memicu error parsing di layar. Kini penghapusan memakai mekanisme API yang konsisten (Eden client) yang tidak memasang header itu untuk permintaan tanpa isi dan membaca respons sesuai tipenya. Tanpa perubahan schema/migration.
