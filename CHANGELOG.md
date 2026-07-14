@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.120] - 2026-07-14
+### Fixed
+- **Hapus Data Pendidikan (admin) gagal dengan error 400 "Bad Request"**: menekan hapus pada daftar Data Pendidikan menampilkan error dan data tidak terhapus. Penyebabnya sama seperti perbaikan Info Sekolah (0.1.114): permintaan hapus dikirim dengan header `Content-Type: application/json` padahal tanpa isi, sehingga server menolak lebih dulu (400) sebelum masuk ke proses hapus, dan respons non-JSON memicu error parsing di layar. Kini penghapusan memakai mekanisme API yang konsisten (Eden client) yang tidak memasang header itu untuk permintaan tanpa isi dan membaca respons sesuai tipenya. Tanpa perubahan schema/migration.
+
 ## [0.1.119] - 2026-07-14
 ### Fixed
 - **Data Pendidikan (admin) lambat muncul setelah tambah data, harus refresh manual**: setelah menyimpan data pendidikan baru, daftar sering lama menampilkan data terbaru sampai halaman di-refresh manual. Penyebabnya alur setelah simpan memicu dua pemuatan daftar yang saling balapan (satu dari proses simpan, satu saat halaman daftar dibuka) plus satu permintaan detail yang tidak terpakai — semuanya menahan tampilan di kondisi loading. Kini setelah simpan langsung diarahkan ke halaman daftar yang memuat data segar satu kali saja, tanpa permintaan berlebih. Tanpa perubahan schema/migration.
