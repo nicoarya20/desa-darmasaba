@@ -58,7 +58,7 @@ export default async function apbdesUpdate(context: Context) {
       context.set.status = 409;
       return {
         success: false,
-        message: `APBDes untuk tahun ${body.tahun} sudah ada`,
+        message: `APBDes tahun ${body.tahun} sudah tersedia. Pilih tahun lain atau ubah data yang sudah ada.`,
       };
     }
 

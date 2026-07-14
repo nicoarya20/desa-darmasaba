@@ -35,7 +35,7 @@ export default async function prestasiDesaUpdate(context: Context) {
         context.set.status = 409;
         return {
           success: false,
-          message: `Prestasi Desa dengan nama "${body.name}" sudah ada`,
+          message: `Prestasi "${body.name}" sudah terdaftar. Gunakan nama lain atau ubah data yang sudah ada.`,
         };
       }
     }
