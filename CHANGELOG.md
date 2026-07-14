@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.117] - 2026-07-14
+### Fixed
+- **Halaman Kependudukan (Dashboard & Dinamika Penduduk) error / blank di STG**: kedua halaman publik gagal dirender (React error #31 — mencoba menampilkan objek data sebagai teks). Penyebabnya di endpoint dashboard summary: daftar query paralel punya satu query berlebih (data kelahiran) yang tidak terpakai, sehingga hasil setiap query setelahnya bergeser satu posisi — akibatnya angka "Pindah Masuk" justru terisi daftar data kematian, dan data agama/umur/banjar ikut tertukar. Query berlebih dihapus agar setiap angka kembali ke tempatnya. Tanpa perubahan schema/migration.
+- **Menu Posyandu di sidebar admin membuka halaman 404**: alamat menu memiliki potongan berlebih di ujung sehingga sistem mengira nama menu adalah ID data dan mencari data posyandu bernama "list_posyandu" yang tidak ada (404). Alamat diperbaiki agar langsung membuka daftar posyandu.
+
 ## [0.1.116] - 2026-07-14
 ### Fixed
 - **Hapus kategori/master induk gagal (error 500) di 8 halaman admin**: melanjutkan perbaikan Info Sekolah (0.1.114), pola yang sama diterapkan ke kategori/master induk sejati — Kategori Pengumuman, Kategori Kegiatan Gotong Royong, Pendaftaran Jadwal Kegiatan, tiga master responden Indeks Kepuasan (Jenis Kelamin, Umur, Pilihan Rating), Kategori Desa Anti Korupsi, dan Kategori Prestasi. Menghapus data ini saat masih dipakai data lain sebelumnya membuat server error 500 (relasi wajib) atau menelantarkan data anak. Kini memakai mekanisme nonaktif (soft-delete) seperti Data Banjar: bila masih dipakai muncul pesan jelas seperti "tidak dapat dihapus karena masih digunakan oleh 3 pengumuman"; bila aman, data disembunyikan dari daftar.
