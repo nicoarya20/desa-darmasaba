@@ -153,9 +153,13 @@ function EditPolsekTerdekat() {
  const handleSubmit = async () => {
   try {
     setIsSubmitting(true);
-    await polsekState.edit.update();
-    toast.success("Polsek terdekat berhasil diperbarui!");
-    router.push("/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat");
+    // Sinkronkan input user (formData lokal) ke edit.form yang divalidasi & dikirim update()
+    polsekState.edit.form = { ...formData };
+    const ok = await polsekState.edit.update();
+    // update() sudah menampilkan toast sukses/gagal sendiri; hanya redirect bila berhasil
+    if (ok) {
+      router.push("/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat");
+    }
   } catch (error) {
     console.error("Error updating polsek terdekat:", error);
     toast.error("Gagal memperbarui data polsek terdekat");
