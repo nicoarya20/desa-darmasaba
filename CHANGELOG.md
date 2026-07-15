@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.123] - 2026-07-15
+### Fixed
+- **Input nomor telepon menerima huruf & tanpa batas panjang di banyak form**: kolom nomor telepon/HP/kontak di berbagai halaman (admin & publik) masih bisa diisi huruf dan menerima digit melebihi panjang wajar — dilaporkan pertama pada form Lowongan Kerja Lokal. Kini seluruh field nomor telepon memfilter karakter non-digit dan membatasi maksimal 13 digit (rentang nomor HP Indonesia, konsisten dengan perbaikan UMKM 0.1.121), serta memakai `inputMode="numeric"` agar keyboard angka muncul di perangkat mobile. Cakupan: Lowongan Kerja Lokal, Pegawai BUMDes, Pegawai PPID, Kontak Darurat (kesehatan & keamanan), Polsek Terdekat, Puskesmas (kontak & UGD), Posyandu (No. HP balita/ibu hamil & telepon posyandu), Peminjam Perpustakaan, Layanan Online (administrasi & pengaduan), Beasiswa Desa, Jadwal Kegiatan, dan Permohonan Informasi/Keberatan PPID. Tanpa perubahan schema/migration.
+
 ## [0.1.122] - 2026-07-14
 ### Fixed
 - **Edit Polsek Terdekat (admin) menampilkan notif ganda & data tidak tersimpan**: saat mengubah data Polsek Terdekat lalu menekan Simpan, muncul pesan error "[layananPolsekId] required" sekaligus notifikasi "berhasil diperbarui" — padahal data tidak tersimpan. Penyebabnya dua hal: (1) input yang diisi pengguna hanya masuk ke state form halaman, tetapi proses simpan memvalidasi & mengirim state form lain yang tidak pernah terisi; (2) saat memuat data untuk diedit, daftar layanan diambil dari field yang tidak ada di respons server (server mengirim relasi, bukan field langsung), sehingga validasi selalu gagal namun tombol Simpan tetap menampilkan notifikasi sukses. Kini input pengguna disinkronkan ke state yang benar sebelum disimpan, daftar layanan dibaca dari relasi yang tepat, dan notifikasi sukses/redirect hanya muncul bila penyimpanan benar-benar berhasil. Tanpa perubahan schema/migration.

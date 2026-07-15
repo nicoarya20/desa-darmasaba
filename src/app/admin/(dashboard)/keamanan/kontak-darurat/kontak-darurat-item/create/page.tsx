@@ -96,9 +96,13 @@ function CreateKontakItem() {
           <TextInput
             label={<Text fw="bold" fz="sm">Nomor Telepon Kontak</Text>}
             placeholder="Masukkan nomor telepon"
+            inputMode="numeric"
+            maxLength={13}
             value={kontakState.create.form.nomorTelepon}
             onChange={(val) => {
-              kontakState.create.form.nomorTelepon = val.target.value;
+              kontakState.create.form.nomorTelepon = val.target.value
+                .replace(/\D/g, '')
+                .slice(0, 13);
             }}
             required
           />

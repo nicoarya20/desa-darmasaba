@@ -298,7 +298,14 @@ export default function EditPegawaiPPID() {
             label="Telepon"
             placeholder="08123456789"
             value={formData.telepon}
-            onChange={(e) => setFormData({ ...formData, telepon: e.target.value })}
+            inputMode="numeric"
+            maxLength={13}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                telepon: e.target.value.replace(/\D/g, "").slice(0, 13),
+              })
+            }
           />
 
           {/* Alamat */}

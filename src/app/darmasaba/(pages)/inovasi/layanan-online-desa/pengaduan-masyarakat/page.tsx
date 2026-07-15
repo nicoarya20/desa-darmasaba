@@ -139,10 +139,16 @@ function PengaduanMasyarakat() {
               onChange={(val) => (state.pengaduanMasyarakat.create.form.email = val.target.value)}
             />
             <TextInput
-              type="number"
+              inputMode="numeric"
+              maxLength={13}
               label={<Text fz="sm" fw="bold">Nomor Telepon</Text>}
               placeholder="Masukkan nomor telepon"
-              onChange={(val) => (state.pengaduanMasyarakat.create.form.nomorTelepon = val.target.value)}
+              value={state.pengaduanMasyarakat.create.form.nomorTelepon}
+              onChange={(val) =>
+                (state.pengaduanMasyarakat.create.form.nomorTelepon = val.target.value
+                  .replace(/\D/g, '')
+                  .slice(0, 13))
+              }
             />
             <TextInput
               label={<Text fz="sm" fw="bold">NIK</Text>}

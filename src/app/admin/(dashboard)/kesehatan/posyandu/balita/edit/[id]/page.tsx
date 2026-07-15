@@ -113,8 +113,10 @@ export default function BalitaEditPage() {
             <TextInput
               label="No. HP Orang Tua"
               placeholder="08xx-xxxx-xxxx"
+              inputMode="numeric"
+              maxLength={13}
               value={form.noHpOrtu}
-              onChange={(e) => { balitaState.edit.form.noHpOrtu = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.edit.form.noHpOrtu = e.currentTarget.value.replace(/\D/g, '').slice(0, 13); }}
               radius="md"
             />
             <Select

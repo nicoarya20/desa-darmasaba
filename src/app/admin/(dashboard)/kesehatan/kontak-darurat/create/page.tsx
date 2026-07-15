@@ -132,10 +132,13 @@ function CreateKontakDarurat() {
           />
 
           <TextInput
-            type='number'
+            inputMode="numeric"
+            maxLength={13}
             value={kontakDaruratState.create.form.whatsapp}
             onChange={(val) => {
-              kontakDaruratState.create.form.whatsapp = val.target.value;
+              kontakDaruratState.create.form.whatsapp = val.target.value
+                .replace(/\D/g, '')
+                .slice(0, 13);
             }}
             label={<Text fz="sm" fw="bold">Telepon</Text>}
             placeholder="Masukkan telepon"

@@ -226,9 +226,12 @@ function Page() {
                     label="Nomor Telepon"
                     placeholder="Masukkan nomor telepon aktif"
                     withAsterisk
+                    inputMode="numeric"
+                    maxLength={13}
+                    value={permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.notelp || ''}
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.notelp =
-                        val.target.value;
+                        val.target.value.replace(/\D/g, '').slice(0, 13);
                     }}
                   />
 

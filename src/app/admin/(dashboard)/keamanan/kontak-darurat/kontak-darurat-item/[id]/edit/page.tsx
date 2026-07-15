@@ -148,8 +148,12 @@ function EditKontakItem() {
           <TextInput
             label="Nomor Telepon"
             placeholder="Masukkan nomor telepon"
+            inputMode="numeric"
+            maxLength={13}
             value={formData.nomorTelepon}
-            onChange={(e) => handleChange('nomorTelepon', e.target.value)}
+            onChange={(e) =>
+              handleChange('nomorTelepon', e.target.value.replace(/\D/g, '').slice(0, 13))
+            }
             required
           />
 

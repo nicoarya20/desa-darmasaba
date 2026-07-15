@@ -247,7 +247,13 @@ function CreatePegawaiBumDes() {
               label="Nomor Telepon"
               placeholder="Contoh: 08123456789"
               value={stateOrganisasi.create.form.telepon}
-              onChange={(e) => (stateOrganisasi.create.form.telepon = e.currentTarget.value)}
+              inputMode="numeric"
+              maxLength={13}
+              onChange={(e) =>
+                (stateOrganisasi.create.form.telepon = e.currentTarget.value
+                  .replace(/\D/g, "")
+                  .slice(0, 13))
+              }
             />
           </Box>
 

@@ -71,8 +71,10 @@ export default function IbuHamilCreatePage() {
             <TextInput
               label="No. HP"
               placeholder="08xx-xxxx-xxxx"
+              inputMode="numeric"
+              maxLength={13}
               value={form.noHp}
-              onChange={(e) => { ibuHamilState.create.form.noHp = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.create.form.noHp = e.currentTarget.value.replace(/\D/g, '').slice(0, 13); }}
               radius="md"
             />
             <TextInput

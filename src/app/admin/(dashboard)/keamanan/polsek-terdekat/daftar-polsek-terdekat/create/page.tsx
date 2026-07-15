@@ -159,7 +159,13 @@ function CreatePolsekTerdekat() {
           />
           <TextInput
             value={polsekState.create.form.nomorTelepon}
-            onChange={(val) => (polsekState.create.form.nomorTelepon = val.target.value)}
+            inputMode="numeric"
+            maxLength={13}
+            onChange={(val) =>
+              (polsekState.create.form.nomorTelepon = val.target.value
+                .replace(/\D/g, '')
+                .slice(0, 13))
+            }
             label={<Text fw="bold" fz="sm">Nomor Telepon Polsek Terdekat</Text>}
             placeholder="Masukkan nomor telepon Polsek Terdekat"
             required
