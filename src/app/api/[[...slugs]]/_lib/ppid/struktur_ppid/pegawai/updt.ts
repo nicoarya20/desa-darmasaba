@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
@@ -124,6 +125,14 @@ export default async function pegawaiUpdate(context: Context) {
       }
     );
   } catch (error) {
+    // Ganti email ke email pegawai PPID lain yang sudah ada (@unique) → 409
+    const duplicate = toDuplicateResponse(error);
+    if (duplicate) {
+      return new Response(JSON.stringify(duplicate), {
+        status: 409,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     console.error("Error updating profile PPID:", error);
     return new Response(
       JSON.stringify({

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -488,7 +489,8 @@ const pegawai = proxy({
           toast.success("Pegawai berhasil ditambahkan");
           await pegawai.findMany.load();
         } else {
-          toast.error(res.data?.message ?? "Gagal tambah pegawai");
+          // Pesan server (mis. 409 "Email sudah dipakai")
+          toast.error(getServerMessage(res) ?? "Gagal tambah pegawai");
         }
       } catch (error) {
         console.error("Gagal create:", error);

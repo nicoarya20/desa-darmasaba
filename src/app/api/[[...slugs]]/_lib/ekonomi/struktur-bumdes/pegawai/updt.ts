@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 type FormUpdatePegawai = {
@@ -54,6 +55,12 @@ export default async function pegawaiUpdate(context: Context) {
       data: updated,
     };
   } catch (error: any) {
+    // Ganti email ke email pegawai lain yang sudah ada (@unique) → 409
+    const duplicate = toDuplicateResponse(error);
+    if (duplicate) {
+      context.set.status = 409;
+      return duplicate;
+    }
     console.error("Error update pegawai:", error);
     return {
       success: false,
