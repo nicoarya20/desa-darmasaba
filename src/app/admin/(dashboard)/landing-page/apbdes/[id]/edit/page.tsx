@@ -50,7 +50,7 @@ type ItemForm = {
 };
 
 function EditAPBDes() {
-  const apbdesState = useProxy(apbdes);
+  const apbdesState = useProxy(apbdes, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const params = useParams();
 

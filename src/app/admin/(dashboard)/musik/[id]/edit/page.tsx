@@ -28,7 +28,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 export default function EditMusik() {
-  const musikState = useProxy(stateDashboardMusik);
+  const musikState = useProxy(stateDashboardMusik, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;

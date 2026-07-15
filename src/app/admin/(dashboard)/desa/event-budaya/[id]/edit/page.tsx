@@ -19,7 +19,7 @@ import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function EditEventBudayaPage() {
-  const state = useProxy(eventBudayaState);
+  const state = useProxy(eventBudayaState, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;

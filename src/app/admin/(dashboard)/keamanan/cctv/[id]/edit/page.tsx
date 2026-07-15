@@ -31,7 +31,7 @@ const LeafletMapEdit = dynamic(
 
 function EditCctv() {
   const router = useRouter();
-  const state = useProxy(cctvState);
+  const state = useProxy(cctvState, { sync: true }); // sync: cegah caret jump di controlled input
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loaded, setLoaded] = useState(false);
