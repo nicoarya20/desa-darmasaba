@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -44,7 +45,7 @@ const grafikSektorUnggulan = proxy({
           "create"
         ].post(grafikSektorUnggulan.create.form);
         if (res.status === 200) {
-          const id = res.data?.data?.id;
+          const id = (res.data as any)?.data?.id;
           if (id) {
             toast.success("Sukses menambahkan");
             grafikSektorUnggulan.create.form = {
@@ -56,7 +57,10 @@ const grafikSektorUnggulan = proxy({
             return id;
           }
         }
-        return toast.error("failed create");
+        // Tampilkan pesan server (mis. 409 "Nama sudah dipakai")
+        return toast.error(
+          getServerMessage(res) || "Gagal menambahkan sektor unggulan desa"
+        );
       } catch (error) {
         console.log((error as Error).message);
       } finally {
@@ -177,7 +181,11 @@ const grafikSektorUnggulan = proxy({
         return result.data;
       } catch (error) {
         console.error("Error update data:", error);
-        toast.error("Gagal update data grafik sektor unggulan desa");
+        // Pesan dari server (mis. 409 "Nama sudah dipakai") diteruskan via Error
+        toast.error(
+          (error as Error).message ||
+            "Gagal update data grafik sektor unggulan desa"
+        );
       } finally {
         this.loading = false;
       }
