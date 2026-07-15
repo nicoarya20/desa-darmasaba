@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { handlePrismaError } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 
@@ -12,14 +13,19 @@ export default async function kategoriPrestasiCreate(context: Context) {
         };
     }
 
-    const kategoriPrestasi = await prisma.kategoriPrestasiDesa.create({
-        data: {
-            name: body.name,
-        },
-    });
-    return {
-        success: true,
-        message: "Sukses menambahkan kategori prestasi",
-        data: kategoriPrestasi
-    };
+    try {
+        const kategoriPrestasi = await prisma.kategoriPrestasiDesa.create({
+            data: {
+                name: body.name,
+            },
+        });
+        return {
+            success: true,
+            message: "Sukses menambahkan kategori prestasi",
+            data: kategoriPrestasi
+        };
+    } catch (error) {
+        // Nama kategori unik (@unique) → 409 "Nama sudah dipakai"; error lain di-throw
+        return handlePrismaError(error, context);
+    }
 }

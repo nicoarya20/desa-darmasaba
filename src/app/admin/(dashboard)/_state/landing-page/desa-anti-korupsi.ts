@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -296,7 +297,8 @@ const kategoriDesaAntiKorupsi = proxy({
           kategoriDesaAntiKorupsi.findMany.load();
           return toast.success("Data berhasil ditambahkan");
         }
-        return toast.error("Gagal menambahkan data");
+        // Pesan server (mis. 409 "Nama sudah dipakai")
+        return toast.error(getServerMessage(res) || "Gagal menambahkan data");
       } catch (error) {
         console.log(error);
         toast.error("Gagal menambahkan data");
