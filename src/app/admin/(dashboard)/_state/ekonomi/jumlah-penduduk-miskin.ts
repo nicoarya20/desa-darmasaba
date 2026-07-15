@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -45,7 +46,7 @@ const jumlahPendudukMiskin = proxy({
           "create"
         ].post(jumlahPendudukMiskin.create.form);
         if (res.status === 200) {
-          const id = res.data?.data?.id;
+          const id = (res.data as any)?.data?.id;
           if (id) {
             toast.success("Sukses menambahkan");
             jumlahPendudukMiskin.create.form = {
@@ -56,7 +57,10 @@ const jumlahPendudukMiskin = proxy({
             return id;
           }
         }
-        return toast.error("failed create");
+        // Tampilkan pesan server (mis. 409 "Tahun sudah dipakai")
+        return toast.error(
+          getServerMessage(res) || "Gagal menambahkan jumlah penduduk miskin"
+        );
       } catch (error) {
         console.log((error as Error).message);
       } finally {
@@ -166,7 +170,11 @@ const jumlahPendudukMiskin = proxy({
           "Error update data grafik jumlah penduduk miskin:",
           error
         );
-        toast.error("Gagal update data grafik jumlah penduduk miskin");
+        // Pesan dari server (mis. 409 "Tahun sudah dipakai") diteruskan via Error
+        toast.error(
+          (error as Error).message ||
+            "Gagal update data grafik jumlah penduduk miskin"
+        );
       } finally {
         this.loading = false;
       }

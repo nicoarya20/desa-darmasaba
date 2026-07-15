@@ -73,9 +73,6 @@ export function toDuplicateResponse(error: unknown): DuplicateResponse | null {
   return null;
 }
 
-// Elysia context minimal yang dibutuhkan untuk set status.
-type StatusContext = { set: { status: number | string } };
-
 /**
  * Helper siap-pakai di dalam catch handler create/edit:
  *
@@ -84,14 +81,19 @@ type StatusContext = { set: { status: number | string } };
  *
  * - P2002 → set status 409 (jika context ada) + return response duplikat.
  * - Selain itu → re-throw agar penanganan error yang ada tidak berubah.
+ *
+ * `context` bertipe longgar (any) karena tipe `set` Elysia (status = union
+ * besar keyof StatusMap) terlalu spesifik untuk dicocokkan secara struktural;
+ * kita hanya perlu menulis `set.status`.
  */
 export function handlePrismaError(
   error: unknown,
-  context?: StatusContext
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: { set?: { status?: any } } | any
 ): DuplicateResponse {
   const duplicate = toDuplicateResponse(error);
   if (duplicate) {
-    if (context) context.set.status = 409;
+    if (context?.set) context.set.status = 409;
     return duplicate;
   }
   throw error;
