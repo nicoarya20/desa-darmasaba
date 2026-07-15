@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 export type Status = 'Selesai' | 'Proses' | 'Gagal';
 
 function CreateLaporanPublik() {
-  const stateLaporan = useProxy(laporanPublikState);
+  const stateLaporan = useProxy(laporanPublikState, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

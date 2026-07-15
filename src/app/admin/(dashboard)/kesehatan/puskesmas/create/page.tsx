@@ -23,7 +23,7 @@ import { useProxy } from 'valtio/utils';
 import puskesmasState from '../../../_state/kesehatan/puskesmas/puskesmas';
 
 function CreatePuskesmas() {
-  const statePuskesmas = useProxy(puskesmasState);
+  const statePuskesmas = useProxy(puskesmasState, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);

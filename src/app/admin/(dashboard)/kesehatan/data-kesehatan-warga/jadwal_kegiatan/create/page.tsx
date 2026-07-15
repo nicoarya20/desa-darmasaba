@@ -20,7 +20,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateJadwalKegiatan() {
-  const stateJadwalKegiatan = useProxy(jadwalKegiatanState);
+  const stateJadwalKegiatan = useProxy(jadwalKegiatanState, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

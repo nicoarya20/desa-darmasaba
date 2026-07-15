@@ -13,7 +13,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreateGrafikBerdasarkanUsiaKerjaYangMenganggur() {
   const router = useRouter();
-  const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanUsiaKerjaNganggur);
+  const stategrafik = useProxy(grafikNganggur.grafikBerdasarkanUsiaKerjaNganggur, { sync: true }); // sync: cegah caret jump di controlled input
   const [donutData, setDonutData] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

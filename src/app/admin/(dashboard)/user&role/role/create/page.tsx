@@ -21,7 +21,7 @@ import user from '../../../_state/user/user-state';
 
 export default function CreateRole() {
   const router = useRouter();
-  const stateRole = useProxy(user.roleState);
+  const stateRole = useProxy(user.roleState, { sync: true }); // sync: cegah caret jump di controlled input
   useEffect(() => {
     stateRole.findMany.load();
   }, []);

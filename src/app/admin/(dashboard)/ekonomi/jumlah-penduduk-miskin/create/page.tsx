@@ -11,7 +11,7 @@ import jumlahPendudukMiskin from '../../../_state/ekonomi/jumlah-penduduk-miskin
 import { toast } from 'react-toastify';
 
 export default function CreateJumlahPendudukMiskin() {
-  const stateJPM = useProxy(jumlahPendudukMiskin);
+  const stateJPM = useProxy(jumlahPendudukMiskin, { sync: true }); // sync: cegah caret jump di controlled input
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);

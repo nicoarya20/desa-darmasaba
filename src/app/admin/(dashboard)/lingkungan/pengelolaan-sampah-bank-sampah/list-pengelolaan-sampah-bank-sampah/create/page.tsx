@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function CreatePengelolaanSampahBankSampah() {
-  const stateCreate = useProxy(pengelolaanSampahState.pengelolaanSampah);
+  const stateCreate = useProxy(pengelolaanSampahState.pengelolaanSampah, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

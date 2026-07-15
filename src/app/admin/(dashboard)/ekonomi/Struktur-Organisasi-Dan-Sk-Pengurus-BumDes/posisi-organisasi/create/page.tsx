@@ -12,7 +12,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreatePosisiOrganisasiBumDes() {
   const router = useRouter();
-  const stateOrganisasi = useProxy(stateStrukturBumDes.posisiOrganisasi);
+  const stateOrganisasi = useProxy(stateStrukturBumDes.posisiOrganisasi, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Helper function to check if HTML content is empty

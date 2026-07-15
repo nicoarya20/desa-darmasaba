@@ -20,7 +20,7 @@ import distribusiAgama from '../../../_state/kependudukan/distribusi-agama';
 import { toast } from 'react-toastify';
 
 function CreateDistribusiAgama() {
-  const stateDistribusiAgama = useProxy(distribusiAgama);
+  const stateDistribusiAgama = useProxy(distribusiAgama, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

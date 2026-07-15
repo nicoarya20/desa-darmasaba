@@ -10,7 +10,7 @@ import dataPendidikan from '../../../_state/pendidikan/data-pendidikan';
 import { toast } from 'react-toastify';
 
 export default function CreateDataPendidikan() {
-  const stateDPM = useProxy(dataPendidikan);
+  const stateDPM = useProxy(dataPendidikan, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

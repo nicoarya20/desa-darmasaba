@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 
 function CreateKategoriKegiatan() {
   const router = useRouter();
-  const stateKategori = useProxy(gotongRoyongState.kategoriKegiatan)
+  const stateKategori = useProxy(gotongRoyongState.kategoriKegiatan, { sync: true }) // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid

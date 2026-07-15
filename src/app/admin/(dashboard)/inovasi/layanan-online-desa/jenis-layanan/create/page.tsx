@@ -21,7 +21,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreateJenisLayanan() {
   const router = useRouter();
-  const statePasar = useProxy(layananonlineDesa.jenisLayanan);
+  const statePasar = useProxy(layananonlineDesa.jenisLayanan, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {

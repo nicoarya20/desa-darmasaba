@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateGrafikHasilKepuasanMasyarakat() {
-  const stateGrafikKepuasan = useProxy(grafikkepuasan);
+  const stateGrafikKepuasan = useProxy(grafikkepuasan, { sync: true }); // sync: cegah caret jump di controlled input
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);

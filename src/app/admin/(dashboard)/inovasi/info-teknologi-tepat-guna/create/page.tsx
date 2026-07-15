@@ -24,7 +24,7 @@ import CreateEditor from '../../../_com/createEditor';
 import infoTeknoState from '../../../_state/inovasi/info-tekno';
 
 function CreateInfoTeknologiTepatGuna() {
-  const stateInfoTekno = useProxy(infoTeknoState);
+  const stateInfoTekno = useProxy(infoTeknoState, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();

@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePelayananTelunjukDesa() {
-  const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa);
+  const stateTelunjukDesa = useProxy(stateLayananDesa.pelayananTelunjukSaktiDesa, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

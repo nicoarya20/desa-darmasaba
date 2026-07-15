@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 
 function CreateLembaga() {
   const router = useRouter();
-  const stateLembaga = useProxy(infoSekolahPaud.lembagaPendidikan);
+  const stateLembaga = useProxy(infoSekolahPaud.lembagaPendidikan, { sync: true }); // sync: cegah caret jump di controlled input
   // Snapshot cabang jenjangPendidikan agar Select re-render saat findMany.load()
   // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
   const stateJenjang = useProxy(infoSekolahPaud.jenjangPendidikan);

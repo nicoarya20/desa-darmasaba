@@ -24,7 +24,7 @@ import CreateEditor from '../../../_com/createEditor';
 import tipsKeamananState from '../../../_state/keamanan/tips-keamanan';
 
 function CreateKeamananLingkungan() {
-  const stateKeamanan = useProxy(tipsKeamananState);
+  const stateKeamanan = useProxy(tipsKeamananState, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();

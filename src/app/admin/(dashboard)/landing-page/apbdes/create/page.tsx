@@ -39,7 +39,7 @@ type ItemForm = {
 
 function CreateAPBDes() {
   const router = useRouter();
-  const stateAPBDes = useProxy(apbdes);
+  const stateAPBDes = useProxy(apbdes, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);

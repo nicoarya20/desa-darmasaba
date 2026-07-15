@@ -12,7 +12,7 @@ import { useProxy } from 'valtio/utils';
 
 function RespondenCreate() {
   const router = useRouter();
-  const stategrafikBerdasarkanResponden = useProxy(indeksKepuasanState.responden)
+  const stategrafikBerdasarkanResponden = useProxy(indeksKepuasanState.responden, { sync: true }) // sync: cegah caret jump di controlled input
   // Snapshot 3 cabang opsi agar Select re-render saat findMany.load() async
   // selesai — JSX sebelumnya baca raw proxy (loading/data tak reaktif).
   const snapJK = useProxy(indeksKepuasanState.jenisKelaminResponden)

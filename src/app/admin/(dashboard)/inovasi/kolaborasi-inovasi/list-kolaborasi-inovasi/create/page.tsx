@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateProgramKreatifDesa() {
-  const stateCreate = useProxy(kolaborasiInovasiState);
+  const stateCreate = useProxy(kolaborasiInovasiState, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

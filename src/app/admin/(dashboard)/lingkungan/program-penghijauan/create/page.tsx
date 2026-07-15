@@ -21,7 +21,7 @@ import { toast } from 'react-toastify';
 import { useState } from 'react';
 
 function CreateProgramPenghijauan() {
-  const stateCreate = useProxy(programPenghijauanState);
+  const stateCreate = useProxy(programPenghijauanState, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
