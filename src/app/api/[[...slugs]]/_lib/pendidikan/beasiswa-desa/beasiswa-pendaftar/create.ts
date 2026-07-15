@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 type FormCreate = {
@@ -43,6 +44,12 @@ export default async function beasiswaPendaftarCreate(context: Context) {
       data: result,
     };
   } catch (error) {
+    // NIK pendaftar unik (@unique) → 409 "NIK sudah dipakai"; error lain di-throw
+    const duplicate = toDuplicateResponse(error);
+    if (duplicate) {
+      context.set.status = 409;
+      return duplicate;
+    }
     console.error("Gagal membuat data beasiswa pendaftar:", error);
     throw new Error("Gagal membuat data beasiswa pendaftar: " + (error as Error).message);
   }

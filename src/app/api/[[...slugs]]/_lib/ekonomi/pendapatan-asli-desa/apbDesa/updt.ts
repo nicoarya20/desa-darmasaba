@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 type FormUpdate = {
@@ -60,9 +61,15 @@ export default async function apbDesaUpdate(context: Context) {
             data: updated,
         };
     } catch (error) {
+        // Ganti tahun ke tahun APBDes lain yang sudah ada → 409 "Tahun sudah dipakai"
+        const duplicate = toDuplicateResponse(error);
+        if (duplicate) {
+            context.set.status = 409;
+            return duplicate;
+        }
         console.error('Error updating APB Desa:', error);
         context.set.status = 500;
         return { error: 'Failed to update APB Desa'};
     }
-    
+
 }

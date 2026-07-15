@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -44,7 +45,8 @@ const ApbDesa = proxy({
           ApbDesa.findMany.load();
           this.reset();
         } else {
-          toast.error(res.data?.message || "Gagal menambahkan APB Desa");
+          // Pesan server (mis. 409 "Tahun sudah dipakai") — via data/error Eden
+          toast.error(getServerMessage(res) || "Gagal menambahkan APB Desa");
         }
       } catch (error) {
         console.error("Create error:", error);
@@ -191,15 +193,18 @@ const ApbDesa = proxy({
             body: JSON.stringify(this.form),
           }
         );
+        const data = await response.json().catch(() => null);
         if (!response.ok) {
-          throw new Error("Gagal memperbarui APB Desa");
+          // Pesan server (mis. 409 "Tahun sudah dipakai") diteruskan via Error
+          throw new Error(
+            getServerMessage(data) || "Gagal memperbarui APB Desa"
+          );
         }
-        const data = await response.json();
         toast.success("APB Desa berhasil diperbarui");
         return data;
       } catch (error) {
         console.error("Error updating APB Desa:", error);
-        toast.error("Gagal memperbarui APB Desa");
+        toast.error((error as Error).message || "Gagal memperbarui APB Desa");
         throw error;
       } finally {
         this.loading = false;
