@@ -87,7 +87,7 @@ const jumlahPengangguran = proxy({
           ].post(jumlahPengangguran.create.form);
 
         if (res.status === 200) {
-          const id = res.data?.id;
+          const id = (res.data as any)?.id;
           if (id) {
             toast.success("Sukses menambahkan");
             jumlahPengangguran.create.form = { ...jumlahPengangguranForm };
@@ -95,7 +95,10 @@ const jumlahPengangguran = proxy({
             return id;
           }
         }
-        toast.error("failed create");
+        // Ambil pesan dari server (mis. 409 duplikat bulan+tahun) supaya jelas ke user
+        const serverMessage =
+          (res.data as any)?.message ?? (res.error?.value as any)?.message;
+        toast.error(serverMessage || "Gagal menambahkan data pengangguran");
         return null;
       } catch (error) {
         console.log((error as Error).message);

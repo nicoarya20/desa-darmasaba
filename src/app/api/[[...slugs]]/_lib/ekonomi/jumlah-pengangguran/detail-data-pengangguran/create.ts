@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
 // Define month order for calculation
@@ -25,6 +26,19 @@ export default async function createDetailDataPengangguran(context: Context) {
   const currentMonthIndex = monthOrder.indexOf(body.month);
   if (currentMonthIndex === -1) {
     throw new Error("Bulan tidak valid");
+  }
+
+  // Guard duplikat: kombinasi (month, year) unik di schema (@@unique).
+  // Cek dulu supaya bisa balikan pesan jelas, bukan 500 dari P2002.
+  const duplicate = await prisma.detailDataPengangguran.findFirst({
+    where: { month: body.month, year: yearNumber },
+  });
+  if (duplicate) {
+    context.set.status = 409;
+    return {
+      success: false,
+      message: `Data bulan ${body.month} tahun ${yearNumber} sudah terpakai. Silakan edit data yang ada atau pilih bulan lain.`,
+    };
   }
 
   // Calculate previous month and year
@@ -58,26 +72,41 @@ export default async function createDetailDataPengangguran(context: Context) {
     percentageChange = Number(body.percentageChange) || 0;
   }
 
-  const created = await prisma.detailDataPengangguran.create({
-    data: {
-      month: body.month,
-      year: yearNumber,
-      totalUnemployment: Number(body.totalUnemployment),
-      educatedUnemployment: Number(body.educatedUnemployment),
-      uneducatedUnemployment: Number(body.uneducatedUnemployment),
-      percentageChange, // This is now calculated based on previous month's data
-    },
-    select: {
-      id: true,
-      month: true,
-      year: true,
-      totalUnemployment: true,
-      educatedUnemployment: true,
-      uneducatedUnemployment: true,
-      percentageChange: true,
-      createdAt: true,
-    },
-  });
+  try {
+    const created = await prisma.detailDataPengangguran.create({
+      data: {
+        month: body.month,
+        year: yearNumber,
+        totalUnemployment: Number(body.totalUnemployment),
+        educatedUnemployment: Number(body.educatedUnemployment),
+        uneducatedUnemployment: Number(body.uneducatedUnemployment),
+        percentageChange, // This is now calculated based on previous month's data
+      },
+      select: {
+        id: true,
+        month: true,
+        year: true,
+        totalUnemployment: true,
+        educatedUnemployment: true,
+        uneducatedUnemployment: true,
+        percentageChange: true,
+        createdAt: true,
+      },
+    });
 
-  return created;
+    return created;
+  } catch (error) {
+    // Jaring pengaman kalau ada race di antara cek duplikat dan create (P2002 = unique violation)
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      context.set.status = 409;
+      return {
+        success: false,
+        message: `Data bulan ${body.month} tahun ${yearNumber} sudah terpakai. Silakan edit data yang ada atau pilih bulan lain.`,
+      };
+    }
+    throw error;
+  }
 }
