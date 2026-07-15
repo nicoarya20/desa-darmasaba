@@ -20,7 +20,7 @@ import { useProxy } from 'valtio/utils';
 
 
 function CreateKelahiran() {
-  const createState = useProxy(persentaseKelahiranKematian.kelahiran);
+  const createState = useProxy(persentaseKelahiranKematian.kelahiran, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

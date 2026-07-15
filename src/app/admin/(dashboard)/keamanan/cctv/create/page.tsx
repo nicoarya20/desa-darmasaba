@@ -32,7 +32,7 @@ const LeafletMap = dynamic(
 
 function CreateCctv() {
   const router = useRouter();
-  const state = useProxy(cctvState);
+  const state = useProxy(cctvState, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [markerSet, setMarkerSet] = useState(false);
 

@@ -24,7 +24,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateFoto() {
-  const FotoState = useProxy(stateGallery.foto);
+  const FotoState = useProxy(stateGallery.foto, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);

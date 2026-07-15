@@ -27,7 +27,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 export default function CreateMusik() {
-  const musikState = useProxy(stateDashboardMusik);
+  const musikState = useProxy(stateDashboardMusik, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewCover, setPreviewCover] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [previewAudio, setPreviewAudio] = useState<string | null>(null);

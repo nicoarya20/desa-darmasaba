@@ -25,7 +25,7 @@ import ApiFetch from '@/lib/api-fetch';
 
 export default function CreateDataUmkm() {
   const router = useRouter();
-  const state = useProxy(umkmState.umkm);
+  const state = useProxy(umkmState.umkm, { sync: true }); // sync: cegah caret jump di controlled input
   // Snapshot cabang kategoriProduk agar Select re-render saat findManyAll.load()
   // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
   const kategoriState = useProxy(umkmState.kategoriProduk);

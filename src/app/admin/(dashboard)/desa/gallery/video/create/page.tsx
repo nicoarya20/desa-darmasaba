@@ -22,7 +22,7 @@ import { useProxy } from 'valtio/utils';
 import { convertYoutubeUrlToEmbed } from '../../lib/youtube-utils';
 
 function CreateVideo() {
-  const videoState = useProxy(stateGallery.video);
+  const videoState = useProxy(stateGallery.video, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [link, setLink] = useState('');
   const embedLink = convertYoutubeUrlToEmbed(link);

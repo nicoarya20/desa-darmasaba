@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 
 function CreateEventBudayaPage() {
-  const state = useProxy(eventBudayaState);
+  const state = useProxy(eventBudayaState, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
 
   const handleSubmit = async () => {

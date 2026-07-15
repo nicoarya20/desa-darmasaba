@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 function CreateKategoriPengumuman() {
-  const createState = useProxy(stateDesaPengumuman.category);
+  const createState = useProxy(stateDesaPengumuman.category, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
