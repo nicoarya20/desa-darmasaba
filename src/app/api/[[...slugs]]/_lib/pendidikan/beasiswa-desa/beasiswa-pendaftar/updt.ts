@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 type FormUpdate = {
@@ -59,6 +60,12 @@ export default async function beasiswaPendaftarUpdate(context: Context) {
       data,
     };
   } catch (error) {
+    // Ganti NIK ke NIK pendaftar lain yang sudah ada → 409 "NIK sudah dipakai"
+    const duplicate = toDuplicateResponse(error);
+    if (duplicate) {
+      context.set.status = 409;
+      return duplicate;
+    }
     console.error("Update by ID error:", error);
     return {
       success: false,

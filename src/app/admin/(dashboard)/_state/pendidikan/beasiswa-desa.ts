@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -61,11 +62,13 @@ const beasiswaPendaftar = proxy({
           beasiswaPendaftar.findMany.load();
           return toast.success("Data Berhasil Dibuat, Silahkan Menunggu Konfirmasi dari Admin di WhatsApp");
         }
-        console.log(res);
-        return toast.error("failed create");
+        // Pesan server (mis. 409 "NIK sudah dipakai")
+        return toast.error(
+          getServerMessage(res) || "Gagal menambahkan pendaftar beasiswa"
+        );
       } catch (error) {
         console.log(error);
-        return toast.error("failed create");
+        return toast.error("Gagal menambahkan pendaftar beasiswa");
       } finally {
         beasiswaPendaftar.create.loading = false;
       }
