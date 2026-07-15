@@ -188,8 +188,12 @@ export default function CreateDataUmkm() {
             <TextInput
               label="Nomor WA / Kontak"
               placeholder="Contoh: 08123456789"
+              inputMode="numeric"
+              maxLength={13}
               value={state.create.form.kontak}
-              onChange={(e) => (state.create.form.kontak = e.target.value)}
+              onChange={(e) =>
+                (state.create.form.kontak = e.target.value.replace(/\D/g, "").slice(0, 13))
+              }
             />
           </Group>
 
