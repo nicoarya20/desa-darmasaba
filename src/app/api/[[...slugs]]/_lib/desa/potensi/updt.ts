@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
@@ -83,6 +84,14 @@ export default async function potensiDesaUpdate(context: Context) {
             { status: 200, headers: { 'Content-Type': 'application/json' } }
         );
     } catch (error) {
+        // Ganti nama ke potensi lain yang sudah ada → 409 "Nama sudah dipakai"
+        const duplicate = toDuplicateResponse(error);
+        if (duplicate) {
+            return new Response(JSON.stringify(duplicate), {
+                status: 409,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
         console.error("Error updating potensi desa:", error);
         return new Response(
             JSON.stringify({
