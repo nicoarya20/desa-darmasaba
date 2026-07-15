@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -58,7 +59,8 @@ const programInovasi = proxy({
         if (process.env.NODE_ENV === 'development') {
           console.log(res);
         }
-        return toast.error("failed create");
+        // Pesan server (mis. 409 "Nama sudah dipakai")
+        return toast.error(getServerMessage(res) || "Gagal menambahkan data");
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           console.error("Create error:", error);
@@ -406,7 +408,8 @@ const pejabatDesa = proxy({
         const errorMessage = (error as Error).message;
         this.error = errorMessage;
         console.error("Update profile error:", errorMessage);
-        toast.error("Terjadi kesalahan saat update profile");
+        // Pesan server (mis. 409 "Nama sudah dipakai") diteruskan via Error
+        toast.error(errorMessage || "Terjadi kesalahan saat update profile");
         return false;
       } finally {
         this.loading = false;

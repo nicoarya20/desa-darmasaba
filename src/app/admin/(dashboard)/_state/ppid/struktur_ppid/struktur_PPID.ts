@@ -139,7 +139,8 @@ const stateStruktur = proxy({
         const errorMessage = (error as Error).message;
         this.error = errorMessage;
         console.error("Update struktur error:", errorMessage);
-        toast.error("Terjadi kesalahan saat update struktur");
+        // Pesan server (mis. 409 "Email sudah dipakai") diteruskan via Error
+        toast.error(errorMessage || "Terjadi kesalahan saat update struktur");
         return false;
       } finally {
         this.loading = false;
