@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 type FormUpdateDesaAntiKorupsi = {
@@ -42,6 +43,12 @@ export default async function desaAntiKorupsiUpdate(context: Context) {
       data: updated,
     };
   } catch (error: any) {
+    // Ganti nama ke nilai lain yang sudah ada → 409 "Nama sudah dipakai"
+    const duplicate = toDuplicateResponse(error);
+    if (duplicate) {
+      context.set.status = 409;
+      return duplicate;
+    }
     console.error("❌ Error update desa anti korupsi:", error);
     return {
       success: false,

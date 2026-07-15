@@ -45,7 +45,8 @@ const responden = proxy({
           toast.success("Responden berhasil ditambahkan");
           await responden.findMany.load();
         } else {
-          toast.error(res.data?.message ?? "Gagal tambah responden");
+          // Pesan server (mis. 409 "Nama sudah dipakai")
+          toast.error(getServerMessage(res) ?? "Gagal tambah responden");
         }
       } catch (error) {
         console.error("Gagal create:", error);
