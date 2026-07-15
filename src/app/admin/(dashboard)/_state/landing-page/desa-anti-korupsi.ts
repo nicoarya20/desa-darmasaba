@@ -46,7 +46,8 @@ const desaAntikorupsi = proxy({
           desaAntikorupsi.findMany.load();
           return toast.success("Data berhasil ditambahkan");
         }
-        return toast.error("Gagal menambahkan data");
+        // Pesan server (mis. 409 "Nama sudah dipakai")
+        return toast.error(getServerMessage(res) || "Gagal menambahkan data");
       } catch (error) {
         console.log(error);
         toast.error("Gagal menambahkan data");

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 type FormUpdate = {
@@ -30,6 +31,12 @@ export default async function respondenUpdate(context: Context) {
       data: result,
     };
   } catch (error) {
+    // Ganti nama ke nilai lain yang sudah ada → 409 "Nama sudah dipakai"
+    const duplicate = toDuplicateResponse(error);
+    if (duplicate) {
+      context.set.status = 409;
+      return duplicate;
+    }
     console.error("Error updating responden:", error);
     // Instead of throwing an error, return a proper JSON response
     return {

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 type FormCreate = {
@@ -35,6 +36,12 @@ export default async function desaAntiKorupsiCreate(context: Context) {
       data: result,
     };
   } catch (error) {
+    // Nama unik (@unique) → 409 "Nama sudah dipakai"; error lain di-throw
+    const duplicate = toDuplicateResponse(error);
+    if (duplicate) {
+      context.set.status = 409;
+      return duplicate;
+    }
     console.error("Error creating desa anti korupsi:", error);
     throw new Error(
       "Gagal membuat desa anti korupsi: " + (error as Error).message
