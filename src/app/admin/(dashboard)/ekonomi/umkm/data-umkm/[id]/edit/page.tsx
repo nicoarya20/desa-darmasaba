@@ -321,8 +321,12 @@ function EditDataUmkm() {
             <TextInput
               label="Nomor WA / Kontak"
               placeholder="Contoh: 08123456789"
+              inputMode="numeric"
+              maxLength={13}
               value={formData.kontak}
-              onChange={(e) => handleChange("kontak", e.target.value)}
+              onChange={(e) =>
+                handleChange("kontak", e.target.value.replace(/\D/g, "").slice(0, 13))
+              }
             />
           </Group>
 

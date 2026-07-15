@@ -15,10 +15,12 @@ import {
   TableTh,
   TableThead,
   TableTr,
+  Text,
+  ThemeIcon,
   Title,
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconShoppingCartOff, IconTrash } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
 import { useState } from 'react';
 
@@ -53,68 +55,84 @@ function PenjualanUmkm() {
     <Stack gap="lg">
       <Group justify="space-between">
         <Title order={3}>Histori Penjualan UMKM</Title>
-        <Button leftSection={<IconPlus size={18} />} color="blue">
-          Catat Penjualan
-        </Button>
       </Group>
 
       <Paper withBorder p="md" radius="md">
         {state.loading ? (
           <Skeleton height={400} />
+        ) : state.data.length === 0 ? (
+          <Center py={60}>
+            <Stack align="center" gap="xs">
+              <ThemeIcon variant="light" color="gray" size={64} radius="xl">
+                <IconShoppingCartOff size={34} stroke={1.5} />
+              </ThemeIcon>
+              <Text fw={600} size="lg">
+                Belum ada penjualan tercatat
+              </Text>
+              <Text c="dimmed" size="sm" ta="center" maw={360}>
+                Penjualan otomatis muncul di sini saat warga memesan produk UMKM
+                dari halaman publik.
+              </Text>
+            </Stack>
+          </Center>
         ) : (
-          <Box style={{ overflowX: 'auto' }}>
-            <Table highlightOnHover>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Tanggal</TableTh>
-                  <TableTh>Produk</TableTh>
-                  <TableTh>UMKM</TableTh>
-                  <TableTh>Jumlah</TableTh>
-                  <TableTh>Total Nilai</TableTh>
-                  <TableTh>Aksi</TableTh>
-                </TableTr>
-              </TableThead>
-
-              <TableTbody>
-                {state.data.map((item) => (
-                  <TableTr key={item.id}>
-                    <TableTd>
-                      {new Date(item.tanggal).toLocaleDateString('id-ID')}
-                    </TableTd>
-                    <TableTd fw={500}>{item.produk?.nama}</TableTd>
-                    <TableTd>{item.produk?.umkm?.nama}</TableTd>
-                    <TableTd>{item.jumlah}</TableTd>
-                    <TableTd fw={600}>
-                      Rp {item.totalNilai.toLocaleString()}
-                    </TableTd>
-
-                    <TableTd>
-                      <Button
-                        variant="subtle"
-                        color="red"
-                        size="xs"
-                        onClick={() => {
-                          setSelectedId(item.id);
-                          setModalHapus(true);
-                        }}
-                      >
-                        <IconTrash size={16} />
-                      </Button>
-                    </TableTd>
+          <>
+            <Box style={{ overflowX: 'auto' }}>
+              <Table highlightOnHover>
+                <TableThead>
+                  <TableTr>
+                    <TableTh>Tanggal</TableTh>
+                    <TableTh>Produk</TableTh>
+                    <TableTh>UMKM</TableTh>
+                    <TableTh>Jumlah</TableTh>
+                    <TableTh>Total Nilai</TableTh>
+                    <TableTh>Aksi</TableTh>
                   </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
-          </Box>
-        )}
+                </TableThead>
 
-        <Center mt="md">
-          <Pagination
-            total={state.totalPages}
-            value={state.page}
-            onChange={(p) => state.load(p, 10)}
-          />
-        </Center>
+                <TableTbody>
+                  {state.data.map((item) => (
+                    <TableTr key={item.id}>
+                      <TableTd>
+                        {new Date(item.tanggal).toLocaleDateString('id-ID')}
+                      </TableTd>
+                      <TableTd fw={500}>{item.produk?.nama}</TableTd>
+                      <TableTd>{item.produk?.umkm?.nama}</TableTd>
+                      <TableTd>{item.jumlah}</TableTd>
+                      <TableTd fw={600}>
+                        Rp {item.totalNilai.toLocaleString()}
+                      </TableTd>
+
+                      <TableTd>
+                        <Button
+                          variant="subtle"
+                          color="red"
+                          size="xs"
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            setModalHapus(true);
+                          }}
+                        >
+                          <IconTrash size={16} />
+                        </Button>
+                      </TableTd>
+                    </TableTr>
+                  ))}
+                </TableTbody>
+              </Table>
+            </Box>
+
+            {state.totalPages > 1 && (
+              <Center mt="md">
+                <Pagination
+                  total={state.totalPages}
+                  value={state.page}
+                  onChange={(p) => state.load(p, 10)}
+                />
+              </Center>
+            )}
+          </>
+        )}
       </Paper>
 
       {/* 🔥 Modal Konfirmasi */}
