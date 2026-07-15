@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -274,8 +275,9 @@ const jenisKelaminResponden = proxy({
           toast.success("Jenis kelamin responden berhasil ditambahkan");
           await jenisKelaminResponden.findMany.load();
         } else {
+          // Pesan server (mis. 409 "Nama sudah dipakai")
           toast.error(
-            res.data?.message ?? "Gagal tambah jenis kelamin responden"
+            getServerMessage(res) ?? "Gagal tambah jenis kelamin responden"
           );
         }
       } catch (error) {
@@ -465,11 +467,12 @@ const pilihanRatingResponden = proxy({
           "create"
         ].post(pilihanRatingResponden.create.form);
         if (res.status === 200) {
-          toast.success("Jenis kelamin responden berhasil ditambahkan");
+          toast.success("Pilihan rating responden berhasil ditambahkan");
           await pilihanRatingResponden.findMany.load();
         } else {
+          // Pesan server (mis. 409 "Nama sudah dipakai")
           toast.error(
-            res.data?.message ?? "Gagal tambah jenis kelamin responden"
+            getServerMessage(res) ?? "Gagal tambah pilihan rating responden"
           );
         }
       } catch (error) {
@@ -662,8 +665,9 @@ const kelompokUmurResponden = proxy({
           toast.success("Kelompok umur responden berhasil ditambahkan");
           await kelompokUmurResponden.findMany.load();
         } else {
+          // Pesan server (mis. 409 "Nama sudah dipakai")
           toast.error(
-            res.data?.message ?? "Gagal tambah kelompok umur responden"
+            getServerMessage(res) ?? "Gagal tambah kelompok umur responden"
           );
         }
       } catch (error) {
