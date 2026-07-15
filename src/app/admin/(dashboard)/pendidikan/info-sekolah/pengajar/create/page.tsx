@@ -22,7 +22,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreatePengajar() {
   const router = useRouter();
-  const stateCreate = useProxy(infoSekolahPaud.pengajar);
+  const stateCreate = useProxy(infoSekolahPaud.pengajar, { sync: true }); // sync: cegah caret jump di controlled input
   // Snapshot cabang lembagaPendidikan agar Select re-render saat findMany.load()
   // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
   const lembagaState = useProxy(infoSekolahPaud.lembagaPendidikan);

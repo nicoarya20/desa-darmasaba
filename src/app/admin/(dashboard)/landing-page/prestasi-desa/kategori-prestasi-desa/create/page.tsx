@@ -12,7 +12,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreateKategoriPrestasi() {
   const router = useRouter();
-  const stateKategori = useProxy(prestasiState.kategoriPrestasi)
+  const stateKategori = useProxy(prestasiState.kategoriPrestasi, { sync: true }) // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid

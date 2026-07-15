@@ -12,7 +12,7 @@ import { useProxy } from 'valtio/utils';
 
 
 function CreateKeunggulanProgram() {
-  const stateCreate = useProxy(beasiswaDesaState.keunggulanProgram);
+  const stateCreate = useProxy(beasiswaDesaState.keunggulanProgram, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

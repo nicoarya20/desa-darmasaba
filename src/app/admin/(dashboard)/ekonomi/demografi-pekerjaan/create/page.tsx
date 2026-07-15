@@ -21,7 +21,7 @@ import demografiPekerjaan from '../../../_state/ekonomi/demografi-pekerjaan';
 import { toast } from 'react-toastify';
 
 function CreateDemografiPekerjaan() {
-  const stateDemografi = useProxy(demografiPekerjaan);
+  const stateDemografi = useProxy(demografiPekerjaan, { sync: true }); // sync: cegah caret jump di controlled input
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);

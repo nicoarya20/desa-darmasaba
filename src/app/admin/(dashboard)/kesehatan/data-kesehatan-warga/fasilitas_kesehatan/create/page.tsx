@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateFasilitasKesehatan() {
-  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan);
+  const stateFasilitasKesehatan = useProxy(fasilitasKesehatanState.fasilitasKesehatan, { sync: true }); // sync: cegah caret jump di controlled input
   // Snapshot cabang dokter & tarif agar MultiSelect re-render saat findMany.load()
   // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
   const stateDokter = useProxy(fasilitasKesehatanState.dokter);

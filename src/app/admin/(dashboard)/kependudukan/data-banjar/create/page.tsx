@@ -20,7 +20,7 @@ import dataBanjar from '../../../_state/kependudukan/data-banjar';
 import { toast } from 'react-toastify';
 
 function CreateDataBanjar() {
-  const stateDataBanjar = useProxy(dataBanjar);
+  const stateDataBanjar = useProxy(dataBanjar, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

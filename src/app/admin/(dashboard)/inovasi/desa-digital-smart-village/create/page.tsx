@@ -24,7 +24,7 @@ import CreateEditor from '../../../_com/createEditor';
 import desaDigitalState from '../../../_state/inovasi/desa-digital';
 
 export default function CreateDesaDigital() {
-  const stateDesaDigital = useProxy(desaDigitalState);
+  const stateDesaDigital = useProxy(desaDigitalState, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();

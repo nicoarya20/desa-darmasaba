@@ -15,7 +15,7 @@ function CreatePegawaiPPID() {
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const stateOrganisasi = useProxy(stateStrukturPPID.pegawai)
+  const stateOrganisasi = useProxy(stateStrukturPPID.pegawai, { sync: true }) // sync: cegah caret jump di controlled input
   // Snapshot cabang posisiOrganisasi agar Select re-render saat findManyAll.load()
   // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
   const statePosisi = useProxy(stateStrukturPPID.posisiOrganisasi)

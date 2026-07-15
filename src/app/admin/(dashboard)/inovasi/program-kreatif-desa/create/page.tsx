@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 function CreateProgramKreatifDesa() {
-  const stateCreate = useProxy(programKreatifState);
+  const stateCreate = useProxy(programKreatifState, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

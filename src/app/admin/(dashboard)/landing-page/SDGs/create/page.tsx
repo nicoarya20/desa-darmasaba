@@ -14,7 +14,7 @@ import sdgsDesa from '../../../_state/landing-page/sdgs-desa';
 
 function CreateSDGsDesa() {
   const router = useRouter();
-  const stateSDGSDesa = useProxy(sdgsDesa)
+  const stateSDGSDesa = useProxy(sdgsDesa, { sync: true }) // sync: cegah caret jump di controlled input
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

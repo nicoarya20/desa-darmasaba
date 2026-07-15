@@ -40,7 +40,7 @@ type SosmedKey =
 
 export default function CreateMediaSosial() {
   const router = useRouter();
-  const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial);
+  const stateMediaSosial = useProxy(profileLandingPageState.mediaSosial, { sync: true }); // sync: cegah caret jump di controlled input
 
   const [selectedSosmed, setSelectedSosmed] = useState<SosmedKey>('facebook');
   const [previewImage, setPreviewImage] = useState<string | null>(null);

@@ -20,7 +20,7 @@ import distribusiUmur from '../../../_state/kependudukan/distribusi-umur';
 import { toast } from 'react-toastify';
 
 function CreateDistribusiUmur() {
-  const stateDistribusiUmur = useProxy(distribusiUmur);
+  const stateDistribusiUmur = useProxy(distribusiUmur, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

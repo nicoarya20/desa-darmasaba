@@ -28,7 +28,7 @@ import ringkasanKesehatanState from '../../../../_state/kesehatan/ringkasan-kese
 
 
 function CreatePosyandu() {
-  const statePosyandu = useProxy(posyandustate);
+  const statePosyandu = useProxy(posyandustate, { sync: true }); // sync: cegah caret jump di controlled input
   const stateBanjar = useProxy(ringkasanKesehatanState);
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);

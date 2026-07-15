@@ -21,12 +21,17 @@ import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useProxy } from 'valtio/utils';
+import { useSnapshot } from 'valtio';
 import profileLandingPageState from '../../../../_state/landing-page/profile';
 
 function CreateProgramInovasi() {
   const router = useRouter();
-  const stateProgramInovasi = useProxy(profileLandingPageState.programInovasi);
+  // BACA (render/value) via snapshot; TULIS (onChange/handler) via proxy mentah.
+  // { sync: true } WAJIB: default useSnapshot notify re-render async (satu microtask),
+  // sehingga controlled <input> commit dgn value lama dulu → caret loncat saat ketik di
+  // tengah. Sync memaksa re-render di event yang sama → caret stabil.
+  const stateProgramInovasi = profileLandingPageState.programInovasi;
+  const snap = useSnapshot(profileLandingPageState.programInovasi, { sync: true });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,9 +39,9 @@ function CreateProgramInovasi() {
   // Check if form is valid
   const isFormValid = () => {
     return (
-      stateProgramInovasi.create.form.name?.trim() !== '' &&
-      stateProgramInovasi.create.form.description?.trim() !== '' &&
-      stateProgramInovasi.create.form.link?.trim() !== '' &&
+      snap.create.form.name?.trim() !== '' &&
+      snap.create.form.description?.trim() !== '' &&
+      snap.create.form.link?.trim() !== '' &&
       file !== null
     );
   };
@@ -187,7 +192,7 @@ function CreateProgramInovasi() {
           <TextInput
             label="Nama Program Inovasi"
             placeholder="Masukkan nama program inovasi"
-            value={stateProgramInovasi.create.form.name}
+            value={snap.create.form.name}
             onChange={(e) => (stateProgramInovasi.create.form.name = e.target.value)}
             required
           />
@@ -198,7 +203,7 @@ function CreateProgramInovasi() {
               Deskripsi
             </Text>
             <CreateEditor
-              value={stateProgramInovasi.create.form.description || ''}
+              value={snap.create.form.description || ''}
               onChange={(htmlContent: string) => {
                 stateProgramInovasi.create.form.description = htmlContent;
               }}
@@ -209,7 +214,7 @@ function CreateProgramInovasi() {
           <TextInput
             label="Link Program Inovasi"
             placeholder="Masukkan link program inovasi (opsional)"
-            value={stateProgramInovasi.create.form.link || ''}
+            value={snap.create.form.link || ''}
             onChange={(e) => (stateProgramInovasi.create.form.link = e.target.value)}
           />
 

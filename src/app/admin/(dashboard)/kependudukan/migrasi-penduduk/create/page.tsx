@@ -22,7 +22,7 @@ import migrasiPenduduk from '../../../_state/kependudukan/migrasi-penduduk';
 import { toast } from 'react-toastify';
 
 function CreateMigrasiPenduduk() {
-  const stateMigrasiPenduduk = useProxy(migrasiPenduduk);
+  const stateMigrasiPenduduk = useProxy(migrasiPenduduk, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

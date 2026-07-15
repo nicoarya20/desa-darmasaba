@@ -26,7 +26,7 @@ import { useProxy } from 'valtio/utils';
 
 export default function CreateDesaAntiKorupsi() {
   const router = useRouter();
-  const stateKorupsi = useProxy(korupsiState.desaAntikorupsi);
+  const stateKorupsi = useProxy(korupsiState.desaAntikorupsi, { sync: true }); // sync: cegah caret jump di controlled input
   // Snapshot cabang kategoriDesaAntiKorupsi agar Select re-render saat
   // findMany.load() async selesai — JSX sebelumnya baca raw proxy (race, STG).
   const kategoriState = useProxy(korupsiState.kategoriDesaAntiKorupsi);

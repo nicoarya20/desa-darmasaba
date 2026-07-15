@@ -25,7 +25,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateSuratKeterangan() {
-  const stateSurat = useProxy(stateLayananDesa.suratKeterangan);
+  const stateSurat = useProxy(stateLayananDesa.suratKeterangan, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewImage2, setPreviewImage2] = useState<{ preview: string; file: File } | null>(null);
   const [previewImage, setPreviewImage] = useState<{ preview: string; file: File } | null>(null);
   const router = useRouter();

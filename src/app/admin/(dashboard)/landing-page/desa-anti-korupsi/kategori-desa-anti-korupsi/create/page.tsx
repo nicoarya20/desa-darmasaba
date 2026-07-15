@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 
 export default function CreateKategoriDesaAntiKorupsi() {
   const router = useRouter();
-  const stateKategori = useProxy(korupsiState.kategoriDesaAntiKorupsi);
+  const stateKategori = useProxy(korupsiState.kategoriDesaAntiKorupsi, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid

@@ -22,7 +22,7 @@ import grafikSektorUnggulan from '../../../_state/ekonomi/sektor-unggulan-desa';
 import { toast } from 'react-toastify';
 
 function CreateSektorUnggulanDesa() {
-  const stateGrafik = useProxy(grafikSektorUnggulan);
+  const stateGrafik = useProxy(grafikSektorUnggulan, { sync: true }); // sync: cegah caret jump di controlled input
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -24,7 +24,7 @@ import CreateEditor from '../../../_com/createEditor';
 import penghargaanState from '../../../_state/desa/penghargaan';
 
 function CreatePenghargaan() {
-  const statePenghargaan = useProxy(penghargaanState);
+  const statePenghargaan = useProxy(penghargaanState, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();

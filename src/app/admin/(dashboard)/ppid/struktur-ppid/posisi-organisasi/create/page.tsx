@@ -12,7 +12,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreatePosisiOrganisasiPPID() {
   const router = useRouter();
-  const stateOrganisasi = useProxy(stateStrukturPPID.posisiOrganisasi);
+  const stateOrganisasi = useProxy(stateStrukturPPID.posisiOrganisasi, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid

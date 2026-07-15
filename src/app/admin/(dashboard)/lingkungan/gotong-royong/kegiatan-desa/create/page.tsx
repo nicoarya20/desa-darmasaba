@@ -27,7 +27,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreateKegiatanDesa() {
   const router = useRouter();
-  const stateKegiatanDesa = useProxy(gotongRoyongState.kegiatanDesa);
+  const stateKegiatanDesa = useProxy(gotongRoyongState.kegiatanDesa, { sync: true }); // sync: cegah caret jump di controlled input
   // Snapshot cabang kategoriKegiatan agar Select re-render saat findMany.load()
   // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
   const kategoriState = useProxy(gotongRoyongState.kategoriKegiatan);

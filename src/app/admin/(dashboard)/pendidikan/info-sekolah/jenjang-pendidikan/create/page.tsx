@@ -20,7 +20,7 @@ import infoSekolahPaud from '../../../../_state/pendidikan/info-sekolah-paud';
 
 function CreateJenjangPendidikan() {
   const router = useRouter();
-  const stateJenjang = useProxy(infoSekolahPaud.jenjangPendidikan);
+  const stateJenjang = useProxy(infoSekolahPaud.jenjangPendidikan, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid
