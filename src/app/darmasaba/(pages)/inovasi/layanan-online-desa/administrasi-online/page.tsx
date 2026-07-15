@@ -94,10 +94,16 @@ function AdministrasiOnline() {
               onChange={(val) => (state.administrasiOnline.create.form.alamat = val.target.value)}
             />
             <TextInput
-              type="number"
+              inputMode="numeric"
+              maxLength={13}
               label={<Text fz="sm" fw="bold">Nomor Telepon</Text>}
               placeholder="Masukkan nomor telepon"
-              onChange={(val) => (state.administrasiOnline.create.form.nomorTelepon = val.target.value)}
+              value={state.administrasiOnline.create.form.nomorTelepon}
+              onChange={(val) =>
+                (state.administrasiOnline.create.form.nomorTelepon = val.target.value
+                  .replace(/\D/g, '')
+                  .slice(0, 13))
+              }
             />
             <Select
               value={state.administrasiOnline.create.form.jenisLayananId}

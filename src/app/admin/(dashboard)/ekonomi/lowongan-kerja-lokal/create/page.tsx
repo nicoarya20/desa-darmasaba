@@ -121,10 +121,14 @@ function CreateLowonganKerja() {
           <TextInput
             value={lowonganState.create.form.notelp}
             onChange={(val) =>
-              (lowonganState.create.form.notelp = val.target.value)
+              (lowonganState.create.form.notelp = val.target.value
+                .replace(/\D/g, '')
+                .slice(0, 13))
             }
             label="Nomor Yang Dapat Dihubungi"
             placeholder="Masukkan nomor yang dapat dihubungi"
+            inputMode="numeric"
+            maxLength={13}
             required
           />
           <TextInput

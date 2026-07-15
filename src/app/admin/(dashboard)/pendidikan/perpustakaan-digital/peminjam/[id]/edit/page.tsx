@@ -219,9 +219,13 @@ function EditPeminjam() {
 
           <TextInput
             value={formData.noTelp}
-            onChange={(e) => handleChange('noTelp', e.target.value)}
+            onChange={(e) =>
+              handleChange('noTelp', e.target.value.replace(/\D/g, '').slice(0, 13))
+            }
             label={<Text fw="bold" fz="sm">No Telp Peminjam</Text>}
             placeholder="Masukkan no telp peminjam"
+            inputMode="numeric"
+            maxLength={13}
             required
           />
 

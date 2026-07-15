@@ -69,12 +69,14 @@ function CreatePendaftaran() {
             input: { fontSize: '16px', lineHeight: 1.5 },
           }}
         />
-        <TextInput 
-          label="Nomor Telepon" 
-          placeholder="Masukkan nomor telepon" 
-          size="md" 
+        <TextInput
+          label="Nomor Telepon"
+          placeholder="Masukkan nomor telepon"
+          size="md"
+          inputMode="numeric"
+          maxLength={13}
           value={stateCreate.create.form.nomor}
-          onChange={(e) => stateCreate.create.form.nomor = e.target.value}
+          onChange={(e) => stateCreate.create.form.nomor = e.target.value.replace(/\D/g, '').slice(0, 13)}
           styles={{
             label: { fontSize: '14px', lineHeight: 1.4, fontWeight: 500 },
             input: { fontSize: '16px', lineHeight: 1.5 },

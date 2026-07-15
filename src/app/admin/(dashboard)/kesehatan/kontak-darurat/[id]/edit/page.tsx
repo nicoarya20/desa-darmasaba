@@ -174,7 +174,14 @@ function EditKontakDarurat() {
 
           <TextInput
             value={formData.whatsapp}
-            onChange={(e) => setFormData(prev => ({ ...prev, whatsapp: e.target.value }))}
+            inputMode="numeric"
+            maxLength={13}
+            onChange={(e) =>
+              setFormData(prev => ({
+                ...prev,
+                whatsapp: e.target.value.replace(/\D/g, '').slice(0, 13),
+              }))
+            }
             label="Telepon"
             placeholder="Masukkan telepon"
             required

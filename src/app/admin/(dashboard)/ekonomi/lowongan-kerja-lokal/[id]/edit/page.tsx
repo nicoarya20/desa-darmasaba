@@ -194,7 +194,11 @@ function EditLowonganKerja() {
             label="Nomor Yang Dapat Dihubungi"
             placeholder="Masukkan nomor yang dapat dihubungi"
             value={formData.notelp}
-            onChange={(e) => handleChange("notelp", e.target.value)}
+            inputMode="numeric"
+            maxLength={13}
+            onChange={(e) =>
+              handleChange("notelp", e.target.value.replace(/\D/g, "").slice(0, 13))
+            }
             required
           />
 

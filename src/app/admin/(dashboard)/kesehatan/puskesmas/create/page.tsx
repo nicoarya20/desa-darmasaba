@@ -150,9 +150,13 @@ function CreatePuskesmas() {
           <TextInput
             label="Kontak Puskesmas"
             placeholder="Masukkan kontak puskesmas"
+            inputMode="numeric"
+            maxLength={13}
             value={statePuskesmas.create.form.kontak.kontakPuskesmas}
             onChange={(e) =>
-              (statePuskesmas.create.form.kontak.kontakPuskesmas = e.target.value)
+              (statePuskesmas.create.form.kontak.kontakPuskesmas = e.target.value
+                .replace(/\D/g, '')
+                .slice(0, 13))
             }
           />
           <TextInput
@@ -170,8 +174,14 @@ function CreatePuskesmas() {
           <TextInput
             label="Kontak UGD"
             placeholder="Masukkan kontak UGD"
+            inputMode="numeric"
+            maxLength={13}
             value={statePuskesmas.create.form.kontak.kontakUGD}
-            onChange={(e) => (statePuskesmas.create.form.kontak.kontakUGD = e.target.value)}
+            onChange={(e) =>
+              (statePuskesmas.create.form.kontak.kontakUGD = e.target.value
+                .replace(/\D/g, '')
+                .slice(0, 13))
+            }
           />
 
           <Box>

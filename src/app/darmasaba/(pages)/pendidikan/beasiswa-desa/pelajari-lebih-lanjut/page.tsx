@@ -393,8 +393,11 @@ export default function BeasiswaPage() {
             <TextInput
               label="No HP"
               placeholder="Masukkan no hp"
+              inputMode="numeric"
+              maxLength={13}
+              value={beasiswaDesa.create.form.noHp}
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
-              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value }}
+              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value.replace(/\D/g, '').slice(0, 13) }}
             />
             <Group justify="flex-end" mt="md">
               <Button

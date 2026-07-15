@@ -215,7 +215,11 @@ function EditPolsekTerdekat() {
           />
           <TextInput
             value={formData.nomorTelepon}
-            onChange={(e) => handleChange("nomorTelepon", e.currentTarget.value)}
+            inputMode="numeric"
+            maxLength={13}
+            onChange={(e) =>
+              handleChange("nomorTelepon", e.currentTarget.value.replace(/\D/g, "").slice(0, 13))
+            }
             label="Nomor Telepon"
           />
           <TextInput

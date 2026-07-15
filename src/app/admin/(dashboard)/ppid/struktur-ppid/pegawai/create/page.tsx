@@ -239,11 +239,16 @@ function CreatePegawaiPPID() {
           <Box>
             <TextInput
               required
-              type='number'
+              inputMode="numeric"
+              maxLength={13}
               label="Nomor Telepon"
               placeholder="Contoh: 08123456789"
               value={stateOrganisasi.create.form.telepon}
-              onChange={(e) => (stateOrganisasi.create.form.telepon = e.currentTarget.value)}
+              onChange={(e) =>
+                (stateOrganisasi.create.form.telepon = e.currentTarget.value
+                  .replace(/\D/g, "")
+                  .slice(0, 13))
+              }
             />
           </Box>
 

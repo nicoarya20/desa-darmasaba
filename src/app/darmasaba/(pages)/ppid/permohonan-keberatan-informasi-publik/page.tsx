@@ -226,8 +226,13 @@ function Page() {
                     radius="md"
                     size="md"
                     withAsterisk
+                    inputMode="numeric"
+                    maxLength={13}
+                    value={stateKeberatan.create.form.notelp || ''}
                     onChange={(val) =>
-                      (stateKeberatan.create.form.notelp = val.target.value)
+                      (stateKeberatan.create.form.notelp = val.target.value
+                        .replace(/\D/g, '')
+                        .slice(0, 13))
                     }
                   />
 

@@ -225,8 +225,12 @@ function CreatePosyandu() {
           <TextInput
             label="Telepon Posyandu"
             placeholder="Masukkan telepon posyandu"
+            inputMode="numeric"
+            maxLength={13}
             value={statePosyandu.create.form.nomor || ''}
-            onChange={(e) => (statePosyandu.create.form.nomor = e.target.value)}
+            onChange={(e) =>
+              (statePosyandu.create.form.nomor = e.target.value.replace(/\D/g, '').slice(0, 13))
+            }
             required
           />
           <Select

@@ -269,7 +269,10 @@ function Page() {
             <TextInput
               label="No HP"
               placeholder="Masukkan no hp"
-              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value }} />
+              inputMode="numeric"
+              maxLength={13}
+              value={beasiswaDesa.create.form.noHp}
+              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value.replace(/\D/g, '').slice(0, 13) }} />
             <Group justify="flex-end" mt="md">
               <Button variant="default" radius="xl" onClick={close}>Batal</Button>
               <Button radius="xl" bg={colors['blue-button']} onClick={handleSubmit} disabled={!isFormValid()}>Kirim</Button>
