@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function CreateKategoriPotensi() {
-  const createState = useProxy(potensiDesaState.kategoriPotensi);
+  const createState = useProxy(potensiDesaState.kategoriPotensi, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

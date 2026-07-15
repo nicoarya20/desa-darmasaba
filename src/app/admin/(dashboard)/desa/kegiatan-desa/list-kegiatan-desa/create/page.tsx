@@ -30,7 +30,7 @@ import { useProxy } from 'valtio/utils';
 const isHtmlEmpty = (html: string) => html.replace(/<[^>]*>/g, '').trim() === '';
 
 export default function CreateKegiatanDesa() {
-  const kegiatanState = useProxy(stateDashboardKegiatan);
+  const kegiatanState = useProxy(stateDashboardKegiatan, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);

@@ -23,7 +23,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateMitraKolaborasi() {
-  const state = useProxy(mitraKolaborasi);
+  const state = useProxy(mitraKolaborasi, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);

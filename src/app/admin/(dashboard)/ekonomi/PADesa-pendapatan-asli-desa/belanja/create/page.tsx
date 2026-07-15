@@ -20,7 +20,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateBelanja() {
-  const belanjaState = useProxy(PendapatanAsliDesa.belanja);
+  const belanjaState = useProxy(PendapatanAsliDesa.belanja, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

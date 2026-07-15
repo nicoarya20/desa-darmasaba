@@ -20,7 +20,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreateJenisPengaduan() {
   const router = useRouter();
-  const state = useProxy(layananonlineDesa.jenisPengaduan);
+  const state = useProxy(layananonlineDesa.jenisPengaduan, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
     state.findMany.load();

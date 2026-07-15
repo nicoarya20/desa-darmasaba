@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateKategoriKegiatan() {
-  const createState = useProxy(stateDashboardKegiatan.kategoriKegiatan);
+  const createState = useProxy(stateDashboardKegiatan.kategoriKegiatan, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

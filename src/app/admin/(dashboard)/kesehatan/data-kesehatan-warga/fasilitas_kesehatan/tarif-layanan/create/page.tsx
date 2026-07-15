@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreateTarifLayanan() {
-  const createState = useProxy(fasilitasKesehatanState.tarif);
+  const createState = useProxy(fasilitasKesehatanState.tarif, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

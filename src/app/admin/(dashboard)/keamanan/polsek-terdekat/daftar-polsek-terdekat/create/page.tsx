@@ -20,7 +20,7 @@ import { useProxy } from 'valtio/utils';
 import statePolsekTerdekat from '../../../../_state/keamanan/polsek-terdekat';
 
 function CreatePolsekTerdekat() {
-  const polsekState = useProxy(statePolsekTerdekat.polsekTerdekatState);
+  const polsekState = useProxy(statePolsekTerdekat.polsekTerdekatState, { sync: true }); // sync: cegah caret jump di controlled input
   // Snapshot cabang layananPolsek agar Select re-render saat findManyAll.load()
   // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
   const layananState = useProxy(statePolsekTerdekat.layananPolsek);

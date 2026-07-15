@@ -8,7 +8,7 @@ import CreateEditor from '../../../_com/createEditor';
 import daftarInformasiPublik from '../../../_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 
 export default function CreateDaftarInformasi() {
-  const daftarInformasi = useProxy(daftarInformasiPublik);
+  const daftarInformasi = useProxy(daftarInformasiPublik, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
 
   // Check if form is valid

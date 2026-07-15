@@ -16,7 +16,7 @@ import umkmState from '../../../../_state/ekonomi/umkm/umkm';
 
 export default function CreateKategoriProduk() {
   const router = useRouter();
-  const state = useProxy(umkmState.kategoriProduk.create);
+  const state = useProxy(umkmState.kategoriProduk.create, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleResetForm = () => {

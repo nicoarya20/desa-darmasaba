@@ -15,7 +15,7 @@ import { useProxy } from 'valtio/utils';
 
 function CreatePrestasiDesa() {
   const router = useRouter();
-  const snapPrestasi = useProxy(prestasiState.prestasiDesa); // snapshot → buat render
+  const snapPrestasi = useProxy(prestasiState.prestasiDesa, { sync: true }); // sync: cegah caret jump di controlled input // snapshot → buat render
   // Snapshot cabang kategoriPrestasi agar Select re-render saat findMany.load()
   // async selesai — JSX sebelumnya baca raw proxy (race intermiten, STG).
   const kategoriState = useProxy(prestasiState.kategoriPrestasi);

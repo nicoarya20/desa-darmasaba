@@ -23,7 +23,7 @@ import { convertYoutubeUrlToEmbed } from '../../../desa/gallery/lib/youtube-util
 
 function CreatePencegahanKriminalitas() {
   const router = useRouter();
-  const kriminalitasState = useProxy(pencegahanKriminalitasState);
+  const kriminalitasState = useProxy(pencegahanKriminalitasState, { sync: true }); // sync: cegah caret jump di controlled input
   const [link, setLink] = useState('');
   const embedLink = convertYoutubeUrlToEmbed(link);
   const [isSubmitting, setIsSubmitting] = useState(false);

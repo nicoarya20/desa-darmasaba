@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function CreatePerbekelDariMasaKeMasa() {
-  const state = useProxy(stateProfileDesa.mantanPerbekel);
+  const state = useProxy(stateProfileDesa.mantanPerbekel, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

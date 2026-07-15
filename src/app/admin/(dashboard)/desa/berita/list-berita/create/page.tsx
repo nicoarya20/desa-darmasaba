@@ -29,7 +29,7 @@ import { useProxy } from 'valtio/utils';
 import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/desa/gallery/lib/youtube-utils';
 
 export default function CreateBerita() {
-  const beritaState = useProxy(stateDashboardBerita);
+  const beritaState = useProxy(stateDashboardBerita, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   
   // Featured image state
