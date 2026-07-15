@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -42,7 +43,8 @@ const potensiDesa = proxy({
           potensiDesa.findMany.load();
           return toast.success("Potensi berhasil disimpan!");
         }
-        return toast.error("Gagal menyimpan potensi");
+        // Pesan server (mis. 409 "Nama sudah dipakai")
+        return toast.error(getServerMessage(res) || "Gagal menyimpan potensi");
       } catch (error) {
         console.log((error as Error).message);
       } finally {
@@ -279,11 +281,13 @@ const kategoriPotensi = proxy({
           kategoriPotensi.findMany.load();
           return toast.success("Data Kategori Potensi Berhasil Dibuat");
         }
-        console.log(res);
-        return toast.error("failed create");
+        // Pesan server (mis. 409 "Nama sudah dipakai")
+        return toast.error(
+          getServerMessage(res) || "Gagal membuat kategori potensi"
+        );
       } catch (error) {
         console.log(error);
-        return toast.error("failed create");
+        return toast.error("Gagal membuat kategori potensi");
       } finally {
         kategoriPotensi.create.loading = false;
       }

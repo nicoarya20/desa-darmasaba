@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -35,11 +36,13 @@ const category = proxy({
           category.findMany.load();
           return toast.success("Data Kategori Pengumuman Berhasil Dibuat");
         }
-        console.log(res);
-        return toast.error("failed create");
+        // Pesan server (mis. 409 "Nama sudah dipakai")
+        return toast.error(
+          getServerMessage(res) || "Gagal membuat kategori pengumuman"
+        );
       } catch (error) {
         console.log(error);
-        return toast.error("failed create");
+        return toast.error("Gagal membuat kategori pengumuman");
       } finally {
         category.create.loading = false;
       }

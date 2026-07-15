@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 type FormUpdate = {
@@ -22,6 +23,12 @@ export default async function kategoriPengumumanUpdate(context: Context) {
             data: result,
         };
     } catch (error) {
+        // Ganti nama ke kategori lain yang sudah ada → 409; error lain di-throw
+        const duplicate = toDuplicateResponse(error);
+        if (duplicate) {
+            context.set.status = 409;
+            return duplicate;
+        }
         console.error("Error updating kategori pengumuman:", error);
         throw new Error("Gagal mengupdate kategori pengumuman: " + (error as Error).message);
     }
