@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.135] - 2026-07-16
+### Fixed
+- **Field NIS & Nomor KK masih menerima huruf**: kolom NIS (form Beasiswa Desa publik — halaman utama & "pelajari lebih lanjut") dan Nomor KK (admin Ajukan Permohonan) sebelumnya memakai `type="number"`, yang di keyboard fisik masih meloloskan karakter `e`, `+`, `-`, `.` dan berisiko kehilangan angka nol di depan. Kini ketiganya memakai pola yang sama dengan perbaikan NIK/telepon sebelumnya: memfilter karakter non-digit (`replace(/\D/g, '')`) plus `inputMode="numeric"`, dengan batas maksimal NIS 18 digit dan Nomor KK 16 digit. Tanpa perubahan schema/migration.
+
 ## [0.1.133] - 2026-07-15
 ### Fixed
 - **Kursor "loncat" saat mengetik di form admin (create & edit)**: mengetik di kolom teks pada banyak halaman admin membuat karakter meleset posisi — misal mengetik `a(y)am` jadi `a(ya)m`, paling terasa saat menyisipkan karakter di tengah kata. Penyebabnya kolom terkontrol membaca nilai dari state Valtio yang me-render ulang secara asinkron (satu microtask), sehingga `<input>` sempat commit dengan nilai lama dan browser memindahkan kursor ke akhir. Kini state sumber nilai memakai `{ sync: true }` agar render ulang terjadi sinkron di event yang sama — kursor tetap di tempat. Cakupan tambahan pada 32 halaman yang terlewat dari perbaikan sebelumnya: 4 halaman edit (Musik, CCTV, Event Budaya, APBDes) dan 28 halaman create (Banjar, Berita, Event Budaya, Galeri Foto/Video, Kegiatan Desa, Pengumuman, Potensi, Profil Perbekel, PADesa Belanja/Pembiayaan, UMKM Data/Kategori/Produk, Mitra Kolaborasi, Jenis Pengaduan, CCTV, Pencegahan Kriminalitas, Polsek Terdekat & Layanan, Tarif Layanan, Kelahiran, Kematian, Prestasi Desa, Musik, Daftar Informasi Publik). Tanpa perubahan schema/migration.

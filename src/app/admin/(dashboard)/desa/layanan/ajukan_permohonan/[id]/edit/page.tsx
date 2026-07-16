@@ -165,11 +165,12 @@ function EditAjukanPermohonan() {
           />
 
           <TextInput
-            type="number"
             label="Nomor KK"
             placeholder="Masukkan nomor KK"
+            inputMode="numeric"
+            maxLength={16}
             value={formData.nomorKk}
-            onChange={(e) => handleChange('nomorKk', e.target.value)}
+            onChange={(e) => handleChange('nomorKk', e.target.value.replace(/\D/g, '').slice(0, 16))}
             required
           />
 

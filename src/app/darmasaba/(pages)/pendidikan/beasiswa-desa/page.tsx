@@ -221,10 +221,12 @@ function Page() {
               placeholder="Masukkan nama lengkap"
               onChange={(val) => { beasiswaDesa.create.form.namaLengkap = val.target.value }} />
             <TextInput
-              type="number"
               label="NIS"
               placeholder="Masukkan NIS"
-              onChange={(val) => { beasiswaDesa.create.form.nis = val.target.value }} />
+              inputMode="numeric"
+              maxLength={18}
+              value={beasiswaDesa.create.form.nis}
+              onChange={(val) => { beasiswaDesa.create.form.nis = val.target.value.replace(/\D/g, '').slice(0, 18) }} />
             <TextInput
               label="Kelas"
               placeholder="Masukkan kelas"
