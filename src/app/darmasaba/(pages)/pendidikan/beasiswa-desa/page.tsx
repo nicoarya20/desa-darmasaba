@@ -257,7 +257,10 @@ function Page() {
             <TextInput
               label="NIK Orang Tua / Wali"
               placeholder="Masukkan NIK orang tua / wali"
-              onChange={(val) => { beasiswaDesa.create.form.nik = val.target.value }} />
+              inputMode="numeric"
+              maxLength={16}
+              value={beasiswaDesa.create.form.nik || ''}
+              onChange={(val) => { beasiswaDesa.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, 16) }} />
             <TextInput
               label="Pekerjaan Orang Tua / Wali"
               placeholder="Masukkan pekerjaan orang tua / wali"

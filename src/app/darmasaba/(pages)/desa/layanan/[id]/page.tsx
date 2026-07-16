@@ -150,10 +150,12 @@ function Page() {
               onChange={(val) => (stateCreate.create.form.nama = val.target.value)}
             />
             <TextInput
-              type="number"
+              inputMode="numeric"
+              maxLength={16}
               label={<Text fz="sm" fw="bold">NIK</Text>}
               placeholder="Masukkan NIK"
-              onChange={(val) => (stateCreate.create.form.nik = val.target.value)}
+              value={stateCreate.create.form.nik || ''}
+              onChange={(val) => (stateCreate.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, 16))}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Alamat</Text>}

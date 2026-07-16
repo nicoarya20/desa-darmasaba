@@ -59,8 +59,10 @@ export default function IbuHamilEditPage() {
             <TextInput
               label="NIK"
               placeholder="Nomor Induk Kependudukan"
+              inputMode="numeric"
+              maxLength={16}
               value={form.nik}
-              onChange={(e) => { ibuHamilState.edit.form.nik = e.currentTarget.value; }}
+              onChange={(e) => { ibuHamilState.edit.form.nik = e.currentTarget.value.replace(/\D/g, '').slice(0, 16); }}
               radius="md"
             />
             <TextInput

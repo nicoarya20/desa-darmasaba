@@ -147,11 +147,12 @@ function EditAjukanPermohonan() {
           />
 
           <TextInput
-            type="number"
+            inputMode="numeric"
+            maxLength={16}
             label="NIK"
             placeholder="Masukkan NIK"
             value={formData.nik}
-            onChange={(e) => handleChange('nik', e.target.value)}
+            onChange={(e) => handleChange('nik', e.target.value.replace(/\D/g, '').slice(0, 16))}
             required
           />
 
