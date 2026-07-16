@@ -58,8 +58,10 @@ export default function BalitaCreatePage() {
             <TextInput
               label="NIK"
               placeholder="Nomor Induk Kependudukan"
+              inputMode="numeric"
+              maxLength={16}
               value={form.nik}
-              onChange={(e) => { balitaState.create.form.nik = e.currentTarget.value; }}
+              onChange={(e) => { balitaState.create.form.nik = e.currentTarget.value.replace(/\D/g, '').slice(0, 16); }}
               radius="md"
             />
             <TextInput

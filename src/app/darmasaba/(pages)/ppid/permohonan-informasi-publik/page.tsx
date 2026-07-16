@@ -216,9 +216,12 @@ function Page() {
                     label="Nomor Induk Kependudukan (NIK)"
                     placeholder="Masukkan NIK"
                     withAsterisk
+                    inputMode="numeric"
+                    maxLength={16}
+                    value={permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.nik || ''}
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.nik =
-                        val.target.value;
+                        val.target.value.replace(/\D/g, '').slice(0, 16);
                     }}
                   />
 

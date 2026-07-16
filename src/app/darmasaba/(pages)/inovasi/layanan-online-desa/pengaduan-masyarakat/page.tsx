@@ -151,9 +151,12 @@ function PengaduanMasyarakat() {
               }
             />
             <TextInput
+              inputMode="numeric"
+              maxLength={16}
               label={<Text fz="sm" fw="bold">NIK</Text>}
               placeholder="Masukkan nik"
-              onChange={(val) => (state.pengaduanMasyarakat.create.form.nik = val.target.value)}
+              value={state.pengaduanMasyarakat.create.form.nik || ''}
+              onChange={(val) => (state.pengaduanMasyarakat.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, 16))}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Judul Pengaduan</Text>}
