@@ -61,8 +61,8 @@ model FileStorage {
   isActive                       Boolean                    @default(true)
   link                           String
   category                       String // "image" / "document" / "audio" / "other"
-  Berita                         Berita[]                 @relation("BeritaFeaturedImage")
-  BeritaImages                   Berita[]                 @relation("BeritaImages")
+  Berita                         Berita[]                   @relation("BeritaFeaturedImage")
+  BeritaImages                   Berita[]                   @relation("BeritaImages")
   PotensiDesa                    PotensiDesa[]
   Posyandu                       Posyandu[]
   StrukturPPID                   StrukturPPID[]
@@ -103,10 +103,13 @@ model FileStorage {
 
   ArtikelKesehatan ArtikelKesehatan[]
   StrukturBumDes   StrukturBumDes[]
-  
-  MusikDesaAudio   MusikDesa[] @relation("MusikAudioFile")
-  MusikDesaCover   MusikDesa[] @relation("MusikCoverImage")
-  UmkmImage       Umkm[]       @relation("UmkmImage")
+
+  MusikDesaAudio MusikDesa[] @relation("MusikAudioFile")
+  MusikDesaCover MusikDesa[] @relation("MusikCoverImage")
+  UmkmImage      Umkm[]      @relation("UmkmImage")
+
+  KesejahteraanMasyarakat       KesejahteraanMasyarakat[] @relation("KesejahteraanFeaturedImage")
+  KesejahteraanMasyarakatImages KesejahteraanMasyarakat[] @relation("KesejahteraanImages")
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -206,30 +209,30 @@ model APBDes {
 }
 
 model APBDesItem {
-  id         String       @id @default(cuid())
-  kode       String // contoh: "4", "4.1", "4.1.2"
-  uraian     String // nama item, contoh: "Pendapatan Asli Desa", "Hasil Usaha"
-  anggaran   Float // dalam satuan Rupiah (bisa DECIMAL di DB, tapi Float umum di TS/JS)
-  tipe       String? // "pendapatan" | "belanja" | "pembiayaan" | null
-  level      Int // 1 = kelompok utama, 2 = sub-kelompok, 3 = detail
-  parentId   String? // untuk relasi hierarki
-  parent     APBDesItem?  @relation("APBDesItemParent", fields: [parentId], references: [id])
-  children   APBDesItem[] @relation("APBDesItemParent")
-  apbdesId   String
-  apbdes     APBDes       @relation(fields: [apbdesId], references: [id])
-  
+  id       String       @id @default(cuid())
+  kode     String // contoh: "4", "4.1", "4.1.2"
+  uraian   String // nama item, contoh: "Pendapatan Asli Desa", "Hasil Usaha"
+  anggaran Float // dalam satuan Rupiah (bisa DECIMAL di DB, tapi Float umum di TS/JS)
+  tipe     String? // "pendapatan" | "belanja" | "pembiayaan" | null
+  level    Int // 1 = kelompok utama, 2 = sub-kelompok, 3 = detail
+  parentId String? // untuk relasi hierarki
+  parent   APBDesItem?  @relation("APBDesItemParent", fields: [parentId], references: [id])
+  children APBDesItem[] @relation("APBDesItemParent")
+  apbdesId String
+  apbdes   APBDes       @relation(fields: [apbdesId], references: [id])
+
   // Field kalkulasi (auto-calculated dari realisasi items)
-  totalRealisasi Float      @default(0) // Sum dari semua realisasi
-  selisih        Float      @default(0) // totalRealisasi - anggaran
-  persentase     Float      @default(0) // (totalRealisasi / anggaran) * 100
-  
+  totalRealisasi Float @default(0) // Sum dari semua realisasi
+  selisih        Float @default(0) // totalRealisasi - anggaran
+  persentase     Float @default(0) // (totalRealisasi / anggaran) * 100
+
   // Relasi ke realisasi items
   realisasiItems RealisasiItem[]
-  
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  deletedAt  DateTime?
-  isActive   Boolean      @default(true)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
 
   @@index([kode])
   @@index([level])
@@ -239,19 +242,19 @@ model APBDesItem {
 // Model baru untuk multiple realisasi per item
 model RealisasiItem {
   id           String     @id @default(cuid())
-  kode         String?     // Kode realisasi, mirip dengan APBDesItem
+  kode         String? // Kode realisasi, mirip dengan APBDesItem
   apbdesItemId String
   apbdesItem   APBDesItem @relation(fields: [apbdesItemId], references: [id], onDelete: Cascade)
 
-  jumlah       Float      // Jumlah realisasi dalam Rupiah
-  tanggal      DateTime   @db.Date // Tanggal realisasi
-  keterangan   String?    @db.Text // Keterangan tambahan (opsional)
-  buktiFileId  String?    // FileStorage ID untuk bukti/foto (opsional)
+  jumlah      Float // Jumlah realisasi dalam Rupiah
+  tanggal     DateTime @db.Date // Tanggal realisasi
+  keterangan  String?  @db.Text // Keterangan tambahan (opsional)
+  buktiFileId String? // FileStorage ID untuk bukti/foto (opsional)
 
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  deletedAt    DateTime?
-  isActive     Boolean    @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
 
   @@index([kode])
   @@index([apbdesItemId])
@@ -296,7 +299,7 @@ model Responden {
   kelompokUmurId String
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
-  deletedAt  DateTime?
+  deletedAt      DateTime?
   isActive       Boolean                @default(true)
 }
 
@@ -305,7 +308,7 @@ model JenisKelaminResponden {
   name      String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  deletedAt  DateTime?
+  deletedAt DateTime?
   isActive  Boolean     @default(true)
   Responden Responden[]
 }
@@ -315,7 +318,7 @@ model PilihanRatingResponden {
   name      String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  deletedAt  DateTime?
+  deletedAt DateTime?
   isActive  Boolean     @default(true)
   Responden Responden[]
 }
@@ -325,7 +328,7 @@ model UmurResponden {
   name      String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  deletedAt  DateTime?
+  deletedAt DateTime?
   isActive  Boolean     @default(true)
   Responden Responden[]
 }
@@ -400,24 +403,24 @@ model StrukturOrganisasiPPID {
 
 // ========================================= VISI MISI PPID ========================================= //
 model VisiMisiPPID {
-  id        String   @id @default(cuid())
-  visi      String   @db.Text
-  misi      String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  visi      String    @db.Text
+  misi      String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 }
 
 // ========================================= DASAR HUKUM PPID ========================================= //
 model DasarHukumPPID {
-  id        String   @id @default(cuid())
-  judul     String   @db.Text
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  judul     String    @db.Text
+  content   String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 }
 
 // ========================================= PROFILE PPID ========================================= //
@@ -439,14 +442,14 @@ model ProfilePPID {
 
 // ========================================= DAFTAR INFORMASI PUBLIK ========================================= //
 model DaftarInformasiPublik {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   jenisInformasi String
   deskripsi      String
-  tanggal        DateTime @db.Date
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  tanggal        DateTime  @db.Date
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
-  isActive       Boolean  @default(true)
+  isActive       Boolean   @default(true)
 }
 
 //=========================================PERMOHONAN INFORMASI PUBLIK========================= //
@@ -502,15 +505,15 @@ model CaraMemperolehSalinanInformasi {
 
 //=========================================PERMOHONAN INFORMASI KEBERATAN PUBLIK========================= //
 model FormulirPermohonanKeberatan {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   email     String
   notelp    String
   alasan    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 }
 
 // ========================================= IKM ========================================= //
@@ -561,33 +564,33 @@ model GrafikBerdasarkanUmur {
 // ========================================= MENU DESA ========================================= //
 // ========================================= PROFILE DESA ========================================= //
 model SejarahDesa {
-  id        String   @id @default(cuid())
-  judul     String   @db.Text
-  deskripsi String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  judul     String    @db.Text
+  deskripsi String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 }
 
 model VisiMisiDesa {
-  id        String   @id @default(cuid())
-  visi      String   @db.Text
-  misi      String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  visi      String    @db.Text
+  misi      String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 }
 
 model LambangDesa {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   judul     String
-  deskripsi String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  deskripsi String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 }
 
 model MaskotDesa {
@@ -602,11 +605,11 @@ model MaskotDesa {
 }
 
 model ProfileDesaImage {
-  id           String      @id @default(cuid())
+  id           String       @id @default(cuid())
   label        String
   image        FileStorage? @relation(fields: [imageId], references: [id])
   imageId      String?
-  MaskotDesa   MaskotDesa  @relation(fields: [maskotDesaId], references: [id])
+  MaskotDesa   MaskotDesa   @relation(fields: [maskotDesaId], references: [id])
   maskotDesaId String
 }
 
@@ -665,6 +668,22 @@ model KategoriBerita {
   updatedAt DateTime @updatedAt
   deletedAt DateTime @default(now())
   isActive  Boolean  @default(true)
+}
+
+// Program kesejahteraan masyarakat (bansos/bantuan warga) — pola konten meniru Berita, tanpa kategori
+model KesejahteraanMasyarakat {
+  id        String        @id @default(cuid())
+  judul     String
+  deskripsi String
+  image     FileStorage?  @relation("KesejahteraanFeaturedImage", fields: [imageId], references: [id])
+  imageId   String?
+  images    FileStorage[] @relation("KesejahteraanImages")
+  content   String        @db.Text
+  linkVideo String?       @db.VarChar(500)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime      @default(now())
+  isActive  Boolean       @default(true)
 }
 
 // ========================================= POTENSI DESA ========================================= //
@@ -1154,13 +1173,13 @@ model DoctorSign {
 
 // ========================================= BANJAR ========================================= //
 model Banjar {
-  id               String           @id @default(cuid())
-  name             String
-  isActive         Boolean          @default(true)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  posyandus        Posyandu[]
-  grafikKepuasans  GrafikKepuasan[]
+  id              String           @id @default(cuid())
+  name            String
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  posyandus       Posyandu[]
+  grafikKepuasans GrafikKepuasan[]
 }
 
 // ========================================= POSYANDU ========================================= //
@@ -1433,8 +1452,8 @@ enum StatusCctv {
 
 model CctvKeamanan {
   id         String     @id @default(cuid())
-  kode       String     // e.g. "CCTV-01"
-  nama       String     // e.g. "Balai Desa"
+  kode       String // e.g. "CCTV-01"
+  nama       String // e.g. "Balai Desa"
   lokasi     String
   latitude   Float?
   longitude  Float?
@@ -1462,32 +1481,32 @@ model MenuTipsKeamanan {
 // ========================================= MENU EKONOMI ========================================= //
 // ========================================= PASAR DESA ========================================= //
 model PasarDesa {
-  id               String            @id @default(uuid())
-  nama             String
-  image            FileStorage?      @relation(fields: [imageId], references: [id])
-  imageId          String?
-  harga            Int
-  rating           Float             @default(0)
-  alamatUsaha      String?           // Opsional, bisa ambil dari UMKM
-  kontak           String?           // Opsional, bisa ambil dari UMKM
-  deskripsi        String?
-  
+  id          String       @id @default(uuid())
+  nama        String
+  image       FileStorage? @relation(fields: [imageId], references: [id])
+  imageId     String?
+  harga       Int
+  rating      Float        @default(0)
+  alamatUsaha String? // Opsional, bisa ambil dari UMKM
+  kontak      String? // Opsional, bisa ambil dari UMKM
+  deskripsi   String?
+
   // Data Stok & UMKM
-  stok             Int               @default(0)
+  stok   Int     @default(0)
   // Satuan jual produk (mis. "kg", "ekor", "ikat", "pcs"). Nullable agar produk
   // lama tetap valid tanpa backfill; UI fallback tanpa satuan bila kosong.
-  satuan           String?
-  umkm             Umkm              @relation(fields: [umkmId], references: [id])
-  umkmId           String
-  
-  // Relasi Penjualan
-  penjualan        PenjualanProduk[]
+  satuan String?
+  umkm   Umkm    @relation(fields: [umkmId], references: [id])
+  umkmId String
 
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  deletedAt        DateTime?
-  isActive         Boolean           @default(true)
-  
+  // Relasi Penjualan
+  penjualan PenjualanProduk[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
+
   kategoriProduk   KategoriProdukUmkm? @relation(fields: [kategoriProdukId], references: [id])
   kategoriProdukId String?
   KategoriToPasar  KategoriToPasar[]
@@ -1747,15 +1766,15 @@ model Pembiayaan {
 // ========================================= MENU INOVASI ========================================= //
 // ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
 model DesaDigital {
-  id        String      @id @default(cuid())
+  id        String       @id @default(cuid())
   name      String
-  deskripsi String      @db.Text
+  deskripsi String       @db.Text
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 // ========================================= PROGRAM KREATIF ========================================= //
@@ -1798,15 +1817,15 @@ model MitraKolaborasi {
 
 // ========================================= INFO TEKHNOLOGI TEPAT GUNA ========================================= //
 model InfoTekno {
-  id        String      @id @default(cuid())
+  id        String       @id @default(cuid())
   name      String
-  deskripsi String      @db.Text
+  deskripsi String       @db.Text
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  deletedAt DateTime    @default(now())
-  isActive  Boolean     @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime     @default(now())
+  isActive  Boolean      @default(true)
 }
 
 // ========================================= AJUKAN IDE INOVATIF ========================================= //
@@ -1857,7 +1876,7 @@ model PengaduanMasyarakat {
   nik                String
   judulPengaduan     String
   lokasiKejadian     String
-  image              FileStorage?    @relation(fields: [imageId], references: [id])
+  image              FileStorage?   @relation(fields: [imageId], references: [id])
   imageId            String?
   deskripsiPengaduan String         @db.Text
   jenisPengaduan     JenisPengaduan @relation(fields: [jenisPengaduanId], references: [id])
@@ -1939,7 +1958,7 @@ model KegiatanDesa {
   tanggal            DateTime
   lokasi             String
   partisipan         Int
-  image              FileStorage?      @relation(fields: [imageId], references: [id])
+  image              FileStorage?     @relation(fields: [imageId], references: [id])
   imageId            String?
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
@@ -2025,7 +2044,7 @@ model NilaiKonservasiAdat {
 // ========================================= INFO SEKOLAH & PAUD ========================================= //
 model JenjangPendidikan {
   id        String    @id @default(cuid())
-  nama      String    // TK/PAUD, SD, SMP, SMA/SMK
+  nama      String // TK/PAUD, SD, SMP, SMA/SMK
   lembagas  Lembaga[] // Relasi ke lembaga
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -2224,7 +2243,7 @@ model DataPerpustakaan {
   deskripsi  String       @db.Text
   kategori   KategoriBuku @relation(fields: [kategoriId], references: [id])
   kategoriId String
-  image      FileStorage?  @relation(fields: [imageId], references: [id])
+  image      FileStorage? @relation(fields: [imageId], references: [id])
   imageId    String?
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
@@ -2269,7 +2288,6 @@ enum StatusPeminjaman {
   Terlambat
   Dibatalkan
 }
-
 
 // ========================================= DATA PENDIDIKAN ========================================= //
 model DataPendidikan {
@@ -2425,16 +2443,16 @@ model RateLimit {
 // ========================================= KEPENDUDUKAN ========================================= //
 // ========================================= DATA BANJAR ========================================= //
 model DataBanjar {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   nama      String // Nama banjar
   penduduk  Int // Jumlah penduduk
   kk        Int // Jumlah kepala keluarga
   miskin    Int // Jumlah penduduk miskin
   tahun     Int // Tahun data
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 
   @@index([tahun])
   @@index([isActive])
@@ -2442,14 +2460,14 @@ model DataBanjar {
 
 // ========================================= DISTRIBUSI AGAMA ========================================= //
 model DistribusiAgama {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   agama     String // Nama agama
   jumlah    Int // Jumlah penganut
   tahun     Int // Tahun data
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 
   @@index([tahun])
   @@index([isActive])
@@ -2457,14 +2475,14 @@ model DistribusiAgama {
 
 // ========================================= DISTRIBUSI UMUR ========================================= //
 model DistribusiUmur {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   rentangUmur String // Rentang umur (e.g., "0-14", "15-24", "25-54", "55-64", "65+")
   jumlah      Int // Jumlah penduduk
   tahun       Int // Tahun data
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  isActive    Boolean  @default(true)
+  isActive    Boolean   @default(true)
 
   @@index([tahun])
   @@index([isActive])
@@ -2472,17 +2490,17 @@ model DistribusiUmur {
 
 // ========================================= MIGRASI PENDUDUK ========================================= //
 model MigrasiPenduduk {
-  id          String   @id @default(cuid())
-  nama        String // Nama penduduk
-  jenis       JenisMigrasi // MASUK atau KELUAR
-  tanggal     DateTime // Tanggal migrasi
-  asal        String? // Asal (untuk masuk)
-  tujuan      String? // Tujuan (untuk keluar)
-  alasan      String? // Alasan migrasi
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
-  isActive    Boolean  @default(true)
+  id        String       @id @default(cuid())
+  nama      String // Nama penduduk
+  jenis     JenisMigrasi // MASUK atau KELUAR
+  tanggal   DateTime // Tanggal migrasi
+  asal      String? // Asal (untuk masuk)
+  tujuan    String? // Tujuan (untuk keluar)
+  alasan    String? // Alasan migrasi
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean      @default(true)
 
   @@index([tanggal])
   @@index([isActive])
@@ -2495,39 +2513,39 @@ enum JenisMigrasi {
 
 // ========================================= DINAMIKA PENDUDUK ========================================= //
 model DinamikaPenduduk {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   tahun     Int // Tahun data
   kelahiran Int // Jumlah kelahiran
   kematian  Int // Jumlah kematian
   masuk     Int // Jumlah penduduk masuk
   keluar    Int // Jumlah penduduk keluar
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  isActive  Boolean  @default(true)
+  isActive  Boolean   @default(true)
 
+  @@unique([tahun])
   @@index([tahun])
   @@index([isActive])
-  @@unique([tahun])
 }
 
 // ========================================= MUSIK DESA ========================================= //
 model MusikDesa {
-  id          String       @id @default(cuid())
-  judul       String       @db.VarChar(255)
-  artis       String       @db.VarChar(255)
-  deskripsi   String?      @db.Text
-  durasi      String       @db.VarChar(20) // format: "MM:SS"
-  audioFile   FileStorage? @relation("MusikAudioFile", fields: [audioFileId], references: [id])
-  audioFileId String?
-  coverImage  FileStorage? @relation("MusikCoverImage", fields: [coverImageId], references: [id])
+  id           String       @id @default(cuid())
+  judul        String       @db.VarChar(255)
+  artis        String       @db.VarChar(255)
+  deskripsi    String?      @db.Text
+  durasi       String       @db.VarChar(20) // format: "MM:SS"
+  audioFile    FileStorage? @relation("MusikAudioFile", fields: [audioFileId], references: [id])
+  audioFileId  String?
+  coverImage   FileStorage? @relation("MusikCoverImage", fields: [coverImageId], references: [id])
   coverImageId String?
-  genre       String?      @db.VarChar(100)
-  tahunRilis  Int?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  deletedAt   DateTime?
-  isActive    Boolean      @default(true)
+  genre        String?      @db.VarChar(100)
+  tahunRilis   Int?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean      @default(true)
 
   @@index([judul])
   @@index([artis])
@@ -2562,20 +2580,19 @@ model KategoriProdukUmkm {
   PasarDesa PasarDesa[]
 }
 
-
 model PenjualanProduk {
-  id           String    @id @default(cuid())
-  produk       PasarDesa @relation(fields: [produkId], references: [id])
-  produkId     String
-  jumlah       Int
-  hargaSatuan  Int // snapshot harga saat transaksi, agar histori tetap akurat
-  totalNilai   Int // hargaSatuan * jumlah
-  tanggal      DateTime  @default(now())
-  periode      String // format "YYYY-MM" untuk grouping bulanan
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
-  isActive     Boolean   @default(true)
+  id          String    @id @default(cuid())
+  produk      PasarDesa @relation(fields: [produkId], references: [id])
+  produkId    String
+  jumlah      Int
+  hargaSatuan Int // snapshot harga saat transaksi, agar histori tetap akurat
+  totalNilai  Int // hargaSatuan * jumlah
+  tanggal     DateTime  @default(now())
+  periode     String // format "YYYY-MM" untuk grouping bulanan
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  isActive    Boolean   @default(true)
 
   @@index([periode])
   @@index([produkId])
@@ -2673,4 +2690,3 @@ model EventBudaya {
   updatedAt DateTime @updatedAt
   isActive  Boolean  @default(true)
 }
-

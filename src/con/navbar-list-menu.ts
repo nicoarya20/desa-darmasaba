@@ -234,6 +234,11 @@ const navbarListMenu = [
                 id: "5.10",
                 name: "Demografi Pekerjaan",
                 href: "/darmasaba/ekonomi/demografi-pekerjaan"
+            },
+            {
+                id: "5.11",
+                name: "Kesejahteraan Masyarakat",
+                href: "/darmasaba/ekonomi/kesejahteraan-masyarakat"
             }
         ]
     }, {

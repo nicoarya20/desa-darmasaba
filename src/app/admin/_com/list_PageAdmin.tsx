@@ -275,6 +275,11 @@ export const devBar = [
         id: "Ekonomi_10",
         name: "Demografi Pekerjaan",
         path: "/admin/ekonomi/demografi-pekerjaan"
+      },
+      {
+        id: "Ekonomi_11",
+        name: "Kesejahteraan Masyarakat",
+        path: "/admin/ekonomi/kesejahteraan-masyarakat"
       }
     ]
   }, {
@@ -726,6 +731,11 @@ export const navBar = [
         id: "Ekonomi_10",
         name: "Demografi Pekerjaan",
         path: "/admin/ekonomi/demografi-pekerjaan"
+      },
+      {
+        id: "Ekonomi_11",
+        name: "Kesejahteraan Masyarakat",
+        path: "/admin/ekonomi/kesejahteraan-masyarakat"
       }
     ]
   }, {
@@ -1135,6 +1145,11 @@ export const role1 = [
         id: "Ekonomi_10",
         name: "Demografi Pekerjaan",
         path: "/admin/ekonomi/demografi-pekerjaan"
+      },
+      {
+        id: "Ekonomi_11",
+        name: "Kesejahteraan Masyarakat",
+        path: "/admin/ekonomi/kesejahteraan-masyarakat"
       }
     ]
   },

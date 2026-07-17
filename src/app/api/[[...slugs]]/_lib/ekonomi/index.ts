@@ -14,6 +14,7 @@ import Umkm from "./umkm";
 import ProdukUmkm from "./umkm/produk";
 import PenjualanProduk from "./umkm/penjualan";
 import UmkmDashboard from "./umkm/dashboard";
+import KesejahteraanMasyarakat from "./kesejahteraan-masyarakat";
 
 const Ekonomi = new Elysia({
   prefix: "/ekonomi",
@@ -34,5 +35,6 @@ const Ekonomi = new Elysia({
 .use(DemografiPekerjaan)
 .use(JumlahPengangguran)
 .use(PendapatanAsliDesa)
+.use(KesejahteraanMasyarakat)
 
 export default Ekonomi
