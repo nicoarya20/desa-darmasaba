@@ -9,10 +9,10 @@ import {
 import { IconArrowRight, IconCalendar } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
-function KesejahteraanMasyarakatPublic() {
+function KesejahteraanMasyarakatContent() {
   const searchParams = useSearchParams();
   const router = useTransitionRouter();
 
@@ -215,6 +215,14 @@ function KesejahteraanMasyarakatPublic() {
         </Box>
       </Container>
     </Box>
+  );
+}
+
+function KesejahteraanMasyarakatPublic() {
+  return (
+    <Suspense fallback={<Center py={50}><Skeleton h={400} /></Center>}>
+      <KesejahteraanMasyarakatContent />
+    </Suspense>
   );
 }
 
