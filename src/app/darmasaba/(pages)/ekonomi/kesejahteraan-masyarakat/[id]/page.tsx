@@ -5,6 +5,7 @@ import NewsReader from '@/app/darmasaba/_com/NewsReader';
 import colors from '@/con/colors';
 import {
   Box,
+  Button,
   Center,
   Container,
   Group,
@@ -19,10 +20,10 @@ import {
   Badge,
   Divider,
 } from '@mantine/core';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { IconVideo, IconCalendar } from '@tabler/icons-react';
+import { IconVideo, IconCalendar, IconArrowBack } from '@tabler/icons-react';
 
 interface ExistingImage {
   id: string;
@@ -44,6 +45,7 @@ interface KesejahteraanDetail {
 function Page() {
   const params = useParams<{ id: string }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const router = useRouter();
   const state = useProxy(stateKesejahteraanMasyarakat.kesejahteraan);
   const [loading, setLoading] = useState(true);
 
@@ -82,6 +84,16 @@ function Page() {
 
   return (
     <Stack pos="relative" bg={colors.Bg} pb="xl" gap="xs" px={{ base: 'md', md: 0 }}>
+      <Box px={{ base: 'md', md: 100 }}>
+        <Button
+          variant="subtle"
+          leftSection={<IconArrowBack size={16} />}
+          onClick={() => router.back()}
+        >
+          Kembali
+        </Button>
+      </Box>
+
       <Group px={{ base: 'md', md: 100 }}>
         <NewsReader />
       </Group>
