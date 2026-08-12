@@ -13,14 +13,12 @@ import {
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useProxy } from 'valtio/utils';
 import umkmState from '../../../../../_state/ekonomi/umkm/umkm';
 
 export default function EditKategoriProduk() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const state = useProxy(umkmState.kategoriProduk.findMany);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [nama, setNama] = useState("");
@@ -28,12 +26,12 @@ export default function EditKategoriProduk() {
 
   useEffect(() => {
     const init = async () => {
-      // Find the item from the existing list or load it if not available
-      if (state.data.length === 0) {
-        await state.load();
+      const slice = umkmState.kategoriProduk.findManyAll;
+      if (slice.data.length === 0) {
+        await slice.load();
       }
-      
-      const item = state.data.find((v: any) => v.id === id);
+
+      const item = slice.data.find((v: any) => v.id === id);
       if (item) {
         setNama(item.nama);
         setOriginalNama(item.nama);
@@ -41,7 +39,7 @@ export default function EditKategoriProduk() {
       setIsLoading(false);
     };
     init();
-  }, [id, state]);
+  }, [id]);
 
   const handleResetForm = () => {
     setNama(originalNama);
