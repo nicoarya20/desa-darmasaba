@@ -25,6 +25,7 @@ const ProdukUmkm = new Elysia({
       deskripsi: t.Optional(t.String()),
       imageId: t.Optional(t.String()),
       isActive: t.Optional(t.Boolean()),
+      satuan: t.Optional(t.String()),
     }),
   })
   .put("/:id", produkUmkmUpdate, {
@@ -40,6 +41,7 @@ const ProdukUmkm = new Elysia({
       deskripsi: t.Optional(t.String()),
       imageId: t.Optional(t.String()),
       isActive: t.Boolean(),
+      satuan: t.Optional(t.String()),
     }),
   })
   .delete("/del/:id", produkUmkmDelete, {
