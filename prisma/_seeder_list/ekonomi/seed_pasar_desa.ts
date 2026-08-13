@@ -5,7 +5,7 @@ const kategoriProduk = loadJsonData("ekonomi/pasar-desa/kategori-produk.json");
 const pasarDesa = loadJsonData("ekonomi/pasar-desa/pasar-desa.json");
 const kategoriToPasar = loadJsonData("ekonomi/pasar-desa/kategori-to-pasar.json");
 
-export async function seedPasarDesa() {
+export async function seedKategoriProduk() {
   console.log("🔄 Seeding Kategori Produk...");
   for (const k of kategoriProduk) {
     await prisma.kategoriProduk.upsert({
@@ -22,6 +22,11 @@ export async function seedPasarDesa() {
     });
   }
   console.log("✅ Kategori Produk seeded successfully");
+}
+
+export async function seedPasarDesa() {
+  // Ensure KategoriProduk is seeded first
+  await seedKategoriProduk();
 
   console.log("🔄 Seeding Pasar Desa...");
   

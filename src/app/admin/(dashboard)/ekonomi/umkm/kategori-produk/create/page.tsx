@@ -1,8 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+import kategoriProduk from '@/app/admin/(dashboard)/_state/ekonomi/umkm/kategori-produk';
+import colors from '@/con/colors';
 import {
   Box,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
   TextInput,
@@ -10,69 +14,108 @@ import {
 } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import umkmState from '../../../../_state/ekonomi/umkm/umkm';
 
-export default function CreateKategoriProduk() {
+function CreateKategoriProduk() {
   const router = useRouter();
-  const state = useProxy(umkmState.kategoriProduk.create, { sync: true }); // sync: cegah caret jump di controlled input
+  const statePasar = useProxy(kategoriProduk);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleResetForm = () => {
-    state.form = {
-      nama: "",
+  // Check if form is valid
+  const isFormValid = () => {
+    return statePasar.create.form.nama?.trim() !== '';
+  };
+
+  useEffect(() => {
+    statePasar.findMany.load();
+  }, []);
+
+  const resetForm = () => {
+    statePasar.create.form = {
+      nama: '',
     };
   };
 
-  const handleCreate = async () => {
-    setIsSubmitting(true);
+  const handleSubmit = async () => {
     try {
-      const success = await umkmState.kategoriProduk.create.submit();
-      if (success) {
-        handleResetForm();
-        router.push('/admin/ekonomi/umkm/kategori-produk');
+      if (!statePasar.create.form.nama) {
+        return toast.warn('Nama kategori produk wajib diisi');
       }
+      setIsSubmitting(true);
+      await statePasar.create.create();
+      resetForm();
+      router.push('/admin/ekonomi/umkm/kategori-produk');
     } catch (error) {
-      console.error(error);
+      console.error(error)
+      toast.error('Gagal menambahkan kategori produk');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Box>
-      <Group mb="lg">
+     <Box px={{ base: 0, md: 'xs' }} py="xs">
+      {/* Header dengan tombol kembali */}
+      <Group mb="md">
         <Button
           variant="subtle"
           onClick={() => router.back()}
-          leftSection={<IconArrowBack size={20} />}
+          p="xs"
+          radius="md"
         >
-          Kembali
+          <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
-        <Title order={3}>Tambah Kategori Produk Baru</Title>
+        <Title order={4} ml="sm" c="dark">
+          Tambah Kategori Produk
+        </Title>
       </Group>
 
-      <Paper withBorder p="xl" radius="md" shadow="sm" maw={600}>
-        <Stack gap="lg">
+      {/* Card form */}
+      <Paper
+        w={{ base: '100%', md: '50%' }}
+        bg={colors['white-1']}
+        p="lg"
+        radius="md"
+        shadow="sm"
+        style={{ border: '1px solid #e0e0e0' }}
+      >
+        <Stack gap="md">
           <TextInput
-            label="Nama Kategori"
-            placeholder="Contoh: Makanan, Minuman, Kerajinan"
+            label="Nama Kategori Produk"
+            placeholder="Masukkan nama kategori produk"
+            value={statePasar.create.form.nama || ''}
+            onChange={(e) => (statePasar.create.form.nama = e.target.value)}
             required
-            value={state.form.nama}
-            onChange={(e) => (state.form.nama = e.target.value)}
           />
 
-          <Group justify="flex-end" mt="xl">
-            <Button variant="outline" color="gray" onClick={handleResetForm}>
+          <Group justify="right">
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
               Reset
             </Button>
-            <Button 
-              color="blue" 
-              onClick={handleCreate}
-              loading={isSubmitting}
+
+            {/* Tombol Simpan */}
+            <Button
+              onClick={handleSubmit}
+              radius="md"
+              size="md"
+              disabled={!isFormValid() || isSubmitting}
+              style={{
+                background: !isFormValid() || isSubmitting
+                  ? `linear-gradient(135deg, #cccccc, #eeeeee)`
+                  : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
+                color: '#fff',
+                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+              }}
             >
-              Simpan Kategori
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>
@@ -80,3 +123,5 @@ export default function CreateKategoriProduk() {
     </Box>
   );
 }
+
+export default CreateKategoriProduk;

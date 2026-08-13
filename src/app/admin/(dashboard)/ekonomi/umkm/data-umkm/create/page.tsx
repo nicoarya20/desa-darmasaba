@@ -97,11 +97,12 @@ export default function CreateDataUmkm() {
         >
           Kembali
         </Button>
-        <Title order={3}>Daftarkan UMKM Baru</Title>
+        
       </Group>
 
-      <Paper withBorder p="xl" radius="md" shadow="sm">
+      <Paper w={{ base: '100%', md: '50%' }} withBorder p="xl" radius="md" shadow="sm">
         <Stack gap="lg">
+          <Title order={3}>Daftarkan UMKM Baru</Title>
           {/* Logo / Image UMKM */}
           <Box>
             <Text fw={500} size="sm" mb={4}>Logo / Foto UMKM</Text>
