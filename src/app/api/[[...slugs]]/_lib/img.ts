@@ -21,7 +21,7 @@ async function img({
   const noImage = path.join(ROOT, "public/no-image.jpg");
 
   // Validasi ekstensi file
-  if (![".jpg", ".jpeg", ".png"].includes(ext)) {
+  if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) {
     console.warn(`Ekstensi file tidak didukung: ${ext}`);
     const buffer = await fs.readFile(noImage);
     const uint8Array = new Uint8Array(buffer);
