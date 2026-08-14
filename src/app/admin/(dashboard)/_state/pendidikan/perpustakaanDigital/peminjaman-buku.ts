@@ -12,8 +12,8 @@ const templatePeminjamanBuku = z.object({
   bukuId: z.string().min(1, "Buku ID harus diisi"),
   tanggalPinjam: z.string().min(1, "Tanggal Pinjam harus diisi"),
   batasKembali: z.string().min(1, "Batas Kembali harus diisi"),
-  tanggalKembali: z.string().min(1, "Tanggal Kembali harus diisi"),
-  catatan: z.string().min(1, "Catatan harus diisi"),
+  tanggalKembali: z.string().optional(),
+  catatan: z.string().optional(),
 });
 
 const defaultPeminjamanBuku = {
