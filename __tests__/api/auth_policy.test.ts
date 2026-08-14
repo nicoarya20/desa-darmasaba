@@ -107,6 +107,13 @@ describe('isPublicPostPath', () => {
     expect(isPublicPostPath('/api/inovasi/layananonlinedesa/pengaduanmasyarakat/upload')).toBe(true);
   });
 
+  it('form pinjam buku publik → boleh POST tanpa login', () => {
+    expect(isPublicPostPath('/api/pendidikan/perpustakaandigital/peminjamanbuku/create')).toBe(true);
+    // sub-path admin (misal update status) tetap butuh auth
+    expect(isPublicPostPath('/api/pendidikan/perpustakaandigital/peminjamanbuku/create/')).toBe(false);
+    expect(isPublicPostPath('/api/pendidikan/perpustakaandigital/peminjamanbuku')).toBe(false);
+  });
+
   it('master data (jenislayanan/jenispengaduan) TETAP admin → tidak bocor', () => {
     // Bertingkat di bawah path publik; exact-match mencegah kebocoran.
     expect(isPublicPostPath('/api/inovasi/layananonlinedesa/administrasionline/jenislayanan/create')).toBe(false);

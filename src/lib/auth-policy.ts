@@ -77,6 +77,8 @@ export const PUBLIC_POST_PATHS: readonly string[] = [
   // Upload gambar khusus pengaduan (image-only, tervalidasi) — bukan
   // /api/fileStorage/create yang generik & tetap admin-only.
   "/api/inovasi/layananonlinedesa/pengaduanmasyarakat/upload",
+  // Pinjam buku: form publik warga anonim, data peminjam diisi manual di form.
+  "/api/pendidikan/perpustakaandigital/peminjamanbuku/create",
 ];
 
 /**
