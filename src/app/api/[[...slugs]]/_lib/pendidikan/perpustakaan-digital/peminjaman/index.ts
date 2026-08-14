@@ -18,8 +18,8 @@ const PeminjamanBuku = new Elysia({
       bukuId: t.String(),
       tanggalPinjam: t.String(),
       batasKembali: t.String(),
-      tanggalKembali: t.String(),
-      catatan: t.String()
+      tanggalKembali: t.Optional(t.String()),
+      catatan: t.Optional(t.String())
     }),
   })
 
@@ -38,8 +38,8 @@ const PeminjamanBuku = new Elysia({
       bukuId: t.String(),
       tanggalPinjam: t.String(),
       batasKembali: t.String(),
-      tanggalKembali: t.String(),
-      catatan: t.String(),
+      tanggalKembali: t.Optional(t.String()),
+      catatan: t.Optional(t.String()),
       status: t.String()
     }),
   })
