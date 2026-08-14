@@ -9,12 +9,35 @@ import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import colors from '@/con/colors';
 
+type DPMrafik = {
+  id: string;
+  name: string;
+  jumlah: number;
+};
+
+type CustomTooltipProps = {
+  active?: boolean;
+  payload?: { payload: DPMrafik }[];
+};
+
+function CustomTooltip({ active, payload }: CustomTooltipProps) {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <Paper p="sm" shadow="md" withBorder radius="md" style={{ maxWidth: 220, wordBreak: 'break-word' }}>
+        <Text fw={700} fz="sm">
+          {data.name}
+        </Text>
+        <Text fz="xs" c="dimmed">
+          Jumlah: {data.jumlah}
+        </Text>
+      </Paper>
+    );
+  }
+  return null;
+}
+
 function Page() {
-  type DPMrafik = {
-    id: string;
-    name: string;
-    jumlah: number;
-  };
 
   const stateDPM = useProxy(dataPendidikan);
   const [chartData, setChartData] = useState<DPMrafik[]>([]);
@@ -75,22 +98,15 @@ function Page() {
             </Stack>
           </Paper>
         ) : (
-          <Paper radius="lg" p="xl" withBorder shadow="sm" bg="var(--mantine-color-white)">
+          <Paper radius="lg" p="xl" withBorder shadow="sm" bg="var(--mantine-color-white)" style={{ overflow: 'hidden' }}>
             <Title order={4} fw={600} mb="md">
               Grafik Pendidikan
             </Title>
             <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={chartData}>
+              <BarChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: 12,
-                    background: 'var(--mantine-color-gray-0)',
-                    border: '1px solid var(--mantine-color-gray-3)',
-                  }}
-                  cursor={{ fill: 'var(--mantine-color-gray-1)' }}
-                />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--mantine-color-gray-1)' }} />
                 <Legend />
                 <Bar dataKey="jumlah" fill={colors['blue-button']} name="Jumlah Penduduk dengan Pendidikan" radius={[8, 8, 0, 0]} />
               </BarChart>

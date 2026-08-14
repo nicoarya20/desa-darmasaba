@@ -53,7 +53,7 @@ const dataPendidikan = proxy({
             return id;
           }
         }
-        return toast.error("failed create");
+        return toast.error(res.data?.message || "Gagal menambahkan data");
       } catch (error) {
         console.log((error as Error).message);
       } finally {

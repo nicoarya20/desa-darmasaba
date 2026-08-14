@@ -27,6 +27,7 @@ import {
   toPhoneDigits,
   toStoredPhone,
 } from './notelp';
+import { isPeminjamanFormValid } from './peminjamanForm';
 
 export interface ModalPeminjamanProps {
   opened: boolean;
@@ -49,26 +50,10 @@ export default function ModalPeminjaman({
 
   const BATAS_HARI_PINJAM = 4;
 
-  // Helper function to check if HTML content is empty
-  const isHtmlEmpty = (html: string) => {
-    // Remove all HTML tags and check if there's any text content
-    const textContent = html.replace(/<[^>]*>/g, '').trim();
-    return textContent === '';
-  };
-
   // Digit nomor telepon (tanpa prefix +62) untuk input & validasi
   const phoneDigits = toPhoneDigits(snap.create.form.noTelp);
 
-  // Check if form is valid
-  const isFormValid = () => {
-    return (
-      snap.create.form.nama?.trim() !== '' &&
-      isValidPhoneDigits(phoneDigits) &&
-      snap.create.form.alamat?.trim() !== '' &&
-      snap.create.form.tanggalPinjam?.trim() !== '' &&
-      !isHtmlEmpty(snap.create.form.catatan)
-    );
-  };
+  const isFormValid = () => isPeminjamanFormValid(snap.create.form);
 
   // Reset form setiap modal dibuka
   useEffect(() => {
@@ -230,7 +215,12 @@ export default function ModalPeminjaman({
           />
 
           <Box>
-            <Text fw={500}>Catatan</Text>
+            <Text fw={500}>
+              Catatan{' '}
+              <Text span c="dimmed" fz="sm">
+                (Opsional)
+              </Text>
+            </Text>
             <CreateEditor
               value={snap.create.form.catatan}
               onChange={(val) =>

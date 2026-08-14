@@ -11,6 +11,30 @@ import HeaderSearch from '../../_com/header';
 import { ModalKonfirmasiHapus } from '../../_com/modalKonfirmasiHapus';
 import dataPendidikan from '../../_state/pendidikan/data-pendidikan';
 
+type DPMrafik = { id: string; name: string; jumlah: number };
+
+type CustomTooltipProps = {
+  active?: boolean;
+  payload?: { payload: DPMrafik }[];
+};
+
+function CustomTooltip({ active, payload }: CustomTooltipProps) {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <Paper p="sm" shadow="md" withBorder radius="md" style={{ maxWidth: 220, wordBreak: 'break-word' }}>
+        <Text fw={700} fz="sm">
+          {data.name}
+        </Text>
+        <Text fz="xs" c="dimmed">
+          Jumlah: {data.jumlah}
+        </Text>
+      </Paper>
+    );
+  }
+  return null;
+}
+
 function DataPendidikan() {
   const [search, setSearch] = useState('');
   return (
@@ -28,7 +52,6 @@ function DataPendidikan() {
 }
 
 function ListDataPendidikan({ search }: { search: string }) {
-  type DPMrafik = { id: string; name: string; jumlah: number };
   const stateDPM = useProxy(dataPendidikan);
   const [chartData, setChartData] = useState<DPMrafik[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -153,16 +176,16 @@ function ListDataPendidikan({ search }: { search: string }) {
           </Center>
         </Paper>
 
-        <Paper withBorder p="md" bg={colors['white-1']} shadow="sm" radius="md">
+        <Paper withBorder p="md" bg={colors['white-1']} shadow="sm" radius="md" style={{ overflow: 'hidden' }}>
           <Title order={4} mb="sm">
             Grafik Data Pendidikan
           </Title>
           {mounted && chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+              <BarChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
                 <XAxis dataKey="name" />
                 <YAxis />
-                <RechartTooltip />
+                <RechartTooltip content={<CustomTooltip />} />
                 <Legend />
                 <Bar dataKey="jumlah" fill={colors['blue-button']} name="Jumlah Pendidikan" radius={[4, 4, 0, 0]} />
               </BarChart>
