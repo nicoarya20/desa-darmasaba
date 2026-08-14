@@ -48,7 +48,7 @@ function Page() {
             fw="bold"
             lh={1.2}
           >
-            Data per Banjar
+            Data Per Banjar
           </Title>
           <Text
             ta="center"
