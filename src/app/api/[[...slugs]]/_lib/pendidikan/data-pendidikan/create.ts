@@ -10,10 +10,22 @@ type FormCreate = Prisma.DataPendidikanGetPayload<{
 }>;
 export default async function dataPendidikanCreate(context: Context) {
     const body = context.body as FormCreate;
+    const name = body.name.trim();
+
+    const duplicate = await prisma.dataPendidikan.findFirst({
+        where: { name: { equals: name, mode: "insensitive" }, isActive: true },
+    });
+
+    if (duplicate) {
+        return {
+            success: false,
+            message: `Data pendidikan "${name}" sudah ada.`,
+        };
+    }
 
     const created = await prisma.dataPendidikan.create({
         data: {
-            name: body.name,
+            name,
             jumlah: body.jumlah,
         },
         select: {
