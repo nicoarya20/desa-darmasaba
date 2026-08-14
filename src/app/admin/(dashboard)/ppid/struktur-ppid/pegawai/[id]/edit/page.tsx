@@ -208,6 +208,7 @@ export default function EditPegawaiPPID() {
             placeholder="Contoh: S.Kom"
             value={formData.gelarAkademik}
             onChange={(e) => setFormData({ ...formData, gelarAkademik: e.target.value })}
+            required
           />
 
           {/* Foto Profil */}

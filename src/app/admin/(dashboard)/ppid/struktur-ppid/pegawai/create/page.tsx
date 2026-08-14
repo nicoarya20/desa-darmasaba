@@ -141,7 +141,7 @@ function CreatePegawaiPPID() {
           </Box>
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Foto Profil
+              Foto Profil <Text component="span" c="red">*</Text>
             </Text>
             <Dropzone
               onDrop={(files) => {
