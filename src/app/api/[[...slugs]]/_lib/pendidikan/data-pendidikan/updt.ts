@@ -17,10 +17,11 @@ export default async function dataPendidikanUpdate(context: Context) {
         }
     })
 
-    const {name, jumlah} = context.body as {
+    const {name: rawName, jumlah} = context.body as {
         name: string;
         jumlah: string;
     }
+    const name = rawName.trim();
 
     if (!existingData) {
         return {
@@ -30,12 +31,27 @@ export default async function dataPendidikanUpdate(context: Context) {
         }
     }
 
+    const duplicate = await prisma.dataPendidikan.findFirst({
+        where: {
+            name: { equals: name, mode: "insensitive" },
+            isActive: true,
+            NOT: { id },
+        },
+    })
+
+    if (duplicate) {
+        return {
+            success: false,
+            message: `Data pendidikan "${name}" sudah ada.`,
+        }
+    }
+
     const updated = await prisma.dataPendidikan.update({
         where: {
             id: id,
         },
         data: {
-            name: name,
+            name,
             jumlah: jumlah,
         },
     })

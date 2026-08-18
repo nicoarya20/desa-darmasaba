@@ -1,4 +1,5 @@
 import { useMusic } from '@/app/context/MusicContext';
+import { formatTime } from '@/app/context/music/format';
 import {
   ActionIcon,
   Avatar,
@@ -9,7 +10,6 @@ import {
   Paper,
   Slider,
   Text,
-  Transition
 } from '@mantine/core';
 import {
   IconArrowsShuffle,
@@ -40,24 +40,21 @@ export default function FixedPlayerBar() {
     playNext,
     playPrev,
     seek,
+    seekPreview,
     setVolume,
     toggleMute,
     toggleRepeat,
     toggleShuffle,
   } = useMusic();
 
-  const [showVolume, setShowVolume] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
 
-  // Format time
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  // Handle seek drag (visual only) / commit
+  const handleSeekPreview = (value: number) => {
+    seekPreview(value);
   };
 
-  // Handle seek
-  const handleSeek = (value: number) => {
+  const handleSeekEnd = (value: number) => {
     seek(value);
   };
 
@@ -230,7 +227,8 @@ export default function FixedPlayerBar() {
               <Slider
                 value={currentTime}
                 max={duration || 100}
-                onChange={handleSeek}
+                onChange={handleSeekPreview}
+                onChangeEnd={handleSeekEnd}
                 size="sm"
                 color="blue"
                 label={(value) => formatTime(value)}
@@ -240,11 +238,7 @@ export default function FixedPlayerBar() {
 
           {/* Right Controls - Volume + Close */}
           <Group gap="xs" flex={1} justify="flex-end">
-            <Box
-              onMouseEnter={() => setShowVolume(true)}
-              onMouseLeave={() => setShowVolume(false)}
-              pos="relative"
-            >
+            <Group gap={6} wrap="nowrap">
               <ActionIcon
                 variant="subtle"
                 color={isMuted ? 'red' : 'gray'}
@@ -259,38 +253,21 @@ export default function FixedPlayerBar() {
                 )}
               </ActionIcon>
 
-              <Transition
-                mounted={showVolume}
-                transition="scale-y"
-                duration={200}
-                timingFunction="ease"
-              >
-                {(style) => (
-                  <Paper
-                    style={{
-                      ...style,
-                      position: 'absolute',
-                      bottom: '100%',
-                      right: 0,
-                      mb: 'xs',
-                      p: 'sm',
-                      zIndex: 1001,
-                    }}
-                    shadow="md"
-                    withBorder
-                  >
-                    <Slider
-                      value={isMuted ? 0 : volume}
-                      max={100}
-                      onChange={handleVolumeChange}
-                      h={100}
-                      color="blue"
-                      size="sm"
-                    />
-                  </Paper>
-                )}
-              </Transition>
-            </Box>
+              {/* Slider volume inline permanen, desktop saja — mobile sudah punya
+                  hardware volume dan ruang mini bar terbatas di layar sempit.
+                  Menggantikan popup hover sebelumnya yang rapuh: ada celah antar
+                  ikon & popup yang bikin popup nutup sebelum sempat digeser, dan
+                  hover sama sekali tidak jalan di touch device. */}
+              <Box w={90} display={{ base: 'none', md: 'block' }}>
+                <Slider
+                  value={isMuted ? 0 : volume}
+                  max={100}
+                  onChange={handleVolumeChange}
+                  color="blue"
+                  size="sm"
+                />
+              </Box>
+            </Group>
 
             <ActionIcon
               variant="subtle"
@@ -309,7 +286,8 @@ export default function FixedPlayerBar() {
           <Slider
             value={currentTime}
             max={duration || 100}
-            onChange={handleSeek}
+            onChange={handleSeekPreview}
+            onChangeEnd={handleSeekEnd}
             size="sm"
             color="blue"
             label={(value) => formatTime(value)}

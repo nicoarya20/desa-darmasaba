@@ -80,7 +80,7 @@ function APBDesTable({ apbdesData }: APBDesTableProps) {
       </Title>
 
       <Paper withBorder radius="md" shadow="xs" p="md">
-        <Box style={{ overflowY: 'auto' }}>
+        <Box style={{ overflowX: 'auto' }}>
           <Table withColumnBorders highlightOnHover>
             <Table.Thead bg="#2c5f78">
               <Table.Tr>

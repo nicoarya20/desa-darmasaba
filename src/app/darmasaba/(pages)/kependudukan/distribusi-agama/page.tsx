@@ -124,9 +124,6 @@ function Page() {
               <PieChart
                 data={chartData}
                 size={300}
-                labelsPosition="inside"
-                withLabels
-                withLabelsLine
               />
             </Box>
             

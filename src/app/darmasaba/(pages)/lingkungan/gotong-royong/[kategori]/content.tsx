@@ -77,7 +77,7 @@ export default function Content({ kategori }: { kategori: string }) {
                     <Grid gutter={0}>
                       <GridCol span={{ base: 12, md: 6 }}>
                         <Image
-                          src={featured.image?.link || '/images/placeholder.jpg'}
+                          src={featured.image?.link || '/no-image.jpg'}
                           alt={featured.judul || 'Berita Utama'}
                           height={400}
                           fit="cover"
@@ -175,7 +175,7 @@ export default function Content({ kategori }: { kategori: string }) {
                     >
                       <Card.Section>
                         <Image
-                          src={item.image?.link || '/images/placeholder-small.jpg'}
+                          src={item.image?.link || '/no-image.jpg'}
                           height={200}
                           alt={item.judul}
                           fit="cover"
@@ -204,7 +204,7 @@ export default function Content({ kategori }: { kategori: string }) {
                             year: 'numeric',
                           })}
                         </Text>
-                        <Badge color="gray" variant="outline">Baca Selengkapnya</Badge>
+                        <Button variant="light" size="xs" rightSection={<IconArrowRight size={14} />}>Baca Selengkapnya</Button>
                       </Group>
                     </Card>
                   ))}

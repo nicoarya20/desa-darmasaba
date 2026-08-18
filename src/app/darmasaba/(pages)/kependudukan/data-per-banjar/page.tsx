@@ -48,7 +48,7 @@ function Page() {
             fw="bold"
             lh={1.2}
           >
-            Data per Banjar
+            Data Per Banjar
           </Title>
           <Text
             ta="center"
@@ -83,9 +83,9 @@ function Page() {
   const rows = data.map((item) => (
     <Table.Tr key={item.id}>
       <Table.Td>{item.nama}</Table.Td>
-      <Table.Td ta="right">{item.penduduk.toLocaleString('id-ID')}</Table.Td>
-      <Table.Td ta="right">{item.kk.toLocaleString('id-ID')}</Table.Td>
-      <Table.Td ta="right">{item.miskin.toLocaleString('id-ID')}</Table.Td>
+      <Table.Td>{item.penduduk.toLocaleString('id-ID')}</Table.Td>
+      <Table.Td>{item.kk.toLocaleString('id-ID')}</Table.Td>
+      <Table.Td>{item.miskin.toLocaleString('id-ID')}</Table.Td>
     </Table.Tr>
   ));
 
@@ -130,18 +130,18 @@ function Page() {
               <Table.Thead>
                 <Table.Tr>
                   <Table.Th>Banjar</Table.Th>
-                  <Table.Th ta="right">Penduduk</Table.Th>
-                  <Table.Th ta="right">Kepala Keluarga</Table.Th>
-                  <Table.Th ta="right">Penduduk Miskin</Table.Th>
+                  <Table.Th>Penduduk</Table.Th>
+                  <Table.Th>Kepala Keluarga</Table.Th>
+                  <Table.Th>Penduduk Miskin</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
                 {rows}
                 <Table.Tr fw={700} bg={colors.grey[1]}>
                   <Table.Td>Total</Table.Td>
-                  <Table.Td ta="right">{totalPenduduk.toLocaleString('id-ID')}</Table.Td>
-                  <Table.Td ta="right">{totalKK.toLocaleString('id-ID')}</Table.Td>
-                  <Table.Td ta="right">{totalMiskin.toLocaleString('id-ID')}</Table.Td>
+                  <Table.Td>{totalPenduduk.toLocaleString('id-ID')}</Table.Td>
+                  <Table.Td>{totalKK.toLocaleString('id-ID')}</Table.Td>
+                  <Table.Td>{totalMiskin.toLocaleString('id-ID')}</Table.Td>
                 </Table.Tr>
               </Table.Tbody>
             </Table>

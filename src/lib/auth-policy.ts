@@ -77,6 +77,8 @@ export const PUBLIC_POST_PATHS: readonly string[] = [
   // Upload gambar khusus pengaduan (image-only, tervalidasi) — bukan
   // /api/fileStorage/create yang generik & tetap admin-only.
   "/api/inovasi/layananonlinedesa/pengaduanmasyarakat/upload",
+  // Pinjam buku: form publik warga anonim, data peminjam diisi manual di form.
+  "/api/pendidikan/perpustakaandigital/peminjamanbuku/create",
 ];
 
 /**
@@ -86,6 +88,19 @@ export const PUBLIC_POST_PATHS: readonly string[] = [
  */
 export function isPublicPostPath(pathname: string): boolean {
   return PUBLIC_POST_PATHS.includes(pathname);
+}
+
+// GET publik untuk mengambil BYTES file yang linknya sudah tersimpan di DB
+// (audioFile/dokumen non-image) — analog dengan /api/img/:name yang sudah
+// publik. Prefix-match by design: :name dinamis di belakangnya. Endpoint lain
+// di bawah /api/fileStorage (findMany/create/delete) TETAP admin-only karena
+// tidak masuk daftar ini.
+export const PUBLIC_GET_PATH_PREFIXES: readonly string[] = [
+  "/api/fileStorage/findUnique/",
+];
+
+export function isPublicGetPath(pathname: string): boolean {
+  return PUBLIC_GET_PATH_PREFIXES.some((p) => pathname.startsWith(p));
 }
 
 /**
