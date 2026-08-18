@@ -73,14 +73,12 @@ function DetailTipsKeamanan() {
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
-                <Box pl={8}>
-                  <Text
+                <Text
                   fz="md"
                   c="dimmed"
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
                 />
-                </Box>
               </Box>
 
               <Box>

@@ -89,7 +89,6 @@ function DetailInfoWabahPenyakit() {
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Lengkap</Text>
                 <Text
-                  pl={10}
                   fz="md"
                   c="dimmed"
                   dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap }}
