@@ -48,12 +48,13 @@ function Section({ title, data, badgeColor = 'blue' }: SectionProps) {
               </span>
             </Box>
           </Table.Td>
-          <Table.Td 
-            ta="right" 
-            style={{ 
+          <Table.Td
+            ta="right"
+            style={{
               borderBottom: '1px solid #e5e7eb',
               fontWeight: 600,
               color: 'var(--mantine-color-blue-7)',
+              whiteSpace: 'nowrap',
             }}
           >
             Rp {item.anggaran.toLocaleString('id-ID')}
@@ -116,14 +117,14 @@ export default function PaguTable({ apbdesData }: PaguTableProps) {
         >
           <Table.Thead>
             <Table.Tr bg="blue.9">
-              <Table.Th c="white" fw={600} style={{ minWidth: '60%' }}>
+              <Table.Th c="white" fw={600} style={{ width: '60%' }}>
                 Uraian
               </Table.Th>
-              <Table.Th 
-                c="white" 
-                fw={600} 
+              <Table.Th
+                c="white"
+                fw={600}
                 ta="right"
-                style={{ minWidth: '40%' }}
+                style={{ width: '40%' }}
               >
                 Anggaran (Rp)
               </Table.Th>
@@ -138,7 +139,7 @@ export default function PaguTable({ apbdesData }: PaguTableProps) {
             {totalPendapatan > 0 && (
               <Table.Tr bg="green.0" fw={700}>
                 <Table.Td>Total Pendapatan</Table.Td>
-                <Table.Td ta="right">
+                <Table.Td ta="right" style={{ whiteSpace: 'nowrap' }}>
                   Rp {totalPendapatan.toLocaleString('id-ID')}
                 </Table.Td>
               </Table.Tr>
@@ -152,7 +153,7 @@ export default function PaguTable({ apbdesData }: PaguTableProps) {
             {totalBelanja > 0 && (
               <Table.Tr bg="red.0" fw={700}>
                 <Table.Td>Total Belanja</Table.Td>
-                <Table.Td ta="right">
+                <Table.Td ta="right" style={{ whiteSpace: 'nowrap' }}>
                   Rp {totalBelanja.toLocaleString('id-ID')}
                 </Table.Td>
               </Table.Tr>
@@ -166,7 +167,7 @@ export default function PaguTable({ apbdesData }: PaguTableProps) {
             {totalPembiayaan > 0 && (
               <Table.Tr bg="orange.0" fw={700}>
                 <Table.Td>Total Pembiayaan</Table.Td>
-                <Table.Td ta="right">
+                <Table.Td ta="right" style={{ whiteSpace: 'nowrap' }}>
                   Rp {totalPembiayaan.toLocaleString('id-ID')}
                 </Table.Td>
               </Table.Tr>
