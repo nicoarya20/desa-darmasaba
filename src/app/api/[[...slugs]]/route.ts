@@ -3,7 +3,7 @@ import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
 import { requireAuth } from "@/lib/api-auth";
-import { isPublicPostPath } from "@/lib/auth-policy";
+import { isPublicPostPath, isPublicGetPath } from "@/lib/auth-policy";
 import fs from "fs/promises";
 import path from "path";
 import Desa from "./_lib/desa";
@@ -102,9 +102,14 @@ const ApiServer = new Elysia()
         const isPublicWrite =
           method === "POST" && isPublicPostPath(pathname);
 
+        // Ambil bytes file publik (audio/dokumen non-image) lewat findUnique —
+        // analog /api/img yang sudah publik. Sub-path admin lain di bawah
+        // ADMIN_ONLY_GET_PATHS (findMany, dst) TETAP kena guard.
+        const isPublicRead = method === "GET" && isPublicGetPath(pathname);
+
         const needsAuth =
           (["POST", "PUT", "DELETE", "PATCH"].includes(method) && !isPublicWrite) ||
-          ADMIN_ONLY_GET_PATHS.some((p) => pathname.startsWith(p));
+          (ADMIN_ONLY_GET_PATHS.some((p) => pathname.startsWith(p)) && !isPublicRead);
 
         if (!needsAuth) return;
 

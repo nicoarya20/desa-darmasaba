@@ -9,6 +9,7 @@ import {
   isAccountActive,
   publicOriginFromHeaders,
   isPublicPostPath,
+  isPublicGetPath,
 } from '@/lib/auth-policy';
 
 describe('resolveRoleForNewUser', () => {
@@ -131,5 +132,22 @@ describe('isPublicPostPath', () => {
     expect(isPublicPostPath('/api/inovasi/ajukanideinovatif/create/')).toBe(false);
     expect(isPublicPostPath('/api/inovasi/ajukanideinovatif/create/extra')).toBe(false);
     expect(isPublicPostPath('')).toBe(false);
+  });
+});
+
+describe('isPublicGetPath', () => {
+  it('fileStorage/findUnique/:name → boleh GET tanpa login (serve bytes audio/dokumen)', () => {
+    expect(isPublicGetPath('/api/fileStorage/findUnique/abc.mp3')).toBe(true);
+    expect(isPublicGetPath('/api/fileStorage/findUnique/dokumen.pdf.gz')).toBe(true);
+  });
+
+  it('endpoint fileStorage lain TETAP admin-only', () => {
+    expect(isPublicGetPath('/api/fileStorage/findMany')).toBe(false);
+    expect(isPublicGetPath('/api/fileStorage')).toBe(false);
+  });
+
+  it('path admin-only lain tidak ikut terbuka', () => {
+    expect(isPublicGetPath('/api/user')).toBe(false);
+    expect(isPublicGetPath('/api/imgs')).toBe(false);
   });
 });
