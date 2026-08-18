@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.139] - 2026-08-18
+### Fixed
+- **Slider durasi musik tidak mengikuti posisi drag**: menggeser slider durasi ke posisi tertentu tidak lompat ke titik yang diinginkan. Penyebabnya endpoint pengambil file audio (`/api/fileStorage/findUnique/:name`) belum mendukung HTTP Range request, sehingga browser tidak bisa seek ke bagian audio yang belum ter-buffer. Kini endpoint mendukung `Range` header dan merespons `206 Partial Content` dengan `Content-Range`/`Accept-Ranges` sesuai standar.
+- **Slider volume di player musik (pojok bawah) tidak bisa digeser naik/turun**: slider sebelumnya diberi tinggi (`h={100}`) untuk terlihat vertikal, padahal komponen Slider yang dipakai tidak punya mode vertikal sama sekali sehingga drag tidak berefek. Diganti jadi slider horizontal yang benar-benar interaktif.
+- **Popup volume hilang saat kursor terlalu lama di area hover**: popup berbasis hover mudah tertutup sebelum sempat digeser (ada celah antar ikon speaker dan popup) dan sama sekali tidak bisa dipakai di perangkat sentuh/mobile. Diganti slider volume permanen di sebelah ikon speaker (tampil di desktop, disembunyikan di mobile karena perangkat sudah punya kontrol volume hardware).
+- **Card detail struktur organisasi (PPID, Struktur Perangkat Desa, Struktur BUMDes) teks jabatan/nama menumpuk & jarak ke tombol Detail terlalu mepet**: diperbaiki pada 3 halaman yang memakai layout struktur organisasi yang sama.
+- **Pindah halaman pagination Lowongan Kerja Lokal saat sedang mencari kehilangan filter pencarian**: tombol pagination sebelumnya memuat ulang data tanpa menyertakan kata kunci pencarian dan jumlah data per halaman.
+
+### Added
+- Akses publik (tanpa login) untuk mengambil bytes file lewat `/api/fileStorage/findUnique/:name` — diperlukan agar audio musik bisa diputar oleh pengunjung yang belum login. Endpoint fileStorage lainnya (daftar, tambah, hapus) tetap butuh login admin.
+
 ## [0.1.135] - 2026-07-16
 ### Fixed
 - **Field NIS & Nomor KK masih menerima huruf**: kolom NIS (form Beasiswa Desa publik — halaman utama & "pelajari lebih lanjut") dan Nomor KK (admin Ajukan Permohonan) sebelumnya memakai `type="number"`, yang di keyboard fisik masih meloloskan karakter `e`, `+`, `-`, `.` dan berisiko kehilangan angka nol di depan. Kini ketiganya memakai pola yang sama dengan perbaikan NIK/telepon sebelumnya: memfilter karakter non-digit (`replace(/\D/g, '')`) plus `inputMode="numeric"`, dengan batas maksimal NIS 18 digit dan Nomor KK 16 digit. Tanpa perubahan schema/migration.
