@@ -90,6 +90,19 @@ export function isPublicPostPath(pathname: string): boolean {
   return PUBLIC_POST_PATHS.includes(pathname);
 }
 
+// GET publik untuk mengambil BYTES file yang linknya sudah tersimpan di DB
+// (audioFile/dokumen non-image) — analog dengan /api/img/:name yang sudah
+// publik. Prefix-match by design: :name dinamis di belakangnya. Endpoint lain
+// di bawah /api/fileStorage (findMany/create/delete) TETAP admin-only karena
+// tidak masuk daftar ini.
+export const PUBLIC_GET_PATH_PREFIXES: readonly string[] = [
+  "/api/fileStorage/findUnique/",
+];
+
+export function isPublicGetPath(pathname: string): boolean {
+  return PUBLIC_GET_PATH_PREFIXES.some((p) => pathname.startsWith(p));
+}
+
 /**
  * Origin publik (proto://host) dari header request. Di belakang proxy
  * (Cloudflare → Portainer), `nextUrl.origin` ter-resolve ke host internal container
