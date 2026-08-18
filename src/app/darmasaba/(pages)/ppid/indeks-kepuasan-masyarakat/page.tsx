@@ -310,11 +310,11 @@ function Kepuasan() {
                             </Center>
                           </Box>
                           <Box mt="md" style={{ width: '100%' }}>
-                            <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
+                            <SimpleGrid cols={1} spacing="xs" verticalSpacing="xs">
                               {donutDataRating.map((entry) => (
                                 <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
                                   <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
-                                  <Text fz={{ base: "0.85rem", md: "0.95rem" }} lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  <Text fz={{ base: "0.85rem", md: "0.95rem" }} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {entry.name}: {entry.value}
                                   </Text>
                                 </Flex>
@@ -601,11 +601,11 @@ function Kepuasan() {
                           </Center>
                         </Box>
                         <Box mt="md" style={{ width: '100%' }}>
-                          <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
+                          <SimpleGrid cols={1} spacing="xs" verticalSpacing="xs">
                             {donutDataRating.map((entry) => (
                               <Flex key={entry.name} gap="sm" align="center" style={{ overflow: 'hidden' }}>
                                 <Box bg={entry.color} w={16} h={16} style={{ flexShrink: 0 }} />
-                                <Text fz={{ base: "0.85rem", md: "0.95rem" }} lineClamp={1} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <Text fz={{ base: "0.85rem", md: "0.95rem" }} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                   {entry.name}: {entry.value}
                                 </Text>
                               </Flex>
