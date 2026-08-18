@@ -265,7 +265,7 @@ function Kepuasan() {
                                 labelsPosition="inside"
                                 labelsType="percent"
                                 size={250}
-                                data={donutDataJenisKelamin}
+                                data={donutDataJenisKelamin.filter(item => item.value > 0)}
                               />
                             </Center>
                           </Box>
@@ -305,7 +305,7 @@ function Kepuasan() {
                                 labelsType="percent"
                                 withLabelsLine
                                 size={250}
-                                data={donutDataRating}
+                                data={donutDataRating.filter(item => item.value > 0)}
                               />
                             </Center>
                           </Box>
@@ -349,7 +349,7 @@ function Kepuasan() {
                                 labelsType="percent"
                                 withLabelsLine
                                 size={250}
-                                data={donutDataKelompokUmur}
+                                data={donutDataKelompokUmur.filter(item => item.value > 0)}
                               />
                             </Center>
                           </Box>
