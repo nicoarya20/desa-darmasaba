@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../_com/BackButto';
 import { useDisclosure } from '@mantine/hooks';
+import { toast } from 'react-toastify';
 
 interface LayananData {
   id: string;
@@ -65,6 +66,10 @@ function Page() {
   }
 
   const handleSubmit = async () => {
+    if (stateCreate.create.form.nik.length !== 16) {
+      toast.error('NIK harus terdiri dari 16 digit');
+      return;
+    }
     await stateCreate.create.create();
     resetForm();
     close();
