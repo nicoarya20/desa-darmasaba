@@ -225,7 +225,7 @@ function Page() {
                     style={{
                       width: "100%",
                       overflowX: "auto",
-                      paddingBottom: 185,
+                      paddingBottom: 250,
                     }}
                   >
                     <Box style={{ minWidth: 900 }}> {/* ⭐ batas minimum biar bisa scroll */}
@@ -250,7 +250,7 @@ function Page() {
                           angle: -45,
                           textAnchor: 'end',
                           interval: 0,
-                          fontSize: 12,
+                          fontSize: 11,
                           dy: 10,
                         }}
                         yAxisProps={{

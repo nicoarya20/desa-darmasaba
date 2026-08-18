@@ -121,17 +121,15 @@ export default function DetailInformasiPublikUser() {
               <Title order={5} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={4}>
                 Deskripsi
               </Title>
-
-              <Box>
-                <Text
-                  ta="justify"
-                  dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                  fz={{ base: 'sm', md: 'md' }}
-                  lh={1.6}
-                  style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                  className="prose max-w-none"
-                />
-              </Box>
+              <Text
+                component="div"
+                ta="justify"
+                dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
+                fz={{ base: 'sm', md: 'md' }}
+                lh={1.6}
+                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                className="prose max-w-none"
+              />
             </Box>
           </Stack>
         </Stack>
