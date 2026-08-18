@@ -1,5 +1,6 @@
 'use client'
 import { useMusic } from '@/app/context/MusicContext';
+import { formatTime } from '@/app/context/music/format';
 import { ActionIcon, Avatar, Badge, Box, Card, Flex, Grid, Group, Paper, ScrollArea, Slider, Stack, Text, TextInput } from '@mantine/core';
 import { IconArrowsShuffle, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOff, IconSearch, IconVolume, IconVolumeOff, IconX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -22,6 +23,7 @@ const MusicPlayer = () => {
     playNext,
     playPrev,
     seek,
+    seekPreview,
     setVolume,
     toggleMute,
     toggleRepeat,
@@ -45,13 +47,6 @@ const MusicPlayer = () => {
       (musik.genre && musik.genre.toLowerCase().includes(search.toLowerCase()))
     );
   }, [musikData, search]);
-
-  // Format time helper
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const handleVolumeChange = (value: number) => {
     setVolume(value);
@@ -146,7 +141,8 @@ const MusicPlayer = () => {
                         <Slider
                           value={currentTime}
                           max={duration || 100}
-                          onChange={(v) => seek(v)}
+                          onChange={(v) => seekPreview(v)}
+                          onChangeEnd={(v) => seek(v)}
                           color="#0B4F78"
                           size="sm"
                           style={{ flex: 1 }}
@@ -285,7 +281,8 @@ const MusicPlayer = () => {
               <Slider
                 value={currentTime}
                 max={duration || 100}
-                onChange={(v) => seek(v)}
+                onChange={(v) => seekPreview(v)}
+                onChangeEnd={(v) => seek(v)}
                 color="#0B4F78"
                 size="xs"
                 style={{ flex: 1 }}
