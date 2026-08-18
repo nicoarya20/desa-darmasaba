@@ -2,7 +2,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import { IconActivity, IconBuildingHospital, IconCalendarEvent, IconGauge, IconNotes } from '@tabler/icons-react';
+import { IconActivity, IconBuildingHospital, IconCalendarEvent, IconGauge, IconNotes, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -42,6 +42,12 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
       value: "artikelkesehatan",
       href: "/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan",
       icon: <IconNotes size={18} stroke={1.8} />
+    },
+    {
+      label: "Peserta Kegiatan",
+      value: "pesertakegiatan",
+      href: "/admin/kesehatan/data-kesehatan-warga/peserta_jadwal_kegiatan",
+      icon: <IconUsers size={18} stroke={1.8} />
     },
   ];
 
