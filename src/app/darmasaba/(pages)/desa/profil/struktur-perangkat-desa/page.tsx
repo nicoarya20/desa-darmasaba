@@ -99,6 +99,18 @@ function StrukturPerangkatDesaNode() {
     void stateOrganisasi.findMany.load()
   }, [])
 
+  // Sinkronkan label tombol dengan status fullscreen browser sebenarnya —
+  // keluar via ESC tidak memanggil toggleFullscreen, jadi label bisa nyangkut di "Exit".
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setFullscreen(Boolean(document.fullscreenElement))
+    }
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }
+  }, [])
+
   const isLoading =
     !stateOrganisasi.findMany.data && stateOrganisasi.findMany.loading !== false
 
@@ -373,11 +385,6 @@ function StrukturPerangkatDesaNode() {
           ref={chartContainerRef}
           className="struktur-fullscreen"
           style={{
-            overflowX: 'auto',
-            overflowY: 'auto',
-            width: '100%',
-            maxWidth: '100%',
-            padding: '32px 16px',
             transition: 'transform 0.2s ease',
           }}
         >
@@ -417,7 +424,7 @@ function NodeCard({ node, router }: any) {
             ...styles,
             width: '100%',
             maxWidth: isMobile ? 200 : 240, // lebih kecil di mobile
-            minHeight: isMobile ? 240 : 280,
+            height: isMobile ? 290 : 300, // tinggi tetap — sel-sel node di baris yang sama harus sama tinggi supaya garis line-down turun sejajar. Dinaikkan dari 240/280 karena foto+nama 2 baris+jabatan 2 baris+tombol butuh ±288px, sebelumnya kepotong
             padding: isMobile ? 16 : 20,
             background: 'linear-gradient(135deg, rgba(28,110,164,0.15) 0%, rgba(255,255,255,0.95) 100%)',
             borderColor: 'rgba(28, 110, 164, 0.3)',
@@ -466,42 +473,37 @@ function NodeCard({ node, router }: any) {
             </Box>
 
             {/* Name */}
-            <Text
-              fw={700}
-              ta="center"
-              c={colors['blue-button']}
-              lineClamp={2}
-              fz={{ base: 13, md: 15 }}
-              lh={1.2}
-              style={{
-                minHeight: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                wordBreak: 'break-word',
-              }}
-            >
-              {name}
-            </Text>
+            {/* Box pembungkus menangani centering vertikal — display:flex tidak boleh
+                dipasang langsung di Text karena akan menimpa -webkit-line-clamp milik
+                lineClamp, sehingga teks panjang gagal terpotong dan meluber keluar Card */}
+            <Box style={{ minHeight: 40, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Text
+                fw={700}
+                ta="center"
+                c={colors['blue-button']}
+                lineClamp={2}
+                fz={{ base: 13, md: 15 }}
+                lh={1.2}
+                style={{ wordBreak: 'break-word' }}
+              >
+                {name}
+              </Text>
+            </Box>
 
             {/* Title/Position */}
-            <Text
-              c="dimmed"
-              ta="center"
-              fw={500}
-              lineClamp={2}
-              fz={{ base: 12, md: 13 }}
-              lh={1.3}
-              style={{
-                minHeight: 32,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                wordBreak: 'break-word',
-              }}
-            >
-              {title}
-            </Text>
+            <Box style={{ minHeight: 32, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Text
+                c="dimmed"
+                ta="center"
+                fw={500}
+                lineClamp={2}
+                fz={{ base: 12, md: 13 }}
+                lh={1.3}
+                style={{ wordBreak: 'break-word' }}
+              >
+                {title}
+              </Text>
+            </Box>
 
             {/* Detail Button */}
             {hasId && (

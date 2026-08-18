@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
+const ITEMS_PER_PAGE = 6;
+
 const formatCurrency = (value: string | number) => {
   // Convert to string if it's a number
   const numStr = typeof value === 'number' ? value.toString() : value;
@@ -37,7 +39,7 @@ function Page() {
   } = state.findMany
 
   useEffect(() => {
-    load(page, 6, debouncedSearch)
+    load(page, ITEMS_PER_PAGE, debouncedSearch)
   }, [page, debouncedSearch, load])
 
   if (loading || !data) {
@@ -56,7 +58,7 @@ function Page() {
         <Title order={1} ta="center" c={colors["blue-button"]} fw="bold" lh={1.15}>
           Lowongan Kerja Lokal
         </Title>
-        <Group justify='center'>
+        <Group justify='center' mt={{ base: 'md', md: 'xl' }}>
           <TextInput
             radius={'xl'}
             w={{ base: '100%', md: 700 }}
@@ -141,7 +143,7 @@ function Page() {
           <Center>
             <Pagination
               value={page}
-              onChange={(newPage) => load(newPage)}
+              onChange={(newPage) => load(newPage, ITEMS_PER_PAGE, debouncedSearch)}
               total={totalPages}
               my="md"
             />
