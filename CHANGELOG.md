@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.140] - 2026-08-19
+### Fixed
+- **Gambar gagal dimuat (ikon rusak) di Safari, padahal normal di Chrome**: seluruh gambar di situs publik kadang tampil sebagai ikon gambar rusak khusus di Safari. Diverifikasi lewat Safari asli: error-nya "An SSL error has occurred and a secure connection to the server cannot be made", dan file yang gagal terbukti valid saat diakses langsung (curl 200 OK) — akar masalahnya adalah bug WebKit/Safari yang intermiten saat negosiasi HTTP/3 (QUIC) dengan Cloudflare (setting berlaku di seluruh domain, di luar akses project ini). Karena setting Cloudflare tidak bisa diubah dari sini, ditambahkan mitigasi sisi client: gambar yang gagal load di-retry otomatis (maks 3x, delay bertahap 400ms/1s/2s) lewat listener `error` capture-phase di level `document` pada layout publik (`/darmasaba/*`), sehingga otomatis mencakup semua gambar tanpa menyentuh tiap halaman satu per satu. Bukan fix akar — hanya mengurangi dampaknya di sisi pengunjung.
+
 ## [0.1.139] - 2026-08-18
 ### Fixed
 - **Slider durasi musik tidak mengikuti posisi drag**: menggeser slider durasi ke posisi tertentu tidak lompat ke titik yang diinginkan. Penyebabnya endpoint pengambil file audio (`/api/fileStorage/findUnique/:name`) belum mendukung HTTP Range request, sehingga browser tidak bisa seek ke bagian audio yang belum ter-buffer. Kini endpoint mendukung `Range` header dan merespons `206 Partial Content` dengan `Content-Range`/`Accept-Ranges` sesuai standar.
