@@ -87,7 +87,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         keepMounted={false}
       >
         <Box visibleFrom='md' pb={10}>
-          <ScrollArea type="auto" offsetScrollbars>
+          <ScrollArea type="hover" offsetScrollbars>
             <TabsList
               p="sm"
               style={{
@@ -120,7 +120,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         </Box>
 
         <Box hiddenFrom='md' pb={10}>
-          <ScrollArea type="auto" offsetScrollbars={false} w="100%">
+          <ScrollArea type="hover" offsetScrollbars={false} w="100%">
             <TabsList
               p="xs"
               style={{

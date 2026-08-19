@@ -56,7 +56,7 @@ function LayoutTabsKepuasan({ children }: { children: React.ReactNode }) {
 
         {/* ✅ Scroll horizontal wrapper */}
         <Box>
-          <ScrollArea type="auto" offsetScrollbars>
+          <ScrollArea type="hover" offsetScrollbars>
             <TabsList
               p="sm"
               style={{

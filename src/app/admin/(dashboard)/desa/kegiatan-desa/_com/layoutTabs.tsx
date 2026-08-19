@@ -54,7 +54,7 @@ function LayoutTabsKegiatanDesa({ children }: { children: React.ReactNode }) {
                 radius="lg"
                 keepMounted={false}
             >
-                <ScrollArea type="auto" offsetScrollbars>
+                <ScrollArea type="hover" offsetScrollbars>
                     <TabsList
                         p="sm"
                         style={{
