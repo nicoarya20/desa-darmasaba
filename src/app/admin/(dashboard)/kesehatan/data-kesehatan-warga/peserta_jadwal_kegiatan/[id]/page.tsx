@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconTrash } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -20,8 +20,8 @@ function DetailPesertaJadwalKegiatan() {
     state.findUnique.load(id);
   }, []);
 
-  const handleHapus = () => {
-    state.delete.byId(id);
+  const handleHapus = async () => {
+    await state.delete.byId(id);
     setModalHapus(false);
     router.push("/admin/kesehatan/data-kesehatan-warga/peserta_jadwal_kegiatan");
   };
@@ -102,6 +102,16 @@ function DetailPesertaJadwalKegiatan() {
                   disabled={state.delete.loading}
                 >
                   <IconTrash size={20} />
+                </Button>
+
+                <Button
+                  color="green"
+                  onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/peserta_jadwal_kegiatan/${data.id}/edit`)}
+                  variant="light"
+                  radius="md"
+                  size="md"
+                >
+                  <IconEdit size={20} />
                 </Button>
               </Group>
             </Stack>
