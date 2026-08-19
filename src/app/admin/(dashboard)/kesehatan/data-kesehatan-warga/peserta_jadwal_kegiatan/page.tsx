@@ -96,7 +96,11 @@ function ListPesertaJadwalKegiatan({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Text fz="md" lh={1.5}>
-                        {item.tanggal}
+                        {new Date(item.tanggal).toLocaleDateString('id-ID', {
+                          day: '2-digit',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
                       </Text>
                     </TableTd>
                     <TableTd>
@@ -159,7 +163,13 @@ function ListPesertaJadwalKegiatan({ search }: { search: string }) {
                   </Box>
                   <Box>
                     <Text fz="sm" fw={600} lh={1.4}>Tanggal Lahir</Text>
-                    <Text fz="sm" fw={500} lh={1.5}>{item.tanggal}</Text>
+                    <Text fz="sm" fw={500} lh={1.5}>
+                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </Text>
                   </Box>
                   <Box>
                     <Text fz="sm" fw={600} lh={1.4}>Nama Orang Tua/Wali</Text>
