@@ -20,9 +20,9 @@ function DetailPencegahanKriminalitas() {
     kriminalitasState.findUnique.load(params?.id as string);
   }, []);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedId) {
-      kriminalitasState.delete.byId(selectedId);
+      await kriminalitasState.delete.byId(selectedId);
       setModalHapus(false);
       setSelectedId(null);
       router.push("/admin/keamanan/pencegahan-kriminalitas");
