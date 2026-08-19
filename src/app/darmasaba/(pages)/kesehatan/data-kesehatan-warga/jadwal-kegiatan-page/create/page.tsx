@@ -34,9 +34,9 @@ function CreatePendaftaran() {
       <Title order={2} ta="left">Formulir Pendaftaran</Title>
       <Divider />
       <Stack gap="md">
-        <TextInput 
-          label="Nama Balita" 
-          placeholder="Masukkan nama balita" 
+        <TextInput
+          label="Nama Peserta"
+          placeholder="Masukkan nama peserta"
           size="md" 
           value={stateCreate.create.form.name}
           onChange={(e) => stateCreate.create.form.name = e.target.value}

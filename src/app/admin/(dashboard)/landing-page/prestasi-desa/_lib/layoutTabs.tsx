@@ -57,7 +57,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         keepMounted={false}
       >
 
-        <ScrollArea type="auto" offsetScrollbars>
+        <ScrollArea type="hover" offsetScrollbars>
           <TabsList
             p="sm"
             style={{

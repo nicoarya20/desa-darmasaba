@@ -102,7 +102,7 @@ export default function CreateDesaAntiKorupsi() {
         <Button variant="subtle" onClick={() => router.back()} p="xs" radius="md">
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
-        <Title order={4} ml="sm" c="dark">
+        <Title order={4} c="dark">
           Tambah Dokumen Desa Anti Korupsi
         </Title>
       </Group>

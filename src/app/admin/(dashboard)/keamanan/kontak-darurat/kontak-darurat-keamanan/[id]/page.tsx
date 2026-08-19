@@ -75,17 +75,6 @@ function DetailKontakDaruratKeamanan() {
                 <Text fz="md" c="dimmed">{data?.nama || '-'}</Text>
               </Box>
 
-              <Box>
-                <Text fz={"lg"} fw={"bold"}>Ikon Program Kreatif Desa</Text>
-                {data?.icon && (
-                  <IconMapper
-                    name={data?.icon as IconKey}
-                    size={32}
-                    color={colors['blue-button']}
-                  />
-                )}
-              </Box>
-
               {/* Kontak Items */}
               <Box>
                 <Text fz="lg" fw="bold">Kontak</Text>

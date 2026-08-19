@@ -127,7 +127,7 @@ function DetailLaporanPublik() {
                 <Text fz="lg" fw="bold">Penanganan</Text>
                 {data.penanganan?.length ? (
                   data.penanganan.map((item, index) => (
-                    <Box key={index} pl="sm">
+                    <Box key={index}>
                       <Text
                         fz="md"
                         c="dimmed"
