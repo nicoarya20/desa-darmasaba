@@ -46,12 +46,17 @@ describe("handleImageLoadError", () => {
     expect(scheduleRetry).not.toHaveBeenCalled();
   });
 
+  // isWebpSupported: () => true dipaksa eksplisit di test-test retry murni ini
+  // supaya tidak nyasar ke cabang fallback WebP (lihat describe terpisah di
+  // bawah) — default-nya supportsWebp() asli, yang di environment node test
+  // ini (tanpa document) bakal gagal-diam jadi `false` dan salah memicu
+  // cabang WebP karena src-nya kebetulan berekstensi .webp.
   it("menjadwalkan retry pertama dengan delay sesuai IMAGE_RETRY_DELAYS_MS[0] dan increment dataset.retryAttempt", () => {
     const img = new FakeHTMLImageElement();
     img.src = "https://example.com/api/img/foo-mobile.webp";
     const scheduleRetry = vi.fn();
 
-    handleImageLoadError(makeErrorEvent(img), scheduleRetry);
+    handleImageLoadError(makeErrorEvent(img), scheduleRetry, () => true);
 
     expect(img.dataset.retryAttempt).toBe("1");
     expect(scheduleRetry).toHaveBeenCalledTimes(1);
@@ -66,7 +71,7 @@ describe("handleImageLoadError", () => {
       capturedRetryFn = fn;
     };
 
-    handleImageLoadError(makeErrorEvent(img), scheduleRetry);
+    handleImageLoadError(makeErrorEvent(img), scheduleRetry, () => true);
     expect(capturedRetryFn).not.toBeNull();
     capturedRetryFn!();
 
@@ -81,7 +86,7 @@ describe("handleImageLoadError", () => {
     img.dataset.retryAttempt = "1";
     const scheduleRetry = vi.fn();
 
-    handleImageLoadError(makeErrorEvent(img), scheduleRetry);
+    handleImageLoadError(makeErrorEvent(img), scheduleRetry, () => true);
 
     expect(img.dataset.retryAttempt).toBe("2");
     expect(scheduleRetry).toHaveBeenCalledWith(expect.any(Function), IMAGE_RETRY_DELAYS_MS[1]);
@@ -93,7 +98,7 @@ describe("handleImageLoadError", () => {
     img.dataset.retryAttempt = String(MAX_IMAGE_RETRIES);
     const scheduleRetry = vi.fn();
 
-    handleImageLoadError(makeErrorEvent(img), scheduleRetry);
+    handleImageLoadError(makeErrorEvent(img), scheduleRetry, () => true);
 
     expect(scheduleRetry).not.toHaveBeenCalled();
     expect(img.dataset.retryAttempt).toBe(String(MAX_IMAGE_RETRIES));
@@ -108,6 +113,60 @@ describe("handleImageLoadError", () => {
 
     expect(scheduleRetry).not.toHaveBeenCalled();
     expect(img.dataset.retryAttempt).toBeUndefined();
+  });
+
+  it("browser tanpa dukungan WebP: langsung swap src ke ?format=jpeg tanpa delay, tidak masuk hitungan retryAttempt", () => {
+    const img = new FakeHTMLImageElement();
+    img.src = "https://example.com/api/img/foo-mobile.webp";
+    const scheduleRetry = vi.fn();
+    const isWebpSupported = () => false;
+
+    handleImageLoadError(makeErrorEvent(img), scheduleRetry, isWebpSupported);
+
+    expect(scheduleRetry).not.toHaveBeenCalled();
+    expect(img.dataset.retryAttempt).toBeUndefined();
+    expect(img.dataset.webpFallbackApplied).toBe("1");
+
+    const url = new URL(img.src);
+    expect(url.origin + url.pathname).toBe("https://example.com/api/img/foo-mobile.webp");
+    expect(url.searchParams.get("format")).toBe("jpeg");
+  });
+
+  it("fallback WebP hanya dipicu sekali per gambar — error kedua lanjut ke jalur retry normal", () => {
+    const img = new FakeHTMLImageElement();
+    img.src = "https://example.com/api/img/foo-mobile.webp?format=jpeg";
+    img.dataset.webpFallbackApplied = "1";
+    const scheduleRetry = vi.fn();
+    const isWebpSupported = () => false;
+
+    handleImageLoadError(makeErrorEvent(img), scheduleRetry, isWebpSupported);
+
+    expect(scheduleRetry).toHaveBeenCalledTimes(1);
+    expect(scheduleRetry).toHaveBeenCalledWith(expect.any(Function), IMAGE_RETRY_DELAYS_MS[0]);
+  });
+
+  it("URL bukan .webp tidak terpengaruh fallback WebP meski browser tidak mendukung WebP", () => {
+    const img = new FakeHTMLImageElement();
+    img.src = "https://example.com/api/img/foo-mobile.jpg";
+    const scheduleRetry = vi.fn();
+    const isWebpSupported = () => false;
+
+    handleImageLoadError(makeErrorEvent(img), scheduleRetry, isWebpSupported);
+
+    expect(img.dataset.webpFallbackApplied).toBeUndefined();
+    expect(scheduleRetry).toHaveBeenCalledWith(expect.any(Function), IMAGE_RETRY_DELAYS_MS[0]);
+  });
+
+  it("browser dengan dukungan WebP tidak terpengaruh — langsung lanjut ke jalur retry normal", () => {
+    const img = new FakeHTMLImageElement();
+    img.src = "https://example.com/api/img/foo-mobile.webp";
+    const scheduleRetry = vi.fn();
+    const isWebpSupported = () => true;
+
+    handleImageLoadError(makeErrorEvent(img), scheduleRetry, isWebpSupported);
+
+    expect(img.dataset.webpFallbackApplied).toBeUndefined();
+    expect(scheduleRetry).toHaveBeenCalledWith(expect.any(Function), IMAGE_RETRY_DELAYS_MS[0]);
   });
 });
 
