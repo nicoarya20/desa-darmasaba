@@ -53,13 +53,21 @@ function LayoutTabsGotongRoyong({ children }: { children: React.ReactNode }) {
   };
 
   // --- tabs dinamis ---
+  // Dedupe berdasarkan value (nama kategori) agar tidak muncul kategori ganda
+  const seenTab = new Set<string>();
   const tabs = [
     { label: "Semua", value: "semua", href: "/darmasaba/lingkungan/gotong-royong/semua" },
-    ...(kategoriState.findMany.data || []).map((kat: any) => ({
-      label: kat.nama,
-      value: kat.nama.toLowerCase(),
-      href: `/darmasaba/lingkungan/gotong-royong/${kat.nama.toLowerCase()}`
-    }))
+    ...(kategoriState.findMany.data || [])
+      .map((kat: any) => ({
+        label: kat.nama,
+        value: kat.nama.toLowerCase(),
+        href: `/darmasaba/lingkungan/gotong-royong/${kat.nama.toLowerCase()}`
+      }))
+      .filter((tab: { value: string }) => {
+        if (seenTab.has(tab.value)) return false;
+        seenTab.add(tab.value);
+        return true;
+      })
   ];
 
   const handleTabChange = (value: string | null) => {

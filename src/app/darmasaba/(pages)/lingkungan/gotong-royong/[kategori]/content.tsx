@@ -196,7 +196,7 @@ export default function Content({ kategori }: { kategori: string }) {
                         mt="xs"
                         dangerouslySetInnerHTML={{ __html: item.deskripsiLengkap }}
                       />
-                      <Group justify="apart" mt="md" gap="xs">
+                      <Group justify="apart" mt="lg" gap="xs">
                         <Text size="xs" c="dimmed">
                           {new Date(item.createdAt).toLocaleDateString('id-ID', {
                             day: 'numeric',
