@@ -56,7 +56,7 @@ function Page() {
             <Box pb={20} key={state.findUnique.data.id}>
               <Text 
                 ta={"center"} 
-                fz={{base: "2rem", md: "2.5rem", lg: "3rem", xl: "3.4rem"}} 
+                fz={{ base: "1.6rem", md: "2rem", lg: "2.25rem" }} 
                 c={colors["blue-button"]} 
                 fw={"bold"}
               >
