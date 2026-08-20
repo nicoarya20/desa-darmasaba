@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.141] - 2026-08-20
+### Fixed
+- **Gambar berformat WebP tidak pernah tampil di Safari versi lama (pra-Safari 14, sebelum September 2020)**: berbeda dari mitigasi retry di 0.1.140 (yang menangani kegagalan intermiten karena bug WebKit/QUIC), ini kegagalan yang selalu terjadi — Safari lama memang tidak punya kemampuan decode format WebP sama sekali, jadi gambar apa pun akan gagal diulang berapa kali pun. Ditambahkan fallback format: browser mendeteksi sendiri ketidakmampuannya decode WebP (feature-detect via canvas, tanpa request jaringan), lalu meminta ulang gambar yang sama ke `/api/img/:name` dengan parameter `?format=jpeg`. Server mengonversi on-the-fly dari WebP ke JPEG (atau PNG jika gambarnya punya transparansi) lewat `sharp` — tanpa migrasi data, tanpa file kedua tersimpan. Murni opt-in lewat query param: browser modern (termasuk Safari versi baru) tidak pernah mengirim param ini, jadi tidak ada perubahan perilaku atau performa untuk mereka.
+
 ## [0.1.140] - 2026-08-19
 ### Fixed
 - **Gambar gagal dimuat (ikon rusak) di Safari, padahal normal di Chrome**: seluruh gambar di situs publik kadang tampil sebagai ikon gambar rusak khusus di Safari. Diverifikasi lewat Safari asli: error-nya "An SSL error has occurred and a secure connection to the server cannot be made", dan file yang gagal terbukti valid saat diakses langsung (curl 200 OK) — akar masalahnya adalah bug WebKit/Safari yang intermiten saat negosiasi HTTP/3 (QUIC) dengan Cloudflare (setting berlaku di seluruh domain, di luar akses project ini). Karena setting Cloudflare tidak bisa diubah dari sini, ditambahkan mitigasi sisi client: gambar yang gagal load di-retry otomatis (maks 3x, delay bertahap 400ms/1s/2s) lewat listener `error` capture-phase di level `document` pada layout publik (`/darmasaba/*`), sehingga otomatis mencakup semua gambar tanpa menyentuh tiap halaman satu per satu. Bukan fix akar — hanya mengurangi dampaknya di sisi pengunjung.
