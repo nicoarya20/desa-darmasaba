@@ -84,11 +84,16 @@ function Page() {
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between', // ✅ biar button selalu di bawah
-                    height: '100%', // ✅ bikin tinggi seragam
+                    // Safari lama: `justifyContent: space-between` + `height: 100%`
+                    // pada grid item auto-height membuat WebKit salah hitung
+                    // free-space flex, sehingga tombol Detail terdorong keluar
+                    // dari kartu (muncul sebagai pita biru di dasar halaman).
+                    // Pola aman lintas-browser: konten `flex: 1`, tombol
+                    // dipancang ke bawah dengan `marginTop: auto`.
+                    height: '100%', // bikin tinggi seragam (di-stretch oleh grid)
                   }}
                 >
-                  <Stack gap={"xs"}>
+                  <Stack gap={"xs"} style={{ flex: 1 }}>
                     <Box
                       style={{
                         width: '100%',
@@ -118,7 +123,7 @@ function Page() {
                     </Box>
                   </Stack>
 
-                  <Center mt="md">
+                  <Center mt="md" style={{ marginTop: 'auto' }}>
                     <Button
                       bg={colors['blue-button']}
                       radius="lg"
