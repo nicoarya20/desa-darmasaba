@@ -58,7 +58,7 @@ function Page() {
               <Group>
                 <Tooltip label="Gambaran manfaat utama program" position="top-start" withArrow>
                   <Box>
-                    <IconBook2 size={36} stroke={1.5} color={colors['blue-button']} />
+                    <IconBook2 size={24} stroke={1.8} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
                 <Title order={3} fw={700} c={colors['blue-button']} lh={1.2} fz={{ base: 'sm', md: 'md' }}>
@@ -78,7 +78,7 @@ function Page() {
               <Group>
                 <Tooltip label="Tempat dan waktu pelaksanaan" position="top-start" withArrow>
                   <Box>
-                    <IconMapPin size={36} stroke={1.5} color={colors['blue-button']} />
+                    <IconMapPin size={24} stroke={1.8} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
                 <Title order={3} fw={700} c={colors['blue-button']} lh={1.2} fz={{ base: 'sm', md: 'md' }}>
@@ -98,7 +98,7 @@ function Page() {
               <Group>
                 <Tooltip label="Sarana yang disediakan untuk peserta" position="top-start" withArrow>
                   <Box>
-                    <IconCalendarTime size={36} stroke={1.5} color={colors['blue-button']} />
+                    <IconCalendarTime size={24} stroke={1.8} color={colors['blue-button']} />
                   </Box>
                 </Tooltip>
                 <Title order={3} fw={700} c={colors['blue-button']} lh={1.2} fz={{ base: 'sm', md: 'md' }}>
