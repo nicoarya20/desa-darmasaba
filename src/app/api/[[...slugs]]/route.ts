@@ -150,6 +150,7 @@ const ApiServer = new Elysia()
             name: params.name,
             ROOT,
             size: query.size,
+            format: query.format,
           });
         },
         {
@@ -159,6 +160,7 @@ const ApiServer = new Elysia()
           query: t.Optional(
             t.Object({
               size: t.Optional(t.Number()),
+              format: t.Optional(t.String()),
             }),
           ),
         },
