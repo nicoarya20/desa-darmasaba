@@ -22,15 +22,22 @@ import { useProxy } from 'valtio/utils';
 
 function AdministrasiOnline() {
   const [opened, { open, close }] = useDisclosure(false);
-  const state = useProxy(layananonlineDesa);
+  const state = useProxy(layananonlineDesa, { sync: true });
 
-  // Check if form is valid
+  // Batas minimum karakter agar tombol Simpan hanya aktif saat data valid.
+  const MIN = { name: 3, alamat: 3 };
+
+  // Check if form is valid.
+  // Pakai panjang minimum, bukan `x?.trim() !== ''`: field default '' membuat
+  // `!== ''` selalu lolos sehingga tombol tak pernah benar-benar tergerbang.
   const isFormValid = () => {
+    const f = state.administrasiOnline.create.form;
+    const telpDigits = (f.nomorTelepon || '').replace(/\D/g, '');
     return (
-      state.administrasiOnline.create.form.name?.trim() !== '' &&
-      state.administrasiOnline.create.form.alamat?.trim() !== '' &&
-      state.administrasiOnline.create.form.nomorTelepon?.trim() !== '' &&
-      state.administrasiOnline.create.form.jenisLayananId?.trim() !== ''
+      (f.name || '').trim().length >= MIN.name &&
+      (f.alamat || '').trim().length >= MIN.alamat &&
+      telpDigits.length >= 10 &&
+      !!(f.jenisLayananId || '').trim()
     );
   };
 
@@ -51,9 +58,11 @@ function AdministrasiOnline() {
   };
 
   const handleSubmit = async () => {
-    await state.administrasiOnline.create.create();
-    resetForm();
-    close(); // Tutup modal setelah submit
+    const success = await state.administrasiOnline.create.create();
+    if (success) {
+      resetForm();
+      close(); // Tutup modal hanya setelah submit sukses
+    }
   };
 
   return (
@@ -85,12 +94,16 @@ function AdministrasiOnline() {
             <Title order={3}>Ajukan Administrasi Online</Title>
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="Masukkan nama"
-              onChange={(val) => (state.administrasiOnline.create.form.name = val.target.value)}
+              placeholder="Masukkan nama (minimal 3 karakter)"
+              value={state.administrasiOnline.create.form.name || ''}
+              onChange={(val) =>
+                (state.administrasiOnline.create.form.name = val.target.value.replace(/[0-9]/g, ''))
+              }
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Alamat</Text>}
-              placeholder="Masukkan alamat"
+              placeholder="Masukkan alamat (minimal 3 karakter)"
+              value={state.administrasiOnline.create.form.alamat || ''}
               onChange={(val) => (state.administrasiOnline.create.form.alamat = val.target.value)}
             />
             <TextInput

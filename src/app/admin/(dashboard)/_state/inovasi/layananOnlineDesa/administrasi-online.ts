@@ -30,7 +30,8 @@ const administrasiOnline = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return false;
       }
       try {
         administrasiOnline.create.loading = true;
@@ -40,12 +41,15 @@ const administrasiOnline = proxy({
           ].post(administrasiOnline.create.form);
         if (res.status === 200) {
           administrasiOnline.findMany.load();
-          return toast.success("Data berhasil ditambahkan");
+          toast.success("Data berhasil ditambahkan");
+          return true;
         }
-        return toast.error("Gagal menambahkan data");
+        toast.error("Gagal menambahkan data");
+        return false;
       } catch (error) {
         console.log(error);
         toast.error("Gagal menambahkan data");
+        return false;
       } finally {
         administrasiOnline.create.loading = false;
       }

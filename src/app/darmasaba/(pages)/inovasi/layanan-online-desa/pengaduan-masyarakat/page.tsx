@@ -15,28 +15,32 @@ import { useProxy } from 'valtio/utils';
 
 function PengaduanMasyarakat() {
   const [opened, { open, close }] = useDisclosure(false);
-  const state = useProxy(layananonlineDesa);
+  const state = useProxy(layananonlineDesa, { sync: true });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
-  // Helper function to check if HTML content is empty
-  const isHtmlEmpty = (html: string) => {
-    // Remove all HTML tags and check if there's any text content
-    const textContent = html.replace(/<[^>]*>/g, '').trim();
-    return textContent === '';
-  };
+  // Batas minimum karakter agar data yang dikirim valid (bukan sekadar terisi).
+  const MIN = { name: 3, judul: 3, lokasi: 3, deskripsi: 10 };
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // Check if form is valid
+  // Check if form is valid.
+  // Catatan: pakai truthy + panjang minimum, bukan `x?.trim() !== ''`.
+  // Field yang belum disentuh bernilai '' (default state), sehingga `!== ''`
+  // tidak menjaga apa pun; cek panjang minimum-lah yang benar-benar menggerbang.
   const isFormValid = () => {
+    const f = state.pengaduanMasyarakat.create.form;
+    const nikDigits = (f.nik || '').replace(/\D/g, '');
+    const telpDigits = (f.nomorTelepon || '').replace(/\D/g, '');
+    const deskripsiText = (f.deskripsiPengaduan || '').replace(/<[^>]*>/g, '').trim();
     return (
-      state.pengaduanMasyarakat.create.form.name?.trim() !== '' &&
-      state.pengaduanMasyarakat.create.form.email?.trim() !== '' &&
-      state.pengaduanMasyarakat.create.form.nomorTelepon?.trim() !== '' &&
-      state.pengaduanMasyarakat.create.form.nik?.trim() !== '' &&
-      state.pengaduanMasyarakat.create.form.judulPengaduan?.trim() !== '' &&
-      state.pengaduanMasyarakat.create.form.lokasiKejadian?.trim() !== '' &&
-      !isHtmlEmpty(state.pengaduanMasyarakat.create.form.deskripsiPengaduan) &&
-      state.pengaduanMasyarakat.create.form.jenisPengaduanId?.trim() !== '' &&
+      (f.name || '').trim().length >= MIN.name &&
+      isValidEmail((f.email || '').trim()) &&
+      telpDigits.length >= 10 &&
+      nikDigits.length === 16 &&
+      (f.judulPengaduan || '').trim().length >= MIN.judul &&
+      (f.lokasiKejadian || '').trim().length >= MIN.lokasi &&
+      deskripsiText.length >= MIN.deskripsi &&
+      !!(f.jenisPengaduanId || '').trim() &&
       file !== null
     );
   };
@@ -130,12 +134,16 @@ function PengaduanMasyarakat() {
             <Title order={3}>Ajukan Pengaduan Masyarakat</Title>
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
-              placeholder="Masukkan nama"
-              onChange={(val) => (state.pengaduanMasyarakat.create.form.name = val.target.value)}
+              placeholder="Masukkan nama (minimal 3 karakter)"
+              value={state.pengaduanMasyarakat.create.form.name || ''}
+              onChange={(val) =>
+                (state.pengaduanMasyarakat.create.form.name = val.target.value.replace(/[0-9]/g, ''))
+              }
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Email</Text>}
               placeholder="Masukkan email"
+              value={state.pengaduanMasyarakat.create.form.email || ''}
               onChange={(val) => (state.pengaduanMasyarakat.create.form.email = val.target.value)}
             />
             <TextInput
@@ -160,12 +168,14 @@ function PengaduanMasyarakat() {
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Judul Pengaduan</Text>}
-              placeholder="Masukkan judul pengaduan"
+              placeholder="Masukkan judul pengaduan (minimal 3 karakter)"
+              value={state.pengaduanMasyarakat.create.form.judulPengaduan || ''}
               onChange={(val) => (state.pengaduanMasyarakat.create.form.judulPengaduan = val.target.value)}
             />
             <TextInput
               label={<Text fz="sm" fw="bold">Lokasi Kejadian</Text>}
-              placeholder="Masukkan lokasi kejadian"
+              placeholder="Masukkan lokasi kejadian (minimal 3 karakter)"
+              value={state.pengaduanMasyarakat.create.form.lokasiKejadian || ''}
               onChange={(val) => (state.pengaduanMasyarakat.create.form.lokasiKejadian = val.target.value)}
             />
             <Box>
