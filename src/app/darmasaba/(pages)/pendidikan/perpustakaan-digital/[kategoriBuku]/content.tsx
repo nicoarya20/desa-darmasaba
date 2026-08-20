@@ -169,7 +169,7 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
                      }}
                     />
                     {/* 📗 Tombol Detail */}
-                    <Button variant='light' color='blue' onClick={() => router.push(`/darmasaba/pendidikan/perpustakaan-digital/${v.kategori?.name}/${v.id}`)}>
+                    <Button variant='light' color='blue' onClick={() => router.push(`/darmasaba/pendidikan/perpustakaan-digital/${encodeURIComponent(v.kategori?.name || 'semua')}/${v.id}`)}>
                       Lihat Detail
                     </Button>
                   </Stack>

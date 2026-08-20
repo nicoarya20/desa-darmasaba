@@ -19,7 +19,7 @@ import { DateInput } from '@mantine/dates';
 import { IconArrowRight, IconBook2, IconPhone, IconUser } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useSnapshot } from 'valtio';
+import { useProxy } from 'valtio/utils';
 import {
   isValidPhoneDigits,
   MAX_DIGITS,
@@ -27,7 +27,13 @@ import {
   toPhoneDigits,
   toStoredPhone,
 } from './notelp';
-import { isPeminjamanFormValid } from './peminjamanForm';
+import {
+  ALAMAT_MAX,
+  ALAMAT_MIN,
+  CATATAN_MAX,
+  isPeminjamanFormValid,
+  richTextLength,
+} from './peminjamanForm';
 
 export interface ModalPeminjamanProps {
   opened: boolean;
@@ -46,7 +52,9 @@ export default function ModalPeminjaman({
   onClose,
   buku,
 }: ModalPeminjamanProps) {
-  const snap = useSnapshot(perpustakaanDigitalState.peminjamanBuku);
+  // sync: true -> update proxy sinkron, caret tidak loncat ke akhir saat menghapus
+  // di tengah teks (mis. field Alamat) khususnya di Safari.
+  const snap = useProxy(perpustakaanDigitalState.peminjamanBuku, { sync: true });
 
   const BATAS_HARI_PINJAM = 4;
 
@@ -73,8 +81,8 @@ export default function ModalPeminjaman({
 
   const handleSubmit = async () => {
     if (!buku) return toast.error('Data buku tidak ditemukan');
-    await perpustakaanDigitalState.peminjamanBuku.create.create();
-    onClose();
+    const success = await perpustakaanDigitalState.peminjamanBuku.create.create();
+    if (success) onClose();
   };
 
   return (
@@ -165,13 +173,21 @@ export default function ModalPeminjaman({
 
           <TextInput
             label="Alamat"
-            placeholder="Masukkan alamat"
+            placeholder="Masukkan alamat lengkap"
             leftSection={<IconUser size={16} />}
+            maxLength={ALAMAT_MAX}
             value={snap.create.form.alamat}
             onChange={(e) =>
               (perpustakaanDigitalState.peminjamanBuku.create.form.alamat =
-                e.currentTarget.value)
+                e.currentTarget.value.slice(0, ALAMAT_MAX))
             }
+            error={
+              snap.create.form.alamat.trim().length > 0 &&
+              snap.create.form.alamat.trim().length < ALAMAT_MIN
+                ? `Alamat minimal ${ALAMAT_MIN} karakter`
+                : null
+            }
+            description={`${snap.create.form.alamat.trim().length}/${ALAMAT_MAX} karakter (min ${ALAMAT_MIN})`}
             required
           />
 
@@ -228,6 +244,13 @@ export default function ModalPeminjaman({
                   val)
               }
             />
+            <Text
+              fz="xs"
+              mt={4}
+              c={richTextLength(snap.create.form.catatan) > CATATAN_MAX ? 'red' : 'dimmed'}
+            >
+              {richTextLength(snap.create.form.catatan)}/{CATATAN_MAX} karakter
+            </Text>
           </Box>
 
           <DateInput
