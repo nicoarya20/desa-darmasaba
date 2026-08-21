@@ -184,7 +184,7 @@ function Page() {
                   </Stack>
                 ) : (
                   <Paper p="lg" bg={colors['BG-trans']} radius="md" shadow="xs">
-                    <Text ta="center" fz={{ base: "xs", md: "sm" }} c={colors['blue-button-2']} lh={1.45}>
+                    <Text ta="center" fz={{ base: "xs", md: "sm" }} c="dimmed" lh={1.45}>
                       Belum ada kontak tersedia
                     </Text>
                   </Paper>
