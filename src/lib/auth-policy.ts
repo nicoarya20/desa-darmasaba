@@ -79,6 +79,16 @@ export const PUBLIC_POST_PATHS: readonly string[] = [
   "/api/inovasi/layananonlinedesa/pengaduanmasyarakat/upload",
   // Pinjam buku: form publik warga anonim, data peminjam diisi manual di form.
   "/api/pendidikan/perpustakaandigital/peminjamanbuku/create",
+  // Survei Indeks Kepuasan Masyarakat (IKM): warga anonim mengisi rating layanan
+  // di /darmasaba/ppid/indeks-kepuasan-masyarakat. Master data (jenis kelamin,
+  // rating, kelompok umur) di path lain & tetap admin-only.
+  "/api/landingpage/responden/create",
+  // Permohonan layanan surat: warga mengajukan surat keterangan dari /darmasaba
+  // /desa/layanan. Kategori/jenis layanan tetap admin-only (bukan path ini).
+  "/api/desa/ajukanpermohonan/create",
+  // Pendaftaran jadwal kegiatan kesehatan: warga mendaftar kegiatan di
+  // /darmasaba/kesehatan. Jadwal kegiatan (master) di-CRUD admin, bukan path ini.
+  "/api/kesehatan/pendaftaran-jadwal-kegiatan/create",
 ];
 
 /**

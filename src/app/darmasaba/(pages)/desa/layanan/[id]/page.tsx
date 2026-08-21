@@ -34,7 +34,7 @@ function Page() {
   const [data, setData] = useState<LayananData | null>(null);
 
   const [opened, { open, close }] = useDisclosure(false);
-  const stateCreate = useProxy(stateLayananDesa.ajukanPermohonan);
+  const stateCreate = useProxy(stateLayananDesa.ajukanPermohonan, { sync: true }); // sync: caret input controlled tak loncat
 
 
   useEffect(() => {
@@ -66,8 +66,30 @@ function Page() {
   }
 
   const handleSubmit = async () => {
-    if (stateCreate.create.form.nik.length !== 16) {
+    const f = stateCreate.create.form;
+    if (!f.nama?.trim()) {
+      toast.error('Nama wajib diisi');
+      return;
+    }
+    // Nama tidak boleh mengandung angka (nama orang, bukan kode).
+    if (/[0-9]/.test(f.nama)) {
+      toast.error('Nama tidak boleh mengandung angka');
+      return;
+    }
+    if (f.nik.length !== 16) {
       toast.error('NIK harus terdiri dari 16 digit');
+      return;
+    }
+    if (f.nomorKk.length !== 16) {
+      toast.error('Nomor KK harus terdiri dari 16 digit');
+      return;
+    }
+    if (!f.alamat?.trim()) {
+      toast.error('Alamat wajib diisi');
+      return;
+    }
+    if (!f.kategoriId) {
+      toast.error('Kategori wajib dipilih');
       return;
     }
     await stateCreate.create.create();
@@ -152,7 +174,9 @@ function Page() {
             <TextInput
               label={<Text fz="sm" fw="bold">Nama</Text>}
               placeholder="Masukkan nama"
-              onChange={(val) => (stateCreate.create.form.nama = val.target.value)}
+              value={stateCreate.create.form.nama || ''}
+              // Tolak angka saat mengetik — nama orang tidak memuat digit.
+              onChange={(val) => (stateCreate.create.form.nama = val.target.value.replace(/[0-9]/g, ''))}
             />
             <TextInput
               inputMode="numeric"
@@ -168,10 +192,12 @@ function Page() {
               onChange={(val) => (stateCreate.create.form.alamat = val.target.value)}
             />
             <TextInput
-              type="number"
+              inputMode="numeric"
+              maxLength={16}
               label={<Text fz="sm" fw="bold">Nomor KK</Text>}
               placeholder="Masukkan Nomor KK"
-              onChange={(val) => (stateCreate.create.form.nomorKk = val.target.value)}
+              value={stateCreate.create.form.nomorKk || ''}
+              onChange={(val) => (stateCreate.create.form.nomorKk = val.target.value.replace(/\D/g, '').slice(0, 16))}
             />
             <Select
               label="Kategori"

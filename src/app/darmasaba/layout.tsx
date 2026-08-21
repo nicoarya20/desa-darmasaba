@@ -18,11 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     base: "3.9rem",
                     md: "2.5rem"
                 }} />
-                <Box style={{
-                    overflow: "scroll"
-                }}>
-                    {children}
-                </Box>
+                <Box>{children}</Box>
                 <Footer />
                 <FixedPlayerBar />
             </Stack>

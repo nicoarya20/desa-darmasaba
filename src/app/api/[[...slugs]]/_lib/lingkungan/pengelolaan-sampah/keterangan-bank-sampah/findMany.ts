@@ -13,8 +13,12 @@ export default async function keteranganBankSampahTerdekatFindMany(context: Cont
 
   // Tambahkan pencarian (jika ada)
   if (search) {
+    // Cari di semua field yang ditampilkan ke user (nama tempat & alamat),
+    // bukan hanya `name` — sebelumnya search hanya menemukan 1 data.
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
+      { namaTempatMaps: { contains: search, mode: 'insensitive' } },
+      { alamat: { contains: search, mode: 'insensitive' } },
     ];
   }
 

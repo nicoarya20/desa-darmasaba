@@ -78,7 +78,7 @@ function InformasiDesa() {
               >
                 <Paper shadow="md" radius="lg" p="lg" withBorder>
                   <Grid align="stretch" gutter="xl">
-                    <GridCol span={{ base: 12, md: 6 }}>
+                    <GridCol span={{ base: 12, md: 5 }}>
                       <Image
                         src={dataBerita.image?.link || '/no-image.jpg'}
                         fallbackSrc="/no-image.jpg"
@@ -86,12 +86,12 @@ function InformasiDesa() {
                         radius="md"
                         fit="cover"
                         w="100%"
-                        h={{ base: 220, md: 300 }}
+                        h={{ base: 200, md: 260 }}
                         loading="lazy"
                         style={{ objectPosition: 'center' }}
                       />
                     </GridCol>
-                    <GridCol span={{ base: 12, md: 6 }}>
+                    <GridCol span={{ base: 12, md: 7 }}>
                       <Stack gap="sm" h="100%" justify="center">
                         {dataBerita.kategoriBerita?.name && (
                           <Badge bg={colors['blue-button']} radius="sm" w="fit-content">

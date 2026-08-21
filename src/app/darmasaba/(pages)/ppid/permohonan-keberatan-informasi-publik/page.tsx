@@ -53,7 +53,7 @@ const data = [
 ];
 
 function Page() {
-  const stateKeberatan = useProxy(permohonanKeberatanInformasi);
+  const stateKeberatan = useProxy(permohonanKeberatanInformasi, { sync: true });
   const router = useRouter();
 
   // Helper function to validate email format
@@ -62,15 +62,18 @@ function Page() {
     return emailRegex.test(email);
   };
 
-  // Check if form is valid
+  // Check if form is valid.
+  // Catatan: pakai truthy check — form.x?.trim() !== '' bernilai true saat field
+  // belum disentuh (undefined), sehingga tombol kirim aktif walau form kosong.
   const isFormValid = () => {
     const form = stateKeberatan.create.form;
+    const notelpDigits = (form.notelp || '').replace(/\D/g, '');
     return (
-      form.name?.trim() !== '' &&
-      form.email?.trim() !== '' &&
-      isValidEmail(form.email) &&
-      form.notelp?.trim() !== '' &&
-      form.alasan?.trim() !== ''
+      !!form.name?.trim() &&
+      !!form.email?.trim() &&
+      isValidEmail(form.email || '') &&
+      notelpDigits.length >= 10 &&
+      !!form.alasan?.trim()
     );
   };
 
@@ -203,8 +206,12 @@ function Page() {
                     radius="md"
                     size="md"
                     withAsterisk
+                    value={stateKeberatan.create.form.name || ''}
                     onChange={(val) =>
-                      (stateKeberatan.create.form.name = val.target.value)
+                      (stateKeberatan.create.form.name = val.target.value.replace(
+                        /[0-9]/g,
+                        ''
+                      ))
                     }
                   />
 

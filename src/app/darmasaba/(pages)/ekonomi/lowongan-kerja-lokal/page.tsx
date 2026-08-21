@@ -58,7 +58,7 @@ function Page() {
         <Title order={1} ta="center" c={colors["blue-button"]} fw="bold" lh={1.15}>
           Lowongan Kerja Lokal
         </Title>
-        <Group justify='center' mt={{ base: 'md', md: 'xl' }}>
+        <Group justify='center' mt={{ base: 'lg', md: 40 }}>
           <TextInput
             radius={'xl'}
             w={{ base: '100%', md: 700 }}

@@ -17,6 +17,7 @@ import {
 } from '@mantine/core';
 import { IconSend2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import JenisInformasiSelector from './jenis_infromasi/jenisInformasiSelector';
@@ -51,8 +52,10 @@ const steps = [
 ];
 
 function Page() {
-  const permohonanInformasiPublikState = useProxy(statePermohonanInformasi);
+  const permohonanInformasiPublikState = useProxy(statePermohonanInformasi, { sync: true });
   const router = useRouter();
+  // Pernyataan persetujuan wajib dicentang sebelum kirim.
+  const [setuju, setSetuju] = useState(false);
 
   // Helper function to validate email format
   const isValidEmail = (email: string) => {
@@ -60,19 +63,23 @@ function Page() {
     return emailRegex.test(email);
   };
 
-  // Check if form is valid
+  // Check if form is valid.
+  // Catatan: form.x?.trim() !== '' bernilai true saat field masih undefined
+  // (belum disentuh) → tombol kirim aktif walau form kosong. Pakai truthy check.
   const isFormValid = () => {
     const form = permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form;
+    const nikDigits = (form.nik || '').replace(/\D/g, '');
     return (
-      form.name?.trim() !== '' &&
-      form.nik?.trim() !== '' &&
-      form.notelp?.trim() !== '' &&
-      form.alamat?.trim() !== '' &&
-      form.email?.trim() !== '' &&
-      isValidEmail(form.email) &&
-      form.jenisInformasiDimintaId &&
-      form.caraMemperolehInformasiId &&
-      form.caraMemperolehSalinanInformasiId
+      !!form.name?.trim() &&
+      nikDigits.length === 16 &&
+      !!form.notelp?.trim() &&
+      !!form.alamat?.trim() &&
+      !!form.email?.trim() &&
+      isValidEmail(form.email || '') &&
+      !!form.jenisInformasiDimintaId &&
+      !!form.caraMemperolehInformasiId &&
+      !!form.caraMemperolehSalinanInformasiId &&
+      setuju
     );
   };
 
@@ -80,6 +87,10 @@ function Page() {
     const { create } = permohonanInformasiPublikState.statepermohonanInformasiPublik;
     const hasil = await create.create();
     if (hasil) {
+      // Reset proxy form (NIK/notelp controlled) + checkbox agar tidak menyisakan
+      // data lama saat pengguna kembali ke halaman ini.
+      create.form = {} as typeof create.form;
+      setSetuju(false);
       router.push('/darmasaba/permohonan/berhasil');
     }
   };
@@ -206,9 +217,10 @@ function Page() {
                     label="Nama Lengkap"
                     placeholder="Masukkan nama lengkap Anda"
                     withAsterisk
+                    value={permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.name || ''}
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.name =
-                        val.target.value;
+                        val.target.value.replace(/[0-9]/g, '');
                     }}
                   />
 
@@ -283,6 +295,8 @@ function Page() {
                     <Checkbox
                       size="sm"
                       color={colors['blue-button']}
+                      checked={setuju}
+                      onChange={(e) => setSetuju(e.currentTarget.checked)}
                       label="Saya menyatakan bahwa data yang saya berikan benar adanya dan informasi yang diminta akan digunakan sesuai ketentuan."
                     />
                   </Box>

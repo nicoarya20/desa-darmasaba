@@ -185,7 +185,7 @@ function Page() {
               <Center>
                 <Pagination
                   value={page}
-                  onChange={(newPage) => load(newPage)} // ini penting!
+                  onChange={(newPage) => load2(newPage, 3, debouncedSearch)} // load2 = list bank sampah (state2), bukan mekanisme
                   total={totalPages}
                   my="md"
                 />
