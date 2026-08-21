@@ -22,6 +22,7 @@ import {
   IconPhoneRinging,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 
@@ -56,11 +57,50 @@ function Page() {
   const stateKeberatan = useProxy(permohonanKeberatanInformasi, { sync: true });
   const router = useRouter();
 
+  // Tandai field yang sudah pernah disentuh (blur) agar pesan error tidak
+  // langsung merah saat halaman pertama kali dibuka.
+  const [touched, setTouched] = useState({
+    name: false,
+    email: false,
+    notelp: false,
+    alasan: false,
+  });
+
   // Helper function to validate email format
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
+  // Pesan error per field (hanya tampil setelah field disentuh).
+  const form = stateKeberatan.create.form;
+  const notelpDigits = (form.notelp || '').replace(/\D/g, '');
+
+  const nameError =
+    touched.name && (form.name || '').trim().length < 3
+      ? 'Nama lengkap wajib diisi (min. 3 karakter)'
+      : null;
+
+  const emailError = touched.email
+    ? !form.email?.trim()
+      ? 'Alamat email wajib diisi'
+      : !isValidEmail(form.email)
+        ? 'Format email tidak valid'
+        : null
+    : null;
+
+  const notelpError = touched.notelp
+    ? notelpDigits.length === 0
+      ? 'Nomor telepon wajib diisi'
+      : notelpDigits.length < 10
+        ? 'Nomor telepon minimal 10 digit'
+        : null
+    : null;
+
+  const alasanError =
+    touched.alasan && !form.alasan?.trim()
+      ? 'Alasan keberatan wajib diisi'
+      : null;
 
   // Check if form is valid.
   // Catatan: pakai truthy check — form.x?.trim() !== '' bernilai true saat field
@@ -206,6 +246,7 @@ function Page() {
                     radius="md"
                     size="md"
                     withAsterisk
+                    error={nameError}
                     value={stateKeberatan.create.form.name || ''}
                     onChange={(val) =>
                       (stateKeberatan.create.form.name = val.target.value.replace(
@@ -213,6 +254,7 @@ function Page() {
                         ''
                       ))
                     }
+                    onBlur={() => setTouched((t) => ({ ...t, name: true }))}
                   />
 
                   <TextInput
@@ -222,9 +264,12 @@ function Page() {
                     size="md"
                     type="email"
                     withAsterisk
+                    error={emailError}
+                    value={stateKeberatan.create.form.email || ''}
                     onChange={(val) =>
                       (stateKeberatan.create.form.email = val.target.value)
                     }
+                    onBlur={() => setTouched((t) => ({ ...t, email: true }))}
                   />
 
                   <TextInput
@@ -235,12 +280,14 @@ function Page() {
                     withAsterisk
                     inputMode="numeric"
                     maxLength={13}
+                    error={notelpError}
                     value={stateKeberatan.create.form.notelp || ''}
                     onChange={(val) =>
                       (stateKeberatan.create.form.notelp = val.target.value
                         .replace(/\D/g, '')
                         .slice(0, 13))
                     }
+                    onBlur={() => setTouched((t) => ({ ...t, notelp: true }))}
                   />
 
                   <Box>
@@ -249,10 +296,17 @@ function Page() {
                     </Text>
                     <PPIDTextEditor
                       showSubmit={false}
-                      onChange={(val) =>
-                        (stateKeberatan.create.form.alasan = val)
-                      }
+                      onChange={(val) => {
+                        stateKeberatan.create.form.alasan = val;
+                        if (!touched.alasan)
+                          setTouched((t) => ({ ...t, alasan: true }));
+                      }}
                     />
+                    {alasanError && (
+                      <Text c="red" fz="xs" lh={1.4} mt={4}>
+                        {alasanError}
+                      </Text>
+                    )}
                   </Box>
 
                   <Tooltip label="Pastikan semua data sudah diisi dengan benar">
