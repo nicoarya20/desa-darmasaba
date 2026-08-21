@@ -137,10 +137,10 @@ function Page() {
           </Title>
           <Text
             id="news-content"
-            py={20}
-            px={{ base: 0, md: 'sm' }}
+            pb={20}
+            px={0}
             fz={{ base: 'sm', md: 'md' }}
-            lh={{ base: 1.8, md: 2 }}
+            lh={{ base: 1.6, md: 1.7 }}
             ta="justify"
             c="dimmed"
             style={{
