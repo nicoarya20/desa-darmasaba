@@ -129,7 +129,7 @@ function Page() {
         </Stack>
       </Box>
       <Box px={{ base: "md", md: 100 }}>
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl" style={{ alignItems: 'flex-start' }}>
           {data.map((item) => (
             <a
               key={item.id}
@@ -152,34 +152,43 @@ function Page() {
                   </Title>
                 </Group>
 
-                {item.kontakItems?.map((kontak) => (
-                  <Paper
-                    key={kontak.id}
-                    p="lg"
-                    bg={colors['BG-trans']}
-                    radius="md"
-                    shadow="xs"
-                    mt="sm"
-                  >
-                    <Group align="center" justify="space-between">
-                      <Group align="center">
-                        {kontak.kontakItem?.icon && (
-                          <IconMapper
-                            name={kontak.kontakItem.icon as IconKey}
-                            size={24}
-                            color={colors['blue-button']}
-                          />
-                        )}
-                        <Text fw="bold" fz={{ base: "xs", md: "sm" }} c={colors["blue-button"]} lh={1.45}>
-                          {kontak.kontakItem?.nama}
-                        </Text>
-                      </Group>
-                      <Text fw="bold" fz={{ base: "xs", md: "sm" }} c={colors["blue-button"]} lh={1.45}>
-                        {kontak.kontakItem?.nomorTelepon}
-                      </Text>
-                    </Group>
+                {item.kontakItems && item.kontakItems.length > 0 ? (
+                  <Stack gap="sm">
+                    {item.kontakItems.map((kontak) => (
+                      <Paper
+                        key={kontak.id}
+                        p="lg"
+                        bg={colors['BG-trans']}
+                        radius="md"
+                        shadow="xs"
+                      >
+                        <Group align="center" justify="space-between">
+                          <Group align="center">
+                            {kontak.kontakItem?.icon && (
+                              <IconMapper
+                                name={kontak.kontakItem.icon as IconKey}
+                                size={24}
+                                color={colors['blue-button']}
+                              />
+                            )}
+                            <Text fw="bold" fz={{ base: "xs", md: "sm" }} c={colors["blue-button"]} lh={1.45}>
+                              {kontak.kontakItem?.nama}
+                            </Text>
+                          </Group>
+                          <Text fw="bold" fz={{ base: "xs", md: "sm" }} c={colors["blue-button"]} lh={1.45}>
+                            {kontak.kontakItem?.nomorTelepon}
+                          </Text>
+                        </Group>
+                      </Paper>
+                    ))}
+                  </Stack>
+                ) : (
+                  <Paper p="lg" bg={colors['BG-trans']} radius="md" shadow="xs">
+                    <Text ta="center" fz={{ base: "xs", md: "sm" }} c={colors['blue-button-2']} lh={1.45}>
+                      Belum ada kontak tersedia
+                    </Text>
                   </Paper>
-                ))}
+                )}
               </Paper>
             </a>
           ))}
