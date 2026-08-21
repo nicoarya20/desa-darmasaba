@@ -103,8 +103,8 @@ function Page() {
           >
             {filteredData.map((v, k) => {
               return (
-                <Stack key={k} h="100%">
-                  <Paper p={'xl'} h="100%" style={{ display: 'flex', flexDirection: 'column' }}>
+                <Stack key={k}>
+                  <Paper p={'xl'} flex={1} style={{ display: 'flex', flexDirection: 'column' }}>
                     <Center pb={20}>
                       {v.icon ? (
                         <IconMapper
