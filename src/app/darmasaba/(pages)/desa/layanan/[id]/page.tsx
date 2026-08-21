@@ -36,6 +36,16 @@ function Page() {
   const [opened, { open, close }] = useDisclosure(false);
   const stateCreate = useProxy(stateLayananDesa.ajukanPermohonan, { sync: true }); // sync: caret input controlled tak loncat
 
+  // Tandai field yang sudah disentuh (blur) agar pesan error tidak langsung
+  // merah saat modal pertama kali dibuka.
+  const [touched, setTouched] = useState({
+    nama: false,
+    nik: false,
+    alamat: false,
+    nomorKk: false,
+    kategori: false,
+  });
+
 
   useEffect(() => {
     state.suratKeterangan.findManyAll.load()
@@ -63,7 +73,45 @@ function Page() {
       nomorKk: '',
       kategoriId: '',
     }
+    setTouched({ nama: false, nik: false, alamat: false, nomorKk: false, kategori: false });
   }
+
+  // Pesan error per field (hanya tampil setelah field disentuh).
+  const f = stateCreate.create.form;
+  const namaError =
+    touched.nama && !(f.nama || '').trim()
+      ? 'Nama wajib diisi'
+      : null;
+  const nikError = touched.nik
+    ? (f.nik || '').length === 0
+      ? 'NIK wajib diisi'
+      : (f.nik || '').length !== 16
+        ? 'NIK harus terdiri dari 16 digit'
+        : null
+    : null;
+  const alamatError =
+    touched.alamat && !(f.alamat || '').trim()
+      ? 'Alamat wajib diisi'
+      : null;
+  const nomorKkError = touched.nomorKk
+    ? (f.nomorKk || '').length === 0
+      ? 'Nomor KK wajib diisi'
+      : (f.nomorKk || '').length !== 16
+        ? 'Nomor KK harus terdiri dari 16 digit'
+        : null
+    : null;
+  const kategoriError =
+    touched.kategori && !f.kategoriId
+      ? 'Kategori wajib dipilih'
+      : null;
+
+  // Tombol Simpan aktif hanya bila semua syarat terpenuhi.
+  const isFormValid = () =>
+    !!(f.nama || '').trim() &&
+    (f.nik || '').length === 16 &&
+    !!(f.alamat || '').trim() &&
+    (f.nomorKk || '').length === 16 &&
+    !!f.kategoriId;
 
   const handleSubmit = async () => {
     const f = stateCreate.create.form;
@@ -172,32 +220,45 @@ function Page() {
           <Stack gap="xs">
             <Title order={3}>Ajukan Permohonan</Title>
             <TextInput
-              label={<Text fz="sm" fw="bold">Nama</Text>}
+              label={<Text span fz="sm" fw="bold">Nama</Text>}
               placeholder="Masukkan nama"
+              withAsterisk
+              error={namaError}
               value={stateCreate.create.form.nama || ''}
               // Tolak angka saat mengetik — nama orang tidak memuat digit.
               onChange={(val) => (stateCreate.create.form.nama = val.target.value.replace(/[0-9]/g, ''))}
+              onBlur={() => setTouched((t) => ({ ...t, nama: true }))}
             />
             <TextInput
               inputMode="numeric"
               maxLength={16}
-              label={<Text fz="sm" fw="bold">NIK</Text>}
+              label={<Text span fz="sm" fw="bold">NIK</Text>}
               placeholder="Masukkan NIK"
+              withAsterisk
+              error={nikError}
               value={stateCreate.create.form.nik || ''}
               onChange={(val) => (stateCreate.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, 16))}
+              onBlur={() => setTouched((t) => ({ ...t, nik: true }))}
             />
             <TextInput
-              label={<Text fz="sm" fw="bold">Alamat</Text>}
+              label={<Text span fz="sm" fw="bold">Alamat</Text>}
               placeholder="Masukkan alamat"
+              withAsterisk
+              error={alamatError}
+              value={stateCreate.create.form.alamat || ''}
               onChange={(val) => (stateCreate.create.form.alamat = val.target.value)}
+              onBlur={() => setTouched((t) => ({ ...t, alamat: true }))}
             />
             <TextInput
               inputMode="numeric"
               maxLength={16}
-              label={<Text fz="sm" fw="bold">Nomor KK</Text>}
+              label={<Text span fz="sm" fw="bold">Nomor KK</Text>}
               placeholder="Masukkan Nomor KK"
+              withAsterisk
+              error={nomorKkError}
               value={stateCreate.create.form.nomorKk || ''}
               onChange={(val) => (stateCreate.create.form.nomorKk = val.target.value.replace(/\D/g, '').slice(0, 16))}
+              onBlur={() => setTouched((t) => ({ ...t, nomorKk: true }))}
             />
             <Select
               label="Kategori"
@@ -211,6 +272,7 @@ function Page() {
                 value: item.id,
               }))}
               value={stateCreate.create.form.kategoriId || null}
+              error={kategoriError}
               onChange={(val: string | null) => {
                 if (val) {
                   // Cari di findManyAll (sumber data dropdown), bukan findMany
@@ -225,12 +287,13 @@ function Page() {
                   stateCreate.create.form.kategoriId = '';
                 }
               }}
+              onBlur={() => setTouched((t) => ({ ...t, kategori: true }))}
               // searchable
               clearable
               nothingFoundMessage="Tidak ditemukan"
               required
             />
-            <Button bg={colors['blue-button']} onClick={handleSubmit}>
+            <Button bg={colors['blue-button']} onClick={handleSubmit} disabled={!isFormValid()}>
               Simpan
             </Button>
           </Stack>
