@@ -57,6 +57,16 @@ function Page() {
   // Pernyataan persetujuan wajib dicentang sebelum kirim.
   const [setuju, setSetuju] = useState(false);
 
+  // Tandai field yang sudah disentuh (blur) agar pesan error tidak langsung
+  // merah saat halaman pertama kali dibuka.
+  const [touched, setTouched] = useState({
+    name: false,
+    nik: false,
+    notelp: false,
+    alamat: false,
+    email: false,
+  });
+
   // Helper function to validate email format
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -69,10 +79,11 @@ function Page() {
   const isFormValid = () => {
     const form = permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form;
     const nikDigits = (form.nik || '').replace(/\D/g, '');
+    const notelpDigits = (form.notelp || '').replace(/\D/g, '');
     return (
       !!form.name?.trim() &&
       nikDigits.length === 16 &&
-      !!form.notelp?.trim() &&
+      notelpDigits.length >= 10 &&
       !!form.alamat?.trim() &&
       !!form.email?.trim() &&
       isValidEmail(form.email || '') &&
@@ -83,6 +94,45 @@ function Page() {
     );
   };
 
+  // Pesan error per field (hanya tampil setelah field disentuh).
+  const form = permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form;
+  const nikDigits = (form.nik || '').replace(/\D/g, '');
+  const notelpDigits = (form.notelp || '').replace(/\D/g, '');
+
+  const nameError =
+    touched.name && (form.name || '').trim().length < 3
+      ? 'Nama lengkap wajib diisi (min. 3 karakter)'
+      : null;
+
+  const nikError = touched.nik
+    ? nikDigits.length === 0
+      ? 'NIK wajib diisi'
+      : nikDigits.length !== 16
+        ? 'NIK harus 16 digit'
+        : null
+    : null;
+
+  const notelpError = touched.notelp
+    ? notelpDigits.length === 0
+      ? 'Nomor telepon wajib diisi'
+      : notelpDigits.length < 10
+        ? 'Nomor telepon minimal 10 digit'
+        : null
+    : null;
+
+  const alamatError =
+    touched.alamat && !form.alamat?.trim()
+      ? 'Alamat lengkap wajib diisi'
+      : null;
+
+  const emailError = touched.email
+    ? !form.email?.trim()
+      ? 'Alamat email wajib diisi'
+      : !isValidEmail(form.email)
+        ? 'Format email tidak valid'
+        : null
+    : null;
+
   const submitForms = async () => {
     const { create } = permohonanInformasiPublikState.statepermohonanInformasiPublik;
     const hasil = await create.create();
@@ -91,6 +141,13 @@ function Page() {
       // data lama saat pengguna kembali ke halaman ini.
       create.form = {} as typeof create.form;
       setSetuju(false);
+      setTouched({
+        name: false,
+        nik: false,
+        notelp: false,
+        alamat: false,
+        email: false,
+      });
       router.push('/darmasaba/permohonan/berhasil');
     }
   };
@@ -217,11 +274,13 @@ function Page() {
                     label="Nama Lengkap"
                     placeholder="Masukkan nama lengkap Anda"
                     withAsterisk
+                    error={nameError}
                     value={permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.name || ''}
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.name =
                         val.target.value.replace(/[0-9]/g, '');
                     }}
+                    onBlur={() => setTouched((t) => ({ ...t, name: true }))}
                   />
 
                   <TextInput
@@ -230,11 +289,13 @@ function Page() {
                     withAsterisk
                     inputMode="numeric"
                     maxLength={16}
+                    error={nikError}
                     value={permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.nik || ''}
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.nik =
                         val.target.value.replace(/\D/g, '').slice(0, 16);
                     }}
+                    onBlur={() => setTouched((t) => ({ ...t, nik: true }))}
                   />
 
                   <TextInput
@@ -243,31 +304,40 @@ function Page() {
                     withAsterisk
                     inputMode="numeric"
                     maxLength={13}
+                    error={notelpError}
                     value={permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.notelp || ''}
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.notelp =
                         val.target.value.replace(/\D/g, '').slice(0, 13);
                     }}
+                    onBlur={() => setTouched((t) => ({ ...t, notelp: true }))}
                   />
 
                   <TextInput
                     label="Alamat Lengkap"
                     placeholder="Masukkan alamat sesuai identitas"
                     withAsterisk
+                    error={alamatError}
+                    value={permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.alamat || ''}
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.alamat =
                         val.target.value;
                     }}
+                    onBlur={() => setTouched((t) => ({ ...t, alamat: true }))}
                   />
 
                   <TextInput
                     label="Alamat Email"
                     placeholder="Masukkan alamat email aktif"
+                    type="email"
                     withAsterisk
+                    error={emailError}
+                    value={permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.email || ''}
                     onChange={(val) => {
                       permohonanInformasiPublikState.statepermohonanInformasiPublik.create.form.email =
                         val.target.value;
                     }}
+                    onBlur={() => setTouched((t) => ({ ...t, email: true }))}
                   />
 
                   <JenisInformasiSelector
