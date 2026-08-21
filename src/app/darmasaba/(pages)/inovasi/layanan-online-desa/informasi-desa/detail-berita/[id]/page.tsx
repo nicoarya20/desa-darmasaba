@@ -55,7 +55,7 @@ function Page() {
       </Box>
       <Container w={{ base: "100%", md: "50%" }} >
         <Box pb={20}>
-          <Text ta={"center"} fz={"2.4rem"} c={colors["blue-button"]} fw={"bold"}>
+          <Text ta={"center"} fz={{ base: "1.5rem", md: "2.4rem" }} lh={{ base: 1.25, md: 1.2 }} c={colors["blue-button"]} fw={"bold"}>
             {state.findUnique.data?.judul}
           </Text>
         </Box>
