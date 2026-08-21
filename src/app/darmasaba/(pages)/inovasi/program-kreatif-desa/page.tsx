@@ -103,8 +103,8 @@ function Page() {
           >
             {filteredData.map((v, k) => {
               return (
-                <Stack key={k} >
-                  <Paper p={'xl'} >
+                <Stack key={k} h="100%">
+                  <Paper p={'xl'} h="100%" style={{ display: 'flex', flexDirection: 'column' }}>
                     <Center pb={20}>
                       {v.icon ? (
                         <IconMapper
@@ -118,7 +118,7 @@ function Page() {
                     </Center>
                     <Text ta={'center'} fz={'h3'} fw={'bold'} c={colors['blue-button']}>{v.name}</Text>
                     <Text lineClamp={2} lh={"1.9"} py={10} ta={'center'} fz={'lg'} c={'black'}>{v.slug}</Text>
-                    <Center>
+                    <Center mt="auto">
                       <Button onClick={() => router.push(`/darmasaba/inovasi/program-kreatif-desa/${v.id}`)} bg={colors['blue-button']}>Selengkapnya</Button>
                     </Center>
                   </Paper>

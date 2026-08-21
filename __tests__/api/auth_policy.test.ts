@@ -115,6 +115,23 @@ describe('isPublicPostPath', () => {
     expect(isPublicPostPath('/api/pendidikan/perpustakaandigital/peminjamanbuku')).toBe(false);
   });
 
+  it('form publik IKM / layanan surat / pendaftaran jadwal → boleh POST tanpa login', () => {
+    expect(isPublicPostPath('/api/landingpage/responden/create')).toBe(true);
+    expect(isPublicPostPath('/api/desa/ajukanpermohonan/create')).toBe(true);
+    expect(isPublicPostPath('/api/kesehatan/pendaftaran-jadwal-kegiatan/create')).toBe(true);
+    // Trailing slash / prefix parsial tetap ditolak (exact-match).
+    expect(isPublicPostPath('/api/landingpage/responden/create/')).toBe(false);
+    expect(isPublicPostPath('/api/desa/ajukanpermohonan')).toBe(false);
+  });
+
+  it('master data terkait form publik baru TETAP admin → tidak bocor', () => {
+    // Jadwal kegiatan (master, di-CRUD admin) ≠ pendaftaran (form publik warga).
+    expect(isPublicPostPath('/api/kesehatan/jadwal-kegiatan/create')).toBe(false);
+    // Master data responden (jenis kelamin / umur / rating) tetap admin-only.
+    expect(isPublicPostPath('/api/landingpage/jenis-kelamin-responden/create')).toBe(false);
+    expect(isPublicPostPath('/api/landingpage/umur-responden/create')).toBe(false);
+  });
+
   it('master data (jenislayanan/jenispengaduan) TETAP admin → tidak bocor', () => {
     // Bertingkat di bawah path publik; exact-match mencegah kebocoran.
     expect(isPublicPostPath('/api/inovasi/layananonlinedesa/administrasionline/jenislayanan/create')).toBe(false);

@@ -9,6 +9,7 @@ import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { BEASISWA_LIMIT, isBeasiswaFormValid, stripDigits } from './_lib/beasiswaForm';
 
 function formatDana(value: string | number): string {
   const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]/g, '')) : value;
@@ -21,7 +22,7 @@ function formatDana(value: string | number): string {
 }
 
 function Page() {
-  const beasiswaDesa = useProxy(beasiswaDesaState.beasiswaPendaftar)
+  const beasiswaDesa = useProxy(beasiswaDesaState.beasiswaPendaftar, { sync: true })
   const ungggulanDesa = useProxy(beasiswaDesaState.keunggulanProgram)
   const statsBeasiswa = useProxy(ringkasanBeasiswaState.findStats)
   const [opened, { open, close }] = useDisclosure(false);
@@ -43,23 +44,8 @@ function Page() {
     };
   };
 
-  // Check if form is valid
-  const isFormValid = () => {
-    return (
-      beasiswaDesa.create.form.namaLengkap?.trim() !== '' &&
-      beasiswaDesa.create.form.nis?.trim() !== '' &&
-      beasiswaDesa.create.form.kelas?.trim() !== '' &&
-      beasiswaDesa.create.form.jenisKelamin?.trim() !== '' &&
-      beasiswaDesa.create.form.alamatDomisili?.trim() !== '' &&
-      beasiswaDesa.create.form.tempatLahir?.trim() !== '' &&
-      beasiswaDesa.create.form.tanggalLahir?.trim() !== '' &&
-      beasiswaDesa.create.form.namaOrtu?.trim() !== '' &&
-      beasiswaDesa.create.form.nik?.trim() !== '' &&
-      beasiswaDesa.create.form.pekerjaanOrtu?.trim() !== '' &&
-      beasiswaDesa.create.form.penghasilan?.trim() !== '' &&
-      beasiswaDesa.create.form.noHp?.trim() !== ''
-    );
-  };
+  // Tombol "Kirim" aktif hanya bila semua field memenuhi batas min/maks karakter.
+  const isFormValid = () => isBeasiswaFormValid(beasiswaDesa.create.form);
 
   const { data, page, totalPages, loading, load } = ungggulanDesa.findMany;
 
@@ -78,9 +64,11 @@ function Page() {
   ];
 
   const handleSubmit = async () => {
-    await beasiswaDesa.create.create();
-    resetForm();
-    close();
+    const success = await beasiswaDesa.create.create();
+    if (success) {
+      resetForm();
+      close();
+    }
   };
 
   const timeline = [
@@ -219,35 +207,45 @@ function Page() {
             <TextInput
               label="Nama Lengkap"
               placeholder="Masukkan nama lengkap"
-              onChange={(val) => { beasiswaDesa.create.form.namaLengkap = val.target.value }} />
+              maxLength={BEASISWA_LIMIT.nama.max}
+              value={beasiswaDesa.create.form.namaLengkap}
+              onChange={(val) => { beasiswaDesa.create.form.namaLengkap = stripDigits(val.target.value) }} />
             <TextInput
               label="NIS"
               placeholder="Masukkan NIS"
               inputMode="numeric"
-              maxLength={18}
+              maxLength={BEASISWA_LIMIT.nis.max}
               value={beasiswaDesa.create.form.nis}
-              onChange={(val) => { beasiswaDesa.create.form.nis = val.target.value.replace(/\D/g, '').slice(0, 18) }} />
+              onChange={(val) => { beasiswaDesa.create.form.nis = val.target.value.replace(/\D/g, '').slice(0, BEASISWA_LIMIT.nis.max) }} />
             <TextInput
               label="Kelas"
               placeholder="Masukkan kelas"
+              maxLength={BEASISWA_LIMIT.kelas.max}
+              value={beasiswaDesa.create.form.kelas}
               onChange={(val) => { beasiswaDesa.create.form.kelas = val.target.value }} />
             <Select
               label="Jenis Kelamin"
               placeholder="Pilih jenis kelamin"
               data={[{ value: "LAKI_LAKI", label: "Laki-laki" }, { value: "PEREMPUAN", label: "Perempuan" }]}
+              value={beasiswaDesa.create.form.jenisKelamin || null}
               onChange={(val) => { if (val) beasiswaDesa.create.form.jenisKelamin = val }} />
             <TextInput
               label="Alamat Domisili"
               placeholder="Masukkan alamat domisili"
+              maxLength={BEASISWA_LIMIT.alamat.max}
+              value={beasiswaDesa.create.form.alamatDomisili}
               onChange={(val) => { beasiswaDesa.create.form.alamatDomisili = val.target.value }} />
             <TextInput
               label="Tempat Lahir"
               placeholder="Masukkan tempat lahir"
+              maxLength={BEASISWA_LIMIT.tempatLahir.max}
+              value={beasiswaDesa.create.form.tempatLahir}
               onChange={(val) => { beasiswaDesa.create.form.tempatLahir = val.target.value }} />
             <TextInput
               type="date"
               label="Tanggal Lahir"
               placeholder="Pilih tanggal lahir"
+              value={beasiswaDesa.create.form.tanggalLahir}
               onChange={(val) => { beasiswaDesa.create.form.tanggalLahir = val.target.value }} />
             <Box pt={15} pb={10}>
               <Divider />
@@ -255,29 +253,35 @@ function Page() {
             <TextInput
               label="Nama Orang Tua / Wali"
               placeholder="Masukkan nama orang tua / wali"
-              onChange={(val) => { beasiswaDesa.create.form.namaOrtu = val.target.value }} />
+              maxLength={BEASISWA_LIMIT.namaOrtu.max}
+              value={beasiswaDesa.create.form.namaOrtu}
+              onChange={(val) => { beasiswaDesa.create.form.namaOrtu = stripDigits(val.target.value) }} />
             <TextInput
               label="NIK Orang Tua / Wali"
               placeholder="Masukkan NIK orang tua / wali"
               inputMode="numeric"
-              maxLength={16}
+              maxLength={BEASISWA_LIMIT.nik.len}
               value={beasiswaDesa.create.form.nik || ''}
-              onChange={(val) => { beasiswaDesa.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, 16) }} />
+              onChange={(val) => { beasiswaDesa.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, BEASISWA_LIMIT.nik.len) }} />
             <TextInput
               label="Pekerjaan Orang Tua / Wali"
               placeholder="Masukkan pekerjaan orang tua / wali"
+              maxLength={BEASISWA_LIMIT.pekerjaanOrtu.max}
+              value={beasiswaDesa.create.form.pekerjaanOrtu}
               onChange={(val) => { beasiswaDesa.create.form.pekerjaanOrtu = val.target.value }} />
             <TextInput
               label="Penghasilan Orang Tua / Wali"
               placeholder="Masukkan penghasilan orang tua / wali"
+              maxLength={BEASISWA_LIMIT.penghasilan.max}
+              value={beasiswaDesa.create.form.penghasilan}
               onChange={(val) => { beasiswaDesa.create.form.penghasilan = val.target.value }} />
             <TextInput
               label="No HP"
               placeholder="Masukkan no hp"
               inputMode="numeric"
-              maxLength={13}
+              maxLength={BEASISWA_LIMIT.noHp.max}
               value={beasiswaDesa.create.form.noHp}
-              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value.replace(/\D/g, '').slice(0, 13) }} />
+              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value.replace(/\D/g, '').slice(0, BEASISWA_LIMIT.noHp.max) }} />
             <Group justify="flex-end" mt="md">
               <Button variant="default" radius="xl" onClick={close}>Batal</Button>
               <Button radius="xl" bg={colors['blue-button']} onClick={handleSubmit} disabled={!isFormValid()}>Kirim</Button>

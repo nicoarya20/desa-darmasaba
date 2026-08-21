@@ -10,6 +10,30 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit, clamp gagal
+ * kalau isinya mengandung tag blok (<p>, <div>, <ul>) -- teks tampil penuh
+ * dan tinggi kartu meledak, tapi hanya di Safari. Jadi deskripsi HTML
+ * diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR.
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function Content({ kategoriBuku }: { kategoriBuku: string }) {
   const state = useProxy(perpustakaanDigitalState);
   const [isLoading, setIsLoading] = useState(true);
@@ -112,7 +136,11 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
                 key={k}
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.2 }}
-                style={{ width: '100%', height: '100%' }}
+                // Grid me-stretch motion.div ke tinggi baris (align-items:
+                // stretch default). Sebagai flex-column, Paper di dalamnya bisa
+                // di-grow tanpa perlu height: '100%' (persentase yang
+                // di-resolve beda antara Blink dan WebKit).
+                style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
               >
                 <Paper
                   p="lg"
@@ -120,13 +148,13 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
                   shadow="md"
                   bg={colors['white-trans-1']}
                   style={{
-                    height: '100%',
+                    flexGrow: 1,
+                    minHeight: 0,
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between'
                   }}
                 >
-                  <Stack gap="md" style={{ flex: 1 }}>
+                  <Stack gap="md" style={{ flexGrow: 1, flexBasis: 'auto', minHeight: 0 }}>
                     <Center>
                       <Image
                         src={v.image?.link}
@@ -155,24 +183,31 @@ function Content({ kategoriBuku }: { kategoriBuku: string }) {
                         </Badge>
                       )}
                     </Stack>
+                    {/* dangerouslySetInnerHTML + truncate="end" dihapus: tag
+                        blok bikin lineClamp gagal di WebKit, truncate menambah
+                        nowrap yang bentrok. Deskripsi diratakan lewat
+                        toPlainText dulu. */}
                     <Text
                      ta="justify"
                      fz="sm"
                      lh={1.5}
                      lineClamp={5}
-                     truncate="end"
                      c="dimmed"
-                     dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                     style={{
-                       wordBreak: 'break-word',
-                       whiteSpace: 'normal',
-                     }}
-                    />
-                    {/* 📗 Tombol Detail */}
-                    <Button variant='light' color='blue' onClick={() => router.push(`/darmasaba/pendidikan/perpustakaan-digital/${v.kategori?.name}/${v.id}`)}>
-                      Lihat Detail
-                    </Button>
+                     style={{ wordBreak: 'break-word' }}
+                    >
+                      {toPlainText(v.deskripsi)}
+                    </Text>
                   </Stack>
+                  {/* 📗 Tombol Detail. Stack di atas sudah flexGrow:1 sehingga
+                      tombol jatuh ke dasar kartu; mt hanya untuk jarak. */}
+                  <Button
+                    variant='light'
+                    color='blue'
+                    mt="md"
+                    onClick={() => router.push(`/darmasaba/pendidikan/perpustakaan-digital/${encodeURIComponent(v.kategori?.name || 'semua')}/${v.id}`)}
+                  >
+                    Lihat Detail
+                  </Button>
                 </Paper>
               </motion.div>
             ))}

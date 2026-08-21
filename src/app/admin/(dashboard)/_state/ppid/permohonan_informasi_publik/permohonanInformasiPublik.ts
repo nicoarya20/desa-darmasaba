@@ -76,7 +76,6 @@ const caraMemperolehSalinanInformasi = proxy({
     },
   },
 });
-console.log(caraMemperolehSalinanInformasi);
 
 type PermohonanInformasiPublikForm =
   Prisma.PermohonanInformasiPublikGetPayload<{

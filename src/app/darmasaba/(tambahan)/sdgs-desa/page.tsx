@@ -166,16 +166,19 @@ function Page() {
                       background: 'linear-gradient(145deg, #f8f9fa, #ffffff)',
                       borderRadius: '12px',
                       width: '100%',
+                      height: 160,
                       display: 'flex',
+                      alignItems: 'center',
                       justifyContent: 'center',
                       marginBottom: '1rem',
                     }}
                   >
                     <Image
                       src={item.image?.link || '/placeholder-sdgs.png'}
+                      fallbackSrc="/placeholder-sdgs.png"
                       alt={item.name}
-                      width={120}
-                      height={120}
+                      w={120}
+                      h={120}
                       fit="contain"
                       style={{ filter: 'drop-shadow(0px 2px 6px rgba(0,0,0,0.1))' }}
                       loading="lazy"

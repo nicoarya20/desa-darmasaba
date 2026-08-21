@@ -48,7 +48,8 @@ const beasiswaPendaftar = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return false;
       }
 
       try {
@@ -58,17 +59,20 @@ const beasiswaPendaftar = proxy({
         ].post(beasiswaPendaftar.create.form);
         if (res.status === 200) {
           beasiswaPendaftar.findMany.load();
-          return toast.success(
+          toast.success(
             "Data Berhasil Dibuat, Silahkan Menunggu Konfirmasi dari Admin di WhatsApp"
           );
+          return true;
         }
         // Pesan server (mis. 409 "NIK sudah dipakai")
-        return toast.error(
+        toast.error(
           getServerMessage(res) || "Gagal menambahkan pendaftar beasiswa"
         );
+        return false;
       } catch (error) {
         console.log(error);
-        return toast.error("Gagal menambahkan pendaftar beasiswa");
+        toast.error("Gagal menambahkan pendaftar beasiswa");
+        return false;
       } finally {
         beasiswaPendaftar.create.loading = false;
       }

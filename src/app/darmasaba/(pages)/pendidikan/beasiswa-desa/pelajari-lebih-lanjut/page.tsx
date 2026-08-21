@@ -23,10 +23,11 @@ import { useDisclosure } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import beasiswaDesaState from '@/app/admin/(dashboard)/_state/pendidikan/beasiswa-desa';
 import colors from '@/con/colors';
+import { BEASISWA_LIMIT, isBeasiswaFormValid, stripDigits } from '../_lib/beasiswaForm';
 
 export default function BeasiswaPage() {
   const router = useRouter();
-  const beasiswaDesa = useProxy(beasiswaDesaState.beasiswaPendaftar);
+  const beasiswaDesa = useProxy(beasiswaDesaState.beasiswaPendaftar, { sync: true });
   const [opened, { open, close }] = useDisclosure(false);
 
   const resetForm = () => {
@@ -46,28 +47,15 @@ export default function BeasiswaPage() {
     };
   };
 
-  // Check if form is valid
-  const isFormValid = () => {
-    return (
-      beasiswaDesa.create.form.namaLengkap?.trim() !== '' &&
-      beasiswaDesa.create.form.nis?.trim() !== '' &&
-      beasiswaDesa.create.form.kelas?.trim() !== '' &&
-      beasiswaDesa.create.form.jenisKelamin?.trim() !== '' &&
-      beasiswaDesa.create.form.alamatDomisili?.trim() !== '' &&
-      beasiswaDesa.create.form.tempatLahir?.trim() !== '' &&
-      beasiswaDesa.create.form.tanggalLahir?.trim() !== '' &&
-      beasiswaDesa.create.form.namaOrtu?.trim() !== '' &&
-      beasiswaDesa.create.form.nik?.trim() !== '' &&
-      beasiswaDesa.create.form.pekerjaanOrtu?.trim() !== '' &&
-      beasiswaDesa.create.form.penghasilan?.trim() !== '' &&
-      beasiswaDesa.create.form.noHp?.trim() !== ''
-    );
-  };
+  // Tombol "Kirim" aktif hanya bila semua field memenuhi batas min/maks karakter.
+  const isFormValid = () => isBeasiswaFormValid(beasiswaDesa.create.form);
 
   const handleSubmit = async () => {
-    await beasiswaDesa.create.create();
-    resetForm();
-    close();
+    const success = await beasiswaDesa.create.create();
+    if (success) {
+      resetForm();
+      close();
+    }
   };
 
   return (
@@ -319,7 +307,9 @@ export default function BeasiswaPage() {
               label="Nama Lengkap"
               placeholder="Masukkan nama lengkap"
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
-              onChange={(val) => { beasiswaDesa.create.form.namaLengkap = val.target.value }}
+              maxLength={BEASISWA_LIMIT.nama.max}
+              value={beasiswaDesa.create.form.namaLengkap}
+              onChange={(val) => { beasiswaDesa.create.form.namaLengkap = stripDigits(val.target.value) }}
             />
             <TextInput
               label="NIS"
@@ -334,6 +324,8 @@ export default function BeasiswaPage() {
               label="Kelas"
               placeholder="Masukkan kelas"
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
+              maxLength={BEASISWA_LIMIT.kelas.max}
+              value={beasiswaDesa.create.form.kelas}
               onChange={(val) => { beasiswaDesa.create.form.kelas = val.target.value }}
             />
             <Select
@@ -344,18 +336,23 @@ export default function BeasiswaPage() {
                 { value: "PEREMPUAN", label: "Perempuan" }
               ]}
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
+              value={beasiswaDesa.create.form.jenisKelamin || null}
               onChange={(val) => { if (val) beasiswaDesa.create.form.jenisKelamin = val }}
             />
             <TextInput
               label="Alamat Domisili"
               placeholder="Masukkan alamat domisili"
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
+              maxLength={BEASISWA_LIMIT.alamat.max}
+              value={beasiswaDesa.create.form.alamatDomisili}
               onChange={(val) => { beasiswaDesa.create.form.alamatDomisili = val.target.value }}
             />
             <TextInput
               label="Tempat Lahir"
               placeholder="Masukkan tempat lahir"
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
+              maxLength={BEASISWA_LIMIT.tempatLahir.max}
+              value={beasiswaDesa.create.form.tempatLahir}
               onChange={(val) => { beasiswaDesa.create.form.tempatLahir = val.target.value }}
             />
             <TextInput
@@ -363,6 +360,7 @@ export default function BeasiswaPage() {
               label="Tanggal Lahir"
               placeholder="Pilih tanggal lahir"
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
+              value={beasiswaDesa.create.form.tanggalLahir}
               onChange={(val) => { beasiswaDesa.create.form.tanggalLahir = val.target.value }}
             />
             <Box pt={15} pb={10}>
@@ -372,7 +370,9 @@ export default function BeasiswaPage() {
               label="Nama Orang Tua / Wali"
               placeholder="Masukkan nama orang tua / wali"
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
-              onChange={(val) => { beasiswaDesa.create.form.namaOrtu = val.target.value }}
+              maxLength={BEASISWA_LIMIT.namaOrtu.max}
+              value={beasiswaDesa.create.form.namaOrtu}
+              onChange={(val) => { beasiswaDesa.create.form.namaOrtu = stripDigits(val.target.value) }}
             />
             <TextInput
               label="NIK Orang Tua / Wali"
@@ -387,12 +387,16 @@ export default function BeasiswaPage() {
               label="Pekerjaan Orang Tua / Wali"
               placeholder="Masukkan pekerjaan orang tua / wali"
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
+              maxLength={BEASISWA_LIMIT.pekerjaanOrtu.max}
+              value={beasiswaDesa.create.form.pekerjaanOrtu}
               onChange={(val) => { beasiswaDesa.create.form.pekerjaanOrtu = val.target.value }}
             />
             <TextInput
               label="Penghasilan Orang Tua / Wali"
               placeholder="Masukkan penghasilan orang tua / wali"
               labelProps={{ style: { fontSize: '0.9375rem', fontWeight: 600, lineHeight: 1.4 } }}
+              maxLength={BEASISWA_LIMIT.penghasilan.max}
+              value={beasiswaDesa.create.form.penghasilan}
               onChange={(val) => { beasiswaDesa.create.form.penghasilan = val.target.value }}
             />
             <TextInput

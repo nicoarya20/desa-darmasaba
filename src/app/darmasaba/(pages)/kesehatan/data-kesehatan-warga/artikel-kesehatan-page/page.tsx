@@ -69,9 +69,13 @@ function ArtikelKesehatanPage() {
                       {new Date(item.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })} • Dinas Kesehatan
                     </Text>
                   </Group>
-                  <Text fz={{ base: 'sm', sm: 'md' }} lh={{ base: 'sm', sm: 'md' }} lineClamp={3}>
-                    {item.content}
-                  </Text>
+                  <Text
+                    fz={{ base: 'sm', sm: 'md' }}
+                    lh={{ base: 'sm', sm: 'md' }}
+                    lineClamp={3}
+                    style={{ wordBreak: 'break-word' }}
+                    dangerouslySetInnerHTML={{ __html: item.content }}
+                  />
                   <Group justify="flex-start">
                     <Button
                       bg={colors['blue-button']}

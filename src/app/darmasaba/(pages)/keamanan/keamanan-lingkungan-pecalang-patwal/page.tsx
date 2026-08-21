@@ -9,10 +9,33 @@ import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { useRouter } from 'next/navigation';
 
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit, clamp gagal
+ * kalau isinya mengandung tag blok (<p>, <div>, <ul>) -- teks tampil penuh
+ * dan tinggi kartu meledak, tapi hanya di Safari. Jadi deskripsi HTML
+ * diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR.
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 function Page() {
   const state = useProxy(keamananLingkunganState)
-  const router = useRouter()  
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const {
@@ -90,11 +113,20 @@ function Page() {
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
+                  // JANGAN pasang height: '100%' + justify space-between di sini.
+                  // Paper ini grid item dengan row height `auto`, containing
+                  // block-nya indefinite. Blink me-resolve persentase itu jadi
+                  // `auto`; WebKit me-resolve-nya ke tinggi grid container
+                  // (termasuk gap + hasil stretch), sehingga kartu jadi lebih
+                  // tinggi dari barisnya dan tombol Detail terdorong keluar.
+                  // Grid sudah align-items: stretch default -> tinggi seragam.
+                  minHeight: 0,
                 }}
+                onClick={() => router.push(`/darmasaba/keamanan/keamanan-lingkungan-pecalang-patwal/${v.id}`)}
               >
-                <Stack align="center" gap="sm" style={{ flexGrow: 1 }}>
+                {/* flexBasis 'auto', bukan `flex: 1` (= flex-basis 0%) yang
+                    perhitungan free space-nya sering meleset di WebKit. */}
+                <Stack align="center" gap="sm" style={{ flexGrow: 1, flexBasis: 'auto', minHeight: 0 }}>
                   <Box
                     style={{
                       width: '100%',
@@ -102,45 +134,53 @@ function Page() {
                       borderRadius: '12px',
                       overflow: 'hidden',
                       position: 'relative',
+                      flexShrink: 0,
                     }}
                   >
+                    {/* Dipancang absolut. Tinggi induk berasal dari
+                        aspect-ratio, dan Safari lama menganggap itu indefinite
+                        -- height: '100%' jatuh ke `auto` dan gambar pakai
+                        tinggi intrinsiknya. */}
                     <Image
                       src={v.image?.link}
                       alt={v.name}
-                      fit="cover"
                       loading="lazy"
                       style={{
+                        position: 'absolute',
+                        inset: 0,
                         width: '100%',
                         height: '100%',
+                        objectFit: 'cover',
                         transition: 'transform 0.4s ease',
                       }}
                       onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
                       onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                     />
                   </Box>
-                  <Title order={2} ta="center" c={colors['blue-button']} lh={1.2}>
+                  <Title order={2} ta="center" c={colors['blue-button']} lh={1.2} lineClamp={2}>
                     {v.name}
                   </Title>
+                  {/* dangerouslySetInnerHTML + truncate dihapus: tag blok bikin
+                      lineClamp gagal di WebKit, truncate menambah nowrap yang
+                      bentrok. Deskripsi diratakan lewat toPlainText dulu. */}
                   <Text
                     fz={{ base: 'xs', md: 'sm' }}
                     ta="justify"
                     lineClamp={3}
                     lh={1.55}
-                    style={{
-                      minHeight: '4.8em',
-                    }}
+                    style={{ minHeight: '4.8em', wordBreak: 'break-word' }}
                     c={'black'}
                   >
-                    <span
-                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                      dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-                    />
+                    {toPlainText(v.deskripsi)}
                   </Text>
                 </Stack>
-                <Center mt="md">
+                {/* paddingTop, bukan mt="md". Inline marginTop: 'auto' menimpa
+                    class mt Mantine, jadi jaraknya hilang. */}
+                <Center style={{ marginTop: 'auto', paddingTop: 'var(--mantine-spacing-md)' }}>
                   <Button
                     variant="light"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation()
                       router.push(`/darmasaba/keamanan/keamanan-lingkungan-pecalang-patwal/${v.id}`)
                     }}
                   >

@@ -29,7 +29,7 @@ export function EdukasiCard({ icon, title, description, color = '#1e88e5' }: Edu
     >
       <Stack h="100%" justify="space-between" gap="md">
         <Box>
-          <Stack align="center" gap="xs" mb="md">
+          <Stack align="center" gap={4} mb="sm">
             <Box style={{ color }}>{icon}</Box>
             <Title
               order={3}
@@ -39,7 +39,6 @@ export function EdukasiCard({ icon, title, description, color = '#1e88e5' }: Edu
               lineClamp={2}
               style={{
                 wordBreak: 'break-word',
-                minHeight: '3.5rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

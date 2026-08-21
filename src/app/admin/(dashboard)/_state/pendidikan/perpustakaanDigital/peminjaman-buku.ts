@@ -65,7 +65,8 @@ const peminjamanBuku = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return false;
       }
 
       try {
@@ -76,13 +77,16 @@ const peminjamanBuku = proxy({
           ].post(peminjamanBuku.create.form);
         if (res.status === 200) {
           peminjamanBuku.findMany.load();
-          return toast.success("Data Peminjaman Buku Berhasil Dibuat");
+          toast.success("Data Peminjaman Buku Berhasil Dibuat");
+          return true;
         }
         console.log(res);
-        return toast.error("failed create");
+        toast.error("failed create");
+        return false;
       } catch (error) {
         console.log(error);
-        return toast.error("failed create");
+        toast.error("failed create");
+        return false;
       } finally {
         peminjamanBuku.create.loading = false;
       }

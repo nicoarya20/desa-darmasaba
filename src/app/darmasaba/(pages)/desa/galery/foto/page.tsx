@@ -15,9 +15,8 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
 import { IconPhoto } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
 // Komponen kartu foto
@@ -99,7 +98,6 @@ function FotoCard({ item }: { item: any }) {
 
 // Komponen utama
 export default function GaleriFotoUser() {
-  const [search] = useState('');
   return (
     <Box py="xl" px={{ base: 'md', md: 'lg' }}>
       {/* Header */}
@@ -108,19 +106,42 @@ export default function GaleriFotoUser() {
       </Title>
 
       {/* Daftar Foto */}
-      <FotoList search={search} />
+      <FotoList />
     </Box>
   );
 }
 
-function FotoList({ search }: { search: string }) {
+function FotoList() {
   const FotoState = useProxy(stateGallery.foto);
 
-  const { data, page, totalPages, loading, load } = FotoState.findMany;
+  const { data, page, totalPages, loading } = FotoState.findMany;
 
-  useShallowEffect(() => {
-    load(page, 3, search);
-  }, [page, search]);
+  // Sinkronkan pencarian dengan SearchBar di layout galeri: SearchBar
+  // memperbarui URL (?search=) lalu dispatch event 'searchUpdate'. Tab Foto
+  // sebelumnya memakai nilai search kosong yang di-hardcode sehingga kotak
+  // pencarian tidak berpengaruh — kini mendengarkan event yang sama seperti
+  // tab Video agar pencarian berfungsi (termasuk di Safari).
+  const loadData = useCallback((pageNum: number, searchTerm: string) => {
+    stateGallery.foto.findMany.load(pageNum, 3, searchTerm.trim());
+  }, []);
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const params = new URLSearchParams(window.location.search);
+      loadData(parseInt(params.get('page') || '1'), params.get('search') || '');
+    };
+    const handleSearchUpdate = (e: Event) => {
+      const { search } = (e as CustomEvent).detail;
+      loadData(1, search);
+    };
+    handleRouteChange();
+    window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener('searchUpdate', handleSearchUpdate as EventListener);
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('searchUpdate', handleSearchUpdate as EventListener);
+    };
+  }, [loadData]);
 
   if (loading) {
     return (
@@ -160,7 +181,8 @@ function FotoList({ search }: { search: string }) {
         <Pagination
           value={page}
           onChange={(newPage) => {
-            load(newPage, 3, search);
+            const params = new URLSearchParams(window.location.search);
+            loadData(newPage, params.get('search') || '');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}
