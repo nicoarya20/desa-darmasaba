@@ -2,7 +2,7 @@
 
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Button, Center, Group, Pagination, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Image, Pagination, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconFileDescription, IconInfoCircle } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -63,25 +63,36 @@ function PelayananSuratKeterangan({ search }: { search: string }) {
         spacing="lg"
       >
         {data?.map((v, k) => (
-          <BackgroundImage
+          <Box
             key={k}
-            src={v.image?.link || ''}
-            h={250}
-            radius="lg"
             pos="relative"
+            h={250}
             style={{
+              borderRadius: 16,
               boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
               overflow: "hidden",
             }}
           >
+            <Image
+              src={v.image?.link || ''}
+              alt={v.name}
+              pos="absolute"
+              top={0}
+              left={0}
+              w="100%"
+              h="100%"
+              fit="cover"
+              loading="eager"
+              style={{ zIndex: 0, borderRadius: 16 }}
+            />
             <Box
               pos="absolute"
               w="100%"
               h="100%"
               bg="rgba(0,0,0,0.45)"
-              style={{ borderRadius: 16 }}
+              style={{ borderRadius: 16, zIndex: 1 }}
             />
-            <Stack justify="space-between" h="100%" gap="md" p="lg" pos="relative">
+            <Stack justify="space-between" h="100%" gap="md" p="lg" pos="relative" style={{ zIndex: 2 }}>
               <Title
                 order={3}
                 c="white"
@@ -107,7 +118,7 @@ function PelayananSuratKeterangan({ search }: { search: string }) {
                 </Button>
               </Group>
             </Stack>
-          </BackgroundImage>
+          </Box>
         ))}
       </SimpleGrid>
       <Center>

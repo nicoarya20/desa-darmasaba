@@ -2,7 +2,7 @@
 'use client';
 import penghargaanState from "@/app/admin/(dashboard)/_state/desa/penghargaan";
 import colors from "@/con/colors";
-import { Box, Button, Container, Group, Paper, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Box, Button, Container, Group, Image, Paper, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowRight, IconAward } from "@tabler/icons-react";
 import { useTransitionRouter } from "next-view-transitions";
@@ -269,9 +269,6 @@ function Slider() {
               pos="relative"
               style={{
                 height: mobile ? "380px" : "450px",
-                backgroundImage: `url(${item.image?.link})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 overflow: "hidden",
               }}
@@ -288,13 +285,25 @@ function Slider() {
                 }
               }}
             >
+              <Image
+                src={item.image?.link || ''}
+                alt={item.name}
+                pos="absolute"
+                top={0}
+                left={0}
+                w="100%"
+                h="100%"
+                fit="cover"
+                loading="eager"
+                style={{ zIndex: 0, borderRadius: 16 }}
+              />
               <Box
                 pos="absolute"
                 inset={0}
                 bg="linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.3))"
-                style={{ borderRadius: 16 }}
+                style={{ borderRadius: 16, zIndex: 1 }}
               />
-              <Stack justify="flex-end" h="100%" gap="sm" p="lg" pos="relative">
+              <Stack justify="flex-end" h="100%" gap="sm" p="lg" pos="relative" style={{ zIndex: 2 }}>
                 <Title
                   order={3}
                   fw={700}

@@ -24,9 +24,9 @@ async function img({
 }) {
   const noImage = path.join(ROOT, "public/no-image.jpg");
   const ext = path.extname(name).toLowerCase();
-  const contentType = MIME_MAP[ext];
+  const mimeType = MIME_MAP[ext];
 
-  if (!contentType) {
+  if (!mimeType) {
     console.warn(`Ekstensi file tidak didukung: ${ext}`);
     const buffer = await fs.readFile(noImage);
     return new Response(new Uint8Array(buffer), {
@@ -52,7 +52,7 @@ async function img({
     const buffer = Buffer.concat(chunks);
 
     let output: Buffer;
-    let responseContentType = contentType;
+    let responseContentType = mimeType;
 
     if (convertToJpeg) {
       let pipeline = sharp(buffer);

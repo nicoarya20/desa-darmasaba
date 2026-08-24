@@ -1,7 +1,7 @@
 'use client'
 import puskesmasState from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/puskesmas';
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Grid, GridCol, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip, Badge, Divider, Group } from '@mantine/core';
+import { Box, Grid, GridCol, Image, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip, Badge, Divider, Group } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -40,25 +40,37 @@ function Page() {
       <Stack gap="xl" px={{ base: 'md', md: 100 }}>
         <Paper p="lg" radius="xl" shadow="md" bg={colors['white-trans-1']} withBorder>
           <Box pb="xl">
-            <BackgroundImage
-              radius="lg"
+            <Box
+              pos="relative"
               h={{ base: 260, md: 480 }}
               w="100%"
-              src={data.image?.link ?? "/no-image.jpg"}
-              style={{ position: 'relative', overflow: 'hidden' }}
+              style={{ borderRadius: 16, overflow: 'hidden' }}
             >
+              <Image
+                src={data.image?.link ?? "/no-image.jpg"}
+                alt={data.name}
+                pos="absolute"
+                top={0}
+                left={0}
+                w="100%"
+                h="100%"
+                fit="cover"
+                loading="eager"
+                style={{ zIndex: 0, borderRadius: 16 }}
+              />
               <Box
                 pos="absolute"
                 w="100%"
                 h="100%"
                 bg={colors.trans.dark[2]}
-                style={{ borderRadius: 16 }}
+                style={{ borderRadius: 16, zIndex: 1 }}
               />
               <Stack
                 pos="absolute"
                 bottom={20}
                 left={20}
                 gap={6}
+                style={{ zIndex: 2 }}
               >
                 <Title
                   order={1}
@@ -74,7 +86,7 @@ function Page() {
                   </Text>
                 </Group>
               </Stack>
-            </BackgroundImage>
+            </Box>
 
             <Grid mt="xl" gutter="xl">
               <GridCol span={{ base: 12, md: 6 }}>
