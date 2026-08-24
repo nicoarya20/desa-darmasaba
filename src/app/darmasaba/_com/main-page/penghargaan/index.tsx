@@ -98,8 +98,8 @@ function Penghargaan() {
     }
   };
 
-  // Ambil data terbatas berdasarkan perangkat
-  const data = state.findMany.data?.slice(0, isMobile ? 1 : 3);
+  // Tampilkan maksimal 3 penghargaan (mobile & desktop)
+  const data = state.findMany.data?.slice(0, 3);
 
   return (
     <Stack pos="relative" h="auto" mih={{ base: 500, md: 720 }} style={{ overflow: "hidden" }}>
@@ -186,14 +186,13 @@ function Penghargaan() {
         </Center>
       )}
 
-      {/* Overlay konten */}
+      {/* Overlay konten — relative (normal flow) agar section ikut tumbuh
+          mengikuti tinggi konten. Kalau absolute + height:100%, tinggi section
+          terkunci ke mih dan konten yang melebihi (mis. tombol) kena clip. */}
       <Box
         style={{
           width: "100%",
-          height: "100%",
-          position: "absolute",
-          top: 0,
-          left: 0,
+          position: "relative",
           background: "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.85))",
           zIndex: 1,
         }}
@@ -259,6 +258,7 @@ function Penghargaan() {
                         lh={TYPO.paperTitle.lh}
                         style={{ wordBreak: "break-word" }}
                         title={v.name}
+                        lineClamp={3}
                       >
                         {v.name}
                       </Text>
@@ -271,6 +271,7 @@ function Penghargaan() {
                           ta="center"
                           lh={TYPO.body.lh}
                           style={{ maxWidth: 520 }}
+                          lineClamp={2}
                         >
                           {v.description}
                         </Text>
