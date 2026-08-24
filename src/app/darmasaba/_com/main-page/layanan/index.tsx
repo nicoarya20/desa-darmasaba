@@ -8,6 +8,7 @@ import {
   Container,
   Divider,
   Group,
+  Image,
   Paper,
   Skeleton,
   Stack,
@@ -292,18 +293,26 @@ function Slider() {
               h={HEIGHT}
               pos="relative"
               style={{
-                backgroundImage: `url(${item.image?.link})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
                 borderRadius: 8,
                 overflow: "hidden",
               }}
             >
+              {/* Real <img> layer (Safari lama tidak melukis background-image
+                  async di dalam track scroll horizontal saat load pertama) */}
+              <Image
+                src={item.image?.link}
+                alt={_.startCase(item.name)}
+                pos="absolute"
+                inset={0}
+                w="100%"
+                h="100%"
+                fit="cover"
+                loading="eager"
+              />
               <Box
                 style={{
                   borderRadius: 8,
-                  zIndex: 0,
+                  zIndex: 1,
                 }}
                 pos="absolute"
                 w="100%"
@@ -316,6 +325,7 @@ function Slider() {
                 gap={0}
                 p="lg"
                 pos="relative"
+                style={{ zIndex: 2 }}
               >
                 <Box p="lg">
                   {/* slide title - semantic h2 */}

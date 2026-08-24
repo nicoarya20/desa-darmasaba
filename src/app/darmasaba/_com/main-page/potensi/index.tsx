@@ -3,12 +3,12 @@
 import potensiDesaState from "@/app/admin/(dashboard)/_state/desa/potensi";
 import colors from "@/con/colors";
 import {
-  BackgroundImage,
   Box,
   Button,
   Container,
   Divider,
   Group,
+  Image,
   Loader,
   SimpleGrid,
   Stack,
@@ -105,18 +105,30 @@ function Potensi() {
               onClick={() => router.push(`/darmasaba/desa/potensi/${v.id}`)}
               style={{ cursor: "pointer" }}
             >
-              <BackgroundImage
-                src={v.image?.link}
-                h={320}
-                radius={20}
+              <Box
                 pos="relative"
+                h={320}
+                style={{ borderRadius: 20, overflow: "hidden" }}
               >
+                {/* Real <img> layer (Safari lama tidak melukis background-image
+                    async pada layer transform saat load pertama) */}
+                <Image
+                  src={v.image?.link}
+                  alt={v.name}
+                  pos="absolute"
+                  inset={0}
+                  w="100%"
+                  h="100%"
+                  fit="cover"
+                  loading="eager"
+                />
+
                 <Box
                   pos="absolute"
                   w="100%"
                   h="100%"
                   bg={colors.trans.dark[2]}
-                  style={{ borderRadius: 20, zIndex: 0 }}
+                  style={{ borderRadius: 20, zIndex: 1 }}
                 />
 
                 {/* CARD CONTENT */}
@@ -126,7 +138,7 @@ function Potensi() {
                   p="md"
                   align="start"
                   pos="absolute"
-                  style={{ zIndex: 1 }}
+                  style={{ zIndex: 2 }}
                 >
                   <Tooltip label={v.name} position="top-start">
                     <Text
@@ -148,7 +160,7 @@ function Potensi() {
                     dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                   />
                 </Stack>
-              </BackgroundImage>
+              </Box>
             </motion.div>
           ))}
         </SimpleGrid>
