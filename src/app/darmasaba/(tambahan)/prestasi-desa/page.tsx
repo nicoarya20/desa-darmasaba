@@ -1,7 +1,7 @@
 'use client'
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Button, Center, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Button, Center, Group, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
@@ -66,24 +66,34 @@ function Page() {
         ) : (
           data.map((v, k) => {
             return (
-              <BackgroundImage
+              <Box
                 key={k}
-                src={v.image?.link || ''}
-
-                radius={16}
                 pos={"relative"}
+                style={{ borderRadius: 16, overflow: "hidden" }}
               >
+                <Image
+                  src={v.image?.link || ''}
+                  alt={v.kategori?.name || ''}
+                  pos="absolute"
+                  top={0}
+                  left={0}
+                  w="100%"
+                  h="100%"
+                  fit="cover"
+                  loading="eager"
+                  style={{ zIndex: 0, borderRadius: 16 }}
+                />
                 <Box
                   style={{
                     borderRadius: 16,
-                    zIndex: 0
+                    zIndex: 1
                   }}
                   pos={"absolute"}
                   w={"100%"}
                   h={"100%"}
                   bg={colors.trans.dark[2]}
                 />
-                <Stack justify='space-between' h={"100%"} gap={0} p={"lg"} pos={"relative"}>
+                <Stack justify='space-between' h={"100%"} gap={0} p={"lg"} pos={"relative"} style={{ zIndex: 2 }}>
                   <Group>
                     <Paper radius={"lg"} py={7} px={10}>
                       <Text>{v.kategori?.name}</Text>
@@ -96,7 +106,7 @@ function Page() {
                       c={"white"}
                       size={"1.8rem"}
                       style={{
-                        wordBreak: "break-word", 
+                        wordBreak: "break-word",
                         whiteSpace: "normal"
                       }}
                       lineClamp={5}
@@ -111,7 +121,7 @@ function Page() {
                     </Button>
                   </Group>
                 </Stack>
-              </BackgroundImage>
+              </Box>
             )
           })
         )}

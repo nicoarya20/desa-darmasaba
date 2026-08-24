@@ -145,11 +145,12 @@ const ApiServer = new Elysia()
       .get("/potensi", getPotensi)
       .get(
         "/img/:name",
-        ({ params, query }) => {
+        ({ params, query, headers }) => {
           return img({
             name: params.name,
             ROOT,
             size: query.size,
+            accept: headers["accept"],
           });
         },
         {

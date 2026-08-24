@@ -3,12 +3,12 @@
 import prestasiState from "@/app/admin/(dashboard)/_state/landing-page/prestasi-desa";
 import colors from "@/con/colors";
 import {
-  BackgroundImage,
   Box,
   Button,
   Center,
   Container,
   Group,
+  Image,
   Loader,
   SimpleGrid,
   Stack,
@@ -98,21 +98,32 @@ function Prestasi() {
         ) : (
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" mb="xl">
             {data.map((v, k) => (
-              <BackgroundImage
+              <Box
                 key={k}
-                src={v.image?.link || ""}
-                radius="xl"
                 pos="relative"
+                style={{ borderRadius: 27, overflow: "hidden" }}
               >
+                <Image
+                  src={v.image?.link || ""}
+                  alt={v.kategori.name}
+                  pos="absolute"
+                  top={0}
+                  left={0}
+                  w="100%"
+                  h="100%"
+                  fit="cover"
+                  loading="eager"
+                  style={{ zIndex: 0, borderRadius: 27 }}
+                />
                 <Box
                   pos="absolute"
                   inset={0}
                   bg="linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)"
-                  style={{ borderRadius: 27 }}
+                  style={{ borderRadius: 27, zIndex: 1 }}
                 />
 
-                <Stack justify="space-between" h="100%" pos="relative" p="lg">
-                  
+                <Stack justify="space-between" h="100%" pos="relative" p="lg" style={{ zIndex: 2 }}>
+
                   {/* KATEGORI */}
                   <Text
                     c="white"
@@ -147,7 +158,7 @@ function Prestasi() {
                     </Button>
                   </Group>
                 </Stack>
-              </BackgroundImage>
+              </Box>
             ))}
           </SimpleGrid>
         )}

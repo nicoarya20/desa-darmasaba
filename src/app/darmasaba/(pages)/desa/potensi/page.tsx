@@ -2,7 +2,7 @@
 'use client'
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
 import colors from '@/con/colors';
-import { BackgroundImage, Box, Button, Flex, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Flex, Group, Image, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { IconEye } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useEffect, useState } from 'react';
@@ -84,20 +84,31 @@ function Page() {
             ))
           ) : data && data.length > 0 ? (
             data.map((v, k) => (
-              <BackgroundImage
+              <Box
                 key={k}
-                src={v.image?.link || ''}
+                pos="relative"
                 h={360}
-                radius="xl"
                 onMouseEnter={() => setHoveredId(v.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 style={{
+                  borderRadius: 27,
                   overflow: 'hidden',
-                  position: 'relative',
                   cursor: 'pointer',
                   transition: 'transform 0.3s ease'
                 }}
               >
+                <Image
+                  src={v.image?.link || ''}
+                  alt={v.name}
+                  pos="absolute"
+                  top={0}
+                  left={0}
+                  w="100%"
+                  h="100%"
+                  fit="cover"
+                  loading="eager"
+                  style={{ zIndex: 0, borderRadius: 27 }}
+                />
                 <Box
                   pos="absolute"
                   inset={0}
@@ -106,11 +117,12 @@ function Page() {
                     : "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.15) 100%)"
                   }
                   style={{
-                    transition: 'background 0.3s ease'
+                    transition: 'background 0.3s ease',
+                    zIndex: 1
                   }}
                 />
 
-                <Stack justify="space-between" h="100%" gap="md" p="lg" pos="relative">
+                <Stack justify="space-between" h="100%" gap="md" p="lg" pos="relative" style={{ zIndex: 2 }}>
                   <Group>
                     <Paper
                       radius="lg"
@@ -168,7 +180,7 @@ function Page() {
                     </Button>
                   </Group>
                 </Stack>
-              </BackgroundImage>
+              </Box>
             ))
           ) : (
             <Stack align="center" gap="xs">

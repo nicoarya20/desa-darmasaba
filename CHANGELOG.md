@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.140] - 2026-08-24
+### Fixed
+- **Gambar tidak tampil di Safari ≤13 / iOS ≤13 (seluruh halaman publik)**: pipeline upload menyimpan semua gambar sebagai `.webp`, tetapi WebKit lama tidak mendukung format WebP. Endpoint `/api/img` kini membaca header `Accept` — jika klien tidak menyertakan `image/webp`, file `.webp` di-transcode on-the-fly ke JPEG via sharp sebelum dikirim. Browser modern tetap menerima WebP. Header `Vary: Accept` ditambahkan agar CDN/proxy tidak salah cache.
+- **Gambar kartu/hero blank saat load pertama di Safari 14/15 (background-image paint bug)**: WebKit lama tidak melukis CSS `background-image` yang diisi dari data async bila elemen berada di dalam compositing layer (transform, marquee). Diperbaiki di 7 halaman publik dengan mengganti `BackgroundImage` / CSS `backgroundImage` menjadi elemen `<Image>` absolut sebagai layer terbawah, sehingga gambar dirender melalui pipeline `<img>` biasa yang selalu bekerja di semua Safari. Halaman yang diperbaiki: Potensi Desa, Layanan Surat Keterangan, Detail Puskesmas, APBDes, Prestasi Desa (dua halaman), dan Penghargaan Desa.
+
 ## [0.1.139] - 2026-08-18
 ### Fixed
 - **Slider durasi musik tidak mengikuti posisi drag**: menggeser slider durasi ke posisi tertentu tidak lompat ke titik yang diinginkan. Penyebabnya endpoint pengambil file audio (`/api/fileStorage/findUnique/:name`) belum mendukung HTTP Range request, sehingga browser tidak bisa seek ke bagian audio yang belum ter-buffer. Kini endpoint mendukung `Range` header dan merespons `206 Partial Content` dengan `Content-Range`/`Accept-Ranges` sesuai standar.
