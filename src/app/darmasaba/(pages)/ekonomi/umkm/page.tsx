@@ -120,9 +120,9 @@ function TabProdukUmkm({ router }: { router: any }) {
                 key={k}
                 whileHover={{ scale: 1.03 }}
                 onClick={() => router.push(`/darmasaba/ekonomi/umkm/produk/${v.id}`)}
-                style={{ cursor: 'pointer', height: '100%' }}
+                style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
               >
-                <Card shadow="xs" padding="md" radius="md" withBorder style={{ height: '100%' }}>
+                <Card shadow="xs" padding="md" radius="md" withBorder style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <Card.Section>
                     <Image
                       src={v.image?.link || '/no-image.jpg'}
@@ -196,8 +196,9 @@ function TabDirektoriUmkm({ router }: { router: any }) {
                 key={k}
                 onClick={() => router.push(`/darmasaba/ekonomi/umkm/${v.id}`)}
                 whileHover={{ scale: 1.03 }}
+                style={{ display: 'flex', flexDirection: 'column' }}
               >
-                <Paper p="md" radius="md" withBorder shadow="xs" style={{ cursor: 'pointer', height: '100%' }}>
+                <Paper p="md" radius="md" withBorder shadow="xs" style={{ cursor: 'pointer', flex: 1 }}>
                   <Image
                     radius="md"
                     src={v.image?.link || '/no-image.jpg'}
