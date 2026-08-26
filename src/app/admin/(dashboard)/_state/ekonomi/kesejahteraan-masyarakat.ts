@@ -276,6 +276,7 @@ const kesejahteraan = proxy({
       };
     }> | null,
     loading: false,
+    loaded: false,
     async load() {
       this.loading = true;
       try {
@@ -293,6 +294,7 @@ const kesejahteraan = proxy({
         this.data = null;
       } finally {
         this.loading = false;
+        this.loaded = true;
       }
     },
   },
