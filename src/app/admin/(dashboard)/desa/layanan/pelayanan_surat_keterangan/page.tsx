@@ -27,6 +27,32 @@ import HeaderSearch from '../../../_com/header';
 import stateLayananDesa from '../../../_state/desa/layananDesa';
 import { useDebouncedValue } from '@mantine/hooks';
 
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
+ * clamp gagal kalau isinya mengandung tag blok (<p>, <div>, <ul>, <h1-6>)
+ * -- teks tampil penuh dan overlap dengan elemen di bawahnya, tapi hanya
+ * di Safari (mis. iPhone X). Deskripsi rich-text sering berisi tag blok,
+ * jadi harus diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR. Pola sama
+ * dengan fix di src/app/admin/(dashboard)/landing-page/profil/program-inovasi/page.tsx
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function SuratKeterangan() {
   const [search, setSearch] = useState('');
   return (
@@ -128,11 +154,9 @@ function ListSuratKeterangan({ search }: { search: string }) {
                         <Text
                           fz="sm"
                           lh={1.5}
-                          dangerouslySetInnerHTML={{ __html: item.deskripsi || '' }}
                           style={{ wordBreak: 'break-word' }}
                           lineClamp={1}
-                          truncate="end"
-                        />
+                          truncate="end">{toPlainText(item.deskripsi) || '-'}</Text>
                       </TableTd>
                        <TableTd style={{ maxWidth: 250 }}>
                         <Button
