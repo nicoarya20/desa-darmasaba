@@ -10,6 +10,11 @@ export async function storeImageAsWebp(file: File) {
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const desktopBuffer = await sharp(buffer)
+    // Foto dari kamera HP disimpan dengan piksel mentah (orientasi sensor)
+    // + tag EXIF Orientation. sharp tidak auto-baca EXIF ini saat resize, dan
+    // .toBuffer() default membuang metadata — tanpa .rotate() (no-arg, auto-
+    // orient dari EXIF) hasilnya piksel mentah tersimpan miring permanen.
+    .rotate()
     .resize({ width: 1920, withoutEnlargement: true })
     .webp({ quality: 80 })
     .toBuffer();
