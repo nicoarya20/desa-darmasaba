@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.171] - 2026-08-26
+### Fixed
+- **Deskripsi Program Inovasi (admin, `/admin/landing-page/profil/program-inovasi`) tampil tumpang tindih (overlap) khusus di Safari iPhone X, aman di device lain**: `Text` dengan `lineClamp` sebelumnya me-render langsung HTML rich-text (`dangerouslySetInnerHTML`) dari field deskripsi yang berisi heading/list (mis. "Tujuan Program", "Sasaran Program"). WebKit (Safari/iOS) gagal meng-clamp konten yang berisi elemen blok bersarang, sehingga teks penuh muncul dan overlap dengan elemen di bawahnya. Diperbaiki dengan meratakan deskripsi jadi plain text sebelum di-clamp (pola sama dengan fix serupa di halaman Perpustakaan Digital publik) — berlaku untuk tabel desktop maupun kartu mobile.
+
 ## [0.1.141] - 2026-08-20
 ### Fixed
 - **Gambar berformat WebP tidak pernah tampil di Safari versi lama (pra-Safari 14, sebelum September 2020)**: berbeda dari mitigasi retry di 0.1.140 (yang menangani kegagalan intermiten karena bug WebKit/QUIC), ini kegagalan yang selalu terjadi — Safari lama memang tidak punya kemampuan decode format WebP sama sekali, jadi gambar apa pun akan gagal diulang berapa kali pun. Ditambahkan fallback format: browser mendeteksi sendiri ketidakmampuannya decode WebP (feature-detect via canvas, tanpa request jaringan), lalu meminta ulang gambar yang sama ke `/api/img/:name` dengan parameter `?format=jpeg`. Server mengonversi on-the-fly dari WebP ke JPEG (atau PNG jika gambarnya punya transparansi) lewat `sharp` — tanpa migrasi data, tanpa file kedua tersimpan. Murni opt-in lewat query param: browser modern (termasuk Safari versi baru) tidak pernah mengirim param ini, jadi tidak ada perubahan perilaku atau performa untuk mereka.
