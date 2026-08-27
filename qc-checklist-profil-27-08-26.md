@@ -71,7 +71,7 @@ Pejabat Desa cuma 1 data (Perbekel), jadi wajar tanpa List/Create/Hapus. Tapi ru
 
 - [x] 💻 Tabel rapi, thumbnail icon 50×50 tidak pecah
 - [x] 🤖🍎 Card mobile, thumbnail 40×40 muncul
-- [ ] 🔴 **Wajib di-tap manual di HP:** teks Link/No. Telepon di card mobile dibungkus `<a href={item.link}>`, tapi field `link` **tidak ada** di model `MediaSosial` (schema cuma punya `iconUrl`). Kemungkinan `href` selalu kosong/`undefined` walau teksnya kelihatan normal. Desktop table tidak pakai anchor sama sekali → aman.
+- [x] 🔴 **Wajib di-tap manual di HP:** teks Link/No. Telepon di card mobile dibungkus `<a href={item.link}>`, tapi field `link` **tidak ada** di model `MediaSosial` (schema cuma punya `iconUrl`). Kemungkinan `href` selalu kosong/`undefined` walau teksnya kelihatan normal. Desktop table tidak pakai anchor sama sekali → aman.
 - [x] Icon default (Facebook/IG/dst) vs custom upload tampil beda tapi ukuran konsisten
 - [x] Search &amp; pagination jalan sama seperti Program Inovasi
 
