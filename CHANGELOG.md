@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.140] - 2026-08-27
+### Fixed
+- **Link/No. Telepon di card mobile admin Media Sosial tidak bisa di-tap**: teks link/kontak dibungkus `<a href={item.link}>`, padahal field `link` tidak pernah ada di model `MediaSosial` (schema hanya punya `iconUrl`) — href selalu kosong walau teksnya tampil normal. Tabel desktop tidak memakai anchor sama sekali sehingga tidak terdampak.
+- **Klik icon media sosial di footer publik salah arah**: `SosmedView.tsx` memakai `router.push(item.iconUrl)` (navigasi SPA internal) untuk semua tipe tanpa membedakan URL sosmed vs nomor telepon.
+
+### Changed
+- **Entry Media Sosial bertipe Telephone/WhatsApp kini diarahkan ke wa.me**: nomor dinormalisasi (awalan `0`/`62` → `62xxx`) lalu dibuka via `https://wa.me/<nomor>` — otomatis membuka WhatsApp Web di desktop dan aplikasi WhatsApp di mobile. Tipe lain (Facebook/Instagram/TikTok/YouTube/dst) tetap memakai `iconUrl` apa adanya. Logic dipusatkan di `getSosmedHref()` (`_lib/sosmed.ts`) dan dipakai baik di list admin maupun footer publik.
+
 ## [0.1.139] - 2026-08-18
 ### Fixed
 - **Slider durasi musik tidak mengikuti posisi drag**: menggeser slider durasi ke posisi tertentu tidak lompat ke titik yang diinginkan. Penyebabnya endpoint pengambil file audio (`/api/fileStorage/findUnique/:name`) belum mendukung HTTP Range request, sehingga browser tidak bisa seek ke bagian audio yang belum ter-buffer. Kini endpoint mendukung `Range` header dan merespons `206 Partial Content` dengan `Content-Range`/`Accept-Ranges` sesuai standar.
