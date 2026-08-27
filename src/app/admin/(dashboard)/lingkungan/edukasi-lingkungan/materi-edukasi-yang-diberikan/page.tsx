@@ -6,6 +6,32 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateEdukasiLingkungan from '../../../_state/lingkungan/edukasi-lingkungan';
 
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
+ * clamp gagal kalau isinya mengandung tag blok (<p>, <div>, <ul>, <h1-6>)
+ * -- teks tampil penuh dan overlap dengan elemen di bawahnya, tapi hanya
+ * di Safari (mis. iPhone X). Deskripsi rich-text sering berisi tag blok,
+ * jadi harus diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR. Pola sama
+ * dengan fix di src/app/admin/(dashboard)/landing-page/profil/program-inovasi/page.tsx
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function Page() {
   const router = useRouter()
   const listMateriEdukasi = useProxy(stateEdukasiLingkungan.stateMateriEdukasiLingkungan)
@@ -58,9 +84,7 @@ function Page() {
                 ta="justify"
                 c="dimmed"
                 lineClamp={10}
-                dangerouslySetInnerHTML={{ __html: listMateriEdukasi.findById.data.deskripsi }}
-                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-              />
+                style={{ wordBreak: "break-word", whiteSpace: "normal" }}>{toPlainText(listMateriEdukasi.findById.data.deskripsi) || '-'}</Text>
             </Box>
           </Paper>
         </Stack>
