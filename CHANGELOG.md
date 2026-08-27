@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.173] - 2026-08-27
+### Fixed
+- **Link/No. Telepon di card mobile admin Media Sosial tidak bisa di-tap**: teks link/kontak dibungkus `<a href={item.link}>`, padahal field `link` tidak pernah ada di model `MediaSosial` (schema hanya punya `iconUrl`) — href selalu kosong walau teksnya tampil normal. Tabel desktop tidak memakai anchor sama sekali sehingga tidak terdampak.
+- **Klik icon media sosial di footer publik salah arah**: `SosmedView.tsx` memakai `router.push(item.iconUrl)` (navigasi SPA internal) untuk semua tipe tanpa membedakan URL sosmed vs nomor telepon.
+
+### Changed
+- **Entry Media Sosial bertipe Telephone/WhatsApp kini diarahkan ke wa.me**: nomor dinormalisasi (awalan `0`/`62` → `62xxx`) lalu dibuka via `https://wa.me/<nomor>` — otomatis membuka WhatsApp Web di desktop dan aplikasi WhatsApp di mobile. Tipe lain (Facebook/Instagram/TikTok/YouTube/dst) tetap memakai `iconUrl` apa adanya. Logic dipusatkan di `getSosmedHref()` (`_lib/sosmed.ts`) dan dipakai baik di list admin maupun footer publik.
+
 ## [0.1.172] - 2026-08-26
 ### Fixed
 - **Deskripsi/teks panjang tumpang tindih (overlap) khusus di Safari iPhone X pada 33 halaman list admin lain** (desa, ekonomi, inovasi, keamanan, kesehatan, landing-page, lingkungan, pendidikan, ppid) — bug WebKit yang sama dengan fix Program Inovasi di `0.1.171`: `Text` dengan `lineClamp` me-render langsung HTML rich-text (`dangerouslySetInnerHTML`) yang berisi tag blok (heading, paragraf, list), dan WebKit gagal meng-clamp konten seperti itu sehingga teks penuh muncul dan overlap dengan elemen di bawahnya. Diperbaiki dengan pola yang sama: meratakan field jadi plain text (`toPlainText()`) sebelum di-`lineClamp`, di tabel desktop maupun kartu mobile setiap halaman. `dangerouslySetInnerHTML` di luar sel yang di-clamp (mis. tampilan detail penuh) tidak disentuh.
