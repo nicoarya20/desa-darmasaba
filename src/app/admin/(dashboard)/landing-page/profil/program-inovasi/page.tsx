@@ -107,7 +107,7 @@ function ListProgramInovasi({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
-                      <Text color="dimmed">Belum ada data program inovasi</Text>
+                      <Text c="dimmed">Belum ada data program inovasi</Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -153,6 +153,11 @@ function ListProgramInovasi({ search }: { search: string }) {
           </Table>
         </Box>
         <Box hiddenFrom="md" pt={20}>
+          {filteredData.length === 0 ? (
+            <Center py={20}>
+              <Text c="dimmed">Belum ada data program inovasi</Text>
+            </Center>
+          ) : (
           <Stack gap="sm">
             {filteredData.map((item) => (
               <Paper
@@ -215,6 +220,7 @@ function ListProgramInovasi({ search }: { search: string }) {
               </Paper>
             ))}
           </Stack>
+          )}
         </Box>
 
         {filteredData.length > 0 && (
