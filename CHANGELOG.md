@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.172] - 2026-08-26
+### Fixed
+- **Deskripsi/teks panjang tumpang tindih (overlap) khusus di Safari iPhone X pada 33 halaman list admin lain** (desa, ekonomi, inovasi, keamanan, kesehatan, landing-page, lingkungan, pendidikan, ppid) — bug WebKit yang sama dengan fix Program Inovasi di `0.1.171`: `Text` dengan `lineClamp` me-render langsung HTML rich-text (`dangerouslySetInnerHTML`) yang berisi tag blok (heading, paragraf, list), dan WebKit gagal meng-clamp konten seperti itu sehingga teks penuh muncul dan overlap dengan elemen di bawahnya. Diperbaiki dengan pola yang sama: meratakan field jadi plain text (`toPlainText()`) sebelum di-`lineClamp`, di tabel desktop maupun kartu mobile setiap halaman. `dangerouslySetInnerHTML` di luar sel yang di-clamp (mis. tampilan detail penuh) tidak disentuh.
+
 ## [0.1.171] - 2026-08-26
 ### Fixed
 - **Deskripsi Program Inovasi (admin, `/admin/landing-page/profil/program-inovasi`) tampil tumpang tindih (overlap) khusus di Safari iPhone X, aman di device lain**: `Text` dengan `lineClamp` sebelumnya me-render langsung HTML rich-text (`dangerouslySetInnerHTML`) dari field deskripsi yang berisi heading/list (mis. "Tujuan Program", "Sasaran Program"). WebKit (Safari/iOS) gagal meng-clamp konten yang berisi elemen blok bersarang, sehingga teks penuh muncul dan overlap dengan elemen di bawahnya. Diperbaiki dengan meratakan deskripsi jadi plain text sebelum di-clamp (pola sama dengan fix serupa di halaman Perpustakaan Digital publik) — berlaku untuk tabel desktop maupun kartu mobile.
