@@ -6,9 +6,36 @@ import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import DOMPurify from 'dompurify';
 import HeaderSearch from '../../../_com/header';
 import profileLandingPageState from '../../../_state/landing-page/profile';
+
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
+ * clamp gagal kalau isinya mengandung tag blok (<p>, <div>, <ul>, <h1-6>)
+ * -- teks tampil penuh dan overlap dengan elemen di bawahnya, tapi hanya
+ * di Safari (mis. iPhone X). Deskripsi rich-text program inovasi sering
+ * berisi heading ("Tujuan Program", "Sasaran Program", dst), jadi harus
+ * diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR.
+ * Pola sama dengan `toPlainText` di
+ * src/app/darmasaba/(pages)/pendidikan/perpustakaan-digital/semua/content.tsx
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 function ProgramInovasi() {
   const [search, setSearch] = useState("");
@@ -80,7 +107,7 @@ function ListProgramInovasi({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
-                      <Text color="dimmed">Belum ada data program inovasi</Text>
+                      <Text c="dimmed">Belum ada data program inovasi</Text>
                     </Center>
                   </TableTd>
                 </TableTr>
@@ -91,7 +118,7 @@ function ListProgramInovasi({ search }: { search: string }) {
                       <Text fw={500}>{item.name}</Text>
                     </TableTd>
                     <TableTd style={{ maxWidth: 250 }}>
-                      <Text fz="sm" lineClamp={1} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.description || '-') }}></Text>
+                      <Text fz="sm" lineClamp={1}>{toPlainText(item.description) || '-'}</Text>
                     </TableTd>
                     <TableTd style={{ maxWidth: 250 }}>
                       <Tooltip label="Buka tautan program" position="top" withArrow>
@@ -126,6 +153,11 @@ function ListProgramInovasi({ search }: { search: string }) {
           </Table>
         </Box>
         <Box hiddenFrom="md" pt={20}>
+          {filteredData.length === 0 ? (
+            <Center py={20}>
+              <Text c="dimmed">Belum ada data program inovasi</Text>
+            </Center>
+          ) : (
           <Stack gap="sm">
             {filteredData.map((item) => (
               <Paper
@@ -145,7 +177,7 @@ function ListProgramInovasi({ search }: { search: string }) {
                   {/* Description */}
                   <Box>
                     <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
-                    <Text dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.description || '-') }} fz="sm" c="gray.7" lineClamp={2} />
+                    <Text fz="sm" c="gray.7" lineClamp={2}>{toPlainText(item.description) || '-'}</Text>
                   </Box>
 
                   {/* Link */}
@@ -188,6 +220,7 @@ function ListProgramInovasi({ search }: { search: string }) {
               </Paper>
             ))}
           </Stack>
+          )}
         </Box>
 
         {filteredData.length > 0 && (

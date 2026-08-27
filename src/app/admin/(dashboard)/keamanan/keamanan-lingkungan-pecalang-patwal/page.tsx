@@ -26,6 +26,32 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import keamananLingkunganState from '../../_state/keamanan/keamanan-lingkungan';
 
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
+ * clamp gagal kalau isinya mengandung tag blok (<p>, <div>, <ul>, <h1-6>)
+ * -- teks tampil penuh dan overlap dengan elemen di bawahnya, tapi hanya
+ * di Safari (mis. iPhone X). Deskripsi rich-text sering berisi tag blok,
+ * jadi harus diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR. Pola sama
+ * dengan fix di src/app/admin/(dashboard)/landing-page/profil/program-inovasi/page.tsx
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function KeamananLingkungan() {
   const [search, setSearch] = useState("");
 
@@ -127,9 +153,7 @@ function ListKeamananLingkungan({ search }: { search: string }) {
                           whiteSpace: 'nowrap',
                           textOverflow: 'ellipsis',
                           overflow: 'hidden',
-                        }}
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
-                      />
+                        }}>{toPlainText(item.deskripsi) || '-'}</Text>
                     </TableTd>
                     <TableTd style={{ width: 140, textAlign: 'center' }}>
                       <Button
@@ -172,7 +196,7 @@ function ListKeamananLingkungan({ search }: { search: string }) {
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
                       <Box pl={8}>
-                        <Text fz="sm" lineClamp={3} style={{ wordBreak: 'break-word' }} fw={500} lh={1.5} c="dimmed" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                        <Text fz="sm" lineClamp={3} style={{ wordBreak: 'break-word' }} fw={500} lh={1.5} c="dimmed">{toPlainText(item.deskripsi) || '-'}</Text>
                       </Box>
                     </Box>
                     <Box>

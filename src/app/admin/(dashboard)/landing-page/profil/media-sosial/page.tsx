@@ -27,7 +27,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import profileLandingPageState from '../../../_state/landing-page/profile';
-import { sosmedMap } from '../_lib/sosmed';
+import { getSosmedHref, sosmedMap } from '../_lib/sosmed';
 
 function MediaSosial() {
   const [search, setSearch] = useState("");
@@ -226,20 +226,31 @@ function ListMediaSosial({ search }: { search: string }) {
                     </Box>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>Link / No. Telepon</Text>
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ textDecoration: 'underline' }}
-                      >
-                        <Text
-                          fz="sm"
-                          c="blue"
-                          truncate
-                        >
-                          {item.iconUrl || item.noTelp || '-'}
-                        </Text>
-                      </a>
+                      {(() => {
+                        const href = getSosmedHref(item.icon, item.iconUrl);
+                        const label = item.iconUrl || '-';
+
+                        if (!href) {
+                          return (
+                            <Text fz="sm" c="dimmed" truncate>
+                              {label}
+                            </Text>
+                          );
+                        }
+
+                        return (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'underline' }}
+                          >
+                            <Text fz="sm" c="blue" truncate>
+                              {label}
+                            </Text>
+                          </a>
+                        );
+                      })()}
                     </Box>
                     <Group mt="sm" justify="flex-end">
                       <Button

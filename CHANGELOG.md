@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.173] - 2026-08-27
+### Fixed
+- **Link/No. Telepon di card mobile admin Media Sosial tidak bisa di-tap**: teks link/kontak dibungkus `<a href={item.link}>`, padahal field `link` tidak pernah ada di model `MediaSosial` (schema hanya punya `iconUrl`) — href selalu kosong walau teksnya tampil normal. Tabel desktop tidak memakai anchor sama sekali sehingga tidak terdampak.
+- **Klik icon media sosial di footer publik salah arah**: `SosmedView.tsx` memakai `router.push(item.iconUrl)` (navigasi SPA internal) untuk semua tipe tanpa membedakan URL sosmed vs nomor telepon.
+- **Gambar/icon di halaman Detail Media Sosial (`/admin/landing-page/profil/media-sosial/[id]`) tampil raksasa tidak proporsional, di desktop maupun mobile**: `Image` tidak diberi ukuran (`w`/`h`), sehingga dirender di resolusi native-nya tanpa batasan — beda dengan halaman List (thumbnail 50×50/40×40) dan Create/Edit (`maxHeight: 200`) yang sudah membatasi ukuran preview. Ditambahkan batas ukuran tetap 160×160 dengan border dan radius, konsisten dengan pola preview gambar di halaman lain.
+
+### Changed
+- **Entry Media Sosial bertipe Telephone/WhatsApp kini diarahkan ke wa.me**: nomor dinormalisasi (awalan `0`/`62` → `62xxx`) lalu dibuka via `https://wa.me/<nomor>` — otomatis membuka WhatsApp Web di desktop dan aplikasi WhatsApp di mobile. Tipe lain (Facebook/Instagram/TikTok/YouTube/dst) tetap memakai `iconUrl` apa adanya. Logic dipusatkan di `getSosmedHref()` (`_lib/sosmed.ts`) dan dipakai baik di list admin maupun footer publik.
+
+## [0.1.172] - 2026-08-26
+### Fixed
+- **Deskripsi/teks panjang tumpang tindih (overlap) khusus di Safari iPhone X pada 33 halaman list admin lain** (desa, ekonomi, inovasi, keamanan, kesehatan, landing-page, lingkungan, pendidikan, ppid) — bug WebKit yang sama dengan fix Program Inovasi di `0.1.171`: `Text` dengan `lineClamp` me-render langsung HTML rich-text (`dangerouslySetInnerHTML`) yang berisi tag blok (heading, paragraf, list), dan WebKit gagal meng-clamp konten seperti itu sehingga teks penuh muncul dan overlap dengan elemen di bawahnya. Diperbaiki dengan pola yang sama: meratakan field jadi plain text (`toPlainText()`) sebelum di-`lineClamp`, di tabel desktop maupun kartu mobile setiap halaman. `dangerouslySetInnerHTML` di luar sel yang di-clamp (mis. tampilan detail penuh) tidak disentuh.
+
+## [0.1.171] - 2026-08-26
+### Fixed
+- **Deskripsi Program Inovasi (admin, `/admin/landing-page/profil/program-inovasi`) tampil tumpang tindih (overlap) khusus di Safari iPhone X, aman di device lain**: `Text` dengan `lineClamp` sebelumnya me-render langsung HTML rich-text (`dangerouslySetInnerHTML`) dari field deskripsi yang berisi heading/list (mis. "Tujuan Program", "Sasaran Program"). WebKit (Safari/iOS) gagal meng-clamp konten yang berisi elemen blok bersarang, sehingga teks penuh muncul dan overlap dengan elemen di bawahnya. Diperbaiki dengan meratakan deskripsi jadi plain text sebelum di-clamp (pola sama dengan fix serupa di halaman Perpustakaan Digital publik) — berlaku untuk tabel desktop maupun kartu mobile.
+
 ## [0.1.141] - 2026-08-20
 ### Fixed
 - **Gambar berformat WebP tidak pernah tampil di Safari versi lama (pra-Safari 14, sebelum September 2020)**: berbeda dari mitigasi retry di 0.1.140 (yang menangani kegagalan intermiten karena bug WebKit/QUIC), ini kegagalan yang selalu terjadi — Safari lama memang tidak punya kemampuan decode format WebP sama sekali, jadi gambar apa pun akan gagal diulang berapa kali pun. Ditambahkan fallback format: browser mendeteksi sendiri ketidakmampuannya decode WebP (feature-detect via canvas, tanpa request jaringan), lalu meminta ulang gambar yang sama ke `/api/img/:name` dengan parameter `?format=jpeg`. Server mengonversi on-the-fly dari WebP ke JPEG (atau PNG jika gambarnya punya transparansi) lewat `sharp` — tanpa migrasi data, tanpa file kedua tersimpan. Murni opt-in lewat query param: browser modern (termasuk Safari versi baru) tidak pernah mengirim param ini, jadi tidak ada perubahan perilaku atau performa untuk mereka.

@@ -26,6 +26,32 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import kontakDarurat from '../../_state/kesehatan/kontak-darurat/kontakDarurat';
 
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
+ * clamp gagal kalau isinya mengandung tag blok (<p>, <div>, <ul>, <h1-6>)
+ * -- teks tampil penuh dan overlap dengan elemen di bawahnya, tapi hanya
+ * di Safari (mis. iPhone X). Deskripsi rich-text sering berisi tag blok,
+ * jadi harus diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR. Pola sama
+ * dengan fix di src/app/admin/(dashboard)/landing-page/profil/program-inovasi/page.tsx
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function KontakDarurat() {
   const [search, setSearch] = useState("");
 
@@ -104,7 +130,7 @@ function ListKontakDarurat({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd w={335}>
-                      <Text fz="sm" lh={1.45} c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      <Text fz="sm" lh={1.45} c="dimmed" lineClamp={1}>{toPlainText(item.deskripsi) || '-'}</Text>
                     </TableTd>
                     <TableTd w={335}>
                       <Button
