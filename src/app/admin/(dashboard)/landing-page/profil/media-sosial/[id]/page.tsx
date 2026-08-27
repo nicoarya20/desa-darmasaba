@@ -86,7 +86,7 @@ function DetailMediaSosial() {
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Gambar</Text>
+                <Text fz="lg" fw="bold" mb={4}>Gambar</Text>
                 {(() => {
                   const src = getIconSource(data);
 
@@ -96,12 +96,16 @@ function DetailMediaSosial() {
                         loading="lazy"
                         src={src}
                         alt={data.name}
+                        w={160}
+                        h={160}
                         fit={data.image?.link ? "cover" : "contain"}
+                        radius="md"
+                        style={{ border: '1px solid #ddd', background: '#fff' }}
                       />
                     );
                   }
 
-                  return <Box bg={colors['blue-button']} w="100%" h="100%" />;
+                  return <Box bg={colors['blue-button']} w={160} h={160} style={{ borderRadius: 8 }} />;
                 })()}
               </Box>
 

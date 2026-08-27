@@ -4,6 +4,7 @@
 ### Fixed
 - **Link/No. Telepon di card mobile admin Media Sosial tidak bisa di-tap**: teks link/kontak dibungkus `<a href={item.link}>`, padahal field `link` tidak pernah ada di model `MediaSosial` (schema hanya punya `iconUrl`) — href selalu kosong walau teksnya tampil normal. Tabel desktop tidak memakai anchor sama sekali sehingga tidak terdampak.
 - **Klik icon media sosial di footer publik salah arah**: `SosmedView.tsx` memakai `router.push(item.iconUrl)` (navigasi SPA internal) untuk semua tipe tanpa membedakan URL sosmed vs nomor telepon.
+- **Gambar/icon di halaman Detail Media Sosial (`/admin/landing-page/profil/media-sosial/[id]`) tampil raksasa tidak proporsional, di desktop maupun mobile**: `Image` tidak diberi ukuran (`w`/`h`), sehingga dirender di resolusi native-nya tanpa batasan — beda dengan halaman List (thumbnail 50×50/40×40) dan Create/Edit (`maxHeight: 200`) yang sudah membatasi ukuran preview. Ditambahkan batas ukuran tetap 160×160 dengan border dan radius, konsisten dengan pola preview gambar di halaman lain.
 
 ### Changed
 - **Entry Media Sosial bertipe Telephone/WhatsApp kini diarahkan ke wa.me**: nomor dinormalisasi (awalan `0`/`62` → `62xxx`) lalu dibuka via `https://wa.me/<nomor>` — otomatis membuka WhatsApp Web di desktop dan aplikasi WhatsApp di mobile. Tipe lain (Facebook/Instagram/TikTok/YouTube/dst) tetap memakai `iconUrl` apa adanya. Logic dipusatkan di `getSosmedHref()` (`_lib/sosmed.ts`) dan dipakai baik di list admin maupun footer publik.
