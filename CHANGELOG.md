@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.173] - 2026-08-27
+### Fixed
+- **Gambar/icon di halaman Detail Media Sosial (`/admin/landing-page/profil/media-sosial/[id]`) tampil raksasa tidak proporsional, di desktop maupun mobile**: `Image` tidak diberi ukuran (`w`/`h`), sehingga dirender di resolusi native-nya tanpa batasan — beda dengan halaman List (thumbnail 50×50/40×40) dan Create/Edit (`maxHeight: 200`) yang sudah membatasi ukuran preview. Ditambahkan batas ukuran tetap 160×160 dengan border dan radius, konsisten dengan pola preview gambar di halaman lain.
+
 ## [0.1.172] - 2026-08-26
 ### Fixed
 - **Deskripsi/teks panjang tumpang tindih (overlap) khusus di Safari iPhone X pada 33 halaman list admin lain** (desa, ekonomi, inovasi, keamanan, kesehatan, landing-page, lingkungan, pendidikan, ppid) — bug WebKit yang sama dengan fix Program Inovasi di `0.1.171`: `Text` dengan `lineClamp` me-render langsung HTML rich-text (`dangerouslySetInnerHTML`) yang berisi tag blok (heading, paragraf, list), dan WebKit gagal meng-clamp konten seperti itu sehingga teks penuh muncul dan overlap dengan elemen di bawahnya. Diperbaiki dengan pola yang sama: meratakan field jadi plain text (`toPlainText()`) sebelum di-`lineClamp`, di tabel desktop maupun kartu mobile setiap halaman. `dangerouslySetInnerHTML` di luar sel yang di-clamp (mis. tampilan detail penuh) tidak disentuh.
