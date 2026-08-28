@@ -217,16 +217,17 @@ export default function RealisasiManager({
       </Group>
 
       {/* Summary Cards */}
-      {/* SimpleGrid: 2 kolom di mobile, 4 di desktop (sebelumnya Group grow
-          memaksa 4 kartu sejajar di semua layar sehingga nominal rupiah
-          kepotong/kepenuhan di mobile). fontSize pakai clamp agar nominal
-          panjang otomatis mengecil dan tetap satu baris, bukan overflow. */}
-      <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="sm" mb="md">
+      {/* SimpleGrid 2 kolom di semua breakpoint: nominal APBDes bisa mencapai
+          belasan miliar (mis. Rp 21.424.289.948). Layout 4 kolom membuat tiap
+          kartu terlalu sempit sehingga nominal tembus keluar kartu. Dengan 2
+          kolom tetap → baris 1: Anggaran + Total Realisasi, baris 2: Sisa
+          Anggaran + Persentase. Kartu mendapat separuh lebar container. */}
+      <SimpleGrid cols={2} spacing="sm" mb="md">
         <Paper withBorder p="md" radius="md" bg="blue.0">
           <Text fz="xs" c="blue.9" fw={600}>
             ANGGARAN
           </Text>
-          <Text c="blue.9" fw={700} style={{ fontSize: 'clamp(0.8rem, 3.2vw, 1.125rem)' }}>
+          <Text c="blue.9" fw={700} style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.25rem)' }}>
             {formatRupiah(itemAnggaran)}
           </Text>
         </Paper>
@@ -235,7 +236,7 @@ export default function RealisasiManager({
           <Text fz="xs" c="teal.9" fw={600}>
             TOTAL REALISASI
           </Text>
-          <Text c="teal.9" fw={700} style={{ fontSize: 'clamp(0.8rem, 3.2vw, 1.125rem)' }}>
+          <Text c="teal.9" fw={700} style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.25rem)' }}>
             {formatRupiah(itemTotalRealisasi)}
           </Text>
         </Paper>
@@ -247,7 +248,7 @@ export default function RealisasiManager({
           <Text
             c={getSisaAnggaran() >= 0 ? 'green.9' : 'red.9'}
             fw={700}
-            style={{ fontSize: 'clamp(0.8rem, 3.2vw, 1.125rem)' }}
+            style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.25rem)' }}
           >
             {formatRupiah(getSisaAnggaran())}
           </Text>
@@ -260,7 +261,7 @@ export default function RealisasiManager({
           <Text
             c={getPersentaseColor(itemPersentase) + '.9'}
             fw={700}
-            style={{ fontSize: 'clamp(0.8rem, 3.2vw, 1.125rem)' }}
+            style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.25rem)' }}
           >
             {itemPersentase.toFixed(2)}%
           </Text>
