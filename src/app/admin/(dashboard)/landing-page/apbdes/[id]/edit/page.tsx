@@ -4,6 +4,7 @@
 'use client';
 
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
@@ -305,15 +306,20 @@ function EditAPBDes() {
             }
             description="Opsional - akan diisi otomatis jika kosong"
           />
-          <TextInput
-            label="Deskripsi"
-            placeholder="Deskripsi APBDes (opsional)"
-            value={apbdesState.edit.form.deskripsi}
-            onChange={(e) =>
-              (apbdesState.edit.form.deskripsi = e.target.value)
-            }
-            description="Opsional"
-          />
+          <Box>
+            <Text fz="sm" fw={500} mb={2}>
+              Deskripsi
+            </Text>
+            <Text fz="xs" c="dimmed" mb={6}>
+              Opsional
+            </Text>
+            <EditEditor
+              value={apbdesState.edit.form.deskripsi || ''}
+              onChange={(htmlContent) =>
+                (apbdesState.edit.form.deskripsi = htmlContent)
+              }
+            />
+          </Box>
           <TextInput
             label="Jumlah Total"
             placeholder="Contoh: Rp 1.000.000.000"
@@ -608,7 +614,7 @@ function EditAPBDes() {
                 color: '#fff',
               }}
             >
-              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan Perubahan'}
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

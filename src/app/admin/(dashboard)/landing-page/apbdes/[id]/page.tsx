@@ -109,9 +109,12 @@ function DetailAPBDes() {
               {data.deskripsi && (
                 <Box>
                   <Text fz="lg" fw="bold">Deskripsi</Text>
-                  <Text fz="md" c="dimmed">
-                    {data.deskripsi}
-                  </Text>
+                  <Text
+                    fz="md"
+                    c="dimmed"
+                    style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                    dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                  />
                 </Box>
               )}
 
