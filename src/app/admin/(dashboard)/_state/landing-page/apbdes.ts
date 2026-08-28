@@ -81,12 +81,12 @@ const apbdes = proxy({
       this.form = { ...defaultApbdesForm };
     },
 
-    async create() {
+    async create(): Promise<boolean> {
       const parsed = ApbdesFormSchema.safeParse(this.form);
       if (!parsed.success) {
         const errors = parsed.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
         toast.error(`Validasi gagal:\n${errors.join("\n")}`);
-        return;
+        return false;
       }
 
       try {
@@ -97,12 +97,19 @@ const apbdes = proxy({
           toast.success("APBDes berhasil dibuat");
           apbdes.findMany.load();
           this.reset();
-        } else {
-          toast.error(res.data?.message || "Gagal membuat APBDes");
+          return true;
         }
+
+        // Respons non-2xx (mis. 409 tahun duplikat): Eden treaty menaruh body
+        // di res.error.value, BUKAN res.data — jadi baca dari sana agar pesan
+        // spesifik backend ("APBDes tahun X sudah tersedia...") tidak hilang.
+        const errValue = (res as any)?.error?.value;
+        toast.error(errValue?.message || res.data?.message || "Gagal membuat APBDes");
+        return false;
       } catch (error: any) {
         console.error("Create APBDes error:", error);
         toast.error(error?.message || "Terjadi kesalahan saat membuat APBDes");
+        return false;
       } finally {
         this.loading = false;
       }
