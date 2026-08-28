@@ -4,6 +4,7 @@
 'use client';
 
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
+import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
@@ -17,6 +18,7 @@ import {
   NumberInput,
   Paper,
   Select,
+  SimpleGrid,
   Stack,
   Table,
   Text,
@@ -304,15 +306,20 @@ function EditAPBDes() {
             }
             description="Opsional - akan diisi otomatis jika kosong"
           />
-          <TextInput
-            label="Deskripsi"
-            placeholder="Deskripsi APBDes (opsional)"
-            value={apbdesState.edit.form.deskripsi}
-            onChange={(e) =>
-              (apbdesState.edit.form.deskripsi = e.target.value)
-            }
-            description="Opsional"
-          />
+          <Box>
+            <Text fz="sm" fw={500} mb={2}>
+              Deskripsi
+            </Text>
+            <Text fz="xs" c="dimmed" mb={6}>
+              Opsional
+            </Text>
+            <EditEditor
+              value={apbdesState.edit.form.deskripsi || ''}
+              onChange={(htmlContent) =>
+                (apbdesState.edit.form.deskripsi = htmlContent)
+              }
+            />
+          </Box>
           <TextInput
             label="Jumlah Total"
             placeholder="Contoh: Rp 1.000.000.000"
@@ -453,7 +460,10 @@ function EditAPBDes() {
               Tambah Item Pendapatan/Belanja
             </Title>
             <Stack gap="xs">
-              <Group grow>
+              {/* SimpleGrid: stack 1 kolom di mobile agar Select tidak sempit
+                  (sebelumnya Group grow membagi rata 3 kolom di semua layar,
+                  bikin label Level/Tipe ketutup di mobile). */}
+              <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xs">
                 <TextInput
                   label="Kode"
                   placeholder="Contoh: 4.1.2"
@@ -495,7 +505,7 @@ function EditAPBDes() {
                   value={newItem.tipe}
                   onChange={(val) => setNewItem({ ...newItem, tipe: (val as any) || 'pendapatan' })}
                 />
-              </Group>
+              </SimpleGrid>
               <TextInput
                 label="Uraian"
                 placeholder="Contoh: Dana Desa"
@@ -528,58 +538,63 @@ function EditAPBDes() {
               <Title order={6} mb="sm">
                 Daftar Item ({apbdesState.edit.form.items.length})
               </Title>
-              <Table striped highlightOnHover>
-                <thead>
-                  <tr>
-                    <th>Kode</th>
-                    <th>Uraian</th>
-                    <th>Anggaran</th>
-                    <th>Realisasi</th>
-                    <th>Selisih</th>
-                    <th>%</th>
-                    <th>Level</th>
-                    <th>Tipe</th>
-                    <th style={{ width: '50px' }}>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {apbdesState.edit.form.items.map((item, idx) => (
-                    <tr key={idx}>
-                      <td>
-                        <Text size="sm" fw={500}>
-                          {item.kode}
-                        </Text>
-                      </td>
-                      <td>{item.uraian}</td>
-                      <td>{item.anggaran.toLocaleString('id-ID')}</td>
-                      <td>{item.realisasi?.toLocaleString('id-ID') || '0'}</td>
-                      <td style={{ color: item.selisih && item.selisih > 0 ? 'red' : 'green' }}>
-                        {item.selisih?.toLocaleString('id-ID') || '0'}
-                      </td>
-                      <td>{item.persentase?.toFixed(2) || '0'}%</td>
-                      <td>
-                        <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
-                          L{item.level}
-                        </Badge>
-                      </td>
-                      <td>
-                        {item.tipe ? (
-                          <Badge color={item.tipe === 'pendapatan' ? 'teal' : 'red'} size="sm">
-                            {item.tipe}
+              {/* ScrollContainer: tabel 9 kolom lebih lebar dari layar mobile.
+                  Sebelumnya pakai tag <table> native yang tidak kebagian style
+                  Mantine (border/spacing kacau) dan tidak bisa di-scroll. */}
+              <Table.ScrollContainer minWidth={760}>
+                <Table striped highlightOnHover>
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th>Kode</Table.Th>
+                      <Table.Th>Uraian</Table.Th>
+                      <Table.Th>Anggaran</Table.Th>
+                      <Table.Th>Realisasi</Table.Th>
+                      <Table.Th>Selisih</Table.Th>
+                      <Table.Th>%</Table.Th>
+                      <Table.Th>Level</Table.Th>
+                      <Table.Th>Tipe</Table.Th>
+                      <Table.Th style={{ width: 50 }}>Aksi</Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {apbdesState.edit.form.items.map((item, idx) => (
+                      <Table.Tr key={idx}>
+                        <Table.Td>
+                          <Text size="sm" fw={500}>
+                            {item.kode}
+                          </Text>
+                        </Table.Td>
+                        <Table.Td>{item.uraian}</Table.Td>
+                        <Table.Td>{item.anggaran.toLocaleString('id-ID')}</Table.Td>
+                        <Table.Td>{item.realisasi?.toLocaleString('id-ID') || '0'}</Table.Td>
+                        <Table.Td style={{ color: item.selisih && item.selisih > 0 ? 'red' : 'green' }}>
+                          {item.selisih?.toLocaleString('id-ID') || '0'}
+                        </Table.Td>
+                        <Table.Td>{item.persentase?.toFixed(2) || '0'}%</Table.Td>
+                        <Table.Td>
+                          <Badge size="sm" color={item.level === 1 ? 'blue' : item.level === 2 ? 'green' : 'grape'}>
+                            L{item.level}
                           </Badge>
-                        ) : (
-                          <Text size="sm" c="dimmed">-</Text>
-                        )}
-                      </td>
-                      <td>
-                        <ActionIcon color="red" onClick={() => handleRemoveItem(idx)}>
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+                        </Table.Td>
+                        <Table.Td>
+                          {item.tipe ? (
+                            <Badge color={item.tipe === 'pendapatan' ? 'teal' : 'red'} size="sm">
+                              {item.tipe}
+                            </Badge>
+                          ) : (
+                            <Text size="sm" c="dimmed">-</Text>
+                          )}
+                        </Table.Td>
+                        <Table.Td>
+                          <ActionIcon color="red" onClick={() => handleRemoveItem(idx)}>
+                            <IconTrash size={16} />
+                          </ActionIcon>
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
+                  </Table.Tbody>
+                </Table>
+              </Table.ScrollContainer>
             </Paper>
           )}
 
@@ -599,7 +614,7 @@ function EditAPBDes() {
                 color: '#fff',
               }}
             >
-              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan Perubahan'}
+              {isSubmitting ? <Loader size="sm" color="white" /> : 'Simpan'}
             </Button>
           </Group>
         </Stack>

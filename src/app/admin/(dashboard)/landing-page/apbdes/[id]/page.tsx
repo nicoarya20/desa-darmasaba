@@ -109,9 +109,12 @@ function DetailAPBDes() {
               {data.deskripsi && (
                 <Box>
                   <Text fz="lg" fw="bold">Deskripsi</Text>
-                  <Text fz="md" c="dimmed">
-                    {data.deskripsi}
-                  </Text>
+                  <Text
+                    fz="md"
+                    c="dimmed"
+                    style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                    dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                  />
                 </Box>
               )}
 
@@ -196,6 +199,10 @@ function DetailAPBDes() {
               <Text fz="lg" fw="bold">
                 Rincian Pendapatan & Belanja ({data.items.length} item)
               </Text>
+              {/* ScrollContainer: di mobile tabel 5 kolom lebih lebar dari layar.
+                  Tanpa ini kolom kanan (Selisih/Persentase) kepotong keluar layar.
+                  minWidth menjaga kolom tetap terbaca lalu scroll horizontal. */}
+              <Table.ScrollContainer minWidth={720}>
               <Table striped highlightOnHover>
                 <TableThead>
                   <TableTr>
@@ -231,6 +238,7 @@ function DetailAPBDes() {
                     ))}
                 </TableTbody>
               </Table>
+              </Table.ScrollContainer>
 
               {/* Realisasi Manager untuk setiap item */}
               {data.items.map((item) => (

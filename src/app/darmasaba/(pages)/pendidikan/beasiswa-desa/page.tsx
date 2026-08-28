@@ -9,6 +9,7 @@ import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import { BEASISWA_LIMIT, isBeasiswaFormValid, stripDigits } from './_lib/beasiswaForm';
 
 function formatDana(value: string | number): string {
   const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]/g, '')) : value;
@@ -21,11 +22,20 @@ function formatDana(value: string | number): string {
 }
 
 function Page() {
-  const beasiswaDesa = useProxy(beasiswaDesaState.beasiswaPendaftar)
+  const beasiswaDesa = useProxy(beasiswaDesaState.beasiswaPendaftar, { sync: true })
   const ungggulanDesa = useProxy(beasiswaDesaState.keunggulanProgram)
   const statsBeasiswa = useProxy(ringkasanBeasiswaState.findStats)
   const [opened, { open, close }] = useDisclosure(false);
   const router = useTransitionRouter()
+
+  // Tandai field yang sudah disentuh (blur) agar pesan error min/maks tidak
+  // langsung merah saat modal pertama kali dibuka.
+  const [touched, setTouched] = useState({
+    namaLengkap: false, nis: false, kelas: false, jenisKelamin: false,
+    alamatDomisili: false, tempatLahir: false, tanggalLahir: false,
+    namaOrtu: false, nik: false, pekerjaanOrtu: false, penghasilan: false, noHp: false,
+  });
+
   const resetForm = () => {
     beasiswaDesa.create.form = {
       namaLengkap: "",
@@ -41,25 +51,78 @@ function Page() {
       penghasilan: "",
       noHp: "",
     };
+    setTouched({
+      namaLengkap: false, nis: false, kelas: false, jenisKelamin: false,
+      alamatDomisili: false, tempatLahir: false, tanggalLahir: false,
+      namaOrtu: false, nik: false, pekerjaanOrtu: false, penghasilan: false, noHp: false,
+    });
   };
 
-  // Check if form is valid
-  const isFormValid = () => {
-    return (
-      beasiswaDesa.create.form.namaLengkap?.trim() !== '' &&
-      beasiswaDesa.create.form.nis?.trim() !== '' &&
-      beasiswaDesa.create.form.kelas?.trim() !== '' &&
-      beasiswaDesa.create.form.jenisKelamin?.trim() !== '' &&
-      beasiswaDesa.create.form.alamatDomisili?.trim() !== '' &&
-      beasiswaDesa.create.form.tempatLahir?.trim() !== '' &&
-      beasiswaDesa.create.form.tanggalLahir?.trim() !== '' &&
-      beasiswaDesa.create.form.namaOrtu?.trim() !== '' &&
-      beasiswaDesa.create.form.nik?.trim() !== '' &&
-      beasiswaDesa.create.form.pekerjaanOrtu?.trim() !== '' &&
-      beasiswaDesa.create.form.penghasilan?.trim() !== '' &&
-      beasiswaDesa.create.form.noHp?.trim() !== ''
-    );
-  };
+  // Tombol "Kirim" aktif hanya bila semua field memenuhi batas min/maks karakter.
+  const isFormValid = () => isBeasiswaFormValid(beasiswaDesa.create.form);
+
+  // Pesan error per field (hanya tampil setelah field disentuh) — hanya
+  // memvisualkan batas min/maks yang sudah dipakai isBeasiswaFormValid, tidak
+  // mengubah aturan validasi.
+  const form = beasiswaDesa.create.form;
+  const nikDigits = (form.nik || '').replace(/\D/g, '');
+  const hpDigits = (form.noHp || '').replace(/\D/g, '');
+  const nisDigits = (form.nis || '').replace(/\D/g, '');
+
+  const namaLengkapError =
+    touched.namaLengkap && (form.namaLengkap || '').trim().length < BEASISWA_LIMIT.nama.min
+      ? `Nama minimal ${BEASISWA_LIMIT.nama.min} karakter`
+      : null;
+  const nisError =
+    touched.nis && nisDigits.length < BEASISWA_LIMIT.nis.min
+      ? `NIS minimal ${BEASISWA_LIMIT.nis.min} digit`
+      : null;
+  const kelasError =
+    touched.kelas && (form.kelas || '').trim().length < BEASISWA_LIMIT.kelas.min
+      ? 'Kelas wajib diisi'
+      : null;
+  const jenisKelaminError =
+    touched.jenisKelamin && !(form.jenisKelamin || '').trim()
+      ? 'Jenis kelamin wajib dipilih'
+      : null;
+  const alamatDomisiliError =
+    touched.alamatDomisili && (form.alamatDomisili || '').trim().length < BEASISWA_LIMIT.alamat.min
+      ? `Alamat minimal ${BEASISWA_LIMIT.alamat.min} karakter`
+      : null;
+  const tempatLahirError =
+    touched.tempatLahir && (form.tempatLahir || '').trim().length < BEASISWA_LIMIT.tempatLahir.min
+      ? `Tempat lahir minimal ${BEASISWA_LIMIT.tempatLahir.min} karakter`
+      : null;
+  const tanggalLahirError =
+    touched.tanggalLahir && !(form.tanggalLahir || '').trim()
+      ? 'Tanggal lahir wajib diisi'
+      : null;
+  const namaOrtuError =
+    touched.namaOrtu && (form.namaOrtu || '').trim().length < BEASISWA_LIMIT.namaOrtu.min
+      ? `Nama orang tua minimal ${BEASISWA_LIMIT.namaOrtu.min} karakter`
+      : null;
+  const nikError = touched.nik
+    ? nikDigits.length === 0
+      ? 'NIK wajib diisi'
+      : nikDigits.length !== BEASISWA_LIMIT.nik.len
+        ? `NIK harus ${BEASISWA_LIMIT.nik.len} digit`
+        : null
+    : null;
+  const pekerjaanOrtuError =
+    touched.pekerjaanOrtu && (form.pekerjaanOrtu || '').trim().length < BEASISWA_LIMIT.pekerjaanOrtu.min
+      ? `Pekerjaan minimal ${BEASISWA_LIMIT.pekerjaanOrtu.min} karakter`
+      : null;
+  const penghasilanError =
+    touched.penghasilan && (form.penghasilan || '').trim().length < BEASISWA_LIMIT.penghasilan.min
+      ? 'Penghasilan wajib diisi'
+      : null;
+  const noHpError = touched.noHp
+    ? hpDigits.length === 0
+      ? 'No HP wajib diisi'
+      : hpDigits.length < BEASISWA_LIMIT.noHp.min
+        ? `No HP minimal ${BEASISWA_LIMIT.noHp.min} digit`
+        : null
+    : null;
 
   const { data, page, totalPages, loading, load } = ungggulanDesa.findMany;
 
@@ -78,9 +141,11 @@ function Page() {
   ];
 
   const handleSubmit = async () => {
-    await beasiswaDesa.create.create();
-    resetForm();
-    close();
+    const success = await beasiswaDesa.create.create();
+    if (success) {
+      resetForm();
+      close();
+    }
   };
 
   const timeline = [
@@ -219,65 +284,117 @@ function Page() {
             <TextInput
               label="Nama Lengkap"
               placeholder="Masukkan nama lengkap"
-              onChange={(val) => { beasiswaDesa.create.form.namaLengkap = val.target.value }} />
+              withAsterisk
+              maxLength={BEASISWA_LIMIT.nama.max}
+              error={namaLengkapError}
+              value={beasiswaDesa.create.form.namaLengkap}
+              onChange={(val) => { beasiswaDesa.create.form.namaLengkap = stripDigits(val.target.value) }}
+              onBlur={() => setTouched((t) => ({ ...t, namaLengkap: true }))} />
             <TextInput
               label="NIS"
               placeholder="Masukkan NIS"
+              withAsterisk
               inputMode="numeric"
-              maxLength={18}
+              maxLength={BEASISWA_LIMIT.nis.max}
+              error={nisError}
               value={beasiswaDesa.create.form.nis}
-              onChange={(val) => { beasiswaDesa.create.form.nis = val.target.value.replace(/\D/g, '').slice(0, 18) }} />
+              onChange={(val) => { beasiswaDesa.create.form.nis = val.target.value.replace(/\D/g, '').slice(0, BEASISWA_LIMIT.nis.max) }}
+              onBlur={() => setTouched((t) => ({ ...t, nis: true }))} />
             <TextInput
               label="Kelas"
               placeholder="Masukkan kelas"
-              onChange={(val) => { beasiswaDesa.create.form.kelas = val.target.value }} />
+              withAsterisk
+              maxLength={BEASISWA_LIMIT.kelas.max}
+              error={kelasError}
+              value={beasiswaDesa.create.form.kelas}
+              onChange={(val) => { beasiswaDesa.create.form.kelas = val.target.value }}
+              onBlur={() => setTouched((t) => ({ ...t, kelas: true }))} />
             <Select
               label="Jenis Kelamin"
               placeholder="Pilih jenis kelamin"
+              withAsterisk
               data={[{ value: "LAKI_LAKI", label: "Laki-laki" }, { value: "PEREMPUAN", label: "Perempuan" }]}
-              onChange={(val) => { if (val) beasiswaDesa.create.form.jenisKelamin = val }} />
+              error={jenisKelaminError}
+              value={beasiswaDesa.create.form.jenisKelamin || null}
+              onChange={(val) => { if (val) beasiswaDesa.create.form.jenisKelamin = val }}
+              onBlur={() => setTouched((t) => ({ ...t, jenisKelamin: true }))} />
             <TextInput
               label="Alamat Domisili"
               placeholder="Masukkan alamat domisili"
-              onChange={(val) => { beasiswaDesa.create.form.alamatDomisili = val.target.value }} />
+              withAsterisk
+              maxLength={BEASISWA_LIMIT.alamat.max}
+              error={alamatDomisiliError}
+              value={beasiswaDesa.create.form.alamatDomisili}
+              onChange={(val) => { beasiswaDesa.create.form.alamatDomisili = val.target.value }}
+              onBlur={() => setTouched((t) => ({ ...t, alamatDomisili: true }))} />
             <TextInput
               label="Tempat Lahir"
               placeholder="Masukkan tempat lahir"
-              onChange={(val) => { beasiswaDesa.create.form.tempatLahir = val.target.value }} />
+              withAsterisk
+              maxLength={BEASISWA_LIMIT.tempatLahir.max}
+              error={tempatLahirError}
+              value={beasiswaDesa.create.form.tempatLahir}
+              onChange={(val) => { beasiswaDesa.create.form.tempatLahir = val.target.value }}
+              onBlur={() => setTouched((t) => ({ ...t, tempatLahir: true }))} />
             <TextInput
               type="date"
               label="Tanggal Lahir"
               placeholder="Pilih tanggal lahir"
-              onChange={(val) => { beasiswaDesa.create.form.tanggalLahir = val.target.value }} />
+              withAsterisk
+              error={tanggalLahirError}
+              value={beasiswaDesa.create.form.tanggalLahir}
+              onChange={(val) => { beasiswaDesa.create.form.tanggalLahir = val.target.value }}
+              onBlur={() => setTouched((t) => ({ ...t, tanggalLahir: true }))} />
             <Box pt={15} pb={10}>
               <Divider />
             </Box>
             <TextInput
               label="Nama Orang Tua / Wali"
               placeholder="Masukkan nama orang tua / wali"
-              onChange={(val) => { beasiswaDesa.create.form.namaOrtu = val.target.value }} />
+              withAsterisk
+              maxLength={BEASISWA_LIMIT.namaOrtu.max}
+              error={namaOrtuError}
+              value={beasiswaDesa.create.form.namaOrtu}
+              onChange={(val) => { beasiswaDesa.create.form.namaOrtu = stripDigits(val.target.value) }}
+              onBlur={() => setTouched((t) => ({ ...t, namaOrtu: true }))} />
             <TextInput
               label="NIK Orang Tua / Wali"
               placeholder="Masukkan NIK orang tua / wali"
+              withAsterisk
               inputMode="numeric"
-              maxLength={16}
+              maxLength={BEASISWA_LIMIT.nik.len}
+              error={nikError}
               value={beasiswaDesa.create.form.nik || ''}
-              onChange={(val) => { beasiswaDesa.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, 16) }} />
+              onChange={(val) => { beasiswaDesa.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, BEASISWA_LIMIT.nik.len) }}
+              onBlur={() => setTouched((t) => ({ ...t, nik: true }))} />
             <TextInput
               label="Pekerjaan Orang Tua / Wali"
               placeholder="Masukkan pekerjaan orang tua / wali"
-              onChange={(val) => { beasiswaDesa.create.form.pekerjaanOrtu = val.target.value }} />
+              withAsterisk
+              maxLength={BEASISWA_LIMIT.pekerjaanOrtu.max}
+              error={pekerjaanOrtuError}
+              value={beasiswaDesa.create.form.pekerjaanOrtu}
+              onChange={(val) => { beasiswaDesa.create.form.pekerjaanOrtu = val.target.value }}
+              onBlur={() => setTouched((t) => ({ ...t, pekerjaanOrtu: true }))} />
             <TextInput
               label="Penghasilan Orang Tua / Wali"
               placeholder="Masukkan penghasilan orang tua / wali"
-              onChange={(val) => { beasiswaDesa.create.form.penghasilan = val.target.value }} />
+              withAsterisk
+              maxLength={BEASISWA_LIMIT.penghasilan.max}
+              error={penghasilanError}
+              value={beasiswaDesa.create.form.penghasilan}
+              onChange={(val) => { beasiswaDesa.create.form.penghasilan = val.target.value }}
+              onBlur={() => setTouched((t) => ({ ...t, penghasilan: true }))} />
             <TextInput
               label="No HP"
               placeholder="Masukkan no hp"
+              withAsterisk
               inputMode="numeric"
-              maxLength={13}
+              maxLength={BEASISWA_LIMIT.noHp.max}
+              error={noHpError}
               value={beasiswaDesa.create.form.noHp}
-              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value.replace(/\D/g, '').slice(0, 13) }} />
+              onChange={(val) => { beasiswaDesa.create.form.noHp = val.target.value.replace(/\D/g, '').slice(0, BEASISWA_LIMIT.noHp.max) }}
+              onBlur={() => setTouched((t) => ({ ...t, noHp: true }))} />
             <Group justify="flex-end" mt="md">
               <Button variant="default" radius="xl" onClick={close}>Batal</Button>
               <Button radius="xl" bg={colors['blue-button']} onClick={handleSubmit} disabled={!isFormValid()}>Kirim</Button>

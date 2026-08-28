@@ -190,7 +190,7 @@ function ProfilePerbekel() {
                 loading={isSubmitting || perbekelState.edit.loading}
                 disabled={!perbekelState.edit.form.biodata.trim()}
               >
-                {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
+                {isSubmitting ? 'Menyimpan...' : 'Simpan'}
               </Button>
 
               <Button variant="outline" onClick={handleBack} disabled={isSubmitting || perbekelState.edit.loading}>

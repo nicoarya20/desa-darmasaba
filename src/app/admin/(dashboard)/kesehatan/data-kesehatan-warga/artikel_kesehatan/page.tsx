@@ -26,6 +26,16 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import artikelKesehatanState from '../../../_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
 
+// Strip tag HTML dari konten rich-text (CreateEditor/Tiptap) untuk preview teks polos di tabel
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function ArtikelKesehatan() {
   const [search, setSearch] = useState("");
 
@@ -105,7 +115,7 @@ function ListArtikelKesehatan({ search }: { search: string }) {
                     </TableTd>
                     <TableTd style={{ minWidth: 200 }} >
                       <Text truncate fz="sm" c="dimmed" lineClamp={1}>
-                        {item.content}
+                        {stripHtml(item.content)}
                       </Text>
                     </TableTd>
                     <TableTd style={{ minWidth: 200 }}>

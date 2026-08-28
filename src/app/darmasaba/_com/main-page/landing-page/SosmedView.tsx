@@ -1,17 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { sosmedMap } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
+import { getSosmedHref, sosmedMap } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
 import colors from "@/con/colors";
 import { ActionIcon, Box, Card, Flex, Image, Text, Tooltip } from "@mantine/core";
 import { Prisma } from "@prisma/client";
-import { useTransitionRouter } from "next-view-transitions";
 
 function SosmedView({
   data,
 }: {
   data: Prisma.MediaSosialGetPayload<{ include: { image: true } }>[];
 }) {
-  const router = useTransitionRouter();
-
   const getIconSource = (item: any) => {
     if (item.image?.link) return item.image.link;
     if (item.icon && sosmedMap[item.icon as keyof typeof sosmedMap]?.src) {
@@ -39,7 +36,10 @@ function SosmedView({
               variant="light"
               radius="xl"
               size="xl"
-              onClick={() => item.iconUrl && router.push(item.iconUrl)}
+              onClick={() => {
+                const href = getSosmedHref(item.icon, item.iconUrl);
+                if (href) window.open(href, "_blank", "noopener,noreferrer");
+              }}
               style={{
                 transition: "all 0.3s ease",
                 boxShadow: "0 0 12px rgba(28, 110, 164, 0.6)",

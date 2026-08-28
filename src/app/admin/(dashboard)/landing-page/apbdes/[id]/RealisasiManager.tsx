@@ -10,6 +10,7 @@ import {
   Button,
   Group,
   Paper,
+  SimpleGrid,
   Stack,
   Text,
   TextInput,
@@ -216,12 +217,17 @@ export default function RealisasiManager({
       </Group>
 
       {/* Summary Cards */}
-      <Group grow mb="md">
+      {/* SimpleGrid 2 kolom di semua breakpoint: nominal APBDes bisa mencapai
+          belasan miliar (mis. Rp 21.424.289.948). Layout 4 kolom membuat tiap
+          kartu terlalu sempit sehingga nominal tembus keluar kartu. Dengan 2
+          kolom tetap → baris 1: Anggaran + Total Realisasi, baris 2: Sisa
+          Anggaran + Persentase. Kartu mendapat separuh lebar container. */}
+      <SimpleGrid cols={2} spacing="sm" mb="md">
         <Paper withBorder p="md" radius="md" bg="blue.0">
           <Text fz="xs" c="blue.9" fw={600}>
             ANGGARAN
           </Text>
-          <Text fz="lg" c="blue.9" fw={700}>
+          <Text c="blue.9" fw={700} style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.25rem)' }}>
             {formatRupiah(itemAnggaran)}
           </Text>
         </Paper>
@@ -230,7 +236,7 @@ export default function RealisasiManager({
           <Text fz="xs" c="teal.9" fw={600}>
             TOTAL REALISASI
           </Text>
-          <Text fz="lg" c="teal.9" fw={700}>
+          <Text c="teal.9" fw={700} style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.25rem)' }}>
             {formatRupiah(itemTotalRealisasi)}
           </Text>
         </Paper>
@@ -239,7 +245,11 @@ export default function RealisasiManager({
           <Text fz="xs" c={getSisaAnggaran() >= 0 ? 'green.9' : 'red.9'} fw={600}>
             SISA ANGGARAN
           </Text>
-          <Text fz="lg" c={getSisaAnggaran() >= 0 ? 'green.9' : 'red.9'} fw={700}>
+          <Text
+            c={getSisaAnggaran() >= 0 ? 'green.9' : 'red.9'}
+            fw={700}
+            style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.25rem)' }}
+          >
             {formatRupiah(getSisaAnggaran())}
           </Text>
         </Paper>
@@ -248,11 +258,15 @@ export default function RealisasiManager({
           <Text fz="xs" c={getPersentaseColor(itemPersentase) + '.9'} fw={600}>
             PERSENTASE
           </Text>
-          <Text fz="lg" c={getPersentaseColor(itemPersentase) + '.9'} fw={700}>
+          <Text
+            c={getPersentaseColor(itemPersentase) + '.9'}
+            fw={700}
+            style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.25rem)' }}
+          >
             {itemPersentase.toFixed(2)}%
           </Text>
         </Paper>
-      </Group>
+      </SimpleGrid>
 
       {/* Realisasi List */}
       {realisasiItems && realisasiItems.length > 0 ? (
@@ -260,7 +274,10 @@ export default function RealisasiManager({
           <Text fz="sm" fw={600} mb="xs">
             Daftar Realisasi ({realisasiItems.length})
           </Text>
-          <Box style={{ overflowX: 'auto' }}>
+          {/* ScrollContainer + minWidth: paksa kolom tetap terbaca (Tanggal/Uraian
+              tidak kempes) lalu scroll horizontal di mobile, bukan overflowX
+              polos yang membuat kolom menyempit dan teks bertumpuk. */}
+          <Table.ScrollContainer minWidth={560}>
             <Table striped highlightOnHover fz="sm">
               <TableThead>
                 <TableTr>
@@ -318,7 +335,7 @@ export default function RealisasiManager({
                 ))}
               </TableTbody>
             </Table>
-          </Box>
+          </Table.ScrollContainer>
         </Box>
       ) : (
         <Center py="xl">

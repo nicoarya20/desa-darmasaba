@@ -16,6 +16,7 @@ export default async function mitraKolaborasiUpdate(context: Context) {
         const body = (await context.body) as Omit<FormUpdate, "id">;
     
         const {
+            name,
             tanggal,
             namaOrangtua,
             nomor,
@@ -54,6 +55,7 @@ export default async function mitraKolaborasiUpdate(context: Context) {
         const updated = await prisma.pendaftaranJadwalKegiatan.update({
             where: { id },
             data: {
+                name,
                 tanggal,
                 namaOrangtua,
                 nomor,

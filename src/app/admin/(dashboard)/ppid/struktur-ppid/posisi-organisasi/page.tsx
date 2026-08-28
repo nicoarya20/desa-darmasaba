@@ -9,7 +9,32 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import stateStrukturPPID from '../../../_state/ppid/struktur_ppid/struktur_PPID';
-import DOMPurify from 'dompurify';
+
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
+ * clamp gagal kalau isinya mengandung tag blok (<p>, <div>, <ul>, <h1-6>)
+ * -- teks tampil penuh dan overlap dengan elemen di bawahnya, tapi hanya
+ * di Safari (mis. iPhone X). Deskripsi rich-text sering berisi tag blok,
+ * jadi harus diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR. Pola sama
+ * dengan fix di src/app/admin/(dashboard)/landing-page/profil/program-inovasi/page.tsx
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 function PosisiOrganisasiPPID() {
   const [search, setSearch] = useState("");
@@ -101,7 +126,7 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
                       <Text fz="md" fw={600} lh={1.5} truncate="end" lineClamp={1}>{item.nama}</Text>
                     </TableTd>
                     <TableTd w={200}>
-                      <Text fz="sm" lh={1.5} c="dimmed" lineClamp={1} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.deskripsi || '-') }} />
+                      <Text fz="sm" lh={1.5} c="dimmed" lineClamp={1}>{toPlainText(item.deskripsi) || '-'}</Text>
                     </TableTd>
                     <TableTd>
                       <Text fz="md" lh={1.5}>{item.hierarki || '-'}</Text>

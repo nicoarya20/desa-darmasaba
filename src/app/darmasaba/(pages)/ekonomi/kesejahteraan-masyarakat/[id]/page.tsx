@@ -23,7 +23,7 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { IconVideo, IconCalendar, IconArrowBack } from '@tabler/icons-react';
+import { IconVideo, IconCalendar, IconArrowBack, IconDatabaseOff } from '@tabler/icons-react';
 
 interface ExistingImage {
   id: string;
@@ -74,9 +74,28 @@ function Page() {
 
   if (!state.findUnique.data) {
     return (
-      <Center>
-        <Text>Data tidak ditemukan</Text>
-      </Center>
+      <Stack bg={colors.Bg} pb="xl" gap="xs" px={{ base: 'md', md: 0 }}>
+        <Box px={{ base: 'md', md: 100 }} pt="md">
+          <Button
+            variant="subtle"
+            leftSection={<IconArrowBack size={16} />}
+            onClick={() => router.back()}
+          >
+            Kembali
+          </Button>
+        </Box>
+        <Center py={80}>
+          <Stack align="center" gap="md">
+            <IconDatabaseOff size={80} color={colors.grey['2']} />
+            <Text ta="center" fz="lg" fw={500} c="dimmed">
+              Data Tidak Ditemukan
+            </Text>
+            <Text ta="center" fz="sm" c="dimmed" maw={400}>
+              Program kesejahteraan masyarakat yang Anda cari tidak tersedia atau sudah dihapus.
+            </Text>
+          </Stack>
+        </Center>
+      </Stack>
     );
   }
 

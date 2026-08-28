@@ -159,7 +159,7 @@ function EditPejabatDesa() {
   const handleBack = () => router.back();
 
   // Loading
-  if (allState.edit.loading) {
+  if (allState.findUnique.loading || allState.edit.loading) {
     return (
       <Box>
         <Center h={400}>

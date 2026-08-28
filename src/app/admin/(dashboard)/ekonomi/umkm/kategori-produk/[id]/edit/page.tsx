@@ -101,7 +101,7 @@ export default function EditKategoriProduk() {
               loading={isSubmitting}
               disabled={!nama.trim()}
             >
-              Simpan Perubahan
+              Simpan
             </Button>
           </Group>
         </Stack>

@@ -160,7 +160,7 @@ function Page() {
                       <IconUser size={18} color="white" />
                       <Text c={colors['white-1']}>
                         Penanggung Jawab:&nbsp;
-                        <Text span fw="bold">Bidan Komang Ayu</Text>
+                        <Text span fw="bold" c={colors['white-1']}>Bidan Komang Ayu</Text>
                       </Text>
                     </Group>
                     <Group gap="xs">

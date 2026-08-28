@@ -161,7 +161,7 @@ function Semua() {
                     {item.kategoriBerita?.name || 'Berita'}
                   </Badge>
 
-                  <Title order={4} mt="sm" lineClamp={2}>
+                  <Title order={4} mt="sm" lineClamp={2} style={{ minHeight: '2.9em' }}>
                     {item.judul}
                   </Title>
                   <Text

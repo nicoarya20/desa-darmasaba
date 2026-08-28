@@ -54,7 +54,7 @@ function LayoutTabsGallery({ children }: { children: React.ReactNode }) {
                 keepMounted={false}
             >
                 {/* ✅ Scroll horizontal wrapper */}
-                <ScrollArea type="auto" offsetScrollbars>
+                <ScrollArea type="hover" offsetScrollbars>
                     <TabsList
                         p="sm"
                         style={{

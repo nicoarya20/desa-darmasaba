@@ -100,13 +100,18 @@ function StrukturOrganisasiPPID() {
 
   // Sinkronkan label tombol dengan status fullscreen browser sebenarnya —
   // keluar via ESC tidak memanggil toggleFullscreen, jadi label bisa nyangkut di "Exit".
+  // Safari (lama) hanya punya API ber-prefix webkit, jadi dengarkan kedua event
+  // dan cek kedua properti agar status tetap sinkron.
   useEffect(() => {
+    const doc = document as any
     const handleFullscreenChange = () => {
-      setFullscreen(Boolean(document.fullscreenElement))
+      setFullscreen(Boolean(doc.fullscreenElement || doc.webkitFullscreenElement))
     }
     document.addEventListener('fullscreenchange', handleFullscreenChange)
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange)
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange)
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
     }
   }, [])
 
@@ -226,12 +231,20 @@ function StrukturOrganisasiPPID() {
   }
 
   // 🎬 fullscreen & zoom control
+  // Safari (lama) tidak mendukung requestFullscreen/exitFullscreen tanpa prefix,
+  // sehingga tombol seolah "tidak bisa diklik" (klik tidak beraksi). Pakai
+  // fallback ber-prefix webkit agar berfungsi di Safari.
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      chartContainerRef.current?.requestFullscreen()
+    const doc = document as any
+    const el = chartContainerRef.current as any
+    const isFs = doc.fullscreenElement || doc.webkitFullscreenElement
+    if (!isFs) {
+      const request = el?.requestFullscreen || el?.webkitRequestFullscreen
+      request?.call(el)
       setFullscreen(true)
     } else {
-      document.exitFullscreen()
+      const exit = doc.exitFullscreen || doc.webkitExitFullscreen
+      exit?.call(document)
       setFullscreen(false)
     }
   }

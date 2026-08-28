@@ -106,14 +106,14 @@ function APBDesTable({ apbdesData }: APBDesTableProps) {
                 <Table.Tr key={item.id}>
                   <Table.Td style={getIndent(item.level)}>
                     <Group gap="xs" align="flex-start">
-                      <Text fw={item.level === 1 ? 'bold' : 'normal'}>{item.kode}</Text>
+                      <Text fz="sm" fw={item.level === 1 ? 'bold' : 'normal'}>{item.kode}</Text>
                       <Text fz="sm">{item.uraian}</Text>
                     </Group>
                   </Table.Td>
-                  <Table.Td ta="right">{formatRupiahOrEmpty(item.anggaran)}</Table.Td>
-                  <Table.Td ta="right">{formatRupiahOrEmpty(item.realisasi)}</Table.Td>
+                  <Table.Td ta="right"><Text fz="sm">{formatRupiahOrEmpty(item.anggaran)}</Text></Table.Td>
+                  <Table.Td ta="right"><Text fz="sm">{formatRupiahOrEmpty(item.realisasi)}</Text></Table.Td>
                   <Table.Td ta="right">
-                    <Text c={item.selisih >= 0 ? 'green' : 'red'}>
+                    <Text fz="sm" c={item.selisih >= 0 ? 'green' : 'red'}>
                       {formatRupiahOrEmpty(item.selisih)}
                     </Text>
                   </Table.Td>
@@ -128,21 +128,21 @@ function APBDesTable({ apbdesData }: APBDesTableProps) {
             <Table.Tfoot bg="#e6f0f7">
               <Table.Tr>
                 <Table.Th colSpan={1}>
-                  <Text fw={700}>JUMLAH PENDAPATAN</Text>
+                  <Text fz="sm" fw={700}>JUMLAH PENDAPATAN</Text>
                 </Table.Th>
                 <Table.Th ta="right">
-                  <Text fw={700}>{formatRupiahOrEmpty(totalAnggaran)}</Text>
+                  <Text fz="sm" fw={700}>{formatRupiahOrEmpty(totalAnggaran)}</Text>
                 </Table.Th>
                 <Table.Th ta="right">
-                  <Text fw={700}>{formatRupiahOrEmpty(totalRealisasi)}</Text>
+                  <Text fz="sm" fw={700}>{formatRupiahOrEmpty(totalRealisasi)}</Text>
                 </Table.Th>
                 <Table.Th ta="right">
-                  <Text fw={700} c={totalSelisih >= 0 ? 'green' : 'red'}>
+                  <Text fz="sm" fw={700} c={totalSelisih >= 0 ? 'green' : 'red'}>
                     {formatRupiahOrEmpty(totalSelisih)}
                   </Text>
                 </Table.Th>
                 <Table.Th ta="center">
-                  <Text fw={700}>{formatPersentaseOrEmpty(totalPersentase)}</Text>
+                  <Text fz="sm" fw={700}>{formatPersentaseOrEmpty(totalPersentase)}</Text>
                 </Table.Th>
               </Table.Tr>
             </Table.Tfoot>
