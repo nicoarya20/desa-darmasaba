@@ -112,6 +112,17 @@ export default function CreateDaftarInformasi() {
           </Box>
 
           <Group justify="flex-end" mt="md">
+            {/* Tombol Reset */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={resetForm}
+            >
+              Reset
+            </Button>
+
             <Button
               onClick={handleSubmit}
               loading={daftarInformasi.create.loading}

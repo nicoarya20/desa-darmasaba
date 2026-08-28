@@ -123,7 +123,7 @@ function MenuAccessPage() {
               </Stack>
 
               <Button onClick={handleSave} mt="md">
-                Simpan Perubahan
+                Simpan
               </Button>
             </>
           )}

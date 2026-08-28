@@ -22,9 +22,10 @@ function DetailSDGSDesa() {
   }, [])
 
 
-  const handleHapus = () => {
-    if (selectedId) {
-      sdgsState.delete.byId(selectedId)
+  const handleHapus = async () => {
+    if (!selectedId) return
+    const ok = await sdgsState.delete.byId(selectedId)
+    if (ok) {
       setModalHapus(false)
       setSelectedId(null)
       router.push("/admin/landing-page/SDGs")
@@ -128,6 +129,7 @@ function DetailSDGSDesa() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
+        loading={sdgsState.delete.loading}
         text="Apakah Anda yakin ingin menghapus Sdgs Desa ini?"
       />
     </Box>
