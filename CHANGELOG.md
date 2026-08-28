@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.174] - 2026-08-28
+### Fixed
+- **Hapus SDGs Desa (`/admin/landing-page/SDGs/[id]`) menyembunyikan kegagalan**: `handleHapus` memanggil delete tanpa `await` lalu langsung `router.push` ke halaman List, dan `<ModalKonfirmasiHapus>` tidak diberi prop `loading`. Akibatnya admin ter-redirect ke List sebelum request DELETE selesai — bila gagal (network/server error), `toast.error` tetap muncul tapi di halaman lain sehingga mudah tidak disadari. Diperbaiki: `sdgsDesa.delete.byId` kini mengembalikan `boolean` (sukses/gagal), `handleHapus` jadi `async` + `await` dan hanya redirect saat sukses, serta modal diberi `loading={sdgsState.delete.loading}` agar tombol "Yakin Hapus" menampilkan state proses. Tidak ada perubahan schema/database.
+
 ## [0.1.173] - 2026-08-27
 ### Fixed
 - **Link/No. Telepon di card mobile admin Media Sosial tidak bisa di-tap**: teks link/kontak dibungkus `<a href={item.link}>`, padahal field `link` tidak pernah ada di model `MediaSosial` (schema hanya punya `iconUrl`) — href selalu kosong walau teksnya tampil normal. Tabel desktop tidak memakai anchor sama sekali sehingga tidak terdampak.
