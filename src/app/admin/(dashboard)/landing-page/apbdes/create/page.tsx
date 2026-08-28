@@ -28,6 +28,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import apbdes from '../../../_state/landing-page/apbdes';
+import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 
 // Tipe item untuk form
 type ItemForm = {
@@ -339,13 +340,20 @@ function CreateAPBDes() {
             onChange={(e) => (stateAPBDes.create.form.name = e.target.value)}
             description="Opsional - akan diisi otomatis jika kosong"
           />
-          <TextInput
-            label="Deskripsi"
-            placeholder="Deskripsi APBDes (opsional)"
-            value={stateAPBDes.create.form.deskripsi}
-            onChange={(e) => (stateAPBDes.create.form.deskripsi = e.target.value)}
-            description="Opsional"
-          />
+          <Box>
+            <Text fz="sm" fw={500} mb={2}>
+              Deskripsi
+            </Text>
+            <Text fz="xs" c="dimmed" mb={6}>
+              Opsional
+            </Text>
+            <CreateEditor
+              value={stateAPBDes.create.form.deskripsi || ''}
+              onChange={(htmlContent: string) => {
+                stateAPBDes.create.form.deskripsi = htmlContent;
+              }}
+            />
+          </Box>
           <TextInput
             label="Jumlah Total"
             placeholder="Contoh: Rp 1.000.000.000"

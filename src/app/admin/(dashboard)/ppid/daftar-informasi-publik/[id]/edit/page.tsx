@@ -28,6 +28,13 @@ function EditDaftarInformasiPublik() {
     tanggal: '',
   });
 
+  // Simpan data original untuk tombol Batal
+  const [originalData, setOriginalData] = useState<FormDaftarInformasi>({
+    jenisInformasi: '',
+    deskripsi: '',
+    tanggal: '',
+  });
+
   // Check if form is valid
   const isFormValid = () => {
     return (
@@ -52,11 +59,13 @@ function EditDaftarInformasiPublik() {
       try {
         const data = await daftarInformasi.edit.load(id);
         if (data) {
-          setFormData({
+          const loaded: FormDaftarInformasi = {
             jenisInformasi: data.jenisInformasi || '',
             deskripsi: data.deskripsi || '',
             tanggal: data.tanggal || '',
-          });
+          };
+          setFormData(loaded);
+          setOriginalData(loaded);
         }
       } catch (error) {
         console.error('Error loading daftar informasi:', error);
@@ -69,6 +78,12 @@ function EditDaftarInformasiPublik() {
 
   const handleChange = (field: keyof FormDaftarInformasi, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Tombol Batal → balikin ke data original
+  const handleResetForm = () => {
+    setFormData(originalData);
+    toast.info('Form dikembalikan ke data awal');
   };
 
   const handleSubmit = async () => {
@@ -135,6 +150,17 @@ function EditDaftarInformasiPublik() {
           />
 
           <Group justify="right" mt="md">
+            {/* Tombol Batal */}
+            <Button
+              variant="outline"
+              color="gray"
+              radius="md"
+              size="md"
+              onClick={handleResetForm}
+            >
+              Batal
+            </Button>
+
             <Button
               onClick={handleSubmit}
               disabled={!isFormValid()}
@@ -148,7 +174,7 @@ function EditDaftarInformasiPublik() {
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
               }}
             >
-              Simpan Perubahan
+              Simpan
             </Button>
           </Group>
         </Stack>
