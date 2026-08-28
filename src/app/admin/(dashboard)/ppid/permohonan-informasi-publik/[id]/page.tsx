@@ -54,35 +54,35 @@ function DetailPermohonanInformasiPublik() {
             <Stack gap="lg">
             <Box>
                 <Text fz="lg" fw="bold" mb={4}>Nama</Text>
-                <Text fz="md" c="dimmed">{data.name || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ overflowWrap: 'anywhere' }}>{data.name || '-'}</Text>
               </Box>
               <Box>
                 <Text fz="lg" fw="bold" mb={4}>NIK</Text>
-                <Text fz="md" c="dimmed">{data.nik || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ overflowWrap: 'anywhere' }}>{data.nik || '-'}</Text>
               </Box>
               <Box>
                 <Text fz="lg" fw="bold" mb={4}>Telepon</Text>
-                <Text fz="md" c="dimmed">{data.notelp || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ overflowWrap: 'anywhere' }}>{data.notelp || '-'}</Text>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold" mb={4}>Email</Text>
-                <Text fz="md" c="dimmed">{data.email || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ overflowWrap: 'anywhere' }}>{data.email || '-'}</Text>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold" mb={4}>Jenis Informasi</Text>
-                <Text fz="md" c="dimmed">{data.jenisInformasiDiminta?.name || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ overflowWrap: 'anywhere' }}>{data.jenisInformasiDiminta?.name || '-'}</Text>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold" mb={4}>Cara Akses Informasi</Text>
-                <Text fz="md" c="dimmed">{data.caraMemperolehInformasi?.name || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ overflowWrap: 'anywhere' }}>{data.caraMemperolehInformasi?.name || '-'}</Text>
               </Box>
 
               <Box>
                 <Text fz="lg" fw="bold" mb={4}>Cara Akses Salinan Informasi</Text>
-                <Text fz="md" c="dimmed">{data.caraMemperolehSalinanInformasi?.name || '-'}</Text>
+                <Text fz="md" c="dimmed" style={{ overflowWrap: 'anywhere' }}>{data.caraMemperolehSalinanInformasi?.name || '-'}</Text>
               </Box>
             </Stack>
           </Paper>
