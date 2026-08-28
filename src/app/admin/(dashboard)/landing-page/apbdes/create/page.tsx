@@ -113,9 +113,12 @@ function CreateAPBDes() {
       stateAPBDes.create.form.imageId = imageId;
       stateAPBDes.create.form.fileId = fileId;
 
-      await stateAPBDes.create.create();
+      // create() menampilkan toast sukses/gagal sendiri & mengembalikan status.
+      // Hanya lanjut reset + redirect kalau benar-benar sukses — mencegah toast
+      // "berhasil" + "gagal" muncul bersamaan saat tahun duplikat (409).
+      const ok = await stateAPBDes.create.create();
+      if (!ok) return;
 
-      toast.success("Berhasil menambahkan APBDes");
       resetForm();
       router.push("/admin/landing-page/apbdes");
     } catch (error: any) {
