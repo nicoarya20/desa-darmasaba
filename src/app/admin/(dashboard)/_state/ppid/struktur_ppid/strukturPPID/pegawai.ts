@@ -222,6 +222,34 @@ const pegawai = proxy({
     },
   },
 
+  active: {
+    loading: false,
+    async byId(id: string) {
+      if (!id) return toast.warn("ID tidak valid");
+      try {
+        pegawai.active.loading = true;
+        const res = await fetch(
+          `/api/ppid/strukturppid/pegawai/active/${id}`,
+          {
+            method: "PATCH",
+          }
+        );
+        const json = await res.json();
+        if (res.ok) {
+          toast.success(json.message ?? "Pegawai berhasil diaktifkan");
+          await pegawai.findMany.load();
+        } else {
+          toast.error(json.message ?? "Gagal mengaktifkan pegawai");
+        }
+      } catch (error) {
+        console.error("Gagal active:", error);
+        toast.error("Terjadi kesalahan saat mengaktifkan pegawai");
+      } finally {
+        pegawai.active.loading = false;
+      }
+    },
+  },
+
   edit: {
     id: "",
     form: { ...pegawaiDefaultForm },
