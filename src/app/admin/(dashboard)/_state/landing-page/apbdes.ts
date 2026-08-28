@@ -208,8 +208,11 @@ const apbdes = proxy({
 
   delete: {
     loading: false,
-    async byId(id: string) {
-      if (!id) return toast.warn("ID tidak valid");
+    async byId(id: string): Promise<boolean> {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return false;
+      }
 
       try {
         this.loading = true;
@@ -217,13 +220,16 @@ const apbdes = proxy({
 
         if (res.data?.success) {
           toast.success("APBDes berhasil dihapus");
-          apbdes.findMany.load();
-        } else {
-          toast.error(res.data?.message || "Gagal menghapus APBDes");
+          await apbdes.findMany.load();
+          return true;
         }
+
+        toast.error(res.data?.message || "Gagal menghapus APBDes");
+        return false;
       } catch (error: any) {
         console.error("Delete error:", error);
         toast.error(error?.message || "Terjadi kesalahan saat menghapus");
+        return false;
       } finally {
         this.loading = false;
       }
