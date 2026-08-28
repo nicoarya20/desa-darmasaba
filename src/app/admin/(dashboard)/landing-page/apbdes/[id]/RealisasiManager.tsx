@@ -5,6 +5,7 @@ import { useProxy } from 'valtio/utils';
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import {
   Box,
   Button,
@@ -59,6 +60,8 @@ export default function RealisasiManager({
   const [modalOpened, setModalOpened] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [deleteModalOpened, setDeleteModalOpened] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -145,17 +148,21 @@ export default function RealisasiManager({
     }
   };
 
-  const handleDelete = async (realisasiId: string) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus realisasi ini?')) {
-      return;
-    }
+  const handleOpenDelete = (realisasiId: string) => {
+    setDeletingId(realisasiId);
+    setDeleteModalOpened(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingId) return;
 
     try {
       setLoading(true);
-      const success = await state.realisasi.delete(realisasiId);
+      const success = await state.realisasi.delete(deletingId);
 
       if (success) {
-        toast.success('Realisasi berhasil dihapus');
+        setDeleteModalOpened(false);
+        setDeletingId(null);
       }
     } catch (error: any) {
       console.error('Error deleting realisasi:', error);
@@ -324,7 +331,7 @@ export default function RealisasiManager({
                           variant="light"
                           color="red"
                           size="sm"
-                          onClick={() => handleDelete(realisasi.id)}
+                          onClick={() => handleOpenDelete(realisasi.id)}
                           disabled={loading}
                         >
                           <IconTrash size={16} />
@@ -441,6 +448,14 @@ export default function RealisasiManager({
           </Group>
         </Stack>
       </Modal>
+
+      <ModalKonfirmasiHapus
+        opened={deleteModalOpened}
+        onClose={() => setDeleteModalOpened(false)}
+        onConfirm={handleConfirmDelete}
+        loading={loading}
+        text="Apakah Anda yakin ingin menghapus realisasi ini?"
+      />
     </Paper>
   );
 }

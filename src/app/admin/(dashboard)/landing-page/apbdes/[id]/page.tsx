@@ -41,9 +41,10 @@ function DetailAPBDes() {
     apbdesState.findUnique.load(params.id as string);
   }, [params?.id]);
 
-  const handleHapus = () => {
-    if (selectedId) {
-      apbdesState.delete.byId(selectedId);
+  const handleHapus = async () => {
+    if (!selectedId) return;
+    const ok = await apbdesState.delete.byId(selectedId);
+    if (ok) {
       setModalHapus(false);
       setSelectedId(null);
       router.push('/admin/landing-page/apbdes');
@@ -264,6 +265,7 @@ function DetailAPBDes() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
+        loading={apbdesState.delete.loading}
         text="Apakah Anda yakin ingin menghapus APBDes ini?"
       />
     </Box>
