@@ -8,6 +8,9 @@ interface ModalKonfirmasiNonAktifProps {
   onClose: () => void
   onConfirm: () => void
   text: string
+  title?: string
+  confirmLabel?: string
+  confirmColor?: string
 }
 
 export function ModalKonfirmasiNonAktif({
@@ -16,19 +19,22 @@ export function ModalKonfirmasiNonAktif({
   onClose,
   onConfirm,
   text,
+  title = "Konfirmasi Non Aktif",
+  confirmLabel = "Yakin Non Aktif",
+  confirmColor = "red",
 }: ModalKonfirmasiNonAktifProps) {
   return (
     <Modal
       opened={opened}
       onClose={onClose}
-      title={<Text fw={"bold"} fz={"xl"}>Konfirmasi Non Aktif</Text>}
+      title={<Text fw={"bold"} fz={"xl"}>{title}</Text>}
       centered
     >
       <Text mb="md">{text}</Text>
       <Flex justify="flex-end" gap="sm">
         <Button style={{color: "white"}} bg={colors['blue-button']} variant="default" onClick={onClose}>Batal</Button>
-        <Button color="red" onClick={onConfirm} loading={loading}>
-          Yakin Non Aktif
+        <Button color={confirmColor} onClick={onConfirm} loading={loading}>
+          {confirmLabel}
         </Button>
       </Flex>
     </Modal>
