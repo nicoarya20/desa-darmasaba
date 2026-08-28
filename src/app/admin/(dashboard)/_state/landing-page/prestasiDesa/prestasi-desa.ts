@@ -126,8 +126,11 @@ const prestasiDesa = proxy({
   },
   delete: {
     loading: false,
-    async byId(id: string) {
-      if (!id) return toast.warn("ID tidak valid");
+    async byId(id: string): Promise<boolean> {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return false;
+      }
 
       try {
         prestasiDesa.delete.loading = true;
@@ -145,12 +148,15 @@ const prestasiDesa = proxy({
         if (response.ok && result?.success) {
           toast.success(result.message || "Prestasi desa berhasil dihapus");
           await prestasiDesa.findMany.load();
+          return true;
         } else {
           toast.error(result?.message || "Gagal menghapus prestasi desa");
+          return false;
         }
       } catch (error) {
         console.error("Gagal delete:", error);
         toast.error("Terjadi kesalahan saat menghapus prestasi desa");
+        return false;
       } finally {
         prestasiDesa.delete.loading = false;
       }

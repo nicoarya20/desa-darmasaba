@@ -23,19 +23,19 @@ function DetailPrestasiDesa() {
   }, [])
 
 
-  const handleHapus = () => {
-    if (selectedId) {
-      detailState.delete.byId(selectedId)
-      setModalHapus(false)
-      setSelectedId(null)
-      router.push("/admin/landing-page/prestasi-desa/list-prestasi-desa")
-    }
+  const handleHapus = async () => {
+    if (!selectedId) return
+    const ok = await detailState.delete.byId(selectedId)
+    if (!ok) return
+    setModalHapus(false)
+    setSelectedId(null)
+    router.push("/admin/landing-page/prestasi-desa/list-prestasi-desa")
   }
 
   if (!detailState.findUnique.data) {
     return (
       <Stack py={10}>
-        <Skeleton h={40} />
+        <Skeleton height={500} radius="md" />
       </Stack>
     )
   }
@@ -143,6 +143,7 @@ function DetailPrestasiDesa() {
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
+        loading={detailState.delete.loading}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
         text='Apakah anda yakin ingin menghapus prestasi desa ini?'
