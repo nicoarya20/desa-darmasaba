@@ -3,6 +3,7 @@ import pegawaiFindMany from "./findMany";
 import pegawaiFindUnique from "./findUnique";
 import pegawaiCreate from "./create";
 import pegawaiNonActive from "./nonActive";
+import pegawaiActive from "./active";
 import pegawaiUpdate from "./updt";
 import pegawaiDelete from "./del";
 import pegawaiFindManyAll from "./findManyAll";
@@ -62,8 +63,13 @@ const Pegawai = new Elysia({
     }
   )
 
-  // ✅ Delete
+  // ✅ Non aktifkan (soft delete)
   .delete("/non-active/:id", pegawaiNonActive)
+
+  // ✅ Aktifkan kembali
+  .patch("/active/:id", pegawaiActive)
+
+  // ✅ Delete
   .delete("/del/:id", pegawaiDelete);
 
 export default Pegawai;

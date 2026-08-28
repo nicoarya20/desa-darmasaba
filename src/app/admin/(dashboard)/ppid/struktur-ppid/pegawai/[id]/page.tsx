@@ -32,13 +32,18 @@ function DetailPegawai() {
     }
   };
 
-  const handleNonActive = () => {
-    if (selectedId) {
-      statePegawai.nonActive.byId(selectedId);
-      setModalNonActive(false);
-      setSelectedId(null);
-      router.push("/admin/ppid/struktur-ppid/pegawai");
+  const handleToggleStatus = async () => {
+    if (!selectedId) return;
+    const isActive = statePegawai.findUnique.data?.isActive;
+    if (isActive) {
+      await statePegawai.nonActive.byId(selectedId);
+    } else {
+      await statePegawai.active.byId(selectedId);
     }
+    setModalNonActive(false);
+    setSelectedId(null);
+    // Muat ulang detail agar status & tombol langsung sinkron tanpa pindah halaman
+    await statePegawai.findUnique.load(params?.id as string);
   };
 
   if (!statePegawai.findUnique.data) {
@@ -137,7 +142,7 @@ function DetailPegawai() {
               </Box>
 
               <Button
-                color={data.isActive ? "green" : "gray"}
+                color={data.isActive ? "red" : "green"}
                 onClick={() => {
                   setSelectedId(data.id || null);
                   setModalNonActive(true);
@@ -146,7 +151,7 @@ function DetailPegawai() {
                 radius="md"
                 size="md"
               >
-                {data.isActive ? "Aktif" : "Nonaktif"}
+                {data.isActive ? "Nonaktifkan" : "Aktifkan"}
               </Button>
 
               <Group gap="sm" mt="md">
@@ -186,12 +191,20 @@ function DetailPegawai() {
         text="Apakah Anda yakin ingin menghapus data pegawai ini?"
       />
 
-      {/* Modal NonActive */}
+      {/* Modal Toggle Status Aktif/Nonaktif */}
       <ModalKonfirmasiNonAktif
         opened={modalNonActive}
+        loading={statePegawai.nonActive.loading || statePegawai.active.loading}
         onClose={() => setModalNonActive(false)}
-        onConfirm={handleNonActive}
-        text="Apakah Anda yakin ingin menonaktifkan pegawai ini?"
+        onConfirm={handleToggleStatus}
+        text={
+          data.isActive
+            ? "Apakah Anda yakin ingin menonaktifkan pegawai ini?"
+            : "Apakah Anda yakin ingin mengaktifkan kembali pegawai ini?"
+        }
+        title={data.isActive ? "Konfirmasi Non Aktif" : "Konfirmasi Aktifkan"}
+        confirmLabel={data.isActive ? "Yakin Non Aktif" : "Yakin Aktifkan"}
+        confirmColor={data.isActive ? "red" : "green"}
       />
     </Box>
   );
