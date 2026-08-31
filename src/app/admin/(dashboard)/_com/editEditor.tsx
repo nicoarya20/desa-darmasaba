@@ -51,7 +51,7 @@ export default function EditEditor({ value, onChange }: EditEditorProps) {
 
   return (
     <RichTextEditor editor={editor}>
-      <RichTextEditor.Toolbar sticky stickyOffset="var(--docs-header-height)">
+      <RichTextEditor.Toolbar>
         {/* Toolbar seperti sebelumnya */}
         <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />
