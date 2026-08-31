@@ -7,6 +7,9 @@ import { z } from "zod";
 
 // --- Zod Schema untuk APBDes Item (dengan field kalkulasi) ---
 const ApbdesItemSchema = z.object({
+  // id item lama (hanya ada saat edit). Dikirim ke backend agar realisasi tetap
+  // ter-link walau kode item diubah/dihapus. Item baru tidak punya id.
+  id: z.string().optional(),
   kode: z.string().min(1, "Kode wajib diisi"),
   uraian: z.string().min(1, "Uraian wajib diisi"),
   anggaran: z.number().min(0, "Anggaran tidak boleh negatif"),
@@ -43,6 +46,7 @@ const defaultApbdesForm = {
 // --- Helper: Normalize item (dengan field kalkulasi) ---
 function normalizeItem(item: Partial<z.infer<typeof ApbdesItemSchema>>): z.infer<typeof ApbdesItemSchema> {
   return {
+    id: item.id,
     kode: item.kode || "",
     uraian: item.uraian || "",
     anggaran: item.anggaran ?? 0,
@@ -266,6 +270,7 @@ const apbdes = proxy({
             imageId: data.imageId || "",
             fileId: data.fileId || "",
             items: (data.items || []).map((item: any) => ({
+              id: item.id, // pertahankan id agar realisasi tetap ter-link saat update
               kode: item.kode,
               uraian: item.uraian,
               anggaran: item.anggaran,
@@ -309,6 +314,7 @@ const apbdes = proxy({
           fileId: parsed.data.fileId,
           id: this.id,
           items: parsed.data.items.map(item => ({
+            id: item.id, // kirim id item lama agar realisasi tetap ter-link walau kode berubah
             kode: item.kode,
             uraian: item.uraian,
             anggaran: item.anggaran,
