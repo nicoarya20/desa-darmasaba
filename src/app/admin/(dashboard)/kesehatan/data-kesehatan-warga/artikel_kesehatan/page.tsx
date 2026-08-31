@@ -92,56 +92,92 @@ function ListArtikelKesehatan({ search }: { search: string }) {
           </Button>
         </Group>
 
-        {/* Tabel */}
-        <Box style={{ overflowX: "auto" }}>
-         <Table highlightOnHover
-    layout="fixed" // 🔥 PENTING
-    withColumnBorders={false}>
-            <TableThead>
-              <TableTr>
-                <TableTh style={{ minWidth: 200 }}>Judul</TableTh>
-                <TableTh style={{ minWidth: 200 }}>Konten</TableTh>
-                <TableTh style={{ minWidth: 200 }}>Aksi</TableTh>
-              </TableTr>
-            </TableThead>
-            <TableTbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item) => (
-                  <TableTr key={item.id}>
-                    <TableTd style={{ minWidth: 200 }}>
-                      <Text fw={500} truncate="end" lineClamp={1}>
-                        {item.title}
-                      </Text>
-                    </TableTd>
-                    <TableTd style={{ minWidth: 200 }} >
-                      <Text truncate fz="sm" c="dimmed" lineClamp={1}>
-                        {stripHtml(item.content)}
-                      </Text>
-                    </TableTd>
-                    <TableTd style={{ minWidth: 200 }}>
-                      <Button
-                        variant="light"
-                        color="blue"
-                        onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${item.id}`)}
-                      >
-                        <IconDeviceImacCog size={20} />
-                        <Text ml={5}>Detail</Text>
-                      </Button>
-                    </TableTd>
-                  </TableTr>
-                ))
-              ) : (
-                <TableTr>
-                  <TableTd colSpan={3}>
-                    <Center py={20}>
-                      <Text color="dimmed">Tidak ada artikel yang cocok</Text>
-                    </Center>
+        {/* Tabel — Desktop (≥md) */}
+        <Table
+          visibleFrom="md"
+          highlightOnHover
+          layout="fixed"
+          withColumnBorders={false}
+        >
+          <TableThead>
+            <TableTr>
+              <TableTh style={{ minWidth: 200 }}>Judul</TableTh>
+              <TableTh style={{ minWidth: 200 }}>Konten</TableTh>
+              <TableTh style={{ minWidth: 200 }}>Aksi</TableTh>
+            </TableTr>
+          </TableThead>
+          <TableTbody>
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <TableTr key={item.id}>
+                  <TableTd style={{ minWidth: 200 }}>
+                    <Text fw={500} truncate="end" lineClamp={1}>
+                      {item.title}
+                    </Text>
+                  </TableTd>
+                  <TableTd style={{ minWidth: 200 }} >
+                    <Text truncate fz="sm" c="dimmed" lineClamp={1}>
+                      {stripHtml(item.content)}
+                    </Text>
+                  </TableTd>
+                  <TableTd style={{ minWidth: 200 }}>
+                    <Button
+                      variant="light"
+                      color="blue"
+                      onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${item.id}`)}
+                    >
+                      <IconDeviceImacCog size={20} />
+                      <Text ml={5}>Detail</Text>
+                    </Button>
                   </TableTd>
                 </TableTr>
-              )}
-            </TableTbody>
-          </Table>
-        </Box>
+              ))
+            ) : (
+              <TableTr>
+                <TableTd colSpan={3}>
+                  <Center py={20}>
+                    <Text c="dimmed">Tidak ada artikel yang cocok</Text>
+                  </Center>
+                </TableTd>
+              </TableTr>
+            )}
+          </TableTbody>
+        </Table>
+
+        {/* Kartu — Mobile (<md) */}
+        <Stack gap="sm" hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <Paper key={item.id} withBorder p="sm" radius="md">
+                <Stack gap="xs">
+                  <Box>
+                    <Text size="xs" c="dimmed">Judul</Text>
+                    <Text fw={500} lineClamp={2}>{item.title}</Text>
+                  </Box>
+                  <Box>
+                    <Text size="xs" c="dimmed">Konten</Text>
+                    <Text fz="sm" c="dimmed" lineClamp={2}>
+                      {stripHtml(item.content)}
+                    </Text>
+                  </Box>
+                  <Button
+                    fullWidth
+                    variant="light"
+                    color="blue"
+                    leftSection={<IconDeviceImacCog size={20} />}
+                    onClick={() => router.push(`/admin/kesehatan/data-kesehatan-warga/artikel_kesehatan/${item.id}`)}
+                  >
+                    Detail
+                  </Button>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Center py={20}>
+              <Text c="dimmed">Tidak ada artikel yang cocok</Text>
+            </Center>
+          )}
+        </Stack>
       </Paper>
 
       {/* Pagination */}
