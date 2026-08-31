@@ -228,13 +228,13 @@ function EditArtikelKesehatan() {
           </Box>
 
           {/* Konten */}
-          <InputText
-            label="Deskripsi"
-            value={formData.content}
-            onChange={(value) => setFormData((prev) => ({ ...prev, content: value }))}
-            placeholder="Masukkan deskripsi artikel"
-            required
-          />
+          <Box>
+            <Text fw="bold">Deskripsi</Text>
+            <EditEditor
+              value={formData.content}
+              onChange={(value) => setFormData((prev) => ({ ...prev, content: value }))}
+            />
+          </Box>
 
           {/* Pendahuluan */}
           <Box>
