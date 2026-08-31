@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.181] - 2026-08-31
+### Fixed
+- **Tombol "Batal" pada Edit APBDes (`/admin/landing-page/apbdes/[id]/edit`) tidak mengembalikan daftar item**: `handleReset` hanya memulihkan field top-level (tahun/nama/deskripsi/dll) tetapi mempertahankan array `items` yang sedang diedit (`items: [...form.items] // keep existing items`). Akibatnya penambahan, penghapusan, atau perubahan baris item TIDAK ikut ter-reset saat admin klik Batal. Diperbaiki: item awal di-*snapshot* saat load, dan Batal kini memulihkan seluruh form termasuk `items` dari snapshot lewat helper murni `buildResetForm()` — item dipulihkan sebagai salinan independen sehingga editan berikutnya tak memutasi snapshot (dan sebaliknya). Tidak ada perubahan schema/database.
+
 ## [0.1.180] - 2026-08-31
 ### Fixed
 - **Riwayat realisasi APBDes hilang permanen saat Edit (`/admin/landing-page/apbdes/[id]/edit`)**: handler update (`updt.ts`) memakai pola *delete-all-then-recreate* — semua `APBDesItem` dihapus lalu dibuat ulang, dan realisasi yang di-preserve dicocokkan lewat string `kode` yang mutable, tanpa transaksi. Dua skenario kehilangan data: (a) admin mengubah kode item (mis. `4.1` → `4.1a`) memutus link ke realisasi; (b) admin menghapus baris item memicu cascade delete yang menghapus fisik `RealisasiItem`. Diperbaiki tanpa menyentuh schema database: item dicocokkan lewat `id` yang STABIL (bukan kode), di-*update in-place* sehingga link realisasi tak pernah putus walau kode berubah; item yang dihapus admin di-*soft-delete* (`isActive=false`) sehingga cascade tak pernah kebakar dan riwayat tetap tersimpan; seluruh mutasi item + header dibungkus satu `$transaction` agar atomik. Field baru `id` (opsional) ditambahkan ke body request update dan dialirkan dari frontend (state + halaman edit) — backward-compatible: klien lama tanpa `id` tetap jalan via fallback pencocokan by kode.

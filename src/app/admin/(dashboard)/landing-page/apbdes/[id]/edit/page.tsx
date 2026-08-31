@@ -4,6 +4,7 @@
 'use client';
 
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
+import { buildResetForm, type ApbdesItemForm } from './_lib/resetForm';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
@@ -93,6 +94,7 @@ function EditAPBDes() {
     fileId: '',
     imageUrl: '',
     fileUrl: '',
+    items: [] as ApbdesItemForm[], // snapshot item awal untuk tombol Batal
   });
 
   // Load data saat pertama kali
@@ -110,7 +112,21 @@ function EditAPBDes() {
         setPreviewImage(data.image?.link || null);
         setPreviewDoc(data.file?.link || null);
 
-        // Simpan data original untuk reset
+        // Map item sekali; simpan dua salinan independen agar Batal bisa
+        // memulihkan item ke kondisi awal tanpa terpengaruh editan di form.
+        const loadedItems: ApbdesItemForm[] = (data.items || []).map((item: any) => ({
+          id: item.id, // pertahankan id agar realisasi tetap ter-link saat update
+          kode: item.kode,
+          uraian: item.uraian,
+          anggaran: item.anggaran,
+          realisasi: item.totalRealisasi || 0,
+          selisih: item.selisih || 0,
+          persentase: item.persentase || 0,
+          level: item.level,
+          tipe: item.tipe || 'pendapatan',
+        }));
+
+        // Simpan data original untuk reset (termasuk snapshot item)
         setOriginalData({
           tahun: data.tahun || new Date().getFullYear(),
           name: data.name || '',
@@ -120,6 +136,7 @@ function EditAPBDes() {
           fileId: data.fileId || '',
           imageUrl: data.image?.link || '',
           fileUrl: data.file?.link || '',
+          items: loadedItems.map((it) => ({ ...it })),
         });
 
         // Set form dengan data lama (termasuk imageId dan fileId)
@@ -130,17 +147,7 @@ function EditAPBDes() {
           jumlah: data.jumlah || '',
           imageId: data.imageId || '',
           fileId: data.fileId || '',
-          items: (data.items || []).map((item: any) => ({
-            id: item.id, // pertahankan id agar realisasi tetap ter-link saat update
-            kode: item.kode,
-            uraian: item.uraian,
-            anggaran: item.anggaran,
-            realisasi: item.totalRealisasi || 0,
-            selisih: item.selisih || 0,
-            persentase: item.persentase || 0,
-            level: item.level,
-            tipe: item.tipe || 'pendapatan',
-          })),
+          items: loadedItems.map((it) => ({ ...it })),
         };
       } catch (error) {
         console.error('Error loading APBDes:', error);
@@ -244,16 +251,10 @@ function EditAPBDes() {
   };
 
   const handleReset = () => {
-    // Reset ke data original (tahun, name, deskripsi, jumlah, imageId, fileId)
-    apbdesState.edit.form = {
-      tahun: originalData.tahun,
-      name: originalData.name,
-      deskripsi: originalData.deskripsi,
-      jumlah: originalData.jumlah,
-      imageId: originalData.imageId,
-      fileId: originalData.fileId,
-      items: [...apbdesState.edit.form.items], // keep existing items
-    };
+    // Reset ke data original — termasuk item: pulihkan dari snapshot awal
+    // (buildResetForm mengembalikan salinan item independen agar edit
+    // berikutnya tak memutasi snapshot).
+    apbdesState.edit.form = buildResetForm(originalData);
 
     // Reset preview ke data original
     setPreviewImage(originalData.imageUrl || null);
