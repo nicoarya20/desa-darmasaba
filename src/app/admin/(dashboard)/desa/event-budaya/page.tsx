@@ -23,7 +23,7 @@ import {
   Title,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconCalendarEvent, IconEdit, IconEye, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconCalendarEvent, IconDeviceImacCog, IconEdit, IconEye, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -89,7 +89,7 @@ function ListEventBudaya({ search }: { search: string }) {
           </Button>
         </Group>
 
-        <Box style={{ overflowX: 'auto' }}>
+        <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <Table highlightOnHover layout="fixed" withColumnBorders={false}>
             <TableThead>
               <TableTr>
@@ -171,6 +171,74 @@ function ListEventBudaya({ search }: { search: string }) {
             </TableTbody>
           </Table>
         </Box>
+
+        {/* Mobile Card View */}
+        <Stack hiddenFrom="md" gap="sm">
+          {data.length > 0 ? (
+            data.map((item) => (
+              <Paper key={item.id} withBorder p="md" radius="md">
+                <Stack gap="xs">
+                  <Text fz="sm" fw={600} lh={1.4} c="dimmed">Nama Event</Text>
+                  <Group gap="xs" wrap="nowrap">
+                    <IconCalendarEvent size={16} color={colors['blue-button-5']} style={{ flexShrink: 0 }} />
+                    <Text fz="sm" fw={500} lh={1.45}>{item.nama}</Text>
+                  </Group>
+
+                  <Text fz="sm" fw={600} lh={1.4} c="dimmed" mt="xs">Tanggal</Text>
+                  <Box>
+                    <Badge variant="light" color="indigo">
+                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </Badge>
+                  </Box>
+
+                  <Text fz="sm" fw={600} lh={1.4} c="dimmed" mt="xs">Lokasi</Text>
+                  <Text fz="sm" fw={500} lh={1.45}>{item.lokasi || '-'}</Text>
+
+                  <Group gap="xs" mt="sm" wrap="nowrap">
+                    <Button
+                      variant="light"
+                      color="blue"
+                      flex={1}
+                      fz="sm"
+                      h={36}
+                      onClick={() => router.push(`/admin/desa/event-budaya/${item.id}`)}
+                    >
+                      <IconDeviceImacCog size={18} />
+                      <Text ml="xs">Detail</Text>
+                    </Button>
+                    <ActionIcon
+                      variant="light"
+                      color="blue"
+                      size={36}
+                      onClick={() => router.push(`/admin/desa/event-budaya/${item.id}/edit`)}
+                    >
+                      <IconEdit size={18} />
+                    </ActionIcon>
+                    <ActionIcon
+                      variant="light"
+                      color="red"
+                      size={36}
+                      onClick={() => {
+                        setSelectedId(item.id);
+                        setModalHapus(true);
+                      }}
+                    >
+                      <IconTrash size={18} />
+                    </ActionIcon>
+                  </Group>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Text ta="center" c="dimmed" py="xl" fz="sm">
+              Belum ada data event budaya
+            </Text>
+          )}
+        </Stack>
 
         {totalPages > 1 && (
           <Group justify="center" mt="lg">
