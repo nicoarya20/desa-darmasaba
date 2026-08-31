@@ -41,6 +41,7 @@ import { useProxy } from 'valtio/utils';
 
 // Tipe untuk form item
 type ItemForm = {
+  id?: string; // id item lama; dipertahankan agar realisasi tetap ter-link saat update
   kode: string;
   uraian: string;
   anggaran: number;
@@ -130,6 +131,7 @@ function EditAPBDes() {
           imageId: data.imageId || '',
           fileId: data.fileId || '',
           items: (data.items || []).map((item: any) => ({
+            id: item.id, // pertahankan id agar realisasi tetap ter-link saat update
             kode: item.kode,
             uraian: item.uraian,
             anggaran: item.anggaran,

@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { assignParentIdsToApbdesItems } from "./lib/getParentsID";
-import { RealisasiItem } from "@prisma/client";
 
 type APBDesItemInput = {
+  id?: string; // id item lama; kosong = item baru
   kode: string;
   uraian: string;
   anggaran: number;
@@ -26,16 +26,16 @@ export default async function apbdesUpdate(context: Context) {
   const { id } = context.params as { id: string };
 
   try {
-    // 1. Pastikan APBDes ada
+    // 1. Pastikan APBDes ada + ambil item aktif beserta realisasinya.
+    //    Realisasi TIDAK dihapus di mana pun pada alur ini — cukup dibaca untuk
+    //    rekalkulasi total. Inilah kunci pencegahan data-loss.
     const existing = await prisma.aPBDes.findUnique({
       where: { id },
       include: {
         items: {
           where: { isActive: true },
           include: {
-            realisasiItems: {
-              where: { isActive: true },
-            },
+            realisasiItems: { where: { isActive: true } },
           },
         },
       },
@@ -43,10 +43,7 @@ export default async function apbdesUpdate(context: Context) {
 
     if (!existing) {
       context.set.status = 404;
-      return {
-        success: false,
-        message: "APBDes tidak ditemukan",
-      };
+      return { success: false, message: "APBDes tidak ditemukan" };
     }
 
     // Cegah duplikasi: tahun tidak boleh bentrok dengan APBDes aktif lain
@@ -62,142 +59,133 @@ export default async function apbdesUpdate(context: Context) {
       };
     }
 
-    // 2. Build map untuk preserve realisasiItems berdasarkan kode
-    const existingItemsMap = new Map<string, {
-      id: string;
-      realisasiItems: RealisasiItem[];
-    }>();
-    
-    existing.items.forEach(item => {
-      existingItemsMap.set(item.kode, {
-        id: item.id,
-        realisasiItems: item.realisasiItems,
+    const existingItems = existing.items;
+    type ExistingItem = (typeof existingItems)[number];
+
+    // 2. Cocokkan item form ke item lama.
+    //    - Utamakan id item yang STABIL: kode boleh admin ubah bebas tanpa
+    //      memutus link ke realisasi.
+    //    - Fallback ke kode untuk item tanpa id (kompat klien lama).
+    const existingById = new Map<string, ExistingItem>(
+      existingItems.map((it) => [it.id, it])
+    );
+    const existingByKode = new Map<string, ExistingItem>();
+    for (const it of existingItems) {
+      if (!existingByKode.has(it.kode)) existingByKode.set(it.kode, it);
+    }
+
+    const matchedExistingIds = new Set<string>();
+    const toUpdate: { old: ExistingItem; input: APBDesItemInput }[] = [];
+    const toCreate: APBDesItemInput[] = [];
+
+    for (const input of body.items) {
+      let match: ExistingItem | undefined;
+      if (input.id && existingById.has(input.id) && !matchedExistingIds.has(input.id)) {
+        match = existingById.get(input.id);
+      } else if (!input.id) {
+        const byKode = existingByKode.get(input.kode);
+        if (byKode && !matchedExistingIds.has(byKode.id)) match = byKode;
+      }
+
+      if (match) {
+        matchedExistingIds.add(match.id);
+        toUpdate.push({ old: match, input });
+      } else {
+        toCreate.push(input);
+      }
+    }
+
+    // Item lama yang tidak lagi ada di form = dihapus admin.
+    // Soft-delete (isActive=false) — realisasi fisiknya TIDAK ikut ke-cascade,
+    // jadi riwayat tetap tersimpan & bisa dipulihkan.
+    const toSoftDelete = existingItems.filter((it) => !matchedExistingIds.has(it.id));
+
+    const now = new Date();
+
+    // 3. Semua mutasi item + header APBDes dalam satu transaksi (atomik).
+    //    Sebelumnya delete-all lalu recreate tanpa transaksi: gagal di tengah =
+    //    realisasi hilang permanen.
+    await prisma.$transaction(async (tx) => {
+      // 3a. Update item lama in-place — realisasi tetap ter-link, hanya
+      //     rekalkulasi total dari realisasi yang sudah ada.
+      for (const { old, input } of toUpdate) {
+        const totalRealisasi = old.realisasiItems.reduce((s, r) => s + r.jumlah, 0);
+        const anggaran = input.anggaran;
+        await tx.aPBDesItem.update({
+          where: { id: old.id },
+          data: {
+            kode: input.kode,
+            uraian: input.uraian,
+            anggaran,
+            level: input.level,
+            tipe: input.tipe ?? null,
+            totalRealisasi,
+            selisih: anggaran - totalRealisasi,
+            persentase: anggaran > 0 ? (totalRealisasi / anggaran) * 100 : 0,
+            isActive: true,
+            deletedAt: null,
+          },
+        });
+      }
+
+      // 3b. Buat item baru (belum punya realisasi).
+      if (toCreate.length > 0) {
+        await tx.aPBDesItem.createMany({
+          data: toCreate.map((input) => ({
+            apbdesId: id,
+            kode: input.kode,
+            uraian: input.uraian,
+            anggaran: input.anggaran,
+            level: input.level,
+            tipe: input.tipe ?? null,
+            totalRealisasi: 0,
+            selisih: input.anggaran,
+            persentase: 0,
+            isActive: true,
+          })),
+        });
+      }
+
+      // 3c. Soft-delete item yang dihapus admin.
+      if (toSoftDelete.length > 0) {
+        await tx.aPBDesItem.updateMany({
+          where: { id: { in: toSoftDelete.map((it) => it.id) } },
+          data: { isActive: false, deletedAt: now },
+        });
+      }
+
+      // 3d. Update data APBDes.
+      await tx.aPBDes.update({
+        where: { id },
+        data: {
+          tahun: body.tahun,
+          name: body.name || `APBDes Tahun ${body.tahun}`,
+          deskripsi: body.deskripsi,
+          jumlah: body.jumlah,
+          imageId: body.imageId === "" ? null : body.imageId,
+          fileId: body.fileId === "" ? null : body.fileId,
+        },
       });
     });
 
-    // 3. Hapus semua item lama (cascade akan menghapus realisasiItems juga)
-    // TAPI kita sudah save realisasiItems di map atas
-    await prisma.aPBDesItem.deleteMany({
-      where: { apbdesId: id },
-    });
-
-    // 4. Buat item baru dengan preserve realisasiItems
-    await prisma.aPBDesItem.createMany({
-      data: await Promise.all(body.items.map(async (item) => {
-        const anggaran = item.anggaran;
-        
-        // Check apakah item ini punya realisasiItems lama
-        const existingItem = existingItemsMap.get(item.kode);
-        const realisasiItemsData = existingItem?.realisasiItems || [];
-        const totalRealisasi = realisasiItemsData.reduce((sum, r) => sum + r.jumlah, 0);
-        const selisih = anggaran - totalRealisasi;
-        const persentase = anggaran > 0 ? (totalRealisasi / anggaran) * 100 : 0;
-
-        return {
-          apbdesId: id,
-          kode: item.kode,
-          uraian: item.uraian,
-          anggaran: anggaran,
-          level: item.level,
-          tipe: item.tipe || null,
-          totalRealisasi,
-          selisih,
-          persentase,
-          isActive: true,
-        };
-      })),
-    });
-
-    // 5. Dapatkan semua item yang baru dibuat untuk mendapatkan ID-nya
-    const allItems = await prisma.aPBDesItem.findMany({
-      where: { apbdesId: id },
+    // 4. Perbarui parentId untuk item aktif (kode bisa berubah → hierarki ikut).
+    const activeItems = await prisma.aPBDesItem.findMany({
+      where: { apbdesId: id, isActive: true },
       select: { id: true, kode: true },
     });
+    await assignParentIdsToApbdesItems(activeItems);
 
-    // 6. Build map baru untuk item IDs
-    const newItemIdsMap = new Map<string, string>();
-    allItems.forEach(item => {
-      newItemIdsMap.set(item.kode, item.id);
-    });
-
-    // 7. Re-create realisasiItems dengan link ke item IDs yang baru
-    for (const [oldKode, oldItemData] of existingItemsMap.entries()) {
-      if (oldItemData.realisasiItems.length > 0) {
-        const newItemId = newItemIdsMap.get(oldKode);
-        if (newItemId) {
-          // Re-create realisasiItems untuk item ini
-          await prisma.realisasiItem.createMany({
-            data: oldItemData.realisasiItems.map(r => ({
-              apbdesItemId: newItemId,
-              kode: r.kode,
-              jumlah: r.jumlah,
-              tanggal: r.tanggal,
-              keterangan: r.keterangan,
-              buktiFileId: r.buktiFileId,
-              isActive: true,
-            })),
-          });
-        }
-      }
-    }
-
-    // 8. Recalculate totalRealisasi setelah re-create realisasiItems
-    for (const kode of existingItemsMap.keys()) {
-      const newItemId = newItemIdsMap.get(kode);
-      if (newItemId) {
-        const realisasiItems = await prisma.realisasiItem.findMany({
-          where: { apbdesItemId: newItemId, isActive: true },
-        });
-        const totalRealisasi = realisasiItems.reduce((sum, r) => sum + r.jumlah, 0);
-        
-        const item = await prisma.aPBDesItem.findUnique({
-          where: { id: newItemId },
-        });
-        
-        if (item) {
-          const selisih = item.anggaran - totalRealisasi;
-          const persentase = item.anggaran > 0 ? (totalRealisasi / item.anggaran) * 100 : 0;
-          
-          await prisma.aPBDesItem.update({
-            where: { id: newItemId },
-            data: { totalRealisasi, selisih, persentase },
-          });
-        }
-      }
-    }
-
-    // 9. Update parentId untuk setiap item
-    const itemsForParentUpdate = allItems.map(item => ({
-      id: item.id,
-      kode: item.kode,
-    }));
-
-    await assignParentIdsToApbdesItems(itemsForParentUpdate);
-
-    // 10. Update data APBDes
-    await prisma.aPBDes.update({
-      where: { id },
-      data: {
-        tahun: body.tahun,
-        name: body.name || `APBDes Tahun ${body.tahun}`,
-        deskripsi: body.deskripsi,
-        jumlah: body.jumlah,
-        imageId: body.imageId === '' ? null : body.imageId,
-        fileId: body.fileId === '' ? null : body.fileId,
-      },
-    });
-
-    // 11. Ambil data lengkap untuk response (include realisasiItems)
+    // 5. Ambil data lengkap untuk response (include realisasiItems).
     const result = await prisma.aPBDes.findUnique({
       where: { id },
       include: {
         items: {
           where: { isActive: true },
-          orderBy: { kode: 'asc' },
+          orderBy: { kode: "asc" },
           include: {
             realisasiItems: {
               where: { isActive: true },
-              orderBy: { tanggal: 'asc' },
+              orderBy: { tanggal: "asc" },
             },
           },
         },

@@ -11,6 +11,9 @@ import realisasiDelete from "./realisasi/delete";
 
 // Definisikan skema untuk item APBDes (tanpa realisasi field)
 const ApbdesItemSchema = t.Object({
+  // id item lama; dikirim saat edit agar realisasi tetap ter-link walau kode
+  // diubah. Optional & backward-compatible: create/klien lama tak mengirimnya.
+  id: t.Optional(t.String()),
   kode: t.String(),
   uraian: t.String(),
   anggaran: t.Number(),
