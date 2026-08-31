@@ -65,6 +65,7 @@ function EditBerita() {
   
   // Gallery images state
   const [existingGalleryImages, setExistingGalleryImages] = useState<ExistingImage[]>([]);
+  const [originalGalleryImages, setOriginalGalleryImages] = useState<ExistingImage[]>([]);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
   
@@ -143,6 +144,7 @@ function EditBerita() {
           // Load gallery images
           if (data?.images && data.images.length > 0) {
             setExistingGalleryImages(data.images);
+            setOriginalGalleryImages(data.images);
           }
 
           // Load YouTube link
@@ -288,6 +290,14 @@ function EditBerita() {
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
+
+    // Pulihkan galeri: kembalikan gambar existing yang sempat dihapus,
+    // dan buang gambar baru (revoke object URL agar tidak memory leak)
+    setExistingGalleryImages(originalGalleryImages);
+    galleryPreviews.forEach((url) => URL.revokeObjectURL(url));
+    setGalleryFiles([]);
+    setGalleryPreviews([]);
+
     setYoutubeLink(originalYoutubeLink);
     toast.info("Form dikembalikan ke data awal");
   };
