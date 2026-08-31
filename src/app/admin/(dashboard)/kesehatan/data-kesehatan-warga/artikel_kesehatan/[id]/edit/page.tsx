@@ -81,8 +81,8 @@ function EditArtikelKesehatan() {
           doctorSign: { content: form.doctorSign?.content || '' },
         });
 
-        if (form.imageId) {
-          setPreviewImage(`${process.env.NEXT_PUBLIC_API_URL}/file/${form.imageId}`);
+        if (stateArtikelKesehatan.edit.imageLink) {
+          setPreviewImage(stateArtikelKesehatan.edit.imageLink);
         }
       } catch (error) {
         console.error('Error loading artikel kesehatan:', error);
