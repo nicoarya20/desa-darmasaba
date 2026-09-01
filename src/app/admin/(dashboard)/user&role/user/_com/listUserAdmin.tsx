@@ -24,12 +24,20 @@ export default function ListUserAdmin({ search }: { search: string }) {
 
   const reload = (p = page) => stateUser.findMany.load(p, 10, debouncedSearch, "admin");
 
-  const handleDelete = () => {
-    if (selectedId) {
-      stateUser.deleteUser.delete(selectedId);
-      setModalHapus(false);
-      setSelectedId(null);
-      reload();
+  const handleDelete = async () => {
+    if (!selectedId) return;
+
+    // Tunggu delete selesai sebelum reload — kalau tidak, reload menembak
+    // server sebelum baris benar-benar terhapus (race) & user muncul lagi.
+    const ok = await stateUser.deleteUser.delete(selectedId);
+    setModalHapus(false);
+    setSelectedId(null);
+
+    if (ok) {
+      // Bila baris terakhir di halaman ini yang dihapus, mundur satu halaman
+      // agar tidak berhenti di halaman kosong.
+      const nextPage = (data?.length ?? 0) === 1 && page > 1 ? page - 1 : page;
+      reload(nextPage);
     }
   };
 
