@@ -98,7 +98,9 @@ function ListAjukanIdeInovatif({ search }: { search: string }) {
     <Box py={10}>
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Title order={4}>Daftar Ide Inovatif</Title>
-        <Box style={{ overflowX: "auto" }}>
+
+        {/* Desktop Table */}
+        <Box visibleFrom="md" style={{ overflowX: "auto" }}>
          <Table highlightOnHover
     layout="fixed" // 🔥 PENTING
     withColumnBorders={false}>
@@ -141,13 +143,55 @@ function ListAjukanIdeInovatif({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
-                      <Text color="dimmed">Tidak ada ide inovatif yang cocok</Text>
+                      <Text c="dimmed">Tidak ada ide inovatif yang cocok</Text>
                     </Center>
                   </TableTd>
                 </TableTr>
               )}
             </TableTbody>
           </Table>
+        </Box>
+
+        {/* Mobile Cards */}
+        <Box hiddenFrom="md">
+          {filteredData.length > 0 ? (
+            <Stack gap="md" mt="md">
+              {filteredData.map((item) => (
+                <Paper key={item.id} p="md" withBorder radius="md">
+                  <Stack gap={8}>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
+                      <Text fz="sm" fw={500} lh={1.4} lineClamp={2}>{item.name}</Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Alamat</Text>
+                      <Text fz="sm" c="dimmed" lh={1.4} lineClamp={2}>{toPlainText(item.alamat) || '-'}</Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Nama Ide Inovatif</Text>
+                      <Text fz="sm" lh={1.4} lineClamp={2}>{toPlainText(item.namaIde) || '-'}</Text>
+                    </Box>
+                    <Button
+                      fullWidth
+                      mt={4}
+                      size="xs"
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                      leftSection={<IconDeviceImac size={16} />}
+                      onClick={() => router.push(`/admin/inovasi/ajukan-ide-inovatif/${item.id}`)}
+                    >
+                      Detail
+                    </Button>
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+          ) : (
+            <Center py={20}>
+              <Text c="dimmed">Tidak ada ide inovatif yang cocok</Text>
+            </Center>
+          )}
         </Box>
       </Paper>
       <Center>

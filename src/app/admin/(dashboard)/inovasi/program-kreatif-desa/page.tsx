@@ -169,7 +169,7 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
                   router.push('/admin/inovasi/program-kreatif-desa/create')
                 }
               >
-                Tambah Baru
+                Tambah
               </Button>
             </Group>
 
@@ -223,7 +223,7 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
               router.push('/admin/inovasi/program-kreatif-desa/create')
             }
           >
-            Tambah Baru
+            Tambah
           </Button>
         </Group>
 
@@ -351,7 +351,7 @@ function ListProgramKreatifDesa({ search }: { search: string }) {
                       )}
                     </Box>
                   </Box>
-                  <Box ta="center" mt="sm">
+                  <Box mt="sm">
                     <Button
                       size="xs"
                       radius="md"
