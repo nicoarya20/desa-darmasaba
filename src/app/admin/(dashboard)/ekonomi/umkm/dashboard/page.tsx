@@ -156,7 +156,7 @@ function UmkmDashboard() {
                 />
               </Group>
             </Group>
-            <Box style={{ overflowX: 'auto' }}>
+            <Box style={{ overflowX: 'auto' }} visibleFrom="md">
               <Table highlightOnHover>
                 <TableThead>
                   <TableTr>
@@ -200,6 +200,52 @@ function UmkmDashboard() {
                 </TableTbody>
               </Table>
             </Box>
+
+            {/* Mobile: kartu per produk — hindari scroll horizontal tabel 7 kolom */}
+            <Stack gap="sm" hiddenFrom="md">
+              {detail.map((item: any, i: number) => (
+                <Card key={i} withBorder radius="md" p="sm" shadow="xs">
+                  <Group justify="space-between" align="flex-start" wrap="nowrap" mb="xs">
+                    <Text fw={600} size="sm" style={{ flex: 1 }}>{item.namaProduk}</Text>
+                    <Badge color={getStatusColor(item.statusStok)}>{item.statusStok}</Badge>
+                  </Group>
+                  <Stack gap={6}>
+                    <Group justify="space-between" wrap="nowrap">
+                      <Text size="xs" c="dimmed">Penjualan Bulan Ini</Text>
+                      <Text size="sm" fw={500}>Rp {item.penjualanBulanIni.toLocaleString()}</Text>
+                    </Group>
+                    <Group justify="space-between" wrap="nowrap">
+                      <Text size="xs" c="dimmed">Bulan Lalu</Text>
+                      <Text size="sm">Rp {item.penjualanBulanLalu.toLocaleString()}</Text>
+                    </Group>
+                    <Group justify="space-between" wrap="nowrap">
+                      <Text size="xs" c="dimmed">Trend</Text>
+                      <Group gap={4} wrap="nowrap">
+                        {renderTrend(item.trend)}
+                        {item.trendPersen !== 0 && (
+                          <Text
+                            size="xs"
+                            c={item.trend === 'up' ? 'green' : item.trend === 'down' ? 'red' : 'dimmed'}
+                          >
+                            {item.trendPersen > 0 ? '+' : ''}{item.trendPersen}%
+                          </Text>
+                        )}
+                      </Group>
+                    </Group>
+                    <Group grow wrap="nowrap">
+                      <Box>
+                        <Text size="xs" c="dimmed">Volume</Text>
+                        <Text size="sm">{item.volume}</Text>
+                      </Box>
+                      <Box>
+                        <Text size="xs" c="dimmed">Stok</Text>
+                        <Text size="sm">{item.stok}</Text>
+                      </Box>
+                    </Group>
+                  </Stack>
+                </Card>
+              ))}
+            </Stack>
           </Card>
         </Grid.Col>
       </Grid>
