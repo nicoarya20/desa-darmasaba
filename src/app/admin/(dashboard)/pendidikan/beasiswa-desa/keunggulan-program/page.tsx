@@ -217,9 +217,8 @@ function ListKeunggulanProgram({ search }: { search: string }) {
                         fz="sm"
                         fw={500}
                         lh={1.4}
-                        truncate="end"
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
-                      />
+                        lineClamp={2}
+                      >{toPlainText(item.deskripsi) || '-'}</Text>
                     </Box>
                     <Group justify="flex-end" mt="xs">
                       <Button

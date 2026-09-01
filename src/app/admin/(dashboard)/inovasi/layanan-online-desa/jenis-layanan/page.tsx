@@ -220,13 +220,13 @@ function ListJenisLayanan({ search }: { search: string }) {
                       <Text fz="sm" fw={600} lh={1.4} c={theme.black}>
                         Deskripsi
                       </Text>
-                      <Text 
-                        fz="sm" 
-                        fw={500} 
-                        lh={1.5} 
+                      <Text
+                        fz="sm"
+                        fw={500}
+                        lh={1.5}
                         c={theme.black}
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
-                      />
+                        lineClamp={2}
+                      >{toPlainText(item.deskripsi) || '-'}</Text>
                     </Box>
                     <Group justify="flex-end" mt="xs">
                       <Button

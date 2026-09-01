@@ -183,7 +183,7 @@ function ListPosisiOrganisasiPPID({ search }: { search: string }) {
                   </Box>
                   <Box>
                     <Text fz="xs" fw={600} lh={1.4}>Deskripsi</Text>
-                    <Text fz="sm" lh={1.5} dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }} />
+                    <Text fz="sm" lh={1.5} lineClamp={2}>{toPlainText(item.deskripsi) || '-'}</Text>
                   </Box>
                   <Box>
                     <Text fz="xs" fw={600} lh={1.4}>Hierarki</Text>
