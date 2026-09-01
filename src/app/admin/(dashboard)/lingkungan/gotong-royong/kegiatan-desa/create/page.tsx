@@ -11,6 +11,7 @@ import {
   Group,
   Image,
   Loader,
+  NumberInput,
   Paper,
   Select,
   Stack,
@@ -220,15 +221,11 @@ function CreateKegiatanDesa() {
               onChange={(val) => (stateKegiatanDesa.create.form.deskripsiSingkat = val)}
             />
           </Box>
-          <TextInput
-            type="number"
+          <NumberInput
             min={0}
             value={stateKegiatanDesa.create.form.partisipan}
-            onChange={(e) => {
-              const value = Number(e.target.value);
-              if (value >= 0) {
-                stateKegiatanDesa.create.form.partisipan = value;
-              }
+            onChange={(value) => {
+              stateKegiatanDesa.create.form.partisipan = Number(value) || 0;
             }}
             label="Partisipan"
             placeholder="Masukkan jumlah partisipan"

@@ -11,6 +11,7 @@ import {
   Group,
   Image,
   Loader,
+  NumberInput,
   Paper,
   Select,
   Stack,
@@ -247,13 +248,13 @@ export default function EditKegiatanDesa() {
             placeholder="masukkan lokasi kegiatan desa"
             onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
           />
-          <TextInput
+          <NumberInput
+            min={0}
             value={formData.partisipan}
             label={<Text fz="sm" fw="bold">Partisipan Kegiatan Desa</Text>}
             placeholder="masukkan partisipan kegiatan desa"
-            onChange={(e) => {
-              const val = Number(e.target.value);
-              if (!isNaN(val)) setFormData({ ...formData, partisipan: val });
+            onChange={(value) => {
+              setFormData({ ...formData, partisipan: Number(value) || 0 });
             }}
           />
 
