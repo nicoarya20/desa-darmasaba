@@ -249,7 +249,7 @@ function EditPerpustakaanDigital() {
             onChange={(val) => handleInputChange('kategoriId', val || '')}
             label="Kategori"
             placeholder="Pilih kategori"
-            data={kategoriState.findMany.data?.map((v) => ({ value: v.id, label: v.name })) || []}
+            data={kategoriState.findManyAll.data?.map((v) => ({ value: v.id, label: v.name })) || []}
             clearable
             searchable
             required
