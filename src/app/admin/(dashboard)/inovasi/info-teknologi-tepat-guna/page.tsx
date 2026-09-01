@@ -210,10 +210,8 @@ function ListInfoTeknologiTepatGuna({ search }: { search: string }) {
                       fz="sm"
                       fw={500}
                       lh={1.4}
-                      dangerouslySetInnerHTML={{
-                        __html: item.deskripsi || '-',
-                      }}
-                    />
+                      lineClamp={2}
+                    >{toPlainText(item.deskripsi) || '-'}</Text>
                    </Box>
                   </Box>
                   <Group justify="flex-end">

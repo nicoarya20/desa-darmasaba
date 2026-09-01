@@ -207,8 +207,8 @@ function ListTipsKeamanan({ search }: { search: string }) {
                       fz="sm"
                       fw={500}
                       lh={1.45}
-                      dangerouslySetInnerHTML={{ __html: item.deskripsi }}
-                    />
+                      lineClamp={2}
+                    >{toPlainText(item.deskripsi) || '-'}</Text>
                     </Box>
                   </Box>
                   <Box>
