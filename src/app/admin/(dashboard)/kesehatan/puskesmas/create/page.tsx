@@ -15,9 +15,10 @@ import {
   Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { TimeInput } from '@mantine/dates';
+import { IconArrowBack, IconClock, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import puskesmasState from '../../../_state/kesehatan/puskesmas/puskesmas';
@@ -28,6 +29,14 @@ function CreatePuskesmas() {
   const [file, setFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const refJamBuka = useRef<HTMLInputElement>(null);
+  const refJamTutup = useRef<HTMLInputElement>(null);
+
+  const picker = (ref: React.RefObject<HTMLInputElement | null>) => (
+    <ActionIcon variant="subtle" color="gray" onClick={() => ref.current?.showPicker()}>
+      <IconClock size={16} stroke={1.5} />
+    </ActionIcon>
+  );
 
   // Check if form is valid
   const isFormValid = () => {
@@ -128,21 +137,23 @@ function CreatePuskesmas() {
             onChange={(e) => (statePuskesmas.create.form.alamat = e.target.value)}
             required
           />
-          <TextInput
+          <TimeInput
             label="Jam Buka"
-            placeholder="Masukkan jam buka"
+            ref={refJamBuka}
+            rightSection={picker(refJamBuka)}
             value={statePuskesmas.create.form.jam.workDays}
             onChange={(e) => (statePuskesmas.create.form.jam.workDays = e.target.value)}
           />
-          <TextInput
+          <TimeInput
             label="Jam Tutup"
-            placeholder="Masukkan jam tutup"
+            ref={refJamTutup}
+            rightSection={picker(refJamTutup)}
             value={statePuskesmas.create.form.jam.weekDays}
             onChange={(e) => (statePuskesmas.create.form.jam.weekDays = e.target.value)}
           />
           <TextInput
-            label="Holiday"
-            placeholder="Masukkan hari libur"
+            label="Hari Libur"
+            placeholder="Masukkan hari libur (mis. Minggu & hari besar)"
             value={statePuskesmas.create.form.jam.holiday}
             onChange={(e) => (statePuskesmas.create.form.jam.holiday = e.target.value)}
           />

@@ -8,6 +8,7 @@ import {
   Group,
   Loader,
   Paper,
+  Select,
   Stack,
   TextInput,
   Title
@@ -17,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { JENIS_KELAMIN_OPTIONS } from '../../lib/jenisKelamin';
 
 function CreateKematian() {
   const createState = useProxy(persentaseKelahiranKematian.kematian, { sync: true }); // sync: cegah caret jump di controlled input
@@ -132,11 +134,12 @@ function CreateKematian() {
             onChange={(e) => (createState.create.form.tanggal = e.target.value)}
             required
           />
-          <TextInput
+          <Select
             label="Jenis Kelamin"
-            placeholder="Masukkan jenis kelamin"
+            placeholder="Pilih jenis kelamin"
+            data={[...JENIS_KELAMIN_OPTIONS]}
             value={createState.create.form.jenisKelamin}
-            onChange={(e) => (createState.create.form.jenisKelamin = e.target.value)}
+            onChange={(value) => (createState.create.form.jenisKelamin = value || '')}
             required
           />
           <TextInput

@@ -10,6 +10,7 @@ import {
   Group,
   Loader,
   Paper,
+  Select,
   Stack,
   Text,
   TextInput,
@@ -21,6 +22,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { convertToISODate } from '../../../lib/dateUtils';
+import { JENIS_KELAMIN_OPTIONS } from '../../../lib/jenisKelamin';
 
 function EditKematian() {
   const editState = useProxy(persentaseKelahiranKematian.kematian);
@@ -195,11 +197,12 @@ function EditKematian() {
             required
           />
 
-          <TextInput
+          <Select
             label="Jenis Kelamin"
-            placeholder="Masukkan jenis kelamin"
+            placeholder="Pilih jenis kelamin"
+            data={[...JENIS_KELAMIN_OPTIONS]}
             value={formData.jenisKelamin}
-            onChange={(e) => handleChange('jenisKelamin', e.target.value)}
+            onChange={(value) => handleChange('jenisKelamin', value || '')}
             required
           />
 

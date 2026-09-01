@@ -352,8 +352,8 @@ function ListProgramPenghijauan({ search }: { search: string }) {
                       fz="sm"
                       fw={500}
                       lh={1.5}
-                      dangerouslySetInnerHTML={{ __html: item.judul }}
-                    />
+                      lineClamp={2}
+                    >{toPlainText(item.judul) || '-'}</Text>
                   </Box>
                   <Box>
                     <Text fz="sm" fw={600} lh={1.4}>

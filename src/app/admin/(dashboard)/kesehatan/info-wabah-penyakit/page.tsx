@@ -195,8 +195,8 @@ function ListInfoWabahPenyakit({ search }: { search: string }) {
                     fz="sm"
                     fw={500}
                     lh={1.45}
-                    dangerouslySetInnerHTML={{ __html: item.deskripsiSingkat }}
-                  />
+                    lineClamp={2}
+                  >{toPlainText(item.deskripsiSingkat) || '-'}</Text>
 
                   <Button
                     variant="light"

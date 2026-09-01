@@ -19,9 +19,10 @@ import {
   Title
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { TimeInput } from '@mantine/dates';
+import { IconArrowBack, IconClock, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
@@ -48,6 +49,15 @@ interface PuskesmasFormData extends PuskesmasFormBase {
   };
 }
 
+// Best-effort ubah nilai lama (mis. "08.00 - 14.00") ke format HH:MM untuk TimeInput.
+// Kalau tak ada pola jam, kembalikan '' (biar operator isi ulang) — kolom DB tetap String, tak berubah.
+const toTimeValue = (v?: string): string => {
+  if (!v) return '';
+  const m = String(v).match(/(\d{1,2})[.:](\d{2})/);
+  if (!m) return '';
+  return `${m[1].padStart(2, '0')}:${m[2]}`;
+};
+
 function EditPuskesmas() {
   const statePuskesmas = useProxy(puskesmasState);
   const router = useRouter();
@@ -56,6 +66,14 @@ function EditPuskesmas() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const refJamBuka = useRef<HTMLInputElement>(null);
+  const refJamTutup = useRef<HTMLInputElement>(null);
+
+  const picker = (ref: React.RefObject<HTMLInputElement | null>) => (
+    <ActionIcon variant="subtle" color="gray" onClick={() => ref.current?.showPicker()}>
+      <IconClock size={16} stroke={1.5} />
+    </ActionIcon>
+  );
   const [formData, setFormData] = useState<PuskesmasFormData>({
     name: '',
     alamat: '',
@@ -96,8 +114,8 @@ function EditPuskesmas() {
             name: form.name,
             alamat: form.alamat,
             jam: {
-              workDays: form.jam.workDays,
-              weekDays: form.jam.weekDays,
+              workDays: toTimeValue(form.jam.workDays),
+              weekDays: toTimeValue(form.jam.weekDays),
               holiday: form.jam.holiday,
             },
             kontak: {
@@ -112,8 +130,8 @@ function EditPuskesmas() {
             name: form.name,
             alamat: form.alamat,
             jam: {
-              workDays: form.jam.workDays,
-              weekDays: form.jam.weekDays,
+              workDays: toTimeValue(form.jam.workDays),
+              weekDays: toTimeValue(form.jam.weekDays),
               holiday: form.jam.holiday,
             },
             kontak: {
@@ -251,25 +269,27 @@ function EditPuskesmas() {
             required
           />
 
-          <TextInput
+          <TimeInput
             label="Jam Buka"
-            placeholder="Masukkan jam buka"
+            ref={refJamBuka}
+            rightSection={picker(refJamBuka)}
             value={formData.jam.workDays}
             onChange={(e) => handleNestedChange('jam', 'workDays', e.target.value)}
             required
           />
 
-          <TextInput
+          <TimeInput
             label="Jam Tutup"
-            placeholder="Masukkan jam tutup"
+            ref={refJamTutup}
+            rightSection={picker(refJamTutup)}
             value={formData.jam.weekDays}
             onChange={(e) => handleNestedChange('jam', 'weekDays', e.target.value)}
             required
           />
 
           <TextInput
-            label="Jam Libur"
-            placeholder="Masukkan jam libur"
+            label="Hari Libur"
+            placeholder="Masukkan hari libur (mis. Minggu & hari besar)"
             value={formData.jam.holiday}
             onChange={(e) => handleNestedChange('jam', 'holiday', e.target.value)}
             required

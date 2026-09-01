@@ -41,7 +41,7 @@ export function PendidikanNonFormalTextEditor({ onSubmit, onChange, showSubmit =
   return (
     <Stack >
       <RichTextEditor editor={editor}>
-        <RichTextEditor.Toolbar sticky stickyOffset={60}>
+        <RichTextEditor.Toolbar>
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Bold />
             <RichTextEditor.Italic />
