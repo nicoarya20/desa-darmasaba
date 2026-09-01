@@ -5,6 +5,8 @@ import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/pos
 import ringkasanKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/ringkasan-kesehatan/ringkasanKesehatan';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
+import { isJadwalEmpty } from '@/lib/jadwal-pelayanan';
+import JadwalPelayananInput from '@/components/admin/JadwalPelayananInput';
 import {
   ActionIcon,
   Box,
@@ -49,7 +51,7 @@ function EditPosyandu() {
       formData.name?.trim() !== '' &&
       formData.nomor?.trim() !== '' &&
       !isHtmlEmpty(formData.deskripsi) &&
-      !isHtmlEmpty(formData.jadwalPelayanan) &&
+      !isJadwalEmpty(formData.jadwalPelayanan) &&
       (file !== null || originalData.imageId !== '') // Either a new file is selected or an existing image exists
     );
   };
@@ -125,7 +127,7 @@ function EditPosyandu() {
       return;
     }
 
-    if (isHtmlEmpty(formData.jadwalPelayanan)) {
+    if (isJadwalEmpty(formData.jadwalPelayanan)) {
       toast.error('Jadwal pelayanan wajib diisi');
       return;
     }
@@ -318,10 +320,10 @@ function EditPosyandu() {
             <Text fw="bold" fz="sm" mb={6}>
               Jadwal Pelayanan
             </Text>
-            <EditEditor
+            <JadwalPelayananInput
               value={formData.jadwalPelayanan}
-              onChange={(htmlContent) =>
-                setFormData({ ...formData, jadwalPelayanan: htmlContent })
+              onChange={(jsonValue) =>
+                setFormData({ ...formData, jadwalPelayanan: jsonValue })
               }
             />
           </Box>

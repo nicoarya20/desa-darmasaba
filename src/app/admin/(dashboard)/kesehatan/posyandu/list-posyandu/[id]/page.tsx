@@ -3,6 +3,7 @@ import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirma
 import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
 import colors from '@/con/colors';
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import JadwalPelayananView from '@/components/JadwalPelayananView';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -108,12 +109,7 @@ function DetailPosyandu() {
 
               <Box>
                 <Text fz="lg" fw="bold">Jadwal Pelayanan</Text>
-                <Text
-                  fz="md"
-                  c="dimmed"
-                  dangerouslySetInnerHTML={{ __html: data.jadwalPelayanan || '-' }}
-                  style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                />
+                <JadwalPelayananView value={data.jadwalPelayanan} fz="md" emptyText="-" />
               </Box>
 
 

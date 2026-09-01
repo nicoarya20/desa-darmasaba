@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.189] - 2026-09-01
+### Changed
+- **Input "Jadwal Pelayanan" Posyandu (`/admin/kesehatan/posyandu/list-posyandu` create & edit) diganti dari rich text editor menjadi pemilih terstruktur**: admin kini memilih hari (Senin–Jumat / Sabtu–Minggu / Libur) dan jam buka–tutup lewat komponen `JadwalPelayananInput`, bisa menambah/menghapus beberapa baris jadwal. Data disimpan sebagai JSON string di kolom `jadwalPelayanan` yang sudah ada — **tanpa migrasi database**. Data lama berbentuk HTML tetap ditampilkan lewat jalur *legacy* (fallback) di halaman detail admin, kartu & detail publik sehingga tidak ada data yang hilang. Tampilan render dipusatkan di komponen `JadwalPelayananView` (multi-baris) dan helper `jadwalToText` (ringkas satu baris untuk kartu). Helper murni di `src/lib/jadwal-pelayanan.ts` disertai unit test (`__tests__/api/posyandu_jadwal_pelayanan.test.ts`, 26 test).
+
 ## [0.1.181] - 2026-08-31
 ### Fixed
 - **Tombol "Batal" pada Edit APBDes (`/admin/landing-page/apbdes/[id]/edit`) tidak mengembalikan daftar item**: `handleReset` hanya memulihkan field top-level (tahun/nama/deskripsi/dll) tetapi mempertahankan array `items` yang sedang diedit (`items: [...form.items] // keep existing items`). Akibatnya penambahan, penghapusan, atau perubahan baris item TIDAK ikut ter-reset saat admin klik Batal. Diperbaiki: item awal di-*snapshot* saat load, dan Batal kini memulihkan seluruh form termasuk `items` dari snapshot lewat helper murni `buildResetForm()` — item dipulihkan sebagai salinan independen sehingga editan berikutnya tak memutasi snapshot (dan sebaliknya). Tidak ada perubahan schema/database.
