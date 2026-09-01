@@ -91,20 +91,24 @@ function UmkmDashboard() {
         <Grid.Col span={12}>
           <Card withBorder radius="md" p="lg" shadow="sm">
             <Title order={4} mb="md">Grafik Penjualan per Produk</Title>
-            <Box style={{ height: 350 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={detail.map((item: any) => ({
-                  name: item.namaProduk,
-                  penjualan: item.penjualanBulanIni
-                }))}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip formatter={(value: any) => `Rp ${value.toLocaleString()}`} />
-                  <Legend />
-                  <Bar dataKey="penjualan" fill={colors['blue-button']} name="Penjualan" />
-                </BarChart>
-              </ResponsiveContainer>
+            {/* Scroll horizontal: tiap produk diberi lebar min ~140px agar label
+                sumbu-X tidak numpuk saat produk banyak — geser untuk lihat sisanya */}
+            <Box style={{ overflowX: 'auto' }}>
+              <Box style={{ height: 350, minWidth: Math.max(detail.length * 140, 600) }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={detail.map((item: any) => ({
+                    name: item.namaProduk,
+                    penjualan: item.penjualanBulanIni
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" interval={0} />
+                    <YAxis />
+                    <Tooltip formatter={(value: any) => `Rp ${value.toLocaleString()}`} />
+                    <Legend />
+                    <Bar dataKey="penjualan" fill={colors['blue-button']} name="Penjualan" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
             </Box>
           </Card>
         </Grid.Col>
