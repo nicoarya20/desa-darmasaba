@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Flex, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -62,25 +62,9 @@ function DetailAjukanIdeInofativDesa() {
       >
         <Stack gap="md">
           {/* Header */}
-          <Flex justify="space-between" align="center">
-            <Text fz="2xl" fw="bold" c={colors['blue-button']}>
-              Detail Ajukan Ide Inovatif Desa
-            </Text>
-
-            <Button
-              color="red"
-              onClick={() => {
-                setSelectedId(data.id);
-                setModalHapus(true);
-              }}
-              variant="light"
-              radius="md"
-              size="md"
-              disabled={state.delete.loading}
-            >
-              <IconTrash size={20} />
-            </Button>
-          </Flex>
+          <Text fz="2xl" fw="bold" c={colors['blue-button']}>
+            Detail Ajukan Ide Inovatif Desa
+          </Text>
 
           {/* Detail Data */}
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
@@ -114,6 +98,23 @@ function DetailAjukanIdeInofativDesa() {
                 <Text fz="lg" fw="bold">Benefit</Text>
                 <Text fz="md" c="dimmed">{data?.benefit || '-'}</Text>
               </Box>
+
+              {/* Tombol Hapus dipindah ke sini agar tidak mepet dengan judul di layar sempit (mis. iPhone X) */}
+              <Button
+                color="red"
+                onClick={() => {
+                  setSelectedId(data.id);
+                  setModalHapus(true);
+                }}
+                variant="light"
+                radius="md"
+                size="md"
+                mt="xs"
+                leftSection={<IconTrash size={20} />}
+                disabled={state.delete.loading}
+              >
+                Hapus
+              </Button>
             </Stack>
           </Paper>
         </Stack>

@@ -4,7 +4,7 @@ import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/
 import colors from '@/con/colors';
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -108,7 +108,7 @@ function DetailDataPerpustakaan() {
                   radius="md"
                   size="md"
                 >
-                  <IconX size={20} />
+                  <IconTrash size={20} />
                 </Button>
 
                 <Button
