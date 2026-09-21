@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.196] - 2026-09-21
+### Added
+- **Seed data untuk submenu Ekonomi > Kesejahteraan Masyarakat**: menambahkan 6 entri data program/kegiatan kesejahteraan masyarakat (BLT Dana Desa, verifikasi PKH, penyaluran BPNT/Kartu Sembako, bedah rumah RTLH, pendampingan PBI JKN-KIS, sosialisasi PIP) yang dikontekskan ke Desa Darmasaba, mengacu ke program bansos nasional yang benar-benar berjalan di level desa. Sebelumnya submenu ini (model `KesejahteraanMasyarakat`, fitur sudah ada di admin/API/public) tidak punya data seed sehingga tampil kosong di setup baru. Tidak ada perubahan schema/migration.
+
 ## [0.1.189] - 2026-09-01
 ### Changed
 - **Input "Jadwal Pelayanan" Posyandu (`/admin/kesehatan/posyandu/list-posyandu` create & edit) diganti dari rich text editor menjadi pemilih terstruktur**: admin kini memilih hari (Senin–Jumat / Sabtu–Minggu / Libur) dan jam buka–tutup lewat komponen `JadwalPelayananInput`, bisa menambah/menghapus beberapa baris jadwal. Data disimpan sebagai JSON string di kolom `jadwalPelayanan` yang sudah ada — **tanpa migrasi database**. Data lama berbentuk HTML tetap ditampilkan lewat jalur *legacy* (fallback) di halaman detail admin, kartu & detail publik sehingga tidak ada data yang hilang. Tampilan render dipusatkan di komponen `JadwalPelayananView` (multi-baris) dan helper `jadwalToText` (ringkas satu baris untuk kartu). Helper murni di `src/lib/jadwal-pelayanan.ts` disertai unit test (`__tests__/api/posyandu_jadwal_pelayanan.test.ts`, 26 test).
