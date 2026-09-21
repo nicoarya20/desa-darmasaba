@@ -45,39 +45,9 @@ const getTodayDate = (): string => {
   return `${year}-${month}-${day}`;
 };
 
-// Fungsi untuk memeriksa apakah tanggal tertentu adalah hari libur nasional
-// Daftar hari libur nasional Indonesia (bisa diperbarui sesuai tahun berjalan)
-const isNationalHoliday = (date: string): boolean => {
-  // Format tanggal harus dalam bentuk YYYY-MM-DD
-  const holidays = [
-    // Tahun 2026
-    '2026-01-01', // Tahun Baru Masehi
-    '2026-02-17', // Isra Mikraj Nabi Muhammad SAW
-    '2026-03-08', // Hari Raya Nyepi Tahun Baru Saka 1948
-    '2026-04-03', // Wafat Isa Almasih
-    '2026-05-01', // Hari Buruh Internasional
-    '2026-05-20', // Kenaikan Isa Almasih
-    '2026-06-01', // Hari Lahir Pancasila
-    '2026-06-05', // Hari Raya Idul Adha
-    '2026-08-17', // Hari Kemerdekaan RI
-    '2026-09-21', // Tahun Baru Islam 1448 H
-    '2026-10-02', // Maulid Nabi Muhammad SAW
-    '2026-12-25', // Hari Raya Natal
-
-    // Hari raya besar lainnya
-    '2026-04-06', // Hari Raya Idul Fitri
-    '2026-04-07', // Hari Raya Idul Fitri
-
-    // Hari libur pengganti
-    '2026-04-08', // Hari Libur Pengganti Idul Fitri
-  ];
-
-  return holidays.includes(date);
-};
-
-const isWorkingHours = (day: string, currentTime: string): boolean => {
+const isWorkingHours = (day: string, currentTime: string, isHoliday: boolean): boolean => {
   // Cek apakah hari ini hari libur nasional
-  if (isNationalHoliday(getTodayDate())) {
+  if (isHoliday) {
     return false;
   }
 
@@ -107,10 +77,14 @@ const isWorkingHours = (day: string, currentTime: string): boolean => {
   return compareTimes(currentTime, closeTime) && !compareTimes(currentTime, openTime);
 };
 
-const getWorkStatus = (day: string, currentTime: string): { status: string; message: string } => {
+const getWorkStatus = (
+  day: string,
+  currentTime: string,
+  holiday: { isHoliday: boolean; holidayName: string | null }
+): { status: string; message: string } => {
   // Cek apakah hari ini hari libur nasional
-  if (isNationalHoliday(getTodayDate())) {
-    return { status: "Tutup", message: "Hari Libur Nasional" };
+  if (holiday.isHoliday) {
+    return { status: "Tutup", message: holiday.holidayName ?? "Hari Libur Nasional" };
   }
 
   const workingDays = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
@@ -118,7 +92,7 @@ const getWorkStatus = (day: string, currentTime: string): { status: string; mess
     return { status: "Tutup", message: "Libur Akhir Pekan" };
   }
 
-  const isOpen = isWorkingHours(day, currentTime);
+  const isOpen = isWorkingHours(day, currentTime, holiday.isHoliday);
 
   let workHoursMessage = "";
   if (["Senin", "Selasa", "Rabu", "Kamis"].includes(day)) {
@@ -170,6 +144,11 @@ function LandingPage() {
   >(null);
   const [isLoadingSosmed, setIsLoadingSosmed] = useState(true);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [holiday, setHoliday] = useState<{ isHoliday: boolean; holidayName: string | null }>({
+    isHoliday: false,
+    holidayName: null,
+  });
+  const [isLoadingHoliday, setIsLoadingHoliday] = useState(true);
 
   useEffect(() => {
     const fetchSocialMedia = async () => {
@@ -204,8 +183,27 @@ function LandingPage() {
       }
     };
 
+    const fetchHoliday = async () => {
+      try {
+        const response = await fetch(`/api/landingpage/harilibur/cek?date=${getTodayDate()}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const result = await response.json();
+        setHoliday({
+          isHoliday: Boolean(result.isHoliday),
+          holidayName: result.holidayName ?? null,
+        });
+      } catch {
+        // Fail-open: kalau gagal ambil data hari libur, anggap bukan hari libur
+        // supaya widget jam operasional tetap jalan berdasarkan jam kerja normal.
+        setHoliday({ isHoliday: false, holidayName: null });
+      } finally {
+        setIsLoadingHoliday(false);
+      }
+    };
+
     fetchSocialMedia();
     fetchProfile();
+    fetchHoliday();
   }, []);
 
   const [workStatus, setWorkStatus] = useState<{ status: string; message: string }>({
@@ -214,16 +212,18 @@ function LandingPage() {
   });
 
   useEffect(() => {
+    if (isLoadingHoliday) return;
+
     const updateWorkStatus = () => {
       const day = getDayOfWeek();
       const time = getCurrentTime();
-      const status = getWorkStatus(day, time);
+      const status = getWorkStatus(day, time, holiday);
       setWorkStatus(status);
     };
     updateWorkStatus();
     const intervalId = setInterval(updateWorkStatus, 60 * 1000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [isLoadingHoliday, holiday]);
 
   return (
     <Stack bg={colors.Bg} p="md" gap="lg">
@@ -266,24 +266,33 @@ function LandingPage() {
                             </Flex>
 
                             <Paper p="sm" radius="md" bg="white">
-                              <Tooltip label="Status saat ini berdasarkan jam operasional kantor">
-                                <Badge
-                                  color={workStatus.status === "Buka" ? "green" : "red"}
-                                  radius="sm"
-                                  variant="filled"
-                                  size="md"
-                                >
-                                  {workStatus.status}
-                                </Badge>
-                              </Tooltip>
+                              {isLoadingHoliday ? (
+                                <Stack gap={4}>
+                                  <Skeleton height={20} width={60} radius="sm" />
+                                  <Skeleton height={22} width="80%" mt={4} />
+                                </Stack>
+                              ) : (
+                                <>
+                                  <Tooltip label="Status saat ini berdasarkan jam operasional kantor">
+                                    <Badge
+                                      color={workStatus.status === "Buka" ? "green" : "red"}
+                                      radius="sm"
+                                      variant="filled"
+                                      size="md"
+                                    >
+                                      {workStatus.status}
+                                    </Badge>
+                                  </Tooltip>
 
-                              <Text
-                                fw={700}
-                                fz={{ base: "md", md: "lg" }}
-                                mt={4}
-                              >
-                                {workStatus.message}
-                              </Text>
+                                  <Text
+                                    fw={700}
+                                    fz={{ base: "md", md: "lg" }}
+                                    mt={4}
+                                  >
+                                    {workStatus.message}
+                                  </Text>
+                                </>
+                              )}
                             </Paper>
                           </Stack>
                         </GridCol>
@@ -302,11 +311,15 @@ function LandingPage() {
                               <Text fz={{ base: "xs", md: "sm" }} c="dimmed">
                                 Status Kantor
                               </Text>
-                              <Text fw={700} fz={{ base: "md", md: "lg" }}>
-                                {workStatus.status === "Buka"
-                                  ? "Sedang Beroperasi"
-                                  : "Tidak Beroperasi"}
-                              </Text>
+                              {isLoadingHoliday ? (
+                                <Skeleton height={22} width="70%" mt={4} />
+                              ) : (
+                                <Text fw={700} fz={{ base: "md", md: "lg" }}>
+                                  {workStatus.status === "Buka"
+                                    ? "Sedang Beroperasi"
+                                    : "Tidak Beroperasi"}
+                                </Text>
+                              )}
                             </Paper>
                           </Stack>
                         </GridCol>
