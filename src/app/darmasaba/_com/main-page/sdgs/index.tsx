@@ -104,12 +104,15 @@ export default function SDGS() {
                         }}
                       >
                         <Image
-                          src={item.image?.link ? item.image.link : "/placeholder-sdgs.png"}
+                          src={item.image?.link || "/no-image.jpg"}
                           alt={item.name}
                           w={mobile ? 90 : 110}
                           h={mobile ? 90 : 110}
                           fit="contain"
                           loading="lazy"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src = "/no-image.jpg";
+                          }}
                         />
                       </Box>
                     </Center>
