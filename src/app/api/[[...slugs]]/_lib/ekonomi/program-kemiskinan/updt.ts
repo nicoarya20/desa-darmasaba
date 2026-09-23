@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
 type FormUpdate = {
@@ -64,6 +65,15 @@ export default async function programKemiskinanUpdate(context: Context) {
       status: 200,
     });
   } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `Data statistik untuk tahun ${body.statistik?.tahun ?? ""} sudah digunakan program lain.`,
+        }),
+        { status: 409 }
+      );
+    }
     console.error("Gagal update:", err);
     return new Response(JSON.stringify({ success: false, message: "Gagal update program" }), {
       status: 500,

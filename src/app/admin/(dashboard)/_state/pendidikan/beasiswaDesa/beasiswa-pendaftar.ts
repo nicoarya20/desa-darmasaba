@@ -10,7 +10,9 @@ const templateBeasiswaPendaftar = z.object({
   namaLengkap: z.string().min(1, "Nama harus diisi"),
   nis: z.string().min(1, "NIS harus diisi"),
   kelas: z.string().min(1, "Kelas harus diisi"),
-  jenisKelamin: z.string().min(1, "Jenis kelamin harus diisi"),
+  jenisKelamin: z.enum(["LAKI_LAKI", "PEREMPUAN"], {
+    errorMap: () => ({ message: "Jenis kelamin harus diisi" }),
+  }),
   alamatDomisili: z.string().min(1, "Alamat domisili harus diisi"),
   tempatLahir: z.string().min(1, "Tempat lahir harus diisi"),
   tanggalLahir: z.string().min(1, "Tanggal lahir harus diisi"),
@@ -56,7 +58,7 @@ const beasiswaPendaftar = proxy({
         beasiswaPendaftar.create.loading = true;
         const res = await ApiFetch.api.pendidikan.beasiswa.beasiswapendaftar[
           "create"
-        ].post(beasiswaPendaftar.create.form);
+        ].post(cek.data);
         if (res.status === 200) {
           beasiswaPendaftar.findMany.load();
           toast.success(

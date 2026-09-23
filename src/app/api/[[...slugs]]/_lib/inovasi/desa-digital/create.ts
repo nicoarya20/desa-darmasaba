@@ -12,7 +12,7 @@ type FormCreate = Prisma.DesaDigitalGetPayload<{
 export default async function desaDigitalCreate(context: Context){
     const body = context.body as FormCreate;
 
-    await prisma.desaDigital.create({
+    const result = await prisma.desaDigital.create({
         data: {
             name: body.name,
             deskripsi: body.deskripsi,
@@ -23,8 +23,6 @@ export default async function desaDigitalCreate(context: Context){
     return {
         success: true,
         message: "Sukses menambahkan desa digital",
-        data: {
-            ...body,
-        }
+        data: result,
     }
 }

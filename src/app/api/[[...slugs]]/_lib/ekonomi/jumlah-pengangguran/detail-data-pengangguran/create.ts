@@ -94,7 +94,11 @@ export default async function createDetailDataPengangguran(context: Context) {
       },
     });
 
-    return created;
+    return {
+      success: true,
+      message: "Sukses menambahkan data pengangguran",
+      data: created,
+    };
   } catch (error) {
     // Jaring pengaman kalau ada race di antara cek duplikat dan create (P2002 = unique violation)
     if (
