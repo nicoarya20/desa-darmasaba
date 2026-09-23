@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { toForeignKeyResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
 
 async function umkmCreate(context: Context) {
@@ -24,6 +25,11 @@ async function umkmCreate(context: Context) {
       data,
     };
   } catch (e) {
+    const fkError = toForeignKeyResponse(e);
+    if (fkError) {
+      context.set.status = 422;
+      return fkError;
+    }
     console.error("Error di umkmCreate:", e);
     return {
       success: false,

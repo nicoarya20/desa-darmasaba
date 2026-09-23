@@ -10,7 +10,7 @@ type FormCreateDataLingkunganDesa = {
 export default async function dataLingkunganDesaCreate(context: Context){
     const body = context.body as FormCreateDataLingkunganDesa;
 
-    await prisma.dataLingkunganDesa.create({
+    const result = await prisma.dataLingkunganDesa.create({
         data: {
             name: body.name,
             jumlah: body.jumlah,
@@ -22,8 +22,6 @@ export default async function dataLingkunganDesaCreate(context: Context){
     return {
         success: true,
         message: "Sukses menambahkan data lingkungan desa",
-        data: {
-            ...body,
-        }
+        data: result,
     }
 }

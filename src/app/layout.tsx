@@ -22,9 +22,13 @@ export const viewport: Viewport = {
 };
 
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL?.startsWith("http")
+    ? process.env.NEXT_PUBLIC_BASE_URL
+    : "https://desa-darmasaba-stg.wibudev.com";
+
 export const metadata: Metadata = {
-  // ✅ Tambahkan metadataBase
-  metadataBase: new URL("https://cld-dkr-staging-desa-darmasaba.wibudev.com"),
+  metadataBase: new URL(BASE_URL),
   
   title: {
     default: "Desa Darmasaba",
@@ -64,7 +68,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://cld-dkr-staging-desa-darmasaba.wibudev.com",
+    url: "/",
     siteName: "Desa Darmasaba",
     title: "Desa Darmasaba - Kabupaten Badung, Bali",
     description: "Website resmi Desa Darmasaba, Kabupaten Badung, Bali. Informasi layanan publik, berita, dan profil desa.",

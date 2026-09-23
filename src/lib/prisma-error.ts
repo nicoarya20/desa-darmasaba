@@ -98,3 +98,25 @@ export function handlePrismaError(
   }
   throw error;
 }
+
+export type ForeignKeyResponse = { success: false; message: string };
+
+/**
+ * Jika `error` adalah foreign-key violation Prisma (P2003), kembalikan response
+ * 422 yang jelas. Jika bukan, kembalikan null.
+ */
+export function toForeignKeyResponse(error: unknown): ForeignKeyResponse | null {
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2003"
+  ) {
+    const field = typeof error.meta?.field_name === "string"
+      ? error.meta.field_name.replace(/_fkey$/, "").replace(/Id$/, " ID")
+      : "referensi";
+    return {
+      success: false,
+      message: `Data ${field} tidak ditemukan atau sudah dihapus.`,
+    };
+  }
+  return null;
+}

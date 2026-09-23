@@ -18,6 +18,7 @@ import { seedAPBDesItem } from "./_seeder_list/ekonomi/seed_apbdes_item";
 import { seedDemografiPekerjaan } from "./_seeder_list/ekonomi/seed_demografi_pekerjaan";
 import { seedJumlahPendudukMiskin } from "./_seeder_list/ekonomi/seed_jumlah_penduduk_miskin";
 import { seedJumlahPengangguran } from "./_seeder_list/ekonomi/seed_jumlah_pengangguran";
+import { seedKesejahteraanMasyarakat } from "./_seeder_list/ekonomi/seed_kesejahteraan_masyarakat";
 import { seedLowonganKerjaLokal } from "./_seeder_list/ekonomi/seed_lowongan_kerja_lokal";
 import { seedKategoriProduk, seedPasarDesa } from "./_seeder_list/ekonomi/seed_pasar_desa";
 import { seedPendapatanAsli } from "./_seeder_list/ekonomi/seed_pendapatan_asli";
@@ -339,6 +340,9 @@ import seedAssets from "./seed_assets";
 
   // // ==================== SUBMENU DEMOGRAFI PEKERJAAN =============
   await seedDemografiPekerjaan();
+
+  // // ==================== SUBMENU KESEJAHTERAAN MASYARAKAT =========
+  await seedKesejahteraanMasyarakat();
 
   // // ====================== MENU INOVASI ==========================
   // // ====================== SUBMENU AJUKAN IDE INOVATIF ===========

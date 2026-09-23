@@ -11,7 +11,7 @@ type FormCreateProgramPenghijauan = {
 export default async function programPenghijauanCreate(context: Context){
     const body = context.body as FormCreateProgramPenghijauan;
 
-    await prisma.programPenghijauan.create({
+    const result = await prisma.programPenghijauan.create({
         data: {
             name: body.name,
             judul: body.judul,
@@ -22,9 +22,7 @@ export default async function programPenghijauanCreate(context: Context){
 
     return {
         success: true,
-        message: "Sukses menambahkan program kreatif",
-        data: {
-            ...body,
-        }
+        message: "Sukses menambahkan program penghijauan",
+        data: result,
     }
 }

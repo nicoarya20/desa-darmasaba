@@ -11,7 +11,7 @@ type FormCreateProgramKreatif = {
 export default async function programKreatifCreate(context: Context){
     const body = context.body as FormCreateProgramKreatif;
 
-    await prisma.programKreatif.create({
+    const result = await prisma.programKreatif.create({
         data: {
             name: body.name,
             slug: body.slug,
@@ -23,8 +23,6 @@ export default async function programKreatifCreate(context: Context){
     return {
         success: true,
         message: "Sukses menambahkan program kreatif",
-        data: {
-            ...body,
-        }
+        data: result,
     }
 }

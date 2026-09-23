@@ -16,7 +16,7 @@ const MigrasiPenduduk = new Elysia({
   .get("/find-many", migrasiPendudukFindMany)
   .post("/create", migrasiPendudukCreate, {
     body: t.Object({
-      jenis: t.String(),
+      jenis: t.Union([t.Literal("MASUK"), t.Literal("KELUAR")]),
       nama: t.String(),
       tanggal: t.String(),
       asalTujuan: t.String(),
@@ -28,7 +28,7 @@ const MigrasiPenduduk = new Elysia({
       id: t.String(),
     }),
     body: t.Object({
-      jenis: t.String(),
+      jenis: t.Union([t.Literal("MASUK"), t.Literal("KELUAR")]),
       nama: t.String(),
       tanggal: t.String(),
       asalTujuan: t.String(),

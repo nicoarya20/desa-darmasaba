@@ -15,7 +15,7 @@ type FormCreate = {
 async function musikCreate(context: Context) {
   const body = context.body as FormCreate;
 
-  await prisma.musikDesa.create({
+  const result = await prisma.musikDesa.create({
     data: {
       judul: body.judul,
       artis: body.artis,
@@ -31,6 +31,7 @@ async function musikCreate(context: Context) {
   return {
     success: true,
     message: "Sukses menambahkan musik",
+    data: result,
   };
 }
 
