@@ -60,7 +60,7 @@ export default function EditKontakDaruratKeamanan() {
       const id = params?.id;
       if (!id) {
         toast.error('ID tidak valid');
-        router.push('/admin/keamanan/kontak-darurat');
+        router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
         return;
       }
 
@@ -72,7 +72,7 @@ export default function EditKontakDaruratKeamanan() {
         const data = await kontakState.update.load(id);
         if (!data) {
           toast.error('Data tidak ditemukan');
-          router.push('/admin/keamanan/kontak-darurat');
+          router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
           return;
         }
 
@@ -83,7 +83,7 @@ export default function EditKontakDaruratKeamanan() {
       } catch (err) {
         console.error('Gagal memuat data:', err);
         toast.error('Gagal memuat data kontak darurat');
-        router.push('/admin/keamanan/kontak-darurat');
+        router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
       }
     };
 
