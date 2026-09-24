@@ -1,0 +1,26 @@
+# Database & Data Layer
+
+## Prisma Schema
+- Schema at `prisma/schema.prisma` (~2700 lines, 190 models)
+- Common model conventions: `@default(cuid())` IDs, `createdAt`/`updatedAt` timestamps, `isActive Boolean @default(true)` — widely used but **not universal** (some lookup-style models like `Layanan`, `Potensi` have none of these).
+- Soft delete via `deletedAt DateTime?` — **inconsistently implemented**. Most models use a nullable `deletedAt DateTime?` with no default (correct pattern, e.g. `FileStorage`, `Role`). A few models (`AppMenu`, `AppMenuChild`, `PejabatDesa`) declare `deletedAt @default(now())`, which defeats the purpose of soft-delete — treat these as known bugs, don't copy that pattern into new models.
+- Seeders per-module in `prisma/_seeder_list/`, orchestrated by `prisma/seed.ts`
+
+## Authentication Flow
+Auth was rewritten to **Better Auth with Google OAuth only** (no more phone OTP). Flow:
+1. User signs in with Google → Better Auth (`src/lib/auth.ts`) creates a session, stored in Postgres (`Session`, `Account`, `Verification`, `RateLimit` models — Better Auth's own schema, not custom).
+2. `src/middleware.ts` reads Better Auth's signed cookie cache directly (`getCookieCache`/`getSessionCookie` from `better-auth/cookies`) — it does **not** decode a custom JWT. This was a deliberate choice to avoid a hang bug from fetching `/api/auth/get-session` in-container.
+3. `src/lib/api-auth.ts` validates sessions in API routes via `auth.api.getSession()`.
+4. Access control (which admin paths are public/protected, role checks) lives in `src/lib/auth-policy.ts`, used by both `middleware.ts` and the Elysia `route.ts`.
+5. Old OTP routes (`/validasi`, `/waiting-room`) are dead and redirect to `/login`.
+
+**Legacy/dead models still in schema, not referenced by active code** — don't build new features on these:
+- `UserSession` — old JWT session tracking, superseded by Better Auth's `Session` model.
+- `KodeOtp` — old phone-OTP storage, zero references in `src/`.
+
+`src/lib/session.ts` (iron-session) is also dead code, unused by the current auth path.
+
+## File Handling
+All uploaded files reference the `FileStorage` Prisma model. **MinIO is the primary and only active storage backend** — see `src/lib/minio.ts` and usage in `src/app/api/[[...slugs]]/_lib/fileStorage/_lib/{create,del,findUniq}.ts` and `upl-img*.ts` (configured via `MINIO_ENDPOINT`/`MINIO_ACCESS_KEY`/`MINIO_SECRET_KEY`/`MINIO_BUCKET`/`MINIO_USE_SSL`).
+
+Seafile was the previous storage backend and has been fully migrated to MinIO (`prisma/migrate-seafile-to-minio.ts`). `WIBU_UPLOAD_DIR` (local disk) and Seafile (`src/lib/seafile-auth-service.ts`, `SEAFILE_*` env vars) are both leftovers — still declared in `.env.example` but not referenced by any active upload/read/delete path. Don't rely on either for new file-handling code; use MinIO.

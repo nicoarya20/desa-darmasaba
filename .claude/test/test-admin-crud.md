@@ -9,7 +9,7 @@
 
 ## 0. Cara Pakai Dokumen Ini
 
-Admin punya **~70 modul CRUD** yang polanya seragam (lihat `.claude/DESIGN.md` §9–10). Daripada tulis
+Admin punya **~70 modul CRUD** yang polanya seragam (lihat `docs/DESIGN.md` §9–10). Daripada tulis
 checklist detail 70x, dokumen ini punya:
 
 1. **Template CRUD generik** (section 1) — checklist yang dijalankan **per modul**.
@@ -28,11 +28,11 @@ text yang beda dari modul lain di domain yang sama.
 ## 1. Template CRUD Generik (jalankan per modul)
 
 ### Create
-- [ ] Form muncul sesuai pola (`.claude/DESIGN.md` §10), field sesuai domain
+- [ ] Form muncul sesuai pola (`docs/DESIGN.md` §10), field sesuai domain
 - [ ] Validasi required field — submit kosong menampilkan error, tidak nge-hit API
 - [ ] Validasi format (email, nomor telepon, angka, tanggal) sesuai field yang ada
 - [ ] Upload gambar (jika ada): preview muncul, bisa dihapus (tombol X), reject file >5MB, reject non-image
-- [ ] Rich text editor (jika ada, lihat `.claude/DESIGN.md` §17): format Bold/Italic/List/Link tersimpan
+- [ ] Rich text editor (jika ada, lihat `docs/DESIGN.md` §17): format Bold/Italic/List/Link tersimpan
       dengan benar setelah reload
 - [ ] Select/dropdown relasi (jika ada, mis. kategori) — data ke-load dan bisa dipilih
 - [ ] Tombol "Simpan" disabled saat form invalid / saat `isSubmitting`
@@ -50,7 +50,7 @@ text yang beda dari modul lain di domain yang sama.
 - [ ] Tabel desktop (`visibleFrom="md"`) dan kartu mobile (`hiddenFrom="md"`) sama-sama menampilkan data
       yang benar
 - [ ] Sorting (jika ada) berfungsi
-- [ ] Tab (jika modul punya tab, lihat `.claude/DESIGN.md` §11) — tiap tab load data yang benar & URL
+- [ ] Tab (jika modul punya tab, lihat `docs/DESIGN.md` §11) — tiap tab load data yang benar & URL
       berubah sesuai tab aktif
 
 ### Detail
@@ -72,7 +72,7 @@ text yang beda dari modul lain di domain yang sama.
 - [ ] Tombol "Batal" di modal membatalkan tanpa efek
 - [ ] Setelah hapus, data hilang dari List tanpa perlu refresh manual
 - [ ] Soft delete (`deletedAt`) — cek di Prisma Studio apakah row benar hilang secara soft delete, bukan
-      hard delete (sesuai `.claude/DATABASE.md`), dan data tidak lagi muncul di public site
+      hard delete (sesuai `docs/DATABASE.md`), dan data tidak lagi muncul di public site
 - [ ] Hapus data yang sedang dipakai relasi lain (mis. kategori yang masih punya item) — pastikan tidak
       menyebabkan orphan data atau crash di sisi lain
 
@@ -211,7 +211,7 @@ text yang beda dari modul lain di domain yang sama.
 ## 3. Auth Admin
 - [ ] Login admin (`auth/login-admin`) — kredensial salah menampilkan error yang jelas
 - [ ] Registrasi admin (`auth/registrasi-admin`) — validasi input, cek approval flow (kalau ada)
-- [ ] Validasi admin (`auth/validasi-admin`) — flow OTP/validasi email sesuai `.claude/DATABASE.md` §Auth
+- [ ] Validasi admin (`auth/validasi-admin`) — flow OTP/validasi email sesuai `docs/DATABASE.md` §Auth
 - [ ] Session persist setelah refresh halaman admin
 - [ ] Logout menghapus session (`UserSession`) dan redirect ke login
 - [ ] Akses halaman admin tanpa login → redirect ke login (cek `src/middleware.ts`)
@@ -219,15 +219,15 @@ text yang beda dari modul lain di domain yang sama.
 
 ## 4. Role-Based Access Control
 - [ ] Login dengan minimal 2 role berbeda (mis. super admin vs operator) — sidebar menu berbeda sesuai
-      `menuIds`/role (`.claude/DESIGN.md` §7 — `role1`, `role2`, `role3`)
+      `menuIds`/role (`docs/DESIGN.md` §7 — `role1`, `role2`, `role3`)
 - [ ] Akses langsung via URL ke modul yang **tidak** ada di menu role tsb — harus diblok (403/redirect),
       bukan cuma disembunyikan dari sidebar
 - [ ] Perubahan di "Menu Access" untuk suatu role langsung berefek ke user dengan role tsb (perlu re-login
       atau langsung update session — cek yang mana)
 
 ## 5. Upload & File Storage (cross-modul)
-- [ ] Upload gambar tersimpan dan bisa diakses (via local `uploads/`, MinIO, atau Seafile fallback sesuai
-      `.claude/DATABASE.md`)
+- [ ] Upload gambar tersimpan dan bisa diakses via MinIO (satu-satunya storage backend, lihat
+      `docs/DATABASE.md`)
 - [ ] Hapus data dengan gambar — cek apakah file storage-nya ikut terhapus atau orphan (informasi ini
       penting untuk housekeeping storage, tanyakan ke user kalau perilaku saat ini tidak jelas)
 - [ ] Reupload/replace gambar di form Edit tidak menyebabkan broken image sementara

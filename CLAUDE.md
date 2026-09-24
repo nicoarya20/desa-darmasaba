@@ -25,12 +25,19 @@ bunx prisma studio           # Interactive DB viewer
 bun eslint . --fix
 ```
 
-## Reference Docs
+## Stack Inti (cold-start — jangan asumsi lain tanpa cek dulu)
 
-- Architecture, request flow, domain modules, key files: @.claude/ARCHITECTURE.md
-- Database conventions, auth flow, file handling: @.claude/DATABASE.md
-- Env vars, Docker, CI/CD, releasing: @.claude/DEPLOYMENT.md
-- UI/UX design system, tokens, komponen, pola halaman: @.claude/DESIGN.md
+- **Auth**: Better Auth (`src/lib/auth.ts`), Google OAuth only, session di Postgres. **Bukan** iron-session/JWT manual — `src/lib/session.ts` itu dead code, jangan dipakai.
+- **State**: Valtio (`proxy`/`useSnapshot`) dipakai di ~semua domain. **Bukan** Zustand (tidak pernah ada di project) atau Jotai (di `package.json` tapi 0 usage).
+- **File storage**: MinIO (`src/lib/minio.ts`) adalah backend satu-satunya. Seafile sudah **digantikan MinIO** (lihat `prisma/migrate-seafile-to-minio.ts`) — `src/lib/seafile-auth-service.ts` dan `WIBU_UPLOAD_DIR` adalah sisa lama yang sudah tidak dipakai, jangan dipakai untuk fitur baru.
+- **Release**: bukan `git tag`, tapi bump versi `package.json` → commit ke `stg`/`prod` → trigger `publish.yml` → `re-pull.yml` (keduanya `workflow_dispatch` manual). Pakai tool MCP `deploy-stg` untuk stg.
+
+Detail lengkap tiap topik ada di `docs/` — baca sesuai kebutuhan task, jangan diasumsikan sudah termuat otomatis:
+
+- Architecture, request flow, domain modules, key files: `docs/ARCHITECTURE.md`
+- Database conventions, auth flow, file handling: `docs/DATABASE.md`
+- Env vars, Docker, CI/CD, releasing: `docs/DEPLOYMENT.md`
+- UI/UX design system, tokens, komponen, pola halaman: `docs/DESIGN.md`
 - AI collaboration contract, rules, and guidelines: @AI-CONTRACT.md
 
 ### Workflow for Code Changes
@@ -48,8 +55,9 @@ bun eslint . --fix
 12. **Merge ke Branch** - Merge ke branch target (biasanya `stg` untuk staging atau `prod` untuk production) ke 2 remote origin dan deploy
 
 ### GitHub Workflows
-1.  **publish.yml**: Uses branch `main`, stack env and image tag matching version from `package.json`.
-2.  **re-pull.yml**: **Wait for `publish.yml` to complete successfully before running.** Uses branch `main`, stack env and stack name `desa-darmasaba`.
+Both are manual `workflow_dispatch` triggers (not tied to branch `main`) — see `docs/DEPLOYMENT.md` for the full release flow. The `deploy-stg` MCP tool automates this end-to-end for stg deploys.
+1.  **publish.yml**: Input `stack_env` (also used as git ref to check out), `tag` (set to match `package.json` version), `stack_name`.
+2.  **re-pull.yml**: **Wait for `publish.yml` to complete successfully before running.** Input `stack_env`, `stack_name`.
 
 ### After Progress
 -   Always give option to continue to GitHub workflows or not
