@@ -11,7 +11,7 @@ const GrafikHasilKepuasanMasyarakat = new Elysia({
 })
   .get("/find-many", grafikHasilKepuasanMasyarakatFindMany)
   .get("/:id", async (context) => {
-    const response = await grafikHasilKepuasanMasyarakatFindById(new Request(context.request))
+    const response = await grafikHasilKepuasanMasyarakatFindById(context.request)
     return response
   })
   .put("/:id", grafikHasilKepuasanMasyarakatUpdate, {

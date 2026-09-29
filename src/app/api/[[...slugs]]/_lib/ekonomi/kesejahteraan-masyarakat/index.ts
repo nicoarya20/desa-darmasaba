@@ -14,7 +14,7 @@ const KesejahteraanMasyarakat = new Elysia({
   .get("/find-many", kesejahteraanFindMany)
   .get("/find-many-ui", kesejahteraanFindMany)
   .get("/:id", async (context) => {
-    const response = await findKesejahteraanById(new Request(context.request));
+    const response = await findKesejahteraanById(context.request);
     return response;
   })
   .post("/create", kesejahteraanCreate, {

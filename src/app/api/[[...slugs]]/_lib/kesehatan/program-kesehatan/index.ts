@@ -20,7 +20,7 @@ const ProgramKesehatan = new Elysia({
 .get("/find-many", programKesehatanFindMany)
 .delete("/del/:id", programKesehatanDelete)
 .get("/:id", async (context) => {
-    const response = await programKesehatanFindUnique(new Request(context.request));
+    const response = await programKesehatanFindUnique(context.request);
     return response;
 })
 .put(

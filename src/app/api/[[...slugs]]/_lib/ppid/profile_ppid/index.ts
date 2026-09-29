@@ -7,7 +7,7 @@ const ProfilePPID = new Elysia({
     tags: ["PPID/Profile PPID"]
 })
     .get("/:id", async (context) => {
-        const response = await profilePPIDFindById(new Request(context.request))
+        const response = await profilePPIDFindById(context.request)
         return response
     })
     .put("/:id", async (context) => {

@@ -36,7 +36,7 @@ const JadwalKegiatan = new Elysia({
   .delete("/del/:id", jadwalKegiatanDelete)
   .get("/:id", async (context) => {
     const response = await jadwalKegiatanFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

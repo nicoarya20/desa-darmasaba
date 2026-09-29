@@ -11,7 +11,7 @@ const Pembiayaan = new Elysia({
 })
   .get("/find-many", pembiayaanFindMany)
   .get("/:id", async (context) => {
-    const response = await pembiayaanFindUnique(new Request(context.request));
+    const response = await pembiayaanFindUnique(context.request);
     return response;
   })
   .post("/create", pembiayaanCreate, {

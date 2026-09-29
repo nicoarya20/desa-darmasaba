@@ -11,7 +11,7 @@ const PelayananSuratKeterangan = new Elysia({ prefix: "/pelayanansuratketerangan
 .get("/find-many", pelayananSuratKeteranganFindMany)
 .get("/findManyAll", pelayananSuratKeteranganFindManyAll)
 .get("/:id", async (context) => {
-    const response = await pelayananSuratKeteranganFindUnique(new Request(context.request));
+    const response = await pelayananSuratKeteranganFindUnique(context.request);
     return response;
 })
 .post("/create", pelayananSuratKeteranganCreate, {

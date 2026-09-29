@@ -11,7 +11,7 @@ const GalleryVideo = new Elysia({
 })
   .get("/find-many", galleryVideoFindMany)
   .get("/:id", async (context) => {
-    const response = await galleryVideoFindUnique(new Request(context.request));
+    const response = await galleryVideoFindUnique(context.request);
     return response;
   })
   .post("/create", galleryVideoCreate, {

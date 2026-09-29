@@ -8,7 +8,7 @@ import grafikMenganggurBerdasarkanPendidikanUpdate from "./updt";
 const GrafikMenganggurBerdasarkanPendidikan = new Elysia({prefix: "grafikmenganggurberdasarkanpendidikan", tags: ["Ekonomi/Usia Kerja Yang Menganggur/Pengangguran Berdasarkan Pendidikan"]})
 .get("/find-many", grafikMenganggurBerdasarkanPendidikanFindMany)
 .get("/:id", async (context) => {
-    const response = await grafikMenganggurBerdasarkanPendidikanFindUnique(new Request(context.request))
+    const response = await grafikMenganggurBerdasarkanPendidikanFindUnique(context.request)
     return response
   })
 .put("/:id", grafikMenganggurBerdasarkanPendidikanUpdate, {

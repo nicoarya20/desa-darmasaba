@@ -29,7 +29,7 @@ const BeasiswaPendaftar = new Elysia({
   .get("/findMany", beasiswaPendaftarFindMany)
   .get("/:id", async (context) => {
     const response = await beasiswaPendaftarFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

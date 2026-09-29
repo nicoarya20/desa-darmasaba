@@ -20,7 +20,7 @@ const KontakDarurat = new Elysia({
 .get("/find-many", kontakDaruratFindMany)
 .delete("/del/:id", kontakDaruratDelete)
 .get("/:id", async (context) => {
-    const response = await kontakDaruratFindUnique(new Request(context.request));
+    const response = await kontakDaruratFindUnique(context.request);
     return response;
 })
 .put(

@@ -7,7 +7,7 @@ const VisiMisiDesa = new Elysia({
   tags: ["Desa/Profile"],
 })
   .get("/:id", async (context) => {
-    const response = await visiMisiDesaFindById(new Request(context.request));
+    const response = await visiMisiDesaFindById(context.request);
     return response;
   })
   .put(

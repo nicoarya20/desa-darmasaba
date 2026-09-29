@@ -8,7 +8,7 @@ import pelayananTelunjukSaktiDesaFindMany from "./find-many";
 const pelayananTelunjukSaktiDesa = new Elysia({ prefix: "/pelayanantelunjuksaktidesa", tags: ["Desa/Layanan/Pelayanan Telunjuk Sakti Desa"] })
 .get("/find-many", pelayananTelunjukSaktiDesaFindMany)
 .get("/:id", async (context) => {
-    const response = await pelayananTelunjukSaktiDesaFindUnique(new Request(context.request));
+    const response = await pelayananTelunjukSaktiDesaFindUnique(context.request);
     return response;
 })
 .put("/:id", async (context) => {

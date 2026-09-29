@@ -19,7 +19,7 @@ const Role = new Elysia({
   .get("/findMany", roleFindMany)
   .get("/:id", async (context) => {
     const response = await roleFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

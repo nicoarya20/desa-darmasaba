@@ -30,7 +30,7 @@ const Puskesmas = new Elysia({
 .get("/find-many", puskesmasFindMany)
 .delete("/del/:id", puskesmasDelete)
 .get("/:id", async (context) => {
-    const response = await findUniquePuskesmas(new Request(context.request));
+    const response = await findUniquePuskesmas(context.request);
     return response;
   })
   .put(

@@ -19,7 +19,7 @@ const JenisKelaminResponden = new Elysia({
   .get("/findMany", jenisKelaminRespondenFindMany)
   .get("/:id", async (context) => {
     const response = await jenisKelaminRespondenFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

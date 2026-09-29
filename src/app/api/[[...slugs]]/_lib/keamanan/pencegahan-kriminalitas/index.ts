@@ -21,7 +21,7 @@ const PencegahanKriminalitas = new Elysia({
   .get("/find-many", pencegahanKriminalitasFindMany)
   .get("/:id", async (context) => {
     const response = await pencegahanKriminalitasFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

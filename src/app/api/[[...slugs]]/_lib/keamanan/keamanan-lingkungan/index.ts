@@ -9,7 +9,7 @@ import keamananLingkunganFindMany from "./findMany";
 const KeamananLingkungan = new Elysia({ prefix: "/keamananlingkungan", tags: ["Keamanan/Keamanan Lingkungan"] })
 .get("/find-many", keamananLingkunganFindMany)
 .get("/:id", async (context) => {
-    const response = await keamananLingkunganFindUnique(new Request(context.request));
+    const response = await keamananLingkunganFindUnique(context.request);
     return response;
 })
 .post("/create", keamananLingkunganCreate, {

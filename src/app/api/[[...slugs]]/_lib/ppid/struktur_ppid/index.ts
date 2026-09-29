@@ -9,7 +9,7 @@ const StrukturPPID = new Elysia({
     tags: ["PPID/Struktur PPID"]
 })
 .get("/:id", async (context) => {
-    const response = await strukturPPIDFindById(new Request(context.request))
+    const response = await strukturPPIDFindById(context.request)
     return response
 })
 .use(Pegawai)

@@ -20,7 +20,7 @@ const InfoWabahPenyakit = new Elysia({
 .get("/find-many", infoWabahPenyakitFindMany)
 .delete("/del/:id", infoWabahPenyakitDelete)
 .get("/:id", async (context) => {
-    const response = await infoWabahPenyakitFindUnique(new Request(context.request));
+    const response = await infoWabahPenyakitFindUnique(context.request);
     return response;
 })
 .put("/:id", async (context) => {

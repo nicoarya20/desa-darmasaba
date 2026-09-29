@@ -22,7 +22,7 @@ const Posyandu = new Elysia({
 .get("/find-many", posyanduFindMany)
 .delete("/del/:id", posyanduDelete)
 .get("/:id", async (context) => {
-    const response = await findPosyanduById(new Request(context.request));
+    const response = await findPosyanduById(context.request);
     return response;
 })
 .put(

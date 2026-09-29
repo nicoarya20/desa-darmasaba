@@ -22,7 +22,7 @@ const PotensiDesa = new Elysia({
     .delete("/del/:id", potensiDesaDelete)
     .get("/find-many", potensiDesaFindMany)
     .get("/:id", async (context) => {
-          const response = await findUnique(new Request(context.request));
+          const response = await findUnique(context.request);
           return response;
         })
     .put(

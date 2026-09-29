@@ -12,7 +12,7 @@ const DataPendidikan = new Elysia({
   .get("/findMany", dataPendidikanFindMany)
   .get("/:id", async (context) => {
     const response = await dataPendidikanFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })
