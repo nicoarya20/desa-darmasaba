@@ -74,13 +74,11 @@ function CreateProgramKemiskinan() {
         if (programState.findUnique.data) {
           setLineChart([programState.findUnique.data]);
         }
-        toast.success('Program berhasil ditambahkan');
-      } else {
-        toast.error('Gagal menambahkan program, coba lagi');
+        resetForm();
+        router.push('/admin/ekonomi/program-kemiskinan');
       }
-
-      resetForm();
-      router.push('/admin/ekonomi/program-kemiskinan');
+      // Gagal: pesan error sudah ditampilkan oleh programState.create.create(),
+      // form & navigasi sengaja tidak direset supaya user bisa perbaiki input.
     } catch (error) {
       console.error('Gagal menyimpan data:', error);
       toast.error('Terjadi kesalahan saat menyimpan data');

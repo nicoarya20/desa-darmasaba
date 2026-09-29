@@ -35,7 +35,8 @@ const programKemiskinanState = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return null;
       }
 
       try {
@@ -43,15 +44,19 @@ const programKemiskinanState = proxy({
         const res = await ApiFetch.api.ekonomi.programkemiskinan["create"].post(
           programKemiskinanState.create.form
         );
-        if (res.status === 200) {
+        if (res.status === 200 && (res.data as any)?.data?.id) {
+          const id = (res.data as any).data.id;
           programKemiskinanState.findMany.load();
-          return toast.success("Sukses menambahkan");
+          toast.success("Sukses menambahkan");
+          return id;
         }
-        console.log(res);
-        return toast.error("failed create");
+        const serverMessage = (res.data as any)?.message ?? (res.error?.value as any)?.message;
+        toast.error(serverMessage || "Gagal menambahkan program kemiskinan");
+        return null;
       } catch (error) {
         console.log(error);
-        return toast.error("failed create");
+        toast.error("Gagal menambahkan program kemiskinan");
+        return null;
       } finally {
         programKemiskinanState.create.loading = false;
       }
