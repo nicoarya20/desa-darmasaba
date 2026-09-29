@@ -134,7 +134,7 @@ export default function EditKontakDaruratKeamanan() {
       const success = await kontakState.update.update();
       if (success) {
         toast.success('Kontak Darurat berhasil diperbarui!');
-        router.push('/admin/keamanan/kontak-darurat');
+        router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
       }
     } catch (error) {
       console.error('Error saat menyimpan:', error);
