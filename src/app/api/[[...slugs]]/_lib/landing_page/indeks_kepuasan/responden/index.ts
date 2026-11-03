@@ -9,7 +9,7 @@ import respondenDelete from "./del";
 const Responden = new Elysia({ prefix: "/responden", tags: ["Desa/Responden"] })
   .get("/findMany", respondenFindMany)
   .get("/:id", async (context) => {
-    const response = await respondenFindUnique(new Request(context.request));
+    const response = await respondenFindUnique(context.request);
     return response;
   })
   .post("/create", respondenCreate, {

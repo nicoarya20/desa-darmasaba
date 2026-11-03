@@ -129,9 +129,16 @@ const userState = proxy({
   deleteUser: {
     loading: false,
   
-    async delete(id: string) {
-      if (!id) return toast.warn("ID tidak valid");
-  
+    // Mengembalikan boolean sukses. Sengaja TIDAK me-reload list di sini:
+    // caller (list admin) yang me-reload dengan filter benar (roleGroup="admin",
+    // halaman & search saat ini). Reload internal tanpa argumen dulu membuang
+    // filter itu sehingga daftar admin tercampur warga & pindah ke page 1.
+    async delete(id: string): Promise<boolean> {
+      if (!id) {
+        toast.warn("ID tidak valid");
+        return false;
+      }
+
       try {
         userState.deleteUser.loading = true;
 
@@ -142,13 +149,15 @@ const userState = proxy({
 
         if (res.data?.success) {
           toast.success(res.data.message || "User berhasil dihapus permanen");
-          await userState.findMany.load(); // refresh list user setelah delete
-        } else {
-          toast.error(res.data?.message || "Gagal menghapus user");
+          return true;
         }
+
+        toast.error(res.data?.message || "Gagal menghapus user");
+        return false;
       } catch (error) {
         console.error("Gagal delete user:", error);
         toast.error("Terjadi kesalahan saat menghapus user");
+        return false;
       } finally {
         userState.deleteUser.loading = false;
       }

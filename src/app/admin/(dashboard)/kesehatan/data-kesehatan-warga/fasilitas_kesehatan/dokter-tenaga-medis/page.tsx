@@ -10,6 +10,32 @@ import HeaderSearch from '@/app/admin/(dashboard)/_com/header';
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
 import { useState } from 'react';
 
+/**
+ * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
+ * clamp gagal kalau isinya mengandung tag blok (<p>, <div>, <ul>, <h1-6>)
+ * -- teks tampil penuh dan overlap dengan elemen di bawahnya, tapi hanya
+ * di Safari (mis. iPhone X). Jadwal rich-text sering berisi tag blok,
+ * jadi harus diratakan jadi plain text dulu sebelum di-clamp.
+ *
+ * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR. Pola sama
+ * dengan fix di src/app/admin/(dashboard)/landing-page/profil/program-inovasi/page.tsx
+ */
+function toPlainText(html?: string | null) {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function DokterTenagaMedis() {
   const [search, setSearch] = useState("");
   const router = useRouter();
@@ -108,7 +134,7 @@ function ListDokterTenagaMedis({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
-                      <Text fz="md" fw={500} lh={1.5} dangerouslySetInnerHTML={{ __html: item.jadwal || '-' }} />
+                      <Text fz="md" fw={500} lh={1.5} lineClamp={1}>{toPlainText(item.jadwal) || '-'}</Text>
                     </TableTd>
                     <TableTd>
                       <Button
@@ -156,7 +182,7 @@ function ListDokterTenagaMedis({ search }: { search: string }) {
                 </Box>
                 <Box mb="md">
                   <Text fz="sm" fw={600} lh={1.4}>Jadwal</Text>
-                  <Text fz="sm" fw={500} lh={1.5} dangerouslySetInnerHTML={{ __html: item.jadwal || '-' }} />
+                  <Text fz="sm" fw={500} lh={1.5} lineClamp={2}>{toPlainText(item.jadwal) || '-'}</Text>
                 </Box>
                 <Button
                   fullWidth

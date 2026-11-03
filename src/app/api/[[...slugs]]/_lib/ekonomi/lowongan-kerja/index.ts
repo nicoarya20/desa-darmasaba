@@ -20,7 +20,7 @@ const LowonganKerja = new Elysia({prefix: "/lowongankerja", tags: ["Ekonomi/Lowo
 })
 .get("/find-many", lowonganKerjaFindMany)
 .get("/:id", async (context) => {
-    const response = await lowonganKerjaFindUnique(new Request(context.request));
+    const response = await lowonganKerjaFindUnique(context.request);
     return response;
 })
 .delete("/del/:id", lowonganKerjaDelete)

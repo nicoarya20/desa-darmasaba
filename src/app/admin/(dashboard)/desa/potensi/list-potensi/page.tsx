@@ -27,7 +27,6 @@ import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import potensiDesaState from '../../../_state/desa/potensi';
 import { useDebouncedValue } from '@mantine/hooks';
-import DOMPurify from 'dompurify';
 
 /**
  * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
@@ -224,14 +223,9 @@ function ListPotensi({ search }: { search: string }) {
                     <Text
                       fz="sm"
                       lh={1.5}
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(item.deskripsi, {
-                          ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li'],
-                          ALLOWED_ATTR: []
-                        })
-                      }}
+                      lineClamp={2}
                       style={{ wordBreak: 'break-word' }}
-                    />
+                    >{toPlainText(item.deskripsi) || '-'}</Text>
                   </Box>
                   <Button
                     size="xs"

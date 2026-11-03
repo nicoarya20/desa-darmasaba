@@ -13,7 +13,7 @@ const APBDesa = new Elysia({
   .get("/find-many", apbDesaFindMany)
   .get("/find-first", apbDesaFindFirst)
   .get("/:id", async (context) => {
-    const response = await apbDesaFindUnique(new Request(context.request));
+    const response = await apbDesaFindUnique(context.request);
     return response;
   })
   .post("/create", apbDesaCreate, {

@@ -4,7 +4,7 @@ import pelayananPerizinanBerusahaUpdate from "./updt";
 
 const PelayananPerizinanBerusaha = new Elysia({ prefix: "/pelayananperizinanberusaha", tags: ["Desa/Layanan/Pelayanan Perizinan Berusaha"] })
 .get("/:id", async (context) => {
-    const response = await pelayananPerizinanBerusahaFindUnique(new Request(context.request));
+    const response = await pelayananPerizinanBerusahaFindUnique(context.request);
     return response;
 })
 .put("/:id", async (context) => {

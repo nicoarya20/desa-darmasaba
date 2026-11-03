@@ -9,7 +9,7 @@ import galleryFotoFindRecent from "./findRecent";
 const GalleryFoto = new Elysia({ prefix: "/gallery/foto", tags: ["Desa/Gallery/Foto"] })
     .get("/find-many", galleryFotoFindMany)
     .get("/:id", async (context) => {
-        const response = await galleryFotoFindUnique(new Request(context.request));
+        const response = await galleryFotoFindUnique(context.request);
         return response;
     })
     .post("/create", galleryFotoCreate, {

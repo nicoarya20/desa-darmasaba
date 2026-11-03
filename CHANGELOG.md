@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.196] - 2026-09-21
+### Added
+- **Seed data untuk submenu Ekonomi > Kesejahteraan Masyarakat**: menambahkan 6 entri data program/kegiatan kesejahteraan masyarakat (BLT Dana Desa, verifikasi PKH, penyaluran BPNT/Kartu Sembako, bedah rumah RTLH, pendampingan PBI JKN-KIS, sosialisasi PIP) yang dikontekskan ke Desa Darmasaba, mengacu ke program bansos nasional yang benar-benar berjalan di level desa. Sebelumnya submenu ini (model `KesejahteraanMasyarakat`, fitur sudah ada di admin/API/public) tidak punya data seed sehingga tampil kosong di setup baru. Tidak ada perubahan schema/migration.
+
+## [0.1.189] - 2026-09-01
+### Changed
+- **Input "Jadwal Pelayanan" Posyandu (`/admin/kesehatan/posyandu/list-posyandu` create & edit) diganti dari rich text editor menjadi pemilih terstruktur**: admin kini memilih hari (Senin–Jumat / Sabtu–Minggu / Libur) dan jam buka–tutup lewat komponen `JadwalPelayananInput`, bisa menambah/menghapus beberapa baris jadwal. Data disimpan sebagai JSON string di kolom `jadwalPelayanan` yang sudah ada — **tanpa migrasi database**. Data lama berbentuk HTML tetap ditampilkan lewat jalur *legacy* (fallback) di halaman detail admin, kartu & detail publik sehingga tidak ada data yang hilang. Tampilan render dipusatkan di komponen `JadwalPelayananView` (multi-baris) dan helper `jadwalToText` (ringkas satu baris untuk kartu). Helper murni di `src/lib/jadwal-pelayanan.ts` disertai unit test (`__tests__/api/posyandu_jadwal_pelayanan.test.ts`, 26 test).
+
+## [0.1.181] - 2026-08-31
+### Fixed
+- **Tombol "Batal" pada Edit APBDes (`/admin/landing-page/apbdes/[id]/edit`) tidak mengembalikan daftar item**: `handleReset` hanya memulihkan field top-level (tahun/nama/deskripsi/dll) tetapi mempertahankan array `items` yang sedang diedit (`items: [...form.items] // keep existing items`). Akibatnya penambahan, penghapusan, atau perubahan baris item TIDAK ikut ter-reset saat admin klik Batal. Diperbaiki: item awal di-*snapshot* saat load, dan Batal kini memulihkan seluruh form termasuk `items` dari snapshot lewat helper murni `buildResetForm()` — item dipulihkan sebagai salinan independen sehingga editan berikutnya tak memutasi snapshot (dan sebaliknya). Tidak ada perubahan schema/database.
+
+## [0.1.180] - 2026-08-31
+### Fixed
+- **Riwayat realisasi APBDes hilang permanen saat Edit (`/admin/landing-page/apbdes/[id]/edit`)**: handler update (`updt.ts`) memakai pola *delete-all-then-recreate* — semua `APBDesItem` dihapus lalu dibuat ulang, dan realisasi yang di-preserve dicocokkan lewat string `kode` yang mutable, tanpa transaksi. Dua skenario kehilangan data: (a) admin mengubah kode item (mis. `4.1` → `4.1a`) memutus link ke realisasi; (b) admin menghapus baris item memicu cascade delete yang menghapus fisik `RealisasiItem`. Diperbaiki tanpa menyentuh schema database: item dicocokkan lewat `id` yang STABIL (bukan kode), di-*update in-place* sehingga link realisasi tak pernah putus walau kode berubah; item yang dihapus admin di-*soft-delete* (`isActive=false`) sehingga cascade tak pernah kebakar dan riwayat tetap tersimpan; seluruh mutasi item + header dibungkus satu `$transaction` agar atomik. Field baru `id` (opsional) ditambahkan ke body request update dan dialirkan dari frontend (state + halaman edit) — backward-compatible: klien lama tanpa `id` tetap jalan via fallback pencocokan by kode.
+
 ## [0.1.174] - 2026-08-28
 ### Fixed
 - **Hapus SDGs Desa (`/admin/landing-page/SDGs/[id]`) menyembunyikan kegagalan**: `handleHapus` memanggil delete tanpa `await` lalu langsung `router.push` ke halaman List, dan `<ModalKonfirmasiHapus>` tidak diberi prop `loading`. Akibatnya admin ter-redirect ke List sebelum request DELETE selesai — bila gagal (network/server error), `toast.error` tetap muncul tapi di halaman lain sehingga mudah tidak disadari. Diperbaiki: `sdgsDesa.delete.byId` kini mengembalikan `boolean` (sukses/gagal), `handleHapus` jadi `async` + `await` dan hanya redirect saat sukses, serta modal diberi `loading={sdgsState.delete.loading}` agar tombol "Yakin Hapus" menampilkan state proses. Tidak ada perubahan schema/database.

@@ -7,7 +7,7 @@ import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from
 import { YearPickerInput } from '@mantine/dates';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
@@ -41,19 +41,6 @@ function CreateProgramKreatifDesa() {
       kolaborator: "",
     };
   };
-
-  // Generate slug dari name
-  useEffect(() => {
-    const { name } = stateCreate.create.form;
-    if (name) {
-      const slug = name
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-');
-      stateCreate.create.form.slug = slug;
-    }
-  }, [stateCreate.create.form.name]);
 
   const handleSubmit = async () => {
     try {

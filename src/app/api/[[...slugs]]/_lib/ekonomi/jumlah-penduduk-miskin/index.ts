@@ -12,7 +12,7 @@ const JumlahPendudukMiskin = new Elysia({
   .get("/find-many", grafikJumlahPendudukMiskinFindMany)
   .get("/:id", async (context) => {
     const response = await grafikJumlahPendudukMiskinFindById(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

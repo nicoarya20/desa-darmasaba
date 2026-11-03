@@ -15,7 +15,7 @@ const BeasiswaPendaftar = new Elysia({
       namaLengkap: t.String(),
       nis: t.String(),
       kelas: t.String(),
-      jenisKelamin: t.String(),
+      jenisKelamin: t.Union([t.Literal("LAKI_LAKI"), t.Literal("PEREMPUAN")]),
       alamatDomisili: t.String(),
       tempatLahir: t.String(),
       tanggalLahir: t.String(),
@@ -29,7 +29,7 @@ const BeasiswaPendaftar = new Elysia({
   .get("/findMany", beasiswaPendaftarFindMany)
   .get("/:id", async (context) => {
     const response = await beasiswaPendaftarFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })
@@ -44,7 +44,7 @@ const BeasiswaPendaftar = new Elysia({
         namaLengkap: t.String(),
         nis: t.String(),
         kelas: t.String(),
-        jenisKelamin: t.String(),
+        jenisKelamin: t.Union([t.Literal("LAKI_LAKI"), t.Literal("PEREMPUAN")]),
         alamatDomisili: t.String(),
         tempatLahir: t.String(),
         tanggalLahir: t.String(),

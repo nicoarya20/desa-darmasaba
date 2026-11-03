@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import SelectIconProgramEdit from '@/app/admin/(dashboard)/_com/selectIconEdit';
 import kontakDarurat from '@/app/admin/(dashboard)/_state/keamanan/kontak-darurat-keamanan';
 import colors from '@/con/colors';
@@ -22,12 +21,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-
-type FormData = {
-  name: string;
-  icon: IconKey | '';
-  kategoriId: string[];
-};
+import {
+  mapKontakToForm,
+  type KontakDaruratFormData as FormData,
+} from './_lib/mapKontakToForm';
 
 export default function EditKontakDaruratKeamanan() {
   const router = useRouter();
@@ -63,7 +60,7 @@ export default function EditKontakDaruratKeamanan() {
       const id = params?.id;
       if (!id) {
         toast.error('ID tidak valid');
-        router.push('/admin/keamanan/kontak-darurat');
+        router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
         return;
       }
 
@@ -75,22 +72,18 @@ export default function EditKontakDaruratKeamanan() {
         const data = await kontakState.update.load(id);
         if (!data) {
           toast.error('Data tidak ditemukan');
-          router.push('/admin/keamanan/kontak-darurat');
+          router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
           return;
         }
 
-        const initial: FormData = {
-          name: data.nama || '',
-          icon: (data.icon as IconKey) || '',
-          kategoriId: Array.isArray(data.kategoriId) ? data.kategoriId : [],
-        };
+        const initial = mapKontakToForm(data);
 
         setFormData(initial);
         setOriginalData(initial);
       } catch (err) {
         console.error('Gagal memuat data:', err);
         toast.error('Gagal memuat data kontak darurat');
-        router.push('/admin/keamanan/kontak-darurat');
+        router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
       }
     };
 
@@ -141,7 +134,7 @@ export default function EditKontakDaruratKeamanan() {
       const success = await kontakState.update.update();
       if (success) {
         toast.success('Kontak Darurat berhasil diperbarui!');
-        router.push('/admin/keamanan/kontak-darurat');
+        router.push('/admin/keamanan/kontak-darurat/kontak-darurat-keamanan');
       }
     } catch (error) {
       console.error('Error saat menyimpan:', error);

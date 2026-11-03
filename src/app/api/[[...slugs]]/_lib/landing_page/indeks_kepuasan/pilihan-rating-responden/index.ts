@@ -19,7 +19,7 @@ const PilihanRatingResponden = new Elysia({
   .get("/findMany", pilihanRatingRespondenFindMany)
   .get("/:id", async (context) => {
     const response = await pilihanRatingRespondenFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

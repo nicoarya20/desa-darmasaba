@@ -20,7 +20,7 @@ const LayananPolsek = new Elysia({
   .get("/findManyAll", layananPolsekFindManyAll)
   .get("/:id", async (context) => {
     const response = await layananPolsekFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

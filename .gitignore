@@ -68,6 +68,8 @@ ai.sh
 # AI tooling configs lain (personal, per-dev)
 /.qwen
 /.gemini
+/.agents
+skills-lock.json
 
 # internal notes (tak perlu di repo)
 /QC

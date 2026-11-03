@@ -1,7 +1,7 @@
 'use client'
 import { Box, Button, Flex, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconEdit, IconX } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -146,7 +146,7 @@ function DetailKegiatanDesa() {
                   radius="md"
                   size="md"
                 >
-                  <IconX size={20} />
+                  <IconTrash size={20} />
                 </Button>
 
                 <Button

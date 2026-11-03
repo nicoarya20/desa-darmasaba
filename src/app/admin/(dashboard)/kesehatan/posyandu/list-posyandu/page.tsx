@@ -221,8 +221,8 @@ function ListPosyandu({ search }: { search: string }) {
                         fz="sm"
                         fw={500}
                         lh={1.5}
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi }}
-                      />
+                        lineClamp={2}
+                      >{toPlainText(item.deskripsi) || '-'}</Text>
                     </Box>
                     <Button
                       size="xs"

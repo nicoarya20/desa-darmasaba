@@ -12,7 +12,7 @@ const MenuTipsKeamanan = new Elysia({
   .get("/find-many", menuTipsKeamananFindMany)
   .get("/:id", async (context) => {
     const response = await menuTipsKeamananFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

@@ -19,6 +19,14 @@ function ProfilePerbekel() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [originalData, setOriginalData] = useState({
+    biodata: "",
+    pengalaman: "",
+    pengalamanOrganisasi: "",
+    programUnggulan: "",
+    imageId: "",
+    imageUrl: "",
+  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -30,8 +38,19 @@ function ProfilePerbekel() {
       }
 
       const data = await perbekelState.findUnique.load(id);
-      if (data) perbekelState.edit.initialize(data);
-      if (data?.image?.link) setPreviewImage(data.image.link);
+      if (data) {
+        perbekelState.edit.initialize(data);
+        // Simpan snapshot data awal untuk tombol Batal
+        setOriginalData({
+          biodata: data.biodata || "",
+          pengalaman: data.pengalaman || "",
+          pengalamanOrganisasi: data.pengalamanOrganisasi || "",
+          programUnggulan: data.programUnggulan || "",
+          imageId: data.imageId || "",
+          imageUrl: data.image?.link || "",
+        });
+        setPreviewImage(data.image?.link || null);
+      }
     };
 
     loadData();
@@ -86,6 +105,18 @@ function ProfilePerbekel() {
 
   const handleBack = () => router.back();
 
+  // Tombol Batal → kembalikan form ke data awal sebelum diubah
+  const handleResetForm = () => {
+    perbekelState.edit.form.biodata = originalData.biodata;
+    perbekelState.edit.form.pengalaman = originalData.pengalaman;
+    perbekelState.edit.form.pengalamanOrganisasi = originalData.pengalamanOrganisasi;
+    perbekelState.edit.form.programUnggulan = originalData.programUnggulan;
+    perbekelState.edit.form.imageId = originalData.imageId;
+    setPreviewImage(originalData.imageUrl || null);
+    setFile(null);
+    toast.info("Form dikembalikan ke data awal");
+  };
+
   if (perbekelState.findUnique.loading || perbekelState.edit.loading) {
     return (
       <Box>
@@ -97,13 +128,13 @@ function ProfilePerbekel() {
   }
 
   return (
-     <Box px={{ base: 0, md: 'lg' }} py="xs">
+    <Box px={{ base: 0, md: 'lg' }} py="xs">
       <Stack gap="xs">
         {/* Header */}
         <Group mb="md">
-            <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
-              <IconArrowBack color={colors['blue-button']} size={24} />
-            </Button>
+          <Button variant="subtle" onClick={handleBack} p="xs" radius="md">
+            <IconArrowBack color={colors['blue-button']} size={24} />
+          </Button>
           <Title order={4} ml="sm" c="dark">
             Edit Profil Perbekel
           </Title>
@@ -126,7 +157,7 @@ function ProfilePerbekel() {
               <Dropzone
                 onDrop={(files) => handleFileChange(files[0])}
                 onReject={() => toast.error('File tidak valid.')}
-                maxSize={5 * 1024 ** 2} 
+                maxSize={5 * 1024 ** 2}
                 accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
               >
                 <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
@@ -184,6 +215,9 @@ function ProfilePerbekel() {
 
             {/* Submit */}
             <Group>
+              <Button variant="outline" color="gray" onClick={handleResetForm} disabled={isSubmitting || perbekelState.edit.loading}>
+                Batal
+              </Button>
               <Button
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
@@ -193,9 +227,7 @@ function ProfilePerbekel() {
                 {isSubmitting ? 'Menyimpan...' : 'Simpan'}
               </Button>
 
-              <Button variant="outline" onClick={handleBack} disabled={isSubmitting || perbekelState.edit.loading}>
-                Batal
-              </Button>
+
             </Group>
           </Stack>
         </Paper>

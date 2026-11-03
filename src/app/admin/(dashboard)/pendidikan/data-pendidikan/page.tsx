@@ -120,48 +120,107 @@ function ListDataPendidikan({ search }: { search: string }) {
               </Text>
             </Box>
           ) : (
-            <Table striped highlightOnHover>
-              <TableThead>
-                <TableTr>
-                  <TableTh>Nama</TableTh>
-                  <TableTh>Jumlah</TableTh>
-                  <TableTh>Edit</TableTh>
-                  <TableTh>Hapus</TableTh>
-                </TableTr>
-              </TableThead>
-              <TableTbody>
-                {filteredData.map((item) => (
-                  <TableTr key={item.id}>
-                    <TableTd>{item.name}</TableTd>
-                    <TableTd>{item.jumlah}</TableTd>
-                    <TableTd>
-                      <Button
-                        color="green"
-                        variant="light"
-                        radius="md"
-                        onClick={() => router.push(`/admin/pendidikan/data-pendidikan/${item.id}`)}
-                      >
-                        <IconEdit size={20} />
-                      </Button>
-                    </TableTd>
-                    <TableTd>
-                      <Button
-                        color="red"
-                        variant="light"
-                        radius="md"
-                        disabled={stateDPM.delete.loading}
-                        onClick={() => {
-                          setSelectedId(item.id);
-                          setModalHapus(true);
-                        }}
-                      >
-                        <IconTrash size={20} />
-                      </Button>
-                    </TableTd>
-                  </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
+            <>
+              {/* Desktop Table */}
+              <Box visibleFrom="md">
+                <Table striped highlightOnHover>
+                  <TableThead>
+                    <TableTr>
+                      <TableTh>Nama</TableTh>
+                      <TableTh>Jumlah</TableTh>
+                      <TableTh>Edit</TableTh>
+                      <TableTh>Hapus</TableTh>
+                    </TableTr>
+                  </TableThead>
+                  <TableTbody>
+                    {filteredData.map((item) => (
+                      <TableTr key={item.id}>
+                        <TableTd>{item.name}</TableTd>
+                        <TableTd>{item.jumlah}</TableTd>
+                        <TableTd>
+                          <Button
+                            color="green"
+                            variant="light"
+                            radius="md"
+                            onClick={() => router.push(`/admin/pendidikan/data-pendidikan/${item.id}`)}
+                          >
+                            <IconEdit size={20} />
+                          </Button>
+                        </TableTd>
+                        <TableTd>
+                          <Button
+                            color="red"
+                            variant="light"
+                            radius="md"
+                            disabled={stateDPM.delete.loading}
+                            onClick={() => {
+                              setSelectedId(item.id);
+                              setModalHapus(true);
+                            }}
+                          >
+                            <IconTrash size={20} />
+                          </Button>
+                        </TableTd>
+                      </TableTr>
+                    ))}
+                  </TableTbody>
+                </Table>
+              </Box>
+
+              {/* Mobile Card */}
+              <Box hiddenFrom="md">
+                <Stack gap="xs">
+                  {filteredData.map((item) => (
+                    <Paper key={item.id} withBorder p="sm" radius="sm">
+                      <Stack gap="xs">
+                        <Box>
+                          <Text fz="sm" fw={600} lh={1.4}>
+                            Nama
+                          </Text>
+                          <Text fz="sm" fw={500} lh={1.4}>
+                            {item.name}
+                          </Text>
+                        </Box>
+                        <Box>
+                          <Text fz="sm" fw={600} lh={1.4}>
+                            Jumlah
+                          </Text>
+                          <Text fz="sm" fw={500} lh={1.4}>
+                            {item.jumlah}
+                          </Text>
+                        </Box>
+                        <Group justify="flex-end" gap="xs">
+                          <Button
+                            variant="light"
+                            color="green"
+                            radius="md"
+                            onClick={() => router.push(`/admin/pendidikan/data-pendidikan/${item.id}`)}
+                            px="xs"
+                            py="xs"
+                          >
+                            <IconEdit size={16} />
+                          </Button>
+                          <Button
+                            variant="light"
+                            color="red"
+                            radius="md"
+                            disabled={stateDPM.delete.loading}
+                            onClick={() => {
+                              setSelectedId(item.id);
+                              setModalHapus(true);
+                            }}
+                            px="xs"
+                            py="xs"
+                          >
+                            <IconTrash size={16} />
+                          </Button>
+                        </Group>
+                      </Stack>
+                    </Paper>
+                  ))}
+                </Stack>
+              </Box>
+            </>
           )}
           <Center mt="md">
             <Pagination

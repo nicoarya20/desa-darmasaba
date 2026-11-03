@@ -4,7 +4,9 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const templateMigrasiPenduduk = z.object({
-  jenis: z.string().min(1, "Jenis migrasi harus diisi"),
+  jenis: z.enum(["MASUK", "KELUAR"], {
+    errorMap: () => ({ message: "Jenis migrasi harus diisi" }),
+  }),
   nama: z.string().min(1, "Nama harus diisi"),
   tanggal: z.string().min(1, "Tanggal harus diisi"),
   asalTujuan: z.string().min(1, "Asal/Tujuan harus diisi"),
@@ -30,7 +32,7 @@ const migrasiPenduduk = proxy({
       }
       try {
         migrasiPenduduk.create.loading = true;
-        const res = await ApiFetch.api.kependudukan.migrasipenduduk["create"].post(migrasiPenduduk.create.form);
+        const res = await ApiFetch.api.kependudukan.migrasipenduduk["create"].post(cek.data);
 
         if (res.status === 200) {
           const id = res.data?.data?.id;

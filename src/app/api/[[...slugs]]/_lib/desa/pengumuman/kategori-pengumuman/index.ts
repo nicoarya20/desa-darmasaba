@@ -19,7 +19,7 @@ const KategoriPengumuman = new Elysia({
   .get("/findMany", kategoriPengumumanFindMany)
   .get("/:id", async (context) => {
     const response = await kategoriPengumumanFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

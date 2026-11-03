@@ -179,6 +179,7 @@ const artikelKesehatanState = proxy({
   },
   edit: {
     id: "",
+    imageLink: "",
     form: { ...defaultForm },
     loading: false,
     async load(id: string) {
@@ -220,6 +221,7 @@ const artikelKesehatanState = proxy({
         },
         imageId: data.imageId,
       };
+      artikelKesehatanState.edit.imageLink = data.image?.link || "";
     },
     async submit() {
       const cek = templateForm.safeParse(artikelKesehatanState.edit.form);
@@ -290,6 +292,7 @@ const artikelKesehatanState = proxy({
     },
     resetForm() {
       artikelKesehatanState.edit.id = "";
+      artikelKesehatanState.edit.imageLink = "";
       artikelKesehatanState.edit.form = { ...defaultForm };
     },
   },

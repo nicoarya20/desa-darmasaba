@@ -12,7 +12,7 @@ const GrafikBerdasarkanJenisKelamin = new Elysia({
 })
   .get("/find-many", grafikBerdasarkanJenisKelaminFindMany)
   .get("/:id", async (context) => {
-      const response = await grafikBerdasarakanJenisKelaminFindById(new Request(context.request))
+      const response = await grafikBerdasarakanJenisKelaminFindById(context.request)
       return response
     })
   .put("/:id", grafikBerdasarakanJenisKelaminUpdate, {

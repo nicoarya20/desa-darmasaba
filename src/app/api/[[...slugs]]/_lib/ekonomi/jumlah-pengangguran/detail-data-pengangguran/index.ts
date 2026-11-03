@@ -1,4 +1,10 @@
 import Elysia, { t } from "elysia";
+
+const monthSchema = t.Union([
+  t.Literal("Jan"), t.Literal("Feb"), t.Literal("Mar"), t.Literal("Apr"),
+  t.Literal("Mei"), t.Literal("Jun"), t.Literal("Jul"), t.Literal("Agu"),
+  t.Literal("Sep"), t.Literal("Okt"), t.Literal("Nov"), t.Literal("Des"),
+]);
 import detailDataPengangguranCreate from "./create";
 import detailDataPengangguranDelete from "./del";
 import findByMonthYear from "./findByMonthYear";
@@ -13,13 +19,13 @@ const DetailDataPengangguran = new Elysia({
   .get("/find-many", detailDataPengangguranFindMany)
   .get("/month/:month/year/:year", findByMonthYear, {
     params: t.Object({
-      month: t.String(),
+      month: monthSchema,
       year: t.Number(),
     }),
   })
   .post("/create", detailDataPengangguranCreate, {
     body: t.Object({
-      month: t.String(),
+      month: monthSchema,
       year: t.Number(),
       totalUnemployment: t.Number(),
       educatedUnemployment: t.Number(),
@@ -32,7 +38,7 @@ const DetailDataPengangguran = new Elysia({
       id: t.String(),
     }),
     body: t.Object({
-      month: t.String(),
+      month: monthSchema,
       year: t.Number(),
       totalUnemployment: t.Number(),
       educatedUnemployment: t.Number(),
@@ -47,7 +53,7 @@ const DetailDataPengangguran = new Elysia({
   })
   .get("/:id", async (context) => {
     const response = await detailDataPengangguranFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   });

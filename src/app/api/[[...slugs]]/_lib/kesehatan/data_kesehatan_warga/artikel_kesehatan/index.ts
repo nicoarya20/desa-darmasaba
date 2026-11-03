@@ -43,7 +43,7 @@ const ArtikelKesehatan = new Elysia({
   .delete("/del/:id", artikelKesehatanDelete)
   .get("/:id", async (context) => {
     const response = await artikelKesehatanFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

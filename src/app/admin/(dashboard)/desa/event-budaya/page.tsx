@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import eventBudayaState from '@/app/admin/(dashboard)/_state/desa/eventBudaya';
 import colors from '@/con/colors';
 import {
-  ActionIcon,
   Badge,
   Box,
   Button,
@@ -23,7 +21,7 @@ import {
   Title,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconCalendarEvent, IconEdit, IconEye, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
+import { IconCalendarEvent, IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -49,22 +47,12 @@ function ListEventBudaya({ search }: { search: string }) {
   const state = useProxy(eventBudayaState);
   const router = useRouter();
   const [debouncedSearch] = useDebouncedValue(search, 500);
-  const [modalHapus, setModalHapus] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const { data, page, totalPages, loading, load } = state.findMany;
 
   useEffect(() => {
     load(page, 10, debouncedSearch);
   }, [page, debouncedSearch]);
-
-  const handleHapus = async () => {
-    if (selectedId) {
-      await state.delete.byId(selectedId);
-      setModalHapus(false);
-      setSelectedId(null);
-    }
-  };
 
   if (loading || !data) {
     return (
@@ -89,7 +77,7 @@ function ListEventBudaya({ search }: { search: string }) {
           </Button>
         </Group>
 
-        <Box style={{ overflowX: 'auto' }}>
+        <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
           <Table highlightOnHover layout="fixed" withColumnBorders={false}>
             <TableThead>
               <TableTr>
@@ -130,32 +118,17 @@ function ListEventBudaya({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd onClick={(e) => e.stopPropagation()}>
-                      <Group gap="xs">
-                        <ActionIcon
-                          variant="light"
-                          color="teal"
-                          onClick={() => router.push(`/admin/desa/event-budaya/${item.id}`)}
-                        >
-                          <IconEye size={16} />
-                        </ActionIcon>
-                        <ActionIcon
-                          variant="light"
-                          color="blue"
-                          onClick={() => router.push(`/admin/desa/event-budaya/${item.id}/edit`)}
-                        >
-                          <IconEdit size={16} />
-                        </ActionIcon>
-                        <ActionIcon
-                          variant="light"
-                          color="red"
-                          onClick={() => {
-                            setSelectedId(item.id);
-                            setModalHapus(true);
-                          }}
-                        >
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      </Group>
+                      <Button
+                        variant="light"
+                        color="blue"
+                        fz="sm"
+                        px="sm"
+                        h={36}
+                        onClick={() => router.push(`/admin/desa/event-budaya/${item.id}`)}
+                      >
+                        <IconDeviceImacCog size={18} />
+                        <Text ml="xs">Detail</Text>
+                      </Button>
                     </TableTd>
                   </TableTr>
                 ))
@@ -172,6 +145,54 @@ function ListEventBudaya({ search }: { search: string }) {
           </Table>
         </Box>
 
+        {/* Mobile Card View */}
+        <Stack hiddenFrom="md" gap="sm">
+          {data.length > 0 ? (
+            data.map((item) => (
+              <Paper key={item.id} withBorder p="md" radius="md">
+                <Stack gap="xs">
+                  <Text fz="sm" fw={600} lh={1.4} c="dimmed">Nama Event</Text>
+                  <Group gap="xs" wrap="nowrap">
+                    <IconCalendarEvent size={16} color={colors['blue-button-5']} style={{ flexShrink: 0 }} />
+                    <Text fz="sm" fw={500} lh={1.45}>{item.nama}</Text>
+                  </Group>
+
+                  <Text fz="sm" fw={600} lh={1.4} c="dimmed" mt="xs">Tanggal</Text>
+                  <Box>
+                    <Badge variant="light" color="indigo">
+                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </Badge>
+                  </Box>
+
+                  <Text fz="sm" fw={600} lh={1.4} c="dimmed" mt="xs">Lokasi</Text>
+                  <Text fz="sm" fw={500} lh={1.45}>{item.lokasi || '-'}</Text>
+
+                  <Button
+                    variant="light"
+                    color="blue"
+                    fullWidth
+                    mt="sm"
+                    fz="sm"
+                    h={36}
+                    onClick={() => router.push(`/admin/desa/event-budaya/${item.id}`)}
+                  >
+                    <IconDeviceImacCog size={18} />
+                    <Text ml="xs">Detail</Text>
+                  </Button>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Text ta="center" c="dimmed" py="xl" fz="sm">
+              Belum ada data event budaya
+            </Text>
+          )}
+        </Stack>
+
         {totalPages > 1 && (
           <Group justify="center" mt="lg">
             <Pagination
@@ -182,16 +203,6 @@ function ListEventBudaya({ search }: { search: string }) {
           </Group>
         )}
       </Paper>
-
-      <ModalKonfirmasiHapus
-        opened={modalHapus}
-        onClose={() => {
-          setModalHapus(false);
-          setSelectedId(null);
-        }}
-        onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus event budaya ini?"
-      />
     </Box>
   );
 }

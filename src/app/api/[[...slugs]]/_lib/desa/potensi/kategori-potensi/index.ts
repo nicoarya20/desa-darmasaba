@@ -19,7 +19,7 @@ const KategoriPotensi = new Elysia({
   .get("/findMany", kategoriPotensiFindMany)
   .get("/:id", async (context) => {
     const response = await kategoriPotensiFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

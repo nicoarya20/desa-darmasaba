@@ -8,7 +8,7 @@ const LambangDesa = new Elysia({
   tags: ["Desa/Profile"],
 })
   .get("/:id", async (context) => {
-    const response = await lambangDesaFindById(new Request(context.request));
+    const response = await lambangDesaFindById(context.request);
     return response;
   })
   .put(

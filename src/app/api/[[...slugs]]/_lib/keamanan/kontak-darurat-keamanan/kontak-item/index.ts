@@ -11,7 +11,7 @@ const KontakItem = new Elysia({
 })
   .get("/find-many", kontakItemFindMany)
   .get("/:id", async (context) => {
-    const response = await kontakItemFindUnique(new Request(context.request));
+    const response = await kontakItemFindUnique(context.request);
     return response;
   })
   .post("/create", kontakItemCreate, {

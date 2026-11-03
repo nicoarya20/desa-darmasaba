@@ -9,6 +9,7 @@ import {
   Group,
   Loader,
   Paper,
+  Select,
   Stack,
   TextInput,
   Title
@@ -19,6 +20,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { convertToISODate } from '../../../lib/dateUtils';
+import { JENIS_KELAMIN_OPTIONS } from '../../../lib/jenisKelamin';
 
 function EditKelahiran() {
   const editState = useProxy(persentaseKelahiranKematian.kelahiran);
@@ -172,11 +174,12 @@ function EditKelahiran() {
             placeholder="Masukkan tanggal"
             required
           />
-          <TextInput
+          <Select
             value={formData.jenisKelamin}
-            onChange={(e) => handleChange('jenisKelamin', e.target.value)}
+            onChange={(value) => handleChange('jenisKelamin', value || '')}
             label="Jenis Kelamin"
-            placeholder="Masukkan jenis kelamin"
+            placeholder="Pilih jenis kelamin"
+            data={[...JENIS_KELAMIN_OPTIONS]}
             required
           />
           <TextInput

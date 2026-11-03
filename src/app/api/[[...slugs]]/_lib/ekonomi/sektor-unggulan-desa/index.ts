@@ -11,7 +11,7 @@ const SektorUnggulanDesa = new Elysia({
 })
   .get("/find-many", sektorUnggulanDesaFindMany)
   .get("/:id", async (context) => {
-    const response = await sektorUnggulanDesaFindUnique(new Request(context.request));
+    const response = await sektorUnggulanDesaFindUnique(context.request);
     return response;
   })
   .post("/create", sektorUnggulanDesaCreate, {

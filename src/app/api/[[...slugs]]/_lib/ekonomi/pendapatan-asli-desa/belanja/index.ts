@@ -11,7 +11,7 @@ const Belanja = new Elysia({
 })
 .get("/find-many", belanjaFindMany)
 .get("/:id", async (context) => {
-    const response = await belanjaFindUnique(new Request(context.request));
+    const response = await belanjaFindUnique(context.request);
     return response;
 })
 .post("/create", belanjaCreate, {

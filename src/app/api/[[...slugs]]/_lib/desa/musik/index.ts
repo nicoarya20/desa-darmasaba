@@ -8,7 +8,7 @@ import findMusikById from "./find-by-id";
 const Musik = new Elysia({ prefix: "/musik", tags: ["Desa/Musik"] })
   .get("/find-many", musikFindMany)
   .get("/:id", async (context) => {
-    const response = await findMusikById(new Request(context.request));
+    const response = await findMusikById(context.request);
     return response;
   })
   .post("/create", musikCreate, {
