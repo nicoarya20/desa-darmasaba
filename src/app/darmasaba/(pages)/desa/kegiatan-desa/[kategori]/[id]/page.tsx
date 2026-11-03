@@ -2,6 +2,7 @@
 'use client'
 import stateDashboardKegiatan from '@/app/admin/(dashboard)/_state/desa/kegiatanDesa';
 import colors from '@/con/colors';
+import { isKegiatanPembangunan } from '@/lib/kegiatan-pembangunan';
 import {
   Badge,
   Box,
@@ -20,6 +21,7 @@ import { IconCalendar, IconMapPin, IconUsers } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
+import PembangunanInfo from '../../_com/PembangunanInfo';
 
 const formatTanggal = (val: string) =>
   val
@@ -107,6 +109,12 @@ function Page() {
                 </Group>
               </Group>
             </Stack>
+
+            {isKegiatanPembangunan(data) && (
+              <Paper withBorder radius="md" p="md" bg="gray.0">
+                <PembangunanInfo item={data} showSumberDana />
+              </Paper>
+            )}
 
             <Divider />
 

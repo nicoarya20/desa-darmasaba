@@ -1990,6 +1990,14 @@ model KegiatanDesa {
   isActive           Boolean          @default(true)
   kategoriKegiatan   KategoriKegiatan @relation(fields: [kategoriKegiatanId], references: [id])
   kategoriKegiatanId String
+
+  // Khusus kategori Pembangunan (KATEGORI_PEMBANGUNAN_ID) — nullable agar data lama aman
+  anggaran          Float? // Rupiah, tipe sama dengan APBDesItem.anggaran
+  progres           Int? // 0–100 (CHECK constraint di migrasi)
+  statusPembangunan String? // "rencana" | "berjalan" | "selesai" — divalidasi di API
+  sumberDana        String?
+
+  @@index([kategoriKegiatanId])
 }
 
 model KategoriKegiatan {

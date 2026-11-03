@@ -23,6 +23,7 @@ import { IconPlus, IconDeviceImacCog, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import PembangunanSummary from '../_com/PembangunanSummary';
 import HeaderSearch from '../../../_com/header';
 import stateDashboardKegiatan from '../../../_state/desa/kegiatanDesa';
 
@@ -102,6 +103,7 @@ function ListKegiatanDesa({ search }: { search: string }) {
                       <Text fz="sm" c="dimmed" lh={1.45}>
                         {item.kategoriKegiatan?.nama || '-'}
                       </Text>
+                      <PembangunanSummary item={item} />
                     </TableTd>
                     <TableTd>
                       <Text fz="sm" c="dimmed" lh={1.45} truncate="end">
@@ -151,6 +153,7 @@ function ListKegiatanDesa({ search }: { search: string }) {
 
                   <Text fz="sm" fw={600} lh={1.4} c="dimmed" mt="xs">Kategori</Text>
                   <Text fz="sm" lh={1.45} fw={500}>{item.kategoriKegiatan?.nama || '-'}</Text>
+                  <PembangunanSummary item={item} />
 
                   <Text fz="sm" fw={600} lh={1.4} c="dimmed" mt="xs">Lokasi</Text>
                   <Text fz="sm" lh={1.45} fw={500}>{item.lokasi || '-'}</Text>

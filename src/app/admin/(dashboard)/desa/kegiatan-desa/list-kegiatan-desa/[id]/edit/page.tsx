@@ -3,6 +3,7 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateDashboardKegiatan from '@/app/admin/(dashboard)/_state/desa/kegiatanDesa';
 import colors from '@/con/colors';
+import { KATEGORI_PEMBANGUNAN_ID } from '@/lib/kegiatan-pembangunan';
 import ApiFetch from '@/lib/api-fetch';
 import {
   ActionIcon,
@@ -26,6 +27,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import PembangunanFields, { type PembangunanFormValues } from '../../../_com/PembangunanFields';
 
 const isHtmlEmpty = (html: string) => html.replace(/<[^>]*>/g, '').trim() === '';
 
@@ -40,6 +42,10 @@ interface KegiatanData {
   kategoriKegiatanId: string | null;
   imageId: string | null;
   image?: { link: string } | null;
+  anggaran?: number | null;
+  progres?: number | null;
+  statusPembangunan?: string | null;
+  sumberDana?: string | null;
 }
 
 function EditKegiatanDesa() {
@@ -60,6 +66,10 @@ function EditKegiatanDesa() {
     partisipan: 0,
     kategoriKegiatanId: '',
     imageId: '',
+    anggaran: null as number | null,
+    progres: null as number | null,
+    statusPembangunan: null as string | null,
+    sumberDana: null as string | null,
   };
 
   const [formData, setFormData] = useState(emptyForm);
@@ -96,6 +106,10 @@ function EditKegiatanDesa() {
             partisipan: data.partisipan || 0,
             kategoriKegiatanId: data.kategoriKegiatanId || '',
             imageId: data.imageId || '',
+            anggaran: data.anggaran ?? null,
+            progres: data.progres ?? null,
+            statusPembangunan: data.statusPembangunan ?? null,
+            sumberDana: data.sumberDana ?? null,
           };
 
           setFormData(form);
@@ -111,7 +125,7 @@ function EditKegiatanDesa() {
     load();
   }, [params?.id]);
 
-  const handleChange = (field: string, value: string | number) => {
+  const handleChange = (field: string, value: string | number | null) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -160,6 +174,10 @@ function EditKegiatanDesa() {
       partisipan: originalData.partisipan,
       kategoriKegiatanId: originalData.kategoriKegiatanId,
       imageId: originalData.imageId,
+      anggaran: originalData.anggaran,
+      progres: originalData.progres,
+      statusPembangunan: originalData.statusPembangunan,
+      sumberDana: originalData.sumberDana,
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
@@ -230,6 +248,15 @@ function EditKegiatanDesa() {
             onChange={(val) => handleChange('partisipan', Number(val) || 0)}
             min={0}
           />
+
+          {formData.kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID && (
+            <PembangunanFields
+              values={formData}
+              onChange={(patch: Partial<PembangunanFormValues>) =>
+                setFormData((prev) => ({ ...prev, ...patch }))
+              }
+            />
+          )}
 
           <Textarea
             label="Deskripsi Singkat"

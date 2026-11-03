@@ -2,6 +2,7 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateDashboardKegiatan from '@/app/admin/(dashboard)/_state/desa/kegiatanDesa';
 import colors from '@/con/colors';
+import { KATEGORI_PEMBANGUNAN_ID } from '@/lib/kegiatan-pembangunan';
 import ApiFetch from '@/lib/api-fetch';
 import {
   ActionIcon,
@@ -26,6 +27,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import PembangunanFields from '../../_com/PembangunanFields';
 
 const isHtmlEmpty = (html: string) => html.replace(/<[^>]*>/g, '').trim() === '';
 
@@ -156,6 +158,13 @@ export default function CreateKegiatanDesa() {
             onChange={(val) => (kegiatanState.kegiatan.create.form.partisipan = Number(val) || 0)}
             min={0}
           />
+
+          {kegiatanState.kegiatan.create.form.kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID && (
+            <PembangunanFields
+              values={kegiatanState.kegiatan.create.form}
+              onChange={(patch) => Object.assign(kegiatanState.kegiatan.create.form, patch)}
+            />
+          )}
 
           <Textarea
             label="Deskripsi Singkat"

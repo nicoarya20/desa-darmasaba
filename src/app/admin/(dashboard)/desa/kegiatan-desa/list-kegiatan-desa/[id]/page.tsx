@@ -2,6 +2,12 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateDashboardKegiatan from '@/app/admin/(dashboard)/_state/desa/kegiatanDesa';
 import colors from '@/con/colors';
+import {
+  STATUS_PEMBANGUNAN_LABEL,
+  formatRupiah,
+  isKegiatanPembangunan,
+  isStatusPembangunan,
+} from '@/lib/kegiatan-pembangunan';
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -17,6 +23,11 @@ interface KegiatanDetail {
   tanggal: string;
   lokasi: string;
   partisipan: number;
+  kategoriKegiatanId?: string | null;
+  anggaran?: number | null;
+  progres?: number | null;
+  statusPembangunan?: string | null;
+  sumberDana?: string | null;
   kategoriKegiatan?: { nama: string } | null;
   image?: { link: string } | null;
 }
@@ -110,6 +121,34 @@ function DetailKegiatanDesa() {
                 <Text fz="lg" fw="bold">Partisipan</Text>
                 <Text fz="md" c="dimmed">{data.partisipan ?? 0} orang</Text>
               </Box>
+
+              {isKegiatanPembangunan(data) && (
+                <>
+                  <Box>
+                    <Text fz="lg" fw="bold">Status Pembangunan</Text>
+                    <Text fz="md" c="dimmed">
+                      {isStatusPembangunan(data.statusPembangunan)
+                        ? STATUS_PEMBANGUNAN_LABEL[data.statusPembangunan]
+                        : '-'}
+                    </Text>
+                  </Box>
+
+                  <Box>
+                    <Text fz="lg" fw="bold">Progres</Text>
+                    <Text fz="md" c="dimmed">{data.progres ?? 0}%</Text>
+                  </Box>
+
+                  <Box>
+                    <Text fz="lg" fw="bold">Anggaran</Text>
+                    <Text fz="md" c="dimmed">{formatRupiah(data.anggaran)}</Text>
+                  </Box>
+
+                  <Box>
+                    <Text fz="lg" fw="bold">Sumber Dana</Text>
+                    <Text fz="md" c="dimmed">{data.sumberDana || '-'}</Text>
+                  </Box>
+                </>
+              )}
 
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi Singkat</Text>
