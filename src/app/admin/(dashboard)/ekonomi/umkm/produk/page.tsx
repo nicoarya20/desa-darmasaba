@@ -25,6 +25,8 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import umkmState from '../../../_state/ekonomi/umkm/umkm';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import { UnggulanBadge } from '@/app/darmasaba/(pages)/ekonomi/umkm/_com/UnggulanBadge';
+import { ProdukMobileList } from './_com/ProdukMobileList';
 
 function ProdukUmkm() {
   const router = useRouter();
@@ -38,6 +40,11 @@ function ProdukUmkm() {
   useShallowEffect(() => {
     state.load(state.page, 10, debouncedSearch);
   }, [state.page, debouncedSearch]);
+
+  const handleAskDelete = (id: string) => {
+    setSelectedId(id);
+    setModalHapus(true);
+  };
 
   const handleHapus = async () => {
     if (selectedId) {
@@ -74,7 +81,8 @@ function ProdukUmkm() {
         {state.loading ? (
           <Skeleton height={400} />
         ) : (
-          <Box style={{ overflowX: 'auto' }}>
+          <>
+          <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
             <Table highlightOnHover>
               <TableThead>
                 <TableTr>
@@ -83,6 +91,7 @@ function ProdukUmkm() {
                   <TableTh>Harga</TableTh>
                   <TableTh>Stok</TableTh>
                   <TableTh>Status Stok</TableTh>
+                  <TableTh>Unggulan</TableTh>
                   <TableTh>Aksi</TableTh>
                 </TableTr>
               </TableThead>
@@ -98,6 +107,7 @@ function ProdukUmkm() {
                         {item.stok < 5 ? 'Rendah' : item.stok < 20 ? 'Menipis' : 'Aman'}
                       </Badge>
                     </TableTd>
+                    <TableTd>{item.isUnggulan ? <UnggulanBadge size="sm" /> : '-'}</TableTd>
                     <TableTd>
                       <Group gap="xs">
                         <Button 
@@ -112,10 +122,7 @@ function ProdukUmkm() {
                           variant="subtle" 
                           color="red" 
                           size="xs"
-                          onClick={() => {
-                            setSelectedId(item.id);
-                            setModalHapus(true);
-                          }}
+                          onClick={() => handleAskDelete(item.id)}
                         >
                           <IconTrash size={16} />
                         </Button>
@@ -126,6 +133,14 @@ function ProdukUmkm() {
               </TableTbody>
             </Table>
           </Box>
+          <Box hiddenFrom="md">
+            <ProdukMobileList
+              items={state.data}
+              onEdit={(id) => router.push(`/admin/ekonomi/umkm/produk/${id}/edit`)}
+              onDelete={handleAskDelete}
+            />
+          </Box>
+          </>
         )}
 
         <Center mt="md">
