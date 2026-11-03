@@ -1519,6 +1519,10 @@ model PasarDesa {
   umkm   Umkm    @relation(fields: [umkmId], references: [id])
   umkmId String
 
+  // Penanda "Produk Unggulan Desa" untuk katalog publik. NOT NULL DEFAULT false
+  // agar produk lama otomatis non-unggulan; admin menandai lewat form produk.
+  isUnggulan Boolean @default(false)
+
   // Relasi Penjualan
   penjualan PenjualanProduk[]
 
