@@ -13,6 +13,13 @@ export const STATUS_PEMBANGUNAN_LABEL: Record<StatusPembangunan, string> = {
   selesai: "Selesai",
 };
 
+/** Warna Mantine per status, dipakai badge di admin & halaman publik. */
+export const STATUS_PEMBANGUNAN_COLOR: Record<StatusPembangunan, string> = {
+  rencana: "gray",
+  berjalan: "blue",
+  selesai: "green",
+};
+
 export const PROGRES_MIN = 0;
 export const PROGRES_MAX = 100;
 export const SUMBER_DANA_MAX_LENGTH = 255;
