@@ -202,7 +202,7 @@ const navbarListMenu = [
             },
             {
                 id: "5.3",
-                name: "Struktur Organisasi dan SK Pengurus BUMDesa",
+                name: "BUMDes",
                 href: "/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes"
             },
             {

@@ -22,6 +22,8 @@ interface PegawaiBumDes {
 }
 
 const posisiOrganisasiBumDes = loadJsonData<PosisiOrganisasi[][]>("ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json");
+// Posisi = struktur jabatan generik BUMDes (tanpa nama orang). Data pengurus sengaja kosong:
+// nama pengurus BUMDes asli diinput admin lewat CMS, bukan di-seed (sebelumnya terisi perangkat desa).
 const pegawai = loadJsonData<PegawaiBumDes[]>("ekonomi/struktur-organisasi/pegawai-bumdes.json");
 
 export async function seedStrukturBumdes() {
