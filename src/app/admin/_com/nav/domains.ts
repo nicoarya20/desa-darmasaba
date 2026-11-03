@@ -85,7 +85,7 @@ export const ekonomiMenu: NavItem = {
   children: [
     { id: "Ekonomi_UMKM_1", name: "UMKM", path: "/admin/ekonomi/umkm/dashboard" },
     { id: "Ekonomi_2", name: "Lowongan Kerja Lokal", path: "/admin/ekonomi/lowongan-kerja-lokal" },
-    { id: "Ekonomi_3", name: "Struktur Organisasi Dan Sk Pengurus Bumdesa", path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai" },
+    { id: "Ekonomi_3", name: "BUMDes", path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/profil" },
     { id: "Ekonomi_4", name: "PADesa (Pendapatan Asli Desa)", path: "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa" },
     { id: "Ekonomi_5", name: "Jumlah Pengangguran", path: "/admin/ekonomi/jumlah-pengangguran" },
     { id: "Ekonomi_6", name: "Jumlah penduduk usia kerja yang menganggur", path: "/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia" },
