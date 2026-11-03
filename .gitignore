@@ -85,3 +85,5 @@ test-berita-state.ts
 
 # Catatan diskusi (lokal, tidak untuk repo)
 .DISKUSI/
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
