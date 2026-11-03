@@ -231,7 +231,7 @@ File: `src/con/navbar-list-menu.ts`
 | # | Menu | Jumlah Sub |
 |---|---|---|
 | 1 | PPID | 8 |
-| 2 | Desa | 9 (termasuk Kalender Event Budaya) |
+| 2 | Desa | 10 (termasuk Kalender Event Budaya, Monev & Pembangunan) |
 | 3 | Kesehatan | 7 |
 | 4 | Keamanan | 7 |
 | 5 | Ekonomi | 11 (termasuk Kesejahteraan Masyarakat) |

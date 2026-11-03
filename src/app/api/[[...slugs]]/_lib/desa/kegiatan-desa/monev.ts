@@ -3,19 +3,12 @@ import {
   KATEGORI_PEMBANGUNAN_ID,
   STATUS_PEMBANGUNAN,
   isStatusPembangunan,
-  type StatusPembangunan,
+  type MonevSummary,
 } from "@/lib/kegiatan-pembangunan";
 import { Context } from "elysia";
 
 const DEFAULT_LIMIT = 9;
 const MAX_LIMIT = 50;
-
-export type MonevSummary = {
-  totalKegiatan: number;
-  perStatus: Record<StatusPembangunan, number> & { belumDiisi: number };
-  totalAnggaran: number;
-  rataRataProgres: number;
-};
 
 type StatusGroupRow = { statusPembangunan: string | null; _count: { _all: number } };
 

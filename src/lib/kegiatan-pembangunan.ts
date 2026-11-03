@@ -34,6 +34,14 @@ export type PembangunanFields = {
 /** Field pembangunan yang BOLEH tidak dikirim klien (undefined = jangan ubah). */
 export type PembangunanInput = Partial<PembangunanFields>;
 
+/** Ringkasan agregat Monev (respons GET /kegiatandesa/monev). */
+export type MonevSummary = {
+  totalKegiatan: number;
+  perStatus: Record<StatusPembangunan, number> & { belumDiisi: number };
+  totalAnggaran: number;
+  rataRataProgres: number;
+};
+
 export type ParseResult =
   | { ok: true; data: PembangunanInput }
   | { ok: false; message: string };
