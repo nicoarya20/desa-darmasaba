@@ -93,15 +93,10 @@ describe("parsePembangunanInput", () => {
   });
 
   it("memangkas sumber dana, mengosongkan string kosong, dan membatasi panjang", () => {
-    expect(parsePembangunanInput({ sumberDana: "  APBDes  " })).toEqual({
-      ok: true,
-      data: { sumberDana: "APBDes" },
-    });
-    expect(parsePembangunanInput({ sumberDana: "   " })).toEqual({
-      ok: true,
-      data: { sumberDana: null },
-    });
-    expect(parsePembangunanInput({ sumberDana: "x".repeat(256) }).ok).toBe(false);
+    const sd = (sumberDana: string) => parsePembangunanInput({ sumberDana });
+    expect(sd("  APBDes  ")).toEqual({ ok: true, data: { sumberDana: "APBDes" } });
+    expect(sd("   ")).toEqual({ ok: true, data: { sumberDana: null } });
+    expect(sd("x".repeat(256)).ok).toBe(false);
   });
 
   it("body tanpa field baru menghasilkan data kosong (tidak mengubah apa pun)", () => {
@@ -109,9 +104,8 @@ describe("parsePembangunanInput", () => {
   });
 
   it("null mengosongkan field", () => {
-    expect(
-      parsePembangunanInput({ anggaran: null, progres: null, statusPembangunan: null }),
-    ).toEqual({ ok: true, data: { anggaran: null, progres: null, statusPembangunan: null } });
+    const body = { anggaran: null, progres: null, statusPembangunan: null };
+    expect(parsePembangunanInput(body)).toEqual({ ok: true, data: body });
   });
 });
 
