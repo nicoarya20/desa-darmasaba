@@ -4,6 +4,7 @@ import BackButton from './_com/BackButto';
 import ProfileDesa from './ui/profileDesa';
 import SejarahDesa from './ui/sejarahDesa';
 import VisimisiDesa from './ui/visimisiDesa';
+import WilayahDesa from './ui/wilayahDesa';
 import LambangDesa from './ui/lambangDesa';
 import MaskotDesa from './ui/maskotDesa';
 import ProfilPerbekel from './ui/profilPerbekel';
@@ -31,6 +32,7 @@ function Page() {
           <ProfileDesa />
           <SejarahDesa />
           <VisimisiDesa />
+          <WilayahDesa />
           <LambangDesa />
           <MaskotDesa />
           <ProfilPerbekel />
