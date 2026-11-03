@@ -17,6 +17,7 @@ async function produkUmkmUpdate(context: Context) {
         umkmId: body.umkmId,
         imageId: body.imageId,
         isActive: body.isActive,
+        isUnggulan: body.isUnggulan, // undefined = flag lama tidak diubah (klien lama)
         kategoriProdukId: body.kategoriId, // Now editable via PasarDesa
       },
     });
