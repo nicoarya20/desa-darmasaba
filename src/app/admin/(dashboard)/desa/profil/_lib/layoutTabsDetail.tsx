@@ -2,7 +2,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import { IconCalendar, IconUser, IconUsers } from '@tabler/icons-react';
+import { IconCalendar, IconMapPin, IconUser, IconUsers } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -27,6 +27,12 @@ function LayoutTabsDetail({ children }: { children: React.ReactNode }) {
             value: "profilperbekeldarimasakemasa",
             href: "/admin/desa/profil/profil-perbekel-dari-masa-ke-masa",
             icon: <IconCalendar size={18} stroke={1.8} />
+        },
+        {
+            label: "Letak & Batas Wilayah",
+            value: "wilayahdesa",
+            href: "/admin/desa/profil/wilayah-desa",
+            icon: <IconMapPin size={18} stroke={1.8} />
         }
     ];
 

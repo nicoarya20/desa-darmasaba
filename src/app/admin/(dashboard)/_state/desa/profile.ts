@@ -5,6 +5,7 @@ import maskotDesa from "./profile/maskot-desa";
 import profilPerbekel from "./profile/profil-perbekel";
 import sejarahDesa from "./profile/sejarah-desa";
 import visiMisiDesa from "./profile/visi-misi-desa";
+import wilayahDesa from "./profile/wilayah-desa";
 
 const stateProfileDesa = proxy({
   lambangDesa,
@@ -13,6 +14,7 @@ const stateProfileDesa = proxy({
   visiMisiDesa,
   sejarahDesa,
   mantanPerbekel,
+  wilayahDesa,
 });
 
 export default stateProfileDesa;
