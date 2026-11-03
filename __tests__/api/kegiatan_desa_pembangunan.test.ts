@@ -1,9 +1,6 @@
 // @vitest-environment node
-// Kegiatan Desa — kategori Pembangunan (anggaran, progres, status, sumber dana).
-//
-// Mengunci: validasi progres 0-100 & status enum, perilaku lama create/update/list
-// (tanpa field baru) tidak berubah, field baru bersifat aditif, dan endpoint
-// ringkasan Monev (agregat benar + paginasi + tanpa N+1).
+// Kegiatan Desa kategori Pembangunan: validasi progres/status, kontrak lama tetap,
+// field baru aditif, dan endpoint Monev (agregat, paginasi, tanpa N+1).
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const prismaMock = vi.hoisted(() => ({
@@ -69,8 +66,9 @@ describe("parsePembangunanInput", () => {
   });
 
   it("menerima batas 0 dan 100", () => {
-    expect(parsePembangunanInput({ progres: 0 })).toEqual({ ok: true, data: { progres: 0 } });
-    expect(parsePembangunanInput({ progres: 100 })).toEqual({ ok: true, data: { progres: 100 } });
+    for (const progres of [0, 100]) {
+      expect(parsePembangunanInput({ progres })).toEqual({ ok: true, data: { progres } });
+    }
   });
 
   it("menolak status di luar rencana|berjalan|selesai", () => {
