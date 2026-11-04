@@ -74,7 +74,7 @@ function Page() {
         <BackButton />
       </Box>
 
-      <Grid align="center" px={{ base: 'md', md: 100 }} gutter="lg">
+      <Grid align="center" px={{ base: 'md', md: 100 }} gap="lg">
         <GridCol span={{ base: 12, md: 8 }}>
           <Title
             order={1}
