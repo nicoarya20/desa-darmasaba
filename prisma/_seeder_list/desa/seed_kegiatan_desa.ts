@@ -29,6 +29,10 @@ export async function seedKegiatanDesa() {
         lokasi: item.lokasi,
         partisipan: item.partisipan,
         kategoriKegiatanId: item.kategoriKegiatanId,
+        anggaran: item.anggaran ?? null,
+        progres: item.progres ?? null,
+        statusPembangunan: item.statusPembangunan ?? null,
+        sumberDana: item.sumberDana ?? null,
       },
       create: {
         id: item.id,
@@ -39,6 +43,10 @@ export async function seedKegiatanDesa() {
         lokasi: item.lokasi,
         partisipan: item.partisipan,
         kategoriKegiatanId: item.kategoriKegiatanId,
+        anggaran: item.anggaran ?? null,
+        progres: item.progres ?? null,
+        statusPembangunan: item.statusPembangunan ?? null,
+        sumberDana: item.sumberDana ?? null,
       },
     });
     console.log(`  ✅ Kegiatan: ${item.judul}`);

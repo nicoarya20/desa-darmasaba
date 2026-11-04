@@ -3,6 +3,8 @@
 import prisma from "@/lib/prisma";
 import { seedBerita } from "./_seeder_list/desa/berita/seed_berita";
 import { seedKegiatanDesa } from "./_seeder_list/desa/seed_kegiatan_desa";
+import { seedWilayahDesa } from "./_seeder_list/desa/seed_wilayah_desa";
+import { seedBumdesProfil } from "./_seeder_list/ekonomi/seed_bumdes_profil";
 import { seedEventBudaya } from "./_seeder_list/desa/event-budaya/seed_event_budaya";
 import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
 import { seedVideo } from "./_seeder_list/desa/gallery/video/seed_video";
@@ -238,6 +240,7 @@ import seedAssets from "./seed_assets";
   // // =========== SUBMENU PROFILE ===========
   await seedProfileDesa();
   await seedProfilePerbekel();
+  await seedWilayahDesa();
 
   // // =========== SUBMENU POTENSI DESA ===========
   await seedPotensi();
@@ -319,6 +322,7 @@ import seedAssets from "./seed_assets";
 
   // // ==================== SUBMENU STRUKTUR ORGANISASI DAN SK PENGURUS BUMDES ==========
   await seedStrukturBumdes();
+  await seedBumdesProfil();
 
   // // ==================== SUBMENU PENDAPATAN ASLI DESA ==========
   await seedPendapatanAsli();
