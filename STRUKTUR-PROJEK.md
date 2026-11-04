@@ -10,7 +10,7 @@
 |----------|-----------|
 | **Framework Frontend** | Next.js 15 dengan App Router |
 | **Bahasa** | TypeScript (strict mode) |
-| **Styling** | Mantine UI v7/v8 + Custom CSS |
+| **Styling** | Mantine UI v9 + Custom CSS |
 | **Backend API** | Elysia.js (high-performance TypeScript framework) |
 | **Database** | PostgreSQL |
 | **ORM** | Prisma 6.3.1 |
