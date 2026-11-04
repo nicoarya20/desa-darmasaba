@@ -50,7 +50,7 @@ export const auth = betterAuth({
     expiresIn: 7 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
     storeSessionInDatabase: true,
-    // Cookie cache TTL pendek (60 dtk) → middleware bisa baca role/isActive dari
+    // Cookie cache TTL pendek (60 dtk) → proxy bisa baca role/isActive dari
     // cookie tanpa fetch/DB (menghindari hang saat fetch loopback di container).
     // TTL pendek menjaga perubahan role/isActive (mis. admin promote lewat tab
     // Warga) berlaku maksimal ~60 dtk. Validasi penuh tetap di getSession (DB).

@@ -6,8 +6,8 @@ import { decideAdminAccess } from "./lib/auth-policy";
 // User dari cookie cache Better Auth (additionalFields roleId/isActive ikut).
 type CachedUser = { id: string; roleId?: string; isActive?: boolean };
 
-// Baca sesi dari COOKIE CACHE — decode lokal di middleware, TANPA fetch/DB.
-// Sebelumnya middleware fetch get-session (loopback/proxy) → hang/timeout di
+// Baca sesi dari COOKIE CACHE — decode lokal di proxy, TANPA fetch/DB.
+// Sebelumnya guard ini fetch get-session (loopback/proxy) → hang/timeout di
 // container. getCookieCache membaca & memverifikasi cookie signed langsung.
 // Cache TTL 60 dtk (lihat session.cookieCache di auth.ts) → role tetap fresh.
 async function getCachedUser(request: NextRequest): Promise<CachedUser | null> {
@@ -26,7 +26,9 @@ function hasSessionToken(request: NextRequest): boolean {
   return Boolean(getSessionCookie(request));
 }
 
-export async function middleware(request: NextRequest) {
+// Next 16: konvensi `proxy` (dulu middleware.ts, deprecated); runtime selalu
+// nodejs (edge tidak didukung) — getCookieCache cukup butuh WebCrypto.
+export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const loginUrl = new URL("/login", request.url);
 
