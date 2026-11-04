@@ -32,6 +32,7 @@ bun eslint . --fix
 - Env vars, Docker, CI/CD, releasing: @.claude/DEPLOYMENT.md
 - UI/UX design system, tokens, komponen, pola halaman: @.claude/DESIGN.md
 - AI collaboration contract, rules, and guidelines: @AI-CONTRACT.md
+- Keputusan arsitektur / migrasi (ADR, baca saat menyentuh area terkait): `docs/decisions/`
 
 ### Workflow for Code Changes
 1.  **Commit** existing changes before starting new work

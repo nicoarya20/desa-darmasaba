@@ -5,7 +5,7 @@
 - **Runtime/Package manager**: Bun (not npm)
 - **API server**: Elysia.js (mounted at `/api/[[...slugs]]`)
 - **ORM**: Prisma + PostgreSQL
-- **UI**: Mantine UI v7-8
+- **UI**: Mantine UI v8 (8.3.18) + Tiptap 3 — lihat `docs/decisions/2026-11-04-mantine-8-staged-upgrade.md`
 - **State**: Jotai (atoms), Valtio (proxies), SWR (data fetching)
 - **Auth**: iron-session + JWT
 - **File storage**: Local uploads + MinIO (object storage) + Seafile (self-hosted fallback)
