@@ -135,7 +135,7 @@ function DetailBerita() {
                       {data.images.length}
                     </Badge>
                   </Group>
-                  <Grid gutter="md">
+                  <Grid gap="md">
                     {data.images.map((img, index) => (
                       <Grid.Col span={{ base: 6, md: 4 }} key={img.id}>
                         <Card p="xs" radius="md" withBorder>

@@ -58,7 +58,7 @@ function Semua() {
           <Box mb={50}>
             <Title order={2} mb="md">Berita Utama</Title>
             <Paper shadow="md" radius="md" withBorder>
-              <Grid gutter={0}>
+              <Grid gap={0}>
                 <GridCol span={{ base: 12, md: 6 }}>
                   <Image
                     src={featuredData.image?.link || '/images/placeholderx.jpg'}

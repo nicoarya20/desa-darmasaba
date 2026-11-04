@@ -301,7 +301,7 @@ export default function CreateKesejahteraan() {
             </Dropzone>
 
             {galleryPreviews.length > 0 && (
-              <Grid mt="sm" gutter="sm">
+              <Grid mt="sm" gap="sm">
                 {galleryPreviews.map((preview, index) => (
                   <Grid.Col span={4} key={index}>
                     <Card p="xs" radius="md" withBorder>

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.205] - 2026-11-04
+### Changed
+- **Library UI Mantine naik dari 8.3.18 ke 9.7.4** (tahap terakhir upgrade UI bertahap): seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di 9.7.4. Tampilan halaman publik dan admin dipertahankan sama seperti sebelumnya: radius sudut default, warna varian `light`/`outline`, serta ketebalan teks tombol (600) dan label input/menu (500) tetap seperti di Mantine 8.
+- **Upload file kini benar-benar membatasi ekstensi yang terdaftar.** Sebelumnya `image/*` di daftar format membuat semua jenis gambar lolos, padahal yang tercantum hanya 4 ekstensi. Sekarang:
+  - gambar hanya `.jpg`, `.jpeg`, `.png`, dan `.webp`, sehingga `.gif`, `.heic`, `.svg`, dan `.avif` ditolak. Ini berlaku di hampir semua form upload gambar. Form Data UMKM, Produk UMKM, dan halaman `/admin/images` tidak berubah, karena dari awal memakai daftar format gambar bawaan Mantine yang memang menerima semua format di atas;
+  - musik hanya `.mp3`, `.wav`, `.ogg`, dan `.m4a`, sehingga misalnya `.aac` dan `.flac` ditolak;
+  - dokumen Desa Anti Korupsi hanya `.pdf`, `.doc`/`.docx`, `.xls`/`.xlsx`, dan `.ppt`/`.pptx`.
+
+  File yang ditolak diperlakukan sama seperti file lain yang formatnya tidak didukung.
+- **Paste file ke area upload**: menempelkan file (Ctrl/Cmd+V) ke area upload yang sedang fokus kini diterima seperti file yang diseret ke sana. Aturan format dan ukuran filenya sama.
+
+### Fixed
+- **Grid tidak lagi melebar keluar tepi container**: Mantine 9 memakai jarak antar kolom berbasis CSS `gap`, bukan margin negatif, sehingga scroll horizontal kecil yang kadang muncul di layar HP bisa hilang. Lebar dan jarak kolom tetap sama.
+
+Tidak ada perubahan schema/database/API.
+
 ## [0.1.204] - 2026-11-04
 ### Changed
 - **Framework naik dari Next.js 15.5.14 ke 16.4.5, React ke 19.3.1**: fungsi halaman publik maupun admin tidak berubah. QA mencatat sedikit perubahan tampilan, dan ini akan dipoles setelah seluruh tahap upgrade UI selesai. Build dan dev server sekarang memakai Turbopack (bawaan Next 16), dan `next dev` menulis output ke `.next/dev`. Jumlah halaman hasil build kini 394 (sebelumnya 395) karena Next 16 tidak lagi membuat halaman `_app`/`_document`/`_error` Pages Router untuk project yang hanya memakai App Router. Daftar halaman aplikasi tidak berubah.

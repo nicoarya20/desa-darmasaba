@@ -156,7 +156,7 @@ function Page() {
             </Stack>
           </Center>
         ) : (
-          <Grid gutter="xl">
+          <Grid gap="xl">
             {data.map((item) => (
               <GridCol key={item.id} span={{ base: 12, sm: 6, md: 4 }}>
                 <Paper

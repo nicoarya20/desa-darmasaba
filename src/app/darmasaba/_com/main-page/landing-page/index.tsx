@@ -253,7 +253,7 @@ function LandingPage() {
                       shadow="md"
                       style={{ position: "relative", overflow: "hidden" }}
                     >
-                      <Grid gutter="md">
+                      <Grid gap="md">
 
                         {/* Kolom 1 */}
                         <GridCol span={{ base: 12, md: 6 }}>

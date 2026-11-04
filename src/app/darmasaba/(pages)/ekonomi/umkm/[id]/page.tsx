@@ -36,7 +36,7 @@ function Page() {
       </Box>
 
       <Box px={{ base: 'md', md: 100 }}>
-        <Grid gutter="xl">
+        <Grid gap="xl">
           <GridCol span={{ base: 12, md: 4 }}>
             <Image
               radius="lg"

@@ -8,18 +8,23 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 
 | Paket | Versi | Kegunaan |
 |---|---|---|
-| `@mantine/core` | 8.3.18 | Komponen utama (AppShell, Paper, Button, Input, dll) |
-| `@mantine/dates` | 8.3.18 | Date picker |
-| `@mantine/dropzone` | 8.3.18 | Upload file/gambar |
-| `@mantine/tiptap` | 8.3.18 | Rich text editor (wrapper custom di `_com/createEditor.tsx`) |
+| `@mantine/core` | 9.7.4 | Komponen utama (AppShell, Paper, Button, Input, dll) |
+| `@mantine/dates` | 9.7.4 | Date picker |
+| `@mantine/dropzone` | 9.7.4 | Upload file/gambar |
+| `@mantine/tiptap` | 9.7.4 | Rich text editor (wrapper custom di `_com/createEditor.tsx`) |
 | `@tiptap/*` | ^3.32.2 | Engine rich text editor (StarterKit, Highlight, TextAlign, Superscript, Subscript; Link via `@mantine/tiptap`) — lihat §17 |
-| `@mantine/charts` | 8.3.18 | BarChart, PieChart, dll |
+| `@mantine/charts` | 9.7.4 | BarChart, PieChart, dll |
 | `@tabler/icons-react` | ^3.30.0 | Semua ikon (Tabler Icons) |
 | `framer-motion` | ^12.38.0 | Animasi (navbar mobile, hover cards, stagger) |
 | `recharts` | ^3.8.0 | Grafik APBDes |
 | `primereact` | ^10.9.6 | Beberapa komponen tabel |
-| `@mantine/hooks` | 8.3.18 | Hooks pendukung Mantine (dipakai luas bareng `@mantine/core`) |
+| `@mantine/hooks` | 9.7.4 | Hooks pendukung Mantine (dipakai luas bareng `@mantine/core`) |
 | `chart.js` | ^4.4.8 | Grafik tambahan di luar `@mantine/charts` |
+
+**Catatan Mantine 9** (lihat `docs/decisions/2026-11-04-mantine-9-upgrade.md`):
+- Jarak kolom `Grid` memakai prop `gap`, bukan `gutter` (sudah dihapus di v9).
+- Tampilan v8 dipertahankan di theme `src/app/layout.tsx`: `defaultRadius: "sm"`, `cssVariablesResolver={v8CssVariablesResolver}`, `fontWeights.medium: "500"`, dan override `--mantine-font-weight-medium: 600` di `Button` (+ `ButtonGroupSection`/`ActionIconGroupSection`), supaya tombol tetap 600 seperti di v8. Jangan dihapus sebelum fondasi tema baru diterapkan.
+- `accept` Dropzone yang berisi MIME wildcard **dan** ekstensi (mis. `image/*` + `.jpg`) kini hanya menerima ekstensi itu saja (react-dropzone 20).
 
 ---
 

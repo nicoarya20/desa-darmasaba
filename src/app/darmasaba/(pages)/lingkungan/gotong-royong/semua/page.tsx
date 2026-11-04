@@ -130,7 +130,7 @@ export default function Page() {
               <Box mb={50} style={styles}>
                 <Text fz="h2" fw={700} mb="md">Gotong royong Utama</Text>
                 <Paper shadow="md" radius="md" withBorder>
-                  <Grid gutter={0}>
+                  <Grid gap={0}>
                     <GridCol span={{ base: 12, md: 6 }}>
                       <Image
                         src={featuredData.image?.link || '/images/placeholder.jpg'}
