@@ -1,7 +1,7 @@
 # ==============================
 # Stage 1: Builder
 # ==============================
-FROM oven/bun:1-debian AS builder
+FROM oven/bun:1.4.4-debian AS builder
 
 WORKDIR /app
 
@@ -35,7 +35,7 @@ RUN bun run build
 # ==============================
 # Stage 2: Runner (Production)
 # ==============================
-FROM oven/bun:1-debian AS runner
+FROM oven/bun:1.4.4-debian AS runner
 
 WORKDIR /app
 
