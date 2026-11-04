@@ -97,7 +97,7 @@
     "react-zoom-pan-pinch": "^3.7.0",
     "readdirp": "^4.1.1",
     "recharts": "^3.8.0",
-    "sharp": "^0.34.3",
+    "sharp": "^0.35.5",
     "swr": "^2.3.2",
     "uuid": "^11.1.0",
     "valtio": "^2.1.3",
