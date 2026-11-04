@@ -1,6 +1,6 @@
 # ADR 2026-11-04 — Upgrade UI bertahap: Mantine 8 → Next 16 → Mantine 9
 
-- **Status:** Tahap 1 selesai (v0.1.203), Tahap 2 & 3 belum dimulai
+- **Status:** Tahap 1 selesai (v0.1.203), Tahap 2 selesai di lokal (v0.1.204, lihat [ADR Next 16](2026-11-04-next-16-upgrade.md)), Tahap 3 belum dimulai
 - **Branch tahap 1:** `tasks/mantine-v8-migration/upgrade-mantine-v8/2026-11-04-1435`
 - **Lingkup:** dependency UI + editor teks. Tidak ada perubahan schema/database/API/middleware.
 - **Catatan versi:** tahap 1 awalnya dibangun di atas `main` lokal yang basi (`c7de9c75`, versi 0.1.181). Branch kemudian disinkronkan dengan `origin/main` `9f460ed5` (v0.1.202) lewat merge `06c3fa4b`, sehingga versinya menjadi 0.1.203. Semua angka gate di §4 diukur setelah sinkron.
@@ -25,7 +25,7 @@ Upgrade dipecah jadi tiga tahap. Tiap tahap punya branch, QA manual, dan persetu
 | Tahap | Isi | Status |
 |---|---|---|
 | 1 | Mantine **8.3.18** + Tiptap 3 (tetap Next 15) | ✅ v0.1.203 |
-| 2 | Next **16.4.5** (menyentuh backend, sudah disetujui tim backend) | ⬜ |
+| 2 | Next **16.4.5** (menyentuh backend, sudah disetujui tim backend) | ✅ v0.1.204 (lokal), lihat [ADR Next 16](2026-11-04-next-16-upgrade.md) |
 | 3 | Mantine **9.7.4** | ⬜ |
 
 ## 3. Tahap 1 — Apa yang berubah
@@ -89,6 +89,8 @@ Baseline pembanding: `origin/main` `9f460ed5` (v0.1.202). Hasil branch identik d
 - **Base image Docker** `oven/bun:1-debian` memakai tag floating (saat ini bun 1.4.4).
 
 ## 6. Rencana Tahap 2 — Next 16.4.5
+
+> **Sudah dikerjakan di v0.1.204.** Hasil, keputusan (D15–D20), gate, dan hutang teknis tercatat di [ADR Next 16](2026-11-04-next-16-upgrade.md). Rencana di bawah dipertahankan sebagai catatan historis. Butir 3 (`eslint-config-next` 16) dan butir 4 (ganti `next-view-transitions`) ditunda ke task terpisah.
 
 Hasil cek statis: 15 pemanggilan `cookies()`/`headers()` sudah `await`, `params` sudah Promise, tidak ada webpack custom, `next lint` tidak dipakai, dan `eslint.config.mjs` sudah flat config.
 
