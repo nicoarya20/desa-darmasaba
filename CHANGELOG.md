@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.181] - 2026-11-04
+### Changed
+- **Library UI Mantine naik dari 7.17 ke 8.3.18**: seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di satu versi yang sama, 8.3.18. Sebelumnya versinya campur (core 7.17, sedangkan dates/dropzone sudah 8.x), sehingga ada ketidakcocokan peer dependency. Tampilan halaman publik dan admin tidak berubah. Prop `color` pada `Text` yang sudah deprecated diganti `c` (21 halaman admin) tanpa efek visual.
+- **Editor teks (admin & form publik) pindah ke Tiptap 3**: semua editor rich text memakai Tiptap 3. Isi yang sudah tersimpan tetap sama persis, dan di halaman edit tombol Simpan/Batal tidak menganggap konten berubah sebelum benar-benar diketik. Satu perilaku baru dari Tiptap 3: menekan Backspace/Delete di awal atau akhir item list kini menggabungkan item atau mengangkatnya keluar dari list.
+
+### Fixed
+- **Keamanan editor teks**: lockfile sebelumnya menyimpan salinan lama `prosemirror-view` 1.41.8 yang rentan XSS saat menempel (paste) konten ([GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w)). Sekarang hanya ada satu salinan, 1.42.9, yang sudah diperbaiki. Salinan ganda paket inti editor (`prosemirror-model`/`-transform`/`-view`) juga dihapus.
+
+### Removed
+- **Paket yang tidak terpakai**: `@mantine/form`, `@mantine/modals`, `@mantine/carousel`, `embla-carousel`, `embla-carousel-autoplay`, `embla-carousel-react`, dan `@tiptap/extension-underline` (fitur underline sudah termasuk di StarterKit Tiptap 3).
+- **10 komponen editor duplikat yang tidak pernah dipakai** di halaman mana pun.
+- **Lockfile biner lama `bun.lockb`**: sudah basi sejak April 2026 dan tidak dipakai lagi. Satu-satunya lockfile sekarang `bun.lock`.
+
+Tidak ada perubahan schema/database/API.
+
 ## [0.1.174] - 2026-08-28
 ### Fixed
 - **Hapus SDGs Desa (`/admin/landing-page/SDGs/[id]`) menyembunyikan kegagalan**: `handleHapus` memanggil delete tanpa `await` lalu langsung `router.push` ke halaman List, dan `<ModalKonfirmasiHapus>` tidak diberi prop `loading`. Akibatnya admin ter-redirect ke List sebelum request DELETE selesai — bila gagal (network/server error), `toast.error` tetap muncul tapi di halaman lain sehingga mudah tidak disadari. Diperbaiki: `sdgsDesa.delete.byId` kini mengembalikan `boolean` (sukses/gagal), `handleHapus` jadi `async` + `await` dan hanya redirect saat sukses, serta modal diberi `loading={sdgsState.delete.loading}` agar tombol "Yakin Hapus" menampilkan state proses. Tidak ada perubahan schema/database.
