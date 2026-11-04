@@ -414,7 +414,7 @@ function EditKesejahteraan() {
                   <IconPhoto size={40} color="#868e96" stroke={1.5} />
                 </Dropzone.Idle>
               </Group>
-              <Text ta="center" mt="sm" size="xs" color="dimmed">
+              <Text ta="center" mt="sm" size="xs" c="dimmed">
                 Seret gambar untuk menambahkan ke galeri
               </Text>
             </Dropzone>

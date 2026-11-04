@@ -172,7 +172,7 @@ function CreatePosyandu() {
                   <IconPhoto size={48} color="var(--mantine-color-dimmed)" stroke={1.5} />
                 </Dropzone.Idle>
               </Group>
-              <Text ta="center" mt="sm" size="sm" color="dimmed">
+              <Text ta="center" mt="sm" size="sm" c="dimmed">
                 Seret gambar atau klik untuk memilih file (maks 5MB)
               </Text>
             </Dropzone>
