@@ -3,7 +3,6 @@ import { RichTextEditor, Link } from '@mantine/tiptap';
 import { useEditor } from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
@@ -17,14 +16,14 @@ type EditEditorProps = {
 export default function EditPPIDEditor({ value, onChange }: EditEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Underline,
+      StarterKit.configure({ link: false }),
       Link,
       Superscript,
       SubScript,
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
+    shouldRerenderOnTransaction: true,
     onUpdate({ editor }) {
       onChange(editor.getHTML());
     },
@@ -32,7 +31,7 @@ export default function EditPPIDEditor({ value, onChange }: EditEditorProps) {
   
   useEffect(() => {
     if (editor && value && value !== editor.getHTML()) {
-      editor.commands.setContent(value);
+      editor.commands.setContent(value, { emitUpdate: false });
     }
   }, [editor, value]);
 

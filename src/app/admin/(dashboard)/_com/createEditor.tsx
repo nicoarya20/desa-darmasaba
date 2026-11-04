@@ -3,7 +3,6 @@ import { RichTextEditor, Link } from '@mantine/tiptap';
 import { useEditor } from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
@@ -17,14 +16,14 @@ type CreateEditorProps = {
 export default function CreateEditor({ value, onChange }: CreateEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Underline,
+      StarterKit.configure({ link: false }),
       Link,
       Superscript,
       SubScript,
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
+    shouldRerenderOnTransaction: true,
     content: value,
     onUpdate: () => {
       if (editor) {
@@ -36,7 +35,7 @@ export default function CreateEditor({ value, onChange }: CreateEditorProps) {
   // 👇 Tambahkan efek untuk sinkronisasi value dari luar (resetForm)
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value || '');
+      editor.commands.setContent(value || '', { emitUpdate: false });
     }
   }, [value, editor]);
 

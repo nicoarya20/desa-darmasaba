@@ -5,7 +5,6 @@ import Highlight from '@tiptap/extension-highlight';
 import SubScript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import TextAlign from '@tiptap/extension-text-align';
-import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useEffect } from 'react';
@@ -18,14 +17,14 @@ export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true, initialC
   initialContent?: string }) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Underline,
+      StarterKit.configure({ link: false }),
       Link,
       Superscript,
       SubScript,
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
+    shouldRerenderOnTransaction: true,
     immediatelyRender: false,
     content: initialContent,
     onUpdate : ({editor}) => {
@@ -35,7 +34,7 @@ export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true, initialC
 
   useEffect(() => {
     if (editor && initialContent !== editor.getHTML()) {
-      editor.commands.setContent(initialContent || '<p></p>');
+      editor.commands.setContent(initialContent || '<p></p>', { emitUpdate: false });
     }
   }, [initialContent, editor]);
 
