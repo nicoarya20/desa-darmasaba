@@ -32,7 +32,7 @@ import {
 
 const KATEGORI_SOSIAL_ID = "katsosia000001"; // test-only: id kategori non-pembangunan
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- stub context handler test
 const ctx = (over: Record<string, any>) => ({ set: {}, query: {}, params: {}, ...over }) as any;
 
 const baseBody = {
