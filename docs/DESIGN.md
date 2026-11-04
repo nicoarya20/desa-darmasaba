@@ -480,12 +480,13 @@ const statePosyandu = proxy({
 
 ## 13. Dark Mode
 
-File: `src/components/admin/AdminThemeProvider.tsx`, `src/utils/themeTokens.ts`, `src/styles/dark-mode-table.css`
+File: `src/utils/themeTokens.ts`, `src/state/darkModeStore.ts`
 
 - State: `useDarkMode()` hook dari `src/state/darkModeStore.ts`
-- Diterapkan via `MantineProvider forceColorScheme={isDark ? 'dark' : 'light'}`
+- Diterapkan via `themeTokens(isDark)` + props/style inline di komponen admin (mis. `src/app/admin/layout.tsx`). Color scheme Mantine sendiri tidak di-switch: satu-satunya `MantineProvider` aktif ada di `src/app/layout.tsx` (`defaultColorScheme="light"`).
+- `src/components/admin/AdminThemeProvider.tsx` (pakai `forceColorScheme`) **tidak dipakai** (0 importer) dan tidak punya compat look Mantine 9 — jangan dipasang tanpa menyamakan theme-nya dengan `layout.tsx` (lihat `docs/decisions/2026-11-04-mantine-9-upgrade.md` §6).
 - Semua komponen admin konsumsi `themeTokens(isDark)` untuk styling inline
-- Table hover dark mode via CSS override: `[data-mantine-color-scheme="dark"] tr:hover { background: rgba(255,255,255,0.08) }`
+- ⚠️ `src/styles/dark-mode-table.css` (hover tabel `[data-mantine-color-scheme="dark"] tr:hover`) **tidak aktif**: hanya di-import oleh `AdminThemeProvider.tsx` yang tidak dipakai, dan color scheme Mantine tidak pernah `dark`. Kandidat poles tampilan.
 - Transisi: `transition: 'background 0.3s ease, border-color 0.3s ease'`
 - Halaman publik tidak ada dark mode (fixed light)
 
@@ -649,7 +650,7 @@ Pattern di halaman Create/Edit:
 | `src/con/colors.ts` | Raw color palette |
 | `src/utils/themeTokens.ts` | Token warna, tipografi, spacing, radius, shadows |
 | `src/app/layout.tsx` | `createTheme` Mantine (font, overrides) |
-| `src/components/admin/AdminThemeProvider.tsx` | Provider dark mode admin |
+| `src/components/admin/AdminThemeProvider.tsx` | Tidak dipakai (0 importer); dark mode admin lewat `themeTokens` — lihat §13 |
 | `src/components/admin/UnifiedSurface.tsx` | UnifiedCard komponen |
 | `src/components/admin/UnifiedTypography.tsx` | UnifiedTitle, UnifiedText, UnifiedPageHeader |
 | `src/app/admin/(dashboard)/_com/header.tsx` | HeaderSearch |
