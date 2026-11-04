@@ -84,7 +84,7 @@ function TabProdukUmkm({ router }: { router: any }) {
 
   return (
     <Stack gap="lg">
-      <Grid gutter="md" align="flex-end">
+      <Grid gap="md" align="flex-end">
         <GridCol span={{ base: 12, md: 8 }}>
           <TextInput
             label="Cari Produk UMKM"

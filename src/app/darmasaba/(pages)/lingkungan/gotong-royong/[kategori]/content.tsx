@@ -74,7 +74,7 @@ export default function Content({ kategori }: { kategori: string }) {
                 <Box mb={50}>
                   <Text fz="h2" fw={700} mb="md">Gotong Royong Utama</Text>
                   <Paper shadow="md" radius="md" withBorder>
-                    <Grid gutter={0}>
+                    <Grid gap={0}>
                       <GridCol span={{ base: 12, md: 6 }}>
                         <Image
                           src={featured.image?.link || '/no-image.jpg'}

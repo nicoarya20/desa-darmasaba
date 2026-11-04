@@ -159,7 +159,7 @@ function DetailProdukPasarUser() {
       </Box>
 
       <Paper mt="md" mx={{ base: 'md', md: 100 }} p="lg" radius="md">
-        <Grid gutter="xl" align="flex-start">
+        <Grid gap="xl" align="flex-start">
           <Grid.Col span={{ base: 12, md: 5 }}>
             <Image
               src={data.image?.link || '/no-image.jpg'}

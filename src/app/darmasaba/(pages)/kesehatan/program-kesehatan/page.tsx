@@ -79,7 +79,7 @@ export default function Page() {
         <BackButton />
       </Box>
 
-      <Grid px={{ base: "md", md: 100 }} align="center" gutter="lg">
+      <Grid px={{ base: "md", md: 100 }} align="center" gap="lg">
         <GridCol span={{ base: 12, md: 8 }}>
           <Title
             order={1}

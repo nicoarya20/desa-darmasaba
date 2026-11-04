@@ -88,7 +88,7 @@ function Page() {
               </Stack>
             </Box>
 
-            <Grid mt="xl" gutter="xl">
+            <Grid mt="xl" gap="xl">
               <GridCol span={{ base: 12, md: 6 }}>
                 <Stack gap="lg">
                   <Box>

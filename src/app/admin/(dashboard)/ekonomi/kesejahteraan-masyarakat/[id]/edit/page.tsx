@@ -425,7 +425,7 @@ function EditKesejahteraan() {
                 <Text fz="xs" fw="bold" mb={6} c="dimmed">
                   Gambar Existing ({existingGalleryImages.length})
                 </Text>
-                <Grid gutter="sm">
+                <Grid gap="sm">
                   {existingGalleryImages.map((img, index) => (
                     <Grid.Col span={4} key={img.id}>
                       <Card p="xs" radius="md" withBorder>
@@ -456,7 +456,7 @@ function EditKesejahteraan() {
                 <Text fz="xs" fw="bold" mb={6} c="dimmed">
                   Gambar Baru ({galleryPreviews.length})
                 </Text>
-                <Grid gutter="sm">
+                <Grid gap="sm">
                   {galleryPreviews.map((preview, index) => (
                     <Grid.Col span={4} key={index}>
                       <Card p="xs" radius="md" withBorder>

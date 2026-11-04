@@ -120,7 +120,7 @@ export default function LayoutTabs({
 
         <Tabs color="blue" variant="pills" value={activeTabState} onChange={handleTabChange}>
           <Box px={{ base: 'md', md: 100 }} py="md" bg="var(--mantine-color-gray-1)" style={{ borderRadius: 16 }}>
-            <Grid align="center" gutter="md">
+            <Grid align="center" gap="md">
               <GridCol span={{ base: 12, md: 9 }}>
                 <TabsList>
                   {tabs.map((tab) => (
