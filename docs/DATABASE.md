@@ -9,9 +9,9 @@
 ## Authentication Flow
 Auth was rewritten to **Better Auth with Google OAuth only** (no more phone OTP). Flow:
 1. User signs in with Google → Better Auth (`src/lib/auth.ts`) creates a session, stored in Postgres (`Session`, `Account`, `Verification`, `RateLimit` models — Better Auth's own schema, not custom).
-2. `src/middleware.ts` reads Better Auth's signed cookie cache directly (`getCookieCache`/`getSessionCookie` from `better-auth/cookies`) — it does **not** decode a custom JWT. This was a deliberate choice to avoid a hang bug from fetching `/api/auth/get-session` in-container.
+2. `src/proxy.ts` (Next 16 `proxy` convention, formerly `middleware.ts`) reads Better Auth's signed cookie cache directly (`getCookieCache`/`getSessionCookie` from `better-auth/cookies`) — it does **not** decode a custom JWT. This was a deliberate choice to avoid a hang bug from fetching `/api/auth/get-session` in-container.
 3. `src/lib/api-auth.ts` validates sessions in API routes via `auth.api.getSession()`.
-4. Access control (which admin paths are public/protected, role checks) lives in `src/lib/auth-policy.ts`, used by both `middleware.ts` and the Elysia `route.ts`.
+4. Access control (which admin paths are public/protected, role checks) lives in `src/lib/auth-policy.ts`, used by both `proxy.ts` and the Elysia `route.ts`.
 5. Old OTP routes (`/validasi`, `/waiting-room`) are dead and redirect to `/login`.
 
 **Legacy/dead models still in schema, not referenced by active code** — don't build new features on these:

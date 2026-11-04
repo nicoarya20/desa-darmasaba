@@ -214,7 +214,7 @@ text yang beda dari modul lain di domain yang sama.
 - [ ] Validasi admin (`auth/validasi-admin`) — flow OTP/validasi email sesuai `docs/DATABASE.md` §Auth
 - [ ] Session persist setelah refresh halaman admin
 - [ ] Logout menghapus session (`UserSession`) dan redirect ke login
-- [ ] Akses halaman admin tanpa login → redirect ke login (cek `src/middleware.ts`)
+- [ ] Akses halaman admin tanpa login → redirect ke login (cek `src/proxy.ts`)
 - [ ] Token/session expired → redirect ke login, bukan error blank/500
 
 ## 4. Role-Based Access Control

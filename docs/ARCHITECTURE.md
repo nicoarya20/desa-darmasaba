@@ -14,7 +14,7 @@
 ## Request Flow
 
 ```
-Browser → Next.js middleware (src/middleware.ts)
+Browser → Next.js proxy (src/proxy.ts, runtime nodejs)
        → Public pages: src/app/darmasaba/
        → Admin pages:  src/app/admin/
        → API:          src/app/api/[[...slugs]]/route.ts (Elysia.js)
@@ -39,7 +39,7 @@ Admin also has non-domain sections not covered above: `auth` (login/registrasi/v
 
 | File | Purpose |
 |------|---------|
-| `src/middleware.ts` | Route guards, reads Better Auth's signed cookie cache (not a custom JWT decode) — see `src/lib/auth-policy.ts` for the whitelist logic it delegates to |
+| `src/proxy.ts` | Route guards (Next 16 `proxy` convention, formerly `middleware.ts`; always Node.js runtime), reads Better Auth's signed cookie cache (not a custom JWT decode) — see `src/lib/auth-policy.ts` for the whitelist logic it delegates to |
 | `src/lib/prisma.ts` | Prisma client singleton |
 | `src/lib/auth.ts` | Better Auth server config (Google OAuth, Postgres session store, super-admin allowlist) |
 | `src/lib/api-auth.ts` | Better Auth session validation in API routes (`auth.api.getSession()`) |
