@@ -134,7 +134,7 @@ function ListArtikelKesehatan({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={3}>
                     <Center py={20}>
-                      <Text color="dimmed">Tidak ada artikel yang cocok</Text>
+                      <Text c="dimmed">Tidak ada artikel yang cocok</Text>
                     </Center>
                   </TableTd>
                 </TableTr>

@@ -141,7 +141,7 @@ function ListAjukanIdeInovatif({ search }: { search: string }) {
                 <TableTr>
                   <TableTd colSpan={4}>
                     <Center py={20}>
-                      <Text color="dimmed">Tidak ada ide inovatif yang cocok</Text>
+                      <Text c="dimmed">Tidak ada ide inovatif yang cocok</Text>
                     </Center>
                   </TableTd>
                 </TableTr>
