@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.203] - 2026-11-04
+### Added
+- **Letak & Batas Wilayah di Profil Desa** (`/darmasaba/desa/profil`): section baru menampilkan batas utara/selatan/timur/barat, luas wilayah (hektar), keterangan, dan peta embed (hanya URL https). Diisi admin lewat tab "Letak & Batas Wilayah" di admin Profil Desa; bila belum diisi tampil empty-state. Model baru `WilayahDesa` (satu baris) + endpoint `GET /api/desa/profile/wilayah` (publik) dan `PUT` (admin). Tidak ada data wilayah di seed — wajib diisi lewat admin.
+- **Halaman BUMDes dengan profil dan unit usaha**: model baru `ProfilBumDes` dan `UnitUsahaBumDes`, endpoint API + admin CRUD (profil BUMDes dan daftar unit usaha). Halaman publik kini berurutan: profil BUMDes, unit usaha, lalu struktur pengurus & SK, masing-masing dengan empty-state.
+- **Produk Unggulan Desa di katalog UMKM**: kolom `PasarDesa.isUnggulan` (default false), parameter opsional `unggulan=true` pada list produk, toggle di form admin produk, badge "Unggulan" dan filter "Produk Unggulan" di katalog publik.
+- **Kegiatan Pembangunan dan halaman Monev & Pembangunan**: field opsional pada `KegiatanDesa` (`anggaran`, `progres` 0–100, `statusPembangunan` rencana/berjalan/selesai, `sumberDana`), kategori "Pembangunan", kartu dengan progress bar di Kegiatan Desa, halaman baru `/darmasaba/desa/monev-pembangunan` (ringkasan per status, total anggaran, rata-rata progres, tautan ke APBDes), dan entri menu "Monev & Pembangunan" di grup Desa.
+### Changed
+- Menu `Ekonomi > Struktur Organisasi dan SK Pengurus BUMDesa` berlabel **"BUMDes"** (URL tetap sama agar link lama tidak putus).
+- Seed `struktur-bumdes` tidak lagi memuat perangkat desa (Kades, Sekdes, Kaur, Kadus); hanya jabatan generik tanpa nama orang.
+### Catatan operator
+- 4 migrasi baru (idempoten, tabel/kolom baru, tidak menghapus data): `20261103090747_add_wilayah_desa`, `20261103100000_add_profil_dan_unit_usaha_bumdes`, `20261103100200_add_produk_unggulan_flag`, `20261103100300_add_pembangunan_fields_kegiatan_desa`.
+- Data pegawai BUMDes lama yang berisi perangkat desa di DB staging/produksi TIDAK dihapus oleh rilis ini; pembersihan adalah keputusan terpisah.
+- Data batas wilayah, profil/unit usaha BUMDes, dan produk unggulan harus diinput lewat admin (tidak ada data karangan di seed).
+
 ## [0.1.196] - 2026-09-21
 ### Added
 - **Seed data untuk submenu Ekonomi > Kesejahteraan Masyarakat**: menambahkan 6 entri data program/kegiatan kesejahteraan masyarakat (BLT Dana Desa, verifikasi PKH, penyaluran BPNT/Kartu Sembako, bedah rumah RTLH, pendampingan PBI JKN-KIS, sosialisasi PIP) yang dikontekskan ke Desa Darmasaba, mengacu ke program bansos nasional yang benar-benar berjalan di level desa. Sebelumnya submenu ini (model `KesejahteraanMasyarakat`, fitur sudah ada di admin/API/public) tidak punya data seed sehingga tampil kosong di setup baru. Tidak ada perubahan schema/migration.
