@@ -1,6 +1,6 @@
 # ADR 2026-11-04 — Tahap 2: Next.js 15.5.14 → 16.4.5
 
-- **Status:** Selesai di lokal (v0.1.204), QA user lolos. Belum masuk `stg`.
+- **Status:** Selesai (v0.1.204), QA user lolos. Masuk `stg` lewat merge `11a534b8` (2026-11-04), deploy oleh tim.
 - **Branch:** `tasks/next16-upgrade/upgrade-next16/2026-11-04-1617`, stacked di atas tahap 1 (v8 `4d0ee79c`, v0.1.203). Saat masuk `stg`, tahap 1 masuk lebih dulu.
 - **Basis tim:** `origin/main` = `origin/stg` = `9f460ed5` (v0.1.202).
 - **Lingkup:** framework (Next/React), guard route (`middleware.ts` → `proxy.ts`), config build, base image Docker, `sharp`. Tidak ada perubahan schema/database/API maupun logika bisnis. Perubahan backend diizinkan tim backend khusus untuk upgrade framework.

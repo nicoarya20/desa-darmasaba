@@ -1,6 +1,6 @@
 # ADR 2026-11-04 — Tahap 3: Mantine 8.3.18 → 9.7.4
 
-- **Status:** Selesai di lokal (v0.1.205), QA user lolos. Belum masuk `stg`.
+- **Status:** Selesai (v0.1.205), QA user lolos. Masuk `stg` lewat merge `e7690885` (2026-11-04), deploy oleh tim.
 - **Branch:** `tasks/mantine-v9-upgrade/upgrade-mantine-v9/2026-11-04-1946`, stacked di atas tahap 2 (`de72a680`, v0.1.204). Saat masuk `stg`, tahap 1 dan 2 masuk lebih dulu.
 - **Basis tim:** `origin/stg` = `11a534b8` (v0.1.204), `origin/main` = `9f460ed5`.
 - **Lingkup:** dependency `@mantine/*`, theme publik (`src/app/layout.tsx`), prop `Grid`. Tidak ada perubahan schema/database/API/backend.
