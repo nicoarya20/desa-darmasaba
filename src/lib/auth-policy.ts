@@ -1,6 +1,6 @@
 // Kebijakan role/akses Better Auth — fungsi murni, tanpa I/O.
 // Dipisah supaya bisa di-unit-test tanpa DB dan dipakai konsisten oleh
-// auth.ts (hook), middleware.ts (guard route), dan api-auth.ts (guard API).
+// auth.ts (hook), proxy.ts (guard route), dan api-auth.ts (guard API).
 
 // Roles desa-darmasaba (relasi tabel Role, id string):
 //   "0" DEVELOPER | "1" SUPER ADMIN | "2" ADMIN DESA
@@ -36,11 +36,11 @@ export function isAccountActive(
 // Halaman profil publik untuk user non-admin (roleId 5+).
 export const PROFILE_PATH = "/profile";
 
-// Keputusan guard middleware untuk /admin/*. Fungsi murni supaya bisa di-test.
+// Keputusan guard proxy untuk /admin/*. Fungsi murni supaya bisa di-test.
 export type AdminAccessDecision = "allow" | "login" | "profile";
 
 /**
- * Tentukan akses /admin dari state cookie yang tersedia di middleware.
+ * Tentukan akses /admin dari state cookie yang tersedia di proxy (src/proxy.ts).
  *
  * Kunci fix "tiba-tiba logout": cookie cache Better Auth TTL pendek (60 dtk),
  * sedangkan session_token hidup 7 hari. Saat cache MISS tapi token masih ada,

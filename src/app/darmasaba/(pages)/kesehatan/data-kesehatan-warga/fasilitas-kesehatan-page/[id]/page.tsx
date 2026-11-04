@@ -73,7 +73,7 @@ function Page() {
           <Skeleton h={64} radius="lg" />
         </Box>
         <Box px={{ base: 'md', md: 100 }}>
-          <Grid gutter="lg">
+          <Grid gap="lg">
             <Grid.Col span={{ base: 12, md: 8 }}>
               <Skeleton h={320} radius="lg" />
             </Grid.Col>
@@ -151,7 +151,7 @@ function Page() {
       </Box>
 
       <Box px={{ base: 'md', md: 100 }}>
-        <Grid gutter="lg">
+        <Grid gap="lg">
           <Grid.Col span={{ base: 12, md: 8 }}>
             <Card radius="xl" p="lg" withBorder>
               <Stack gap="md">

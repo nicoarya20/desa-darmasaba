@@ -166,7 +166,7 @@ const MusicPlayer = () => {
                 <Text ta="center" c="dimmed">Tidak ada musik yang ditemukan</Text>
               ) : (
                 <ScrollArea.Autosize mah={400}>
-                  <Grid gutter="md">
+                  <Grid gap="md">
                     {filteredMusik.map((song) => (
                       <Grid.Col span={{ base: 12, sm: 6, lg: 4 }} key={song.id}>
                         <Card

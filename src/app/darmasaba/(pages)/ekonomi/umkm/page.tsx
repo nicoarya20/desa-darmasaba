@@ -102,7 +102,7 @@ function TabProdukUmkm({ router }: { router: any }) {
         fullWidth
         maw={{ base: '100%', sm: 360 }}
       />
-      <Grid gutter="md" align="flex-end">
+      <Grid gap="md" align="flex-end">
         <GridCol span={{ base: 12, md: 8 }}>
           <TextInput
             label="Cari Produk UMKM"

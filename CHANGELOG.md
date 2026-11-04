@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.203] - 2026-11-04
+## [0.1.206] - 2026-11-04
 ### Added
 - **Letak & Batas Wilayah di Profil Desa** (`/darmasaba/desa/profil`): section baru menampilkan batas utara/selatan/timur/barat, luas wilayah (hektar), keterangan, dan peta embed (hanya URL https). Diisi admin lewat tab "Letak & Batas Wilayah" di admin Profil Desa; bila belum diisi tampil empty-state. Model baru `WilayahDesa` (satu baris) + endpoint `GET /api/desa/profile/wilayah` (publik) dan `PUT` (admin). Tidak ada data wilayah di seed — wajib diisi lewat admin.
 - **Halaman BUMDes dengan profil dan unit usaha**: model baru `ProfilBumDes` dan `UnitUsahaBumDes`, endpoint API + admin CRUD (profil BUMDes dan daftar unit usaha). Halaman publik kini berurutan: profil BUMDes, unit usaha, lalu struktur pengurus & SK, masing-masing dengan empty-state.
@@ -14,6 +14,53 @@
 - 4 migrasi baru (idempoten, tabel/kolom baru, tidak menghapus data): `20261103090747_add_wilayah_desa`, `20261103100000_add_profil_dan_unit_usaha_bumdes`, `20261103100200_add_produk_unggulan_flag`, `20261103100300_add_pembangunan_fields_kegiatan_desa`.
 - Data pegawai BUMDes lama yang berisi perangkat desa di DB staging/produksi TIDAK dihapus oleh rilis ini; pembersihan adalah keputusan terpisah.
 - Data batas wilayah, profil/unit usaha BUMDes, dan produk unggulan harus diinput lewat admin (tidak ada data karangan di seed).
+
+## [0.1.205] - 2026-11-04
+### Changed
+- **Library UI Mantine naik dari 8.3.18 ke 9.7.4** (tahap terakhir upgrade UI bertahap): seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di 9.7.4. Tampilan halaman publik dan admin dipertahankan sama seperti sebelumnya: radius sudut default, warna varian `light`/`outline`, serta ketebalan teks tombol (600) dan label input/menu (500) tetap seperti di Mantine 8.
+- **Upload file kini benar-benar membatasi ekstensi yang terdaftar.** Sebelumnya `image/*` di daftar format membuat semua jenis gambar lolos, padahal yang tercantum hanya 4 ekstensi. Sekarang:
+  - gambar hanya `.jpg`, `.jpeg`, `.png`, dan `.webp`, sehingga `.gif`, `.heic`, `.svg`, dan `.avif` ditolak. Ini berlaku di hampir semua form upload gambar. Form Data UMKM, Produk UMKM, dan halaman `/admin/images` tidak berubah, karena dari awal memakai daftar format gambar bawaan Mantine yang memang menerima semua format di atas;
+  - musik hanya `.mp3`, `.wav`, `.ogg`, dan `.m4a`, sehingga misalnya `.aac` dan `.flac` ditolak;
+  - dokumen Desa Anti Korupsi hanya `.pdf`, `.doc`/`.docx`, `.xls`/`.xlsx`, dan `.ppt`/`.pptx`.
+
+  File yang ditolak diperlakukan sama seperti file lain yang formatnya tidak didukung.
+- **Paste file ke area upload**: menempelkan file (Ctrl/Cmd+V) ke area upload yang sedang fokus kini diterima seperti file yang diseret ke sana. Aturan format dan ukuran filenya sama.
+
+### Fixed
+- **Grid tidak lagi melebar keluar tepi container**: Mantine 9 memakai jarak antar kolom berbasis CSS `gap`, bukan margin negatif, sehingga scroll horizontal kecil yang kadang muncul di layar HP bisa hilang. Lebar dan jarak kolom tetap sama.
+
+Tidak ada perubahan schema/database/API.
+
+## [0.1.204] - 2026-11-04
+### Changed
+- **Framework naik dari Next.js 15.5.14 ke 16.4.5, React ke 19.3.1**: fungsi halaman publik maupun admin tidak berubah. QA mencatat sedikit perubahan tampilan, dan ini akan dipoles setelah seluruh tahap upgrade UI selesai. Build dan dev server sekarang memakai Turbopack (bawaan Next 16), dan `next dev` menulis output ke `.next/dev`. Jumlah halaman hasil build kini 394 (sebelumnya 395) karena Next 16 tidak lagi membuat halaman `_app`/`_document`/`_error` Pages Router untuk project yang hanya memakai App Router. Daftar halaman aplikasi tidak berubah.
+- **Guard halaman admin pindah dari `src/middleware.ts` ke `src/proxy.ts`** (konvensi baru Next 16, selalu berjalan di runtime Node.js). Aturan aksesnya tidak berubah: `/admin`, `/validasi`, dan `/waiting-room` tetap mewajibkan login, dan akun non-admin tetap diarahkan ke `/profile`. Matcher-nya kini dikunci dengan unit test.
+- **Browser minimum naik** mengikuti default Next 16: Safari/iOS 16.4, serta Chrome, Edge, dan Firefox 111. Browser yang lebih lama bisa tidak memuat situs dengan benar.
+- **Image Docker dikunci ke `oven/bun:1.4.4-debian`** (sebelumnya tag floating `1-debian`). Saat ini keduanya menunjuk image yang sama persis (digest `sha256:93d5032f…`), jadi hasil build tidak berubah. Bedanya, rilis Bun baru tidak lagi ikut terpasang diam-diam.
+- **`next dev` tidak lagi mengubah `AGENTS.md`**: fitur `agentRules` Next 16, yang otomatis menyisipkan blok ke file itu, dimatikan karena file tersebut di-track git.
+- **ESLint tetap memakai `eslint-config-next` 15.5.12.** Versi 16 membutuhkan penulisan ulang config dan membawa aturan React Compiler yang bentrok dengan pola Valtio di sekitar 210 file. Upgrade lint dikerjakan sebagai task terpisah.
+
+### Fixed
+- **Akses dev server dari HP/perangkat lain di jaringan lokal**: `allowedDevOrigins` sebelumnya diisi URL lengkap (`http://192.168.1.82:3000`), padahal Next hanya mencocokkan hostname, sehingga entri itu tidak pernah berlaku. Sekarang ditulis `192.168.1.82`. `localhost` sudah diizinkan secara default.
+- **Keamanan: 28 advisory Next.js tertutup** (3 critical, 12 high, 11 moderate, 2 low pada 15.5.14). Di antaranya RCE tanpa autentikasi di Image Optimization API untuk file SVG ([GHSA-2464-fhr4-w9xw](https://github.com/advisories/GHSA-2464-fhr4-w9xw)) dan AVIF ([GHSA-2xp9-vwfh-vxw4](https://github.com/advisories/GHSA-2xp9-vwfh-vxw4)), RCE di server Windows ([GHSA-p293-qw3h-jr36](https://github.com/advisories/GHSA-p293-qw3h-jr36)), serta beberapa celah bypass middleware/proxy ([GHSA-492v-c6pp-mqqv](https://github.com/advisories/GHSA-492v-c6pp-mqqv), [GHSA-267c-6grr-h53f](https://github.com/advisories/GHSA-267c-6grr-h53f), [GHSA-26hh-7cqf-hhc6](https://github.com/advisories/GHSA-26hh-7cqf-hhc6)).
+- **Keamanan: pengolah gambar `sharp` naik dari 0.34.5 ke 0.35.5** (libvips 8.17.3 → 8.18.7). Ini menutup 3 advisory high di libvips, libheif, dan librsvg ([GHSA-f88m-g3jw-g9cj](https://github.com/advisories/GHSA-f88m-g3jw-g9cj), [GHSA-rgj7-g3m4-5g8c](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c), [GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w)), dan sekaligus menjadi mitigasi yang direkomendasikan untuk GHSA-2464-fhr4-w9xw. `sharp` dipakai untuk `/api/img` dan upload gambar, termasuk upload pengaduan publik. Gambar yang dihasilkan identik byte-per-byte dengan sebelumnya, dan salinan ganda `sharp` di dalam Next ikut hilang.
+
+Tidak ada perubahan schema/database/API.
+
+## [0.1.203] - 2026-11-04
+### Changed
+- **Library UI Mantine naik dari 7.17 ke 8.3.18**: seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di satu versi yang sama, 8.3.18. Sebelumnya versinya campur (core 7.17, sedangkan dates/dropzone sudah 8.x), sehingga ada ketidakcocokan peer dependency. Tampilan halaman publik dan admin tidak berubah. Prop `color` pada `Text` yang sudah deprecated diganti `c` (19 halaman admin) tanpa efek visual.
+- **Editor teks (admin & form publik) pindah ke Tiptap 3**: semua editor rich text memakai Tiptap 3. Isi yang sudah tersimpan tetap sama persis, dan di halaman edit tombol Simpan/Batal tidak menganggap konten berubah sebelum benar-benar diketik. Satu perilaku baru dari Tiptap 3: menekan Backspace/Delete di awal atau akhir item list kini menggabungkan item atau mengangkatnya keluar dari list.
+
+### Fixed
+- **Keamanan editor teks**: lockfile sebelumnya menyimpan salinan lama `prosemirror-view` 1.41.8 yang rentan XSS saat menempel (paste) konten ([GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w)). Sekarang hanya ada satu salinan, 1.42.9, yang sudah diperbaiki. Salinan ganda paket inti editor (`prosemirror-model`/`-transform`/`-view`) juga dihapus.
+
+### Removed
+- **Paket yang tidak terpakai**: `@mantine/form`, `@mantine/modals`, `@mantine/carousel`, `embla-carousel`, `embla-carousel-autoplay`, `embla-carousel-react`, dan `@tiptap/extension-underline` (fitur underline sudah termasuk di StarterKit Tiptap 3).
+- **10 komponen editor duplikat yang tidak pernah dipakai** di halaman mana pun.
+- **Lockfile biner lama `bun.lockb`**: sudah basi sejak April 2026 dan tidak dipakai lagi. Satu-satunya lockfile sekarang `bun.lock`.
+
+Tidak ada perubahan schema/database/API.
 
 ## [0.1.196] - 2026-09-21
 ### Added

@@ -60,7 +60,7 @@ export default function Content({ kategori }: { kategori: string }) {
               Berita Utama
             </Title>
             <Paper shadow="md" radius="md" withBorder>
-              <Grid gutter={0}>
+              <Grid gap={0}>
                 <GridCol span={{ base: 12, md: 6 }}>
                   <Image
                     src={featured.image?.link}

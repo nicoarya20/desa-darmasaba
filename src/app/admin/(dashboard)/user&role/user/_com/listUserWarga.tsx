@@ -8,7 +8,7 @@ import user from '../../../_state/user/user-state';
 
 // Role admin yang bisa diberikan ke warga saat ACC (0=DEVELOPER & 1=SUPER ADMIN
 // dikunci — hanya via seed/DB). Mengubah role warga → admin membuat mereka bisa
-// akses dashboard admin (middleware mengarahkan role >4 ke /profile).
+// akses dashboard admin (proxy mengarahkan role >4 ke /profile).
 const ASSIGNABLE_ROLE_IDS = ["2", "3", "4"];
 
 // Daftar warga publik (role 5, hasil login Google). Super admin bisa meng-ACC

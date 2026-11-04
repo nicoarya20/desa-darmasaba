@@ -8,21 +8,23 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 
 | Paket | Versi | Kegunaan |
 |---|---|---|
-| `@mantine/core` | ^7.17.4 | Komponen utama (AppShell, Paper, Button, Input, dll) |
-| `@mantine/form` | ^8.1.0 | Form management (beberapa halaman masih pakai `useState` manual) |
-| `@mantine/dates` | ^8.1.0 | Date picker |
-| `@mantine/dropzone` | ^8.1.1 | Upload file/gambar |
-| `@mantine/modals` | ^8.3.6 | Modal management |
-| `@mantine/tiptap` | ^7.17.4 | Rich text editor (wrapper custom di `_com/createEditor.tsx`) |
-| `@mantine/charts` | ^7.17.1 | BarChart, PieChart, dll |
-| `@mantine/carousel` | ^7.16.2 | Slider/carousel |
+| `@mantine/core` | 9.7.4 | Komponen utama (AppShell, Paper, Button, Input, dll) |
+| `@mantine/dates` | 9.7.4 | Date picker |
+| `@mantine/dropzone` | 9.7.4 | Upload file/gambar |
+| `@mantine/tiptap` | 9.7.4 | Rich text editor (wrapper custom di `_com/createEditor.tsx`) |
+| `@tiptap/*` | ^3.32.2 | Engine rich text editor (StarterKit, Highlight, TextAlign, Superscript, Subscript; Link via `@mantine/tiptap`) — lihat §17 |
+| `@mantine/charts` | 9.7.4 | BarChart, PieChart, dll |
 | `@tabler/icons-react` | ^3.30.0 | Semua ikon (Tabler Icons) |
 | `framer-motion` | ^12.38.0 | Animasi (navbar mobile, hover cards, stagger) |
 | `recharts` | ^3.8.0 | Grafik APBDes |
 | `primereact` | ^10.9.6 | Beberapa komponen tabel |
-| `@mantine/hooks` | ^7.17.4 | Hooks pendukung Mantine (dipakai luas bareng `@mantine/core`) |
+| `@mantine/hooks` | 9.7.4 | Hooks pendukung Mantine (dipakai luas bareng `@mantine/core`) |
 | `chart.js` | ^4.4.8 | Grafik tambahan di luar `@mantine/charts` |
-| `embla-carousel`, `embla-carousel-autoplay`, `embla-carousel-react` | ^8.6.0 | Carousel/slider tambahan di luar `@mantine/carousel` |
+
+**Catatan Mantine 9** (lihat `docs/decisions/2026-11-04-mantine-9-upgrade.md`):
+- Jarak kolom `Grid` memakai prop `gap`, bukan `gutter` (sudah dihapus di v9).
+- Tampilan v8 dipertahankan di theme `src/app/layout.tsx`: `defaultRadius: "sm"`, `cssVariablesResolver={v8CssVariablesResolver}`, `fontWeights.medium: "500"`, dan override `--mantine-font-weight-medium: 600` di `Button` (+ `ButtonGroupSection`/`ActionIconGroupSection`), supaya tombol tetap 600 seperti di v8. Jangan dihapus sebelum fondasi tema baru diterapkan.
+- `accept` Dropzone yang berisi MIME wildcard **dan** ekstensi (mis. `image/*` + `.jpg`) kini hanya menerima ekstensi itu saja (react-dropzone 20).
 
 ---
 
@@ -398,7 +400,7 @@ Semua halaman list menggunakan pola ini secara konsisten:
 </Box>
 ```
 
-**Catatan penting**: Banyak halaman menggunakan `useState` manual + validasi di `handleSubmit`, bukan `useForm` dari Mantine. Error feedback via `toast.error()` (react-toastify).
+**Catatan penting**: Halaman form menggunakan `useState` manual + validasi di `handleSubmit` (`@mantine/form`/`useForm` tidak dipasang). Error feedback via `toast.error()` (react-toastify).
 
 ### Edit
 
@@ -478,12 +480,13 @@ const statePosyandu = proxy({
 
 ## 13. Dark Mode
 
-File: `src/components/admin/AdminThemeProvider.tsx`, `src/utils/themeTokens.ts`, `src/styles/dark-mode-table.css`
+File: `src/utils/themeTokens.ts`, `src/state/darkModeStore.ts`
 
 - State: `useDarkMode()` hook dari `src/state/darkModeStore.ts`
-- Diterapkan via `MantineProvider forceColorScheme={isDark ? 'dark' : 'light'}`
+- Diterapkan via `themeTokens(isDark)` + props/style inline di komponen admin (mis. `src/app/admin/layout.tsx`). Color scheme Mantine sendiri tidak di-switch: satu-satunya `MantineProvider` aktif ada di `src/app/layout.tsx` (`defaultColorScheme="light"`).
+- `src/components/admin/AdminThemeProvider.tsx` (pakai `forceColorScheme`) **tidak dipakai** (0 importer) dan tidak punya compat look Mantine 9 — jangan dipasang tanpa menyamakan theme-nya dengan `layout.tsx` (lihat `docs/decisions/2026-11-04-mantine-9-upgrade.md` §6).
 - Semua komponen admin konsumsi `themeTokens(isDark)` untuk styling inline
-- Table hover dark mode via CSS override: `[data-mantine-color-scheme="dark"] tr:hover { background: rgba(255,255,255,0.08) }`
+- ⚠️ `src/styles/dark-mode-table.css` (hover tabel `[data-mantine-color-scheme="dark"] tr:hover`) **tidak aktif**: hanya di-import oleh `AdminThemeProvider.tsx` yang tidak dipakai, dan color scheme Mantine tidak pernah `dark`. Kandidat poles tampilan.
 - Transisi: `transition: 'background 0.3s ease, border-color 0.3s ease'`
 - Halaman publik tidak ada dark mode (fixed light)
 
@@ -591,6 +594,8 @@ Form survei + hasil real-time via `Mantine BarChart` dan `PieChart`.
 
 File: `src/app/admin/(dashboard)/_com/createEditor.tsx`, `editEditor.tsx`
 
+Editor memakai **Tiptap 3**. Konfigurasi wajib (`StarterKit.configure({ link: false, trailingNode: false })`, `shouldRerenderOnTransaction: true`, `setContent(value, { emitUpdate: false })`) dan alasannya ada di `docs/decisions/2026-11-04-mantine-8-staged-upgrade.md` §3.
+
 Wrapper `Mantine RichTextEditor` (`@mantine/tiptap`) dengan ekstensi:
 - Format: Bold, Italic, Underline, Strikethrough, Highlight, Code
 - Struktur: H1, H2, H3, H4, Blockquote, BulletList, OrderedList
@@ -645,7 +650,7 @@ Pattern di halaman Create/Edit:
 | `src/con/colors.ts` | Raw color palette |
 | `src/utils/themeTokens.ts` | Token warna, tipografi, spacing, radius, shadows |
 | `src/app/layout.tsx` | `createTheme` Mantine (font, overrides) |
-| `src/components/admin/AdminThemeProvider.tsx` | Provider dark mode admin |
+| `src/components/admin/AdminThemeProvider.tsx` | Tidak dipakai (0 importer); dark mode admin lewat `themeTokens` — lihat §13 |
 | `src/components/admin/UnifiedSurface.tsx` | UnifiedCard komponen |
 | `src/components/admin/UnifiedTypography.tsx` | UnifiedTitle, UnifiedText, UnifiedPageHeader |
 | `src/app/admin/(dashboard)/_com/header.tsx` | HeaderSearch |

@@ -59,7 +59,7 @@ function PelayananTelunjukSaktiDesa() {
           </Text>
         </Card>
       ) : (
-        <Grid gutter="lg">
+        <Grid gap="lg">
           {data.map((v, k) => (
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }} key={k}>
               <Card

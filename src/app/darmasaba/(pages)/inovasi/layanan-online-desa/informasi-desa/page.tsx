@@ -77,7 +77,7 @@ function InformasiDesa() {
                 onClick={() => router.push(`${BASE}/detail-berita/${dataBerita.id}`)}
               >
                 <Paper shadow="md" radius="lg" p="lg" withBorder>
-                  <Grid align="stretch" gutter="xl">
+                  <Grid align="stretch" gap="xl">
                     <GridCol span={{ base: 12, md: 5 }}>
                       <Image
                         src={dataBerita.image?.link || '/no-image.jpg'}
@@ -145,7 +145,7 @@ function InformasiDesa() {
               subtitle="Kabar dan liputan kegiatan desa"
               icon={<IconNews size={22} />}
             />
-            <Grid gutter="lg">
+            <Grid gap="lg">
               {loadingBeritaRecent && recentBerita.length === 0
                 ? Array.from({ length: 4 }).map((_, i) => (
                     <GridCol span={{ base: 12, sm: 6, md: 3 }} key={i}>
@@ -170,7 +170,7 @@ function InformasiDesa() {
           </Stack>
 
           {/* === PENGUMUMAN === */}
-          <Grid gutter="xl" align="start">
+          <Grid gap="xl" align="start">
             {/* Pengumuman utama */}
             <GridCol span={{ base: 12, md: 5 }}>
               <Stack gap="md">
@@ -251,7 +251,7 @@ function InformasiDesa() {
                   subtitle="Daftar pengumuman lainnya"
                   icon={<IconSpeakerphone size={22} />}
                 />
-                <Grid gutter="md" align="stretch">
+                <Grid gap="md" align="stretch">
                   {loadingPengumumanRecent && recentPengumuman.length === 0
                     ? Array.from({ length: 4 }).map((_, i) => (
                         <GridCol span={{ base: 12, sm: 6 }} key={i}>
