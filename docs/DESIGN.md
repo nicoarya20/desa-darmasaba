@@ -588,6 +588,8 @@ Form survei + hasil real-time via `Mantine BarChart` dan `PieChart`.
 
 File: `src/app/admin/(dashboard)/_com/createEditor.tsx`, `editEditor.tsx`
 
+Editor memakai **Tiptap 3**. Konfigurasi wajib (`StarterKit.configure({ link: false, trailingNode: false })`, `shouldRerenderOnTransaction: true`, `setContent(value, { emitUpdate: false })`) dan alasannya ada di `docs/decisions/2026-11-04-mantine-8-staged-upgrade.md` §3.
+
 Wrapper `Mantine RichTextEditor` (`@mantine/tiptap`) dengan ekstensi:
 - Format: Bold, Italic, Underline, Strikethrough, Highlight, Code
 - Struktur: H1, H2, H3, H4, Blockquote, BulletList, OrderedList
