@@ -8,14 +8,12 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 
 | Paket | Versi | Kegunaan |
 |---|---|---|
-| `@mantine/core` | ^7.17.4 | Komponen utama (AppShell, Paper, Button, Input, dll) |
-| `@mantine/form` | ^8.1.0 | Form management (beberapa halaman masih pakai `useState` manual) |
-| `@mantine/dates` | ^8.1.0 | Date picker |
-| `@mantine/dropzone` | ^8.1.1 | Upload file/gambar |
-| `@mantine/modals` | ^8.3.6 | Modal management |
-| `@mantine/tiptap` | ^7.17.4 | Rich text editor (wrapper custom di `_com/createEditor.tsx`) |
-| `@mantine/charts` | ^7.17.1 | BarChart, PieChart, dll |
-| `@mantine/carousel` | ^7.16.2 | Slider/carousel |
+| `@mantine/core` | 8.3.18 | Komponen utama (AppShell, Paper, Button, Input, dll) |
+| `@mantine/dates` | 8.3.18 | Date picker |
+| `@mantine/dropzone` | 8.3.18 | Upload file/gambar |
+| `@mantine/tiptap` | 8.3.18 | Rich text editor (wrapper custom di `_com/createEditor.tsx`) |
+| `@tiptap/*` | ^3.32.2 | Engine rich text editor (StarterKit, Highlight, TextAlign, Superscript, Subscript; Link via `@mantine/tiptap`) — lihat §17 |
+| `@mantine/charts` | 8.3.18 | BarChart, PieChart, dll |
 | `@tabler/icons-react` | ^3.30.0 | Semua ikon (Tabler Icons) |
 | `framer-motion` | ^12.38.0 | Animasi (navbar mobile, hover cards, stagger) |
 | `recharts` | ^3.8.0 | Grafik APBDes |
@@ -395,7 +393,7 @@ Semua halaman list menggunakan pola ini secara konsisten:
 </Box>
 ```
 
-**Catatan penting**: Banyak halaman menggunakan `useState` manual + validasi di `handleSubmit`, bukan `useForm` dari Mantine. Error feedback via `toast.error()` (react-toastify).
+**Catatan penting**: Halaman form menggunakan `useState` manual + validasi di `handleSubmit` (`@mantine/form`/`useForm` tidak dipasang). Error feedback via `toast.error()` (react-toastify).
 
 ### Edit
 
