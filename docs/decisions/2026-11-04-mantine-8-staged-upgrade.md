@@ -1,8 +1,9 @@
 # ADR 2026-11-04 — Upgrade UI bertahap: Mantine 8 → Next 16 → Mantine 9
 
-- **Status:** Tahap 1 selesai (v0.1.181), Tahap 2 & 3 belum dimulai
+- **Status:** Tahap 1 selesai (v0.1.203), Tahap 2 & 3 belum dimulai
 - **Branch tahap 1:** `tasks/mantine-v8-migration/upgrade-mantine-v8/2026-11-04-1435`
 - **Lingkup:** dependency UI + editor teks. Tidak ada perubahan schema/database/API/middleware.
+- **Catatan versi:** tahap 1 awalnya dibangun di atas `main` lokal yang basi (`c7de9c75`, versi 0.1.181). Branch kemudian disinkronkan dengan `origin/main` `9f460ed5` (v0.1.202) lewat merge `06c3fa4b`, sehingga versinya menjadi 0.1.203. Semua angka gate di §4 diukur setelah sinkron.
 
 ## 1. Konteks
 
@@ -23,7 +24,7 @@ Upgrade dipecah jadi tiga tahap. Tiap tahap punya branch, QA manual, dan persetu
 
 | Tahap | Isi | Status |
 |---|---|---|
-| 1 | Mantine **8.3.18** + Tiptap 3 (tetap Next 15) | ✅ v0.1.181 |
+| 1 | Mantine **8.3.18** + Tiptap 3 (tetap Next 15) | ✅ v0.1.203 |
 | 2 | Next **16.4.5** (menyentuh backend, sudah disetujui tim backend) | ⬜ |
 | 3 | Mantine **9.7.4** | ⬜ |
 
@@ -61,28 +62,30 @@ editor.commands.setContent(value, { emitUpdate: false })
 Selain itu, 10 komponen editor tanpa pemanggil dihapus (desa, berita, keamanan, kesehatan, ppid).
 
 ### Komponen
-- `<Text color="dimmed">` diganti `<Text c="dimmed">` di 21 file admin. Prop `color` pada Text deprecated di v8 dan dihapus di v9.
+- `<Text color="dimmed">` diganti `<Text c="dimmed">` di 19 file admin (24 baris, dihitung terhadap `origin/main`; dua baris lain sudah ditulis ulang upstream di `ebbf99bf` dan `a44078af`). Prop `color` pada Text deprecated di v8 dan dihapus di v9.
 - Import `@mantine/carousel/styles.css` dihapus dari `src/app/globals.css`.
 - `Portal reuseTargetNode` dan `Popover hideDetached` (default baru v8) sudah dianalisis. Tidak perlu perubahan.
 
 ## 4. Verifikasi tahap 1
 
+Baseline pembanding: `origin/main` `9f460ed5` (v0.1.202). Hasil branch identik dengan baseline di setiap gate.
+
 | Gate | Hasil |
 |---|---|
 | `bun run tsc --noEmit` | 0 error |
-| ESLint (`--ignore-pattern '.next/**'`) | 107 problems, identik dengan `main` |
-| `bun run test:api` | 29 file / 240 tes lulus, identik dengan `main` (lihat §5) |
+| ESLint (`--ignore-pattern '.next/**' --ignore-pattern 'next-env.d.ts'`) | 111 problems (1 error bawaan `prefer-const` di `prisma/_seeder_list/ekonomi/seed_apbdes.ts:11`, 110 warning), identik per baris dengan baseline |
+| `bun run test:api` | 37 file / 298 tes lulus, exit 0 |
 | `bun run build` | sukses, 395 halaman |
 | SSR halaman publik / login | 200, `/admin` → 307 ke `/login` |
-| Review silang 3 reviewer | 0 temuan kritis |
-| QA manual | lolos |
+| Review silang pasca-merge | 0 temuan kritis |
+| QA manual | lolos di base lama; perlu diulang setelah sinkron dengan `origin/main` |
 
 ## 5. Masalah yang diketahui (sudah ada sejak `main`, bukan akibat upgrade)
 
 - **Overlay dev "TimeoutError: Transition was aborted because of timeout in DOM update".** Sumbernya `next-view-transitions` 0.3.5 (`<ViewTransitions>` di `src/app/layout.tsx`, dipakai 38 file). Di mode dev, compile pertama sebuah halaman bisa lebih dari 4 detik, sehingga browser membatalkan animasi transisi. Library tidak menangani rejection itu, jadi muncul di overlay. Navigasinya sendiri tetap selesai. Di produksi tidak terlihat oleh pengguna. Rencananya diganti dengan view transition bawaan di Tahap 2.
-- **`test:api` exit 1.** Semua tes lulus, tetapi vitest ikut menjalankan file spec Playwright e2e, dan ada error `ERR_REQUIRE_ASYNC_MODULE` (cssstyle/jsdom).
 - **ESLint memindai `.next/`** setelah build, sehingga muncul ribuan problem palsu. Jalankan dengan `--ignore-pattern '.next/**'`.
 - **1 error lint** `prefer-const` di `prisma/_seeder_list/ekonomi/seed_apbdes.ts:11`.
+- **CHANGELOG tidak punya entry untuk setiap rilis.** Antara 0.1.174 dan 0.1.202, entry hanya ada untuk 0.1.180, 0.1.181, 0.1.189, dan 0.1.196. Versi 0.1.197–0.1.202, termasuk 0.1.202 yang sedang di stg/main, tidak tercatat.
 - **Base image Docker** `oven/bun:1-debian` memakai tag floating (saat ini bun 1.4.4).
 
 ## 6. Rencana Tahap 2 — Next 16.4.5
@@ -107,4 +110,4 @@ Pekerjaan awal untuk v9 tersimpan di branch `tasks/mantine-v9-migration/*` (comm
 
 ## 8. Rollback
 
-Tahap 1 tidak menyentuh data maupun schema. Untuk rollback, deploy ulang image versi 0.1.180, atau revert branch ini.
+Tahap 1 tidak menyentuh data maupun schema. Untuk rollback, deploy ulang image versi 0.1.202 (versi stg/main sebelum 0.1.203), atau revert merge ke `stg`. Jangan rollback ke 0.1.180: 22 rilis upstream akan ikut mundur, termasuk fix handler Elysia `0793cbf2` dan `d802a48a`.
