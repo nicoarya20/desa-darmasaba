@@ -1,6 +1,6 @@
 # ADR 2026-11-04 — Upgrade UI bertahap: Mantine 8 → Next 16 → Mantine 9
 
-- **Status:** Tahap 1 selesai (v0.1.203), Tahap 2 selesai di lokal (v0.1.204, lihat [ADR Next 16](2026-11-04-next-16-upgrade.md)), Tahap 3 belum dimulai
+- **Status:** Tahap 1 selesai (v0.1.203), Tahap 2 selesai di lokal (v0.1.204, lihat [ADR Next 16](2026-11-04-next-16-upgrade.md)), Tahap 3 selesai di lokal (v0.1.205, lihat [ADR Mantine 9](2026-11-04-mantine-9-upgrade.md))
 - **Branch tahap 1:** `tasks/mantine-v8-migration/upgrade-mantine-v8/2026-11-04-1435`
 - **Lingkup:** dependency UI + editor teks. Tidak ada perubahan schema/database/API/middleware.
 - **Catatan versi:** tahap 1 awalnya dibangun di atas `main` lokal yang basi (`c7de9c75`, versi 0.1.181). Branch kemudian disinkronkan dengan `origin/main` `9f460ed5` (v0.1.202) lewat merge `06c3fa4b`, sehingga versinya menjadi 0.1.203. Semua angka gate di §4 diukur setelah sinkron.
@@ -26,7 +26,7 @@ Upgrade dipecah jadi tiga tahap. Tiap tahap punya branch, QA manual, dan persetu
 |---|---|---|
 | 1 | Mantine **8.3.18** + Tiptap 3 (tetap Next 15) | ✅ v0.1.203 |
 | 2 | Next **16.4.5** (menyentuh backend, sudah disetujui tim backend) | ✅ v0.1.204 (lokal), lihat [ADR Next 16](2026-11-04-next-16-upgrade.md) |
-| 3 | Mantine **9.7.4** | ⬜ |
+| 3 | Mantine **9.7.4** | ✅ v0.1.205 (lokal), lihat [ADR Mantine 9](2026-11-04-mantine-9-upgrade.md) |
 
 ## 3. Tahap 1 — Apa yang berubah
 
@@ -109,6 +109,8 @@ Breaking change yang relevan untuk repo ini:
 - `fontWeights.medium` 500 → 600. Perlu keputusan visual.
 
 Pekerjaan awal untuk v9 tersimpan di branch `tasks/mantine-v9-migration/*` (commit `3d03aac3` gutter→gap, `439ff012` compat look).
+
+> **Hasil (v0.1.205):** compat look akhirnya hanya dipasang di `src/app/layout.tsx`, karena `AdminThemeProvider.tsx` tidak punya importer (D22). `fontWeights.medium` diputuskan `500` ditambah override 600 di Button (D21-revisi). Detail di [ADR Mantine 9](2026-11-04-mantine-9-upgrade.md).
 
 ## 8. Rollback
 
