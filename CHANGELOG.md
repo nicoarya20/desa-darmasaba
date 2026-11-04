@@ -2,7 +2,7 @@
 
 ## [0.1.203] - 2026-11-04
 ### Changed
-- **Library UI Mantine naik dari 7.17 ke 8.3.18**: seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di satu versi yang sama, 8.3.18. Sebelumnya versinya campur (core 7.17, sedangkan dates/dropzone sudah 8.x), sehingga ada ketidakcocokan peer dependency. Tampilan halaman publik dan admin tidak berubah. Prop `color` pada `Text` yang sudah deprecated diganti `c` (21 halaman admin) tanpa efek visual.
+- **Library UI Mantine naik dari 7.17 ke 8.3.18**: seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di satu versi yang sama, 8.3.18. Sebelumnya versinya campur (core 7.17, sedangkan dates/dropzone sudah 8.x), sehingga ada ketidakcocokan peer dependency. Tampilan halaman publik dan admin tidak berubah. Prop `color` pada `Text` yang sudah deprecated diganti `c` (19 halaman admin) tanpa efek visual.
 - **Editor teks (admin & form publik) pindah ke Tiptap 3**: semua editor rich text memakai Tiptap 3. Isi yang sudah tersimpan tetap sama persis, dan di halaman edit tombol Simpan/Batal tidak menganggap konten berubah sebelum benar-benar diketik. Satu perilaku baru dari Tiptap 3: menekan Backspace/Delete di awal atau akhir item list kini menggabungkan item atau mengangkatnya keluar dari list.
 
 ### Fixed
