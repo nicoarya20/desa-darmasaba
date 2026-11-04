@@ -5,7 +5,7 @@
 - **Runtime/Package manager**: Bun (not npm)
 - **API server**: Elysia.js (mounted at `/api/[[...slugs]]`)
 - **ORM**: Prisma + PostgreSQL
-- **UI**: Mantine UI v8 (8.3.18) + Tiptap 3 — lihat `docs/decisions/2026-11-04-mantine-8-staged-upgrade.md`
+- **UI**: Mantine UI v9 (9.7.4) + Tiptap 3 — lihat `docs/decisions/2026-11-04-mantine-9-upgrade.md` (induk: `docs/decisions/2026-11-04-mantine-8-staged-upgrade.md`)
 - **State**: Valtio (proxies) — used almost everywhere (180+ files). SWR used in one file only. Jotai is listed in package.json but has zero usage — do not use it for new code.
 - **Auth**: Better Auth (`src/lib/auth.ts`), Google OAuth only, sessions stored in Postgres. `iron-session`/JWT (`src/lib/session.ts`) is legacy and unused — do not build on it.
 - **File storage**: MinIO (object storage — see `src/lib/minio.ts`), the sole storage backend. Data was migrated off Seafile to MinIO (`prisma/migrate-seafile-to-minio.ts`); `src/lib/seafile-auth-service.ts` and `WIBU_UPLOAD_DIR` are leftovers from before the migration — do not build on them.
