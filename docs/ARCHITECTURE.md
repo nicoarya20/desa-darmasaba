@@ -1,7 +1,7 @@
 # Architecture
 
 ## Tech Stack
-- **Framework**: Next.js 15 (App Router) + React 19
+- **Framework**: Next.js 16.4.5 (App Router, Turbopack for dev + build) + React 19.3 — see `docs/decisions/2026-11-04-next-16-upgrade.md`
 - **Runtime/Package manager**: Bun (not npm)
 - **API server**: Elysia.js (mounted at `/api/[[...slugs]]`)
 - **ORM**: Prisma + PostgreSQL
