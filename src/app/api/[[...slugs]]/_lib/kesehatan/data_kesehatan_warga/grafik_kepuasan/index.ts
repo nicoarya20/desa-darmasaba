@@ -10,7 +10,7 @@ const GrafikKepuasan = new Elysia({
     tags: ["Data Kesehatan/Grafik Kepuasan"]
 })
     .get("/:id", async (context) => {
-        const response = await grafikKepuasanFindUnique(new Request(context.request));
+        const response = await grafikKepuasanFindUnique(context.request);
         return response;
     })
     .get("/find-many", grafikKepuasanFindMany)

@@ -298,7 +298,7 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
                     </Text>
                     {iconMap[item.icon] && <Box title={item.icon}>{React.createElement(iconMap[item.icon], { size: 22 })}</Box>}
                   </Box>
-                  <Center>
+                  <Group>
                     <Button
                       size="xs"
                       radius="md"
@@ -309,7 +309,7 @@ function ListDataLingkunganDesa({ search }: { search: string }) {
                     >
                       Detail
                     </Button>
-                  </Center>
+                  </Group>
                 </Stack>
               </Paper>
             ))}

@@ -12,7 +12,7 @@ const SejarahDesa = new Elysia({
     return response;
   })
   .get("/:id", async (context) => {
-    const response = await sejarahDesaFindById(new Request(context.request));
+    const response = await sejarahDesaFindById(context.request);
     return response;
   })
   .put(

@@ -26,7 +26,7 @@ const PeminjamanBuku = new Elysia({
   .get("/findMany", peminjamanBukuFindMany)
   .get("/:id", async (context) => {
     const response = await peminjamanBukuFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

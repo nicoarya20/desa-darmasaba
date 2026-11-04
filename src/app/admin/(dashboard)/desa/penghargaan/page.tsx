@@ -184,7 +184,7 @@ function ListPenghargaan({ search }: { search: string }) {
                     Deskripsi
                   </Text>
                   <Text lineClamp={3} fz="sm" fw={500} lh={1.45} c="dimmed">
-                    <span dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                    {toPlainText(item.deskripsi) || '-'}
                   </Text>
                 </Box>
                 <Group mt="md">

@@ -10,7 +10,7 @@ const TarifLayanan = new Elysia({
     tags: ["Data Kesehatan/Fasilitas Kesehatan/Tarif Layanan"]
 })
     .get("/:id", async (context) => {
-        const response = await tarifLayananFindUnique(new Request(context.request));
+        const response = await tarifLayananFindUnique(context.request);
         return response;
     })
     .get("/findMany", tarifLayananFindMany)

@@ -10,7 +10,7 @@ const DistribusiAgama = new Elysia({
     tags: ["Kependudukan/Distribusi Agama"],
 })
 .get("/:id", async (context) => {
-    const response = await distribusiAgamaFindUnique(new Request(context.request))
+    const response = await distribusiAgamaFindUnique(context.request)
     return response
   })
   .get("/find-many", distribusiAgamaFindMany)

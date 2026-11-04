@@ -22,7 +22,7 @@ const ProgramKemiskinan = new Elysia({
 .delete("/del/:id", programKemiskinanDelete)
 .get("/find-many", programKemiskinanFindMany)
 .get("/:id", async (context) => {
-    const response = await programKemiskinanFindUnique(new Request(context.request));
+    const response = await programKemiskinanFindUnique(context.request);
     return response;
 })
 .put("/:id", async (context) => {

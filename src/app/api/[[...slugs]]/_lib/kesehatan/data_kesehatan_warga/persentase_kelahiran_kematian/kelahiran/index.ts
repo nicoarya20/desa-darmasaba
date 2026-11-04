@@ -22,7 +22,7 @@ const Kelahiran = new Elysia({
   .get("/findMany", kelahiranFindMany)
   .get("/:id", async (context) => {
     const response = await kelahiranFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

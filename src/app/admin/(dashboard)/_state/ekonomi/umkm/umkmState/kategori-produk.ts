@@ -139,6 +139,8 @@ const kategoriProduk = proxy({
           kategoriProduk.findManyAll.load();
           return true;
         }
+        // success:false → tampilkan alasan dari server (mis. "kategori masih dipakai")
+        toast.error(result.message || "Gagal menghapus kategori");
       } catch (e) {
         toast.error("Gagal menghapus kategori");
       } finally {

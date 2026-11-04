@@ -5,6 +5,7 @@ import ibuHamilState from "@/app/admin/(dashboard)/_state/kesehatan/ibu-hamil/ib
 import posyandustate from "@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu";
 import ringkasanState from "@/app/admin/(dashboard)/_state/kesehatan/ringkasan-kesehatan/ringkasanKesehatan";
 import colors from "@/con/colors";
+import { jadwalToText } from "@/lib/jadwal-pelayanan";
 import {
   Badge, Box, Button, Center, Flex, Group, Image,
   Pagination, Paper, Progress, ScrollArea, Select,
@@ -349,9 +350,10 @@ export default function Page() {
                               c="dimmed"
                               lh={1.5}
                               lineClamp={2}
-                              dangerouslySetInnerHTML={{ __html: v.jadwalPelayanan }}
                               style={{ wordBreak: "break-word" }}
-                            />
+                            >
+                              {jadwalToText(v.jadwalPelayanan) || "–"}
+                            </Text>
                           </Flex>
 
                           <Button

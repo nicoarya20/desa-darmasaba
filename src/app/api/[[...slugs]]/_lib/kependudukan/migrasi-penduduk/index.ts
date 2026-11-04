@@ -10,13 +10,13 @@ const MigrasiPenduduk = new Elysia({
     tags: ["Kependudukan/Migrasi Penduduk"],
 })
 .get("/:id", async (context) => {
-    const response = await migrasiPendudukFindUnique(new Request(context.request))
+    const response = await migrasiPendudukFindUnique(context.request)
     return response
   })
   .get("/find-many", migrasiPendudukFindMany)
   .post("/create", migrasiPendudukCreate, {
     body: t.Object({
-      jenis: t.String(),
+      jenis: t.Union([t.Literal("MASUK"), t.Literal("KELUAR")]),
       nama: t.String(),
       tanggal: t.String(),
       asalTujuan: t.String(),
@@ -28,7 +28,7 @@ const MigrasiPenduduk = new Elysia({
       id: t.String(),
     }),
     body: t.Object({
-      jenis: t.String(),
+      jenis: t.Union([t.Literal("MASUK"), t.Literal("KELUAR")]),
       nama: t.String(),
       tanggal: t.String(),
       asalTujuan: t.String(),

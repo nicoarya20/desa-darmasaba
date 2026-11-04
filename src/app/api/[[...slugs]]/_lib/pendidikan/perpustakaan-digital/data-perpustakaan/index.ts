@@ -23,7 +23,7 @@ const DataPerpustakaan = new Elysia({
   .get("/findMany", dataPerpustakaanFindMany)
   .get("/:id", async (context) => {
     const response = await dataPerpustakaanFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

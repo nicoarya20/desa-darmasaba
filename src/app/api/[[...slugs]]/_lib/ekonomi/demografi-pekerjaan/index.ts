@@ -10,7 +10,7 @@ const DemografiPekerjaan = new Elysia({
     tags: ["Ekonomi/Demografi Pekerjaan"],
 })
 .get("/:id", async (context) => {
-    const response = await demografiPekerjaanFindUnique(new Request(context.request))
+    const response = await demografiPekerjaanFindUnique(context.request)
     return response
   })
   .get("/find-many", demografiPekerjaanFindMany)

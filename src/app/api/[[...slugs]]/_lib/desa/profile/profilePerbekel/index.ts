@@ -8,7 +8,7 @@ const ProfilPerbekel = new Elysia({
 })
   .get("/:id", async (context) => {
     const response = await profilePerbekelFindById(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

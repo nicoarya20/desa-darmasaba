@@ -27,7 +27,8 @@ export default async function migrasiPendudukFindMany(context: Context) {
   if (search) {
     where.OR = [
       { nama: { contains: search, mode: "insensitive" } },
-      { asalTujuan: { contains: search, mode: "insensitive" } },
+      { asal: { contains: search, mode: "insensitive" } },
+      { tujuan: { contains: search, mode: "insensitive" } },
     ];
   }
 

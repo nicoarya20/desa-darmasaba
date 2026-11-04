@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.181] - 2026-11-04
+## [0.1.203] - 2026-11-04
 ### Changed
 - **Library UI Mantine naik dari 7.17 ke 8.3.18**: seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di satu versi yang sama, 8.3.18. Sebelumnya versinya campur (core 7.17, sedangkan dates/dropzone sudah 8.x), sehingga ada ketidakcocokan peer dependency. Tampilan halaman publik dan admin tidak berubah. Prop `color` pada `Text` yang sudah deprecated diganti `c` (21 halaman admin) tanpa efek visual.
 - **Editor teks (admin & form publik) pindah ke Tiptap 3**: semua editor rich text memakai Tiptap 3. Isi yang sudah tersimpan tetap sama persis, dan di halaman edit tombol Simpan/Batal tidak menganggap konten berubah sebelum benar-benar diketik. Satu perilaku baru dari Tiptap 3: menekan Backspace/Delete di awal atau akhir item list kini menggabungkan item atau mengangkatnya keluar dari list.
@@ -14,6 +14,22 @@
 - **Lockfile biner lama `bun.lockb`**: sudah basi sejak April 2026 dan tidak dipakai lagi. Satu-satunya lockfile sekarang `bun.lock`.
 
 Tidak ada perubahan schema/database/API.
+
+## [0.1.196] - 2026-09-21
+### Added
+- **Seed data untuk submenu Ekonomi > Kesejahteraan Masyarakat**: menambahkan 6 entri data program/kegiatan kesejahteraan masyarakat (BLT Dana Desa, verifikasi PKH, penyaluran BPNT/Kartu Sembako, bedah rumah RTLH, pendampingan PBI JKN-KIS, sosialisasi PIP) yang dikontekskan ke Desa Darmasaba, mengacu ke program bansos nasional yang benar-benar berjalan di level desa. Sebelumnya submenu ini (model `KesejahteraanMasyarakat`, fitur sudah ada di admin/API/public) tidak punya data seed sehingga tampil kosong di setup baru. Tidak ada perubahan schema/migration.
+
+## [0.1.189] - 2026-09-01
+### Changed
+- **Input "Jadwal Pelayanan" Posyandu (`/admin/kesehatan/posyandu/list-posyandu` create & edit) diganti dari rich text editor menjadi pemilih terstruktur**: admin kini memilih hari (Senin–Jumat / Sabtu–Minggu / Libur) dan jam buka–tutup lewat komponen `JadwalPelayananInput`, bisa menambah/menghapus beberapa baris jadwal. Data disimpan sebagai JSON string di kolom `jadwalPelayanan` yang sudah ada — **tanpa migrasi database**. Data lama berbentuk HTML tetap ditampilkan lewat jalur *legacy* (fallback) di halaman detail admin, kartu & detail publik sehingga tidak ada data yang hilang. Tampilan render dipusatkan di komponen `JadwalPelayananView` (multi-baris) dan helper `jadwalToText` (ringkas satu baris untuk kartu). Helper murni di `src/lib/jadwal-pelayanan.ts` disertai unit test (`__tests__/api/posyandu_jadwal_pelayanan.test.ts`, 26 test).
+
+## [0.1.181] - 2026-08-31
+### Fixed
+- **Tombol "Batal" pada Edit APBDes (`/admin/landing-page/apbdes/[id]/edit`) tidak mengembalikan daftar item**: `handleReset` hanya memulihkan field top-level (tahun/nama/deskripsi/dll) tetapi mempertahankan array `items` yang sedang diedit (`items: [...form.items] // keep existing items`). Akibatnya penambahan, penghapusan, atau perubahan baris item TIDAK ikut ter-reset saat admin klik Batal. Diperbaiki: item awal di-*snapshot* saat load, dan Batal kini memulihkan seluruh form termasuk `items` dari snapshot lewat helper murni `buildResetForm()` — item dipulihkan sebagai salinan independen sehingga editan berikutnya tak memutasi snapshot (dan sebaliknya). Tidak ada perubahan schema/database.
+
+## [0.1.180] - 2026-08-31
+### Fixed
+- **Riwayat realisasi APBDes hilang permanen saat Edit (`/admin/landing-page/apbdes/[id]/edit`)**: handler update (`updt.ts`) memakai pola *delete-all-then-recreate* — semua `APBDesItem` dihapus lalu dibuat ulang, dan realisasi yang di-preserve dicocokkan lewat string `kode` yang mutable, tanpa transaksi. Dua skenario kehilangan data: (a) admin mengubah kode item (mis. `4.1` → `4.1a`) memutus link ke realisasi; (b) admin menghapus baris item memicu cascade delete yang menghapus fisik `RealisasiItem`. Diperbaiki tanpa menyentuh schema database: item dicocokkan lewat `id` yang STABIL (bukan kode), di-*update in-place* sehingga link realisasi tak pernah putus walau kode berubah; item yang dihapus admin di-*soft-delete* (`isActive=false`) sehingga cascade tak pernah kebakar dan riwayat tetap tersimpan; seluruh mutasi item + header dibungkus satu `$transaction` agar atomik. Field baru `id` (opsional) ditambahkan ke body request update dan dialirkan dari frontend (state + halaman edit) — backward-compatible: klien lama tanpa `id` tetap jalan via fallback pencocokan by kode.
 
 ## [0.1.174] - 2026-08-28
 ### Fixed

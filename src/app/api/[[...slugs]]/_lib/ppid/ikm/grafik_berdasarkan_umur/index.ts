@@ -19,7 +19,7 @@ const GrafikBerdasarkanUmur = new Elysia({
     }),
   })
   .get("/:id", async (context) => {
-        const response = await grafikBerdasarakanUmurFindById(new Request(context.request))
+        const response = await grafikBerdasarakanUmurFindById(context.request)
         return response
       })
   .put("/:id", grafikBerdasarakanUmurUpdate, {

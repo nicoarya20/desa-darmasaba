@@ -43,7 +43,7 @@ function CreateJumlahPengangguran() {
   const monthOptions = [
     'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
     'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
-  ];
+  ] as const;
 
   const resetForm = () => {
     stateDetail.create.form = {
@@ -141,7 +141,7 @@ function CreateJumlahPengangguran() {
             data={monthOptions}
             value={stateDetail.create.form.month}
             onChange={(value) => {
-              stateDetail.create.form.month = value || '';
+              stateDetail.create.form.month = (value || '') as typeof stateDetail.create.form.month;
               calculateTotalAndChange();
             }}
             required

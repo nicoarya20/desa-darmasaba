@@ -21,7 +21,7 @@ import {
   Title,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconEdit, IconPlus, IconSearch, IconTrash, IconX } from '@tabler/icons-react';
+import { IconEdit, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -254,22 +254,26 @@ function ListMitraKolaborasi({ search }: { search: string }) {
                       <Text fz="sm" fw={600} lh={1.4}>
                         Image
                       </Text>
-                      <Box w="100%" h={60} mt="xs">
+                      <Box
+                        w="100%"
+                        h={90}
+                        mt="xs"
+                        p="xs"
+                        bg={colors.grey['1']}
+                        style={{ borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
                         {item.image?.link ? (
                           <Image
                             loading="lazy"
                             src={item.image.link}
                             alt={item.name}
-                            fit="cover"
+                            fit="contain"
                             radius="sm"
                             h="100%"
+                            w="100%"
                           />
                         ) : (
-                          <Box
-                            bg={colors['blue-button']}
-                            w="100%"
-                            h="100%"
-                          />
+                          <Box bg={colors['blue-button']} w="100%" h="100%" style={{ borderRadius: 8 }} />
                         )}
                       </Box>
                     </Box>
@@ -285,7 +289,7 @@ function ListMitraKolaborasi({ search }: { search: string }) {
                           setModalHapus(true);
                         }}
                       >
-                        <IconX size={16} />
+                        <IconTrash size={16} />
                       </Button>
                       <Button
                         size="xs"

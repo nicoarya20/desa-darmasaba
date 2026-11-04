@@ -3,6 +3,8 @@ import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
+import { isJadwalEmpty } from '@/lib/jadwal-pelayanan';
+import JadwalPelayananInput from '@/components/admin/JadwalPelayananInput';
 import {
   ActionIcon,
   Box,
@@ -50,7 +52,7 @@ function CreatePosyandu() {
       statePosyandu.create.form.name?.trim() !== '' &&
       statePosyandu.create.form.nomor?.trim() !== '' &&
       !isHtmlEmpty(statePosyandu.create.form.deskripsi) &&
-      !isHtmlEmpty(statePosyandu.create.form.jadwalPelayanan) &&
+      !isJadwalEmpty(statePosyandu.create.form.jadwalPelayanan) &&
       file !== null
     );
   };
@@ -85,7 +87,7 @@ function CreatePosyandu() {
       return;
     }
 
-    if (isHtmlEmpty(statePosyandu.create.form.jadwalPelayanan)) {
+    if (isJadwalEmpty(statePosyandu.create.form.jadwalPelayanan)) {
       toast.error('Jadwal pelayanan wajib diisi');
       return;
     }
@@ -256,10 +258,10 @@ function CreatePosyandu() {
             <Text fw="bold" fz="sm" mb={6}>
               Jadwal Pelayanan
             </Text>
-            <CreateEditor
+            <JadwalPelayananInput
               value={statePosyandu.create.form.jadwalPelayanan}
-              onChange={(htmlContent) => {
-                statePosyandu.create.form.jadwalPelayanan = htmlContent;
+              onChange={(jsonValue) => {
+                statePosyandu.create.form.jadwalPelayanan = jsonValue;
               }}
             />
           </Box>

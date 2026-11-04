@@ -113,6 +113,7 @@ const eventBudayaState = proxy({
   edit: {
     id: "",
     form: { ...defaultForm },
+    original: { ...defaultForm }, // snapshot data awal untuk tombol Batal
     loading: false,
 
     async load(id: string) {
@@ -124,7 +125,7 @@ const eventBudayaState = proxy({
         if (result?.success) {
           const data = result.data;
           eventBudayaState.edit.id = data.id;
-          eventBudayaState.edit.form = {
+          const loadedForm = {
             nama: data.nama,
             tanggal: data.tanggal
               ? new Date(data.tanggal).toISOString().split("T")[0]
@@ -132,6 +133,8 @@ const eventBudayaState = proxy({
             lokasi: data.lokasi,
             deskripsi: data.deskripsi ?? "",
           };
+          eventBudayaState.edit.form = { ...loadedForm };
+          eventBudayaState.edit.original = { ...loadedForm };
         }
       } catch (error) {
         console.error("Error loading event budaya for edit:", error);
@@ -176,9 +179,16 @@ const eventBudayaState = proxy({
       }
     },
 
+    // kembalikan form ke data awal (dipakai tombol Batal), tetap di halaman edit
+    restore() {
+      eventBudayaState.edit.form = { ...eventBudayaState.edit.original };
+      toast.info("Form dikembalikan ke data awal");
+    },
+
     reset() {
       eventBudayaState.edit.id = "";
       eventBudayaState.edit.form = { ...defaultForm };
+      eventBudayaState.edit.original = { ...defaultForm };
     },
   },
 

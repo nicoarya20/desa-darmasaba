@@ -10,7 +10,7 @@ const StrukturOrganisasi = new Elysia({
     tags: ["Ekonomi/Struktur Organisasi"],
 })
 .get("/:id", async (context) => {
-    const response = await strukturBumDesFindById(new Request(context.request))
+    const response = await strukturBumDesFindById(context.request)
     return response
 })
 .use(PosisiOrganisasi)

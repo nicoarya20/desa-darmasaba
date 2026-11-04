@@ -56,7 +56,7 @@ const FasilitasKesehatan = new Elysia({
   // ==========================
   .get("/:id", async (context) => {
     const response = await findUniqueFasilitasKesehatan(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

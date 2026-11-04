@@ -233,7 +233,7 @@ function ListProgramKemiskinan({ search }: { search: string }) {
                       <Text fz="sm" fw={600} lh={1.4}>
                         Deskripsi Singkat
                       </Text>
-                      <Text fz="sm" fw={500} lh={1.4} c="dark.9" dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      <Text fz="sm" fw={500} lh={1.4} c="dark.9" lineClamp={2}>{toPlainText(item.deskripsi) || '-'}</Text>
                     </Box>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>

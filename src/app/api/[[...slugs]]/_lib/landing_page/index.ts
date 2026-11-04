@@ -12,6 +12,7 @@ import JenisKelaminResponden from "./indeks_kepuasan/jenis-kelamin-responden";
 import PilihanRatingResponden from "./indeks_kepuasan/pilihan-rating-responden";
 import UmurResponden from "./indeks_kepuasan/umur-responden";
 import Responden from "./indeks_kepuasan/responden";
+import HariLibur from "./hari-libur";
 
 const LandingPage = new Elysia({
     prefix: "/landingpage",
@@ -31,5 +32,6 @@ const LandingPage = new Elysia({
 .use(PilihanRatingResponden)
 .use(UmurResponden)
 .use(Responden)
+.use(HariLibur)
 
 export default LandingPage

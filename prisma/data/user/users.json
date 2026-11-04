@@ -10,6 +10,15 @@
   },
   {
     "id": "cmie1o0zh0002vn132vtzg7hh",
+    "username": "SuperAdmin-Nico",
+    "nomor": "6289647037425",
+    "email": "keanobramantyaalmaliki@gmail.com",
+    "roleId": 1,
+    "isActive": true,
+    "sessionInvalid": false
+  },
+  {
+    "id": "cmie1o0zh0002vn132vtzg7hh",
     "username": "SuperAdmin-Keano",
     "nomor": "6289647037426",
     "email": "keanobramantyaalmaliki@gmail.com",

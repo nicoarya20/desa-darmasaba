@@ -13,6 +13,7 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import posyanduState from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
+import JadwalPelayananView from '@/components/JadwalPelayananView';
 
 export default function DetailPosyanduUser() {
   const statePosyandu = useProxy(posyanduState);
@@ -110,12 +111,10 @@ export default function DetailPosyanduUser() {
                 color="gray"
                 style={{ marginTop: 2, flexShrink: 0 }}
               />
-              <Text
-                fz={{ base: 'sm', md: 'md' }}
+              <JadwalPelayananView
+                value={data.jadwalPelayanan}
                 c="black"
-                lh={1.6}
-                dangerouslySetInnerHTML={{ __html: data.jadwalPelayanan || '–' }}
-                style={{ wordBreak: 'break-word' }}
+                fz={{ base: 'sm', md: 'md' }}
               />
             </Flex>
 

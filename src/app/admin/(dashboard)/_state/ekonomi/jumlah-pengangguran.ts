@@ -6,7 +6,9 @@ import { proxy } from "valtio";
 import { z } from "zod";
 
 const templateJumlahPengngguran = z.object({
-  month: z.string().min(1, "Bulan harus diisi"),
+  month: z.enum(["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"], {
+    errorMap: () => ({ message: "Bulan harus diisi" }),
+  }),
   year: z.number().min(1, "Tahun harus diisi"),
   totalUnemployment: z.number().min(1, "Total pengangguran harus diisi"),
   educatedUnemployment: z
@@ -19,8 +21,11 @@ const templateJumlahPengngguran = z.object({
 
 });
 
+const MONTH_VALUES = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"] as const;
+type MonthValue = typeof MONTH_VALUES[number];
+
 type JumlahPengangguran = {
-  month: string;
+  month: MonthValue | "";
   year: number;
   totalUnemployment: number;
   educatedUnemployment: number;
@@ -84,10 +89,10 @@ const jumlahPengangguran = proxy({
         const res =
           await ApiFetch.api.ekonomi.jumlahpengangguran.detaildatapengangguran[
             "create"
-          ].post(jumlahPengangguran.create.form);
+          ].post(cek.data);
 
         if (res.status === 200) {
-          const id = (res.data as any)?.id;
+          const id = (res.data as any)?.data?.id ?? (res.data as any)?.id;
           if (id) {
             toast.success("Sukses menambahkan");
             jumlahPengangguran.create.form = { ...jumlahPengangguranForm };

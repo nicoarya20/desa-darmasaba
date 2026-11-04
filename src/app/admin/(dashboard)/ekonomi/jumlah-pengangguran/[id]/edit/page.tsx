@@ -171,6 +171,7 @@ function EditDetailDataPengangguran() {
 
       stateDetail.update.form = {
         ...formData,
+        month: formData.month as typeof stateDetail.update.form.month,
         totalUnemployment: total,
         percentageChange,
       };

@@ -19,7 +19,7 @@ const PenangananDarurat = new Elysia({
 .get("/find-many", penangananDaruratFindMany)
 .delete("/del/:id", penangananDaruratDelete)
 .get(":id", async (context) => {
-    const response = await penangananDaruratFindUnique(new Request(context.request));
+    const response = await penangananDaruratFindUnique(context.request);
     return response;
 })
 .put(

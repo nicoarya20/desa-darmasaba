@@ -9,7 +9,7 @@ type FormCreatePengelolaanSampah = {
 export default async function pengelolaanSampahCreate(context: Context){
     const body = context.body as FormCreatePengelolaanSampah;
 
-    await prisma.pengelolaanSampah.create({
+    const result = await prisma.pengelolaanSampah.create({
         data: {
             name: body.name,
             icon: body.icon,
@@ -18,9 +18,7 @@ export default async function pengelolaanSampahCreate(context: Context){
 
     return {
         success: true,
-        message: "Sukses menambahkan program kreatif",
-        data: {
-            ...body,
-        }
+        message: "Sukses menambahkan pengelolaan sampah",
+        data: result,
     }
 }

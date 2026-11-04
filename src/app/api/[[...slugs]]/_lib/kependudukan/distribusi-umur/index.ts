@@ -10,7 +10,7 @@ const DistribusiUmur = new Elysia({
     tags: ["Kependudukan/Distribusi Umur"],
 })
 .get("/:id", async (context) => {
-    const response = await distribusiUmurFindUnique(new Request(context.request))
+    const response = await distribusiUmurFindUnique(context.request)
     return response
   })
   .get("/find-many", distribusiUmurFindMany)

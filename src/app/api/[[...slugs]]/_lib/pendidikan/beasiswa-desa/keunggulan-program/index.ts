@@ -19,7 +19,7 @@ const KeunggulanProgram = new Elysia({
   .get("/findMany", keunggulanProgramFindMany)
   .get("/:id", async (context) => {
     const response = await keunggulanProgramFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

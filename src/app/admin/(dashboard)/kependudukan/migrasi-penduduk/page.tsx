@@ -317,7 +317,7 @@ function ListMigrasiPenduduk({ search, year }: { search: string; year?: number }
         <Pagination
           value={page}
           onChange={(newPage) => {
-            load(newPage, 10, search);
+            load(newPage, 10, debouncedSearch, year);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}

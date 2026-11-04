@@ -41,7 +41,7 @@ function CreateArtikelKesehatan() {
   const isFormValid = () => {
     return (
       stateArtikelKesehatan.create.form.title?.trim() !== '' &&
-      stateArtikelKesehatan.create.form.content?.trim() !== '' &&
+      !isHtmlEmpty(stateArtikelKesehatan.create.form.content) &&
       !isHtmlEmpty(stateArtikelKesehatan.create.form.introduction.content) &&
       stateArtikelKesehatan.create.form.symptom.title?.trim() !== '' &&
       !isHtmlEmpty(stateArtikelKesehatan.create.form.symptom.content) &&
@@ -98,7 +98,7 @@ function CreateArtikelKesehatan() {
       return;
     }
 
-    if (!stateArtikelKesehatan.create.form.content?.trim()) {
+    if (isHtmlEmpty(stateArtikelKesehatan.create.form.content)) {
       toast.error('Deskripsi wajib diisi');
       return;
     }
@@ -294,15 +294,15 @@ function CreateArtikelKesehatan() {
             }}
             required
           />
-          <TextInput
-            label={"Deskripsi"}
-            placeholder="Masukkan deskripsi"
-            value={stateArtikelKesehatan.create.form.content}
-            onChange={(e) => {
-              stateArtikelKesehatan.create.form.content = e.target.value;
-            }}
-            required
-          />
+          <Box>
+            <Text fz="sm" fw="bold">Deskripsi</Text>
+            <CreateEditor
+              value={stateArtikelKesehatan.create.form.content}
+              onChange={(e) => {
+                stateArtikelKesehatan.create.form.content = e;
+              }}
+            />
+          </Box>
           <Box>
             <Text fz="sm" fw="bold">Pendahuluan</Text>
             <CreateEditor

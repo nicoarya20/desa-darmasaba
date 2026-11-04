@@ -1,26 +1,24 @@
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
 
 type FormUpdate = {
-  id: string;
   nama: string;
   icon: string;
   kategoriId: string[];
 };
 
-export default async function kontakDaruratKeamananUpdate(context: Context) {
-  const body = context.body as FormUpdate;
-
-  if (!body.id) {
-    throw new Error("ID pasar desa tidak boleh kosong");
-  }
+export default async function kontakDaruratKeamananUpdate(context: {
+  params: { id: string };
+  body: FormUpdate;
+}) {
+  const { id } = context.params;
+  const body = context.body;
 
   if (!body.kategoriId || body.kategoriId.length === 0) {
     throw new Error("Minimal 1 kategori harus dipilih");
   }
 
   await prisma.kontakDaruratKeamanan.update({
-    where: { id: body.id },
+    where: { id },
     data: {
       nama: body.nama,
       icon: body.icon,
@@ -29,18 +27,18 @@ export default async function kontakDaruratKeamananUpdate(context: Context) {
   });
 
   await prisma.kontakDaruratToItem.deleteMany({
-    where: { kontakDaruratId: body.id },
+    where: { kontakDaruratId: id },
   });
 
   await prisma.kontakDaruratToItem.createMany({
     data: body.kategoriId.map((kategoriId) => ({
-      kontakDaruratId: body.id,
+      kontakDaruratId: id,
       kontakItemId: kategoriId,
     })),
   });
 
   const updated = await prisma.kontakDaruratKeamanan.findUnique({
-    where: { id: body.id },
+    where: { id },
     include: {
       kategori: true,
       kontakItems: {

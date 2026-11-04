@@ -10,7 +10,7 @@ const PersentaseKelahiranKematian = new Elysia({
   tags: ["Data Kesehatan/Persentase Kelahiran Kematian"],
 })
   .get("/:id", async (context) => {
-    const response = await persentaseKelahiranKematianFindUnique(new Request(context.request))
+    const response = await persentaseKelahiranKematianFindUnique(context.request)
     return response
   })
   .get("/find-many", persentaseKelahiranKematianFindMany)

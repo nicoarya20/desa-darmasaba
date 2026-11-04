@@ -197,7 +197,9 @@ function ListFoto({ search }: { search: string }) {
                     </Box>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>Deskripsi</Text>
-                      <Text fz="sm" fw={500} lh={1.45} dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
+                      <Text fz="sm" fw={500} lh={1.45} lineClamp={3}>
+                        {toPlainText(item.deskripsi) || '-'}
+                      </Text>
                     </Box>
                     <Button
                       variant="light"

@@ -8,7 +8,7 @@ import grafikMenganggurBerdasarkanUsiaDelete from "./del";
 const GrafikUsiaKerjaYangMenganggur = new Elysia({prefix: "/grafikusiakerjayangmenganggur", tags: ["Ekonomi/Jumlah Penduduk Usia Kerja Yang Menganggur"]})
 .get("/find-many", grafikMenganggurBerdasarkanUsiaFindMany)
 .get("/:id", async (context) => {
-    const response = await grafikMenganggurBerdasarkanUsiaFindUnique(new Request(context.request))
+    const response = await grafikMenganggurBerdasarkanUsiaFindUnique(context.request)
     return response
   })
 .put("/:id", grafikMenganggurBerdasarkanUsiaUpdate, {

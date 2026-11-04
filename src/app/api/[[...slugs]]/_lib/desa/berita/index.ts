@@ -11,7 +11,7 @@ const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
   .get("/find-many", beritaFindMany)
   .get("/find-many-ui", beritaFindMany)
   .get("/:id", async (context) => {
-      const response = await findBeritaById(new Request(context.request));
+      const response = await findBeritaById(context.request);
       return response;
     })
   .post("/create", beritaCreate, {

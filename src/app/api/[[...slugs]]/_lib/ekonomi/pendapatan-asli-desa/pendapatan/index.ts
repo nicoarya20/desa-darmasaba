@@ -13,7 +13,7 @@ const PendapatanAsli = new Elysia({
   .get("/find-many", pendapatanAsliFindMany)
   .get("/:id", async (context) => {
     const response = await pendapatanAsliFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

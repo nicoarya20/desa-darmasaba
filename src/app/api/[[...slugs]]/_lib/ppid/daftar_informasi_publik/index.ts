@@ -21,7 +21,7 @@ const DaftarInformasiPublik = new Elysia({
   })
   .delete("/del/:id", daftarInformasiPublikDelete)
   .get("/:id", async (context) => {
-    const response = await daftarInformasiPublikFindById(new Request(context.request))
+    const response = await daftarInformasiPublikFindById(context.request)
     return response
   })
   .get("/find-many", daftarInformasiPublikFindMany)

@@ -10,7 +10,7 @@ const DataBanjar = new Elysia({
     tags: ["Kependudukan/Data Banjar"],
 })
 .get("/:id", async (context) => {
-    const response = await dataBanjarFindUnique(new Request(context.request))
+    const response = await dataBanjarFindUnique(context.request)
     return response
   })
   .get("/find-many", dataBanjarFindMany)

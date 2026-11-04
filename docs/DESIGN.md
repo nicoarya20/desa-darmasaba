@@ -18,6 +18,8 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 | `framer-motion` | ^12.38.0 | Animasi (navbar mobile, hover cards, stagger) |
 | `recharts` | ^3.8.0 | Grafik APBDes |
 | `primereact` | ^10.9.6 | Beberapa komponen tabel |
+| `@mantine/hooks` | 8.3.18 | Hooks pendukung Mantine (dipakai luas bareng `@mantine/core`) |
+| `chart.js` | ^4.4.8 | Grafik tambahan di luar `@mantine/charts` |
 
 ---
 
@@ -229,7 +231,7 @@ File: `src/con/navbar-list-menu.ts`
 | 2 | Desa | 9 (termasuk Kalender Event Budaya) |
 | 3 | Kesehatan | 7 |
 | 4 | Keamanan | 7 |
-| 5 | Ekonomi | 10 |
+| 5 | Ekonomi | 11 (termasuk Kesejahteraan Masyarakat) |
 | 6 | Inovasi | 6 |
 | 7 | Lingkungan | 6 |
 | 8 | Kependudukan | 5 |
@@ -238,10 +240,10 @@ File: `src/con/navbar-list-menu.ts`
 
 ### Sidebar Admin
 
-File: `src/app/admin/_com/list_PageAdmin.tsx`
+File: `src/app/admin/_com/list_PageAdmin.tsx` (re-export saja; data sebenarnya ada di `src/app/admin/_com/nav/domains.ts` dan dirakit di `src/app/admin/_com/nav/index.ts`)
 
 Export: `navBar` (semua domain), `role1`, `role2`, `role3` (role-based subset), `devBar`.  
-Logic pemilihan: `getNavbar({ roleId, menuIds })` — filter berdasarkan `menuIds` jika tersedia, fallback ke role.
+Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`. Filter berdasarkan `menuIds` (dengan normalisasi ID) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`).
 
 ---
 
@@ -454,10 +456,9 @@ Tab routing berbasis URL — setiap tab = path unik. Tab aktif dideteksi dari UR
 
 ## 12. State Management
 
-- **Valtio** (`useProxy`, `useShallowEffect`) — state untuk semua domain (posyandu, kependudukan, ekonomi, dll)
-- **Jotai** — atoms untuk state global ringan
-- **Zustand** (custom store) — dark mode state di `src/state/darkModeStore.ts`
-- **SWR** — data fetching pada beberapa halaman publik
+- **Valtio** (`proxy`, `useSnapshot`) — state dominan di project ini (180+ file), dipakai untuk semua domain (posyandu, kependudukan, ekonomi, dll) **dan** dark mode (`src/state/darkModeStore.ts` — bukan Zustand; Zustand tidak ada di dependencies)
+- **Jotai** — ada di `package.json` tapi tidak dipakai sama sekali (0 import) — jangan dipakai untuk kode baru
+- **SWR** — hanya dipakai di 1 file (`src/state/state-layanan.ts`), bukan pola umum
 
 Pattern state per domain (contoh posyandu):
 ```ts

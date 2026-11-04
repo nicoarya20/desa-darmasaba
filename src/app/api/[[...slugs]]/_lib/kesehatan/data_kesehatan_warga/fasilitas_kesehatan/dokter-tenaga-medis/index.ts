@@ -10,7 +10,7 @@ const DokterTenagaMedis = new Elysia({
     tags: ["Data Kesehatan/Fasilitas Kesehatan/Dokter Tenaga Medis"]
 })
     .get("/:id", async (context) => {
-        const response = await dokterTenagaMedisFindUnique(new Request(context.request));
+        const response = await dokterTenagaMedisFindUnique(context.request);
         return response;
     })
     .get("/findMany", dokterTenagaMedisFindMany)

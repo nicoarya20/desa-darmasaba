@@ -23,7 +23,7 @@ const Kematian = new Elysia({
   .get("/findMany", kematianFindMany)
   .get("/:id", async (context) => {
     const response = await kematianFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

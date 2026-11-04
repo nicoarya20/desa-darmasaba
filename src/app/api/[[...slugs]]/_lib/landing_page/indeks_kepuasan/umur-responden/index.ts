@@ -19,7 +19,7 @@ const UmurResponden = new Elysia({
   .get("/findMany", umurRespondenFindMany)
   .get("/:id", async (context) => {
     const response = await umurRespondenFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

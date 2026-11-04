@@ -89,7 +89,7 @@ function EditEventBudayaPage() {
           <Group justify="flex-end" mt="md">
             <Button
               variant="default"
-              onClick={() => router.push('/admin/desa/event-budaya')}
+              onClick={() => state.edit.restore()}
             >
               Batal
             </Button>

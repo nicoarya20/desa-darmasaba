@@ -12,7 +12,7 @@ const MantanPerbekel = new Elysia({
   .get("/findMany", profileMantanPerbekelFindMany)
   .get("/:id", async (context) => {
     const response = await profileMantanPerbekelFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

@@ -7,7 +7,7 @@ const MaskotDesa = new Elysia({
   tags: ["Desa/Profile"],
 })
   .get("/:id", async (context) => {
-    const response = await maskotDesaFindById(new Request(context.request));
+    const response = await maskotDesaFindById(context.request);
     return response;
   })
   .put(

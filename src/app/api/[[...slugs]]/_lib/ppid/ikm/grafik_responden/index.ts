@@ -10,7 +10,7 @@ const GrafikBerdasarkanResponden = new Elysia({
     tags: ["PPID/IKM/grafikberdasarkanresponden"]
 })
 .get("/:id", async (context) => {
-    const response = await grafikRespondenFindById(new Request(context.request))
+    const response = await grafikRespondenFindById(context.request)
     return response
 })
 .put("/:id", grafikRespondenUpdate, {

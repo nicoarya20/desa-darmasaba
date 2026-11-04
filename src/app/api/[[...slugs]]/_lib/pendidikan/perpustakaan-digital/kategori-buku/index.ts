@@ -21,7 +21,7 @@ const KategoriBuku = new Elysia({
   .get("/findManyAll", kategoriBukuFindManyAll)
   .get("/:id", async (context) => {
     const response = await kategoriBukuFindUnique(
-      new Request(context.request)
+      context.request
     );
     return response;
   })

@@ -17,7 +17,7 @@ export default async function kolaborasiInovasiCreate(context: Context) {
   const body = context.body as FormCreateKolaborasiInovasi;
 
   // Create new kolaborasi inovasi
-  await prisma.kolaborasiInovasi.create({
+  const result = await prisma.kolaborasiInovasi.create({
     data: {
       name: body.name,
       tahun: body.tahun,
@@ -30,8 +30,6 @@ export default async function kolaborasiInovasiCreate(context: Context) {
   return {
     success: true,
     message: "Berhasil membuat kolaborasi inovasi",
-    data: {
-      ...body,
-    },
+    data: result,
   };
 }

@@ -26,7 +26,7 @@ export default async function kegiatanDesaCreate(context: Context) {
         judul: body.judul,
         deskripsiSingkat: body.deskripsiSingkat,
         deskripsiLengkap: body.deskripsiLengkap,
-        tanggal: body.tanggal,
+        tanggal: new Date(body.tanggal),
         lokasi: body.lokasi,
         partisipan: body.partisipan ?? 0,
         imageId: body.imageId,
