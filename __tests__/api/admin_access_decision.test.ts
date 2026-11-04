@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Guard akses /admin di middleware — fungsi murni decideAdminAccess.
+// Guard akses /admin di proxy (src/proxy.ts) — fungsi murni decideAdminAccess.
 // Fokus: regresi "tiba-tiba logout" saat cookie cache (60 dtk) expired tapi
 // session_token (7 hari) masih ada.
 import { describe, it, expect } from 'vitest';

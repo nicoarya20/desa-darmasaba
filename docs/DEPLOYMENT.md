@@ -33,7 +33,9 @@ Seafile has been fully replaced by MinIO (see `prisma/migrate-seafile-to-minio.t
 
 ## Docker
 
-Multi-stage build: `oven/bun:1-debian` → builder → runner. The runner creates a `nextjs` user (UID 1001), exposes port 3000, and mounts `/app/uploads` as a volume. Entrypoint runs migrations automatically (`bunx prisma migrate deploy`).
+Multi-stage build: `oven/bun:1.4.4-debian` (pinned) → builder → runner. The Dockerfile uses `COPY --chmod`, which needs BuildKit (`docker buildx`; CI uses `docker/setup-buildx-action`). The legacy builder fails at the runner stage. `next build` uses Turbopack (Next 16 default) and needs roughly 2.5 GB RAM inside the build container. The runner creates a `nextjs` user (UID 1001), exposes port 3000, and mounts `/app/uploads` as a volume. Entrypoint runs migrations automatically (`bunx prisma migrate deploy`).
+
+Since Next 16, `next dev` writes its output to `.next/dev`, separate from the `next build` output in `.next/`.
 
 ## CI/CD
 

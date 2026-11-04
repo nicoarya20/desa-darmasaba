@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.204] - 2026-11-04
+### Changed
+- **Framework naik dari Next.js 15.5.14 ke 16.4.5, React ke 19.3.1**: fungsi halaman publik maupun admin tidak berubah. QA mencatat sedikit perubahan tampilan, dan ini akan dipoles setelah seluruh tahap upgrade UI selesai. Build dan dev server sekarang memakai Turbopack (bawaan Next 16), dan `next dev` menulis output ke `.next/dev`. Jumlah halaman hasil build kini 394 (sebelumnya 395) karena Next 16 tidak lagi membuat halaman `_app`/`_document`/`_error` Pages Router untuk project yang hanya memakai App Router. Daftar halaman aplikasi tidak berubah.
+- **Guard halaman admin pindah dari `src/middleware.ts` ke `src/proxy.ts`** (konvensi baru Next 16, selalu berjalan di runtime Node.js). Aturan aksesnya tidak berubah: `/admin`, `/validasi`, dan `/waiting-room` tetap mewajibkan login, dan akun non-admin tetap diarahkan ke `/profile`. Matcher-nya kini dikunci dengan unit test.
+- **Browser minimum naik** mengikuti default Next 16: Safari/iOS 16.4, serta Chrome, Edge, dan Firefox 111. Browser yang lebih lama bisa tidak memuat situs dengan benar.
+- **Image Docker dikunci ke `oven/bun:1.4.4-debian`** (sebelumnya tag floating `1-debian`). Saat ini keduanya menunjuk image yang sama persis (digest `sha256:93d5032f…`), jadi hasil build tidak berubah. Bedanya, rilis Bun baru tidak lagi ikut terpasang diam-diam.
+- **`next dev` tidak lagi mengubah `AGENTS.md`**: fitur `agentRules` Next 16, yang otomatis menyisipkan blok ke file itu, dimatikan karena file tersebut di-track git.
+- **ESLint tetap memakai `eslint-config-next` 15.5.12.** Versi 16 membutuhkan penulisan ulang config dan membawa aturan React Compiler yang bentrok dengan pola Valtio di sekitar 210 file. Upgrade lint dikerjakan sebagai task terpisah.
+
+### Fixed
+- **Akses dev server dari HP/perangkat lain di jaringan lokal**: `allowedDevOrigins` sebelumnya diisi URL lengkap (`http://192.168.1.82:3000`), padahal Next hanya mencocokkan hostname, sehingga entri itu tidak pernah berlaku. Sekarang ditulis `192.168.1.82`. `localhost` sudah diizinkan secara default.
+- **Keamanan: 28 advisory Next.js tertutup** (3 critical, 12 high, 11 moderate, 2 low pada 15.5.14). Di antaranya RCE tanpa autentikasi di Image Optimization API untuk file SVG ([GHSA-2464-fhr4-w9xw](https://github.com/advisories/GHSA-2464-fhr4-w9xw)) dan AVIF ([GHSA-2xp9-vwfh-vxw4](https://github.com/advisories/GHSA-2xp9-vwfh-vxw4)), RCE di server Windows ([GHSA-p293-qw3h-jr36](https://github.com/advisories/GHSA-p293-qw3h-jr36)), serta beberapa celah bypass middleware/proxy ([GHSA-492v-c6pp-mqqv](https://github.com/advisories/GHSA-492v-c6pp-mqqv), [GHSA-267c-6grr-h53f](https://github.com/advisories/GHSA-267c-6grr-h53f), [GHSA-26hh-7cqf-hhc6](https://github.com/advisories/GHSA-26hh-7cqf-hhc6)).
+- **Keamanan: pengolah gambar `sharp` naik dari 0.34.5 ke 0.35.5** (libvips 8.17.3 → 8.18.7). Ini menutup 3 advisory high di libvips, libheif, dan librsvg ([GHSA-f88m-g3jw-g9cj](https://github.com/advisories/GHSA-f88m-g3jw-g9cj), [GHSA-rgj7-g3m4-5g8c](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c), [GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w)), dan sekaligus menjadi mitigasi yang direkomendasikan untuk GHSA-2464-fhr4-w9xw. `sharp` dipakai untuk `/api/img` dan upload gambar, termasuk upload pengaduan publik. Gambar yang dihasilkan identik byte-per-byte dengan sebelumnya, dan salinan ganda `sharp` di dalam Next ikut hilang.
+
+Tidak ada perubahan schema/database/API.
+
 ## [0.1.203] - 2026-11-04
 ### Changed
 - **Library UI Mantine naik dari 7.17 ke 8.3.18**: seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di satu versi yang sama, 8.3.18. Sebelumnya versinya campur (core 7.17, sedangkan dates/dropzone sudah 8.x), sehingga ada ketidakcocokan peer dependency. Tampilan halaman publik dan admin tidak berubah. Prop `color` pada `Text` yang sudah deprecated diganti `c` (19 halaman admin) tanpa efek visual.
