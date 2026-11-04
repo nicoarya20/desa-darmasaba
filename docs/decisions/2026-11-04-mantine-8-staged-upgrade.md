@@ -78,7 +78,7 @@ Baseline pembanding: `origin/main` `9f460ed5` (v0.1.202). Hasil branch identik d
 | `bun run build` | sukses, 395 halaman |
 | SSR halaman publik / login | 200, `/admin` → 307 ke `/login` |
 | Review silang pasca-merge | 0 temuan kritis |
-| QA manual | lolos di base lama; perlu diulang setelah sinkron dengan `origin/main` |
+| QA manual | lolos ulang di 0.1.203 setelah sinkron dengan `origin/main` (editor admin + halaman publik) |
 
 ## 5. Masalah yang diketahui (sudah ada sejak `main`, bukan akibat upgrade)
 
