@@ -16,7 +16,7 @@ type EditEditorProps = {
 export default function EditPPIDEditor({ value, onChange }: EditEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ link: false }),
+      StarterKit.configure({ link: false, trailingNode: false }),
       Link,
       Superscript,
       SubScript,

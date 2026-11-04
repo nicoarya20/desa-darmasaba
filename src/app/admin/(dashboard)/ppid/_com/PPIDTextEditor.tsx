@@ -17,7 +17,7 @@ export function PPIDTextEditor({ onSubmit, onChange, showSubmit = true, initialC
   initialContent?: string }) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ link: false }),
+      StarterKit.configure({ link: false, trailingNode: false }),
       Link,
       Superscript,
       SubScript,

@@ -16,7 +16,7 @@ export function PendidikanNonFormalTextEditor({ onSubmit, onChange, showSubmit =
   initialContent?: string }) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ link: false }),
+      StarterKit.configure({ link: false, trailingNode: false }),
       Link,
       Superscript,
       SubScript,

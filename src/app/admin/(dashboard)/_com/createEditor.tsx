@@ -16,7 +16,7 @@ type CreateEditorProps = {
 export default function CreateEditor({ value, onChange }: CreateEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ link: false }),
+      StarterKit.configure({ link: false, trailingNode: false }),
       Link,
       Superscript,
       SubScript,
