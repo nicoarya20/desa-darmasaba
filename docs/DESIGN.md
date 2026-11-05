@@ -15,7 +15,7 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 | `@tiptap/*` | ^3.32.2 | Engine rich text editor (StarterKit, Highlight, TextAlign, Superscript, Subscript; Link via `@mantine/tiptap`) — lihat §17 |
 | `@mantine/charts` | 9.7.4 | BarChart, PieChart, dll |
 | `@tabler/icons-react` | ^3.30.0 | Semua ikon (Tabler Icons) |
-| `framer-motion` | ^12.38.0 | Animasi (navbar mobile, hover cards, stagger) |
+| `framer-motion` | ^12.38.0 | Animasi (hover cards, stagger) |
 | `recharts` | ^3.8.0 | Grafik APBDes |
 | `primereact` | ^10.9.6 | Beberapa komponen tabel |
 | `@mantine/hooks` | 9.7.4 | Hooks pendukung Mantine (dipakai luas bareng `@mantine/core`) |
@@ -155,7 +155,7 @@ File: `src/app/darmasaba/layout.tsx`
 ```
 Stack (gap=0, bg=grey[1])
   Navbar (fixed, z-index=100)
-  Space h={{ base:"3.9rem", md:"2.75rem" }}  // md = tinggi bar desktop 44px
+  Space h={{ base:"3rem", md:"2.75rem" }}  // = tinggi bar mobile 48px / desktop 44px
   {children}
   Footer
   FixedPlayerBar
@@ -165,7 +165,7 @@ Stack (gap=0, bg=grey[1])
 
 Gaya apple.com. File: `_com/NavbarMainMenu.tsx` (bar), `_com/NavbarFlyout.tsx` (panel), `_com/useNavbarFlyout.ts` (state & interaksi), `_com/navbar.module.css` (gaya + animasi, variabel warna di `.root`), `_com/navbar-menu.logic.ts` (helper murni, dites di `__tests__/api/navbar_menu_logic.test.ts`). State terbuka di `stateNav.openMenuId` / `stateNav.isSearch`.
 
-- **Bar**: tinggi 44px, `rgba(251,251,253,0.8)` + `backdrop-filter: saturate(180%) blur(20px)`, isi max-width 1100px. Menu aktif = teks biru brand 600. Dirender di luar `Paper .glass2` mobile, karena `backdrop-filter` pada induk membuat overlay blur di dalamnya tidak bisa mem-blur halaman.
+- **Bar**: tinggi 44px, `rgba(251,251,253,0.8)` + `backdrop-filter: saturate(180%) blur(20px)`, isi max-width 1100px. Menu aktif = teks biru brand 600. Jangan bungkus navbar dengan elemen ber-`backdrop-filter`/`filter`: induk seperti itu membuat overlay blur di dalamnya tidak bisa mem-blur halaman.
 - **Flyout**: hover menu (jeda 100ms) → latar `#fbfbfd` mengembang dari bawah bar (transisi `clip-path` 320ms `cubic-bezier(0.32,0.72,0,1)`, tinggi mengikuti isi yang diukur `ResizeObserver`, jadi pindah menu ikut retarget). Isi: label kecil abu + link 22px/600 dalam satu kolom (bila melebihi tinggi layar, panel bisa di-scroll).
 - **Reveal teks**: `opacity` + `translateY(-8px)` 300ms `cubic-bezier(0.23,1,0.32,1)`, stagger 30ms per baris.
 - **Blur halaman**: overlay `fixed` `backdrop-filter: blur(18px)` + tint, fade `opacity`. Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual: Lightning CSS (Turbopack) menggabungkan keduanya jadi hanya versi `-webkit-` yang diabaikan Chrome.
@@ -174,7 +174,12 @@ Gaya apple.com. File: `_com/NavbarMainMenu.tsx` (bar), `_com/NavbarFlyout.tsx` (
 
 ### Navbar Mobile
 
-`Burger` + `Paper` slide-in dari kanan (framer-motion `x: "100%" → x: 0`, duration 0.2s). `ScrollArea.Autosize` agar menu bisa di-scroll.
+Gaya apple.com. File: `_com/NavbarMobile.tsx` + `_com/navbar-mobile.module.css` (variabel warna/kurva dipakai bersama dari `.root` di `navbar.module.css`). State buka di `stateNav.mobileOpen`.
+
+- **Bar**: tinggi 48px, kaca sama dengan desktop, logo kiri, `Burger` kanan.
+- **Panel**: kaca penuh layar `rgba(251,251,253,0.82)` + `backdrop-filter: saturate(180%) blur(20px)` (halaman ter-blur), membuka dari bawah bar lewat `clip-path` 320ms. Scroll halaman dikunci selama terbuka.
+- **Drill-down**: awalnya hanya menu utama (24px/600 + chevron). Tap menu → submenu masuk dari kanan dengan tombol "Kembali"; kembali → menu utama masuk dari kiri. Reveal bertahap 25ms per baris.
+- **Tutup**: burger, Escape, klik link, atau route berganti. Panel `inert` saat tertutup.
 
 ### Footer
 
@@ -499,23 +504,15 @@ File: `src/utils/themeTokens.ts`, `src/state/darkModeStore.ts`
 
 ## 14. Animasi & Efek Visual
 
-### Glass Effect (Navbar Publik Mobile)
+### Glass Effect
 
-```css
-.glass2 {
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(40px);
-  position: fixed;
-  z-index: 1;
-}
-```
+Kartu kaca memakai `.glass3` (`src/app/globals.css`): `rgba(255,255,255,0.3)` + `backdrop-filter: blur(40px)`. Navbar punya gaya kaca sendiri di CSS module-nya.
+
+Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual — Lightning CSS (Turbopack) menggabungkan keduanya jadi hanya versi `-webkit-` yang diabaikan Chrome. Dijaga test `__tests__/api/navbar_menu_logic.test.ts`.
 
 ### Framer Motion Patterns
 
 ```ts
-// Navbar mobile slide-in
-initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ duration: 0.2 }}
-
 // Card hover
 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}  // potensi, layanan
 whileHover={{ scale: 1.05 }}                               // SDGs
