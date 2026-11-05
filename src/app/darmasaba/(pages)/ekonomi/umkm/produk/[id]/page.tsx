@@ -27,6 +27,7 @@ import umkmState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm';
 import ApiFetch from '@/lib/api-fetch';
 import { perSatuanSuffix, withSatuan } from '../../_lib/satuan';
 import { PesananModal, type OrderForm } from '../../_com/PesananModal';
+import { LinkTokoOnlineButtons } from '../../_com/LinkTokoOnlineButtons';
 import {
   PESAN_KONEKSI_GAGAL,
   buildOrderMessage,
@@ -186,6 +187,8 @@ function DetailProdukPasarUser() {
               >
                 Pesan Sekarang
               </Button>
+
+              <LinkTokoOnlineButtons links={data.linkTokoOnline} withLabel />
             </Stack>
           </Grid.Col>
         </Grid>

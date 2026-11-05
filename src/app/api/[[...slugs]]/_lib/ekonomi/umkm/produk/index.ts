@@ -5,6 +5,12 @@ import produkUmkmFindMany from "./findMany";
 import produkUmkmFindUnique from "./findUnique";
 import produkUmkmUpdate from "./updt";
 
+// Opsional & aditif: tanpa field ini perilaku lama tidak berubah. Aturan isi (https, host, maks 5)
+// divalidasi handler lewat util bersama agar pesan errornya konsisten dengan form admin.
+const linkTokoOnlineBody = t.Optional(
+  t.Array(t.Object({ platform: t.String(), url: t.String() })),
+);
+
 const ProdukUmkm = new Elysia({
   prefix: "/umkm/produk",
   tags: ["Ekonomi/UMKM Produk"],
@@ -27,6 +33,7 @@ const ProdukUmkm = new Elysia({
       isActive: t.Optional(t.Boolean()),
       satuan: t.Optional(t.String()),
       isUnggulan: t.Optional(t.Boolean()),
+      linkTokoOnline: linkTokoOnlineBody,
     }),
   })
   .put("/:id", produkUmkmUpdate, {
@@ -44,6 +51,7 @@ const ProdukUmkm = new Elysia({
       isActive: t.Boolean(),
       satuan: t.Optional(t.String()),
       isUnggulan: t.Optional(t.Boolean()),
+      linkTokoOnline: linkTokoOnlineBody,
     }),
   })
   .delete("/del/:id", produkUmkmDelete, {
