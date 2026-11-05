@@ -55,12 +55,44 @@ export const WHEEL_THRESHOLD_PX = 40;
 /** Jeda tanpa event wheel (ms) yang menandai akhir satu gerakan (termasuk momentum). */
 export const WHEEL_QUIET_MS = 160;
 
-export type WheelState = { acc: number; locked: boolean; lastAt: number };
+/**
+ * Deteksi gerakan baru saat event masih beruntun. Momentum macOS selalu melemah dan tak pernah berbalik
+ * arah, jadi gerakan baru = (a) sempat melemah ≤ LOW lalu naik ≥ RISE, (b) naik > RISE_FACTOR× event
+ * sebelumnya dan ≥ RISE, atau (c) berbalik arah dengan |delta| ≥ RISE.
+ */
+export const WHEEL_GESTURE = { lowPx: 4, risePx: 10, riseFactor: 2 } as const;
 
-export const INITIAL_WHEEL_STATE: WheelState = { acc: 0, locked: false, lastAt: -Infinity };
+export type WheelState = {
+  acc: number;
+  locked: boolean;
+  lastAt: number;
+  /** |delta| event sebelumnya dan |delta| terkecil sejak terkunci. */
+  lastAbs: number;
+  minAbs: number;
+  /** Arah langkah terakhir (1 maju, -1 mundur, 0 belum ada). */
+  dir: -1 | 0 | 1;
+};
+
+export const INITIAL_WHEEL_STATE: WheelState = {
+  acc: 0,
+  locked: false,
+  lastAt: -Infinity,
+  lastAbs: 0,
+  minAbs: Infinity,
+  dir: 0,
+};
+
+function isNewGesture(state: WheelState, deltaX: number): boolean {
+  const abs = Math.abs(deltaX);
+  const { lowPx, risePx, riseFactor } = WHEEL_GESTURE;
+  if (abs < risePx) return false;
+  const reversed = state.dir !== 0 && Math.sign(deltaX) !== state.dir;
+  return reversed || state.minAbs <= lowPx || abs > state.lastAbs * riseFactor;
+}
 
 /**
- * Satu gerakan dua jari (beserta momentumnya) = maksimal 1 kartu.
+ * Satu gerakan dua jari (beserta momentumnya) = maksimal 1 kartu. Kunci dibuka oleh jeda hening ATAU
+ * deteksi gerakan baru (agar geser cepat beruntun tetap jalan walau momentum belum habis).
  * deltaX positif (jari ke kiri, konten bergulir ke kanan) = maju.
  */
 export function reduceWheel(
@@ -70,14 +102,22 @@ export function reduceWheel(
   threshold = WHEEL_THRESHOLD_PX,
   quietMs = WHEEL_QUIET_MS,
 ): { state: WheelState; step: -1 | 0 | 1 } {
-  const fresh = now - state.lastAt > quietMs;
-  const base = fresh ? { acc: 0, locked: false } : state;
-  if (base.locked) return { state: { ...base, lastAt: now }, step: 0 };
+  const abs = Math.abs(deltaX);
+  const unlocked = now - state.lastAt > quietMs || (state.locked && isNewGesture(state, deltaX));
+  const base: WheelState = unlocked ? { ...INITIAL_WHEEL_STATE, dir: state.dir } : state;
+
+  if (base.locked) {
+    return {
+      state: { ...base, lastAt: now, lastAbs: abs, minAbs: Math.min(base.minAbs, abs) },
+      step: 0,
+    };
+  }
   const acc = base.acc + deltaX;
   if (Math.abs(acc) >= threshold) {
-    return { state: { acc: 0, locked: true, lastAt: now }, step: acc > 0 ? 1 : -1 };
+    const step = acc > 0 ? 1 : -1;
+    return { state: { acc: 0, locked: true, lastAt: now, lastAbs: abs, minAbs: abs, dir: step }, step };
   }
-  return { state: { acc, locked: false, lastAt: now }, step: 0 };
+  return { state: { ...base, acc, lastAt: now, lastAbs: abs }, step: 0 };
 }
 
 /** Geometri titik indikator (px): titik biasa, titik aktif (progress bar), jarak antar titik. */

@@ -126,6 +126,32 @@ describe('reduceWheel', () => {
     expect(run([[50, 0], [20, 16], [50, 400]])).toEqual([1, 1]);
   });
 
+  // Pola mirip trackpad macOS: jari mempercepat, lalu momentum melemah setelah jari diangkat.
+  const swipe = (sign: 1 | -1) => [2, 6, 14, 24, 30, 28].map((d) => d * sign);
+  const momentum = (sign: 1 | -1) => [26, 22, 18, 15, 12, 9, 7, 5, 3, 2, 1].map((d) => d * sign);
+  const timeline = (...deltas: number[][]): Array<[number, number]> =>
+    deltas.flat().map((d, i) => [d, i * 16]);
+
+  it('geser kedua langsung saat momentum geser pertama masih berjalan tetap maju', () => {
+    expect(run(timeline(swipe(1), momentum(1), swipe(1)))).toEqual([1, 1]);
+  });
+
+  it('geser kedua memotong momentum yang masih kuat (gerak tiba-tiba > 2x) tetap maju', () => {
+    expect(run(timeline(swipe(1), [26, 22, 18], [40, 44]))).toEqual([1, 1]);
+  });
+
+  it('berbalik arah di tengah momentum = mundur', () => {
+    expect(run(timeline(swipe(1), [26, 22], swipe(-1)))).toEqual([1, -1]);
+  });
+
+  it('momentum yang melemah sampai habis tidak menambah kartu', () => {
+    expect(run(timeline(swipe(1), momentum(1)))).toEqual([1]);
+  });
+
+  it('tiga geser beruntun tanpa jeda = tiga kartu', () => {
+    expect(run(timeline(swipe(1), momentum(1), swipe(1), momentum(1), swipe(1)))).toEqual([1, 1, 1]);
+  });
+
   it('geser kecil di bawah ambang diabaikan dan direset setelah jeda', () => {
     expect(run([[30, 0], [30, 500]])).toEqual([]);
   });
