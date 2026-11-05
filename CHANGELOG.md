@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.210] - 2026-11-05
+### Changed
+- **Footer di ponsel bergaya apple.com**: padding kiri-kanan footer di ponsel kini 16px (sebelumnya sekitar 80px sehingga teks sangat sempit). Grup link "Layanan Desa" dan "Tautan Penting" di ponsel tampil sebagai daftar lipat dengan panah — ketuk judul untuk membuka link-nya, dipisahkan garis tipis. Tampilan laptop/desktop tidak berubah.
+
+## [0.1.209] - 2026-11-05
+### Changed
+- **Footer halaman publik bergaya apple.com**: tepi kiri-kanan footer kini sejajar dengan konten "Komitmen Layanan Kami" dan "Visi Kami" di atasnya (sebelumnya melebar hampir selebar layar). Card berbayang di sekitar bagian Komitmen Layanan sampai "Desa Kuat, Warga Sejahtera!" dihapus; bagian itu kini dipisahkan dari daftar link cukup dengan garis tipis. Jarak vertikal seluruh footer kini seragam dan lebih rapat: 32px antar blok (termasuk di atas dan di bawah setiap garis pemisah) dan 10px antar baris di dalam blok, logo slogan sedikit diperkecil. Kolom "Layanan Desa" dan "Tautan Penting" tampil di baris atas; "Tentang Darmasaba" (beserta ikon media sosial) dan "Berlangganan Info" pindah ke baris di bawahnya. Ada garis tipis di atas daftar link dan di atas copyright, dan copyright kini rata kiri.
+
+## [0.1.208] - 2026-11-05
+### Changed
+- **Section Layanan dan Potensi Desa di beranda digabung** menjadi satu galeri bergaya apple.com berjudul "Layanan dan Potensi Desa": baris atas berisi layanan (kartu besar di tengah, kartu sebelahnya mengintip), baris bawah berisi potensi desa (kartu lebih kecil). Setiap 5 detik kedua baris bergeser satu kartu ke kiri dan berhenti dengan kartu aktif di tengah, berputar terus tanpa ujung. Kartu kini bersudut kotak, klik kartu membuka halaman detailnya.
+- Di ponsel kartu tampil tegak (potret) dengan judul dan tombol di tengah bawah, dan baris bisa digeser dengan jari.
+- Di laptop, galeri bisa digeser dengan dua jari di trackpad saat kursor berada di atas baris (satu gerakan = satu kartu), tanpa lagi memicu kembali ke halaman sebelumnya.
+- Kedua baris selalu bergerak bersama: menggeser baris layanan atau potensi, maupun mengklik titik penanda, menggeser layanan dan potensi sekaligus.
+- Penanda posisi berupa 5 titik dengan titik panjang selalu di tengah. Titik panjang berfungsi sebagai progress bar yang terisi hitam selama 5 detik sebelum galeri maju, lalu titik di sebelahnya bergeser ke tengah. Ada tombol jeda; gerak otomatis juga berhenti saat menavigasi kartu dengan keyboard, saat tab tidak aktif, atau bila perangkat mengaktifkan "kurangi animasi".
+- Potensi desa di beranda kini menampilkan hingga 10 potensi (sebelumnya 4).
+
+### Removed
+- Paragraf penjelasan di bawah judul Layanan dan Potensi Desa, tombol "Detail" ke daftar layanan, dan tombol "Lihat Semua Potensi" di beranda (halaman daftarnya tetap bisa dibuka dari navbar).
+
 ## [0.1.207] - 2026-11-05
 ### Changed
 - **Navbar desktop halaman publik bergaya apple.com**: saat cursor diarahkan ke menu, panel submenu kini mengembang halus dari bawah navbar, teks submenu muncul bertahap, dan konten halaman di belakangnya di-blur. Sebelumnya submenu muncul tiba-tiba tanpa animasi. Pindah antar menu langsung mengganti isi panel dengan tinggi yang menyesuaikan halus; panel tertutup saat cursor keluar dari navbar, tombol Escape, klik area blur, atau berpindah halaman. Pencarian memakai panel yang sama.
