@@ -13,6 +13,7 @@ import { Box, Stack } from "@mantine/core";
 import Apbdes from "./_com/main-page/apbdes";
 import Prestasi from "./_com/main-page/prestasi";
 import ScrollToTopButton from "./_com/scrollToTopButton";
+import GateSplash from "./_com/splash/GateSplash";
 
 import { useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
@@ -147,6 +148,7 @@ export default function Page() {
 
   return (
     <Box id="page-root">
+      <GateSplash />
       <Stack bg={colors.grey[1]} gap={0}>
         <LandingPage />
         <Apbdes />
