@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.211] - 2026-11-05
+### Added
+- **Pesanan produk UMKM kini bisa dibuat warga tanpa login** lewat endpoint publik baru. Setelah pesanan dibuat, muncul jendela konfirmasi "Pesanan Dibuat" dengan tautan WhatsApp yang diklik warga sendiri. Harga dihitung server dari data produk dan stok berkurang secara atomik.
+- **Batas panjang "alasan keberatan"** pada Permohonan Keberatan Informasi Publik (PPID): maksimal 2000 karakter, dengan penghitung karakter dan tombol kirim yang nonaktif bila melebihi batas. Server juga menolak input yang terlalu panjang.
+- **Galeri Foto**: klik kartu foto membuka jendela detail berisi foto utuh, deskripsi lengkap, dan tanggal.
+
+### Fixed
+- Warga yang belum login tidak bisa mengirim **Laporan Publik** (Keamanan) karena ditolak 401; kini bisa mengirim laporan.
+- Pesanan **UMKM** di ponsel gagal dengan pesan error umum, dan di laptop muncul "nomor WhatsApp tidak terdaftar" padahal pesanan tersimpan; keduanya diperbaiki, termasuk format nomor kontak yang tidak seragam.
+- **Beranda**: kotak input email di footer tidak lagi menutupi popup berita.
+- **Galeri Foto**: ukuran foto kini seragam (rasio 4:3).
+- **Desa - Layanan**: jarak judul dan deskripsi Pelayanan Telunjuk Sakti, tinggi kartu, dan jarak antar baris deskripsi pelayanan penduduk dirapikan.
+- **Struktur PPID**: bagan dan panel kontrol kini terpusat di desktop maupun ponsel.
+
 ## [0.1.210] - 2026-11-05
 ### Changed
 - **Footer di ponsel bergaya apple.com**: padding kiri-kanan footer di ponsel kini 16px (sebelumnya sekitar 80px sehingga teks sangat sempit). Grup link "Layanan Desa" dan "Tautan Penting" di ponsel tampil sebagai daftar lipat dengan panah — ketuk judul untuk membuka link-nya, dipisahkan garis tipis. Tampilan laptop/desktop tidak berubah.
