@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.208] - 2026-11-05
+### Changed
+- **Section Layanan dan Potensi Desa di beranda digabung** menjadi satu galeri bergaya apple.com berjudul "Layanan dan Potensi Desa": baris atas berisi layanan (kartu besar di tengah, kartu sebelahnya mengintip), baris bawah berisi potensi desa (kartu lebih kecil). Setiap 5 detik kedua baris bergeser satu kartu ke kiri dan berhenti dengan kartu aktif di tengah, berputar terus tanpa ujung. Kartu kini bersudut kotak, klik kartu membuka halaman detailnya.
+- Di ponsel kartu tampil tegak (potret) dengan judul dan tombol di tengah bawah, dan baris bisa digeser dengan jari.
+- Ada titik penanda posisi dan tombol jeda; gerak otomatis juga berhenti saat menavigasi kartu dengan keyboard, saat tab tidak aktif, atau bila perangkat mengaktifkan "kurangi animasi".
+- Potensi desa di beranda kini menampilkan hingga 10 potensi (sebelumnya 4).
+
+### Removed
+- Paragraf penjelasan di bawah judul Layanan dan Potensi Desa, tombol "Detail" ke daftar layanan, dan tombol "Lihat Semua Potensi" di beranda (halaman daftarnya tetap bisa dibuka dari navbar).
+
 ## [0.1.207] - 2026-11-05
 ### Changed
 - **Navbar desktop halaman publik bergaya apple.com**: saat cursor diarahkan ke menu, panel submenu kini mengembang halus dari bawah navbar, teks submenu muncul bertahap, dan konten halaman di belakangnya di-blur. Sebelumnya submenu muncul tiba-tiba tanpa animasi. Pindah antar menu langsung mengganti isi panel dengan tinggi yang menyesuaikan halus; panel tertutup saat cursor keluar dari navbar, tombol Escape, klik area blur, atau berpindah halaman. Pencarian memakai panel yang sama.
