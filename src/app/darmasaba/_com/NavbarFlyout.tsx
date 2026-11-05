@@ -4,7 +4,7 @@ import stateNav from "@/state/state-nav";
 import { Link } from "next-view-transitions";
 import { CSSProperties, RefObject, useLayoutEffect, useRef, useState } from "react";
 import { MenuItem } from "../../../../types/menu-item";
-import { flyoutRowCount, isPathActive } from "./navbar-menu.logic";
+import { isPathActive } from "./navbar-menu.logic";
 import { NavbarSearch } from "./NavBarSearch";
 import s from "./navbar.module.css";
 
@@ -66,12 +66,11 @@ function FlyoutMenu({ menu, pathname }: { menu: MenuItem; pathname: string }) {
   const links = (menu.children ?? []).flatMap((child) =>
     child.href ? [{ id: child.id, name: child.name, href: child.href }] : [],
   );
-  const listStyle = { gridTemplateRows: `repeat(${flyoutRowCount(links.length)}, auto)` };
 
   return (
     <nav aria-label={`Submenu ${menu.name}`}>
       <p className={`${s.flyoutLabel} ${s.reveal}`}>{menu.name}</p>
-      <ul className={s.flyoutList} style={listStyle}>
+      <ul className={s.flyoutList}>
         {links.map((link, index) => (
           <li key={link.id} className={s.reveal} style={{ "--i": index + 1 } as CSSProperties}>
             <Link

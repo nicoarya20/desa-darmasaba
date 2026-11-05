@@ -3,9 +3,6 @@ import { MenuItem } from "../../../../types/menu-item";
 /** roleId yang boleh melihat tombol "Kembali ke Admin" (semua role akun admin). */
 export const ADMIN_ROLE_IDS: readonly number[] = [0, 1, 2, 3, 4];
 
-/** Jumlah baris maksimum per kolom di flyout; sisa item mengalir ke kolom berikutnya. */
-export const FLYOUT_MAX_ROWS = 6;
-
 /** Cek apakah `pathname` berada di bawah `href` (persis atau sub-path, bukan sekadar prefix string). */
 export function isPathActive(pathname: string, href?: string): boolean {
   if (!href) return false;
@@ -21,9 +18,4 @@ export function isMenuActive(item: MenuItem, pathname: string): boolean {
 /** Benar bila user login dengan role admin. */
 export function isAdminRole(roleId: number | null | undefined): boolean {
   return roleId != null && ADMIN_ROLE_IDS.includes(roleId);
-}
-
-/** Jumlah baris grid flyout untuk `count` item. */
-export function flyoutRowCount(count: number): number {
-  return Math.max(1, Math.min(count, FLYOUT_MAX_ROWS));
 }
