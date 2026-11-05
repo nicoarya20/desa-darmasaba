@@ -1,7 +1,7 @@
 "use client";
 import { Image } from "@mantine/core";
 import { Link } from "next-view-transitions";
-import { useCallback, useRef, useState, type FocusEvent, type MouseEvent, type PointerEvent } from "react";
+import { useRef, useState, type FocusEvent, type MouseEvent, type PointerEvent } from "react";
 import { buildLoopTrack, DRAG_CLICK_TOLERANCE_PX, loopStart, realIndex, swipeStep } from "./gallery.logic";
 import s from "./gallery.module.css";
 import type { LoopCarousel } from "./use-loop-carousel";
@@ -15,8 +15,8 @@ type Props = {
   items: GalleryItem[];
   carousel: LoopCarousel;
   ctaLabel: string;
-  /** Dipanggil setelah user menggeser baris (sentuh/trackpad) — progress diulang. */
-  onInteract: () => void;
+  /** User menggeser baris ini (sentuh/trackpad) sejauh `delta` kartu; induk menggeser SEMUA baris. */
+  onStep: (delta: number) => void;
 };
 
 const PLACEHOLDER_COUNT = 5;
@@ -27,7 +27,7 @@ function trackTransform(index: number, dragX: number) {
 }
 
 /** Satu baris galeri loop: kartu aktif di tengah, geser jari (sentuh) atau dua jari (trackpad). */
-export function GalleryRow({ label, variant, items, carousel, ctaLabel, onInteract }: Props) {
+export function GalleryRow({ label, variant, items, carousel, ctaLabel, onStep }: Props) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
@@ -37,15 +37,7 @@ export function GalleryRow({ label, variant, items, carousel, ctaLabel, onIntera
   const track = buildLoopTrack(items);
   const start = loopStart(count);
 
-  const { step } = carousel;
-  const onWheelStep = useCallback(
-    (delta: -1 | 1) => {
-      step(delta);
-      onInteract();
-    },
-    [step, onInteract],
-  );
-  useWheelStep(viewportRef, onWheelStep, count > 1);
+  useWheelStep(viewportRef, onStep, count > 1);
 
   const onPointerDown = (e: PointerEvent) => {
     if (e.pointerType === "mouse" || count <= 1) return;
@@ -64,8 +56,8 @@ export function GalleryRow({ label, variant, items, carousel, ctaLabel, onIntera
     setDragX(0);
     if (!moved) return;
     suppressClick.current = true;
-    carousel.step(swipeStep(e.clientX - x));
-    onInteract();
+    const delta = swipeStep(e.clientX - x);
+    if (delta !== 0) onStep(delta);
   };
   // Browser mengambil alih untuk scroll vertikal: batalkan geser tanpa pindah kartu.
   const onPointerCancel = () => {

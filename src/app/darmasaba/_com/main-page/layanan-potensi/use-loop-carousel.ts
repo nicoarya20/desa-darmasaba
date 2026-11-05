@@ -65,7 +65,6 @@ export function useLoopCarousel(count: number, reducedMotion: boolean) {
     animate: state.animate && !reducedMotion,
     active: realIndex(state.index, count),
     position: state.position,
-    next: useCallback(() => step(1), [step]),
     step,
     goTo,
     settle,

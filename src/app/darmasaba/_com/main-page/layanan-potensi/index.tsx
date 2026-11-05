@@ -53,7 +53,19 @@ function LayananPotensi() {
   const [userPaused, setUserPaused] = useState(false);
   const [keyboardInside, setKeyboardInside] = useState(false);
   const [restartKey, setRestartKey] = useState(0);
-  const restartTimer = useCallback(() => setRestartKey((k) => k + 1), []);
+  const { step: stepFeature } = feature;
+  const { step: stepTile } = tile;
+
+  // Geser manual (baris mana pun, sentuh/trackpad) atau klik titik → kedua baris bergeser bersama
+  // sejauh `delta` kartu, lalu progress titik diulang dari 0.
+  const stepAll = useCallback(
+    (delta: number) => {
+      stepFeature(delta);
+      stepTile(delta);
+      setRestartKey((k) => k + 1);
+    },
+    [stepFeature, stepTile],
+  );
 
   // Titik indikator mengikuti Layanan; bila Layanan ≤ 1 item, ikut Potensi agar putar otomatis tetap jalan.
   const primary = layanan.length > 1 ? feature : tile;
@@ -63,8 +75,8 @@ function LayananPotensi() {
 
   // Progress bar titik aktif penuh → kedua baris maju bersamaan.
   const onCycleEnd = () => {
-    feature.next();
-    tile.next();
+    stepFeature(1);
+    stepTile(1);
   };
 
   // Jeda selama fokus keyboard ada di kartu (WCAG 2.2.2); fokus dari klik/tap tidak menjeda.
@@ -95,7 +107,7 @@ function LayananPotensi() {
                 items={layanan}
                 carousel={feature}
                 ctaLabel={GALLERY_TEXT.ctaLayanan}
-                onInteract={restartTimer}
+                onStep={stepAll}
               />
             ) : null}
             {potensiLoading || potensi.length > 0 ? (
@@ -105,7 +117,7 @@ function LayananPotensi() {
                 items={potensi}
                 carousel={tile}
                 ctaLabel={GALLERY_TEXT.ctaPotensi}
-                onInteract={restartTimer}
+                onStep={stepAll}
               />
             ) : null}
           </div>
@@ -116,10 +128,7 @@ function LayananPotensi() {
             progressKey={restartKey}
             autoplay={canPlay}
             running={running}
-            onStep={(delta) => {
-              primary.step(delta);
-              restartTimer();
-            }}
+            onStep={stepAll}
             onCycleEnd={onCycleEnd}
             onTogglePause={() => setUserPaused((p) => !p)}
           />
