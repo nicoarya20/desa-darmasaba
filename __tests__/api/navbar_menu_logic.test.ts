@@ -2,9 +2,9 @@
 import { describe, expect, it } from 'vitest';
 import navbarListMenu from '@/con/navbar-list-menu';
 import stateNav from '@/state/state-nav';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import {
-  FLYOUT_MAX_ROWS,
-  flyoutRowCount,
   isAdminRole,
   isMenuActive,
   isPathActive,
@@ -57,18 +57,6 @@ describe('isAdminRole', () => {
   });
 });
 
-describe('flyoutRowCount', () => {
-  it('mengikuti jumlah item sampai batas, lalu mengalir ke kolom berikutnya', () => {
-    expect(flyoutRowCount(3)).toBe(3);
-    expect(flyoutRowCount(FLYOUT_MAX_ROWS)).toBe(FLYOUT_MAX_ROWS);
-    expect(flyoutRowCount(11)).toBe(FLYOUT_MAX_ROWS);
-  });
-
-  it('minimal 1 baris', () => {
-    expect(flyoutRowCount(0)).toBe(1);
-  });
-});
-
 describe('navbarListMenu (data yang dipakai flyout)', () => {
   it('id menu utama unik, karena flyout mencari menu terbuka berdasarkan id', () => {
     const ids = navbarListMenu.map((m) => m.id);
@@ -89,5 +77,19 @@ describe('stateNav.clear', () => {
     stateNav.clear();
     expect(stateNav.openMenuId).toBeNull();
     expect(stateNav.isSearch).toBe(false);
+  });
+});
+
+describe('navbar.module.css', () => {
+  // Lightning CSS (Turbopack) menggabungkan `backdrop-filter` + `-webkit-backdrop-filter`
+  // menjadi hanya versi -webkit- yang diabaikan Chrome → blur overlay hilang.
+  it('tidak menulis -webkit-backdrop-filter manual (biar compiler yang menambah prefix)', () => {
+    const css = readFileSync(
+      path.resolve(__dirname, '../../src/app/darmasaba/_com/navbar.module.css'),
+      'utf8',
+    );
+    const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(declarations).toContain('backdrop-filter: blur(');
+    expect(declarations).not.toContain('-webkit-backdrop-filter');
   });
 });
