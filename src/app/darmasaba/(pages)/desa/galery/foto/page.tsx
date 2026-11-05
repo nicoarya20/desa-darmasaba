@@ -4,10 +4,12 @@
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
 import {
+  AspectRatio,
   Box,
   Center,
   Grid,
   Image,
+  Modal,
   Pagination,
   Paper,
   Skeleton,
@@ -16,11 +18,30 @@ import {
   Title,
 } from '@mantine/core';
 import { IconPhoto } from '@tabler/icons-react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
-// Komponen kartu foto
+// Rasio tampilan thumbnail galeri: semua foto dipotong (cover) ke rasio yang
+// sama agar kartu seragam apa pun orientasi foto aslinya.
+const FOTO_ASPECT_RATIO = 4 / 3;
+// Tinggi maksimum foto di modal agar foto portrait tidak melebihi layar.
+const FOTO_MODAL_MAX_HEIGHT = '70vh';
+
+function formatTanggal(value: string) {
+  return new Date(value).toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+// Komponen kartu foto: klik kartu (termasuk deskripsi) membuka modal detail
+// berisi foto utuh dan deskripsi lengkap, karena di kartu deskripsi dipotong
+// (lineClamp) dan sebelumnya tidak ada handler klik sama sekali.
 function FotoCard({ item }: { item: any }) {
+  const [opened, setOpened] = useState(false);
+  const judul = item.name || 'Tanpa Judul';
+  const open = () => setOpened(true);
 
   return (
     <Grid.Col span={{ base: 12, xs: 6, md: 4 }}>
@@ -28,50 +49,42 @@ function FotoCard({ item }: { item: any }) {
         shadow="sm"
         radius="md"
         p={0}
-        style={{ transition: 'transform 0.2s' }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Lihat detail foto ${judul}`}
+        onClick={open}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            open();
+          }
+        }}
+        style={{ transition: 'transform 0.2s', cursor: 'pointer', overflow: 'hidden' }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
         onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-        
       >
-        {item.imageGalleryFoto?.link ? (
-          <Box
-            pos="relative"
-            style={{
-              paddingBottom: '100%',
-              overflow: 'hidden',
-              borderRadius: '4px 4px 0 0',
-              backgroundColor: '#f9f9f9',
-            }}
-          >
+        <AspectRatio ratio={FOTO_ASPECT_RATIO} bg="gray.1">
+          {item.imageGalleryFoto?.link ? (
             <Image
-              radius="lg"
               src={item.imageGalleryFoto.link}
               alt={item.name || 'Foto Galeri'}
-              p={10}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                objectPosition: 'center',
-              }}
+              fit="cover"
               loading="lazy"
             />
-          </Box>
-        ) : (
-          <Center h={180} bg="gray.1">
-            <IconPhoto size={40} color="gray" />
-          </Center>
-        )}
+          ) : (
+            <Center>
+              <IconPhoto size={40} color="gray" />
+            </Center>
+          )}
+        </AspectRatio>
 
         <Stack p="md" gap={4}>
           <Text fw={600} lineClamp={1} fz={{ base: 'sm', md: 'md' }} lh={{ base: '1.4', md: '1.5' }}>
-            {item.name || 'Tanpa Judul'}
+            {judul}
           </Text>
           {item.deskripsi && (
             <Text
+              component="div"
               fz={{ base: 'xs', md: 'sm' }}
               c="dimmed"
               lineClamp={2}
@@ -84,14 +97,37 @@ function FotoCard({ item }: { item: any }) {
             c="dimmed"
             lh={{ base: '1.3', md: '1.4' }}
           >
-            {new Date(item.createdAt).toLocaleDateString('id-ID', {
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-            })}
+            {formatTanggal(item.createdAt)}
           </Text>
         </Stack>
       </Paper>
+
+      {/* Modal sengaja di luar Paper: event React dari portal akan bubble ke
+          onClick Paper sehingga tombol tutup malah membuka ulang modal. */}
+      <Modal opened={opened} onClose={() => setOpened(false)} title={judul} size="lg" centered>
+        <Stack gap="sm">
+          {item.imageGalleryFoto?.link && (
+            <Image
+              src={item.imageGalleryFoto.link}
+              alt={item.name || 'Foto Galeri'}
+              fit="contain"
+              radius="md"
+              mah={FOTO_MODAL_MAX_HEIGHT}
+            />
+          )}
+          {item.deskripsi && (
+            <Text
+              component="div"
+              fz={{ base: 'sm', md: 'md' }}
+              style={{ wordBreak: 'break-word' }}
+              dangerouslySetInnerHTML={{ __html: item.deskripsi }}
+            />
+          )}
+          <Text fz="xs" c="dimmed">
+            {formatTanggal(item.createdAt)}
+          </Text>
+        </Stack>
+      </Modal>
     </Grid.Col>
   );
 }
