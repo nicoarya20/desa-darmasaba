@@ -40,6 +40,11 @@ import BackButton from '../../desa/layanan/_com/BackButto'
 import './struktur.css'
 import { useMediaQuery } from '@mantine/hooks'
 
+// Lebar maksimum panel kontrol & kartu "data kosong" — dipusatkan oleh parent,
+// menyusut penuh di layar sempit supaya tidak meluber atau melenceng dari tengah.
+const CONTROLS_MAX_WIDTH = 560
+const EMPTY_STATE_MAX_WIDTH = 560
+
 export default function Page() {
   return (
     <Box
@@ -136,12 +141,13 @@ function StrukturOrganisasiPPID() {
   if (data.length === 0) {
     return (
       <Center py={40}>
-        <Stack align="center" gap="md">
+        <Stack align="center" gap="md" w="100%">
           <Paper
             radius="md"
             p="xl"
+            w="100%"
+            maw={EMPTY_STATE_MAX_WIDTH}
             style={{
-              width: 560,
               background: 'rgba(28,110,164,0.2)',
               border: `1px solid rgba(255,255,255,0.1)`,
               textAlign: 'center',
@@ -258,20 +264,12 @@ function StrukturOrganisasiPPID() {
       {/* 🔍 Controls */}
       <Paper
         shadow="xs"
-        w={{
-          base: '100%',       // Mobile: 100%
-          sm: '40%',          // Tablet: 95%
-          md: '39%',          // Desktop: 70%
-          lg: '38%',          // Desktop L: 60%
-          xl: '37%',          // 4K: 50%
-          '2xl': '36%',       // Ultra-wide: 45%
-        }}
+        w="100%"
+        maw={CONTROLS_MAX_WIDTH}
         p="md"
         radius="md"
         style={{
-          background: colors['blue-button'],       // ⬅️ penting
-          maxWidth: '100%',    // ⬅️ penting
-          overflowX: 'auto'    // ⬅️ untuk mencegah overflow
+          background: colors['blue-button'],
         }}
       >
 
@@ -305,21 +303,18 @@ function StrukturOrganisasiPPID() {
                 flexShrink: 0,
               },
             }}
-            style={{ width: '100%' }} // 👈 penting
+            style={{ width: '100%' }}
           >
+            {/* Wrap + justify center (bukan scroll horizontal): tombol selalu terpusat,
+                tidak ada tombol yang terpotong/tersembunyi di layar sempit. */}
             <TabsList
               style={{
                 display: 'flex',
-                overflowX: 'auto',
-                overflowY: 'hidden',
                 gap: '4px',
                 paddingBottom: '4px',
-                flexWrap: 'nowrap',
-                WebkitOverflowScrolling: 'touch',
-                scrollbarWidth: 'thin',
-                msOverflowStyle: '-ms-autohiding-scrollbar',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
                 maxWidth: '100%',
-                scrollBehavior: 'smooth', // 👈 smooth scroll
               }}
             >
               <TabsTab
@@ -400,11 +395,14 @@ function StrukturOrganisasiPPID() {
             transition: 'transform 0.2s ease',
           }}
         >
+          {/* zoom (bukan transform: scale) memengaruhi layout, jadi chart tetap di
+              tengah saat lebih sempit dari container dan bisa di-scroll penuh saat
+              lebih lebar — transform membuat sisi kiri terpotong & tak bisa di-scroll.
+              margin auto di flex item: terpusat bila muat, rata kiri bila meluber. */}
           <Box style={{
-            transform: `scale(${scale})`,
-            transformOrigin: 'center top',
-            display: 'inline-block', // 👈 agar tidak memenuhi lebar parent
-            minWidth: 'min-content', // 👈 penting agar chart tidak dipaksa muat di width 100%
+            zoom: scale,
+            flexShrink: 0,
+            margin: '0 auto',
           }}>
             <OrganizationChart
               value={chartData}
