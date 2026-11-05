@@ -17,6 +17,7 @@ import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
+import { AgendaMetaFields } from '../../_com/agenda-meta-fields';
 
 function EditEventBudayaPage() {
   const state = useProxy(eventBudayaState, { sync: true }); // sync: cegah caret jump di controlled input
@@ -48,7 +49,7 @@ function EditEventBudayaPage() {
         >
           <IconArrowBack size={18} />
         </ActionIcon>
-        <Title order={4}>Edit Event Budaya</Title>
+        <Title order={4}>Edit Agenda Desa</Title>
       </Group>
 
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
@@ -60,15 +61,7 @@ function EditEventBudayaPage() {
             value={state.edit.form.nama}
             onChange={(e) => (state.edit.form.nama = e.currentTarget.value)}
           />
-          <TextInput
-            label="Tanggal"
-            type="date"
-            required
-            value={state.edit.form.tanggal}
-            onChange={(e) =>
-              (state.edit.form.tanggal = e.currentTarget.value)
-            }
-          />
+          <AgendaMetaFields form={state.edit.form} />
           <TextInput
             label="Lokasi"
             placeholder="Contoh: Balai Desa Darmasaba"

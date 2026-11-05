@@ -43,7 +43,7 @@ export const desaMenu: NavItem = {
     { id: "Desa_6", name: "Layanan", path: "/admin/desa/layanan/pelayanan_surat_keterangan" },
     { id: "Desa_7", name: "Penghargaan", path: "/admin/desa/penghargaan" },
     { id: "Desa_8", name: "Kegiatan Desa", path: "/admin/desa/kegiatan-desa/list-kegiatan-desa" },
-    { id: "Desa_9", name: "Event Budaya", path: "/admin/desa/event-budaya" },
+    { id: "Desa_9", name: "Agenda & Kalender Desa", path: "/admin/desa/event-budaya" },
     { id: "Desa_10", name: "Banjar", path: "/admin/desa/banjar" },
   ],
 }
