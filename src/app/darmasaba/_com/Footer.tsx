@@ -1,5 +1,5 @@
 'use client'
-import { ActionIcon, Anchor, Box, Button, Container, Divider, Flex, Group, Image, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Accordion, ActionIcon, Anchor, Box, Button, Container, Divider, Flex, Group, Image, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandYoutube } from '@tabler/icons-react';
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
@@ -61,6 +61,20 @@ const tautanPenting = [
   }
 ]
 
+const linkGroups = [
+  { title: "Layanan Desa", links: layanandesa },
+  { title: "Tautan Penting", links: tautanPenting },
+]
+
+// Gaya accordion link di ponsel ala footer apple.com: tanpa padding samping, garis tipis antar grup
+const mobileAccordionStyles = {
+  item: { borderBottomColor: 'rgba(255, 255, 255, 0.2)' },
+  control: { paddingInline: 0, paddingBlock: 10, backgroundColor: 'transparent', color: 'white' },
+  label: { paddingBlock: 0, fontSize: 'var(--mantine-font-size-md)' },
+  chevron: { color: 'white' },
+  content: { padding: '0 0 16px' },
+}
+
 function Footer() {
 
   const emailRef = useRef<HTMLInputElement>(null)
@@ -102,8 +116,9 @@ function Footer() {
         (termasuk kiri-kanan setiap Divider), dan gap="xs" (10px) untuk isi di dalam blok.
         Satu Container untuk seluruh footer agar tepi kiri-kanannya sejajar.
       */}
-      <Box component="footer" w="100%" p="xl">
-        <Box px="xl">
+      {/* Ponsel: padding samping hanya dari Container (16px) seperti apple.com; layar lebar tetap sejajar seperti sebelumnya */}
+      <Box component="footer" w="100%" py="xl" px={{ base: 0, sm: 'xl' }}>
+        <Box px={{ base: 0, md: 'xl' }}>
           <Container size="lg">
             <Stack gap="xl">
               <Box>
@@ -149,23 +164,33 @@ function Footer() {
 
               <Divider color="white" opacity={0.2} />
 
-              <SimpleGrid cols={{ base: 2, md: 4 }} spacing="xl" verticalSpacing="xl">
-                <Stack gap="xs">
-                  <Text c="white" fz="sm" fw={600}>Layanan Desa</Text>
-                  {layanandesa.map((item) => (
-                    <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
-                  ))}
-                </Stack>
-
-                <Stack gap="xs">
-                  <Text c="white" fz="sm" fw={600}>Tautan Penting</Text>
-                  {tautanPenting.map((item) => (
-                    <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
-                  ))}
-                </Stack>
+              <SimpleGrid visibleFrom="sm" cols={{ base: 2, md: 4 }} spacing="xl" verticalSpacing="xl">
+                {linkGroups.map((group) => (
+                  <Stack key={group.title} gap="xs">
+                    <Text c="white" fz="sm" fw={600}>{group.title}</Text>
+                    {group.links.map((item) => (
+                      <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
+                    ))}
+                  </Stack>
+                ))}
               </SimpleGrid>
 
-              {/* Grid 2 kolom dengan spacing sama: kolom kanan jatuh tepat di garis kolom ke-3 grid link */}
+              <Accordion hiddenFrom="sm" multiple styles={mobileAccordionStyles}>
+                {linkGroups.map((group) => (
+                  <Accordion.Item key={group.title} value={group.title}>
+                    <Accordion.Control>{group.title}</Accordion.Control>
+                    <Accordion.Panel>
+                      <Stack gap="sm">
+                        {group.links.map((item) => (
+                          <Anchor key={item.title} c="#F3F2EC" fz="sm" href={item.link}>{item.title}</Anchor>
+                        ))}
+                      </Stack>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+
+              {/* Grid 2 kolom dengan spacing sama: kolom kanan jatuh tepat di garis kolom ke-3 grid link (desktop) */}
               <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl" verticalSpacing="xl">
                 <Stack gap="xs">
                   <Text c="white" fz="sm" fw={600}>Tentang Darmasaba</Text>
