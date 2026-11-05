@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
+import { parseWaktuBiaya } from "@/lib/pelayanan-waktu-biaya";
 
 type FormUpdate = Prisma.PelayananSuratKeteranganGetPayload<{
     select: {
@@ -9,6 +10,8 @@ type FormUpdate = Prisma.PelayananSuratKeteranganGetPayload<{
         deskripsi: true;
         imageId: true;
         image2Id: true;
+        estimasiWaktu: true;
+        biaya: true;
     };
 }>;
 export default async function updatePelayananSuratKeterangan(context: Context) {
@@ -29,6 +32,11 @@ export default async function updatePelayananSuratKeterangan(context: Context) {
                 },
             });
         }
+        const waktuBiaya = parseWaktuBiaya(body);
+        if (!waktuBiaya.ok) {
+            return Response.json({ success: false, message: waktuBiaya.message }, { status: 400 });
+        }
+
         const existing = await prisma.pelayananSuratKeterangan.findUnique({
             where: { id },
             include: {
@@ -84,6 +92,7 @@ export default async function updatePelayananSuratKeterangan(context: Context) {
                 deskripsi,
                 imageId,
                 image2Id,
+                ...waktuBiaya.data,
             },
         })
 
