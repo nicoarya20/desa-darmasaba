@@ -154,8 +154,8 @@ File: `src/app/darmasaba/layout.tsx`
 
 ```
 Stack (gap=0, bg=grey[1])
-  Navbar (fixed, glass effect, z-index=100)
-  Space h={{ base:"3.9rem", md:"2.5rem" }}
+  Navbar (fixed, z-index=100)
+  Space h={{ base:"3.9rem", md:"2.75rem" }}  // md = tinggi bar desktop 44px
   {children}
   Footer
   FixedPlayerBar
@@ -163,9 +163,14 @@ Stack (gap=0, bg=grey[1])
 
 ### Navbar Desktop
 
-`Paper` dengan class `glass2` (`backdrop-filter: blur(40px)`, `rgba(255,255,255,0.3)`), posisi `fixed`. Lebar konten `Container w={{ base:'100%', md:'80%' }}`. Menu menggunakan `Mantine Menu` dengan `trigger="hover"`.
+Gaya apple.com. File: `_com/NavbarMainMenu.tsx` (bar), `_com/NavbarFlyout.tsx` (panel), `_com/useNavbarFlyout.ts` (state & interaksi), `_com/navbar.module.css` (gaya + animasi, variabel warna di `.root`), `_com/navbar-menu.logic.ts` (helper murni, dites di `__tests__/api/navbar_menu_logic.test.ts`). State terbuka di `stateNav.openMenuId` / `stateNav.isSearch`.
 
-Active state: `borderBottom: 2px solid ${colors['blue-button']}`, `fontWeight: 600`.
+- **Bar**: tinggi 44px, `rgba(251,251,253,0.8)` + `backdrop-filter: saturate(180%) blur(20px)`, isi max-width 1100px. Menu aktif = teks biru brand 600. Dirender di luar `Paper .glass2` mobile, karena `backdrop-filter` pada induk membuat overlay blur di dalamnya tidak bisa mem-blur halaman.
+- **Flyout**: hover menu (jeda 100ms) → latar `#fbfbfd` mengembang dari bawah bar (transisi `clip-path` 320ms `cubic-bezier(0.32,0.72,0,1)`, tinggi mengikuti isi yang diukur `ResizeObserver`, jadi pindah menu ikut retarget). Isi: label kecil abu + link 22px/600; lebih dari 6 item mengalir ke kolom berikutnya.
+- **Reveal teks**: `opacity` + `translateY(-8px)` 300ms `cubic-bezier(0.23,1,0.32,1)`, stagger 30ms per baris.
+- **Blur halaman**: overlay `fixed` `backdrop-filter: blur(18px)` + tint, fade `opacity`.
+- **Tutup**: cursor keluar area bar+panel (jeda 120ms), Escape, klik overlay, klik link, atau route berganti. Pencarian dibuka/tutup lewat klik ikon (tidak ikut hover).
+- **Aksesibilitas**: menu utama `<button aria-expanded>`, submenu `<a>` (bisa keyboard & tab baru), Enter membuka + fokus link pertama, panel `inert` saat tertutup. `prefers-reduced-motion`: tanpa gerak, hanya fade. Hover warna hanya untuk `(hover: hover) and (pointer: fine)`.
 
 ### Navbar Mobile
 
@@ -494,7 +499,7 @@ File: `src/utils/themeTokens.ts`, `src/state/darkModeStore.ts`
 
 ## 14. Animasi & Efek Visual
 
-### Glass Effect (Navbar Publik)
+### Glass Effect (Navbar Publik Mobile)
 
 ```css
 .glass2 {
