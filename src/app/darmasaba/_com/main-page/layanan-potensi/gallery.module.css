@@ -1,7 +1,9 @@
 /*
  * Galeri Layanan & Potensi Desa gaya apple.com ("Endless entertainment.").
- * Kartu aktif selalu di tengah: track diberi padding kiri 50% - setengah kartu, lalu digeser
- * `translateX(-index * (lebar + gap))`. Semua persen relatif ke lebar viewport baris.
+ * Kartu aktif selalu di tengah lewat satu transform: `translateX(50% - w/2 - index * (w + gap))`.
+ * Track SENGAJA tanpa padding: `flex-basis` persen dihitung dari content box track, sedangkan
+ * persen di `translate` dari border box-nya. Padding membuat keduanya beda acuan → kartu mengecil
+ * dan tidak lagi di tengah. Tanpa padding keduanya = lebar viewport baris.
  * Kartu sengaja tanpa radius (permintaan user).
  */
 .section {
@@ -34,7 +36,6 @@
 .track {
   display: flex;
   gap: var(--gap);
-  padding-inline-start: calc(50% - var(--card-w) / 2);
   transition: transform var(--slide-ms) var(--ease);
   will-change: transform;
 }

@@ -78,3 +78,16 @@ describe('swipeStep', () => {
     expect(swipeStep(49, 50)).toBe(0);
   });
 });
+
+describe('gallery.module.css', () => {
+  it('track tanpa padding agar flex-basis % dan translate % memakai acuan lebar yang sama', async () => {
+    const { readFileSync } = await import('node:fs');
+    const css = readFileSync(
+      `${process.cwd()}/src/app/darmasaba/_com/main-page/layanan-potensi/gallery.module.css`,
+      'utf8',
+    );
+    const trackRule = css.match(/\n\.track \{([^}]*)\}/)?.[1] ?? '';
+    expect(trackRule).toContain('display: flex');
+    expect(trackRule).not.toMatch(/padding/);
+  });
+});

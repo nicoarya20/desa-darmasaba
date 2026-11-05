@@ -20,8 +20,9 @@ type Props = {
 
 const PLACEHOLDER_COUNT = 5;
 
+/** Geser track agar kartu `index` tepat di tengah viewport (persen = lebar viewport, lihat CSS). */
 function trackTransform(index: number, dragX: number) {
-  return `translate3d(calc(${-index} * (var(--card-w) + var(--gap)) + ${dragX}px), 0, 0)`;
+  return `translate3d(calc(50% - var(--card-w) / 2 - ${index} * (var(--card-w) + var(--gap)) + ${dragX}px), 0, 0)`;
 }
 
 /** Satu baris galeri loop: kartu aktif di tengah, geser jari di perangkat sentuh. */
