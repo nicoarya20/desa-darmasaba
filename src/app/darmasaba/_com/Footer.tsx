@@ -1,5 +1,5 @@
 'use client'
-import { ActionIcon, Anchor, Box, Button, Center, Container, Divider, Flex, Group, Image, Paper, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
+import { ActionIcon, Anchor, Box, Button, Container, Divider, Flex, Group, Image, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandYoutube } from '@tabler/icons-react';
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
@@ -97,121 +97,121 @@ function Footer() {
 
   return (
     <Stack bg="linear-gradient(180deg, #1C6EA4, #124170)" c="white">
-      <Box w="100%" p="xl">
-        <Center>
-          <Paper w="100%" bg="transparent" shadow="md" radius="lg" p="xl">
-            <Box component="footer">
-              <Container size="lg">
-                <Stack gap="xl">
-                  <Box>
-                    <Title fz="lg" order={2} fw={700} mb="md" c="white">Komitmen Layanan Kami</Title>
-                    <Stack gap="sm">
-                      {[
-                        { title: "Transparansi", text: "Pengelolaan dana desa dilakukan secara terbuka agar masyarakat dapat memahami dan memantau penggunaan anggaran." },
-                        { title: "Profesionalisme", text: "Layanan desa diberikan secara cepat, adil, dan profesional demi kepuasan masyarakat." },
-                        { title: "Partisipasi", text: "Masyarakat dilibatkan aktif dalam pengambilan keputusan demi pembangunan desa yang berhasil." },
-                        { title: "Inovasi", text: "Kami terus berinovasi, termasuk melalui teknologi, agar layanan semakin mudah diakses." },
-                        { title: "Keadilan", text: "Kebijakan dan program disusun untuk memberi manfaat yang merata bagi seluruh warga." },
-                        { title: "Pemberdayaan", text: "Masyarakat didukung melalui pelatihan, pendampingan, dan pengembangan usaha lokal." },
-                        { title: "Ramah Lingkungan", text: "Seluruh kegiatan pembangunan memperhatikan keberlanjutan demi menjaga alam dan kesehatan warga." }
-                      ].map((item, i) => (
-                        <Group key={i} align="flex-start" gap="xs">
-                          <Text fz="sm" c="#F3F2EC" fw={700}>{i + 1}. {item.title}:</Text>
-                          <Text fz="sm" c="#F3F2EC">{item.text}</Text>
-                        </Group>
-                      ))}
-                    </Stack>
-                  </Box>
+      {/*
+        Ritme vertikal ala footer apple.com: satu Stack gap="xl" (32px) memisahkan semua blok
+        (termasuk kiri-kanan setiap Divider), dan gap="xs" (10px) untuk isi di dalam blok.
+        Satu Container untuk seluruh footer agar tepi kiri-kanannya sejajar.
+      */}
+      <Box component="footer" w="100%" p="xl">
+        <Box px="xl">
+          <Container size="lg">
+            <Stack gap="xl">
+              <Box>
+                <Title fz="lg" order={2} fw={700} mb="sm" c="white">Komitmen Layanan Kami</Title>
+                <Stack gap="xs">
+                  {[
+                    { title: "Transparansi", text: "Pengelolaan dana desa dilakukan secara terbuka agar masyarakat dapat memahami dan memantau penggunaan anggaran." },
+                    { title: "Profesionalisme", text: "Layanan desa diberikan secara cepat, adil, dan profesional demi kepuasan masyarakat." },
+                    { title: "Partisipasi", text: "Masyarakat dilibatkan aktif dalam pengambilan keputusan demi pembangunan desa yang berhasil." },
+                    { title: "Inovasi", text: "Kami terus berinovasi, termasuk melalui teknologi, agar layanan semakin mudah diakses." },
+                    { title: "Keadilan", text: "Kebijakan dan program disusun untuk memberi manfaat yang merata bagi seluruh warga." },
+                    { title: "Pemberdayaan", text: "Masyarakat didukung melalui pelatihan, pendampingan, dan pengembangan usaha lokal." },
+                    { title: "Ramah Lingkungan", text: "Seluruh kegiatan pembangunan memperhatikan keberlanjutan demi menjaga alam dan kesehatan warga." }
+                  ].map((item, i) => (
+                    <Group key={i} align="flex-start" gap="xs">
+                      <Text fz="sm" c="#F3F2EC" fw={700}>{i + 1}. {item.title}:</Text>
+                      <Text fz="sm" c="#F3F2EC">{item.text}</Text>
+                    </Group>
+                  ))}
+                </Stack>
+              </Box>
 
-                  <Divider color="white" opacity={0.2} />
+              <Divider color="white" opacity={0.2} />
 
-                  <Box>
-                    <Title fz="lg" order={2} fw={700} mb="md" c="white">Visi Kami</Title>
-                    <Text fz="sm" mb="sm" c="#F3F2EC">
-                      Dengan visi ini, kami berkomitmen menjadikan desa sebagai tempat yang aman, sejahtera, dan nyaman bagi seluruh warga.
-                    </Text>
-                    <Text fz="sm" mb="sm" c="#F3F2EC">
-                      Kami percaya kemajuan dimulai dari kerja sama antara pemerintah desa dan masyarakat, didukung tata kelola yang baik demi kepentingan bersama. Saran maupun keluhan dapat disampaikan melalui kontak di bawah ini.
-                    </Text>
-                  </Box>
+              <Box>
+                <Title fz="lg" order={2} fw={700} mb="sm" c="white">Visi Kami</Title>
+                <Stack gap="xs">
+                  <Text fz="sm" c="#F3F2EC">
+                    Dengan visi ini, kami berkomitmen menjadikan desa sebagai tempat yang aman, sejahtera, dan nyaman bagi seluruh warga.
+                  </Text>
+                  <Text fz="sm" c="#F3F2EC">
+                    Kami percaya kemajuan dimulai dari kerja sama antara pemerintah desa dan masyarakat, didukung tata kelola yang baik demi kepentingan bersama. Saran maupun keluhan dapat disampaikan melalui kontak di bawah ini.
+                  </Text>
+                </Stack>
+              </Box>
 
-                  <Group justify="apart" align="center" mt="lg">
-                    <Text c="#F3F2EC" ta="center" fz="md" fw={700} style={{ fontStyle: 'italic' }}>&quot;Desa Kuat, Warga Sejahtera!&quot;</Text>
-                    <ActionIcon size={80} radius="xl" variant="transparent">
-                      <Image src="/chatbot-removebg-preview.png" alt="Logo Desa" width={80} height={80} loading="lazy" />
-                    </ActionIcon>
+              <Group align="center" gap="md">
+                <Text c="#F3F2EC" fz="md" fw={700} style={{ fontStyle: 'italic' }}>&quot;Desa Kuat, Warga Sejahtera!&quot;</Text>
+                <ActionIcon size={64} radius="xl" variant="transparent">
+                  <Image src="/chatbot-removebg-preview.png" alt="Logo Desa" width={64} height={64} loading="lazy" />
+                </ActionIcon>
+              </Group>
+
+              <Divider color="white" opacity={0.2} />
+
+              <SimpleGrid cols={{ base: 2, md: 4 }} spacing="xl" verticalSpacing="xl">
+                <Stack gap="xs">
+                  <Text c="white" fz="sm" fw={600}>Layanan Desa</Text>
+                  {layanandesa.map((item) => (
+                    <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
+                  ))}
+                </Stack>
+
+                <Stack gap="xs">
+                  <Text c="white" fz="sm" fw={600}>Tautan Penting</Text>
+                  {tautanPenting.map((item) => (
+                    <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
+                  ))}
+                </Stack>
+              </SimpleGrid>
+
+              {/* Grid 2 kolom dengan spacing sama: kolom kanan jatuh tepat di garis kolom ke-3 grid link */}
+              <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl" verticalSpacing="xl">
+                <Stack gap="xs">
+                  <Text c="white" fz="sm" fw={600}>Tentang Darmasaba</Text>
+                  <Text fz="xs" c="#F3F2EC">
+                    Darmasaba adalah desa budaya yang kaya akan tradisi dan nilai-nilai warisan Bali.
+                  </Text>
+                  <Flex gap="md" c="#F3F2EC">
+                    {sosialMedia.map((item) => (
+                      <ActionIcon
+                        key={item.title}
+                        component="a"
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="subtle"
+                        color="white"
+                        aria-label={item.title}
+                      >
+                        <item.icon size={22} />
+                      </ActionIcon>
+                    ))}
+                  </Flex>
+                </Stack>
+
+                <Stack gap="xs">
+                  <Text c="white" fz="sm" fw={600}>Berlangganan Info</Text>
+                  <Text c="#F3F2EC" fz="xs">Dapatkan kabar terbaru tentang program dan kegiatan desa langsung ke email Anda.</Text>
+                  <Group wrap="nowrap" gap="sm" maw={440}>
+                    <TextInput
+                      flex={1}
+                      placeholder="Masukkan email Anda"
+                      aria-label="Email untuk berlangganan info"
+                      rightSection={<IconAt size={16} />}
+                      ref={emailRef} // ini aja cukup
+                    />
+                    <Button onClick={handleSubmit} variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} radius="md">Daftar</Button>
                   </Group>
                 </Stack>
-              </Container>
-            </Box>
-          </Paper>
-        </Center>
+              </SimpleGrid>
 
-        <Box py={40}>
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="xl">
-            <Box>
-              <Stack gap="sm">
-                <Text c="white" fz="md" fw={700}>Tentang Darmasaba</Text>
-                <Text fz="xs" c="#F3F2EC">
-                  Darmasaba adalah desa budaya yang kaya akan tradisi dan nilai-nilai warisan Bali.
-                </Text>
-                <Flex gap="md" mt="sm" c="#F3F2EC">
-                  {sosialMedia.map((item) => (
-                    <ActionIcon
-                      key={item.title}
-                      component="a"
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="subtle"
-                      color="white"
-                    >
-                      <item.icon size={22} />
-                    </ActionIcon>
-                  ))}
-                </Flex>
+              <Divider color="white" opacity={0.2} />
 
-              </Stack>
-            </Box>
-
-            <Box>
-              <Stack gap="xs">
-                <Text c="white" fz="md" fw={700}>Layanan Desa</Text>
-                {layanandesa.map((item) => (
-                  <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
-                ))}
-              </Stack>
-            </Box>
-
-            <Box>
-              <Stack gap="xs">
-                <Text c="white" fz="md" fw={700}>Tautan Penting</Text>
-                {tautanPenting.map((item) => (
-                  <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
-                ))}
-              </Stack>
-            </Box>
-
-            <Box>
-              <Stack gap="sm">
-                <Text c="white" fz="md" fw={700}>Berlangganan Info</Text>
-                <Text c="#F3F2EC" fz="xs">Dapatkan kabar terbaru tentang program dan kegiatan desa langsung ke email Anda.</Text>
-                <Group wrap="nowrap">
-                  <TextInput
-                    w="70%"
-                    placeholder="Masukkan email Anda"
-                    rightSection={<IconAt size={16} />}
-                    ref={emailRef} // ini aja cukup
-                  />
-                  <Button onClick={handleSubmit} variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} radius="md">Daftar</Button>
-                </Group>
-              </Stack>
-            </Box>
-          </SimpleGrid>
+              <Text fz="xs" c="#F3F2EC">© 2025 Desa Darmasaba. Hak cipta dilindungi.</Text>
+            </Stack>
+          </Container>
         </Box>
-
-        <Divider opacity={0.2} my="md" />
-        <Text ta="center" fz="xs" c="white">© 2025 Desa Darmasaba. Hak cipta dilindungi.</Text>
       </Box>
     </Stack>
   );
