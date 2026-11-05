@@ -15,7 +15,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <ImageErrorRetry />
                 <Navbar />
                 <Space h={{
-                    base: "3.9rem",
+                    base: "3rem", // = tinggi bar mobile (--m-bar-h 48px)
                     md: "2.75rem" // = tinggi navbar desktop (--nav-h 44px)
                 }} />
                 <Box>{children}</Box>

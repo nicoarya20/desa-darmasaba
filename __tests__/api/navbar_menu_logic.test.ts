@@ -80,16 +80,19 @@ describe('stateNav.clear', () => {
   });
 });
 
-describe('navbar.module.css', () => {
+describe('CSS ber-backdrop-filter (navbar & glass)', () => {
   // Lightning CSS (Turbopack) menggabungkan `backdrop-filter` + `-webkit-backdrop-filter`
-  // menjadi hanya versi -webkit- yang diabaikan Chrome → blur overlay hilang.
-  it('tidak menulis -webkit-backdrop-filter manual (biar compiler yang menambah prefix)', () => {
-    const css = readFileSync(
-      path.resolve(__dirname, '../../src/app/darmasaba/_com/navbar.module.css'),
-      'utf8',
-    );
+  // menjadi hanya versi -webkit- yang diabaikan Chrome → blur hilang.
+  const files = [
+    'src/app/darmasaba/_com/navbar.module.css',
+    'src/app/darmasaba/_com/navbar-mobile.module.css',
+    'src/app/globals.css',
+  ];
+
+  it.each(files)('%s tidak menulis -webkit-backdrop-filter manual', (file) => {
+    const css = readFileSync(path.resolve(__dirname, '../..', file), 'utf8');
     const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(declarations).toContain('backdrop-filter: blur(');
+    expect(declarations).toMatch(/backdrop-filter: [a-z]/);
     expect(declarations).not.toContain('-webkit-backdrop-filter');
   });
 });
