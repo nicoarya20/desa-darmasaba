@@ -2,6 +2,7 @@ import "@mantine/core/styles.css";
 import "./globals.css"; // Sisanya import di globals.css
 
 import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
+import { GATE_SPLASH_HEAD_SCRIPT } from "@/app/darmasaba/_com/splash/gate-splash.session";
 import { MusicProvider } from "@/app/context/MusicContext";
 import {
   ColorSchemeScript,
@@ -118,6 +119,8 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <ColorSchemeScript defaultColorScheme="light" />
+        {/* Putuskan splash beranda sebelum paint (lihat gate-splash.session.ts); di root layout agar tak dirender ulang saat navigasi. */}
+        <script dangerouslySetInnerHTML={{ __html: GATE_SPLASH_HEAD_SCRIPT }} />
       </head>
       <body>
         <ViewTransitions>
