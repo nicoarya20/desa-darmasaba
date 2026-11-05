@@ -1,0 +1,15 @@
+/*
+ * Deskripsi berasal dari rich text editor (<p>, <ul>, <ol>) dan dirender lewat
+ * dangerouslySetInnerHTML. Margin bawaan browser (1em) pada <p> membuat jarak
+ * antarbaris terlihat terlalu lebar, jadi di-reset ke token spacing `xs`
+ * (0.625rem, docs/DESIGN.md bagian 4).
+ */
+.richText p,
+.richText ul,
+.richText ol {
+  margin: 0 0 0.625rem;
+}
+
+.richText > :last-child {
+  margin-bottom: 0;
+}
