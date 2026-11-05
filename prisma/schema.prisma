@@ -2748,12 +2748,16 @@ model RingkasanKesehatanDesa {
 
 // ========================================= EVENT BUDAYA ========================================= //
 model EventBudaya {
-  id        String   @id @default(cuid())
-  nama      String
-  tanggal   DateTime
-  lokasi    String
-  deskripsi String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isActive  Boolean  @default(true)
+  id             String    @id @default(cuid())
+  nama           String
+  tanggal        DateTime
+  tanggalSelesai DateTime?
+  kategori       String    @default("BUDAYA")
+  lokasi         String
+  deskripsi      String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  isActive       Boolean   @default(true)
+
+  @@index([tanggal])
 }
