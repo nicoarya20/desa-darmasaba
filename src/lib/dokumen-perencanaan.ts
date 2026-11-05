@@ -21,6 +21,10 @@ export const JENIS_MUSYAWARAH_LABEL: Record<JenisMusyawarah, string> = {
   LAINNYA: "Musyawarah lainnya",
 };
 
+/** Anchor section di halaman Monev & Pembangunan, dan tautan publik ke sana (dipakai PPID). */
+export const DOKUMEN_PERENCANAAN_SECTION_ID = "dokumen-perencanaan";
+export const DOKUMEN_PERENCANAAN_PUBLIC_HREF = `/darmasaba/desa/monev-pembangunan#${DOKUMEN_PERENCANAAN_SECTION_ID}`;
+
 export const TAHUN_MIN = 2000;
 export const TAHUN_MAX = 2100;
 export const JUDUL_MIN_LENGTH = 3;

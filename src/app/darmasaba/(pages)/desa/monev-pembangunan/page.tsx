@@ -5,12 +5,15 @@ import {
   STATUS_PEMBANGUNAN,
   STATUS_PEMBANGUNAN_LABEL,
 } from '@/lib/kegiatan-pembangunan';
+import { buildRkpIndex } from '@/lib/dokumen-perencanaan';
+import stateDokumenPerencanaanPublik from '@/app/admin/(dashboard)/_state/desa/dokumenPerencanaanPublik';
 import { Alert, Button, Center, Group, Pagination, Paper, ScrollArea, SegmentedControl, Skeleton, Stack, Text } from '@mantine/core';
 import { IconAlertCircle, IconChartBar } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../layanan/_com/BackButto';
+import DokumenPerencanaanSection from './_com/DokumenPerencanaanSection';
 import MonevKegiatanList from './_com/MonevKegiatanList';
 import MonevSummaryCards from './_com/MonevSummaryCards';
 
@@ -33,6 +36,10 @@ function Page() {
   useEffect(() => { loadCurrent(); }, [page, filter]);
 
   const summary = state.summary;
+
+  const dokumenState = useProxy(stateDokumenPerencanaanPublik);
+  useEffect(() => { stateDokumenPerencanaanPublik.loadRkpIndex(); }, []);
+  const rkpIndex = useMemo(() => buildRkpIndex(dokumenState.rkpDocs), [dokumenState.rkpDocs]);
 
   return (
     <Stack bg={colors.Bg} py="xl" gap="xl" px={{ base: 'md', md: 100 }}>
@@ -81,13 +88,15 @@ function Page() {
             radius="lg"
           />
         </ScrollArea>
-        <MonevKegiatanList items={state.data} loading={state.loading} filtered={filter !== FILTER_ALL} />
+        <MonevKegiatanList items={state.data} loading={state.loading} filtered={filter !== FILTER_ALL} rkpIndex={rkpIndex} />
         {state.totalPages > 1 && (
           <Center>
             <Pagination value={page} onChange={setPage} total={state.totalPages} radius="xl" />
           </Center>
         )}
       </Stack>
+
+      <DokumenPerencanaanSection />
     </Stack>
   );
 }
