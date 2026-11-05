@@ -1537,6 +1537,25 @@ model PasarDesa {
   kategoriProduk   KategoriProdukUmkm? @relation(fields: [kategoriProdukId], references: [id])
   kategoriProdukId String?
   KategoriToPasar  KategoriToPasar[]
+  linkTokoOnline   LinkTokoOnline[]
+}
+
+// Link toko online (Shopee, Tokopedia, dll.) per produk UMKM. `platform` disimpan
+// sebagai String dan divalidasi aplikasi dari konstanta bernama (tanpa enum DB agar
+// platform baru tidak butuh migrasi tipe). URL divalidasi di boundary server.
+model LinkTokoOnline {
+  id        String    @id @default(uuid())
+  produk    PasarDesa @relation(fields: [produkId], references: [id], onDelete: Cascade)
+  produkId  String
+  platform  String
+  url       String
+  urutan    Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
+
+  @@index([produkId])
 }
 
 model KategoriProduk {
