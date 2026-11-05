@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import { Box, Card, Flex, Grid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { IconExternalLink } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -38,6 +39,8 @@ function PelayananTelunjukSaktiDesa() {
     id: string;
     deskripsi: string;
     link: string;
+    estimasiWaktu: string | null;
+    biaya: number | null;
     items: ServiceItem[];
     createdAt: Date;
     updatedAt: Date;
@@ -82,6 +85,7 @@ function PelayananTelunjukSaktiDesa() {
                   <Title order={3} fw={700} lh={1.3} mih="2.6em" lineClamp={TITLE_MAX_LINES} title={v.name}>
                     {v.name}
                   </Title>
+                  <LayananWaktuBiayaBadge estimasiWaktu={v.estimasiWaktu} biaya={v.biaya} />
                   <Flex gap="xs" align="center">
                     <IconExternalLink size={18} stroke={1.5} style={{ flexShrink: 0 }} />
                     <Text
