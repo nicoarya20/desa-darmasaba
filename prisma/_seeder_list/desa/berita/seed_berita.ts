@@ -48,7 +48,24 @@ export async function seedBerita() {
 
     let imageId: string | null = null;
 
-    if (b.imageName) {
+    if (b.imageName && b.imageLink) {
+      // Gambar berita terbaru disajikan dari public/ (tanpa MinIO): link menunjuk path statis.
+      const image = await prisma.fileStorage.upsert({
+        where: { name: b.imageName },
+        update: { link: b.imageLink, isActive: true },
+        create: {
+          name: b.imageName,
+          realName: b.imageName,
+          path: "public",
+          mimeType: "image/webp",
+          category: "image",
+          link: b.imageLink,
+          isActive: true,
+        },
+        select: { id: true },
+      });
+      imageId = image.id;
+    } else if (b.imageName) {
       const image = await prisma.fileStorage.findUnique({
         where: { name: b.imageName },
         select: { id: true },
@@ -72,6 +89,7 @@ export async function seedBerita() {
           content: b.content,
           kategoriBeritaId: b.kategoriBeritaId,
           imageId,
+          ...(b.tanggal && { createdAt: new Date(b.tanggal) }),
         },
         create: {
           id: b.id,
@@ -80,6 +98,8 @@ export async function seedBerita() {
           content: b.content,
           kategoriBeritaId: b.kategoriBeritaId,
           imageId,
+          // createdAt = tanggal terbit asli; urutan "terbaru" di halaman publik memakai kolom ini.
+          ...(b.tanggal && { createdAt: new Date(b.tanggal) }),
         },
       });
 
