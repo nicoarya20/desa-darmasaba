@@ -147,15 +147,35 @@ function Footer() {
           </Paper>
         </Center>
 
-        <Box py={40}>
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="xl">
-            <Box>
-              <Stack gap="sm">
-                <Text c="white" fz="md" fw={700}>Tentang Darmasaba</Text>
+        {/* Sarang padding sama dengan Paper di atas (px xl + Container lg) agar tepi footer sejajar konten */}
+        <Box px="xl" pt="xl">
+          <Container size="lg">
+            <Divider color="white" opacity={0.2} mb="xl" />
+
+            <SimpleGrid cols={{ base: 2, md: 4 }} spacing="xl" verticalSpacing="xl">
+              <Stack gap="xs">
+                <Text c="white" fz="sm" fw={600}>Layanan Desa</Text>
+                {layanandesa.map((item) => (
+                  <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
+                ))}
+              </Stack>
+
+              <Stack gap="xs">
+                <Text c="white" fz="sm" fw={600}>Tautan Penting</Text>
+                {tautanPenting.map((item) => (
+                  <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
+                ))}
+              </Stack>
+            </SimpleGrid>
+
+            {/* Grid 2 kolom dengan spacing sama: kolom kanan jatuh tepat di garis kolom ke-3 grid link */}
+            <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl" verticalSpacing="xl" mt={48}>
+              <Stack gap="xs">
+                <Text c="white" fz="sm" fw={600}>Tentang Darmasaba</Text>
                 <Text fz="xs" c="#F3F2EC">
                   Darmasaba adalah desa budaya yang kaya akan tradisi dan nilai-nilai warisan Bali.
                 </Text>
-                <Flex gap="md" mt="sm" c="#F3F2EC">
+                <Flex gap="md" mt="xs" c="#F3F2EC">
                   {sosialMedia.map((item) => (
                     <ActionIcon
                       key={item.title}
@@ -165,53 +185,34 @@ function Footer() {
                       rel="noopener noreferrer"
                       variant="subtle"
                       color="white"
+                      aria-label={item.title}
                     >
                       <item.icon size={22} />
                     </ActionIcon>
                   ))}
                 </Flex>
-
               </Stack>
-            </Box>
 
-            <Box>
               <Stack gap="xs">
-                <Text c="white" fz="md" fw={700}>Layanan Desa</Text>
-                {layanandesa.map((item) => (
-                  <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
-                ))}
-              </Stack>
-            </Box>
-
-            <Box>
-              <Stack gap="xs">
-                <Text c="white" fz="md" fw={700}>Tautan Penting</Text>
-                {tautanPenting.map((item) => (
-                  <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
-                ))}
-              </Stack>
-            </Box>
-
-            <Box>
-              <Stack gap="sm">
-                <Text c="white" fz="md" fw={700}>Berlangganan Info</Text>
+                <Text c="white" fz="sm" fw={600}>Berlangganan Info</Text>
                 <Text c="#F3F2EC" fz="xs">Dapatkan kabar terbaru tentang program dan kegiatan desa langsung ke email Anda.</Text>
-                <Group wrap="nowrap">
+                <Group wrap="nowrap" gap="sm" mt="xs" maw={440}>
                   <TextInput
-                    w="70%"
+                    flex={1}
                     placeholder="Masukkan email Anda"
+                    aria-label="Email untuk berlangganan info"
                     rightSection={<IconAt size={16} />}
                     ref={emailRef} // ini aja cukup
                   />
                   <Button onClick={handleSubmit} variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} radius="md">Daftar</Button>
                 </Group>
               </Stack>
-            </Box>
-          </SimpleGrid>
-        </Box>
+            </SimpleGrid>
 
-        <Divider opacity={0.2} my="md" />
-        <Text ta="center" fz="xs" c="white">© 2025 Desa Darmasaba. Hak cipta dilindungi.</Text>
+            <Divider color="white" opacity={0.2} mt={48} mb="md" />
+            <Text fz="xs" c="#F3F2EC">© 2025 Desa Darmasaba. Hak cipta dilindungi.</Text>
+          </Container>
+        </Box>
       </Box>
     </Stack>
   );
