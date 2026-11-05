@@ -89,6 +89,9 @@ export const PUBLIC_POST_PATHS: readonly string[] = [
   // Pendaftaran jadwal kegiatan kesehatan: warga mendaftar kegiatan di
   // /darmasaba/kesehatan. Jadwal kegiatan (master) di-CRUD admin, bukan path ini.
   "/api/kesehatan/pendaftaran-jadwal-kegiatan/create",
+  // Laporan keamanan lingkungan: warga anonim mengirim laporan dari /darmasaba
+  // /keamanan/laporan-publik. Update/hapus laporan (PUT/DELETE) tetap admin-only.
+  "/api/keamanan/laporanpublik/create",
 ];
 
 /**
