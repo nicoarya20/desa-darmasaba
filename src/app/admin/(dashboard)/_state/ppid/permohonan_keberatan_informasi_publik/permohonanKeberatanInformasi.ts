@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
+import {
+  ALASAN_KEBERATAN_TOO_LONG_MESSAGE,
+  validateAlasanKeberatanLength,
+} from "@/lib/permohonan-keberatan";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
@@ -12,7 +16,13 @@ const templateForm = z.object({
     .string()
     .min(3, "Nomor Telepon minimal 3 karakter")
     .max(15, "Nomor Telepon maksimal 15 angka"),
-  alasan: z.string().min(3, "Alasan minimal 3 karakter"),
+  alasan: z
+    .string()
+    .min(3, "Alasan minimal 3 karakter")
+    .refine(
+      (val) => validateAlasanKeberatanLength(val) === null,
+      ALASAN_KEBERATAN_TOO_LONG_MESSAGE
+    ),
 });
 
 type PermohonanKeberatanInformasiForm =
@@ -42,9 +52,13 @@ const permohonanKeberatanInformasi = proxy({
         const res = await ApiFetch.api.ppid.permohonankeberataninformasipublik[
           "create"
         ].post(permohonanKeberatanInformasi.create.form);
-        if (res.data?.success === false) {
-            toast.error(res.data?.message);
-            return false; // ⬅️ gagal
+        // Status 4xx (mis. 400 alasan terlalu panjang) masuk ke res.error, bukan res.data.
+        const failure = res.error?.value as { message?: string } | undefined;
+        if (res.error || res.data?.success === false) {
+          toast.error(
+            res.data?.message || failure?.message || "Gagal mengirim permohonan"
+          );
+          return false; // ⬅️ gagal
         }
 
         toast.success("Sukses menambahkan");
