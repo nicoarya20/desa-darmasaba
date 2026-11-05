@@ -1741,6 +1741,8 @@ model SektorUnggulanDesa {
   name        String   @unique @db.VarChar(100) // Nama sektor (e.g., "Sektor Pertanian", "Sektor Peternakan")
   description String?  @db.Text // Deskripsi lengkap tentang sektor
   value       Float? // Nilai kuantitatif sektor (misalnya, kontribusi PDB, jumlah produksi, dll.)
+  satuan      String?  @db.VarChar(20) // Satuan nilai (mis. "ton", "kg", "ha", "ekor", "%"); null = nilai tanpa satuan (indeks/skor lama)
+  periode     String?  @db.VarChar(50) // Periode nilai (mis. "2025", "Semester I 2026")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime @default(now())
