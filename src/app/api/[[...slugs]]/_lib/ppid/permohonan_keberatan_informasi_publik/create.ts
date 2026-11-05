@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { validateAlasanKeberatanLength } from "@/lib/permohonan-keberatan";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 
@@ -22,6 +23,17 @@ export default async function permohonanKeberatanInformasiPublikCreate(
       success: false,
       status: 400,
       message: "Maksimal nomor telepon adalah 15 angka",
+    };
+  }
+
+  // ========== VALIDASI PANJANG ALASAN KEBERATAN ==========
+  const alasanError = validateAlasanKeberatanLength(body.alasan);
+  if (alasanError) {
+    context.set.status = 400;
+    return {
+      success: false,
+      status: 400,
+      message: alasanError,
     };
   }
 

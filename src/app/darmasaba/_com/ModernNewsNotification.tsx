@@ -44,6 +44,11 @@ export interface ModernNewsNotificationProps {
   autoShowDelay?: number;
 }
 
+// Panel & toast fixed harus di atas konten Beranda (section z-index 2, input Footer z-index 1)
+// tapi di bawah Navbar (z-index 100). Tanpa nilai ini (auto) panel tertimpa elemen ber-posisi
+// yang muncul belakangan di DOM, mis. kolom email "Berlangganan Info" di Footer.
+const NEWS_PANEL_Z_INDEX = 50;
+
 // === Helper ===
 function stripHtml(html: string): string {
   return html
@@ -222,6 +227,7 @@ export default function ModernNewsNotification({
                 style={{
                   ...styles,
                   position: "fixed",
+                  zIndex: NEWS_PANEL_Z_INDEX,
                   bottom: "100px",
                   left: "24px",
                   width: "90vw",
@@ -316,6 +322,7 @@ export default function ModernNewsNotification({
                 style={{
                   ...styles,
                   position: "fixed",
+                  zIndex: NEWS_PANEL_Z_INDEX,
                   bottom: "100px",
                   right: "24px",
                   width: "90vw",
@@ -422,6 +429,7 @@ export default function ModernNewsNotification({
                 style={{
                   ...styles,
                   position: "fixed",
+                  zIndex: NEWS_PANEL_Z_INDEX,
                   bottom: "100px",
                   left: "24px",
                   width: "90vw",
@@ -499,6 +507,7 @@ export default function ModernNewsNotification({
             style={{
               ...styles,
               position: "fixed",
+              zIndex: NEWS_PANEL_Z_INDEX,
               bottom: "100px",
               right: "24px",
               width: "90vw",

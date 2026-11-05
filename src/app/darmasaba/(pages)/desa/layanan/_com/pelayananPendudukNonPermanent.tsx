@@ -7,6 +7,7 @@ import { ActionIcon, Box, Divider, Flex, Group, Skeleton, Stack, Text, Title, To
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import classes from './pelayananPendudukNonPermanent.module.css';
 
 function PelayananPendudukNonPermanent() {
   const state = useProxy(stateLayananDesa);
@@ -53,8 +54,10 @@ function PelayananPendudukNonPermanent() {
           <Box>
             {data?.deskripsi ? (
               <Text
+                component="div"
+                className={classes.richText}
                 fz={{ base: 'sm', md: 'md' }}
-                lh={{ base: 1.6, md: 1.7 }}
+                lh={1.5}
                 ta="justify"
                 c="black"
                 dangerouslySetInnerHTML={{ __html: data?.deskripsi }}

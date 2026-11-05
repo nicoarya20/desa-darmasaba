@@ -5,6 +5,10 @@ import { IconExternalLink } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
+// Jumlah baris maksimum agar tinggi card seragam di semua baris grid
+const TITLE_MAX_LINES = 2;
+const LINK_MAX_LINES = 2;
+
 interface ServiceItem {
   name: string;
   deskripsi: string;
@@ -42,13 +46,14 @@ function PelayananTelunjukSaktiDesa() {
 
   return (
     <Box>
-      <Title order={2} mb="lg" fw={700} style={{ lineHeight: 1.3 }} ta="left">
-        Layanan Telunjuk Sakti Desa
-        <Text span c="black" fz={{ base: 'sm', md: 'md' }} fw={400} style={{ lineHeight: 1.5 }}>
-          {' '}
+      <Stack gap="xs" mb="lg">
+        <Title order={2} fw={700} lh={1.3} ta="left">
+          Layanan Telunjuk Sakti Desa
+        </Title>
+        <Text c="black" fz={{ base: 'sm', md: 'md' }} fw={400} lh={1.5}>
           Terwujudnya sistem administrasi kependudukan terintegrasi berbasis elektronik, cerdas, dan aman
         </Text>
-      </Title>
+      </Stack>
 
       {loading ? (
         <Skeleton h={400} radius="lg" />
@@ -67,26 +72,31 @@ function PelayananTelunjukSaktiDesa() {
                 radius="xl"
                 withBorder
                 p="lg"
+                h="100%"
                 style={{
                   transition: 'all 0.3s ease',
                   background: 'linear-gradient(145deg, #ffffff, #f8f9fa)',
                 }}
               >
                 <Stack gap="sm">
-                  <Title order={3} fw={700} lh={1.3}>
+                  <Title order={3} fw={700} lh={1.3} mih="2.6em" lineClamp={TITLE_MAX_LINES} title={v.name}>
                     {v.name}
                   </Title>
                   <Flex gap="xs" align="center">
-                    <IconExternalLink size={18} stroke={1.5} />
+                    <IconExternalLink size={18} stroke={1.5} style={{ flexShrink: 0 }} />
                     <Text
                       component="a"
                       href={v.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       fz={{ base: 'xs', md: 'sm' }}
+                      lh={1.5}
+                      lineClamp={LINK_MAX_LINES}
+                      title={v.deskripsi}
+                      miw={0}
                       c="blue"
                       td="underline"
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: 'pointer', wordBreak: 'break-word' }}
                     >
                       {v.deskripsi}
                     </Text>

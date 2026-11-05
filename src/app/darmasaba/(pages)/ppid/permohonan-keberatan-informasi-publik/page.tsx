@@ -3,6 +3,11 @@ import permohonanKeberatanInformasi from '@/app/admin/(dashboard)/_state/ppid/pe
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
 import colors from '@/con/colors';
 import {
+  ALASAN_KEBERATAN_MAX_LENGTH,
+  richTextLength,
+  validateAlasanKeberatanLength,
+} from '@/lib/permohonan-keberatan';
+import {
   Box,
   Button,
   Center,
@@ -97,10 +102,13 @@ function Page() {
         : null
     : null;
 
+  const alasanLength = richTextLength(form.alasan);
+  const alasanTooLong = validateAlasanKeberatanLength(form.alasan || '');
+
   const alasanError =
     touched.alasan && !form.alasan?.trim()
       ? 'Alasan keberatan wajib diisi'
-      : null;
+      : alasanTooLong;
 
   // Check if form is valid.
   // Catatan: pakai truthy check — form.x?.trim() !== '' bernilai true saat field
@@ -113,7 +121,8 @@ function Page() {
       !!form.email?.trim() &&
       isValidEmail(form.email || '') &&
       notelpDigits.length >= 10 &&
-      !!form.alasan?.trim()
+      !!form.alasan?.trim() &&
+      !validateAlasanKeberatanLength(form.alasan)
     );
   };
 
@@ -302,6 +311,13 @@ function Page() {
                           setTouched((t) => ({ ...t, alasan: true }));
                       }}
                     />
+                    <Text
+                      fz="xs"
+                      mt={4}
+                      c={alasanLength > ALASAN_KEBERATAN_MAX_LENGTH ? 'red' : 'dimmed'}
+                    >
+                      {alasanLength}/{ALASAN_KEBERATAN_MAX_LENGTH} karakter
+                    </Text>
                     {alasanError && (
                       <Text c="red" fz="xs" lh={1.4} mt={4}>
                         {alasanError}

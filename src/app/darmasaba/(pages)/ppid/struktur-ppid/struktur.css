@@ -74,6 +74,8 @@
      Dipindah dari inline style Box supaya rule :fullscreen di bawah bisa
      menang tanpa perang spesifisitas melawan inline style. */
   .struktur-fullscreen {
+    display: flex;
+    align-items: flex-start;
     overflow-x: auto;
     overflow-y: auto;
     width: 100%;

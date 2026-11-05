@@ -9,39 +9,32 @@ import {
   Text,
   Image,
   Skeleton,
-  Group,
   Badge,
   Divider,
   Title,
-  Modal,
-  NumberInput,
-  TextInput,
-  Textarea,
-  Alert,
   Grid,
 } from '@mantine/core';
 import {
   IconArrowBack,
-  IconBrandWhatsapp,
-  IconMapPin,
-  IconUser,
   IconShoppingCart,
 } from '@tabler/icons-react';
 import { useRouter, useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import { useShallowEffect } from '@mantine/hooks';
-import { toast } from 'react-toastify';
 
 import colors from '@/con/colors';
 import umkmState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm';
 import ApiFetch from '@/lib/api-fetch';
-import { jumlahLabel, perSatuanSuffix, withSatuan } from '../../_lib/satuan';
-
-interface OrderForm {
-  nama: string;
-  jumlah: number;
-  catatan: string;
-}
+import { perSatuanSuffix, withSatuan } from '../../_lib/satuan';
+import { PesananModal, type OrderForm } from '../../_com/PesananModal';
+import {
+  PESAN_KONEKSI_GAGAL,
+  buildOrderMessage,
+  buildWaUrl,
+  isPesananBerhasil,
+  normalizeWaNumber,
+  pesanErrorMessage,
+} from '../../_lib/pesanan';
 
 const DEFAULT_FORM: OrderForm = {
   nama: '',
@@ -58,6 +51,9 @@ function DetailProdukPasarUser() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<OrderForm>(DEFAULT_FORM);
   const [error, setError] = useState('');
+  // Terisi setelah pesanan tercatat: modal berganti ke tampilan konfirmasi.
+  // waUrl null = nomor WA penjual tidak valid (WhatsApp tidak dibuka).
+  const [ordered, setOrdered] = useState<{ waUrl: string | null } | null>(null);
 
   useShallowEffect(() => {
     state.load(params?.id as string);
@@ -67,9 +63,12 @@ function DetailProdukPasarUser() {
   const total = data ? form.jumlah * (data.harga ?? 0) : 0;
 
   const handleClose = () => {
+    const perluRefreshStok = ordered !== null;
     setModalOpen(false);
     setError('');
     setForm(DEFAULT_FORM);
+    setOrdered(null);
+    if (perluRefreshStok) state.load(params?.id as string);
   };
 
   const handleOrder = async () => {
@@ -80,8 +79,8 @@ function DetailProdukPasarUser() {
       return;
     }
 
-    if (form.jumlah < 1) {
-      setError('Jumlah minimal 1');
+    if (!Number.isInteger(form.jumlah) || form.jumlah < 1) {
+      setError('Jumlah minimal 1 dan berupa bilangan bulat');
       return;
     }
 
@@ -94,49 +93,35 @@ function DetailProdukPasarUser() {
     setError('');
 
     try {
-      const res = await ApiFetch.api.ekonomi.umkm.penjualan.create.post({
+      // Harga tidak dikirim: server mengambilnya dari DB (endpoint publik).
+      const res = await ApiFetch.api.ekonomi.umkm.penjualan.pesan.post({
         produkId: data.id,
         jumlah: form.jumlah,
-        hargaSatuan: data.harga || 0,
-        tanggal: new Date().toISOString(),
       });
 
-      if (!res.data?.success) {
-        throw new Error(res.data?.message || 'Gagal membuat pesanan');
+      if (!isPesananBerhasil(res)) {
+        setError(pesanErrorMessage(res));
+        return;
       }
 
-      state.load(params?.id as string);
-      handleClose();
-
-      toast.success('Pesanan berhasil dicatat!');
-
-      let kontak = data.umkm?.kontak?.replace(/[^0-9]/g, '') || '';
-      if (kontak.startsWith('0')) {
-        kontak = '62' + kontak.slice(1);
-      }
-
-      if (kontak) {
-        const message = [
-          `Halo *${data.umkm?.nama}*, saya ingin memesan:`,
-          '',
-          `*${data.nama}*`,
-          `Jumlah: ${withSatuan(form.jumlah, data.satuan)}`,
-          `Harga Satuan: Rp ${data.harga?.toLocaleString('id-ID')}${perSatuanSuffix(data.satuan)}`,
-          `*Total: Rp ${total.toLocaleString('id-ID')}*`,
-          '',
-          `Nama Pemesan: ${form.nama}`,
-          form.catatan ? `Catatan: ${form.catatan}` : null,
-        ]
-          .filter(Boolean)
-          .join('\n');
-
-        window.open(
-          `https://wa.me/${kontak}?text=${encodeURIComponent(message)}`,
-          '_blank'
-        );
-      }
-    } catch (e: any) {
-      setError(e.message || 'Terjadi kesalahan');
+      // WhatsApp TIDAK dibuka otomatis lewat window.open setelah await: browser
+      // HP memblokirnya (user-activation hilang) dan di laptop tab WhatsApp
+      // menutupi status pesanan. Tautan diklik warga langsung di modal konfirmasi.
+      const waNumber = normalizeWaNumber(data.umkm?.kontak);
+      const message = buildOrderMessage({
+        umkmNama: data.umkm?.nama,
+        produkNama: data.nama,
+        jumlah: form.jumlah,
+        satuan: data.satuan,
+        harga: data.harga ?? 0,
+        total,
+        pemesan: form.nama,
+        catatan: form.catatan,
+      });
+      setOrdered({ waUrl: waNumber ? buildWaUrl(waNumber, message) : null });
+    } catch {
+      // Gagal jaringan (fetch melempar) — pesanan tidak sampai ke server.
+      setError(PESAN_KONEKSI_GAGAL);
     } finally {
       setLoading(false);
     }
@@ -206,42 +191,18 @@ function DetailProdukPasarUser() {
         </Grid>
       </Paper>
 
-      {/* Modal */}
-      <Modal opened={modalOpen} onClose={handleClose} title="Pesanan">
-        <Stack>
-          <TextInput
-            label="Nama"
-            value={form.nama}
-            onChange={(e) =>
-              setForm({ ...form, nama: e.target.value })
-            }
-          />
-
-          <NumberInput
-            label={jumlahLabel(data.satuan)}
-            min={1}
-            max={data.stok}
-            value={form.jumlah}
-            onChange={(v) =>
-              setForm({ ...form, jumlah: Number(v) || 1 })
-            }
-          />
-
-          <Textarea
-            label="Catatan"
-            value={form.catatan}
-            onChange={(e) =>
-              setForm({ ...form, catatan: e.target.value })
-            }
-          />
-
-          {error && <Alert color="red">{error}</Alert>}
-
-          <Button loading={loading} onClick={handleOrder}>
-            Kirim via WhatsApp
-          </Button>
-        </Stack>
-      </Modal>
+      <PesananModal
+        opened={modalOpen}
+        onClose={handleClose}
+        satuan={data.satuan}
+        stok={data.stok}
+        form={form}
+        onFormChange={setForm}
+        error={error}
+        loading={loading}
+        onSubmit={handleOrder}
+        ordered={ordered}
+      />
     </Box>
   );
 }
