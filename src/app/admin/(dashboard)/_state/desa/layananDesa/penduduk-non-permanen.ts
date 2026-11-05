@@ -1,3 +1,4 @@
+import { parseWaktuBiaya, toWaktuBiayaForm } from "@/lib/pelayanan-waktu-biaya";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -14,12 +15,16 @@ type pelayananPendudukNonPermanenForm =
       id: true;
       name: true;
       deskripsi: true;
+      estimasiWaktu: true;
+      biaya: true;
     };
   }>;
 
 const pelayananPendudukNonPermanenDefaultForm = {
   name: "",
   deskripsi: "",
+  estimasiWaktu: "",
+  biaya: "",
 };
 
 const pelayananPendudukNonPermanen = proxy({
@@ -31,6 +36,8 @@ const pelayananPendudukNonPermanen = proxy({
         id: "",
         name: "",
         deskripsi: "",
+        estimasiWaktu: null,
+        biaya: null,
       } as pelayananPendudukNonPermanenForm;
     },
     async load(id: string) {
@@ -86,6 +93,7 @@ const pelayananPendudukNonPermanen = proxy({
           pelayananPendudukNonPermanen.update.form = {
             name: data.name,
             deskripsi: data.deskripsi,
+            ...toWaktuBiayaForm(data),
           };
           return data;
         } else {
@@ -106,6 +114,11 @@ const pelayananPendudukNonPermanen = proxy({
           .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
           .join(", ");
         toast.error(`Form tidak valid: ${errors}`);
+        return;
+      }
+      const waktuBiaya = parseWaktuBiaya(data);
+      if (!waktuBiaya.ok) {
+        toast.error(waktuBiaya.message);
         return;
       }
 

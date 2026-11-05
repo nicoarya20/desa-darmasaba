@@ -2,6 +2,7 @@
 
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
@@ -53,6 +54,8 @@ function CreateSuratKeterangan() {
       deskripsi: '',
       imageId: '',
       image2Id: '',
+      estimasiWaktu: '',
+      biaya: '',
     };
     setPreviewImage(null);
     setPreviewImage2(null);
@@ -141,6 +144,13 @@ function CreateSuratKeterangan() {
             label="Nama Surat Keterangan"
             placeholder="Masukkan nama surat keterangan"
             required
+          />
+
+          <LayananWaktuBiayaFields
+            estimasiWaktu={stateSurat.create.form.estimasiWaktu}
+            biaya={stateSurat.create.form.biaya}
+            onEstimasiWaktuChange={(v) => (stateSurat.create.form.estimasiWaktu = v)}
+            onBiayaChange={(v) => (stateSurat.create.form.biaya = v)}
           />
 
           {/* Konten */}

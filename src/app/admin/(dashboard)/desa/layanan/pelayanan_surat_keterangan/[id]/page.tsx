@@ -2,6 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
+import { formatBiayaPelayanan } from '@/lib/pelayanan-waktu-biaya';
 import {
   Box,
   Button,
@@ -141,6 +142,24 @@ function DetailSuratKeterangan() {
                   </Text>
                 )}
               </Box>
+
+              <Stack gap={"xs"}>
+                <Text fz="lg" fw="bold">
+                  Estimasi Waktu
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.estimasiWaktu || '-'}
+                </Text>
+              </Stack>
+
+              <Stack gap={"xs"}>
+                <Text fz="lg" fw="bold">
+                  Biaya
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {formatBiayaPelayanan(data?.biaya) ?? '-'}
+                </Text>
+              </Stack>
 
               <Group gap="sm">
                   <Button
