@@ -181,6 +181,18 @@ Gaya apple.com. File: `_com/NavbarMobile.tsx` + `_com/navbar-mobile.module.css` 
 - **Drill-down**: awalnya hanya menu utama (24px/600 + chevron). Tap menu → submenu masuk dari kanan dengan tombol "Kembali"; kembali → menu utama masuk dari kiri. Reveal bertahap 25ms per baris.
 - **Tutup**: burger, Escape, klik link, atau route berganti. Panel `inert` saat tertutup.
 
+### Galeri Layanan & Potensi Desa (Beranda)
+
+Gaya galeri apple.com ("Endless entertainment."). Folder: `_com/main-page/layanan-potensi/` — `index.tsx` (section, data, timer), `GalleryRow.tsx` (baris loop + swipe), `GalleryControls.tsx` (titik + progress + jeda), `use-loop-carousel.ts` (state baris), `use-wheel-step.ts` (geser trackpad), `gallery.logic.ts` (helper murni, dites di `__tests__/api/layanan_potensi_gallery_logic.test.ts`), `gallery.module.css`, `gallery.text.ts` (label).
+
+- **Isi**: judul "Layanan dan Potensi Desa" tanpa subteks. Baris atas = Layanan (`suratKeterangan.findMany`), baris bawah = Potensi (`potensiDesa.findMany`), masing-masing limit default 10.
+- **Bentuk**: kartu tanpa radius. Desktop: atas 49% lebar (rasio 976:522), bawah 18.4% (16:9). ≤1068px: 64% / 28%. Mobile ≤734px: kartu potret 69% (550:992) / 47% (3:4), caption + pill di tengah bawah.
+- **Gerak**: tiap 5 detik kedua baris maju 1 kartu bersamaan; kartu aktif selalu di tengah lewat satu `translateX(50% - w/2 - index·(w+gap))`. Track jangan diberi padding: `flex-basis` % mengacu ke content box track, `translate` % ke border box — padding membuat kartu mengecil dan tidak di tengah. Loop: item diulang di track, setelah `transitionend` indeks lompat tanpa animasi ke salinan tengah.
+- **Titik + progress**: 5 titik, titik aktif (panjang) selalu di tengah. Titik aktif berisi progress bar abu-abu → hitam linear 5 detik; `animationend`-nya adalah jam putar otomatis (bukan `setInterval`), jadi jeda membekukan bar di tempat dan lanjut dari situ. Saat maju, strip bergeser 1 titik (kunci = `position` kumulatif yang tak dinormalkan) sehingga titik kanan meluncur ke tengah dan memanjang.
+- **Geser**: sentuh/pen = swipe; trackpad dua jari (atau Shift+scroll) di atas baris = 1 kartu per gerakan termasuk momentum. Kunci per gerakan dibuka oleh jeda hening 160ms **atau** deteksi gerakan baru (`WHEEL_GESTURE`: melemah lalu naik lagi, lonjakan >2×, atau berbalik arah) — momentum macOS bisa 1–2 detik, jadi tanpa deteksi ini geser cepat beruntun tertelan. Geser baris mana pun atau klik titik → **kedua baris** bergeser bersama sejauh langkah yang sama (`stepAll` di `index.tsx`); hanya fokus keyboard ke kartu samping yang menggeser barisnya sendiri. Gestur "Back" browser dicegah dengan `overscroll-behavior-x: none` di `<html>` selama kursor di atas baris (lapis utama — Chrome hanya mengizinkan `preventDefault` pada event wheel pertama satu gerakan, jadi `preventDefault` saja tidak cukup) + `preventDefault` pada event dominan horizontal. Scroll vertikal tetap jalan; di luar galeri gestur Back normal.
+- **Jeda**: tombol pause, fokus keyboard di kartu, tab tidak aktif, `prefers-reduced-motion` (tanpa gerak otomatis & tanpa transisi). Hover tidak menjeda. Geser atau klik titik mengulang progress dari 0.
+- **Aksesibilitas**: hanya salinan tengah yang bisa di-Tab/terbaca screen reader; fokus keyboard ke kartu samping membawanya ke tengah.
+
 ### Footer
 
 ```tsx
