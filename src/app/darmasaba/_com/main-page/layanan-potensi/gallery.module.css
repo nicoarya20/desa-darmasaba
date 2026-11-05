@@ -40,9 +40,8 @@
   will-change: transform;
 }
 
-.track[data-animate="false"],
-.track[data-animate="false"] .caption {
-  /* Lompatan loop ke salinan tengah harus instan, termasuk caption aktif/redup. */
+.track[data-animate="false"] {
+  /* Lompatan loop ke salinan tengah harus instan. */
   transition: none;
 }
 
@@ -96,11 +95,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  transition: opacity var(--slide-ms) var(--ease);
-}
-
-.feature .card[data-active="false"] .caption {
-  opacity: 0.35;
 }
 
 .name {
@@ -307,7 +301,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .track,
-  .caption,
   .dot {
     transition: none;
   }

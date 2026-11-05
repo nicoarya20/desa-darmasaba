@@ -107,7 +107,6 @@ export function GalleryRow({ label, variant, items, carousel, ctaLabel, onStep }
                   key={`${item.id}-${i}`}
                   href={item.href}
                   className={s.card}
-                  data-active={i === carousel.index || count === 1}
                   aria-hidden={isClone || undefined}
                   tabIndex={isClone ? -1 : undefined}
                   draggable={false}
