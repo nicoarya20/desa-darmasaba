@@ -528,7 +528,7 @@ Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual — Lightning
 
 - **Kapan tampil:** hanya bila beranda adalah halaman pendaratan dan belum dilihat di tab ini (`sessionStorage`). Skrip inline di `<head>` root layout menulis `<html data-gate-splash="play|skip">` sebelum paint; CSS menampilkan splash hanya saat `play`, jadi tak ada kedipan bagi yang tak perlu splash. Selesai → `done`.
 - **Struktur:** `gate-splash.timeline.ts` (rencana animasi, data murni, diuji) → `gate-splash.player.ts` (Web Animations API per `data-part`) → `GateSplash.tsx`. Siluet = `gate-splash.path.ts` (hasil jiplak foto, jangan edit manual).
-- **Batas performa:** zoom adegan selayar penuh ≤ `MAX_SCENE_SCALE` (1.25); tanpa `filter: blur`/`mix-blend-mode` selayar penuh. Browser me-raster layer animasi pada skala maksimalnya — di monitor 4K eksternal zoom besar melebihi memori GPU (gerbang/logo hilang). Uji gerak secara real-time (screencast), bukan screenshot yang di-pause.
+- **Batas performa:** zoom adegan selayar penuh ≤ `MAX_SCENE_SCALE` (1.25); tanpa `filter: blur`/`mix-blend-mode` selayar penuh. Browser me-raster layer animasi pada skala maksimalnya — di monitor 4K eksternal zoom besar melebihi memori GPU (gerbang/logo hilang). Yang dianimasikan harus elemen HTML (`<div>`), bukan `<svg>`: animasi transform pada `<svg>` berjalan di main thread dan tertinggal dari bagian lain saat beranda sibuk memuat (tembok terlepas dari gerbang). Uji gerak secara real-time (screencast), bukan screenshot yang di-pause.
 - **Aksesibilitas & failsafe:** klik/tap/Escape melewati; "kurangi animasi" → fade saja; tanpa JS splash pudar sendiri setelah ±6 dtk.
 - Dijaga test `__tests__/api/gate_splash.test.ts`.
 
