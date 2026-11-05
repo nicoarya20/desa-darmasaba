@@ -105,7 +105,8 @@ const eventBudayaState = proxy({
         const res = await ApiFetch.api.desa["eventbudaya"]["find-many"].get({ query });
         if (requestId !== findManyRequestId) return;
 
-        if (res.status === 200 && res.data?.success) {
+        // "data" in res.data mempersempit union respons (varian gagal tidak punya data/total).
+        if (res.status === 200 && res.data && "data" in res.data && res.data.success) {
           eventBudayaState.findMany.data = res.data.data ?? [];
           eventBudayaState.findMany.total = res.data.total ?? 0;
           eventBudayaState.findMany.totalPages = res.data.totalPages ?? 1;
