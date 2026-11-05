@@ -87,6 +87,7 @@ model FileStorage {
   InfoTekno                      InfoTekno[]
   PengaduanMasyarakat            PengaduanMasyarakat[]
   KegiatanDesa                   KegiatanDesa[]
+  DokumenPerencanaan             DokumenPerencanaan[]
   ProgramInovasi                 ProgramInovasi[]
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
@@ -2033,6 +2034,27 @@ model KegiatanDesa {
   sumberDana        String?
 
   @@index([kategoriKegiatanId])
+}
+
+// Dokumen perencanaan desa: RPJM (periode 6/8 tahun), RKP (per tahun), dan berita acara musyawarah.
+model DokumenPerencanaan {
+  id              String       @id @default(cuid())
+  jenis           String // "RPJM" | "RKP" | "BERITA_ACARA_MUSYAWARAH" — divalidasi di API (src/lib/dokumen-perencanaan.ts)
+  judul           String
+  tahun           Int? // RKP & berita acara
+  tahunMulai      Int? // RPJM
+  tahunSelesai    Int? // RPJM (>= tahunMulai, divalidasi di API)
+  nomorPerdes     String?
+  ringkasan       String?      @db.Text
+  jenisMusyawarah String? // "MUSDES" | "MUSRENBANGDES" | "MMD" | "LAINNYA" — hanya berita acara
+  file            FileStorage? @relation(fields: [fileId], references: [id])
+  fileId          String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
+  isActive        Boolean      @default(true)
+
+  @@index([jenis, tahun])
 }
 
 model KategoriKegiatan {
