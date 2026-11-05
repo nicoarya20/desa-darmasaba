@@ -93,7 +93,7 @@ const navbarListMenu = [
             },
             {
                 id: "2.9",
-                name: "Kalender Event Budaya",
+                name: "Agenda & Kalender Desa",
                 href: "/darmasaba/desa/event-budaya"
             },
             {
