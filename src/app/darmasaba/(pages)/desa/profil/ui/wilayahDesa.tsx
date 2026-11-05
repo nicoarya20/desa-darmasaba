@@ -1,7 +1,7 @@
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
-import { AspectRatio, Box, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
@@ -76,16 +76,17 @@ function WilayahDesa() {
               )}
 
               {data.petaEmbedUrl && (
-                <AspectRatio ratio={16 / 9} mah={450}>
+                // Tinggi eksplisit: AspectRatio + mah membuat iframe meluber keluar Paper & menimpa section Lambang Desa.
+                <Box h={{ base: 300, sm: 380, md: 450 }} style={{ overflow: 'hidden', borderRadius: 12 }}>
                   <iframe
                     src={data.petaEmbedUrl}
                     title="Peta wilayah Desa Darmasaba"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     sandbox="allow-scripts allow-same-origin allow-popups"
-                    style={{ border: 0, borderRadius: 12 }}
+                    style={{ border: 0, display: 'block', width: '100%', height: '100%' }}
                   />
-                </AspectRatio>
+                </Box>
               )}
             </>
           )}

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.212] - 2026-11-05
+### Fixed
+- **Desa - Profil**: peta di section "Letak & Batas Wilayah" tidak lagi meluber keluar kartu dan menimpa logo/judul "Lambang Desa"; tinggi peta kini menyesuaikan ukuran layar (300px ponsel, 380px tablet, 450px desktop).
+
 ## [0.1.211] - 2026-11-05
 ### Added
 - **Pesanan produk UMKM kini bisa dibuat warga tanpa login** lewat endpoint publik baru. Setelah pesanan dibuat, muncul jendela konfirmasi "Pesanan Dibuat" dengan tautan WhatsApp yang diklik warga sendiri. Harga dihitung server dari data produk dan stok berkurang secara atomik.
