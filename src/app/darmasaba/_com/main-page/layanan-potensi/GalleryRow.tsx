@@ -1,10 +1,11 @@
 "use client";
 import { Image } from "@mantine/core";
 import { Link } from "next-view-transitions";
-import { useRef, useState, type FocusEvent, type MouseEvent, type PointerEvent } from "react";
+import { useCallback, useRef, useState, type FocusEvent, type MouseEvent, type PointerEvent } from "react";
 import { buildLoopTrack, DRAG_CLICK_TOLERANCE_PX, loopStart, realIndex, swipeStep } from "./gallery.logic";
 import s from "./gallery.module.css";
 import type { LoopCarousel } from "./use-loop-carousel";
+import { useWheelStep } from "./use-wheel-step";
 
 export type GalleryItem = { id: string; name: string; imageUrl?: string; href: string };
 
@@ -14,7 +15,7 @@ type Props = {
   items: GalleryItem[];
   carousel: LoopCarousel;
   ctaLabel: string;
-  /** Dipanggil setelah user menggeser baris (timer otomatis diulang). */
+  /** Dipanggil setelah user menggeser baris (sentuh/trackpad) — progress diulang. */
   onInteract: () => void;
 };
 
@@ -25,8 +26,9 @@ function trackTransform(index: number, dragX: number) {
   return `translate3d(calc(50% - var(--card-w) / 2 - ${index} * (var(--card-w) + var(--gap)) + ${dragX}px), 0, 0)`;
 }
 
-/** Satu baris galeri loop: kartu aktif di tengah, geser jari di perangkat sentuh. */
+/** Satu baris galeri loop: kartu aktif di tengah, geser jari (sentuh) atau dua jari (trackpad). */
 export function GalleryRow({ label, variant, items, carousel, ctaLabel, onInteract }: Props) {
+  const viewportRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
   const [dragX, setDragX] = useState(0);
@@ -34,6 +36,16 @@ export function GalleryRow({ label, variant, items, carousel, ctaLabel, onIntera
   const count = items.length;
   const track = buildLoopTrack(items);
   const start = loopStart(count);
+
+  const { step } = carousel;
+  const onWheelStep = useCallback(
+    (delta: -1 | 1) => {
+      step(delta);
+      onInteract();
+    },
+    [step, onInteract],
+  );
+  useWheelStep(viewportRef, onWheelStep, count > 1);
 
   const onPointerDown = (e: PointerEvent) => {
     if (e.pointerType === "mouse" || count <= 1) return;
@@ -73,6 +85,7 @@ export function GalleryRow({ label, variant, items, carousel, ctaLabel, onIntera
 
   return (
     <div
+      ref={viewportRef}
       role="group"
       aria-label={label}
       className={`${s.viewport} ${s[variant]}`}

@@ -1,7 +1,12 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import {
+  DOT,
+  DOT_WINDOW,
+  INITIAL_WHEEL_STATE,
   buildLoopTrack,
+  dotCenterX,
+  reduceWheel,
   loopStart,
   normalizeLoopIndex,
   realIndex,
@@ -89,5 +94,55 @@ describe('gallery.module.css', () => {
     const trackRule = css.match(/\n\.track \{([^}]*)\}/)?.[1] ?? '';
     expect(trackRule).toContain('display: flex');
     expect(trackRule).not.toMatch(/padding/);
+  });
+});
+
+describe('reduceWheel', () => {
+  const run = (events: Array<[number, number]>) => {
+    let state = INITIAL_WHEEL_STATE;
+    const steps: number[] = [];
+    for (const [dx, t] of events) {
+      const r = reduceWheel(state, dx, t, 40, 160);
+      state = r.state;
+      if (r.step) steps.push(r.step);
+    }
+    return steps;
+  };
+
+  it('jari ke kiri (deltaX positif) melewati ambang = maju 1 kartu', () => {
+    expect(run([[15, 0], [15, 16], [15, 32]])).toEqual([1]);
+  });
+
+  it('jari ke kanan = mundur', () => {
+    expect(run([[-25, 0], [-25, 16]])).toEqual([-1]);
+  });
+
+  it('momentum setelah langkah tidak menambah kartu selama event masih beruntun', () => {
+    const events: Array<[number, number]> = Array.from({ length: 60 }, (_, i) => [30, i * 16]);
+    expect(run(events)).toEqual([1]);
+  });
+
+  it('gerakan baru setelah jeda hening bisa maju lagi', () => {
+    expect(run([[50, 0], [20, 16], [50, 400]])).toEqual([1, 1]);
+  });
+
+  it('geser kecil di bawah ambang diabaikan dan direset setelah jeda', () => {
+    expect(run([[30, 0], [30, 500]])).toEqual([]);
+  });
+});
+
+describe('dotCenterX', () => {
+  it('titik aktif di tengah, tetangga simetris', () => {
+    expect(dotCenterX(0)).toBe(0);
+    expect(dotCenterX(1)).toBe(DOT.activeWidth / 2 + DOT.gap + DOT.size / 2);
+    expect(dotCenterX(-1)).toBe(-dotCenterX(1));
+  });
+
+  it('jarak antar titik biasa konstan (ukuran + gap)', () => {
+    expect(dotCenterX(2) - dotCenterX(1)).toBe(DOT.size + DOT.gap);
+  });
+
+  it('jendela 5 titik: 2 di tiap sisi titik aktif', () => {
+    expect(DOT_WINDOW * 2 + 1).toBe(5);
   });
 });

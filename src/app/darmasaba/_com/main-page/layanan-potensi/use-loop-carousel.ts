@@ -2,16 +2,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { loopStart, normalizeLoopIndex, realIndex } from "./gallery.logic";
 
-type LoopState = { index: number; animate: boolean; count: number };
+/** `position` = langkah kumulatif yang tak pernah dinormalkan (kunci titik indikator agar tetap bergeser mulus). */
+type LoopState = { index: number; animate: boolean; count: number; position: number };
 
 /** State satu baris galeri loop: indeks track aktif + langkah maju/mundur/lompat. */
 export function useLoopCarousel(count: number, reducedMotion: boolean) {
   const start = loopStart(count);
-  const [state, setState] = useState<LoopState>({ index: start, animate: false, count });
+  const [state, setState] = useState<LoopState>({ index: start, animate: false, count, position: 0 });
 
   // Data datang setelah mount (count 0 → n): reset ke salinan tengah saat render, bukan lewat effect.
   if (state.count !== count) {
-    setState({ index: start, animate: false, count });
+    setState({ index: start, animate: false, count, position: 0 });
   }
 
   const step = useCallback(
@@ -20,8 +21,8 @@ export function useLoopCarousel(count: number, reducedMotion: boolean) {
       setState((s) =>
         // Tanpa transisi (reduced motion) `transitionend` tak pernah datang → normalkan langsung.
         reducedMotion
-          ? { ...s, index: normalizeLoopIndex(s.index + delta, count), animate: false }
-          : { ...s, index: s.index + delta, animate: true },
+          ? { ...s, index: normalizeLoopIndex(s.index + delta, count), animate: false, position: s.position + delta }
+          : { ...s, index: s.index + delta, animate: true, position: s.position + delta },
       );
     },
     [count, reducedMotion],
@@ -30,7 +31,10 @@ export function useLoopCarousel(count: number, reducedMotion: boolean) {
   const goTo = useCallback(
     (target: number) => {
       if (count <= 1) return;
-      setState((s) => ({ ...s, index: s.index + (target - realIndex(s.index, count)), animate: !reducedMotion }));
+      setState((s) => {
+        const delta = target - realIndex(s.index, count);
+        return { ...s, index: s.index + delta, animate: !reducedMotion, position: s.position + delta };
+      });
     },
     [count, reducedMotion],
   );
@@ -60,6 +64,7 @@ export function useLoopCarousel(count: number, reducedMotion: boolean) {
     index: state.index,
     animate: state.animate && !reducedMotion,
     active: realIndex(state.index, count),
+    position: state.position,
     next: useCallback(() => step(1), [step]),
     step,
     goTo,

@@ -8,7 +8,6 @@ import { useCallback, useEffect, useMemo, useState, type FocusEvent } from "reac
 import { useSnapshot } from "valtio";
 import { GalleryControls } from "./GalleryControls";
 import { GalleryRow, type GalleryItem } from "./GalleryRow";
-import { AUTO_ADVANCE_MS } from "./gallery.logic";
 import s from "./gallery.module.css";
 import { GALLERY_TEXT } from "./gallery.text";
 import { useLoopCarousel } from "./use-loop-carousel";
@@ -56,20 +55,17 @@ function LayananPotensi() {
   const [restartKey, setRestartKey] = useState(0);
   const restartTimer = useCallback(() => setRestartKey((k) => k + 1), []);
 
-  const canPlay = Math.max(layanan.length, potensi.length) > 1 && !reducedMotion;
+  // Titik indikator mengikuti Layanan; bila Layanan ≤ 1 item, ikut Potensi agar putar otomatis tetap jalan.
+  const primary = layanan.length > 1 ? feature : tile;
+  const primaryCount = layanan.length > 1 ? layanan.length : potensi.length;
+  const canPlay = primaryCount > 1 && !reducedMotion;
   const running = canPlay && !userPaused && !keyboardInside && visibility === "visible";
-  const { next: nextFeature } = feature;
-  const { next: nextTile } = tile;
 
-  // Kedua baris maju bersamaan di detik yang sama.
-  useEffect(() => {
-    if (!running) return;
-    const id = setInterval(() => {
-      nextFeature();
-      nextTile();
-    }, AUTO_ADVANCE_MS);
-    return () => clearInterval(id);
-  }, [running, restartKey, nextFeature, nextTile]);
+  // Progress bar titik aktif penuh → kedua baris maju bersamaan.
+  const onCycleEnd = () => {
+    feature.next();
+    tile.next();
+  };
 
   // Jeda selama fokus keyboard ada di kartu (WCAG 2.2.2); fokus dari klik/tap tidak menjeda.
   const onRowsFocus = (e: FocusEvent<HTMLDivElement>) => {
@@ -114,13 +110,17 @@ function LayananPotensi() {
             ) : null}
           </div>
           <GalleryControls
-            count={layanan.length}
-            active={feature.active}
-            onSelect={(i) => {
-              feature.goTo(i);
+            count={primaryCount}
+            active={primary.active}
+            position={primary.position}
+            progressKey={restartKey}
+            autoplay={canPlay}
+            running={running}
+            onStep={(delta) => {
+              primary.step(delta);
               restartTimer();
             }}
-            paused={canPlay ? userPaused : null}
+            onCycleEnd={onCycleEnd}
             onTogglePause={() => setUserPaused((p) => !p)}
           />
         </>

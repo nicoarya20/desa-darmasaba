@@ -8,6 +8,6 @@ export const GALLERY_TEXT = {
   empty: "Belum ada layanan dan potensi untuk ditampilkan.",
   pause: "Jeda putar otomatis",
   play: "Lanjutkan putar otomatis",
-  dots: "Pilih layanan",
-  dot: (n: number, total: number) => `Layanan ${n} dari ${total}`,
+  dots: "Pilih kartu",
+  dot: (n: number, total: number) => `Kartu ${n} dari ${total}`,
 } as const;

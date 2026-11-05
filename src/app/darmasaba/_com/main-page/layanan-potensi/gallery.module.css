@@ -146,7 +146,7 @@
   background: #e3e3e6;
 }
 
-/* Kontrol: titik indikator di tengah, tombol jeda di kanan. */
+/* Kontrol: 5 titik di tengah (titik aktif = progress bar), tombol jeda di kanan. */
 .controls {
   position: relative;
   display: flex;
@@ -158,37 +158,59 @@
 }
 
 .dots {
-  display: flex;
-  align-items: center;
+  position: relative;
+  height: 24px;
 }
 
+/* Tiap titik diposisikan absolut dari tengah strip; geser + lebar dianimasikan saat strip maju. */
 .dot {
-  display: grid;
-  place-items: center;
-  width: 20px;
+  position: absolute;
+  top: 0;
+  left: 50%;
   height: 24px;
-  padding: 0;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
   border: 0;
   background: none;
   cursor: pointer;
+  transition: transform 450ms var(--ease), width 450ms var(--ease), opacity 300ms ease;
 }
 
-.dot::before {
-  content: "";
-  width: 6px;
+.dot[data-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dotBar {
+  position: relative;
+  width: 100%;
   height: 6px;
   border-radius: 3px;
+  overflow: hidden;
   background: #86868b;
-  transition: width 300ms var(--ease), background-color 300ms ease;
 }
 
-.dot[aria-current="true"] {
-  width: 36px;
-}
-
-.dot[aria-current="true"]::before {
-  width: 26px;
+/* Progress: abu-abu di detik 0, terisi hitam linear selama --cycle-ms. */
+.dotFill {
+  position: absolute;
+  inset: 0;
   background: #1d1d1f;
+  transform-origin: left center;
+  animation: dotProgress var(--cycle-ms) linear forwards;
+}
+
+.dotFill[data-autoplay="false"] {
+  animation: none;
+}
+
+@keyframes dotProgress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .pause {
@@ -286,7 +308,7 @@
 @media (prefers-reduced-motion: reduce) {
   .track,
   .caption,
-  .dot::before {
+  .dot {
     transition: none;
   }
 }

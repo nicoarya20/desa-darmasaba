@@ -4,7 +4,8 @@
 ### Changed
 - **Section Layanan dan Potensi Desa di beranda digabung** menjadi satu galeri bergaya apple.com berjudul "Layanan dan Potensi Desa": baris atas berisi layanan (kartu besar di tengah, kartu sebelahnya mengintip), baris bawah berisi potensi desa (kartu lebih kecil). Setiap 5 detik kedua baris bergeser satu kartu ke kiri dan berhenti dengan kartu aktif di tengah, berputar terus tanpa ujung. Kartu kini bersudut kotak, klik kartu membuka halaman detailnya.
 - Di ponsel kartu tampil tegak (potret) dengan judul dan tombol di tengah bawah, dan baris bisa digeser dengan jari.
-- Ada titik penanda posisi dan tombol jeda; gerak otomatis juga berhenti saat menavigasi kartu dengan keyboard, saat tab tidak aktif, atau bila perangkat mengaktifkan "kurangi animasi".
+- Di laptop, galeri bisa digeser dengan dua jari di trackpad saat kursor berada di atas baris (satu gerakan = satu kartu), tanpa lagi memicu kembali ke halaman sebelumnya.
+- Penanda posisi berupa 5 titik dengan titik panjang selalu di tengah. Titik panjang berfungsi sebagai progress bar yang terisi hitam selama 5 detik sebelum galeri maju, lalu titik di sebelahnya bergeser ke tengah. Ada tombol jeda; gerak otomatis juga berhenti saat menavigasi kartu dengan keyboard, saat tab tidak aktif, atau bila perangkat mengaktifkan "kurangi animasi".
 - Potensi desa di beranda kini menampilkan hingga 10 potensi (sebelumnya 4).
 
 ### Removed
