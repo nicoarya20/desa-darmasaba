@@ -196,6 +196,12 @@ describe('kontrak CSS & pemasangan splash', () => {
     expect(css.replace(/\/\*[\s\S]*?\*\//g, '')).not.toMatch(/-webkit-|mix-blend-mode|filter: blur/);
   });
 
+  it('bagian yang dianimasikan adalah elemen HTML, bukan <svg> (animasi <svg> di main thread → tertinggal)', () => {
+    const tsx = readFileSync(path.join(SPLASH_DIR, 'GateSplash.tsx'), 'utf8');
+    expect(tsx).not.toMatch(/<svg[^>]*data-part=/);
+    expect(tsx).toMatch(/<div className=\{`\$\{s\.gate\} \$\{s\.gateL\}`\} data-part="gate-l">/);
+  });
+
   it('skrip <head> dipasang di root layout dan / redirect ke beranda', () => {
     const layout = readFileSync(path.join(ROOT, 'src/app/layout.tsx'), 'utf8');
     expect(layout).toContain('__html: GATE_SPLASH_HEAD_SCRIPT');

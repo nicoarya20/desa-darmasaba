@@ -25,12 +25,18 @@ function GateWorld() {
       <div className={`${s.curtain} ${s.curtainL}`} data-part="curtain-l" />
       <div className={`${s.curtain} ${s.curtainR}`} data-part="curtain-r" />
       <div className={s.halo} data-part="glow" />
-      <svg className={`${s.gate} ${s.gateL}`} data-part="gate-l" viewBox={GATE_VIEWBOX_ATTR} preserveAspectRatio="none">
-        <use href={`#${GATE_SHAPE_ID}`} />
-      </svg>
-      <svg className={`${s.gate} ${s.gateR}`} data-part="gate-r" viewBox={GATE_VIEWBOX_ATTR} preserveAspectRatio="none">
-        <use href={`#${GATE_SHAPE_ID}`} />
-      </svg>
+      {/* Yang dianimasikan <div> pembungkus, bukan <svg>: animasi transform pada <svg> berjalan di
+          main thread sehingga tertinggal dari tembok/tirai (compositor) saat beranda sibuk memuat. */}
+      <div className={`${s.gate} ${s.gateL}`} data-part="gate-l">
+        <svg className={s.gateShape} viewBox={GATE_VIEWBOX_ATTR} preserveAspectRatio="none">
+          <use href={`#${GATE_SHAPE_ID}`} />
+        </svg>
+      </div>
+      <div className={`${s.gate} ${s.gateR}`} data-part="gate-r">
+        <svg className={s.gateShape} viewBox={GATE_VIEWBOX_ATTR} preserveAspectRatio="none">
+          <use href={`#${GATE_SHAPE_ID}`} />
+        </svg>
+      </div>
       <div className={`${s.wall} ${s.wallL}`} data-part="wall-l" />
       <div className={`${s.wall} ${s.wallR}`} data-part="wall-r" />
       <div className={s.floor} />

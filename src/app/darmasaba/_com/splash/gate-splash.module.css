@@ -71,14 +71,16 @@
   transform: translate(-50%, 50%); opacity: 0;
   background: radial-gradient(closest-side, rgba(255, 214, 150, .3), rgba(255, 214, 150, 0));
 }
+/* Pembungkus gerbang (div) yang dianimasikan — elemen HTML agar animasinya di compositor. */
+.gate { position: absolute; bottom: 0; width: var(--gate-w); height: var(--gate-h); transform-origin: 50% 100%; }
+.gateL { left: calc(50% - var(--gap) / 2 - var(--gate-w)); }
+.gateR { left: calc(50% + var(--gap) / 2); }
 /* fill/stroke di <svg>, bukan di path: path ada di shadow tree <use> yang tak terjangkau selector. */
-.gate {
-  position: absolute; bottom: 0; width: var(--gate-w); height: var(--gate-h); overflow: visible;
-  transform-origin: 50% 100%;
+.gateShape {
+  display: block; width: 100%; height: 100%; overflow: visible;
   fill: var(--navy-0); stroke: var(--gold); stroke-opacity: .55;
 }
-.gateL { left: calc(50% - var(--gap) / 2 - var(--gate-w)); }
-.gateR { left: calc(50% + var(--gap) / 2); transform: scaleX(-1); }
+.gateR .gateShape { transform: scaleX(-1); }   /* sisi kanan = cermin sisi kiri */
 /* Tembok di depan gerbang, menumpuk 12px agar sambungannya tak terlihat. */
 .wall {
   position: absolute; bottom: 0; height: var(--wall-h); background: var(--navy-0);
