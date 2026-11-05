@@ -11,12 +11,19 @@ import { MenuItem } from "../../../../types/menu-item";
 import { NavbarMainMenu } from "./NavbarMainMenu";
 
 export function Navbar() {
-  const { item, isSearch, mobileOpen } = useSnapshot(stateNav);
+  const { mobileOpen } = useSnapshot(stateNav);
   const router = useRouter();
 
   return (
     <Box>
+      {/* Desktop navbar (muncul mulai 992px ke atas). Sengaja di luar Paper .glass2:
+          backdrop-filter pada induk membuat overlay blur di dalamnya tak bisa mem-blur halaman. */}
+      <Box visibleFrom="md">
+        <NavbarMainMenu listNavbar={navbarListMenu} />
+      </Box>
+
       <Paper
+        hiddenFrom="md"
         radius="0"
         className="glass2"
         w="100vw"
@@ -24,13 +31,8 @@ export function Navbar() {
         top={0}
         style={{ zIndex: 100 }}
       >
-        {/* Desktop navbar (muncul mulai 992px ke atas) */}
-       <Box visibleFrom="md" style={{ overflowX: 'auto' }}>
-          <NavbarMainMenu listNavbar={navbarListMenu} />
-        </Box>
-
         {/* Mobile navbar (muncul di bawah 992px, termasuk iPad Mini) */}
-        <Box hiddenFrom="md" bg={colors.grey[2]} px="md" py="sm">
+        <Box bg={colors.grey[2]} px="md" py="sm">
           <Group justify="space-between" wrap="nowrap">
             <ActionIcon
               variant="transparent"
@@ -87,8 +89,6 @@ export function Navbar() {
           )}
         </Box>
       </Paper>
-
-      {(item || isSearch) && <Box className="glass" />}
     </Box>
   );
 }
