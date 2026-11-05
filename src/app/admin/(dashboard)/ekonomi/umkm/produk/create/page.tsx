@@ -25,6 +25,7 @@ import { useProxy } from 'valtio/utils';
 import umkmState from '../../../../_state/ekonomi/umkm/umkm';
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import ApiFetch from '@/lib/api-fetch';
+import { LinkTokoOnlineField } from '../_com/LinkTokoOnlineField';
 
 export default function CreateProdukUmkm() {
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function CreateProdukUmkm() {
       kategoriId: "",
       isActive: true,
       isUnggulan: false,
+      linkTokoOnline: [],
     };
     setPreviewImage(null);
     setFile(null);
@@ -207,6 +209,11 @@ export default function CreateProdukUmkm() {
             description="Tampilkan penanda Unggulan dan masukkan ke filter Produk Unggulan di katalog publik"
             checked={state.create.form.isUnggulan}
             onChange={(e) => (state.create.form.isUnggulan = e.currentTarget.checked)}
+          />
+
+          <LinkTokoOnlineField
+            value={state.create.form.linkTokoOnline}
+            onChange={(next) => (state.create.form.linkTokoOnline = next)}
           />
 
           <Box>

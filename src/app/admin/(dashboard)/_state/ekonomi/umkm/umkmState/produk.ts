@@ -1,6 +1,10 @@
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+import {
+  validateLinkTokoOnlineList,
+  type LinkTokoOnlineInput,
+} from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
 
 const produkFormSchema = z.object({
   nama: z.string().min(1, "Nama produk minimal 1 karakter"),
@@ -12,6 +16,7 @@ const produkFormSchema = z.object({
   imageId: z.string().optional().nullable(),
   kategoriId: z.string().min(1, "Kategori wajib dipilih"),
   isUnggulan: z.boolean().optional(),
+  linkTokoOnline: z.array(z.object({ platform: z.string(), url: z.string() })).optional(),
 });
 
 const defaultProdukForm = {
@@ -25,6 +30,7 @@ const defaultProdukForm = {
   kategoriId: "",
   isActive: true,
   isUnggulan: false,
+  linkTokoOnline: [] as LinkTokoOnlineInput[],
 };
 
 const produk = proxy({
@@ -86,12 +92,17 @@ const produk = proxy({
     },
   },
   create: {
-    form: { ...defaultProdukForm },
+    form: { ...defaultProdukForm, linkTokoOnline: [] as LinkTokoOnlineInput[] },
     loading: false,
     async submit() {
       const cek = produkFormSchema.safeParse(this.form);
       if (!cek.success) {
         toast.error("Cek kembali form anda");
+        return false;
+      }
+      const cekLink = validateLinkTokoOnlineList(this.form.linkTokoOnline);
+      if (!cekLink.ok) {
+        toast.error(cekLink.message);
         return false;
       }
       this.loading = true;
@@ -107,6 +118,7 @@ const produk = proxy({
           produk.findMany.load();
           return true;
         }
+        toast.error(result.message || "Gagal membuat produk");
       } catch (e) {
         toast.error("Gagal membuat produk");
       } finally {
@@ -116,12 +128,17 @@ const produk = proxy({
     },
   },
   update: {
-    form: { ...defaultProdukForm },
+    form: { ...defaultProdukForm, linkTokoOnline: [] as LinkTokoOnlineInput[] },
     loading: false,
     async submit(id: string) {
       const cek = produkFormSchema.safeParse(this.form);
       if (!cek.success) {
         toast.error("Cek kembali form anda");
+        return false;
+      }
+      const cekLink = validateLinkTokoOnlineList(this.form.linkTokoOnline);
+      if (!cekLink.ok) {
+        toast.error(cekLink.message);
         return false;
       }
       this.loading = true;
@@ -137,6 +154,7 @@ const produk = proxy({
           produk.findMany.load();
           return true;
         }
+        toast.error(result.message || "Gagal memperbarui produk");
       } catch (e) {
         toast.error("Gagal memperbarui produk");
       } finally {
