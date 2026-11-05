@@ -1,136 +1,108 @@
 'use client'
 
-import colors from "@/con/colors"
-import stateNav from "@/state/state-nav"
-import { ActionIcon, Button, Container, Flex, Image, Menu, MenuTarget, Stack, Tooltip } from "@mantine/core"
+import { authStore } from "@/store/authStore"
+import { Image, Tooltip } from "@mantine/core"
 import { IconSearch, IconUserCog } from "@tabler/icons-react"
-import { useTransitionRouter } from 'next-view-transitions'
-import { usePathname, useRouter } from "next/navigation"
+import { Link } from "next-view-transitions"
 import { useSnapshot } from "valtio"
 import { MenuItem } from "../../../../types/menu-item"
-import { NavbarSearch } from "./NavBarSearch"
-import { NavbarSubMenu } from "./NavbarSubMenu"
-import { authStore } from "@/store/authStore";
+import { NavbarFlyout } from "./NavbarFlyout"
+import { isAdminRole, isMenuActive } from "./navbar-menu.logic"
+import s from "./navbar.module.css"
+import { SEARCH_VIEW_ID, useNavbarFlyout } from "./useNavbarFlyout"
 
-// contoh state auth (dummy aja dulu, bisa diganti sesuai sistem auth kamu)
-const isAdmin = authStore.user?.roleId === 0 || authStore.user?.roleId === 1 || authStore.user?.roleId === 2 || authStore.user?.roleId === 3 || authStore.user?.roleId === 4;
+const FLYOUT_ID = "darmasaba-nav-flyout"
+const ADMIN_HOME = "/admin/landing-page/profile/program-inovasi"
 
+/** Navbar desktop gaya apple.com: hover menu → flyout mengembang, teks reveal, halaman di-blur. */
 export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
-  const { item, isSearch } = useSnapshot(stateNav)
-  const router = useTransitionRouter()
-  const next = useRouter()
-  const pathname = usePathname();
+  const { user } = useSnapshot(authStore)
+  const nav = useNavbarFlyout(listNavbar)
 
   return (
-    <Stack gap={0} visibleFrom="sm" bg={colors["white-trans-1"]}>
-      <Container pos="relative" w={{ base: '100%', md: '80%' }} fluid>
-        <Flex align="center" justify="space-between" wrap={{ base: "wrap", md: "nowrap" }}>
-          <Tooltip label="Kembali ke Beranda" position="bottom" withArrow>
-            <ActionIcon
-              radius="xl"
-              variant="transparent"
-              onClick={() => {
-                router.push("/darmasaba")
-                stateNav.clear()
-              }}
-            >
-              <Image
-                radius="xl"
-                src="/assets/images/darmasaba-icon.png"
-                alt="Darmasaba Logo"
-                w={28}
-                h={28}
-                loading="lazy"
-              />
-            </ActionIcon>
-          </Tooltip>
-
-          {listNavbar.map((item, k) => (
-            <MenuItemCom
-              key={k}
-              item={item}
-              isActive={item.href && pathname.startsWith(item.href) ||
-                (item.children?.some(child => child.href && pathname.startsWith(child.href)))}
-            />
-          ))}
-
-          <Tooltip label="Cari Konten" position="bottom" withArrow>
-            <ActionIcon
-              variant="transparent"
-              c={isSearch ? 'gray' : colors["blue-button"]}
-              onClick={() => {
-                stateNav.item = null
-                stateNav.isSearch = !stateNav.isSearch
-              }}
-              radius="xl"
-            >
-              <IconSearch size="1.5rem" />
-            </ActionIcon>
-          </Tooltip>
-
-          {/* hanya tampil kalau role = admin */}
-          {isAdmin && (
-            <Tooltip label="Kembali ke Admin" position="bottom" withArrow>
-              <ActionIcon
-                onClick={() => {
-                  next.push("/admin/landing-page/profile/program-inovasi")
-                }}
-                color={colors["blue-button"]}
-                radius="xl"
-                variant="light"
+    <div className={s.root}>
+      <div className={s.overlay} data-open={nav.open} onClick={nav.close} aria-hidden />
+      <header
+        ref={nav.headerRef}
+        className={s.header}
+        data-open={nav.open}
+        onMouseEnter={nav.onHeaderEnter}
+        onMouseLeave={nav.onHeaderLeave}
+      >
+        <nav className={s.bar} aria-label="Menu utama">
+          <div className={s.barInner}>
+            <Tooltip label="Kembali ke Beranda" position="bottom" withArrow>
+              <Link
+                href="/darmasaba"
+                className={s.barItem}
+                aria-label="Beranda Desa Darmasaba"
+                onMouseEnter={() => !nav.isSearch && nav.close()}
               >
-                <IconUserCog size={22} />
-              </ActionIcon>
+                <Image src="/assets/images/darmasaba-icon.png" alt="" className={s.logo} />
+              </Link>
             </Tooltip>
-          )}
-        </Flex>
-      </Container>
 
-      {item && <NavbarSubMenu item={item as MenuItem[]} />}
-      {isSearch && <NavbarSearch />}
-    </Stack>
-  )
-}
+            {listNavbar.map((item) =>
+              item.children?.length ? (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={s.barItem}
+                  data-menu-id={item.id}
+                  data-active={isMenuActive(item, nav.pathname)}
+                  aria-expanded={nav.openMenuId === item.id}
+                  aria-controls={FLYOUT_ID}
+                  onMouseEnter={() => nav.onItemEnter(item)}
+                  onMouseLeave={nav.onItemLeave}
+                  onClick={(event) => nav.onItemClick(item, event.detail === 0)}
+                >
+                  {item.name}
+                </button>
+              ) : item.href ? (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={s.barItem}
+                  data-active={isMenuActive(item, nav.pathname)}
+                  onMouseEnter={() => nav.onItemEnter(item)}
+                >
+                  {item.name}
+                </Link>
+              ) : null,
+            )}
 
-function MenuItemCom({ item, isActive = false }: { item: MenuItem, isActive?: boolean }) {
-  const router = useTransitionRouter()
+            <Tooltip label="Cari Konten" position="bottom" withArrow>
+              <button
+                type="button"
+                className={s.barItem}
+                data-menu-id={SEARCH_VIEW_ID}
+                aria-label="Cari konten"
+                aria-expanded={nav.isSearch}
+                aria-controls={FLYOUT_ID}
+                onClick={nav.toggleSearch}
+              >
+                <IconSearch size={18} stroke={1.75} />
+              </button>
+            </Tooltip>
 
-  return (
-    <Menu
-      trigger="hover"
-      position="bottom-start"
-      offset={20}
-      width={300}
-      shadow="md"
-      withinPortal
-      onOpen={() => {
-        stateNav.item = item.children || null;
-        stateNav.isSearch = false;
-      }}
-    >
-      <MenuTarget>
-        <Button
-          variant="subtle"
-          color={isActive ? colors['blue-button'] : 'gray'}
-          onClick={() => {
-            if (item.href) {
-              router.push(item.href);
-              stateNav.clear();
-            }
-          }}
-          styles={{
-            root: {
-              fontWeight: isActive ? 600 : 400,
-              borderBottom: isActive ? `2px solid ${colors['blue-button']}` : 'none',
-              '&:hover': {
-                backgroundColor: 'transparent',
-              }
-            }
-          }}
-        >
-          {item.name}
-        </Button>
-      </MenuTarget>
-    </Menu>
+            {isAdminRole(user?.roleId) && (
+              <Tooltip label="Kembali ke Admin" position="bottom" withArrow>
+                <Link href={ADMIN_HOME} className={s.barItem} aria-label="Kembali ke Admin">
+                  <IconUserCog size={20} stroke={1.75} />
+                </Link>
+              </Tooltip>
+            )}
+          </div>
+        </nav>
+
+        <NavbarFlyout
+          id={FLYOUT_ID}
+          open={nav.open}
+          view={nav.view}
+          pathname={nav.pathname}
+          panelRef={nav.panelRef}
+        />
+      </header>
+    </div>
   )
 }

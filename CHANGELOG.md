@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.207] - 2026-11-05
+### Changed
+- **Navbar desktop halaman publik bergaya apple.com**: saat cursor diarahkan ke menu, panel submenu kini mengembang halus dari bawah navbar, teks submenu muncul bertahap, dan konten halaman di belakangnya di-blur. Sebelumnya submenu muncul tiba-tiba tanpa animasi. Pindah antar menu langsung mengganti isi panel dengan tinggi yang menyesuaikan halus; panel tertutup saat cursor keluar dari navbar, tombol Escape, klik area blur, atau berpindah halaman. Pencarian memakai panel yang sama.
+- Submenu kini berupa link biasa: bisa dibuka di tab baru dan dinavigasi dengan keyboard. Pengguna yang mengaktifkan "kurangi animasi" di perangkatnya mendapat versi tanpa gerakan (hanya fade).
+- **Navbar mobile bergaya apple.com**: tombol menu membuka panel kaca yang mengembang halus dan mem-blur halaman di belakangnya. Panel awalnya hanya menampilkan menu utama; submenu dibuka per menu (geser masuk) dengan tombol "Kembali", jadi daftar tidak lagi panjang sekaligus. Halaman di belakang tidak ikut ter-scroll selama menu terbuka.
+
+### Fixed
+- Tombol "Kembali ke Admin" di navbar desktop kini muncul/hilang sesuai status login terkini (sebelumnya hanya dibaca sekali saat halaman dimuat).
+- Efek hover menu navbar desktop yang sebelumnya tidak pernah aktif.
+- Efek kaca buram (blur) yang hilang di Chrome sejak upgrade Next 16 kini kembali, termasuk pada kartu profil berlatar kaca.
+
 ## [0.1.206] - 2026-11-04
 ### Added
 - **Letak & Batas Wilayah di Profil Desa** (`/darmasaba/desa/profil`): section baru menampilkan batas utara/selatan/timur/barat, luas wilayah (hektar), keterangan, dan peta embed (hanya URL https). Diisi admin lewat tab "Letak & Batas Wilayah" di admin Profil Desa; bila belum diisi tampil empty-state. Model baru `WilayahDesa` (satu baris) + endpoint `GET /api/desa/profile/wilayah` (publik) dan `PUT` (admin). Tidak ada data wilayah di seed — wajib diisi lewat admin.
