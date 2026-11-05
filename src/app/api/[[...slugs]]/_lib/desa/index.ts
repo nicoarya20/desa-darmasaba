@@ -17,6 +17,7 @@ import KegiatanDesa from "./kegiatan-desa";
 import KategoriKegiatan from "./kegiatan-desa/kategori-kegiatan";
 import EventBudaya from "./event-budaya";
 import Banjar from "./banjar";
+import DokumenPerencanaan from "./dokumen-perencanaan";
 
 
 const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
@@ -38,6 +39,7 @@ const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
   .use(KategoriKegiatan)
   .use(EventBudaya)
   .use(Banjar)
+  .use(DokumenPerencanaan)
 
 
 export default Desa;

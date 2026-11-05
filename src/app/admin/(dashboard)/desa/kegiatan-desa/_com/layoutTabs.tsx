@@ -2,7 +2,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import { IconCalendarEvent, IconCategory } from '@tabler/icons-react';
+import { IconCalendarEvent, IconCategory, IconFileDescription } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -22,6 +22,12 @@ function LayoutTabsKegiatanDesa({ children }: { children: React.ReactNode }) {
             value: "kategori_kegiatan",
             href: "/admin/desa/kegiatan-desa/kategori-kegiatan-desa",
             icon: <IconCategory size={22} stroke={1.8} />
+        },
+        {
+            label: "Dokumen Perencanaan",
+            value: "dokumen_perencanaan",
+            href: "/admin/desa/kegiatan-desa/dokumen-perencanaan",
+            icon: <IconFileDescription size={22} stroke={1.8} />
         },
     ];
 
