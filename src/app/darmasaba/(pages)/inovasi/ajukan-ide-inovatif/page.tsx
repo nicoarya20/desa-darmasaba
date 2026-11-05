@@ -7,6 +7,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBulbFilled } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
+import PengantarMusyawarah from './_com/PengantarMusyawarah';
 
 function Page() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -109,6 +110,7 @@ function Page() {
               </Flex>
             </Paper>
           </SimpleGrid>
+          <PengantarMusyawarah />
         </Stack>
       </Box>
 

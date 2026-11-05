@@ -5,11 +5,14 @@ import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+import { PERIODE_MAX_LENGTH, SATUAN_MAX_LENGTH } from "@/lib/sektor-unggulan";
 
 const templateGrafikSektorUnggulan = z.object({
   name: z.string().min(2, "Nama harus diisi"),
   description: z.string().min(2, "Deskripsi harus diisi"),
   value: z.number().min(1, "Nilai harus diisi"),
+  satuan: z.string().max(SATUAN_MAX_LENGTH, `Satuan maksimal ${SATUAN_MAX_LENGTH} karakter`).optional(),
+  periode: z.string().max(PERIODE_MAX_LENGTH, `Periode maksimal ${PERIODE_MAX_LENGTH} karakter`).optional(),
 });
 
 interface SektorUnggulanForm {
@@ -17,12 +20,16 @@ interface SektorUnggulanForm {
   name: string;
   description: string;
   value: number;
+  satuan?: string;
+  periode?: string;
 }
 
 const defaultForm: SektorUnggulanForm = {
   name: "",
   description: "",
   value: 0,
+  satuan: "",
+  periode: "",
 };
 
 const grafikSektorUnggulan = proxy({
@@ -48,11 +55,7 @@ const grafikSektorUnggulan = proxy({
           const id = (res.data as any)?.data?.id;
           if (id) {
             toast.success("Sukses menambahkan");
-            grafikSektorUnggulan.create.form = {
-              name: "",
-              description: "",
-              value: 0,
-            };
+            grafikSektorUnggulan.create.form = { ...defaultForm };
             grafikSektorUnggulan.findMany.load();
             return id;
           }
@@ -76,6 +79,8 @@ const grafikSektorUnggulan = proxy({
             name: true;
             description: true;
             value: true;
+            satuan: true;
+            periode: true;
             createdAt: true;
             updatedAt: true;
           };
@@ -122,6 +127,8 @@ const grafikSektorUnggulan = proxy({
         name: true;
         description: true;
         value: true;
+        satuan: true;
+        periode: true;
         createdAt: true;
         updatedAt: true;
       };
