@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.213] - 2026-11-05
+### Changed
+- **Layar pembuka website baru: gerbang Candi Bentar.** Saat pertama kali membuka website, pengunjung kini disambut siluet Candi Bentar di tepi air pada malam menjelang fajar: logo dan tulisan "Pemerintah Desa Darmasaba" muncul di celah gerbang, lalu kamera seolah melangkah menembus celah — gerbang terbuka ke samping, cahaya fajar memenuhi layar, dan beranda tampil. Durasi sekitar 2,5 detik (sebelumnya layar logo diam selama 3 detik), dan bisa dilewati dengan klik/tap atau tombol Escape.
+- Layar pembuka hanya tampil sekali per tab dan hanya bila beranda adalah halaman pertama yang dibuka; membuka halaman lain langsung (misalnya dari tautan berita) tidak memunculkannya. Pengguna yang mengaktifkan "kurangi animasi" di perangkatnya mendapat versi tanpa gerakan (hanya fade).
+- Membuka alamat utama website (`/`) kini langsung diarahkan ke beranda tanpa menunggu.
+
 ## [0.1.212] - 2026-11-05
 ### Fixed
 - **Desa - Profil**: peta di section "Letak & Batas Wilayah" tidak lagi meluber keluar kartu dan menimpa logo/judul "Lambang Desa"; tinggi peta kini menyesuaikan ukuran layar (300px ponsel, 380px tablet, 450px desktop).
