@@ -792,6 +792,8 @@ model PelayananSuratKeterangan {
   imageId          String?
   image2           FileStorage?       @relation("PelayananSuratKeteranganImage2", fields: [image2Id], references: [id])
   image2Id         String?
+  estimasiWaktu    String?
+  biaya            Int?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   deletedAt        DateTime           @default(now())
@@ -800,35 +802,41 @@ model PelayananSuratKeterangan {
 }
 
 model PelayananTelunjukSaktiDesa {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  link      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  link          String
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model PelayananPerizinanBerusaha {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  link      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  link          String
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model PelayananPendudukNonPermanen {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model AjukanPermohonan {
