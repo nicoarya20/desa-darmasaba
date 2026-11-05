@@ -255,7 +255,7 @@ File: `src/con/navbar-list-menu.ts`
 | # | Menu | Jumlah Sub |
 |---|---|---|
 | 1 | PPID | 8 |
-| 2 | Desa | 10 (termasuk Kalender Event Budaya, Monev & Pembangunan) |
+| 2 | Desa | 10 (termasuk Agenda & Kalender Desa, Monev & Pembangunan) |
 | 3 | Kesehatan | 7 |
 | 4 | Keamanan | 7 |
 | 5 | Ekonomi | 11 (termasuk Kesejahteraan Masyarakat) |
@@ -584,7 +584,7 @@ p={{ base: "sm", md: "lg" }}
 | Domain | Konten Utama |
 |---|---|
 | PPID | Profil, Struktur, Visi Misi, Dasar Hukum, Permohonan Informasi |
-| Desa | Profil, Potensi, Berita, Pengumuman, Gallery, Layanan, Penghargaan, Kalender Event Budaya |
+| Desa | Profil, Potensi, Berita, Pengumuman, Gallery, Layanan, Penghargaan, Agenda & Kalender Desa |
 | Kesehatan | Data Posyandu (balita, ibu hamil, ringkasan), Puskesmas, Program, Info Wabah |
 | Kependudukan | Dashboard statistik, Data Per Banjar, Dinamika, Distribusi Agama/Umur |
 | Ekonomi | UMKM, Lowongan Kerja, BUMDesa, PADesa, Transparansi APBDes (grafik + tabel) |
