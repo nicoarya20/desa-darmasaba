@@ -2,7 +2,7 @@
 
 ## [0.1.209] - 2026-11-05
 ### Changed
-- **Footer halaman publik bergaya apple.com**: tepi kiri-kanan footer kini sejajar dengan konten "Komitmen Layanan Kami" dan "Visi Kami" di atasnya (sebelumnya melebar hampir selebar layar). Kolom "Layanan Desa" dan "Tautan Penting" tampil di baris atas; "Tentang Darmasaba" (beserta ikon media sosial) dan "Berlangganan Info" pindah ke baris di bawahnya. Ada garis tipis di atas daftar link dan di atas copyright, dan copyright kini rata kiri.
+- **Footer halaman publik bergaya apple.com**: tepi kiri-kanan footer kini sejajar dengan konten "Komitmen Layanan Kami" dan "Visi Kami" di atasnya (sebelumnya melebar hampir selebar layar). Card berbayang di sekitar bagian Komitmen Layanan sampai "Desa Kuat, Warga Sejahtera!" dihapus; bagian itu kini dipisahkan dari daftar link cukup dengan garis tipis. Kolom "Layanan Desa" dan "Tautan Penting" tampil di baris atas; "Tentang Darmasaba" (beserta ikon media sosial) dan "Berlangganan Info" pindah ke baris di bawahnya. Ada garis tipis di atas daftar link dan di atas copyright, dan copyright kini rata kiri.
 
 ## [0.1.208] - 2026-11-05
 ### Changed
