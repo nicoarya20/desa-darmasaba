@@ -95,6 +95,11 @@ const navbarListMenu = [
                 id: "2.9",
                 name: "Kalender Event Budaya",
                 href: "/darmasaba/desa/event-budaya"
+            },
+            {
+                id: "2.10",
+                name: "Monev & Pembangunan",
+                href: "/darmasaba/desa/monev-pembangunan"
             }
 
         ]
@@ -197,7 +202,7 @@ const navbarListMenu = [
             },
             {
                 id: "5.3",
-                name: "Struktur Organisasi dan SK Pengurus BUMDesa",
+                name: "BUMDes",
                 href: "/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes"
             },
             {

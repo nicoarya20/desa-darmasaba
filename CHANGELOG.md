@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.206] - 2026-11-04
+### Added
+- **Letak & Batas Wilayah di Profil Desa** (`/darmasaba/desa/profil`): section baru menampilkan batas utara/selatan/timur/barat, luas wilayah (hektar), keterangan, dan peta embed (hanya URL https). Diisi admin lewat tab "Letak & Batas Wilayah" di admin Profil Desa; bila belum diisi tampil empty-state. Model baru `WilayahDesa` (satu baris) + endpoint `GET /api/desa/profile/wilayah` (publik) dan `PUT` (admin). Tidak ada data wilayah di seed — wajib diisi lewat admin.
+- **Halaman BUMDes dengan profil dan unit usaha**: model baru `ProfilBumDes` dan `UnitUsahaBumDes`, endpoint API + admin CRUD (profil BUMDes dan daftar unit usaha). Halaman publik kini berurutan: profil BUMDes, unit usaha, lalu struktur pengurus & SK, masing-masing dengan empty-state.
+- **Produk Unggulan Desa di katalog UMKM**: kolom `PasarDesa.isUnggulan` (default false), parameter opsional `unggulan=true` pada list produk, toggle di form admin produk, badge "Unggulan" dan filter "Produk Unggulan" di katalog publik.
+- **Kegiatan Pembangunan dan halaman Monev & Pembangunan**: field opsional pada `KegiatanDesa` (`anggaran`, `progres` 0–100, `statusPembangunan` rencana/berjalan/selesai, `sumberDana`), kategori "Pembangunan", kartu dengan progress bar di Kegiatan Desa, halaman baru `/darmasaba/desa/monev-pembangunan` (ringkasan per status, total anggaran, rata-rata progres, tautan ke APBDes), dan entri menu "Monev & Pembangunan" di grup Desa.
+- **Seed data contoh untuk fitur baru**: wilayah desa (4 batas bertanda "data contoh", luas dan peta dikosongkan karena belum ada data resmi), profil dan 2 unit usaha BUMDes (teks diturunkan dari seed Potensi), 2 produk ditandai unggulan, dan 3 kegiatan Pembangunan contoh (rencana/berjalan/selesai). Semua seeder idempoten; tidak ada perubahan schema.
+### Changed
+- Menu `Ekonomi > Struktur Organisasi dan SK Pengurus BUMDesa` berlabel **"BUMDes"** (URL tetap sama agar link lama tidak putus).
+- Seed `struktur-bumdes` tidak lagi memuat perangkat desa (Kades, Sekdes, Kaur, Kadus); hanya jabatan generik tanpa nama orang.
+### Catatan operator
+- 4 migrasi baru (idempoten, tabel/kolom baru, tidak menghapus data): `20261103090747_add_wilayah_desa`, `20261103100000_add_profil_dan_unit_usaha_bumdes`, `20261103100200_add_produk_unggulan_flag`, `20261103100300_add_pembangunan_fields_kegiatan_desa`.
+- Data pegawai BUMDes lama yang berisi perangkat desa di DB staging/produksi TIDAK dihapus oleh rilis ini; pembersihan adalah keputusan terpisah.
+- Data batas wilayah, profil/unit usaha BUMDes, dan produk unggulan harus diinput lewat admin (tidak ada data karangan di seed).
+
 ## [0.1.205] - 2026-11-04
 ### Changed
 - **Library UI Mantine naik dari 8.3.18 ke 9.7.4** (tahap terakhir upgrade UI bertahap): seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di 9.7.4. Tampilan halaman publik dan admin dipertahankan sama seperti sebelumnya: radius sudut default, warna varian `light`/`outline`, serta ketebalan teks tombol (600) dan label input/menu (500) tetap seperti di Mantine 8.

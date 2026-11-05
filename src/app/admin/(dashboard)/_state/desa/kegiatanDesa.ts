@@ -3,6 +3,12 @@ import ApiFetch from "@/lib/api-fetch";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+import {
+  PROGRES_MAX,
+  PROGRES_MIN,
+  STATUS_PEMBANGUNAN,
+  SUMBER_DANA_MAX_LENGTH,
+} from "@/lib/kegiatan-pembangunan";
 
 // ========================================= SCHEMAS ========================================= //
 
@@ -15,6 +21,11 @@ const templateForm = z.object({
   partisipan: z.number().optional().default(0),
   kategoriKegiatanId: z.string().nonempty("Kategori kegiatan harus dipilih"),
   imageId: z.string().optional(),
+  // Khusus kategori Pembangunan — null = belum diisi
+  anggaran: z.number().min(0, "Anggaran tidak boleh negatif").nullable().optional(),
+  progres: z.number().int().min(PROGRES_MIN).max(PROGRES_MAX).nullable().optional(),
+  statusPembangunan: z.enum(STATUS_PEMBANGUNAN).nullable().optional(),
+  sumberDana: z.string().max(SUMBER_DANA_MAX_LENGTH).nullable().optional(),
 });
 
 const defaultForm = {
@@ -26,6 +37,10 @@ const defaultForm = {
   partisipan: 0,
   kategoriKegiatanId: "",
   imageId: "" as string | undefined,
+  anggaran: null as number | null,
+  progres: null as number | null,
+  statusPembangunan: null as string | null,
+  sumberDana: null as string | null,
 };
 
 const templateKategori = z.object({
@@ -62,7 +77,9 @@ const kegiatan = proxy({
           return true;
         }
 
-        toast.error(res.data?.message || "Gagal menyimpan kegiatan desa");
+        // Respons 400 (validasi) ada di res.error, bukan res.data
+        const errMessage = (res.error?.value as { message?: string } | undefined)?.message;
+        toast.error(res.data?.message || errMessage || "Gagal menyimpan kegiatan desa");
         return false;
       } catch (error) {
         console.error("Error creating kegiatan:", error);
@@ -190,6 +207,10 @@ const kegiatan = proxy({
             partisipan: data.partisipan || 0,
             kategoriKegiatanId: data.kategoriKegiatanId || "",
             imageId: data.imageId || undefined,
+            anggaran: data.anggaran ?? null,
+            progres: data.progres ?? null,
+            statusPembangunan: data.statusPembangunan ?? null,
+            sumberDana: data.sumberDana ?? null,
           };
           return data;
         }

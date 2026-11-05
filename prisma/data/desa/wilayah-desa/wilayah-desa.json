@@ -1,0 +1,9 @@
+{
+  "batasUtara": "Wilayah sebelah utara Desa Darmasaba (data contoh)",
+  "batasSelatan": "Wilayah sebelah selatan Desa Darmasaba (data contoh)",
+  "batasTimur": "Wilayah sebelah timur Desa Darmasaba (data contoh)",
+  "batasBarat": "Wilayah sebelah barat Desa Darmasaba (data contoh)",
+  "luasWilayah": null,
+  "keterangan": "Data contoh untuk pengembangan. Ganti dengan data resmi (nama desa/kelurahan berbatasan, luas wilayah, dan peta) lewat admin Desa > Profil > Letak & Batas Wilayah.",
+  "petaEmbedUrl": null
+}

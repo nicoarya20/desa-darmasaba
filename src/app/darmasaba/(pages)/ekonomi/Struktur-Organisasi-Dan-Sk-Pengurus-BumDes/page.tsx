@@ -38,6 +38,9 @@ import { useProxy } from 'valtio/utils'
 import BackButton from '../../desa/layanan/_com/BackButto'
 import '../../ppid/struktur-ppid/struktur.css'
 import { useMediaQuery } from '@mantine/hooks'
+import BumdesSection from './_com/BumdesSection'
+import ProfilBumdesSection from './_com/ProfilBumdesSection'
+import UnitUsahaBumdesSection from './_com/UnitUsahaBumdesSection'
 
 export default function Page() {
   return (
@@ -60,17 +63,19 @@ export default function Page() {
             fz={{ base: 28, md: 36, lg: 44 }}
             lh={{ base: 1.05, md: 1.03 }}
           >
-            Struktur Organisasi & SK Pengurus BumDes
+            BUMDes
           </Title>
           <Text ta="center" c="black" maw={800} fz={{ base: 14, md: 16 }} lh={1.6}>
-            Gambaran visual peran dan pengurus yang ditugaskan. Gunakan kontrol
-            di bawah untuk mencari, memperbesar, atau melihat lebih jelas.
+            Profil, unit usaha, serta struktur pengurus dan SK Badan Usaha Milik
+            Desa Darmasaba.
           </Text>
         </Stack>
 
-        <Box mt="lg">
+        <ProfilBumdesSection />
+        <UnitUsahaBumdesSection />
+        <BumdesSection title="Struktur Pengurus & SK">
           <StrukturOrganisasiBumDes />
-        </Box>
+        </BumdesSection>
       </Box>
     </Box>
   )

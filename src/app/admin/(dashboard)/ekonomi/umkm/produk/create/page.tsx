@@ -12,7 +12,8 @@ import {
   Select,
   ActionIcon,
   Image,
-  NumberInput
+  NumberInput,
+  Switch
 } from '@mantine/core';
 import { SATUAN_PRESETS } from '@/app/darmasaba/(pages)/ekonomi/umkm/_lib/satuan';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
@@ -53,6 +54,7 @@ export default function CreateProdukUmkm() {
       imageId: null,
       kategoriId: "",
       isActive: true,
+      isUnggulan: false,
     };
     setPreviewImage(null);
     setFile(null);
@@ -198,6 +200,13 @@ export default function CreateProdukUmkm() {
             })) || []}
             value={state.create.form.kategoriId}
             onChange={(val) => (state.create.form.kategoriId = val || "")}
+          />
+
+          <Switch
+            label="Produk Unggulan Desa"
+            description="Tampilkan penanda Unggulan dan masukkan ke filter Produk Unggulan di katalog publik"
+            checked={state.create.form.isUnggulan}
+            onChange={(e) => (state.create.form.isUnggulan = e.currentTarget.checked)}
           />
 
           <Box>

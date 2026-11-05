@@ -19,6 +19,7 @@ import {
   Loader,
   NumberInput,
   Center,
+  Switch,
 } from "@mantine/core";
 import { SATUAN_PRESETS } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/satuan";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
@@ -44,6 +45,7 @@ interface ProdukData {
   deskripsi: string | null;
   imageId: string | null;
   kategoriProdukId: string | null;
+  isUnggulan: boolean;
   image?: { link: string } | null;
 }
 
@@ -56,6 +58,7 @@ interface ProdukForm {
   deskripsi: string;
   imageId: string | null;
   kategoriId: string;
+  isUnggulan: boolean;
 }
 
 function EditProdukUmkm() {
@@ -77,6 +80,7 @@ function EditProdukUmkm() {
     deskripsi: "",
     imageId: null,
     kategoriId: "",
+    isUnggulan: false,
   });
 
   const [originalData, setOriginalData] = useState<ProdukForm & { imageUrl: string }>({
@@ -88,6 +92,7 @@ function EditProdukUmkm() {
     deskripsi: "",
     imageId: null,
     kategoriId: "",
+    isUnggulan: false,
     imageUrl: ""
   });
 
@@ -120,6 +125,7 @@ function EditProdukUmkm() {
           deskripsi: data.deskripsi || "",
           imageId: data.imageId || "",
           kategoriId: data.kategoriProdukId || "",
+          isUnggulan: data.isUnggulan ?? false,
         };
 
         setFormData(initialForm);
@@ -137,7 +143,7 @@ function EditProdukUmkm() {
     init();
   }, [id]);
 
-  const handleChange = (field: keyof ProdukForm, value: string | number) => {
+  const handleChange = (field: keyof ProdukForm, value: string | number | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -193,6 +199,7 @@ function EditProdukUmkm() {
       deskripsi: originalData.deskripsi,
       imageId: originalData.imageId,
       kategoriId: originalData.kategoriId,
+      isUnggulan: originalData.isUnggulan,
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
@@ -363,6 +370,14 @@ function EditProdukUmkm() {
             })) || []}
             value={formData.kategoriId}
             onChange={(val) => handleChange("kategoriId", val || "")}
+          />
+
+          {/* Produk Unggulan Desa */}
+          <Switch
+            label="Produk Unggulan Desa"
+            description="Tampilkan penanda Unggulan dan masukkan ke filter Produk Unggulan di katalog publik"
+            checked={formData.isUnggulan}
+            onChange={(e) => handleChange("isUnggulan", e.currentTarget.checked)}
           />
 
           {/* Deskripsi */}

@@ -15,6 +15,7 @@ async function produkUmkmCreate(context: Context) {
         umkmId: body.umkmId,
         imageId: body.imageId,
         isActive: body.isActive ?? true,
+        isUnggulan: body.isUnggulan ?? false,
         rating: 0, // Default for UMKM products
         kategoriProdukId: body.kategoriId, // Now required via PasarDesa
       },

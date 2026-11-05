@@ -2,11 +2,13 @@
 'use client'
 import stateDashboardKegiatan from '@/app/admin/(dashboard)/_state/desa/kegiatanDesa';
 import colors from '@/con/colors';
+import { isKegiatanPembangunan } from '@/lib/kegiatan-pembangunan';
 import { Box, Button, Center, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
+import PembangunanInfo from '../_com/PembangunanInfo';
 
 function Semua() {
   const router = useTransitionRouter();
@@ -78,6 +80,7 @@ function Semua() {
                 >
                   {item.deskripsiSingkat}
                 </Text>
+                {isKegiatanPembangunan(item) && <PembangunanInfo item={item} />}
               </Stack>
               <Center pb="md" mt="auto">
                 <Button variant="light" onClick={() => router.push(toDetail(item))}>

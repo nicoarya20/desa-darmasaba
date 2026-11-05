@@ -9,6 +9,7 @@ import DemografiPekerjaan from "./demografi-pekerjaan";
 import JumlahPengangguran from "./jumlah-pengangguran";
 import PendapatanAsliDesa from "./pendapatan-asli-desa";
 import StrukturOrganisasi from "./struktur-bumdes";
+import Bumdes from "./bumdes";
 import KategoriProduk from "./umkm/kategori-produk/kategori-produk";
 import Umkm from "./umkm";
 import ProdukUmkm from "./umkm/produk";
@@ -23,6 +24,7 @@ const Ekonomi = new Elysia({
 .use(LowonganKerja)
 .use(ProgramKemiskinan)
 .use(StrukturOrganisasi)
+.use(Bumdes)
 .use(KategoriProduk)
 .use(Umkm)
 .use(ProdukUmkm)

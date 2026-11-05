@@ -110,6 +110,9 @@ model FileStorage {
 
   KesejahteraanMasyarakat       KesejahteraanMasyarakat[] @relation("KesejahteraanFeaturedImage")
   KesejahteraanMasyarakatImages KesejahteraanMasyarakat[] @relation("KesejahteraanImages")
+
+  ProfilBumDes    ProfilBumDes[]
+  UnitUsahaBumDes UnitUsahaBumDes[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -581,6 +584,26 @@ model VisiMisiDesa {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   isActive  Boolean   @default(true)
+}
+
+// Letak & batas wilayah desa. Singleton: hanya satu baris (id tetap
+// "wilayah-desa", di-upsert dari admin). Semua kolom nullable agar tabel boleh
+// kosong sebelum admin mengisi; aturan wajib-isi ditegakkan di API.
+model WilayahDesa {
+  id           String    @id @default(cuid())
+  batasUtara   String?
+  batasSelatan String?
+  batasTimur   String?
+  batasBarat   String?
+  // Satuan: hektar (ha).
+  luasWilayah  Float?
+  keterangan   String?   @db.Text
+  // URL embed peta (hanya https), dirender sebagai iframe di halaman publik.
+  petaEmbedUrl String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean   @default(true)
 }
 
 model LambangDesa {
@@ -1499,6 +1522,10 @@ model PasarDesa {
   umkm   Umkm    @relation(fields: [umkmId], references: [id])
   umkmId String
 
+  // Penanda "Produk Unggulan Desa" untuk katalog publik. NOT NULL DEFAULT false
+  // agar produk lama otomatis non-unggulan; admin menandai lewat form produk.
+  isUnggulan Boolean @default(false)
+
   // Relasi Penjualan
   penjualan PenjualanProduk[]
 
@@ -1615,6 +1642,38 @@ model StrukturOrganisasiBumDes {
   updatedAt            DateTime               @updatedAt
   deletedAt            DateTime?
   isActive             Boolean                @default(true)
+}
+
+// Profil BUMDes (singleton): satu baris dengan id tetap "profil-bumdes", ditulis lewat upsert.
+model ProfilBumDes {
+  id           String       @id @default("profil-bumdes")
+  nama         String       @db.VarChar(255)
+  deskripsi    String       @db.Text
+  alamat       String?      @db.Text
+  kontak       String?      @db.VarChar(255)
+  tahunBerdiri Int?
+  image        FileStorage? @relation(fields: [imageId], references: [id])
+  imageId      String?
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+}
+
+// Daftar unit usaha BUMDes; urutan menentukan posisi tampil di halaman publik.
+model UnitUsahaBumDes {
+  id        String       @id @default(cuid())
+  nama      String       @db.VarChar(255)
+  deskripsi String       @db.Text
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
+  urutan    Int          @default(0)
+  isActive  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+
+  @@index([isActive, deletedAt, urutan])
 }
 
 // ========================================= PROGRAM KEMISKINAN ========================================= //
@@ -1966,6 +2025,14 @@ model KegiatanDesa {
   isActive           Boolean          @default(true)
   kategoriKegiatan   KategoriKegiatan @relation(fields: [kategoriKegiatanId], references: [id])
   kategoriKegiatanId String
+
+  // Khusus kategori Pembangunan (KATEGORI_PEMBANGUNAN_ID) — nullable agar data lama aman
+  anggaran          Float? // Rupiah, tipe sama dengan APBDesItem.anggaran
+  progres           Int? // 0–100 (CHECK constraint di migrasi)
+  statusPembangunan String? // "rencana" | "berjalan" | "selesai" — divalidasi di API
+  sumberDana        String?
+
+  @@index([kategoriKegiatanId])
 }
 
 model KategoriKegiatan {

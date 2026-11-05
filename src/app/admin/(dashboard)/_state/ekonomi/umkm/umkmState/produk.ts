@@ -11,6 +11,7 @@ const produkFormSchema = z.object({
   deskripsi: z.string().optional().nullable(),
   imageId: z.string().optional().nullable(),
   kategoriId: z.string().min(1, "Kategori wajib dipilih"),
+  isUnggulan: z.boolean().optional(),
 });
 
 const defaultProdukForm = {
@@ -23,6 +24,7 @@ const defaultProdukForm = {
   imageId: null as string | null,
   kategoriId: "",
   isActive: true,
+  isUnggulan: false,
 };
 
 const produk = proxy({
@@ -36,7 +38,8 @@ const produk = proxy({
       limit = 10,
       search = "",
       umkmId = "",
-      kategoriId = ""
+      kategoriId = "",
+      unggulan = false
     ) {
       this.loading = true;
       this.page = page;
@@ -48,6 +51,7 @@ const produk = proxy({
           umkmId,
           kategoriId,
         });
+        if (unggulan) params.set("unggulan", "true");
         const res = await fetch(
           `/api/ekonomi/umkm/produk/find-many?${params}`
         );
