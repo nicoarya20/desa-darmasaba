@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import { Box, Button, Center, Group, Loader, Stack, Stepper, StepperCompleted, StepperStep, Text, Title } from '@mantine/core';
 import { IconArrowLeft, IconArrowRight, IconCheck } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -74,6 +75,8 @@ function PelayananPerizinanBerusaha() {
               Sistem Online Single Submission (OSS) untuk pendaftaran NIB
             </Text>
           </Box>
+
+          <LayananWaktuBiayaBadge estimasiWaktu={data?.estimasiWaktu} biaya={data?.biaya} />
 
           <Text
             fz={{ base: 'sm', md: 'md' }}

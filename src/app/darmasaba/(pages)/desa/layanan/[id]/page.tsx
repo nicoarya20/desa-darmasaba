@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import colors from '@/con/colors';
 import { Box, Button, Center, Container, Group, Image, Modal, Paper, Select, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useParams } from 'next/navigation';
@@ -16,6 +17,8 @@ interface LayananData {
   deskripsi: string;
   imageId: string;
   image2Id: string;
+  estimasiWaktu: string | null;
+  biaya: number | null;
   image?: {
     id: string;
     link: string;
@@ -167,13 +170,16 @@ function Page() {
         <BackButton />
       </Box>
       <Container w={{ base: "100%", md: "60%" }}>
-        <Text
-          fz={{ base: "2rem", md: "2.5rem", lg: "3rem" }}
-          ta="center"
-          fw="bold"
-        >
-          {data.name}
-        </Text>
+        <Stack align="center" gap="sm">
+          <Text
+            fz={{ base: "2rem", md: "2.5rem", lg: "3rem" }}
+            ta="center"
+            fw="bold"
+          >
+            {data.name}
+          </Text>
+          <LayananWaktuBiayaBadge estimasiWaktu={data.estimasiWaktu} biaya={data.biaya} />
+        </Stack>
       </Container>
       <Box px={{ base: "35", md: 100 }}>
         <Stack gap="md">

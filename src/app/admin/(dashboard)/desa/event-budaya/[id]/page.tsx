@@ -1,7 +1,9 @@
 'use client';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import eventBudayaState from '@/app/admin/(dashboard)/_state/desa/eventBudaya';
+import { KategoriEventBadge } from '@/components/KategoriEventBadge';
 import colors from '@/con/colors';
+import { formatRentangTanggal } from '@/lib/agenda-desa-waktu';
 import {
   Box,
   Button,
@@ -67,7 +69,7 @@ export default function DetailEventBudaya() {
           <Group gap="sm">
             <IconCalendarEvent size={22} color={colors['blue-button']} />
             <Text fz="xl" fw="bold" c={colors['blue-button']}>
-              Detail Event Budaya
+              Detail Agenda Desa
             </Text>
           </Group>
 
@@ -81,13 +83,20 @@ export default function DetailEventBudaya() {
               <Box>
                 <Text fz="sm" fw={600} c="dimmed">Tanggal</Text>
                 <Text fz="md">
-                  {new Date(data.tanggal).toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })}
+                  {data.tanggalSelesai
+                    ? formatRentangTanggal(data)
+                    : new Date(data.tanggal).toLocaleDateString('id-ID', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
                 </Text>
+              </Box>
+
+              <Box>
+                <Text fz="sm" fw={600} c="dimmed">Kategori</Text>
+                <KategoriEventBadge kategori={data.kategori} mt={4} />
               </Box>
 
               <Box>
@@ -134,7 +143,7 @@ export default function DetailEventBudaya() {
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text="Apakah anda yakin ingin menghapus event budaya ini?"
+        text="Apakah anda yakin ingin menghapus agenda ini?"
       />
     </Box>
   );

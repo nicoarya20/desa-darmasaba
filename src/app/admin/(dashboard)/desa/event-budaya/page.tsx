@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import eventBudayaState from '@/app/admin/(dashboard)/_state/desa/eventBudaya';
+import { KategoriEventBadge } from '@/components/KategoriEventBadge';
 import colors from '@/con/colors';
+import { formatRentangTanggal } from '@/lib/agenda-desa-waktu';
 import {
   Badge,
   Box,
@@ -32,7 +34,7 @@ function EventBudayaPage() {
   return (
     <Box>
       <HeaderSearch
-        title="Event Budaya"
+        title="Agenda & Kalender Desa"
         placeholder="Cari nama atau lokasi..."
         searchIcon={<IconSearch size={20} />}
         value={search}
@@ -66,7 +68,7 @@ function ListEventBudaya({ search }: { search: string }) {
     <Box py="md">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="lg">
-          <Title order={4}>List Event Budaya</Title>
+          <Title order={4}>List Agenda Desa</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -81,10 +83,11 @@ function ListEventBudaya({ search }: { search: string }) {
           <Table highlightOnHover layout="fixed" withColumnBorders={false}>
             <TableThead>
               <TableTr>
-                <TableTh w="35%">Nama Event</TableTh>
-                <TableTh w="20%">Tanggal</TableTh>
-                <TableTh w="25%">Lokasi</TableTh>
-                <TableTh w="20%">Aksi</TableTh>
+                <TableTh w="28%">Nama Event</TableTh>
+                <TableTh w="16%">Kategori</TableTh>
+                <TableTh w="22%">Tanggal</TableTh>
+                <TableTh w="19%">Lokasi</TableTh>
+                <TableTh w="15%">Aksi</TableTh>
               </TableTr>
             </TableThead>
             <TableTbody>
@@ -104,12 +107,11 @@ function ListEventBudaya({ search }: { search: string }) {
                       </Group>
                     </TableTd>
                     <TableTd>
-                      <Badge variant="light" color="indigo">
-                        {new Date(item.tanggal).toLocaleDateString('id-ID', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
+                      <KategoriEventBadge kategori={item.kategori} />
+                    </TableTd>
+                    <TableTd>
+                      <Badge variant="light" color="indigo" tt="none">
+                        {formatRentangTanggal(item)}
                       </Badge>
                     </TableTd>
                     <TableTd>
@@ -134,7 +136,7 @@ function ListEventBudaya({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4}>
+                  <TableTd colSpan={5}>
                     <Text ta="center" c="dimmed" py="xl">
                       Belum ada data event budaya
                     </Text>
@@ -157,14 +159,15 @@ function ListEventBudaya({ search }: { search: string }) {
                     <Text fz="sm" fw={500} lh={1.45}>{item.nama}</Text>
                   </Group>
 
+                  <Text fz="sm" fw={600} lh={1.4} c="dimmed" mt="xs">Kategori</Text>
+                  <Box>
+                    <KategoriEventBadge kategori={item.kategori} />
+                  </Box>
+
                   <Text fz="sm" fw={600} lh={1.4} c="dimmed" mt="xs">Tanggal</Text>
                   <Box>
-                    <Badge variant="light" color="indigo">
-                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                    <Badge variant="light" color="indigo" tt="none">
+                      {formatRentangTanggal(item)}
                     </Badge>
                   </Box>
 

@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { LINK_TOKO_INCLUDE } from "./_link";
 import { buildProdukWhere } from "./_where";
 
 async function produkUmkmFindMany(context: Context) {
@@ -22,7 +23,8 @@ async function produkUmkmFindMany(context: Context) {
           umkm: {
             include: { kategori: true }
           },
-          kategoriProduk: true
+          kategoriProduk: true,
+          linkTokoOnline: LINK_TOKO_INCLUDE,
         },
         skip,
         take: limit,

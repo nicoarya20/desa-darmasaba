@@ -171,6 +171,7 @@ Gaya apple.com. File: `_com/NavbarMainMenu.tsx` (bar), `_com/NavbarFlyout.tsx` (
 - **Blur halaman**: overlay `fixed` `backdrop-filter: blur(18px)` + tint, fade `opacity`. Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual: Lightning CSS (Turbopack) menggabungkan keduanya jadi hanya versi `-webkit-` yang diabaikan Chrome.
 - **Tutup**: cursor keluar area bar+panel (jeda 120ms), Escape, klik overlay, klik link, atau route berganti. Pencarian dibuka/tutup lewat klik ikon (tidak ikut hover).
 - **Aksesibilitas**: menu utama `<button aria-expanded>`, submenu `<a>` (bisa keyboard & tab baru), Enter membuka + fokus link pertama, panel `inert` saat tertutup. `prefers-reduced-motion`: tanpa gerak, hanya fade. Hover warna hanya untuk `(hover: hover) and (pointer: fine)`.
+- **Pencarian** (`_com/globalSearch.tsx`): dropdown berisi bagian "Halaman" (submenu navbar yang cocok, dari `_com/searchMenu.ts` atas `src/con/navbar-list-menu.ts` lalu `src/con/search-extra-pages.ts` untuk halaman publik di luar navbar, langsung tanpa menunggu API) di atas "Konten" (hasil API). "Halaman" menampilkan 5 hasil dulu (`MENU_PREVIEW_COUNT`, `previewMenuResults`), sisanya dibuka di tempat lewat tombol "Tampilkan N halaman lainnya" (`_com/SearchShowMoreButton.tsx`); ketikan berubah → kembali 5. Baris dirender `_com/SearchResultRow.tsx`. Dites di `__tests__/api/search_menu.test.ts`.
 
 ### Navbar Mobile
 
@@ -241,6 +242,10 @@ Stack bg="linear-gradient(180deg, #1C6EA4, #124170)"
     // Berlangganan
 ```
 
+### Peta Informasi (`/darmasaba/peta-informasi`)
+
+Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.tsx` (H1, `TextInput` berlabel "Saring halaman", ringkasan `aria-live`, `SimpleGrid` 1/2/3 kolom) → `_com/PetaInformasiGroupCard.tsx` (kartu per menu utama: H2 + `<ul>/<li>` `Anchor component={Link}`). Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, saring lewat `searchMenu` tanpa API. Pintu masuk: footer "Tautan Penting", entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Dites di `__tests__/api/peta_informasi.test.ts`.
+
 ---
 
 ## 6. Layout Admin (`/admin/`)
@@ -292,7 +297,7 @@ File: `src/con/navbar-list-menu.ts`
 | # | Menu | Jumlah Sub |
 |---|---|---|
 | 1 | PPID | 8 |
-| 2 | Desa | 10 (termasuk Kalender Event Budaya, Monev & Pembangunan) |
+| 2 | Desa | 10 (termasuk Agenda & Kalender Desa, Monev & Pembangunan) |
 | 3 | Kesehatan | 7 |
 | 4 | Keamanan | 7 |
 | 5 | Ekonomi | 11 (termasuk Kesejahteraan Masyarakat) |
@@ -631,7 +636,7 @@ p={{ base: "sm", md: "lg" }}
 | Domain | Konten Utama |
 |---|---|
 | PPID | Profil, Struktur, Visi Misi, Dasar Hukum, Permohonan Informasi |
-| Desa | Profil, Potensi, Berita, Pengumuman, Gallery, Layanan, Penghargaan, Kalender Event Budaya |
+| Desa | Profil, Potensi, Berita, Pengumuman, Gallery, Layanan, Penghargaan, Agenda & Kalender Desa |
 | Kesehatan | Data Posyandu (balita, ibu hamil, ringkasan), Puskesmas, Program, Info Wabah |
 | Kependudukan | Dashboard statistik, Data Per Banjar, Dinamika, Distribusi Agama/Umur |
 | Ekonomi | UMKM, Lowongan Kerja, BUMDesa, PADesa, Transparansi APBDes (grafik + tabel) |

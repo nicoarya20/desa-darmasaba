@@ -87,6 +87,7 @@ model FileStorage {
   InfoTekno                      InfoTekno[]
   PengaduanMasyarakat            PengaduanMasyarakat[]
   KegiatanDesa                   KegiatanDesa[]
+  DokumenPerencanaan             DokumenPerencanaan[]
   ProgramInovasi                 ProgramInovasi[]
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
@@ -792,6 +793,8 @@ model PelayananSuratKeterangan {
   imageId          String?
   image2           FileStorage?       @relation("PelayananSuratKeteranganImage2", fields: [image2Id], references: [id])
   image2Id         String?
+  estimasiWaktu    String?
+  biaya            Int?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   deletedAt        DateTime           @default(now())
@@ -800,35 +803,41 @@ model PelayananSuratKeterangan {
 }
 
 model PelayananTelunjukSaktiDesa {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  link      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  link          String
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model PelayananPerizinanBerusaha {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  link      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  link          String
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model PelayananPendudukNonPermanen {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model AjukanPermohonan {
@@ -1537,6 +1546,25 @@ model PasarDesa {
   kategoriProduk   KategoriProdukUmkm? @relation(fields: [kategoriProdukId], references: [id])
   kategoriProdukId String?
   KategoriToPasar  KategoriToPasar[]
+  linkTokoOnline   LinkTokoOnline[]
+}
+
+// Link toko online (Shopee, Tokopedia, dll.) per produk UMKM. `platform` disimpan
+// sebagai String dan divalidasi aplikasi dari konstanta bernama (tanpa enum DB agar
+// platform baru tidak butuh migrasi tipe). URL divalidasi di boundary server.
+model LinkTokoOnline {
+  id        String    @id @default(uuid())
+  produk    PasarDesa @relation(fields: [produkId], references: [id], onDelete: Cascade)
+  produkId  String
+  platform  String
+  url       String
+  urutan    Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
+
+  @@index([produkId])
 }
 
 model KategoriProduk {
@@ -1741,6 +1769,8 @@ model SektorUnggulanDesa {
   name        String   @unique @db.VarChar(100) // Nama sektor (e.g., "Sektor Pertanian", "Sektor Peternakan")
   description String?  @db.Text // Deskripsi lengkap tentang sektor
   value       Float? // Nilai kuantitatif sektor (misalnya, kontribusi PDB, jumlah produksi, dll.)
+  satuan      String?  @db.VarChar(20) // Satuan nilai (mis. "ton", "kg", "ha", "ekor", "%"); null = nilai tanpa satuan (indeks/skor lama)
+  periode     String?  @db.VarChar(50) // Periode nilai (mis. "2025", "Semester I 2026")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime @default(now())
@@ -2033,6 +2063,27 @@ model KegiatanDesa {
   sumberDana        String?
 
   @@index([kategoriKegiatanId])
+}
+
+// Dokumen perencanaan desa: RPJM (periode 6/8 tahun), RKP (per tahun), dan berita acara musyawarah.
+model DokumenPerencanaan {
+  id              String       @id @default(cuid())
+  jenis           String // "RPJM" | "RKP" | "BERITA_ACARA_MUSYAWARAH" — divalidasi di API (src/lib/dokumen-perencanaan.ts)
+  judul           String
+  tahun           Int? // RKP & berita acara
+  tahunMulai      Int? // RPJM
+  tahunSelesai    Int? // RPJM (>= tahunMulai, divalidasi di API)
+  nomorPerdes     String?
+  ringkasan       String?      @db.Text
+  jenisMusyawarah String? // "MUSDES" | "MUSRENBANGDES" | "MMD" | "LAINNYA" — hanya berita acara
+  file            FileStorage? @relation(fields: [fileId], references: [id])
+  fileId          String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
+  isActive        Boolean      @default(true)
+
+  @@index([jenis, tahun])
 }
 
 model KategoriKegiatan {
@@ -2748,12 +2799,16 @@ model RingkasanKesehatanDesa {
 
 // ========================================= EVENT BUDAYA ========================================= //
 model EventBudaya {
-  id        String   @id @default(cuid())
-  nama      String
-  tanggal   DateTime
-  lokasi    String
-  deskripsi String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isActive  Boolean  @default(true)
+  id             String    @id @default(cuid())
+  nama           String
+  tanggal        DateTime
+  tanggalSelesai DateTime?
+  kategori       String    @default("BUDAYA")
+  lokasi         String
+  deskripsi      String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  isActive       Boolean   @default(true)
+
+  @@index([tanggal])
 }

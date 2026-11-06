@@ -34,6 +34,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 import umkmState from "../../../../../_state/ekonomi/umkm/umkm";
+import { LinkTokoOnlineField } from "../../_com/LinkTokoOnlineField";
+import type { LinkTokoOnlineInput } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
 
 interface ProdukData {
   id: string;
@@ -46,6 +48,7 @@ interface ProdukData {
   imageId: string | null;
   kategoriProdukId: string | null;
   isUnggulan: boolean;
+  linkTokoOnline?: LinkTokoOnlineInput[];
   image?: { link: string } | null;
 }
 
@@ -59,6 +62,7 @@ interface ProdukForm {
   imageId: string | null;
   kategoriId: string;
   isUnggulan: boolean;
+  linkTokoOnline: LinkTokoOnlineInput[];
 }
 
 function EditProdukUmkm() {
@@ -81,6 +85,7 @@ function EditProdukUmkm() {
     imageId: null,
     kategoriId: "",
     isUnggulan: false,
+    linkTokoOnline: [],
   });
 
   const [originalData, setOriginalData] = useState<ProdukForm & { imageUrl: string }>({
@@ -93,6 +98,7 @@ function EditProdukUmkm() {
     imageId: null,
     kategoriId: "",
     isUnggulan: false,
+    linkTokoOnline: [],
     imageUrl: ""
   });
 
@@ -126,6 +132,7 @@ function EditProdukUmkm() {
           imageId: data.imageId || "",
           kategoriId: data.kategoriProdukId || "",
           isUnggulan: data.isUnggulan ?? false,
+          linkTokoOnline: (data.linkTokoOnline ?? []).map((l) => ({ platform: l.platform, url: l.url })),
         };
 
         setFormData(initialForm);
@@ -200,6 +207,7 @@ function EditProdukUmkm() {
       imageId: originalData.imageId,
       kategoriId: originalData.kategoriId,
       isUnggulan: originalData.isUnggulan,
+      linkTokoOnline: originalData.linkTokoOnline,
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
@@ -378,6 +386,12 @@ function EditProdukUmkm() {
             description="Tampilkan penanda Unggulan dan masukkan ke filter Produk Unggulan di katalog publik"
             checked={formData.isUnggulan}
             onChange={(e) => handleChange("isUnggulan", e.currentTarget.checked)}
+          />
+
+          {/* Link Toko Online */}
+          <LinkTokoOnlineField
+            value={formData.linkTokoOnline}
+            onChange={(next) => setFormData((prev) => ({ ...prev, linkTokoOnline: next }))}
           />
 
           {/* Deskripsi */}
