@@ -87,7 +87,8 @@ describe('parseWaktuBiaya — validasi estimasi waktu', () => {
 
 describe('parseWaktuBiaya — kontrak aditif', () => {
   it('tanpa field baru → data kosong (kolom tidak disentuh)', () => {
-    for (const input of [{}, undefined, null, { name: 'x', deskripsi: 'y' }]) {
+    const inputs: Parameters<typeof parseWaktuBiaya>[0][] = [{}, undefined, null, { name: 'x', deskripsi: 'y' } as object];
+    for (const input of inputs) {
       const result = parseWaktuBiaya(input);
       expect(result).toEqual({ ok: true, data: {} });
       expect(result.ok && Object.keys(result.data)).toEqual([]);
