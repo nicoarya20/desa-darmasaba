@@ -2,10 +2,14 @@
 
 ## [0.1.216] - 2026-11-06
 ### Changed
-- **Section Prestasi Desa di beranda tampil baru**, bergaya halaman promo apple.com. Bagian atasnya foto desa selebar layar dengan judul "Prestasi Desa", kalimat pengantar, dan tombol "Lihat Semua Prestasi".
-- Di bawah foto ada grid berisi **4 prestasi terbaru**, masing-masing dengan foto besar dan judul di pojok kiri bawah. Klik di mana saja pada foto untuk membuka detail prestasi. Prestasi yang baru ditambahkan admin langsung muncul di urutan pertama.
-- Kartu tidak lagi menampilkan potongan deskripsi panjang dan tombol "Detail Prestasi"; yang tampil kini judul prestasinya, lebih ringkas dan mudah dibaca.
-- Foto desa di bagian atas masih foto contoh sementara (pemandangan sawah di Kecamatan Abiansemal) sampai foto asli Desa Darmasaba tersedia.
+- **Prestasi Desa dan Penghargaan Desa kini menjadi satu: "Prestasi dan Penghargaan Desa".** Di beranda, section ini dibuka dengan video penghargaan yang sama seperti sebelumnya, berisi judul, kalimat pengantar, dan tombol "Selengkapnya". Daftar kartu penghargaan di atas video diganti grid berisi **4 prestasi atau penghargaan terbaru** dengan foto besar dan judul di pojok kiri bawah. Klik di mana saja pada foto untuk membuka detailnya. Entri yang baru ditambahkan admin langsung muncul paling depan.
+- Video kini hanya berputar saat terlihat di layar. Video bisa dijeda dan diputar lagi lewat tombol di pojok kanan bawah, dan tidak berputar otomatis bila pengguna mengaktifkan "kurangi gerakan".
+- **Halaman "Prestasi dan Penghargaan Desa"** (`/darmasaba/prestasi-desa`) kini menampilkan prestasi dan penghargaan sekaligus dalam grid foto yang sama dengan beranda, lengkap dengan pencarian dan halaman bernomor. Alamat lama `/darmasaba/penghargaan` otomatis diarahkan ke halaman ini, dan halaman detail setiap prestasi atau penghargaan tetap bisa dibuka seperti biasa.
+- Menu navbar "Penghargaan" berganti nama menjadi "Prestasi dan Penghargaan".
+- Urutan section beranda: Prestasi dan Penghargaan kini tepat di bawah APBDes, dan Indeks Kepuasan Masyarakat pindah ke paling bawah.
+
+### Fixed
+- Hasil pencarian untuk penghargaan tidak lagi membuka halaman yang tidak ada (`/darmasaba/desa/penghargaan`).
 
 ## [0.1.215] - 2026-11-06
 ### Changed
