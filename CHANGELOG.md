@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.216] - 2026-11-06
+### Changed
+- **Section Prestasi Desa di beranda tampil baru**, bergaya halaman promo apple.com. Bagian atasnya foto desa selebar layar dengan judul "Prestasi Desa", kalimat pengantar, dan tombol "Lihat Semua Prestasi".
+- Di bawah foto ada grid berisi **4 prestasi terbaru**, masing-masing dengan foto besar dan judul di pojok kiri bawah. Klik di mana saja pada foto untuk membuka detail prestasi. Prestasi yang baru ditambahkan admin langsung muncul di urutan pertama.
+- Kartu tidak lagi menampilkan potongan deskripsi panjang dan tombol "Detail Prestasi"; yang tampil kini judul prestasinya, lebih ringkas dan mudah dibaca.
+- Foto desa di bagian atas masih foto contoh sementara (pemandangan sawah di Kecamatan Abiansemal) sampai foto asli Desa Darmasaba tersedia.
+
 ## [0.1.215] - 2026-11-06
 ### Changed
 - **Halaman "Lihat semua data APBDes" tampil baru**, senada dengan section APBDes di beranda: tombol tahun, tanggal "Data diperbarui", tiga kartu ringkasan, grafik pagu dan realisasi, lalu rincian anggaran per kategori yang langsung terbuka.
