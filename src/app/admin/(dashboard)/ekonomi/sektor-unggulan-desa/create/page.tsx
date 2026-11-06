@@ -20,6 +20,7 @@ import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import grafikSektorUnggulan from '../../../_state/ekonomi/sektor-unggulan-desa';
 import { toast } from 'react-toastify';
+import { PERIODE_MAX_LENGTH, SATUAN_MAX_LENGTH } from '@/lib/sektor-unggulan';
 
 function CreateSektorUnggulanDesa() {
   const stateGrafik = useProxy(grafikSektorUnggulan, { sync: true }); // sync: cegah caret jump di controlled input
@@ -49,6 +50,8 @@ function CreateSektorUnggulanDesa() {
       name: '',
       description: '',
       value: 0,
+      satuan: '',
+      periode: '',
     };
   };
 
@@ -131,6 +134,28 @@ function CreateSektorUnggulanDesa() {
               stateGrafik.create.form.value = Number(e.currentTarget.value);
             }}
             required
+          />
+
+          <TextInput
+            label="Satuan"
+            description='Opsional. Contoh: ton, kg, ha, ekor, %'
+            placeholder="Masukkan satuan"
+            maxLength={SATUAN_MAX_LENGTH}
+            value={stateGrafik.create.form.satuan ?? ''}
+            onChange={(e) => {
+              stateGrafik.create.form.satuan = e.currentTarget.value;
+            }}
+          />
+
+          <TextInput
+            label="Periode"
+            description='Opsional. Contoh: 2025, Semester I 2026'
+            placeholder="Masukkan periode"
+            maxLength={PERIODE_MAX_LENGTH}
+            value={stateGrafik.create.form.periode ?? ''}
+            onChange={(e) => {
+              stateGrafik.create.form.periode = e.currentTarget.value;
+            }}
           />
 
           <Group justify="right">

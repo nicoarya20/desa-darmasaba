@@ -1,12 +1,15 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
+import { parseWaktuBiaya } from "@/lib/pelayanan-waktu-biaya";
 
 type FormUpdate = Prisma.PelayananTelunjukSaktiDesaGetPayload<{
     select: {
         name: true;
         deskripsi: true;
         link: true;
+        estimasiWaktu: true;
+        biaya: true;
     };
 }>;
 export default async function pelayananTelunjukSaktiDesaUpdate(context: Context) {
@@ -28,12 +31,18 @@ export default async function pelayananTelunjukSaktiDesaUpdate(context: Context)
             });
         }
 
+        const waktuBiaya = parseWaktuBiaya(body);
+        if (!waktuBiaya.ok) {
+            return Response.json({ success: false, message: waktuBiaya.message }, { status: 400 });
+        }
+
         const data = await prisma.pelayananTelunjukSaktiDesa.update({
             where: { id },
             data: {
                 name,
                 deskripsi,
                 link,
+                ...waktuBiaya.data,
             },
         });
 
@@ -55,6 +64,7 @@ export default async function pelayananTelunjukSaktiDesaUpdate(context: Context)
                 name,
                 deskripsi,
                 link,
+                ...waktuBiaya.data,
             },
         });
 

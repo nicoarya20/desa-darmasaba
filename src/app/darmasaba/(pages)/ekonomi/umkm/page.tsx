@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
 import { UnggulanBadge } from './_com/UnggulanBadge';
+import { LinkTokoOnlineButtons } from './_com/LinkTokoOnlineButtons';
 import { perSatuanSuffix } from './_lib/satuan';
 
 function Page() {
@@ -179,6 +180,7 @@ function TabProdukUmkm({ router }: { router: any }) {
                         {perSatuanSuffix(v.satuan)}
                       </Text>
                     </Text>
+                    <LinkTokoOnlineButtons links={v.linkTokoOnline} compact />
                   </Stack>
                 </Card>
               </motion.div>

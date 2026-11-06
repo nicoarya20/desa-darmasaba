@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { LINK_TOKO_INCLUDE, sembunyikanLinkBilaDihapus } from "./_link";
 
 async function produkUmkmFindUnique(context: Context) {
   const id = context.params.id;
@@ -15,7 +16,8 @@ async function produkUmkmFindUnique(context: Context) {
           orderBy: { tanggal: 'desc' },
           take: 10
         },
-        kategoriProduk: true
+        kategoriProduk: true,
+        linkTokoOnline: LINK_TOKO_INCLUDE,
       },
     });
 
@@ -29,7 +31,7 @@ async function produkUmkmFindUnique(context: Context) {
     return {
       success: true,
       message: "Berhasil mengambil detail produk UMKM (PasarDesa)",
-      data,
+      data: sembunyikanLinkBilaDihapus(data),
     };
   } catch (e) {
     console.error("Error di produkUmkmFindUnique:", e);

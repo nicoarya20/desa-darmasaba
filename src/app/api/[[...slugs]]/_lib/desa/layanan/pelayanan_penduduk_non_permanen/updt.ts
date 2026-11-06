@@ -1,11 +1,14 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
+import { parseWaktuBiaya } from "@/lib/pelayanan-waktu-biaya";
 
 type FormUpdate = Prisma.PelayananPendudukNonPermanenGetPayload<{
     select: {
         name: true;
         deskripsi: true;
+        estimasiWaktu: true;
+        biaya: true;
     };
 }>;
 export default async function pelayananPendudukNonPermanenUpdate(context: Context) {
@@ -26,6 +29,11 @@ export default async function pelayananPendudukNonPermanenUpdate(context: Contex
                 },
             });
         }
+        const waktuBiaya = parseWaktuBiaya(body);
+        if (!waktuBiaya.ok) {
+            return Response.json({ success: false, message: waktuBiaya.message }, { status: 400 });
+        }
+
         const existing = await prisma.pelayananPendudukNonPermanen.findUnique({
             where: { id },
         });
@@ -44,7 +52,7 @@ export default async function pelayananPendudukNonPermanenUpdate(context: Contex
 
         const updated = await prisma.pelayananPendudukNonPermanen.update({
             where: { id },
-            data: { name, deskripsi },
+            data: { name, deskripsi, ...waktuBiaya.data },
         });
 
         return new Response(JSON.stringify({

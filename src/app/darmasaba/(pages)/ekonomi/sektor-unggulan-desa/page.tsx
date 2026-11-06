@@ -16,6 +16,7 @@ import { BarChart } from '@mantine/charts';
 import { useProxy } from 'valtio/utils';
 import grafikSektorUnggulan from '@/app/admin/(dashboard)/_state/ekonomi/sektor-unggulan-desa';
 import { useShallowEffect } from '@mantine/hooks';
+import { formatSektorValue, resolveChartUnit } from '@/lib/sektor-unggulan';
 
 function Page() {
   const state = useProxy(grafikSektorUnggulan)
@@ -62,13 +63,14 @@ function Page() {
   const endIndex = startIndex + itemsPerPage;
   const currentData = data.slice(startIndex, endIndex);
 
-  const chartData = data
-    .filter(item => item?.name && typeof item.value === 'number')
-    .map((item) => ({
-      id: item.id,
-      sektor: item.name,
-      Ton: item.value,
-    }));
+  const plottable = data.filter(item => item?.name && typeof item.value === 'number');
+  const chartUnit = resolveChartUnit(plottable);
+
+  const chartData = plottable.map((item) => ({
+    id: item.id,
+    sektor: item.name,
+    [chartUnit]: item.value,
+  }));
 
   const chartWidth = Math.max(600, chartData.length * 150);
 
@@ -98,6 +100,11 @@ function Page() {
                 <Title order={3} fw="bold">
                   {v.name}
                 </Title>
+                {formatSektorValue(v) && (
+                  <Text fw={600} c={colors['blue-button']} fz={{ base: 'sm', md: 'md' }} mt={4}>
+                    {formatSektorValue(v)}
+                  </Text>
+                )}
                 <Text
                   ta="justify"
                   fz={{ base: 'sm', md: 'md' }}
@@ -133,7 +140,7 @@ function Page() {
                     data={chartData}
                     dataKey="sektor"
                     series={[
-                      { name: 'Ton', color: colors['blue-button'] },
+                      { name: chartUnit, color: colors['blue-button'] },
                     ]}
                     tickLine="y"
                     tooltipAnimationDuration={200}
@@ -141,7 +148,7 @@ function Page() {
                     withXAxis
                     withYAxis
                     xAxisLabel="Sektor"
-                    yAxisLabel="Ton"
+                    yAxisLabel={chartUnit}
                     style={{
                       fontFamily: 'inherit',
                       fontSize: '12px',

@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { handlePrismaError } from "@/lib/prisma-error";
 import { Context } from "elysia";
+import { parseSatuanPeriodeInput } from "@/lib/sektor-unggulan";
 
 export default async function sektorUnggulanDesaUpdate(context: Context) {
     const id = context.params?.id;
@@ -16,6 +17,13 @@ export default async function sektorUnggulanDesaUpdate(context: Context) {
         name: string;
         description: string;
         value: number;
+    }
+
+    // satuan/periode opsional: tidak dikirim = tidak diubah; null/"" = dikosongkan
+    const extra = parseSatuanPeriodeInput(context.body as Record<string, unknown>);
+    if (!extra.ok) {
+        context.set.status = 400;
+        return { success: false, message: extra.message };
     }
 
     const existing = await prisma.sektorUnggulanDesa.findUnique({
@@ -40,6 +48,7 @@ export default async function sektorUnggulanDesaUpdate(context: Context) {
                 name,
                 description,
                 value,
+                ...extra.data,
             },
         })
 

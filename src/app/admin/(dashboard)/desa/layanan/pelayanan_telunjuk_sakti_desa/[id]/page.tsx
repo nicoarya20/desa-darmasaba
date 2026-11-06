@@ -2,6 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import colors from '@/con/colors';
+import { formatBiayaPelayanan } from '@/lib/pelayanan-waktu-biaya';
 import {
   Box,
   Button,
@@ -126,6 +127,24 @@ function DetailPelayananTelunjukSakti() {
                   }}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Estimasi Waktu
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {data?.estimasiWaktu || '-'}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Biaya
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {formatBiayaPelayanan(data?.biaya) ?? '-'}
+                </Text>
               </Box>
 
               <Group gap="sm">

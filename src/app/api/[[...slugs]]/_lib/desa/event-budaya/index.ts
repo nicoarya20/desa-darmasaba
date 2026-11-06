@@ -16,6 +16,8 @@ const EventBudaya = new Elysia({ prefix: "/eventbudaya", tags: ["Desa/Event Buda
       tanggal: t.String(),
       lokasi: t.String(),
       deskripsi: t.Optional(t.String()),
+      kategori: t.Optional(t.String()),
+      tanggalSelesai: t.Optional(t.Union([t.String(), t.Null()])),
     }),
   })
   .put("/:id", eventBudayaUpdate, {
@@ -24,6 +26,8 @@ const EventBudaya = new Elysia({ prefix: "/eventbudaya", tags: ["Desa/Event Buda
       tanggal: t.String(),
       lokasi: t.String(),
       deskripsi: t.Optional(t.String()),
+      kategori: t.Optional(t.String()),
+      tanggalSelesai: t.Optional(t.Union([t.String(), t.Null()])),
     }),
   })
   .delete("/del/:id", eventBudayaDelete);

@@ -3,7 +3,9 @@
 
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
 import colors from '@/con/colors';
+import { toWaktuBiayaForm, toWaktuBiayaPayload, validateWaktuBiayaForm } from '@/lib/pelayanan-waktu-biaya';
 import {
   Box,
   Button,
@@ -33,6 +35,8 @@ function EditPelayananPerizinanBerusaha() {
     name: '',
     deskripsi: '',
     link: '',
+    estimasiWaktu: '',
+    biaya: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,6 +61,8 @@ function EditPelayananPerizinanBerusaha() {
     name: '',
     deskripsi: '',
     link: '',
+    estimasiWaktu: '',
+    biaya: '',
   });
 
   // Load data detail
@@ -76,12 +82,14 @@ function EditPelayananPerizinanBerusaha() {
             name: data.name || "",
             deskripsi: data.deskripsi || "",
             link: data.link || "",
+            ...toWaktuBiayaForm(data),
           });
           setOriginalData({
             id: data.id,
             name: data.name || "",
             deskripsi: data.deskripsi || "",
             link: data.link || "",
+            ...toWaktuBiayaForm(data),
           });
         } else {
           toast.error("Data tidak ditemukan");
@@ -113,6 +121,8 @@ function EditPelayananPerizinanBerusaha() {
       name: originalData.name,
       deskripsi: originalData.deskripsi,
       link: originalData.link,
+      estimasiWaktu: originalData.estimasiWaktu,
+      biaya: originalData.biaya,
     });
     toast.info("Form dikembalikan ke data awal");
   };
@@ -133,9 +143,21 @@ function EditPelayananPerizinanBerusaha() {
       return;
     }
 
+    const waktuBiayaError = validateWaktuBiayaForm(formData);
+    if (waktuBiayaError) {
+      toast.error(waktuBiayaError);
+      return;
+    }
+
     try {
       setIsSubmitting(true);
-      await state.update.update(formData);
+      await state.update.update({
+        id: formData.id,
+        name: formData.name,
+        deskripsi: formData.deskripsi,
+        link: formData.link,
+        ...toWaktuBiayaPayload(formData),
+      });
       router.push('/admin/desa/layanan/pelayanan_perizinan_berusaha');
     } catch (error) {
       console.error('Error updating pelayanan perizinan berusaha:', error);
@@ -196,6 +218,13 @@ function EditPelayananPerizinanBerusaha() {
               placeholder="Masukkan link terkait"
               value={formData.link}
               onChange={(e) => handleChange('link')(e.target.value)}
+            />
+
+            <LayananWaktuBiayaFields
+              estimasiWaktu={formData.estimasiWaktu}
+              biaya={formData.biaya}
+              onEstimasiWaktuChange={handleChange('estimasiWaktu')}
+              onBiayaChange={handleChange('biaya')}
             />
 
             <Box>

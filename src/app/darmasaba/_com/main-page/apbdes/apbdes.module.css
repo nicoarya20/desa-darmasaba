@@ -12,7 +12,7 @@
   --line: rgba(0, 0, 0, 0.08);
   --radius: 18px;
   background: #fff;
-  padding: 80px 16px 72px;
+  padding: var(--section-pad-y) 16px;
   color: var(--ink);
 }
 
@@ -228,8 +228,11 @@
 }
 
 /* ---------- Halaman detail ---------- */
+/* padding-bottom ditulis eksplisit: .section memakai ritme beranda (--section-pad-y),
+   halaman detail tetap berjarak sendiri ke footer. */
 .page {
   padding-top: 32px;
+  padding-bottom: 72px;
 }
 
 .back {
@@ -282,10 +285,6 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
-  .section {
-    padding: 56px 16px 48px;
-  }
-
   .title {
     font-size: 32px;
   }
@@ -332,6 +331,7 @@
 
   .page {
     padding-top: 24px;
+    padding-bottom: 48px;
   }
 }
 

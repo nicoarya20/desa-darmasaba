@@ -91,6 +91,16 @@ function DetailSektorUnggulanDesa() {
                 <Text fz="md" c="dimmed">{data.value ?? '-'}</Text>
               </Box>
 
+              <Box>
+                <Text fz="lg" fw="bold">Satuan</Text>
+                <Text fz="md" c="dimmed">{data.satuan || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Periode</Text>
+                <Text fz="md" c="dimmed">{data.periode || '-'}</Text>
+              </Box>
+
               {/* Tombol Aksi */}
               <Group gap="sm">
                 <Button

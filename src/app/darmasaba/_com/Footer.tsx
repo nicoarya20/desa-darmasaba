@@ -2,6 +2,7 @@
 import { Accordion, ActionIcon, Anchor, Box, Button, Container, Divider, Flex, Group, Image, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandYoutube } from '@tabler/icons-react';
 import { useRef } from 'react';
+import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInformasi';
 import { toast } from 'react-toastify';
 
 const sosialMedia = [
@@ -58,7 +59,11 @@ const tautanPenting = [
   {
     title: "Transparansi",
     link: "/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba",
-  }
+  },
+  {
+    title: "Peta Informasi",
+    link: PETA_INFORMASI_HREF,
+  },
 ]
 
 const linkGroups = [

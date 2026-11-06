@@ -19,6 +19,8 @@ const SektorUnggulanDesa = new Elysia({
       name: t.String(),
       description: t.String(),
       value: t.Number(),
+      satuan: t.Optional(t.Nullable(t.String())),
+      periode: t.Optional(t.Nullable(t.String())),
     }),
   })
   .put("/:id", sektorUnggulanDesaUpdate, {
@@ -29,6 +31,8 @@ const SektorUnggulanDesa = new Elysia({
       name: t.String(),
       description: t.String(),
       value: t.Number(),
+      satuan: t.Optional(t.Nullable(t.String())),
+      periode: t.Optional(t.Nullable(t.String())),
     }),
   })
   .delete("/del/:id", sektorUnggulanDesaDelete, {

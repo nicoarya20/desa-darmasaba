@@ -2,6 +2,7 @@
 
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import colors from '@/con/colors';
+import { DOKUMEN_PERENCANAAN_PUBLIC_HREF } from '@/lib/dokumen-perencanaan';
 import {
   Badge,
   Box,
@@ -26,6 +27,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconBrandWhatsapp, IconDeviceImacCog, IconFileInfo, IconMail, IconSearch } from '@tabler/icons-react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../desa/layanan/_com/BackButto';
@@ -112,6 +114,17 @@ function Page() {
                 Daftar Informasi Publik Desa Darmasaba adalah kumpulan data yang dapat diakses oleh masyarakat sesuai dengan ketentuan peraturan yang berlaku.
               </Text>
             </Stack>
+          </Paper>
+
+          <Paper p="md" radius="xl" shadow="xs" withBorder>
+            <Group justify="space-between" wrap="wrap" gap="sm">
+              <Text fz={{ base: 'sm', md: 'md' }} lh={1.5}>
+                Dokumen RPJM Desa, RKP Desa, dan berita acara musyawarah tersedia di Monev &amp; Pembangunan.
+              </Text>
+              <Button component={Link} href={DOKUMEN_PERENCANAAN_PUBLIC_HREF} variant="light" radius="md" size="compact-md">
+                Dokumen Perencanaan
+              </Button>
+            </Group>
           </Paper>
 
           <TextInput

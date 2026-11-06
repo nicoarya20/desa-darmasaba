@@ -9,7 +9,7 @@
 .section {
   --ease: cubic-bezier(0.45, 0, 0.15, 1);
   --slide-ms: 800ms;
-  padding: 56px 0 40px;
+  padding: var(--section-pad-y) 0;
 }
 
 .title {
@@ -239,10 +239,6 @@
 
 /* Mobile: kartu potret, caption + pill di tengah bawah (seperti apple.com mobile). */
 @media (max-width: 734px) {
-  .section {
-    padding-top: 40px;
-  }
-
   .title {
     font-size: 32px;
     margin-bottom: 24px;

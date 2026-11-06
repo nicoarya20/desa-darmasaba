@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
+import { hitungAgendaPerBulan } from "@/lib/agenda-desa-waktu";
 import { Context } from "elysia";
+import { buildEventBudayaWhere, buildRingkasanTahunWhere } from "./filter";
 
 async function eventBudayaFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
@@ -8,7 +10,13 @@ async function eventBudayaFindMany(context: Context) {
   const search = (context.query.search as string) || "";
   const skip = (page - 1) * limit;
 
-  const where: any = { isActive: true };
+  const filter = buildEventBudayaWhere(context.query);
+  if (!filter.ok) {
+    context.set.status = 400;
+    return { success: false, message: filter.message };
+  }
+
+  const where: any = filter.where;
 
   if (search) {
     where.OR = [
@@ -28,7 +36,7 @@ async function eventBudayaFindMany(context: Context) {
       prisma.eventBudaya.count({ where }),
     ]);
 
-    return {
+    const response = {
       success: true,
       message: "Berhasil mengambil event budaya",
       data,
@@ -37,6 +45,15 @@ async function eventBudayaFindMany(context: Context) {
       total,
       totalPages: Math.ceil(total / limit),
     };
+
+    if (filter.tahun === null) return response;
+
+    // Ringkasan per bulan untuk tahun terpilih (mengikuti filter kategori saja).
+    const setahun = await prisma.eventBudaya.findMany({
+      where: buildRingkasanTahunWhere(filter.where.kategori, filter.tahun) as any,
+      select: { tanggal: true, tanggalSelesai: true },
+    });
+    return { ...response, ringkasanBulan: hitungAgendaPerBulan(setahun, filter.tahun) };
   } catch (e) {
     console.error("Error di eventBudayaFindMany:", e);
     return { success: false, message: "Gagal mengambil data event budaya" };

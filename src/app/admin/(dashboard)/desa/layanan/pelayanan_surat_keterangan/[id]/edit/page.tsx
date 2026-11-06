@@ -2,7 +2,9 @@
 'use client';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
 import colors from '@/con/colors';
+import { toWaktuBiayaForm, validateWaktuBiayaForm } from '@/lib/pelayanan-waktu-biaya';
 import ApiFetch from '@/lib/api-fetch';
 import {
   ActionIcon,
@@ -32,6 +34,8 @@ interface FormData {
   image2Id: string;
   imageUrl: string;
   image2Url: string;
+  estimasiWaktu: string;
+  biaya: string;
 }
 
 interface FileUploaderProps {
@@ -141,6 +145,8 @@ function EditSuratKeterangan() {
     image2Id: '',
     imageUrl: '',
     image2Url: '',
+    estimasiWaktu: '',
+    biaya: '',
   });
   const [originalData, setOriginalData] = useState<FormData>(formData);
   const [file, setFile] = useState<File | null>(null);
@@ -181,7 +187,8 @@ function EditSuratKeterangan() {
           imageId: data.imageId || '',
           image2Id: data.image2Id || '',
           imageUrl: data.image?.link || '',
-          image2Url: data.image2?.link || ''
+          image2Url: data.image2?.link || '',
+          ...toWaktuBiayaForm(data),
         };
 
         setFormData(mapped);
@@ -240,6 +247,12 @@ function EditSuratKeterangan() {
       return;
     }
 
+    const waktuBiayaError = validateWaktuBiayaForm(formData);
+    if (waktuBiayaError) {
+      toast.error(waktuBiayaError);
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -251,6 +264,8 @@ function EditSuratKeterangan() {
       originalState.edit.form.deskripsi = formData.deskripsi;
       originalState.edit.form.imageId = formData.imageId;
       originalState.edit.form.image2Id = formData.image2Id;
+      originalState.edit.form.estimasiWaktu = formData.estimasiWaktu;
+      originalState.edit.form.biaya = formData.biaya;
 
       // Upload file 1 if exists
       if (file) {
@@ -322,6 +337,13 @@ function EditSuratKeterangan() {
             value={formData.name}
             onChange={handleNameChange}
             required
+          />
+
+          <LayananWaktuBiayaFields
+            estimasiWaktu={formData.estimasiWaktu}
+            biaya={formData.biaya}
+            onEstimasiWaktuChange={(v) => setFormData((prev) => ({ ...prev, estimasiWaktu: v }))}
+            onBiayaChange={(v) => setFormData((prev) => ({ ...prev, biaya: v }))}
           />
 
           {/* Deskripsi */}

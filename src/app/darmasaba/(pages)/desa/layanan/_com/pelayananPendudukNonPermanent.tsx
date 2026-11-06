@@ -2,6 +2,7 @@
 "use client";
 
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import colors from '@/con/colors';
 import { ActionIcon, Box, Divider, Flex, Group, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
@@ -50,6 +51,8 @@ function PelayananPendudukNonPermanent() {
               {data?.name || "Judul belum tersedia"}
             </Title>
           </Box>
+
+          <LayananWaktuBiayaBadge estimasiWaktu={data?.estimasiWaktu} biaya={data?.biaya} />
 
           <Box>
             {data?.deskripsi ? (

@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.1.222] - 2026-11-07
+### Added
+- **Halaman Peta Informasi** (`/darmasaba/peta-informasi`): semua halaman website Desa Darmasaba dalam satu tempat, dikelompokkan per menu (PPID, Desa, Kesehatan, Keamanan, Ekonomi, Inovasi, Lingkungan, Kependudukan, Pendidikan, Musik, Transparansi, Layanan Online Desa), termasuk halaman yang tidak ada di menu seperti APBDes dan Grafik Penyakit. Ketik di kotak "Saring halaman" untuk langsung menyaring daftar, misalnya "apbdes" atau "posyandu". Setiap tautan bisa dibuka di tab baru.
+- Peta Informasi bisa dibuka dari footer (bagian "Tautan Penting"), dicari lewat kotak pencarian ("peta informasi"), dan muncul sebagai tautan "Buka Peta Informasi" saat pencarian tidak menemukan hasil.
+### Fixed
+- Tombol kembali (ikon panah) di halaman publik kini punya label "Kembali ke halaman sebelumnya", sehingga terbaca oleh pembaca layar dan menampilkan keterangan saat disorot mouse.
+
+## [0.1.221] - 2026-11-06
+### Added
+- **Nama menu dan submenu website kini bisa dicari.** Ketik nama halaman di kotak pencarian, misalnya "Polsek Terdekat", "Struktur PPID", atau cukup potongannya seperti "polsek", dan halamannya langsung muncul di bagian "Halaman" paling atas, lengkap dengan letaknya di menu (contoh: "Keamanan › Polsek Terdekat"). Mengetik nama menu utama, misalnya "Keamanan", menampilkan submenu di dalamnya. Hasil ini muncul seketika saat mengetik, di atas hasil pencarian konten seperti biasa.
+- Halaman yang tidak ada di menu juga bisa dicari dengan cara yang sama: APBDes, Desa Anti Korupsi, SDGs Desa, Struktur Perangkat Desa, Galeri Video, Administrasi Online (Ajukan Surat), Pengaduan Masyarakat, Informasi Desa, serta Fasilitas Kesehatan, Artikel Kesehatan, Jadwal Kegiatan Kesehatan, dan Grafik Penyakit. Contoh: ketik "apbdes" atau "ajukan surat".
+- Untuk kata kunci umum seperti "kesehatan" atau "desa", bagian "Halaman" menampilkan 5 halaman teratas dulu. Tekan "Tampilkan N halaman lainnya" untuk membuka semua halaman yang cocok tanpa meninggalkan kotak pencarian; tidak ada halaman yang terpotong.
+
+## [0.1.220] - 2026-11-06
+### Fixed
+- **Hasil pencarian kini membuka halaman yang benar.** Sebelumnya sebagian besar hasil pencarian di website publik (misalnya galeri foto, pasar desa, program kesehatan, pelayanan, dan banyak modul lain) malah membawa pengunjung kembali ke beranda.
+- Hasil pencarian Visi Misi PPID, Profil PPID, Galeri Foto/Video, dan Potensi Desa tidak lagi membuka halaman kosong.
+- Hasil pencarian produk pasar desa kini membuka halaman detail produk UMKM.
+- Hasil pencarian Indeks Kepuasan Masyarakat, kategori berita, Pelayanan Penduduk Non Permanen, serta Dokter dan Tenaga Medis kini membuka halamannya masing-masing. Hasil media sosial langsung membuka akun media sosial desa.
+
+## [0.1.219] - 2026-11-06
+### Added
+- **Dokumen Perencanaan** (RPJM Desa, RKP Desa, Berita Acara Musyawarah): admin mengelola dokumen (PDF, nomor Perdes, ringkasan, periode/tahun) lewat tab baru di admin Kegiatan Desa. Publik melihatnya di section baru pada halaman Monev & Pembangunan, dan ada tautan dari PPID > Daftar Informasi Publik. Kegiatan pembangunan kini berlabel "Bersumber dari RKP Desa {tahun}" dengan tautan ke dokumennya bila ada. Periode RPJM bebas (tahun mulai/selesai) sehingga 6 atau 8 tahun sama-sama bisa. Tabel baru `DokumenPerencanaan`.
+- **Waktu & Biaya Pelayanan**: setiap layanan desa punya "Estimasi Waktu" dan "Biaya (Rp)" opsional; tampil sebagai badge di kartu dan halaman detail ("1 hari kerja • Gratis"). Biaya kosong = belum diisi, 0 = Gratis. Kolom baru di empat tabel pelayanan.
+- **Agenda & Kalender Desa** (sebelumnya "Kalender Event Budaya", alamat halaman tidak berubah): agenda punya kategori (Budaya, Pemerintahan, Musyawarah, Kepemudaan, PKK & Perempuan, Pertanian & Peternakan, Lainnya), tanggal selesai opsional, filter tahun/bulan/kategori, penanda "Akan datang"/"Selesai", dan ringkasan jumlah acara per bulan.
+- **Link Toko Online di produk UMKM**: satu produk bisa punya hingga 5 link (Shopee, Tokopedia, TikTok Shop, Blibli, Lazada, atau lainnya) yang tampil sebagai tombol di samping tombol WhatsApp. Hanya URL https yang diterima dan domainnya divalidasi sesuai platform. Tabel baru `LinkTokoOnline`.
+- **Sektor Unggulan Desa**: nilai kini bisa disertai Satuan (mis. ton, kg, ha) dan Periode; grafik dan label mengikuti satuan.
+- **Ajukan Ide Inovatif**: blok pengantar yang menjelaskan ide warga dapat dibawa ke Musyawarah Desa/Musrenbangdes, dengan tautan ke Agenda & Kalender dan Dokumen Perencanaan.
+- **Kategori Kegiatan Desa** baru: "Kepemudaan" dan "PKK & Pemberdayaan Perempuan" (ditambahkan lewat migrasi sehingga ikut ke staging/produksi).
+
+### Changed
+- **Seed berita** diganti dengan 8 berita terbaru Desa Darmasaba (Okt–Nov 2026) lengkap dengan gambar di `public/assets/images/berita-terbaru/` dan tautan sumber di tiap berita. Seed hanya berpengaruh pada database yang di-seed ulang; staging/produksi perlu input lewat admin atau seed ulang.
+- **Seed agenda** ditambah agenda 2026 dari riset publik (HUT Sekaa Teruna Putra Laksana, Musdes/Musrenbangdes/MMD) dan seluruh agenda lama diberi kategori Budaya.
+
+### Notes untuk operator
+- 5 migrasi baru (`20261106100100`–`20261106100500`), semuanya idempoten dan dapat dijalankan ulang; tidak ada data lama yang diubah.
+- **Estimasi waktu/biaya layanan di seed adalah PERKIRAAN** ("1 hari kerja", Gratis) dan belum diverifikasi dengan Dokumen Standar Pelayanan (Kepbek 53/2022). Ganti lewat admin sebelum dianggap resmi.
+- Data nyata yang masih harus diinput lewat admin: dokumen RPJM/RKP, satuan dan periode sektor unggulan, link toko online produk, serta tanggal agenda yang belum pasti (mis. Gerakan Kulkul PKK & Posyandu).
+
+## [0.1.218] - 2026-11-06
+### Changed
+- **Jarak antar section di beranda kini seragam, sekitar 100px di layar lebar dan 72px di ponsel.** Sebelumnya jaraknya berbeda-beda: Kabar Desa ke APBDes terlalu jauh, sedangkan Prestasi ke Layanan dan Potensi Desa terlalu rapat. Judul "Desa Anti Korupsi" juga tidak lagi menempel ke tepi atas latar birunya.
+
 ## [0.1.217] - 2026-11-06
 ### Added
 - **Section "Kabar Desa" di beranda**, tepat di bawah bagian pembuka. Berita terbaru tampil besar dengan foto, kategori, tanggal, dan ringkasan, diikuti tiga berita berikutnya dalam kartu foto. Di bawahnya ada tiga pengumuman terbaru. Klik kartu atau baris mana pun untuk membuka detailnya, atau pakai tautan "Lihat semua berita" di samping judul dan "Semua pengumuman" di panel pengumuman.

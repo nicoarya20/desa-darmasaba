@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { KATEGORI_EVENT_DEFAULT } from "@/lib/agenda-desa";
 import ApiFetch from "@/lib/api-fetch";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
@@ -10,6 +11,8 @@ const templateForm = z.object({
   tanggal: z.string().min(1, "Tanggal harus diisi"),
   lokasi: z.string().min(1, "Lokasi harus diisi"),
   deskripsi: z.string().optional(),
+  kategori: z.string().min(1, "Kategori harus dipilih"),
+  tanggalSelesai: z.string().optional(),
 });
 
 const defaultForm = {
@@ -17,7 +20,27 @@ const defaultForm = {
   tanggal: "",
   lokasi: "",
   deskripsi: "",
+  kategori: KATEGORI_EVENT_DEFAULT as string,
+  tanggalSelesai: "",
 };
+
+/** Filter opsional list agenda (publik); nilai kosong/undefined tidak dikirim. */
+export type AgendaFilter = {
+  kategori?: string;
+  tahun?: number;
+  bulan?: number;
+  mendatang?: boolean;
+};
+
+/** Pesan error bila tanggal selesai (YYYY-MM-DD) lebih awal dari tanggal mulai; null bila valid. */
+function errorRentangTanggal(form: { tanggal: string; tanggalSelesai?: string }): string | null {
+  if (form.tanggalSelesai && form.tanggalSelesai < form.tanggal) {
+    return "Tanggal selesai tidak boleh sebelum tanggal mulai";
+  }
+  return null;
+}
+
+let findManyRequestId = 0; // abaikan respons lama bila filter berganti cepat
 
 const eventBudayaState = proxy({
   create: {
@@ -31,6 +54,8 @@ const eventBudayaState = proxy({
           .join("\n")}] required`;
         return toast.error(err);
       }
+      const errTanggal = errorRentangTanggal(eventBudayaState.create.form);
+      if (errTanggal) return toast.error(errTanggal);
 
       try {
         eventBudayaState.create.loading = true;
@@ -60,32 +85,45 @@ const eventBudayaState = proxy({
     page: 1,
     totalPages: 1,
     total: 0,
+    /** Jumlah agenda per bulan (indeks 0 = Januari); null bila filter tahun tidak dipakai. */
+    ringkasanBulan: null as number[] | null,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {
+    load: async (page = 1, limit = 10, search = "", filter: AgendaFilter = {}) => {
+      const requestId = ++findManyRequestId;
       eventBudayaState.findMany.loading = true;
       eventBudayaState.findMany.page = page;
       eventBudayaState.findMany.search = search;
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
+        if (filter.kategori) query.kategori = filter.kategori;
+        if (filter.tahun) query.tahun = filter.tahun;
+        if (filter.bulan) query.bulan = filter.bulan;
+        if (filter.mendatang) query.mendatang = true;
 
         const res = await ApiFetch.api.desa["eventbudaya"]["find-many"].get({ query });
+        if (requestId !== findManyRequestId) return;
 
-        if (res.status === 200 && res.data?.success) {
+        // "data" in res.data mempersempit union respons (varian gagal tidak punya data/total).
+        if (res.status === 200 && res.data && "data" in res.data && res.data.success) {
           eventBudayaState.findMany.data = res.data.data ?? [];
           eventBudayaState.findMany.total = res.data.total ?? 0;
           eventBudayaState.findMany.totalPages = res.data.totalPages ?? 1;
+          eventBudayaState.findMany.ringkasanBulan =
+            "ringkasanBulan" in res.data ? (res.data.ringkasanBulan as number[]) : null;
         } else {
           eventBudayaState.findMany.data = [];
           eventBudayaState.findMany.total = 0;
           eventBudayaState.findMany.totalPages = 1;
+          eventBudayaState.findMany.ringkasanBulan = null;
         }
       } catch (error) {
+        if (requestId !== findManyRequestId) return;
         console.error("Error loading event budaya:", error);
         eventBudayaState.findMany.data = [];
       } finally {
-        eventBudayaState.findMany.loading = false;
+        if (requestId === findManyRequestId) eventBudayaState.findMany.loading = false;
       }
     },
   },
@@ -132,6 +170,10 @@ const eventBudayaState = proxy({
               : "",
             lokasi: data.lokasi,
             deskripsi: data.deskripsi ?? "",
+            kategori: data.kategori ?? KATEGORI_EVENT_DEFAULT,
+            tanggalSelesai: data.tanggalSelesai
+              ? new Date(data.tanggalSelesai).toISOString().split("T")[0]
+              : "",
           };
           eventBudayaState.edit.form = { ...loadedForm };
           eventBudayaState.edit.original = { ...loadedForm };
@@ -150,6 +192,11 @@ const eventBudayaState = proxy({
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
         toast.error(err);
+        return false;
+      }
+      const errTanggal = errorRentangTanggal(eventBudayaState.edit.form);
+      if (errTanggal) {
+        toast.error(errTanggal);
         return false;
       }
 
