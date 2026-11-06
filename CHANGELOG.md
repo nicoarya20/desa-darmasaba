@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.213] - 2026-11-06
+### Added
+- **Dokumen Perencanaan** (RPJM Desa, RKP Desa, Berita Acara Musyawarah): admin mengelola dokumen (PDF, nomor Perdes, ringkasan, periode/tahun) lewat tab baru di admin Kegiatan Desa. Publik melihatnya di section baru pada halaman Monev & Pembangunan, dan ada tautan dari PPID > Daftar Informasi Publik. Kegiatan pembangunan kini berlabel "Bersumber dari RKP Desa {tahun}" dengan tautan ke dokumennya bila ada. Periode RPJM bebas (tahun mulai/selesai) sehingga 6 atau 8 tahun sama-sama bisa. Tabel baru `DokumenPerencanaan`.
+- **Waktu & Biaya Pelayanan**: setiap layanan desa punya "Estimasi Waktu" dan "Biaya (Rp)" opsional; tampil sebagai badge di kartu dan halaman detail ("1 hari kerja • Gratis"). Biaya kosong = belum diisi, 0 = Gratis. Kolom baru di empat tabel pelayanan.
+- **Agenda & Kalender Desa** (sebelumnya "Kalender Event Budaya", alamat halaman tidak berubah): agenda punya kategori (Budaya, Pemerintahan, Musyawarah, Kepemudaan, PKK & Perempuan, Pertanian & Peternakan, Lainnya), tanggal selesai opsional, filter tahun/bulan/kategori, penanda "Akan datang"/"Selesai", dan ringkasan jumlah acara per bulan.
+- **Link Toko Online di produk UMKM**: satu produk bisa punya hingga 5 link (Shopee, Tokopedia, TikTok Shop, Blibli, Lazada, atau lainnya) yang tampil sebagai tombol di samping tombol WhatsApp. Hanya URL https yang diterima dan domainnya divalidasi sesuai platform. Tabel baru `LinkTokoOnline`.
+- **Sektor Unggulan Desa**: nilai kini bisa disertai Satuan (mis. ton, kg, ha) dan Periode; grafik dan label mengikuti satuan.
+- **Ajukan Ide Inovatif**: blok pengantar yang menjelaskan ide warga dapat dibawa ke Musyawarah Desa/Musrenbangdes, dengan tautan ke Agenda & Kalender dan Dokumen Perencanaan.
+- **Kategori Kegiatan Desa** baru: "Kepemudaan" dan "PKK & Pemberdayaan Perempuan" (ditambahkan lewat migrasi sehingga ikut ke staging/produksi).
+
+### Changed
+- **Seed berita** diganti dengan 8 berita terbaru Desa Darmasaba (Okt–Nov 2026) lengkap dengan gambar di `public/assets/images/berita-terbaru/` dan tautan sumber di tiap berita. Seed hanya berpengaruh pada database yang di-seed ulang; staging/produksi perlu input lewat admin atau seed ulang.
+- **Seed agenda** ditambah agenda 2026 dari riset publik (HUT Sekaa Teruna Putra Laksana, Musdes/Musrenbangdes/MMD) dan seluruh agenda lama diberi kategori Budaya.
+
+### Notes untuk operator
+- 5 migrasi baru (`20261106100100`–`20261106100500`), semuanya idempoten dan dapat dijalankan ulang; tidak ada data lama yang diubah.
+- **Estimasi waktu/biaya layanan di seed adalah PERKIRAAN** ("1 hari kerja", Gratis) dan belum diverifikasi dengan Dokumen Standar Pelayanan (Kepbek 53/2022). Ganti lewat admin sebelum dianggap resmi.
+- Data nyata yang masih harus diinput lewat admin: dokumen RPJM/RKP, satuan dan periode sektor unggulan, link toko online produk, serta tanggal agenda yang belum pasti (mis. Gerakan Kulkul PKK & Posyandu).
+
 ## [0.1.212] - 2026-11-05
 ### Fixed
 - **Desa - Profil**: peta di section "Letak & Batas Wilayah" tidak lagi meluber keluar kartu dan menimpa logo/judul "Lambang Desa"; tinggi peta kini menyesuaikan ukuran layar (300px ponsel, 380px tablet, 450px desktop).
