@@ -4,11 +4,16 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
 import searchExtraPages from '@/con/search-extra-pages';
-import searchMenu, { flattenMenu, MAX_MENU_RESULTS } from '@/app/darmasaba/_com/searchMenu';
+import searchMenu, {
+  flattenMenu,
+  MENU_PREVIEW_COUNT,
+  previewMenuResults,
+} from '@/app/darmasaba/_com/searchMenu';
 import type { MenuItem } from '../../types/menu-item';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
 const GLOBAL_SEARCH = path.resolve(__dirname, '../../src/app/darmasaba/_com/globalSearch.tsx');
+const SHOW_MORE = path.resolve(__dirname, '../../src/app/darmasaba/_com/SearchShowMoreButton.tsx');
 
 /** Semua submenu ber-href langsung dari config navbar (sumber kebenaran yang sama dengan navbar). */
 const submenus = navbarListMenu.flatMap((menu) =>
@@ -98,11 +103,12 @@ describe('searchMenu pada config navbar nyata', () => {
     expect(searchMenu('  CCTV  ')[0]?.href).toBe('/darmasaba/keamanan/cctv');
   });
 
-  it('batas MAX_MENU_RESULTS dihormati untuk query yang sangat umum', () => {
-    expect(MAX_MENU_RESULTS).toBe(8);
-    const all = searchMenu('a', navbarListMenu, Infinity);
-    expect(all.length).toBeGreaterThan(MAX_MENU_RESULTS);
-    expect(searchMenu('a')).toHaveLength(MAX_MENU_RESULTS);
+  it('tanpa batas default: query umum tidak memotong halaman yang cocok', () => {
+    const labels = searchMenu('kesehatan').map((r) => `${r.parent} › ${r.label}`);
+    expect(labels).toContain('Kesehatan › Kontak Darurat');
+    expect(labels).toContain('Kesehatan › Info Wabah/Penyakit');
+    expect(searchMenu('a').length).toBeGreaterThan(8);
+    expect(searchMenu('a')).toEqual(searchMenu('a', undefined, Infinity));
   });
 
   it('setiap href di navbar-list-menu.ts cocok dengan page.tsx nyata', () => {
@@ -197,13 +203,48 @@ describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
 
   it('peringkat sama: submenu navbar tetap di atas halaman tambahan', () => {
     // keduanya berawalan "desa": "Desa Digital/Smart Village" (navbar) & "Desa Anti Korupsi" (tambahan)
-    const labels = searchMenu('desa', undefined, Infinity).map((r) => r.label);
+    const labels = searchMenu('desa').map((r) => r.label);
     expect(labels.indexOf('Desa Digital/Smart Village')).toBeGreaterThan(-1);
     expect(labels.indexOf('Desa Digital/Smart Village')).toBeLessThan(labels.indexOf('Desa Anti Korupsi'));
   });
 
   it('halaman tambahan tidak ikut bila menus dioper sendiri (hanya navbar)', () => {
     expect(searchMenu('apbdes', navbarListMenu)).toEqual([]);
+  });
+});
+
+describe('previewMenuResults', () => {
+  const make = (n: number) => Array.from({ length: n }, (_, i) => `h${i + 1}`); // test-only
+
+  it('pratinjau default 5 hasil', () => {
+    expect(MENU_PREVIEW_COUNT).toBe(5);
+  });
+
+  it('≤ 5 hasil → semua visible, hiddenCount 0', () => {
+    expect(previewMenuResults(make(5), false)).toEqual({ visible: make(5), hiddenCount: 0 });
+    expect(previewMenuResults(make(3), false)).toEqual({ visible: make(3), hiddenCount: 0 });
+    expect(previewMenuResults([], false)).toEqual({ visible: [], hiddenCount: 0 });
+  });
+
+  it('11 hasil tertutup → visible 5 teratas berurutan, hiddenCount 6', () => {
+    expect(previewMenuResults(make(11), false)).toEqual({ visible: ['h1', 'h2', 'h3', 'h4', 'h5'], hiddenCount: 6 });
+  });
+
+  it('expanded → semua visible berurutan, hiddenCount 0', () => {
+    expect(previewMenuResults(make(11), true)).toEqual({ visible: make(11), hiddenCount: 0 });
+  });
+
+  it('previewCount bisa dioper dan input tidak dimutasi', () => {
+    const input = make(4);
+    expect(previewMenuResults(input, false, 2)).toEqual({ visible: ['h1', 'h2'], hiddenCount: 2 });
+    expect(input).toEqual(make(4));
+  });
+
+  it('hasil nyata "kesehatan" tertutup → 5 tampil, sisanya tersembunyi', () => {
+    const all = searchMenu('kesehatan');
+    const { visible, hiddenCount } = previewMenuResults(all, false);
+    expect(visible).toEqual(all.slice(0, 5));
+    expect(hiddenCount).toBe(all.length - 5);
   });
 });
 
@@ -217,5 +258,21 @@ describe('globalSearch.tsx memakai hasil menu', () => {
   it('menampilkan bagian "Halaman" dan "Tidak ada hasil" hanya bila menu & API kosong', () => {
     expect(src).toContain('Halaman');
     expect(src).toMatch(/menuResults\.length === 0/);
+  });
+
+  it('memotong hasil lewat previewMenuResults dan merender tombol "halaman lainnya"', () => {
+    expect(src).toMatch(/previewMenuResults\(menuResults, expanded\)/);
+    expect(src).toMatch(/menuPreview\.visible\.map/);
+    expect(src).toMatch(/menuPreview\.hiddenCount > 0/);
+    expect(src).not.toMatch(/menuResults\.map/);
+    const button = readFileSync(SHOW_MORE, 'utf8');
+    expect(button).toContain('halaman lainnya');
+    expect(button).toMatch(/UnstyledButton[\s\S]*type="button"/);
+  });
+
+  it('expanded di-reset saat query berubah dan saat clearSearch', () => {
+    expect(src).toMatch(/setExpanded\(false\);[^\n]*\n\s*\}, \[snap\.query\]\)/);
+    const clear = src.slice(src.indexOf('const clearSearch'));
+    expect(clear.slice(0, clear.indexOf('};'))).toContain('setExpanded(false)');
   });
 });
