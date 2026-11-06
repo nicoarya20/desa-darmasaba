@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.215] - 2026-11-06
+### Changed
+- **Halaman "Lihat semua data APBDes" tampil baru**, senada dengan section APBDes di beranda: tombol tahun, tanggal "Data diperbarui", tiga kartu ringkasan, grafik pagu dan realisasi, lalu rincian anggaran per kategori yang langsung terbuka.
+- Rincian di halaman ini menambah kolom **Lebih/(Kurang)**, yaitu sisa anggaran setiap pos (anggaran dikurangi realisasi).
+- Dokumen APBDes (gambar dan tautan unduh) kini tampil satu panel untuk tahun yang dipilih. Panel ini hanya muncul bila admin sudah mengunggah dokumen untuk tahun itu. Grid kartu per tahun dan teks "jumlah" isian bebas tidak ditampilkan lagi.
+- Di ponsel, rincian tersusun ke bawah tanpa tabel yang perlu digeser ke samping.
+
+### Fixed
+- **Total di halaman APBDes tidak lagi dihitung berlipat** pada rincian bertingkat. Baris "JUMLAH" lama yang mencampur pendapatan, belanja, dan pembiayaan juga dihapus; total setiap kategori kini tertulis di judul kategorinya.
+
 ## [0.1.214] - 2026-11-06
 ### Changed
 - **Section APBDes di beranda tampil baru dan lebih ringkas.** Kini dibuka dengan tiga kartu ringkasan (Pendapatan, Belanja, Pembiayaan) berisi pagu dalam angka besar yang mudah dibaca (misalnya "Rp 23,14 M") beserta nilai lengkapnya, bilah realisasi, dan persennya. Di bawahnya ada grafik pagu dan realisasi, lalu rincian anggaran per kategori yang bisa dibuka-tutup. Tombol "Lihat semua data APBDes" pindah ke bagian bawah.
@@ -10,7 +20,7 @@
 - Bila realisasi suatu tahun belum diinput, kartu menulis "Belum ada realisasi" (sebelumnya semua tampil merah dengan peringatan "Realisasi rendah, perlu perhatian khusus").
 
 ### Fixed
-- **Total APBDes tidak lagi dihitung berlipat** pada tahun yang rinciannya bertingkat (misalnya "4 Pendapatan Desa" → "4.1 Pendapatan Asli Desa" → "4.1.1 Hasil Usaha Desa"). Sebelumnya induk dan anaknya dijumlahkan bersama sehingga total pendapatan 2025 tampil hampir tiga kali lipat.
+- **Total APBDes tidak lagi dihitung berlipat** pada tahun yang rinciannya bertingkat (misalnya "4 Pendapatan Desa" → "4.1 Pendapatan Asli Desa" → "4.1.1 Hasil Usaha Desa"). Sebelumnya induk dan anaknya dijumlahkan bersama sehingga total 2025 tampil berlipat: pendapatan sekitar dua kali (Rp 3,35 M, seharusnya Rp 1,5 M) dan belanja tiga kali (Rp 4,5 M, seharusnya Rp 1,5 M).
 - Di ponsel, tabel APBDes tidak lagi terpotong di sisi kanan dan nominal anggaran terbaca utuh.
 - Warna legenda grafik kini sesuai dengan batangnya, dan satuan sumbu memakai Jt/M/T (sebelumnya "B").
 
