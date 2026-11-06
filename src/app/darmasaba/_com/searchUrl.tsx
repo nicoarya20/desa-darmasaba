@@ -91,4 +91,7 @@ const getDetailUrl = (item: { type?: string; id: string | number;[key: string]: 
   return '/darmasaba';
 };
 
+/** Normalisasi `type` hasil pencarian sebelum lookup peta: hanya trim, huruf tidak diubah (kunci peta camelCase). */
+export const normalizeSearchType = (type: unknown) => String(type ?? '').trim();
+
 export default getDetailUrl;

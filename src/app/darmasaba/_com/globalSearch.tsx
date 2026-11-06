@@ -6,7 +6,7 @@ import { Box, Center, Loader, Popover, Text, TextInput } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
-import getDetailUrl from './searchUrl';
+import getDetailUrl, { normalizeSearchType } from './searchUrl';
 
 export default function GlobalSearch() {
   const snap = useSnapshot(searchState);
@@ -39,8 +39,8 @@ export default function GlobalSearch() {
       // 🔥 pastikan objek udah “dikeluarkan” dari Proxy valtio
       const rawItem = JSON.parse(JSON.stringify(item));
   
-      // 🔥 pastikan type-nya string murni
-      const type = String(rawItem.type || '').trim().toLowerCase();
+      // 🔥 pastikan type-nya string murni (huruf tidak diubah: kunci peta URL camelCase)
+      const type = normalizeSearchType(rawItem.type);
   
       // 🔥 panggil getDetailUrl pakai type yang fix
       let url = getDetailUrl({ ...rawItem, type });
@@ -57,8 +57,6 @@ export default function GlobalSearch() {
         setIsNavigating(false);
         return;
       }
-  
-      console.log('Navigating to:', url);
   
       // tutup popover dulu
       setOpened(false);
