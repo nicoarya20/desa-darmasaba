@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.219] - 2026-11-06
+### Added
+- **Nama menu dan submenu website kini bisa dicari.** Ketik nama halaman di kotak pencarian, misalnya "Polsek Terdekat", "Struktur PPID", atau cukup potongannya seperti "polsek", dan halamannya langsung muncul di bagian "Halaman" paling atas, lengkap dengan letaknya di menu (contoh: "Keamanan › Polsek Terdekat"). Mengetik nama menu utama, misalnya "Keamanan", menampilkan submenu di dalamnya. Hasil ini muncul seketika saat mengetik, di atas hasil pencarian konten seperti biasa.
+
 ## [0.1.218] - 2026-11-06
 ### Fixed
 - **Hasil pencarian kini membuka halaman yang benar.** Sebelumnya sebagian besar hasil pencarian di website publik (misalnya galeri foto, pasar desa, program kesehatan, pelayanan, dan banyak modul lain) malah membawa pengunjung kembali ke beranda.
