@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.214] - 2026-11-06
+### Changed
+- **Section APBDes di beranda tampil baru dan lebih ringkas.** Kini dibuka dengan tiga kartu ringkasan (Pendapatan, Belanja, Pembiayaan) berisi pagu dalam angka besar yang mudah dibaca (misalnya "Rp 23,14 M") beserta nilai lengkapnya, bilah realisasi, dan persennya. Di bawahnya ada grafik pagu dan realisasi, lalu rincian anggaran per kategori yang bisa dibuka-tutup. Tombol "Lihat semua data APBDes" pindah ke bagian bawah.
+- Tahun APBDes kini dipilih lewat tombol tahun di tengah (sebelumnya kotak pilihan).
+- Di bawah pilihan tahun kini tertulis tanggal terakhir data APBDes diperbarui, sehingga warga tahu seberapa baru angka yang ditampilkan.
+- Setiap pos di rincian anggaran kini punya bilah progres realisasi beserta persen dan nominalnya, jadi kemajuan penggunaan anggaran per pos langsung terlihat.
+- Ikon emoji diganti ikon garis yang seragam dengan bagian lain website.
+- Bila realisasi suatu tahun belum diinput, kartu menulis "Belum ada realisasi" (sebelumnya semua tampil merah dengan peringatan "Realisasi rendah, perlu perhatian khusus").
+
+### Fixed
+- **Total APBDes tidak lagi dihitung berlipat** pada tahun yang rinciannya bertingkat (misalnya "4 Pendapatan Desa" → "4.1 Pendapatan Asli Desa" → "4.1.1 Hasil Usaha Desa"). Sebelumnya induk dan anaknya dijumlahkan bersama sehingga total pendapatan 2025 tampil hampir tiga kali lipat.
+- Di ponsel, tabel APBDes tidak lagi terpotong di sisi kanan dan nominal anggaran terbaca utuh.
+- Warna legenda grafik kini sesuai dengan batangnya, dan satuan sumbu memakai Jt/M/T (sebelumnya "B").
+
 ## [0.1.213] - 2026-11-05
 ### Changed
 - **Layar pembuka website baru: gerbang Candi Bentar.** Saat pertama kali membuka website, pengunjung kini disambut siluet Candi Bentar di tepi air pada malam menjelang fajar: logo dan tulisan "Pemerintah Desa Darmasaba" muncul di celah gerbang, lalu kamera seolah melangkah menembus celah — gerbang terbuka ke samping, cahaya fajar memenuhi layar, dan beranda tampil. Durasi sekitar 2,5 detik (sebelumnya layar logo diam selama 3 detik), dan bisa dilewati dengan klik/tap atau tombol Escape.

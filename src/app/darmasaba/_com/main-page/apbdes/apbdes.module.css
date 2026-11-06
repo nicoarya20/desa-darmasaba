@@ -1,0 +1,483 @@
+/*
+ * Section APBDes beranda — gaya bersih ala apple.com (sejalan navbar/footer/galeri):
+ * latar putih, kartu #f5f5f7 tanpa border/bayangan, angka besar, warna aksen per kategori
+ * lewat variabel --accent/--tint (diset inline dari apbdes.meta.ts).
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.section {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --subtle: #86868b;
+  --tile: #f5f5f7;
+  --line: rgba(0, 0, 0, 0.08);
+  --radius: 18px;
+  background: #fff;
+  padding: 80px 16px 72px;
+  color: var(--ink);
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  margin: 0;
+  font-size: 48px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--brand);
+}
+
+.lead {
+  margin: 12px auto 0;
+  max-width: 640px;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.years {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.updated {
+  margin: 0;
+  font-size: 14px;
+  color: var(--subtle);
+}
+
+.yearCaption {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.empty {
+  margin: 0;
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--tile);
+  border-radius: var(--radius);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: contentIn 280ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes contentIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* ---------- Ringkasan ---------- */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--tile);
+  border-radius: var(--radius);
+  padding: 28px;
+  min-width: 0;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: var(--accent);
+}
+
+.label {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.amount {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.amountFull {
+  margin: 6px 0 24px;
+  font-size: 14px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.bar {
+  height: 6px;
+  margin-top: auto;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 600ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.metaPct {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------- Panel (grafik & rincian) ---------- */
+.panel {
+  background: var(--tile);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+
+.panelTitle {
+  margin: 0 0 20px;
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.note {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Accordion rincian (classNames Mantine) */
+.accItem {
+  border-bottom: 1px solid var(--line);
+}
+
+.accItem:last-of-type {
+  border-bottom: 0;
+}
+
+.accControl {
+  padding: 4px 0;
+  background: transparent;
+}
+
+.accContent {
+  padding: 0 0 16px;
+}
+
+.accIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: var(--accent);
+}
+
+.accLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  flex-wrap: wrap;
+  padding-right: 12px;
+}
+
+.accName {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.accMeta {
+  font-size: 14px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Desktop: kode | uraian | realisasi (bar + persen + nominal) | anggaran */
+.row,
+.rowHead {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 220px 168px;
+  column-gap: 24px;
+  align-items: start;
+}
+
+.row {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.rowHead {
+  padding: 4px 0 8px;
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.rowHead > :last-child,
+.pagu {
+  text-align: right;
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 7px;
+  font-variant-numeric: tabular-nums;
+}
+
+.progressLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rowBar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.progressPct {
+  min-width: 44px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.kode {
+  color: var(--subtle);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.uraian {
+  padding-left: calc(var(--depth, 0) * 16px);
+}
+
+.row[data-parent] .uraian,
+.row[data-parent] .pagu {
+  font-weight: 600;
+}
+
+
+.pagu {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.real {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.realLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- CTA ---------- */
+.cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.ctaLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 22px;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+}
+
+.ctaLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ctaLink:hover {
+    background: var(--brand-hover);
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .card,
+  .panel {
+    padding: 24px;
+  }
+
+  .amount {
+    font-size: 32px;
+  }
+
+  .row,
+  .rowHead {
+    grid-template-columns: 64px minmax(0, 1fr) 160px 150px;
+    column-gap: 16px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .section {
+    padding: 56px 16px 48px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .lead {
+    font-size: 17px;
+  }
+
+  .years {
+    margin-bottom: 28px;
+  }
+
+  .summary {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .content {
+    gap: 12px;
+  }
+
+  .card,
+  .panel {
+    padding: 20px;
+  }
+
+  .amount {
+    font-size: 32px;
+  }
+
+  .amountFull {
+    margin-bottom: 20px;
+  }
+
+  .panelTitle {
+    font-size: 21px;
+  }
+
+  /* Kode + uraian di baris atas; anggaran lalu realisasi di bawah uraian — tanpa scroll horizontal. */
+  .rowHead {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 6px;
+  }
+
+  .pagu,
+  .progress {
+    grid-column: 2;
+    padding-left: calc(var(--depth, 0) * 16px);
+    text-align: left;
+  }
+
+  .pagu {
+    grid-row: 2;
+  }
+
+  .progress {
+    grid-row: 3;
+    padding-top: 0;
+  }
+
+  .realLabel {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content {
+    animation: none;
+  }
+
+  .barFill {
+    transition: none;
+  }
+}
