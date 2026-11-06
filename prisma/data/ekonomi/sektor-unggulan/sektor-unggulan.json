@@ -3,7 +3,9 @@
     "id": "053999e8-e5c4-4a50-b587-0e0ce15aba1a",
     "name": "Pertanian",
     "description": "Sektor pertanian meliputi kegiatan bercocok tanam padi, palawija, dan tanaman lain di subak yang menjadi basis mata pencaharian warga",
-    "value": 90
+    "value": 90,
+    "satuan": "ton",
+    "periode": "Tahun 2025 (data contoh)"
   },
   {
     "id": "8e0d2f2d-512d-4c05-8880-b6e7d144a34d",
@@ -15,7 +17,9 @@
     "id": "0378b10a-f0e3-421c-9272-225d931179ce",
     "name": "Peternakan",
     "description": "Peternakan ikan lele dan mata pencaharian lain yang mendukung ketahanan pangan dan ekonomi masyarakat desa",
-    "value": 30
+    "value": 30,
+    "satuan": "ton",
+    "periode": "Tahun 2025 (data contoh)"
   },
   {
     "id": "4fa28680-8014-4c46-9dd0-1aa910630fd3",
