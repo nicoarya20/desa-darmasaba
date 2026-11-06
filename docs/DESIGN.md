@@ -207,6 +207,14 @@ Gaya bersih apple.com. Folder: `_com/main-page/apbdes/` — `index.tsx` (section
 - **CTA**: pill "Lihat semua data APBDes" → `/darmasaba/apbdes`, di bawah section.
 - **Halaman detail** `(tambahan)/apbdes/page.tsx`: memakai `ApbdesBody` (`components/ApbdesBody.tsx`) + hook `use-apbdes-data.ts` yang sama dengan beranda, `variant="full"` (beranda `"compact"`). Bedanya: `BackButton` di atas, judul `h1`, accordion terbuka semua sejak awal, kolom kelima **Lebih/(Kurang)** = anggaran − realisasi gabungan (desktop 72 | uraian | 200 | 160 | 160px; tablet 56/140/140/140; mobile baris ke-4 di bawah realisasi), dan panel dokumen (`components/ApbdesDocument.tsx`: gambar 160px rasio 3:4 + tombol "Unduh dokumen") yang hanya muncul bila tahun terpilih punya `file`/`image`.
 
+### Prestasi Desa (Beranda)
+
+Pola promo apple.com. Folder: `_com/main-page/prestasi/` — `index.tsx` (section + load data), `PrestasiHero.tsx`, `PrestasiGrid.tsx`, `prestasi.logic.ts` (helper murni, dites di `__tests__/api/prestasi_beranda_logic.test.ts`), `prestasi.meta.ts` (limit, rute, warna brand, foto hero), `prestasi.text.ts` (label), `prestasi.module.css`.
+
+- **Hero**: foto full-bleed tanpa radius, tinggi `min(100svh, 1100px)` (min 600px; tablet maks 860px; mobile 86svh). Teks putih di tengah atas di atas gradasi gelap dari atas: judul "Prestasi Desa" 56px (tablet 48, mobile 40), subtext 21px (19/17), pill CTA brand "Lihat Semua Prestasi" → `/darmasaba/prestasi-desa`. Foto = **dummy CC0 hardcode** (`public/assets/images/prestasi/`, srcset 1280/2048/3200 WebP, lazy) — belum ada field admin; ganti di `PRESTASI_HERO_IMAGE` saat foto asli tersedia.
+- **Grid**: 4 prestasi terbaru (`load(1, 4)`; backend urut `createdAt desc`), 2 kolom, gap 10px, tile 16:10 tanpa radius. Seluruh tile = tautan ke `/darmasaba/prestasi-desa/{id}`; judul = field `name` di kiri bawah (28px, tablet 24, mobile 21; maks 3 baris) di atas gradasi gelap dari bawah. Jumlah ganjil → tile terakhir melebar 2 kolom (21:9); kosong → grid disembunyikan, hero tetap tampil. Loading = 4 placeholder abu. Mobile ≤734px: 1 kolom, tile 4:3.
+- **Gerak**: hover (pointer halus) foto tile zoom 1.03 700ms; `prefers-reduced-motion` mati.
+
 ### Footer
 
 ```tsx
