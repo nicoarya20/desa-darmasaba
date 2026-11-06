@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.218] - 2026-11-06
+### Fixed
+- **Hasil pencarian kini membuka halaman yang benar.** Sebelumnya sebagian besar hasil pencarian di website publik (misalnya galeri foto, pasar desa, program kesehatan, pelayanan, dan banyak modul lain) malah membawa pengunjung kembali ke beranda.
+- Hasil pencarian Visi Misi PPID, Profil PPID, Galeri Foto/Video, dan Potensi Desa tidak lagi membuka halaman kosong.
+- Hasil pencarian produk pasar desa kini membuka halaman detail produk UMKM.
+- Hasil pencarian Indeks Kepuasan Masyarakat, kategori berita, Pelayanan Penduduk Non Permanen, serta Dokter dan Tenaga Medis kini membuka halamannya masing-masing. Hasil media sosial langsung membuka akun media sosial desa.
+
 ## [0.1.217] - 2026-11-06
 ### Added
 - **Section "Kabar Desa" di beranda**, tepat di bawah bagian pembuka. Berita terbaru tampil besar dengan foto, kategori, tanggal, dan ringkasan, diikuti tiga berita berikutnya dalam kartu foto. Di bawahnya ada tiga pengumuman terbaru. Klik kartu atau baris mana pun untuk membuka detailnya, atau pakai tautan "Lihat semua berita" di samping judul dan "Semua pengumuman" di panel pengumuman.
