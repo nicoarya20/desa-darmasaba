@@ -131,7 +131,7 @@ const stateDokumenPerencanaan = proxy({
       const s = stateDokumenPerencanaan.edit;
       s.loading = true;
       try {
-        const res = await ApiFetch.api.desa["dokumenperencanaan"][id].get();
+        const res = await ApiFetch.api.desa["dokumenperencanaan"]({ id }).get();
         const d = res.data?.success ? (res.data.data as unknown as DokumenPerencanaanItem) : null;
         if (!d) {
           toast.error(res.data?.message || errorMessage(res.error) || "Dokumen tidak ditemukan");
@@ -168,7 +168,7 @@ const stateDokumenPerencanaan = proxy({
       }
       s.loading = true;
       try {
-        const res = await ApiFetch.api.desa["dokumenperencanaan"][s.id].put({ ...s.form });
+        const res = await ApiFetch.api.desa["dokumenperencanaan"]({ id: s.id }).put({ ...s.form });
         if (res.status === 200 && res.data?.success) {
           toast.success("Dokumen perencanaan berhasil diupdate");
           return true;
