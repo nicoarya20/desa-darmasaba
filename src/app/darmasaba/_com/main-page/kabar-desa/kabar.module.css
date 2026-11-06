@@ -1,5 +1,5 @@
 /*
- * Section Kabar Desa beranda — pola apple.com Newsroom, sejalan APBDes: latar putih, isi 1100px,
+ * Section Kabar Desa beranda — pola apple.com Newsroom: latar putih, isi lebar 1440px (lebih lebar dari APBDes),
  * kartu #f5f5f7 radius 18px tanpa border/bayangan. Berita = foto (1 utama + 3 kecil),
  * pengumuman = daftar teks (gaya di kabar.pengumuman.module.css).
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
@@ -11,14 +11,14 @@
   --tile: #f5f5f7;
   --line: rgba(0, 0, 0, 0.08);
   --radius: 18px;
-  --gutter: 16px;
+  --gutter: 40px;
   background: #fff;
   padding: 80px var(--gutter) 72px;
   color: var(--ink);
 }
 
 .inner {
-  max-width: 1100px;
+  max-width: 1440px;
   margin: 0 auto;
 }
 
@@ -78,7 +78,7 @@
 
 .featured {
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  min-height: 380px;
+  min-height: 440px;
 }
 
 .featuredPhoto,
@@ -240,7 +240,7 @@
 }
 
 .featured.placeholder {
-  min-height: 380px;
+  min-height: 440px;
 }
 
 @keyframes pulse {
@@ -279,6 +279,10 @@
 
 /* ---------- Tablet ---------- */
 @media (max-width: 1068px) {
+  .section {
+    --gutter: 32px;
+  }
+
   .title {
     font-size: 40px;
   }
@@ -307,6 +311,7 @@
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
   .section {
+    --gutter: 16px;
     padding: 56px var(--gutter) 56px;
   }
 
