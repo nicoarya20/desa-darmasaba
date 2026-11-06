@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.220] - 2026-11-07
+### Added
+- **Halaman Peta Informasi** (`/darmasaba/peta-informasi`): semua halaman website Desa Darmasaba dalam satu tempat, dikelompokkan per menu (PPID, Desa, Kesehatan, Keamanan, Ekonomi, Inovasi, Lingkungan, Kependudukan, Pendidikan, Musik, Transparansi, Layanan Online Desa), termasuk halaman yang tidak ada di menu seperti APBDes dan Grafik Penyakit. Ketik di kotak "Saring halaman" untuk langsung menyaring daftar, misalnya "apbdes" atau "posyandu". Setiap tautan bisa dibuka di tab baru.
+- Peta Informasi bisa dibuka dari footer (bagian "Tautan Penting"), dicari lewat kotak pencarian ("peta informasi"), dan muncul sebagai tautan "Buka Peta Informasi" saat pencarian tidak menemukan hasil.
+
 ## [0.1.219] - 2026-11-06
 ### Added
 - **Nama menu dan submenu website kini bisa dicari.** Ketik nama halaman di kotak pencarian, misalnya "Polsek Terdekat", "Struktur PPID", atau cukup potongannya seperti "polsek", dan halamannya langsung muncul di bagian "Halaman" paling atas, lengkap dengan letaknya di menu (contoh: "Keamanan › Polsek Terdekat"). Mengetik nama menu utama, misalnya "Keamanan", menampilkan submenu di dalamnya. Hasil ini muncul seketika saat mengetik, di atas hasil pencarian konten seperti biasa.
