@@ -13,6 +13,8 @@ export type DetailRow = {
   hasChildren: boolean;
   anggaran: number;
   realisasi: number;
+  /** Anggaran − realisasi (konvensi backend: positif = anggaran belum terpakai). */
+  selisih: number;
   persen: number | null;
 };
 
@@ -71,6 +73,7 @@ export function summarizeCategory(tipe: Tipe, items: readonly APBDesItem[]): Cat
       hasChildren: family.length > 1,
       anggaran: item.anggaran,
       realisasi,
+      selisih: item.anggaran - realisasi,
       persen: percent(realisasi, item.anggaran),
     };
   });
@@ -92,9 +95,10 @@ export function listYears(data: readonly Pick<APBDes, "tahun">[]): number[] {
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 });
 
-/** Rupiah penuh: `Rp 23.141.290.636`. */
+/** Rupiah penuh: `Rp 23.141.290.636`; negatif `-Rp 5.000`. */
 export function formatRupiah(value: number): string {
-  return `Rp ${rupiahFormatter.format(value)}`;
+  const text = `Rp ${rupiahFormatter.format(Math.abs(value))}`;
+  return value < 0 ? `-${text}` : text;
 }
 
 const COMPACT_UNITS: ReadonlyArray<readonly [number, string]> = [
