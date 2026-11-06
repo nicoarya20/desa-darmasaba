@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.217] - 2026-11-06
+### Added
+- **Section "Kabar Desa" di beranda**, tepat di bawah bagian pembuka. Berita terbaru tampil besar dengan foto, kategori, tanggal, dan ringkasan, diikuti tiga berita berikutnya dalam kartu foto. Di bawahnya ada tiga pengumuman terbaru. Klik kartu atau baris mana pun untuk membuka detailnya, atau pakai tautan "Lihat semua berita" di samping judul dan "Semua pengumuman" di panel pengumuman.
+- Di ponsel, tiga kartu berita bisa digeser ke samping.
+
+### Removed
+- Panel melayang "Berita & Pengumuman" beserta tombol loncengnya. Panel ini tidak lagi terbuka sendiri dan menutupi bagian pembuka beranda. Isinya kini ada di section Kabar Desa.
+
 ## [0.1.216] - 2026-11-06
 ### Changed
 - **Prestasi Desa dan Penghargaan Desa kini menjadi satu: "Prestasi dan Penghargaan Desa".** Di beranda, section ini dibuka dengan video penghargaan yang sama seperti sebelumnya, berisi judul, kalimat pengantar, dan tombol "Selengkapnya". Daftar kartu penghargaan di atas video diganti grid berisi **4 prestasi atau penghargaan terbaru** dengan foto besar dan judul di pojok kiri bawah. Klik di mana saja pada foto untuk membuka detailnya. Entri yang baru ditambahkan admin langsung muncul paling depan.
