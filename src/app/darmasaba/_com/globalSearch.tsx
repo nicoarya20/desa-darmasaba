@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import searchState, { debouncedFetch } from '@/app/api/[[...slugs]]/_lib/search/searchState';
@@ -7,6 +6,8 @@ import { IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 import getDetailUrl, { normalizeSearchType } from './searchUrl';
+
+type SearchResultItem = (typeof searchState.results)[number];
 
 export default function GlobalSearch() {
   const snap = useSnapshot(searchState);
@@ -28,7 +29,7 @@ export default function GlobalSearch() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [snap.loading]);
 
-  const handleSelect = async (e: React.MouseEvent, item: any) => {
+  const handleSelect = async (e: React.MouseEvent, item: SearchResultItem) => {
     e.preventDefault();
     e.stopPropagation();
   
@@ -67,12 +68,8 @@ export default function GlobalSearch() {
       // kasih delay biar UI nutup dulu
       await new Promise((r) => setTimeout(r, 100));
   
-      // navigasi
-      if (url.startsWith('http')) {
-        window.location.href = url;
-      } else {
-        window.location.href = url;
-      }
+      // navigasi (URL internal maupun link eksternal)
+      window.location.href = url;
   
     } catch (err) {
       console.error('Error saat navigasi:', err);
@@ -146,7 +143,7 @@ export default function GlobalSearch() {
           }}
         >
           {[...snap.results].length > 0 ? (
-            [...snap.results].map((item: any, i: number) => (
+            [...snap.results].map((item, i) => (
               <Box
                 key={i}
                 p="sm"
