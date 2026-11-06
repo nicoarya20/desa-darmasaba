@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
+import searchExtraPages from '@/con/search-extra-pages';
 import searchMenu, { flattenMenu, MAX_MENU_RESULTS } from '@/app/darmasaba/_com/searchMenu';
 import type { MenuItem } from '../../types/menu-item';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
@@ -151,6 +152,58 @@ describe('searchMenu: aturan pencocokan & urutan', () => {
 
   it('parameter limit memotong hasil', () => {
     expect(searchMenu('keamanan', FIXTURE, 2)).toHaveLength(2);
+  });
+});
+
+describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
+  const extras = flattenMenu(searchExtraPages);
+  const navbar = flattenMenu(navbarListMenu);
+
+  it('daftar halaman tambahan terisi dan semuanya ber-href', () => {
+    expect(extras.length).toBeGreaterThanOrEqual(12);
+    expect(extras).toHaveLength(searchExtraPages.flatMap((g) => g.children ?? []).length);
+  });
+
+  it('setiap href halaman tambahan cocok dengan page.tsx nyata (bukan placeholder [sub])', () => {
+    const routes = publicRoutes();
+    const broken = extras.filter((e) => !matchesRealPage(e.href, routes)).map((e) => e.href);
+    expect(broken).toEqual([]);
+  });
+
+  it('bukan halaman create, detail, hasil form, atau daftar "semua"', () => {
+    const forbidden = extras.filter((e) => /\/(create|detail|berhasil|gagal|semua[^/]*)(\/|$)|\[/.test(e.href));
+    expect(forbidden).toEqual([]);
+  });
+
+  it('tidak ada href atau id duplikat antara navbar dan halaman tambahan', () => {
+    const all = [...navbar, ...extras];
+    const dup = (key: 'href' | 'id') => all.map((m) => m[key]).filter((v, i, arr) => arr.indexOf(v) !== i);
+    expect(dup('href')).toEqual([]);
+    expect(dup('id')).toEqual([]);
+    const groupIds = [...navbarListMenu, ...searchExtraPages].map((g) => g.id);
+    expect(new Set(groupIds).size).toBe(groupIds.length);
+  });
+
+  it.each([
+    ['apbdes', 'APBDes', '/darmasaba/apbdes'],
+    ['pengaduan', 'Pengaduan Masyarakat', '/darmasaba/inovasi/layanan-online-desa/pengaduan-masyarakat'],
+    ['ajukan surat', 'Administrasi Online (Ajukan Surat)', '/darmasaba/inovasi/layanan-online-desa/administrasi-online'],
+    ['struktur perangkat', 'Struktur Perangkat Desa', '/darmasaba/desa/profil/struktur-perangkat-desa'],
+    ['anti korupsi', 'Desa Anti Korupsi', '/darmasaba/desa-anti-korupsi'],
+    ['sdgs', 'SDGs Desa', '/darmasaba/sdgs-desa'],
+  ])('default searchMenu("%s") → hasil pertama %s', (q, label, href) => {
+    expect(searchMenu(q)[0]).toMatchObject({ label, href });
+  });
+
+  it('peringkat sama: submenu navbar tetap di atas halaman tambahan', () => {
+    // keduanya berawalan "desa": "Desa Digital/Smart Village" (navbar) & "Desa Anti Korupsi" (tambahan)
+    const labels = searchMenu('desa', undefined, Infinity).map((r) => r.label);
+    expect(labels.indexOf('Desa Digital/Smart Village')).toBeGreaterThan(-1);
+    expect(labels.indexOf('Desa Digital/Smart Village')).toBeLessThan(labels.indexOf('Desa Anti Korupsi'));
+  });
+
+  it('halaman tambahan tidak ikut bila menus dioper sendiri (hanya navbar)', () => {
+    expect(searchMenu('apbdes', navbarListMenu)).toEqual([]);
   });
 });
 
