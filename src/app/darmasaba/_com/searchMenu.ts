@@ -3,7 +3,7 @@ import searchExtraPages from '@/con/search-extra-pages';
 import type { MenuItem } from '../../../../types/menu-item';
 
 /** Sumber default pencarian: menu navbar dulu, lalu halaman publik di luar navbar. */
-const DEFAULT_SEARCH_MENUS: readonly MenuItem[] = [...navbarListMenu, ...searchExtraPages];
+export const DEFAULT_SEARCH_MENUS: readonly MenuItem[] = [...navbarListMenu, ...searchExtraPages];
 
 /** Jumlah hasil "Halaman" yang tampil sebelum pengunjung menekan "Tampilkan N halaman lainnya". */
 export const MENU_PREVIEW_COUNT = 5;
