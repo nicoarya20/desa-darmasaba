@@ -83,8 +83,8 @@ const navbarListMenu = [
             },
             {
                 id: "2.7",
-                name: "Penghargaan",
-                href: "/darmasaba/penghargaan"
+                name: "Prestasi dan Penghargaan",
+                href: "/darmasaba/prestasi-desa"
             },
             {
                 id: "2.8",

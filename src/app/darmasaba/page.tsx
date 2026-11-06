@@ -5,7 +5,6 @@ import DesaAntiKorupsi from "@/app/darmasaba/_com/main-page/desaantikorupsi";
 import Kepuasan from "@/app/darmasaba/_com/main-page/kepuasan";
 import LandingPage from "@/app/darmasaba/_com/main-page/landing-page";
 import LayananPotensi from "@/app/darmasaba/_com/main-page/layanan-potensi";
-import Penghargaan from "@/app/darmasaba/_com/main-page/penghargaan";
 import colors from "@/con/colors";
 import SDGS from "./_com/main-page/sdgs";
 
@@ -152,12 +151,11 @@ export default function Page() {
       <Stack bg={colors.grey[1]} gap={0}>
         <LandingPage />
         <Apbdes />
-        <Penghargaan />
+        <Prestasi />
         <LayananPotensi />
         <DesaAntiKorupsi />
-        <Kepuasan />
         <SDGS />
-        <Prestasi />
+        <Kepuasan />
       <ScrollToTopButton />
       <NewsReaderLanding />
 
