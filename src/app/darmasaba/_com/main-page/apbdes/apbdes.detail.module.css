@@ -1,0 +1,225 @@
+/*
+ * Rincian anggaran APBDes (accordion + baris pos) — dipakai ApbdesDetail di beranda & halaman detail.
+ * Variabel warna (--ink, --muted, --line, --accent, …) diwarisi dari .section di apbdes.module.css.
+ */
+
+/* Accordion rincian (classNames Mantine) */
+.accItem {
+  border-bottom: 1px solid var(--line);
+}
+
+.accItem:last-of-type {
+  border-bottom: 0;
+}
+
+.accControl {
+  padding: 4px 0;
+  background: transparent;
+}
+
+.accContent {
+  padding: 0 0 16px;
+}
+
+.accIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: var(--accent);
+}
+
+.accLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  flex-wrap: wrap;
+  padding-right: 12px;
+}
+
+.accName {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.accMeta {
+  font-size: 14px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Desktop: kode | uraian | realisasi (bar + persen + nominal) | anggaran */
+.row,
+.rowHead {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 220px 168px;
+  column-gap: 24px;
+  align-items: start;
+}
+
+/* Halaman detail: tambah kolom Lebih/(Kurang) */
+[data-variant="full"] .row,
+[data-variant="full"] .rowHead {
+  grid-template-columns: 72px minmax(0, 1fr) 200px 160px 160px;
+}
+
+.selisih {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.row {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.rowHead {
+  padding: 4px 0 8px;
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.rowHead > :last-child,
+.pagu {
+  text-align: right;
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 7px;
+  font-variant-numeric: tabular-nums;
+}
+
+.progressLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rowBar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.progressPct {
+  min-width: 44px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.kode {
+  color: var(--subtle);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.uraian {
+  padding-left: calc(var(--depth, 0) * 16px);
+}
+
+.row[data-parent] .uraian,
+.row[data-parent] .pagu {
+  font-weight: 600;
+}
+
+
+.pagu {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.real {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.cellLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .row,
+  .rowHead {
+    grid-template-columns: 64px minmax(0, 1fr) 160px 150px;
+    column-gap: 16px;
+  }
+
+  [data-variant="full"] .row,
+  [data-variant="full"] .rowHead {
+    grid-template-columns: 56px minmax(0, 1fr) 140px 140px 140px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  /* Kode + uraian di baris atas; anggaran lalu realisasi di bawah uraian — tanpa scroll horizontal. */
+  .rowHead {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 6px;
+  }
+
+  [data-variant="full"] .row {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .pagu,
+  .progress,
+  .selisih {
+    grid-column: 2;
+    padding-left: calc(var(--depth, 0) * 16px);
+    text-align: left;
+  }
+
+  .pagu {
+    grid-row: 2;
+  }
+
+  .progress {
+    grid-row: 3;
+    padding-top: 0;
+  }
+
+  .selisih {
+    grid-row: 4;
+    font-size: 13px;
+  }
+
+  .cellLabel {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+}

@@ -65,6 +65,14 @@ describe('summarizeCategory', () => {
     expect(byKode['4.1.1'].hasChildren).toBe(false);
   });
 
+  it('selisih = anggaran − realisasi gabungan (induk ikut menghitung realisasi anak)', () => {
+    const { rows } = summarizeCategory('pendapatan', hirarki);
+    const byKode = Object.fromEntries(rows.map((r) => [r.kode, r]));
+    expect(byKode['4.1'].selisih).toBe(350 - 132);
+    expect(byKode['4.1.1'].selisih).toBe(150 - 97);
+    expect(byKode['4.1.3'].selisih).toBe(100);
+  });
+
   it('data datar: semua item akar dan dijumlah', () => {
     const datar = [item('5.1.1', 8, 'belanja'), item('5.1.2', 12, 'belanja')];
     const s = summarizeCategory('belanja', datar);
@@ -98,6 +106,7 @@ describe('format', () => {
   it('rupiah penuh memakai titik ribuan', () => {
     expect(formatRupiah(23141290636)).toBe('Rp 23.141.290.636');
     expect(formatRupiah(0)).toBe('Rp 0');
+    expect(formatRupiah(-5000000)).toBe('-Rp 5.000.000');
   });
 
   it('rupiah ringkas memakai satuan Indonesia, bukan B', () => {

@@ -17,3 +17,9 @@ export function accentVars(tipe: Tipe): CSSProperties {
   const { accent, tint } = TIPE_META[tipe];
   return { "--accent": accent, "--tint": tint } as CSSProperties;
 }
+
+/** Variabel warna brand untuk section beranda & halaman detail APBDes. */
+export const APBDES_BRAND_VARS = {
+  "--brand": colors["blue-button"],
+  "--brand-hover": colors["blue-button-6"],
+} as CSSProperties;
