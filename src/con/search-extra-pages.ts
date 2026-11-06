@@ -2,8 +2,8 @@ import type { MenuItem } from '../../types/menu-item';
 
 /**
  * Halaman publik yang TIDAK ada di navbar, tetapi tetap harus bisa ditemukan lewat
- * pencarian global (bagian "Halaman"). Hanya dipakai oleh `searchMenu`; navbar tetap
- * membaca `navbar-list-menu.ts` saja. Bentuknya sama dengan config navbar:
+ * pencarian global (bagian "Halaman") dan tampil di halaman Peta Informasi. Dibaca lewat
+ * `DEFAULT_SEARCH_MENUS` di `searchMenu`; navbar tetap membaca `navbar-list-menu.ts` saja. Bentuknya sama dengan config navbar:
  * grup = nama "menu utama" yang tampil sebagai keterangan, children = halaman.
  * id berawalan "x" agar tidak bentrok dengan id navbar.
  * Jangan masukkan halaman create, detail, hasil form (berhasil/gagal), atau daftar "semua-*".
