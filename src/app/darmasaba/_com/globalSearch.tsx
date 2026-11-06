@@ -6,7 +6,8 @@ import { IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 import SearchResultRow from './SearchResultRow';
-import searchMenu from './searchMenu';
+import SearchShowMoreButton from './SearchShowMoreButton';
+import searchMenu, { previewMenuResults } from './searchMenu';
 import getDetailUrl, { normalizeSearchType } from './searchUrl';
 
 type SearchResultItem = (typeof searchState.results)[number];
@@ -24,13 +25,16 @@ export default function GlobalSearch() {
   const snap = useSnapshot(searchState);
   const [opened, setOpened] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   // Hasil menu dihitung lokal dari config navbar: langsung muncul tanpa menunggu debounce/API.
   const menuResults = searchMenu(snap.query);
+  const menuPreview = previewMenuResults(menuResults, expanded);
   const apiResults = [...snap.results];
 
   // Buka popover saat ada query
   useEffect(() => {
     setOpened(!!snap.query);
+    setExpanded(false); // ketikan berubah → hasil Halaman kembali ke pratinjau
   }, [snap.query]);
 
   // Infinite scroll handler
@@ -111,6 +115,7 @@ export default function GlobalSearch() {
     searchState.nextPage = null;
     setOpened(false);
     setIsNavigating(false);
+    setExpanded(false);
   };
 
   return (
@@ -171,7 +176,7 @@ export default function GlobalSearch() {
           {menuResults.length > 0 && (
             <>
               <SectionLabel>Halaman</SectionLabel>
-              {menuResults.map((item) => (
+              {menuPreview.visible.map((item) => (
                 <SearchResultRow
                   key={item.id}
                   title={item.label}
@@ -180,6 +185,9 @@ export default function GlobalSearch() {
                   onClick={(e) => handleSelectMenu(e, item.href)}
                 />
               ))}
+              {menuPreview.hiddenCount > 0 && (
+                <SearchShowMoreButton hiddenCount={menuPreview.hiddenCount} onExpand={() => setExpanded(true)} />
+              )}
             </>
           )}
 

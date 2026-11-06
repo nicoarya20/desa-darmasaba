@@ -5,8 +5,8 @@ import type { MenuItem } from '../../../../types/menu-item';
 /** Sumber default pencarian: menu navbar dulu, lalu halaman publik di luar navbar. */
 const DEFAULT_SEARCH_MENUS: readonly MenuItem[] = [...navbarListMenu, ...searchExtraPages];
 
-/** Batas jumlah hasil menu yang tampil di dropdown pencarian global. */
-export const MAX_MENU_RESULTS = 8;
+/** Jumlah hasil "Halaman" yang tampil sebelum pengunjung menekan "Tampilkan N halaman lainnya". */
+export const MENU_PREVIEW_COUNT = 5;
 
 /** Satu submenu navbar yang bisa dicari: nama submenu, nama menu utamanya, dan tujuan link. */
 export type MenuSearchItem = {
@@ -41,7 +41,7 @@ function matchRank(item: MenuSearchItem, needle: string): number | null {
 export default function searchMenu(
   query: string,
   menus: readonly MenuItem[] = DEFAULT_SEARCH_MENUS,
-  limit: number = MAX_MENU_RESULTS,
+  limit: number = Infinity,
 ): MenuSearchItem[] {
   const needle = query.trim().toLowerCase();
   if (!needle) return [];
@@ -52,4 +52,14 @@ export default function searchMenu(
     .sort((a, b) => a.rank - b.rank || a.order - b.order)
     .slice(0, limit)
     .map((m) => m.item);
+}
+
+/** Potong hasil menu jadi pratinjau: `visible` yang dirender dan `hiddenCount` sisa yang belum dibuka. */
+export function previewMenuResults<T>(
+  results: readonly T[],
+  expanded: boolean,
+  previewCount: number = MENU_PREVIEW_COUNT,
+): { visible: T[]; hiddenCount: number } {
+  if (expanded || results.length <= previewCount) return { visible: [...results], hiddenCount: 0 };
+  return { visible: results.slice(0, previewCount), hiddenCount: results.length - previewCount };
 }
