@@ -1,5 +1,9 @@
 import navbarListMenu from '@/con/navbar-list-menu';
+import searchExtraPages from '@/con/search-extra-pages';
 import type { MenuItem } from '../../../../types/menu-item';
+
+/** Sumber default pencarian: menu navbar dulu, lalu halaman publik di luar navbar. */
+const DEFAULT_SEARCH_MENUS: readonly MenuItem[] = [...navbarListMenu, ...searchExtraPages];
 
 /** Batas jumlah hasil menu yang tampil di dropdown pencarian global. */
 export const MAX_MENU_RESULTS = 8;
@@ -33,10 +37,10 @@ function matchRank(item: MenuSearchItem, needle: string): number | null {
   return null;
 }
 
-/** Cari submenu navbar yang nama submenu atau nama menu utamanya memuat query (tidak peka huruf besar/kecil). */
+/** Cari submenu navbar (dan halaman tambahan) yang nama submenu atau nama menu utamanya memuat query (tidak peka huruf besar/kecil). */
 export default function searchMenu(
   query: string,
-  menus: readonly MenuItem[] = navbarListMenu,
+  menus: readonly MenuItem[] = DEFAULT_SEARCH_MENUS,
   limit: number = MAX_MENU_RESULTS,
 ): MenuSearchItem[] {
   const needle = query.trim().toLowerCase();
