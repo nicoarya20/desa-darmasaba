@@ -1,13 +1,13 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import getDetailUrl, { normalizeSearchType } from '@/app/darmasaba/_com/searchUrl';
+import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
 const ROOT = path.resolve(__dirname, '../..');
 const FIND_MANY = path.join(ROOT, 'src/app/api/[[...slugs]]/_lib/search/findMany.ts');
 const GLOBAL_SEARCH = path.join(ROOT, 'src/app/darmasaba/_com/globalSearch.tsx');
-const DARMASABA_DIR = path.join(ROOT, 'src/app/darmasaba');
 const HOME = '/darmasaba';
 
 /**
@@ -33,26 +33,6 @@ function globalSearchTypes(): string[] {
   expect(start).toBeGreaterThan(-1);
   const types = [...src.slice(start).matchAll(/type:\s*["']([A-Za-z]+)["']/g)].map((m) => m[1]);
   return [...new Set(types)];
-}
-
-/** Daftar route publik (segmen URL) dari page.tsx di src/app/darmasaba; route group `(x)` dibuang. */
-function publicRoutes(): string[][] {
-  const files = readdirSync(DARMASABA_DIR, { recursive: true, encoding: 'utf8' })
-    .filter((f) => path.basename(f) === 'page.tsx');
-  return files.map((f) => [
-    'darmasaba',
-    ...path.dirname(f).split(path.sep).filter((s) => s !== '.' && !/^\(.*\)$/.test(s)),
-  ]);
-}
-
-/** Cocokkan URL ke route nyata. Segmen dinamik `[x]` match apa saja, kecuali placeholder `[sub]`. */
-function matchesRealPage(url: string, routes: string[][]): boolean {
-  const segs = url.split('?')[0].split('/').filter(Boolean);
-  return routes.some(
-    (route) =>
-      route.length === segs.length &&
-      route.every((r, i) => (/^\[.+\]$/.test(r) ? r !== '[sub]' : r === segs[i])),
-  );
 }
 
 const sampleItem = (type: string) => ({ type, id: 'abc123', kategori: 'umum', name: 'Contoh' });
