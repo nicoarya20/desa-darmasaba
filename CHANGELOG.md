@@ -2,7 +2,7 @@
 
 ## [0.1.217] - 2026-11-06
 ### Added
-- **Section "Kabar Desa" di beranda**, tepat di bawah bagian pembuka. Berita terbaru tampil besar dengan foto, kategori, tanggal, dan ringkasan, diikuti tiga berita berikutnya dalam kartu foto. Di bawahnya ada tiga pengumuman terbaru. Klik kartu atau baris mana pun untuk membuka detailnya, atau pakai tombol "Lihat semua berita" dan tautan "Semua pengumuman".
+- **Section "Kabar Desa" di beranda**, tepat di bawah bagian pembuka. Berita terbaru tampil besar dengan foto, kategori, tanggal, dan ringkasan, diikuti tiga berita berikutnya dalam kartu foto. Di bawahnya ada tiga pengumuman terbaru. Klik kartu atau baris mana pun untuk membuka detailnya, atau pakai tautan "Lihat semua berita" di samping judul dan "Semua pengumuman" di panel pengumuman.
 - Di ponsel, tiga kartu berita bisa digeser ke samping.
 
 ### Removed

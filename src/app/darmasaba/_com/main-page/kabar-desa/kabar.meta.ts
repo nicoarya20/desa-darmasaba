@@ -15,8 +15,7 @@ export const BERITA_BASE_HREF = "/darmasaba/desa/berita";
 export const BERITA_LIST_HREF = `${BERITA_BASE_HREF}/semua`;
 export const PENGUMUMAN_BASE_HREF = "/darmasaba/desa/pengumuman";
 
-/** Variabel warna brand (judul, CTA) untuk section Kabar Desa. */
+/** Variabel warna brand (judul, tautan, kategori) untuk section Kabar Desa. */
 export const KABAR_BRAND_VARS = {
   "--brand": colors["blue-button"],
-  "--brand-hover": colors["blue-button-6"],
 } as CSSProperties;
