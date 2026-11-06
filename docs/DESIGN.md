@@ -171,6 +171,7 @@ Gaya apple.com. File: `_com/NavbarMainMenu.tsx` (bar), `_com/NavbarFlyout.tsx` (
 - **Blur halaman**: overlay `fixed` `backdrop-filter: blur(18px)` + tint, fade `opacity`. Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual: Lightning CSS (Turbopack) menggabungkan keduanya jadi hanya versi `-webkit-` yang diabaikan Chrome.
 - **Tutup**: cursor keluar area bar+panel (jeda 120ms), Escape, klik overlay, klik link, atau route berganti. Pencarian dibuka/tutup lewat klik ikon (tidak ikut hover).
 - **Aksesibilitas**: menu utama `<button aria-expanded>`, submenu `<a>` (bisa keyboard & tab baru), Enter membuka + fokus link pertama, panel `inert` saat tertutup. `prefers-reduced-motion`: tanpa gerak, hanya fade. Hover warna hanya untuk `(hover: hover) and (pointer: fine)`.
+- **Pencarian** (`_com/globalSearch.tsx`): dropdown berisi bagian "Halaman" (submenu navbar yang cocok, dari `_com/searchMenu.ts` atas `src/con/navbar-list-menu.ts`, langsung tanpa menunggu API) di atas "Konten" (hasil API). Baris dirender `_com/SearchResultRow.tsx`. Dites di `__tests__/api/search_menu.test.ts`.
 
 ### Navbar Mobile
 
