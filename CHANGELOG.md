@@ -4,6 +4,8 @@
 ### Added
 - **Halaman Peta Informasi** (`/darmasaba/peta-informasi`): semua halaman website Desa Darmasaba dalam satu tempat, dikelompokkan per menu (PPID, Desa, Kesehatan, Keamanan, Ekonomi, Inovasi, Lingkungan, Kependudukan, Pendidikan, Musik, Transparansi, Layanan Online Desa), termasuk halaman yang tidak ada di menu seperti APBDes dan Grafik Penyakit. Ketik di kotak "Saring halaman" untuk langsung menyaring daftar, misalnya "apbdes" atau "posyandu". Setiap tautan bisa dibuka di tab baru.
 - Peta Informasi bisa dibuka dari footer (bagian "Tautan Penting"), dicari lewat kotak pencarian ("peta informasi"), dan muncul sebagai tautan "Buka Peta Informasi" saat pencarian tidak menemukan hasil.
+### Fixed
+- Tombol kembali (ikon panah) di halaman publik kini punya label "Kembali ke halaman sebelumnya", sehingga terbaca oleh pembaca layar dan menampilkan keterangan saat disorot mouse.
 
 ## [0.1.219] - 2026-11-06
 ### Added
