@@ -1,16 +1,16 @@
 import { Image } from "@mantine/core";
 import { Link } from "next-view-transitions";
-import { isWideCard, type PrestasiCard } from "./prestasi.logic";
+import { isWideCard, type PrestasiItem } from "./prestasi.logic";
 import s from "./prestasi.module.css";
 import { PRESTASI_TEXT } from "./prestasi.text";
 
 type Props = {
-  cards: readonly PrestasiCard[];
+  cards: readonly PrestasiItem[];
   loading: boolean;
   placeholderCount: number;
 };
 
-/** Grid 2 kolom prestasi terbaru; seluruh tile = tautan ke detail, judul di kiri bawah foto. */
+/** Grid 2 kolom prestasi & penghargaan; seluruh tile = tautan ke detail, judul di kiri bawah foto. */
 export function PrestasiGrid({ cards, loading, placeholderCount }: Props) {
   if (loading && cards.length === 0) {
     return (
@@ -27,7 +27,7 @@ export function PrestasiGrid({ cards, loading, placeholderCount }: Props) {
   return (
     <ul className={s.grid} aria-label={PRESTASI_TEXT.gridLabel}>
       {cards.map((card, i) => (
-        <li key={card.id} className={isWideCard(i, cards.length) ? s.wide : undefined}>
+        <li key={`${card.source}-${card.id}`} className={isWideCard(i, cards.length) ? s.wide : undefined}>
           <Link href={card.href} className={s.card}>
             {card.imageUrl ? (
               <Image src={card.imageUrl} alt="" className={s.cardImage} loading="lazy" decoding="async" />
