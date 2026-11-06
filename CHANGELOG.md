@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.218] - 2026-11-06
+### Fixed
+- **Hasil pencarian kini membuka halaman yang benar.** Sebelumnya sebagian besar hasil pencarian di website publik (misalnya galeri foto, pasar desa, program kesehatan, pelayanan, dan banyak modul lain) malah membawa pengunjung kembali ke beranda.
+- Hasil pencarian Visi Misi PPID, Profil PPID, Galeri Foto/Video, dan Potensi Desa tidak lagi membuka halaman kosong.
+- Hasil pencarian produk pasar desa kini membuka halaman detail produk UMKM.
+- Hasil pencarian Indeks Kepuasan Masyarakat, kategori berita, Pelayanan Penduduk Non Permanen, serta Dokter dan Tenaga Medis kini membuka halamannya masing-masing. Hasil media sosial langsung membuka akun media sosial desa.
+
 ## [0.1.213] - 2026-11-06
 ### Added
 - **Dokumen Perencanaan** (RPJM Desa, RKP Desa, Berita Acara Musyawarah): admin mengelola dokumen (PDF, nomor Perdes, ringkasan, periode/tahun) lewat tab baru di admin Kegiatan Desa. Publik melihatnya di section baru pada halaman Monev & Pembangunan, dan ada tautan dari PPID > Daftar Informasi Publik. Kegiatan pembangunan kini berlabel "Bersumber dari RKP Desa {tahun}" dengan tautan ke dokumennya bila ada. Periode RPJM bebas (tahun mulai/selesai) sehingga 6 atau 8 tahun sama-sama bisa. Tabel baru `DokumenPerencanaan`.
