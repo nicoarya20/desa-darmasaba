@@ -6,6 +6,8 @@ import {
   formatPercent,
   formatRupiah,
   formatRupiahCompact,
+  formatTanggal,
+  latestUpdate,
   listYears,
   summarizeApbdes,
   summarizeCategory,
@@ -117,5 +119,28 @@ describe('format', () => {
     expect(barWidth(-5)).toBe(0);
     expect(barWidth(null)).toBe(0);
     expect(barWidth(42.5)).toBe(42.5);
+  });
+});
+
+describe('latestUpdate', () => {
+  it('mengambil waktu terbaru dari APBDes, item, dan realisasi', () => {
+    const base = item('4.1.1', 150, 'pendapatan', [45]);
+    base.updatedAt = '2026-02-01T00:00:00.000Z';
+    base.realisasiItems![0].updatedAt = '2026-10-15T03:00:00.000Z';
+    const tgl = latestUpdate({ updatedAt: '2026-01-10T00:00:00.000Z', items: [base] });
+    expect(tgl?.toISOString()).toBe('2026-10-15T03:00:00.000Z');
+  });
+
+  it('null bila tidak ada tanggal yang valid', () => {
+    expect(latestUpdate({ updatedAt: undefined, items: [] })).toBeNull();
+    expect(latestUpdate({ updatedAt: 'bukan-tanggal', items: [] })).toBeNull();
+  });
+});
+
+describe('formatTanggal', () => {
+  it('tanggal panjang Indonesia di zona WITA', () => {
+    expect(formatTanggal(new Date('2026-11-03T06:45:42.617Z'))).toBe('3 November 2026');
+    // 16:30 UTC = 00:30 WITA keesokan harinya
+    expect(formatTanggal(new Date('2026-11-03T16:30:00.000Z'))).toBe('4 November 2026');
   });
 });

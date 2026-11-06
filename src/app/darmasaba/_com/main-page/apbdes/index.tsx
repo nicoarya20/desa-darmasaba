@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { useSnapshot } from 'valtio'
 
-import { listYears, summarizeApbdes } from './apbdes.logic'
+import { formatTanggal, latestUpdate, listYears, summarizeApbdes } from './apbdes.logic'
 import s from './apbdes.module.css'
 import { APBDES_TEXT } from './apbdes.text'
 import { ApbdesChart } from './components/ApbdesChart'
@@ -41,6 +41,7 @@ function Apbdes() {
   const current = list?.find((a) => a.tahun === year) ?? null
   const categories = useMemo(() => summarizeApbdes(current?.items ?? []), [current])
   const hasItems = (current?.items?.length ?? 0) > 0
+  const updated = useMemo(() => (current ? latestUpdate(current) : null), [current])
 
   return (
     <section className={s.section} style={BRAND_VARS} aria-labelledby="apbdes-title">
@@ -71,6 +72,11 @@ function Apbdes() {
               ) : (
                 <p className={s.yearCaption}>{APBDES_TEXT.singleYear(year)}</p>
               )}
+              {updated ? (
+                <p className={s.updated}>
+                  <time dateTime={updated.toISOString()}>{APBDES_TEXT.updatedAt(formatTanggal(updated))}</time>
+                </p>
+              ) : null}
             </div>
 
             {/* key=tahun: konten dipasang ulang agar animasi masuk berjalan tiap ganti tahun */}

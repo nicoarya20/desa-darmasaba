@@ -4,6 +4,8 @@
 ### Changed
 - **Section APBDes di beranda tampil baru dan lebih ringkas.** Kini dibuka dengan tiga kartu ringkasan (Pendapatan, Belanja, Pembiayaan) berisi pagu dalam angka besar yang mudah dibaca (misalnya "Rp 23,14 M") beserta nilai lengkapnya, bilah realisasi, dan persennya. Di bawahnya ada grafik pagu dan realisasi, lalu rincian anggaran per kategori yang bisa dibuka-tutup. Tombol "Lihat semua data APBDes" pindah ke bagian bawah.
 - Tahun APBDes kini dipilih lewat tombol tahun di tengah (sebelumnya kotak pilihan).
+- Di bawah pilihan tahun kini tertulis tanggal terakhir data APBDes diperbarui, sehingga warga tahu seberapa baru angka yang ditampilkan.
+- Setiap pos di rincian anggaran kini punya bilah progres realisasi beserta persen dan nominalnya, jadi kemajuan penggunaan anggaran per pos langsung terlihat.
 - Ikon emoji diganti ikon garis yang seragam dengan bagian lain website.
 - Bila realisasi suatu tahun belum diinput, kartu menulis "Belum ada realisasi" (sebelumnya semua tampil merah dengan peringatan "Realisasi rendah, perlu perhatian khusus").
 

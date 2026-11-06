@@ -122,3 +122,33 @@ export function formatPercent(value: number | null): string {
 export function barWidth(value: number | null): number {
   return Math.min(100, Math.max(0, value ?? 0));
 }
+
+type Stamp = string | Date | null | undefined;
+
+function toTime(value: Stamp): number | null {
+  if (!value) return null;
+  const t = new Date(value).getTime();
+  return Number.isNaN(t) ? null : t;
+}
+
+/**
+ * Waktu pembaruan terakhir data satu tahun APBDes. Realisasi dan item disimpan di tabel
+ * sendiri, jadi menambah realisasi tidak mengubah `updatedAt` APBDes — ambil yang terbaru dari ketiganya.
+ */
+export function latestUpdate(apbdes: Pick<APBDes, "updatedAt" | "items">): Date | null {
+  const stamps: Stamp[] = [apbdes.updatedAt];
+  for (const item of apbdes.items ?? []) {
+    stamps.push(item.updatedAt);
+    for (const r of item.realisasiItems ?? []) stamps.push(r.updatedAt);
+  }
+  const times = stamps.map(toTime).filter((t): t is number => t !== null);
+  return times.length > 0 ? new Date(Math.max(...times)) : null;
+}
+
+/** Zona waktu Desa Darmasaba (Bali, WITA) agar tanggal sama di perangkat mana pun. */
+export const DESA_TIME_ZONE = "Asia/Makassar";
+
+/** Tanggal panjang Indonesia: `3 November 2026`. */
+export function formatTanggal(date: Date): string {
+  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: DESA_TIME_ZONE }).format(date);
+}

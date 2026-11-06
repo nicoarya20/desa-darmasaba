@@ -45,8 +45,16 @@
 
 .years {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 40px;
+}
+
+.updated {
+  margin: 0;
+  font-size: 14px;
+  color: var(--subtle);
 }
 
 .yearCaption {
@@ -243,15 +251,60 @@
   padding: 0;
 }
 
-.row {
+/* Desktop: kode | uraian | realisasi (bar + persen + nominal) | anggaran */
+.row,
+.rowHead {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) auto;
-  column-gap: 16px;
-  align-items: baseline;
+  grid-template-columns: 72px minmax(0, 1fr) 220px 168px;
+  column-gap: 24px;
+  align-items: start;
+}
+
+.row {
   padding: 12px 0;
   border-top: 1px solid var(--line);
   font-size: 15px;
   line-height: 1.4;
+}
+
+.rowHead {
+  padding: 4px 0 8px;
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.rowHead > :last-child,
+.pagu {
+  text-align: right;
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 7px;
+  font-variant-numeric: tabular-nums;
+}
+
+.progressLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rowBar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.progressPct {
+  min-width: 44px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
 }
 
 .kode {
@@ -269,11 +322,8 @@
   font-weight: 600;
 }
 
-.values {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+
+.pagu {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -281,6 +331,15 @@
 .real {
   font-size: 13px;
   color: var(--muted);
+}
+
+.realLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* ---------- CTA ---------- */
@@ -324,6 +383,12 @@
 
   .amount {
     font-size: 32px;
+  }
+
+  .row,
+  .rowHead {
+    grid-template-columns: 64px minmax(0, 1fr) 160px 150px;
+    column-gap: 16px;
   }
 }
 
@@ -371,18 +436,39 @@
     font-size: 21px;
   }
 
-  /* Kode + uraian di baris atas, nominal di bawah uraian — tanpa scroll horizontal. */
+  /* Kode + uraian di baris atas; anggaran lalu realisasi di bawah uraian — tanpa scroll horizontal. */
+  .rowHead {
+    display: none;
+  }
+
   .row {
     grid-template-columns: 44px minmax(0, 1fr);
     column-gap: 12px;
-    row-gap: 4px;
+    row-gap: 6px;
   }
 
-  .values {
+  .pagu,
+  .progress {
     grid-column: 2;
-    align-items: flex-start;
     padding-left: calc(var(--depth, 0) * 16px);
-    white-space: normal;
+    text-align: left;
+  }
+
+  .pagu {
+    grid-row: 2;
+  }
+
+  .progress {
+    grid-row: 3;
+    padding-top: 0;
+  }
+
+  .realLabel {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
   }
 }
 
