@@ -65,6 +65,11 @@ const searchExtraPages: MenuItem[] = [
       { id: 'x4.4', name: 'Grafik Penyakit', href: '/darmasaba/kesehatan/data-kesehatan-warga/grafik-penyakit' },
     ],
   },
+  {
+    id: 'x5',
+    name: 'Informasi',
+    children: [{ id: 'x5.1', name: 'Peta Informasi (Semua Halaman)', href: '/darmasaba/peta-informasi' }],
+  },
 ];
 
 export default searchExtraPages;

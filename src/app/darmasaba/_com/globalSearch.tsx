@@ -1,7 +1,7 @@
 'use client';
 
 import searchState, { debouncedFetch } from '@/app/api/[[...slugs]]/_lib/search/searchState';
-import { Box, Center, Loader, Popover, Text, TextInput } from '@mantine/core';
+import { Anchor, Box, Center, Loader, Popover, Stack, Text, TextInput } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
@@ -9,6 +9,7 @@ import SearchResultRow from './SearchResultRow';
 import SearchShowMoreButton from './SearchShowMoreButton';
 import searchMenu, { previewMenuResults } from './searchMenu';
 import getDetailUrl, { normalizeSearchType } from './searchUrl';
+import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInformasi';
 
 type SearchResultItem = (typeof searchState.results)[number];
 
@@ -213,9 +214,13 @@ export default function GlobalSearch() {
           )}
 
           {apiResults.length === 0 && !snap.loading && menuResults.length === 0 && (
-            <Center py="md">
+            <Stack align="center" gap={4} py="md">
               <Text fz="sm">Tidak ada hasil</Text>
-            </Center>
+              {/* Jalan keluar saat buntu: daftar semua halaman website */}
+              <Anchor href={PETA_INFORMASI_HREF} fz="xs" onClick={(e) => handleSelectMenu(e, PETA_INFORMASI_HREF)}>
+                Buka Peta Informasi
+              </Anchor>
+            </Stack>
           )}
         </Popover.Dropdown>
       </Popover>
