@@ -144,7 +144,7 @@ function Kepuasan() {
 
   if ((loading && !data) || !data) {
     return (
-      <Stack py={10} px="sm">
+      <Stack px="sm" py="var(--section-pad-y)">
         <Skeleton height={300} mb="md" />
         <SimpleGrid cols={{ base: 1, md: 3 }}>
           <Skeleton height={300} />
@@ -157,8 +157,8 @@ function Kepuasan() {
 
   if (data.length === 0) {
     return (
-      <Stack p="sm" my="xs">
-        <Container w={{ base: "100%", md: "80%" }} p="sm">
+      <Stack px="sm" py="var(--section-pad-y)">
+        <Container w={{ base: "100%", md: "80%" }} px="sm">
           <Center>
             <Title
               order={2}
@@ -482,7 +482,7 @@ function Kepuasan() {
   }
 
   return (
-    <Stack p="sm" my="xs">
+    <Stack px="sm" py="var(--section-pad-y)">
       <Container size="lg" px="sm">
         <Center>
           <Title

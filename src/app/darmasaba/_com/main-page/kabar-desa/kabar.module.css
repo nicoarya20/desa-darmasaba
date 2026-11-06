@@ -15,7 +15,7 @@
   /* = Stack p="sm" + Box px="sm" (12 + 12px) di section Kepuasan. */
   --gutter: 24px;
   background: #fff;
-  padding: 56px var(--gutter) 72px;
+  padding: var(--section-pad-y) var(--gutter);
   color: var(--ink);
 }
 
@@ -288,10 +288,6 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
-  .section {
-    padding: 40px var(--gutter) 56px;
-  }
-
   .header {
     margin-bottom: 20px;
   }
