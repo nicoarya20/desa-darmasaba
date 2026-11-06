@@ -35,8 +35,8 @@ export default function SDGS() {
   }, [])
 
   return (
-    <Stack p="sm" my="xs">
-      <Container w={{ base: "100%", md: "80%" }} p="xl">
+    <Stack px="sm" py="var(--section-pad-y)">
+      <Container w={{ base: "100%", md: "80%" }} px="xl">
 
         {/* ========== TITLE SECTION ========== */}
         <Center>
@@ -63,7 +63,7 @@ export default function SDGS() {
           SDGs Desa adalah upaya desa untuk menciptakan pembangunan yang maju, inklusif, dan berkelanjutan melalui 17 tujuan mulai dari pengentasan kemiskinan, pendidikan, kesehatan, hingga pelestarian lingkungan.
         </Text>
 
-        <Box py="lg">
+        <Box pt="lg">
           {sdgsDesa && sdgsDesa.length > 0 ? (
 
             /* ========== LIST GRID ========== */

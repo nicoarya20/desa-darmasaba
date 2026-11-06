@@ -38,9 +38,9 @@ function DesaAntiKorupsi() {
   const data = (state.desaAntikorupsi.findMany.data || []).slice(0, 6);
 
   return (
-    <Stack gap="0" bg={colors.Bg} p="sm" my="xs">
+    <Stack gap="0" bg={colors.Bg} px="sm" py="var(--section-pad-y)">
       {/* ===================== HEADER ===================== */}
-      <Container w={{ base: "100%", md: "80%" }} p="md">
+      <Container w={{ base: "100%", md: "80%" }} px="md">
         <Center>
           <Text
             fw={700}
@@ -91,7 +91,6 @@ function DesaAntiKorupsi() {
             cols={{ base: 1, sm: 2, md: 3 }}
             spacing="lg"
             mt="lg"
-            mb="xl"
           >
             {data.map((v, k) => (
               <Paper

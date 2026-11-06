@@ -49,6 +49,25 @@ body {
 }
 
 /* ===================================
+   3b. RITME SECTION BERANDA
+   ===================================
+   Satu-satunya pengatur jarak antar section beranda: ubah --section-gap saja.
+   Tiap section memberi padding atas & bawah = setengahnya, jadi jarak konten
+   section A → konten section B selalu ±--section-gap, baik latar keduanya sama
+   maupun berbeda (tiap warna latar kebagian setengah). */
+:root {
+  --section-gap: 100px;
+  --section-pad-y: calc(var(--section-gap) / 2);
+}
+
+/* = breakpoint mobile apple.com yang dipakai section beranda */
+@media (max-width: 734px) {
+  :root {
+    --section-gap: 72px;
+  }
+}
+
+/* ===================================
    4. GLASS EFFECTS - OPTIMIZED
    =================================== */
 /* Tulis `backdrop-filter` TANPA `-webkit-backdrop-filter` manual: Lightning CSS

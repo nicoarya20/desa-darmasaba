@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.218] - 2026-11-06
+### Changed
+- **Jarak antar section di beranda kini seragam, sekitar 100px di layar lebar dan 72px di ponsel.** Sebelumnya jaraknya berbeda-beda: Kabar Desa ke APBDes terlalu jauh, sedangkan Prestasi ke Layanan dan Potensi Desa terlalu rapat. Judul "Desa Anti Korupsi" juga tidak lagi menempel ke tepi atas latar birunya.
+
 ## [0.1.217] - 2026-11-06
 ### Added
 - **Section "Kabar Desa" di beranda**, tepat di bawah bagian pembuka. Berita terbaru tampil besar dengan foto, kategori, tanggal, dan ringkasan, diikuti tiga berita berikutnya dalam kartu foto. Di bawahnya ada tiga pengumuman terbaru. Klik kartu atau baris mana pun untuk membuka detailnya, atau pakai tautan "Lihat semua berita" di samping judul dan "Semua pengumuman" di panel pengumuman.
