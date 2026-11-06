@@ -1,5 +1,6 @@
 'use client'
 import colors from '@/con/colors';
+import { formatBiayaPelayanan } from '@/lib/pelayanan-waktu-biaya';
 import {
   Box,
   Button,
@@ -81,6 +82,10 @@ function PelayananPendudukNonPermanent() {
             </Center>
 
             <Divider my="md" color={colors['blue-button']} />
+
+            <Text ta="center" fz="sm" c="dimmed">
+              Estimasi Waktu: {data.estimasiWaktu || '-'} • Biaya: {formatBiayaPelayanan(data.biaya) ?? '-'}
+            </Text>
 
             <Box mt="lg">
               <Text

@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import {
+  toWaktuBiayaForm,
+  toWaktuBiayaPayload,
+  validateWaktuBiayaForm,
+} from "@/lib/pelayanan-waktu-biaya";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -9,6 +14,8 @@ const telunjukSaktiDesaForm = {
   name: "",
   deskripsi: "",
   link: "",
+  estimasiWaktu: "",
+  biaya: "",
 };
 
 const templateTelunjukSaktiDesaForm = z.object({
@@ -30,11 +37,16 @@ const pelayananTelunjukSaktiDesa = proxy({
           .join("\n")}] required`;
         return toast.error(err);
       }
+      const waktuBiayaError = validateWaktuBiayaForm(pelayananTelunjukSaktiDesa.create.form);
+      if (waktuBiayaError) return toast.error(waktuBiayaError);
       try {
         pelayananTelunjukSaktiDesa.create.loading = true;
         const res = await ApiFetch.api.desa.layanan.pelayanantelunjuksaktidesa[
           "create"
-        ].post(pelayananTelunjukSaktiDesa.create.form);
+        ].post({
+          ...pelayananTelunjukSaktiDesa.create.form,
+          ...toWaktuBiayaPayload(pelayananTelunjukSaktiDesa.create.form),
+        });
         if (res.status === 200) {
           pelayananTelunjukSaktiDesa.findMany.load();
           return toast.success("Telunjuk Sakti Desa berhasil disimpan!");
@@ -176,6 +188,7 @@ const pelayananTelunjukSaktiDesa = proxy({
             name: data.name,
             deskripsi: data.deskripsi,
             link: data.link,
+            ...toWaktuBiayaForm(data),
           };
           return data;
         } else {
@@ -199,6 +212,8 @@ const pelayananTelunjukSaktiDesa = proxy({
           .join("\n")}] required`;
         return toast.error(err);
       }
+      const waktuBiayaError = validateWaktuBiayaForm(pelayananTelunjukSaktiDesa.edit.form);
+      if (waktuBiayaError) return toast.error(waktuBiayaError);
       try {
         pelayananTelunjukSaktiDesa.edit.loading = true;
         const response = await fetch(
@@ -212,6 +227,7 @@ const pelayananTelunjukSaktiDesa = proxy({
               name: this.form.name,
               deskripsi: this.form.deskripsi,
               link: this.form.link,
+              ...toWaktuBiayaPayload(this.form),
             }),
           }
         );

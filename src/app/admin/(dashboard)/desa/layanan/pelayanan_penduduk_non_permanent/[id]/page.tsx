@@ -3,7 +3,9 @@
 
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
 import colors from '@/con/colors';
+import { toWaktuBiayaForm, toWaktuBiayaPayload, validateWaktuBiayaForm } from '@/lib/pelayanan-waktu-biaya';
 import {
   Box,
   Button,
@@ -31,6 +33,8 @@ function EditPelayananPendudukNonPermanent() {
   const [formData, setFormData] = useState({
     name: '',
     deskripsi: '',
+    estimasiWaktu: '',
+    biaya: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,6 +57,8 @@ function EditPelayananPendudukNonPermanent() {
   const [originalData, setOriginalData] = useState({
     name: '',
     deskripsi: '',
+    estimasiWaktu: '',
+    biaya: '',
   });
 
 
@@ -68,10 +74,12 @@ function EditPelayananPendudukNonPermanent() {
           setFormData({
             name: data.name || '',
             deskripsi: data.deskripsi || '',
+            ...toWaktuBiayaForm(data),
           });
           setOriginalData({
             name: data.name || '',
             deskripsi: data.deskripsi || '',
+            ...toWaktuBiayaForm(data),
           });
         }
       } catch (error) {
@@ -96,6 +104,8 @@ function EditPelayananPendudukNonPermanent() {
     setFormData({
       name: originalData.name,
       deskripsi: originalData.deskripsi,
+      estimasiWaktu: originalData.estimasiWaktu,
+      biaya: originalData.biaya,
     });
     toast.info("Form dikembalikan ke data awal");
   };
@@ -111,6 +121,12 @@ function EditPelayananPendudukNonPermanent() {
       return;
     }
 
+    const waktuBiayaError = validateWaktuBiayaForm(formData);
+    if (waktuBiayaError) {
+      toast.error(waktuBiayaError);
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       if (!statePendudukNonPermanent.findById.data) return;
@@ -120,6 +136,7 @@ function EditPelayananPendudukNonPermanent() {
         ...statePendudukNonPermanent.findById.data,
         name: formData.name,
         deskripsi: formData.deskripsi,
+        ...toWaktuBiayaPayload(formData),
       };
 
       await statePendudukNonPermanent.update.update(updated);
@@ -167,6 +184,13 @@ function EditPelayananPendudukNonPermanent() {
               value={formData.name}
               onChange={(e) => handleChange('name')(e.target.value)}
               required
+            />
+
+            <LayananWaktuBiayaFields
+              estimasiWaktu={formData.estimasiWaktu}
+              biaya={formData.biaya}
+              onEstimasiWaktuChange={handleChange('estimasiWaktu')}
+              onBiayaChange={handleChange('biaya')}
             />
 
             {/* Deskripsi Field */}

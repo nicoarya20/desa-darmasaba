@@ -1,7 +1,9 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
 import colors from '@/con/colors';
+import { toWaktuBiayaForm, validateWaktuBiayaForm } from '@/lib/pelayanan-waktu-biaya';
 import {
   Box,
   Button,
@@ -37,12 +39,16 @@ function EditPelayananTelunjukSakti() {
     name: '',
     deskripsi: '',
     link: '',
+    estimasiWaktu: '',
+    biaya: '',
   });
 
   const [originalData, setOriginalData] = useState({
     name: '',
     deskripsi: '',
     link: '',
+    estimasiWaktu: '',
+    biaya: '',
   });
 
   // Load data awal hanya sekali (pas ada id)
@@ -58,11 +64,13 @@ function EditPelayananTelunjukSakti() {
             name: data.name ?? '',
             deskripsi: data.deskripsi ?? '',
             link: data.link ?? '',
+            ...toWaktuBiayaForm(data),
           });
           setOriginalData({
             name: data.name ?? '',
             deskripsi: data.deskripsi ?? '',
             link: data.link ?? '',
+            ...toWaktuBiayaForm(data),
           });
         }
       } catch (error) {
@@ -87,6 +95,8 @@ function EditPelayananTelunjukSakti() {
       name: originalData.name,
       deskripsi: originalData.deskripsi,
       link: originalData.link,
+      estimasiWaktu: originalData.estimasiWaktu,
+      biaya: originalData.biaya,
     });
     toast.info("Form dikembalikan ke data awal");
   };
@@ -105,6 +115,12 @@ function EditPelayananTelunjukSakti() {
 
     if (!formData.link?.trim()) {
       toast.error('Link wajib diisi');
+      return;
+    }
+
+    const waktuBiayaError = validateWaktuBiayaForm(formData);
+    if (waktuBiayaError) {
+      toast.error(waktuBiayaError);
       return;
     }
 
@@ -170,6 +186,13 @@ function EditPelayananTelunjukSakti() {
             placeholder="Masukkan alamat link"
             value={formData.link}
             onChange={(e) => handleChange('link', e.target.value)}
+          />
+
+          <LayananWaktuBiayaFields
+            estimasiWaktu={formData.estimasiWaktu}
+            biaya={formData.biaya}
+            onEstimasiWaktuChange={(v) => handleChange('estimasiWaktu', v)}
+            onBiayaChange={(v) => handleChange('biaya', v)}
           />
 
           {/* Tombol Simpan */}

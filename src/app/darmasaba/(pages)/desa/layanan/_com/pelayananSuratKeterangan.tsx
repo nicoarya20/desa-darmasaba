@@ -1,6 +1,7 @@
 "use client";
 
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import colors from '@/con/colors';
 import { Box, Button, Center, Group, Image, Pagination, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
@@ -102,6 +103,9 @@ function PelayananSuratKeterangan({ search }: { search: string }) {
               >
                 {v.name}
               </Title>
+              <Group justify="center">
+                <LayananWaktuBiayaBadge estimasiWaktu={v.estimasiWaktu} biaya={v.biaya} onDark />
+              </Group>
               <Group justify="center">
                 <Button
                   size="md"

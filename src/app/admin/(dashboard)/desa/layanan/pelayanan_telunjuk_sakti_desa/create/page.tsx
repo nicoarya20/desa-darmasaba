@@ -1,6 +1,7 @@
 'use client';
 
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
+import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
 import colors from '@/con/colors';
 import {
   Box,
@@ -37,6 +38,8 @@ function CreatePelayananTelunjukDesa() {
       name: '',
       deskripsi: '',
       link: '',
+      estimasiWaktu: '',
+      biaya: '',
     };
   };
 
@@ -123,6 +126,13 @@ function CreatePelayananTelunjukDesa() {
             label="Link"
             placeholder="Masukkan link pelayanan"
             required
+          />
+
+          <LayananWaktuBiayaFields
+            estimasiWaktu={stateTelunjukDesa.create.form.estimasiWaktu}
+            biaya={stateTelunjukDesa.create.form.biaya}
+            onEstimasiWaktuChange={(v) => (stateTelunjukDesa.create.form.estimasiWaktu = v)}
+            onBiayaChange={(v) => (stateTelunjukDesa.create.form.biaya = v)}
           />
 
           {/* Tombol Simpan */}

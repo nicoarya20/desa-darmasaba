@@ -1,6 +1,7 @@
 import Elysia, { t } from "elysia";
 import pelayananPerizinanBerusahaFindUnique from "./findUnique";
 import pelayananPerizinanBerusahaUpdate from "./updt";
+import { waktuBiayaBodySchema } from "../waktu-biaya.schema";
 
 const PelayananPerizinanBerusaha = new Elysia({ prefix: "/pelayananperizinanberusaha", tags: ["Desa/Layanan/Pelayanan Perizinan Berusaha"] })
 .get("/:id", async (context) => {
@@ -16,6 +17,7 @@ const PelayananPerizinanBerusaha = new Elysia({ prefix: "/pelayananperizinanberu
         name: t.String(),
         deskripsi: t.String(),
         link: t.String(),
+        ...waktuBiayaBodySchema,
     }),
 })
 export default PelayananPerizinanBerusaha;
