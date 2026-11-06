@@ -16,7 +16,7 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 | `@mantine/charts` | 9.7.4 | BarChart, PieChart, dll |
 | `@tabler/icons-react` | ^3.30.0 | Semua ikon (Tabler Icons) |
 | `framer-motion` | ^12.38.0 | Animasi (hover cards, stagger) |
-| `recharts` | ^3.8.0 | Grafik APBDes |
+| `recharts` | ^3.8.0 | Grafik langsung di beberapa halaman data (pendidikan, kesehatan, ekonomi) |
 | `primereact` | ^10.9.6 | Beberapa komponen tabel |
 | `@mantine/hooks` | 9.7.4 | Hooks pendukung Mantine (dipakai luas bareng `@mantine/core`) |
 | `chart.js` | ^4.4.8 | Grafik tambahan di luar `@mantine/charts` |
@@ -192,6 +192,19 @@ Gaya galeri apple.com ("Endless entertainment."). Folder: `_com/main-page/layana
 - **Geser**: sentuh/pen = swipe; trackpad dua jari (atau Shift+scroll) di atas baris = 1 kartu per gerakan termasuk momentum. Kunci per gerakan dibuka oleh jeda hening 160ms **atau** deteksi gerakan baru (`WHEEL_GESTURE`: melemah lalu naik lagi, lonjakan >2×, atau berbalik arah) — momentum macOS bisa 1–2 detik, jadi tanpa deteksi ini geser cepat beruntun tertelan. Geser baris mana pun atau klik titik → **kedua baris** bergeser bersama sejauh langkah yang sama (`stepAll` di `index.tsx`); hanya fokus keyboard ke kartu samping yang menggeser barisnya sendiri. Gestur "Back" browser dicegah dengan `overscroll-behavior-x: none` di `<html>` selama kursor di atas baris (lapis utama — Chrome hanya mengizinkan `preventDefault` pada event wheel pertama satu gerakan, jadi `preventDefault` saja tidak cukup) + `preventDefault` pada event dominan horizontal. Scroll vertikal tetap jalan; di luar galeri gestur Back normal.
 - **Jeda**: tombol pause, fokus keyboard di kartu, tab tidak aktif, `prefers-reduced-motion` (tanpa gerak otomatis & tanpa transisi). Hover tidak menjeda. Geser atau klik titik mengulang progress dari 0.
 - **Aksesibilitas**: hanya salinan tengah yang bisa di-Tab/terbaca screen reader; fokus keyboard ke kartu samping membawanya ke tengah.
+
+### APBDes (Beranda)
+
+Gaya bersih apple.com. Folder: `_com/main-page/apbdes/` — `index.tsx` (section, tahun, data), `components/ApbdesSummary.tsx` (3 kartu), `components/ApbdesChart.tsx` (`@mantine/charts` BarChart), `components/ApbdesDetail.tsx` (accordion rincian), `components/ApbdesSkeleton.tsx`, `apbdes.logic.ts` (helper murni, dites di `__tests__/api/apbdes_beranda_logic.test.ts`), `apbdes.meta.ts` (ikon + warna kategori), `apbdes.text.ts` (label), `apbdes.module.css`.
+
+- **Bentuk**: latar putih, isi max-width 1100px, kartu/panel `#f5f5f7` radius 18px tanpa border/bayangan. Judul 48px (mobile 32px) warna `blue-button`, subjudul abu `#6e6e73`. Tahun dipilih lewat `SegmentedControl` di tengah (teks "Tahun X" bila hanya satu tahun).
+- **Ringkasan**: 3 kartu Pendapatan / Belanja / Pembiayaan — ikon Tabler (`IconCash`, `IconReceipt2`, `IconBuildingBank`, tanpa emoji) dalam lingkaran tint, pagu ringkas (`Rp 23,14 M`) + penuh, progress tipis 6px, persen realisasi. Warna aksen per kategori (teal / biru brand / oranye) **netral**: realisasi rendah atau 0 tidak diberi merah — 0 ditulis "Belum ada realisasi".
+- **Angka**: satuan ringkas Indonesia Rb/Jt/M/T (bukan B), Rupiah penuh `Rp 1.234.567`, persen `8,8%`.
+- **Total kategori** = jumlah item akar (kode yang bukan turunan kode lain). Data bisa berhirarki (4 → 4.1 → 4.1.1) di mana induk sudah memuat jumlah anaknya; menjumlah semua item menghitung ganda. Realisasi baris = realisasi item + turunannya.
+- **Grafik**: pagu (`blue-button-3`) vs realisasi (`blue-button`), legend di atas, grid horizontal, sumbu ringkas, tooltip Rupiah penuh. Bila realisasi tahun itu kosong muncul catatan di bawah grafik.
+- **Rincian**: `Accordion multiple` per kategori (tertutup awal), header = jumlah pos + pagu ringkas. Baris: kode | uraian (indentasi 16px per tingkat, induk tebal) | pagu + realisasi·persen. Mobile ≤734px: nominal pindah ke bawah uraian, tanpa scroll horizontal.
+- **Gerak**: konten fade + naik 6px 280ms tiap ganti tahun (`key=tahun`); progress bar transisi lebar 600ms. `prefers-reduced-motion`: keduanya mati. Loading = skeleton (bukan overlay).
+- **CTA**: pill "Lihat semua data APBDes" → `/darmasaba/apbdes`, di bawah section.
 
 ### Footer
 
@@ -539,7 +552,7 @@ Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual — Lightning
 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}  // potensi, layanan
 whileHover={{ scale: 1.05 }}                               // SDGs
 
-// Stagger fade-up (APBDes sections)
+// Stagger fade-up (beberapa halaman publik)
 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
 transition={{ delay: index * 0.1 }}  // 0.1s, 0.2s, 0.3s, 0.4s
 ```
