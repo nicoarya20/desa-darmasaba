@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.224] - 2026-11-07
+### Changed
+- **Menjalankan seed ulang tidak lagi menimpa data yang sudah diedit admin.** Seed kini hanya menambahkan data yang belum ada. Data yang sudah ada di database (termasuk data contoh yang sudah diubah lewat admin) dibiarkan apa adanya. Saat seed dijalankan, baris pertama log menampilkan mode yang aktif.
+- Untuk sengaja mengembalikan data contoh ke isi aslinya, jalankan seed dengan `SEED_OVERWRITE=true`. Perhatian: mode ini menimpa editan admin pada data hasil seed.
+- Akibatnya, perbaikan isi data contoh di file seed tidak otomatis masuk ke database yang sudah terisi. Ubah lewat admin, atau jalankan dengan `SEED_OVERWRITE=true`.
+- Pembersihan data contoh lama (0.1.223) kini juga mencocokkan deskripsi: berita, jabatan BUMDes, atau buku lama yang judul **atau** deskripsinya sudah diubah admin tidak ikut terhapus. Pengurus BUMDes lama yang sudah dipindah ke jabatan lain juga tidak ikut terhapus.
+
 ## [0.1.223] - 2026-11-07
 ### Fixed
 - **Data hasil seed tidak lagi tampil dobel setelah data contoh diganti.** Sebelumnya, data contoh versi lama tetap tersimpan saat isi seed diperbarui, sehingga tampil berdampingan dengan data baru. Saat seed dijalankan, data lama berikut kini dibersihkan otomatis:
