@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.223] - 2026-11-07
+### Fixed
+- **Data hasil seed tidak lagi tampil dobel setelah data contoh diganti.** Sebelumnya, data contoh versi lama tetap tersimpan saat isi seed diperbarui, sehingga tampil berdampingan dengan data baru. Saat seed dijalankan, data lama berikut kini dibersihkan otomatis:
+  - 18 berita lama (sebelum diganti berita Okt–Nov 2026)
+  - 22 jabatan perangkat desa dan 8 nama pengurus lama di Struktur Organisasi BUMDes
+  - kategori kegiatan "Sosial" yang muncul dua kali
+  - buku "Seni Berpikir Kritis" yang tercatat dua kali di Perpustakaan Digital
+- Data yang sudah diubah admin (judul/nama berbeda dari data contoh lama) tidak ikut terhapus. Kegiatan yang memakai kategori "Sosial" lama otomatis dipindah ke kategori "Sosial" yang tersisa. Jabatan BUMDes lama yang masih dipakai pengurus buatan admin juga dibiarkan.
+
 ## [0.1.222] - 2026-11-07
 ### Added
 - **Halaman Peta Informasi** (`/darmasaba/peta-informasi`): semua halaman website Desa Darmasaba dalam satu tempat, dikelompokkan per menu (PPID, Desa, Kesehatan, Keamanan, Ekonomi, Inovasi, Lingkungan, Kependudukan, Pendidikan, Musik, Transparansi, Layanan Online Desa), termasuk halaman yang tidak ada di menu seperti APBDes dan Grafik Penyakit. Ketik di kotak "Saring halaman" untuk langsung menyaring daftar, misalnya "apbdes" atau "posyandu". Setiap tautan bisa dibuka di tab baru.

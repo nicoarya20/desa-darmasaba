@@ -8,7 +8,7 @@ import { join } from "path";
 const prismaMock = vi.hoisted(() => ({
   kategoriBerita: { upsert: vi.fn(), findMany: vi.fn() },
   fileStorage: { upsert: vi.fn(), findUnique: vi.fn() },
-  berita: { upsert: vi.fn() },
+  berita: { upsert: vi.fn(), deleteMany: vi.fn().mockResolvedValue({ count: 0 }) },
 }));
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
 
