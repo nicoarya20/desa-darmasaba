@@ -1,93 +1,115 @@
 {
-  "keterangan": "Posisi organisasi seed lama (jabatan perangkat desa) yang diganti posisi generik BUMDes di commit 933cc499. Dihapus saat seed hanya bila namanya belum diubah admin.",
+  "keterangan": "Posisi organisasi seed lama (jabatan perangkat desa) yang diganti posisi generik BUMDes di commit 933cc499. Dihapus saat seed hanya bila nama dan deskripsinya belum diubah admin.",
   "data": [
     {
       "id": "kepala_desa",
-      "nama": "Kepala Desa"
+      "nama": "Kepala Desa",
+      "deskripsi": "Pemimpin desa Darmasaba"
     },
     {
       "id": "kepala_urusan",
-      "nama": "Kepala Urusan"
+      "nama": "Kepala Urusan",
+      "deskripsi": "Pemimpin urusan desa Darmasaba"
     },
     {
       "id": "sekretaris_desa",
-      "nama": "Sekretaris Desa"
+      "nama": "Sekretaris Desa",
+      "deskripsi": "Pengelola administrasi desa"
     },
     {
       "id": "kaur_keuangan",
-      "nama": "Kaur Keuangan"
+      "nama": "Kaur Keuangan",
+      "deskripsi": "Pengelola keuangan desa"
     },
     {
       "id": "kaur_perencanaan",
-      "nama": "Kaur Perencanaan"
+      "nama": "Kaur Perencanaan",
+      "deskripsi": "Penyusun program kerja desa"
     },
     {
       "id": "kaur_umum",
-      "nama": "Kaur Umum & TU"
+      "nama": "Kaur Umum & TU",
+      "deskripsi": "Pelayanan umum dan administrasi"
     },
     {
       "id": "kasi_pemerintahan",
-      "nama": "Kasi Pemerintahan"
+      "nama": "Kasi Pemerintahan",
+      "deskripsi": "Urusan pemerintahan dan keamanan"
     },
     {
       "id": "kasi_pelayanan",
-      "nama": "Kasi Pelayanan"
+      "nama": "Kasi Pelayanan",
+      "deskripsi": "Urusan pelayanan masyarakat"
     },
     {
       "id": "kasi_kesejahteraan",
-      "nama": "Kasi Kesejahteraan"
+      "nama": "Kasi Kesejahteraan",
+      "deskripsi": "Urusan sosial dan kesejahteraan"
     },
     {
       "id": "kadus_banjar_dinas_cabe",
-      "nama": "Kepala Dusun Banjar Dinas Cabe"
+      "nama": "Kepala Dusun Banjar Dinas Cabe",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Cabe"
     },
     {
       "id": "kadus_banjar_dinas_menesa",
-      "nama": "Kepala Dusun Banjar Dinas Menesa"
+      "nama": "Kepala Dusun Banjar Dinas Menesa",
+      "deskripsi": "Pimpinan wilayah Banjar Menesa"
     },
     {
       "id": "kadus_banjar_dinas_penenjoan",
-      "nama": "Kepala Dusun Banjar Dinas Penenjoan"
+      "nama": "Kepala Dusun Banjar Dinas Penenjoan",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Penenjoan"
     },
     {
       "id": "kadus_banjar_dinas_telanga",
-      "nama": "Kepala Dusun Banjar Dinas Telanga"
+      "nama": "Kepala Dusun Banjar Dinas Telanga",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Telanga"
     },
     {
       "id": "kadus_banjar_dinas_tengah",
-      "nama": "Kepala Dusun Banjar Dinas Tengah"
+      "nama": "Kepala Dusun Banjar Dinas Tengah",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Tengah"
     },
     {
       "id": "kadus_banjar_dinas_baler_pasar",
-      "nama": "Kepala Dusun Banjar Dinas Baler Pasar"
+      "nama": "Kepala Dusun Banjar Dinas Baler Pasar",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Baler Pasar"
     },
     {
       "id": "kadus_banjar_dinas_bucu",
-      "nama": "Kepala Dusun Banjar Dinas Bucu"
+      "nama": "Kepala Dusun Banjar Dinas Bucu",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Bucu"
     },
     {
       "id": "kadus_banjar_dinas_gulingan",
-      "nama": "Kepala Dusun Banjar Dinas Gulingan"
+      "nama": "Kepala Dusun Banjar Dinas Gulingan",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Gulingan"
     },
     {
       "id": "kadus_banjar_dinas_bersih",
-      "nama": "Kepala Dusun Banjar Dinas Bersih"
+      "nama": "Kepala Dusun Banjar Dinas Bersih",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Bersih"
     },
     {
       "id": "kadus_banjar_dinas_umahanyar",
-      "nama": "Kepala Dusun Banjar Dinas Umahanyar"
+      "nama": "Kepala Dusun Banjar Dinas Umahanyar",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Umahanyar"
     },
     {
       "id": "kadus_banjar_dinas_taman",
-      "nama": "Kepala Dusun Banjar Dinas Taman"
+      "nama": "Kepala Dusun Banjar Dinas Taman",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Taman"
     },
     {
       "id": "kadus_banjar_dinas_darmasaba",
-      "nama": "Kepala Dusun Banjar Dinas Darmasaba"
+      "nama": "Kepala Dusun Banjar Dinas Darmasaba",
+      "deskripsi": "Pimpinan wilayah Banjar Dinas Darmasaba"
     },
     {
       "id": "staf_desa",
-      "nama": "Staf Desa"
+      "nama": "Staf Desa",
+      "deskripsi": "Staf Desa"
     }
   ]
 }

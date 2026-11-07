@@ -4,7 +4,9 @@ import { loadRetiredSeed, retireSeedRows } from "../../../retire-seed-rows";
 
 const kategoriBerita = loadJsonData("desa/berita/kategori-berita.json");
 const beritaJson = loadJsonData("desa/berita/berita.json");
-const beritaPensiun = loadRetiredSeed<{ id: string; judul: string }>("desa/berita/berita.retired.json");
+const beritaPensiun = loadRetiredSeed<{ id: string; judul: string; deskripsi: string }>(
+  "desa/berita/berita.retired.json",
+);
 
 export async function seedBerita() {
   // ================== SUBMENU BERITA ========================
@@ -114,7 +116,7 @@ export async function seedBerita() {
   }
 
   await retireSeedRows("Berita", beritaPensiun, (b) =>
-    prisma.berita.deleteMany({ where: { id: b.id, judul: b.judul } }),
+    prisma.berita.deleteMany({ where: { id: b.id, judul: b.judul, deskripsi: b.deskripsi } }),
   );
 
   console.log("🎉 Berita seed selesai");
