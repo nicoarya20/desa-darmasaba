@@ -1,0 +1,93 @@
+{
+  "keterangan": "Posisi organisasi seed lama (jabatan perangkat desa) yang diganti posisi generik BUMDes di commit 933cc499. Dihapus saat seed hanya bila namanya belum diubah admin.",
+  "data": [
+    {
+      "id": "kepala_desa",
+      "nama": "Kepala Desa"
+    },
+    {
+      "id": "kepala_urusan",
+      "nama": "Kepala Urusan"
+    },
+    {
+      "id": "sekretaris_desa",
+      "nama": "Sekretaris Desa"
+    },
+    {
+      "id": "kaur_keuangan",
+      "nama": "Kaur Keuangan"
+    },
+    {
+      "id": "kaur_perencanaan",
+      "nama": "Kaur Perencanaan"
+    },
+    {
+      "id": "kaur_umum",
+      "nama": "Kaur Umum & TU"
+    },
+    {
+      "id": "kasi_pemerintahan",
+      "nama": "Kasi Pemerintahan"
+    },
+    {
+      "id": "kasi_pelayanan",
+      "nama": "Kasi Pelayanan"
+    },
+    {
+      "id": "kasi_kesejahteraan",
+      "nama": "Kasi Kesejahteraan"
+    },
+    {
+      "id": "kadus_banjar_dinas_cabe",
+      "nama": "Kepala Dusun Banjar Dinas Cabe"
+    },
+    {
+      "id": "kadus_banjar_dinas_menesa",
+      "nama": "Kepala Dusun Banjar Dinas Menesa"
+    },
+    {
+      "id": "kadus_banjar_dinas_penenjoan",
+      "nama": "Kepala Dusun Banjar Dinas Penenjoan"
+    },
+    {
+      "id": "kadus_banjar_dinas_telanga",
+      "nama": "Kepala Dusun Banjar Dinas Telanga"
+    },
+    {
+      "id": "kadus_banjar_dinas_tengah",
+      "nama": "Kepala Dusun Banjar Dinas Tengah"
+    },
+    {
+      "id": "kadus_banjar_dinas_baler_pasar",
+      "nama": "Kepala Dusun Banjar Dinas Baler Pasar"
+    },
+    {
+      "id": "kadus_banjar_dinas_bucu",
+      "nama": "Kepala Dusun Banjar Dinas Bucu"
+    },
+    {
+      "id": "kadus_banjar_dinas_gulingan",
+      "nama": "Kepala Dusun Banjar Dinas Gulingan"
+    },
+    {
+      "id": "kadus_banjar_dinas_bersih",
+      "nama": "Kepala Dusun Banjar Dinas Bersih"
+    },
+    {
+      "id": "kadus_banjar_dinas_umahanyar",
+      "nama": "Kepala Dusun Banjar Dinas Umahanyar"
+    },
+    {
+      "id": "kadus_banjar_dinas_taman",
+      "nama": "Kepala Dusun Banjar Dinas Taman"
+    },
+    {
+      "id": "kadus_banjar_dinas_darmasaba",
+      "nama": "Kepala Dusun Banjar Dinas Darmasaba"
+    },
+    {
+      "id": "staf_desa",
+      "nama": "Staf Desa"
+    }
+  ]
+}

@@ -1,8 +1,12 @@
 import prisma from "@/lib/prisma";
 import { loadJsonData } from "../../load-json";
+import { loadRetiredSeed, retireSeedRows } from "../../retire-seed-rows";
 
 const kategoriKegiatanJson = loadJsonData("desa/kegiatan-desa/kategori-kegiatan.json");
 const kegiatanDesaJson = loadJsonData("desa/kegiatan-desa/kegiatan-desa.json");
+const kategoriPensiun = loadRetiredSeed<{ id: string; nama: string; replacedBy: string }>(
+  "desa/kegiatan-desa/kategori-kegiatan.retired.json",
+);
 
 export async function seedKegiatanDesa() {
   console.log("🔄 Seeding Kategori Kegiatan Desa...");
@@ -15,6 +19,18 @@ export async function seedKegiatanDesa() {
     });
     console.log(`  ✅ Kategori: ${k.nama}`);
   }
+
+  // Di sini, bukan di seeder gotong royong: kategori pengganti baru pasti ada setelah loop di atas.
+  // Kegiatan yang memakai kategori lama (termasuk buatan admin) dipindah dulu agar kategori lama bisa dihapus.
+  for (const k of kategoriPensiun) {
+    await prisma.kegiatanDesa.updateMany({
+      where: { kategoriKegiatanId: k.id },
+      data: { kategoriKegiatanId: k.replacedBy },
+    });
+  }
+  await retireSeedRows("Kategori Kegiatan", kategoriPensiun, (k) =>
+    prisma.kategoriKegiatan.deleteMany({ where: { id: k.id, nama: k.nama } }),
+  );
 
   console.log("🔄 Seeding Kegiatan Desa...");
 

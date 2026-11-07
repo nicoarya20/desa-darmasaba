@@ -5,6 +5,7 @@
 - Common model conventions: `@default(cuid())` IDs, `createdAt`/`updatedAt` timestamps, `isActive Boolean @default(true)` — widely used but **not universal** (some lookup-style models like `Layanan`, `Potensi` have none of these).
 - Soft delete via `deletedAt DateTime?` — **inconsistently implemented**. Most models use a nullable `deletedAt DateTime?` with no default (correct pattern, e.g. `FileStorage`, `Role`). A few models (`AppMenu`, `AppMenuChild`, `PejabatDesa`) declare `deletedAt @default(now())`, which defeats the purpose of soft-delete — treat these as known bugs, don't copy that pattern into new models.
 - Seeders per-module in `prisma/_seeder_list/`, orchestrated by `prisma/seed.ts`
+- Seeders only upsert by `id`, so re-running is safe but rows whose `id` was removed from the seed JSON stay in the DB (shows up as duplicate content). When replacing seed data with new ids, list the old ids in a sibling `<name>.retired.json` (`{ keterangan, data: [{ id, <judul|nama> }] }`) and call `retireSeedRows()` from `prisma/retire-seed-rows.ts` in that seeder. It deletes only rows whose id **and** title/name still match (admin-edited rows survive) and skips rows still referenced by FK. Never sync-delete "everything not in JSON" — that would wipe admin-created data.
 
 ## Authentication Flow
 Auth was rewritten to **Better Auth with Google OAuth only** (no more phone OTP). Flow:
