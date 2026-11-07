@@ -61,8 +61,10 @@ describe("seed hasil pertanian & peternakan", () => {
 
   beforeEach(() => vi.clearAllMocks());
 
-  it("seeder hanya menimpa satuan/periode untuk sektor yang mengisinya di JSON", async () => {
+  it("mode SEED_OVERWRITE: seeder hanya menimpa satuan/periode untuk sektor yang mengisinya di JSON", async () => {
+    vi.stubEnv("SEED_OVERWRITE", "true");
     await seedSektorUnggulanDesa();
+    vi.unstubAllEnvs();
     const calls = prismaMock.sektorUnggulanDesa.upsert.mock.calls.map(([arg]) => arg);
     const pertanian = calls.find((c) => c.update.name === "Pertanian");
     const umkm = calls.find((c) => c.update.name === "UMKM Kecil");

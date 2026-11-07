@@ -1,5 +1,5 @@
 import { KATEGORI_EVENT_DEFAULT } from "@/lib/agenda-desa";
-import prisma from "@/lib/prisma";
+import prisma from "../../../seed-prisma";
 import { loadJsonData } from "../../../load-json";
 
 // Data event-budaya.json:

@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { loadJsonData } from "../../load-json";
 
 const kontakDaruratKeamanan = loadJsonData("keamanan/kontak-darurat-keamanan/kontak-darurat-keamanan.json");

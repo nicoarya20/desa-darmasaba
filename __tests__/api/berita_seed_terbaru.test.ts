@@ -123,7 +123,8 @@ describe("seedBerita", () => {
       const call = prismaMock.berita.upsert.mock.calls[i][0];
       expect(call.where).toEqual({ id: b.id });
       expect(call.create.createdAt).toEqual(new Date(b.tanggal));
-      expect(call.update.createdAt).toEqual(new Date(b.tanggal));
+      // create-only (seed-prisma): berita yang sudah ada tidak ditimpa, editan admin aman.
+      expect(call.update).toEqual({});
       expect(call.create.imageId).toBe(`file-${b.imageName}`);
       expect(call.create.kategoriBeritaId).toBe(b.kategoriBeritaId);
     });

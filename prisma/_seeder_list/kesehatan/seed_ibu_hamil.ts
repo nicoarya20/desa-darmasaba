@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { IbuHamilStatus } from "@prisma/client";
 
 const IBU_HAMIL_DATA = [
