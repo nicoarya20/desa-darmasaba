@@ -90,5 +90,45 @@
     "progres": 0,
     "statusPembangunan": "rencana",
     "sumberDana": "Contoh: Bantuan keuangan provinsi"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567821",
+    "judul": "Pelatihan Kewirausahaan Digital Sekaa Teruna",
+    "deskripsiSingkat": "Pemuda Sekaa Teruna Desa Darmasaba belajar memasarkan produk lokal melalui media sosial dan marketplace.",
+    "deskripsiLengkap": "Pelatihan kewirausahaan digital bagi anggota Sekaa Teruna Desa Darmasaba, meliputi foto produk dengan ponsel, menulis deskripsi produk, membuka toko di marketplace, dan promosi lewat media sosial. Peserta mempraktikkan langsung dengan produk UMKM desa. Data contoh untuk pengembangan; ganti dengan data resmi lewat admin Desa > Kegiatan Desa.",
+    "tanggal": "2026-08-15T00:00:00.000Z",
+    "lokasi": "Balai Desa Darmasaba",
+    "partisipan": 45,
+    "kategoriKegiatanId": "katkepemudaan01"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567822",
+    "judul": "Bersih Sungai dan Penanaman Pohon oleh Pemuda Desa",
+    "deskripsiSingkat": "Sekaa Teruna se-Desa Darmasaba membersihkan aliran sungai dan menanam bibit pohon di sempadan sungai.",
+    "deskripsiLengkap": "Kegiatan peduli lingkungan yang digerakkan pemuda Sekaa Teruna se-Desa Darmasaba. Pemuda membersihkan sampah di aliran sungai, memilah sampah plastik untuk bank sampah, dan menanam bibit pohon di sempadan sungai untuk mencegah erosi. Data contoh untuk pengembangan; ganti dengan data resmi lewat admin Desa > Kegiatan Desa.",
+    "tanggal": "2026-09-20T00:00:00.000Z",
+    "lokasi": "Sempadan Sungai Desa Darmasaba",
+    "partisipan": 70,
+    "kategoriKegiatanId": "katkepemudaan01"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567823",
+    "judul": "Pelatihan Pengolahan Pangan Lokal TP PKK",
+    "deskripsiSingkat": "TP PKK Desa Darmasaba melatih ibu-ibu mengolah hasil kebun menjadi produk pangan bernilai jual.",
+    "deskripsiLengkap": "TP PKK Desa Darmasaba menggelar pelatihan pengolahan pangan lokal bagi kader PKK banjar. Materi meliputi pengolahan singkong dan pisang menjadi keripik, pengemasan yang higienis, dan perhitungan harga jual, sebagai bekal usaha rumah tangga. Data contoh untuk pengembangan; ganti dengan data resmi lewat admin Desa > Kegiatan Desa.",
+    "tanggal": "2026-07-10T00:00:00.000Z",
+    "lokasi": "Balai Desa Darmasaba",
+    "partisipan": 40,
+    "kategoriKegiatanId": "katpkkperempuan01"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567824",
+    "judul": "Penyuluhan Kesehatan Ibu dan Anak bersama Kader PKK",
+    "deskripsiSingkat": "Kader PKK dan bidan desa memberi penyuluhan gizi ibu hamil, ASI eksklusif, dan pencegahan stunting.",
+    "deskripsiLengkap": "Kader PKK Desa Darmasaba bersama bidan desa menyelenggarakan penyuluhan kesehatan ibu dan anak. Materi meliputi gizi ibu hamil, pentingnya ASI eksklusif, menu MPASI dari bahan lokal, dan pencegahan stunting, dilanjutkan pemeriksaan tumbuh kembang balita. Data contoh untuk pengembangan; ganti dengan data resmi lewat admin Desa > Kegiatan Desa.",
+    "tanggal": "2026-10-05T00:00:00.000Z",
+    "lokasi": "Posyandu Desa Darmasaba",
+    "partisipan": 60,
+    "kategoriKegiatanId": "katpkkperempuan01"
   }
 ]

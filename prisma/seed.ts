@@ -26,6 +26,7 @@ import { seedKategoriProduk, seedPasarDesa } from "./_seeder_list/ekonomi/seed_p
 import { seedPendapatanAsli } from "./_seeder_list/ekonomi/seed_pendapatan_asli";
 import { seedPendudukUsiaKerjaYangMenganggur } from "./_seeder_list/ekonomi/seed_penduduk_usia_kerja_yang_menganggur";
 import { seedProgramKemiskinan } from "./_seeder_list/ekonomi/seed_program_kemiskinan";
+import { seedLinkTokoOnline } from "./_seeder_list/ekonomi/seed_link_toko_online";
 import { seedSektorUnggulanDesa } from "./_seeder_list/ekonomi/seed_sektor_unggulan_desa";
 import { seedStrukturBumdes } from "./_seeder_list/ekonomi/seed_struktur_bumdes";
 import { seedUmkm } from "./_seeder_list/ekonomi/seed_umkm";
@@ -316,6 +317,7 @@ import seedAssets from "./seed_assets";
 
   // // ==================== SUBMENU PASAR DESA (PASAR) ============
   await seedPasarDesa();
+  await seedLinkTokoOnline();
 
   // // ==================== SUBMENU LOWONGAN KERJA LOKAL ==========
   await seedLowonganKerjaLokal();

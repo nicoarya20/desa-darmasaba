@@ -1,0 +1,31 @@
+{
+  "keterangan": "Data contoh untuk pengembangan. Link mengarah ke halaman pencarian marketplace, bukan toko UMKM Darmasaba yang sebenarnya. Ganti dengan link toko resmi lewat admin Ekonomi > UMKM > Produk sebelum penilaian.",
+  "data": [
+    {
+      "produkId": "1b7a17ea-83f7-4e73-a94d-96e2b4a623f2",
+      "links": [
+        { "platform": "SHOPEE", "url": "https://shopee.co.id/search?keyword=sembako%20bali" },
+        { "platform": "TOKOPEDIA", "url": "https://www.tokopedia.com/search?q=sembako%20bali" }
+      ]
+    },
+    {
+      "produkId": "6dea2257-b710-4cd2-8d94-9b6737e658d8",
+      "links": [
+        { "platform": "SHOPEE", "url": "https://shopee.co.id/search?keyword=jajanan%20pasar%20bali" },
+        { "platform": "TIKTOK_SHOP", "url": "https://www.tiktok.com/search?q=jajanan%20pasar%20bali" }
+      ]
+    },
+    {
+      "produkId": "24c6b992-49da-4c6e-aebb-72cf89f75438",
+      "links": [
+        { "platform": "TOKOPEDIA", "url": "https://www.tokopedia.com/search?q=sayur%20segar%20bali" }
+      ]
+    },
+    {
+      "produkId": "d62660a2-ac6b-428a-acf6-58cc837ef789",
+      "links": [
+        { "platform": "SHOPEE", "url": "https://shopee.co.id/search?keyword=daging%20ayam%20segar%20bali" }
+      ]
+    }
+  ]
+}
