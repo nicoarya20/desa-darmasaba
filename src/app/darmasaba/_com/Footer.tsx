@@ -1,9 +1,21 @@
 'use client'
 import { Accordion, ActionIcon, Anchor, Box, Button, Container, Divider, Flex, Group, Image, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandYoutube } from '@tabler/icons-react';
-import { useRef } from 'react';
+import dynamic from 'next/dynamic';
+import { useRef, useState } from 'react';
+import { KONTAK_BUPATI } from '@/con/kontak-bupati';
 import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInformasi';
 import { toast } from 'react-toastify';
+import { FooterKontakBupati } from './FooterKontakBupati';
+
+// Footer tampil di semua halaman publik: modal (editor tiptap + dropzone) dimuat
+// terpisah & baru dipasang saat pertama dibuka, supaya tidak membebani bundle
+// tiap halaman dan tidak memicu fetch jenis pengaduan sebelum dibutuhkan.
+const PengaduanMasyarakatModal = dynamic(() => import('./pengaduan/PengaduanMasyarakatModal'), { ssr: false });
+
+// Item footer berupa link biasa, atau pemicu modal pengaduan (bukan pindah halaman).
+type FooterLink = { title: string } & ({ link: string } | { opensPengaduanModal: true });
 
 const sosialMedia = [
   {
@@ -28,7 +40,7 @@ const sosialMedia = [
   },
 ]
 
-const layanandesa = [
+const layanandesa: FooterLink[] = [
   {
     title: "Administrasi Kependudukan",
     link: "/darmasaba/desa/layanan/",
@@ -39,7 +51,7 @@ const layanandesa = [
   },
   {
     title: "Pengaduan Masyarakat",
-    link: "/darmasaba/keamanan/laporan-publik",
+    opensPengaduanModal: true,
   },
   {
     title: "Informasi Publik",
@@ -47,7 +59,7 @@ const layanandesa = [
   },
 ]
 
-const tautanPenting = [
+const tautanPenting: FooterLink[] = [
   {
     title: "Portal Badung",
     link: "/darmasaba/desa/berita/semua",
@@ -83,6 +95,21 @@ const mobileAccordionStyles = {
 function Footer() {
 
   const emailRef = useRef<HTMLInputElement>(null)
+  const [pengaduanOpened, pengaduan] = useDisclosure(false)
+  const [pengaduanMounted, setPengaduanMounted] = useState(false)
+  const openPengaduan = () => {
+    setPengaduanMounted(true)
+    pengaduan.open()
+  }
+
+  const renderLink = (item: FooterLink, fz: 'xs' | 'sm') =>
+    'link' in item ? (
+      <Anchor key={item.title} c="#F3F2EC" fz={fz} href={item.link}>{item.title}</Anchor>
+    ) : (
+      <Anchor key={item.title} component="button" type="button" ta="left" c="#F3F2EC" fz={fz} onClick={openPengaduan}>
+        {item.title}
+      </Anchor>
+    )
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -173,11 +200,13 @@ function Footer() {
                 {linkGroups.map((group) => (
                   <Stack key={group.title} gap="xs">
                     <Text c="white" fz="sm" fw={600}>{group.title}</Text>
-                    {group.links.map((item) => (
-                      <Anchor key={item.title} c="#F3F2EC" fz="xs" href={item.link}>{item.title}</Anchor>
-                    ))}
+                    {group.links.map((item) => renderLink(item, 'xs'))}
                   </Stack>
                 ))}
+                <Stack gap="xs">
+                  <Text c="white" fz="sm" fw={600}>{KONTAK_BUPATI.judul}</Text>
+                  <FooterKontakBupati fz="xs" />
+                </Stack>
               </SimpleGrid>
 
               <Accordion hiddenFrom="sm" multiple styles={mobileAccordionStyles}>
@@ -186,13 +215,19 @@ function Footer() {
                     <Accordion.Control>{group.title}</Accordion.Control>
                     <Accordion.Panel>
                       <Stack gap="sm">
-                        {group.links.map((item) => (
-                          <Anchor key={item.title} c="#F3F2EC" fz="sm" href={item.link}>{item.title}</Anchor>
-                        ))}
+                        {group.links.map((item) => renderLink(item, 'sm'))}
                       </Stack>
                     </Accordion.Panel>
                   </Accordion.Item>
                 ))}
+                <Accordion.Item value={KONTAK_BUPATI.judul}>
+                  <Accordion.Control>{KONTAK_BUPATI.judul}</Accordion.Control>
+                  <Accordion.Panel>
+                    <Stack gap="sm">
+                      <FooterKontakBupati fz="sm" />
+                    </Stack>
+                  </Accordion.Panel>
+                </Accordion.Item>
               </Accordion>
 
               {/* Grid 2 kolom dengan spacing sama: kolom kanan jatuh tepat di garis kolom ke-3 grid link (desktop) */}
@@ -243,6 +278,7 @@ function Footer() {
           </Container>
         </Box>
       </Box>
+      {pengaduanMounted && <PengaduanMasyarakatModal opened={pengaduanOpened} onClose={pengaduan.close} />}
     </Stack>
   );
 }
