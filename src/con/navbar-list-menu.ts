@@ -400,6 +400,11 @@ const navbarListMenu = [
                 href: "/darmasaba/musik/musik-desa"
             }
         ]
+    },
+    {
+        id: "11",
+        name: "DAK",
+        href: "/darmasaba/desa-anti-korupsi"
     }
 ]
 
