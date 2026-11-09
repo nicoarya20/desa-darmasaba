@@ -17,8 +17,10 @@ const visible = visibleMenu(navbarListMenu);
 const kesehatanOf = (menus: readonly MenuItem[]) => menus.find((m) => m.name === 'Kesehatan');
 
 describe('visibleMenu pada config navbar nyata', () => {
-  it('memuat menu link langsung "DAK" → /darmasaba/desa-anti-korupsi', () => {
-    expect(visible.find((m) => m.name === 'DAK')).toMatchObject({ href: '/darmasaba/desa-anti-korupsi' });
+  it('memuat menu "DAK" dengan submenu "Desa Anti Korupsi" → /darmasaba/desa-anti-korupsi', () => {
+    expect(visible.find((m) => m.name === 'DAK')?.children).toEqual([
+      { id: '11.1', name: 'Desa Anti Korupsi', href: '/darmasaba/desa-anti-korupsi' },
+    ]);
   });
 
   it('Kesehatan hanya menampilkan Posyandu, Program Kesehatan, Kontak Darurat (urutan config)', () => {

@@ -408,7 +408,13 @@ const navbarListMenu = [
     {
         id: "11",
         name: "DAK",
-        href: "/darmasaba/desa-anti-korupsi"
+        children: [
+            {
+                id: "11.1",
+                name: "Desa Anti Korupsi",
+                href: "/darmasaba/desa-anti-korupsi"
+            }
+        ]
     }
 ]
 

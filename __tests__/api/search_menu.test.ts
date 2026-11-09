@@ -206,10 +206,11 @@ describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
   });
 
   it('peringkat sama: submenu navbar tetap di atas halaman tambahan', () => {
-    // keduanya berawalan "desa": "Desa Digital/Smart Village" (navbar) & "Desa Anti Korupsi" (tambahan)
-    const labels = searchMenu('desa').map((r) => r.label);
-    expect(labels.indexOf('Desa Digital/Smart Village')).toBeGreaterThan(-1);
-    expect(labels.indexOf('Desa Digital/Smart Village')).toBeLessThan(labels.indexOf('Desa Anti Korupsi'));
+    // keduanya berawalan "struktur": "Struktur PPID" (navbar) & "Struktur Perangkat Desa" (tambahan)
+    const labels = searchMenu('struktur').map((r) => r.label);
+    expect(labels.indexOf('Struktur PPID')).toBeGreaterThan(-1);
+    expect(labels.indexOf('Struktur Perangkat Desa')).toBeGreaterThan(-1);
+    expect(labels.indexOf('Struktur PPID')).toBeLessThan(labels.indexOf('Struktur Perangkat Desa'));
   });
 
   it('halaman tambahan tidak ikut bila menus dioper sendiri (hanya navbar)', () => {

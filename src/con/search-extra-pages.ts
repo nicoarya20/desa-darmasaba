@@ -14,7 +14,6 @@ const searchExtraPages: MenuItem[] = [
     name: 'Transparansi',
     children: [
       { id: 'x1.1', name: 'APBDes', href: '/darmasaba/apbdes' },
-      { id: 'x1.2', name: 'Desa Anti Korupsi', href: '/darmasaba/desa-anti-korupsi' },
       { id: 'x1.3', name: 'SDGs Desa', href: '/darmasaba/sdgs-desa' },
     ],
   },
