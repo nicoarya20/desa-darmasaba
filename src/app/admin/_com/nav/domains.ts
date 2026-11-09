@@ -32,7 +32,7 @@ export const ppidMenu: NavItem = {
 
 export const desaMenu: NavItem = {
   id: "Desa",
-  name: "Desa",
+  name: "Pemerintahan",
   path: "",
   children: [
     { id: "Desa_1", name: "Profil", path: "/admin/desa/profil/profil-desa" },

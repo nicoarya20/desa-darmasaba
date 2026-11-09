@@ -88,11 +88,11 @@ describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () =>
     expect(groups.map((g) => g.name)).toEqual([...navbarNames, ...extraOnly]);
   });
 
-  it('"Desa" dan "Kesehatan" navbar digabung dengan halaman tambahan bernama sama', () => {
+  it('"Pemerintahan" dan "Kesehatan" navbar digabung dengan halaman tambahan bernama sama', () => {
     const names = groups.map((g) => g.name);
-    expect(names.filter((n) => n === 'Desa')).toHaveLength(1);
+    expect(names.filter((n) => n === 'Pemerintahan')).toHaveLength(1);
     expect(names.filter((n) => n === 'Kesehatan')).toHaveLength(1);
-    const desa = groups.find((g) => g.name === 'Desa')!.pages.map((p) => p.href);
+    const desa = groups.find((g) => g.name === 'Pemerintahan')!.pages.map((p) => p.href);
     expect(desa).toContain('/darmasaba/desa/profil');
     expect(desa).toContain('/darmasaba/desa/galery/video');
     const kesehatan = groups.find((g) => g.name === 'Kesehatan')!.pages.map((p) => p.href);

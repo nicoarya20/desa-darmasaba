@@ -49,7 +49,7 @@ const navbarListMenu = [
 
     {
         id: "2",
-        name: "Desa",
+        name: "Pemerintahan",
         children: [
             {
                 id: "2.1",
