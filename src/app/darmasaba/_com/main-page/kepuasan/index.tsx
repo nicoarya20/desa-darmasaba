@@ -1,19 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan";
 import colors from "@/con/colors";
 import { BarChart, PieChart } from '@mantine/charts';
 import { Box, Button, Center, Container, Flex, Modal, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useDisclosure, useMediaQuery, useShallowEffect } from "@mantine/hooks";
-import { useState } from "react";
+import { useMemo } from "react";
 import { useProxy } from "valtio/utils";
-
-interface ChartDataItem {
-  name: string;
-  value: number;
-  color: string;
-  label?: string;
-}
+import { summarizeKepuasan } from "./kepuasan.logic";
+import { RESPONDEN_CHART_LIMIT } from "./kepuasan.meta";
 
 function Kepuasan() {
   const state = useProxy(indeksKepuasanState.responden);
@@ -23,10 +17,6 @@ function Kepuasan() {
   const snapRating = useProxy(indeksKepuasanState.pilihanRatingResponden);
   const snapUmur = useProxy(indeksKepuasanState.kelompokUmurResponden);
   const { data, loading } = state.findMany;
-  const [donutDataJenisKelamin, setDonutDataJenisKelamin] = useState<ChartDataItem[]>([]);
-  const [donutDataRating, setDonutDataRating] = useState<ChartDataItem[]>([]);
-  const [donutDataKelompokUmur, setDonutDataKelompokUmur] = useState<ChartDataItem[]>([]);
-  const [barChartData, setBarChartData] = useState<Array<{ month: string; Responden: number }>>([]);
   const [opened, { open, close }] = useDisclosure(false)
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -61,86 +51,19 @@ function Kepuasan() {
     }
   }
 
-  // Load data on component mount
+  // Muat data saat mount; data grafik diturunkan langsung dari snapshot (lihat kepuasan.logic.ts).
   useShallowEffect(() => {
     if (!data && !loading) {
-      state.findMany.load(1, 1000); // Load first page with a large limit to get all data
-      return;
-    }
-
-    if (data && data.length > 0) {
-      // Hitung total berdasarkan jenis kelamin
-      const totalLaki = data.filter((item: any) => item.jenisKelamin?.name?.toLowerCase() === 'laki-laki').length;
-      const totalPerempuan = data.filter((item: any) => item.jenisKelamin?.name?.toLowerCase() === 'perempuan').length;
-
-      // Hitung total berdasarkan rating
-      const totalSangatBaik = data.filter((item: any) => item.rating?.name?.toLowerCase() === 'sangat baik').length;
-      const totalBaik = data.filter((item: any) => item.rating?.name?.toLowerCase() === 'baik').length;
-      const totalKurangBaik = data.filter((item: any) => item.rating?.name?.toLowerCase() === 'kurang baik').length;
-      const totalSangatKurangBaik = data.filter((item: any) => item.rating?.name?.toLowerCase() === 'sangat kurang baik').length;
-
-      // Hitung total berdasarkan kelompok umur
-      const totalMuda = data.filter((item: any) => item.kelompokUmur?.name?.toLowerCase() === 'muda').length;
-      const totalDewasa = data.filter((item: any) => item.kelompokUmur?.name?.toLowerCase() === 'dewasa').length;
-      const totalLansia = data.filter((item: any) => item.kelompokUmur?.name?.toLowerCase() === 'lansia').length;
-
-      // Update gender chart data
-      setDonutDataJenisKelamin([
-        { name: 'Laki-laki', value: totalLaki, color: '#52ABE3FF' },
-        { name: 'Perempuan', value: totalPerempuan, color: '#10A85AFF' },
-      ]);
-
-      // Update rating chart data
-      setDonutDataRating([
-        { name: 'Sangat Baik', value: totalSangatBaik, color: '#52ABE3FF' },
-        { name: 'Baik', value: totalBaik, color: '#10A85AFF' },
-        { name: 'Kurang Baik', value: totalKurangBaik, color: '#FFA500' },
-        { name: 'Sangat Kurang Baik', value: totalSangatKurangBaik, color: '#FF4500' },
-      ]);
-
-      // Update age group chart data
-      setDonutDataKelompokUmur([
-        { name: 'Muda', value: totalMuda, color: '#52ABE3FF' },
-        { name: 'Dewasa', value: totalDewasa, color: '#10A85AFF' },
-        { name: 'Lansia', value: totalLansia, color: '#FFA500' },
-      ]);
-
-      // Process data for bar chart (group by month)
-      const monthYearMap = new Map<string, number>();
-
-      data.forEach((item: any) => {
-        // Try both createdAt and tanggal fields
-        const dateValue = item.tanggal || item.createdAt;
-        if (!dateValue) return;
-
-        const parsedDate = new Date(dateValue);
-        if (isNaN(parsedDate.getTime())) return;
-
-        const month = parsedDate.getMonth() + 1;
-        const year = parsedDate.getFullYear();
-        const monthYearKey = `${year}-${String(month).padStart(2, '0')}`;
-
-        monthYearMap.set(monthYearKey, (monthYearMap.get(monthYearKey) || 0) + 1);
-      });
-
-      // Convert map to array and sort by date
-      const barData = Array.from(monthYearMap.entries())
-        .map(([key, Responden]) => {
-          const [year, month] = key.split('-');
-          const monthName = new Date(Number(year), Number(month) - 1, 1)
-            .toLocaleString('id-ID', { month: 'long' });
-          return {
-            month: `${monthName} ${year}`,
-            Responden,
-            sortKey: parseInt(`${year}${String(month).padStart(2, '0')}`, 10)
-          };
-        })
-        .sort((a, b) => a.sortKey - b.sortKey)
-        .map(({ month, Responden }) => ({ month, Responden }));
-
-      setBarChartData(barData);
+      state.findMany.load(1, RESPONDEN_CHART_LIMIT); // halaman 1 dengan limit besar agar grafik mencakup semua data
     }
   }, [data]);
+
+  const {
+    jenisKelamin: donutDataJenisKelamin,
+    rating: donutDataRating,
+    kelompokUmur: donutDataKelompokUmur,
+    monthly: barChartData,
+  } = useMemo(() => summarizeKepuasan(data), [data]);
 
   if ((loading && !data) || !data) {
     return (
