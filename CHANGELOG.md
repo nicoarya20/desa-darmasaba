@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.230] - 2026-11-09
+### Changed
+- **Halaman detail Desa Anti Korupsi diperbarui** agar senada dengan section-nya di beranda. Tampilannya kini bersih: judul dan pengantar rata kiri, tombol kategori dengan jumlah indikatornya, lalu daftar indikator bernomor dalam satu panel. Teks indikator yang sebelumnya huruf kapital semua kini ditulis dengan huruf biasa. Singkatan seperti Perdes, SOP, dan APBDes tetap ditulis seperti biasa.
+- **Tiap indikator kini punya tempat untuk suratnya (PDF).** Indikator yang suratnya sudah diunggah bisa diklik di bagian mana pun pada barisnya, lalu suratnya terbuka di tab baru. Indikator yang belum punya surat menampilkan label "Dokumen belum tersedia". Saat ini belum ada surat yang diunggah, jadi semua indikator masih menampilkan label tersebut.
+- Untuk menambahkan surat, buka **Admin → Landing Page → Desa Anti Korupsi**, pilih indikatornya, klik **Edit**, lalu unggah dokumennya. Surat langsung muncul di halaman detail tanpa perubahan kode.
+- Di atas daftar kini tampil jumlah dokumen yang sudah tersedia di kategori yang dipilih, misalnya "0 dari 5 dokumen tersedia".
+- Di ponsel, tombol kategori kini tampil dalam satu baris yang bisa digeser. Tombol yang aktif otomatis digeser ke tengah.
+
 ## [0.1.229] - 2026-11-09
 ### Changed
 - **Kepala halaman Potensi Desa diperbarui.** Kotak angka biru diganti tombol **Semua · Potensi · Wisata**, masing-masing dengan jumlahnya. Klik salah satu tombol untuk menampilkan potensi kategori itu saja. Paragraf pengantar kini rata kiri sehingga jarak antarkata tidak lagi melebar, dan judulnya sedikit lebih besar.
