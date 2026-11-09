@@ -1,6 +1,6 @@
 'use client';
 import { isPdfMime } from '@/lib/desa-anti-korupsi-dokumen';
-import { ActionIcon, Badge, Box, Group, Paper, Select, Text, TextInput, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Box, Checkbox, Group, Paper, Select, Text, TextInput, Tooltip } from '@mantine/core';
 import { IconArrowDown, IconArrowUp, IconEye, IconTrash } from '@tabler/icons-react';
 import type { DokumenDraft } from '../_lib/dokumen-draft';
 
@@ -10,6 +10,9 @@ type Props = {
   total: number;
   folderOptions: { value: string; label: string }[];
   folderValue: string;
+  selected: boolean;
+  /** Dipanggil saat checkbox diklik; `shiftKey` true = Shift+klik (pilih rentang). */
+  onToggleSelect: (shiftKey: boolean) => void;
   onJudul: (judul: string) => void;
   onFolder: (value: string) => void;
   onMove: (direction: -1 | 1) => void;
@@ -17,12 +20,27 @@ type Props = {
   onRemove: () => void;
 };
 
-/** Satu baris ringkas dokumen di editor: judul, pindah folder, pratinjau, urutan, hapus. */
-export function DokumenDraftRow({ draft, index, total, folderOptions, folderValue, ...on }: Props) {
+/** Satu baris ringkas dokumen di editor: pilih, judul, pindah folder, pratinjau, urutan, hapus. */
+export function DokumenDraftRow({ draft, index, total, folderOptions, folderValue, selected, ...on }: Props) {
   const pdf = isPdfMime(draft.mimeType);
   return (
-    <Paper withBorder radius="md" p="xs" data-draft-key={draft.key}>
+    <Paper
+      withBorder
+      radius="md"
+      p="xs"
+      data-draft-key={draft.key}
+      data-selected={selected || undefined}
+      bg={selected ? 'var(--mantine-primary-color-light)' : undefined}
+    >
       <Group gap="xs" wrap="wrap" align="flex-start">
+        {/* onClick (bukan onChange) agar shiftKey terbaca; Checkbox controlled sehingga tidak ada dobel-trigger. */}
+        <Checkbox
+          mt={7}
+          size="sm"
+          aria-label={`Pilih ${draft.judul.trim() || `dokumen ${index + 1}`}`}
+          checked={selected}
+          onClick={(e) => on.onToggleSelect(e.shiftKey)}
+        />
         <Badge variant="light" mt={6}>
           {index + 1}
         </Badge>
