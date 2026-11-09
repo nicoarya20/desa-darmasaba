@@ -1,14 +1,18 @@
 'use client';
 import { FOLDER_UMUM_KEY } from '@/lib/desa-anti-korupsi-folder';
-import { Accordion, Badge, Group, Stack, Text } from '@mantine/core';
-import { IconFolder } from '@tabler/icons-react';
+import { Alert, Stack, Text } from '@mantine/core';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
+import { duplicateFileError } from '../_lib/dokumen-bulk';
+import { orderedDokumenKeys } from '../_lib/dokumen-bulk-actions';
 import { draftsFromFiles, type DokumenDraft } from '../_lib/dokumen-draft';
 import { groupDrafts, moveDraftToFolder, moveDraftWithinFolder, type IsiDraft } from '../_lib/folder-draft';
-import { DokumenDraftRow } from './DokumenDraftRow';
+import { DokumenBulkActions } from './DokumenBulkActions';
+import { DokumenGroupAccordion, folderKeyOfValue as toFolderKey, folderValueOf as toValue } from './DokumenGroupAccordion';
 import { DokumenPreviewDialog } from './DokumenPreviewDialog';
 import { DokumenUploadZone } from './DokumenUploadZone';
 import { FolderManager } from './FolderManager';
+import { useDokumenSelection } from './useDokumenSelection';
 
 /** URL pratinjau draft: object URL untuk berkas lokal (dicabut saat berganti), link server untuk yang tersimpan. */
 function usePreviewUrl(draft: DokumenDraft | null): string | null {
@@ -23,13 +27,9 @@ function usePreviewUrl(draft: DokumenDraft | null): string | null {
   return objectUrl ?? draft?.link ?? null;
 }
 
-// Nilai Select/Accordion untuk folder virtual "Umum" (folderKey null di draft).
-const toValue = (folderKey: string | null) => folderKey ?? FOLDER_UMUM_KEY;
-const toFolderKey = (value: string) => (value === FOLDER_UMUM_KEY ? null : value);
-
 type Props = { value: IsiDraft; onChange: (next: IsiDraft) => void };
 
-/** Editor isi program: kelola folder, unggah banyak berkas ke folder terpilih, atur & pindahkan dokumen. */
+/** Editor isi program: kelola folder, unggah ke folder terpilih, atur/pindahkan dokumen, aksi massal terpilih. */
 export function DokumenFolderEditor({ value, onChange }: Props) {
   const [previewKey, setPreviewKey] = useState<string | null>(null);
   const [target, setTarget] = useState<string>(FOLDER_UMUM_KEY);
@@ -38,6 +38,8 @@ export function DokumenFolderEditor({ value, onChange }: Props) {
   const previewUrl = usePreviewUrl(previewDraft);
 
   const groups = groupDrafts(value);
+  const { selection, toggle, selectAll, replace } = useDokumenSelection(value.dokumen, orderedDokumenKeys(groups));
+  const fileError = duplicateFileError(value);
   const folderOptions = groups.map((g) => ({ value: toValue(g.key), label: g.nama.trim() || '(tanpa nama)' }));
   // Folder tujuan yang sudah dihapus → kembali ke "Umum".
   const safeTarget = folderOptions.some((o) => o.value === target) ? target : FOLDER_UMUM_KEY;
@@ -63,46 +65,26 @@ export function DokumenFolderEditor({ value, onChange }: Props) {
       <Text fw="bold" fz="sm">
         Dokumen ({value.dokumen.length})
       </Text>
-      <Accordion multiple variant="separated" radius="md" value={opened} onChange={setOpened}>
-        {groups.map((g) => (
-          <Accordion.Item key={toValue(g.key)} value={toValue(g.key)}>
-            <Accordion.Control icon={<IconFolder size={16} />}>
-              <Group gap="xs" wrap="nowrap">
-                <Text fz="sm" fw={600} truncate>
-                  {g.nama.trim() || '(tanpa nama)'}
-                </Text>
-                <Badge size="sm" variant="light">
-                  {g.dokumen.length}
-                </Badge>
-              </Group>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <Stack gap={6}>
-                {g.dokumen.length === 0 && (
-                  <Text fz="xs" c="dimmed">
-                    Folder kosong
-                  </Text>
-                )}
-                {g.dokumen.map((d, index) => (
-                  <DokumenDraftRow
-                    key={d.key}
-                    draft={d}
-                    index={index}
-                    total={g.dokumen.length}
-                    folderOptions={folderOptions}
-                    folderValue={toValue(g.key)}
-                    onJudul={(judul) => updateDokumen(d.key, { judul })}
-                    onFolder={(v) => onChange(moveDraftToFolder(value, d.key, toFolderKey(v)))}
-                    onMove={(direction) => onChange(moveDraftWithinFolder(value, d.key, direction))}
-                    onPreview={() => setPreviewKey(d.key)}
-                    onRemove={() => remove(d.key)}
-                  />
-                ))}
-              </Stack>
-            </Accordion.Panel>
-          </Accordion.Item>
-        ))}
-      </Accordion>
+      {fileError && (
+        <Alert color="red" variant="light" p="xs" icon={<IconAlertTriangle size={16} />} title="Belum bisa disimpan">
+          <Text fz="xs">{fileError}. Hapus salah satunya atau pindahkan ke folder lain.</Text>
+        </Alert>
+      )}
+      <DokumenGroupAccordion
+        groups={groups}
+        folderOptions={folderOptions}
+        selection={selection}
+        opened={opened}
+        onOpenedChange={setOpened}
+        onToggleSelect={toggle}
+        onSelectAll={selectAll}
+        onJudul={(key, judul) => updateDokumen(key, { judul })}
+        onFolder={(key, v) => onChange(moveDraftToFolder(value, key, toFolderKey(v)))}
+        onMove={(key, direction) => onChange(moveDraftWithinFolder(value, key, direction))}
+        onPreview={setPreviewKey}
+        onRemove={remove}
+      />
+      <DokumenBulkActions value={value} selection={selection} onChange={onChange} onSelectionChange={replace} />
 
       <DokumenPreviewDialog
         preview={

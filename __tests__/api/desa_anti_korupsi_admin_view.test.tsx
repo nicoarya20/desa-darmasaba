@@ -75,6 +75,7 @@ describe('DokumenFolderEditor (create/edit admin)', () => {
     expect(html).toContain('value="Laporan Keuangan"');
     expect(html).toContain('Unggah ke folder');
     expect(html).toContain('Dokumen (3)');
-    expect(html).toContain('aria-label="Hapus folder"');
+    // Hapus folder kini lewat menu aksi folder (FolderActionsMenu), bukan tombol tersendiri.
+    expect(html).toContain('aria-label="Aksi folder Laporan Keuangan"');
   });
 });
