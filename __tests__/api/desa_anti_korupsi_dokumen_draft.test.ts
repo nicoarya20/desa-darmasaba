@@ -61,7 +61,8 @@ describe('draft dari berkas & data tersimpan', () => {
         judul: 'Perdes',
         urutan: 0,
         fileId: 'f1',
-        file: { id: 'f1', link: '/api/fileStorage/findUnique/x', realName: 'perdes.pdf', mimeType: 'application/pdf' },
+        createdAt: '2026-11-09T00:00:00.000Z',
+        file: { id: 'f1', link: '/api/fileStorage/findUnique/x', realName: 'perdes.pdf', mimeType: 'application/pdf', size: 1024 },
       },
     ], 'fa');
     expect(draft).toEqual({
