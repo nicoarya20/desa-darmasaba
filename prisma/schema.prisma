@@ -68,7 +68,6 @@ model FileStorage {
   StrukturPPID                   StrukturPPID[]
   GalleryFoto                    GalleryFoto[]
   Pelapor                        Pelapor[]
-  Penghargaan                    Penghargaan[]
   ProfileDesaImage               ProfileDesaImage[]
   ProfilePPID                    ProfilePPID[]
   ProfilPerbekel                 ProfilPerbekel[]
@@ -270,6 +269,8 @@ model PrestasiDesa {
   id         String               @id @default(cuid())
   name       String
   deskripsi  String               @db.Text
+  /// Capaian/peringkat, mis. "Juara 1 Lomba Desa Provinsi Bali 2025" (eks-kolom Penghargaan.juara).
+  juara      String?
   kategori   KategoriPrestasiDesa @relation(fields: [kategoriId], references: [id])
   kategoriId String
   image      FileStorage?         @relation(fields: [imageId], references: [id])
@@ -852,20 +853,6 @@ model AjukanPermohonan {
   updatedAt  DateTime                 @updatedAt
   deletedAt  DateTime                 @default(now())
   isActive   Boolean                  @default(true)
-}
-
-// ========================================= PENGHARGAAN ========================================= //
-model Penghargaan {
-  id        String       @id @default(cuid())
-  name      String
-  juara     String
-  deskripsi String       @db.Text
-  image     FileStorage? @relation(fields: [imageId], references: [id])
-  imageId   String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  deletedAt DateTime     @default(now())
-  isActive  Boolean      @default(true)
 }
 
 // ========================================= MENU KESEHATAN ========================================= //
