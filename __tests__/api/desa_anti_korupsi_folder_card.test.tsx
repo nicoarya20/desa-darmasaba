@@ -31,6 +31,8 @@ const dok = (id: string, judul: string, mimeType = 'application/pdf'): DokumenDe
   file: { id: `f-${id}`, link: `/api/fileStorage/findUnique/${id}`, realName: `${id}.pdf`, mimeType, size: 1024 },
 });
 
+const noop = () => undefined;
+
 const now = new Date();
 const detail: DesaAntiKorupsiDetail = {
   id: 'p1',
@@ -110,7 +112,7 @@ describe('program-folder helpers', () => {
 
 describe('ProgramIsi (halaman /darmasaba/desa-anti-korupsi/program/[id])', () => {
   it('tanpa ?folder → grid folder termasuk Umum, dengan jumlah dokumen per folder', () => {
-    const html = render(<ProgramIsi detail={detail} folderParam={null} />);
+    const html = render(<ProgramIsi detail={detail} folderParam={null} urutParam={null} onUrutChange={noop} />);
     expect([...html.matchAll(/data-folder-key="([^"]+)"/g)].map((m) => m[1])).toEqual(['fa', 'fb', 'umum']);
     expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/p1?folder=umum"');
     expect([...html.matchAll(/data-testid="jumlah-dokumen-folder"[^>]*>(\d+) dokumen</g)].map((m) => m[1])).toEqual(['2', '0', '1']);
@@ -120,7 +122,7 @@ describe('ProgramIsi (halaman /darmasaba/desa-anti-korupsi/program/[id])', () =>
   });
 
   it('kembali & breadcrumb menuju detail?kategori=<kategori program>', () => {
-    const html = render(<ProgramIsi detail={detail} folderParam="fa" />);
+    const html = render(<ProgramIsi detail={detail} folderParam="fa" urutParam={null} onUrutChange={noop} />);
     expect(html.match(/href="\/darmasaba\/desa-anti-korupsi\/detail\?kategori=PENGUATAN%20PENGAWASAN"/g)?.length).toBe(2);
     expect(html).toContain('href="/darmasaba/desa-anti-korupsi"');
     // folder aktif = crumb terakhir; nama program jadi tautan kembali ke grid folder
@@ -129,7 +131,7 @@ describe('ProgramIsi (halaman /darmasaba/desa-anti-korupsi/program/[id])', () =>
   });
 
   it('?folder=<id> → daftar dokumen folder itu saja, dengan Pratinjau khusus PDF & Unduh', () => {
-    const html = render(<ProgramIsi detail={detail} folderParam="fa" />);
+    const html = render(<ProgramIsi detail={detail} folderParam="fa" urutParam={null} onUrutChange={noop} />);
     expect(html).toMatch(/data-testid="folder-aktif"[^>]*>Laporan Keuangan</);
     expect([...html.matchAll(/data-dokumen-id="([^"]+)"/g)].map((m) => m[1])).toEqual(['a1', 'a2']);
     expect(html).toContain('aria-label="Pratinjau APBDes 2025"');
@@ -139,10 +141,13 @@ describe('ProgramIsi (halaman /darmasaba/desa-anti-korupsi/program/[id])', () =>
   });
 
   it('?folder=umum → dokumen tanpa folder; folder kosong & program kosong → empty state', () => {
-    const umum = render(<ProgramIsi detail={detail} folderParam="umum" />);
+    const umum = render(<ProgramIsi detail={detail} folderParam="umum" urutParam={null} onUrutChange={noop} />);
     expect([...umum.matchAll(/data-dokumen-id="([^"]+)"/g)].map((m) => m[1])).toEqual(['u1']);
-    expect(render(<ProgramIsi detail={detail} folderParam="fb" />)).toContain('Folder ini belum berisi dokumen');
-    const kosong = render(<ProgramIsi detail={{ ...detail, folders: [], dokumenUmum: [] }} folderParam={null} />);
+    const kosongFolder = render(<ProgramIsi detail={detail} folderParam="fb" urutParam={null} onUrutChange={noop} />);
+    expect(kosongFolder).toContain('Folder ini belum berisi dokumen');
+    const kosong = render(
+      <ProgramIsi detail={{ ...detail, folders: [], dokumenUmum: [] }} folderParam={null} urutParam={null} onUrutChange={noop} />,
+    );
     expect(kosong).toContain('Belum ada dokumen pada program ini');
     expect(kosong).not.toContain('Cari judul dokumen');
   });

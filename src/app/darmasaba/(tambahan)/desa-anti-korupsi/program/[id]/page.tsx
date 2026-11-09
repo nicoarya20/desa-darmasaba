@@ -4,10 +4,12 @@ import colors from '@/con/colors';
 import { Button, Container, Flex, Loader, Stack, Text } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ProgramIsi } from '../../_com/ProgramIsi';
+import { programHref } from '../../_lib/program-folder';
+import type { UrutValue } from '../../_lib/program-urut';
 
 const loader = (
   <Flex justify="center" align="center" h={200}>
@@ -19,6 +21,7 @@ function ProgramContent() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? '';
   const searchParams = useSearchParams();
+  const router = useRouter();
   const findUnique = useProxy(korupsiState.desaAntikorupsi.findUnique);
   const [loading, setLoading] = useState(true);
 
@@ -49,10 +52,20 @@ function ProgramContent() {
       </Stack>
     );
   }
-  return <ProgramIsi detail={detail} folderParam={searchParams.get('folder')} />;
+  const folderParam = searchParams.get('folder');
+  // Pilihan urut ditulis ke `?urut=` (replace, tanpa scroll) agar tautan bisa dibagikan.
+  const handleUrutChange = (urut: UrutValue) => router.replace(programHref(id, folderParam, urut), { scroll: false });
+  return (
+    <ProgramIsi
+      detail={detail}
+      folderParam={folderParam}
+      urutParam={searchParams.get('urut')}
+      onUrutChange={handleUrutChange}
+    />
+  );
 }
 
-/** Halaman publik satu program Desa Anti Korupsi: folder & dokumen (folder aktif di `?folder=`). */
+/** Halaman publik satu program Desa Anti Korupsi: folder & dokumen (folder aktif di `?folder=`, urutan di `?urut=`). */
 export default function ProgramDesaAntiKorupsiPage() {
   return (
     <Stack bg={colors.Bg} py="xl" mih="100vh">

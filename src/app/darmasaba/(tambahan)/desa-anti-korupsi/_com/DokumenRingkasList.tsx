@@ -1,5 +1,5 @@
 import colors from '@/con/colors';
-import { fileExtension, isPdfMime, type DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
+import { isPdfMime, type DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { ActionIcon, Badge, Group, Paper, Stack, Text, Tooltip } from '@mantine/core';
 import {
   IconDownload,
@@ -10,6 +10,7 @@ import {
   IconFileTypePpt,
   IconFileTypeXls,
 } from '@tabler/icons-react';
+import { dokumenInfo, ringkasInfo } from '../_lib/dokumen-info';
 
 /** Satu baris daftar: dokumen + label folder asal (dipakai hasil pencarian lintas folder). */
 export type DokumenRingkasItem = { dokumen: DokumenDesaAntiKorupsiView; folderLabel?: string };
@@ -26,15 +27,15 @@ const ICON_BY_EXT: Record<string, typeof IconFileText> = {
 
 type Props = { items: readonly DokumenRingkasItem[]; onPreview: (dokumen: DokumenDesaAntiKorupsiView) => void };
 
-/** Daftar dokumen ringkas: ikon tipe, judul, aksi Pratinjau (khusus PDF) & Unduh. */
+/** Daftar dokumen ringkas: ikon tipe, judul, tipe/ukuran/tanggal unggah, aksi Pratinjau (khusus PDF) & Unduh. */
 export function DokumenRingkasList({ items, onPreview }: Props) {
   return (
     <Paper withBorder radius="lg" p={0} bg="white">
       <Stack gap={0} component="ul" m={0} p={0} style={{ listStyle: 'none' }}>
         {items.map(({ dokumen: d, folderLabel }, index) => {
           const pdf = isPdfMime(d.file.mimeType);
-          const ext = fileExtension(d.file.realName, d.file.mimeType);
-          const Icon = (pdf ? IconFileTypePdf : ICON_BY_EXT[ext]) ?? IconFileText;
+          const info = dokumenInfo(d);
+          const Icon = (pdf ? IconFileTypePdf : ICON_BY_EXT[info.tipe]) ?? IconFileText;
           return (
             <Group
               key={d.id}
@@ -47,25 +48,35 @@ export function DokumenRingkasList({ items, onPreview }: Props) {
               py="sm"
               style={index > 0 ? { borderTop: '1px solid var(--mantine-color-gray-2)' } : undefined}
             >
-              <Group gap="sm" wrap="nowrap" miw={0}>
+              <Group gap="sm" wrap="nowrap" miw={0} style={{ flex: 1 }}>
                 <Icon size={24} color={colors['blue-button']} style={{ flexShrink: 0 }} />
                 <Stack gap={2} miw={0}>
                   <Text fz="sm" fw={500} lineClamp={2} title={d.judul}>
                     {d.judul}
                   </Text>
-                  <Group gap={6}>
-                    <Badge size="xs" variant="light" color="gray">
-                      {ext}
-                    </Badge>
-                    {folderLabel && (
-                      <Text fz="xs" c="dimmed" truncate>
-                        {folderLabel}
-                      </Text>
-                    )}
-                  </Group>
+                  {/* Mobile: tipe · ukuran · tanggal turun jadi satu baris keterangan kecil di bawah judul. */}
+                  <Text fz="xs" c="dimmed" hiddenFrom="sm" data-testid="dokumen-info-ringkas">
+                    {ringkasInfo(info)}
+                  </Text>
+                  {folderLabel && (
+                    <Text fz="xs" c="dimmed" truncate>
+                      {folderLabel}
+                    </Text>
+                  )}
                 </Stack>
               </Group>
-              <Group gap={6} wrap="nowrap">
+              <Group gap="md" wrap="nowrap" visibleFrom="sm" data-testid="dokumen-info" style={{ flexShrink: 0 }}>
+                <Badge size="sm" variant="light" color="gray" w={64} title="Tipe berkas">
+                  {info.tipe}
+                </Badge>
+                <Text fz="xs" c="dimmed" w={72} ta="right" title="Ukuran berkas">
+                  {info.ukuran}
+                </Text>
+                <Text fz="xs" c="dimmed" w={96} title="Tanggal unggah">
+                  {info.tanggal}
+                </Text>
+              </Group>
+              <Group gap={6} wrap="nowrap" style={{ flexShrink: 0 }}>
                 {pdf && (
                   <Tooltip label="Pratinjau" withArrow>
                     <ActionIcon
