@@ -4,6 +4,12 @@ import desaAntiKorupsiFindMany from "./findMany";
 import desaAntiKorupsiFindUnique from "./findUnique";
 import desaAntiKorupsiUpdate from "./updt";
 import desaAntiKorupsiCreate from "./create";
+import desaAntiKorupsiSalinKeProgram from "./salin";
+import {
+  desaAntiKorupsiSampahHapus,
+  desaAntiKorupsiSampahList,
+  desaAntiKorupsiSampahPulihkan,
+} from "./sampah";
 import { DOKUMEN_MAX_PER_PROGRAM } from "@/lib/desa-anti-korupsi-dokumen";
 
 // Tipe dasar saja; aturan dokumen & folder (judul/nama wajib, urutan, duplikat, kepemilikan,
@@ -43,6 +49,21 @@ const DesaAntiKorupsi = new Elysia({
 
   // ✅ Find by ID
   .get("/:id", desaAntiKorupsiFindUnique)
+
+  // ✅ Tempat sampah dokumen (khusus admin; guard di handler, retensi DAK_SAMPAH_RETENSI_HARI)
+  .get("/:id/sampah", desaAntiKorupsiSampahList)
+  .post("/sampah/:dokumenId/pulihkan", desaAntiKorupsiSampahPulihkan)
+  .delete("/sampah/:dokumenId", desaAntiKorupsiSampahHapus)
+
+  // ✅ Salin dokumen ke program lain (khusus admin; langsung tersimpan). Aturan 1..50 id, kepemilikan
+  // folder & batas dokumen dicek di handler supaya respons 400/409 + pesan.
+  .post("/dokumen/salin-ke-program", desaAntiKorupsiSalinKeProgram, {
+    body: t.Object({
+      dokumenIds: t.Array(t.String()),
+      targetProgramId: t.String(),
+      targetFolderId: t.Nullable(t.String()),
+    }),
+  })
 
   // ✅ Create
   .post("/create", desaAntiKorupsiCreate, {
