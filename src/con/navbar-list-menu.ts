@@ -227,7 +227,7 @@ const navbarListMenu = [
             },
             {
                 id: "5.8",
-                name: "Program Kemiskinan",
+                name: "Program Pengentasan Kemiskinan",
                 href: "/darmasaba/ekonomi/program-kemiskinan"
             },
             {
