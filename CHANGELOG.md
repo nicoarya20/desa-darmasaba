@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.226] - 2026-11-09
+### Changed
+- **Tampilan baru section Indeks Kepuasan Masyarakat di beranda**, senada dengan section APBDes dan Kabar Desa: latar putih, grafik dalam kartu abu muda tanpa bingkai, dan tombol "Ajukan Responden" berbentuk pil.
+- Grafik jumlah responden per bulan kini disertai total responden dalam angka besar. Komposisi jenis kelamin, ulasan, dan umur tampil sebagai grafik donat dengan jumlah dan persentase tiap kategori, dalam warna biru desa.
+- Saat belum ada responden, section hanya menampilkan satu kartu ringkas berisi ajakan mengisi survei, bukan grafik kosong dan tiga kotak "Belum ada data".
+- Isian form "Ajukan Responden" tidak berubah; label tanggal kini selalu "Tanggal Pengisian".
+
 ## [0.1.223] - 2026-11-07
 ### Fixed
 - **Data hasil seed tidak lagi tampil dobel setelah data contoh diganti.** Sebelumnya, data contoh versi lama tetap tersimpan saat isi seed diperbarui, sehingga tampil berdampingan dengan data baru. Saat seed dijalankan, data lama berikut kini dibersihkan otomatis:
