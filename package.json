@@ -9,7 +9,8 @@
     "test:api": "vitest run",
     "test:e2e": "playwright test",
     "test": "bun run test:api && bun run test:e2e",
-    "gen:api": ""
+    "gen:api": "",
+    "backfill:file-size": "bun run prisma/backfill-file-size.ts"
   },
   "prisma": {
     "seed": "bun run prisma/seed.ts"
