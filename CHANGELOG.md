@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.226] - 2026-11-09
+### Changed
+- **Tampilan baru section Indeks Kepuasan Masyarakat di beranda**, senada dengan section APBDes dan Kabar Desa: latar putih, grafik dalam kartu abu muda tanpa bingkai, dan tombol "Ajukan Responden" berbentuk pil.
+- Grafik jumlah responden per bulan kini disertai total responden dalam angka besar. Komposisi jenis kelamin, ulasan, dan umur tampil sebagai grafik donat dengan jumlah dan persentase tiap kategori, dalam warna biru desa.
+- Saat belum ada responden, section hanya menampilkan satu kartu ringkas berisi ajakan mengisi survei, bukan grafik kosong dan tiga kotak "Belum ada data".
+- Isian form "Ajukan Responden" tidak berubah; label tanggal kini selalu "Tanggal Pengisian".
+
 ## [0.1.225] - 2026-11-09
 ### Changed
 - **Tampilan section SDGs Desa di beranda diperbarui** agar senada dengan section Kabar Desa dan APBDes: latar abu muda, kartu putih datar tanpa bayangan, ikon resmi tiap tujuan SDGs, nama tujuan rata kiri, dan skor besar dengan keterangan "Skor". Skor di semua kartu kini sejajar walaupun panjang nama tujuannya berbeda. Di layar ponsel, kartu tampil sebagai baris (ikon di kiri, nama dan skor di kanan) sehingga nama tujuan yang panjang tetap mudah dibaca.
