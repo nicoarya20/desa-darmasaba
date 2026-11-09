@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import pencegahanKriminalitasState from '../../../_state/keamanan/pencegahan-kriminalitas';
-import { convertYoutubeUrlToEmbed } from '../../../desa/gallery/lib/youtube-utils';
+import { convertYoutubeUrlToEmbed } from '../../../pemerintahan/gallery/lib/youtube-utils';
 
 function CreatePencegahanKriminalitas() {
   const router = useRouter();

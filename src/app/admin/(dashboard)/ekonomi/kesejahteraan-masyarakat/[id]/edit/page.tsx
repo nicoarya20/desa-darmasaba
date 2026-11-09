@@ -32,7 +32,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
-import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/desa/gallery/lib/youtube-utils';
+import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/pemerintahan/gallery/lib/youtube-utils';
 
 interface ExistingImage {
   id: string;

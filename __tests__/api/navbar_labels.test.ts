@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
 import { DEFAULT_SEARCH_MENUS, flattenMenu } from '@/app/darmasaba/_com/searchMenu';
@@ -31,14 +31,34 @@ describe('label menu "Pemerintahan" (sebelumnya "Desa")', () => {
     expect(video?.parent).toBe('Pemerintahan');
   });
 
-  it('admin: desaMenu berlabel "Pemerintahan", id "Desa" & path /admin/desa/* tetap', () => {
+  it('admin: desaMenu berlabel "Pemerintahan", id "Desa" tetap & path pindah ke /admin/pemerintahan/*', () => {
     expect(desaMenu.id).toBe('Desa');
     expect(desaMenu.name).toBe('Pemerintahan');
     expect(desaMenu.children?.[0]).toEqual({
       id: 'Desa_1',
       name: 'Profil',
-      path: '/admin/desa/profil/profil-desa',
+      path: '/admin/pemerintahan/profil/profil-desa',
     });
+  });
+});
+
+// Pindah route admin (task RA): route lama grup "desa" → /admin/pemerintahan/*. id menu & API /api/desa tetap.
+describe('route admin grup Pemerintahan', () => {
+  const ADMIN_ROOT = path.join(ROOT, 'src/app/admin/(dashboard)');
+  const paths = (desaMenu.children ?? []).map((c) => c.path);
+
+  it('semua path menu diawali /admin/pemerintahan/ dan tidak ada yang masih di route lama "desa"', () => {
+    expect(paths).toHaveLength(10);
+    for (const p of paths) expect(p, p).toMatch(/^\/admin\/pemerintahan\//);
+    expect(paths.filter((p) => /^\/admin\/desa(\/|$)/.test(p))).toEqual([]);
+  });
+
+  it('setiap path menu punya page.tsx di folder pemerintahan, folder lama sudah tidak ada', () => {
+    for (const p of paths) {
+      const page = path.join(ADMIN_ROOT, p.replace(/^\/admin\//, ''), 'page.tsx');
+      expect(existsSync(page), page).toBe(true);
+    }
+    expect(existsSync(path.join(ADMIN_ROOT, 'desa'))).toBe(false);
   });
 });
 
