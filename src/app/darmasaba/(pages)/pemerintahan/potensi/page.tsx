@@ -8,7 +8,7 @@ import { useProxy } from 'valtio/utils';
 import BackButton from '../layanan/_com/BackButto';
 import { PotensiDetailModal } from './_com/PotensiDetailModal';
 import { PotensiGrid } from './_com/PotensiGrid';
-import type { PotensiItem } from './_com/potensi.logic';
+import { POTENSI_LIST_LIMIT, type PotensiItem } from './_com/potensi.logic';
 
 function Page() {
   const [loading, setLoading] = useState(false)
@@ -27,7 +27,7 @@ function Page() {
     const loadData = async () => {
       try {
         setLoading(true)
-        await state.potensiDesa.findMany.load()
+        await state.potensiDesa.findMany.load(1, POTENSI_LIST_LIMIT)
       } catch (error) {
         console.error('Gagal memuat data:', error);
       } finally {
