@@ -4,6 +4,7 @@ import desaAntiKorupsiFindMany from "./findMany";
 import desaAntiKorupsiFindUnique from "./findUnique";
 import desaAntiKorupsiUpdate from "./updt";
 import desaAntiKorupsiCreate from "./create";
+import desaAntiKorupsiZip from "./zip";
 import { DOKUMEN_MAX_PER_PROGRAM } from "@/lib/desa-anti-korupsi-dokumen";
 
 // Tipe dasar saja; aturan dokumen & folder (judul/nama wajib, urutan, duplikat, kepemilikan,
@@ -43,6 +44,11 @@ const DesaAntiKorupsi = new Elysia({
 
   // ✅ Find by ID
   .get("/:id", desaAntiKorupsiFindUnique)
+
+  // ✅ Unduh ZIP dokumen aktif (publik); ?folder=<id|umum> = satu folder saja
+  .get("/:id/zip", desaAntiKorupsiZip, {
+    query: t.Object({ folder: t.Optional(t.String()) }),
+  })
 
   // ✅ Create
   .post("/create", desaAntiKorupsiCreate, {
