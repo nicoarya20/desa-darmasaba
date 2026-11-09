@@ -1,10 +1,12 @@
-import navbarListMenu from '@/con/navbar-list-menu';
-import searchExtraPages from '@/con/search-extra-pages';
 import type { MenuItem } from '../../../../types/menu-item';
-import { visibleMenu } from './navbar-menu.logic';
+import { effectiveMenuVisibility } from './menu-visibility.logic';
 
-/** Sumber default pencarian: menu navbar yang terlihat dulu, lalu halaman publik di luar navbar. */
-export const DEFAULT_SEARCH_MENUS: readonly MenuItem[] = visibleMenu([...navbarListMenu, ...searchExtraPages]);
+/**
+ * Sumber default pencarian TANPA override DB: menu navbar yang terlihat dulu, lalu halaman publik
+ * di luar navbar (yang tidak berada di bawah submenu tersembunyi). UI publik memakai versi ber-override
+ * dari `useMenuVisibility().searchMenus`.
+ */
+export const DEFAULT_SEARCH_MENUS: readonly MenuItem[] = effectiveMenuVisibility({}).searchMenus;
 
 /** Jumlah hasil "Halaman" yang tampil sebelum pengunjung menekan "Tampilkan N halaman lainnya". */
 export const MENU_PREVIEW_COUNT = 5;
