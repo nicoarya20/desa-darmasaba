@@ -2,18 +2,25 @@
 'use client'
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
 import colors from '@/con/colors';
-import { Box, Button, Flex, Group, Image, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { IconEye } from '@tabler/icons-react';
-import { useTransitionRouter } from 'next-view-transitions';
+import { Box, Flex, Paper, Stack, Text, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../layanan/_com/BackButto';
+import { PotensiDetailModal } from './_com/PotensiDetailModal';
+import { PotensiGrid } from './_com/PotensiGrid';
+import type { PotensiItem } from './_com/potensi.logic';
 
 function Page() {
-  const router = useTransitionRouter()
   const [loading, setLoading] = useState(false)
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
+  // Item dipertahankan saat overlay ditutup agar isinya tidak hilang selama animasi keluar.
+  const [selected, setSelected] = useState<PotensiItem | null>(null)
+  const [detailOpened, setDetailOpened] = useState(false)
   const state = useProxy(potensiDesaState)
+
+  const openDetail = (item: PotensiItem) => {
+    setSelected(item)
+    setDetailOpened(true)
+  }
 
   useEffect(() => {
     state.kategoriPotensi.findMany.load()
@@ -31,6 +38,8 @@ function Page() {
   }, [])
 
   const data = state.potensiDesa.findMany.data
+  // data null = belum pernah dimuat; tampilkan kerangka, bukan pesan kosong, sebelum efek pertama jalan.
+  const isLoading = loading || data === null
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap={48}>
@@ -77,123 +86,21 @@ function Page() {
           </Paper>
         </Flex>
 
-        <SimpleGrid py={48} cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
-          {loading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} h={360} radius="xl" />
-            ))
-          ) : data && data.length > 0 ? (
-            data.map((v, k) => (
-              <Box
-                key={k}
-                pos="relative"
-                h={360}
-                onMouseEnter={() => setHoveredId(v.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                style={{
-                  borderRadius: 27,
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  transition: 'transform 0.3s ease'
-                }}
-              >
-                <Image
-                  src={v.image?.link || ''}
-                  alt={v.name}
-                  pos="absolute"
-                  top={0}
-                  left={0}
-                  w="100%"
-                  h="100%"
-                  fit="cover"
-                  loading="eager"
-                  style={{ zIndex: 0, borderRadius: 27 }}
-                />
-                <Box
-                  pos="absolute"
-                  inset={0}
-                  bg={hoveredId === v.id
-                    ? "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.75) 100%)"
-                    : "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.15) 100%)"
-                  }
-                  style={{
-                    transition: 'background 0.3s ease',
-                    zIndex: 1
-                  }}
-                />
-
-                <Stack justify="space-between" h="100%" gap="md" p="lg" pos="relative" style={{ zIndex: 2 }}>
-                  <Group>
-                    <Paper
-                      radius="lg"
-                      py={6}
-                      px={12}
-                      shadow="md"
-                      withBorder
-                      bg="rgba(255,255,255,0.9)"
-                      style={{ transition: 'all 0.3s ease' }}
-                    >
-                      <Text fz={{ base: 11, md: 14 }} fw={600}>{v.kategori?.nama}</Text>
-                    </Paper>
-                  </Group>
-
-                  <Box
-                    style={{
-                      opacity: hoveredId === v.id ? 1 : 0,
-                      transform: hoveredId === v.id ? 'translateY(0)' : 'translateY(10px)',
-                      transition: 'all 0.3s ease',
-                      pointerEvents: hoveredId === v.id ? 'auto' : 'none'
-                    }}
-                  >
-                    <Title
-                      order={3}
-                      fw={800}
-                      c="white"
-                      fz={{ base: 18, md: 20 }}
-                      ta="center"
-                      lineClamp={2}
-                      lh={1.3}
-                    >
-                      {v.name}
-                    </Title>
-                  </Box>
-
-                  <Group
-                    justify="center"
-                    style={{
-                      opacity: hoveredId === v.id ? 1 : 0,
-                      transform: hoveredId === v.id ? 'translateY(0)' : 'translateY(10px)',
-                      transition: 'all 0.3s ease',
-                      pointerEvents: hoveredId === v.id ? 'auto' : 'none'
-                    }}
-                  >
-                    <Button
-                      radius="xl"
-                      size="md"
-                      leftSection={<IconEye size={18} />}
-                      bg={colors["blue-button"]}
-                      variant="gradient"
-                      gradient={{ from: colors["blue-button"], to: "#4dabf7", deg: 45 }}
-                      onClick={() => router.push(`/darmasaba/pemerintahan/potensi/${v.id}`)}
-                    >
-                      <Text c={'white'} fz={{ base: 12, md: 14 }} fw={500}>Lihat Detail</Text>
-                    </Button>
-                  </Group>
-                </Stack>
-              </Box>
-            ))
-          ) : (
-            <Stack align="center" gap="xs">
-              <Text fz={{ base: 14, md: 16 }} fw={600} c="dimmed">
-                Belum ada potensi desa
-              </Text>
-              <Text fz={{ base: 12, md: 14 }} c="dimmed">
-                Data potensi akan tampil di sini setelah tersedia.
-              </Text>
-            </Stack>
-          )}
-        </SimpleGrid>
+        {!isLoading && data.length === 0 ? (
+          <Stack align="center" gap="xs" py={48}>
+            <Text fz={{ base: 14, md: 16 }} fw={600} c="dimmed">
+              Belum ada potensi desa
+            </Text>
+            <Text fz={{ base: 12, md: 14 }} c="dimmed">
+              Data potensi akan tampil di sini setelah tersedia.
+            </Text>
+          </Stack>
+        ) : (
+          <PotensiGrid items={(data ?? []) as PotensiItem[]} loading={isLoading} onOpen={openDetail} />
+        )}
       </Box>
+
+      <PotensiDetailModal item={selected} opened={detailOpened} onClose={() => setDetailOpened(false)} />
     </Stack>
   );
 }
