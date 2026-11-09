@@ -79,6 +79,8 @@
 }
 
 /* `.card .icon` (2 kelas) agar menang atas gaya bawaan Mantine Image (width 100%, radius 0). */
+/* Latar placeholder juga di <img>: selama gambar lazy belum termuat, ruang ikon terbaca sebagai ikon
+   yang sedang dimuat (sama dengan kondisi tanpa gambar); ikon SDG persegi & opak menutupinya setelah termuat. */
 .card .icon,
 .card .iconEmpty {
   flex: none;
@@ -86,11 +88,11 @@
   height: 72px;
   margin-bottom: 20px;
   border-radius: 10px;
+  background: var(--placeholder);
 }
 
 .iconEmpty {
   display: block;
-  background: var(--placeholder);
 }
 
 .name {
