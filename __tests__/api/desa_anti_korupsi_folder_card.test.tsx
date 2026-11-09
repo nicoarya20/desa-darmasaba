@@ -27,7 +27,8 @@ const dok = (id: string, judul: string, mimeType = 'application/pdf'): DokumenDe
   judul,
   urutan: 0,
   fileId: `f-${id}`,
-  file: { id: `f-${id}`, link: `/api/fileStorage/findUnique/${id}`, realName: `${id}.pdf`, mimeType },
+  createdAt: '2026-11-09T00:00:00.000Z',
+  file: { id: `f-${id}`, link: `/api/fileStorage/findUnique/${id}`, realName: `${id}.pdf`, mimeType, size: 1024 },
 });
 
 const now = new Date();

@@ -43,7 +43,8 @@ const ctx = (body: unknown, id?: string, query: Record<string, string> = {}): an
 
 const base = { name: 'Program A', deskripsi: 'x', kategoriId: 'k1' };
 const detailRow = (over: Record<string, unknown> = {}) => ({ id: 'p1', ...base, folders: [], dokumen: [], ...over });
-const file = (id: string) => ({ id, link: `/l/${id}`, realName: `${id}.pdf`, mimeType: 'application/pdf' });
+const file = (id: string) => ({ id, link: `/l/${id}`, realName: `${id}.pdf`, mimeType: 'application/pdf', size: null });
+const createdAt = new Date('2026-11-09T00:00:00.000Z');
 const calls = (fn: { mock: { calls: unknown[][] } }) => fn.mock.calls.map((c) => c[0]);
 
 beforeEach(() => {
@@ -194,8 +195,8 @@ describe('update', () => {
       detailRow({
         folders: [{ id: 'fa', nama: 'Laporan 2025', urutan: 0 }],
         dokumen: [
-          { id: 'a', judul: 'A', urutan: 0, fileId: 'xa', folderId: 'fa', file: file('xa') },
-          { id: 'b', judul: 'B', urutan: 0, fileId: 'xb', folderId: null, file: file('xb') },
+          { id: 'a', judul: 'A', urutan: 0, fileId: 'xa', folderId: 'fa', createdAt, file: file('xa') },
+          { id: 'b', judul: 'B', urutan: 0, fileId: 'xb', folderId: null, createdAt, file: file('xb') },
         ],
       }),
     );
@@ -302,14 +303,14 @@ describe('findMany / findUnique', () => {
     prismaMock.desaAntiKorupsi.findUnique.mockResolvedValueOnce(
       detailRow({
         folders: [{ id: 'fa', nama: 'Laporan', urutan: 0 }],
-        dokumen: [{ id: 'a', judul: 'A', urutan: 0, fileId: 'xa', folderId: null, file: file('xa') }],
+        dokumen: [{ id: 'a', judul: 'A', urutan: 0, fileId: 'xa', folderId: null, createdAt, file: file('xa') }],
       }),
     );
     const res = await dakFindUnique(ctx(undefined, 'p1'));
     expect(prismaMock.desaAntiKorupsi.findUnique.mock.calls[0][0].include).toBe(DESA_ANTI_KORUPSI_DETAIL_INCLUDE);
     expect(res.data).toMatchObject({
       folders: [{ id: 'fa', nama: 'Laporan', urutan: 0, dokumen: [] }],
-      dokumenUmum: [{ id: 'a', judul: 'A', urutan: 0, fileId: 'xa', file: file('xa') }],
+      dokumenUmum: [{ id: 'a', judul: 'A', urutan: 0, fileId: 'xa', createdAt: '2026-11-09T00:00:00.000Z', file: file('xa') }],
     });
   });
 
@@ -320,5 +321,8 @@ describe('findMany / findUnique', () => {
     expect(DESA_ANTI_KORUPSI_DETAIL_INCLUDE.dokumen.where).toEqual({ isActive: true });
     expect(DESA_ANTI_KORUPSI_DETAIL_INCLUDE.dokumen.orderBy).toEqual(order);
     expect(DESA_ANTI_KORUPSI_DETAIL_INCLUDE.dokumen.select.file.select).toMatchObject({ link: true, mimeType: true });
+    // size (byte, null = belum di-backfill) & createdAt dipakai urut/format ukuran di UI
+    expect(DESA_ANTI_KORUPSI_DETAIL_INCLUDE.dokumen.select.file.select).toMatchObject({ size: true });
+    expect(DESA_ANTI_KORUPSI_DETAIL_INCLUDE.dokumen.select).toMatchObject({ createdAt: true });
   });
 });

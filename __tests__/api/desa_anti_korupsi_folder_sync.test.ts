@@ -197,7 +197,8 @@ describe('isFolderChanged & resolveFolderId', () => {
 describe('bentuk respons', () => {
   const kategori = { id: 'k1', name: 'KEARIFAN LOKAL', createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date(), isActive: true };
   const program = { id: 'p1', name: 'Program', deskripsi: '-', kategoriId: 'k1', kategori, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date(), isActive: true };
-  const file = (id: string) => ({ id, link: `/l/${id}`, realName: `${id}.pdf`, mimeType: 'application/pdf' });
+  const file = (id: string) => ({ id, link: `/l/${id}`, realName: `${id}.pdf`, mimeType: 'application/pdf', size: 2048 });
+const createdAt = new Date('2026-11-09T01:02:03.000Z');
 
   it('toProgramRingkas mengganti _count dengan jumlahFolder & jumlahDokumen', () => {
     const res = toProgramRingkas({ ...program, _count: { folders: 2, dokumen: 7 } });
@@ -213,10 +214,10 @@ describe('bentuk respons', () => {
         { id: 'fb', nama: 'Kosong', urutan: 1 },
       ],
       dokumen: [
-        { id: 'd1', judul: 'A', urutan: 0, fileId: 'x1', folderId: 'fa', file: file('x1') },
-        { id: 'd2', judul: 'B', urutan: 0, fileId: 'x2', folderId: null, file: file('x2') },
-        { id: 'd3', judul: 'C', urutan: 1, fileId: 'x3', folderId: 'fa', file: file('x3') },
-        { id: 'd4', judul: 'D', urutan: 0, fileId: 'x4', folderId: 'nonaktif', file: file('x4') },
+        { id: 'd1', judul: 'A', urutan: 0, fileId: 'x1', folderId: 'fa', createdAt, file: file('x1') },
+        { id: 'd2', judul: 'B', urutan: 0, fileId: 'x2', folderId: null, createdAt, file: file('x2') },
+        { id: 'd3', judul: 'C', urutan: 1, fileId: 'x3', folderId: 'fa', createdAt, file: file('x3') },
+        { id: 'd4', judul: 'D', urutan: 0, fileId: 'x4', folderId: 'nonaktif', createdAt, file: file('x4') },
       ],
     });
     expect(res.folders.map((f) => [f.id, f.dokumen.map((d) => d.id)])).toEqual([
@@ -224,7 +225,14 @@ describe('bentuk respons', () => {
       ['fb', []],
     ]);
     expect(res.dokumenUmum.map((d) => d.id)).toEqual(['d2', 'd4']);
-    expect(res.folders[0].dokumen[0]).toEqual({ id: 'd1', judul: 'A', urutan: 0, fileId: 'x1', file: file('x1') });
+    expect(res.folders[0].dokumen[0]).toEqual({
+      id: 'd1',
+      judul: 'A',
+      urutan: 0,
+      fileId: 'x1',
+      createdAt: '2026-11-09T01:02:03.000Z', // Date Prisma → ISO string
+      file: { ...file('x1'), size: 2048 },
+    });
     expect(res).not.toHaveProperty('dokumen');
   });
 });
