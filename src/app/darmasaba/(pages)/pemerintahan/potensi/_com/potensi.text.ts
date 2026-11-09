@@ -1,0 +1,21 @@
+/** Label UI halaman Potensi Desa (kepala + saring, kartu, overlay detail). */
+export const POTENSI_TEXT = {
+  title: "Potensi Desa Darmasaba",
+  lead: "Temukan berbagai potensi unggulan, peluang, dan daya tarik yang menjadikan Desa Darmasaba istimewa.",
+  filterLabel: "Saring berdasarkan kategori",
+  filters: { semua: "Semua", potensi: "Potensi", wisata: "Wisata" },
+  empty: "Belum ada potensi desa",
+  emptyHint: "Data potensi akan tampil di sini setelah tersedia.",
+  emptyFilter: (label: string) => `Belum ada data di kategori ${label}.`,
+  detail: "Lihat Detail",
+  detailLabel: (name: string) => `Lihat detail ${name}`,
+  close: "Tutup detail",
+  emptyDescription: "Belum ada deskripsi untuk potensi desa ini.",
+  info: { lokasi: "Lokasi", pengelola: "Pengelola", status: "Status" },
+  emptyValue: "–",
+  emptyValueLabel: "Belum ada data",
+  dokumentasi: "Dokumentasi",
+  dokumentasiAlt: (name: string, n: number) => `Dokumentasi ${name} ${n}`,
+  gridLabel: "Daftar potensi desa",
+  loading: "Memuat potensi desa",
+} as const;
