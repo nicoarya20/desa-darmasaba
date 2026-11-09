@@ -100,6 +100,15 @@ export function donutStrokeWidth(visibleSliceCount: number): number {
   return visibleSliceCount > 1 ? 2 : 0;
 }
 
+/**
+ * Tanggal hari ini menurut jam lokal pengguna, format "YYYY-MM-DD" (sama dengan nilai `<input type="date">`).
+ * Sengaja tidak memakai `toISOString()` (UTC): di WITA pukul 00:00–07:59 hasilnya tanggal kemarin.
+ */
+export function todayLocalIsoDate(now: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
 /** True bila minimal satu kategori bernilai > 0. */
 export function hasValues(slices: readonly ChartSlice[]): boolean {
   return slices.some((s) => s.value > 0);

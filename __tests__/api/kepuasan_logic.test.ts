@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   countByCategory,
   donutSlices,
@@ -10,6 +10,7 @@ import {
   summarizeKepuasan,
   sumValues,
   toSelectOptions,
+  todayLocalIsoDate,
   type RespondenItem,
 } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.logic';
 import {
@@ -229,5 +230,38 @@ describe('donutStrokeWidth', () => {
   it('dua irisan atau lebih → pemisah 2px', () => {
     expect(donutStrokeWidth(2)).toBe(2);
     expect(donutStrokeWidth(4)).toBe(2);
+  });
+});
+
+describe('todayLocalIsoDate', () => {
+  it('format YYYY-MM-DD dengan nol di depan (nilai <input type="date">)', () => {
+    expect(todayLocalIsoDate(new Date(2026, 0, 5, 12, 0))).toBe('2026-01-05');
+    expect(todayLocalIsoDate(new Date(2026, 10, 9, 23, 59))).toBe('2026-11-09');
+  });
+
+  describe('zona WITA (Asia/Makassar, UTC+8)', () => {
+    const originalTz = process.env.TZ;
+    beforeAll(() => {
+      process.env.TZ = 'Asia/Makassar';
+    });
+    afterAll(() => {
+      process.env.TZ = originalTz;
+    });
+
+    it('dini hari 01:30 WITA tetap tanggal hari itu, bukan kemarin seperti toISOString()', () => {
+      const dinihari = new Date('2026-11-08T17:30:00.000Z'); // = 9 Nov 2026 01:30 WITA
+      expect(dinihari.toISOString().slice(0, 10)).toBe('2026-11-08'); // jebakan yang dihindari
+      expect(todayLocalIsoDate(dinihari)).toBe('2026-11-09');
+    });
+
+    it('batas 00:00 dan 07:59 WITA', () => {
+      expect(todayLocalIsoDate(new Date('2026-11-08T16:00:00.000Z'))).toBe('2026-11-09');
+      expect(todayLocalIsoDate(new Date('2026-11-08T23:59:00.000Z'))).toBe('2026-11-09');
+      expect(todayLocalIsoDate(new Date('2026-11-08T15:59:00.000Z'))).toBe('2026-11-08');
+    });
+
+    it('pergantian tahun', () => {
+      expect(todayLocalIsoDate(new Date('2025-12-31T16:30:00.000Z'))).toBe('2026-01-01');
+    });
   });
 });

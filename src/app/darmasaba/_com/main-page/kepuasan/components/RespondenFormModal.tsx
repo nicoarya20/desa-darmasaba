@@ -3,7 +3,7 @@ import colors from "@/con/colors";
 import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useEffect } from "react";
 import { useProxy } from "valtio/utils";
-import { toSelectOptions } from "../kepuasan.logic";
+import { todayLocalIsoDate, toSelectOptions } from "../kepuasan.logic";
 import { KEPUASAN_TEXT } from "../kepuasan.text";
 
 const T = KEPUASAN_TEXT.form;
@@ -13,6 +13,7 @@ type Props = { opened: boolean; onClose: () => void };
 /**
  * Form "Ajukan Responden". Kontrak: mengisi `indeksKepuasanState.responden.create.form`
  * { name, tanggal, jenisKelaminId, ratingId, kelompokUmurId } lalu memanggil `create.create()`.
+ * `tanggal` tidak diisi pengunjung: diisi otomatis tanggal hari ini (jam lokal, "YYYY-MM-DD") saat submit.
  */
 export function RespondenFormModal({ opened, onClose }: Props) {
   const state = useProxy(indeksKepuasanState.responden);
@@ -37,6 +38,7 @@ export function RespondenFormModal({ opened, onClose }: Props) {
     // create() memvalidasi + menangani error sendiri (toast) dan tidak mengembalikan status,
     // sehingga form direset & modal ditutup juga saat validasi gagal. Perilaku lama ini sengaja
     // dipertahankan: perbaikannya butuh create() mengembalikan status (state store, di luar scope).
+    state.create.form.tanggal = todayLocalIsoDate(new Date());
     await state.create.create();
     resetForm();
     onClose();
@@ -52,15 +54,6 @@ export function RespondenFormModal({ opened, onClose }: Props) {
           value={form.name}
           onChange={(e) => {
             state.create.form.name = e.currentTarget.value;
-          }}
-        />
-        <TextInput
-          label={T.tanggal}
-          type="date"
-          placeholder={T.tanggalPlaceholder}
-          value={form.tanggal}
-          onChange={(e) => {
-            state.create.form.tanggal = e.currentTarget.value;
           }}
         />
         <Select

@@ -18,8 +18,6 @@ export const KEPUASAN_TEXT = {
     title: "Ajukan Responden",
     name: "Nama",
     namePlaceholder: "Masukkan nama",
-    tanggal: "Tanggal Pengisian",
-    tanggalPlaceholder: "Masukkan tanggal",
     jenisKelamin: "Jenis Kelamin",
     jenisKelaminPlaceholder: "Pilih jenis kelamin",
     rating: "Rating",
