@@ -1,12 +1,20 @@
 // @vitest-environment node
-// Halaman publik DAK: kartu program menampilkan isi folder (N dokumen), pratinjau PDF & unduh.
+// Publik DAK: kartu program ringkas (tanpa daftar dokumen) + halaman program (grid folder, ?folder, Umum).
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
 import { ProgramFolderCard } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/ProgramFolderCard';
+import { ProgramIsi } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
+import {
+  programHref,
+  resolveActiveFolder,
+  ringkasanIsi,
+  searchDokumen,
+} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/program-folder';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
+import { folderGroups, type DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
 
 // MantineProvider menyisipkan <style> global; dibuang agar tersisa markup komponen saja.
 const render = (node: React.ReactElement) =>
@@ -22,50 +30,119 @@ const dok = (id: string, judul: string, mimeType = 'application/pdf'): DokumenDe
   file: { id: `f-${id}`, link: `/api/fileStorage/findUnique/${id}`, realName: `${id}.pdf`, mimeType },
 });
 
-const noop = () => undefined;
+const now = new Date();
+const detail: DesaAntiKorupsiDetail = {
+  id: 'p1',
+  name: 'Program Transparansi Anggaran',
+  deskripsi: '<p>Deskripsi program</p>',
+  kategoriId: 'k1',
+  kategori: { id: 'k1', name: 'PENGUATAN PENGAWASAN', createdAt: now, updatedAt: now, deletedAt: now, isActive: true },
+  createdAt: now,
+  updatedAt: now,
+  deletedAt: now,
+  isActive: true,
+  folders: [
+    { id: 'fa', nama: 'Laporan Keuangan', urutan: 0, dokumen: [dok('a1', 'APBDes 2025'), dok('a2', 'Realisasi', 'application/gzip')] },
+    { id: 'fb', nama: 'Kosong', urutan: 1, dokumen: [] },
+  ],
+  dokumenUmum: [dok('u1', 'Pengumuman APBDes')],
+};
 
 describe('ProgramFolderCard', () => {
-  it('item dengan N dokumen → badge "N dokumen" dan N baris dokumen sesuai urutan', () => {
-    const dokumen = [dok('a', 'Perdes APBDes'), dok('b', 'Laporan Realisasi'), dok('c', 'SK Tim', 'application/gzip')];
-    const html = render(<ProgramFolderCard name="Program Transparansi" dokumen={dokumen} onPreview={noop} />);
-
-    expect(html).toContain('Program Transparansi');
-    expect(html).toContain('3 dokumen');
-    expect(html.match(/data-dokumen-id="/g)).toHaveLength(3);
-    expect(html.indexOf('Perdes APBDes')).toBeLessThan(html.indexOf('Laporan Realisasi'));
-    expect(html.indexOf('Laporan Realisasi')).toBeLessThan(html.indexOf('SK Tim'));
-  });
-
-  it('tiap dokumen punya tautan unduh; pratinjau hanya untuk PDF', () => {
+  it('menampilkan judul (title penuh), kategori, "N folder · M dokumen", dan tombol Buka ke halaman program', () => {
     const html = render(
-      <ProgramFolderCard name="P" dokumen={[dok('a', 'PDF A'), dok('b', 'Arsip B', 'application/gzip')]} onPreview={noop} />,
+      <ProgramFolderCard id="p1" name="Program Transparansi" kategori="PENGUATAN PENGAWASAN" jumlahFolder={2} jumlahDokumen={5} />,
     );
-    expect(html).toContain('href="/api/fileStorage/findUnique/a"');
-    expect(html).toContain('href="/api/fileStorage/findUnique/b"');
-    expect(html).toContain('aria-label="Unduh PDF A"');
-    expect(html).toContain('aria-label="Unduh Arsip B"');
-    expect(html).toContain('aria-label="Pratinjau PDF A"');
-    expect(html).not.toContain('aria-label="Pratinjau Arsip B"');
-    expect(html.match(/rel="noopener noreferrer"/g)).toHaveLength(2);
+    expect(html).toContain('title="Program Transparansi"');
+    expect(html).toContain('PENGUATAN PENGAWASAN');
+    expect(html).toContain('2 folder · 5 dokumen');
+    expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/p1"');
+    expect(html).toContain('>Buka<');
   });
 
-  it('folder kosong → "0 dokumen" + pesan belum ada dokumen', () => {
-    const html = render(<ProgramFolderCard name="P" dokumen={[]} onPreview={noop} />);
-    expect(html).toContain('0 dokumen');
-    expect(html).toContain('Belum ada dokumen');
+  it('tidak merender daftar dokumen; 0 folder → hanya "M dokumen"', () => {
+    const html = render(<ProgramFolderCard id="p1" name="P" jumlahFolder={0} jumlahDokumen={3} />);
     expect(html).not.toContain('data-dokumen-id');
+    expect(html).not.toContain('folder ·');
+    expect(html).toMatch(/data-testid="ringkasan-isi"[^>]*>3 dokumen</);
+  });
+
+  it('halaman detail memberi kartu ringkasan jumlah, bukan daftar dokumen', () => {
+    const src = readFileSync(
+      path.resolve(__dirname, '../../src/app/darmasaba/(tambahan)/desa-anti-korupsi/detail/page.tsx'),
+      'utf8',
+    );
+    expect(src).toContain('jumlahFolder={item.jumlahFolder}');
+    expect(src).toContain('jumlahDokumen={item.jumlahDokumen}');
+    expect(src).not.toContain('item.dokumen');
+    expect(src).not.toContain('DokumenPreviewModal');
   });
 });
 
-describe('halaman detail publik memakai kartu folder', () => {
-  const src = readFileSync(
-    path.resolve(__dirname, '../../src/app/darmasaba/(tambahan)/desa-anti-korupsi/detail/page.tsx'),
-    'utf8',
-  );
+describe('program-folder helpers', () => {
+  it('programHref & ringkasanIsi', () => {
+    expect(programHref('p 1')).toBe('/darmasaba/desa-anti-korupsi/program/p%201');
+    expect(programHref('p1', 'umum')).toBe('/darmasaba/desa-anti-korupsi/program/p1?folder=umum');
+    expect(ringkasanIsi(1, 0)).toBe('1 folder · 0 dokumen');
+    expect(ringkasanIsi(0, 0)).toBe('0 dokumen');
+  });
 
-  it('kartu diberi daftar dokumen item, bukan lagi item.file tunggal', () => {
-    expect(src).toContain('<ProgramFolderCard');
-    expect(src).toContain('dokumen={item.dokumen ?? []}');
-    expect(src).not.toContain('item.file');
+  it('folderGroups: Umum di akhir hanya bila ada dokumen tanpa folder; resolveActiveFolder dari ?folder', () => {
+    const groups = folderGroups(detail);
+    expect(groups.map((g) => g.key)).toEqual(['fa', 'fb', 'umum']);
+    expect(folderGroups({ ...detail, dokumenUmum: [] }).map((g) => g.key)).toEqual(['fa', 'fb']);
+    expect(resolveActiveFolder('umum', groups)?.nama).toBe('Umum');
+    expect(resolveActiveFolder('fb', groups)?.nama).toBe('Kosong');
+    expect(resolveActiveFolder('tidak-ada', groups)).toBeNull();
+    expect(resolveActiveFolder(null, groups)).toBeNull();
+  });
+
+  it('searchDokumen mencari judul lintas folder tanpa beda kapital', () => {
+    const res = searchDokumen(folderGroups(detail), '  apbdes ');
+    expect(res.map((r) => [r.folder.nama, r.dokumen.id])).toEqual([
+      ['Laporan Keuangan', 'a1'],
+      ['Umum', 'u1'],
+    ]);
+    expect(searchDokumen(folderGroups(detail), '   ')).toEqual([]);
+  });
+});
+
+describe('ProgramIsi (halaman /darmasaba/desa-anti-korupsi/program/[id])', () => {
+  it('tanpa ?folder → grid folder termasuk Umum, dengan jumlah dokumen per folder', () => {
+    const html = render(<ProgramIsi detail={detail} folderParam={null} />);
+    expect([...html.matchAll(/data-folder-key="([^"]+)"/g)].map((m) => m[1])).toEqual(['fa', 'fb', 'umum']);
+    expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/p1?folder=umum"');
+    expect([...html.matchAll(/data-testid="jumlah-dokumen-folder"[^>]*>(\d+) dokumen</g)].map((m) => m[1])).toEqual(['2', '0', '1']);
+    expect(html).not.toContain('data-dokumen-id');
+    expect(html).toContain('Program Transparansi Anggaran');
+    expect(html).toContain('Deskripsi program');
+  });
+
+  it('kembali & breadcrumb menuju detail?kategori=<kategori program>', () => {
+    const html = render(<ProgramIsi detail={detail} folderParam="fa" />);
+    expect(html.match(/href="\/darmasaba\/desa-anti-korupsi\/detail\?kategori=PENGUATAN%20PENGAWASAN"/g)?.length).toBe(2);
+    expect(html).toContain('href="/darmasaba/desa-anti-korupsi"');
+    // folder aktif = crumb terakhir; nama program jadi tautan kembali ke grid folder
+    expect(html).toMatch(/aria-current="page"[^>]*>Laporan Keuangan</);
+    expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/p1"');
+  });
+
+  it('?folder=<id> → daftar dokumen folder itu saja, dengan Pratinjau khusus PDF & Unduh', () => {
+    const html = render(<ProgramIsi detail={detail} folderParam="fa" />);
+    expect(html).toMatch(/data-testid="folder-aktif"[^>]*>Laporan Keuangan</);
+    expect([...html.matchAll(/data-dokumen-id="([^"]+)"/g)].map((m) => m[1])).toEqual(['a1', 'a2']);
+    expect(html).toContain('aria-label="Pratinjau APBDes 2025"');
+    expect(html).not.toContain('aria-label="Pratinjau Realisasi"');
+    expect(html).toContain('aria-label="Unduh Realisasi"');
+    expect(html).not.toContain('data-folder-key');
+  });
+
+  it('?folder=umum → dokumen tanpa folder; folder kosong & program kosong → empty state', () => {
+    const umum = render(<ProgramIsi detail={detail} folderParam="umum" />);
+    expect([...umum.matchAll(/data-dokumen-id="([^"]+)"/g)].map((m) => m[1])).toEqual(['u1']);
+    expect(render(<ProgramIsi detail={detail} folderParam="fb" />)).toContain('Folder ini belum berisi dokumen');
+    const kosong = render(<ProgramIsi detail={{ ...detail, folders: [], dokumenUmum: [] }} folderParam={null} />);
+    expect(kosong).toContain('Belum ada dokumen pada program ini');
+    expect(kosong).not.toContain('Cari judul dokumen');
   });
 });
