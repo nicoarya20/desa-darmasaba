@@ -157,31 +157,53 @@ model MediaSosial {
 
 //========================================= DESA ANTI KORUPSI ========================================= //
 model DesaAntiKorupsi {
-  id         String                   @id @default(cuid())
-  name       String                   @unique
-  deskripsi  String                   @db.Text
-  kategori   KategoriDesaAntiKorupsi  @relation(fields: [kategoriId], references: [id])
+  id         String                         @id @default(cuid())
+  name       String                         @unique
+  deskripsi  String                         @db.Text
+  kategori   KategoriDesaAntiKorupsi        @relation(fields: [kategoriId], references: [id])
   kategoriId String
   dokumen    DokumenDesaAntiKorupsi[]
-  createdAt  DateTime                 @default(now())
-  updatedAt  DateTime                 @updatedAt
-  deletedAt  DateTime                 @default(now())
-  isActive   Boolean                  @default(true)
+  folders    FolderDokumenDesaAntiKorupsi[]
+  createdAt  DateTime                       @default(now())
+  updatedAt  DateTime                       @updatedAt
+  deletedAt  DateTime                       @default(now())
+  isActive   Boolean                        @default(true)
 }
 
 // "Folder" dokumen per program Desa Anti Korupsi: satu program bisa punya banyak berkas.
 model DokumenDesaAntiKorupsi {
-  id                String          @id @default(cuid())
-  desaAntiKorupsi   DesaAntiKorupsi @relation(fields: [desaAntiKorupsiId], references: [id], onDelete: Cascade)
+  id                String                        @id @default(cuid())
+  desaAntiKorupsi   DesaAntiKorupsi               @relation(fields: [desaAntiKorupsiId], references: [id], onDelete: Cascade)
   desaAntiKorupsiId String
-  file              FileStorage     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  file              FileStorage                   @relation(fields: [fileId], references: [id], onDelete: Cascade)
   fileId            String
+  // null = dokumen ada di folder virtual "Umum" (bukan baris DB)
+  folder            FolderDokumenDesaAntiKorupsi? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  folderId          String?
   judul             String
-  urutan            Int             @default(0)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  urutan            Int                           @default(0)
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
   deletedAt         DateTime?
-  isActive          Boolean         @default(true)
+  isActive          Boolean                       @default(true)
+
+  @@index([desaAntiKorupsiId])
+  @@index([folderId])
+}
+
+// Folder (satu tingkat) untuk memilah dokumen di dalam satu program Desa Anti Korupsi.
+// Hapus folder = soft delete; dokumennya dipindah ke "Umum" (folderId null), tidak ikut terhapus.
+model FolderDokumenDesaAntiKorupsi {
+  id                String                   @id @default(cuid())
+  desaAntiKorupsi   DesaAntiKorupsi          @relation(fields: [desaAntiKorupsiId], references: [id], onDelete: Cascade)
+  desaAntiKorupsiId String
+  nama              String
+  urutan            Int                      @default(0)
+  dokumen           DokumenDesaAntiKorupsi[]
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  deletedAt         DateTime?
+  isActive          Boolean                  @default(true)
 
   @@index([desaAntiKorupsiId])
 }
