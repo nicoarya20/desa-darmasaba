@@ -231,6 +231,16 @@ Section Penghargaan & Prestasi lama **digabung** (frontend dulu; tabel backend m
 - **Grid**: 4 entri terbaru gabungan, 2 kolom, gap 10px, tile 16:10 tanpa radius; seluruh tile = tautan ke detail sesuai sumber (`/darmasaba/prestasi-desa/{id}` atau `/darmasaba/penghargaan/{id}`), judul `name` kiri bawah (28px, tablet 24, mobile 21; maks 3 baris) di atas gradasi gelap. Ganjil → tile terakhir lebar 2 kolom (21:9); kosong → grid disembunyikan. Loading = placeholder abu. Mobile ≤734px: 1 kolom, tile 4:3. Hover foto zoom 1.03 700ms (mati saat reduced motion).
 - **Halaman gabungan** `/darmasaba/prestasi-desa`: latar putih, kepala max-width 1100px (kembali, judul `h1` 48px warna brand, subtext abu, cari 320px di kanan — mobile di bawah), grid tile yang sama, 8 per halaman + `Pagination` bila > 1 halaman. Cari debounce 400ms ke kedua sumber. `/darmasaba/penghargaan` dialihkan ke halaman ini; halaman detail `[id]` keduanya tetap. Menu navbar Desa → "Prestasi dan Penghargaan".
 
+### Indeks Kepuasan Masyarakat (Beranda)
+
+Gaya bersih apple.com, sejalan APBDes. Folder: `_com/main-page/kepuasan/` — `index.tsx` (section tipis), `use-kepuasan-data.ts` (hook: muat `responden.findMany` halaman 1 limit 1000 + ringkasan), `components/KepuasanCharts.tsx` (susunan grafik), `components/KepuasanMonthlyChart.tsx` (BarChart per bulan + total), `components/KepuasanDonutCard.tsx` (DonutChart + legenda), `components/KepuasanEmpty.tsx`, `components/KepuasanSkeleton.tsx`, `components/CtaButton.tsx`, `components/RespondenFormModal.tsx` (form "Ajukan Responden"), `kepuasan.logic.ts` (helper murni), `kepuasan.meta.ts` (kategori + warna, limit), `kepuasan.text.ts`, `kepuasan.module.css`. Test: `__tests__/api/kepuasan_logic.test.ts`, `__tests__/api/kepuasan_ui.test.tsx`.
+
+- **Bentuk**: latar putih, isi max-width 1100px, judul 40px (mobile 32px) warna `blue-button` + paragraf pengantar abu 19px (mobile 17px), rata tengah. Panel/kartu `#f5f5f7` radius 18px tanpa border/bayangan.
+- **Ada data**: panel "Responden per bulan" (h3 + keterangan, total responden server 40px di kanan; mobile di bawah judul) berisi grafik batang `blue-button` (sumbu bulan ringkas "Mar 2026", tooltip "Maret 2026"). Di bawahnya 3 kartu (Jenis kelamin / Ulasan / Umur; mobile 1 kolom): donat 168px + legenda jumlah & persen. Palet satu rona biru brand gelap → terang (urutan rating: Sangat Baik paling gelap). Pil "Ajukan Responden" di bawah section.
+- **Kategori** dicocokkan dari nama opsi (tanpa beda huruf besar/kecil) dengan daftar tetap di `kepuasan.meta.ts`; nama opsi baru buatan admin tidak muncul di grafik sampai daftar ditambah.
+- **0 responden**: satu kartu pesan "Belum ada responden" + pil "Ajukan Responden"; tanpa grafik kosong.
+- **Form** (`RespondenFormModal`): kontrak tetap — mengisi `indeksKepuasanState.responden.create.form` `{ name, tanggal, jenisKelaminId, ratingId, kelompokUmurId }` lalu `create.create()`; opsi select dari tiga `findMany` opsi.
+
 ### Footer
 
 ```tsx
@@ -652,7 +662,7 @@ Grafik interaktif (Recharts) + tabel per tahun. Komponen `Mantine Transition` fa
 
 ### Survey Kepuasan Masyarakat
 
-Form survei + hasil real-time via `Mantine BarChart` dan `PieChart`.
+Form survei + hasil via `Mantine BarChart` (per bulan) dan `DonutChart` (komposisi). Detail: §5 "Indeks Kepuasan Masyarakat (Beranda)".
 
 ---
 
