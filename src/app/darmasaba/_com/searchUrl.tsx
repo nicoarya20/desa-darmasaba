@@ -1,4 +1,5 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
+import { isPathHidden } from './menu-visibility.logic';
 
 type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
 
@@ -104,5 +105,12 @@ const getDetailUrl = (item: SearchItem) => {
 
 /** Normalisasi `type` hasil pencarian sebelum lookup peta: hanya trim, huruf tidak diubah (kunci peta camelCase). */
 export const normalizeSearchType = (type: unknown) => String(type ?? '').trim();
+
+/**
+ * Benar bila hasil pencarian konten menuju halaman di bawah submenu tersembunyi (halaman itu 404),
+ * memakai pencocokan per segmen yang sama dengan guard 404.
+ */
+export const isSearchResultHidden = (item: SearchItem, hiddenHrefs: readonly string[]) =>
+  isPathHidden(getDetailUrl({ ...item, type: normalizeSearchType(item.type) }), hiddenHrefs);
 
 export default getDetailUrl;

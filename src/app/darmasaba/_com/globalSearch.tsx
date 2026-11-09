@@ -8,7 +8,8 @@ import { useSnapshot } from 'valtio';
 import SearchResultRow from './SearchResultRow';
 import SearchShowMoreButton from './SearchShowMoreButton';
 import searchMenu, { previewMenuResults } from './searchMenu';
-import getDetailUrl, { normalizeSearchType } from './searchUrl';
+import getDetailUrl, { isSearchResultHidden, normalizeSearchType } from './searchUrl';
+import { useMenuVisibility } from './MenuVisibilityContext';
 import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInformasi';
 
 type SearchResultItem = (typeof searchState.results)[number];
@@ -27,10 +28,12 @@ export default function GlobalSearch() {
   const [opened, setOpened] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  // Hasil menu dihitung lokal dari config navbar: langsung muncul tanpa menunggu debounce/API.
-  const menuResults = searchMenu(snap.query);
+  const { searchMenus, hiddenHrefs } = useMenuVisibility();
+  // Hasil menu dihitung lokal dari menu efektif: langsung muncul tanpa menunggu debounce/API.
+  const menuResults = searchMenu(snap.query, searchMenus);
   const menuPreview = previewMenuResults(menuResults, expanded);
-  const apiResults = [...snap.results];
+  // Hasil konten yang menuju halaman tersembunyi (404) tidak ditawarkan ke pengunjung.
+  const apiResults = snap.results.filter((item) => !isSearchResultHidden(item, hiddenHrefs));
 
   // Buka popover saat ada query
   useEffect(() => {
