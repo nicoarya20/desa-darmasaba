@@ -10,11 +10,15 @@ const sanitize = vi.hoisted(() => vi.fn((html: string) => html.replace(/<script[
 vi.mock('dompurify', () => ({ default: { sanitize } }));
 
 import { PotensiCard } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/PotensiCard';
+import { PotensiHeader } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/PotensiHeader';
 import { PotensiDetailModal } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/PotensiDetailModal';
 import {
   POTENSI_LIST_LIMIT,
   RICH_TEXT_TAGS,
+  countByFilter,
   dokumentasiImages,
+  filterPotensi,
+  isWisata,
   htmlToPlainText,
   potensiInfoRows,
   sanitizePotensiHtml,
@@ -85,6 +89,47 @@ describe('potensiInfoRows & dokumentasiImages', () => {
 
   it('batas muat daftar cukup untuk semua potensi desa (bukan default 10)', () => {
     expect(POTENSI_LIST_LIMIT).toBeGreaterThan(10);
+  });
+});
+
+describe('saring Semua / Potensi / Wisata', () => {
+  // test-only: 3 item, satu wisata dengan nama kategori berhuruf campur, satu tanpa kategori.
+  const list: PotensiItem[] = [
+    { ...item, id: 'w', kategori: { nama: ' WISATA ' } },
+    { ...item, id: 'e', kategori: { nama: 'Ekonomi' } },
+    { ...item, id: 'n', kategori: null },
+  ];
+
+  it('wisata dikenali tanpa peduli huruf/spasi; tanpa kategori = potensi', () => {
+    expect(list.map(isWisata)).toEqual([true, false, false]);
+  });
+
+  it('jumlah per pilihan & isi grid tiap pilihan', () => {
+    expect(countByFilter(list)).toEqual({ semua: 3, potensi: 2, wisata: 1 });
+    expect(filterPotensi(list, 'semua').map((i) => i.id)).toEqual(['w', 'e', 'n']);
+    expect(filterPotensi(list, 'potensi').map((i) => i.id)).toEqual(['e', 'n']);
+    expect(filterPotensi(list, 'wisata').map((i) => i.id)).toEqual(['w']);
+    expect(countByFilter([])).toEqual({ semua: 0, potensi: 0, wisata: 0 });
+  });
+});
+
+describe('PotensiHeader', () => {
+  it('judul h1, pengantar, 3 tombol pil berjumlah; pilihan aktif aria-pressed', () => {
+    const html = render(<PotensiHeader filter="wisata" counts={{ semua: 11, potensi: 6, wisata: 5 }} onFilter={() => {}} />);
+    expect(html).toMatch(new RegExp(`<h1[^>]*>${POTENSI_TEXT.title}</h1>`));
+    expect(html).toContain(POTENSI_TEXT.lead);
+    expect(html).toContain(`role="group" aria-label="${POTENSI_TEXT.filterLabel}"`);
+    expect(html.match(/<button/g)).toHaveLength(3);
+    expect(html.match(/aria-pressed="true"/g)).toHaveLength(1);
+    expect(html).toMatch(/aria-pressed="true"[^>]*>Wisata<span[^>]*>5<\/span>/);
+    expect(html).toMatch(/>Semua<span[^>]*>11<\/span>/);
+    expect(html).toMatch(/>Potensi<span[^>]*>6<\/span>/);
+  });
+
+  it('saat memuat: tombol nonaktif tanpa angka', () => {
+    const html = render(<PotensiHeader filter="semua" counts={null} onFilter={() => {}} />);
+    expect(html.match(/disabled=""/g)).toHaveLength(3);
+    expect(html).not.toMatch(/<span/);
   });
 });
 

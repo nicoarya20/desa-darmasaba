@@ -1,14 +1,9 @@
-import colors from "@/con/colors";
-import type { CSSProperties } from "react";
 import { PotensiCard } from "./PotensiCard";
 import type { PotensiItem } from "./potensi.logic";
 import s from "./potensi.module.css";
 import { POTENSI_TEXT } from "./potensi.text";
 
 const PLACEHOLDER_COUNT = 6;
-
-/** Warna brand tombol "Lihat Detail" (sama dengan tombol pil section lain). */
-const BRAND_VARS = { "--brand": colors["blue-button"], "--brand-hover": colors["blue-button-6"] } as CSSProperties;
 
 type Props = { items: readonly PotensiItem[]; loading: boolean; onOpen: (item: PotensiItem) => void };
 
@@ -27,7 +22,7 @@ export function PotensiGrid({ items, loading, onOpen }: Props) {
   }
 
   return (
-    <ul className={s.grid} style={BRAND_VARS} aria-label={POTENSI_TEXT.gridLabel}>
+    <ul className={s.grid} aria-label={POTENSI_TEXT.gridLabel}>
       {items.map((item) => (
         <li key={item.id}>
           <PotensiCard item={item} onOpen={onOpen} />

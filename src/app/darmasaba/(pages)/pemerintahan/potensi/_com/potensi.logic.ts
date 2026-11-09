@@ -66,3 +66,25 @@ export function sanitizePotensiHtml(html: string | null | undefined): string {
   if (htmlToPlainText(html) === "") return "";
   return DOMPurify.sanitize(html, { ALLOWED_TAGS: RICH_TEXT_TAGS, ALLOWED_ATTR: [] });
 }
+
+/** Pilihan saring di kepala halaman: semua, potensi (non-wisata), atau wisata. */
+export type PotensiFilter = "semua" | "potensi" | "wisata";
+
+export const POTENSI_FILTERS: readonly PotensiFilter[] = ["semua", "potensi", "wisata"];
+
+/** Wisata = kategori bernama "Wisata" (tanpa peduli huruf besar/kecil); kategori lain dihitung "Potensi". */
+export function isWisata(item: PotensiItem): boolean {
+  return item.kategori?.nama?.trim().toLowerCase() === "wisata";
+}
+
+/** Jumlah item per pilihan saring (angka di tombol pil). */
+export function countByFilter(items: readonly PotensiItem[]): Record<PotensiFilter, number> {
+  const wisata = items.filter(isWisata).length;
+  return { semua: items.length, potensi: items.length - wisata, wisata };
+}
+
+/** Item yang tampil di grid untuk pilihan saring aktif. */
+export function filterPotensi(items: readonly PotensiItem[], filter: PotensiFilter): PotensiItem[] {
+  if (filter === "semua") return [...items];
+  return items.filter((item) => isWisata(item) === (filter === "wisata"));
+}

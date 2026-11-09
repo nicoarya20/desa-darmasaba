@@ -2,19 +2,29 @@
 'use client'
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
 import colors from '@/con/colors';
-import { Box, Flex, Paper, Stack, Text, Title } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { Box, Stack, Text } from '@mantine/core';
+import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../layanan/_com/BackButto';
 import { PotensiDetailModal } from './_com/PotensiDetailModal';
 import { PotensiGrid } from './_com/PotensiGrid';
-import { POTENSI_LIST_LIMIT, type PotensiItem } from './_com/potensi.logic';
+import { PotensiHeader } from './_com/PotensiHeader';
+import {
+  POTENSI_LIST_LIMIT,
+  countByFilter,
+  filterPotensi,
+  type PotensiFilter,
+  type PotensiItem,
+} from './_com/potensi.logic';
+import { POTENSI_BRAND_VARS } from './_com/potensi.meta';
+import { POTENSI_TEXT } from './_com/potensi.text';
 
 function Page() {
   const [loading, setLoading] = useState(false)
   // Item dipertahankan saat overlay ditutup agar isinya tidak hilang selama animasi keluar.
   const [selected, setSelected] = useState<PotensiItem | null>(null)
   const [detailOpened, setDetailOpened] = useState(false)
+  const [filter, setFilter] = useState<PotensiFilter>('semua')
   const state = useProxy(potensiDesaState)
 
   const openDetail = (item: PotensiItem) => {
@@ -40,63 +50,34 @@ function Page() {
   const data = state.potensiDesa.findMany.data
   // data null = belum pernah dimuat; tampilkan kerangka, bukan pesan kosong, sebelum efek pertama jalan.
   const isLoading = loading || data === null
+  const items = useMemo(() => (data ?? []) as PotensiItem[], [data])
+  const counts = useMemo(() => (isLoading ? null : countByFilter(items)), [isLoading, items])
+  const visible = useMemo(() => filterPotensi(items, filter), [items, filter])
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap={48}>
+    <Stack pos="relative" bg={colors.Bg} py="xl" gap={48} style={POTENSI_BRAND_VARS}>
       <Box px={{ base: "md", md: 100 }}>
         <BackButton />
       </Box>
 
       <Box px={{ base: "md", md: 100 }}>
-        <Flex justify="space-between" align="center" direction={{ base: "column", md: "row" }} gap="lg">
-          <Stack gap="sm" maw={600}>
-            <Title order={1} fz={{ base: 28, md: 36 }} lh={1.2} c={colors["blue-button"]}>
-              Potensi Desa Darmasaba
-            </Title>
-            <Text fz={{ base: 14, md: 16 }} lh={1.6} ta="justify">
-              Temukan berbagai potensi unggulan, peluang, dan daya tarik yang menjadikan Desa Darmasaba istimewa.
-            </Text>
-          </Stack>
-          <Paper
-            radius="2xl"
-            px="xl"
-            py="md"
-            bg={colors["blue-button"]}
-            shadow="xl"
-            withBorder
-          >
-            <Flex justify="center" align="center" gap="xl">
-              <Box>
-                <Text ta="center" fz={{ base: 20, md: 32 }} fw={800} c="white" lh={1.2}>
-                  {data?.filter(item => item.kategori?.nama.toLowerCase() !== 'wisata').length || 0}
-                </Text>
-                <Text ta="center" fz={{ base: 12, md: 14 }} c="white" fw={500}>
-                  Potensi
-                </Text>
-              </Box>
-              <Box>
-                <Text ta="center" fz={{ base: 20, md: 32 }} fw={800} c="white" lh={1.2}>
-                  {data?.filter(item => item.kategori?.nama.toLowerCase() === 'wisata').length || 0}
-                </Text>
-                <Text ta="center" fz={{ base: 12, md: 14 }} c="white" fw={500}>
-                  Wisata
-                </Text>
-              </Box>
-            </Flex>
-          </Paper>
-        </Flex>
+        <PotensiHeader filter={filter} counts={counts} onFilter={setFilter} />
 
-        {!isLoading && data.length === 0 ? (
+        {!isLoading && items.length === 0 ? (
           <Stack align="center" gap="xs" py={48}>
             <Text fz={{ base: 14, md: 16 }} fw={600} c="dimmed">
-              Belum ada potensi desa
+              {POTENSI_TEXT.empty}
             </Text>
             <Text fz={{ base: 12, md: 14 }} c="dimmed">
-              Data potensi akan tampil di sini setelah tersedia.
+              {POTENSI_TEXT.emptyHint}
             </Text>
           </Stack>
+        ) : !isLoading && visible.length === 0 ? (
+          <Text ta="center" py={48} fz={{ base: 14, md: 16 }} c="dimmed" role="status">
+            {POTENSI_TEXT.emptyFilter(POTENSI_TEXT.filters[filter])}
+          </Text>
         ) : (
-          <PotensiGrid items={(data ?? []) as PotensiItem[]} loading={isLoading} onOpen={openDetail} />
+          <PotensiGrid items={visible} loading={isLoading} onOpen={openDetail} />
         )}
       </Box>
 
