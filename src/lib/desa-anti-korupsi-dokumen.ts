@@ -60,7 +60,7 @@ export function parseDokumenList(input: unknown): DokumenParseResult {
     return fail(`Maksimal ${DOKUMEN_MAX_PER_PROGRAM} dokumen per program`);
   }
 
-  const data: DokumenInput[] = [];
+  const data: DokumenParsed[] = [];
   const ids = new Set<string>();
   const fileIds = new Set<string>();
 
