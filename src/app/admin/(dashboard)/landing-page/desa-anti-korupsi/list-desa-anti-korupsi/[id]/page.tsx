@@ -8,6 +8,7 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { DokumenFolderView } from '../../_com/DokumenFolderView';
 
 
 export default function DetailKegiatanDesa() {
@@ -90,26 +91,7 @@ export default function DetailKegiatanDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold" mb="xs">Dokumen</Text>
-                {data.file?.link ? (
-                  <Box 
-                    style={{
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '8px',
-                      overflow: 'hidden',
-                      height: '500px',
-                      width: '100%'
-                    }}
-                  >
-                    <iframe
-                      src={data.file.link}
-                      width="100%"
-                      height="100%"
-                      style={{ border: 'none' }}
-                    />
-                  </Box>
-                ) : (
-                  <Text fz="sm" c="dimmed">Tidak ada dokumen tersedia</Text>
-                )}
+                <DokumenFolderView key={data.id} dokumen={data.dokumen ?? []} />
               </Box>
 
               <Group gap="sm" mt="md">

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-import React, { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
@@ -11,22 +11,23 @@ import {
   Button,
   Container,
   Flex,
-  Paper,
   SimpleGrid,
   Stack,
   Text,
-  ActionIcon,
   Loader,
-  Tooltip,
 } from '@mantine/core';
-import { IconFile, IconInbox } from '@tabler/icons-react';
+import { IconInbox } from '@tabler/icons-react';
+import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { detailHref, filterByKategori, resolveInitialKategori } from '../_lib/kategori-tab';
+import { DokumenPreviewModal } from '../_com/DokumenPreviewModal';
+import { ProgramFolderCard } from '../_com/ProgramFolderCard';
 
 function LokalContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [pickedKategori, setPickedKategori] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [previewDokumen, setPreviewDokumen] = useState<DokumenDesaAntiKorupsiView | null>(null);
   const state = useProxy(korupsiState);
 
   useEffect(() => {
@@ -99,53 +100,18 @@ function LokalContent() {
           </Flex>
         ) : (
           <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
-            {filteredData.map(item => {
-              const handleDownload = (e: React.MouseEvent) => {
-                e.stopPropagation();
-                if (!item?.file?.link) return;
-                const url = item.file.link.startsWith('http')
-                  ? item.file.link
-                  : `${window.location.origin}${item.file.link.startsWith('/') ? '' : '/'}${
-                      item.file.link
-                    }`;
-                window.open(url, '_blank');
-              };
-
-              return (
-                <Paper
-                  key={item.id}
-                  p="lg"
-                  shadow="md"
-                  radius="xl"
-                  withBorder
-                  style={{
-                    background: 'linear-gradient(135deg, #ffffff, #f8fbff)',
-                  }}
-                >
-                  <Stack h="100%" justify="space-between">
-                    <Text fz="lg" fw={600} c={colors['blue-button']}>
-                      {item.name}
-                    </Text>
-                    {item?.file && (
-                      <Tooltip label="Unduh file" withArrow>
-                        <ActionIcon
-                          variant="filled"
-                          color={colors['blue-button']}
-                          size="lg"
-                          radius="xl"
-                          onClick={handleDownload}
-                        >
-                          <IconFile size={20} />
-                        </ActionIcon>
-                      </Tooltip>
-                    )}
-                  </Stack>
-                </Paper>
-              );
-            })}
+            {filteredData.map(item => (
+              <ProgramFolderCard
+                key={item.id}
+                name={item.name}
+                dokumen={item.dokumen ?? []}
+                onPreview={setPreviewDokumen}
+              />
+            ))}
           </SimpleGrid>
         )}
       </Container>
+      <DokumenPreviewModal dokumen={previewDokumen} onClose={() => setPreviewDokumen(null)} />
     </Stack>
   );
 }

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
+import { DESA_ANTI_KORUPSI_INCLUDE } from "@/lib/desa-anti-korupsi-dokumen";
 import { Context } from "elysia";
 
 async function desaAntiKorupsiFindMany(context: Context) {
@@ -24,10 +25,7 @@ async function desaAntiKorupsiFindMany(context: Context) {
     const [data, total] = await Promise.all([
       prisma.desaAntiKorupsi.findMany({
         where,
-        include: {
-          kategori: true,
-          file: true,
-        },
+        include: DESA_ANTI_KORUPSI_INCLUDE, // kategori + dokumen aktif urut `urutan`
         skip: limit === 0 ? undefined : skip,
         take: limit === 0 ? undefined : limit,
         orderBy: { name: "asc" }, // opsional, kalau mau urut berdasarkan waktu

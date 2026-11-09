@@ -91,7 +91,7 @@ model FileStorage {
   ProgramInovasi                 ProgramInovasi[]
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
-  DesaAntiKorupsi                DesaAntiKorupsi[]
+  DokumenDesaAntiKorupsi         DokumenDesaAntiKorupsi[]
   SDGSDesa                       SdgsDesa[]
   APBDesImage                    APBDes[]                   @relation("APBDesImage")
   APBDesFile                     APBDes[]                   @relation("APBDesFile")
@@ -158,17 +158,33 @@ model MediaSosial {
 
 //========================================= DESA ANTI KORUPSI ========================================= //
 model DesaAntiKorupsi {
-  id         String                  @id @default(cuid())
-  name       String                  @unique
-  deskripsi  String                  @db.Text
-  kategori   KategoriDesaAntiKorupsi @relation(fields: [kategoriId], references: [id])
+  id         String                   @id @default(cuid())
+  name       String                   @unique
+  deskripsi  String                   @db.Text
+  kategori   KategoriDesaAntiKorupsi  @relation(fields: [kategoriId], references: [id])
   kategoriId String
-  file       FileStorage?            @relation(fields: [fileId], references: [id])
-  fileId     String?
-  createdAt  DateTime                @default(now())
-  updatedAt  DateTime                @updatedAt
-  deletedAt  DateTime                @default(now())
-  isActive   Boolean                 @default(true)
+  dokumen    DokumenDesaAntiKorupsi[]
+  createdAt  DateTime                 @default(now())
+  updatedAt  DateTime                 @updatedAt
+  deletedAt  DateTime                 @default(now())
+  isActive   Boolean                  @default(true)
+}
+
+// "Folder" dokumen per program Desa Anti Korupsi: satu program bisa punya banyak berkas.
+model DokumenDesaAntiKorupsi {
+  id                String          @id @default(cuid())
+  desaAntiKorupsi   DesaAntiKorupsi @relation(fields: [desaAntiKorupsiId], references: [id], onDelete: Cascade)
+  desaAntiKorupsiId String
+  file              FileStorage     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId            String
+  judul             String
+  urutan            Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  deletedAt         DateTime?
+  isActive          Boolean         @default(true)
+
+  @@index([desaAntiKorupsiId])
 }
 
 model KategoriDesaAntiKorupsi {
