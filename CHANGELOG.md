@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.229] - 2026-11-09
+### Changed
+- **Judul tiap potensi di halaman Potensi Desa kini langsung terlihat** di kiri bawah foto, seperti di halaman Prestasi dan Penghargaan. Sebelumnya judul baru muncul saat kursor diarahkan ke kartu, sehingga tidak terlihat sama sekali di ponsel.
+- Di bawah foto kini tampil deskripsi singkat tiap potensi dan tombol "Lihat Detail".
+- **"Lihat Detail" kini membuka jendela detail di atas halaman** dengan latar belakang yang diburamkan, berisi foto, kategori, judul, dan deskripsi lengkap. Pengunjung tidak lagi berpindah ke halaman lain dan tetap berada di posisi yang sama di daftar. Jendela ditutup lewat tombol ×, tombol Esc, atau klik di luar jendela. Seluruh kartu juga bisa diklik untuk membuka detail.
+- Jendela detail kini memiliki kotak **Lokasi, Pengelola, dan Status**, serta galeri foto **Dokumentasi**. Data keempatnya belum tersedia, sehingga untuk sementara kotak menampilkan tanda "–" dan galeri belum tampil. Isinya akan muncul otomatis setelah data dilengkapi.
+
+### Fixed
+- Halaman Potensi Desa kini menampilkan semua potensi. Sebelumnya hanya 10 potensi pertama yang tampil, sehingga sebagian potensi tidak terlihat dan jumlah Potensi/Wisata di kotak ringkasan kurang dari yang sebenarnya.
+
 ## [0.1.228] - 2026-11-09
 ### Changed
 - **Menu "Desa" kini bernama "Pemerintahan", termasuk alamat halamannya.** Halaman publik pindah dari `/darmasaba/desa/...` ke `/darmasaba/pemerintahan/...` dan halaman admin dari `/admin/desa/...` ke `/admin/pemerintahan/...`. Alamat lama (bookmark, link yang pernah dibagikan, hasil Google) otomatis dialihkan permanen ke alamat baru.
