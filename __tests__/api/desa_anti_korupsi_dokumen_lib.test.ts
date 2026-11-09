@@ -31,6 +31,17 @@ describe('parseDokumenList', () => {
     });
   });
 
+  it('file yang sama boleh dipakai di folder berbeda dalam satu program', () => {
+    const res = parseDokumenList([
+      doc(),
+      doc({ folder: { id: 'fa' } }),
+      doc({ folder: { id: 'fb' } }),
+      doc({ folder: { tempKey: 'fa' } }), // tempKey "fa" ≠ folder tersimpan "fa"
+    ]);
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.data.map((d) => d.folder)).toEqual([null, { id: 'fa' }, { id: 'fb' }, { tempKey: 'fa' }]);
+  });
+
   it('daftar kosong valid (folder boleh kosong)', () => {
     expect(parseDokumenList([])).toEqual({ ok: true, data: [] });
   });
@@ -43,7 +54,17 @@ describe('parseDokumenList', () => {
     ['urutan negatif', [doc({ urutan: -1 })], 'Dokumen #1: urutan harus bilangan bulat >= 0'],
     ['urutan pecahan', [doc({ urutan: 1.5 })], 'Dokumen #1: urutan harus bilangan bulat >= 0'],
     ['id kosong', [doc({ id: '' })], 'Dokumen #1: id tidak valid'],
-    ['fileId ganda', [doc(), doc({ urutan: 1 })], 'Dokumen #2: file yang sama dipakai dua kali'],
+    ['fileId ganda di Umum', [doc(), doc({ urutan: 1 })], 'Dokumen #2: file yang sama dipakai dua kali di folder yang sama'],
+    [
+      'fileId ganda di folder yang sama',
+      [doc({ folder: { id: 'fa' } }), doc({ urutan: 1, folder: { id: 'fa' } })],
+      'Dokumen #2: file yang sama dipakai dua kali di folder yang sama',
+    ],
+    [
+      'fileId ganda di folder baru yang sama',
+      [doc({ folder: { tempKey: 't1' } }), doc({ urutan: 1, folder: { tempKey: 't1' } })],
+      'Dokumen #2: file yang sama dipakai dua kali di folder yang sama',
+    ],
     ['id ganda', [doc({ id: 'x' }), doc({ id: 'x', fileId: 'f2' })], 'Dokumen #2: dokumen terkirim dua kali'],
     ['folder id+tempKey', [doc({ folder: { id: 'a', tempKey: 'b' } })], 'Dokumen #1: folder harus berisi id atau tempKey'],
     ['folder bukan objek', [doc({ folder: 'fa' })], 'Dokumen #1: folder tidak valid'],
