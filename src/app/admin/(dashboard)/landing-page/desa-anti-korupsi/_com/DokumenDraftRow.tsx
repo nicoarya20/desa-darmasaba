@@ -1,9 +1,11 @@
 'use client';
 import { isPdfMime } from '@/lib/desa-anti-korupsi-dokumen';
-import { ActionIcon, Badge, Box, Checkbox, Group, Paper, Select, Text, TextInput, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Box, Checkbox, Group, Paper, Select, Text, Tooltip } from '@mantine/core';
 import { IconArrowDown, IconArrowUp, IconEye, IconTrash } from '@tabler/icons-react';
 import type { DokumenDraft } from '../_lib/dokumen-draft';
 import { draftInfo } from '../_lib/draft-info';
+import { judulDokumenError } from '../_lib/inline-edit';
+import { InlineEditText } from './InlineEditText';
 
 type Props = {
   draft: DokumenDraft;
@@ -47,13 +49,14 @@ export function DokumenDraftRow({ draft, index, total, folderOptions, folderValu
           {index + 1}
         </Badge>
         <Box flex={1} miw={180}>
-          <TextInput
-            size="xs"
-            aria-label={`Judul dokumen ${index + 1}`}
+          <InlineEditText
+            size="sm"
+            label={`Judul dokumen ${index + 1}`}
             placeholder="Judul dokumen"
             value={draft.judul}
-            onChange={(e) => on.onJudul(e.currentTarget.value)}
-            error={draft.judul.trim() === '' ? 'Judul wajib diisi' : undefined}
+            validate={judulDokumenError}
+            error={judulDokumenError(draft.judul)}
+            onSave={on.onJudul}
           />
           <Group gap={6} mt={2} wrap="wrap" data-draft-info>
             <Text fz="xs" c="dimmed" truncate maw={220}>

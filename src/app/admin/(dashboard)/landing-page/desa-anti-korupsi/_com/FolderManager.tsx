@@ -1,8 +1,8 @@
 'use client';
 import { FOLDER_MAX_PER_PROGRAM } from '@/lib/desa-anti-korupsi-folder';
-import { ActionIcon, Button, Group, Stack, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Badge, Button, Group, Stack, Text } from '@mantine/core';
 import { IconArrowDown, IconArrowUp, IconFolder, IconFolderPlus } from '@tabler/icons-react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { copyFolderContentsAction, duplicateFolderAction, folderLabel, type FolderOutcome } from '../_lib/dokumen-bulk-actions';
 import {
   addFolder,
@@ -16,18 +16,20 @@ import {
 import { showNotice } from './DokumenBulkActions';
 import { FolderActionsMenu } from './FolderActionsMenu';
 import { FolderPickerModal, folderPickerOptionsFromGroups } from './FolderPickerModal';
+import { InlineEditText } from './InlineEditText';
 
 // Menu Mantine mengembalikan fokus ke tombol titik tiga ±10ms setelah tertutup (useFocusReturn);
-// fokus ke input nama ditunda melewati itu supaya "Ganti nama" tidak langsung kehilangan fokus.
+// mode input nama dibuka setelah itu supaya "Ganti nama" tidak langsung blur (= commit & tertutup).
 const RENAME_FOCUS_DELAY_MS = 50;
 
 type Props = { value: IsiDraft; onChange: (next: IsiDraft) => void };
 
-/** Kelola folder program: tambah, naik/turun urutan, dan menu aksi (ganti nama, duplikat, salin isi, hapus). */
+/** Kelola folder program: tambah, ganti nama inline, naik/turun urutan, dan menu aksi (duplikat, salin isi, hapus). */
 export function FolderManager({ value, onChange }: Props) {
   const { folders } = value;
   const penuh = folders.length >= FOLDER_MAX_PER_PROGRAM;
-  const inputs = useRef(new Map<string, HTMLInputElement>());
+  // Folder yang sedang diganti namanya (mode input InlineEditText).
+  const [renaming, setRenaming] = useState<string | null>(null);
   // Folder asal "Salin isi ke…" disimpan terpisah dari status buka agar judul modal tidak berubah saat menutup.
   const [copyFrom, setCopyFrom] = useState<string | null>(null);
   const [copyOpened, setCopyOpened] = useState(false);
@@ -36,12 +38,12 @@ export function FolderManager({ value, onChange }: Props) {
     if (outcome.isi !== value) onChange(outcome.isi);
     showNotice(outcome);
   };
-  const focusNama = (key: string) =>
-    window.setTimeout(() => {
-      const input = inputs.current.get(key);
-      input?.focus();
-      input?.select();
-    }, RENAME_FOCUS_DELAY_MS);
+  const startRename = (key: string) => window.setTimeout(() => setRenaming(key), RENAME_FOCUS_DELAY_MS);
+  const tambah = () => {
+    const next = addFolder(value);
+    onChange(next);
+    setRenaming(next.folders.at(-1)?.key ?? null); // langsung ketik nama folder baru
+  };
 
   return (
     <Stack gap="xs">
@@ -54,7 +56,7 @@ export function FolderManager({ value, onChange }: Props) {
           variant="light"
           leftSection={<IconFolderPlus size={14} />}
           disabled={penuh}
-          onClick={() => onChange(addFolder(value))}
+          onClick={tambah}
         >
           Tambah folder
         </Button>
@@ -69,22 +71,19 @@ export function FolderManager({ value, onChange }: Props) {
         return (
           <Group key={f.key} gap="xs" wrap="nowrap" align="flex-start">
             <IconFolder size={18} style={{ marginTop: 8, flexShrink: 0 }} />
-            <TextInput
-              ref={(el) => {
-                if (el) inputs.current.set(f.key, el);
-                else inputs.current.delete(f.key);
-              }}
-              flex={1}
-              size="sm"
-              aria-label={`Nama folder ${index + 1}`}
+            <InlineEditText
+              label={`Nama folder ${index + 1}`}
               placeholder="Nama folder"
               value={f.nama}
-              onChange={(e) => onChange(renameFolder(value, f.key, e.currentTarget.value))}
+              editing={renaming === f.key}
+              onEditingChange={(editing) => setRenaming(editing ? f.key : null)}
+              validate={(nama) => folderNamaError(renameFolder(value, f.key, nama).folders, f.key)}
               error={folderNamaError(folders, f.key)}
-              rightSection={
-                <Text fz="xs" c="dimmed">
+              onSave={(nama) => onChange(renameFolder(value, f.key, nama))}
+              extra={
+                <Badge size="sm" variant="light" color="gray" aria-label={`${dokumenCount} dokumen`} style={{ flexShrink: 0 }}>
                   {dokumenCount}
-                </Text>
+                </Badge>
               }
             />
             <Group gap={4} wrap="nowrap" mt={4}>
@@ -107,7 +106,7 @@ export function FolderManager({ value, onChange }: Props) {
               <FolderActionsMenu
                 namaFolder={f.nama.trim() || `${index + 1}`}
                 disableDuplicate={penuh}
-                onRename={() => focusNama(f.key)}
+                onRename={() => startRename(f.key)}
                 onDuplicate={() => apply(duplicateFolderAction(value, f.key))}
                 onCopyContents={() => {
                   setCopyFrom(f.key);
