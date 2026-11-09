@@ -5,6 +5,7 @@ import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
 import searchExtraPages from '@/con/search-extra-pages';
 import { flattenMenu } from '@/app/darmasaba/_com/searchMenu';
+import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
 import {
   countPages,
   groupPetaInformasi,
@@ -72,7 +73,7 @@ describe('groupPetaInformasi / petaInformasiGroups (fixture)', () => {
 
 describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () => {
   const groups = petaInformasiGroups('');
-  const expected = [...flattenMenu(navbarListMenu), ...flattenMenu(searchExtraPages)]
+  const expected = [...flattenMenu(visibleMenu(navbarListMenu)), ...flattenMenu(searchExtraPages)]
     .map((p) => p.href)
     .filter((href) => href !== PETA_INFORMASI_HREF);
 
@@ -83,7 +84,8 @@ describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () =>
   });
 
   it('grup navbar dulu sesuai urutan navbar, lalu grup tambahan yang belum ada', () => {
-    const navbarNames = navbarListMenu.map((m) => m.name);
+    // Menu link langsung (mis. DAK) tidak punya submenu, jadi tidak membentuk grup sendiri.
+    const navbarNames = navbarListMenu.filter((m) => m.children?.length).map((m) => m.name);
     const extraOnly = searchExtraPages.map((m) => m.name).filter((n) => !navbarNames.includes(n) && n !== 'Informasi');
     expect(groups.map((g) => g.name)).toEqual([...navbarNames, ...extraOnly]);
   });
