@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.224] - 2026-11-09
+### Changed
+- **Section Desa Anti Korupsi di beranda tampil baru dan lebih mudah dibaca.** Indikator kini ditulis dengan huruf biasa (bukan huruf kapital semua) dan dikelompokkan per kategori: nama kategori, misalnya "Penguatan tata laksana", cukup tampil sekali, diikuti butir-butirnya dengan nomor indikator (1.1, 1.2, …) sebagai pengganti ikon yang sama di setiap kartu.
+- Tampilannya kini senada dengan section Kabar Desa dan APBDes: latar putih, panel abu muda tanpa bayangan, dan tombol "Selengkapnya" berbentuk pil yang membuka halaman detail Desa Anti Korupsi. Di ponsel, nama kategori tampil di atas butirnya.
+
 ## [0.1.223] - 2026-11-07
 ### Fixed
 - **Data hasil seed tidak lagi tampil dobel setelah data contoh diganti.** Sebelumnya, data contoh versi lama tetap tersimpan saat isi seed diperbarui, sehingga tampil berdampingan dengan data baru. Saat seed dijalankan, data lama berikut kini dibersihkan otomatis:
