@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 const ROOT = path.resolve(__dirname, '../..');
 const readJson = <T>(rel: string): T => JSON.parse(readFileSync(path.join(ROOT, 'prisma/data', rel), 'utf8')) as T;
 const MIGRATION = readFileSync(
-  path.join(ROOT, 'prisma/migrations/20261109120000_merge_penghargaan_into_prestasi_desa/migration.sql'),
+  path.join(ROOT, 'prisma/migrations/20261109123000_merge_penghargaan_into_prestasi_desa/migration.sql'),
   'utf8',
 );
 

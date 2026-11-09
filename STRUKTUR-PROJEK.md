@@ -545,7 +545,7 @@ model AppMenu {
 #### Landing Page
 - `DesaAntiKorupsi` + `KategoriDesaAntiKorupsi`
 - `SdgsDesa` - SDGs
-- `PrestasiDesa` + `KategoriPrestasiDesa` — termasuk penghargaan (kategori "Penghargaan", `juara String?`); tabel `Penghargaan` dihapus di migrasi `20261109120000_merge_penghargaan_into_prestasi_desa`
+- `PrestasiDesa` + `KategoriPrestasiDesa` — termasuk penghargaan (kategori "Penghargaan", `juara String?`); tabel `Penghargaan` dihapus di migrasi `20261109123000_merge_penghargaan_into_prestasi_desa`
 - `MediaSosial`
 - `LandingPage_Layanan`
 
