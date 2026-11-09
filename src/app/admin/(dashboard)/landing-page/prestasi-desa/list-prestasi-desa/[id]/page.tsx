@@ -72,6 +72,11 @@ function DetailPrestasiDesa() {
               </Box>
 
               <Box>
+                <Text fz="lg" fw="bold">Capaian / Juara</Text>
+                <Text fz="md" c="dimmed">{detailState.findUnique.data?.juara || '-'}</Text>
+              </Box>
+
+              <Box>
                 <Text fz="lg" fw="bold">Kategori</Text>
                 <Text fz="md" c="dimmed">{detailState.findUnique.data?.kategori?.name || '-'}</Text>
               </Box>
