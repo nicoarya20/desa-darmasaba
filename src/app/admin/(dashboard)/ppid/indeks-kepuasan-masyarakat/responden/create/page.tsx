@@ -1,6 +1,4 @@
 'use client'
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import indeksKepuasanState from '@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan';
 import colors from '@/con/colors';
 import { Box, Button, Group, Loader, Paper, Select, Stack, TextInput, Title } from '@mantine/core';
@@ -18,7 +16,6 @@ function RespondenCreate() {
   const snapJK = useProxy(indeksKepuasanState.jenisKelaminResponden)
   const snapRating = useProxy(indeksKepuasanState.pilihanRatingResponden)
   const snapUmur = useProxy(indeksKepuasanState.kelompokUmurResponden)
-  const [donutData, setDonutData] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid
@@ -52,14 +49,7 @@ function RespondenCreate() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const id = await stategrafikBerdasarkanResponden.create.create();
-      if (typeof id !== 'undefined') {
-        const idStr = String(id);
-        await stategrafikBerdasarkanResponden.findUnique.load(idStr);
-        if (stategrafikBerdasarkanResponden.findUnique.data) {
-          setDonutData([stategrafikBerdasarkanResponden.findUnique.data]);
-        }
-      }
+      await stategrafikBerdasarkanResponden.create.create();
       resetForm();
       router.push("/admin/ppid/indeks-kepuasan-masyarakat/responden");
     } catch (error) {
