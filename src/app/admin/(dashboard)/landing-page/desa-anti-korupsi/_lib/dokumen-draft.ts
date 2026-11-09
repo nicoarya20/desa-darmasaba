@@ -78,18 +78,23 @@ export function isDraftListValid(drafts: readonly DokumenDraft[]): boolean {
   return drafts.every((d) => d.judul.trim() !== '');
 }
 
-/** Unggah berkas draft yang belum punya fileId (berurutan), kembalikan draft yang semuanya ber-fileId. */
+/**
+ * Unggah berkas draft yang belum punya fileId (berurutan), kembalikan draft yang semuanya ber-fileId.
+ * Draft yang berbagi objek File yang sama (salinan draft belum diunggah) cukup diunggah sekali.
+ */
 export async function uploadPendingDrafts(
   drafts: readonly DokumenDraft[],
   upload: (file: File) => Promise<UploadedFile>,
 ): Promise<DokumenDraft[]> {
   const result: DokumenDraft[] = [];
+  const uploadedByFile = new Map<File, UploadedFile>();
   for (const draft of drafts) {
     if (draft.fileId || !draft.file) {
       result.push(draft);
       continue;
     }
-    const uploaded = await upload(draft.file);
+    const uploaded = uploadedByFile.get(draft.file) ?? (await upload(draft.file));
+    uploadedByFile.set(draft.file, uploaded);
     result.push({
       ...draft,
       file: undefined,

@@ -11,11 +11,13 @@ import {
 
 /** Pastikan semua fileId menunjuk berkas aktif di FileStorage; kembalikan pesan error atau null. */
 export async function checkDokumenFiles(fileIds: string[]): Promise<string | null> {
-  if (fileIds.length === 0) return null;
+  // Berkas yang sama boleh dipakai di beberapa folder; count() menghitung berkas unik.
+  const unique = [...new Set(fileIds)];
+  if (unique.length === 0) return null;
   const found = await prisma.fileStorage.count({
-    where: { id: { in: fileIds }, isActive: true },
+    where: { id: { in: unique }, isActive: true },
   });
-  return found === fileIds.length ? null : "File dokumen tidak ditemukan atau sudah dihapus";
+  return found === unique.length ? null : "File dokumen tidak ditemukan atau sudah dihapus";
 }
 
 /** Folder & dokumen aktif milik program; program baru (id null) → kosong. */

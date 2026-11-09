@@ -19,6 +19,7 @@ Tanggal: 2026-11-09 · Migrasi: `20261109103000_dokumen_desa_anti_korupsi`, `202
 - **Satu transaksi:** buat folder baru (tempKey → id) → ubah nama/urutan → hapus folder (lepas dokumen ke Umum) → soft delete / ubah / buat dokumen → baca ulang detail. `urutan` dokumen dihitung per folder.
 - **Daftar program ringan:** `findMany` hanya mengirim `jumlahFolder` & `jumlahDokumen` (aktif) lewat `_count` relasi terfilter (satu query, tanpa N+1); isi dokumen hanya di `/:id`.
 - **Tampilan:** kartu publik ringkas → halaman `/darmasaba/desa-anti-korupsi/program/[id]` (grid folder, `?folder=<id|umum>` bisa dibagikan, cari judul lintas folder); admin detail = tabel per folder dalam Accordion + pratinjau modal; editor admin = pengelola folder + unggah ke folder terpilih + Select pindah folder, semua tersimpan dengan satu request.
+- **Berkas unik per folder, bukan per program:** satu `fileId` boleh dipakai dokumen di beberapa folder program yang sama (admin menyalin dokumen ke folder lain tanpa mengunggah ulang), tapi dua dokumen dengan `fileId` sama di satu folder ditolak 400 (`file yang sama dipakai dua kali di folder yang sama`). Folder dibandingkan sesuai bentuk rujukannya (`{ id }`, `{ tempKey }`, null = Umum). Cek `FileStorage` aktif menghitung berkas unik.
 
 ## Kontrak `/api/landingpage/desaantikorupsi`
 `FolderRef` = `{ id }` (folder tersimpan) · `{ tempKey }` (folder baru di request yang sama) · `null`/tidak dikirim (= "Umum").

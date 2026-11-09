@@ -39,6 +39,15 @@ export type DokumenSyncResult = { ok: true; plan: DokumenSyncPlan } | Fail;
 
 const fail = (message: string): Fail => ({ ok: false, message });
 
+/**
+ * Kunci keunikan berkas: satu berkas boleh dipakai di beberapa folder program, tapi tidak dua kali
+ * di folder yang sama. Rujukan dibandingkan sesuai bentuknya (`id` ≠ `tempKey`; null = "Umum").
+ */
+function fileFolderKey(fileId: string, folder: FolderRef): string {
+  const ref = folder === null ? "umum" : "id" in folder ? `id:${folder.id}` : `tmp:${folder.tempKey}`;
+  return `${ref}|${fileId}`;
+}
+
 /** Apakah mime type berkas bisa dipratinjau sebagai PDF di viewer (iframe). */
 export function isPdfMime(mimeType: string | null | undefined): boolean {
   return mimeType === PDF_MIME_TYPE;
@@ -53,7 +62,7 @@ export function fileExtension(realName: string | null | undefined, mimeType?: st
   return sub ? sub.toUpperCase() : "-";
 }
 
-/** Validasi daftar dokumen dari body request: bentuk, judul, urutan, folder, dan duplikat. */
+/** Validasi daftar dokumen dari body request: bentuk, judul, urutan, folder, dan duplikat (berkas unik per folder). */
 export function parseDokumenList(input: unknown): DokumenParseResult {
   if (!Array.isArray(input)) return fail("Daftar dokumen tidak valid");
   if (input.length > DOKUMEN_MAX_PER_PROGRAM) {
@@ -62,7 +71,7 @@ export function parseDokumenList(input: unknown): DokumenParseResult {
 
   const data: DokumenParsed[] = [];
   const ids = new Set<string>();
-  const fileIds = new Set<string>();
+  const fileKeys = new Set<string>();
 
   for (const [index, raw] of input.entries()) {
     const label = `Dokumen #${index + 1}`;
@@ -87,10 +96,11 @@ export function parseDokumenList(input: unknown): DokumenParseResult {
     const folderRef = parseFolderRef(folder);
     if (!folderRef.ok) return fail(`${label}: ${folderRef.message}`);
     if (id !== undefined && ids.has(id)) return fail(`${label}: dokumen terkirim dua kali`);
-    if (fileIds.has(fileId)) return fail(`${label}: file yang sama dipakai dua kali`);
+    const fileKey = fileFolderKey(fileId, folderRef.ref);
+    if (fileKeys.has(fileKey)) return fail(`${label}: file yang sama dipakai dua kali di folder yang sama`);
 
     if (id !== undefined) ids.add(id);
-    fileIds.add(fileId);
+    fileKeys.add(fileKey);
     data.push({ ...(id !== undefined ? { id } : {}), fileId, judul: judul.trim(), urutan, folder: folderRef.ref });
   }
 

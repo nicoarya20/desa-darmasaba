@@ -113,6 +113,48 @@ describe('create', () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
+  it('file sama di dua folder diterima; FileStorage dicek per berkas unik', async () => {
+    prismaMock.fileStorage.count.mockResolvedValueOnce(1);
+    prismaMock.desaAntiKorupsi.create.mockResolvedValueOnce({ id: 'p1' });
+    prismaMock.folderDokumenDesaAntiKorupsi.create.mockResolvedValueOnce({ id: 'folder-db-1' });
+    prismaMock.desaAntiKorupsi.findUniqueOrThrow.mockResolvedValueOnce(detailRow());
+
+    const res = await dakCreate(
+      ctx({
+        ...base,
+        folders: [{ tempKey: 't1', nama: 'Laporan', urutan: 0 }],
+        dokumen: [
+          { fileId: 'f1', judul: 'Satu', urutan: 0, folder: { tempKey: 't1' } },
+          { fileId: 'f1', judul: 'Satu (Umum)', urutan: 0, folder: null },
+        ],
+      }),
+    );
+
+    expect(res).toMatchObject({ success: true });
+    expect(prismaMock.fileStorage.count).toHaveBeenCalledWith({ where: { id: { in: ['f1'] }, isActive: true } });
+    expect(prismaMock.dokumenDesaAntiKorupsi.createMany).toHaveBeenCalledWith({
+      data: [
+        { desaAntiKorupsiId: 'p1', fileId: 'f1', judul: 'Satu', urutan: 0, folderId: 'folder-db-1' },
+        { desaAntiKorupsiId: 'p1', fileId: 'f1', judul: 'Satu (Umum)', urutan: 0, folderId: null },
+      ],
+    });
+  });
+
+  it('file sama dua kali di satu folder → 400, tidak menyentuh DB', async () => {
+    const c = ctx({
+      ...base,
+      dokumen: [
+        { fileId: 'f1', judul: 'A', urutan: 0 },
+        { fileId: 'f1', judul: 'B', urutan: 1 },
+      ],
+    });
+    const res = await dakCreate(c);
+    expect(c.set.status).toBe(400);
+    expect(res).toEqual({ success: false, message: 'Dokumen #2: file yang sama dipakai dua kali di folder yang sama' });
+    expect(prismaMock.fileStorage.count).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
   it('fileId tidak ada / nonaktif di FileStorage → 400', async () => {
     prismaMock.fileStorage.count.mockResolvedValueOnce(0);
     const c = ctx({ ...base, dokumen: [{ fileId: 'hilang', judul: 'A', urutan: 0 }] });

@@ -147,6 +147,19 @@ describe('planProgramSync', () => {
     expect(ok.ok && ok.plan.dokumen?.update).toEqual([{ id: 'd3', judul: 'Umum A', urutan: 0, folder: { id: 'fa' } }]);
   });
 
+  it('salinan berkas tersimpan ke folder lain → dokumen baru dengan fileId sama; di folder yang sama ditolak', () => {
+    const salin = { fileId: 'f1', judul: 'Laporan 2025', urutan: 1 };
+    const ok = planProgramSync(existing, { dokumen: [...keepDokumen, { ...salin, folder: { id: 'fb' } }] });
+    expect(ok).toEqual({
+      ok: true,
+      plan: { folders: null, dokumen: { create: [{ ...salin, folder: { id: 'fb' } }], update: [], remove: [] } },
+    });
+    expect(planProgramSync(existing, { dokumen: [...keepDokumen, { ...salin, folder: { id: 'fa' } }] })).toEqual({
+      ok: false,
+      message: 'Dokumen #4: file yang sama dipakai dua kali di folder yang sama',
+    });
+  });
+
   it('dokumen tidak dikirim → hanya folder yang disinkronkan', () => {
     const res = planProgramSync(existing, { folders: [] });
     expect(res).toEqual({ ok: true, plan: { folders: { create: [], update: [], remove: ['fa', 'fb'] }, dokumen: null } });
