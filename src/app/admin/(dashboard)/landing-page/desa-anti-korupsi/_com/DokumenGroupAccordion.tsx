@@ -5,6 +5,7 @@ import { IconFolder } from '@tabler/icons-react';
 import { selectionStateOf, type Selection } from '../_lib/dokumen-selection';
 import type { DraftGroup } from '../_lib/folder-draft';
 import { DokumenDraftRow } from './DokumenDraftRow';
+import { UrutFolderMenu } from './UrutFolderMenu';
 
 /** Value Select/Accordion untuk folderKey draft (null = folder virtual "Umum"). */
 export const folderValueOf = (folderKey: string | null) => folderKey ?? FOLDER_UMUM_KEY;
@@ -25,10 +26,26 @@ type Props = {
   onMove: (key: string, direction: -1 | 1) => void;
   onPreview: (key: string) => void;
   onRemove: (key: string) => void;
+  /** "Urutkan menurut…" per folder (tulis ulang urutan di draft); tanpa prop ini menu tidak tampil. */
+  onSortFolder?: (folderKey: string | null, optionValue: string) => void;
+  /** Posisi asli dokumen di foldernya — dipakai saat `groups` sudah disaring pencarian. */
+  posisi?: ReadonlyMap<string, { index: number; total: number }>;
+  /** Kunci naik/turun urutan (mis. selama mencari, karena tetangga bisa tersembunyi). */
+  reorderLocked?: boolean;
 };
 
-/** Daftar dokumen per folder (Accordion): header berisi "Pilih semua" + nama + jumlah, isi = baris draft. */
-export function DokumenGroupAccordion({ groups, folderOptions, selection, opened, onOpenedChange, ...on }: Props) {
+/** Daftar dokumen per folder (Accordion): header berisi "Pilih semua" + nama + jumlah + urutkan, isi = baris draft. */
+export function DokumenGroupAccordion({
+  groups,
+  folderOptions,
+  selection,
+  opened,
+  onOpenedChange,
+  onSortFolder,
+  posisi,
+  reorderLocked = false,
+  ...on
+}: Props) {
   return (
     <Accordion multiple variant="separated" radius="md" value={opened} onChange={onOpenedChange}>
       {groups.map((g) => {
@@ -59,6 +76,9 @@ export function DokumenGroupAccordion({ groups, folderOptions, selection, opened
                   </Badge>
                 </Group>
               </Accordion.Control>
+              {onSortFolder && (
+                <UrutFolderMenu namaFolder={nama} count={g.dokumen.length} onSelect={(o) => onSortFolder(g.key, o)} />
+              )}
             </Box>
             <Accordion.Panel>
               <Stack gap={6}>
@@ -67,23 +87,27 @@ export function DokumenGroupAccordion({ groups, folderOptions, selection, opened
                     Folder kosong
                   </Text>
                 )}
-                {g.dokumen.map((d, index) => (
-                  <DokumenDraftRow
-                    key={d.key}
-                    draft={d}
-                    index={index}
-                    total={g.dokumen.length}
-                    folderOptions={folderOptions}
-                    folderValue={value}
-                    selected={selection.has(d.key)}
-                    onToggleSelect={(shiftKey) => on.onToggleSelect(d.key, shiftKey)}
-                    onJudul={(judul) => on.onJudul(d.key, judul)}
-                    onFolder={(v) => on.onFolder(d.key, v)}
-                    onMove={(direction) => on.onMove(d.key, direction)}
-                    onPreview={() => on.onPreview(d.key)}
-                    onRemove={() => on.onRemove(d.key)}
-                  />
-                ))}
+                {g.dokumen.map((d, i) => {
+                  const { index, total } = posisi?.get(d.key) ?? { index: i, total: g.dokumen.length };
+                  return (
+                    <DokumenDraftRow
+                      key={d.key}
+                      draft={d}
+                      index={index}
+                      total={total}
+                      moveLocked={reorderLocked}
+                      folderOptions={folderOptions}
+                      folderValue={value}
+                      selected={selection.has(d.key)}
+                      onToggleSelect={(shiftKey) => on.onToggleSelect(d.key, shiftKey)}
+                      onJudul={(judul) => on.onJudul(d.key, judul)}
+                      onFolder={(v) => on.onFolder(d.key, v)}
+                      onMove={(direction) => on.onMove(d.key, direction)}
+                      onPreview={() => on.onPreview(d.key)}
+                      onRemove={() => on.onRemove(d.key)}
+                    />
+                  );
+                })}
               </Stack>
             </Accordion.Panel>
           </Accordion.Item>

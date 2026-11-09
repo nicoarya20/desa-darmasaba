@@ -21,10 +21,12 @@ type Props = {
   onMove: (direction: -1 | 1) => void;
   onPreview: () => void;
   onRemove: () => void;
+  /** Nonaktifkan naik/turun urutan (mis. selama tampilan disaring pencarian). */
+  moveLocked?: boolean;
 };
 
 /** Satu baris ringkas dokumen di editor: pilih, judul, info ukuran/tanggal, pindah folder, pratinjau, urutan, hapus. */
-export function DokumenDraftRow({ draft, index, total, folderOptions, folderValue, selected, ...on }: Props) {
+export function DokumenDraftRow({ draft, index, total, folderOptions, folderValue, selected, moveLocked = false, ...on }: Props) {
   const pdf = isPdfMime(draft.mimeType);
   const info = draftInfo(draft);
   return (
@@ -97,14 +99,20 @@ export function DokumenDraftRow({ draft, index, total, folderOptions, folderValu
               <IconEye size={14} />
             </ActionIcon>
           </Tooltip>
-          <ActionIcon variant="light" size="md" aria-label="Naikkan urutan" disabled={index === 0} onClick={() => on.onMove(-1)}>
+          <ActionIcon
+            variant="light"
+            size="md"
+            aria-label="Naikkan urutan"
+            disabled={moveLocked || index === 0}
+            onClick={() => on.onMove(-1)}
+          >
             <IconArrowUp size={14} />
           </ActionIcon>
           <ActionIcon
             variant="light"
             size="md"
             aria-label="Turunkan urutan"
-            disabled={index === total - 1}
+            disabled={moveLocked || index === total - 1}
             onClick={() => on.onMove(1)}
           >
             <IconArrowDown size={14} />
