@@ -5,7 +5,8 @@ import type { FolderRef } from '@/lib/desa-anti-korupsi-folder';
 
 /**
  * Draft satu dokumen di form: `id` = dokumen tersimpan, `file` = berkas lokal yang belum diunggah,
- * `folderKey` = key FolderDraft tujuan (null = folder virtual "Umum").
+ * `folderKey` = key FolderDraft tujuan (null = folder virtual "Umum"), `size` = ukuran berkas (byte,
+ * null = tidak diketahui), `createdAt` = waktu unggah dokumen tersimpan (ISO).
  */
 export type DokumenDraft = {
   key: string;
@@ -17,6 +18,8 @@ export type DokumenDraft = {
   link?: string;
   mimeType?: string;
   realName?: string;
+  size?: number | null;
+  createdAt?: string;
 };
 
 /** Hasil upload berkas ke FileStorage yang dibutuhkan draft. */
@@ -70,6 +73,8 @@ export function draftsFromSaved(
     link: d.file.link,
     mimeType: d.file.mimeType,
     realName: d.file.realName,
+    size: d.file.size,
+    createdAt: d.createdAt,
   }));
 }
 
@@ -102,6 +107,7 @@ export async function uploadPendingDrafts(
       link: uploaded.link,
       mimeType: uploaded.mimeType,
       realName: uploaded.realName,
+      size: draft.size ?? draft.file.size,
     });
   }
   return result;

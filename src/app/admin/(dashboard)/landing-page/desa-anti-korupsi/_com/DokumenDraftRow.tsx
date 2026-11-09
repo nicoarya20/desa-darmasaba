@@ -3,6 +3,7 @@ import { isPdfMime } from '@/lib/desa-anti-korupsi-dokumen';
 import { ActionIcon, Badge, Box, Checkbox, Group, Paper, Select, Text, TextInput, Tooltip } from '@mantine/core';
 import { IconArrowDown, IconArrowUp, IconEye, IconTrash } from '@tabler/icons-react';
 import type { DokumenDraft } from '../_lib/dokumen-draft';
+import { draftInfo } from '../_lib/draft-info';
 
 type Props = {
   draft: DokumenDraft;
@@ -20,9 +21,10 @@ type Props = {
   onRemove: () => void;
 };
 
-/** Satu baris ringkas dokumen di editor: pilih, judul, pindah folder, pratinjau, urutan, hapus. */
+/** Satu baris ringkas dokumen di editor: pilih, judul, info ukuran/tanggal, pindah folder, pratinjau, urutan, hapus. */
 export function DokumenDraftRow({ draft, index, total, folderOptions, folderValue, selected, ...on }: Props) {
   const pdf = isPdfMime(draft.mimeType);
+  const info = draftInfo(draft);
   return (
     <Paper
       withBorder
@@ -53,10 +55,22 @@ export function DokumenDraftRow({ draft, index, total, folderOptions, folderValu
             onChange={(e) => on.onJudul(e.currentTarget.value)}
             error={draft.judul.trim() === '' ? 'Judul wajib diisi' : undefined}
           />
-          <Group gap={6} mt={2} wrap="nowrap">
+          <Group gap={6} mt={2} wrap="wrap" data-draft-info>
             <Text fz="xs" c="dimmed" truncate maw={220}>
               {draft.realName ?? '-'}
             </Text>
+            <Text fz="xs" c="dimmed" data-info="ukuran" style={{ whiteSpace: 'nowrap' }}>
+              {info.ukuran}
+            </Text>
+            {info.baru ? (
+              <Badge size="xs" color="teal" variant="light" data-info="tanggal">
+                {info.tanggal}
+              </Badge>
+            ) : (
+              <Text fz="xs" c="dimmed" data-info="tanggal" style={{ whiteSpace: 'nowrap' }}>
+                {info.tanggal}
+              </Text>
+            )}
             {!draft.fileId && (
               <Badge size="xs" color="orange" variant="light">
                 Belum diunggah
