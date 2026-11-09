@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
       { source: '/darmasaba/desa/:path*', destination: '/darmasaba/pemerintahan/:path*', permanent: true },
       { source: '/admin/desa', destination: '/admin/pemerintahan', permanent: true },
       { source: '/admin/desa/:path*', destination: '/admin/pemerintahan/:path*', permanent: true },
+      // Penghargaan digabung ke Prestasi Desa (tabel PrestasiDesa, id sama): link lama tetap jalan.
+      { source: '/darmasaba/penghargaan', destination: '/darmasaba/prestasi-desa', permanent: true },
+      { source: '/darmasaba/penghargaan/:id', destination: '/darmasaba/prestasi-desa/:id', permanent: true },
+      { source: '/admin/pemerintahan/penghargaan', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
+      { source: '/admin/pemerintahan/penghargaan/:path*', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
     ];
   },
   async headers() {
