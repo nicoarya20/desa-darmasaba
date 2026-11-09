@@ -12,12 +12,12 @@ function LayoutTabsGallery({ children }: { children: React.ReactNode }) {
         {
             label: "Foto",
             value: "foto",
-            href: "/admin/desa/gallery/foto"
+            href: "/admin/pemerintahan/gallery/foto"
         },
         {
             label: "Video",
             value: "video",
-            href: "/admin/desa/gallery/video"
+            href: "/admin/pemerintahan/gallery/video"
         },
         
     ];
