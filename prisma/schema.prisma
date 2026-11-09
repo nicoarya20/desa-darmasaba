@@ -55,6 +55,9 @@ model FileStorage {
   realName                       String
   path                           String
   mimeType                       String
+  // Ukuran isi berkas dalam byte (setelah dekompresi untuk dokumen ter-gzip). Nullable: baris
+  // lama belum terisi sampai prisma/backfill-file-size.ts dijalankan.
+  size                           Int?
   createdAt                      DateTime                   @default(now())
   updatedAt                      DateTime                   @updatedAt
   deletedAt                      DateTime?
