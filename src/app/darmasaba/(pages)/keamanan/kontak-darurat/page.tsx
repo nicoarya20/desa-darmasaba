@@ -6,7 +6,7 @@ import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconPhoneCall, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 
 function Page() {

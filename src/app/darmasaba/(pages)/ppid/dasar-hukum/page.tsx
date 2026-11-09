@@ -5,7 +5,7 @@ import { Box, Paper, Skeleton, Stack, Text, Transition, Title } from '@mantine/c
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import { IconBook2 } from '@tabler/icons-react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const state = useProxy(stateDasarHukum);

@@ -23,7 +23,7 @@ import {
   IconUser,
 } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton';
 
 function Page() {

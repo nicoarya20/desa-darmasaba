@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 
 import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const stateProgramKreatif = useProxy(programKreatifState);

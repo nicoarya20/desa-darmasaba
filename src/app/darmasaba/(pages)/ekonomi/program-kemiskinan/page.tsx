@@ -7,7 +7,7 @@ import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { CartesianGrid, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 interface StatistikData {
   id: string;

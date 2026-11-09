@@ -21,7 +21,7 @@ import { IconCamera, IconClock, IconMapPin, IconSearch, IconVideo } from '@table
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 const CctvMapSection = dynamic(() => import('./_com/CctvMapSection'), { ssr: false });
 

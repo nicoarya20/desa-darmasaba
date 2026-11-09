@@ -10,12 +10,12 @@ const ROOT = path.resolve(__dirname, '../..');
 
 // Rename label menu (PM task 00202485): "Desa" → "Pemerintahan". Hanya label; id & path tetap.
 describe('label menu "Pemerintahan" (sebelumnya "Desa")', () => {
-  it('navbar publik: menu id "2" berlabel "Pemerintahan" dengan href /darmasaba/desa/* tetap', () => {
+  it('navbar publik: menu id "2" berlabel "Pemerintahan" dengan href /darmasaba/pemerintahan/* tetap', () => {
     const menu = navbarListMenu.find((m) => m.id === '2');
     expect(menu?.name).toBe('Pemerintahan');
     const hrefs = (menu?.children ?? []).map((c) => c.href);
-    expect(hrefs).toContain('/darmasaba/desa/profil');
-    expect(hrefs).toContain('/darmasaba/desa/berita/semua');
+    expect(hrefs).toContain('/darmasaba/pemerintahan/profil');
+    expect(hrefs).toContain('/darmasaba/pemerintahan/berita/semua');
   });
 
   it('navbar publik & search tidak lagi punya menu utama berlabel "Desa"', () => {
@@ -23,10 +23,10 @@ describe('label menu "Pemerintahan" (sebelumnya "Desa")', () => {
     expect(DEFAULT_SEARCH_MENUS.map((m) => m.name)).not.toContain('Desa');
   });
 
-  it('search menu: halaman /darmasaba/desa/* tampil dengan parent "Pemerintahan"', () => {
+  it('search menu: halaman /darmasaba/pemerintahan/* tampil dengan parent "Pemerintahan"', () => {
     const flat = flattenMenu(DEFAULT_SEARCH_MENUS);
-    const profil = flat.find((i) => i.href === '/darmasaba/desa/profil');
-    const video = flat.find((i) => i.href === '/darmasaba/desa/galery/video');
+    const profil = flat.find((i) => i.href === '/darmasaba/pemerintahan/profil');
+    const video = flat.find((i) => i.href === '/darmasaba/pemerintahan/galery/video');
     expect(profil?.parent).toBe('Pemerintahan');
     expect(video?.parent).toBe('Pemerintahan');
   });

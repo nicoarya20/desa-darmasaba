@@ -95,12 +95,12 @@ describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () =>
     expect(names.filter((n) => n === 'Pemerintahan')).toHaveLength(1);
     expect(names.filter((n) => n === 'Kesehatan')).toHaveLength(1);
     const desa = groups.find((g) => g.name === 'Pemerintahan')!.pages.map((p) => p.href);
-    expect(desa).toContain('/darmasaba/desa/profil');
-    expect(desa).toContain('/darmasaba/desa/galery/video');
+    expect(desa).toContain('/darmasaba/pemerintahan/profil');
+    expect(desa).toContain('/darmasaba/pemerintahan/galery/video');
     const kesehatan = groups.find((g) => g.name === 'Kesehatan')!.pages.map((p) => p.href);
     expect(kesehatan).toContain('/darmasaba/kesehatan/data-kesehatan-warga/grafik-penyakit');
     // urutan di dalam grup gabungan: halaman navbar dulu, halaman tambahan sesudahnya
-    expect(desa.indexOf('/darmasaba/desa/profil')).toBeLessThan(desa.indexOf('/darmasaba/desa/galery/video'));
+    expect(desa.indexOf('/darmasaba/pemerintahan/profil')).toBeLessThan(desa.indexOf('/darmasaba/pemerintahan/galery/video'));
   });
 
   it('saring "apbdes" hanya menampilkan APBDes di grup Transparansi', () => {

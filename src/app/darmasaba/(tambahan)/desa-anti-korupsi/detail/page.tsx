@@ -2,7 +2,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
+import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import { useProxy } from 'valtio/utils';
 import {

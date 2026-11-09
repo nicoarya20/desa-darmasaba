@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Box, Button, Container, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import { IconClipboardText } from '@tabler/icons-react';
-import BackButton from '../../(pages)/desa/layanan/_com/BackButto';
+import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto';
 import { useRouter } from 'next/navigation';
 
 const data = [

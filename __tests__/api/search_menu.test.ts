@@ -82,7 +82,7 @@ describe('searchMenu pada config navbar nyata', () => {
     expect(wrongFirst).toEqual([]);
     // "Profil PPID" (PPID) lebih dulu di config daripada "Profil" (Desa); keduanya berawalan "profil".
     expect(searchMenu('Profil').map((r) => r.href)).toEqual(
-      expect.arrayContaining(['/darmasaba/ppid/profil-ppid', '/darmasaba/desa/profil']),
+      expect.arrayContaining(['/darmasaba/ppid/profil-ppid', '/darmasaba/pemerintahan/profil']),
     );
   });
 
@@ -198,7 +198,7 @@ describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
     ['apbdes', 'APBDes', '/darmasaba/apbdes'],
     ['pengaduan', 'Pengaduan Masyarakat', '/darmasaba/inovasi/layanan-online-desa/pengaduan-masyarakat'],
     ['ajukan surat', 'Administrasi Online (Ajukan Surat)', '/darmasaba/inovasi/layanan-online-desa/administrasi-online'],
-    ['struktur perangkat', 'Struktur Perangkat Desa', '/darmasaba/desa/profil/struktur-perangkat-desa'],
+    ['struktur perangkat', 'Struktur Perangkat Desa', '/darmasaba/pemerintahan/profil/struktur-perangkat-desa'],
     ['anti korupsi', 'Desa Anti Korupsi', '/darmasaba/desa-anti-korupsi'],
     ['sdgs', 'SDGs Desa', '/darmasaba/sdgs-desa'],
   ])('default searchMenu("%s") → hasil pertama %s', (q, label, href) => {

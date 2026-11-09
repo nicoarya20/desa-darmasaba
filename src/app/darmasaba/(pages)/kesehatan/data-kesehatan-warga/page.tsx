@@ -4,7 +4,7 @@ import colors from '@/con/colors';
 import { BarChart as MantineBarChart } from '@mantine/charts';
 import { Box, Center, ColorSwatch, Flex, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 import { useMediaQuery, useShallowEffect } from '@mantine/hooks';
 import persentasekelahiran from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/persentaseKelahiran';

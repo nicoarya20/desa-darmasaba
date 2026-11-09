@@ -3,7 +3,7 @@ import colors from '@/con/colors';
 import { Box, CloseButton, Container, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
-import BackButton from '../../../(pages)/desa/layanan/_com/BackButto';
+import BackButton from '../../../(pages)/pemerintahan/layanan/_com/BackButto';
 import { countPages, petaInformasiGroups } from '../_lib/petaInformasi';
 import PetaInformasiGroupCard from './PetaInformasiGroupCard';
 

@@ -1,6 +1,6 @@
 'use client'
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
+import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import { Box, Divider, Flex, Group, Image, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';

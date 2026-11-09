@@ -7,7 +7,7 @@ import { IconBriefcase, IconClock, IconMapPin, IconSearch } from '@tabler/icons-
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 const ITEMS_PER_PAGE = 6;
 

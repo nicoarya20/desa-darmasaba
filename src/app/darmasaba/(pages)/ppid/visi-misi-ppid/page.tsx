@@ -16,7 +16,7 @@ import {
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import { IconSparkles } from '@tabler/icons-react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const allList = useProxy(stateVisiMisiPPID);

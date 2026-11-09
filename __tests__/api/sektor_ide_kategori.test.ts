@@ -229,8 +229,8 @@ describe("pengantar musyawarah Ajukan Ide", () => {
 
   it("memuat tautan ke Agenda & Kalender Desa dan Dokumen Perencanaan", () => {
     expect(PENGANTAR_MUSYAWARAH_LINKS.map((l) => l.href)).toEqual([
-      "/darmasaba/desa/event-budaya",
-      "/darmasaba/desa/monev-pembangunan",
+      "/darmasaba/pemerintahan/event-budaya",
+      "/darmasaba/pemerintahan/monev-pembangunan",
     ]);
   });
 

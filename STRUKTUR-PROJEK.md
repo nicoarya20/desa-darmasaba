@@ -269,7 +269,7 @@ desa-darmasaba/
 ## 4. Modul Domain
 
 ### 4.1 Profil Desa (Desa)
-**Admin**: `/admin/desa/*` | **Publik**: `/darmasaba/desa/*`
+**Admin**: `/admin/desa/*` | **Publik**: `/darmasaba/pemerintahan/*`
 
 | Sub-modul | Fungsi |
 |-----------|--------|

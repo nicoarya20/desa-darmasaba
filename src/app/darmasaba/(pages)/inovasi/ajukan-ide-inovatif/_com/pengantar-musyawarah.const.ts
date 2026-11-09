@@ -9,6 +9,6 @@ export type PengantarMusyawarahLink = { label: string; href: string };
 
 /** Tautan ke Agenda & Kalender Desa dan Dokumen Perencanaan (rute publik yang sudah ada). */
 export const PENGANTAR_MUSYAWARAH_LINKS: readonly PengantarMusyawarahLink[] = [
-  { label: "Agenda & Kalender Desa", href: "/darmasaba/desa/event-budaya" },
-  { label: "Dokumen Perencanaan", href: "/darmasaba/desa/monev-pembangunan" },
+  { label: "Agenda & Kalender Desa", href: "/darmasaba/pemerintahan/event-budaya" },
+  { label: "Dokumen Perencanaan", href: "/darmasaba/pemerintahan/monev-pembangunan" },
 ];

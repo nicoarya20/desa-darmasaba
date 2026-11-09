@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Stack, Box, Paper, Text, ColorSwatch, Flex, Skeleton, Title } from '@mantine/core';
 import React from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { BarChart } from '@mantine/charts';
 import { useProxy } from 'valtio/utils';
 import grafikDemografiPekerjaan from '@/app/admin/(dashboard)/_state/ekonomi/demografi-pekerjaan';

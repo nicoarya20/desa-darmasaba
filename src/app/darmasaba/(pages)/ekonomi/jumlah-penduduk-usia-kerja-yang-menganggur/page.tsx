@@ -7,7 +7,7 @@ import { Box, Center, ColorSwatch, Flex, Paper, Skeleton, Stack, Text, Title } f
 import { useShallowEffect } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const stateGrafikNganggur = useProxy(grafikNganggur.grafikBerdasarkanUsiaKerjaNganggur)

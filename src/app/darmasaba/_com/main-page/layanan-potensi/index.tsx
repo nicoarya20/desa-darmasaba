@@ -35,11 +35,11 @@ function LayananPotensi() {
   }, []);
 
   const layanan = useMemo(
-    () => toItems(layananSnap.data as ApiItem[] | null, "/darmasaba/desa/layanan", _.startCase),
+    () => toItems(layananSnap.data as ApiItem[] | null, "/darmasaba/pemerintahan/layanan", _.startCase),
     [layananSnap.data],
   );
   const potensi = useMemo(
-    () => toItems(potensiSnap.data as ApiItem[] | null, "/darmasaba/desa/potensi", (n) => n),
+    () => toItems(potensiSnap.data as ApiItem[] | null, "/darmasaba/pemerintahan/potensi", (n) => n),
     [potensiSnap.data],
   );
   const layananLoading = layananSnap.data === null;

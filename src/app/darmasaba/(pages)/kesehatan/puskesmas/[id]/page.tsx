@@ -6,7 +6,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import { IconClock, IconMapPin, IconPhone, IconMail, IconBuildingHospital } from '@tabler/icons-react';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const state = useProxy(puskesmasState)
