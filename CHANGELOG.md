@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.225] - 2026-11-09
+### Changed
+- **Tampilan section SDGs Desa di beranda diperbarui** agar senada dengan section Kabar Desa dan APBDes: latar abu muda, kartu putih datar tanpa bayangan, ikon resmi tiap tujuan SDGs, nama tujuan rata kiri, dan skor besar dengan keterangan "Skor". Skor di semua kartu kini sejajar walaupun panjang nama tujuannya berbeda. Di layar ponsel, kartu tampil sebagai baris (ikon di kiri, nama dan skor di kanan) sehingga nama tujuan yang panjang tetap mudah dibaca.
+- Di atas kartu kini ada keterangan "Tujuan dengan skor tertinggi", karena beranda hanya menampilkan empat tujuan berskor tertinggi.
+- Tombol "Jelajahi semua tujuan SDGs Desa" kini berbentuk pil yang sama dengan tombol section lain.
+- Selama data dimuat, tampil kerangka kartu abu-abu; bila data kosong atau gagal dimuat, tampil satu pesan singkat.
+### Fixed
+- Urutan empat tujuan berskor tertinggi kini memperhitungkan angka di belakang koma (sebelumnya 35,47 dan 35,75 dianggap sama). Skor yang ditulis dengan koma desimal (mis. "52,62") juga terbaca dengan benar, dan tujuan tanpa skor tidak ikut tampil.
+
 ## [0.1.223] - 2026-11-07
 ### Fixed
 - **Data hasil seed tidak lagi tampil dobel setelah data contoh diganti.** Sebelumnya, data contoh versi lama tetap tersimpan saat isi seed diperbarui, sehingga tampil berdampingan dengan data baru. Saat seed dijalankan, data lama berikut kini dibersihkan otomatis:
