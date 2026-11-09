@@ -25,7 +25,7 @@ import {
 // tidak bergeser bulan di zona waktu mana pun (logika memakai waktu lokal seperti kode lama).
 const r = (over: Partial<RespondenItem> = {}): RespondenItem => ({
   tanggal: '2026-03-15T00:00:00.000Z',
-  createdAt: '2026-11-01T00:00:00.000Z',
+  createdAt: '2026-11-15T00:00:00.000Z',
   jenisKelamin: { name: 'Laki-laki' },
   rating: { name: 'Sangat Baik' },
   kelompokUmur: { name: 'Dewasa' },
