@@ -272,6 +272,14 @@ Stack bg="linear-gradient(180deg, #1C6EA4, #124170)"
     // Berlangganan
 ```
 
+### Potensi Desa (`/darmasaba/desa/potensi`)
+
+Folder `(pages)/desa/potensi/`: `page.tsx` (kepala: kembali, judul, kartu jumlah Potensi/Wisata — tidak berubah) → `_com/PotensiGrid.tsx` (grid + kerangka) → `_com/PotensiCard.tsx` (kartu) dan `_com/PotensiDetailModal.tsx` (overlay detail), `_com/potensi.logic.ts` (`htmlToPlainText`, `sanitizePotensiHtml`), `_com/potensi.text.ts`, `_com/potensi.module.css`. Data tetap `potensiDesa.findMany` (field `name`, `deskripsi`, `content`, `kategori`, `image`). Test: `__tests__/api/potensi_desa_ui.test.tsx`.
+
+- **Kartu**: putih radius 24px, bayangan lembut; foto 4:3 dengan pil kategori putih kiri atas dan judul `name` **selalu tampil** kiri bawah (24px, tablet/mobile 22; maks 2 baris) di atas gradasi gelap — pola tile Prestasi. Di bawah foto: `deskripsi` sebagai teks polos (tag editor dibuang, maks 3 baris, 15px abu) lalu pil brand "Lihat Detail →". Grid 3/2/1 kolom (≤1068 / ≤734px), gap 28/24/20px. Hover: bayangan menebal + foto zoom 1.04 (mati saat reduced motion).
+- **Klik**: area klik seluruh kartu (`::after` tombol), satu kontrol fokus `button aria-haspopup="dialog"`. Membuka **overlay**, bukan pindah ke `/darmasaba/desa/potensi/{id}` (rute detail tetap ada karena galeri beranda masih menautkannya).
+- **Overlay**: `Modal.Root` Mantine 760px radius 28px, latar halaman di-blur (`Modal.Overlay` blur 10px, gelap 45%), transisi pop 220ms. Hero foto 16:8.5 (mobile 4:3) + gradasi; pil kategori gelap transparan huruf kapital + judul (`Modal.Title`, 40px / tablet 34 / mobile 28) kiri bawah; tombol × bulat 44px kanan atas. Isi: label "DESKRIPSI LENGKAP" lalu `content` yang disanitasi DOMPurify (tag `p, br, strong, em, u, ul, ol, li`, sama dengan admin); kosong → "Belum ada deskripsi…". Tutup: ×, Escape, klik luar. Kelas kartu putih dipasang lewat `classNames.content` (bukan `className` `Modal.Content`, yang ikut ke lapisan inner selebar layar).
+
 ### Peta Informasi (`/darmasaba/peta-informasi`)
 
 Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.tsx` (H1, `TextInput` berlabel "Saring halaman", ringkasan `aria-live`, `SimpleGrid` 1/2/3 kolom) → `_com/PetaInformasiGroupCard.tsx` (kartu per menu utama: H2 + `<ul>/<li>` `Anchor component={Link}`). Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, saring lewat `searchMenu` tanpa API. Pintu masuk: footer "Tautan Penting", entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Dites di `__tests__/api/peta_informasi.test.ts`.
