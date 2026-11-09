@@ -231,6 +231,16 @@ Section Penghargaan & Prestasi lama **digabung** (frontend dulu; tabel backend m
 - **Grid**: 4 entri terbaru gabungan, 2 kolom, gap 10px, tile 16:10 tanpa radius; seluruh tile = tautan ke detail sesuai sumber (`/darmasaba/prestasi-desa/{id}` atau `/darmasaba/penghargaan/{id}`), judul `name` kiri bawah (28px, tablet 24, mobile 21; maks 3 baris) di atas gradasi gelap. Ganjil → tile terakhir lebar 2 kolom (21:9); kosong → grid disembunyikan. Loading = placeholder abu. Mobile ≤734px: 1 kolom, tile 4:3. Hover foto zoom 1.03 700ms (mati saat reduced motion).
 - **Halaman gabungan** `/darmasaba/prestasi-desa`: latar putih, kepala max-width 1100px (kembali, judul `h1` 48px warna brand, subtext abu, cari 320px di kanan — mobile di bawah), grid tile yang sama, 8 per halaman + `Pagination` bila > 1 halaman. Cari debounce 400ms ke kedua sumber. `/darmasaba/penghargaan` dialihkan ke halaman ini; halaman detail `[id]` keduanya tetap. Menu navbar Desa → "Prestasi dan Penghargaan".
 
+### SDGs Desa (Beranda)
+
+Folder: `_com/main-page/sdgs/` — `index.tsx` (section), `SdgsCards.tsx` (kartu + skeleton), `use-sdgs-data.ts` (hook), `sdgs.logic.ts` (helper murni, dites di `__tests__/api/sdgs_desa_logic.test.ts`), `sdgs.meta.ts` (endpoint, limit, rute, warna), `sdgs.text.ts`, `sdgs.module.css`.
+
+- **Sumber data**: `GET /api/landingpage/sdgsdesa/findMany` (respons paginasi default 10, sudah filter `isActive`). `jumlah` = string skor dari admin; dibaca `parseSkor` (titik atau koma desimal, kosong/tidak valid → dibuang), lalu 4 skor tertinggi (`pickTopSdgs`, skor sama = urutan asal). Label skor ditampilkan apa adanya.
+- **Bentuk**: latar `#f5f5f7`, isi max-width 1100px, kepala di tengah: judul `h2` "SDGs Desa" 40px (mobile 32) warna `blue-button` + paragraf abu 19px (mobile 17). Keterangan kecil "Tujuan dengan skor tertinggi" di atas kartu. Kartu putih radius 18px tanpa border/bayangan, grid 4 kolom (≤1068px 2 kolom): ikon SDG 72px (`alt` = nama tujuan; tanpa gambar → kotak abu `#e8e8ed`), nama tujuan 17px/600 rata kiri, lalu "Skor" (14px abu) + angka 40px/700 (tablet 32) di dasar kartu (`margin-top: auto`) sehingga sejajar antar kartu. Skor **bukan** heading.
+- **Mobile ≤734px**: 1 kolom, kartu baris — ikon 64px kiri, nama + skor (28px) kanan.
+- **CTA**: pill "Jelajahi semua tujuan SDGs Desa" → `/darmasaba/sdgs-desa` (pola `.ctaLink` APBDes).
+- **Loading / kosong**: 4 skeleton kartu; kosong atau gagal → satu pesan di panel putih (galat dicatat `console.error`).
+
 ### Footer
 
 ```tsx
