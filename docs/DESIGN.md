@@ -241,6 +241,14 @@ Gaya bersih apple.com, pola halaman spesifikasi. Folder: `_com/main-page/desaant
 - **CTA**: pill "Selengkapnya ›" → `/darmasaba/desa-anti-korupsi/detail`, di bawah panel.
 - **Loading / kosong**: 6 baris placeholder abu berdenyut (tanpa denyut saat reduced motion); data kosong → satu pesan "Belum ada indikator desa anti korupsi.".
 
+### Desa Anti Korupsi — halaman detail (`/darmasaba/desa-anti-korupsi/detail`)
+
+Daftar indikator per kategori, tiap indikator berisi surat (PDF). Folder `(tambahan)/desa-anti-korupsi/`: `detail/page.tsx` (muat `findMany.load(1, 100)`, state kategori, Suspense) → `_com/AntiKorupsiKategoriPills.tsx` (pil) + `_com/AntiKorupsiDokumenList.tsx` (daftar + kerangka), `_com/antikorupsi-detail.logic.ts` (`toDokumenRows`, `documentHref`, `documentType`, `kategoriNames`, `countByKategori`, `countDokumen`), `_com/antikorupsi-detail.text.ts`, `_com/antikorupsi-detail.module.css`; tab kategori dari `_lib/kategori-tab.ts` (`?kategori=` tetap). Teks memakai `toSentenceCase`/`splitIndicatorNumber` dari section beranda. Test: `__tests__/api/desa_anti_korupsi_detail.test.tsx`, `__tests__/api/desa_anti_korupsi_kategori_tab.test.ts`.
+
+- **Bentuk**: latar putih, isi max-width 1100px, kepala rata kiri (pola Potensi): tombol kembali, `h1` 48px (tablet 40, mobile 32) warna brand, pengantar abu 19px (17). Pil kategori sentence case + angka jumlah (`#f5f5f7` → aktif latar brand, `aria-pressed`); mobile ≤734px pil satu baris digeser horizontal dan pil aktif digeser ke tengah. Di bawahnya `h2` nama kategori 28px (mobile 24) + "x dari y dokumen tersedia" abu kanan, lalu satu panel `#f5f5f7` radius 18px: baris nomor brand tabular | teks 17px | aksi dokumen, antarbaris garis tipis. Mobile: aksi pindah ke bawah teks.
+- **Dokumen**: sumber = relasi opsional `DesaAntiKorupsi.file` (admin: edit indikator → unggah dokumen; tersimpan di MinIO, link `/api/fileStorage/findUnique/...` dilayani inline). Ada file dengan link aman (relatif `/…` atau http(s); `documentHref`) → **seluruh baris tautan** `target="_blank"` ke file, pil putih "Buka PDF ↗" (ikon PDF; jenis lain → ekstensi, mis. "Buka DOCX") yang jadi brand saat hover. Tanpa file → baris bukan tautan, pil abu ikon jam + "Dokumen belum tersedia" — tempat ini terisi sendiri begitu admin mengunggah surat.
+- **Loading / kosong**: 5 baris placeholder berdenyut (tanpa denyut saat reduced motion); data kosong → "Belum ada indikator desa anti korupsi."; kategori tanpa butir → "Belum ada indikator untuk kategori ini.".
+
 ### SDGs Desa (Beranda)
 
 Folder: `_com/main-page/sdgs/` — `index.tsx` (section), `SdgsCards.tsx` (kartu + skeleton), `use-sdgs-data.ts` (hook), `sdgs.logic.ts` (helper murni, dites di `__tests__/api/sdgs_desa_logic.test.ts`), `sdgs.meta.ts` (endpoint, limit, rute, warna), `sdgs.text.ts`, `sdgs.module.css`.

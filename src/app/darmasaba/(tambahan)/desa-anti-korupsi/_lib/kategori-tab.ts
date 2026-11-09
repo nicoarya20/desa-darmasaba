@@ -23,6 +23,6 @@ export function resolveInitialKategori(param: string | null | undefined, categor
 }
 
 /** Item yang nama kategorinya persis sama dengan tab terpilih. */
-export function filterByKategori<T extends ItemBerkategori>(data: T[], kategori: string): T[] {
+export function filterByKategori<T extends ItemBerkategori>(data: readonly T[], kategori: string): T[] {
   return data.filter(i => i.kategori?.name === kategori);
 }
