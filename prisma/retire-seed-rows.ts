@@ -15,7 +15,7 @@ export function loadRetiredSeed<T extends { id: string }>(relativePath: string):
  * Menghapus baris seed lama yang id-nya sudah dipensiunkan.
  *
  * Seeder hanya upsert, jadi saat JSON diganti id baru, baris id lama tertinggal dan tampil dobel.
- * `deleteRow` wajib mencocokkan id + field penanda (nama/judul) supaya baris yang sudah diedit
+ * `deleteRow` wajib mencocokkan id + field penanda (judul/nama + deskripsi) supaya baris yang sudah diedit
  * admin tidak ikut terhapus. Baris yang masih dirujuk data lain (FK) dilewati, bukan dipaksa.
  */
 export async function retireSeedRows<T extends { id: string }>(

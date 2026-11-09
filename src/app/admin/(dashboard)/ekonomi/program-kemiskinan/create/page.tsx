@@ -100,7 +100,7 @@ function CreateProgramKemiskinan() {
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
-          Tambah Program Kemiskinan
+          Tambah Program Pengentasan Kemiskinan
         </Title>
       </Group>
 

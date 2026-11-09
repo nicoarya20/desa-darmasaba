@@ -16,7 +16,7 @@ import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { UnggulanBadge } from './_com/UnggulanBadge';
 import { LinkTokoOnlineButtons } from './_com/LinkTokoOnlineButtons';
 import { perSatuanSuffix } from './_lib/satuan';

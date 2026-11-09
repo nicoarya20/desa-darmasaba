@@ -67,7 +67,7 @@ function ProgramKemiskinan() {
   return (
     <Box>
       <HeaderSearch
-        title='Program Kemiskinan'
+        title='Program Pengentasan Kemiskinan'
         placeholder='Cari judul program atau deskripsi...'
         searchIcon={<IconSearch size={20} />}
         value={search}
@@ -118,11 +118,11 @@ function ListProgramKemiskinan({ search }: { search: string }) {
 
   return (
     <Box py={{ base: 'md', md: 'lg' }}>
-      {/* Daftar Program Kemiskinan */}
+      {/* Daftar Program Pengentasan Kemiskinan */}
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
           <Title order={4} lh={1.2}>
-            Daftar Program Kemiskinan
+            Daftar Program Pengentasan Kemiskinan
           </Title>
           <Button
             leftSection={<IconPlus size={18} />}

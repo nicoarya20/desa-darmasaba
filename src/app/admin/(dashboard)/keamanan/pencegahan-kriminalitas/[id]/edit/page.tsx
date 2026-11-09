@@ -2,7 +2,7 @@
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import pencegahanKriminalitasState from '@/app/admin/(dashboard)/_state/keamanan/pencegahan-kriminalitas';
-import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/desa/gallery/lib/youtube-utils';
+import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/pemerintahan/gallery/lib/youtube-utils';
 import colors from '@/con/colors';
 import {
   Box,

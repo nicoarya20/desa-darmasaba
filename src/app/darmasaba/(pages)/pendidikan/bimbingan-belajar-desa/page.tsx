@@ -5,7 +5,7 @@ import { Box, Divider, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, T
 import { useShallowEffect } from '@mantine/hooks';
 import { IconBook2, IconCalendarTime, IconMapPin } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const stateTujuanProgram = useProxy(stateBimbinganBelajarDesa.stateTujuanProgram);

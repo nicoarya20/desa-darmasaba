@@ -19,3 +19,18 @@ export function isMenuActive(item: MenuItem, pathname: string): boolean {
 export function isAdminRole(roleId: number | null | undefined): boolean {
   return roleId != null && ADMIN_ROLE_IDS.includes(roleId);
 }
+
+/**
+ * Satu-satunya filter visibilitas menu publik: buang item `hidden` (di semua level) dan
+ * menu utama yang jadi tanpa link (semua submenu tersembunyi, tidak punya href sendiri).
+ * Dipakai navbar desktop/flyout/mobile dan sumber default pencarian menu.
+ */
+export function visibleMenu(menus: readonly MenuItem[]): MenuItem[] {
+  return menus.flatMap((item): MenuItem[] => {
+    if (item.hidden) return [];
+    if (!item.children) return [item];
+    const children = visibleMenu(item.children);
+    if (children.length === 0 && !item.href) return [];
+    return [{ ...item, children }];
+  });
+}

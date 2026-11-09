@@ -9,7 +9,7 @@ import { IconSearch } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 
 function LayoutTabsGotongRoyong({ children }: { children: React.ReactNode }) {
   const router = useRouter();

@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { loadJsonData } from "../../load-json";
 
 const grafikMenganggurBerdasarkanUsia = loadJsonData("ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran-berdasarkan-usia.json");

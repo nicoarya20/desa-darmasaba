@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.228] - 2026-11-09
+### Changed
+- **Menu "Desa" kini bernama "Pemerintahan", termasuk alamat halamannya.** Halaman publik pindah dari `/darmasaba/desa/...` ke `/darmasaba/pemerintahan/...` dan halaman admin dari `/admin/desa/...` ke `/admin/pemerintahan/...`. Alamat lama (bookmark, link yang pernah dibagikan, hasil Google) otomatis dialihkan permanen ke alamat baru.
+- Submenu Ekonomi "Program Kemiskinan" kini bernama **"Program Pengentasan Kemiskinan"** di website dan admin (alamat halaman tetap).
+- **Menu baru "DAK" di navbar**, paling kanan setelah Musik. Saat diarahkan, muncul submenu "Desa Anti Korupsi" seperti menu Musik. Section Desa Anti Korupsi di beranda tetap ada.
+- Menu **Kesehatan** kini hanya menampilkan Posyandu, Program Kesehatan, dan Kontak Darurat. Data Kesehatan Warga, Puskesmas, Penanganan Darurat, dan Info Wabah/Penyakit disembunyikan dari menu, pencarian, dan Peta Informasi; halaman dan data admin-nya tetap ada.
+- **Footer:** tambah blok **Kontak Bupati** (saat ini berisi tautan website Pemkab Badung). "Pengaduan Masyarakat" di footer kini langsung membuka form pengaduan dalam jendela pop-up, sama dengan form di halaman Layanan Online Desa.
+- **Menjalankan seed ulang tidak lagi menimpa data yang sudah diedit admin.** Seed kini hanya menambahkan data yang belum ada. Data yang sudah ada di database (termasuk data contoh yang sudah diubah lewat admin) dibiarkan apa adanya. Saat seed dijalankan, baris pertama log menampilkan mode yang aktif.
+- Untuk sengaja mengembalikan data contoh ke isi aslinya, jalankan seed dengan `SEED_OVERWRITE=true`. Perhatian: mode ini menimpa editan admin pada data hasil seed.
+- Akibatnya, perbaikan isi data contoh di file seed tidak otomatis masuk ke database yang sudah terisi. Ubah lewat admin, atau jalankan dengan `SEED_OVERWRITE=true`.
+- Pembersihan data contoh lama (0.1.223) kini juga mencocokkan deskripsi: berita, jabatan BUMDes, atau buku lama yang judul **atau** deskripsinya sudah diubah admin tidak ikut terhapus. Pengurus BUMDes lama yang sudah dipindah ke jabatan lain juga tidak ikut terhapus.
+
+### Fixed
+- Tombol **Detail** pada tiap kategori Desa Anti Korupsi kini membuka tab kategori yang diklik (sebelumnya selalu ke Penguatan Tata Laksana).
+- Tab **Penguatan Tata Laksana** kini hanya menampilkan indikator kategorinya sendiri (sebelumnya menampilkan seluruh indikator).
+
 ## [0.1.227] - 2026-11-09
 ### Changed
 - **Warna grafik Ulasan di Indeks Kepuasan Masyarakat kini mengikuti skala penilaian yang umum**: Sangat Baik hijau tua, Baik hijau muda, Kurang Baik jingga, dan Sangat Kurang Baik merah, sehingga tiap penilaian mudah dibedakan. Grafik Jenis kelamin dan Umur tetap berwarna biru desa.

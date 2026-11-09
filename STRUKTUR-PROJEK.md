@@ -269,7 +269,7 @@ desa-darmasaba/
 ## 4. Modul Domain
 
 ### 4.1 Profil Desa (Desa)
-**Admin**: `/admin/desa/*` | **Publik**: `/darmasaba/desa/*`
+**Admin**: `/admin/pemerintahan/*` | **Publik**: `/darmasaba/pemerintahan/*`
 
 | Sub-modul | Fungsi |
 |-----------|--------|
@@ -643,7 +643,7 @@ Admin dashboard berada di `/admin` dengan route group `(dashboard)`.
 |---------|------|--------|
 | **Dashboard** | `/admin` | Dashboard utama |
 | **Autentikasi** | `/admin/auth` | Login admin |
-| **Desa** | `/admin/desa/*` | Berita, gallery, profil, layanan, penghargaan, pengumuman, potensi |
+| **Desa** | `/admin/pemerintahan/*` | Berita, gallery, profil, layanan, penghargaan, pengumuman, potensi |
 | **PPID** | `/admin/ppid/*` | Profil, struktur, visi-misi, daftar informasi, dasar hukum, permohonan, IKM |
 | **Kesehatan** | `/admin/kesehatan/*` | Puskesmas, posyandu, program kesehatan, wabah, kontak darurat |
 | **Ekonomi** | `/admin/ekonomi/*` | APBDes, PAD, demografi, pengangguran, kemiskinan, BUMDes, pasar desa |

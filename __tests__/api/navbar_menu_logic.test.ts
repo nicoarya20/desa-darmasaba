@@ -22,12 +22,12 @@ const PPID: MenuItem = {
 
 describe('isPathActive', () => {
   it('cocok untuk path persis dan sub-path', () => {
-    expect(isPathActive('/darmasaba/desa/profil', '/darmasaba/desa/profil')).toBe(true);
-    expect(isPathActive('/darmasaba/desa/profil/sejarah', '/darmasaba/desa/profil')).toBe(true);
+    expect(isPathActive('/darmasaba/pemerintahan/profil', '/darmasaba/pemerintahan/profil')).toBe(true);
+    expect(isPathActive('/darmasaba/pemerintahan/profil/sejarah', '/darmasaba/pemerintahan/profil')).toBe(true);
   });
 
   it('tidak cocok untuk prefix string yang bukan segmen path', () => {
-    expect(isPathActive('/darmasaba/desa/profil-lain', '/darmasaba/desa/profil')).toBe(false);
+    expect(isPathActive('/darmasaba/pemerintahan/profil-lain', '/darmasaba/pemerintahan/profil')).toBe(false);
   });
 
   it('false bila href kosong', () => {
@@ -41,7 +41,7 @@ describe('isMenuActive', () => {
   });
 
   it('tidak aktif di halaman domain lain', () => {
-    expect(isMenuActive(PPID, '/darmasaba/desa/profil')).toBe(false);
+    expect(isMenuActive(PPID, '/darmasaba/pemerintahan/profil')).toBe(false);
   });
 });
 

@@ -6,7 +6,7 @@ import { ActionIcon, Box, Button, Flex, List, ListItem, Modal, Paper, SimpleGrid
 import { useDisclosure } from '@mantine/hooks';
 import { IconBulbFilled } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import PengantarMusyawarah from './_com/PengantarMusyawarah';
 
 function Page() {

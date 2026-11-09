@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 
 const SINGLETON_ID = "beasiswa_config_desa_001";
 

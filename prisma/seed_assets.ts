@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "./seed-prisma";
 import { Client } from "minio";
 
 const minio = new Client({

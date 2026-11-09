@@ -1,6 +1,6 @@
 'use client'
 
-import BackButton from '../../(pages)/desa/layanan/_com/BackButto'
+import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto'
 import { APBDES_BRAND_VARS } from '../../_com/main-page/apbdes/apbdes.meta'
 import s from '../../_com/main-page/apbdes/apbdes.module.css'
 import { APBDES_TEXT } from '../../_com/main-page/apbdes/apbdes.text'

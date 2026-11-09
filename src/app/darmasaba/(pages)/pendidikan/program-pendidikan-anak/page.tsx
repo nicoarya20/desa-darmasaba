@@ -5,7 +5,7 @@ import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip, Divider,
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import { IconBook2, IconTargetArrow } from '@tabler/icons-react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const stateUnggulan = useProxy(stateProgramPendidikanAnak.programUnggulanState);
