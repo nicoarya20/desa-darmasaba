@@ -13,13 +13,14 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import colors from '@/con/colors';
 import { DokumenFolderEditor } from '../../../_com/DokumenFolderEditor';
+import { isDraftListValid, uploadPendingDrafts } from '../../../_lib/dokumen-draft';
 import {
-  draftsFromSaved,
-  isDraftListValid,
-  toDokumenPayload,
-  uploadPendingDrafts,
-  type DokumenDraft,
-} from '../../../_lib/dokumen-draft';
+  emptyIsiDraft,
+  isFolderListValid,
+  isiDraftFromDetail,
+  toIsiPayload,
+  type IsiDraft,
+} from '../../../_lib/folder-draft';
 import { uploadDokumenFile } from '../../../_lib/upload-dokumen';
 
 interface FormDesaAntiKorupsi {
@@ -49,7 +50,8 @@ export default function EditDesaAntiKorupsi() {
     return (
       formData.name?.trim() !== '' &&
       formData.kategoriId?.trim() !== '' &&
-      isDraftListValid(drafts)
+      isDraftListValid(isi.dokumen) &&
+      isFolderListValid(isi.folders)
     );
   };
 
@@ -59,8 +61,8 @@ export default function EditDesaAntiKorupsi() {
     kategoriId: "",
   });
 
-  const [drafts, setDrafts] = useState<DokumenDraft[]>([]);
-  const [originalDrafts, setOriginalDrafts] = useState<DokumenDraft[]>([]);
+  const [isi, setIsi] = useState<IsiDraft>(emptyIsiDraft);
+  const [originalIsi, setOriginalIsi] = useState<IsiDraft>(emptyIsiDraft);
 
   // Load kategori
   useShallowEffect(() => {
@@ -85,9 +87,9 @@ export default function EditDesaAntiKorupsi() {
         setFormData(loaded);
         setOriginalData(loaded);
 
-        const savedDrafts = draftsFromSaved(data.dokumen ?? []);
-        setDrafts(savedDrafts);
-        setOriginalDrafts(savedDrafts);
+        const savedIsi = isiDraftFromDetail(data);
+        setIsi(savedIsi);
+        setOriginalIsi(savedIsi);
       } catch (err) {
         console.error(err);
         toast.error('Gagal memuat data Desa Anti Korupsi');
@@ -110,7 +112,7 @@ export default function EditDesaAntiKorupsi() {
 
   const handleResetForm = () => {
     setFormData({ ...originalData });
-    setDrafts(originalDrafts);
+    setIsi(originalIsi);
     toast.info("Form dikembalikan ke data awal");
   };
 
@@ -120,10 +122,11 @@ export default function EditDesaAntiKorupsi() {
 
     try {
       setIsSubmitting(true);
-      // Unggah berkas baru dulu, lalu kirim set dokumen final (API menyinkronkan folder).
-      const uploaded = await uploadPendingDrafts(drafts, uploadDokumenFile);
-      setDrafts(uploaded);
-      desaAntiKorupsiState.edit.form = { ...formData, dokumen: toDokumenPayload(uploaded) };
+      // Unggah berkas baru dulu, lalu kirim set folder + dokumen final dalam satu PUT
+      // (API menyinkronkan keduanya dalam satu transaksi).
+      const uploaded: IsiDraft = { ...isi, dokumen: await uploadPendingDrafts(isi.dokumen, uploadDokumenFile) };
+      setIsi(uploaded);
+      desaAntiKorupsiState.edit.form = { ...formData, ...toIsiPayload(uploaded) };
 
       // update() sudah menampilkan toast error (mis. 400 validasi dokumen) → tetap di halaman.
       const ok = await desaAntiKorupsiState.edit.update();
@@ -187,7 +190,7 @@ export default function EditDesaAntiKorupsi() {
             clearable
           />
 
-          <DokumenFolderEditor value={drafts} onChange={setDrafts} />
+          <DokumenFolderEditor value={isi} onChange={setIsi} />
 
           <Group justify="right">
             {/* Tombol Batal */}

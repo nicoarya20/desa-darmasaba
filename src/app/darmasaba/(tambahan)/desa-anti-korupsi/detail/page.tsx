@@ -17,9 +17,7 @@ import {
   Loader,
 } from '@mantine/core';
 import { IconInbox } from '@tabler/icons-react';
-import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { detailHref, filterByKategori, resolveInitialKategori } from '../_lib/kategori-tab';
-import { DokumenPreviewModal } from '../_com/DokumenPreviewModal';
 import { ProgramFolderCard } from '../_com/ProgramFolderCard';
 
 function LokalContent() {
@@ -27,7 +25,6 @@ function LokalContent() {
   const searchParams = useSearchParams();
   const [pickedKategori, setPickedKategori] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [previewDokumen, setPreviewDokumen] = useState<DokumenDesaAntiKorupsiView | null>(null);
   const state = useProxy(korupsiState);
 
   useEffect(() => {
@@ -99,19 +96,21 @@ function LokalContent() {
             </Text>
           </Flex>
         ) : (
-          <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
+          // Kartu ringkas (isi dokumen dibuka di halaman program); grid rata tinggi.
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
             {filteredData.map(item => (
               <ProgramFolderCard
                 key={item.id}
+                id={item.id}
                 name={item.name}
-                dokumen={item.dokumen ?? []}
-                onPreview={setPreviewDokumen}
+                kategori={item.kategori?.name}
+                jumlahFolder={item.jumlahFolder}
+                jumlahDokumen={item.jumlahDokumen}
               />
             ))}
           </SimpleGrid>
         )}
       </Container>
-      <DokumenPreviewModal dokumen={previewDokumen} onClose={() => setPreviewDokumen(null)} />
     </Stack>
   );
 }

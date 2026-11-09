@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import type { DokumenInput } from "@/lib/desa-anti-korupsi-dokumen";
+import type { FolderInput, FolderRef } from "@/lib/desa-anti-korupsi-folder";
 import type {
-  DesaAntiKorupsiWithDokumen,
-  DokumenInput,
-} from "@/lib/desa-anti-korupsi-dokumen";
+  DesaAntiKorupsiDetail,
+  DesaAntiKorupsiRingkas,
+} from "@/lib/desa-anti-korupsi-view";
 import { getServerMessage } from "@/utils/api-message";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -19,15 +21,35 @@ type FormDesaAntikorupsi = {
   name: string;
   deskripsi: string;
   kategoriId: string;
-  dokumen: DokumenInput[]; // isi folder final; urutan = posisi di daftar
+  folders: FolderInput[]; // set folder final; urutan = posisi di daftar
+  dokumen: DokumenInput[]; // set dokumen final; urutan = posisi di dalam foldernya
 };
 
 const defaultDesaAntikorupsi = (): FormDesaAntikorupsi => ({
   name: "",
   deskripsi: "",
   kategoriId: "",
+  folders: [],
   dokumen: [],
 });
+
+/** Isi form edit dari detail program: folder tersimpan (id) + dokumen dengan rujukan foldernya. */
+function isiFormFromDetail(data: DesaAntiKorupsiDetail): Pick<FormDesaAntikorupsi, "folders" | "dokumen"> {
+  const toInput = (d: DesaAntiKorupsiDetail["dokumenUmum"][number], folder: FolderRef): DokumenInput => ({
+    id: d.id,
+    fileId: d.fileId,
+    judul: d.judul,
+    urutan: d.urutan,
+    folder,
+  });
+  return {
+    folders: data.folders.map((f) => ({ id: f.id, nama: f.nama, urutan: f.urutan })),
+    dokumen: [
+      ...data.folders.flatMap((f) => f.dokumen.map((d) => toInput(d, { id: f.id }))),
+      ...data.dokumenUmum.map((d) => toInput(d, null)),
+    ],
+  };
+}
 
 const desaAntikorupsi = proxy({
   create: {
@@ -63,7 +85,7 @@ const desaAntikorupsi = proxy({
     },
   },
   findMany: {
-    data: [] as DesaAntiKorupsiWithDokumen[],
+    data: [] as DesaAntiKorupsiRingkas[], // ringkas: jumlahFolder & jumlahDokumen, tanpa isi dokumen
     page: 1,
     totalPages: 1,
     loading: false,
@@ -98,7 +120,7 @@ const desaAntikorupsi = proxy({
     },
   },
   findUnique: {
-    data: null as DesaAntiKorupsiWithDokumen | null,
+    data: null as DesaAntiKorupsiDetail | null, // folders[] + dokumenUmum
     loading: false,
     async load(id: string) {
       try {
@@ -152,7 +174,7 @@ const desaAntikorupsi = proxy({
     form: defaultDesaAntikorupsi(),
     loading: false,
 
-    async load(id: string): Promise<DesaAntiKorupsiWithDokumen | null> {
+    async load(id: string): Promise<DesaAntiKorupsiDetail | null> {
       if (!id) {
         toast.warn("ID tidak valid");
         return null;
@@ -163,18 +185,13 @@ const desaAntikorupsi = proxy({
           throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
         if (result?.success) {
-          const data = result.data as DesaAntiKorupsiWithDokumen;
+          const data = result.data as DesaAntiKorupsiDetail;
           desaAntikorupsi.edit.id = data.id;
           desaAntikorupsi.edit.form = {
             name: data.name,
             deskripsi: data.deskripsi,
             kategoriId: data.kategoriId,
-            dokumen: (data.dokumen ?? []).map((d) => ({
-              id: d.id,
-              fileId: d.fileId,
-              judul: d.judul,
-              urutan: d.urutan,
-            })),
+            ...isiFormFromDetail(data),
           };
           return data;
         } else {
@@ -209,6 +226,7 @@ const desaAntikorupsi = proxy({
               name: desaAntikorupsi.edit.form.name,
               deskripsi: desaAntikorupsi.edit.form.deskripsi,
               kategoriId: desaAntikorupsi.edit.form.kategoriId,
+              folders: desaAntikorupsi.edit.form.folders,
               dokumen: desaAntikorupsi.edit.form.dokumen,
             }),
           }

@@ -1,15 +1,14 @@
 'use client';
-import { isPdfMime } from '@/lib/desa-anti-korupsi-dokumen';
-import { ActionIcon, Badge, Box, Group, Paper, Stack, Text, TextInput, Tooltip } from '@mantine/core';
-import { Dropzone } from '@mantine/dropzone';
-import { IconArrowDown, IconArrowUp, IconEye, IconFile, IconTrash, IconUpload, IconX } from '@tabler/icons-react';
+import { FOLDER_UMUM_KEY } from '@/lib/desa-anti-korupsi-folder';
+import { Accordion, Badge, Group, Stack, Text } from '@mantine/core';
+import { IconFolder } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
-import { draftsFromFiles, moveDokumen, type DokumenDraft } from '../_lib/dokumen-draft';
-import { DokumenPreviewFrame } from './DokumenPreviewFrame';
-
-const MAX_FILE_SIZE = 5 * 1024 ** 2;
-const ACCEPT = { 'application/*': ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'] };
+import { draftsFromFiles, type DokumenDraft } from '../_lib/dokumen-draft';
+import { groupDrafts, moveDraftToFolder, moveDraftWithinFolder, type IsiDraft } from '../_lib/folder-draft';
+import { DokumenDraftRow } from './DokumenDraftRow';
+import { DokumenPreviewDialog } from './DokumenPreviewDialog';
+import { DokumenUploadZone } from './DokumenUploadZone';
+import { FolderManager } from './FolderManager';
 
 /** URL pratinjau draft: object URL untuk berkas lokal (dicabut saat berganti), link server untuk yang tersimpan. */
 function usePreviewUrl(draft: DokumenDraft | null): string | null {
@@ -24,128 +23,95 @@ function usePreviewUrl(draft: DokumenDraft | null): string | null {
   return objectUrl ?? draft?.link ?? null;
 }
 
-type Props = {
-  value: DokumenDraft[];
-  onChange: (next: DokumenDraft[]) => void;
-};
+// Nilai Select/Accordion untuk folder virtual "Umum" (folderKey null di draft).
+const toValue = (folderKey: string | null) => folderKey ?? FOLDER_UMUM_KEY;
+const toFolderKey = (value: string) => (value === FOLDER_UMUM_KEY ? null : value);
 
-/** Editor "folder" dokumen program: unggah banyak berkas, ubah judul, hapus, dan atur urutan. */
+type Props = { value: IsiDraft; onChange: (next: IsiDraft) => void };
+
+/** Editor isi program: kelola folder, unggah banyak berkas ke folder terpilih, atur & pindahkan dokumen. */
 export function DokumenFolderEditor({ value, onChange }: Props) {
   const [previewKey, setPreviewKey] = useState<string | null>(null);
-  const previewDraft = value.find((d) => d.key === previewKey) ?? null;
+  const [target, setTarget] = useState<string>(FOLDER_UMUM_KEY);
+  const [opened, setOpened] = useState<string[]>([]);
+  const previewDraft = value.dokumen.find((d) => d.key === previewKey) ?? null;
   const previewUrl = usePreviewUrl(previewDraft);
 
-  const setJudul = (key: string, judul: string) =>
-    onChange(value.map((d) => (d.key === key ? { ...d, judul } : d)));
+  const groups = groupDrafts(value);
+  const folderOptions = groups.map((g) => ({ value: toValue(g.key), label: g.nama.trim() || '(tanpa nama)' }));
+  // Folder tujuan yang sudah dihapus → kembali ke "Umum".
+  const safeTarget = folderOptions.some((o) => o.value === target) ? target : FOLDER_UMUM_KEY;
+
+  const updateDokumen = (key: string, patch: Partial<DokumenDraft>) =>
+    onChange({ ...value, dokumen: value.dokumen.map((d) => (d.key === key ? { ...d, ...patch } : d)) });
 
   const remove = (key: string) => {
     if (previewKey === key) setPreviewKey(null);
-    onChange(value.filter((d) => d.key !== key));
+    onChange({ ...value, dokumen: value.dokumen.filter((d) => d.key !== key) });
+  };
+
+  const drop = (files: File[]) => {
+    onChange({ ...value, dokumen: [...value.dokumen, ...draftsFromFiles(files, toFolderKey(safeTarget))] });
+    setOpened((prev) => (prev.includes(safeTarget) ? prev : [...prev, safeTarget]));
   };
 
   return (
-    <Stack gap="sm">
+    <Stack gap="md">
+      <FolderManager value={value} onChange={onChange} />
+      <DokumenUploadZone folderOptions={folderOptions} target={safeTarget} onTargetChange={setTarget} onDrop={drop} />
+
       <Text fw="bold" fz="sm">
-        Dokumen ({value.length})
+        Dokumen ({value.dokumen.length})
       </Text>
-      <Dropzone
-        multiple
-        onDrop={(files) => onChange([...value, ...draftsFromFiles(files)])}
-        onReject={() => toast.error('File tidak valid, gunakan format dokumen maksimal 5MB')}
-        maxSize={MAX_FILE_SIZE}
-        accept={ACCEPT}
-        radius="md"
-      >
-        <Group justify="center" gap="xl" mih={140} style={{ pointerEvents: 'none' }}>
-          <Dropzone.Accept>
-            <IconUpload size={48} color="var(--mantine-color-blue-6)" stroke={1.5} />
-          </Dropzone.Accept>
-          <Dropzone.Reject>
-            <IconX size={48} color="var(--mantine-color-red-6)" stroke={1.5} />
-          </Dropzone.Reject>
-          <Dropzone.Idle>
-            <IconFile size={48} color="var(--mantine-color-dimmed)" stroke={1.5} />
-          </Dropzone.Idle>
-          <div>
-            <Text size="lg" inline>
-              Seret dokumen ke sini atau klik untuk memilih (bisa lebih dari satu)
-            </Text>
-            <Text size="sm" c="dimmed" inline mt={7}>
-              Maksimal 5MB per file (PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX)
-            </Text>
-          </div>
-        </Group>
-      </Dropzone>
-
-      {value.length === 0 && (
-        <Text fz="sm" c="dimmed">
-          Folder masih kosong
-        </Text>
-      )}
-
-      {value.map((d, index) => (
-        <Paper key={d.key} withBorder radius="md" p="sm">
-          <Group gap="xs" wrap="nowrap" align="flex-start">
-            <Badge variant="light" mt={8}>
-              {index + 1}
-            </Badge>
-            <Box flex={1} miw={0}>
-              <TextInput
-                aria-label={`Judul dokumen ${index + 1}`}
-                placeholder="Judul dokumen"
-                value={d.judul}
-                onChange={(e) => setJudul(d.key, e.currentTarget.value)}
-                error={d.judul.trim() === '' ? 'Judul wajib diisi' : undefined}
-              />
-              <Group gap={6} mt={4}>
-                <Text fz="xs" c="dimmed" truncate maw={260}>
-                  {d.realName ?? '-'}
+      <Accordion multiple variant="separated" radius="md" value={opened} onChange={setOpened}>
+        {groups.map((g) => (
+          <Accordion.Item key={toValue(g.key)} value={toValue(g.key)}>
+            <Accordion.Control icon={<IconFolder size={16} />}>
+              <Group gap="xs" wrap="nowrap">
+                <Text fz="sm" fw={600} truncate>
+                  {g.nama.trim() || '(tanpa nama)'}
                 </Text>
-                {!d.fileId && (
-                  <Badge size="xs" color="orange" variant="light">
-                    Belum diunggah
-                  </Badge>
-                )}
+                <Badge size="sm" variant="light">
+                  {g.dokumen.length}
+                </Badge>
               </Group>
-            </Box>
-            <Group gap={4} wrap="nowrap" mt={4}>
-              <Tooltip label={isPdfMime(d.mimeType) ? 'Pratinjau' : 'Pratinjau hanya untuk PDF'}>
-                <ActionIcon
-                  variant={previewKey === d.key ? 'filled' : 'light'}
-                  aria-label="Pratinjau dokumen"
-                  disabled={!isPdfMime(d.mimeType)}
-                  onClick={() => setPreviewKey(previewKey === d.key ? null : d.key)}
-                >
-                  <IconEye size={16} />
-                </ActionIcon>
-              </Tooltip>
-              <ActionIcon
-                variant="light"
-                aria-label="Naikkan urutan"
-                disabled={index === 0}
-                onClick={() => onChange(moveDokumen(value, index, -1))}
-              >
-                <IconArrowUp size={16} />
-              </ActionIcon>
-              <ActionIcon
-                variant="light"
-                aria-label="Turunkan urutan"
-                disabled={index === value.length - 1}
-                onClick={() => onChange(moveDokumen(value, index, 1))}
-              >
-                <IconArrowDown size={16} />
-              </ActionIcon>
-              <ActionIcon variant="light" color="red" aria-label="Hapus dokumen" onClick={() => remove(d.key)}>
-                <IconTrash size={16} />
-              </ActionIcon>
-            </Group>
-          </Group>
-        </Paper>
-      ))}
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Stack gap={6}>
+                {g.dokumen.length === 0 && (
+                  <Text fz="xs" c="dimmed">
+                    Folder kosong
+                  </Text>
+                )}
+                {g.dokumen.map((d, index) => (
+                  <DokumenDraftRow
+                    key={d.key}
+                    draft={d}
+                    index={index}
+                    total={g.dokumen.length}
+                    folderOptions={folderOptions}
+                    folderValue={toValue(g.key)}
+                    onJudul={(judul) => updateDokumen(d.key, { judul })}
+                    onFolder={(v) => onChange(moveDraftToFolder(value, d.key, toFolderKey(v)))}
+                    onMove={(direction) => onChange(moveDraftWithinFolder(value, d.key, direction))}
+                    onPreview={() => setPreviewKey(d.key)}
+                    onRemove={() => remove(d.key)}
+                  />
+                ))}
+              </Stack>
+            </Accordion.Panel>
+          </Accordion.Item>
+        ))}
+      </Accordion>
 
-      {previewDraft && previewUrl && (
-        <DokumenPreviewFrame src={previewUrl} title={previewDraft.judul || previewDraft.realName || 'Dokumen'} />
-      )}
+      <DokumenPreviewDialog
+        preview={
+          previewDraft && previewUrl
+            ? { src: previewUrl, title: previewDraft.judul || previewDraft.realName || 'Dokumen' }
+            : null
+        }
+        onClose={() => setPreviewKey(null)}
+      />
     </Stack>
   );
 }

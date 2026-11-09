@@ -1,25 +1,32 @@
 // @vitest-environment node
-// Folder dokumen Desa Anti Korupsi: validasi payload & rencana sinkronisasi (fungsi murni).
+// Dokumen Desa Anti Korupsi: validasi payload & rencana sinkronisasi (fungsi murni).
 import { describe, expect, it } from 'vitest';
 import {
   DOKUMEN_JUDUL_MAX_LENGTH,
   DOKUMEN_MAX_PER_PROGRAM,
+  fileExtension,
   isPdfMime,
   parseDokumenList,
   planDokumenSync,
+  type DokumenParsed,
   type DokumenTersimpan,
 } from '@/lib/desa-anti-korupsi-dokumen';
 
 const doc = (over: Record<string, unknown> = {}) => ({ fileId: 'f1', judul: 'Perdes', urutan: 0, ...over });
 
 describe('parseDokumenList', () => {
-  it('menerima daftar valid, judul di-trim, id opsional dipertahankan', () => {
-    const res = parseDokumenList([doc({ judul: '  Perdes  ' }), doc({ id: 'd2', fileId: 'f2', urutan: 1 })]);
+  it('menerima daftar valid, judul di-trim, id opsional dipertahankan, folder kosong = Umum (null)', () => {
+    const res = parseDokumenList([
+      doc({ judul: '  Perdes  ' }),
+      doc({ id: 'd2', fileId: 'f2', urutan: 1, folder: { id: 'fa' } }),
+      doc({ fileId: 'f3', urutan: 2, folder: { tempKey: 't1' } }),
+    ]);
     expect(res).toEqual({
       ok: true,
       data: [
-        { fileId: 'f1', judul: 'Perdes', urutan: 0 },
-        { id: 'd2', fileId: 'f2', judul: 'Perdes', urutan: 1 },
+        { fileId: 'f1', judul: 'Perdes', urutan: 0, folder: null },
+        { id: 'd2', fileId: 'f2', judul: 'Perdes', urutan: 1, folder: { id: 'fa' } },
+        { fileId: 'f3', judul: 'Perdes', urutan: 2, folder: { tempKey: 't1' } },
       ],
     });
   });
@@ -38,6 +45,8 @@ describe('parseDokumenList', () => {
     ['id kosong', [doc({ id: '' })], 'Dokumen #1: id tidak valid'],
     ['fileId ganda', [doc(), doc({ urutan: 1 })], 'Dokumen #2: file yang sama dipakai dua kali'],
     ['id ganda', [doc({ id: 'x' }), doc({ id: 'x', fileId: 'f2' })], 'Dokumen #2: dokumen terkirim dua kali'],
+    ['folder id+tempKey', [doc({ folder: { id: 'a', tempKey: 'b' } })], 'Dokumen #1: folder harus berisi id atau tempKey'],
+    ['folder bukan objek', [doc({ folder: 'fa' })], 'Dokumen #1: folder tidak valid'],
   ])('menolak %s', (_label, input, message) => {
     expect(parseDokumenList(input)).toEqual({ ok: false, message });
   });
@@ -58,24 +67,31 @@ describe('parseDokumenList', () => {
 
 describe('planDokumenSync', () => {
   const existing: DokumenTersimpan[] = [
-    { id: 'a', fileId: 'fa', judul: 'A', urutan: 0 },
-    { id: 'b', fileId: 'fb', judul: 'B', urutan: 1 },
-    { id: 'c', fileId: 'fc', judul: 'C', urutan: 2 },
+    { id: 'a', fileId: 'fa', judul: 'A', urutan: 0, folderId: null },
+    { id: 'b', fileId: 'fb', judul: 'B', urutan: 1, folderId: null },
+    { id: 'c', fileId: 'fc', judul: 'C', urutan: 2, folderId: 'f1' },
   ];
+  const asInput = (d: DokumenTersimpan): DokumenParsed => ({
+    id: d.id,
+    fileId: d.fileId,
+    judul: d.judul,
+    urutan: d.urutan,
+    folder: d.folderId ? { id: d.folderId } : null,
+  });
 
   it('tambah baru, ubah judul/urutan, hapus yang tidak dikirim', () => {
     const res = planDokumenSync(existing, [
-      { id: 'c', fileId: 'fc', judul: 'C', urutan: 0 }, // naik ke atas
-      { id: 'a', fileId: 'fa', judul: 'A revisi', urutan: 1 }, // ganti judul + turun
-      { fileId: 'fn', judul: 'Baru', urutan: 2 }, // dokumen baru
+      { id: 'c', fileId: 'fc', judul: 'C', urutan: 0, folder: { id: 'f1' } }, // naik ke atas
+      { id: 'a', fileId: 'fa', judul: 'A revisi', urutan: 1, folder: null }, // ganti judul + turun
+      { fileId: 'fn', judul: 'Baru', urutan: 2, folder: null }, // dokumen baru
     ]);
     expect(res).toEqual({
       ok: true,
       plan: {
-        create: [{ fileId: 'fn', judul: 'Baru', urutan: 2 }],
+        create: [{ fileId: 'fn', judul: 'Baru', urutan: 2, folder: null }],
         update: [
-          { id: 'c', judul: 'C', urutan: 0 },
-          { id: 'a', judul: 'A revisi', urutan: 1 },
+          { id: 'c', judul: 'C', urutan: 0, folder: { id: 'f1' } },
+          { id: 'a', judul: 'A revisi', urutan: 1, folder: null },
         ],
         remove: ['b'],
       },
@@ -83,7 +99,7 @@ describe('planDokumenSync', () => {
   });
 
   it('tanpa perubahan → rencana kosong', () => {
-    expect(planDokumenSync(existing, existing)).toEqual({
+    expect(planDokumenSync(existing, existing.map(asInput))).toEqual({
       ok: true,
       plan: { create: [], update: [], remove: [] },
     });
@@ -95,19 +111,27 @@ describe('planDokumenSync', () => {
   });
 
   it('program baru: semua item tanpa id menjadi create', () => {
-    const res = planDokumenSync([], [{ fileId: 'f1', judul: 'X', urutan: 0 }]);
-    expect(res).toEqual({ ok: true, plan: { create: [{ fileId: 'f1', judul: 'X', urutan: 0 }], update: [], remove: [] } });
+    const res = planDokumenSync([], [{ fileId: 'f1', judul: 'X', urutan: 0, folder: null }]);
+    expect(res).toEqual({
+      ok: true,
+      plan: { create: [{ fileId: 'f1', judul: 'X', urutan: 0, folder: null }], update: [], remove: [] },
+    });
+  });
+
+  it('hanya pindah folder (judul & urutan sama) → tetap update', () => {
+    const res = planDokumenSync(existing, [{ ...asInput(existing[0]), folder: { id: 'f1' } }, asInput(existing[1]), asInput(existing[2])]);
+    expect(res.ok && res.plan.update).toEqual([{ id: 'a', judul: 'A', urutan: 0, folder: { id: 'f1' } }]);
   });
 
   it('menolak id yang bukan milik program', () => {
-    expect(planDokumenSync(existing, [{ id: 'zz', fileId: 'fz', judul: 'Z', urutan: 0 }])).toEqual({
+    expect(planDokumenSync(existing, [{ id: 'zz', fileId: 'fz', judul: 'Z', urutan: 0, folder: null }])).toEqual({
       ok: false,
       message: 'Dokumen tidak ditemukan pada program ini',
     });
   });
 
   it('menolak penggantian file pada dokumen lama', () => {
-    const res = planDokumenSync(existing, [{ id: 'a', fileId: 'lain', judul: 'A', urutan: 0 }]);
+    const res = planDokumenSync(existing, [{ id: 'a', fileId: 'lain', judul: 'A', urutan: 0, folder: null }]);
     expect(res.ok).toBe(false);
   });
 });
@@ -117,5 +141,14 @@ describe('isPdfMime', () => {
     expect(isPdfMime('application/pdf')).toBe(true);
     expect(isPdfMime('application/gzip')).toBe(false);
     expect(isPdfMime(undefined)).toBe(false);
+  });
+});
+
+describe('fileExtension', () => {
+  it('ekstensi dari nama berkas, fallback subtipe mime, lalu "-"', () => {
+    expect(fileExtension('Laporan.final.docx')).toBe('DOCX');
+    expect(fileExtension('tanpa-ekstensi', 'application/pdf')).toBe('PDF');
+    expect(fileExtension('.env', undefined)).toBe('-');
+    expect(fileExtension(null, null)).toBe('-');
   });
 });

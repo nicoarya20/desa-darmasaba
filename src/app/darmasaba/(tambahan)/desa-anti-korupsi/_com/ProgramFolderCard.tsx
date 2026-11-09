@@ -1,86 +1,71 @@
 import colors from '@/con/colors';
-import { isPdfMime, type DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
-import { ActionIcon, Badge, Group, Paper, Stack, Text, Tooltip } from '@mantine/core';
-import { IconDownload, IconEye, IconFileText, IconFolder } from '@tabler/icons-react';
+import { Button, Group, Paper, Stack, Text } from '@mantine/core';
+import { IconChevronRight, IconFolder } from '@tabler/icons-react';
+import Link from 'next/link';
+import { programHref, ringkasanIsi } from '../_lib/program-folder';
 
 type Props = {
+  id: string;
   name: string;
-  dokumen: readonly DokumenDesaAntiKorupsiView[];
-  onPreview: (dokumen: DokumenDesaAntiKorupsiView) => void;
+  kategori?: string | null;
+  jumlahFolder: number;
+  jumlahDokumen: number;
 };
 
-/** Kartu program publik: "folder" berisi daftar dokumen, tiap dokumen bisa dipratinjau/diunduh. */
-export function ProgramFolderCard({ name, dokumen, onPreview }: Props) {
+// 3 baris × line-height 1.4 → tinggi judul tetap, kartu dalam grid rata tinggi.
+const JUDUL_LINE_HEIGHT = 1.4;
+const JUDUL_MAX_LINES = 3;
+
+/** Kartu program publik berukuran seragam: judul (maks 3 baris), kategori, ringkasan isi, tombol Buka. */
+export function ProgramFolderCard({ id, name, kategori, jumlahFolder, jumlahDokumen }: Props) {
   return (
     <Paper
+      h="100%"
       p="lg"
       shadow="md"
       radius="xl"
       withBorder
+      data-program-id={id}
       style={{ background: 'linear-gradient(135deg, #ffffff, #f8fbff)' }}
     >
-      <Stack h="100%" gap="sm">
-        <Text fz="lg" fw={600} c={colors['blue-button']}>
-          {name}
-        </Text>
-        <Group gap={6}>
-          <IconFolder size={18} color={colors['blue-button']} />
-          <Badge variant="light" color={colors['blue-button']} data-testid="jumlah-dokumen">
-            {dokumen.length} dokumen
-          </Badge>
-        </Group>
-
-        {dokumen.length === 0 ? (
-          <Text fz="sm" c="dimmed">
-            Belum ada dokumen
+      <Stack h="100%" gap="md" justify="space-between">
+        <Stack gap={6}>
+          {kategori && (
+            <Text fz="xs" fw={600} c="dimmed" tt="uppercase" lineClamp={1}>
+              {kategori}
+            </Text>
+          )}
+          <Text
+            fz="lg"
+            fw={600}
+            c={colors['blue-button']}
+            lh={JUDUL_LINE_HEIGHT}
+            lineClamp={JUDUL_MAX_LINES}
+            mih={`${JUDUL_LINE_HEIGHT * JUDUL_MAX_LINES}em`}
+            title={name}
+          >
+            {name}
           </Text>
-        ) : (
-          <Stack gap={6} component="ul" m={0} p={0} style={{ listStyle: 'none' }}>
-            {dokumen.map((d) => {
-              const pdf = isPdfMime(d.file.mimeType);
-              return (
-                <Group key={d.id} component="li" gap="xs" wrap="nowrap" justify="space-between" data-dokumen-id={d.id}>
-                  <Group gap={6} wrap="nowrap" miw={0}>
-                    <IconFileText size={16} style={{ flexShrink: 0 }} />
-                    <Text fz="sm" truncate>
-                      {d.judul}
-                    </Text>
-                  </Group>
-                  <Group gap={4} wrap="nowrap">
-                    {pdf && (
-                      <Tooltip label="Pratinjau" withArrow>
-                        <ActionIcon
-                          variant="light"
-                          color={colors['blue-button']}
-                          radius="xl"
-                          aria-label={`Pratinjau ${d.judul}`}
-                          onClick={() => onPreview(d)}
-                        >
-                          <IconEye size={16} />
-                        </ActionIcon>
-                      </Tooltip>
-                    )}
-                    <Tooltip label="Unduh file" withArrow>
-                      <ActionIcon
-                        component="a"
-                        href={d.file.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download={pdf ? d.file.realName : undefined}
-                        variant="filled"
-                        color={colors['blue-button']}
-                        radius="xl"
-                        aria-label={`Unduh ${d.judul}`}
-                      >
-                        <IconDownload size={16} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Group>
-                </Group>
-              );
-            })}
-          </Stack>
-        )}
+        </Stack>
+        <Group justify="space-between" wrap="nowrap" gap="xs">
+          <Group gap={6} wrap="nowrap" miw={0}>
+            <IconFolder size={18} color={colors['blue-button']} style={{ flexShrink: 0 }} />
+            <Text fz="sm" c="dimmed" truncate data-testid="ringkasan-isi">
+              {ringkasanIsi(jumlahFolder, jumlahDokumen)}
+            </Text>
+          </Group>
+          <Button
+            component={Link}
+            href={programHref(id)}
+            size="xs"
+            radius="xl"
+            color={colors['blue-button']}
+            rightSection={<IconChevronRight size={14} />}
+            aria-label={`Buka ${name}`}
+          >
+            Buka
+          </Button>
+        </Group>
       </Stack>
     </Paper>
   );

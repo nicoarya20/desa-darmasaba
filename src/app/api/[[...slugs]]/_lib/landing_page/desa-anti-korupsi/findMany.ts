@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
-import { DESA_ANTI_KORUPSI_INCLUDE } from "@/lib/desa-anti-korupsi-dokumen";
+import { DESA_ANTI_KORUPSI_RINGKAS_INCLUDE, toProgramRingkas } from "@/lib/desa-anti-korupsi-view";
 import { Context } from "elysia";
 
 async function desaAntiKorupsiFindMany(context: Context) {
@@ -22,10 +22,11 @@ async function desaAntiKorupsiFindMany(context: Context) {
     ];
   }
   try {
-    const [data, total] = await Promise.all([
+    const [rows, total] = await Promise.all([
       prisma.desaAntiKorupsi.findMany({
         where,
-        include: DESA_ANTI_KORUPSI_INCLUDE, // kategori + dokumen aktif urut `urutan`
+        // kategori + _count folder/dokumen aktif (subquery dalam satu query, bukan N+1)
+        include: DESA_ANTI_KORUPSI_RINGKAS_INCLUDE,
         skip: limit === 0 ? undefined : skip,
         take: limit === 0 ? undefined : limit,
         orderBy: { name: "asc" }, // opsional, kalau mau urut berdasarkan waktu
@@ -38,7 +39,7 @@ async function desaAntiKorupsiFindMany(context: Context) {
     return {
       success: true,
       message: "Success fetch desa anti korupsi with pagination",
-      data,
+      data: rows.map(toProgramRingkas), // ringkasan jumlahFolder/jumlahDokumen, tanpa isi dokumen
       page,
       totalPages: Math.ceil(total / limit),
       total,

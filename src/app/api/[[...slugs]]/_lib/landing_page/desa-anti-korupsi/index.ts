@@ -6,16 +6,31 @@ import desaAntiKorupsiUpdate from "./updt";
 import desaAntiKorupsiCreate from "./create";
 import { DOKUMEN_MAX_PER_PROGRAM } from "@/lib/desa-anti-korupsi-dokumen";
 
-// Tipe dasar saja; aturan dokumen (judul wajib, urutan, duplikat, id milik program)
-// divalidasi di parseDokumenList/planDokumenSync supaya pesan error seragam.
+// Tipe dasar saja; aturan dokumen & folder (judul/nama wajib, urutan, duplikat, kepemilikan,
+// batas folder, rujukan tempKey) divalidasi di planProgramSync supaya pesan error seragam (400).
+const folderRefBody = t.Optional(
+  t.Nullable(t.Object({ id: t.Optional(t.String()), tempKey: t.Optional(t.String()) }))
+);
+
 const dokumenBody = t.Array(
   t.Object({
     id: t.Optional(t.String()),
     fileId: t.String(),
     judul: t.String(),
     urutan: t.Number(),
+    folder: folderRefBody, // null / tidak dikirim = folder virtual "Umum"
   }),
   { maxItems: DOKUMEN_MAX_PER_PROGRAM }
+);
+
+// Tanpa maxItems: batas 30 folder dicek planProgramSync agar respons tetap 400 + pesan.
+const foldersBody = t.Array(
+  t.Object({
+    id: t.Optional(t.String()),
+    tempKey: t.Optional(t.String()),
+    nama: t.String(),
+    urutan: t.Number(),
+  })
 );
 
 const DesaAntiKorupsi = new Elysia({
@@ -35,6 +50,7 @@ const DesaAntiKorupsi = new Elysia({
       name: t.String(),
       deskripsi: t.String(),
       kategoriId: t.String(),
+      folders: t.Optional(foldersBody),
       dokumen: t.Optional(dokumenBody),
     }),
   })
@@ -45,7 +61,8 @@ const DesaAntiKorupsi = new Elysia({
         name: t.String(),
         deskripsi: t.String(),
         kategoriId: t.String(),
-        // tidak dikirim = isi folder dipertahankan; array = set dokumen final
+        // tidak dikirim = dipertahankan; array = set final (folder hilang → dokumennya ke "Umum")
+        folders: t.Optional(foldersBody),
         dokumen: t.Optional(dokumenBody),
     }),
   })

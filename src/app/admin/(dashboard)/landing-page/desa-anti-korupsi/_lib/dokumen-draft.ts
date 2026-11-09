@@ -1,10 +1,15 @@
 // Logika murni draft dokumen di form admin Desa Anti Korupsi (create & edit):
 // urutan naik/turun, judul default dari nama berkas, upload berkas tertunda, payload API.
 import type { DokumenDesaAntiKorupsiView, DokumenInput } from '@/lib/desa-anti-korupsi-dokumen';
+import type { FolderRef } from '@/lib/desa-anti-korupsi-folder';
 
-/** Draft satu dokumen di form: `id` = dokumen tersimpan, `file` = berkas lokal yang belum diunggah. */
+/**
+ * Draft satu dokumen di form: `id` = dokumen tersimpan, `file` = berkas lokal yang belum diunggah,
+ * `folderKey` = key FolderDraft tujuan (null = folder virtual "Umum").
+ */
 export type DokumenDraft = {
   key: string;
+  folderKey: string | null;
   id?: string;
   fileId?: string;
   judul: string;
@@ -39,10 +44,11 @@ export function judulFromFileName(fileName: string): string {
   return base.trim() || trimmed;
 }
 
-/** Draft baru (belum diunggah) dari berkas yang dipilih di Dropzone. */
-export function draftsFromFiles(files: File[]): DokumenDraft[] {
+/** Draft baru (belum diunggah) dari berkas yang dipilih di Dropzone, langsung masuk folder tujuan. */
+export function draftsFromFiles(files: File[], folderKey: string | null = null): DokumenDraft[] {
   return files.map((file) => ({
     key: nextKey(),
+    folderKey,
     judul: judulFromFileName(file.name),
     file,
     mimeType: file.type,
@@ -50,10 +56,14 @@ export function draftsFromFiles(files: File[]): DokumenDraft[] {
   }));
 }
 
-/** Draft dari dokumen yang sudah tersimpan (respons API). */
-export function draftsFromSaved(dokumen: readonly DokumenDesaAntiKorupsiView[]): DokumenDraft[] {
+/** Draft dari dokumen yang sudah tersimpan (respons API) di folder `folderKey`. */
+export function draftsFromSaved(
+  dokumen: readonly DokumenDesaAntiKorupsiView[],
+  folderKey: string | null = null,
+): DokumenDraft[] {
   return dokumen.map((d) => ({
     key: d.id,
+    folderKey,
     id: d.id,
     fileId: d.fileId,
     judul: d.judul,
@@ -92,15 +102,25 @@ export async function uploadPendingDrafts(
   return result;
 }
 
-/** Payload `dokumen` untuk API: urutan = posisi di daftar, judul di-trim. */
-export function toDokumenPayload(drafts: readonly DokumenDraft[]): DokumenInput[] {
-  return drafts.map((d, index) => {
+/**
+ * Payload `dokumen` untuk API: urutan = posisi di dalam foldernya, judul di-trim, `folderRef`
+ * menerjemahkan folderKey draft menjadi rujukan folder API.
+ */
+export function toDokumenPayload(
+  drafts: readonly DokumenDraft[],
+  folderRef: (folderKey: string | null) => FolderRef = () => null,
+): DokumenInput[] {
+  const posisi = new Map<string | null, number>();
+  return drafts.map((d) => {
     if (!d.fileId) throw new Error(`Dokumen "${d.judul}" belum diunggah`);
+    const urutan = posisi.get(d.folderKey) ?? 0;
+    posisi.set(d.folderKey, urutan + 1);
     return {
       ...(d.id ? { id: d.id } : {}),
       fileId: d.fileId,
       judul: d.judul.trim(),
-      urutan: index,
+      urutan,
+      folder: folderRef(d.folderKey),
     };
   });
 }
