@@ -2,9 +2,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   countByCategory,
+  formatShare,
   hasValues,
   monthlyCounts,
   summarizeKepuasan,
+  sumValues,
   toSelectOptions,
   type RespondenItem,
 } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.logic';
@@ -48,7 +50,7 @@ describe('summarizeKepuasan — data kosong', () => {
 
 describe('monthlyCounts', () => {
   it('satu bulan → satu batang berlabel nama bulan Indonesia + tahun', () => {
-    expect(monthlyCounts([r(), r()])).toEqual([{ month: 'Maret 2026', Responden: 2 }]);
+    expect(monthlyCounts([r(), r()])).toEqual([{ month: 'Maret 2026', short: 'Mar 2026', Responden: 2 }]);
   });
 
   it('beberapa bulan → urut kronologis lintas tahun, bukan urutan data', () => {
@@ -59,15 +61,15 @@ describe('monthlyCounts', () => {
       r({ tanggal: '2026-01-05T00:00:00.000Z' }),
     ];
     expect(monthlyCounts(data)).toEqual([
-      { month: 'Desember 2025', Responden: 1 },
-      { month: 'Januari 2026', Responden: 1 },
-      { month: 'Februari 2026', Responden: 2 },
+      { month: 'Desember 2025', short: 'Des 2025', Responden: 1 },
+      { month: 'Januari 2026', short: 'Jan 2026', Responden: 1 },
+      { month: 'Februari 2026', short: 'Feb 2026', Responden: 2 },
     ]);
   });
 
   it('tanggal null/kosong → pakai createdAt', () => {
     expect(monthlyCounts([r({ tanggal: null }), r({ tanggal: '' })])).toEqual([
-      { month: 'November 2026', Responden: 2 },
+      { month: 'November 2026', short: 'Nov 2026', Responden: 2 },
     ]);
   });
 
@@ -77,7 +79,7 @@ describe('monthlyCounts', () => {
   });
 
   it('menerima objek Date', () => {
-    expect(monthlyCounts([r({ tanggal: new Date(2026, 6, 15) })])).toEqual([{ month: 'Juli 2026', Responden: 1 }]);
+    expect(monthlyCounts([r({ tanggal: new Date(2026, 6, 15) })])).toEqual([{ month: 'Juli 2026', short: 'Jul 2026', Responden: 1 }]);
   });
 });
 
@@ -113,8 +115,8 @@ describe('summarizeKepuasan — campuran', () => {
     expect(values(s.rating)).toEqual([2, 1, 0, 0]);
     expect(values(s.kelompokUmur)).toEqual([1, 1, 1]);
     expect(s.monthly).toEqual([
-      { month: 'Maret 2026', Responden: 2 },
-      { month: 'April 2026', Responden: 1 },
+      { month: 'Maret 2026', short: 'Mar 2026', Responden: 2 },
+      { month: 'April 2026', short: 'Apr 2026', Responden: 1 },
     ]);
     expect(hasValues(s.jenisKelamin)).toBe(true);
   });
@@ -132,5 +134,28 @@ describe('toSelectOptions', () => {
   it('entri null/undefined dibuang; daftar null → []', () => {
     expect(toSelectOptions([null, { id: 'a', name: 'Muda' }, undefined], 'x')).toEqual([{ value: 'a', label: 'Muda' }]);
     expect(toSelectOptions(null, 'x')).toEqual([]);
+  });
+});
+
+describe('sumValues & formatShare', () => {
+  const slices = [
+    { name: 'A', value: 1, color: '#000' },
+    { name: 'B', value: 2, color: '#111' },
+  ];
+
+  it('menjumlah nilai kategori', () => {
+    expect(sumValues(slices)).toBe(3);
+    expect(sumValues([])).toBe(0);
+  });
+
+  it('persen format Indonesia, maks 1 desimal', () => {
+    // toLocaleString memakai spasi tak-putus di sebagian ICU; normalisasi sebelum dibandingkan.
+    const norm = (x: string) => x.replace(/\s/g, '');
+    expect(norm(formatShare(1, 3))).toBe('33,3%');
+    expect(norm(formatShare(2, 2))).toBe('100%');
+  });
+
+  it('total 0 → 0% (bukan NaN)', () => {
+    expect(formatShare(0, 0).replace(/\s/g, '')).toBe('0%');
   });
 });

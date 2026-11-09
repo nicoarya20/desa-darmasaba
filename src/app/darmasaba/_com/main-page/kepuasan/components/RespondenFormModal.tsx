@@ -1,6 +1,6 @@
 import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan";
 import colors from "@/con/colors";
-import { Button, Modal, Paper, Select, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useEffect } from "react";
 import { useProxy } from "valtio/utils";
 import { toSelectOptions } from "../kepuasan.logic";
@@ -44,63 +44,59 @@ export function RespondenFormModal({ opened, onClose }: Props) {
 
   return (
     <Modal opened={opened} onClose={onClose} title={T.title} centered>
-      <Paper bg={colors["white-1"]} p="md">
-        <Stack>
-          <TextInput
-            label={T.name}
-            type="text"
-            placeholder={T.namePlaceholder}
-            value={form.name}
-            onChange={(e) => {
-              state.create.form.name = e.currentTarget.value;
-            }}
-          />
-          <TextInput
-            label={T.tanggal}
-            type="date"
-            placeholder={T.tanggalPlaceholder}
-            value={form.tanggal}
-            onChange={(e) => {
-              state.create.form.tanggal = e.currentTarget.value;
-            }}
-          />
-          <Select
-            label={T.jenisKelamin}
-            placeholder={snapJK.findMany.loading ? T.optionsLoading : T.jenisKelaminPlaceholder}
-            value={form.jenisKelaminId || ""}
-            onChange={(val) => {
-              state.create.form.jenisKelaminId = val ?? "";
-            }}
-            data={toSelectOptions(snapJK.findMany.data, T.unnamedOption)}
-            disabled={snapJK.findMany.loading}
-          />
-          <Select
-            label={T.rating}
-            placeholder={snapRating.findMany.loading ? T.optionsLoading : T.ratingPlaceholder}
-            value={form.ratingId || ""}
-            onChange={(val) => {
-              state.create.form.ratingId = val ?? "";
-            }}
-            data={toSelectOptions(snapRating.findMany.data, T.unnamedOption)}
-            disabled={snapRating.findMany.loading}
-          />
-          <Select
-            label={T.kelompokUmur}
-            placeholder={snapUmur.findMany.loading ? T.optionsLoading : T.kelompokUmurPlaceholder}
-            value={form.kelompokUmurId || ""}
-            onChange={(val) => {
-              state.create.form.kelompokUmurId = val ?? "";
-            }}
-            data={toSelectOptions(snapUmur.findMany.data, T.unnamedOption)}
-            disabled={snapUmur.findMany.loading}
-          />
-          <Button mt={10} bg={colors["blue-button"]} onClick={handleSubmit} style={{ fontWeight: 700 }}>
-            <Text fz="sm" ta="center" c="white">
-              {T.submit}
-            </Text>
-          </Button>
-        </Stack>
-      </Paper>
+      <Stack>
+        <TextInput
+          label={T.name}
+          type="text"
+          placeholder={T.namePlaceholder}
+          value={form.name}
+          onChange={(e) => {
+            state.create.form.name = e.currentTarget.value;
+          }}
+        />
+        <TextInput
+          label={T.tanggal}
+          type="date"
+          placeholder={T.tanggalPlaceholder}
+          value={form.tanggal}
+          onChange={(e) => {
+            state.create.form.tanggal = e.currentTarget.value;
+          }}
+        />
+        <Select
+          label={T.jenisKelamin}
+          placeholder={snapJK.findMany.loading ? T.optionsLoading : T.jenisKelaminPlaceholder}
+          value={form.jenisKelaminId || ""}
+          onChange={(val) => {
+            state.create.form.jenisKelaminId = val ?? "";
+          }}
+          data={toSelectOptions(snapJK.findMany.data, T.unnamedOption)}
+          disabled={snapJK.findMany.loading}
+        />
+        <Select
+          label={T.rating}
+          placeholder={snapRating.findMany.loading ? T.optionsLoading : T.ratingPlaceholder}
+          value={form.ratingId || ""}
+          onChange={(val) => {
+            state.create.form.ratingId = val ?? "";
+          }}
+          data={toSelectOptions(snapRating.findMany.data, T.unnamedOption)}
+          disabled={snapRating.findMany.loading}
+        />
+        <Select
+          label={T.kelompokUmur}
+          placeholder={snapUmur.findMany.loading ? T.optionsLoading : T.kelompokUmurPlaceholder}
+          value={form.kelompokUmurId || ""}
+          onChange={(val) => {
+            state.create.form.kelompokUmurId = val ?? "";
+          }}
+          data={toSelectOptions(snapUmur.findMany.data, T.unnamedOption)}
+          disabled={snapUmur.findMany.loading}
+        />
+        <Button mt="xs" radius="xl" color={colors["blue-button"]} onClick={handleSubmit}>
+          {T.submit}
+        </Button>
+      </Stack>
     </Modal>
   );
 }

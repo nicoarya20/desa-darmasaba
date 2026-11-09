@@ -1,5 +1,19 @@
 /** Label UI section Indeks Kepuasan Masyarakat di beranda. */
 export const KEPUASAN_TEXT = {
+  title: "Indeks Kepuasan Masyarakat",
+  lead: "Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!",
+  cta: "Ajukan Responden",
+  loading: "Memuat data indeks kepuasan",
+  emptyTitle: "Belum ada responden",
+  emptyBody: "Jadilah warga pertama yang menilai pelayanan publik Desa Darmasaba.",
+  monthlyTitle: "Responden per bulan",
+  monthlyCaption: "Pelayanan terhadap publik Desa Darmasaba",
+  monthlySeries: "Responden",
+  total: "Total responden",
+  chartEmpty: "Belum ada data.",
+  jenisKelaminTitle: "Jenis kelamin",
+  ratingTitle: "Ulasan",
+  kelompokUmurTitle: "Umur",
   form: {
     title: "Ajukan Responden",
     name: "Nama",

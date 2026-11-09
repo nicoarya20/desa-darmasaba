@@ -12,7 +12,8 @@ export type RespondenItem = {
 };
 
 export type ChartSlice = { name: string; value: number; color: string };
-export type MonthlyCount = { month: string; Responden: number };
+/** `month` = label panjang (tooltip), `short` = label sumbu ringkas ("Mar 2026"). */
+export type MonthlyCount = { month: string; short: string; Responden: number };
 
 export type KepuasanSummary = {
   jenisKelamin: ChartSlice[];
@@ -36,7 +37,7 @@ export function countByCategory(
   });
 }
 
-/** Jumlah responden per bulan (pakai `tanggal`, jatuh ke `createdAt`), urut kronologis, label "Maret 2026". */
+/** Jumlah responden per bulan (pakai `tanggal`, jatuh ke `createdAt`), urut kronologis, label "Maret 2026" / "Mar 2026". */
 export function monthlyCounts(data: readonly (RespondenItem | null)[]): MonthlyCount[] {
   const counts = new Map<number, number>();
 
@@ -53,8 +54,10 @@ export function monthlyCounts(data: readonly (RespondenItem | null)[]): MonthlyC
     .sort(([a], [b]) => a - b)
     .map(([key, Responden]) => {
       const year = Math.floor(key / 100);
-      const monthName = new Date(year, (key % 100) - 1, 1).toLocaleString("id-ID", { month: "long" });
-      return { month: `${monthName} ${year}`, Responden };
+      const first = new Date(year, (key % 100) - 1, 1);
+      const long = first.toLocaleString("id-ID", { month: "long" });
+      const short = first.toLocaleString("id-ID", { month: "short" });
+      return { month: `${long} ${year}`, short: `${short} ${year}`, Responden };
     });
 }
 
@@ -67,6 +70,17 @@ export function summarizeKepuasan(data: readonly (RespondenItem | null)[] | null
     kelompokUmur: countByCategory(list, (r) => r.kelompokUmur, KELOMPOK_UMUR),
     monthly: monthlyCounts(list),
   };
+}
+
+/** Jumlah semua nilai kategori. */
+export function sumValues(slices: readonly ChartSlice[]): number {
+  return slices.reduce((acc, s) => acc + s.value, 0);
+}
+
+/** Porsi `value` dari `total` sebagai persen Indonesia ("33,3%"); total 0 → "0%". */
+export function formatShare(value: number, total: number): string {
+  const ratio = total > 0 ? value / total : 0;
+  return ratio.toLocaleString("id-ID", { style: "percent", maximumFractionDigits: 1 });
 }
 
 /** True bila minimal satu kategori bernilai > 0. */
