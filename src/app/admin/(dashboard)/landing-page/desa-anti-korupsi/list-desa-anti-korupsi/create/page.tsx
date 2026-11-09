@@ -21,8 +21,9 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { DokumenFolderEditor } from '../../_com/DokumenFolderEditor';
-import { isDraftListValid, uploadPendingDrafts } from '../../_lib/dokumen-draft';
-import { emptyIsiDraft, isFolderListValid, toIsiPayload, type IsiDraft } from '../../_lib/folder-draft';
+import { isIsiDraftValid } from '../../_lib/dokumen-bulk-actions';
+import { uploadPendingDrafts } from '../../_lib/dokumen-draft';
+import { emptyIsiDraft, toIsiPayload, type IsiDraft } from '../../_lib/folder-draft';
 import { uploadDokumenFile } from '../../_lib/upload-dokumen';
 
 export default function CreateDesaAntiKorupsi() {
@@ -37,8 +38,7 @@ export default function CreateDesaAntiKorupsi() {
   // Check if form is valid
   const isFormValid = () => {
     return (
-      isDraftListValid(isi.dokumen) &&
-      isFolderListValid(isi.folders) &&
+      isIsiDraftValid(isi) &&
       stateKorupsi.create.form.name?.trim() !== '' &&
       stateKorupsi.create.form.kategoriId?.trim() !== ''
     );
