@@ -1,12 +1,13 @@
 import { Image, Modal } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
+import { PotensiDetailInfo } from "./PotensiDetailInfo";
 import { sanitizePotensiHtml, type PotensiItem } from "./potensi.logic";
-import s from "./potensi.module.css";
+import s from "./potensi-detail.module.css";
 import { POTENSI_TEXT } from "./potensi.text";
 
 type Props = { item: PotensiItem | null; opened: boolean; onClose: () => void };
 
-/** Isi overlay: hero foto (kategori + judul) lalu deskripsi lengkap. Modal.Title/Body memberi nama & deskripsi dialog. */
+/** Isi overlay: hero foto (kategori + judul), deskripsi lengkap, info (lokasi/pengelola/status) + dokumentasi. Modal.Title/Body memberi nama & deskripsi dialog. */
 function DetailContent({ item, onClose }: { item: PotensiItem; onClose: () => void }) {
   const content = sanitizePotensiHtml(item.content);
   const kategori = item.kategori?.nama;
@@ -14,7 +15,7 @@ function DetailContent({ item, onClose }: { item: PotensiItem; onClose: () => vo
   return (
     <>
       <div className={s.hero}>
-        {item.image?.link ? <Image src={item.image.link} alt="" className={s.mediaImage} /> : null}
+        {item.image?.link ? <Image src={item.image.link} alt="" className={s.heroImage} /> : null}
         <span className={s.heroShade} aria-hidden />
         <button type="button" className={s.closeButton} aria-label={POTENSI_TEXT.close} onClick={onClose}>
           <IconX size={22} stroke={2.2} aria-hidden />
@@ -27,12 +28,12 @@ function DetailContent({ item, onClose }: { item: PotensiItem; onClose: () => vo
       {/* Padding di div dalam: padding bawaan Modal.Body (selector :not(:only-child)) sulit ditimpa dari CSS module. */}
       <Modal.Body>
         <div className={s.detailBody}>
-          <h3 className={s.eyebrow}>{POTENSI_TEXT.fullDescription}</h3>
           {content ? (
             <div className={s.richText} dangerouslySetInnerHTML={{ __html: content }} />
           ) : (
             <p className={s.richText}>{POTENSI_TEXT.emptyDescription}</p>
           )}
+          <PotensiDetailInfo item={item} />
         </div>
       </Modal.Body>
     </>

@@ -12,8 +12,11 @@ vi.mock('dompurify', () => ({ default: { sanitize } }));
 import { PotensiCard } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/PotensiCard';
 import { PotensiDetailModal } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/PotensiDetailModal';
 import {
+  POTENSI_LIST_LIMIT,
   RICH_TEXT_TAGS,
+  dokumentasiImages,
   htmlToPlainText,
+  potensiInfoRows,
   sanitizePotensiHtml,
   type PotensiItem,
 } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/potensi.logic';
@@ -63,6 +66,28 @@ describe('sanitizePotensiHtml', () => {
   });
 });
 
+describe('potensiInfoRows & dokumentasiImages', () => {
+  it('urutan Lokasi, Pengelola, Status; kosong/spasi → null', () => {
+    expect(potensiInfoRows({ ...item, lokasi: ' Subak Darmasaba ', pengelola: '  ', status: undefined })).toEqual([
+      { key: 'lokasi', value: 'Subak Darmasaba' },
+      { key: 'pengelola', value: null },
+      { key: 'status', value: null },
+    ]);
+  });
+
+  it('hanya foto bertautan; kunci dari id atau indeks', () => {
+    expect(dokumentasiImages({ ...item, dokumentasi: [{ id: 'a', link: 'u1' }, { link: null }, { link: 'u3' }] })).toEqual([
+      { key: 'a', link: 'u1' },
+      { key: '2', link: 'u3' },
+    ]);
+    expect(dokumentasiImages(item)).toEqual([]);
+  });
+
+  it('batas muat daftar cukup untuk semua potensi desa (bukan default 10)', () => {
+    expect(POTENSI_LIST_LIMIT).toBeGreaterThan(10);
+  });
+});
+
 describe('PotensiCard', () => {
   const html = render(<PotensiCard item={item} onOpen={() => {}} />);
 
@@ -89,20 +114,47 @@ describe('PotensiCard', () => {
 });
 
 describe('PotensiDetailModal', () => {
-  it('dialog: hero (kategori + judul), tombol tutup, deskripsi lengkap tersanitasi, latar blur', () => {
+  it('dialog: hero (kategori + judul), tombol tutup, deskripsi tanpa label, tersanitasi, latar blur', () => {
     const html = render(<PotensiDetailModal item={item} opened onClose={() => {}} />);
     expect(html).toContain('role="dialog"');
     expect(html).toContain('aria-modal="true"');
     expect(html).toMatch(/<h2[^>]*>Taman Beji Cengana<\/h2>/);
     expect(html).toContain('>Wisata<');
     expect(html).toContain(`aria-label="${POTENSI_TEXT.close}"`);
-    expect(html).toContain(POTENSI_TEXT.fullDescription);
+    expect(html).not.toContain('Deskripsi Lengkap');
     expect(html).toContain('<p>Taman Beji memadukan unsur spiritual.</p>');
     expect(html).not.toContain('<script');
     expect(html).toMatch(/--overlay-filter:\s*blur\(/);
     // Kelas kartu putih hanya di <section> dialog, bukan di lapisan inner selebar layar.
     expect(html.match(/modalContent/g)).toHaveLength(1);
     expect(html).toMatch(/<section[^>]*modalContent/);
+  });
+
+  it('tanpa data info: kotak Lokasi/Pengelola/Status tampil "–" (+ teks pembaca layar), galeri disembunyikan', () => {
+    const html = render(<PotensiDetailModal item={item} opened onClose={() => {}} />);
+    for (const label of Object.values(POTENSI_TEXT.info)) expect(html).toMatch(new RegExp(`<dt[^>]*>${label}</dt>`));
+    expect(html.match(/<dd/g)).toHaveLength(3);
+    expect(html.match(new RegExp(`>${POTENSI_TEXT.emptyValue}<`, 'g'))).toHaveLength(3);
+    expect(html).toContain(POTENSI_TEXT.emptyValueLabel);
+    expect(html).not.toContain(POTENSI_TEXT.dokumentasi);
+  });
+
+  it('dengan data info & dokumentasi: nilai tampil, status berkelas hijau, foto ber-alt', () => {
+    const full = {
+      ...item,
+      lokasi: 'Subak Darmasaba',
+      pengelola: 'Pokdarwis Desa',
+      status: 'Buka untuk Umum',
+      dokumentasi: [{ id: 'd1', link: 'https://example.test/d1.jpg' }, { id: 'd2', link: 'https://example.test/d2.jpg' }],
+    };
+    const html = render(<PotensiDetailModal item={full} opened onClose={() => {}} />);
+    expect(html).toMatch(/<dd[^>]*>Subak Darmasaba<\/dd>/);
+    expect(html).toMatch(/<dd[^>]*>Pokdarwis Desa<\/dd>/);
+    expect(html).toMatch(/<dd[^>]*infoStatus[^>]*>Buka untuk Umum<\/dd>/);
+    expect(html).not.toContain(POTENSI_TEXT.emptyValueLabel);
+    expect(html).toMatch(new RegExp(`<h3[^>]*>${POTENSI_TEXT.dokumentasi}</h3>`));
+    expect(html).toContain(`alt="${POTENSI_TEXT.dokumentasiAlt(item.name, 2)}"`);
+    expect(html).toContain('https://example.test/d2.jpg');
   });
 
   it('konten kosong menampilkan teks pengganti', () => {

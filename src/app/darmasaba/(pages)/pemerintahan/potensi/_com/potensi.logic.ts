@@ -8,7 +8,32 @@ export type PotensiItem = {
   content?: string | null;
   kategori?: { nama?: string | null } | null;
   image?: { link?: string | null } | null;
+  // TODO(potensi-info): 4 field di bawah belum ada di model PotensiDesa — menunggu backend rekan.
+  // Usulan kontrak respons find-many: lokasi/pengelola/status = string opsional (mis. "Buka untuk Umum"),
+  // dokumentasi = relasi FileStorage[] di-include ({ id, link }). Sampai ada, overlay menampilkan "–".
+  lokasi?: string | null;
+  pengelola?: string | null;
+  status?: string | null;
+  dokumentasi?: ReadonlyArray<{ id?: string | null; link?: string | null }> | null;
 };
+
+/**
+ * Batas muat halaman daftar: semua potensi tampil di satu halaman (data desa belasan, jauh di bawah batas ini).
+ * Default `findMany.load()` = 10 sehingga data ke-11 dst. tidak pernah tampil dan kartu jumlah salah.
+ */
+export const POTENSI_LIST_LIMIT = 100;
+
+export type PotensiInfoKey = "lokasi" | "pengelola" | "status";
+
+/** Baris info overlay (Lokasi, Pengelola, Status) berurutan; `value` null bila kosong (UI menampilkan "–"). */
+export function potensiInfoRows(item: PotensiItem): { key: PotensiInfoKey; value: string | null }[] {
+  return (["lokasi", "pengelola", "status"] as const).map((key) => ({ key, value: item[key]?.trim() || null }));
+}
+
+/** Foto dokumentasi yang punya tautan; kosong → galeri disembunyikan. */
+export function dokumentasiImages(item: PotensiItem): { key: string; link: string }[] {
+  return (item.dokumentasi ?? []).flatMap((foto, i) => (foto.link ? [{ key: foto.id ?? `${i}`, link: foto.link }] : []));
+}
 
 /** Tag yang diizinkan untuk konten lengkap (sama dengan tampilan detail di admin). */
 export const RICH_TEXT_TAGS = ["p", "br", "strong", "em", "u", "ul", "ol", "li"];
