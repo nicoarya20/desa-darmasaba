@@ -32,7 +32,7 @@ export const ppidMenu: NavItem = {
 
 export const desaMenu: NavItem = {
   id: "Desa",
-  name: "Desa",
+  name: "Pemerintahan",
   path: "",
   children: [
     { id: "Desa_1", name: "Profil", path: "/admin/desa/profil/profil-desa" },
@@ -90,7 +90,7 @@ export const ekonomiMenu: NavItem = {
     { id: "Ekonomi_5", name: "Jumlah Pengangguran", path: "/admin/ekonomi/jumlah-pengangguran" },
     { id: "Ekonomi_6", name: "Jumlah penduduk usia kerja yang menganggur", path: "/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia" },
     { id: "Ekonomi_7", name: "Jumlah Penduduk Miskin", path: "/admin/ekonomi/jumlah-penduduk-miskin" },
-    { id: "Ekonomi_8", name: "Program Kemiskinan", path: "/admin/ekonomi/program-kemiskinan" },
+    { id: "Ekonomi_8", name: "Program Pengentasan Kemiskinan", path: "/admin/ekonomi/program-kemiskinan" },
     { id: "Ekonomi_9", name: "Sektor Unggulan Desa", path: "/admin/ekonomi/sektor-unggulan-desa" },
     { id: "Ekonomi_10", name: "Demografi Pekerjaan", path: "/admin/ekonomi/demografi-pekerjaan" },
     { id: "Ekonomi_11", name: "Kesejahteraan Masyarakat", path: "/admin/ekonomi/kesejahteraan-masyarakat" },

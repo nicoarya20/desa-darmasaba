@@ -49,7 +49,7 @@ const navbarListMenu = [
 
     {
         id: "2",
-        name: "Desa",
+        name: "Pemerintahan",
         children: [
             {
                 id: "2.1",
@@ -227,7 +227,7 @@ const navbarListMenu = [
             },
             {
                 id: "5.8",
-                name: "Program Kemiskinan",
+                name: "Program Pengentasan Kemiskinan",
                 href: "/darmasaba/ekonomi/program-kemiskinan"
             },
             {

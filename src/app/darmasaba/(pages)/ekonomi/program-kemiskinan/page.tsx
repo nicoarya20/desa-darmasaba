@@ -82,7 +82,7 @@ function Page() {
               fw="bold"
               lh={{ base: 1.2, md: 1.2 }}
             >
-              Program Kemiskinan
+              Program Pengentasan Kemiskinan
             </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 3 }}>

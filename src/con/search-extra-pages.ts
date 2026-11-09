@@ -20,7 +20,7 @@ const searchExtraPages: MenuItem[] = [
   },
   {
     id: 'x2',
-    name: 'Desa',
+    name: 'Pemerintahan',
     children: [
       { id: 'x2.1', name: 'Struktur Perangkat Desa', href: '/darmasaba/desa/profil/struktur-perangkat-desa' },
       { id: 'x2.2', name: 'Galeri Video', href: '/darmasaba/desa/galery/video' },
