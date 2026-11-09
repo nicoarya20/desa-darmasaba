@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.229] - 2026-11-09
+### Added
+- **Desa Anti Korupsi: tiap program kini punya folder berisi banyak dokumen.** Admin dapat mengunggah beberapa dokumen sekaligus, mengubah judul, menghapus, dan mengatur urutan dokumen. Di halaman publik, tiap program tampil sebagai folder dengan jumlah dokumen, dan setiap dokumen bisa dipratinjau atau diunduh. Dokumen tunggal yang sudah ada otomatis menjadi dokumen pertama di folder programnya.
+- **Pengaturan visibilitas menu (khusus Super Admin dan Developer):** halaman baru Pengaturan › Visibilitas Menu untuk menampilkan atau menyembunyikan submenu website publik tanpa deploy ulang. Submenu yang disembunyikan hilang dari navbar, pencarian, dan Peta Informasi, dan halamannya menampilkan 404 bila dibuka langsung.
+
+### Changed
+- **Prestasi dan Penghargaan kini satu data.** Semua penghargaan dipindahkan menjadi prestasi berkategori "Penghargaan" lengkap dengan keterangan juara/capaian, dan dikelola di satu menu admin "Prestasi dan Penghargaan". Menu admin Penghargaan dihapus. Tautan lama `/darmasaba/penghargaan/...` dan `/admin/pemerintahan/penghargaan` dialihkan otomatis. Satu penghargaan yang judulnya sama persis dengan prestasi yang sudah ada digabung ke prestasi tersebut.
+- Submenu Kesehatan yang disembunyikan (Data Kesehatan Warga, Puskesmas, Penanganan Darurat, Info Wabah/Penyakit) kini menampilkan 404 bila dibuka langsung lewat URL, dan hasil pencarian konten kesehatan terkait tidak lagi ditampilkan. Super Admin dapat menampilkannya kembali lewat Pengaturan › Visibilitas Menu.
+- Halaman publik `/darmasaba` kini dirender per permintaan agar pengaturan visibilitas menu langsung berlaku.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261109103000_dokumen_desa_anti_korupsi`, `20261109120000_add_menu_visibility`, `20261109123000_merge_penghargaan_into_prestasi_desa` (tabel `Penghargaan` dihapus setelah datanya disalin).
+
 ## [0.1.228] - 2026-11-09
 ### Changed
 - **Menu "Desa" kini bernama "Pemerintahan", termasuk alamat halamannya.** Halaman publik pindah dari `/darmasaba/desa/...` ke `/darmasaba/pemerintahan/...` dan halaman admin dari `/admin/desa/...` ke `/admin/pemerintahan/...`. Alamat lama (bookmark, link yang pernah dibagikan, hasil Google) otomatis dialihkan permanen ke alamat baru.
