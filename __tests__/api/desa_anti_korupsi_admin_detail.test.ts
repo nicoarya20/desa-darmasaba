@@ -115,22 +115,25 @@ describe('label tampilan', () => {
 const jsonRes = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
+// Tipe `fetch` Bun punya properti tambahan (preconnect), jadi mock fungsi biasa perlu di-cast.
+const asFetch = (mock: ReturnType<typeof vi.fn>) => mock as unknown as typeof fetch;
+
 describe('sampah-api', () => {
   it('muatSampah: GET /:id/sampah dan mengembalikan data', async () => {
     const item = { id: 'd1', judul: 'A', folderId: null, folderNama: null, file: {}, deletedAt: '2026-11-01T00:00:00.000Z', sisaHari: 22 };
     const fetchImpl = vi.fn(async () => jsonRes(200, { success: true, data: [item] }));
-    const res = await muatSampah('p 1', { fetchImpl });
+    const res = await muatSampah('p 1', { fetchImpl: asFetch(fetchImpl) });
     expect(fetchImpl).toHaveBeenCalledWith('/api/landingpage/desaantikorupsi/p%201/sampah', { method: 'GET' });
     expect(res).toEqual({ ok: true, data: [item] });
   });
 
   it('pulihkanSampah: POST /sampah/:id/pulihkan; 409 meneruskan pesan server', async () => {
     const ok = vi.fn(async () => jsonRes(200, { success: true, data: { id: 'd1', folderId: 'fa' } }));
-    expect(await pulihkanSampah('d1', { fetchImpl: ok })).toEqual({ ok: true, data: { id: 'd1', folderId: 'fa' } });
+    expect(await pulihkanSampah('d1', { fetchImpl: asFetch(ok) })).toEqual({ ok: true, data: { id: 'd1', folderId: 'fa' } });
     expect(ok).toHaveBeenCalledWith('/api/landingpage/desaantikorupsi/sampah/d1/pulihkan', { method: 'POST' });
 
     const conflict = vi.fn(async () => jsonRes(409, { success: false, message: 'Berkas yang sama sudah ada di folder asal' }));
-    expect(await pulihkanSampah('d1', { fetchImpl: conflict })).toEqual({
+    expect(await pulihkanSampah('d1', { fetchImpl: asFetch(conflict) })).toEqual({
       ok: false,
       status: 409,
       message: 'Berkas yang sama sudah ada di folder asal',
@@ -139,7 +142,7 @@ describe('sampah-api', () => {
 
   it('hapusPermanenSampah: DELETE /sampah/:id; body bukan JSON → pesan bawaan', async () => {
     const fetchImpl = vi.fn(async () => new Response('<html>502</html>', { status: 502 }));
-    const res = await hapusPermanenSampah('d1', { fetchImpl });
+    const res = await hapusPermanenSampah('d1', { fetchImpl: asFetch(fetchImpl) });
     expect(fetchImpl).toHaveBeenCalledWith('/api/landingpage/desaantikorupsi/sampah/d1', { method: 'DELETE' });
     expect(res).toEqual({ ok: false, status: 502, message: 'Gagal menghapus dokumen secara permanen' });
   });
@@ -148,7 +151,7 @@ describe('sampah-api', () => {
     const fetchImpl = vi.fn(async () => {
       throw new TypeError('Failed to fetch');
     });
-    const res = await muatSampah('p1', { fetchImpl });
+    const res = await muatSampah('p1', { fetchImpl: asFetch(fetchImpl) });
     expect(res).toMatchObject({ ok: false, status: 0 });
     expect(res.ok ? '' : res.message).toContain('Tidak dapat terhubung');
   });
