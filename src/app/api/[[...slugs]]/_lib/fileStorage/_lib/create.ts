@@ -66,6 +66,8 @@ const fileStorageCreate = async (context: Context) => {
       realName: file.name,
       path: pathName,
       mimeType: finalMimeType,
+      // Ukuran asli (sebelum gzip) = ukuran yang diterima pengguna saat unduh/ZIP.
+      size: file.size,
       category,
       link: category === "image" ? `/api/img/${finalName}` : `/api/fileStorage/findUnique/${finalName}`,
     },
