@@ -32,7 +32,7 @@ const detail = {
 
 describe('DokumenFolderView (detail admin)', () => {
   it('satu Accordion item per folder + Umum, header berisi nama & jumlah dokumen', () => {
-    const html = render(<DokumenFolderView {...detail} />);
+    const html = render(<DokumenFolderView programId="p1" {...detail} />);
     expect(html.match(/data-folder-key="/g)).toHaveLength(3);
     expect(html.indexOf('Laporan Keuangan')).toBeLessThan(html.indexOf('Surat Keputusan'));
     expect(html.indexOf('Surat Keputusan')).toBeLessThan(html.indexOf('>Umum<'));
@@ -41,7 +41,7 @@ describe('DokumenFolderView (detail admin)', () => {
   });
 
   it('hanya folder pertama yang berisi dokumen terbuka; isinya tabel (no, judul, tipe, aksi) tanpa iframe inline', () => {
-    const html = render(<DokumenFolderView {...detail} />);
+    const html = render(<DokumenFolderView programId="p1" {...detail} />);
     expect(html).toContain('<table');
     // folder lain tertutup → isinya belum dirender, halaman tidak memanjang
     expect([...html.matchAll(/data-dokumen-id="([^"]+)"/g)].map((m) => m[1])).toEqual(['a1', 'a2']);
@@ -53,7 +53,7 @@ describe('DokumenFolderView (detail admin)', () => {
   });
 
   it('tanpa folder & dokumen → pesan kosong', () => {
-    expect(render(<DokumenFolderView folders={[]} dokumenUmum={[]} />)).toContain('Tidak ada dokumen tersedia');
+    expect(render(<DokumenFolderView programId="p1" folders={[]} dokumenUmum={[]} />)).toContain('Tidak ada dokumen tersedia');
   });
 
   it('halaman detail admin memakai DokumenFolderView dengan folders & dokumenUmum', async () => {
@@ -63,7 +63,7 @@ describe('DokumenFolderView (detail admin)', () => {
       path.resolve(__dirname, '../../src/app/admin/(dashboard)/landing-page/desa-anti-korupsi/list-desa-anti-korupsi/[id]/page.tsx'),
       'utf8',
     );
-    expect(src).toContain('folders={data.folders ?? []}');
+    expect(src).toContain('programId={data.id} folders={data.folders ?? []}');
     expect(src).toContain('dokumenUmum={data.dokumenUmum ?? []}');
   });
 });
