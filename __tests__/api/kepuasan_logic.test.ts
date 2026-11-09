@@ -10,7 +10,13 @@ import {
   toSelectOptions,
   type RespondenItem,
 } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.logic';
-import { RATING } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.meta';
+import {
+  JENIS_KELAMIN,
+  KELOMPOK_UMUR,
+  RATING,
+  RATING_FALLBACK_COLOR,
+  ratingColor,
+} from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.meta';
 
 // test-only: bentuk meniru respons responden.findMany. Tanggal di tengah bulan agar
 // tidak bergeser bulan di zona waktu mana pun (logika memakai waktu lokal seperti kode lama).
@@ -157,5 +163,35 @@ describe('sumValues & formatShare', () => {
 
   it('total 0 → 0% (bukan NaN)', () => {
     expect(formatShare(0, 0).replace(/\s/g, '')).toBe('0%');
+  });
+});
+
+describe('warna rating (meta)', () => {
+  it('urut baik → buruk: hijau tua, hijau muda, jingga, merah (token tema Mantine)', () => {
+    expect(RATING.map((c) => c.color)).toEqual([
+      'var(--mantine-color-green-8)',
+      'var(--mantine-color-lime-8)',
+      'var(--mantine-color-orange-6)',
+      'var(--mantine-color-red-8)',
+    ]);
+  });
+
+  it('ratingColor tanpa beda huruf besar/kecil & spasi tepi', () => {
+    expect(ratingColor('  SANGAT baik ')).toBe('var(--mantine-color-green-8)');
+    expect(ratingColor('kurang baik')).toBe('var(--mantine-color-orange-6)');
+  });
+
+  it('rating tak dikenal → warna netral', () => {
+    expect(ratingColor('Cukup')).toBe(RATING_FALLBACK_COLOR);
+    expect(ratingColor('')).toBe(RATING_FALLBACK_COLOR);
+  });
+
+  it('jenis kelamin & umur tetap palet biru brand', () => {
+    expect(JENIS_KELAMIN.map((c) => c.color)).toEqual(['#0A4E78', '#8AC1E3']);
+    expect(KELOMPOK_UMUR.map((c) => c.color)).toEqual(['#0A4E78', '#2F91CC', '#8AC1E3']);
+  });
+
+  it('summarizeKepuasan membawa warna rating ke slice', () => {
+    expect(summarizeKepuasan([]).rating.map((s) => s.color)).toEqual(RATING.map((c) => c.color));
   });
 });
