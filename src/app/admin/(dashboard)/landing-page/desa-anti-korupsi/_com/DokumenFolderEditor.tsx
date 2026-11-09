@@ -7,7 +7,9 @@ import { duplicateFileError } from '../_lib/dokumen-bulk';
 import { orderedDokumenKeys } from '../_lib/dokumen-bulk-actions';
 import { draftsFromFiles, type DokumenDraft } from '../_lib/dokumen-draft';
 import { groupDrafts, moveDraftToFolder, moveDraftWithinFolder, type IsiDraft } from '../_lib/folder-draft';
-import { DokumenBulkActions } from './DokumenBulkActions';
+import { filterDraftGroups, posisiDraft, sortFolderAction } from '../_lib/urut-draft';
+import { DokumenBulkActions, showNotice } from './DokumenBulkActions';
+import { DokumenCariBox } from './DokumenCariBox';
 import { DokumenGroupAccordion, folderKeyOfValue as toFolderKey, folderValueOf as toValue } from './DokumenGroupAccordion';
 import { DokumenPreviewDialog } from './DokumenPreviewDialog';
 import { DokumenUploadZone } from './DokumenUploadZone';
@@ -27,18 +29,29 @@ function usePreviewUrl(draft: DokumenDraft | null): string | null {
   return objectUrl ?? draft?.link ?? null;
 }
 
-type Props = { value: IsiDraft; onChange: (next: IsiDraft) => void };
+type Props = {
+  value: IsiDraft;
+  onChange: (next: IsiDraft) => void;
+  /** Id program tersimpan (hanya halaman edit) — mengaktifkan "Salin ke program lain…". */
+  programId?: string;
+};
 
-/** Editor isi program: kelola folder, unggah ke folder terpilih, atur/pindahkan dokumen, aksi massal terpilih. */
-export function DokumenFolderEditor({ value, onChange }: Props) {
+/** Editor isi program: kelola folder, unggah ke folder terpilih, cari/urutkan/pindahkan dokumen, aksi massal terpilih. */
+export function DokumenFolderEditor({ value, onChange, programId }: Props) {
   const [previewKey, setPreviewKey] = useState<string | null>(null);
   const [target, setTarget] = useState<string>(FOLDER_UMUM_KEY);
   const [opened, setOpened] = useState<string[]>([]);
+  const [query, setQuery] = useState('');
   const previewDraft = value.dokumen.find((d) => d.key === previewKey) ?? null;
   const previewUrl = usePreviewUrl(previewDraft);
 
   const groups = groupDrafts(value);
-  const { selection, toggle, selectAll, replace } = useDokumenSelection(value.dokumen, orderedDokumenKeys(groups));
+  // Pencarian hanya menyaring tampilan: "Pilih semua" & rentang Shift+klik memakai dokumen yang terlihat,
+  // sedangkan aksi massal tetap berlaku pada semua key terpilih.
+  const searching = query.trim() !== '';
+  const visibleGroups = filterDraftGroups(groups, query);
+  const shownCount = visibleGroups.reduce((n, g) => n + g.dokumen.length, 0);
+  const { selection, toggle, selectAll, replace } = useDokumenSelection(value.dokumen, orderedDokumenKeys(visibleGroups));
   const fileError = duplicateFileError(value);
   const folderOptions = groups.map((g) => ({ value: toValue(g.key), label: g.nama.trim() || '(tanpa nama)' }));
   // Folder tujuan yang sudah dihapus → kembali ke "Umum".
@@ -50,6 +63,12 @@ export function DokumenFolderEditor({ value, onChange }: Props) {
   const remove = (key: string) => {
     if (previewKey === key) setPreviewKey(null);
     onChange({ ...value, dokumen: value.dokumen.filter((d) => d.key !== key) });
+  };
+
+  const sortFolder = (folderKey: string | null, optionValue: string) => {
+    const outcome = sortFolderAction(value, folderKey, optionValue);
+    if (outcome.isi !== value) onChange(outcome.isi);
+    showNotice(outcome);
   };
 
   const drop = (files: File[]) => {
@@ -70,12 +89,19 @@ export function DokumenFolderEditor({ value, onChange }: Props) {
           <Text fz="xs">{fileError}. Hapus salah satunya atau pindahkan ke folder lain.</Text>
         </Alert>
       )}
+      {value.dokumen.length > 0 && (
+        <DokumenCariBox query={query} onQueryChange={setQuery} shown={shownCount} total={value.dokumen.length} />
+      )}
       <DokumenGroupAccordion
-        groups={groups}
+        groups={visibleGroups}
         folderOptions={folderOptions}
         selection={selection}
-        opened={opened}
+        // Selama mencari semua kelompok yang cocok dibuka agar hasil langsung terlihat.
+        opened={searching ? visibleGroups.map((g) => toValue(g.key)) : opened}
         onOpenedChange={setOpened}
+        posisi={posisiDraft(groups)}
+        reorderLocked={searching}
+        onSortFolder={sortFolder}
         onToggleSelect={toggle}
         onSelectAll={selectAll}
         onJudul={(key, judul) => updateDokumen(key, { judul })}
@@ -84,7 +110,13 @@ export function DokumenFolderEditor({ value, onChange }: Props) {
         onPreview={setPreviewKey}
         onRemove={remove}
       />
-      <DokumenBulkActions value={value} selection={selection} onChange={onChange} onSelectionChange={replace} />
+      <DokumenBulkActions
+        value={value}
+        selection={selection}
+        onChange={onChange}
+        onSelectionChange={replace}
+        programId={programId}
+      />
 
       <DokumenPreviewDialog
         preview={

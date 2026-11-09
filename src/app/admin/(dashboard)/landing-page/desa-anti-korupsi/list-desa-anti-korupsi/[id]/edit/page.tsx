@@ -189,7 +189,11 @@ export default function EditDesaAntiKorupsi() {
             clearable
           />
 
-          <DokumenFolderEditor value={isi} onChange={setIsi} />
+          <DokumenFolderEditor
+            value={isi}
+            onChange={setIsi}
+            programId={typeof params?.id === 'string' ? params.id : undefined}
+          />
 
           <Group justify="right">
             {/* Tombol Batal */}

@@ -54,7 +54,7 @@ describe('draft dari berkas & data tersimpan', () => {
     expect(new Set(drafts.map((d) => d.key)).size).toBe(2);
   });
 
-  it('draftsFromSaved memetakan id, fileId, judul, folder & info berkas', () => {
+  it('draftsFromSaved memetakan id, fileId, judul, folder, info berkas, ukuran & tanggal unggah', () => {
     const [draft] = draftsFromSaved([
       {
         id: 'd1',
@@ -74,6 +74,8 @@ describe('draft dari berkas & data tersimpan', () => {
       link: '/api/fileStorage/findUnique/x',
       mimeType: 'application/pdf',
       realName: 'perdes.pdf',
+      size: 1024,
+      createdAt: '2026-11-09T00:00:00.000Z',
     });
   });
 
@@ -100,7 +102,7 @@ describe('uploadPendingDrafts + toDokumenPayload', () => {
     const uploaded = await uploadPendingDrafts(drafts, upload);
     expect(upload).toHaveBeenCalledTimes(1);
     expect(upload).toHaveBeenCalledWith(pending);
-    expect(uploaded[1]).toMatchObject({ fileId: 'f-new', file: undefined });
+    expect(uploaded[1]).toMatchObject({ fileId: 'f-new', file: undefined, size: 1 });
 
     expect(toDokumenPayload(uploaded)).toEqual([
       { id: 'd1', fileId: 'f1', judul: 'Lama', urutan: 0, folder: null },

@@ -73,7 +73,8 @@ describe('DokumenFolderEditor (create/edit admin)', () => {
     const html = render(<DokumenFolderEditor value={isiDraftFromDetail(detail)} onChange={() => undefined} />);
     expect(html).toContain('Folder (2/30)');
     expect(html).toContain('Tambah folder');
-    expect(html).toContain('value="Laporan Keuangan"');
+    // Nama folder tampil sebagai teks ganti-nama-inline (InlineEditText), bukan <input> permanen.
+    expect(html).toContain('aria-label="Nama folder 1: Laporan Keuangan. Ganti nama"');
     expect(html).toContain('Unggah ke folder');
     expect(html).toContain('Dokumen (3)');
     // Hapus folder kini lewat menu aksi folder (FolderActionsMenu), bukan tombol tersendiri.
