@@ -1,12 +1,14 @@
 import prisma from "@/lib/prisma";
+import { DESA_ANTI_KORUPSI_INCLUDE, type DokumenInput } from "@/lib/desa-anti-korupsi-dokumen";
 import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
+import { prepareDokumenSync } from "./dokumen-sync";
 
 type FormCreate = {
   name: string;
   deskripsi: string;
-  fileId: string;
   kategoriId: string; // minimal satu kategori
+  dokumen?: DokumenInput[]; // isi folder; boleh kosong
 };
 
 export default async function desaAntiKorupsiCreate(context: Context) {
@@ -16,18 +18,22 @@ export default async function desaAntiKorupsiCreate(context: Context) {
     throw new Error("kategoriId wajib diisi");
   }
 
+  // Program baru belum punya dokumen tersimpan → semua dokumen wajib tanpa id.
+  const sync = await prepareDokumenSync([], body.dokumen ?? []);
+  if (!sync.ok) {
+    context.set.status = 400;
+    return { success: false, message: sync.message };
+  }
+
   try {
-    // Create langsung data AdministrasiOnline
     const result = await prisma.desaAntiKorupsi.create({
       data: {
         name: body.name,
         deskripsi: body.deskripsi,
-        fileId: body.fileId,
-        kategoriId: body.kategoriId, // relasi ke JenisLayanan
+        kategoriId: body.kategoriId,
+        dokumen: { create: sync.plan.create },
       },
-      include: {
-        kategori: true, // Include data relasi
-      },
+      include: DESA_ANTI_KORUPSI_INCLUDE,
     });
 
     return {

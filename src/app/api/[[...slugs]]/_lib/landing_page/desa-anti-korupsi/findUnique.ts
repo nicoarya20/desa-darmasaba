@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { DESA_ANTI_KORUPSI_INCLUDE } from "@/lib/desa-anti-korupsi-dokumen";
 import { Context } from "elysia";
 
 export default async function desaAntiKorupsiFindUnique(context: Context) {
@@ -11,10 +12,7 @@ export default async function desaAntiKorupsiFindUnique(context: Context) {
 
   const data = await prisma.desaAntiKorupsi.findUnique({
     where: { id },
-    include: {
-      kategori: true,
-      file: true,
-    },
+    include: DESA_ANTI_KORUPSI_INCLUDE, // kategori + dokumen aktif urut `urutan`
   });
 
   if (!data) {

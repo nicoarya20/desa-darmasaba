@@ -32,7 +32,7 @@ const ctx = (body: any, id?: string): any => ({
   set: { status: 200 },
 });
 
-const dakBody = { name: "Program A", deskripsi: "x", fileId: "f", kategoriId: "k" };
+const dakBody = { name: "Program A", deskripsi: "x", kategoriId: "k" };
 const respondenBody = {
   name: "Budi",
   tanggal: "2026-01-01",
