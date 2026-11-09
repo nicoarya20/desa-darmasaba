@@ -337,12 +337,14 @@ File: `src/con/navbar-list-menu.ts`
 | 9 | Pendidikan | 7 |
 | 10 | Musik | 1 |
 
+Visibilitas submenu: field `hidden` di config = **default**; Super Admin/Developer (role 0/1) bisa menimpanya per submenu di admin **Pengaturan › Visibilitas Menu** (`/admin/pengaturan/visibilitas-menu`, tabel `MenuVisibility`, key = href submenu). Menu efektif dihitung di `src/app/darmasaba/_com/menu-visibility.logic.ts`, disuplai layout publik (server) lewat `MenuVisibilityProvider`, dan dipakai navbar, pencarian (menu + hasil konten), serta Peta Informasi. Submenu tersembunyi → halamannya (termasuk sub-path per segmen) 404 lewat `MenuVisibilityGuard`; menu utama yang semua submenunya tersembunyi ikut hilang.
+
 ### Sidebar Admin
 
 File: `src/app/admin/_com/list_PageAdmin.tsx` (re-export saja; data sebenarnya ada di `src/app/admin/_com/nav/domains.ts` dan dirakit di `src/app/admin/_com/nav/index.ts`)
 
 Export: `navBar` (semua domain), `role1`, `role2`, `role3` (role-based subset), `devBar`.  
-Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`. Filter berdasarkan `menuIds` (dengan normalisasi ID) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`).
+Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`. Filter berdasarkan `menuIds` (dengan normalisasi ID) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access.
 
 ---
 
