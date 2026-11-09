@@ -2421,25 +2421,26 @@ model DataPendidikan {
 // ========================================= USER ========================================= //
 
 model User {
-  id             String           @id @default(cuid())
-  username       String
-  nomor          String?          @unique // nullable: user login Google tidak punya nomor HP
-  email          String?          @unique // identitas dari Google OAuth
-  googleId       String?          @unique // Google account ID, di-link saat login Google pertama
-  avatarUrl      String? // foto profil dari Google — dipetakan ke Better Auth `image`
-  emailVerified  Boolean          @default(false) // Better Auth core field
-  roleId         String           @default("2")
-  isActive       Boolean          @default(false)
-  sessionInvalid Boolean          @default(false)
-  lastLogin      DateTime?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now()) @updatedAt
-  permissions    Json?
-  sessions       UserSession[] // ⚠️ legacy JWT session — di-drop setelah cutover Better Auth
-  authSessions   Session[] // Better Auth session
-  accounts       Account[] // Better Auth account (provider google)
-  role           Role             @relation(fields: [roleId], references: [id])
-  menuAccesses   UserMenuAccess[]
+  id                    String           @id @default(cuid())
+  username              String
+  nomor                 String?          @unique // nullable: user login Google tidak punya nomor HP
+  email                 String?          @unique // identitas dari Google OAuth
+  googleId              String?          @unique // Google account ID, di-link saat login Google pertama
+  avatarUrl             String? // foto profil dari Google — dipetakan ke Better Auth `image`
+  emailVerified         Boolean          @default(false) // Better Auth core field
+  roleId                String           @default("2")
+  isActive              Boolean          @default(false)
+  sessionInvalid        Boolean          @default(false)
+  lastLogin             DateTime?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @default(now()) @updatedAt
+  permissions           Json?
+  sessions              UserSession[] // ⚠️ legacy JWT session — di-drop setelah cutover Better Auth
+  authSessions          Session[] // Better Auth session
+  accounts              Account[] // Better Auth account (provider google)
+  role                  Role             @relation(fields: [roleId], references: [id])
+  menuAccesses          UserMenuAccess[]
+  menuVisibilityUpdates MenuVisibility[]
 
   @@map("users")
 }
@@ -2494,6 +2495,19 @@ model UserMenuAccess {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, menuId]) // Satu user tidak bisa punya akses menu yang sama dua kali
+}
+
+// Override visibilitas submenu website publik (navbar/pencarian/Peta Informasi).
+// Tanpa row = pakai default `hidden` di src/con/navbar-list-menu.ts. menuKey = href
+// submenu (lebih stabil dari id urut "3.2"); divalidasi aplikasi terhadap config.
+model MenuVisibility {
+  id          String   @id @default(cuid())
+  menuKey     String   @unique
+  isVisible   Boolean
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // ===================================== BETTER AUTH ===================================== //
