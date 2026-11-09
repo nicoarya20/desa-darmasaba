@@ -1,19 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
-import { DESA_ANTI_KORUPSI_INCLUDE, type DokumenInput } from "@/lib/desa-anti-korupsi-dokumen";
+import type { DokumenInput } from "@/lib/desa-anti-korupsi-dokumen";
+import type { FolderInput } from "@/lib/desa-anti-korupsi-folder";
+import { DESA_ANTI_KORUPSI_DETAIL_INCLUDE, toProgramDetail } from "@/lib/desa-anti-korupsi-view";
 import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
-import { prepareDokumenSync } from "./dokumen-sync";
+import { applyProgramSync, prepareProgramSync } from "./dokumen-sync";
 
 type FormUpdateDesaAntiKorupsi = {
   name?: string;
   deskripsi?: string;
   kategoriId?: string; // minimal satu kategori
-  // undefined = isi folder tidak diubah; array = set dokumen final (sinkronisasi penuh)
+  // undefined = folder tidak diubah; array = set folder final (yang hilang dihapus, dokumennya ke "Umum")
+  folders?: FolderInput[];
+  // undefined = dokumen tidak diubah; array = set dokumen final (sinkronisasi penuh)
   dokumen?: DokumenInput[];
 };
 
-/** Admin: ubah program; bila `dokumen` dikirim, isi folder disinkronkan (tambah/ubah/hapus). */
+/** Admin: ubah program; bila `folders`/`dokumen` dikirim, isinya disinkronkan dalam satu transaksi. */
 export default async function desaAntiKorupsiUpdate(context: Context) {
   const body = context.body as FormUpdateDesaAntiKorupsi;
 
@@ -34,43 +38,28 @@ export default async function desaAntiKorupsiUpdate(context: Context) {
 
   try {
     let updated;
-    if (body.dokumen === undefined) {
+    if (body.folders === undefined && body.dokumen === undefined) {
       updated = await prisma.desaAntiKorupsi.update({
         where: { id },
         data: fields,
-        include: DESA_ANTI_KORUPSI_INCLUDE,
+        include: DESA_ANTI_KORUPSI_DETAIL_INCLUDE,
       });
     } else {
-      const existing = await prisma.dokumenDesaAntiKorupsi.findMany({
-        where: { desaAntiKorupsiId: id, isActive: true },
-        select: { id: true, fileId: true, judul: true, urutan: true },
-      });
-      const sync = await prepareDokumenSync(existing, body.dokumen);
+      const sync = await prepareProgramSync(id, { folders: body.folders, dokumen: body.dokumen });
       if (!sync.ok) {
         context.set.status = 400;
         return { success: false, message: sync.message };
       }
       const { plan } = sync;
 
-      // Satu transaksi: dokumen yang dibuang di-soft-delete, judul/urutan diperbarui,
-      // lalu program di-update sambil membuat dokumen baru (include = isi folder final).
+      // Satu transaksi: field program, folder (buat/ubah/hapus → dokumen ke "Umum"), lalu dokumen;
+      // hasil akhir dibaca ulang dengan include detail (isi folder final).
       updated = await prisma.$transaction(async (tx) => {
-        await tx.dokumenDesaAntiKorupsi.updateMany({
-          where: { id: { in: plan.remove }, desaAntiKorupsiId: id },
-          data: { isActive: false, deletedAt: new Date() },
-        });
-        await Promise.all(
-          plan.update.map((d) =>
-            tx.dokumenDesaAntiKorupsi.update({
-              where: { id: d.id },
-              data: { judul: d.judul, urutan: d.urutan },
-            })
-          )
-        );
-        return tx.desaAntiKorupsi.update({
+        await tx.desaAntiKorupsi.update({ where: { id }, data: fields });
+        await applyProgramSync(tx, id, plan);
+        return tx.desaAntiKorupsi.findUniqueOrThrow({
           where: { id },
-          data: { ...fields, dokumen: { create: plan.create } },
-          include: DESA_ANTI_KORUPSI_INCLUDE,
+          include: DESA_ANTI_KORUPSI_DETAIL_INCLUDE,
         });
       });
     }
@@ -78,7 +67,7 @@ export default async function desaAntiKorupsiUpdate(context: Context) {
     return {
       success: true,
       message: "Desa anti korupsi berhasil diperbarui",
-      data: updated,
+      data: toProgramDetail(updated),
     };
   } catch (error: any) {
     // Ganti nama ke nilai lain yang sudah ada → 409 "Nama sudah dipakai"
