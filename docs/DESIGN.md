@@ -231,6 +231,16 @@ Section Penghargaan & Prestasi lama **digabung** (frontend dulu; tabel backend m
 - **Grid**: 4 entri terbaru gabungan, 2 kolom, gap 10px, tile 16:10 tanpa radius; seluruh tile = tautan ke detail sesuai sumber (`/darmasaba/prestasi-desa/{id}` atau `/darmasaba/penghargaan/{id}`), judul `name` kiri bawah (28px, tablet 24, mobile 21; maks 3 baris) di atas gradasi gelap. Ganjil → tile terakhir lebar 2 kolom (21:9); kosong → grid disembunyikan. Loading = placeholder abu. Mobile ≤734px: 1 kolom, tile 4:3. Hover foto zoom 1.03 700ms (mati saat reduced motion).
 - **Halaman gabungan** `/darmasaba/prestasi-desa`: latar putih, kepala max-width 1100px (kembali, judul `h1` 48px warna brand, subtext abu, cari 320px di kanan — mobile di bawah), grid tile yang sama, 8 per halaman + `Pagination` bila > 1 halaman. Cari debounce 400ms ke kedua sumber. `/darmasaba/penghargaan` dialihkan ke halaman ini; halaman detail `[id]` keduanya tetap. Menu navbar Desa → "Prestasi dan Penghargaan".
 
+### Desa Anti Korupsi (Beranda)
+
+Gaya bersih apple.com, pola halaman spesifikasi. Folder: `_com/main-page/desaantikorupsi/` — `index.tsx` (section), `AntiKorupsiGroups.tsx` (panel grup), `use-antikorupsi-data.ts` (hook atas `korupsiState`), `desaantikorupsi.logic.ts` (helper murni), `desaantikorupsi.meta.ts` (limit, rute, warna), `desaantikorupsi.text.ts`, `desaantikorupsi.module.css`. Test: `__tests__/api/desa_anti_korupsi_logic.test.ts`.
+
+- **Sumber data**: `korupsiState.desaAntikorupsi.findMany.load()` (default limit 10, urut `name asc`), tampil 6 butir pertama (`ANTIKORUPSI_LIMIT`).
+- **Teks**: data desa tersimpan HURUF KAPITAL dan diawali nomor indikator (`1.1 ADANYA ...`). Tampilan: nomor dipisah (`splitIndicatorNumber`), teks & nama kategori jadi sentence case (`toSentenceCase`, hanya bila teks tak memuat huruf kecil sama sekali) dengan ejaan singkatan dipertahankan lewat `KEEP_CASE_TERMS` (Perdes, SOP, APBDes, RKP, SKM, Trantibumlinmas). Data di DB tidak diubah. Nama dirender sebagai teks, bukan `innerHTML`.
+- **Bentuk**: latar putih, isi max-width 1100px, kepala tengah: judul `h2` 40px (tablet 36, mobile 28) warna `blue-button` + pengantar abu 19px (mobile 17). Satu panel `#f5f5f7` radius 18px tanpa border/bayangan; tiap kategori = satu grup (`groupByKategori`, urutan kemunculan) dipisah garis tipis: nama kategori `h3` 21px di kolom kiri 260px (tablet 200px), butir di kanan = nomor brand 600 tabular + teks 17px, antarbutir garis tipis. Tanpa ikon. Mobile ≤734px: nama kategori di atas butirnya.
+- **CTA**: pill "Selengkapnya ›" → `/darmasaba/desa-anti-korupsi/detail`, di bawah panel.
+- **Loading / kosong**: 6 baris placeholder abu berdenyut (tanpa denyut saat reduced motion); data kosong → satu pesan "Belum ada indikator desa anti korupsi.".
+
 ### Footer
 
 ```tsx
