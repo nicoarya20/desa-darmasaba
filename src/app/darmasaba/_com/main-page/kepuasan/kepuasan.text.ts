@@ -27,5 +27,12 @@ export const KEPUASAN_TEXT = {
     optionsLoading: "Memuat...",
     unnamedOption: "Tanpa Nama",
     submit: "Submit",
+    // Sama dengan pesan validasi zod di state store, agar teks di field dan di toast konsisten.
+    required: {
+      name: "Nama harus diisi",
+      jenisKelaminId: "Jenis kelamin harus diisi",
+      ratingId: "Rating harus diisi",
+      kelompokUmurId: "Kelompok umur harus diisi",
+    },
   },
 } as const;

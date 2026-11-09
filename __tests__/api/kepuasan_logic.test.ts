@@ -1,12 +1,14 @@
 // @vitest-environment node
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   countByCategory,
   donutSlices,
   donutStrokeWidth,
   formatShare,
   hasValues,
+  missingFormFields,
   monthlyCounts,
+  submitResponden,
   summarizeKepuasan,
   sumValues,
   toSelectOptions,
@@ -263,5 +265,49 @@ describe('todayLocalIsoDate', () => {
     it('pergantian tahun', () => {
       expect(todayLocalIsoDate(new Date('2025-12-31T16:30:00.000Z'))).toBe('2026-01-01');
     });
+  });
+});
+
+describe('missingFormFields', () => {
+  it('form lengkap → tidak ada yang kurang (tanggal bukan field wajib pengunjung)', () => {
+    expect(missingFormFields({ name: 'A', jenisKelaminId: 'j', ratingId: 'r', kelompokUmurId: 'u' })).toEqual([]);
+  });
+
+  it('kosong / spasi / null / tidak ada → kurang, urut sesuai form', () => {
+    expect(missingFormFields({ name: '  ', jenisKelaminId: 'j', ratingId: null, kelompokUmurId: '' })).toEqual([
+      'name',
+      'ratingId',
+      'kelompokUmurId',
+    ]);
+    expect(missingFormFields({})).toEqual(['name', 'jenisKelaminId', 'ratingId', 'kelompokUmurId']);
+  });
+});
+
+describe('submitResponden', () => {
+  const setup = (result: boolean) => {
+    const calls: string[] = [];
+    const deps = {
+      now: new Date(2026, 10, 9, 1, 30), // dini hari lokal
+      setTanggal: vi.fn((v: string) => calls.push(`tanggal:${v}`)),
+      create: vi.fn(async () => {
+        calls.push('create');
+        return result;
+      }),
+      onSuccess: vi.fn(() => calls.push('success')),
+    };
+    return { deps, calls };
+  };
+
+  it('sukses → tanggal diisi dulu, lalu create, lalu reset + tutup', async () => {
+    const { deps, calls } = setup(true);
+    await expect(submitResponden(deps)).resolves.toBe(true);
+    expect(calls).toEqual(['tanggal:2026-11-09', 'create', 'success']);
+  });
+
+  it('create gagal (validasi/API) → modal tidak direset/ditutup', async () => {
+    const { deps, calls } = setup(false);
+    await expect(submitResponden(deps)).resolves.toBe(false);
+    expect(deps.onSuccess).not.toHaveBeenCalled();
+    expect(calls).toEqual(['tanggal:2026-11-09', 'create']);
   });
 });
