@@ -2,6 +2,7 @@
 
 ## [0.1.229] - 2026-11-09
 ### Changed
+- **Kepala halaman Potensi Desa diperbarui.** Kotak angka biru diganti tombol **Semua · Potensi · Wisata**, masing-masing dengan jumlahnya. Klik salah satu tombol untuk menampilkan potensi kategori itu saja. Paragraf pengantar kini rata kiri sehingga jarak antarkata tidak lagi melebar, dan judulnya sedikit lebih besar.
 - **Judul tiap potensi di halaman Potensi Desa kini langsung terlihat** di kiri bawah foto, seperti di halaman Prestasi dan Penghargaan. Sebelumnya judul baru muncul saat kursor diarahkan ke kartu, sehingga tidak terlihat sama sekali di ponsel.
 - Di bawah foto kini tampil deskripsi singkat tiap potensi dan tombol "Lihat Detail".
 - **"Lihat Detail" kini membuka jendela detail di atas halaman** dengan latar belakang yang diburamkan, berisi foto, kategori, judul, dan deskripsi lengkap. Pengunjung tidak lagi berpindah ke halaman lain dan tetap berada di posisi yang sama di daftar. Jendela ditutup lewat tombol ×, tombol Esc, atau klik di luar jendela. Seluruh kartu juga bisa diklik untuk membuka detail.
