@@ -8,7 +8,7 @@ import { Box, Center, Container, Image, LoadingOverlay, Paper, SimpleGrid, Stack
 import { IconMoodSad } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../(pages)/desa/layanan/_com/BackButto';
+import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   type SdgsDesa = {

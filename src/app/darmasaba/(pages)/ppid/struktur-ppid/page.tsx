@@ -36,7 +36,7 @@ import { useTransitionRouter } from 'next-view-transitions'
 import { OrganizationChart } from 'primereact/organizationchart'
 import { useEffect, useRef, useState } from 'react'
 import { useProxy } from 'valtio/utils'
-import BackButton from '../../desa/layanan/_com/BackButto'
+import BackButton from '../../pemerintahan/layanan/_com/BackButto'
 import './struktur.css'
 import { useMediaQuery } from '@mantine/hooks'
 

@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Stack, Box, Paper, Text, Title, Skeleton, Table, Center } from '@mantine/core';
 import { IconDatabaseOff } from '@tabler/icons-react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { useProxy } from 'valtio/utils';
 import dataBanjar from '@/app/admin/(dashboard)/_state/kependudukan/data-banjar';
 import { useShallowEffect } from '@mantine/hooks';

@@ -4,7 +4,7 @@ import colors from '@/con/colors';
 import { Box } from '@mantine/core';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 const LayoutTabsGotongRoyong = dynamic(
   () => import('./_lib/layoutTabs'),

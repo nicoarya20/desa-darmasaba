@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
+import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import { Stack, Container, Text, Image, ActionIcon, Box, Divider, Flex, Center, Skeleton, Paper, Tooltip } from '@mantine/core';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';

@@ -7,7 +7,7 @@ import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { useState } from 'react';
 import infoTeknoState from '@/app/admin/(dashboard)/_state/inovasi/info-tekno';
 import { IconSearch } from '@tabler/icons-react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const [search, setSearch] = useState("")

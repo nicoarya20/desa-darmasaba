@@ -11,7 +11,7 @@ import {
   Pagination
 } from '@mantine/core';
 import React, { useState } from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { BarChart } from '@mantine/charts';
 import { useProxy } from 'valtio/utils';
 import grafikSektorUnggulan from '@/app/admin/(dashboard)/_state/ekonomi/sektor-unggulan-desa';

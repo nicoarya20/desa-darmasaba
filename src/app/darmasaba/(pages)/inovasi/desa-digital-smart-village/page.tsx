@@ -2,7 +2,7 @@
 import colors from '@/con/colors';
 import { Stack, Box, Text, Paper, SimpleGrid, Image, Skeleton, Center, Pagination, Grid, GridCol, TextInput, Button } from '@mantine/core';
 import React, { useState } from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { useProxy } from 'valtio/utils';
 import desaDigitalState from '@/app/admin/(dashboard)/_state/inovasi/desa-digital';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';

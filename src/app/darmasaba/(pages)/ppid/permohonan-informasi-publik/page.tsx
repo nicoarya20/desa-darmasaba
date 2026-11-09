@@ -19,7 +19,7 @@ import { IconSend2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import JenisInformasiSelector from './jenis_infromasi/jenisInformasiSelector';
 import MemperolehInformasi from './memperoleh_informasi/memperolehInfromasi';
 import MemperolehSalinan from './salinan_informasi/salinanInformasi';

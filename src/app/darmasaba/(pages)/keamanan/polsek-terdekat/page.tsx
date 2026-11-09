@@ -7,7 +7,7 @@ import { IconArrowDown, IconClock, IconNavigation, IconPhone, IconPin } from '@t
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const state = useProxy(statePolsekTerdekat.polsekTerdekatState.findFirst);

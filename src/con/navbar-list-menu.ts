@@ -54,32 +54,32 @@ const navbarListMenu = [
             {
                 id: "2.1",
                 name: "Profil",
-                href: "/darmasaba/desa/profil"
+                href: "/darmasaba/pemerintahan/profil"
             },
             {
                 id: "2.2",
                 name: "Potensi",
-                href: "/darmasaba/desa/potensi"
+                href: "/darmasaba/pemerintahan/potensi"
             },
             {
                 id: "2.3",
                 name: "Berita",
-                href: "/darmasaba/desa/berita/semua"
+                href: "/darmasaba/pemerintahan/berita/semua"
             },
             {
                 id: "2.4",
                 name: "Pengumuman",
-                href: "/darmasaba/desa/pengumuman"
+                href: "/darmasaba/pemerintahan/pengumuman"
             },
             {
                 id: "2.5",
                 name: "Gallery",
-                href: "/darmasaba/desa/galery/foto"
+                href: "/darmasaba/pemerintahan/galery/foto"
             },
             {
                 id: "2.6",
                 name: "Layanan",
-                href: "/darmasaba/desa/layanan"
+                href: "/darmasaba/pemerintahan/layanan"
             },
             {
                 id: "2.7",
@@ -89,17 +89,17 @@ const navbarListMenu = [
             {
                 id: "2.8",
                 name: "Kegiatan Desa",
-                href: "/darmasaba/desa/kegiatan-desa/semua"
+                href: "/darmasaba/pemerintahan/kegiatan-desa/semua"
             },
             {
                 id: "2.9",
                 name: "Agenda & Kalender Desa",
-                href: "/darmasaba/desa/event-budaya"
+                href: "/darmasaba/pemerintahan/event-budaya"
             },
             {
                 id: "2.10",
                 name: "Monev & Pembangunan",
-                href: "/darmasaba/desa/monev-pembangunan"
+                href: "/darmasaba/pemerintahan/monev-pembangunan"
             }
 
         ]

@@ -43,7 +43,7 @@ const sosialMedia = [
 const layanandesa: FooterLink[] = [
   {
     title: "Administrasi Kependudukan",
-    link: "/darmasaba/desa/layanan/",
+    link: "/darmasaba/pemerintahan/layanan/",
   },
   {
     title: "Layanan Sosial",
@@ -62,7 +62,7 @@ const layanandesa: FooterLink[] = [
 const tautanPenting: FooterLink[] = [
   {
     title: "Portal Badung",
-    link: "/darmasaba/desa/berita/semua",
+    link: "/darmasaba/pemerintahan/berita/semua",
   },
   {
     title: "E-Government",

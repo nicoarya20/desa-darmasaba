@@ -6,7 +6,7 @@ import { IconSchool } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
 
 type DPMrafik = {

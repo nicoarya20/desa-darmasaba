@@ -142,7 +142,7 @@ describe('skrip <head> splash', () => {
   });
 
   it('melewati splash bila mendarat di halaman lain', () => {
-    expect(runHeadScript('/darmasaba/desa/profil', fakeStorage(false))).toBe('skip');
+    expect(runHeadScript('/darmasaba/pemerintahan/profil', fakeStorage(false))).toBe('skip');
     expect(runHeadScript('/admin', fakeStorage(false))).toBe('skip');
   });
 

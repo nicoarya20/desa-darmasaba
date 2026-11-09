@@ -7,7 +7,7 @@ import { Icon, IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBui
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const LeafletMultiMarkerMap = dynamic(

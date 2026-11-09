@@ -6,7 +6,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { IconBrandWhatsapp, IconMapPinFilled, IconUser } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 import { perSatuanSuffix } from '../_lib/satuan';
 
 function Page() {

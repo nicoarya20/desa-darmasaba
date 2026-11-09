@@ -4,7 +4,7 @@ import colors from '@/con/colors';
 import { Box, Flex, Group, Paper, SimpleGrid, Stack, Table, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   const state = useProxy(PendapatanAsliDesa.ApbDesa);
