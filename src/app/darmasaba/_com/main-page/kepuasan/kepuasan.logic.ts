@@ -73,3 +73,15 @@ export function summarizeKepuasan(data: readonly (RespondenItem | null)[] | null
 export function hasValues(slices: readonly ChartSlice[]): boolean {
   return slices.some((s) => s.value > 0);
 }
+
+export type SelectOption = { value: string; label: string };
+
+/** Opsi `Select` dari daftar opsi API: buang entri kosong, nama kosong → `fallbackLabel`. */
+export function toSelectOptions(
+  list: readonly ({ id: string; name?: string | null } | null | undefined)[] | null | undefined,
+  fallbackLabel: string,
+): SelectOption[] {
+  return (list ?? [])
+    .filter((item): item is { id: string; name?: string | null } => Boolean(item))
+    .map((item) => ({ value: item.id, label: item.name || fallbackLabel }));
+}

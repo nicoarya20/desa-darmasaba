@@ -2,54 +2,19 @@
 import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan";
 import colors from "@/con/colors";
 import { BarChart, PieChart } from '@mantine/charts';
-import { Box, Button, Center, Container, Flex, Modal, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Box, Button, Center, Container, Flex, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { useDisclosure, useMediaQuery, useShallowEffect } from "@mantine/hooks";
 import { useMemo } from "react";
 import { useProxy } from "valtio/utils";
 import { summarizeKepuasan } from "./kepuasan.logic";
 import { RESPONDEN_CHART_LIMIT } from "./kepuasan.meta";
+import { RespondenFormModal } from "./components/RespondenFormModal";
 
 function Kepuasan() {
   const state = useProxy(indeksKepuasanState.responden);
-  // Snapshot 3 cabang opsi agar Select re-render saat findMany.load() async
-  // selesai — JSX sebelumnya baca raw proxy (loading/data tak reaktif).
-  const snapJK = useProxy(indeksKepuasanState.jenisKelaminResponden);
-  const snapRating = useProxy(indeksKepuasanState.pilihanRatingResponden);
-  const snapUmur = useProxy(indeksKepuasanState.kelompokUmurResponden);
   const { data, loading } = state.findMany;
   const [opened, { open, close }] = useDisclosure(false)
   const isMobile = useMediaQuery("(max-width: 768px)");
-
-  const resetForm = () => {
-    state.create.form = {
-      ...state.create.form,
-      name: "",
-      tanggal: "",
-      jenisKelaminId: "",
-      ratingId: "",
-      kelompokUmurId: "",
-    }
-  }
-
-  useShallowEffect(() => {
-    indeksKepuasanState.jenisKelaminResponden.findMany.load()
-    indeksKepuasanState.pilihanRatingResponden.findMany.load()
-    indeksKepuasanState.kelompokUmurResponden.findMany.load()
-  }, [])
-
-  const handleSubmit = async () => {
-    try {
-      const id = await state.create.create();
-      if (typeof id !== 'undefined') {
-        const idStr = String(id);
-        await state.findUnique.load(idStr);
-      }
-      resetForm();
-      close()
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
-  }
 
   // Muat data saat mount; data grafik diturunkan langsung dari snapshot (lihat kepuasan.logic.ts).
   useShallowEffect(() => {
@@ -313,93 +278,7 @@ function Kepuasan() {
           </Paper>
         </Box>
 
-        {/* Modal */}
-        <Modal opened={opened} onClose={close} title="Ajukan Responden" centered>
-          <Paper bg={colors['white-1']} p="md">
-            <Stack>
-              <TextInput
-                label="Nama"
-                type="text"
-                placeholder="Masukkan nama"
-                value={state.create.form.name}
-                onChange={(val) => {
-                  state.create.form.name = val.currentTarget.value;
-                }}
-              />
-              <TextInput
-                label="Tanggal"
-                type="date"
-                placeholder="masukkan tanggal"
-                value={state.create.form.tanggal}
-                onChange={(val) => {
-                  state.create.form.tanggal = val.currentTarget.value;
-                }}
-              />
-              <Select
-                key={"jenisKelamin"}
-                label={"Jenis Kelamin"}
-                placeholder={snapJK.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
-                value={state.create.form.jenisKelaminId || ""}
-                onChange={(val) => {
-                  state.create.form.jenisKelaminId = val ?? "";
-                }}
-                data={
-                  (snapJK.findMany.data || [])
-                    .filter(Boolean) // Hapus null, undefined, dll
-                    .map((item) => ({
-                      value: item.id,
-                      label: item.name || 'Tanpa Nama',
-                    }))
-                }
-                disabled={snapJK.findMany.loading}
-              />
-              <Select
-                key={"rating_responden"}
-                label={"Rating"}
-                placeholder={snapRating.findMany.loading ? 'Memuat...' : 'Pilih rating'}
-                value={state.create.form.ratingId || ""}
-                onChange={(val) => {
-                  state.create.form.ratingId = val ?? "";
-                }}
-                data={
-                  (snapRating.findMany.data || [])
-                    .filter(Boolean) // Hapus null, undefined, dll
-                    .map((item) => ({
-                      value: item.id,
-                      label: item.name || 'Tanpa Nama',
-                    }))
-                }
-                disabled={snapRating.findMany.loading}
-              />
-              <Select
-                key={"kelompokUmur"}
-                label={"Kelompok Umur"}
-                placeholder={snapUmur.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
-                value={state.create.form.kelompokUmurId || ""}
-                onChange={(val) => {
-                  state.create.form.kelompokUmurId = val ?? "";
-                }}
-                data={
-                  (snapUmur.findMany.data || [])
-                    .filter(Boolean) // Hapus null, undefined, dll
-                    .map((item) => ({
-                      value: item.id,
-                      label: item.name || 'Tanpa Nama',
-                    }))
-                }
-                disabled={snapUmur.findMany.loading}
-              />
-              <Button
-                mt={10}
-                bg={colors['blue-button']}
-                onClick={handleSubmit}
-                style={{ fontWeight: 700 }}
-              >
-                <Text fz="sm" ta="center" c="white">Submit</Text>
-              </Button>
-            </Stack>
-          </Paper>
-        </Modal>
+        <RespondenFormModal opened={opened} onClose={close} />
       </Stack>
     );
   }
@@ -624,93 +503,7 @@ function Kepuasan() {
         </Paper>
       </Box>
 
-      {/* Modal */}
-      <Modal opened={opened} onClose={close} title="Ajukan Responden" centered>
-        <Paper bg={colors['white-1']} p="md">
-          <Stack>
-            <TextInput
-              label="Nama"
-              type='text'
-              placeholder="Masukkan nama"
-              value={state.create.form.name}
-              onChange={(val) => {
-                state.create.form.name = val.currentTarget.value;
-              }}
-            />
-            <TextInput
-              label="Tanggal Pengisian"
-              type="date"
-              placeholder="Masukkan tanggal"
-              value={state.create.form.tanggal}
-              onChange={(val) => {
-                state.create.form.tanggal = val.currentTarget.value;
-              }}
-            />
-            <Select
-              key={"jenisKelamin"}
-              label={"Jenis Kelamin"}
-              placeholder={snapJK.findMany.loading ? 'Memuat...' : 'Pilih jenis kelamin'}
-              value={state.create.form.jenisKelaminId || ""}
-              onChange={(val) => {
-                state.create.form.jenisKelaminId = val ?? "";
-              }}
-              data={
-                (snapJK.findMany.data || [])
-                  .filter(Boolean) // Hapus null, undefined, dll
-                  .map((item) => ({
-                    value: item.id,
-                    label: item.name || 'Tanpa Nama',
-                  }))
-              }
-              disabled={snapJK.findMany.loading}
-            />
-            <Select
-              key={"rating_responden"}
-              label={"Rating"}
-              placeholder={snapRating.findMany.loading ? 'Memuat...' : 'Pilih rating'}
-              value={state.create.form.ratingId || ""}
-              onChange={(val) => {
-                state.create.form.ratingId = val ?? "";
-              }}
-              data={
-                (snapRating.findMany.data || [])
-                  .filter(Boolean) // Hapus null, undefined, dll
-                  .map((item) => ({
-                    value: item.id,
-                    label: item.name || 'Tanpa Nama',
-                  }))
-              }
-              disabled={snapRating.findMany.loading}
-            />
-            <Select
-              key={"kelompokUmur"}
-              label={"Kelompok Umur"}
-              placeholder={snapUmur.findMany.loading ? 'Memuat...' : 'Pilih kelompok umur'}
-              value={state.create.form.kelompokUmurId || ""}
-              onChange={(val) => {
-                state.create.form.kelompokUmurId = val ?? "";
-              }}
-              data={
-                (snapUmur.findMany.data || [])
-                  .filter(Boolean) // Hapus null, undefined, dll
-                  .map((item) => ({
-                    value: item.id,
-                    label: item.name || 'Tanpa Nama',
-                  }))
-              }
-              disabled={snapUmur.findMany.loading}
-            />
-            <Button
-              mt={10}
-              bg={colors['blue-button']}
-              onClick={handleSubmit}
-              style={{ fontWeight: 700 }}
-            >
-              <Text fz="sm" ta="center" c="white">Submit</Text>
-            </Button>
-          </Stack>
-        </Paper>
-      </Modal>
+      <RespondenFormModal opened={opened} onClose={close} />
     </Stack>
   );
 }

@@ -5,6 +5,7 @@ import {
   hasValues,
   monthlyCounts,
   summarizeKepuasan,
+  toSelectOptions,
   type RespondenItem,
 } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.logic';
 import { RATING } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.meta';
@@ -116,5 +117,20 @@ describe('summarizeKepuasan — campuran', () => {
       { month: 'April 2026', Responden: 1 },
     ]);
     expect(hasValues(s.jenisKelamin)).toBe(true);
+  });
+});
+
+describe('toSelectOptions', () => {
+  it('memetakan id/name ke value/label; nama kosong → label cadangan', () => {
+    expect(toSelectOptions([{ id: 'a', name: 'Laki-laki' }, { id: 'b', name: '' }, { id: 'c', name: null }], 'Tanpa Nama')).toEqual([
+      { value: 'a', label: 'Laki-laki' },
+      { value: 'b', label: 'Tanpa Nama' },
+      { value: 'c', label: 'Tanpa Nama' },
+    ]);
+  });
+
+  it('entri null/undefined dibuang; daftar null → []', () => {
+    expect(toSelectOptions([null, { id: 'a', name: 'Muda' }, undefined], 'x')).toEqual([{ value: 'a', label: 'Muda' }]);
+    expect(toSelectOptions(null, 'x')).toEqual([]);
   });
 });
