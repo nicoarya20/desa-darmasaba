@@ -91,7 +91,7 @@ export default function DetailKegiatanDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold" mb="xs">Dokumen</Text>
-                <DokumenFolderView key={data.id} dokumen={data.dokumen ?? []} />
+                <DokumenFolderView key={data.id} folders={data.folders ?? []} dokumenUmum={data.dokumenUmum ?? []} />
               </Box>
 
               <Group gap="sm" mt="md">

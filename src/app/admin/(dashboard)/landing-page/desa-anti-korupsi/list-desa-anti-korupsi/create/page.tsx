@@ -21,12 +21,8 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { DokumenFolderEditor } from '../../_com/DokumenFolderEditor';
-import {
-  isDraftListValid,
-  toDokumenPayload,
-  uploadPendingDrafts,
-  type DokumenDraft,
-} from '../../_lib/dokumen-draft';
+import { isDraftListValid, uploadPendingDrafts } from '../../_lib/dokumen-draft';
+import { emptyIsiDraft, isFolderListValid, toIsiPayload, type IsiDraft } from '../../_lib/folder-draft';
 import { uploadDokumenFile } from '../../_lib/upload-dokumen';
 
 export default function CreateDesaAntiKorupsi() {
@@ -35,13 +31,14 @@ export default function CreateDesaAntiKorupsi() {
   // Snapshot cabang kategoriDesaAntiKorupsi agar Select re-render saat
   // findMany.load() async selesai — JSX sebelumnya baca raw proxy (race, STG).
   const kategoriState = useProxy(korupsiState.kategoriDesaAntiKorupsi);
-  const [drafts, setDrafts] = useState<DokumenDraft[]>([]);
+  const [isi, setIsi] = useState<IsiDraft>(emptyIsiDraft);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid
   const isFormValid = () => {
     return (
-      isDraftListValid(drafts) &&
+      isDraftListValid(isi.dokumen) &&
+      isFolderListValid(isi.folders) &&
       stateKorupsi.create.form.name?.trim() !== '' &&
       stateKorupsi.create.form.kategoriId?.trim() !== ''
     );
@@ -57,9 +54,10 @@ export default function CreateDesaAntiKorupsi() {
       name: '',
       deskripsi: '',
       kategoriId: '',
+      folders: [],
       dokumen: [],
     };
-    setDrafts([]);
+    setIsi(emptyIsiDraft());
   };
 
   const handleSubmit = async () => {
@@ -73,9 +71,12 @@ export default function CreateDesaAntiKorupsi() {
     setIsSubmitting(true);
     try {
       // Berkas diunggah saat simpan (bukan saat dipilih) agar batal = tidak ada file yatim.
-      const uploaded = await uploadPendingDrafts(drafts, uploadDokumenFile);
-      setDrafts(uploaded);
-      stateKorupsi.create.form.dokumen = toDokumenPayload(uploaded);
+      const uploaded: IsiDraft = { ...isi, dokumen: await uploadPendingDrafts(isi.dokumen, uploadDokumenFile) };
+      setIsi(uploaded);
+      // Folder + dokumen dikirim bersama; folder baru dirujuk dokumen lewat tempKey.
+      const payload = toIsiPayload(uploaded);
+      stateKorupsi.create.form.folders = payload.folders;
+      stateKorupsi.create.form.dokumen = payload.dokumen;
       await stateKorupsi.create.create();
 
       toast.success('Data berhasil disimpan');
@@ -152,7 +153,7 @@ export default function CreateDesaAntiKorupsi() {
             required
           />
 
-          <DokumenFolderEditor value={drafts} onChange={setDrafts} />
+          <DokumenFolderEditor value={isi} onChange={setIsi} />
 
           <Group justify="right">
             <Button

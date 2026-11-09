@@ -48,11 +48,13 @@ describe('draft dari berkas & data tersimpan', () => {
     const files = [new File(['x'], 'a.pdf', { type: 'application/pdf' }), new File(['y'], 'b.docx')];
     const drafts = draftsFromFiles(files);
     expect(drafts.map((d) => d.judul)).toEqual(['a', 'b']);
+    expect(drafts.every((d) => d.folderKey === null)).toBe(true);
+    expect(draftsFromFiles(files, 'folder-1').every((d) => d.folderKey === 'folder-1')).toBe(true);
     expect(drafts.every((d) => d.fileId === undefined && d.file instanceof File)).toBe(true);
     expect(new Set(drafts.map((d) => d.key)).size).toBe(2);
   });
 
-  it('draftsFromSaved memetakan id, fileId, judul & info berkas', () => {
+  it('draftsFromSaved memetakan id, fileId, judul, folder & info berkas', () => {
     const [draft] = draftsFromSaved([
       {
         id: 'd1',
@@ -61,9 +63,10 @@ describe('draft dari berkas & data tersimpan', () => {
         fileId: 'f1',
         file: { id: 'f1', link: '/api/fileStorage/findUnique/x', realName: 'perdes.pdf', mimeType: 'application/pdf' },
       },
-    ]);
+    ], 'fa');
     expect(draft).toEqual({
       key: 'd1',
+      folderKey: 'fa',
       id: 'd1',
       fileId: 'f1',
       judul: 'Perdes',
@@ -74,8 +77,8 @@ describe('draft dari berkas & data tersimpan', () => {
   });
 
   it('isDraftListValid menolak judul kosong', () => {
-    expect(isDraftListValid([{ key: 'k', judul: 'A' }])).toBe(true);
-    expect(isDraftListValid([{ key: 'k', judul: '  ' }])).toBe(false);
+    expect(isDraftListValid([{ key: 'k', folderKey: null, judul: 'A' }])).toBe(true);
+    expect(isDraftListValid([{ key: 'k', folderKey: null, judul: '  ' }])).toBe(false);
   });
 });
 
@@ -83,8 +86,8 @@ describe('uploadPendingDrafts + toDokumenPayload', () => {
   it('hanya mengunggah draft baru, lalu payload urutan = posisi', async () => {
     const pending = new File(['x'], 'baru.pdf', { type: 'application/pdf' });
     const drafts: DokumenDraft[] = [
-      { key: 'd1', id: 'd1', fileId: 'f1', judul: 'Lama ' },
-      { key: 'n1', judul: 'Baru', file: pending },
+      { key: 'd1', folderKey: null, id: 'd1', fileId: 'f1', judul: 'Lama ' },
+      { key: 'n1', folderKey: null, judul: 'Baru', file: pending },
     ];
     const upload = vi.fn(async () => ({
       id: 'f-new',
@@ -99,8 +102,22 @@ describe('uploadPendingDrafts + toDokumenPayload', () => {
     expect(uploaded[1]).toMatchObject({ fileId: 'f-new', file: undefined });
 
     expect(toDokumenPayload(uploaded)).toEqual([
-      { id: 'd1', fileId: 'f1', judul: 'Lama', urutan: 0 },
-      { fileId: 'f-new', judul: 'Baru', urutan: 1 },
+      { id: 'd1', fileId: 'f1', judul: 'Lama', urutan: 0, folder: null },
+      { fileId: 'f-new', judul: 'Baru', urutan: 1, folder: null },
+    ]);
+  });
+
+  it('toDokumenPayload: urutan dihitung per folder, folder dirujuk lewat folderRef', () => {
+    const drafts: DokumenDraft[] = [
+      { key: 'a', folderKey: 'f1', fileId: 'x1', judul: 'A' },
+      { key: 'b', folderKey: null, fileId: 'x2', judul: 'B' },
+      { key: 'c', folderKey: 'f1', fileId: 'x3', judul: 'C' },
+    ];
+    const payload = toDokumenPayload(drafts, (k) => (k ? { id: k } : null));
+    expect(payload.map((d) => [d.judul, d.urutan, d.folder])).toEqual([
+      ['A', 0, { id: 'f1' }],
+      ['B', 0, null],
+      ['C', 1, { id: 'f1' }],
     ]);
   });
 
@@ -108,12 +125,12 @@ describe('uploadPendingDrafts + toDokumenPayload', () => {
     const upload = vi.fn(async () => {
       throw new Error('Gagal mengunggah dokumen "x.pdf"');
     });
-    await expect(uploadPendingDrafts([{ key: 'n', judul: 'x', file: new File(['x'], 'x.pdf') }], upload)).rejects.toThrow(
+    await expect(uploadPendingDrafts([{ key: 'n', folderKey: null, judul: 'x', file: new File(['x'], 'x.pdf') }], upload)).rejects.toThrow(
       /x\.pdf/,
     );
   });
 
   it('toDokumenPayload menolak draft yang belum diunggah', () => {
-    expect(() => toDokumenPayload([{ key: 'n', judul: 'Belum' }])).toThrow(/belum diunggah/);
+    expect(() => toDokumenPayload([{ key: 'n', folderKey: null, judul: 'Belum' }])).toThrow(/belum diunggah/);
   });
 });

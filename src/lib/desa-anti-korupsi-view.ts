@@ -2,6 +2,7 @@
 // Daftar program (findMany) hanya membawa ringkasan jumlah; detail (/:id) membawa isi folder.
 import type { Prisma } from "@prisma/client";
 import type { DokumenDesaAntiKorupsiView } from "./desa-anti-korupsi-dokumen";
+import { FOLDER_UMUM_KEY, FOLDER_UMUM_LABEL } from "./desa-anti-korupsi-folder";
 
 /** Include daftar program: kategori + jumlah folder & dokumen aktif (satu query, tanpa N+1). */
 export const DESA_ANTI_KORUPSI_RINGKAS_INCLUDE = {
@@ -73,4 +74,16 @@ export function toProgramDetail(row: DetailRow): DesaAntiKorupsiDetail {
     folders: folders.map((f) => ({ ...f, dokumen: byFolder.get(f.id) ?? [] })),
     dokumenUmum,
   };
+}
+
+/** Satu kelompok tampilan: folder nyata (key = id folder) atau folder virtual "Umum" (key = "umum"). */
+export type FolderGroupView = { key: string; nama: string; dokumen: DokumenDesaAntiKorupsiView[] };
+
+/** Folder berurutan + "Umum" di akhir (hanya bila ada dokumen tanpa folder) untuk halaman publik & admin. */
+export function folderGroups(detail: Pick<DesaAntiKorupsiDetail, "folders" | "dokumenUmum">): FolderGroupView[] {
+  const groups: FolderGroupView[] = detail.folders.map((f) => ({ key: f.id, nama: f.nama, dokumen: f.dokumen }));
+  if (detail.dokumenUmum.length > 0) {
+    groups.push({ key: FOLDER_UMUM_KEY, nama: FOLDER_UMUM_LABEL, dokumen: detail.dokumenUmum });
+  }
+  return groups;
 }
