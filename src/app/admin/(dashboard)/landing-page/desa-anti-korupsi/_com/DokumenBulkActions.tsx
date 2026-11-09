@@ -7,23 +7,29 @@ import { groupDrafts, type IsiDraft } from '../_lib/folder-draft';
 import { DokumenSelectionToolbar } from './DokumenSelectionToolbar';
 import { FolderPickerModal, folderPickerOptionsFromGroups } from './FolderPickerModal';
 import { KonfirmasiHapusDokumenModal } from './KonfirmasiHapusDokumenModal';
+import { SalinKeProgramModal } from './SalinKeProgramModal';
 
 /** Tampilkan notifikasi aksi editor DAK lewat react-toastify sesuai nadanya. */
 export function showNotice({ message, tone }: Notice): void {
   toast[tone](message);
 }
 
-type Mode = 'move' | 'copy' | 'delete' | null;
+type Mode = 'move' | 'copy' | 'program' | 'delete' | null;
 
 type Props = {
   value: IsiDraft;
   selection: Selection;
   onChange: (next: IsiDraft) => void;
   onSelectionChange: (next: Selection) => void;
+  /** Id program tersimpan (halaman edit) — mengaktifkan "Salin ke program lain…"; tidak ada di create. */
+  programId?: string;
 };
 
-/** Toolbar dokumen terpilih + modal pindah/salin (pilih folder) dan konfirmasi hapus; perubahan tetap draft. */
-export function DokumenBulkActions({ value, selection, onChange, onSelectionChange }: Props) {
+/**
+ * Toolbar dokumen terpilih + modal pindah/salin (pilih folder) dan konfirmasi hapus (perubahan tetap draft);
+ * dengan `programId` juga "Salin ke program lain…" yang langsung tersimpan di program tujuan.
+ */
+export function DokumenBulkActions({ value, selection, onChange, onSelectionChange, programId }: Props) {
   const [mode, setMode] = useState<Mode>(null);
   const count = selection.size;
   const options = folderPickerOptionsFromGroups(groupDrafts(value));
@@ -44,6 +50,7 @@ export function DokumenBulkActions({ value, selection, onChange, onSelectionChan
         count={count}
         onMove={() => setMode('move')}
         onCopy={() => setMode('copy')}
+        onCopyToProgram={programId ? () => setMode('program') : undefined}
         onDelete={() => setMode('delete')}
         onClear={() => onSelectionChange(emptySelection())}
       />
@@ -65,6 +72,15 @@ export function DokumenBulkActions({ value, selection, onChange, onSelectionChan
         onConfirm={(folderKey) => apply(bulkCopy(value, selection, folderKey))}
         onClose={close}
       />
+      {programId && (
+        <SalinKeProgramModal
+          opened={mode === 'program'}
+          programId={programId}
+          dokumen={value.dokumen.filter((d) => selection.has(d.key))}
+          onDone={() => onSelectionChange(emptySelection())}
+          onClose={close}
+        />
+      )}
       <KonfirmasiHapusDokumenModal
         opened={mode === 'delete'}
         count={count}

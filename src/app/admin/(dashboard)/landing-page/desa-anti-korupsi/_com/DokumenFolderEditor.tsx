@@ -29,10 +29,15 @@ function usePreviewUrl(draft: DokumenDraft | null): string | null {
   return objectUrl ?? draft?.link ?? null;
 }
 
-type Props = { value: IsiDraft; onChange: (next: IsiDraft) => void };
+type Props = {
+  value: IsiDraft;
+  onChange: (next: IsiDraft) => void;
+  /** Id program tersimpan (hanya halaman edit) — mengaktifkan "Salin ke program lain…". */
+  programId?: string;
+};
 
 /** Editor isi program: kelola folder, unggah ke folder terpilih, cari/urutkan/pindahkan dokumen, aksi massal terpilih. */
-export function DokumenFolderEditor({ value, onChange }: Props) {
+export function DokumenFolderEditor({ value, onChange, programId }: Props) {
   const [previewKey, setPreviewKey] = useState<string | null>(null);
   const [target, setTarget] = useState<string>(FOLDER_UMUM_KEY);
   const [opened, setOpened] = useState<string[]>([]);
@@ -105,7 +110,13 @@ export function DokumenFolderEditor({ value, onChange }: Props) {
         onPreview={setPreviewKey}
         onRemove={remove}
       />
-      <DokumenBulkActions value={value} selection={selection} onChange={onChange} onSelectionChange={replace} />
+      <DokumenBulkActions
+        value={value}
+        selection={selection}
+        onChange={onChange}
+        onSelectionChange={replace}
+        programId={programId}
+      />
 
       <DokumenPreviewDialog
         preview={

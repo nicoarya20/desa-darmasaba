@@ -1,6 +1,6 @@
 'use client';
 import { ActionIcon, Button, Group, Paper, Text, Tooltip } from '@mantine/core';
-import { IconArrowsMove, IconCopy, IconTrash, IconX } from '@tabler/icons-react';
+import { IconArrowsMove, IconCopy, IconFileExport, IconTrash, IconX } from '@tabler/icons-react';
 import type { ComponentType } from 'react';
 
 type Props = {
@@ -9,6 +9,8 @@ type Props = {
   onCopy: () => void;
   onDelete: () => void;
   onClear: () => void;
+  /** "Salin ke program lain…" (langsung tersimpan di program tujuan); tombol tampil hanya bila disediakan. */
+  onCopyToProgram?: () => void;
 };
 
 type Aksi = {
@@ -19,13 +21,16 @@ type Aksi = {
   onClick: () => void;
 };
 
-/** Bar aksi sticky untuk dokumen terpilih (pindah, salin, hapus, batal); tidak dirender saat tidak ada pilihan. */
-export function DokumenSelectionToolbar({ count, onMove, onCopy, onDelete, onClear }: Props) {
+/** Bar aksi sticky untuk dokumen terpilih (pindah, salin, salin ke program lain, hapus, batal); tidak dirender saat tidak ada pilihan. */
+export function DokumenSelectionToolbar({ count, onMove, onCopy, onDelete, onClear, onCopyToProgram }: Props) {
   if (count <= 0) return null;
 
   const aksi: Aksi[] = [
     { label: 'Pindahkan ke…', Icon: IconArrowsMove, variant: 'light', onClick: onMove },
     { label: 'Salin ke…', Icon: IconCopy, variant: 'light', onClick: onCopy },
+    ...(onCopyToProgram
+      ? [{ label: 'Salin ke program lain…', Icon: IconFileExport, variant: 'light' as const, onClick: onCopyToProgram }]
+      : []),
     { label: 'Hapus', Icon: IconTrash, color: 'red', variant: 'light', onClick: onDelete },
     { label: 'Batal', Icon: IconX, color: 'gray', variant: 'subtle', onClick: onClear },
   ];
