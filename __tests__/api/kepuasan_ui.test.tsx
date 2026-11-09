@@ -55,6 +55,21 @@ describe('KepuasanCharts', () => {
 });
 
 describe('KepuasanDonutCard', () => {
+  it('kategori 0 tetap tampil di legenda dengan 0 dan 0%', () => {
+    const html = render(
+      <KepuasanDonutCard
+        title="Jenis kelamin"
+        slices={[
+          { name: 'Laki-laki', value: 2, color: '#0A4E78' },
+          { name: 'Perempuan', value: 0, color: '#8AC1E3' },
+        ]}
+      />,
+    );
+    expect(html.match(/<li/g)).toHaveLength(2);
+    expect(html).toContain('Perempuan');
+    expect(html).toMatch(/>0 ?%</);
+  });
+
   it('semua kategori 0 → catatan singkat, tanpa legenda', () => {
     const html = render(<KepuasanDonutCard title="Umur" slices={[{ name: 'Muda', value: 0, color: '#000' }]} />);
     expect(html).toContain(KEPUASAN_TEXT.chartEmpty);

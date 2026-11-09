@@ -83,6 +83,23 @@ export function formatShare(value: number, total: number): string {
   return ratio.toLocaleString("id-ID", { style: "percent", maximumFractionDigits: 1 });
 }
 
+/**
+ * Irisan donat yang digambar: kategori bernilai 0 dibuang. Irisan 0 tetap diberi garis pemisah oleh
+ * recharts sehingga donat 100% satu kategori tampak bergaris tipis. Legenda tetap memakai semua kategori.
+ */
+export function donutSlices(slices: readonly ChartSlice[]): ChartSlice[] {
+  return slices.filter((s) => s.value > 0);
+}
+
+/**
+ * Tebal garis pemisah antar-irisan. Satu irisan saja → 0: recharts menggambar irisan penuh sebagai
+ * 359,999° yang ditutup sisi radial di sudut 0 (posisi jam 3), sehingga garis pemisah tampak sebagai
+ * garis tipis di donat 100% walau irisan 0 sudah dibuang.
+ */
+export function donutStrokeWidth(visibleSliceCount: number): number {
+  return visibleSliceCount > 1 ? 2 : 0;
+}
+
 /** True bila minimal satu kategori bernilai > 0. */
 export function hasValues(slices: readonly ChartSlice[]): boolean {
   return slices.some((s) => s.value > 0);

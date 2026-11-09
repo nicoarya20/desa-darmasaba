@@ -2,6 +2,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   countByCategory,
+  donutSlices,
+  donutStrokeWidth,
   formatShare,
   hasValues,
   monthlyCounts,
@@ -193,5 +195,39 @@ describe('warna rating (meta)', () => {
 
   it('summarizeKepuasan membawa warna rating ke slice', () => {
     expect(summarizeKepuasan([]).rating.map((s) => s.color)).toEqual(RATING.map((c) => c.color));
+  });
+});
+
+describe('donutSlices', () => {
+  const slices = [
+    { name: 'Laki-laki', value: 2, color: '#0A4E78' },
+    { name: 'Perempuan', value: 0, color: '#8AC1E3' },
+  ];
+
+  it('membuang kategori bernilai 0 (penyebab garis tipis di donat 100%)', () => {
+    expect(donutSlices(slices)).toEqual([{ name: 'Laki-laki', value: 2, color: '#0A4E78' }]);
+  });
+
+  it('tidak mengubah input (legenda tetap memakai semua kategori)', () => {
+    donutSlices(slices);
+    expect(slices).toHaveLength(2);
+  });
+
+  it('semua 0 → kosong; semua > 0 → utuh dan urutan tetap', () => {
+    expect(donutSlices([{ name: 'A', value: 0, color: 'x' }])).toEqual([]);
+    const all = [{ name: 'A', value: 1, color: 'x' }, { name: 'B', value: 3, color: 'y' }];
+    expect(donutSlices(all)).toEqual(all);
+  });
+});
+
+describe('donutStrokeWidth', () => {
+  it('satu irisan (100%) → tanpa garis pemisah agar tidak muncul garis di jam 3', () => {
+    expect(donutStrokeWidth(1)).toBe(0);
+    expect(donutStrokeWidth(0)).toBe(0);
+  });
+
+  it('dua irisan atau lebih → pemisah 2px', () => {
+    expect(donutStrokeWidth(2)).toBe(2);
+    expect(donutStrokeWidth(4)).toBe(2);
   });
 });
