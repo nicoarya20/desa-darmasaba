@@ -84,8 +84,8 @@ describe('halaman kartu Desa Anti Korupsi', () => {
 describe('halaman detail Desa Anti Korupsi', () => {
   it('memakai helper bersama dan membungkus useSearchParams dalam Suspense', () => {
     expect(DETAIL_PAGE_SRC).toContain("resolveInitialKategori(searchParams.get('kategori'), categories)");
-    expect(DETAIL_PAGE_SRC).toContain('filterByKategori(data, selectedKategori)');
+    expect(DETAIL_PAGE_SRC).toContain('filterByKategori(items, selectedKategori)');
     expect(DETAIL_PAGE_SRC).toContain('router.replace(detailHref(kategori), { scroll: false })');
-    expect(DETAIL_PAGE_SRC).toMatch(/<Suspense[\s\S]*<LokalContent \/>[\s\S]*<\/Suspense>/);
+    expect(DETAIL_PAGE_SRC).toMatch(/<Suspense[\s\S]*<AntiKorupsiDetailContent \/>[\s\S]*<\/Suspense>/);
   });
 });
