@@ -4,32 +4,33 @@ import { Box, Button, Container, Paper, SimpleGrid, Stack, Text } from '@mantine
 import { IconClipboardText } from '@tabler/icons-react';
 import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto';
 import { useRouter } from 'next/navigation';
+import { detailHref } from './_lib/kategori-tab';
 
 const data = [
   {
     judul: "PENGUATAN TATA LAKSANA",
     icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    link: "/darmasaba/desa-anti-korupsi/penguatan-tata-laksana"
+    link: detailHref("PENGUATAN TATA LAKSANA")
   },
   {
     judul: "PENGUATAN PENGAWASAN",
     icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    link: "/darmasaba/desa-anti-korupsi/penguatan-pengawasan"
+    link: detailHref("PENGUATAN PENGAWASAN")
   },
   {
     judul: "PENGUATAN KUALITAS PELAYANAN PUBLIK",
     icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    link: "/darmasaba/desa-anti-korupsi/penguatan-kualitas-pelayanan-publik"
+    link: detailHref("PENGUATAN KUALITAS PELAYANAN PUBLIK")
   },
   {
     judul: "PENGUATAN PARTISIPASI MASYARAKAT",
     icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    link: "/darmasaba/desa-anti-korupsi/penguatan-partisipasi-masyarakat"
+    link: detailHref("PENGUATAN PARTISIPASI MASYARAKAT")
   },
   {
     judul: "KEARIFAN LOKAL",
     icon: <IconClipboardText size={100} color={colors["blue-button"]} />,
-    link: "/darmasaba/desa-anti-korupsi/kearifan-lokal"
+    link: detailHref("KEARIFAN LOKAL")
   }
 ]
 function Page() {
@@ -69,7 +70,7 @@ function Page() {
                     <Box>
                       {v.icon}
                     </Box>
-                    <Button fz={"h4"} color={colors["blue-button"]} onClick={() => router.push("/darmasaba/desa-anti-korupsi/detail")}>Detail</Button>
+                    <Button fz={"h4"} color={colors["blue-button"]} onClick={() => router.push(v.link)}>Detail</Button>
                   </Stack>
                 </Box>
               </Paper>

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
@@ -19,9 +20,12 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconFile, IconInbox } from '@tabler/icons-react';
+import { detailHref, filterByKategori, resolveInitialKategori } from '../_lib/kategori-tab';
 
-function Lokal() {
-  const [selectedKategori, setSelectedKategori] = useState<string>('PENGUATAN TATA LAKSANA');
+function LokalContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [pickedKategori, setPickedKategori] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const state = useProxy(korupsiState);
 
@@ -39,10 +43,13 @@ function Lokal() {
 
   const data = state.desaAntikorupsi.findMany.data || [];
   const categories = [...new Set(data.filter(i => i.kategori?.name).map(i => i.kategori.name))];
-  const filteredData =
-    selectedKategori === 'PENGUATAN TATA LAKSANA'
-      ? data
-      : data.filter(i => i.kategori?.name === selectedKategori);
+  const selectedKategori = pickedKategori ?? resolveInitialKategori(searchParams.get('kategori'), categories);
+  const filteredData = filterByKategori(data, selectedKategori);
+
+  const selectKategori = (kategori: string) => {
+    setPickedKategori(kategori);
+    router.replace(detailHref(kategori), { scroll: false });
+  };
 
   return (
     <Stack pos="relative" bg={colors.Bg} py="xl" gap={32}>
@@ -68,7 +75,7 @@ function Lokal() {
           {categories.map(kategori => (
             <Button
               key={kategori}
-              onClick={() => setSelectedKategori(kategori)}
+              onClick={() => selectKategori(kategori)}
               size="sm"
               radius="xl"
               variant={selectedKategori === kategori ? 'filled' : 'outline'}
@@ -140,6 +147,21 @@ function Lokal() {
         )}
       </Container>
     </Stack>
+  );
+}
+
+// useSearchParams di client page wajib dalam Suspense boundary agar `next build` tidak gagal.
+function Lokal() {
+  return (
+    <Suspense
+      fallback={
+        <Flex justify="center" align="center" h={200}>
+          <Loader color={colors['blue-button']} size="lg" />
+        </Flex>
+      }
+    >
+      <LokalContent />
+    </Suspense>
   );
 }
 
