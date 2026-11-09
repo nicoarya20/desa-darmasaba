@@ -13,10 +13,10 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import colors from '@/con/colors';
 import { DokumenFolderEditor } from '../../../_com/DokumenFolderEditor';
-import { isDraftListValid, uploadPendingDrafts } from '../../../_lib/dokumen-draft';
+import { isIsiDraftValid } from '../../../_lib/dokumen-bulk-actions';
+import { uploadPendingDrafts } from '../../../_lib/dokumen-draft';
 import {
   emptyIsiDraft,
-  isFolderListValid,
   isiDraftFromDetail,
   toIsiPayload,
   type IsiDraft,
@@ -50,8 +50,7 @@ export default function EditDesaAntiKorupsi() {
     return (
       formData.name?.trim() !== '' &&
       formData.kategoriId?.trim() !== '' &&
-      isDraftListValid(isi.dokumen) &&
-      isFolderListValid(isi.folders)
+      isIsiDraftValid(isi)
     );
   };
 
