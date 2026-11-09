@@ -26,12 +26,13 @@ const responden = proxy({
   create: {
     form: { ...defaultFormResponden },
     loading: false,
-    async create() {
+    /** Kirim form; true bila tersimpan, false bila validasi/API gagal (toast sudah ditampilkan). */
+    async create(): Promise<boolean> {
       const cek = templateResponden.safeParse(responden.create.form);
       if (!cek.success) {
         const err = cek.error.issues.map((i) => i.message).join("\n");
         toast.error(err);
-        return;
+        return false;
       }
 
       try {
@@ -42,12 +43,15 @@ const responden = proxy({
         if (res.status === 200) {
           toast.success("Responden berhasil ditambahkan");
           await responden.findMany.load();
+          return true;
         } else {
           toast.error(getServerMessage(res) ?? "Gagal tambah responden");
+          return false;
         }
       } catch (error) {
         console.error("Gagal create:", error);
         toast.error("Terjadi kesalahan saat menambahkan responden");
+        return false;
       } finally {
         responden.create.loading = false;
       }

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.227] - 2026-11-09
+### Changed
+- **Warna grafik Ulasan di Indeks Kepuasan Masyarakat kini mengikuti skala penilaian yang umum**: Sangat Baik hijau tua, Baik hijau muda, Kurang Baik jingga, dan Sangat Kurang Baik merah, sehingga tiap penilaian mudah dibedakan. Grafik Jenis kelamin dan Umur tetap berwarna biru desa.
+- **Form "Ajukan Responden" tidak lagi meminta tanggal.** Tanggal pengisian tercatat otomatis sesuai hari saat form dikirim, termasuk bila dikirim lewat tengah malam.
+
+### Fixed
+- **Isian form "Ajukan Responden" tidak lagi hilang saat ada yang belum diisi.** Sebelumnya form langsung tertutup dan isian terhapus sehingga harus diulang dari awal. Kini form tetap terbuka, isian dipertahankan, dan kolom yang masih kosong diberi keterangan merah. Tombol Submit menampilkan tanda memuat selama pengiriman sehingga data tidak terkirim dua kali.
+- Grafik donat yang seluruhnya satu kategori (100%) tidak lagi menampilkan garis tipis putih di sisi kanan.
+
 ## [0.1.226] - 2026-11-09
 ### Changed
 - **Tampilan baru section Indeks Kepuasan Masyarakat di beranda**, senada dengan section APBDes dan Kabar Desa: latar putih, grafik dalam kartu abu muda tanpa bingkai, dan tombol "Ajukan Responden" berbentuk pil.

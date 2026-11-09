@@ -1,22 +1,33 @@
 // @vitest-environment node
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   countByCategory,
+  donutSlices,
+  donutStrokeWidth,
   formatShare,
   hasValues,
+  missingFormFields,
   monthlyCounts,
+  submitResponden,
   summarizeKepuasan,
   sumValues,
   toSelectOptions,
+  todayLocalIsoDate,
   type RespondenItem,
 } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.logic';
-import { RATING } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.meta';
+import {
+  JENIS_KELAMIN,
+  KELOMPOK_UMUR,
+  RATING,
+  RATING_FALLBACK_COLOR,
+  ratingColor,
+} from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.meta';
 
 // test-only: bentuk meniru respons responden.findMany. Tanggal di tengah bulan agar
 // tidak bergeser bulan di zona waktu mana pun (logika memakai waktu lokal seperti kode lama).
 const r = (over: Partial<RespondenItem> = {}): RespondenItem => ({
   tanggal: '2026-03-15T00:00:00.000Z',
-  createdAt: '2026-11-01T00:00:00.000Z',
+  createdAt: '2026-11-15T00:00:00.000Z',
   jenisKelamin: { name: 'Laki-laki' },
   rating: { name: 'Sangat Baik' },
   kelompokUmur: { name: 'Dewasa' },
@@ -157,5 +168,146 @@ describe('sumValues & formatShare', () => {
 
   it('total 0 → 0% (bukan NaN)', () => {
     expect(formatShare(0, 0).replace(/\s/g, '')).toBe('0%');
+  });
+});
+
+describe('warna rating (meta)', () => {
+  it('urut baik → buruk: hijau tua, hijau muda, jingga, merah (token tema Mantine)', () => {
+    expect(RATING.map((c) => c.color)).toEqual([
+      'var(--mantine-color-green-8)',
+      'var(--mantine-color-lime-8)',
+      'var(--mantine-color-orange-6)',
+      'var(--mantine-color-red-8)',
+    ]);
+  });
+
+  it('ratingColor tanpa beda huruf besar/kecil & spasi tepi', () => {
+    expect(ratingColor('  SANGAT baik ')).toBe('var(--mantine-color-green-8)');
+    expect(ratingColor('kurang baik')).toBe('var(--mantine-color-orange-6)');
+  });
+
+  it('rating tak dikenal → warna netral', () => {
+    expect(ratingColor('Cukup')).toBe(RATING_FALLBACK_COLOR);
+    expect(ratingColor('')).toBe(RATING_FALLBACK_COLOR);
+  });
+
+  it('jenis kelamin & umur tetap palet biru brand', () => {
+    expect(JENIS_KELAMIN.map((c) => c.color)).toEqual(['#0A4E78', '#8AC1E3']);
+    expect(KELOMPOK_UMUR.map((c) => c.color)).toEqual(['#0A4E78', '#2F91CC', '#8AC1E3']);
+  });
+
+  it('summarizeKepuasan membawa warna rating ke slice', () => {
+    expect(summarizeKepuasan([]).rating.map((s) => s.color)).toEqual(RATING.map((c) => c.color));
+  });
+});
+
+describe('donutSlices', () => {
+  const slices = [
+    { name: 'Laki-laki', value: 2, color: '#0A4E78' },
+    { name: 'Perempuan', value: 0, color: '#8AC1E3' },
+  ];
+
+  it('membuang kategori bernilai 0 (penyebab garis tipis di donat 100%)', () => {
+    expect(donutSlices(slices)).toEqual([{ name: 'Laki-laki', value: 2, color: '#0A4E78' }]);
+  });
+
+  it('tidak mengubah input (legenda tetap memakai semua kategori)', () => {
+    donutSlices(slices);
+    expect(slices).toHaveLength(2);
+  });
+
+  it('semua 0 → kosong; semua > 0 → utuh dan urutan tetap', () => {
+    expect(donutSlices([{ name: 'A', value: 0, color: 'x' }])).toEqual([]);
+    const all = [{ name: 'A', value: 1, color: 'x' }, { name: 'B', value: 3, color: 'y' }];
+    expect(donutSlices(all)).toEqual(all);
+  });
+});
+
+describe('donutStrokeWidth', () => {
+  it('satu irisan (100%) → tanpa garis pemisah agar tidak muncul garis di jam 3', () => {
+    expect(donutStrokeWidth(1)).toBe(0);
+    expect(donutStrokeWidth(0)).toBe(0);
+  });
+
+  it('dua irisan atau lebih → pemisah 2px', () => {
+    expect(donutStrokeWidth(2)).toBe(2);
+    expect(donutStrokeWidth(4)).toBe(2);
+  });
+});
+
+describe('todayLocalIsoDate', () => {
+  it('format YYYY-MM-DD dengan nol di depan (nilai <input type="date">)', () => {
+    expect(todayLocalIsoDate(new Date(2026, 0, 5, 12, 0))).toBe('2026-01-05');
+    expect(todayLocalIsoDate(new Date(2026, 10, 9, 23, 59))).toBe('2026-11-09');
+  });
+
+  describe('zona WITA (Asia/Makassar, UTC+8)', () => {
+    const originalTz = process.env.TZ;
+    beforeAll(() => {
+      process.env.TZ = 'Asia/Makassar';
+    });
+    afterAll(() => {
+      process.env.TZ = originalTz;
+    });
+
+    it('dini hari 01:30 WITA tetap tanggal hari itu, bukan kemarin seperti toISOString()', () => {
+      const dinihari = new Date('2026-11-08T17:30:00.000Z'); // = 9 Nov 2026 01:30 WITA
+      expect(dinihari.toISOString().slice(0, 10)).toBe('2026-11-08'); // jebakan yang dihindari
+      expect(todayLocalIsoDate(dinihari)).toBe('2026-11-09');
+    });
+
+    it('batas 00:00 dan 07:59 WITA', () => {
+      expect(todayLocalIsoDate(new Date('2026-11-08T16:00:00.000Z'))).toBe('2026-11-09');
+      expect(todayLocalIsoDate(new Date('2026-11-08T23:59:00.000Z'))).toBe('2026-11-09');
+      expect(todayLocalIsoDate(new Date('2026-11-08T15:59:00.000Z'))).toBe('2026-11-08');
+    });
+
+    it('pergantian tahun', () => {
+      expect(todayLocalIsoDate(new Date('2025-12-31T16:30:00.000Z'))).toBe('2026-01-01');
+    });
+  });
+});
+
+describe('missingFormFields', () => {
+  it('form lengkap → tidak ada yang kurang (tanggal bukan field wajib pengunjung)', () => {
+    expect(missingFormFields({ name: 'A', jenisKelaminId: 'j', ratingId: 'r', kelompokUmurId: 'u' })).toEqual([]);
+  });
+
+  it('kosong / spasi / null / tidak ada → kurang, urut sesuai form', () => {
+    expect(missingFormFields({ name: '  ', jenisKelaminId: 'j', ratingId: null, kelompokUmurId: '' })).toEqual([
+      'name',
+      'ratingId',
+      'kelompokUmurId',
+    ]);
+    expect(missingFormFields({})).toEqual(['name', 'jenisKelaminId', 'ratingId', 'kelompokUmurId']);
+  });
+});
+
+describe('submitResponden', () => {
+  const setup = (result: boolean) => {
+    const calls: string[] = [];
+    const deps = {
+      now: new Date(2026, 10, 9, 1, 30), // dini hari lokal
+      setTanggal: vi.fn((v: string) => calls.push(`tanggal:${v}`)),
+      create: vi.fn(async () => {
+        calls.push('create');
+        return result;
+      }),
+      onSuccess: vi.fn(() => calls.push('success')),
+    };
+    return { deps, calls };
+  };
+
+  it('sukses → tanggal diisi dulu, lalu create, lalu reset + tutup', async () => {
+    const { deps, calls } = setup(true);
+    await expect(submitResponden(deps)).resolves.toBe(true);
+    expect(calls).toEqual(['tanggal:2026-11-09', 'create', 'success']);
+  });
+
+  it('create gagal (validasi/API) → modal tidak direset/ditutup', async () => {
+    const { deps, calls } = setup(false);
+    await expect(submitResponden(deps)).resolves.toBe(false);
+    expect(deps.onSuccess).not.toHaveBeenCalled();
+    expect(calls).toEqual(['tanggal:2026-11-09', 'create']);
   });
 });

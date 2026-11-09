@@ -74,11 +74,7 @@ function Kepuasan() {
 
   const handleSubmit = async () => {
     try {
-      const id = await state.create.create();
-      if (typeof id !== 'undefined') {
-        const idStr = String(id);
-        await state.findUnique.load(idStr);
-      }
+      await state.create.create();
       resetForm();
       close();
     } catch (error) {

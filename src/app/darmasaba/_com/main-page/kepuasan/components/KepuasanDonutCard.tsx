@@ -1,5 +1,5 @@
 import { DonutChart } from "@mantine/charts";
-import { formatShare, sumValues, type ChartSlice } from "../kepuasan.logic";
+import { donutSlices, donutStrokeWidth, formatShare, sumValues, type ChartSlice } from "../kepuasan.logic";
 import s from "../kepuasan.module.css";
 import { KEPUASAN_TEXT } from "../kepuasan.text";
 
@@ -11,6 +11,7 @@ type Props = { title: string; slices: readonly ChartSlice[] };
 /** Kartu satu komposisi responden: donat + legenda (jumlah dan persen per kategori). */
 export function KepuasanDonutCard({ title, slices }: Props) {
   const total = sumValues(slices);
+  const drawn = donutSlices(slices);
 
   return (
     <article className={s.card}>
@@ -21,11 +22,11 @@ export function KepuasanDonutCard({ title, slices }: Props) {
         <>
           <div className={s.donut}>
             <DonutChart
-              data={[...slices]}
+              data={drawn}
               size={168}
               thickness={24}
               strokeColor={TILE}
-              strokeWidth={2}
+              strokeWidth={donutStrokeWidth(drawn.length)}
               withTooltip
               tooltipDataSource="segment"
               valueFormatter={(v) => v.toLocaleString("id-ID")}
