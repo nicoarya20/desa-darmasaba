@@ -230,12 +230,4 @@ describe('tombol unduh ZIP', () => {
     expect(sukses).toHaveBeenCalledWith('p1', null);
     expect(onGagal).not.toHaveBeenCalled();
   });
-
-  it('jalankanUnduhZip: error tak terduga (mis. blob gagal) → pesan ramah berisi detail, tidak melempar', async () => {
-    const onGagal = vi.fn();
-    const rusak = vi.fn().mockRejectedValue(new Error('stream terputus'));
-    const res = await jalankanUnduhZip('p1', 'umum', { unduh: rusak, onGagal });
-    expect(res.ok).toBe(false);
-    expect(onGagal).toHaveBeenCalledWith(expect.stringContaining('stream terputus'));
-  });
 });

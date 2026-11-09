@@ -72,6 +72,16 @@ describe('unduhZipDak', () => {
     expect(save).not.toHaveBeenCalled();
   });
 
+  it('gagal membaca blob atau menyimpan: pesan berisi detail, tidak melempar', async () => {
+    const fetchImpl = vi.fn(async () => new Response(new Blob(['zip']), { status: 200 })) as unknown as typeof fetch;
+    const save = vi.fn(() => {
+      throw new Error('stream terputus');
+    });
+    const res = await unduhZipDak('p1', 'umum', { fetchImpl, save });
+    expect(res.ok).toBe(false);
+    if (!res.ok) expect(res.message).toContain('stream terputus');
+  });
+
   it('jaringan gagal: pesan koneksi, tidak melempar', async () => {
     const fetchImpl = vi.fn(async () => {
       throw new TypeError('network');

@@ -6,6 +6,7 @@ export type UnduhZipResult = { ok: true; fileName: string } | { ok: false; messa
 
 const ZIP_API_BASE = "/api/landingpage/desaantikorupsi";
 const PESAN_DEFAULT = "Gagal mengunduh ZIP. Coba lagi atau unduh per dokumen.";
+const PESAN_SIMPAN_GAGAL = "Gagal menyiapkan unduhan ZIP. Coba lagi atau unduh per dokumen.";
 
 /** URL endpoint ZIP; `folder` = id folder, "umum", atau kosong untuk seluruh program. */
 export function zipUrl(programId: string, folder?: string | null): string {
@@ -70,6 +71,12 @@ export async function unduhZipDak(
     return { ok: false, message: pesanGagalZip(res.status, body) };
   }
   const fileName = fileNameFromDisposition(res.headers.get("Content-Disposition"));
-  save(await res.blob(), fileName);
+  try {
+    save(await res.blob(), fileName);
+  } catch (e) {
+    // Stream terputus saat membaca isi ZIP atau browser menolak menyimpan: jadikan pesan, jangan lempar.
+    const detail = e instanceof Error ? e.message : String(e);
+    return { ok: false, message: `${PESAN_SIMPAN_GAGAL} (${detail})` };
+  }
   return { ok: true, fileName };
 }
