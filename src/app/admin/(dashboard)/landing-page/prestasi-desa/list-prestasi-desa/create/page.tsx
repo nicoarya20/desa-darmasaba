@@ -42,6 +42,7 @@ function CreatePrestasiDesa() {
     prestasi.create.form = {
       name: "",
       deskripsi: "",
+      juara: "",
       kategoriId: "",
       imageId: "",
     };
@@ -181,6 +182,14 @@ function CreatePrestasiDesa() {
             value={snapPrestasi.create.form.name}
             onChange={(e) => (prestasi.create.form.name = e.target.value)}
             required
+          />
+
+          <TextInput
+            label="Capaian / Juara"
+            description="Opsional, mis. Juara 1 Lomba Desa Provinsi Bali 2025"
+            placeholder="Masukkan capaian atau peringkat"
+            value={snapPrestasi.create.form.juara}
+            onChange={(e) => (prestasi.create.form.juara = e.target.value)}
           />
 
           <Box>

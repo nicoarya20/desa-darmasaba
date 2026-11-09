@@ -13,7 +13,8 @@ const getDetailUrl = (item: SearchItem) => {
     desaantikorupsi: () => '/darmasaba/desa-anti-korupsi',
     sdgsdesa: () => '/darmasaba/sdgs-desa',
     apbdes: () => '/darmasaba/apbdes',
-    prestasidesa: () => '/darmasaba/prestasi-desa',
+    // Termasuk entri eks-Penghargaan (kini kategori "Penghargaan" di tabel PrestasiDesa).
+    prestasidesa: (id) => `/darmasaba/prestasi-desa/${id}`,
     pejabatdesa: () => '/darmasaba/ppid/profil-ppid',
     strukturppid: () => '/darmasaba/ppid/struktur-ppid',
     visimisippid: () => '/darmasaba/ppid/visi-misi-ppid',
@@ -39,7 +40,6 @@ const getDetailUrl = (item: SearchItem) => {
     pelayananPerizinanBerusaha: () => '/darmasaba/pemerintahan/layanan',
     pelayananTelunjukSaktiDesa: () => '/darmasaba/pemerintahan/layanan',
     pelayananPendudukNonPermanen: () => '/darmasaba/pemerintahan/layanan',
-    penghargaan: () => '/darmasaba/prestasi-desa',
     posyandu: (id) => `/darmasaba/kesehatan/posyandu/${id}`,
     fasilitasKesehatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     dokterdanTenagaMedis: () => '/darmasaba/kesehatan/data-kesehatan-warga',

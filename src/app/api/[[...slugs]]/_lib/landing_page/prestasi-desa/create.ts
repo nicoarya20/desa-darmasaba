@@ -1,9 +1,11 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { normalizeJuara } from "./juara";
 
 type FormCreate = {
   name: string;
   deskripsi: string;
+  juara?: string | null;
   imageId: string;
   kategoriId: string;
 };
@@ -29,6 +31,7 @@ export default async function prestasiDesaCreate(context: Context) {
       data: {
         name: body.name,
         deskripsi: body.deskripsi,
+        juara: normalizeJuara(body.juara) ?? null,
         imageId: body.imageId,
         kategoriId: body.kategoriId,
       },

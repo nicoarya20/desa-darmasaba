@@ -48,7 +48,9 @@ describe('route admin grup Pemerintahan', () => {
   const paths = (desaMenu.children ?? []).map((c) => c.path);
 
   it('semua path menu diawali /admin/pemerintahan/ dan tidak ada yang masih di route lama "desa"', () => {
-    expect(paths).toHaveLength(10);
+    // 9: menu Penghargaan (Desa_7) dihapus — dikelola di Landing Page > Prestasi dan Penghargaan.
+    expect(paths).toHaveLength(9);
+    expect(paths).not.toContain('/admin/pemerintahan/penghargaan');
     for (const p of paths) expect(p, p).toMatch(/^\/admin\/pemerintahan\//);
     expect(paths.filter((p) => /^\/admin\/desa(\/|$)/.test(p))).toEqual([]);
   });

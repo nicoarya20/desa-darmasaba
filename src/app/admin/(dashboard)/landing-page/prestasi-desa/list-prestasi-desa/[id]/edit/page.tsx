@@ -16,6 +16,7 @@ import ApiFetch from '@/lib/api-fetch';
 interface FormPrestasiDesa {
   name: string;
   deskripsi: string;
+  juara: string;
   kategoriId: string;
   imageId: string;
 }
@@ -28,6 +29,7 @@ export default function EditPrestasiDesa() {
   const [formData, setFormData] = useState<FormPrestasiDesa>({
     name: '',
     deskripsi: '',
+    juara: '',
     kategoriId: '',
     imageId: '',
   });
@@ -46,6 +48,7 @@ export default function EditPrestasiDesa() {
   const [originalData, setOriginalData] = useState({
     name: "",
     deskripsi: "",
+    juara: "",
     kategoriId: "",
     imageId: "",
     imageUrl: "",
@@ -71,6 +74,7 @@ export default function EditPrestasiDesa() {
           editState.edit.form = {
             name: data.name,
             deskripsi: data.deskripsi,
+            juara: data.juara ?? '',
             kategoriId: data.kategoriId,
             imageId: data.imageId,
           };
@@ -78,6 +82,7 @@ export default function EditPrestasiDesa() {
           setFormData({
             name: data.name,
             deskripsi: data.deskripsi,
+            juara: data.juara ?? '',
             kategoriId: data.kategoriId,
             imageId: data.imageId,
           });
@@ -85,6 +90,7 @@ export default function EditPrestasiDesa() {
           setOriginalData({
             name: data.name,
             deskripsi: data.deskripsi,
+            juara: data.juara ?? '',
             kategoriId: data.kategoriId,
             imageId: data.imageId,
             imageUrl: data.image?.link || "",
@@ -105,6 +111,7 @@ export default function EditPrestasiDesa() {
     setFormData({
       name: originalData.name,
       deskripsi: originalData.deskripsi,
+      juara: originalData.juara,
       kategoriId: originalData.kategoriId,
       imageId: originalData.imageId,
     });
@@ -156,6 +163,14 @@ export default function EditPrestasiDesa() {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
+          />
+
+          <TextInput
+            label="Capaian / Juara"
+            description="Opsional, mis. Juara 1 Lomba Desa Provinsi Bali 2025"
+            placeholder="Masukkan capaian atau peringkat"
+            value={formData.juara}
+            onChange={(e) => setFormData({ ...formData, juara: e.target.value })}
           />
 
           <Box>
