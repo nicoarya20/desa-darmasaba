@@ -6,13 +6,17 @@ export const DOKUMEN_MAX_PER_PROGRAM = 50;
 export const DOKUMEN_JUDUL_MAX_LENGTH = 255;
 export const PDF_MIME_TYPE = "application/pdf";
 
-/** Satu dokumen dalam respons API (sudah termasuk info berkas). */
+/**
+ * Satu dokumen dalam respons API (sudah termasuk info berkas). `createdAt` = ISO string;
+ * `file.size` = byte, null untuk berkas lama yang belum di-backfill.
+ */
 export type DokumenDesaAntiKorupsiView = {
   id: string;
   judul: string;
   urutan: number;
   fileId: string;
-  file: { id: string; link: string; realName: string; mimeType: string };
+  createdAt: string;
+  file: { id: string; link: string; realName: string; mimeType: string; size: number | null };
 };
 
 /**

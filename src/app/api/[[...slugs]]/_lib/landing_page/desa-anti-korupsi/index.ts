@@ -10,6 +10,7 @@ import {
   desaAntiKorupsiSampahList,
   desaAntiKorupsiSampahPulihkan,
 } from "./sampah";
+import desaAntiKorupsiZip from "./zip";
 import { DOKUMEN_MAX_PER_PROGRAM } from "@/lib/desa-anti-korupsi-dokumen";
 
 // Tipe dasar saja; aturan dokumen & folder (judul/nama wajib, urutan, duplikat, kepemilikan,
@@ -63,6 +64,11 @@ const DesaAntiKorupsi = new Elysia({
       targetProgramId: t.String(),
       targetFolderId: t.Nullable(t.String()),
     }),
+  })
+
+  // ✅ Unduh ZIP dokumen aktif (publik); ?folder=<id|umum> = satu folder saja
+  .get("/:id/zip", desaAntiKorupsiZip, {
+    query: t.Object({ folder: t.Optional(t.String()) }),
   })
 
   // ✅ Create

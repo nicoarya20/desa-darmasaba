@@ -17,8 +17,15 @@ import {
   type IsiDraft,
 } from '@/app/admin/(dashboard)/landing-page/desa-anti-korupsi/_lib/folder-draft';
 
-const file = (id: string) => ({ id, link: `/l/${id}`, realName: `${id}.pdf`, mimeType: 'application/pdf' });
-const dok = (id: string, judul: string) => ({ id, judul, urutan: 0, fileId: `x-${id}`, file: file(`x-${id}`) });
+const file = (id: string) => ({ id, link: `/l/${id}`, realName: `${id}.pdf`, mimeType: 'application/pdf', size: null });
+const dok = (id: string, judul: string) => ({
+  id,
+  judul,
+  urutan: 0,
+  fileId: `x-${id}`,
+  createdAt: '2026-11-09T00:00:00.000Z',
+  file: file(`x-${id}`),
+});
 
 const saved = isiDraftFromDetail({
   folders: [

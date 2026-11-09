@@ -18,7 +18,8 @@ const dok = (id: string, judul: string, realName = `${id}.pdf`, mimeType = 'appl
   judul,
   urutan: 0,
   fileId: `f-${id}`,
-  file: { id: `f-${id}`, link: `/api/fileStorage/findUnique/${id}`, realName, mimeType },
+  createdAt: '2026-11-09T00:00:00.000Z',
+  file: { id: `f-${id}`, link: `/api/fileStorage/findUnique/${id}`, realName, mimeType, size: 1024 },
 });
 
 const detail = {

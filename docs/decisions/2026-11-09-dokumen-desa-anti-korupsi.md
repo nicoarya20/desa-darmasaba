@@ -45,8 +45,15 @@ Semua error: `{ success: false, message }` dengan status 400/401/403/404/409.
 | Method | Path | Body / respons |
 |---|---|---|
 | GET | `/findMany` | tiap program: field program + `kategori` + `jumlahFolder` + `jumlahDokumen` (aktif). **Tidak** lagi membawa `dokumen`. |
-| GET | `/:id` | field program + `kategori` + `folders: { id, nama, urutan, dokumen: Dokumen[] }[]` (urut `urutan`) + `dokumenUmum: Dokumen[]`. `Dokumen` = `{ id, judul, urutan, fileId, file: { id, link, realName, mimeType } }` (aktif, urut `urutan` lalu `createdAt`). |
+| GET | `/:id` | field program + `kategori` + `folders: { id, nama, urutan, dokumen: Dokumen[] }[]` (urut `urutan`) + `dokumenUmum: Dokumen[]`. `Dokumen` = `{ id, judul, urutan, fileId, createdAt (ISO), file: { id, link, realName, mimeType, size } }` (aktif, urut `urutan` lalu `createdAt`; `size` byte, `null` = berkas lama belum di-backfill). |
+| GET | `/:id/zip?folder=<folderId\|umum>` | **Publik.** ZIP dokumen aktif. Tanpa `folder` = seluruh program (subfolder per nama folder + `Umum`); dengan `folder` = isi folder itu di akar arsip. 200 `application/zip` + `Content-Disposition: attachment` (`<slug-program>[-<slug-folder>].zip`, `filename*` RFC 5987). 404 program/folder tidak ada/nonaktif atau tidak ada dokumen; 413 total ukuran > `DAK_ZIP_MAX_BYTES` (default 100 MB); 502 berkas gagal dibaca dari MinIO. Error = `{ success: false, message }`. |
 | POST | `/create` | `{ name, deskripsi, kategoriId, folders?: { tempKey, nama, urutan }[], dokumen?: { fileId, judul, urutan, folder?: FolderRef }[] }` → `data` berbentuk detail `/:id` |
 | PUT | `/:id` | `{ name, deskripsi, kategoriId, folders?: { id? \| tempKey?, nama, urutan }[], dokumen?: { id?, fileId, judul, urutan, folder?: FolderRef }[] }`. `folders`/`dokumen` tidak dikirim = bagian itu tidak diubah; array = set final. → `data` berbentuk detail `/:id` |
 
 Error validasi isi program: HTTP 400 `{ success: false, message }`.
+
+## Ukuran berkas & unduh ZIP — migrasi `20261109150000_add_file_storage_size`
+- **`FileStorage.size Int?`** (byte): diisi upload baru (`/api/fileStorage/create` & upload gambar pengaduan); baris lama diisi `prisma/backfill-file-size.ts` (lihat `docs/DEPLOYMENT.md`). Nullable karena ukuran baris lama hanya bisa diketahui dari MinIO.
+- **Makna ukuran = isi yang diterima pengguna**: dokumen non-PDF disimpan ter-gzip, `size` = ukuran asli (backfill membaca ISIZE di trailer gzip); gambar = ukuran WebP tersimpan.
+- **ZIP**: dibangun di memori dengan `adm-zip`, maka total isi dibatasi (`DAK_ZIP_MAX_BYTES`, default 100 MB) dan dicek dari `size` (fallback `statObject` bila null) **sebelum** mengunduh isi dari MinIO. Isi ter-gzip dibuka sehingga entri ZIP berisi dokumen aslinya. Nama entri = judul + ekstensi berkas asli, disanitasi (tanpa pemisah path/karakter kontrol) dan nama kembar diberi akhiran ` (2)`. Logika murni di `src/lib/desa-anti-korupsi-zip.ts`.
+- **Publik tanpa whitelist baru**: `/api/landingpage/*` GET tidak termasuk `ADMIN_ONLY_GET_PATHS` di `route.ts` dan tidak dicocokkan matcher `src/proxy.ts` (dikunci di `proxy_matcher_contract.test.ts`).

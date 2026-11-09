@@ -32,7 +32,8 @@ export const DESA_ANTI_KORUPSI_DETAIL_INCLUDE = {
       urutan: true,
       fileId: true,
       folderId: true,
-      file: { select: { id: true, link: true, realName: true, mimeType: true } },
+      createdAt: true,
+      file: { select: { id: true, link: true, realName: true, mimeType: true, size: true } },
     },
   },
 } satisfies Prisma.DesaAntiKorupsiInclude;
@@ -64,9 +65,9 @@ export function toProgramDetail(row: DetailRow): DesaAntiKorupsiDetail {
   const byFolder = new Map<string, DokumenDesaAntiKorupsiView[]>(folders.map((f) => [f.id, []]));
   const dokumenUmum: DokumenDesaAntiKorupsiView[] = [];
 
-  for (const { folderId, ...item } of dokumen) {
+  for (const { folderId, createdAt, ...item } of dokumen) {
     const bucket = folderId ? byFolder.get(folderId) : undefined;
-    (bucket ?? dokumenUmum).push(item);
+    (bucket ?? dokumenUmum).push({ ...item, createdAt: createdAt.toISOString() });
   }
 
   return {
