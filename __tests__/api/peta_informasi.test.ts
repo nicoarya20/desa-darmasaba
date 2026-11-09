@@ -5,6 +5,7 @@ import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
 import searchExtraPages from '@/con/search-extra-pages';
 import { flattenMenu } from '@/app/darmasaba/_com/searchMenu';
+import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
 import {
   countPages,
   groupPetaInformasi,
@@ -72,7 +73,7 @@ describe('groupPetaInformasi / petaInformasiGroups (fixture)', () => {
 
 describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () => {
   const groups = petaInformasiGroups('');
-  const expected = [...flattenMenu(navbarListMenu), ...flattenMenu(searchExtraPages)]
+  const expected = [...flattenMenu(visibleMenu(navbarListMenu)), ...flattenMenu(searchExtraPages)]
     .map((p) => p.href)
     .filter((href) => href !== PETA_INFORMASI_HREF);
 

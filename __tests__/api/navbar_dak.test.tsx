@@ -19,6 +19,7 @@ vi.mock('@/app/darmasaba/_com/NavBarSearch', () => ({ NavbarSearch: () => null }
 import navbarListMenu from '@/con/navbar-list-menu';
 import { NavbarMainMenu } from '@/app/darmasaba/_com/NavbarMainMenu';
 import { NavbarMobile } from '@/app/darmasaba/_com/NavbarMobile';
+import { Navbar } from '@/app/darmasaba/_com/Navbar';
 
 const DAK_HREF = '/darmasaba/desa-anti-korupsi';
 
@@ -51,5 +52,10 @@ describe('render navbar publik', () => {
   it('mobile: DAK dirender sebagai <a> ke halaman DAK di level menu utama', () => {
     const html = render(<NavbarMobile listNavbar={navbarListMenu} />);
     expect(html).toMatch(new RegExp(`<a[^>]*href="${DAK_HREF}"[^>]*>DAK</a>`));
+  });
+
+  it('Navbar (lewat daftar menu terlihat) menampilkan DAK di desktop dan mobile', () => {
+    const html = render(<Navbar />);
+    expect(html.match(new RegExp(`<a[^>]*href="${DAK_HREF}"[^>]*>DAK</a>`, 'g'))).toHaveLength(2);
   });
 });

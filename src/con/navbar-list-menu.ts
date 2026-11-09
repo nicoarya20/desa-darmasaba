@@ -116,12 +116,14 @@ const navbarListMenu = [
             {
                 id: "3.2",
                 name: "Data Kesehatan Warga",
-                href: "/darmasaba/kesehatan/data-kesehatan-warga"
+                href: "/darmasaba/kesehatan/data-kesehatan-warga",
+                hidden: true
             },
             {
                 id: "3.3",
                 name: "Puskesmas",
-                href: "/darmasaba/kesehatan/puskesmas"
+                href: "/darmasaba/kesehatan/puskesmas",
+                hidden: true
             },
             {
                 id: "3.4",
@@ -131,7 +133,8 @@ const navbarListMenu = [
             {
                 id: "3.5",
                 name: "Penanganan Darurat",
-                href: "/darmasaba/kesehatan/penanganan-darurat"
+                href: "/darmasaba/kesehatan/penanganan-darurat",
+                hidden: true
             },
             {
                 id: "3.6",
@@ -141,7 +144,8 @@ const navbarListMenu = [
             {
                 id: "3.7",
                 name: "Info Wabah/Penyakit",
-                href: "/darmasaba/kesehatan/info-wabah-penyakit"
+                href: "/darmasaba/kesehatan/info-wabah-penyakit",
+                hidden: true
             }
         ]
     },

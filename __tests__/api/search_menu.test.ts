@@ -9,6 +9,7 @@ import searchMenu, {
   MENU_PREVIEW_COUNT,
   previewMenuResults,
 } from '@/app/darmasaba/_com/searchMenu';
+import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
 import type { MenuItem } from '../../types/menu-item';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
@@ -19,6 +20,9 @@ const SHOW_MORE = path.resolve(__dirname, '../../src/app/darmasaba/_com/SearchSh
 const submenus = navbarListMenu.flatMap((menu) =>
   (menu.children ?? []).filter((c) => c.href).map((c) => ({ menu: menu.name, name: c.name, href: c.href })),
 );
+/** Submenu yang tampil di menu publik (item `hidden` dibuang) = yang boleh ditemukan pencarian. */
+const visibleHrefs = new Set(flattenMenu(visibleMenu(navbarListMenu)).map((m) => m.href));
+const visibleSubmenus = submenus.filter((s) => visibleHrefs.has(s.href));
 
 const FIXTURE: MenuItem[] = [
   {
@@ -62,7 +66,7 @@ describe('flattenMenu', () => {
 describe('searchMenu pada config navbar nyata', () => {
   it('setiap submenu ber-href ditemukan saat namanya dicari (asli & huruf kecil)', () => {
     const missing: string[] = [];
-    for (const s of submenus) {
+    for (const s of visibleSubmenus) {
       for (const q of [s.name, s.name.toLowerCase()]) {
         const hrefs = searchMenu(q).map((r) => r.href);
         if (!hrefs.includes(s.href)) missing.push(`${s.menu} › ${s.name} (q="${q}")`);
@@ -72,7 +76,7 @@ describe('searchMenu pada config navbar nyata', () => {
   });
 
   it('hasil pertama pencarian nama submenu berawalan nama itu (submenu itu sendiri atau senama/berawalan sama)', () => {
-    const wrongFirst = submenus
+    const wrongFirst = visibleSubmenus
       .filter((s) => !searchMenu(s.name)[0]?.label.toLowerCase().startsWith(s.name.toLowerCase()))
       .map((s) => s.name);
     expect(wrongFirst).toEqual([]);
@@ -106,7 +110,7 @@ describe('searchMenu pada config navbar nyata', () => {
   it('tanpa batas default: query umum tidak memotong halaman yang cocok', () => {
     const labels = searchMenu('kesehatan').map((r) => `${r.parent} › ${r.label}`);
     expect(labels).toContain('Kesehatan › Kontak Darurat');
-    expect(labels).toContain('Kesehatan › Info Wabah/Penyakit');
+    expect(labels).toContain('Kesehatan › Program Kesehatan');
     expect(searchMenu('a').length).toBeGreaterThan(8);
     expect(searchMenu('a')).toEqual(searchMenu('a', undefined, Infinity));
   });
