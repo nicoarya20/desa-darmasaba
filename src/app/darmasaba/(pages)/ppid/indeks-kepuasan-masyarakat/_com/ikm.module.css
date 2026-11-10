@@ -1,0 +1,25 @@
+/*
+ * Halaman PPID Indeks Kepuasan memakai ulang komponen grafik beranda (`main-page/kepuasan`).
+ * Komponen itu membaca token di bawah, yang di beranda dipasang oleh `.section`; di sini kartunya
+ * putih (--tile) karena berdiri langsung di atas latar halaman PPID, bukan di atas section putih.
+ */
+.surface {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --tile: #fff;
+  --radius: 18px;
+  color: var(--ink);
+}
+
+/* Slot kanan kepala halaman selebar 320px: tombol dirapatkan ke tepi kanan, sejajar tepi kartu. */
+.ctaSlot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ≤1068px slot turun ke bawah pengantar (lihat ppid-header.module.css): tombol ikut rata kiri. */
+@media (max-width: 1068px) {
+  .ctaSlot {
+    justify-content: flex-start;
+  }
+}

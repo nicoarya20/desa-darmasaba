@@ -306,6 +306,15 @@ Folder `(pages)/pemerintahan/potensi/`: `page.tsx` (tombol kembali + `_com/Poten
 
 Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.tsx` (H1, `TextInput` berlabel "Saring halaman", ringkasan `aria-live`, `SimpleGrid` 1/2/3 kolom) → `_com/PetaInformasiGroupCard.tsx` (kartu per menu utama: H2 + `<ul>/<li>` `Anchor component={Link}`). Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, saring lewat `searchMenu` tanpa API. Pintu masuk: footer "Tautan Penting", entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Dites di `__tests__/api/peta_informasi.test.ts`.
 
+### Kerangka halaman PPID (`(pages)/ppid/_com/`)
+
+Semua halaman `/darmasaba/ppid/*` memakai satu kerangka agar kepala halamannya identik. Test: `__tests__/api/ppid_page_shell_ui.test.tsx`.
+
+- **`PpidPage`** (`PpidPage.tsx`; props `title`, `lead`, `aside?`, `style?`, `children`): latar `colors.Bg`, tinggi minimal 100vh, jarak tepi `md` / desktop 100px, tombol kembali (`BackButton`), kepala halaman, lalu isi dengan jarak 40px. Menyediakan variabel `--brand` dan `--ppid-measure`; `style` untuk variabel CSS tambahan milik halaman.
+- **Dua lebar isi, didefinisikan sekali di `PpidPage`**: (1) **selebar kerangka** untuk tabel, grafik, dan bagan (Daftar Informasi, IKM, Struktur); (2) **lebar baca/formulir** `--ppid-measure: 75rem` (1200px) untuk teks dan formulir (Visi Misi, Dasar Hukum, kedua Permohonan) — pakai `max-width: var(--ppid-measure)`, jangan menulis angka lebar sendiri di CSS halaman.
+- **`PpidHeader`** (`PpidHeader.tsx` + `ppid-header.module.css`; props `title`, `lead`, `aside?`): `h1` 48px (≤734px 32) warna brand dan satu kalimat pengantar abu `#515154` 19px (17) maks 640px, **rata kiri**. `aside` = kontrol di kanan judul selebar 320px (mis. kotak cari Struktur PPID); ≤1068px turun ke bawah pengantar.
+- **Aturan isi**: tanpa logo/ikon di atas judul, tanpa teks tengah atau justify, tanpa kartu di dalam kartu — isi langsung di atas latar halaman; kartu putih hanya untuk formulir, tabel, dan grafik.
+
 ### Profil PPID (`/darmasaba/ppid/profil-ppid`)
 
 Satu file `(pages)/ppid/profil-ppid/page.tsx` + `profil-ppid.module.css`; data `stateProfilePPID.profile.load('edit')` (`name`, `image`, `biodata`, `riwayat`, `pengalaman`, `unggulan` — HTML dari editor admin). Test: `__tests__/api/profil_ppid_ui.test.tsx`.
@@ -315,7 +324,7 @@ Satu file `(pages)/ppid/profil-ppid/page.tsx` + `profil-ppid.module.css`; data `
 
 ### Struktur Organisasi PPID (`/darmasaba/ppid/struktur-ppid`)
 
-Bagan hierarki atas-ke-bawah (pola "Hierarchical Structure") dengan kartu ala referensi BKHM, menggantikan bagan PrimeReact `OrganizationChart` (meluber ±1700px, hanya menggambar akar pertama) beserta kontrol Zoom/Fullscreen. Folder `(pages)/ppid/struktur-ppid/`: `page.tsx` (muat `pegawai.findMany.load(1, 100)` + `posisiOrganisasi.findManyAll.load()`, saring debounce 300ms) → `_com/StrukturHeader.tsx` (kepala), `_com/StrukturChart.tsx` (bagan + kerangka), `_com/StrukturCard.tsx` (kartu), `_com/struktur.logic.ts` (`buildOrgTree`, `filterOrgTree`, `leafSlot`, `toneForDepth`), `_com/struktur.meta.ts` (limit, `LEAF_COLS`, rute profil, variabel warna), `_com/struktur.text.ts`, CSS `struktur-header` / `struktur-chart` / `struktur-card.module.css`. Test: `__tests__/api/struktur_ppid_logic.test.ts`, `__tests__/api/struktur_ppid_ui.test.tsx`.
+Bagan hierarki atas-ke-bawah (pola "Hierarchical Structure") dengan kartu ala referensi BKHM, menggantikan bagan PrimeReact `OrganizationChart` (meluber ±1700px, hanya menggambar akar pertama) beserta kontrol Zoom/Fullscreen. Folder `(pages)/ppid/struktur-ppid/`: `page.tsx` (muat `pegawai.findMany.load(1, 100)` + `posisiOrganisasi.findManyAll.load()`, saring debounce 300ms) → kerangka bersama `ppid/_com/PpidPage.tsx` (kepala; kotak cari lewat `aside`), `_com/StrukturChart.tsx` (bagan + kerangka), `_com/StrukturCard.tsx` (kartu), `_com/struktur.logic.ts` (`buildOrgTree`, `filterOrgTree`, `leafSlot`, `toneForDepth`), `_com/struktur.meta.ts` (limit, `LEAF_COLS`, rute profil, variabel warna), `_com/struktur.text.ts`, CSS `struktur-chart` / `struktur-card.module.css`. Test: `__tests__/api/struktur_ppid_logic.test.ts`, `__tests__/api/struktur_ppid_ui.test.tsx`.
 
 - **Pohon**: satu simpul per jabatan dari pegawai **aktif**; jabatan berisi beberapa pegawai menggambar **satu kartu per pegawai** (`cardsOf`). Di grid daun tiap pegawai jadi satu kotak grid; jabatan yang punya bawahan menjajarkan kartunya dalam grup berpalang kecil (atas: dari atasan, bawah: ke bawahan), dan di ≤1068px kartunya bertumpuk dengan rel kiri menyambung ke kartu pertama. Pencarian nama hanya menyisakan pegawai yang cocok; pencarian jabatan menyisakan semua pegawainya. Jabatan induk yang belum punya pegawai diambil dari daftar jabatan dan digambar sebagai kotak redup bergaris putus "Belum ditugaskan" (tanpa tautan) supaya bawahannya tetap di bawah induknya. API jabatan tidak mengirim `parentId`, jadi kotak tanpa induk ditempel ke akar utama bila tingkatnya lebih rendah; selain itu jadi akar terpisah. Anak diurut `hierarki` lalu nama jabatan.
 - **Kartu**: jabatan huruf kapital 13px/700 (akar 15px, maks 3 baris) + pil nama putih teks brand (maks 2 baris) di kiri; foto di kanan selebar tinggi kartu (`object-fit: cover`, fokus atas) dengan tepi kiri dipudarkan `mask-image` ke gradasi kartu — foto pegawai umumnya persegi berlatar tidak transparan. Tanpa foto → siluet `IconUserFilled` transparan. Ukuran (variabel di `.chart`, dibaca kartu): akar 440×176, bawahan bercabang 320×136, bawahan daun 290×120; radius 16px. Gradasi per tingkat (`--tone-*`): akar `#062F49→#0A4E78`, bawahan langsung `#0A4E78→#2F91CC`, selebihnya `#145F8F→#5DA9D8` (kiri digelapkan dari `#2F91CC` agar teks putih ≥ 4.5:1). Seluruh kartu = tautan ke `/darmasaba/ppid/struktur-ppid/{id}`; hover naik 3px + foto zoom 1.04 (mati saat reduced motion).
@@ -323,6 +332,36 @@ Bagan hierarki atas-ke-bawah (pola "Hierarchical Structure") dengan kartu ala re
 - **Tablet & mobile ≤1068px**: semua bawahan bertumpuk berindentasi (40px, mobile 28px) dengan rel kiri, kartu selebar kolom maks 560px (mobile selebar layar, tinggi 148/128/116px); tanpa geser horizontal.
 - **Kepala**: pola Potensi — `h1` 48px (mobile 32) brand, pengantar abu 19px (17) maks 640px, kotak cari pil 320px di kanan (≤1068px di bawah). Tidak ada yang cocok → "Tidak ada nama atau jabatan yang cocok dengan “…”".
 - **Loading / kosong**: kerangka 1 + 2 kartu berdenyut; tanpa pegawai aktif → pesan + pil "Muat Ulang".
+
+### Permohonan Informasi & Keberatan PPID (`/darmasaba/ppid/permohonan-informasi-publik`, `/darmasaba/ppid/permohonan-keberatan-informasi-publik`)
+
+Dua halaman formulir dengan satu susunan: `PpidPage` → `PermohonanLayout` (alur di `aside`, formulir di isi). Komponen bersama di `(pages)/ppid/_com/`: `PermohonanSteps.tsx`, `PermohonanLayout.tsx` (`PermohonanLayout`, `PermohonanFormCard`), `permohonan.module.css`, `permohonan.meta.ts`. Test: `__tests__/api/ppid_permohonan_ui.test.tsx`.
+
+- **Alur bernomor** (`PermohonanSteps`; props `title`, `steps: { title, desc }[]`): `h2` brand 24px (mobile 21) + `<ol>`; tiap langkah = lingkaran nomor bergaris brand 36px, judul `h3` 17px, keterangan abu 15px, dihubungkan rel tipis `#8ba8c1`. Langsung di atas latar halaman — menggantikan kotak-kotak navy; tanpa ikon per langkah.
+- **Tata letak**: ≥75em (lg tema, ditulis literal) 2 kolom 5fr/7fr gap 64px selebar `--ppid-measure` (1200px), alur **sticky** (`top` = navbar 44px + 32px) di kiri dan formulir di kanan. Di bawahnya bertumpuk, alur di atas; 735px–74.99em langkah jadi 2 kolom tanpa rel supaya formulir tidak terdorong jauh ke bawah.
+- **Kartu formulir** (`PermohonanFormCard`): satu-satunya kartu putih (radius 18px, padding 32px / mobile 20px), selebar kolom grid — selebar isi saat bertumpuk, isian **satu kolom**. Semua isian memakai `PERMOHONAN_FIELD` (`size="md" radius="md"`) sehingga input, dropdown, dan editor sama lebar — dropdown tidak lagi dibungkus `Group`. Tombol kirim pil brand di kiri, selebar kartu di mobile.
+- **Alasan keberatan**: tetap `PPIDTextEditor` (format HTML ke backend tidak berubah) dengan `toolbar="basic"` — hanya tebal, miring, daftar butir, daftar bernomor.
+- **Kontak PPID** (keberatan): `<dl>` Email / WhatsApp di bawah kartu formulir, langsung di atas latar.
+- Validasi, isi kiriman, dan notifikasi tidak diubah oleh desain ini.
+
+### Daftar Informasi Publik (`/darmasaba/ppid/daftar-informasi-publik` + `[id]`)
+
+Folder `(pages)/ppid/daftar-informasi-publik/`: `page.tsx` (daftar) dan `[id]/page.tsx` (detail) di atas kerangka bersama `ppid/_com/PpidPage.tsx`; `_com/DaftarTable.tsx` (tabel + kerangka), `_com/DaftarKontak.tsx`, `_com/daftar.logic.ts` (`DAFTAR_PAGE_SIZE` 5, jeda cari 1000ms, `rowNumber`, `formatTanggal`, rute detail), `_com/daftar.text.ts`, `_com/daftar.module.css`. Test: `__tests__/api/ppid_daftar_informasi_ui.test.tsx`, `__tests__/api/ppid_daftar_ikm_pages_ui.test.tsx`.
+
+- **Kepala**: judul + pengantar (teks "tentang" lama), kotak cari pil di slot `aside`. Kepala dan kotak cari tetap terpasang saat memuat ulang — hanya daftar yang berganti (kerangka di muatan pertama, tabel meredup `data-busy` di muatan berikutnya), supaya fokus kotak cari tidak hilang.
+- **Catatan Dokumen Perencanaan**: satu baris teks abu + tautan ke Monev & Pembangunan, tanpa kartu.
+- **Daftar**: satu kartu putih (radius 18px) berisi `<table>` asli — No, Jenis Informasi (`<th scope="row">`, tebal), Deskripsi, Tanggal Publikasi, tautan "Detail ›". Jenis dan deskripsi **tidak dipotong**; deskripsi ditampilkan sebagai teks polos (`htmlToPlainText`), baris melebar mengikuti isi. ≤734px: tiap baris jadi kartu putih bertumpuk (kepala tabel hanya untuk pembaca layar, kolom No disembunyikan; urutan jenis → tanggal → deskripsi → Detail).
+- **Paginasi**: pil kanan (mobile tengah), hanya tampil bila lebih dari satu halaman. Hasil kosong → satu baris ikon + pesan, tanpa kartu.
+- **Kontak PPID**: `h2` + dua baris ikon (email, WhatsApp) langsung di latar, tanpa kartu.
+- **Detail**: `<dl>` Jenis (24px/600, mobile 21px) · Tanggal · Deskripsi (HTML dari editor admin, rata kiri, maks 760px) langsung di latar. Id tidak ada → "Informasi tidak ditemukan" + tautan kembali ke daftar. Detail basi milik id lain di store diabaikan.
+
+### Indeks Kepuasan Masyarakat — halaman PPID (`/darmasaba/ppid/indeks-kepuasan-masyarakat`)
+
+Halaman ini **tidak punya grafik/form sendiri**: `page.tsx` hanya merangkai kerangka `PpidPage` dengan modul section beranda `_com/main-page/kepuasan/` (`useKepuasanData`, `KepuasanCharts`, `KepuasanSkeleton`, `KepuasanEmpty`, `CtaButton`, `RespondenFormModal`, `KEPUASAN_BRAND_VARS`). Aturan grafik, warna seri, dan alur form ada di bagian Indeks Kepuasan beranda; perubahan di sana otomatis berlaku di sini. Lokal halaman: `_com/ikm.text.ts` (pengantar) dan `_com/ikm.module.css`.
+
+- **Kepala**: judul + satu kalimat pengantar; tombol "Ajukan Responden" di slot `aside` (kanan; ≤1068px di bawah pengantar, rata kiri).
+- **Token**: kelas `kepuasan.module.css` membaca `--ink`, `--muted`, `--tile`, `--radius` yang di beranda dipasang oleh `.section`. Di sini `.surface` memasangnya, dengan `--tile: #fff` karena latar halaman PPID `#D1D9E8` (di beranda tile `#f5f5f7` di atas putih).
+- **Isi**: kartu "Responden per bulan" (total responden sebagai angka utama) lalu tiga donat 3 kolom (mobile bertumpuk) — persis susunan beranda, selebar kolom halaman.
 
 ---
 
@@ -342,6 +381,16 @@ Menggunakan Mantine `AppShell`:
   }}
 >
 ```
+
+### Visi Misi PPID dan Dasar Hukum (`/darmasaba/ppid/visi-misi-ppid`, `/darmasaba/ppid/dasar-hukum`)
+
+Dua halaman teks di atas `PpidPage`, memakai gaya bersama `ppid/_com/ppid-sections.module.css` + kerangka memuat `ppid/_com/PpidSectionsSkeleton.tsx`; teks di `_com/visi-misi.text.ts` / `_com/dasar-hukum.text.ts`. Data: `stateVisiMisiPPID.findById.load('1')` (`visi`, `misi`) dan `stateDasarHukum.findById.load('1')` (`judul`, `content`) — HTML dari editor admin, dirender apa adanya. Test: `__tests__/api/ppid_visi_misi_dasar_hukum_ui.test.tsx`.
+
+- **Bentuk**: tanpa kartu — bagian (`<section>`) langsung di atas latar halaman, selebar `--ppid-measure` (1200px), dipisah garis tipis solid `#b1bdd1`. Tiap bagian grid 2 kolom: label kiri 220px | isi kanan; ≤734px satu kolom (label di atas isi). Isi 19px/1.55 (mobile 17) warna `#1d1d1f`, semua rata kiri.
+- **Visi Misi**: tiga bagian `h2` 24px warna brand (mobile 21) — **Moto** (kalimat 28px/600, mobile 22; teks tetap di kode), **Visi**, **Misi**. Logo desa dan pemisah berikon dihapus.
+- **Daftar dari CMS**: `<ol>` → baris bernomor (angka brand tabular lewat CSS counter), `<ul>` → baris bertitik brand; antarbaris garis tipis. Jenis daftar mengikuti markup editor, tidak diubah.
+- **Dasar Hukum**: `judul` dari CMS (saat ini ditulis kapital semua) tampil sebagai **label kecil** `h2` 13px/700 abu `#515154` berjarak huruf 0.06em, bukan judul besar; `content` sebagai daftar peraturan. Tidak memakai `text-transform`: mengecilkan huruf lewat CSS akan merusak singkatan dan nama diri ("ppid", "darmasaba").
+- **Status**: selama memuat → kerangka `role="status"`; selesai tanpa data → satu kalimat "… belum tersedia." Kepala halaman tetap tampil di kedua keadaan.
 
 ### Header (64px)
 

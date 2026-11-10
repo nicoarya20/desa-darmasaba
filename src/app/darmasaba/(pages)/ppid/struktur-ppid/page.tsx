@@ -3,14 +3,13 @@
 import stateStrukturPPID from '@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID'
 import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton'
 import colors from '@/con/colors'
-import { Box, Button, Stack, Text } from '@mantine/core'
+import { Button, Stack, Text, TextInput } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
-import { IconRefresh } from '@tabler/icons-react'
+import { IconRefresh, IconSearch } from '@tabler/icons-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useProxy } from 'valtio/utils'
-import BackButton from '../../pemerintahan/layanan/_com/BackButto'
+import { PpidPage } from '../_com/PpidPage'
 import { StrukturChart, StrukturChartSkeleton } from './_com/StrukturChart'
-import { StrukturHeader } from './_com/StrukturHeader'
 import { buildOrgTree, filterOrgTree, type PegawaiItem, type PosisiItem } from './_com/struktur.logic'
 import { STRUKTUR_PEGAWAI_LIMIT, STRUKTUR_SEARCH_DEBOUNCE, STRUKTUR_VARS } from './_com/struktur.meta'
 import { STRUKTUR_TEXT } from './_com/struktur.text'
@@ -69,16 +68,23 @@ export default function Page() {
     content = <StrukturChart roots={visible} />
   }
 
+  const searchBox = (
+    <TextInput
+      type="search"
+      radius="xl"
+      size="md"
+      aria-label={STRUKTUR_TEXT.searchLabel}
+      placeholder={STRUKTUR_TEXT.searchPlaceholder}
+      leftSection={<IconSearch size={18} aria-hidden />}
+      value={search}
+      onChange={(event) => setSearch(event.currentTarget.value)}
+    />
+  )
+
   return (
-    <Stack bg={colors.Bg} py="xl" gap={48} mih="100vh" style={STRUKTUR_VARS}>
-      <Box px={{ base: 'md', md: 100 }}>
-        <BackButton />
-      </Box>
-      <Stack px={{ base: 'md', md: 100 }} gap={40}>
-        <StrukturHeader search={search} onSearch={setSearch} />
-        {content}
-      </Stack>
+    <PpidPage title={STRUKTUR_TEXT.title} lead={STRUKTUR_TEXT.lead} aside={searchBox} style={STRUKTUR_VARS}>
+      {content}
       <ScrollToTopButton />
-    </Stack>
+    </PpidPage>
   )
 }
