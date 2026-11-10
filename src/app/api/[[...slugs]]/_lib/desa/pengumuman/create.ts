@@ -1,31 +1,26 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { susunDataCreate, type PengumumanBody } from "@/lib/pengumuman-lampiran";
 import { Context } from "elysia";
-
-type FormCreate = Prisma.PengumumanGetPayload<{
-  select: {
-    judul: true;
-    deskripsi: true;
-    content: true;
-    categoryPengumumanId: true;
-  };
-}>;
+import { validasiLampiran } from "./lampiran-check";
 
 export async function pengumumanCreate(context: Context) {
-  const body = context.body as FormCreate;
+  const body = context.body as PengumumanBody;
 
+  const lampiran = await validasiLampiran(body);
+  if (!lampiran.ok) {
+    context.set.status = 400;
+    return { success: false, message: lampiran.message };
+  }
+
+  let id: string;
   try {
-    await prisma.pengumuman.create({
-      data: {
-        content: body.content,
-        deskripsi: body.deskripsi,
-        judul: body.judul,
-        categoryPengumumanId: body.categoryPengumumanId,
-      },
+    const created = await prisma.pengumuman.create({
+      data: susunDataCreate(body, lampiran.data),
+      select: { id: true },
     });
+    id = created.id;
   } catch (error) {
-    console.error(error);
-    console.error(body)
+    console.error("Gagal membuat pengumuman:", error);
     return {
       success: false,
       message: "Failed create pengumuman",
@@ -38,6 +33,7 @@ export async function pengumumanCreate(context: Context) {
     message: "Sukses menambahkan pengumuman",
     data: {
       ...body,
+      id,
     },
   };
 }
