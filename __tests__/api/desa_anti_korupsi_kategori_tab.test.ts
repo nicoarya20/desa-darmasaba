@@ -63,21 +63,17 @@ describe('filterByKategori', () => {
   });
 });
 
-describe('halaman kartu Desa Anti Korupsi', () => {
-  const judul = [...CARD_PAGE_SRC.matchAll(/judul: "([^"]+)"/g)].map(m => m[1]);
-
-  it('kelima kartu menautkan ke detailHref dengan judulnya sendiri', () => {
-    expect(judul).toHaveLength(5);
-    // Potong per kartu supaya link dicocokkan dengan judul kartu yang sama, bukan kartu tetangga.
-    const cards = CARD_PAGE_SRC.split('judul: ').slice(1);
-    cards.forEach((card, idx) => {
-      expect(card).toContain(`link: detailHref("${judul[idx]}")`);
-    });
+// Halaman utama dulu berisi 5 kartu kategori hardcode; kini data-driven (tautan kategori → detailHref
+// diuji di desa_anti_korupsi_utama.test.tsx lewat buildAntiKorupsiUtamaView).
+describe('halaman utama Desa Anti Korupsi', () => {
+  it('tidak lagi meng-hardcode daftar kategori maupun URL detail', () => {
+    for (const kategori of CATEGORIES) expect(CARD_PAGE_SRC).not.toContain(kategori);
+    expect(CARD_PAGE_SRC).not.toContain('/darmasaba/desa-anti-korupsi/detail');
   });
 
-  it('tombol Detail memakai link kartu, bukan URL hardcode', () => {
-    expect(CARD_PAGE_SRC).toContain('router.push(v.link)');
-    expect(CARD_PAGE_SRC).not.toContain('router.push("/darmasaba/desa-anti-korupsi/detail")');
+  it('merender isi dari data findMany lewat hook + komponen halaman utama', () => {
+    expect(CARD_PAGE_SRC).toContain('useAntiKorupsiUtamaData()');
+    expect(CARD_PAGE_SRC).toContain('<AntiKorupsiUtama view={view} loading={loading} />');
   });
 });
 

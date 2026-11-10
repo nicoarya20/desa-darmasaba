@@ -55,9 +55,12 @@ export type AntiKorupsiApiItem = {
   name: string;
   kategoriId: string;
   kategori: { name: string };
+  /** Jumlah dokumen aktif program (ringkasan findMany); opsional agar pemakai lama tetap valid. */
+  jumlahDokumen?: number;
 };
 
-export type AntiKorupsiIndicator = IndicatorText & { id: string };
+/** Butir indikator tampil; `jumlahDokumen` hanya ada bila item sumbernya membawa angka tersebut. */
+export type AntiKorupsiIndicator = IndicatorText & { id: string; jumlahDokumen?: number };
 
 export type AntiKorupsiGroup = {
   id: string;
@@ -79,7 +82,9 @@ export function groupByKategori(items: readonly AntiKorupsiApiItem[]): AntiKorup
       groups.set(item.kategoriId, group);
     }
     const { number, text } = splitIndicatorNumber(item.name);
-    group.items.push({ id: item.id, number, text: toSentenceCase(text) });
+    const indicator: AntiKorupsiIndicator = { id: item.id, number, text: toSentenceCase(text) };
+    if (typeof item.jumlahDokumen === "number") indicator.jumlahDokumen = item.jumlahDokumen;
+    group.items.push(indicator);
   }
 
   return [...groups.values()];
