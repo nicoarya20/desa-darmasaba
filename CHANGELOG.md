@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.236] - 2026-11-10
+### Added
+- **Program Inovasi: galeri dokumentasi.** Admin dapat mengunggah banyak foto dokumentasi sekaligus (maks. 20 per program) sebagai bukti program berjalan, melihat pratinjaunya, dan menghapus per foto. Di website, halaman detail program menampilkan bagian "Dokumentasi" berisi foto-foto tersebut (klik untuk memperbesar); bagian ini tidak tampil bila belum ada foto. Daftar program di admin kini menampilkan jumlah foto dokumentasi.
+
+### Changed
+- **Halaman utama Desa Anti Korupsi didesain ulang mengikuti tampilan di beranda.** Kartu lima kategori diganti panel berisi semua indikator per kategori, lengkap dengan ringkasan jumlah kategori, indikator, dan dokumen. Tiap indikator bisa diklik langsung ke halaman programnya dan menampilkan jumlah dokumen; nama kategori membuka daftar dokumen kategori tersebut. Kategori kini mengikuti data dari admin, tidak lagi tetap.
+- **Halaman program Desa Anti Korupsi diseragamkan dengan halaman detail dan lebih mudah dibaca.** Latar dan lebar halaman kini sama dengan daftar indikator, jadi berpindah dari daftar ke program tidak lagi terasa seperti pindah situs. Judul tidak lagi tampil huruf kapital semua, nomor indikator (mis. "1.1") tampil sebagai label, dan deskripsi yang hanya mengulang judul disembunyikan. Folder kini tampil sebagai daftar baris berisi jumlah dokumen, ukuran, tanggal unggah terbaru, cuplikan judul dokumen, dan label "Kosong" untuk folder tanpa dokumen. Program yang dokumennya hanya ada di satu folder langsung menampilkan dokumennya tanpa perlu memilih folder. Saat folder dibuka, ada deretan pilihan folder untuk berpindah, dan tombol Kembali kini kembali ke daftar folder program (sebelumnya langsung ke halaman daftar indikator). Tombol unduh ZIP disembunyikan bila folder kosong.
+- **Program Inovasi: gambar kini opsional dan kolom link dihapus.** Gambar program tetap dipakai sebagai logo di beranda bila diisi, dan bisa dikosongkan atau dihapus saat edit. Isian "Link Program Inovasi" dihapus dari form, detail, dan daftar admin. Link yang sudah tersimpan tidak dihapus dari database.
+
+### Removed
+- **APBDes tidak lagi memakai gambar.** Unggah, pratinjau, dan hapus gambar dihapus dari form tambah, edit, dan detail APBDes di admin, dan website hanya menampilkan dokumen APBDes. Data gambar lama tidak dihapus dari database.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261110170000_program_inovasi_images` (tabel penghubung baru `_ProgramInovasiImages`, murni tambahan, aman dijalankan ulang).
+
 ## [0.1.235] - 2026-11-10
 ### Added
 - **Desa Anti Korupsi: dokumen tiap program kini bisa dipilah ke dalam folder.** Admin dapat membuat, mengganti nama, mengurutkan, dan menghapus folder (dokumen di folder yang dihapus pindah ke "Umum"), mengunggah beberapa dokumen sekaligus langsung ke folder pilihan, memindahkan dokumen antar folder, serta mengubah judul dan urutan dokumen. Halaman detail admin menampilkan dokumen per folder dalam tabel ringkas yang bisa dibuka-tutup. Di website, tiap indikator pada halaman detail Desa Anti Korupsi kini menampilkan ringkasan isinya (mis. "2 folder · 5 dokumen") dan membuka halaman program tersendiri berisi folder, pencarian dokumen, serta pratinjau dan unduh. Indikator yang belum berisi dokumen tetap tampil "Dokumen belum tersedia". Dokumen tunggal yang sudah ada otomatis masuk "Umum".

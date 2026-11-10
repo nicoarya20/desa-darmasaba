@@ -203,14 +203,6 @@
   gap: 28px;
 }
 
-.docImage {
-  flex: none;
-  width: 160px;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
 .docBody {
   display: flex;
   flex-direction: column;

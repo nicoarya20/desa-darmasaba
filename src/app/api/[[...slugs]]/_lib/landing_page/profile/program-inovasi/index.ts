@@ -21,8 +21,10 @@ const ProgramInovasi = new Elysia({
     body: t.Object({
       name: t.String(),
       description: t.String(),
-      imageId: t.String(),
-      link: t.String(),
+      // Logo/cover opsional; string kosong/null disimpan sebagai null.
+      imageId: t.Optional(t.Nullable(t.String())),
+      // Galeri dokumentasi (id FileStorage); batas jumlah dicek di handler.
+      imageIds: t.Optional(t.Array(t.String())),
     }),
   })
 
@@ -31,8 +33,10 @@ const ProgramInovasi = new Elysia({
     body: t.Object({
       name: t.Optional(t.String()),
       description: t.Optional(t.String()),
-      imageId: t.Optional(t.String()),
-      link: t.Optional(t.String()),
+      // null/string kosong → logo dihapus.
+      imageId: t.Optional(t.Nullable(t.String())),
+      // Dikirim → galeri diganti (set); tidak dikirim → galeri tidak diubah.
+      imageIds: t.Optional(t.Array(t.String())),
     }),
   })
   // ✅ Delete

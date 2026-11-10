@@ -15,7 +15,7 @@ type Props = {
 /** Baris alat halaman program: cari dokumen lintas folder + pilihan "Urutkan". */
 export function DokumenToolbar({ query, onQueryChange, urut, onUrutChange, showUrut }: Props) {
   return (
-    <Group gap="sm" align="flex-end" wrap="wrap">
+    <Group gap="sm" align="flex-end" wrap="wrap" style={{ flex: '1 1 320px' }}>
       <TextInput
         placeholder="Cari judul dokumen di semua folder"
         aria-label="Cari judul dokumen"

@@ -1,0 +1,3 @@
+Bukti: GET /api/ppid/strukturppid/posisiorganisasi/find-many?page=N&limit=10 (N=1..3), sesi admin.
+Diulang 4x: total baris dari 3 halaman = 22 (sesuai total server), tetapi ID unik hanya 19 (3 ganda, 3 record tidak pernah tampil).
+Penyebab dugaan (kode): findMany.ts orderBy { hierarki: "asc" } saja, tanpa tie-breaker unik.

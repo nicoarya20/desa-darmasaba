@@ -13,6 +13,7 @@ export default async function programInovasiFindUnique(context: Context) {
     where: { id },
     include: {
       image: true,
+      images: true,
     },
   });
 

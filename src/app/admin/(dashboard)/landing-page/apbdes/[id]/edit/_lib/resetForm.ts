@@ -20,9 +20,7 @@ export type ApbdesOriginalData = {
   name: string;
   deskripsi: string;
   jumlah: string;
-  imageId: string;
   fileId: string;
-  imageUrl: string;
   fileUrl: string;
   items: ApbdesItemForm[]; // snapshot item awal
 };
@@ -45,7 +43,6 @@ export function buildResetForm(original: ApbdesOriginalData) {
     name: original.name,
     deskripsi: original.deskripsi,
     jumlah: original.jumlah,
-    imageId: original.imageId,
     fileId: original.fileId,
     items: cloneApbdesItems(original.items),
   };

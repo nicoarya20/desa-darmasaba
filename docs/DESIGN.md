@@ -233,7 +233,7 @@ Gaya bersih apple.com. Folder: `_com/main-page/apbdes/` — `index.tsx` (section
 - **Rincian**: `Accordion multiple` per kategori (tertutup awal), header = jumlah pos + pagu ringkas. Desktop: header kolom kecil (Uraian / Realisasi / Anggaran) lalu baris kode 72px | uraian (indentasi 16px per tingkat, induk tebal) | realisasi 220px (bar 6px warna aksen kategori + persen, nominal realisasi di bawahnya bila > 0) | anggaran 168px rata kanan. Pos beranggaran 0 tanpa bar. Tablet ≤1068px: kolom 64/160/150px. Mobile ≤734px: header kolom disembunyikan; di bawah uraian berturut-turut anggaran, bar + persen, "Realisasi Rp …" — tanpa scroll horizontal.
 - **Gerak**: konten fade + naik 6px 280ms tiap ganti tahun (`key=tahun`); progress bar transisi lebar 600ms. `prefers-reduced-motion`: keduanya mati. Loading = skeleton (bukan overlay).
 - **CTA**: pill "Lihat semua data APBDes" → `/darmasaba/apbdes`, di bawah section.
-- **Halaman detail** `(tambahan)/apbdes/page.tsx`: memakai `ApbdesBody` (`components/ApbdesBody.tsx`) + hook `use-apbdes-data.ts` yang sama dengan beranda, `variant="full"` (beranda `"compact"`). Bedanya: `BackButton` di atas, judul `h1`, accordion terbuka semua sejak awal, kolom kelima **Lebih/(Kurang)** = anggaran − realisasi gabungan (desktop 72 | uraian | 200 | 160 | 160px; tablet 56/140/140/140; mobile baris ke-4 di bawah realisasi), dan panel dokumen (`components/ApbdesDocument.tsx`: gambar 160px rasio 3:4 + tombol "Unduh dokumen") yang hanya muncul bila tahun terpilih punya `file`/`image`.
+- **Halaman detail** `(tambahan)/apbdes/page.tsx`: memakai `ApbdesBody` (`components/ApbdesBody.tsx`) + hook `use-apbdes-data.ts` yang sama dengan beranda, `variant="full"` (beranda `"compact"`). Bedanya: `BackButton` di atas, judul `h1`, accordion terbuka semua sejak awal, kolom kelima **Lebih/(Kurang)** = anggaran − realisasi gabungan (desktop 72 | uraian | 200 | 160 | 160px; tablet 56/140/140/140; mobile baris ke-4 di bawah realisasi), dan panel dokumen (`components/ApbdesDocument.tsx`: judul + tombol "Unduh dokumen", tanpa gambar) yang hanya muncul bila tahun terpilih punya `file`.
 
 ### Prestasi dan Penghargaan Desa (Beranda & halaman gabungan)
 
@@ -261,6 +261,24 @@ Daftar indikator per kategori, tiap indikator berisi surat (PDF). Folder `(tamba
 - **Bentuk**: latar putih, isi max-width 1100px, kepala rata kiri (pola Potensi): tombol kembali, `h1` 48px (tablet 40, mobile 32) warna brand, pengantar abu 19px (17). Pil kategori sentence case + angka jumlah (`#f5f5f7` → aktif latar brand, `aria-pressed`); mobile ≤734px pil satu baris digeser horizontal dan pil aktif digeser ke tengah. Di bawahnya `h2` nama kategori 28px (mobile 24) + "x dari y dokumen tersedia" abu kanan, lalu satu panel `#f5f5f7` radius 18px: baris nomor brand tabular | teks 17px | aksi dokumen, antarbaris garis tipis. Mobile: aksi pindah ke bawah teks.
 - **Dokumen**: sumber = relasi opsional `DesaAntiKorupsi.file` (admin: edit indikator → unggah dokumen; tersimpan di MinIO, link `/api/fileStorage/findUnique/...` dilayani inline). Ada file dengan link aman (relatif `/…` atau http(s); `documentHref`) → **seluruh baris tautan** `target="_blank"` ke file, pil putih "Buka PDF ↗" (ikon PDF; jenis lain → ekstensi, mis. "Buka DOCX") yang jadi brand saat hover. Tanpa file → baris bukan tautan, pil abu ikon jam + "Dokumen belum tersedia" — tempat ini terisi sendiri begitu admin mengunggah surat.
 - **Loading / kosong**: 5 baris placeholder berdenyut (tanpa denyut saat reduced motion); data kosong → "Belum ada indikator desa anti korupsi."; kategori tanpa butir → "Belum ada indikator untuk kategori ini.".
+
+### Desa Anti Korupsi — halaman utama (`/darmasaba/desa-anti-korupsi`)
+
+Memakai gaya section beranda (judul + pengantar + panel `#f5f5f7` grup per kategori), data dari `findMany.load(1, 100)` — kategori tidak lagi di-hardcode. File: `page.tsx`, `_com/AntiKorupsiUtama.tsx`, `_com/antikorupsi-utama.{data,text}.ts`, `_lib/antikorupsi-utama.logic.ts`. Test: `__tests__/api/desa_anti_korupsi_utama.test.tsx`, `__tests__/api/desa_anti_korupsi_groups_link.test.tsx`.
+
+- **Ringkasan**: strip kecil "N kategori · N indikator · N dokumen" di bawah pengantar.
+- **Tautan**: `AntiKorupsiGroups` menerima prop **opsional** `itemHref` (seluruh baris butir → `/darmasaba/desa-anti-korupsi/program/{id}`, hover brand, chevron, badge "N dokumen"/"Belum ada dokumen", focus-visible) dan `kategoriHref` (nama kategori → `/detail?kategori=` + petunjuk "Lihat dokumen →"). Tanpa prop itu (beranda) butir tetap teks biasa, limit 6, dan CTA "Selengkapnya" tetap ada; halaman utama tidak punya CTA.
+
+### Desa Anti Korupsi — halaman program (`/darmasaba/desa-anti-korupsi/program/{id}`)
+
+Kerangka sama dengan halaman detail (`.page`/`.inner` dari `antikorupsi-detail.module.css`: latar putih, isi 1100px) supaya alur detail → program tidak terasa pindah situs. Gaya khusus di `_com/program-folder.module.css`.
+
+- **Kepala** (`ProgramHeader`): tombol kembali kotak ikon brand (senada `BackButton`) tetapi berupa **tautan bertujuan pasti**, bukan `history.back()` — `tujuanKembali` di `_lib/program-folder.ts`: folder dibuka lewat `?folder=` → daftar folder program ("Kembali ke daftar folder"); selain itu → tab kategori halaman detail ("Kembali ke daftar indikator"). Lalu breadcrumb, nomor indikator jadi badge brand, `h1` judul sentence case (`_lib/program-judul.ts`) 32px (tablet 28, mobile 22). Deskripsi disembunyikan bila hanya mengulang nama program (`isDeskripsiDuplikat`).
+- **Baris alat**: cari dokumen (+ "Urutkan" saat daftar dokumen tampil) di kiri, "Unduh semua (ZIP)" + petunjuk 100 MB di kanan. Tidak dirender bila program tanpa folder & dokumen.
+- **Daftar folder** (`FolderList`): panel `#f5f5f7` radius 18px, satu baris per folder (pola daftar indikator halaman detail) — ikon dalam kotak tint brand, nama, "N dokumen · ukuran · Diperbarui {tanggal unggah terbaru}", cuplikan 2 judul + "+N lainnya" (`_lib/folder-kartu.ts`), chevron. Folder kosong redup + badge "Kosong", tetap bisa dibuka.
+- **Folder tunggal**: tanpa `?folder=` dan hanya satu folder berisi dokumen (folder kosong tidak dihitung) → folder itu langsung dibuka (`folderTunggalBerisi`), bukan crumb terakhir, dan Kembali tetap ke tab kategori.
+- **Folder terbuka** (`FolderAktif`): baris chip `FolderChips` (hanya bila >1 folder; `aria-current`, `?urut=` ikut), "Unduh folder (ZIP)" tidak dirender bila folder kosong, daftar dokumen dalam panel `#f5f5f7` yang sama; empty state dengan subteks + tombol "Kembali".
+- Test: `__tests__/api/desa_anti_korupsi_program_tampilan.test.tsx`, `__tests__/api/desa_anti_korupsi_program_navigasi.test.tsx`.
 
 ### SDGs Desa (Beranda)
 

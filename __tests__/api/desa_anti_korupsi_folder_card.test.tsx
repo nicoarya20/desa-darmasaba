@@ -87,9 +87,12 @@ describe('ProgramIsi (halaman /darmasaba/desa-anti-korupsi/program/[id])', () =>
     expect(html).toContain('Deskripsi program');
   });
 
-  it('kembali & breadcrumb menuju detail?kategori=<kategori program>', () => {
+  it('folder terbuka: kembali → daftar folder program; breadcrumb kategori → detail?kategori=<kategori program>', () => {
     const html = render(<ProgramIsi detail={detail} folderParam="fa" urutParam={null} onUrutChange={noop} />);
-    expect(html.match(/href="\/darmasaba\/desa-anti-korupsi\/detail\?kategori=PENGUATAN%20PENGAWASAN"/g)?.length).toBe(2);
+    expect(html.match(/href="\/darmasaba\/desa-anti-korupsi\/detail\?kategori=PENGUATAN%20PENGAWASAN"/g)?.length).toBe(1);
+    const kembali = /<a[^>]*data-testid="program-kembali"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(kembali).toContain('href="/darmasaba/desa-anti-korupsi/program/p1"');
+    expect(kembali).toContain('aria-label="Kembali ke daftar folder"');
     expect(html).toContain('href="/darmasaba/desa-anti-korupsi"');
     // folder aktif = crumb terakhir; nama program jadi tautan kembali ke grid folder
     expect(html).toMatch(/aria-current="page"[^>]*>Laporan Keuangan</);

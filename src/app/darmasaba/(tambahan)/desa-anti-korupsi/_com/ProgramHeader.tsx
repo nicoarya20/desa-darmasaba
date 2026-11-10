@@ -1,54 +1,63 @@
 import colors from '@/con/colors';
 import type { DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
-import { Box, Button, Group, Stack, Text, Title } from '@mantine/core';
+import { ActionIcon, Badge, Box } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
-import { detailHref } from '../_lib/kategori-tab';
-import { ZIP_HINT } from '../_lib/program-zip';
+import type { TujuanKembali } from '../_lib/program-folder';
+import { isDeskripsiDuplikat, judulProgram } from '../_lib/program-judul';
 import { ProgramBreadcrumb } from './ProgramBreadcrumb';
-import { UnduhZipButton } from './UnduhZipButton';
+import classes from './program-folder.module.css';
 
-type Props = { detail: DesaAntiKorupsiDetail; folderName: string | null; jumlahDokumen: number };
+type Props = {
+  detail: DesaAntiKorupsiDetail;
+  /** Nama folder yang dibuka lewat `?folder=` (untuk breadcrumb); null di tingkat program. */
+  folderName: string | null;
+  /** Tujuan + label tombol kembali (lihat `tujuanKembali`). */
+  kembali: TujuanKembali;
+};
 
-/** Kepala halaman program: Kembali, breadcrumb, judul + deskripsi, dan "Unduh semua (ZIP)" + petunjuk batas. */
-export function ProgramHeader({ detail, folderName, jumlahDokumen }: Props) {
+/** Kepala halaman program: tombol kembali (kotak ikon, tujuan pasti), breadcrumb, nomor + judul sentence case, deskripsi. */
+export function ProgramHeader({ detail, folderName, kembali }: Props) {
   const kategori = detail.kategori?.name ?? null;
+  const { nomor, judul } = judulProgram(detail.name);
+  // Data desa sering mengisi deskripsi = nama program persis; ulangan itu tidak ditampilkan.
+  const tampilDeskripsi = Boolean(detail.deskripsi) && !isDeskripsiDuplikat(detail.deskripsi, detail.name);
   return (
     <>
-      <Group justify="space-between" gap="xs">
-        <Button
-          component={Link}
-          href={kategori ? detailHref(kategori) : '/darmasaba/desa-anti-korupsi'}
-          variant="subtle"
-          color={colors['blue-button']}
-          leftSection={<IconArrowLeft size={18} />}
-          px={4}
-        >
-          Kembali
-        </Button>
-      </Group>
-      <ProgramBreadcrumb programId={detail.id} programName={detail.name} kategori={kategori} folderName={folderName} />
-      <Group justify="space-between" align="flex-start" gap="md">
-        <Stack gap={6} miw={0} style={{ flex: '1 1 320px' }}>
-          <Title order={1} fz={{ base: 24, md: 32 }} c={colors['blue-button']} style={{ wordBreak: 'break-word' }}>
-            {detail.name}
-          </Title>
-          {detail.deskripsi && (
-            <Box
-              fz="sm"
-              c="dimmed"
-              style={{ wordBreak: 'break-word', lineHeight: 1.6 }}
-              dangerouslySetInnerHTML={{ __html: detail.deskripsi }}
-            />
-          )}
-        </Stack>
-        <Stack gap={4} align="flex-start">
-          <UnduhZipButton programId={detail.id} folder={null} label="Unduh semua (ZIP)" disabled={jumlahDokumen === 0} />
-          <Text fz="xs" c="dimmed" data-testid="zip-hint">
-            {ZIP_HINT}
-          </Text>
-        </Stack>
-      </Group>
+      {/* Senada BackButton halaman detail, tapi berupa tautan: history.back() bisa keluar dari alur folder. */}
+      <ActionIcon
+        component={Link}
+        href={kembali.href}
+        bg={colors['blue-button']}
+        aria-label={kembali.label}
+        title={kembali.label}
+        data-testid="program-kembali"
+      >
+        <IconArrowLeft aria-hidden />
+      </ActionIcon>
+      <header className={classes.kepala}>
+        <ProgramBreadcrumb programId={detail.id} programName={detail.name} kategori={kategori} folderName={folderName} />
+        {nomor && (
+          <Badge
+            variant="light"
+            color={colors['blue-button']}
+            radius="xl"
+            size="lg"
+            style={{ fontVariantNumeric: 'tabular-nums' }}
+            data-testid="nomor-program"
+          >
+            {nomor}
+          </Badge>
+        )}
+        <h1 className={classes.judul}>{judul}</h1>
+        {tampilDeskripsi && (
+          <Box
+            className={classes.deskripsi}
+            data-testid="deskripsi-program"
+            dangerouslySetInnerHTML={{ __html: detail.deskripsi }}
+          />
+        )}
+      </header>
     </>
   );
 }
