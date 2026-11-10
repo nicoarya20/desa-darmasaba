@@ -3,6 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
+import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
 import {
   Anchor,
   Box,
@@ -23,12 +24,13 @@ import {
   Title,
   UnstyledButton
 } from '@mantine/core';
-import { IconCalendar, IconClock, IconSearch } from '@tabler/icons-react';
+import { IconCalendar, IconSearch } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../layanan/_com/BackButto';
+import { PengumumanThumbnail } from './_com/PengumumanLampiran';
 
 function Page() {
   const router = useTransitionRouter();
@@ -143,22 +145,7 @@ function Page() {
                         <Group gap="xs">
                           <IconCalendar size={18} />
                           <Text fz={{ base: 'xs', md: 'sm' }}>
-                            {new Date(item.createdAt).toLocaleDateString('id-ID', {
-                              weekday: 'long',
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                        </Group>
-                        <Group gap="xs">
-                          <IconClock size={18} />
-                          <Text fz={{ base: 'xs', md: 'sm' }}>
-                            {new Date(item.createdAt).toLocaleTimeString('id-ID', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              timeZoneName: 'short',
-                            })}
+                            {formatTanggalTerbit(tanggalPengumuman(item))}
                           </Text>
                         </Group>
                       </Group>
@@ -240,6 +227,9 @@ function Page() {
                 <Paper key={item.id} p="md" withBorder radius="md" h="100%">
                   <Stack h="100%" justify="space-between">
                     <div>
+                      <Box mb="sm">
+                        <PengumumanThumbnail image={item.image} judul={item.judul} />
+                      </Box>
                       <Text fw={600} c={colors['blue-button']} mb={5} fz={{ base: 'sm', md: 'md' }}>
                         {item.CategoryPengumuman?.name || 'Pengumuman'}
                       </Text>
@@ -260,20 +250,7 @@ function Page() {
                         <Group gap={5}>
                           <IconCalendar size={16} />
                           <Text fz={{ base: 'xs', md: 'xs' }}>
-                            {new Date(item.createdAt).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </Text>
-                        </Group>
-                        <Group gap={5}>
-                          <IconClock size={16} />
-                          <Text fz={{ base: 'xs', md: 'xs' }}>
-                            {new Date(item.createdAt).toLocaleTimeString('id-ID', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {formatTanggalTerbit(tanggalPengumuman(item), false)}
                           </Text>
                         </Group>
                         <Anchor variant="transparent" href={`/darmasaba/pemerintahan/pengumuman/${item.CategoryPengumuman?.name}/${item.id}`}>

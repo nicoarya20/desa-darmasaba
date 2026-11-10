@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { PENGUMUMAN_DETAIL_INCLUDE } from "@/lib/pengumuman-lampiran";
 import { Context } from "elysia";
 
 const pengumumanFindById = async (context: Context) => {
@@ -13,9 +14,7 @@ const pengumumanFindById = async (context: Context) => {
 
   const pengumuman = await prisma.pengumuman.findUnique({
     where: { id },
-    include: {
-      CategoryPengumuman: true,
-    },
+    include: PENGUMUMAN_DETAIL_INCLUDE,
   });
 
   if (!pengumuman) {

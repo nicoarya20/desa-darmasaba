@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
-import { Prisma } from "@prisma/client";
+import type { PengumumanListItem } from "@/lib/pengumuman-lampiran";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+import {
+  pengumumanFindFirst,
+  pengumumanFindRecent,
+  pengumumanFindUnique,
+} from "./pengumuman-read";
 
 const templateFormPengumuman = z.object({
   judul: z.string().min(3, "Judul minimal 3 karakter"),
@@ -17,6 +22,12 @@ const defaultForm = {
   deskripsi: "",
   content: "",
   categoryPengumumanId: "",
+  // Lampiran diisi halaman create/edit setelah berkas diunggah saat Simpan.
+  imageId: null as string | null,
+  imageIds: [] as string[],
+  dokumenIds: [] as string[],
+  /** `YYYY-MM-DD` (WITA); kosong = default hari ini (create) / tidak diubah (edit). */
+  tanggalTerbit: "",
 };
 
 const pengumuman = proxy({
@@ -29,7 +40,8 @@ const pengumuman = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return false;
       }
       try {
         pengumuman.create.loading = true;
@@ -38,25 +50,22 @@ const pengumuman = proxy({
         );
         if (res.status === 200) {
           pengumuman.findMany.load();
-          return toast.success("Sukses menambahkan");
+          toast.success("Sukses menambahkan");
+          return true;
         }
-        console.log(res);
-        return toast.error("failed create");
+        console.error("Gagal membuat pengumuman: HTTP", res.status);
+        toast.error("failed create");
+        return false;
       } catch (error) {
-        console.log((error as Error).message);
+        console.error("Gagal membuat pengumuman:", error);
+        return false;
       } finally {
         pengumuman.create.loading = false;
       }
     },
   },
   findMany: {
-    data: null as
-      | Prisma.PengumumanGetPayload<{
-          include: {
-            CategoryPengumuman: true;
-          };
-        }>[]
-      | null,
+    data: null as PengumumanListItem[] | null,
     page: 1,
     totalPages: 1,
     loading: false,
@@ -91,28 +100,7 @@ const pengumuman = proxy({
       }
     },
   },
-  findUnique: {
-    data: null as Prisma.PengumumanGetPayload<{
-      include: {
-        CategoryPengumuman: true;
-      };
-    }> | null,
-    async load(id: string) {
-      try {
-        const res = await fetch(`/api/desa/pengumuman/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          pengumuman.findUnique.data = data.data ?? null;
-        } else {
-          console.error("Failed to fetch pengumuman:", res.statusText);
-          pengumuman.findUnique.data = null;
-        }
-      } catch (error) {
-        console.error("Error fetching pengumuman:", error);
-        pengumuman.findUnique.data = null;
-      }
-    },
-  },
+  findUnique: pengumumanFindUnique,
   delete: {
     loading: false,
     async byId(id: string) {
@@ -177,6 +165,10 @@ const pengumuman = proxy({
             deskripsi: data.deskripsi,
             content: data.content,
             categoryPengumumanId: data.categoryPengumumanId || "",
+            imageId: data.imageId ?? null,
+            imageIds: (data.images ?? []).map((f: { id: string }) => f.id),
+            dokumenIds: (data.dokumen ?? []).map((f: { id: string }) => f.id),
+            tanggalTerbit: "",
           };
           return data;
         } else {
@@ -214,6 +206,10 @@ const pengumuman = proxy({
             deskripsi: this.form.deskripsi,
             content: this.form.content,
             categoryPengumumanId: this.form.categoryPengumumanId || null,
+            imageId: this.form.imageId,
+            imageIds: this.form.imageIds,
+            dokumenIds: this.form.dokumenIds,
+            ...(this.form.tanggalTerbit ? { tanggalTerbit: this.form.tanggalTerbit } : {}),
           }),
         });
 
@@ -251,54 +247,8 @@ const pengumuman = proxy({
       pengumuman.edit.form = { ...defaultForm };
     },
   },
-  findFirst: {
-    data: null as Prisma.PengumumanGetPayload<{
-      include: {
-        CategoryPengumuman: true;
-      };
-    }> | null,
-    loading: false,
-    async load() {
-      this.loading = true;
-      try {
-        const res = await ApiFetch.api.desa.pengumuman["find-first"].get();
-        if (res.status === 200 && res.data?.success) {
-          pengumuman.findFirst.data = res.data
-            .data as Prisma.PengumumanGetPayload<{
-            include: {
-              CategoryPengumuman: true;
-            };
-          }> | null;
-        }
-      } catch (err) {
-        console.error("Gagal fetch pengumuman terbaru:", err);
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
-  findRecent: {
-    data: [] as Prisma.PengumumanGetPayload<{
-      include: {
-        CategoryPengumuman: true;
-      };
-    }>[],
-    loading: false,
-
-    async load() {
-      try {
-        this.loading = true;
-        const res = await ApiFetch.api.desa.pengumuman["find-recent"].get();
-        if (res.status === 200 && res.data?.success) {
-          this.data = res.data.data ?? [];
-        }
-      } catch (error) {
-        console.error("Gagal fetch pengumuman recent:", error);
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
+  findFirst: pengumumanFindFirst,
+  findRecent: pengumumanFindRecent,
 });
 
 export default pengumuman;

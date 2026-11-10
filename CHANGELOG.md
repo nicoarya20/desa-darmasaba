@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.242] - 2026-11-11
+### Added
+- **Pengumuman kini bisa membawa gambar dan dokumen PDF.** Di admin, form tambah dan edit pengumuman punya isian Gambar Utama, Galeri Gambar (maks. 10), dan Dokumen PDF (bisa lebih dari satu, maks. 10 MB per berkas) yang bisa dipratinjau sebelum disimpan; semuanya opsional dan berkas baru diunggah saat menekan Simpan. Saat edit, gambar utama bisa dihapus atau diganti, dan galeri maupun dokumen bisa ditambah atau dihapus. Halaman detail admin menampilkan semua lampiran.
+- **Tanggal Terbit pengumuman.** Admin dapat mengisi tanggal asli pengumuman (default hari ini), sehingga pengumuman lama yang diinput belakangan tetap tampil dengan tanggal aslinya.
+- Di website, halaman detail pengumuman menampilkan gambar utama di atas isi, lalu galeri gambar dan daftar dokumen PDF dengan tombol Pratinjau dan Unduh. Bagian yang tidak diisi tidak ditampilkan. Kartu daftar pengumuman menampilkan gambar utama sebagai thumbnail bila ada.
+
+### Changed
+- Daftar pengumuman (website, halaman informasi desa, dan Kabar Desa di beranda) kini diurutkan dan diberi tanggal menurut Tanggal Terbit, bukan waktu data dibuat. Jam tidak lagi ditampilkan di kartu pengumuman karena tanggal terbit hanya berupa tanggal. Pengumuman yang sudah ada memakai tanggal pembuatannya sebagai tanggal terbit.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261111090000_pengumuman_lampiran` (kolom `imageId` + `tanggalTerbit` di `Pengumuman` — `tanggalTerbit` baris lama diisi dari `createdAt` — tabel penghubung baru `_PengumumanImages` dan `_PengumumanDokumen`, index kategori; murni tambahan, aman dijalankan ulang).
+- API `/api/desa/pengumuman` create/update menerima field opsional `imageId`, `imageIds`, `dokumenIds`, `tanggalTerbit` (lihat `docs/decisions/2026-11-10-pengumuman-lampiran.md`) — bisa dipakai untuk impor pengumuman lama.
+
 ## [0.1.241] - 2026-11-10
 ### Added
 - **Program Inovasi: galeri dokumentasi.** Admin dapat mengunggah banyak foto dokumentasi sekaligus (maks. 20 per program) sebagai bukti program berjalan, melihat pratinjaunya, dan menghapus per foto. Di website, halaman detail program menampilkan bagian "Dokumentasi" berisi foto-foto tersebut (klik untuk memperbesar); bagian ini tidak tampil bila belum ada foto. Daftar program di admin kini menampilkan jumlah foto dokumentasi.

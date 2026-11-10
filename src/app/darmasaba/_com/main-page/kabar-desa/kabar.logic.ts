@@ -16,6 +16,8 @@ export type PengumumanApiItem = {
   id: string;
   judul: string;
   createdAt: string | Date;
+  /** Tanggal asli pengumuman; dipakai bila ada (respons lama tanpa field ini → createdAt). */
+  tanggalTerbit?: string | Date | null;
   CategoryPengumuman?: { name?: string | null } | null;
 };
 
@@ -77,7 +79,7 @@ export function toPengumumanItem(item: PengumumanApiItem): KabarItem {
     title: item.judul.trim(),
     summary: "",
     kategori,
-    createdAt: new Date(item.createdAt).getTime(),
+    createdAt: new Date(item.tanggalTerbit ?? item.createdAt).getTime(),
     href: detailHref(PENGUMUMAN_BASE_HREF, kategori, item.id),
   };
 }

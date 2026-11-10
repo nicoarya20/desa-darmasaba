@@ -3,6 +3,10 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
+import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
+import { DokumentasiGaleri } from '@/app/darmasaba/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
+import { PengumumanDokumenList } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanDokumenList';
+import { PengumumanGambarUtama } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran';
 import {
   Box,
   Button,
@@ -95,6 +99,15 @@ export default function DetailPengumuman() {
 
               <Box>
                 <Text fz="lg" fw="bold">
+                  Tanggal Terbit
+                </Text>
+                <Text fz="md" c="dimmed">
+                  {formatTanggalTerbit(tanggalPengumuman(data))}
+                </Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
                   Deskripsi
                 </Text>
                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
@@ -114,6 +127,39 @@ export default function DetailPengumuman() {
                   }}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Gambar Utama
+                </Text>
+                {data.image ? (
+                  <PengumumanGambarUtama image={data.image} judul={data.judul} />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Galeri Gambar
+                </Text>
+                {data.images?.length ? (
+                  <DokumentasiGaleri images={data.images} judul={null} alt="Gambar pengumuman" />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">
+                  Dokumen PDF
+                </Text>
+                {data.dokumen?.length ? (
+                  <PengumumanDokumenList dokumen={data.dokumen} judul={null} />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
               </Box>
 
               <Group gap="sm">
