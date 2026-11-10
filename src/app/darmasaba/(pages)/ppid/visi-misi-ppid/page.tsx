@@ -1,158 +1,45 @@
 'use client'
-import stateVisiMisiPPID from '@/app/admin/(dashboard)/_state/ppid/visi_misi_ppid/visimisiPPID';
-import colors from '@/con/colors';
-import {
-  Box,
-  Center,
-  Image,
-  Paper,
-  Skeleton,
-  Stack,
-  Text,
-  Divider,
-  Transition,
-  Title
-} from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { useProxy } from 'valtio/utils';
-import { IconSparkles } from '@tabler/icons-react';
-import BackButton from '../../pemerintahan/layanan/_com/BackButto';
+import stateVisiMisiPPID from '@/app/admin/(dashboard)/_state/ppid/visi_misi_ppid/visimisiPPID'
+import colors from '@/con/colors'
+import { useShallowEffect } from '@mantine/hooks'
+import { useState, type CSSProperties } from 'react'
+import { useProxy } from 'valtio/utils'
+import { PpidPage } from '../_com/PpidPage'
+import { PpidSectionsSkeleton } from '../_com/PpidSectionsSkeleton'
+import s from '../_com/ppid-sections.module.css'
+import { VisiMisiContent } from './_com/VisiMisiContent'
+import { VISI_MISI_TEXT } from './_com/visi-misi.text'
 
-function Page() {
-  const allList = useProxy(stateVisiMisiPPID);
+/** Latar kartu putih tembus yang dibaca `visi-misi.module.css`. */
+const CARD_VARS = { '--vm-card': colors['white-trans-1'] } as CSSProperties
+
+/** Baris tunggal visi-misi PPID di CMS. */
+const VISI_MISI_ID = '1'
+
+/** Halaman publik Visi dan Misi PPID: memuat visi dan misi dari CMS lalu menyerahkannya ke `VisiMisiContent`. */
+export default function Page() {
+  const state = useProxy(stateVisiMisiPPID)
+  const [loaded, setLoaded] = useState(false)
 
   useShallowEffect(() => {
-    allList.findById.load("1");
-  }, []);
+    // Loader menangkap galatnya sendiri (data tetap null) — finally hanya menandai selesai.
+    void state.findById.load(VISI_MISI_ID).finally(() => setLoaded(true))
+  }, [])
 
-  if (!allList.findById.data) {
-    return (
-      <Stack p="xl" gap="sm">
-        {Array.from({ length: 6 }).map((_, k) => (
-          <Skeleton key={k} h={60} radius="lg" />
-        ))}
-      </Stack>
-    );
+  const data = state.findById.data
+
+  let content
+  if (data) {
+    content = <VisiMisiContent visi={data.visi} misi={data.misi} />
+  } else if (loaded) {
+    content = <p className={s.empty}>{VISI_MISI_TEXT.empty}</p>
+  } else {
+    content = <PpidSectionsSkeleton label={VISI_MISI_TEXT.loading} rows={6} />
   }
 
-  const dataArray = Array.isArray(allList.findById.data)
-    ? allList.findById.data
-    : [allList.findById.data];
-
   return (
-    <Stack bg={colors.Bg} py="xl" gap={40}>
-      <Box px={{ base: 'md', md: 100 }}>
-        <BackButton />
-      </Box>
-
-      {dataArray.map((item) => (
-        <Box key={item.id} px={{ base: 'md', md: 100 }}>
-          <Transition mounted transition="fade" duration={500} timingFunction="ease">
-            {(styles) => (
-              <Paper
-                style={styles}
-                p={{ base: 'lg', md: 'xl' }}
-                radius="2xl"
-                shadow="xl"
-                bg={colors['white-trans-1']}
-                withBorder
-              >
-                <Stack gap="xl">
-
-                  {/* ==== MOTTO SECTION ==== */}
-                  <Box>
-                    <Center mb="md">
-                      <Image
-                        src="/darmasaba-icon.png"
-                        w={{ base: 80, md: 130 }}
-                        alt="Logo Desa Darmasaba"
-                        loading="lazy"
-                      />
-                    </Center>
-
-                    <Title
-                      order={2}
-                      ta="center"
-                      fz={{ base: 26, md: 34 }}
-                      lh={1.2}
-                      c={colors['blue-button']}
-                    >
-                      Moto PPID Desa Darmasaba
-                    </Title>
-
-                    <Text
-                      ta="center"
-                      fz={{ base: 15, md: 18 }}
-                      lh={1.5}
-                      c={"black"}
-                      mt="xs"
-                    >
-                      Memberikan informasi yang cepat, mudah, tepat, dan transparan
-                    </Text>
-                  </Box>
-
-                  <Divider
-                    my="sm"
-                    labelPosition="center"
-                    label={<IconSparkles size={18} />}
-                  />
-
-                  {/* ==== VISI SECTION ==== */}
-                  <Box>
-                    <Title
-                      order={3}
-                      ta="center"
-                      fz={{ base: 22, md: 28 }}
-                      lh={1.2}
-                      c={colors['blue-button']}
-                      mb="sm"
-                    >
-                      Visi PPID
-                    </Title>
-
-                    <Text
-                      ta="center"
-                      fz={{ base: 15, md: 18 }}
-                      lh={1.7}
-                      dangerouslySetInnerHTML={{ __html: item.visi }}
-                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                    />
-                  </Box>
-
-                  <Divider my="sm" />
-
-                  {/* ==== MISI SECTION ==== */}
-                  <Box>
-                    <Title
-                      order={3}
-                      ta="center"
-                      fz={{ base: 22, md: 28 }}
-                      lh={1.2}
-                      c={colors['blue-button']}
-                      mb="sm"
-                    >
-                      Misi PPID
-                    </Title>
-
-                    <Box px={{ base: 'md', md: 100 }}>
-                      <Text
-                        ta="justify"
-                        fz={{ base: 15, md: 18 }}
-                        lh={1.7}
-                        dangerouslySetInnerHTML={{ __html: item.misi }}
-                        style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                      />
-                    </Box>
-                  </Box>
-
-                </Stack>
-              </Paper>
-            )}
-          </Transition>
-        </Box>
-      ))}
-    </Stack>
-  );
+    <PpidPage title={VISI_MISI_TEXT.title} lead={VISI_MISI_TEXT.lead} headerHidden style={CARD_VARS}>
+      {content}
+    </PpidPage>
+  )
 }
-
-export default Page;

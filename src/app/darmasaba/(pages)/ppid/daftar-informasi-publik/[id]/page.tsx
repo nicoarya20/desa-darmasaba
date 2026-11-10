@@ -1,139 +1,85 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
-import colors from '@/con/colors';
-import {
-  Box,
-  Button,
-  Center,
-  Divider,
-  Paper,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
-import { IconArrowBack } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { Skeleton } from '@mantine/core';
+import { IconChevronLeft } from '@tabler/icons-react';
+import { Link } from 'next-view-transitions';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { PpidPage } from '../../_com/PpidPage';
+import { DAFTAR_LIST_HREF, formatTanggal } from '../_com/daftar.logic';
+import s from '../_com/daftar.module.css';
+import { DAFTAR_TEXT } from '../_com/daftar.text';
 
+/** Halaman publik detail satu informasi publik: jenis, tanggal publikasi, dan deskripsi lengkap. */
 export default function DetailInformasiPublikUser() {
   const state = useProxy(daftarInformasiPublik);
-  const router = useRouter();
   const params = useParams();
+  const id = typeof params?.id === 'string' ? params.id : '';
+  // Id yang pemuatannya sudah selesai; store tidak punya penanda loading untuk findUnique.
+  const [loadedId, setLoadedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (params?.id) state.findUnique.load(params.id as string);
-  }, [params?.id]);
+    if (!id) return;
+    let active = true;
+    // load() menangani galatnya sendiri (data → null), jadi cukup menunggu selesai.
+    void daftarInformasiPublik.findUnique.load(id).then(() => {
+      if (active) setLoadedId(id);
+    });
+    return () => {
+      active = false;
+    };
+  }, [id]);
 
-  const data = state.findUnique.data;
+  // Store menyimpan detail terakhir yang dibuka: abaikan bila bukan milik id halaman ini.
+  const stored = state.findUnique.data;
+  const data = stored?.id === id ? stored : null;
 
-  if (!state.findUnique.data) {
-    return (
-      <Center py="xl">
-        <Skeleton height={500} radius="md" />
-      </Center>
+  let content;
+  if (data) {
+    content = (
+      <dl className={s.detail}>
+        <div>
+          <dt className={s.detailTerm}>{DAFTAR_TEXT.columns.jenis}</dt>
+          <dd className={`${s.detailValue} ${s.detailJenis}`}>{data.jenisInformasi || DAFTAR_TEXT.emptyValue}</dd>
+        </div>
+        <div>
+          <dt className={s.detailTerm}>{DAFTAR_TEXT.columns.tanggal}</dt>
+          <dd className={s.detailValue}>{formatTanggal(data.tanggal, DAFTAR_TEXT.emptyValue)}</dd>
+        </div>
+        <div>
+          <dt className={s.detailTerm}>{DAFTAR_TEXT.columns.deskripsi}</dt>
+          <dd
+            className={s.detailValue}
+            dangerouslySetInnerHTML={{ __html: data.deskripsi || DAFTAR_TEXT.emptyValue }}
+          />
+        </div>
+      </dl>
     );
-  }
-
-  if (!data) {
-    return (
-      <Center py="xl">
-        <Stack align="center" gap="sm">
-          <Title order={4} fz={{ base: 'lg', md: 'xl' }} lh={1.3}>
-            Informasi tidak ditemukan
-          </Title>
-          <Button variant="light" onClick={() => router.push('/informasi-publik')}>
-            Kembali ke Daftar
-          </Button>
-        </Stack>
-      </Center>
+  } else if (loadedId === id) {
+    content = (
+      <div className={s.notFound} role="status">
+        <p className={s.notFoundTitle}>{DAFTAR_TEXT.notFound}</p>
+        <Link href={DAFTAR_LIST_HREF} className={s.detailLink}>
+          <IconChevronLeft size={16} stroke={2} aria-hidden />
+          {DAFTAR_TEXT.backToList}
+        </Link>
+      </div>
+    );
+  } else {
+    content = (
+      <div className={s.skeleton} role="status" aria-label={DAFTAR_TEXT.detailLoading}>
+        <Skeleton h={32} w="60%" radius="md" />
+        <Skeleton h={20} w={180} radius="md" />
+        <Skeleton h={120} radius="md" />
+      </div>
     );
   }
 
   return (
-    <Box py="lg" px={{ base: 'md', md: 100 }} bg={colors.Bg}>
-      {/* Tombol Kembali */}
-      <Button
-        variant="subtle"
-        onClick={() => router.back()}
-        leftSection={<IconArrowBack size={18} color={colors['blue-button']} />}
-        mb="md"
-        c={colors['blue-button']}
-      >
-        Kembali
-      </Button>
-
-      <Paper
-        withBorder
-        radius="lg"
-        p={{ base: 'md', md: 'xl' }}
-        mx="auto"
-        maw={800}
-        bg="white"
-        shadow="xs"
-      >
-        <Stack gap="xl">
-          {/* MAIN TITLE */}
-          <Title
-            order={2}
-            lh={1.2}
-            ta="center"
-            c={colors['blue-button']}
-          >
-            Detail Informasi Publik
-          </Title>
-
-          <Divider />
-
-          {/* CONTENT */}
-          <Stack gap="lg">
-            {/* Jenis Informasi */}
-            <Box px="lg">
-              <Title order={5} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={4}>
-                Jenis Informasi
-              </Title>
-              <Text fz={{ base: 'sm', md: 'md' }} lh={1.5} c="black">
-                {data.jenisInformasi || '-'}
-              </Text>
-            </Box>
-
-            {/* Tanggal Publikasi */}
-            <Box px="lg">
-              <Title order={5} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={4}>
-                Tanggal Publikasi
-              </Title>
-              <Text fz={{ base: 'sm', md: 'md' }} lh={1.5} c="black">
-                {data.tanggal
-                  ? new Date(data.tanggal).toLocaleDateString('id-ID', {
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric',
-                    })
-                  : '-'}
-              </Text>
-            </Box>
-
-            {/* Deskripsi */}
-            <Box px="lg">
-              <Title order={5} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={4}>
-                Deskripsi
-              </Title>
-              <Text
-                component="div"
-                ta="justify"
-                dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
-                fz={{ base: 'sm', md: 'md' }}
-                lh={1.6}
-                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                className="prose max-w-none"
-              />
-            </Box>
-          </Stack>
-        </Stack>
-      </Paper>
-    </Box>
+    <PpidPage title={DAFTAR_TEXT.detailTitle} lead={DAFTAR_TEXT.detailLead}>
+      <div className={s.body}>{content}</div>
+    </PpidPage>
   );
 }

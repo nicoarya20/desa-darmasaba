@@ -1,4 +1,4 @@
-/* Kepala halaman Struktur PPID — pola kepala Potensi Desa (judul brand 48px, pengantar abu 19px). */
+/* Kepala halaman PPID — pola kepala Potensi Desa (judul brand 48px, pengantar abu 19px). */
 .header {
   display: flex;
   align-items: flex-end;
@@ -29,7 +29,7 @@
   line-height: 1.45;
 }
 
-.search {
+.aside {
   flex: 0 0 320px;
 }
 
@@ -39,7 +39,7 @@
     align-items: stretch;
   }
 
-  .search {
+  .aside {
     flex-basis: auto;
     max-width: 420px;
   }
@@ -60,7 +60,7 @@
     line-height: 1.47;
   }
 
-  .search {
+  .aside {
     max-width: none;
   }
 }

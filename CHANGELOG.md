@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.236] - 2026-11-10
+## [0.1.241] - 2026-11-10
 ### Added
 - **Program Inovasi: galeri dokumentasi.** Admin dapat mengunggah banyak foto dokumentasi sekaligus (maks. 20 per program) sebagai bukti program berjalan, melihat pratinjaunya, dan menghapus per foto. Di website, halaman detail program menampilkan bagian "Dokumentasi" berisi foto-foto tersebut (klik untuk memperbesar); bagian ini tidak tampil bila belum ada foto. Daftar program di admin kini menampilkan jumlah foto dokumentasi.
 
@@ -14,6 +14,35 @@
 
 ### Operator
 - Jalankan migrasi database sebelum versi ini aktif: `20261110170000_program_inovasi_images` (tabel penghubung baru `_ProgramInovasiImages`, murni tambahan, aman dijalankan ulang).
+
+## [0.1.240] - 2026-11-10
+### Changed
+- Visi dan Misi PPID kembali ke tampilan kartu terpusat seperti semula — logo desa, moto, visi, lalu misi — dengan penyempurnaan: moto tampil sebagai kutipan yang menonjol, pemisah antarbagian lebih ringan, dan tiap misi bernomor dalam lencana bulat dengan teks rata kiri agar lebih mudah dibaca. Tampilan tulisan besar dan kartu biru dari versi 0.1.239 dihapus.
+
+## [0.1.239] - 2026-11-10
+### Changed
+- Visi dan Misi PPID tampil lebih hidup: moto menjadi tulisan besar "Cepat. Mudah. Tepat. Transparan.", visi berada di kartu biru tersendiri, dan tiap misi menjadi kartu bernomor yang mudah dipindai. Isi visi dan misi tetap diambil dari admin.
+
+## [0.1.238] - 2026-11-10
+### Changed
+- Dasar Hukum PPID lebih nyaman dibaca: tiap peraturan kini bernomor, dengan nomor peraturan dicetak tebal dan perihalnya di baris bawah, serta baris teks yang lebih pendek sehingga mata tidak perlu menyapu selebar layar.
+
+## [0.1.237] - 2026-11-10
+### Fixed
+- Di ponsel, pita di belakang foto Perbekel kini tampil utuh: turun dari kiri atas foto lalu keluar sampai tepi kanan layar. Sebelumnya pita tergencet di sisi kiri dan terputus di belakang foto.
+
+## [0.1.236] - 2026-11-10
+### Changed
+- **Halaman PPID kini satu tampilan.** Visi dan Misi, Dasar Hukum, Permohonan Informasi Publik, Permohonan Keberatan, Daftar Informasi Publik (beserta detailnya), dan Indeks Kepuasan Masyarakat memakai kepala halaman yang sama dengan Struktur PPID: tombol kembali, judul besar rata kiri, dan satu kalimat pengantar. Logo besar, kartu di dalam kartu, dan teks rata kanan-kiri dihapus.
+- Visi dan Misi PPID: moto, visi, dan misi menjadi bagian terpisah; misi tampil sebagai daftar bernomor.
+- Dasar Hukum PPID tampil sebagai daftar peraturan yang mudah dipindai.
+- Permohonan Informasi Publik dan Permohonan Keberatan: alur langkah bernomor yang ringan (menempel di kiri pada layar lebar) dan formulir satu kolom dengan semua isian sama lebar. Editor "Alasan Keberatan" disederhanakan menjadi tebal, miring, dan daftar.
+- Daftar Informasi Publik: kotak cari di samping judul, dan daftar menampilkan jenis informasi serta deskripsi secara utuh (kartu bertumpuk di ponsel). Kotak cari tidak lagi kehilangan fokus saat daftar dimuat ulang, dan penomoran halaman hanya tampil bila lebih dari satu halaman.
+- Indeks Kepuasan Masyarakat (PPID) kini memakai grafik dan form yang sama dengan bagian Indeks Kepuasan di beranda. Pada form "Ajukan Responden", isian Tanggal dihapus (diisi otomatis dengan tanggal hari ini), pesan wajib isi tampil per isian, dan form tetap terbuka dengan isian dipertahankan bila pengiriman gagal.
+
+### Fixed
+- Visi dan Misi serta Dasar Hukum PPID tidak lagi menampilkan kerangka memuat tanpa akhir saat data tidak tersedia; kini muncul keterangan "belum tersedia".
+- Detail Informasi Publik dengan alamat yang tidak valid kini menampilkan "Informasi tidak ditemukan" beserta tautan kembali ke daftar.
 
 ## [0.1.235] - 2026-11-10
 ### Added
