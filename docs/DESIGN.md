@@ -293,6 +293,13 @@ Folder `(pages)/pemerintahan/potensi/`: `page.tsx` (tombol kembali + `_com/Poten
 
 Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.tsx` (H1, `TextInput` berlabel "Saring halaman", ringkasan `aria-live`, `SimpleGrid` 1/2/3 kolom) → `_com/PetaInformasiGroupCard.tsx` (kartu per menu utama: H2 + `<ul>/<li>` `Anchor component={Link}`). Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, saring lewat `searchMenu` tanpa API. Pintu masuk: footer "Tautan Penting", entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Dites di `__tests__/api/peta_informasi.test.ts`.
 
+### Profil PPID (`/darmasaba/ppid/profil-ppid`)
+
+Satu file `(pages)/ppid/profil-ppid/page.tsx` + `profil-ppid.module.css`; data `stateProfilePPID.profile.load('edit')` (`name`, `image`, `biodata`, `riwayat`, `pengalaman`, `unggulan` — HTML dari editor admin). Test: `__tests__/api/profil_ppid_ui.test.tsx`.
+
+- **Grid 2 kolom mulai `lg` (Mantine 75em = 1200px)**, 1 kolom di bawahnya. Kiri: kartu foto + nama. Kanan, berurutan: Biografi, Riwayat Karir, Pengalaman Organisasi, Program Unggulan — keempatnya satu kolom agar tinggi kedua kolom seimbang (sebelumnya Organisasi & Program selebar kartu di bawah grid sehingga ada ruang kosong di bawah Riwayat Karir). Isi keempat section ukuran huruf sama: 1rem / md 1.1rem / lg 1.2rem.
+- **Kartu foto sticky** (`top` = navbar desktop 44px + 32px) hanya di ≥75em — breakpoint ditulis literal, bukan `$mantine-breakpoint-lg` (80em di `postcss.config.js`), agar sama persis dengan breakpoint grid. Di 1 kolom sticky dimatikan karena akan menutupi teks di bawahnya.
+
 ---
 
 ## 6. Layout Admin (`/admin/`)

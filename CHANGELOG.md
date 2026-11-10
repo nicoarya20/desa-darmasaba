@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.231] - 2026-11-10
+### Changed
+- **Halaman Profil PPID kini lebih rapi di layar lebar.** Pengalaman Organisasi dan Program Unggulan dipindah ke kolom kanan, tepat di bawah Riwayat Karir, sehingga tidak ada lagi ruang kosong besar di bawah Riwayat Karir. Sebelumnya keduanya tampil selebar halaman di bawah foto, dan sisi kanannya kosong.
+- Saat halaman di-scroll, foto pejabat kini ikut turun di samping teks hingga akhir profil.
+- Tampilan 2 kolom (foto di kiri, teks di kanan) kini juga muncul di laptop dengan lebar layar mulai 1200px. Sebelumnya tampilan ini baru muncul mulai 1408px, sehingga di laptop foto tampil besar sendirian di atas teks. Di ponsel dan tablet, tampilan tetap bertumpuk seperti sebelumnya.
+- Ukuran huruf isi Pengalaman Organisasi dan Program Unggulan kini sama dengan Biografi dan Riwayat Karir.
+
 ## [0.1.230] - 2026-11-09
 ### Changed
 - **Halaman detail Desa Anti Korupsi diperbarui** agar senada dengan section-nya di beranda. Tampilannya kini bersih: judul dan pengantar rata kiri, tombol kategori dengan jumlah indikatornya, lalu daftar indikator bernomor dalam satu panel. Teks indikator yang sebelumnya huruf kapital semua kini ditulis dengan huruf biasa. Singkatan seperti Perdes, SOP, dan APBDes tetap ditulis seperti biasa.
