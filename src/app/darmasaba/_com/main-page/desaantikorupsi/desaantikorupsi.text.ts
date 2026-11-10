@@ -6,4 +6,9 @@ export const ANTIKORUPSI_TEXT = {
   cta: "Selengkapnya",
   loading: "Memuat indikator desa anti korupsi",
   empty: "Belum ada indikator desa anti korupsi.",
+  /** Label tautan kategori → halaman detail (hanya saat panel diberi `kategoriHref`). */
+  lihatDokumen: "Lihat dokumen",
+  /** Badge jumlah dokumen butir yang bisa diklik (hanya saat panel diberi `itemHref`). */
+  jumlahDokumen: (n: number) => `${n} dokumen`,
+  belumAdaDokumen: "Belum ada dokumen",
 } as const;
