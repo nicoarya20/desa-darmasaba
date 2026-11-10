@@ -3,8 +3,8 @@
 ## [0.1.232] - 2026-11-10
 ### Changed
 - **Halaman Struktur Organisasi PPID didesain ulang.** Tiap jabatan kini tampil sebagai kartu biru memanjang: nama jabatan dan nama pegawai di kiri, foto di kanan. Tepi kiri foto dibuat memudar ke warna kartu, sehingga foto berlatar kotak biasa tetap menyatu dengan kartunya. Warna kartu makin terang di tiap tingkat di bawahnya: Kepala Desa paling gelap.
-- Seluruh bagan kini langsung terlihat di laptop tanpa perlu digeser. Bawahan yang tidak punya bawahan lagi, seperti para Kepala Dusun, disusun ke bawah dengan garis penghubung di sisi kiri. Karena itu tombol Zoom dan Fullscreen dihapus.
-- Di ponsel, bagan kini tersusun ke bawah selebar layar. Sebelumnya layar hampir kosong dan Kepala Desa berada di luar layar.
+- Bagan kini tersusun dari atas ke bawah: Kepala Desa di tengah atas, lalu bawahannya berjajar di bawahnya dengan garis penghubung. Para Kepala Dusun disusun dalam beberapa baris (2 kartu per baris di laptop, 4 di layar lebar), dan baris terakhir yang tidak penuh diletakkan di tengah. Seluruh bagan langsung terlihat tanpa perlu digeser, jadi tombol Zoom dan Fullscreen dihapus.
+- Di ponsel dan tablet, bagan kini tersusun ke bawah dengan garis penghubung di sisi kiri. Sebelumnya layar hampir kosong dan Kepala Desa berada di luar layar.
 - Seluruh kartu kini bisa diklik untuk membuka profil pegawai, menggantikan tombol "Lihat Detail".
 - Kotak pencarian dipindah ke samping judul dan langsung menyaring bagan saat mengetik.
 
