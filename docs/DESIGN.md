@@ -351,6 +351,16 @@ Menggunakan Mantine `AppShell`:
 >
 ```
 
+### Visi Misi PPID dan Dasar Hukum (`/darmasaba/ppid/visi-misi-ppid`, `/darmasaba/ppid/dasar-hukum`)
+
+Dua halaman teks di atas `PpidPage`, memakai gaya bersama `ppid/_com/ppid-sections.module.css` + kerangka memuat `ppid/_com/PpidSectionsSkeleton.tsx`; teks di `_com/visi-misi.text.ts` / `_com/dasar-hukum.text.ts`. Data: `stateVisiMisiPPID.findById.load('1')` (`visi`, `misi`) dan `stateDasarHukum.findById.load('1')` (`judul`, `content`) — HTML dari editor admin, dirender apa adanya. Test: `__tests__/api/ppid_visi_misi_dasar_hukum_ui.test.tsx`.
+
+- **Bentuk**: tanpa kartu — bagian (`<section>`) langsung di atas latar halaman, maks 980px, dipisah garis tipis solid `#b1bdd1`. Tiap bagian grid 2 kolom: label kiri 220px | isi kanan; ≤734px satu kolom (label di atas isi). Isi 19px/1.55 (mobile 17) warna `#1d1d1f`, semua rata kiri.
+- **Visi Misi**: tiga bagian `h2` 24px warna brand (mobile 21) — **Moto** (kalimat 28px/600, mobile 22; teks tetap di kode), **Visi**, **Misi**. Logo desa dan pemisah berikon dihapus.
+- **Daftar dari CMS**: `<ol>` → baris bernomor (angka brand tabular lewat CSS counter), `<ul>` → baris bertitik brand; antarbaris garis tipis. Jenis daftar mengikuti markup editor, tidak diubah.
+- **Dasar Hukum**: `judul` dari CMS (saat ini ditulis kapital semua) tampil sebagai **label kecil** `h2` 13px/700 abu `#515154` berjarak huruf 0.06em, bukan judul besar; `content` sebagai daftar peraturan. Tidak memakai `text-transform`: mengecilkan huruf lewat CSS akan merusak singkatan dan nama diri ("ppid", "darmasaba").
+- **Status**: selama memuat → kerangka `role="status"`; selesai tanpa data → satu kalimat "… belum tersedia." Kepala halaman tetap tampil di kedua keadaan.
+
 ### Header (64px)
 
 Background: `linear-gradient(90deg, #ffffff, #f9fbff)` (light) / dark equivalent.  
