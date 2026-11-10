@@ -1,0 +1,20 @@
+/** Label UI hero beranda. */
+export const LANDING_TEXT = {
+  org: "Pemerintah Desa Darmasaba",
+  region: "Kecamatan Abiansemal · Kabupaten Badung · Bali",
+  greeting: "Om Swastyastu,",
+  title: "Selamat datang di Desa Darmasaba",
+  logoDesa: "Lambang Desa Darmasaba",
+  logoPudak: "Logo Pudak",
+  open: "Kantor buka",
+  closed: "Kantor tutup",
+  hoursPrefix: "Jam layanan",
+  statusLoading: "Memuat status kantor",
+  sosmedLabel: "Media sosial Desa Darmasaba",
+  sosmedFallback: "Tautan sosial",
+  profileFallbackPosition: "Perbekel Darmasaba",
+  profilePhotoAlt: "Foto Perbekel Darmasaba",
+  programsTitle: "Program Inovasi Desa",
+  programsEmpty: "Belum ada program inovasi.",
+  programsLoading: "Memuat program inovasi",
+} as const;

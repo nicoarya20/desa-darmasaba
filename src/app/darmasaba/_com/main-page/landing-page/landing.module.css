@@ -1,0 +1,430 @@
+/*
+ * Hero beranda — satu permukaan biru-abu tanpa kartu pembungkus: identitas pemerintah desa,
+ * sambutan, status kantor, dan media sosial di kiri; foto Perbekel di kanan; rel program
+ * inovasi (ubin putih seragam) di dasarnya. Tanpa gerak otomatis: situs pemerintah harus tenang.
+ * Isi selebar layar dengan jarak tepi 24px, sejajar tepi kiri-kanan Kabar Desa di bawahnya.
+ * Breakpoint mengikuti section beranda lain: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.section {
+  --ink: #1d1d1f;
+  --muted: #4d5b6b;
+  --brand: #0a4e78;
+  --brand-dark: #062f49;
+  --tile: #fff;
+  --open: #1f9d55;
+  --closed: #d9363e;
+  --gutter: 24px;
+  /* Tinggi foto ikut lebar DAN tinggi layar, supaya rel program tetap masuk layar pertama di laptop. */
+  --photo-h: clamp(300px, min(30vw, 48vh), 500px);
+  background: #d1d9e8;
+  padding: 28px var(--gutter) 44px;
+  color: var(--ink);
+}
+
+.top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: end;
+  gap: 32px;
+  min-height: var(--photo-h);
+}
+
+.copy {
+  align-self: center;
+  min-width: 0;
+  padding: 16px 0;
+}
+
+/* ---------- Identitas ---------- */
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  padding: 8px;
+  background: var(--tile);
+  border-radius: 16px;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+}
+
+.identityText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  margin: 0 0 0 4px;
+}
+
+.org {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.region {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* ---------- Sambutan ---------- */
+.title {
+  margin: 40px 0 0;
+  max-width: 14em;
+  font-size: clamp(2rem, 4.4vw, 3.6rem);
+  line-height: 1.06;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--brand-dark);
+  text-wrap: balance;
+}
+
+.greeting {
+  display: block;
+  margin-bottom: 10px;
+  font-size: clamp(1.125rem, 1.7vw, 1.5rem);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--brand);
+}
+
+/* ---------- Status kantor ---------- */
+.status {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  min-height: 44px;
+  margin: 32px 0 0;
+  padding: 10px 18px;
+  font-size: 15px;
+  line-height: 1.4;
+  background: var(--tile);
+  border-radius: 22px;
+}
+
+.statusLoading {
+  width: 260px;
+  max-width: 100%;
+  opacity: 0.6;
+}
+
+.statusDetail {
+  color: var(--muted);
+}
+
+.statusDetail::before {
+  content: "·";
+  margin-right: 10px;
+}
+
+.dotOpen,
+.dotClosed {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--open);
+}
+
+.dotClosed {
+  background: var(--closed);
+}
+
+/* ---------- Media sosial ---------- */
+.sosmed {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sosmedLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--tile);
+  border-radius: 50%;
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 200ms ease;
+}
+
+/* 2 kelas agar menang atas gaya bawaan Mantine Image (width 100%). */
+.sosmedLink .sosmedIcon {
+  width: 22px;
+  height: 22px;
+}
+
+/* ---------- Perbekel ---------- */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+}
+
+.profile .photo,
+.photoSkeleton {
+  width: 100%;
+  height: var(--photo-h);
+  object-position: center bottom;
+}
+
+.photoSkeleton {
+  border-radius: 24px;
+  background: rgb(255 255 255 / 45%);
+}
+
+.nameCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: min(100%, 460px);
+  margin-top: -32px;
+  padding: 14px 22px;
+  background: rgb(255 255 255 / 96%);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgb(6 47 73 / 10%);
+}
+
+.profileNoPhoto {
+  align-self: center;
+}
+
+.profileNoPhoto .nameCard {
+  margin-top: 0;
+}
+
+.position {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.name {
+  font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+/* ---------- Program inovasi ---------- */
+.programs {
+  margin-top: 36px;
+}
+
+.programsTitle {
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.programsEmpty {
+  margin: 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* auto-fill: ubin tetap seukuran berapa pun jumlah programnya; lebih dari satu baris → turun rapi.
+   Lebar minimum ikut lebar layar (11vw) supaya di desktop selalu ±8 ubin per baris, bukan deretan
+   ubin kecil yang menyisakan separuh layar kosong di monitor lebar. */
+.rail {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(128px, 11vw, 220px), 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.railItem {
+  min-width: 0;
+}
+
+.tile,
+.tileSkeleton {
+  height: 100%;
+  min-height: 148px;
+  background: var(--tile);
+  border-radius: 16px;
+}
+
+.tileSkeleton {
+  background: rgb(255 255 255 / 55%);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 10px 12px;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.tile .tileLogo,
+.tileLogoEmpty {
+  flex: none;
+  width: 100%;
+  height: 72px;
+}
+
+.tileLogoEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a1a1a6;
+}
+
+.tileName {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.tile:focus-visible,
+.sosmedLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgb(6 47 73 / 12%);
+  }
+
+  .sosmedLink:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.tile:active,
+.sosmedLink:active {
+  transform: scale(0.97);
+}
+
+.pulse {
+  animation: landingPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes landingPulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+
+  .tile,
+  .sosmedLink {
+    transition: none;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    gap: 20px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .section {
+    --gutter: 16px;
+    --photo-h: 320px;
+    padding-top: 28px;
+    padding-bottom: 36px;
+  }
+
+  .top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    min-height: 0;
+  }
+
+  .copy {
+    padding: 0;
+  }
+
+  .logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .org {
+    font-size: 13px;
+  }
+
+  .region {
+    font-size: 13px;
+  }
+
+  .title {
+    margin-top: 28px;
+  }
+
+  .status {
+    margin-top: 24px;
+  }
+
+  /* Rel geser menyamping sampai tepi layar; ubin berikutnya mengintip sebagai petunjuk. */
+  .rail {
+    display: flex;
+    margin: 0 calc(var(--gutter) * -1);
+    padding: 0 var(--gutter) 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: var(--gutter);
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .railItem,
+  .tileSkeleton {
+    flex: 0 0 132px;
+    scroll-snap-align: start;
+  }
+}
