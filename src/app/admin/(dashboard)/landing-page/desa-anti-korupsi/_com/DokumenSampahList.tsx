@@ -5,7 +5,7 @@ import { IconRestore, IconTrashX } from '@tabler/icons-react';
 import { formatTanggalId, labelFolderAsal, labelSisaHari } from '../_lib/detail-view';
 import type { SampahItemView } from '../_lib/sampah-api';
 
-/** Aksi yang sedang berjalan pada satu item sampah (untuk loading tombol). */
+/** Aksi yang sedang berjalan pada satu dokumen terhapus (untuk loading tombol). */
 export type SampahBusy = { id: string; aksi: 'pulihkan' | 'hapus' } | null;
 
 type Props = {
@@ -17,10 +17,10 @@ type Props = {
   onHapus: (item: SampahItemView) => void;
 };
 
-/** Keterangan retensi tempat sampah (nilai bawaan backend). */
-export const KETERANGAN_SAMPAH = `Dokumen di tempat sampah dihapus permanen otomatis setelah ${DAK_SAMPAH_RETENSI_HARI} hari.`;
+/** Keterangan retensi dokumen terhapus (nilai bawaan backend). */
+export const KETERANGAN_SAMPAH = `Dokumen terhapus akan dihapus permanen otomatis setelah ${DAK_SAMPAH_RETENSI_HARI} hari.`;
 
-/** Daftar ringkas dokumen di tempat sampah + aksi Pulihkan / Hapus permanen. */
+/** Daftar ringkas dokumen terhapus + aksi Pulihkan / Hapus permanen. */
 export function DokumenSampahList({ items, folders, busy, onPulihkan, onHapus }: Props) {
   return (
     <Stack gap="xs">
@@ -29,7 +29,7 @@ export function DokumenSampahList({ items, folders, busy, onPulihkan, onHapus }:
       </Text>
       {items.length === 0 ? (
         <Text fz="sm" c="dimmed" data-testid="sampah-kosong">
-          Tempat sampah kosong
+          Belum ada dokumen terhapus
         </Text>
       ) : (
         items.map((item) => {

@@ -1,7 +1,7 @@
-// Klien API tempat sampah dokumen Desa Anti Korupsi (khusus admin) untuk halaman detail.
+// Klien API dokumen terhapus (sampah) Desa Anti Korupsi (khusus admin) untuk halaman detail.
 // Fetch biasa (bukan state Valtio) supaya mudah diuji; tidak melempar error — hasil dikembalikan.
 
-/** Satu item tempat sampah sesuai respons GET /:id/sampah (tanggal sudah berupa string JSON). */
+/** Satu dokumen terhapus sesuai respons GET /:id/sampah (tanggal sudah berupa string JSON). */
 export type SampahItemView = {
   id: string;
   judul: string;
@@ -43,13 +43,13 @@ async function request<T>(url: string, method: string, fallback: string, deps: D
   return { ok: true, data: (body as { data: T }).data };
 }
 
-/** Muat daftar tempat sampah satu program (terbaru dulu). */
+/** Muat daftar dokumen terhapus satu program (terbaru dulu). */
 export function muatSampah(programId: string, deps: Deps = {}): Promise<SampahApiResult<SampahItemView[]>> {
   const url = `${SAMPAH_API_BASE}/${encodeURIComponent(programId)}/sampah`;
-  return request(url, 'GET', 'Gagal memuat tempat sampah', deps);
+  return request(url, 'GET', 'Gagal memuat dokumen terhapus', deps);
 }
 
-/** Pulihkan dokumen dari tempat sampah; `folderId` = folder tujuan (null = "Umum"). */
+/** Pulihkan dokumen terhapus; `folderId` = folder tujuan (null = "Umum"). */
 export function pulihkanSampah(
   dokumenId: string,
   deps: Deps = {},
@@ -58,7 +58,7 @@ export function pulihkanSampah(
   return request(url, 'POST', 'Gagal memulihkan dokumen', deps);
 }
 
-/** Hapus permanen dokumen yang ada di tempat sampah. */
+/** Hapus permanen dokumen yang sudah terhapus. */
 export function hapusPermanenSampah(dokumenId: string, deps: Deps = {}): Promise<SampahApiResult<{ id: string }>> {
   const url = `${SAMPAH_API_BASE}/sampah/${encodeURIComponent(dokumenId)}`;
   return request(url, 'DELETE', 'Gagal menghapus dokumen secara permanen', deps);

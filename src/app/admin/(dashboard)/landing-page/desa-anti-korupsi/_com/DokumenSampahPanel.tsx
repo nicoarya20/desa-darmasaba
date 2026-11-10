@@ -1,7 +1,7 @@
 'use client';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
-import { Accordion, Badge, Button, Group, Loader, Stack, Text } from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import { Accordion, Badge, Button, Divider, Group, Loader, Stack, Text } from '@mantine/core';
+import { IconHistory } from '@tabler/icons-react';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { pesanPulihkan } from '../_lib/detail-view';
@@ -17,12 +17,31 @@ type Props = {
 
 const SAMPAH_KEY = 'sampah';
 
-/** Teks konfirmasi hapus permanen satu dokumen sampah. */
+/** Teks konfirmasi hapus permanen satu dokumen terhapus. */
 export function konfirmasiHapusPermanenText(judul: string): string {
   return `Hapus permanen dokumen "${judul}"? Tindakan ini tidak bisa dibatalkan.`;
 }
 
-/** Bagian "Tempat sampah" di detail program: dimuat saat pertama dibuka, pulihkan / hapus permanen. */
+/** Judul bagian "Dokumen terhapus" + badge jumlah (badge tampil setelah daftar dimuat). */
+export function DokumenTerhapusJudul({ jumlah }: { jumlah: number | null }) {
+  return (
+    <Group gap="xs" wrap="nowrap">
+      <Text fw={500} fz="xs" c="dimmed">
+        Dokumen terhapus
+      </Text>
+      {jumlah !== null && (
+        <Badge variant="outline" color="gray" size="xs">
+          {jumlah}
+        </Badge>
+      )}
+    </Group>
+  );
+}
+
+/**
+ * Bagian "Dokumen terhapus" di detail program: dimuat saat pertama dibuka, pulihkan / hapus permanen.
+ * Sengaja bergaya sekunder (redup, tanpa kartu) dan dipisah Divider agar tidak dikira folder.
+ */
 export function DokumenSampahPanel({ programId, folders, onRestored }: Props) {
   const [items, setItems] = useState<SampahItemView[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -71,26 +90,18 @@ export function DokumenSampahPanel({ programId, folders, onRestored }: Props) {
 
   return (
     <>
+      <Divider my="xs" label="Riwayat" labelPosition="left" />
       <Accordion
-        variant="separated"
-        radius="md"
+        variant="default"
+        chevronSize={14}
         onChange={(value) => {
           // Lazy: daftar (dan pembersihan otomatis di backend) hanya dimuat saat bagian dibuka pertama kali.
           if (value === SAMPAH_KEY && items === null && !loading) void muat();
         }}
       >
         <Accordion.Item value={SAMPAH_KEY} data-testid="panel-sampah">
-          <Accordion.Control icon={<IconTrash size={18} />}>
-            <Group gap="xs" wrap="nowrap">
-              <Text fw={600} fz="sm">
-                Tempat sampah
-              </Text>
-              {items !== null && (
-                <Badge variant="light" color="gray" size="sm">
-                  {items.length}
-                </Badge>
-              )}
-            </Group>
+          <Accordion.Control icon={<IconHistory size={16} style={{ color: 'var(--mantine-color-dimmed)' }} />} py={4}>
+            <DokumenTerhapusJudul jumlah={items === null ? null : items.length} />
           </Accordion.Control>
           <Accordion.Panel>
             {loading ? (

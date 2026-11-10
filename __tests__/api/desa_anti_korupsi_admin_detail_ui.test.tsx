@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Detail admin DAK: render tabel (Ukuran/Diunggah), toolbar cari/urut, tombol ZIP, dan tempat sampah.
+// Detail admin DAK: render tabel (Ukuran/Diunggah), toolbar cari/urut, tombol ZIP, dan bagian dokumen terhapus.
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
@@ -7,6 +7,7 @@ import { DokumenFolderView } from '@/app/admin/(dashboard)/landing-page/desa-ant
 import { DokumenSampahList } from '@/app/admin/(dashboard)/landing-page/desa-anti-korupsi/_com/DokumenSampahList';
 import {
   DokumenSampahPanel,
+  DokumenTerhapusJudul,
   konfirmasiHapusPermanenText,
 } from '@/app/admin/(dashboard)/landing-page/desa-anti-korupsi/_com/DokumenSampahPanel';
 import { DokumenZipButton } from '@/app/admin/(dashboard)/landing-page/desa-anti-korupsi/_com/DokumenZipButton';
@@ -84,7 +85,7 @@ const item = (id: string, judul: string, folderId: string | null, folderNama: st
   sisaHari,
 });
 
-describe('Tempat sampah', () => {
+describe('Dokumen terhapus', () => {
   const folders = [{ id: 'fa', nama: 'Laporan' }];
   const noop = () => undefined;
 
@@ -99,12 +100,14 @@ describe('Tempat sampah', () => {
     expect(html).toContain('dihapus permanen hari ini');
     expect(html).toContain('aria-label="Pulihkan SK Kades"');
     expect(html).toContain('aria-label="Hapus permanen SK Kades"');
-    expect(html).toContain('Dokumen di tempat sampah dihapus permanen otomatis setelah 30 hari.');
+    expect(html).toContain('Dokumen terhapus akan dihapus permanen otomatis setelah 30 hari.');
   });
 
   it('daftar kosong → empty state + keterangan tetap tampil', () => {
     const html = render(<DokumenSampahList items={[]} folders={folders} busy={null} onPulihkan={noop} onHapus={noop} />);
-    expect(html).toContain('Tempat sampah kosong');
+    expect(html).toContain('data-testid="sampah-kosong"');
+    expect(html).toContain('Belum ada dokumen terhapus');
+    expect(html).not.toContain('Tempat sampah');
     expect(html).toContain('setelah 30 hari');
   });
 
@@ -115,11 +118,23 @@ describe('Tempat sampah', () => {
     expect(html).toMatch(/<button[^>]*aria-label="Pulihkan SK"[^>]*disabled|<button[^>]*disabled[^>]*aria-label="Pulihkan SK"/);
   });
 
-  it('panel tertutup secara bawaan (lazy): hanya judul, daftar belum dimuat', () => {
+  it('panel tertutup secara bawaan (lazy): judul "Dokumen terhapus", tanpa jumlah, daftar belum dimuat', () => {
     const html = render(<DokumenSampahPanel programId="p1" folders={folders} onRestored={noop} />);
-    expect(html).toContain('Tempat sampah');
+    expect(html).toContain('Dokumen terhapus');
+    expect(html).not.toMatch(/tempat sampah/i);
     expect(html).toContain('data-testid="panel-sampah"');
     expect(html).not.toContain('data-testid="sampah-kosong"');
+    // Dipisah dari daftar folder oleh Divider; ikon judul = riwayat, bukan tempat sampah.
+    expect(html).toContain('Riwayat');
+    expect(html).toContain('tabler-icon-history');
+    expect(html).not.toContain('tabler-icon-trash');
+  });
+
+  it('judul bagian: "Dokumen terhapus" + badge jumlah setelah daftar dimuat', () => {
+    const html = render(<DokumenTerhapusJudul jumlah={3} />);
+    expect(html).toMatch(/Dokumen terhapus<\/p>[\s\S]*>3<\/span>/);
+    expect(render(<DokumenTerhapusJudul jumlah={0} />)).toMatch(/>0<\/span>/);
+    expect(render(<DokumenTerhapusJudul jumlah={null} />)).not.toContain('mantine-Badge');
   });
 
   it('teks konfirmasi hapus permanen', () => {
