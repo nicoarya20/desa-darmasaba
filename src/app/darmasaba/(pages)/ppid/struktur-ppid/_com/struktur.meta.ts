@@ -17,11 +17,11 @@ export const LEAF_COLS = { base: 2, wide: 4 } as const;
 export const strukturDetailHref = (pegawaiId: string) => `/darmasaba/ppid/struktur-ppid/${pegawaiId}`;
 
 /**
- * Variabel warna halaman. Gradasi kartu per tingkat (gelap → terang, teks putih di sisi kiri yang gelap):
+ * Gradasi kartu per tingkat (gelap → terang, teks putih di sisi kiri yang gelap):
  * tingkat 2+ memakai #145F8F di kiri, bukan #2F91CC, agar teks putih tetap kontras ≥ 4.5:1.
+ * `--brand` disediakan kerangka halaman (`ppid/_com/PpidPage.tsx`).
  */
 export const STRUKTUR_VARS = {
-  '--brand': colors['blue-button'],
   '--tone-0': `linear-gradient(100deg, ${colors['blue-button-7']} 0%, ${colors['blue-button']} 100%)`,
   '--tone-1': `linear-gradient(100deg, ${colors['blue-button']} 0%, ${colors['blue-button-5']} 100%)`,
   '--tone-2': `linear-gradient(100deg, #145F8F 0%, ${colors['blue-button-4']} 100%)`,
