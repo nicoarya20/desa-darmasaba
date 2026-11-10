@@ -7,27 +7,26 @@ import pengumumanFindFirst from "./findFirst";
 import pengumumanFindRecent from "./findRecent";
 import pengumumanUpdate from "./updt";
 
+// Field lampiran & tanggal terbit opsional (kontrak additive); batas jumlah & format dicek di
+// `@/lib/pengumuman-lampiran` supaya pesan error 400 seragam.
+const pengumumanBody = t.Object({
+  judul: t.String(),
+  deskripsi: t.String(),
+  content: t.String(),
+  categoryPengumumanId: t.Union([t.String(), t.Null()]),
+  imageId: t.Optional(t.Union([t.String(), t.Null()])),
+  imageIds: t.Optional(t.Array(t.String())),
+  dokumenIds: t.Optional(t.Array(t.String())),
+  tanggalTerbit: t.Optional(t.Union([t.String(), t.Null()])),
+});
+
 const Pengumuman = new Elysia({ prefix: "/pengumuman", tags: ["Desa/Pengumuman"] })
   .get("/find-many", pengumumanFindMany)
   .get("/:id", pengumumanFindById)
   .delete("/del/:id", pengumumanDelete)
-  .post("/create", pengumumanCreate, {
-    body: t.Object({
-      judul: t.String(),
-      deskripsi: t.String(),
-      content: t.String(),
-      categoryPengumumanId: t.Union([t.String(), t.Null()]),
-    }),
-  })
+  .post("/create", pengumumanCreate, { body: pengumumanBody })
   .get("/find-first", pengumumanFindFirst)
   .get("/find-recent", pengumumanFindRecent)
-  .put("/:id", pengumumanUpdate, {
-    body: t.Object({
-      judul: t.String(),
-      deskripsi: t.String(),
-      content: t.String(),
-      categoryPengumumanId: t.Union([t.String(), t.Null()]),
-    }),
-  });
+  .put("/:id", pengumumanUpdate, { body: pengumumanBody });
 
-export default Pengumuman;  
+export default Pengumuman;

@@ -1,77 +1,47 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import {
+  PENGUMUMAN_DETAIL_INCLUDE,
+  susunDataUpdate,
+  type PengumumanBody,
+} from "@/lib/pengumuman-lampiran";
 import { Context } from "elysia";
+import { validasiLampiran } from "./lampiran-check";
 
-type FormUpdate = Prisma.PengumumanGetPayload<{
-  select: {
-    id: true;
-    judul: true;
-    deskripsi: true;
-    content: true;
-    categoryPengumumanId: true;
-  };
-}>;
+const json = (body: unknown, status: number) =>
+  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
+/** Update pengumuman; lampiran/tanggal yang tidak dikirim tidak diubah, array = set final. */
 async function pengumumanUpdate(context: Context) {
   try {
     const id = context.params?.id as string; // ambil dari URL
-    const body = (await context.body) as Omit<FormUpdate, "id">;
-  
-    const {
-      judul,
-      deskripsi,
-      content,
-      categoryPengumumanId,
-    } = body;
-  
+    const body = (await context.body) as PengumumanBody;
+
     if (!id) {
-      return new Response(
-        JSON.stringify({ success: false, message: "ID tidak boleh kosong" }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return json({ success: false, message: "ID tidak boleh kosong" }, 400);
     }
-  
-    const existing = await prisma.pengumuman.findUnique({
-      where: { id },
-      include: {
-        CategoryPengumuman: true,
-      },
-    });
-  
+
+    const existing = await prisma.pengumuman.findUnique({ where: { id }, select: { id: true } });
     if (!existing) {
-      return new Response(
-        JSON.stringify({ success: false, message: "pengumuman tidak ditemukan" }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
-      );
+      return json({ success: false, message: "pengumuman tidak ditemukan" }, 404);
     }
-  
+
+    const lampiran = await validasiLampiran(body);
+    if (!lampiran.ok) {
+      return json({ success: false, message: lampiran.message }, 400);
+    }
+
+    // Berkas MinIO lampiran yang dilepas tidak dihapus (sama seperti dokumen Desa Anti Korupsi):
+    // repo belum punya pembersih berkas yatim — lihat docs/decisions/2026-11-10-pengumuman-lampiran.md.
     const updated = await prisma.pengumuman.update({
       where: { id },
-      data: {
-        judul,
-        deskripsi,
-        content,
-        categoryPengumumanId: categoryPengumumanId || null,
-      },
+      data: susunDataUpdate(body, lampiran.data),
+      include: PENGUMUMAN_DETAIL_INCLUDE,
     });
-  
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: "pengumuman berhasil diupdate",
-        data: updated,
-      }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
+
+    return json({ success: true, message: "pengumuman berhasil diupdate", data: updated }, 200);
   } catch (error) {
-    console.error("Error updating pengumuman:", error); 
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: "Terjadi kesalahan saat mengupdate pengumuman",
-      }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    console.error("Error updating pengumuman:", error);
+    return json({ success: false, message: "Terjadi kesalahan saat mengupdate pengumuman" }, 500);
   }
 }
-  export default pengumumanUpdate;
+export default pengumumanUpdate;
