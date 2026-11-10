@@ -1,6 +1,6 @@
 'use client';
 import type { PengumumanFile } from '@/lib/pengumuman-lampiran';
-import { Anchor, Image, Stack } from '@mantine/core';
+import { Anchor, Box, Image, Stack } from '@mantine/core';
 import { DokumentasiGaleri } from '@/app/darmasaba/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 import { PengumumanDokumenList } from './PengumumanDokumenList';
 
@@ -20,6 +20,16 @@ export function PengumumanGambarUtama({ image, judul }: { image?: PengumumanFile
     <Anchor href={image.link} target="_blank" rel="noopener noreferrer" aria-label="Lihat gambar ukuran penuh" data-pengumuman-gambar-utama>
       <Image src={image.link} alt={judul} radius="md" fit="contain" mah={{ base: 420, md: 640 }} w="100%" loading="lazy" />
     </Anchor>
+  );
+}
+
+/** Thumbnail kartu list (gambar utama, rasio 16:9); tidak dirender bila pengumuman tanpa gambar. */
+export function PengumumanThumbnail({ image, judul }: { image?: { link: string } | null; judul: string }) {
+  if (!image?.link) return null;
+  return (
+    <Box style={{ aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 'var(--mantine-radius-md)' }} data-pengumuman-thumbnail>
+      <Image src={image.link} alt={judul} h="100%" w="100%" fit="cover" loading="lazy" />
+    </Box>
   );
 }
 

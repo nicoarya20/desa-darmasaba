@@ -2,6 +2,11 @@
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
+import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
+import {
+  PengumumanGambarUtama,
+  PengumumanLampiranBawah,
+} from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran';
 import { Box, Container, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
@@ -43,15 +48,14 @@ function Page() {
               </Group>
             </Group>
           <Paper bg={colors["white-1"]} p="md">
-            <Text fz={"md"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: detail.data?.content }} />
-            <Text fz={"md"} c={colors["blue-button"]} fw="bold" >
-              {new Date(detail.data?.createdAt).toLocaleDateString('id-ID', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })}
-            </Text>
+            <Stack gap="md">
+              <PengumumanGambarUtama image={detail.data.image} judul={detail.data.judul} />
+              <Text fz={"md"} style={{wordBreak: "break-word", whiteSpace: "normal"}} dangerouslySetInnerHTML={{ __html: detail.data?.content }} />
+              <Text fz={"md"} c={colors["blue-button"]} fw="bold" >
+                {formatTanggalTerbit(tanggalPengumuman(detail.data))}
+              </Text>
+              <PengumumanLampiranBawah images={detail.data.images} dokumen={detail.data.dokumen} />
+            </Stack>
           </Paper>
         </Stack>
       </Container>

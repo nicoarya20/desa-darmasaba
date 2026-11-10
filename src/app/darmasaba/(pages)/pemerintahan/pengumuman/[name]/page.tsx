@@ -2,11 +2,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
-import { Box, Button, Center, Container, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
+import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
+import { Box, Button, Center, Container, Flex, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconArrowRight, IconCalendar } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
 import { useTransitionRouter } from 'next-view-transitions';
 import BackButton from '../../layanan/_com/BackButto';
+import { PengumumanThumbnail } from '../_com/PengumumanLampiran';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
@@ -84,44 +86,47 @@ function Page() {
               shadow="md"
               bg={colors["white-1"]}
             >
-              <Title order={3}>{v.judul}</Title>
-              <Group style={{ color: 'black' }} pb="sm">
-                <Group gap="xs">
-                  <IconCalendar size={18} />
+              <Flex direction={{ base: 'column', sm: 'row' }} gap="md" align="flex-start">
+                {v.image && (
+                  <Box w={{ base: '100%', sm: 220 }} style={{ flexShrink: 0 }}>
+                    <PengumumanThumbnail image={v.image} judul={v.judul} />
+                  </Box>
+                )}
+                <Box style={{ flex: 1, minWidth: 0 }}>
+                  <Title order={3}>{v.judul}</Title>
+                  <Group style={{ color: 'black' }} pb="sm">
+                    <Group gap="xs">
+                      <IconCalendar size={18} />
+                      <Text
+                        fz={{ base: 'xs', md: 'sm' }}
+                        lh={{ base: 1.4, md: 1.5 }}
+                      >
+                        {formatTanggalTerbit(tanggalPengumuman(v), false)}
+                      </Text>
+                    </Group>
+                  </Group>
                   <Text
-                    fz={{ base: 'xs', md: 'sm' }}
-                    lh={{ base: 1.4, md: 1.5 }}
-                  >
-                    {v.createdAt
-                      ? new Date(v.createdAt).toLocaleDateString('id-ID', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric',
-                        })
-                      : 'No date available'}
-                  </Text>
-                </Group>
-              </Group>
-              <Text
-                ta="justify"
-                fz={{ base: 'sm', md: 'md' }}
-                lh={{ base: 1.6, md: 1.7 }}
-                lineClamp={3}
-                style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                dangerouslySetInnerHTML={{ __html: v.deskripsi }}
-              />
-              <Group justify="flex-end" mt="md">
-                <Button
-                  variant="light"
-                  color={colors['blue-button']}
-                  rightSection={<IconArrowRight size={16} />}
-                  onClick={() =>
-                    router.push(`/darmasaba/pemerintahan/pengumuman/${categoryName}/${v.id}`)
-                  }
-                >
-                  Baca Selengkapnya
-                </Button>
-              </Group>
+                    ta="justify"
+                    fz={{ base: 'sm', md: 'md' }}
+                    lh={{ base: 1.6, md: 1.7 }}
+                    lineClamp={3}
+                    style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                    dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                  />
+                  <Group justify="flex-end" mt="md">
+                    <Button
+                      variant="light"
+                      color={colors['blue-button']}
+                      rightSection={<IconArrowRight size={16} />}
+                      onClick={() =>
+                        router.push(`/darmasaba/pemerintahan/pengumuman/${categoryName}/${v.id}`)
+                      }
+                    >
+                      Baca Selengkapnya
+                    </Button>
+                  </Group>
+                </Box>
+              </Flex>
             </Paper>
           ))
         )}
