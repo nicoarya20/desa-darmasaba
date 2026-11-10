@@ -17,4 +17,6 @@ export const LANDING_TEXT = {
   programsTitle: "Program Inovasi Desa",
   programsEmpty: "Belum ada program inovasi.",
   programsLoading: "Memuat program inovasi",
+  programsPrev: "Program sebelumnya",
+  programsNext: "Program berikutnya",
 } as const;

@@ -1,6 +1,7 @@
 /*
  * Hero beranda — satu permukaan biru-abu tanpa kartu pembungkus: identitas pemerintah desa,
- * sambutan, status kantor, dan media sosial di kiri atas; 4 ubin program inovasi di kiri bawah;
+ * sambutan, status kantor, dan media sosial di kiri atas; rel program inovasi di kiri bawah
+ * (programs.module.css);
  * foto Perbekel besar di kanan setinggi hero. Tanpa gerak otomatis: situs pemerintah harus tenang.
  * Isi selebar layar dengan jarak tepi 24px, sejajar tepi kiri-kanan Kabar Desa di bawahnya.
  * Breakpoint mengikuti section beranda lain: ≤1068px (tablet) dan ≤734px (mobile).
@@ -23,9 +24,25 @@
     "copy profile"
     "programs profile";
   column-gap: 32px;
+  position: relative;
+  overflow: hidden;
   background: #d1d9e8;
   padding: 28px var(--gutter) 44px;
   color: var(--ink);
+}
+
+/* Pita latar: di luar alur grid, di bawah semua isi (isi diberi position: relative). */
+.ribbons {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.copy,
+.profile {
+  position: relative;
 }
 
 .copy {
@@ -227,112 +244,17 @@
   color: var(--brand);
 }
 
-/* ---------- Program inovasi ---------- */
-.programs {
-  grid-area: programs;
-  min-width: 0;
-  margin-top: 36px;
-}
-
-.programsTitle {
-  margin: 0 0 14px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.programsEmpty {
-  margin: 0;
-  font-size: 15px;
-  color: var(--muted);
-}
-
-/* 4 kolom tetap (HERO_PROGRAM_LIMIT): ubin tetap seukuran walau programnya kurang dari 4. */
-.rail {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.railItem {
-  min-width: 0;
-}
-
-.tile,
-.tileSkeleton {
-  height: 100%;
-  min-height: 148px;
-  background: var(--tile);
-  border-radius: 16px;
-}
-
-.tileSkeleton {
-  background: rgb(255 255 255 / 55%);
-}
-
-.tile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 10px 12px;
-  color: var(--ink);
-  text-decoration: none;
-  transition:
-    transform 200ms ease,
-    box-shadow 200ms ease;
-}
-
-.tile .tileLogo,
-.tileLogoEmpty {
-  flex: none;
-  width: 100%;
-  height: 72px;
-}
-
-.tileLogoEmpty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #a1a1a6;
-}
-
-.tileName {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  font-size: 14px;
-  line-height: 1.3;
-  font-weight: 600;
-  text-align: center;
-  overflow-wrap: anywhere;
-}
-
-.tile:focus-visible,
 .sosmedLink:focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
 
 @media (hover: hover) {
-  .tile:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgb(6 47 73 / 12%);
-  }
-
   .sosmedLink:hover {
     transform: translateY(-2px);
   }
 }
 
-.tile:active,
 .sosmedLink:active {
   transform: scale(0.97);
 }
@@ -352,7 +274,6 @@
     animation: none;
   }
 
-  .tile,
   .sosmedLink {
     transition: none;
   }
@@ -386,6 +307,11 @@
     padding-bottom: 36px;
   }
 
+  /* Satu kolom: pita akan menabrak teks, jadi disembunyikan. */
+  .ribbons {
+    display: none;
+  }
+
   .copy {
     padding: 0;
   }
@@ -414,27 +340,5 @@
 
   .status {
     margin-top: 24px;
-  }
-
-  /* Rel geser menyamping sampai tepi layar; ubin berikutnya mengintip sebagai petunjuk. */
-  .rail {
-    display: flex;
-    margin: 0 calc(var(--gutter) * -1);
-    padding: 0 var(--gutter) 4px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-left: var(--gutter);
-    scrollbar-width: none;
-    overscroll-behavior-x: contain;
-  }
-
-  .rail::-webkit-scrollbar {
-    display: none;
-  }
-
-  .railItem,
-  .tileSkeleton {
-    flex: 0 0 132px;
-    scroll-snap-align: start;
   }
 }
