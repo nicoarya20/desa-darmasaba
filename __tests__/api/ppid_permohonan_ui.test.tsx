@@ -164,6 +164,12 @@ describe('Tata letak permohonan — CSS', () => {
     expect(css).not.toMatch(/@media[^{]*\$mantine-breakpoint/);
   });
 
+  it('lebar hanya dibatasi di 2 kolom, lewat token bersama --ppid-measure; saat bertumpuk kartu selebar isi', () => {
+    const maxWidths = [...css.matchAll(/^\s*max-width:\s*([^;]+);$/gm)].map((m) => m[1]);
+    expect(maxWidths).toEqual(['var(--ppid-measure, 75rem)']);
+    expect(desktop?.[1]).toMatch(/\.layout \{[^}]*max-width: var\(--ppid-measure, 75rem\);/);
+  });
+
   it('posisi tempel memperhitungkan tinggi navbar desktop', () => {
     expect(css).toMatch(/--permohonan-sticky-top: calc\(44px \+ 32px\);/);
     expect(desktop?.[1]).toMatch(/top: var\(--permohonan-sticky-top\);/);
