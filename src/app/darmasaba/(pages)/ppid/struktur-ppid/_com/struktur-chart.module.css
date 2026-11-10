@@ -1,0 +1,258 @@
+/*
+ * Garis bagan Struktur PPID, digambar dengan pseudo-element pada <ul>/<li> bersarang.
+ * - .row   : bawahan bercabang berjajar; garis turun dari kartu induk → palang atas → turun ke tiap kartu.
+ * - .stack : bawahan daun bertumpuk (pola "Katim" referensi); rel vertikal di kiri + cabang ke tengah kartu.
+ * Garis 2px dipusatkan dengan calc(50% - 1px) agar segmen dari ::before dan ::after segaris.
+ * Mobile ≤734px: .row ikut jadi tumpukan sehingga tidak ada geser horizontal.
+ */
+.chart {
+  /* Warna garis solid (= brand 35% di atas latar #D1D9E8): garis transparan menggelap di titik tumpang-tindih. */
+  --line: #8ba8c1;
+  --v: 28px;
+  --gap: 14px;
+  --indent: 40px;
+  --rail: 18px;
+  overflow-x: auto;
+  padding: 8px 0 24px;
+}
+
+.roots,
+.row,
+.stack {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Lebar konten: di tengah bila muat, rata kiri + bisa digeser bila meluber. */
+.roots {
+  display: flex;
+  gap: 48px;
+  width: max-content;
+  margin: 0 auto;
+}
+
+.branch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---- Baris bercabang ---- */
+.row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: var(--v);
+}
+
+.row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(50% - 1px);
+  height: var(--v);
+  border-left: 2px solid var(--line);
+}
+
+.row > .branch {
+  padding: var(--v) 14px 0;
+}
+
+.row > .branch::before,
+.row > .branch::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: calc(50% + 1px);
+  height: var(--v);
+  border-top: 2px solid var(--line);
+}
+
+.row > .branch::before {
+  right: calc(50% - 1px);
+}
+
+.row > .branch::after {
+  left: calc(50% - 1px);
+  border-left: 2px solid var(--line);
+}
+
+.row > .branch:first-child::before,
+.row > .branch:last-child::after {
+  border: 0;
+}
+
+.row > .branch:first-child::after {
+  border-top-left-radius: 10px;
+}
+
+.row > .branch:last-child::before {
+  border-right: 2px solid var(--line);
+  border-top-right-radius: 10px;
+}
+
+.row > .branch:only-child::before {
+  display: none;
+}
+
+.row > .branch:only-child::after {
+  border-top: 0;
+  border-left: 2px solid var(--line);
+  border-radius: 0;
+}
+
+/* ---- Tumpukan daun ---- */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  width: calc(var(--indent) + 300px);
+  max-width: 100%;
+  padding: var(--gap) 0 0 var(--indent);
+}
+
+.stack > .branch {
+  align-items: flex-start;
+}
+
+.stack > .branch::before,
+.stack > .branch:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail) - var(--indent));
+}
+
+.stack > .branch::before {
+  top: calc(-1 * var(--gap));
+  width: calc(var(--indent) - var(--rail));
+  height: calc(50% + var(--gap));
+  border-bottom: 2px solid var(--line);
+  border-left: 2px solid var(--line);
+  border-bottom-left-radius: 10px;
+}
+
+.stack > .branch:not(:last-child)::after {
+  top: 50%;
+  bottom: calc(-1 * var(--gap));
+  border-left: 2px solid var(--line);
+}
+
+/* ---- Kerangka ---- */
+.skeleton,
+.skeletonRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.skeleton {
+  flex-direction: column;
+  padding: 8px 0 24px;
+}
+
+.skeletonCard {
+  display: block;
+  width: 340px;
+  max-width: 100%;
+  height: 144px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonCard[data-size="lg"] {
+  width: 440px;
+  height: 176px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonCard {
+    animation: none;
+  }
+}
+
+/* ---- Mobile: semua bawahan bertumpuk ---- */
+@media (max-width: 734px) {
+  .chart {
+    --indent: 28px;
+    --rail: 14px;
+    overflow: visible;
+  }
+
+  .roots {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .branch,
+  .stack > .branch {
+    align-items: stretch;
+  }
+
+  .row,
+  .stack {
+    flex-direction: column;
+    gap: var(--gap);
+    width: 100%;
+    padding: var(--gap) 0 0 var(--indent);
+  }
+
+  .row::before {
+    display: none;
+  }
+
+  .row > .branch {
+    padding: 0;
+  }
+
+  /* :nth-child(n) menaikkan spesifisitas agar menang atas aturan :first-child/:last-child/:only-child desktop. */
+  .row > .branch:nth-child(n)::before,
+  .row > .branch:not(:last-child)::after {
+    display: block;
+    right: auto;
+    left: calc(var(--rail) - var(--indent));
+    border: 0;
+    border-radius: 0;
+  }
+
+  .row > .branch:last-child::after {
+    display: none;
+  }
+
+  /* Kartu di baris punya sub-daftar di bawahnya, jadi tengah kartu = setengah tinggi kartu md mobile (128px). */
+  .row > .branch:nth-child(n)::before {
+    top: calc(-1 * var(--gap));
+    width: calc(var(--indent) - var(--rail));
+    height: calc(64px + var(--gap));
+    border-bottom: 2px solid var(--line);
+    border-left: 2px solid var(--line);
+    border-bottom-left-radius: 10px;
+  }
+
+  .row > .branch:not(:last-child)::after {
+    top: 64px;
+    bottom: calc(-1 * var(--gap));
+    height: auto;
+    border-left: 2px solid var(--line);
+  }
+
+  .skeletonRow {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .skeletonCard,
+  .skeletonCard[data-size="lg"] {
+    width: 100%;
+    height: 128px;
+  }
+}
