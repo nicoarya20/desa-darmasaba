@@ -206,9 +206,10 @@ describe('tombol unduh ZIP', () => {
     );
   });
 
-  it('disabled bila folder / program kosong; grid tanpa tombol folder', () => {
+  it('folder kosong: tombol ZIP folder tidak dirender; program kosong: ZIP semua disabled; grid tanpa tombol folder', () => {
     const kosong = render(<ProgramIsi detail={detail} folderParam="fb" urutParam={null} onUrutChange={noop} />);
-    expect(zipButton(kosong, 'fb')).toContain('disabled');
+    expect(kosong).not.toContain('data-zip-folder="fb"');
+    expect(kosong).not.toContain('Unduh folder (ZIP)');
     const program = render(
       <ProgramIsi detail={{ ...detail, folders: [], dokumenUmum: [] }} folderParam={null} urutParam={null} onUrutChange={noop} />,
     );

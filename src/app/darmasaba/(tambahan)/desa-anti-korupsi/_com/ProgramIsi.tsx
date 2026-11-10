@@ -48,7 +48,7 @@ export function ProgramIsi({ detail, folderParam, urutParam, onUrutChange }: Pro
         />
       );
   } else if (active) {
-    content = <FolderAktif programId={detail.id} folder={active} urut={urut} onPreview={setPreview} />;
+    content = <FolderAktif programId={detail.id} folder={active} groups={groups} urut={urut} onPreview={setPreview} />;
   } else {
     content = <FolderGrid programId={detail.id} groups={groups} urut={urut} />;
   }
