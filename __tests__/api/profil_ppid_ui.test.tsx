@@ -80,6 +80,11 @@ describe('Profil PPID — susunan 2 kolom', () => {
       /\{font-size:1rem;\}@media\(min-width: 62em\)\{[^{}]+\{font-size:1\.1rem;\}\}@media\(min-width: 75em\)\{[^{}]+\{font-size:1\.2rem;\}\}/g;
     expect(grid.match(bodyFont)).toHaveLength(SECTIONS.length);
   });
+
+  it('isi keempat section rata kiri, bukan justify (justify melebarkan celah antarkata di kolom sempit)', () => {
+    expect(grid.match(/text-align:left/g)).toHaveLength(SECTIONS.length);
+    expect(grid).not.toContain('text-align:justify');
+  });
 });
 
 describe('Profil PPID — kartu foto sticky', () => {

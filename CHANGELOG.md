@@ -6,6 +6,7 @@
 - Saat halaman di-scroll, foto pejabat kini ikut turun di samping teks hingga akhir profil.
 - Tampilan 2 kolom (foto di kiri, teks di kanan) kini juga muncul di laptop dengan lebar layar mulai 1200px. Sebelumnya tampilan ini baru muncul mulai 1408px, sehingga di laptop foto tampil besar sendirian di atas teks. Di ponsel dan tablet, tampilan tetap bertumpuk seperti sebelumnya.
 - Ukuran huruf isi Pengalaman Organisasi dan Program Unggulan kini sama dengan Biografi dan Riwayat Karir.
+- Teks Biografi, Riwayat Karir, Pengalaman Organisasi, dan Program Unggulan kini rata kiri. Sebelumnya teks dibuat rata kanan-kiri, sehingga di laptop dan ponsel jarak antarkata sering melebar dan sulit dibaca.
 
 ## [0.1.230] - 2026-11-09
 ### Changed

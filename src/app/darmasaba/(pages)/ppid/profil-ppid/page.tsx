@@ -212,7 +212,7 @@ function Page() {
                           <Text
                             fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
                             lh={1.6}
-                            ta="justify"
+                            ta="left"
                             dangerouslySetInnerHTML={{ __html: item.biodata }}
                             style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                           />
@@ -233,7 +233,7 @@ function Page() {
                             <Text
                               fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
                               lh={1.6}
-                              ta="justify"
+                              ta="left"
                               dangerouslySetInnerHTML={{ __html: item.riwayat }}
                               style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                             />
@@ -255,7 +255,7 @@ function Page() {
                             <Text
                               fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
                               lh={1.6}
-                              ta="justify"
+                              ta="left"
                               dangerouslySetInnerHTML={{ __html: item.pengalaman }}
                               style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                             />
@@ -277,7 +277,7 @@ function Page() {
                             <Text
                               fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
                               lh={1.6}
-                              ta="justify"
+                              ta="left"
                               dangerouslySetInnerHTML={{ __html: item.unggulan }}
                               style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                             />
