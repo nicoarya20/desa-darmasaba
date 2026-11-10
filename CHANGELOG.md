@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.235] - 2026-11-10
+### Fixed
+- Di ponsel, pita di belakang foto Perbekel kini tampil utuh: turun dari kiri atas foto lalu keluar sampai tepi kanan layar. Sebelumnya pita tergencet di sisi kiri dan terputus di belakang foto.
+
 ## [0.1.234] - 2026-11-10
 ### Changed
 - Di ponsel, pita biru, putih, emas, dan merah kini ikut tampil di belakang foto Perbekel pada bagian paling atas beranda. Sebelumnya pita hanya tampil di tablet dan komputer.
