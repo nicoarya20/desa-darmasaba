@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.236] - 2026-11-10
+### Changed
+- **Halaman PPID kini satu tampilan.** Visi dan Misi, Dasar Hukum, Permohonan Informasi Publik, Permohonan Keberatan, Daftar Informasi Publik (beserta detailnya), dan Indeks Kepuasan Masyarakat memakai kepala halaman yang sama dengan Struktur PPID: tombol kembali, judul besar rata kiri, dan satu kalimat pengantar. Logo besar, kartu di dalam kartu, dan teks rata kanan-kiri dihapus.
+- Visi dan Misi PPID: moto, visi, dan misi menjadi bagian terpisah; misi tampil sebagai daftar bernomor.
+- Dasar Hukum PPID tampil sebagai daftar peraturan yang mudah dipindai.
+- Permohonan Informasi Publik dan Permohonan Keberatan: alur langkah bernomor yang ringan (menempel di kiri pada layar lebar) dan formulir satu kolom dengan semua isian sama lebar. Editor "Alasan Keberatan" disederhanakan menjadi tebal, miring, dan daftar.
+- Daftar Informasi Publik: kotak cari di samping judul, dan daftar menampilkan jenis informasi serta deskripsi secara utuh (kartu bertumpuk di ponsel). Kotak cari tidak lagi kehilangan fokus saat daftar dimuat ulang, dan penomoran halaman hanya tampil bila lebih dari satu halaman.
+- Indeks Kepuasan Masyarakat (PPID) kini memakai grafik dan form yang sama dengan bagian Indeks Kepuasan di beranda. Pada form "Ajukan Responden", isian Tanggal dihapus (diisi otomatis dengan tanggal hari ini), pesan wajib isi tampil per isian, dan form tetap terbuka dengan isian dipertahankan bila pengiriman gagal.
+
+### Fixed
+- Visi dan Misi serta Dasar Hukum PPID tidak lagi menampilkan kerangka memuat tanpa akhir saat data tidak tersedia; kini muncul keterangan "belum tersedia".
+- Detail Informasi Publik dengan alamat yang tidak valid kini menampilkan "Informasi tidak ditemukan" beserta tautan kembali ke daftar.
+
 ## [0.1.235] - 2026-11-10
 ### Added
 - **Desa Anti Korupsi: dokumen tiap program kini bisa dipilah ke dalam folder.** Admin dapat membuat, mengganti nama, mengurutkan, dan menghapus folder (dokumen di folder yang dihapus pindah ke "Umum"), mengunggah beberapa dokumen sekaligus langsung ke folder pilihan, memindahkan dokumen antar folder, serta mengubah judul dan urutan dokumen. Halaman detail admin menampilkan dokumen per folder dalam tabel ringkas yang bisa dibuka-tutup. Di website, tiap indikator pada halaman detail Desa Anti Korupsi kini menampilkan ringkasan isinya (mis. "2 folder · 5 dokumen") dan membuka halaman program tersendiri berisi folder, pencarian dokumen, serta pratinjau dan unduh. Indikator yang belum berisi dokumen tetap tampil "Dokumen belum tersedia". Dokumen tunggal yang sudah ada otomatis masuk "Umum".
