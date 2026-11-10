@@ -10,12 +10,15 @@ export type PegawaiItem = {
 /** Jabatan dari `posisiorganisasi/find-many-all` — API ini tidak mengirim `parentId`. */
 export type PosisiItem = { id: string; nama: string; hierarki: number };
 
-/** Satu kotak bagan: satu jabatan beserta pegawai pertamanya (`person` null = belum ditugaskan). */
+/** Pegawai yang ditampilkan di kartu. */
+export type OrgPerson = { id: string; name: string; image: string | null };
+
+/** Satu jabatan di bagan beserta semua pegawai aktifnya (`people` kosong = belum ditugaskan). */
 export type OrgNode = {
   posisiId: string;
   title: string;
   hierarki: number;
-  person: { id: string; name: string; image: string | null } | null;
+  people: OrgPerson[];
   children: OrgNode[];
 };
 
@@ -34,13 +37,19 @@ function sortNodes(nodes: OrgNode[]): OrgNode[] {
 export function buildOrgTree(pegawai: readonly PegawaiItem[], posisiList: readonly PosisiItem[]): OrgNode[] {
   const drafts = new Map<string, Draft>();
   for (const p of pegawai) {
-    if (!p.isActive || drafts.has(p.posisi.id)) continue; // satu kotak per jabatan, pegawai pertama
+    if (!p.isActive) continue;
+    const person = { id: p.id, name: p.namaLengkap, image: p.image?.link || null };
+    const existing = drafts.get(p.posisi.id);
+    if (existing) {
+      existing.people.push(person); // satu jabatan bisa berisi beberapa pegawai — semuanya tampil
+      continue;
+    }
     drafts.set(p.posisi.id, {
       posisiId: p.posisi.id,
       title: p.posisi.nama,
       hierarki: p.posisi.hierarki,
       parentId: p.posisi.parentId ?? null,
-      person: { id: p.id, name: p.namaLengkap, image: p.image?.link || null },
+      people: [person],
       children: [],
     });
   }
@@ -54,7 +63,7 @@ export function buildOrgTree(pegawai: readonly PegawaiItem[], posisiList: readon
       title: parent.nama,
       hierarki: parent.hierarki,
       parentId: null,
-      person: null,
+      people: [],
       children: [],
     });
   }
@@ -74,21 +83,35 @@ export function buildOrgTree(pegawai: readonly PegawaiItem[], posisiList: readon
     posisiId: node.posisiId,
     title: node.title,
     hierarki: node.hierarki,
-    person: node.person,
+    people: node.people,
     children: sortNodes(node.children.map(strip)),
   });
   return roots.filter((node) => !attached.includes(node)).map(strip);
 }
 
-/** Saring bagan: kotak tetap tampil bila nama/jabatannya cocok atau ada keturunan yang cocok. */
+/**
+ * Saring bagan: jabatan tetap tampil bila judulnya cocok (semua pegawainya ikut), ada pegawai yang namanya
+ * cocok (hanya pegawai itu yang tampil), atau ada keturunan yang cocok (sebagai leluhur, pegawai utuh).
+ */
 export function filterOrgTree(nodes: readonly OrgNode[], query: string): OrgNode[] {
   const q = query.trim().toLowerCase();
   if (!q) return [...nodes];
   return nodes.flatMap((node) => {
     const children = filterOrgTree(node.children, q);
-    const hit = node.title.toLowerCase().includes(q) || Boolean(node.person?.name.toLowerCase().includes(q));
-    return hit || children.length > 0 ? [{ ...node, children }] : [];
+    if (node.title.toLowerCase().includes(q)) return [{ ...node, children }];
+    const people = node.people.filter((person) => person.name.toLowerCase().includes(q));
+    if (people.length > 0) return [{ ...node, people, children }];
+    return children.length > 0 ? [{ ...node, children }] : [];
   });
+}
+
+/** Satu kartu yang digambar: jabatan + satu pegawai (null = belum ditugaskan). */
+export type OrgCardItem = { key: string; title: string; person: OrgPerson | null };
+
+/** Kartu-kartu sebuah jabatan: satu per pegawai, atau satu kartu kosong bila belum ditugaskan. */
+export function cardsOf(node: OrgNode): OrgCardItem[] {
+  if (node.people.length === 0) return [{ key: node.posisiId, title: node.title, person: null }];
+  return node.people.map((person) => ({ key: `${node.posisiId}:${person.id}`, title: node.title, person }));
 }
 
 /** Tingkat warna kartu: 0 akar, 1 bawahan langsung, 2 sisanya. */

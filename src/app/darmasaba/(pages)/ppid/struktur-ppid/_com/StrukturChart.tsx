@@ -1,11 +1,12 @@
 import type { CSSProperties } from 'react';
 import { StrukturCard } from './StrukturCard';
-import { leafSlot, toneForDepth, type OrgNode } from './struktur.logic';
+import { cardsOf, leafSlot, toneForDepth, type OrgNode } from './struktur.logic';
 import { LEAF_COLS } from './struktur.meta';
 import s from './struktur-chart.module.css';
 import { STRUKTUR_TEXT } from './struktur.text';
 
-type BranchProps = { node: OrgNode; depth: number; inLeaves: boolean; style?: CSSProperties };
+type Size = 'lg' | 'md' | 'sm';
+type BranchProps = { node: OrgNode; depth: number };
 
 /** Variabel CSS posisi kotak daun untuk kedua batas kolom (laptop / layar lebar). */
 function leafVars(index: number, count: number): CSSProperties {
@@ -21,30 +22,55 @@ function leafVars(index: number, count: number): CSSProperties {
   } as CSSProperties;
 }
 
+/** Kartu sebuah jabatan; jabatan berisi beberapa pegawai → kartu berdampingan di bawah palang kecil. */
+function NodeCards({ node, depth, size }: { node: OrgNode; depth: number; size: Size }) {
+  const cards = cardsOf(node);
+  const tone = toneForDepth(depth);
+  if (cards.length === 1) return <StrukturCard item={cards[0]} tone={tone} size={size} />;
+  return (
+    <div className={s.group} data-branch={node.children.length > 0 || undefined}>
+      {cards.map((item) => (
+        <div key={item.key} className={s.slot}>
+          <StrukturCard item={item} tone={tone} size={size} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Bawahan daun: tiap pegawai jadi satu kotak grid, garis induk turun di tengah grid. */
+function Leaves({ nodes, depth }: { nodes: readonly OrgNode[]; depth: number }) {
+  const items = nodes.flatMap(cardsOf);
+  const gridVars = {
+    '--c2': leafSlot(0, items.length, LEAF_COLS.base).cols,
+    '--c4': leafSlot(0, items.length, LEAF_COLS.wide).cols,
+  } as CSSProperties;
+  return (
+    <ul className={s.leaves} style={gridVars}>
+      {items.map((item, index) => (
+        <li key={item.key} className={s.branch} style={leafVars(index, items.length)}>
+          <StrukturCard item={item} tone={toneForDepth(depth)} size="sm" />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /**
  * Satu cabang: kartu jabatan lalu bawahannya. Bawahan yang punya bawahan → baris berpalang (pola bagan
  * hierarki); bawahan yang semuanya daun → grid beberapa baris dengan garis induk turun di tengah.
  */
-function Branch({ node, depth, inLeaves, style }: BranchProps) {
+function Branch({ node, depth }: BranchProps) {
   const { children } = node;
-  const leaves = children.length > 0 && children.every((child) => child.children.length === 0);
-  const gridVars = {
-    '--c2': leafSlot(0, children.length, LEAF_COLS.base).cols,
-    '--c4': leafSlot(0, children.length, LEAF_COLS.wide).cols,
-  } as CSSProperties;
+  const allLeaves = children.length > 0 && children.every((child) => child.children.length === 0);
   return (
-    <li className={s.branch} style={style}>
-      <StrukturCard node={node} tone={toneForDepth(depth)} size={depth === 0 ? 'lg' : inLeaves ? 'sm' : 'md'} />
-      {children.length > 0 ? (
-        <ul className={leaves ? s.leaves : s.row} style={leaves ? gridVars : undefined}>
-          {children.map((child, index) => (
-            <Branch
-              key={child.posisiId}
-              node={child}
-              depth={depth + 1}
-              inLeaves={leaves}
-              style={leaves ? leafVars(index, children.length) : undefined}
-            />
+    <li className={s.branch}>
+      <NodeCards node={node} depth={depth} size={depth === 0 ? 'lg' : 'md'} />
+      {allLeaves ? <Leaves nodes={children} depth={depth + 1} /> : null}
+      {children.length > 0 && !allLeaves ? (
+        <ul className={s.row}>
+          {children.map((child) => (
+            <Branch key={child.posisiId} node={child} depth={depth + 1} />
           ))}
         </ul>
       ) : null}
@@ -58,7 +84,7 @@ export function StrukturChart({ roots }: { roots: readonly OrgNode[] }) {
     <div className={s.chart}>
       <ul className={s.roots} aria-label={STRUKTUR_TEXT.chartLabel}>
         {roots.map((node) => (
-          <Branch key={node.posisiId} node={node} depth={0} inLeaves={false} />
+          <Branch key={node.posisiId} node={node} depth={0} />
         ))}
       </ul>
     </div>

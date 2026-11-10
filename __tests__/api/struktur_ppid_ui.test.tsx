@@ -27,11 +27,12 @@ import type { OrgNode } from '@/app/darmasaba/(pages)/ppid/struktur-ppid/_com/st
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 
 // test-only: pohon kecil — Kepala Desa → [Kaur Umum (kosong) → Kaur Keuangan, Sekretaris → 2 Kadus].
-const node = (posisiId: string, title: string, person: OrgNode['person'], children: OrgNode[] = []): OrgNode => ({
+type Person = OrgNode['people'][number];
+const node = (posisiId: string, title: string, person: Person | Person[] | null, children: OrgNode[] = []): OrgNode => ({
   posisiId,
   title,
   hierarki: 1,
-  person,
+  people: person === null ? [] : Array.isArray(person) ? person : [person],
   children,
 });
 const TREE: OrgNode[] = [
@@ -84,6 +85,47 @@ describe('Struktur PPID — kartu bagan', () => {
   it('kotak daun membawa geser palang (--o) dan geser baris (--s) dari leafSlot', () => {
     expect(html).toContain('style="--o2:0.5;--a2:0.5;--s2:0;--o4:0.5;--a4:0.5;--s4:0"');
     expect(html).toContain('style="--o2:-0.5;--a2:0.5;--s2:0;--o4:-0.5;--a4:0.5;--s4:0"');
+  });
+});
+
+describe('Struktur PPID — jabatan berisi beberapa pegawai', () => {
+  // test-only: Sekretaris Desa diisi 2 pegawai dan punya bawahan; Staf Desa (daun) diisi 3 pegawai.
+  const people = (...names: string[]) => names.map((name) => ({ id: name, name, image: null }));
+  const multi = render(
+    <StrukturChart
+      roots={[
+        node('kepala_desa', 'Kepala Desa', people('kades'), [
+          node('sekretaris_desa', 'Sekretaris Desa', people('sek1', 'sek2'), [
+            node('kaur_umum', 'Kaur Umum', null, [node('kaur_keuangan', 'Kaur Keuangan', people('keu'))]),
+            node('staf_desa', 'Staf Desa', people('staf1', 'staf2', 'staf3'), [node('x', 'X', people('x'))]),
+          ]),
+          node('kadus_a', 'Kepala Dusun A', people('kadus')),
+        ]),
+        node('bpd', 'Ketua BPD', people('bpd1', 'bpd2')),
+      ]}
+    />,
+  );
+
+  it('semua pegawai tampil sebagai kartu bertaut masing-masing', () => {
+    for (const id of ['sek1', 'sek2', 'staf1', 'staf2', 'staf3', 'bpd1', 'bpd2']) {
+      expect(multi).toContain(`href="/darmasaba/ppid/struktur-ppid/${id}"`);
+    }
+    expect(multi).toContain('aria-label="sek2, Sekretaris Desa — lihat profil"');
+  });
+
+  it('jabatan bercabang → grup kartu berpalang bawah; tanpa bawahan → grup tanpa palang bawah', () => {
+    expect(count(multi, /class="[^"]*_group_/)).toBe(3);
+    expect(count(multi, /class="[^"]*_group_[^"]*" data-branch="true"/)).toBe(2);
+    expect(count(multi, /class="[^"]*_slot_/)).toBe(7);
+  });
+
+  it('daun berisi beberapa pegawai → tiap pegawai satu kotak grid', () => {
+    const leaves = render(
+      <StrukturChart roots={[node('kepala_desa', 'Kepala Desa', people('kades'), [node('staf', 'Staf', people('a', 'b', 'c'))])]} />,
+    );
+    expect(leaves).toMatch(/class="[^"]*_leaves_[^"]*" style="--c2:2;--c4:3"/);
+    expect(count(leaves, /data-size="sm"/)).toBe(3);
+    expect(count(leaves, /class="[^"]*_group_/)).toBe(0);
   });
 });
 

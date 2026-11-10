@@ -324,3 +324,76 @@
     height: 128px;
   }
 }
+
+/*
+ * Jabatan berisi beberapa pegawai: kartu berdampingan. Tiap kartu menggambar tiang pendek (--g) dari
+ * tengahnya + palang ke tengah kartu berikutnya, di atas (garis dari atasan tiba di tengah palang) dan, bila
+ * punya bawahan, di bawah (garis ke bawahan turun dari tengah palang). Akar tanpa palang atas.
+ * ≤1068px: kartu bertumpuk tanpa palang; rel kiri menyambung ke kartu pertama.
+ */
+.group {
+  --g: 14px;
+  display: flex;
+  gap: var(--col-gap);
+}
+
+.slot {
+  position: relative;
+  padding-top: var(--g);
+}
+
+.group[data-branch] > .slot {
+  padding-bottom: var(--g);
+}
+
+.slot::before,
+.group[data-branch] > .slot::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 1px);
+  width: calc(100% + var(--col-gap));
+  height: var(--g);
+  border-left: 2px solid var(--line);
+}
+
+.slot::before {
+  top: 0;
+  border-top: 2px solid var(--line);
+}
+
+.group[data-branch] > .slot::after {
+  bottom: 0;
+  border-bottom: 2px solid var(--line);
+}
+
+.slot:last-child::before,
+.group[data-branch] > .slot:last-child::after {
+  width: 2px;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.roots > .branch > .group > .slot {
+  padding-top: 0;
+}
+
+.roots > .branch > .group > .slot::before {
+  display: none;
+}
+
+@media (max-width: 1068px) {
+  .group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .slot,
+  .group[data-branch] > .slot {
+    padding: 0;
+  }
+
+  .slot::before,
+  .group[data-branch] > .slot::after {
+    display: none;
+  }
+}

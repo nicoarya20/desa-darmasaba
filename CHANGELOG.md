@@ -11,6 +11,7 @@
 ### Fixed
 - Kaur Keuangan kini tampil di bagan. Sebelumnya jabatan ini tidak muncul karena jabatan di atasnya, Kaur Umum & TU, belum diisi pegawai. Jabatan yang belum diisi kini tampil sebagai kartu bergaris putus bertuliskan "Belum ditugaskan".
 - Bagan kini menampilkan semua pegawai aktif. Sebelumnya hanya 10 pegawai pertama yang dimuat.
+- Jabatan yang diisi lebih dari satu pegawai kini menampilkan semua pegawainya, masing-masing dengan kartu sendiri yang berjajar di jabatan itu. Sebelumnya hanya satu pegawai yang tampil.
 - Garis dari Kepala Desa ke Sekretaris Desa kini terlihat, dan semua kartu di tingkat yang sama kini sama lebar.
 
 ## [0.1.231] - 2026-11-10

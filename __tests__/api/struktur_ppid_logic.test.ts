@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildOrgTree,
+  cardsOf,
   filterOrgTree,
   leafSlot,
   toneForDepth,
@@ -57,9 +58,9 @@ describe('buildOrgTree', () => {
     expect(titles(kades.children)).toEqual(['Kaur Umum & TU', 'Sekretaris Desa']);
 
     const [kaurUmum, sekdes] = kades.children;
-    expect(kaurUmum.person).toBeNull();
+    expect(kaurUmum.people).toEqual([]);
     expect(titles(kaurUmum.children)).toEqual(['Kaur Keuangan']);
-    expect(kaurUmum.children[0].person?.name).toBe('Pegawai p3');
+    expect(kaurUmum.children[0].people.map((p) => p.name)).toEqual(['Pegawai p3']);
 
     // Pegawai nonaktif (Staf Desa) tidak tampil; anak diurut tingkat lalu nama jabatan.
     expect(titles(sekdes.children)).toEqual([
@@ -71,8 +72,8 @@ describe('buildOrgTree', () => {
   it('membawa id pegawai dan link foto (kosong → null)', () => {
     const [kades] = buildOrgTree(STG, POSISI);
     const bucu = kades.children[1].children[0];
-    expect(bucu.person).toEqual({ id: 'p5', name: 'Pegawai p5', image: '/api/img/foto.webp' });
-    expect(kades.person?.image).toBeNull();
+    expect(bucu.people).toEqual([{ id: 'p5', name: 'Pegawai p5', image: '/api/img/foto.webp' }]);
+    expect(kades.people[0].image).toBeNull();
   });
 
   it('tanpa daftar jabatan, bawahan yang induknya tak berpegawai ditempel ke akar utama (tetap tampil)', () => {
@@ -81,15 +82,16 @@ describe('buildOrgTree', () => {
     expect(titles(kades.children)).toEqual(['Sekretaris Desa', 'Kaur Keuangan']);
   });
 
-  it('satu kotak per jabatan — pegawai pertama yang aktif', () => {
+  it('satu jabatan berisi beberapa pegawai → satu simpul dengan semua pegawai aktif, urutan data', () => {
     const data = [
-      pegawai('a', 'kepala_desa', 'Kepala Desa', 1, null, { isActive: false }),
-      pegawai('b', 'kepala_desa', 'Kepala Desa', 1, null),
-      pegawai('c', 'kepala_desa', 'Kepala Desa', 1, null),
+      pegawai('a', 'kepala_desa', 'Kepala Desa', 1, null),
+      pegawai('b', 'staf_desa', 'Staf Desa', 2, 'kepala_desa', { isActive: false }),
+      pegawai('c', 'staf_desa', 'Staf Desa', 2, 'kepala_desa'),
+      pegawai('d', 'staf_desa', 'Staf Desa', 2, 'kepala_desa'),
     ];
-    const roots = buildOrgTree(data, []);
-    expect(roots).toHaveLength(1);
-    expect(roots[0].person?.id).toBe('b');
+    const [kades] = buildOrgTree(data, []);
+    expect(titles(kades.children)).toEqual(['Staf Desa']);
+    expect(kades.children[0].people.map((p) => p.id)).toEqual(['c', 'd']);
   });
 
   it('akar setingkat dengan akar utama tetap terpisah', () => {
@@ -120,9 +122,44 @@ describe('filterOrgTree', () => {
     expect(titles(kades.children[0].children)).toEqual(['Kepala Dusun Banjar Dinas Taman']);
   });
 
+  it('jabatan berisi beberapa pegawai: cocok nama → hanya pegawai itu; cocok jabatan → semua pegawai', () => {
+    const shared = buildOrgTree(
+      [
+        pegawai('a', 'kepala_desa', 'Kepala Desa', 1, null),
+        pegawai('c', 'staf_desa', 'Staf Desa', 2, 'kepala_desa'),
+        pegawai('d', 'staf_desa', 'Staf Desa', 2, 'kepala_desa'),
+      ],
+      [],
+    );
+    const ids = (q: string) => filterOrgTree(shared, q)[0].children[0].people.map((p) => p.id);
+    expect(ids('pegawai d')).toEqual(['d']);
+    expect(ids('staf')).toEqual(['c', 'd']);
+    // Leluhur yang tampil karena keturunannya cocok tetap membawa semua pegawainya.
+    expect(filterOrgTree(shared, 'pegawai d')[0].people.map((p) => p.id)).toEqual(['a']);
+  });
+
   it('kueri kosong → pohon utuh; tak ada yang cocok → kosong', () => {
     expect(filterOrgTree(tree, ' ')).toEqual(tree);
     expect(filterOrgTree(tree, 'zzz')).toEqual([]);
+  });
+});
+
+describe('cardsOf', () => {
+  const base = { posisiId: 'staf', title: 'Staf Desa', hierarki: 3, children: [] };
+
+  it('satu kartu per pegawai dengan kunci unik jabatan:pegawai', () => {
+    const people = [
+      { id: 'c', name: 'C', image: null },
+      { id: 'd', name: 'D', image: '/api/img/d.webp' },
+    ];
+    expect(cardsOf({ ...base, people })).toEqual([
+      { key: 'staf:c', title: 'Staf Desa', person: people[0] },
+      { key: 'staf:d', title: 'Staf Desa', person: people[1] },
+    ]);
+  });
+
+  it('jabatan tanpa pegawai → satu kartu kosong', () => {
+    expect(cardsOf({ ...base, people: [] })).toEqual([{ key: 'staf', title: 'Staf Desa', person: null }]);
   });
 });
 
