@@ -1,37 +1,89 @@
-/* Kartu folder & chip folder halaman program publik Desa Anti Korupsi.
-   Warna brand dikirim lewat CSS variable dari `@/con/colors` (--folder-brand, --folder-brand-soft). */
+/* Halaman program publik Desa Anti Korupsi — senada halaman detail (`antikorupsi-detail.module.css`):
+   latar putih, isi 1100px, panel #f5f5f7 radius 18px berisi baris dipisah garis tipis.
+   Warna brand dari `@/con/colors` lewat CSS variable (--folder-brand, --folder-brand-soft). */
 
-.kartu {
+/* ---------- Kepala ---------- */
+.kepala {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: 100%;
-  min-width: 0;
-  text-decoration: none;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.judul {
+  max-width: 880px;
+  margin: 0;
+  color: var(--folder-brand);
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.003em;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+
+.deskripsi {
+  max-width: 680px;
+  color: #6e6e73;
+  font-size: 17px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Baris alat: cari (+ urut) kiri, unduh ZIP kanan ---------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin: 32px 0 16px;
+}
+
+.zip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* ---------- Panel daftar folder ---------- */
+.panel {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+  border-radius: 18px;
+  background: #f5f5f7;
+}
+
+.panel > li + li {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.baris {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
   color: inherit;
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    border-color 160ms ease;
+  text-decoration: none;
+  transition: background-color 160ms ease;
 }
 
-.kartu:hover {
-  transform: translateY(-2px);
-  border-color: var(--folder-brand);
-  box-shadow: 0 8px 20px -10px var(--folder-brand);
+.baris:hover {
+  background: rgba(0, 0, 0, 0.035);
 }
 
-.kartu:focus-visible {
+.baris:focus-visible {
   outline: 2px solid var(--folder-brand);
-  outline-offset: 3px;
+  outline-offset: -2px;
 }
 
-.kartu[data-kosong='true'] {
-  opacity: 0.72;
-}
-
-.kartu[data-kosong='true']:hover {
-  opacity: 1;
+.baris[data-kosong='true'] .isi,
+.baris[data-kosong='true'] .ikon {
+  opacity: 0.6;
 }
 
 .ikon {
@@ -46,6 +98,23 @@
   color: var(--folder-brand);
 }
 
+.isi {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ujung {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  color: var(--folder-brand);
+}
+
+/* ---------- Chip pindah folder ---------- */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -58,17 +127,36 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kartu {
+  .baris {
     transition: none;
-  }
-
-  .kartu:hover {
-    transform: none;
   }
 }
 
-/* Mobile: chip folder satu baris, digeser horizontal di dalam barisnya (halaman tidak ikut melebar). */
-@media (max-width: 48em) {
+/* Tablet ≤1068px, mobile ≤734px (breakpoint halaman detail). */
+@media (max-width: 1068px) {
+  .judul {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 734px) {
+  .judul {
+    font-size: 22px;
+  }
+
+  .deskripsi {
+    font-size: 15px;
+  }
+
+  .baris {
+    padding: 16px;
+  }
+
+  .zip {
+    align-items: flex-start;
+  }
+
+  /* Chip folder satu baris, digeser horizontal di dalam barisnya (halaman tidak ikut melebar). */
   .chips {
     flex-wrap: nowrap;
     overflow-x: auto;

@@ -115,13 +115,13 @@ describe('ProgramIsi tampilan', () => {
     expect(html).toMatch(/data-testid="deskripsi-program"[^>]*><p>Dasar hukum pelayanan publik desa<\/p>/);
   });
 
-  it('kartu folder: meta, tanggal, cuplikan + sisa; folder kosong redup + badge Kosong, tetap tautan', () => {
+  it('baris folder: meta, tanggal, cuplikan + sisa; folder kosong redup + badge Kosong, tetap tautan', () => {
     const html = isi(null);
     const fa = kartu(html, 'fa');
     expect(fa).toContain('data-kosong="false"');
     expect(fa).toMatch(/data-testid="jumlah-dokumen-folder"[^>]*>4 dokumen</);
     expect(fa).toMatch(/data-testid="tanggal-folder"[\s\S]*?Diperbarui 1 Mar 2026/);
-    expect([...fa.matchAll(/title="(Perdes No\. \d)"/g)].map((m) => m[1])).toEqual(['Perdes No. 1', 'Perdes No. 2']);
+    expect(fa).toMatch(/data-testid="cuplikan-folder"[^>]*>Perdes No\. 1 · Perdes No\. 2/);
     expect(fa).toMatch(/data-testid="cuplikan-sisa"[^>]*>\+2 lainnya</);
     expect(fa).not.toContain('badge-kosong');
 
@@ -147,12 +147,13 @@ describe('ProgramIsi tampilan', () => {
     expect(chip('fa')).not.toContain('aria-current');
   });
 
-  it('folder kosong: tanpa tombol ZIP folder, empty state dengan subteks + aksi ke semua folder', () => {
+  it('folder kosong: tanpa tombol ZIP folder, empty state dengan subteks + aksi Kembali ke daftar folder', () => {
     const html = isi('fb');
     expect(html).not.toContain('data-zip-folder="fb"');
     expect(html).toContain('data-zip-folder="semua"');
     expect(html).toMatch(/data-testid="empty-state"[\s\S]*Folder ini belum berisi dokumen[\s\S]*Dokumen akan tampil di sini/);
-    expect(html).toMatch(/href="\/darmasaba\/desa-anti-korupsi\/program\/p1"[^>]*>[\s\S]*?Lihat semua folder/);
+    expect(html).toMatch(/data-testid="empty-state"[\s\S]*href="\/darmasaba\/desa-anti-korupsi\/program\/p1"[^>]*>[\s\S]*?Kembali</);
+    expect(html).not.toContain('Semua folder');
     expect(isi('fa')).toContain('data-zip-folder="fa"');
   });
 });

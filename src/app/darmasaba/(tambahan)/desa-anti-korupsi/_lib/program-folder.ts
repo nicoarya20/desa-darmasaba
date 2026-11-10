@@ -3,6 +3,7 @@
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { filterDokumen } from '@/lib/desa-anti-korupsi-sort';
 import type { FolderGroupView } from '@/lib/desa-anti-korupsi-view';
+import { detailHref } from './kategori-tab';
 import { serializeUrut, type UrutValue } from './program-urut';
 
 const PROGRAM_PATH = '/darmasaba/desa-anti-korupsi/program';
@@ -51,4 +52,35 @@ export function totalUkuranFolder(dokumen: readonly DokumenDesaAntiKorupsiView[]
     total += d.file.size;
   }
   return total;
+}
+
+/**
+ * Folder yang langsung dibuka saat halaman program tanpa `?folder=`: satu-satunya folder berisi dokumen.
+ * Folder kosong tidak dihitung; ≥2 folder berisi atau tidak ada dokumen → null (tampilkan daftar folder).
+ */
+export function folderTunggalBerisi(groups: readonly FolderGroupView[]): FolderGroupView | null {
+  const berisi = groups.filter((g) => g.dokumen.length > 0);
+  return berisi.length === 1 ? berisi[0] : null;
+}
+
+const DAK_ROOT_HREF = '/darmasaba/desa-anti-korupsi';
+
+/** Tujuan tombol Kembali halaman program: URL + nama aksesibel yang menyebut tujuannya. */
+export type TujuanKembali = { href: string; label: string };
+
+/**
+ * Tujuan tombol Kembali halaman program (bukan `history.back`, agar hasilnya pasti):
+ * folder dibuka lewat `?folder=` → daftar folder program; selain itu → tab kategori halaman detail.
+ */
+export function tujuanKembali(opts: {
+  programId: string;
+  kategori: string | null;
+  folderDibuka: boolean;
+  urut?: UrutValue;
+}): TujuanKembali {
+  if (opts.folderDibuka) {
+    return { href: programHref(opts.programId, null, opts.urut), label: 'Kembali ke daftar folder' };
+  }
+  if (opts.kategori) return { href: detailHref(opts.kategori), label: 'Kembali ke daftar indikator' };
+  return { href: DAK_ROOT_HREF, label: 'Kembali ke Desa Anti Korupsi' };
 }

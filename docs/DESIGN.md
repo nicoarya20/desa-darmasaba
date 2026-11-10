@@ -271,10 +271,14 @@ Memakai gaya section beranda (judul + pengantar + panel `#f5f5f7` grup per kateg
 
 ### Desa Anti Korupsi — halaman program (`/darmasaba/desa-anti-korupsi/program/{id}`)
 
-- **Kepala**: nomor indikator jadi badge brand, judul sentence case (`_lib/program-judul.ts`, 20px / md 26px). Deskripsi disembunyikan bila isinya hanya mengulang nama program (`isDeskripsiDuplikat`).
-- **Kartu folder** (`FolderGrid`, `_com/program-folder.module.css`): ikon folder dalam kotak tint brand, "N dokumen · ukuran", cuplikan 2 judul + "+N lainnya", "Diperbarui {tanggal unggah terbaru}" (`_lib/folder-kartu.ts`), hover naik + border brand. Folder kosong redup + badge "Kosong", tetap bisa dibuka.
-- **Folder terbuka** (`FolderAktif`): baris chip `FolderChips` untuk pindah folder (`aria-current`, `?urut=` ikut), "Unduh folder (ZIP)" tidak dirender bila folder kosong, empty state dengan subteks + tombol "Lihat semua folder".
-- Test: `__tests__/api/desa_anti_korupsi_program_tampilan.test.tsx`.
+Kerangka sama dengan halaman detail (`.page`/`.inner` dari `antikorupsi-detail.module.css`: latar putih, isi 1100px) supaya alur detail → program tidak terasa pindah situs. Gaya khusus di `_com/program-folder.module.css`.
+
+- **Kepala** (`ProgramHeader`): tombol kembali kotak ikon brand (senada `BackButton`) tetapi berupa **tautan bertujuan pasti**, bukan `history.back()` — `tujuanKembali` di `_lib/program-folder.ts`: folder dibuka lewat `?folder=` → daftar folder program ("Kembali ke daftar folder"); selain itu → tab kategori halaman detail ("Kembali ke daftar indikator"). Lalu breadcrumb, nomor indikator jadi badge brand, `h1` judul sentence case (`_lib/program-judul.ts`) 32px (tablet 28, mobile 22). Deskripsi disembunyikan bila hanya mengulang nama program (`isDeskripsiDuplikat`).
+- **Baris alat**: cari dokumen (+ "Urutkan" saat daftar dokumen tampil) di kiri, "Unduh semua (ZIP)" + petunjuk 100 MB di kanan. Tidak dirender bila program tanpa folder & dokumen.
+- **Daftar folder** (`FolderList`): panel `#f5f5f7` radius 18px, satu baris per folder (pola daftar indikator halaman detail) — ikon dalam kotak tint brand, nama, "N dokumen · ukuran · Diperbarui {tanggal unggah terbaru}", cuplikan 2 judul + "+N lainnya" (`_lib/folder-kartu.ts`), chevron. Folder kosong redup + badge "Kosong", tetap bisa dibuka.
+- **Folder tunggal**: tanpa `?folder=` dan hanya satu folder berisi dokumen (folder kosong tidak dihitung) → folder itu langsung dibuka (`folderTunggalBerisi`), bukan crumb terakhir, dan Kembali tetap ke tab kategori.
+- **Folder terbuka** (`FolderAktif`): baris chip `FolderChips` (hanya bila >1 folder; `aria-current`, `?urut=` ikut), "Unduh folder (ZIP)" tidak dirender bila folder kosong, daftar dokumen dalam panel `#f5f5f7` yang sama; empty state dengan subteks + tombol "Kembali".
+- Test: `__tests__/api/desa_anti_korupsi_program_tampilan.test.tsx`, `__tests__/api/desa_anti_korupsi_program_navigasi.test.tsx`.
 
 ### SDGs Desa (Beranda)
 

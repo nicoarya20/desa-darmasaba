@@ -1,17 +1,20 @@
 'use client';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { folderGroups, type DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
-import { Stack } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { useState, type ReactNode } from 'react';
-import { resolveActiveFolder, searchDokumen } from '../_lib/program-folder';
+import { folderTunggalBerisi, resolveActiveFolder, searchDokumen, tujuanKembali } from '../_lib/program-folder';
 import { parseUrut, urutkanItems, type UrutValue } from '../_lib/program-urut';
+import { ZIP_HINT } from '../_lib/program-zip';
 import { DokumenEmptyState } from './DokumenEmptyState';
 import { DokumenPreviewModal } from './DokumenPreviewModal';
 import { DokumenRingkasList } from './DokumenRingkasList';
 import { DokumenToolbar } from './DokumenToolbar';
 import { FolderAktif } from './FolderAktif';
-import { FolderGrid } from './FolderGrid';
+import { FolderList } from './FolderList';
 import { ProgramHeader } from './ProgramHeader';
+import classes from './program-folder.module.css';
+import { UnduhZipButton } from './UnduhZipButton';
 
 type Props = {
   detail: DesaAntiKorupsiDetail;
@@ -23,15 +26,25 @@ type Props = {
   onUrutChange: (urut: UrutValue) => void;
 };
 
-/** Isi halaman program publik: header + unduh ZIP, cari & urutkan dokumen, grid folder atau isi folder aktif. */
+/**
+ * Isi halaman program publik: kepala, cari/urut + unduh ZIP, lalu daftar folder atau isi folder.
+ * Tanpa `?folder=` dan hanya satu folder berisi dokumen → folder itu langsung dibuka (tanpa langkah pilih folder).
+ */
 export function ProgramIsi({ detail, folderParam, urutParam, onUrutChange }: Props) {
   const [query, setQuery] = useState('');
   const [preview, setPreview] = useState<DokumenDesaAntiKorupsiView | null>(null);
   const groups = folderGroups(detail);
-  const active = resolveActiveFolder(folderParam, groups);
+  const dipilih = resolveActiveFolder(folderParam, groups);
+  const active = dipilih ?? (folderParam ? null : folderTunggalBerisi(groups));
   const urut = parseUrut(urutParam);
   const searching = query.trim() !== '';
   const jumlahDokumen = groups.reduce((n, g) => n + g.dokumen.length, 0);
+  const kembali = tujuanKembali({
+    programId: detail.id,
+    kategori: detail.kategori?.name ?? null,
+    folderDibuka: dipilih !== null,
+    urut,
+  });
 
   let content: ReactNode;
   if (groups.length === 0) {
@@ -48,25 +61,42 @@ export function ProgramIsi({ detail, folderParam, urutParam, onUrutChange }: Pro
         />
       );
   } else if (active) {
-    content = <FolderAktif programId={detail.id} folder={active} groups={groups} urut={urut} onPreview={setPreview} />;
+    content = (
+      <FolderAktif
+        programId={detail.id}
+        folder={active}
+        groups={groups}
+        urut={urut}
+        backHref={kembali.href}
+        onPreview={setPreview}
+      />
+    );
   } else {
-    content = <FolderGrid programId={detail.id} groups={groups} urut={urut} />;
+    content = <FolderList programId={detail.id} groups={groups} urut={urut} />;
   }
 
   return (
-    <Stack gap="lg">
-      <ProgramHeader detail={detail} folderName={searching ? null : (active?.nama ?? null)} jumlahDokumen={jumlahDokumen} />
+    <>
+      <ProgramHeader detail={detail} folderName={searching ? null : (dipilih?.nama ?? null)} kembali={kembali} />
       {groups.length > 0 && (
-        <DokumenToolbar
-          query={query}
-          onQueryChange={setQuery}
-          urut={urut}
-          onUrutChange={onUrutChange}
-          showUrut={searching || active !== null}
-        />
+        <div className={classes.toolbar}>
+          <DokumenToolbar
+            query={query}
+            onQueryChange={setQuery}
+            urut={urut}
+            onUrutChange={onUrutChange}
+            showUrut={searching || active !== null}
+          />
+          <div className={classes.zip}>
+            <UnduhZipButton programId={detail.id} folder={null} label="Unduh semua (ZIP)" disabled={jumlahDokumen === 0} />
+            <Text fz="xs" c="dimmed" data-testid="zip-hint">
+              {ZIP_HINT}
+            </Text>
+          </div>
+        </div>
       )}
       {content}
       <DokumenPreviewModal dokumen={preview} onClose={() => setPreview(null)} />
-    </Stack>
+    </>
   );
 }

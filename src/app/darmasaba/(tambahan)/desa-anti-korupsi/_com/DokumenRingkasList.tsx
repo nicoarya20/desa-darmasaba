@@ -30,7 +30,8 @@ type Props = { items: readonly DokumenRingkasItem[]; onPreview: (dokumen: Dokume
 /** Daftar dokumen ringkas: ikon tipe, judul, tipe/ukuran/tanggal unggah, aksi Pratinjau (khusus PDF) & Unduh. */
 export function DokumenRingkasList({ items, onPreview }: Props) {
   return (
-    <Paper withBorder radius="lg" p={0} bg="white">
+    // Panel senada daftar indikator halaman detail: #f5f5f7, radius 18px, tanpa border.
+    <Paper radius={18} p={0} bg="#f5f5f7">
       <Stack gap={0} component="ul" m={0} p={0} style={{ listStyle: 'none' }}>
         {items.map(({ dokumen: d, folderLabel }, index) => {
           const pdf = isPdfMime(d.file.mimeType);
@@ -46,7 +47,7 @@ export function DokumenRingkasList({ items, onPreview }: Props) {
               justify="space-between"
               px="md"
               py="sm"
-              style={index > 0 ? { borderTop: '1px solid var(--mantine-color-gray-2)' } : undefined}
+              style={index > 0 ? { borderTop: '1px solid rgba(0, 0, 0, 0.08)' } : undefined}
             >
               <Group gap="sm" wrap="nowrap" miw={0} style={{ flex: 1 }}>
                 <Icon size={24} color={colors['blue-button']} style={{ flexShrink: 0 }} />

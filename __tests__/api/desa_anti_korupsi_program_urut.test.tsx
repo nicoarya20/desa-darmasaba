@@ -137,7 +137,7 @@ describe('urut + cari pada data contoh', () => {
     expect(ids(html)).toEqual(['a2', 'a3', 'a1']);
     expect(html).toContain('aria-label="Urutkan dokumen"');
     expect(html).toContain('value="Judul A–Z"');
-    // urut ikut di tautan "Semua folder"
+    // urut ikut di tautan kembali ke daftar folder
     expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/p1?urut=judul-asc"');
   });
 
@@ -160,7 +160,7 @@ describe('total ukuran folder', () => {
     const html = render(<ProgramIsi detail={detail} folderParam={null} urutParam={null} onUrutChange={noop} />);
     const ukuran = [...html.matchAll(/data-folder-key="([^"]+)"[\s\S]*?(?=data-folder-key=|$)/g)].map((m) => [
       m[1],
-      /data-testid="ukuran-folder"[^>]*>· ([^<]+)</.exec(m[0])?.[1] ?? null,
+      /data-testid="ukuran-folder"[^>]*>\s*· ([^<]+)</.exec(m[0])?.[1] ?? null,
     ]);
     expect(ukuran).toEqual([
       ['fa', '7 KB'],
@@ -206,14 +206,15 @@ describe('tombol unduh ZIP', () => {
     );
   });
 
-  it('folder kosong: tombol ZIP folder tidak dirender; program kosong: ZIP semua disabled; grid tanpa tombol folder', () => {
+  it('folder kosong: tombol ZIP folder tidak dirender; program kosong: tanpa baris alat & ZIP; tombol disabled tetap bisa', () => {
     const kosong = render(<ProgramIsi detail={detail} folderParam="fb" urutParam={null} onUrutChange={noop} />);
     expect(kosong).not.toContain('data-zip-folder="fb"');
     expect(kosong).not.toContain('Unduh folder (ZIP)');
     const program = render(
       <ProgramIsi detail={{ ...detail, folders: [], dokumenUmum: [] }} folderParam={null} urutParam={null} onUrutChange={noop} />,
     );
-    expect(zipButton(program, 'semua')).toContain('disabled');
+    // Program tanpa folder & dokumen: baris alat (cari + ZIP) tidak dirender, hanya empty state.
+    expect(program).not.toContain('data-zip-folder="semua"');
     expect(program).not.toContain('Unduh folder (ZIP)');
     expect(render(<UnduhZipButton programId="p1" folder="fa" label="Unduh" disabled />)).toMatch(/<button[^>]*disabled/);
   });
