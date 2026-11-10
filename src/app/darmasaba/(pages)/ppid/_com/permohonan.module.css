@@ -1,0 +1,206 @@
+/*
+ * Halaman permohonan PPID (permohonan informasi & keberatan): alur bernomor + kartu formulir.
+ * Satu lapis permukaan: alur dan kontak langsung di atas latar halaman, hanya formulir yang berkartu putih.
+ * Breakpoint 2 kolom ditulis literal 75em (= lg tema Mantine); $mantine-breakpoint-lg postcss bernilai 80em.
+ */
+.layout {
+  --permohonan-ink: #1d1d1f;
+  --permohonan-muted: #515154;
+  --permohonan-line: #8ba8c1;
+  /* Navbar desktop 44px + jarak 32px. */
+  --permohonan-sticky-top: calc(44px + 32px);
+  display: grid;
+  gap: 32px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-width: 0;
+  max-width: 680px;
+}
+
+/* ---------- Alur bernomor ---------- */
+
+.stepsTitle {
+  margin: 0 0 20px;
+  color: var(--brand);
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.stepList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  column-gap: 16px;
+  padding-bottom: 24px;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+/* Rel tipis penghubung antarnomor. */
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 42px;
+  bottom: 6px;
+  left: 17px;
+  width: 2px;
+  background: var(--permohonan-line);
+}
+
+.stepNumber {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--brand);
+  border-radius: 50%;
+  color: var(--brand);
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.stepTitle {
+  margin: 6px 0 4px;
+  color: var(--permohonan-ink);
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.stepDesc {
+  margin: 0;
+  color: var(--permohonan-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---------- Kartu formulir ---------- */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.cardTitle {
+  margin: 0 0 4px;
+  color: var(--permohonan-ink);
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  padding-top: 4px;
+}
+
+/* Area tulis editor alasan: cukup tinggi untuk beberapa kalimat sebelum mulai mengetik. */
+.editor :global(.tiptap) {
+  min-height: 120px;
+}
+
+/* ---------- Kontak ---------- */
+
+.contactTitle {
+  margin: 0 0 8px;
+  color: var(--permohonan-ink);
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.contactList {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.contactRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  color: var(--permohonan-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.contactRow dt {
+  flex: 0 0 88px;
+}
+
+.contactRow dd {
+  margin: 0;
+  color: var(--permohonan-ink);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Desktop: alur menempel di kiri, formulir di kanan ---------- */
+
+@media (min-width: 75em) {
+  .layout {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 64px;
+    align-items: start;
+    max-width: 1200px;
+  }
+
+  .aside {
+    position: sticky;
+    top: var(--permohonan-sticky-top);
+  }
+}
+
+/* ---------- Tablet (bertumpuk): langkah 2 kolom agar formulir tidak terdorong jauh ke bawah ---------- */
+
+@media (min-width: 735px) and (max-width: 74.99em) {
+  .stepList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 40px;
+  }
+
+  .step,
+  .step:last-child {
+    padding-bottom: 0;
+  }
+
+  .step:not(:last-child)::before {
+    display: none;
+  }
+}
+
+@media (max-width: 734px) {
+  .stepsTitle {
+    font-size: 21px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .cardTitle {
+    font-size: 21px;
+  }
+
+  .actions > * {
+    flex: 1;
+  }
+}

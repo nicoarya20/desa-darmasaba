@@ -332,6 +332,17 @@ Bagan hierarki atas-ke-bawah (pola "Hierarchical Structure") dengan kartu ala re
 - **Kepala**: pola Potensi — `h1` 48px (mobile 32) brand, pengantar abu 19px (17) maks 640px, kotak cari pil 320px di kanan (≤1068px di bawah). Tidak ada yang cocok → "Tidak ada nama atau jabatan yang cocok dengan “…”".
 - **Loading / kosong**: kerangka 1 + 2 kartu berdenyut; tanpa pegawai aktif → pesan + pil "Muat Ulang".
 
+### Permohonan Informasi & Keberatan PPID (`/darmasaba/ppid/permohonan-informasi-publik`, `/darmasaba/ppid/permohonan-keberatan-informasi-publik`)
+
+Dua halaman formulir dengan satu susunan: `PpidPage` → `PermohonanLayout` (alur di `aside`, formulir di isi). Komponen bersama di `(pages)/ppid/_com/`: `PermohonanSteps.tsx`, `PermohonanLayout.tsx` (`PermohonanLayout`, `PermohonanFormCard`), `permohonan.module.css`, `permohonan.meta.ts`. Test: `__tests__/api/ppid_permohonan_ui.test.tsx`.
+
+- **Alur bernomor** (`PermohonanSteps`; props `title`, `steps: { title, desc }[]`): `h2` brand 24px (mobile 21) + `<ol>`; tiap langkah = lingkaran nomor bergaris brand 36px, judul `h3` 17px, keterangan abu 15px, dihubungkan rel tipis `#8ba8c1`. Langsung di atas latar halaman — menggantikan kotak-kotak navy; tanpa ikon per langkah.
+- **Tata letak**: ≥75em (lg tema, ditulis literal) 2 kolom 5fr/7fr gap 64px maks 1200px, alur **sticky** (`top` = navbar 44px + 32px) di kiri dan formulir di kanan. Di bawahnya bertumpuk, alur di atas; 735px–74.99em langkah jadi 2 kolom tanpa rel supaya formulir tidak terdorong jauh ke bawah.
+- **Kartu formulir** (`PermohonanFormCard`): satu-satunya kartu putih (radius 18px, padding 32px / mobile 20px), lebar baca maks 680px, isian **satu kolom**. Semua isian memakai `PERMOHONAN_FIELD` (`size="md" radius="md"`) sehingga input, dropdown, dan editor sama lebar — dropdown tidak lagi dibungkus `Group`. Tombol kirim pil brand di kiri, selebar kartu di mobile.
+- **Alasan keberatan**: tetap `PPIDTextEditor` (format HTML ke backend tidak berubah) dengan `toolbar="basic"` — hanya tebal, miring, daftar butir, daftar bernomor.
+- **Kontak PPID** (keberatan): `<dl>` Email / WhatsApp di bawah kartu formulir, langsung di atas latar.
+- Validasi, isi kiriman, dan notifikasi tidak diubah oleh desain ini.
+
 ---
 
 ## 6. Layout Admin (`/admin/`)
