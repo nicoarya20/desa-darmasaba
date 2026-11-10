@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.234] - 2026-11-10
+### Changed
+- Di ponsel, pita biru, putih, emas, dan merah kini ikut tampil di belakang foto Perbekel pada bagian paling atas beranda. Sebelumnya pita hanya tampil di tablet dan komputer.
+- Jarak kosong antara ikon media sosial dan foto Perbekel di ponsel dirapatkan.
+
 ## [0.1.233] - 2026-11-10
 ### Changed
 - **Bagian paling atas beranda didesain ulang agar langsung terbaca sebagai situs Pemerintah Desa Darmasaba.** Kini tampil nama instansi dan wilayahnya (Kecamatan Abiansemal, Kabupaten Badung, Bali) di samping lambang desa, disusul sambutan "Om Swastyastu, Selamat datang di Desa Darmasaba". Foto Perbekel di sisi kanan kini lebih besar, setinggi seluruh bagian ini.

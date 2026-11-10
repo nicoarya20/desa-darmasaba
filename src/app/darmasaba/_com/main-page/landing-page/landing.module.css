@@ -307,9 +307,16 @@
     padding-bottom: 36px;
   }
 
-  /* Satu kolom: pita akan menabrak teks, jadi disembunyikan. */
+  /* Satu kolom: pita pindah ke sel foto saja (di belakang Perbekel), supaya tidak menabrak teks.
+     Yang tampil hanya potongan kanan gambar (x 500–1600 dari 1600): SVG dilebarkan 1600/1100 kali
+     lebar layar lalu digeser ke kiri; sisi kirinya kosong dan terpotong overflow section. */
   .ribbons {
-    display: none;
+    --bleed: calc(100% + var(--gutter) * 2);
+    position: static;
+    grid-area: profile;
+    justify-self: start;
+    width: calc(var(--bleed) * 1600 / 1100);
+    margin-left: calc(var(--gutter) * -1 - var(--bleed) * 500 / 1100);
   }
 
   .copy {
@@ -317,7 +324,7 @@
   }
 
   .profile {
-    margin-top: 28px;
+    margin-top: 16px;
   }
 
   .logo {
