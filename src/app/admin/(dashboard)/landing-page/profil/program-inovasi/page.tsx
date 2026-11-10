@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title, Tooltip } from '@mantine/core';
+import { Box, Button, Center, Group, Pagination, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { IconDeviceImacCog, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import profileLandingPageState from '../../../_state/landing-page/profile';
+import { labelJumlahDokumentasi } from './_lib/dokumentasi.logic';
 
 /**
  * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit (Safari/iOS),
@@ -98,7 +99,7 @@ function ListProgramInovasi({ search }: { search: string }) {
               <TableTr>
                 <TableTh>Nama Program</TableTh>
                 <TableTh>Deskripsi</TableTh>
-                <TableTh>Link</TableTh>
+                <TableTh>Dokumentasi</TableTh>
                 <TableTh>Aksi</TableTh>
               </TableTr>
             </TableThead>
@@ -120,17 +121,8 @@ function ListProgramInovasi({ search }: { search: string }) {
                     <TableTd style={{ maxWidth: 250 }}>
                       <Text fz="sm" lineClamp={1}>{toPlainText(item.description) || '-'}</Text>
                     </TableTd>
-                    <TableTd style={{ maxWidth: 250 }}>
-                      <Tooltip label="Buka tautan program" position="top" withArrow>
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: colors['blue-button'], textDecoration: 'underline' }}
-                        >
-                          <Text truncate fz="sm">{item.link}</Text>
-                        </a>
-                      </Tooltip>
+                    <TableTd>
+                      <Text fz="sm">{labelJumlahDokumentasi(item._count?.images)}</Text>
                     </TableTd>
                     <TableTd>
                       <Button
@@ -180,23 +172,10 @@ function ListProgramInovasi({ search }: { search: string }) {
                     <Text fz="sm" c="gray.7" lineClamp={2}>{toPlainText(item.description) || '-'}</Text>
                   </Box>
 
-                  {/* Link */}
+                  {/* Dokumentasi */}
                   <Box>
-                    <Text fz="sm" fw={600} lh={1.4}>Link</Text>
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: 'underline' }}
-                    >
-                      <Text
-                        fz="sm"
-                        c="blue"
-                        truncate
-                      >
-                        {item.link}
-                      </Text>
-                    </a>
+                    <Text fz="sm" fw={600} lh={1.4}>Dokumentasi</Text>
+                    <Text fz="sm" c="gray.7">{labelJumlahDokumentasi(item._count?.images)}</Text>
                   </Box>
 
                   {/* Action */}

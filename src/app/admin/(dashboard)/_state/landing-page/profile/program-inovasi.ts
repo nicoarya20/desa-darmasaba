@@ -1,42 +1,49 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { MAX_GAMBAR_DOKUMENTASI } from "@/lib/program-inovasi";
 import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-const templateProgramInovasi = z.object({
+/** Validasi form admin: logo opsional, link tidak lagi diisi, galeri dibatasi. */
+export const templateProgramInovasi = z.object({
   name: z.string().min(1, "Nama minimal 1 karakter"),
   description: z.string().min(1, "Deskripsi minimal 1 karakter"),
-  imageId: z.string().min(1, "Gambar wajib dipilih"),
-  link: z.string().min(1, "Link minimal 1 karakter"),
+  imageId: z.string().nullable().optional(),
+  imageIds: z
+    .array(z.string())
+    .max(MAX_GAMBAR_DOKUMENTASI, `Maksimal ${MAX_GAMBAR_DOKUMENTASI} gambar dokumentasi`)
+    .optional(),
 });
 
-type ProgramInovasiForm = Prisma.ProgramInovasiGetPayload<{
-  select: {
-    name: true;
-    description: true;
-    imageId: true;
-    link: true;
-  };
-}>;
+/** Bentuk form create/edit Program Inovasi di state admin. */
+export type ProgramInovasiForm = {
+  name: string;
+  description: string;
+  imageId: string | null;
+  imageIds: string[];
+};
+
+/** Form kosong (dipakai create & reset). */
+export const emptyProgramInovasiForm = (): ProgramInovasiForm => ({
+  name: "",
+  description: "",
+  imageId: null,
+  imageIds: [],
+});
 
 const programInovasi = proxy({
   create: {
-    form: {
-      name: "",
-      description: "",
-      imageId: "",
-      link: "",
-    } as ProgramInovasiForm,
+    form: emptyProgramInovasiForm(),
     loading: false,
     async create() {
       const formData = {
         name: programInovasi.create.form.name || "",
         description: programInovasi.create.form.description || "",
-        imageId: programInovasi.create.form.imageId || "",
-        link: programInovasi.create.form.link || "",
+        imageId: programInovasi.create.form.imageId || null,
+        imageIds: [...programInovasi.create.form.imageIds],
       };
 
       const cek = templateProgramInovasi.safeParse(formData);
@@ -118,6 +125,7 @@ const programInovasi = proxy({
     data: null as Prisma.ProgramInovasiGetPayload<{
       include: {
         image: true;
+        images: true;
       };
     }> | null,
     loading: false,
@@ -179,7 +187,7 @@ const programInovasi = proxy({
   },
   update: {
     id: "",
-    form: {} as ProgramInovasiForm,
+    form: emptyProgramInovasiForm(),
     loading: false,
 
     async load(id: string) {
@@ -200,8 +208,8 @@ const programInovasi = proxy({
           this.form = {
             name: data.name,
             description: data.description,
-            imageId: data.imageId,
-            link: data.link,
+            imageId: data.imageId ?? null,
+            imageIds: (data.images ?? []).map((img: { id: string }) => img.id),
           };
           return data;
         } else {
@@ -240,8 +248,8 @@ const programInovasi = proxy({
         ].put({
           name: this.form.name,
           description: this.form.description,
-          imageId: this.form.imageId,
-          link: this.form.link,
+          imageId: this.form.imageId || null,
+          imageIds: [...this.form.imageIds],
         });
 
         if (res.data?.success) {
@@ -249,7 +257,7 @@ const programInovasi = proxy({
           await programInovasi.findMany.load();
           return true;
         } else {
-          toast.error(res.data?.message || "Gagal update program inovasi");
+          toast.error(getServerMessage(res) || "Gagal update program inovasi");
           return false;
         }
       } catch (error) {

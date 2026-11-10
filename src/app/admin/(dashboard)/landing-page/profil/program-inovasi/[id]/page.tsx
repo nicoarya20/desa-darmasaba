@@ -9,6 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import DOMPurify from 'dompurify';
+import { DokumentasiGaleri } from '@/app/darmasaba/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 
 function DetailProgramInovasi() {
   const stateProgramInovasi = useProxy(profileLandingPageState.programInovasi)
@@ -91,20 +92,9 @@ function DetailProgramInovasi() {
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold">Link</Text>
-                {data.link ? (
-                  <a
-                    href={data.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: colors['blue-button'],
-                      textDecoration: 'underline',
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {data.link}
-                  </a>
+                <Text fz="lg" fw="bold">Dokumentasi ({data.images?.length ?? 0} foto)</Text>
+                {data.images?.length ? (
+                  <DokumentasiGaleri images={data.images} judul={null} alt={`Dokumentasi ${data.name}`} />
                 ) : (
                   <Text fz="md" c="dimmed">-</Text>
                 )}
