@@ -1,4 +1,4 @@
-// Detail admin Desa Anti Korupsi: cari + urut tampilan dokumen per folder dan label tempat sampah.
+// Detail admin Desa Anti Korupsi: cari + urut tampilan dokumen per folder dan label dokumen terhapus.
 // Fungsi murni — hanya mengatur tampilan, tidak mengubah urutan tersimpan.
 import { filterDokumen, sortDokumen, type DokumenSortKey, type SortDir } from '@/lib/desa-anti-korupsi-sort';
 import { FOLDER_UMUM_LABEL } from '@/lib/desa-anti-korupsi-folder';
@@ -52,14 +52,14 @@ export function formatTanggalId(iso: string | null | undefined): string {
   return Number.isNaN(time) ? '—' : tanggalId.format(time);
 }
 
-/** Label sisa masa simpan dokumen di tempat sampah. */
+/** Label sisa masa simpan dokumen terhapus. */
 export function labelSisaHari(sisaHari: number): string {
   return sisaHari <= 0 ? 'dihapus permanen hari ini' : `dihapus permanen dalam ${sisaHari} hari`;
 }
 
 type FolderAktif = readonly { id: string; nama: string }[];
 
-/** Asal dokumen sampah: "Umum", nama folder aktif, atau penanda folder sudah dihapus. */
+/** Asal dokumen terhapus: "Umum", nama folder aktif, atau penanda folder sudah dihapus. */
 export function labelFolderAsal(
   item: { folderId: string | null; folderNama: string | null },
   folders: FolderAktif,
