@@ -1,0 +1,19 @@
+/* Halaman Profil PPID.
+   Kartu foto ikut turun saat halaman di-scroll pada layout 2 kolom, sehingga
+   kolom kanan (Biografi, Riwayat, Organisasi, Program — panjangnya tergantung isi
+   CMS) tidak menyisakan ruang kosong di sisi mana pun. */
+.photoColumn {
+  /* 44px = tinggi navbar desktop (--nav-h di _com/navbar.module.css) + jarak 32px. */
+  --profil-photo-sticky-top: calc(44px + 32px);
+}
+
+/* 75em = breakpoint `lg` default tema Mantine (cols={{ base: 1, lg: 2 }} di page.tsx).
+   Sengaja bukan $mantine-breakpoint-lg (80em di postcss.config.js) agar sticky aktif
+   tepat saat grid jadi 2 kolom. Di 1 kolom sticky akan menutupi teks di bawahnya. */
+@media (min-width: 75em) {
+  .photoColumn {
+    position: sticky;
+    top: var(--profil-photo-sticky-top);
+    align-self: start;
+  }
+}

@@ -25,6 +25,7 @@ import {
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import ScrollToTopButton from '@/app/darmasaba/_com/scrollToTopButton';
+import classes from './profil-ppid.module.css';
 
 function Page() {
   const allList = useProxy(stateProfilePPID);
@@ -153,10 +154,10 @@ function Page() {
               <Divider my="lg" />
 
               {/* GRID BLOCK */}
-              <Box px={{ base: 0, md: 50 }} pb={40}>
-                <SimpleGrid cols={{ base: 1, xl: 2 }} spacing="xl">
-                  {/* FOTO + NAMA */}
-                  <Box px={{ base: 0, md: 50 }}>
+              <Box px={{ base: 0, md: 50 }}>
+                <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
+                  {/* FOTO + NAMA — sticky di layout 2 kolom agar kolom kanan yang panjang tak menyisakan ruang kosong */}
+                  <Box px={{ base: 0, md: 50 }} className={classes.photoColumn}>
                     <Paper bg={colors['white-trans-1']} radius="xl" shadow="md" withBorder>
                       <Stack gap={0}>
                         <Image
@@ -195,7 +196,7 @@ function Page() {
                     </Paper>
                   </Box>
 
-                  {/* BIOGRAFI & RIWAYAT */}
+                  {/* BIOGRAFI, RIWAYAT, ORGANISASI, PROGRAM */}
                   <Box>
                     <Stack gap="xl">
                       {/* BIO */}
@@ -239,53 +240,53 @@ function Page() {
                           </Box>
                         </List>
                       </Box>
+
+                      {/* ORGANISASI */}
+                      <Box>
+                        <Flex align="center" gap="sm" mb="sm">
+                          <IconBuildingCommunity size={28} />
+                          <Title order={3} fz={{ base: '1.3rem', md: '1.6rem' }} lh={1.2} fw={800}>
+                            Pengalaman Organisasi
+                          </Title>
+                        </Flex>
+
+                        <List spacing="xs" size="sm">
+                          <Box px={20}>
+                            <Text
+                              fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
+                              lh={1.6}
+                              ta="justify"
+                              dangerouslySetInnerHTML={{ __html: item.pengalaman }}
+                              style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                            />
+                          </Box>
+                        </List>
+                      </Box>
+
+                      {/* PROGRAM UNGGULAN */}
+                      <Box>
+                        <Flex align="center" gap="sm" mb="sm">
+                          <IconTargetArrow size={28} />
+                          <Title order={3} fz={{ base: '1.3rem', md: '1.6rem' }} lh={1.2} fw={800}>
+                            Program Unggulan
+                          </Title>
+                        </Flex>
+
+                        <List spacing="xs" size="sm">
+                          <Box px={20}>
+                            <Text
+                              fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
+                              lh={1.6}
+                              ta="justify"
+                              dangerouslySetInnerHTML={{ __html: item.unggulan }}
+                              style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
+                            />
+                          </Box>
+                        </List>
+                      </Box>
                     </Stack>
                   </Box>
                 </SimpleGrid>
-              </Box>
-
-              {/* ORGANISASI */}
-              <Box pb={40}>
-                <Flex align="center" gap="sm" mb="sm">
-                  <IconBuildingCommunity size={28} />
-                  <Title order={3} fz={{ base: '1.3rem', md: '1.6rem' }} lh={1.2} fw={800}>
-                    Pengalaman Organisasi
-                  </Title>
-                </Flex>
-
-                <List spacing="xs" size="sm">
-                  <Box px={20}>
-                    <Text
-                      fz={{ base: '1rem', md: '1.1rem' }}
-                      lh={1.6}
-                      ta="justify"
-                      dangerouslySetInnerHTML={{ __html: item.pengalaman }}
-                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                    />
-                  </Box>
-                </List>
-              </Box>
-
-              {/* PROGRAM UNGGULAN */}
-              <Box>
-                <Flex align="center" gap="sm" mb="sm">
-                  <IconTargetArrow size={28} />
-                  <Title order={3} fz={{ base: '1.3rem', md: '1.6rem' }} lh={1.2} fw={800}>
-                    Program Unggulan
-                  </Title>
-                </Flex>
-
-                <List spacing="xs" size="sm">
-                  <Box px={20}>
-                    <Text
-                      fz={{ base: '1rem', md: '1.1rem' }}
-                      lh={1.6}
-                      ta="justify"
-                      dangerouslySetInnerHTML={{ __html: item.unggulan }}
-                      style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                    />
-                  </Box>
-                </List>
               </Box>
             </Paper>
           </Box>
