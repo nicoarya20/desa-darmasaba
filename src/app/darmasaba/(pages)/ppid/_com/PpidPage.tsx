@@ -4,8 +4,14 @@ import type { CSSProperties, ReactNode } from 'react';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { PpidHeader } from './PpidHeader';
 
-/** Variabel warna yang dibaca CSS module halaman PPID. */
-const PPID_VARS = { '--brand': colors['blue-button'] } as CSSProperties;
+/**
+ * Lebar "baca/formulir" halaman PPID (1200px): batas isi teks dan formulir.
+ * Tabel, grafik, dan bagan tidak memakainya — mereka selebar kerangka.
+ */
+const PPID_MEASURE = '75rem';
+
+/** Variabel yang dibaca CSS module halaman PPID: warna brand dan lebar baca (`--ppid-measure`). */
+const PPID_VARS = { '--brand': colors['blue-button'], '--ppid-measure': PPID_MEASURE } as CSSProperties;
 
 type Props = {
   title: string;

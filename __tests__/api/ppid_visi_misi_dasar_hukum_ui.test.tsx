@@ -113,6 +113,13 @@ describe('Gaya isi teks PPID (ppid-sections.module.css)', () => {
     expect(css).toMatch(/\.body li\s*\{[^}]*border-top:\s*1px solid var\(--ppid-rule\)/);
   });
 
+  it('lebar isi dan kerangka memuat mengikuti token --ppid-measure dari kerangka halaman, tanpa angka sendiri', () => {
+    expect(css).toMatch(/\.sections\s*\{[^}]*max-width:\s*var\(--ppid-measure\)/);
+    expect(css).toMatch(/\.skeleton\s*\{[^}]*max-width:\s*var\(--ppid-measure\)/);
+    // Hanya deklarasi properti (awal baris); `@media (max-width: …)` bukan batas lebar isi.
+    expect(css).not.toMatch(/^\s*max-width:\s*\d/m);
+  });
+
   it('label kiri + isi kanan di desktop, satu kolom di ≤734px', () => {
     expect(css).toMatch(/\.section\s*\{[^}]*grid-template-columns:\s*220px minmax\(0, 1fr\)/);
     expect(css).toMatch(/@media \(max-width: 734px\)\s*\{\s*\.section\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/);

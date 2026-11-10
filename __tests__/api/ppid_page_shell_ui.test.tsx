@@ -64,6 +64,10 @@ describe('PpidPage', () => {
     expect(html).toMatch(/style="[^"]*--uji:red/);
   });
 
+  it('memasang lebar baca --ppid-measure 75rem untuk isi teks dan formulir', () => {
+    expect(html).toMatch(/style="[^"]*--ppid-measure:75rem/);
+  });
+
   it('hanya satu h1 per halaman', () => {
     expect(html.split('<h1').length - 1).toBe(1);
   });
