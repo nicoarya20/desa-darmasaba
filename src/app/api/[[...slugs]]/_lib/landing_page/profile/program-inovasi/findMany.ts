@@ -25,6 +25,7 @@ async function programInovasiFindMany(context: Context) {
         where,
         include: {
           image: true,
+          images: true,
         },
         skip,
         take: limit,

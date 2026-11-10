@@ -1,31 +1,30 @@
 import prisma from "@/lib/prisma";
 import { toDuplicateResponse } from "@/lib/prisma-error";
+import {
+  susunDataCreate,
+  type ProgramInovasiCreateBody,
+} from "@/lib/program-inovasi";
 import { Context } from "elysia";
 
-type FormCreate = {
-  name: string;
-  description: string;
-  imageId: string;
-  link: string;
-};
-
 export default async function programInovasiCreate(context: Context) {
-  const body = context.body as FormCreate;
+  const body = context.body as ProgramInovasiCreateBody;
 
   if (!body.name) {
     throw new Error("name wajib diisi");
   }
 
+  const hasil = susunDataCreate(body);
+  if (!hasil.ok) {
+    context.set.status = 400;
+    return { success: false, message: hasil.message };
+  }
+
   try {
     const result = await prisma.programInovasi.create({
-      data: {
-        name: body.name,
-        description: body.description,
-        imageId: body.imageId,
-        link: body.link,
-      },
+      data: hasil.data,
       include: {
         image: true,
+        images: true,
       },
     });
 
