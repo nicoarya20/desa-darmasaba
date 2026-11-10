@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Halaman Visi Misi PPID dan Dasar Hukum: kepala bersama, bagian rata kiri tanpa kartu, isi HTML dari CMS apa adanya.
+// Halaman Visi Misi PPID (moto besar, kartu visi, kartu misi bernomor) dan Dasar Hukum (bagian rata kiri tanpa kartu).
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup; aturan tampilan dibaca dari CSS module.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -9,6 +9,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // test-only: isi fiktif berbentuk respons find-by-id.
 const MISI_HTML = '<ol><li>Misi uji satu.</li><li>Misi uji dua.</li></ol>';
+// test-only: misi yang bukan satu daftar teks polos (paragraf) → harus dirender apa adanya.
+const MISI_RICH_HTML = '<p>Misi uji berbentuk <strong>paragraf</strong>.</p>';
 const DASAR_HTML = '<ul><li>UU Uji Nomor 1 tentang Keterbukaan Uji</li><li>PP Uji Nomor 2</li></ul>';
 // test-only: isi yang bukan satu daftar teks polos (ada tautan) → harus dirender apa adanya.
 const DASAR_RICH_HTML = '<p>Lihat <a href="https://contoh.test">tautan uji</a>.</p>';
@@ -26,6 +28,7 @@ import DasarHukumPage from '@/app/darmasaba/(pages)/ppid/dasar-hukum/page';
 
 const PPID_DIR = path.join(process.cwd(), 'src/app/darmasaba/(pages)/ppid');
 const css = readFileSync(path.join(PPID_DIR, '_com/ppid-sections.module.css'), 'utf8');
+const visiMisiCss = readFileSync(path.join(PPID_DIR, 'visi-misi-ppid/_com/visi-misi.module.css'), 'utf8');
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const count = (source: string, needle: string | RegExp) => source.split(needle).length - 1;
 
@@ -50,16 +53,36 @@ describe('Visi dan Misi PPID', () => {
     idx.forEach((i) => expect(i).toBeGreaterThan(-1));
     expect([...idx].sort((a, b) => a - b)).toEqual(idx);
     expect(count(html, '<section')).toBe(3);
-    expect(html).toContain('Memberikan informasi yang cepat, mudah, tepat, dan transparan');
   });
 
-  it('visi dan misi dari CMS dirender apa adanya; misi tetap daftar <ol>', () => {
+  it('moto: kalimat utuh untuk pembaca layar, empat nilai besar hanya tampilan, "Transparan." garis tepi', () => {
     const html = render(<VisiMisiPage />);
-    expect(html).toMatch(/<div class="[^"]*_body_[^"]*">Visi uji\.<\/div>/);
-    expect(html).toContain(MISI_HTML);
+    expect(html).toMatch(/VisuallyHidden[^>]*>Memberikan informasi yang cepat, mudah, tepat, dan transparan<\/span>/);
+    expect(html).toMatch(/<span class="[^"]*_motoLead_[^"]*" aria-hidden="true">Memberikan informasi yang<\/span>/);
+    expect(html).toMatch(/<span class="[^"]*_motoValues_[^"]*" aria-hidden="true"><span>Cepat\. <\/span><span>Mudah\. <\/span><span>Tepat\. <\/span><span class="[^"]*_outlined_[^"]*">Transparan\. <\/span><\/span>/);
   });
 
-  it('tanpa kartu, tanpa teks tengah/justify', () => {
+  it('visi dari CMS dirender apa adanya di kartu visi', () => {
+    const html = render(<VisiMisiPage />);
+    expect(html).toMatch(/<div class="[^"]*_visiText_[^"]*">Visi uji\.<\/div>/);
+  });
+
+  it('misi berupa daftar → kartu bernomor dalam <ol>, angka hiasan disembunyikan dari pembaca layar', () => {
+    const html = render(<VisiMisiPage />);
+    expect(count(html, '<ol')).toBe(1);
+    expect(count(html, '_misiCard_')).toBe(2);
+    expect(html).toMatch(/<span class="[^"]*_misiNumber_[^"]*" aria-hidden="true">01<\/span><p class="[^"]*_misiBody_[^"]*">Misi uji satu\.<\/p>/);
+    expect(html).toMatch(/aria-hidden="true">02<\/span><p[^>]*>Misi uji dua\.<\/p>/);
+  });
+
+  it('misi yang bukan daftar teks polos dirender apa adanya', () => {
+    visiMisi.findById.data = { id: '1', visi: 'Visi uji.', misi: MISI_RICH_HTML };
+    const html = render(<VisiMisiPage />);
+    expect(html).toContain(MISI_RICH_HTML);
+    expect(count(html, '_misiCard_')).toBe(0);
+  });
+
+  it('tanpa kartu Mantine/kaca, tanpa teks tengah/justify', () => {
     const html = render(<VisiMisiPage />);
     expect(html).not.toContain('mantine-Paper-root');
     expect(html).not.toMatch(/text-align:\s*(center|justify)/);
@@ -117,6 +140,23 @@ describe('Dasar Hukum PPID', () => {
     const html = render(<DasarHukumPage />);
     expect(html).toContain('role="status" aria-label="Memuat dasar hukum…"');
     expect(count(html, '<section')).toBe(0);
+  });
+});
+
+describe('Gaya Visi dan Misi PPID (visi-misi.module.css)', () => {
+  it('rata kiri, satu warna: tanpa gradasi, bayangan, kaca, atau huruf kapital paksa', () => {
+    expect(visiMisiCss).not.toMatch(/text-align|text-transform|box-shadow|gradient|backdrop-filter/);
+  });
+
+  it('selebar token --ppid-measure; kartu visi berlatar brand; misi 2 kolom, 1 kolom di ≤734px', () => {
+    expect(visiMisiCss).toMatch(/\.root\s*\{[^}]*max-width:\s*var\(--ppid-measure\)/);
+    expect(visiMisiCss).toMatch(/\.visi\s*\{[^}]*background:\s*var\(--brand\)/);
+    expect(visiMisiCss).toMatch(/\.misiGrid\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+    expect(visiMisiCss).toMatch(/@media \(max-width: 734px\)[\s\S]*\.misiGrid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  });
+
+  it('huruf garis tepi: isi sewarna permukaan dilukis di atas garis warna brand', () => {
+    expect(visiMisiCss).toMatch(/\.outlined\s*\{[^}]*color:\s*var\(--vm-surface\);[^}]*-webkit-text-stroke:[^;]*var\(--brand\);[^}]*paint-order:\s*stroke fill/);
   });
 });
 

@@ -10,8 +10,12 @@ import { PpidHeader } from './PpidHeader';
  */
 const PPID_MEASURE = '75rem';
 
-/** Variabel yang dibaca CSS module halaman PPID: warna brand dan lebar baca (`--ppid-measure`). */
-const PPID_VARS = { '--brand': colors['blue-button'], '--ppid-measure': PPID_MEASURE } as CSSProperties;
+/** Variabel yang dibaca CSS module halaman PPID: warna brand, latar halaman (`--ppid-bg`), dan lebar baca (`--ppid-measure`). */
+const PPID_VARS = {
+  '--brand': colors['blue-button'],
+  '--ppid-bg': colors.Bg,
+  '--ppid-measure': PPID_MEASURE,
+} as CSSProperties;
 
 type Props = {
   title: string;

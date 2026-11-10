@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.239] - 2026-11-10
+### Changed
+- Visi dan Misi PPID tampil lebih hidup: moto menjadi tulisan besar "Cepat. Mudah. Tepat. Transparan.", visi berada di kartu biru tersendiri, dan tiap misi menjadi kartu bernomor yang mudah dipindai. Isi visi dan misi tetap diambil dari admin.
+
 ## [0.1.238] - 2026-11-10
 ### Changed
 - Dasar Hukum PPID lebih nyaman dibaca: tiap peraturan kini bernomor, dengan nomor peraturan dicetak tebal dan perihalnya di baris bawah, serta baris teks yang lebih pendek sehingga mata tidak perlu menyapu selebar layar.
