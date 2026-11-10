@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.233] - 2026-11-10
+### Changed
+- **Bagian paling atas beranda didesain ulang agar langsung terbaca sebagai situs Pemerintah Desa Darmasaba.** Kini tampil nama instansi dan wilayahnya (Kecamatan Abiansemal, Kabupaten Badung, Bali) di samping lambang desa, disusul sambutan "Om Swastyastu, Selamat datang di Desa Darmasaba". Foto Perbekel di sisi kanan kini lebih besar, setinggi seluruh bagian ini.
+- Status kantor kini satu baris: titik hijau atau merah, "Kantor buka" atau "Kantor tutup", lalu jam layanan hari itu atau nama hari liburnya. Sebelumnya informasi yang sama tampil dua kali dalam panel besar.
+- **Semua program inovasi kini bisa dilihat dari beranda.** Program tampil sebagai kotak berukuran sama berisi logo dan nama, 4 kotak sekaligus di kiri bawah; sisanya digeser ke samping dengan jari, trackpad, atau dua tombol panah di samping judul. Garis tipis di bawahnya menunjukkan posisi geseran, dan kotak di tepi memudar sebagai tanda masih ada program lain. Sebelumnya tampil 3 program dalam kotak kecil yang harus digulir.
+- Latar bagian ini kini dihiasi berkas pita biru, putih, emas, dan merah yang melengkung di belakang foto Perbekel. Pita tidak tampil di ponsel.
+- Ikon media sosial kini berupa tautan biasa, sehingga bisa dibuka di tab baru lewat klik kanan atau tekan lama.
+
+### Removed
+- Kalimat "Bagikan ide, kritik, atau saran Anda…" dihapus karena tidak mengarah ke halaman mana pun.
+- Tulisan "Belum ada foto" beserta ikon besarnya tidak lagi tampil saat foto Perbekel belum diunggah; cukup jabatan dan namanya.
+
 ## [0.1.232] - 2026-11-10
 ### Changed
 - **Halaman Struktur Organisasi PPID didesain ulang.** Tiap jabatan kini tampil sebagai kartu biru memanjang: nama jabatan dan nama pegawai di kiri, foto di kanan. Tepi kiri foto dibuat memudar ke warna kartu, sehingga foto berlatar kotak biasa tetap menyatu dengan kartunya. Warna kartu makin terang di tiap tingkat di bawahnya: Kepala Desa paling gelap.
