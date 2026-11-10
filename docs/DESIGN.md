@@ -310,7 +310,8 @@ Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.ts
 
 Semua halaman `/darmasaba/ppid/*` memakai satu kerangka agar kepala halamannya identik. Test: `__tests__/api/ppid_page_shell_ui.test.tsx`.
 
-- **`PpidPage`** (`PpidPage.tsx`; props `title`, `lead`, `aside?`, `style?`, `children`): latar `colors.Bg`, tinggi minimal 100vh, jarak tepi `md` / desktop 100px, tombol kembali (`BackButton`), kepala halaman, lalu isi dengan jarak 40px. Menyediakan variabel `--brand`; `style` untuk variabel CSS tambahan milik halaman.
+- **`PpidPage`** (`PpidPage.tsx`; props `title`, `lead`, `aside?`, `style?`, `children`): latar `colors.Bg`, tinggi minimal 100vh, jarak tepi `md` / desktop 100px, tombol kembali (`BackButton`), kepala halaman, lalu isi dengan jarak 40px. Menyediakan variabel `--brand` dan `--ppid-measure`; `style` untuk variabel CSS tambahan milik halaman.
+- **Dua lebar isi, didefinisikan sekali di `PpidPage`**: (1) **selebar kerangka** untuk tabel, grafik, dan bagan (Daftar Informasi, IKM, Struktur); (2) **lebar baca/formulir** `--ppid-measure: 75rem` (1200px) untuk teks dan formulir (Visi Misi, Dasar Hukum, kedua Permohonan) — pakai `max-width: var(--ppid-measure)`, jangan menulis angka lebar sendiri di CSS halaman.
 - **`PpidHeader`** (`PpidHeader.tsx` + `ppid-header.module.css`; props `title`, `lead`, `aside?`): `h1` 48px (≤734px 32) warna brand dan satu kalimat pengantar abu `#515154` 19px (17) maks 640px, **rata kiri**. `aside` = kontrol di kanan judul selebar 320px (mis. kotak cari Struktur PPID); ≤1068px turun ke bawah pengantar.
 - **Aturan isi**: tanpa logo/ikon di atas judul, tanpa teks tengah atau justify, tanpa kartu di dalam kartu — isi langsung di atas latar halaman; kartu putih hanya untuk formulir, tabel, dan grafik.
 
@@ -355,7 +356,7 @@ Menggunakan Mantine `AppShell`:
 
 Dua halaman teks di atas `PpidPage`, memakai gaya bersama `ppid/_com/ppid-sections.module.css` + kerangka memuat `ppid/_com/PpidSectionsSkeleton.tsx`; teks di `_com/visi-misi.text.ts` / `_com/dasar-hukum.text.ts`. Data: `stateVisiMisiPPID.findById.load('1')` (`visi`, `misi`) dan `stateDasarHukum.findById.load('1')` (`judul`, `content`) — HTML dari editor admin, dirender apa adanya. Test: `__tests__/api/ppid_visi_misi_dasar_hukum_ui.test.tsx`.
 
-- **Bentuk**: tanpa kartu — bagian (`<section>`) langsung di atas latar halaman, maks 980px, dipisah garis tipis solid `#b1bdd1`. Tiap bagian grid 2 kolom: label kiri 220px | isi kanan; ≤734px satu kolom (label di atas isi). Isi 19px/1.55 (mobile 17) warna `#1d1d1f`, semua rata kiri.
+- **Bentuk**: tanpa kartu — bagian (`<section>`) langsung di atas latar halaman, selebar `--ppid-measure` (1200px), dipisah garis tipis solid `#b1bdd1`. Tiap bagian grid 2 kolom: label kiri 220px | isi kanan; ≤734px satu kolom (label di atas isi). Isi 19px/1.55 (mobile 17) warna `#1d1d1f`, semua rata kiri.
 - **Visi Misi**: tiga bagian `h2` 24px warna brand (mobile 21) — **Moto** (kalimat 28px/600, mobile 22; teks tetap di kode), **Visi**, **Misi**. Logo desa dan pemisah berikon dihapus.
 - **Daftar dari CMS**: `<ol>` → baris bernomor (angka brand tabular lewat CSS counter), `<ul>` → baris bertitik brand; antarbaris garis tipis. Jenis daftar mengikuti markup editor, tidak diubah.
 - **Dasar Hukum**: `judul` dari CMS (saat ini ditulis kapital semua) tampil sebagai **label kecil** `h2` 13px/700 abu `#515154` berjarak huruf 0.06em, bukan judul besar; `content` sebagai daftar peraturan. Tidak memakai `text-transform`: mengecilkan huruf lewat CSS akan merusak singkatan dan nama diri ("ppid", "darmasaba").

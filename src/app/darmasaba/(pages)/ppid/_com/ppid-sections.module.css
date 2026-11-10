@@ -5,7 +5,7 @@
   --ppid-rule: #b1bdd1;
   --ppid-text: #1d1d1f;
   --ppid-muted: #515154;
-  max-width: 980px;
+  max-width: var(--ppid-measure);
   border-bottom: 1px solid var(--ppid-rule);
 }
 
@@ -121,7 +121,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 980px;
+  max-width: var(--ppid-measure);
   padding-top: 36px;
   border-top: 1px solid #b1bdd1;
 }
