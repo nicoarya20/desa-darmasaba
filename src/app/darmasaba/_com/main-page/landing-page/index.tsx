@@ -23,32 +23,30 @@ function LandingPage() {
 
   return (
     <section className={s.section} aria-labelledby={TITLE_ID}>
-      <div className={s.top}>
-        <div className={s.copy}>
-          <div className={s.identity}>
-            <span className={s.logo}>
-              <Image src="/darmasaba-icon.png" alt={LANDING_TEXT.logoDesa} fit="contain" />
-            </span>
-            <span className={s.logo}>
-              <Image src="/pudak-icon.png" alt={LANDING_TEXT.logoPudak} fit="contain" />
-            </span>
-            <p className={s.identityText}>
-              <span className={s.org}>{LANDING_TEXT.org}</span>
-              <span className={s.region}>{LANDING_TEXT.region}</span>
-            </p>
-          </div>
-
-          <h1 id={TITLE_ID} className={s.title}>
-            <span className={s.greeting}>{LANDING_TEXT.greeting}</span>
-            {LANDING_TEXT.title}
-          </h1>
-
-          <HeroStatus status={workStatus} />
-          {!loadingSosmed && <HeroSosmed data={socialMedia} />}
+      <div className={s.copy}>
+        <div className={s.identity}>
+          <span className={s.logo}>
+            <Image src="/darmasaba-icon.png" alt={LANDING_TEXT.logoDesa} fit="contain" />
+          </span>
+          <span className={s.logo}>
+            <Image src="/pudak-icon.png" alt={LANDING_TEXT.logoPudak} fit="contain" />
+          </span>
+          <p className={s.identityText}>
+            <span className={s.org}>{LANDING_TEXT.org}</span>
+            <span className={s.region}>{LANDING_TEXT.region}</span>
+          </p>
         </div>
 
-        {loadingProfile ? <HeroProfileSkeleton /> : profile && <HeroProfile data={profile} />}
+        <h1 id={TITLE_ID} className={s.title}>
+          <span className={s.greeting}>{LANDING_TEXT.greeting}</span>
+          {LANDING_TEXT.title}
+        </h1>
+
+        <HeroStatus status={workStatus} />
+        {!loadingSosmed && <HeroSosmed data={socialMedia} />}
       </div>
+
+      {loadingProfile ? <HeroProfileSkeleton /> : profile && <HeroProfile data={profile} />}
 
       <HeroPrograms
         items={(programs.findMany.data ?? []) as ProgramInovasiItem[]}

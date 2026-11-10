@@ -2,9 +2,9 @@
 
 ## [0.1.233] - 2026-11-10
 ### Changed
-- **Bagian paling atas beranda didesain ulang agar langsung terbaca sebagai situs Pemerintah Desa Darmasaba.** Kini tampil nama instansi dan wilayahnya (Kecamatan Abiansemal, Kabupaten Badung, Bali) di samping lambang desa, disusul sambutan "Om Swastyastu, Selamat datang di Desa Darmasaba". Foto Perbekel tetap di sisi kanan.
+- **Bagian paling atas beranda didesain ulang agar langsung terbaca sebagai situs Pemerintah Desa Darmasaba.** Kini tampil nama instansi dan wilayahnya (Kecamatan Abiansemal, Kabupaten Badung, Bali) di samping lambang desa, disusul sambutan "Om Swastyastu, Selamat datang di Desa Darmasaba". Foto Perbekel di sisi kanan kini lebih besar, setinggi seluruh bagian ini.
 - Status kantor kini satu baris: titik hijau atau merah, "Kantor buka" atau "Kantor tutup", lalu jam layanan hari itu atau nama hari liburnya. Sebelumnya informasi yang sama tampil dua kali dalam panel besar.
-- **Semua program inovasi kini langsung terlihat** sebagai deretan kotak berukuran sama di bagian bawah, masing-masing berisi logo dan nama program. Sebelumnya hanya 3 program yang terlihat dan sisanya harus digulir di dalam kotak kecil. Di ponsel, deretan ini digeser ke samping.
+- **Program inovasi kini tampil sebagai 4 kotak berukuran sama** di kiri bawah, masing-masing berisi logo dan nama program. Sebelumnya tampil 3 program dalam kotak kecil yang harus digulir. Di ponsel, deretan ini digeser ke samping.
 - Ikon media sosial kini berupa tautan biasa, sehingga bisa dibuka di tab baru lewat klik kanan atau tekan lama.
 
 ### Removed

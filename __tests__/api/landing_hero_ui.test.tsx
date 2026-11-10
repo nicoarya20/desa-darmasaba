@@ -15,7 +15,7 @@ vi.mock('next-view-transitions', () => ({
 
 import { HeroSosmed, HeroStatus } from '@/app/darmasaba/_com/main-page/landing-page/HeroInfo';
 import { HeroProfile } from '@/app/darmasaba/_com/main-page/landing-page/HeroProfile';
-import { HeroPrograms, type ProgramInovasiItem } from '@/app/darmasaba/_com/main-page/landing-page/HeroPrograms';
+import { HERO_PROGRAM_LIMIT, HeroPrograms, type ProgramInovasiItem } from '@/app/darmasaba/_com/main-page/landing-page/HeroPrograms';
 import {
   describeWorkStatus,
   getCurrentTime,
@@ -141,24 +141,33 @@ describe('HeroPrograms', () => {
   const items = Array.from({ length: 8 }, (_, i) => ({
     id: `prog-${i + 1}`,
     name: `Program ${i + 1}`,
-    image: i === 7 ? null : { link: `/u/logo-${i + 1}.png` },
+    image: i === 3 ? null : { link: `/u/logo-${i + 1}.png` },
   })) as ProgramInovasiItem[];
 
-  it('semua program tampil sebagai tautan ke halaman detailnya, tanpa area gulir tersembunyi', () => {
+  it('hanya 4 program pertama yang tampil, masing-masing tautan ke halaman detailnya', () => {
     const html = render(<HeroPrograms items={items} loading={false} />);
+    expect(HERO_PROGRAM_LIMIT).toBe(4);
     expect(html).toContain(`<h2`);
     expect(html).toContain(LANDING_TEXT.programsTitle);
-    expect(html.match(/<li/g)).toHaveLength(8);
-    for (const item of items) {
+    expect(html.match(/<li/g)).toHaveLength(4);
+    for (const item of items.slice(0, 4)) {
       expect(html).toContain(`href="/darmasaba/program-inovasi/${item.id}"`);
-      expect(html).toContain(item.name);
+      expect(html).toContain(`>${item.name}<`);
+    }
+    for (const item of items.slice(4)) {
+      expect(html).not.toContain(`href="/darmasaba/program-inovasi/${item.id}"`);
     }
     expect(html).not.toContain('ScrollArea');
   });
 
+  it('kurang dari 4 program → tampil seadanya', () => {
+    const html = render(<HeroPrograms items={items.slice(0, 2)} loading={false} />);
+    expect(html.match(/<li/g)).toHaveLength(2);
+  });
+
   it('program tanpa logo tetap punya ubin (ikon pengganti)', () => {
     const html = render(<HeroPrograms items={items} loading={false} />);
-    expect(html.match(/<img/g)).toHaveLength(7);
+    expect(html.match(/<img/g)).toHaveLength(3);
     expect(html.match(/<svg/g)).toHaveLength(1);
   });
 
@@ -170,6 +179,6 @@ describe('HeroPrograms', () => {
     const loading = render(<HeroPrograms items={[]} loading />);
     expect(loading).not.toContain(LANDING_TEXT.programsEmpty);
     expect(loading).not.toContain('<a ');
-    expect(loading.match(/<li/g)).toHaveLength(6);
+    expect(loading.match(/<li/g)).toHaveLength(4);
   });
 });

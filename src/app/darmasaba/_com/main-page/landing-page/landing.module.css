@@ -1,7 +1,7 @@
 /*
  * Hero beranda — satu permukaan biru-abu tanpa kartu pembungkus: identitas pemerintah desa,
- * sambutan, status kantor, dan media sosial di kiri; foto Perbekel di kanan; rel program
- * inovasi (ubin putih seragam) di dasarnya. Tanpa gerak otomatis: situs pemerintah harus tenang.
+ * sambutan, status kantor, dan media sosial di kiri atas; 4 ubin program inovasi di kiri bawah;
+ * foto Perbekel besar di kanan setinggi hero. Tanpa gerak otomatis: situs pemerintah harus tenang.
  * Isi selebar layar dengan jarak tepi 24px, sejajar tepi kiri-kanan Kabar Desa di bawahnya.
  * Breakpoint mengikuti section beranda lain: ≤1068px (tablet) dan ≤734px (mobile).
  */
@@ -14,25 +14,24 @@
   --open: #1f9d55;
   --closed: #d9363e;
   --gutter: 24px;
-  /* Tinggi foto ikut lebar DAN tinggi layar, supaya rel program tetap masuk layar pertama di laptop. */
-  --photo-h: clamp(300px, min(30vw, 48vh), 500px);
+  /* Tinggi foto ikut lebar DAN tinggi layar, supaya seluruh hero tetap masuk layar pertama di laptop. */
+  --photo-h: clamp(340px, min(38vw, 66vh), 700px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "copy profile"
+    "programs profile";
+  column-gap: 32px;
   background: #d1d9e8;
   padding: 28px var(--gutter) 44px;
   color: var(--ink);
 }
 
-.top {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  align-items: end;
-  gap: 32px;
-  min-height: var(--photo-h);
-}
-
 .copy {
-  align-self: center;
+  grid-area: copy;
   min-width: 0;
-  padding: 16px 0;
+  padding-top: 16px;
 }
 
 /* ---------- Identitas ---------- */
@@ -174,9 +173,11 @@
 
 /* ---------- Perbekel ---------- */
 .profile {
+  grid-area: profile;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
   min-width: 0;
   margin: 0;
 }
@@ -228,6 +229,8 @@
 
 /* ---------- Program inovasi ---------- */
 .programs {
+  grid-area: programs;
+  min-width: 0;
   margin-top: 36px;
 }
 
@@ -246,12 +249,10 @@
   color: var(--muted);
 }
 
-/* auto-fill: ubin tetap seukuran berapa pun jumlah programnya; lebih dari satu baris → turun rapi.
-   Lebar minimum ikut lebar layar (11vw) supaya di desktop selalu ±8 ubin per baris, bukan deretan
-   ubin kecil yang menyisakan separuh layar kosong di monitor lebar. */
+/* 4 kolom tetap (HERO_PROGRAM_LIMIT): ubin tetap seukuran walau programnya kurang dari 4. */
 .rail {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(128px, 11vw, 220px), 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin: 0;
   padding: 0;
@@ -359,9 +360,14 @@
 
 /* ---------- Tablet ---------- */
 @media (max-width: 1068px) {
-  .top {
+  /* Kolom kiri terlalu sempit untuk 4 ubin: rel program melebar di bawah teks dan foto. */
+  .section {
+    --photo-h: clamp(300px, 42vw, 460px);
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
-    gap: 20px;
+    grid-template-areas:
+      "copy profile"
+      "programs programs";
+    column-gap: 20px;
   }
 }
 
@@ -370,18 +376,22 @@
   .section {
     --gutter: 16px;
     --photo-h: 320px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas:
+      "copy"
+      "profile"
+      "programs";
     padding-top: 28px;
     padding-bottom: 36px;
   }
 
-  .top {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-    min-height: 0;
-  }
-
   .copy {
     padding: 0;
+  }
+
+  .profile {
+    margin-top: 28px;
   }
 
   .logo {
