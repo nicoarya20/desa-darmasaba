@@ -182,6 +182,17 @@ Gaya apple.com. File: `_com/NavbarMobile.tsx` + `_com/navbar-mobile.module.css` 
 - **Drill-down**: awalnya hanya menu utama (24px/600 + chevron). Tap menu → submenu masuk dari kanan dengan tombol "Kembali"; kembali → menu utama masuk dari kiri. Reveal bertahap 25ms per baris.
 - **Tutup**: burger, Escape, klik link, atau route berganti. Panel `inert` saat tertutup.
 
+### Hero Beranda (Landing)
+
+Layar pertama beranda: menjawab "ini situs siapa" sebelum yang lain. Folder: `_com/main-page/landing-page/` — `index.tsx` (section), `HeroInfo.tsx` (status kantor + media sosial), `HeroProfile.tsx` (foto + kartu nama Perbekel), `HeroPrograms.tsx` (rel program inovasi), `use-landing-data.ts` (hook), `landing.logic.ts` (jam kerja, helper murni), `landing.text.ts`, `landing.module.css`. Test: `__tests__/api/landing_hero_ui.test.tsx`.
+
+- **Sumber data** (tidak berubah): `/api/landingpage/mediasosial/findMany`, `/api/landingpage/pejabatdesa/edit`, `/api/landingpage/harilibur/cek?date=`, dan state Valtio `programInovasi.findMany` (limit bawaan 10).
+- **Bentuk**: satu permukaan `#D1D9E8` (`colors.Bg`) selebar layar, jarak tepi 24px (mobile 16px), **tanpa kartu pembungkus**. Kiri: 2 logo (ubin putih 56px) + "PEMERINTAH DESA DARMASABA" (15px kapital, `blue-button`) + wilayah; `h1` sambutan (`clamp(2rem, 4.4vw, 3.6rem)`, `blue-button-7`) dengan baris salam di atasnya; status kantor; ikon media sosial (bulat putih 44px, tautan asli tab baru). Kanan: foto Perbekel `object-fit: contain` rata bawah, tinggi `--photo-h` = `clamp(300px, min(30vw, 48vh), 500px)` (ikut tinggi layar supaya rel program tetap di layar pertama laptop), kartu nama putih menimpa dasar foto 32px. Tanpa foto → hanya kartu nama.
+- **Status kantor**: satu baris pil putih — titik hijau/merah, "Kantor buka/tutup", lalu "Jam layanan 07:30 - 15:30" atau nama hari libur/"Libur Akhir Pekan". Jam: Senin–Kamis 07:30–15:30, Jumat 07:30–12:00; hari libur nasional mengalahkan jam kerja; diperbarui tiap menit.
+- **Program inovasi**: judul kecil kapital "Program Inovasi Desa" + grid ubin putih seragam (radius 16px, logo `contain` tinggi 72px, nama 14px maks 2 baris) → `/darmasaba/program-inovasi/{id}`. Kolom `repeat(auto-fill, minmax(clamp(128px, 11vw, 220px), 1fr))` → ±8 ubin per baris di desktop, sisanya turun ke baris berikut. **Tanpa marquee/gerak otomatis** — logo yang berjalan sendiri terbaca seperti banner sponsor; hanya hover naik 2px (pointer saja).
+- **Mobile ≤734px**: satu kolom (teks → foto 320px → program); rel program jadi baris geser horizontal sampai tepi layar (`scroll-snap`, ubin 132px, ubin berikutnya mengintip).
+- **Loading**: placeholder berdenyut seukuran foto, pil status, dan 6 ubin (tanpa denyut saat reduced motion).
+
 ### Galeri Layanan & Potensi Desa (Beranda)
 
 Gaya galeri apple.com ("Endless entertainment."). Folder: `_com/main-page/layanan-potensi/` — `index.tsx` (section, data, timer), `GalleryRow.tsx` (baris loop + swipe), `GalleryControls.tsx` (titik + progress + jeda), `use-loop-carousel.ts` (state baris), `use-wheel-step.ts` (geser trackpad), `gallery.logic.ts` (helper murni, dites di `__tests__/api/layanan_potensi_gallery_logic.test.ts`), `gallery.module.css`, `gallery.text.ts` (label).
@@ -690,10 +701,7 @@ p={{ base: "sm", md: "lg" }}
 
 ### Landing Page
 
-- Hero: foto/video desa, nama desa, sapaan kepala desa, jam operasional kantor
-- Statistik cepat: jumlah penduduk, KK, banjar
-- Modul layanan (slider/grid)
-- Sosial media links
+- Hero: identitas pemerintah desa, sambutan, status kantor, media sosial, foto Perbekel, rel program inovasi (lihat §5 "Hero Beranda")
 - Berita terbaru (polling tiap 30 detik)
 
 ### Domain Utama
