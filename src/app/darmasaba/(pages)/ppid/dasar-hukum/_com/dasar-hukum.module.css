@@ -1,0 +1,79 @@
+/* Daftar dasar hukum: nomor urut brand di kiri, penanda peraturan tebal, perihal di bawahnya.
+   Warna dan garis memakai variabel `.sections` (ppid-sections.module.css) lewat pewarisan. */
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: dasar-hukum;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  padding: 18px 0;
+  border-top: 1px solid var(--ppid-rule);
+  counter-increment: dasar-hukum;
+}
+
+.item:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.item:last-child {
+  padding-bottom: 0;
+}
+
+.item::before {
+  content: counter(dasar-hukum);
+  color: var(--brand);
+  font-size: 15px;
+  line-height: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Panjang baris baca: ±70 karakter pada 17px. Garis antarbaris tetap selebar kolom isi. */
+.text {
+  max-width: 43rem;
+  overflow-wrap: anywhere;
+}
+
+.nomor {
+  display: block;
+  color: var(--ppid-text);
+  font-size: 19px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.perihal {
+  display: block;
+  margin-top: 4px;
+  color: var(--ppid-muted);
+  font-size: 17px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+@media (max-width: 734px) {
+  .item {
+    grid-template-columns: 32px minmax(0, 1fr);
+    padding: 16px 0;
+  }
+
+  .item::before {
+    line-height: 24px;
+  }
+
+  .nomor {
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .perihal {
+    font-size: 16px;
+  }
+}

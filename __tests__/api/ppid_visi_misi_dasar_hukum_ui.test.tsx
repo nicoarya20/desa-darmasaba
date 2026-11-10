@@ -9,7 +9,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // test-only: isi fiktif berbentuk respons find-by-id.
 const MISI_HTML = '<ol><li>Misi uji satu.</li><li>Misi uji dua.</li></ol>';
-const DASAR_HTML = '<ul><li>UU Uji Nomor 1</li><li>PP Uji Nomor 2</li></ul>';
+const DASAR_HTML = '<ul><li>UU Uji Nomor 1 tentang Keterbukaan Uji</li><li>PP Uji Nomor 2</li></ul>';
+// test-only: isi yang bukan satu daftar teks polos (ada tautan) → harus dirender apa adanya.
+const DASAR_RICH_HTML = '<p>Lihat <a href="https://contoh.test">tautan uji</a>.</p>';
 
 const visiMisi = vi.hoisted(() => ({ findById: { data: null as unknown, loading: false, load: vi.fn() } }));
 const dasarHukum = vi.hoisted(() => ({ findById: { data: null as unknown, loading: false, load: vi.fn() } }));
@@ -81,11 +83,27 @@ describe('Dasar Hukum PPID', () => {
     expect(html).not.toContain('tabler-icon-book');
   });
 
-  it('subjudul CMS jadi label h2 (isi tidak diubah) dan daftar peraturan dirender apa adanya', () => {
+  it('subjudul CMS jadi label h2 (isi tidak diubah)', () => {
     const html = render(<DasarHukumPage />);
     expect(html).toMatch(/<h2 id="ppid-dasar-hukum" class="[^"]*_sectionLabel_[^"]*">JUDUL UJI PPID<\/h2>/);
-    expect(html).toContain(DASAR_HTML);
     expect(html).toContain('aria-labelledby="ppid-dasar-hukum"');
+  });
+
+  it('daftar peraturan jadi <ol>: penanda dan perihal terpisah, "tentang" hanya untuk pembaca layar', () => {
+    const html = render(<DasarHukumPage />);
+    expect(count(html, '<ol')).toBe(1);
+    expect(count(html, '<li')).toBe(2);
+    expect(html).toMatch(/<span class="[^"]*_nomor_[^"]*">UU Uji Nomor 1<\/span>/);
+    expect(html).toMatch(/<span class="[^"]*_perihal_[^"]*"><span[^>]*VisuallyHidden[^>]*> tentang <\/span>Keterbukaan Uji<\/span>/);
+    expect(html).toMatch(/<span class="[^"]*_nomor_[^"]*">PP Uji Nomor 2<\/span><\/div>/);
+    expect(count(html, '_perihal_')).toBe(1);
+  });
+
+  it('isi CMS yang bukan daftar teks polos dirender apa adanya', () => {
+    dasarHukum.findById.data = { id: '1', judul: 'JUDUL UJI PPID', content: DASAR_RICH_HTML };
+    const html = render(<DasarHukumPage />);
+    expect(html).toContain(DASAR_RICH_HTML);
+    expect(count(html, '<ol')).toBe(0);
   });
 
   it('tanpa kartu kaca, tanpa teks tengah/justify', () => {

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.238] - 2026-11-10
+### Changed
+- Dasar Hukum PPID lebih nyaman dibaca: tiap peraturan kini bernomor, dengan nomor peraturan dicetak tebal dan perihalnya di baris bawah, serta baris teks yang lebih pendek sehingga mata tidak perlu menyapu selebar layar.
+
 ## [0.1.237] - 2026-11-10
 ### Fixed
 - Di ponsel, pita di belakang foto Perbekel kini tampil utuh: turun dari kiri atas foto lalu keluar sampai tepi kanan layar. Sebelumnya pita tergencet di sisi kiri dan terputus di belakang foto.
