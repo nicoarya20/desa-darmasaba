@@ -1,8 +1,11 @@
 # Changelog
 
-## [0.1.229] - 2026-11-09
+## [0.1.234] - 2026-11-10
 ### Added
 - **Desa Anti Korupsi: dokumen tiap program kini bisa dipilah ke dalam folder.** Admin dapat membuat, mengganti nama, mengurutkan, dan menghapus folder (dokumen di folder yang dihapus pindah ke "Umum"), mengunggah beberapa dokumen sekaligus langsung ke folder pilihan, memindahkan dokumen antar folder, serta mengubah judul dan urutan dokumen. Halaman detail admin menampilkan dokumen per folder dalam tabel ringkas yang bisa dibuka-tutup. Di website, kartu program kini berukuran seragam dengan ringkasan jumlah folder dan dokumen; tombol "Buka" membawa ke halaman program tersendiri berisi folder, pencarian dokumen, serta pratinjau dan unduh. Dokumen tunggal yang sudah ada otomatis masuk "Umum".
+- **Desa Anti Korupsi (admin): kelola banyak dokumen sekaligus.** Centang beberapa dokumen (ada "Pilih semua" per folder dan Shift+klik), lalu pindahkan, salin ke folder lain, atau hapus sekaligus. Menu ⋮ di tiap folder untuk ganti nama, duplikat folder beserta isinya, dan salin isi ke folder lain. File yang sama boleh ada di folder berbeda tanpa menggandakan file di penyimpanan; bila ada file kembar dalam satu folder, tombol Simpan dikunci dengan pesan.
+- **Desa Anti Korupsi: salin dokumen ke program lain** (langsung tersimpan; dokumen yang sudah ada di tujuan dilewati), **unduh ZIP** satu folder atau seluruh program di admin maupun website (maks. 100 MB per unduhan), **urutkan & cari dokumen** beserta kolom ukuran file dan tanggal unggah, serta **ganti nama dokumen/folder langsung** dengan klik tulisannya.
+- **Desa Anti Korupsi (admin): bagian "Dokumen terhapus"** di halaman detail program. Dokumen yang dihapus bisa dipulihkan atau dihapus permanen, dan terhapus permanen otomatis setelah 30 hari.
 - **Pengaturan visibilitas menu (khusus Super Admin dan Developer):** halaman baru Pengaturan › Visibilitas Menu untuk menampilkan atau menyembunyikan submenu website publik tanpa deploy ulang. Submenu yang disembunyikan hilang dari navbar, pencarian, dan Peta Informasi, dan halamannya menampilkan 404 bila dibuka langsung.
 
 ### Changed
@@ -11,7 +14,9 @@
 - Halaman publik `/darmasaba` kini dirender per permintaan agar pengaturan visibilitas menu langsung berlaku.
 
 ### Operator
-- Jalankan migrasi database sebelum versi ini aktif: `20261109103000_dokumen_desa_anti_korupsi`, `20261109120000_add_menu_visibility`, `20261109123000_merge_penghargaan_into_prestasi_desa` (tabel `Penghargaan` dihapus setelah datanya disalin), `20261109140000_folder_dokumen_desa_anti_korupsi`.
+- Jalankan migrasi database sebelum versi ini aktif: `20261109103000_dokumen_desa_anti_korupsi`, `20261109120000_add_menu_visibility`, `20261109123000_merge_penghargaan_into_prestasi_desa` (tabel `Penghargaan` dihapus setelah datanya disalin), `20261109140000_folder_dokumen_desa_anti_korupsi`, `20261109150000_add_file_storage_size`.
+- Setelah migrasi, jalankan sekali `bun run backfill:file-size` untuk mengisi ukuran file lama (membaca berkas dari MinIO). Opsional: tanpa ini ukuran file lama tampil "—" dan unduh ZIP tetap berjalan.
+- Opsional env: `DAK_ZIP_MAX_BYTES` (batas ZIP, bawaan 100 MB) dan `DAK_SAMPAH_RETENSI_HARI` (masa simpan dokumen terhapus, bawaan 30 hari).
 
 ## [0.1.228] - 2026-11-09
 ### Changed
