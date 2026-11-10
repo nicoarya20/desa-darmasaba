@@ -332,6 +332,25 @@ Bagan hierarki atas-ke-bawah (pola "Hierarchical Structure") dengan kartu ala re
 - **Kepala**: pola Potensi — `h1` 48px (mobile 32) brand, pengantar abu 19px (17) maks 640px, kotak cari pil 320px di kanan (≤1068px di bawah). Tidak ada yang cocok → "Tidak ada nama atau jabatan yang cocok dengan “…”".
 - **Loading / kosong**: kerangka 1 + 2 kartu berdenyut; tanpa pegawai aktif → pesan + pil "Muat Ulang".
 
+### Daftar Informasi Publik (`/darmasaba/ppid/daftar-informasi-publik` + `[id]`)
+
+Folder `(pages)/ppid/daftar-informasi-publik/`: `page.tsx` (daftar) dan `[id]/page.tsx` (detail) di atas kerangka bersama `ppid/_com/PpidPage.tsx`; `_com/DaftarTable.tsx` (tabel + kerangka), `_com/DaftarKontak.tsx`, `_com/daftar.logic.ts` (`DAFTAR_PAGE_SIZE` 5, jeda cari 1000ms, `rowNumber`, `formatTanggal`, rute detail), `_com/daftar.text.ts`, `_com/daftar.module.css`. Test: `__tests__/api/ppid_daftar_informasi_ui.test.tsx`, `__tests__/api/ppid_daftar_ikm_pages_ui.test.tsx`.
+
+- **Kepala**: judul + pengantar (teks "tentang" lama), kotak cari pil di slot `aside`. Kepala dan kotak cari tetap terpasang saat memuat ulang — hanya daftar yang berganti (kerangka di muatan pertama, tabel meredup `data-busy` di muatan berikutnya), supaya fokus kotak cari tidak hilang.
+- **Catatan Dokumen Perencanaan**: satu baris teks abu + tautan ke Monev & Pembangunan, tanpa kartu.
+- **Daftar**: satu kartu putih (radius 18px) berisi `<table>` asli — No, Jenis Informasi (`<th scope="row">`, tebal), Deskripsi, Tanggal Publikasi, tautan "Detail ›". Jenis dan deskripsi **tidak dipotong**; deskripsi ditampilkan sebagai teks polos (`htmlToPlainText`), baris melebar mengikuti isi. ≤734px: tiap baris jadi kartu putih bertumpuk (kepala tabel hanya untuk pembaca layar, kolom No disembunyikan; urutan jenis → tanggal → deskripsi → Detail).
+- **Paginasi**: pil kanan (mobile tengah), hanya tampil bila lebih dari satu halaman. Hasil kosong → satu baris ikon + pesan, tanpa kartu.
+- **Kontak PPID**: `h2` + dua baris ikon (email, WhatsApp) langsung di latar, tanpa kartu.
+- **Detail**: `<dl>` Jenis (24px/600, mobile 21px) · Tanggal · Deskripsi (HTML dari editor admin, rata kiri, maks 760px) langsung di latar. Id tidak ada → "Informasi tidak ditemukan" + tautan kembali ke daftar. Detail basi milik id lain di store diabaikan.
+
+### Indeks Kepuasan Masyarakat — halaman PPID (`/darmasaba/ppid/indeks-kepuasan-masyarakat`)
+
+Halaman ini **tidak punya grafik/form sendiri**: `page.tsx` hanya merangkai kerangka `PpidPage` dengan modul section beranda `_com/main-page/kepuasan/` (`useKepuasanData`, `KepuasanCharts`, `KepuasanSkeleton`, `KepuasanEmpty`, `CtaButton`, `RespondenFormModal`, `KEPUASAN_BRAND_VARS`). Aturan grafik, warna seri, dan alur form ada di bagian Indeks Kepuasan beranda; perubahan di sana otomatis berlaku di sini. Lokal halaman: `_com/ikm.text.ts` (pengantar) dan `_com/ikm.module.css`.
+
+- **Kepala**: judul + satu kalimat pengantar; tombol "Ajukan Responden" di slot `aside` (kanan; ≤1068px di bawah pengantar, rata kiri).
+- **Token**: kelas `kepuasan.module.css` membaca `--ink`, `--muted`, `--tile`, `--radius` yang di beranda dipasang oleh `.section`. Di sini `.surface` memasangnya, dengan `--tile: #fff` karena latar halaman PPID `#D1D9E8` (di beranda tile `#f5f5f7` di atas putih).
+- **Isi**: kartu "Responden per bulan" (total responden sebagai angka utama) lalu tiga donat 3 kolom (mobile bertumpuk) — persis susunan beranda, selebar kolom halaman.
+
 ---
 
 ## 6. Layout Admin (`/admin/`)
