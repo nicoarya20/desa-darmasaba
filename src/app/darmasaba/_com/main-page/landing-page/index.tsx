@@ -5,6 +5,7 @@ import { useShallowEffect } from "@mantine/hooks";
 import { useProxy } from "valtio/utils";
 import { HeroSosmed, HeroStatus } from "./HeroInfo";
 import { HeroProfile, HeroProfileSkeleton } from "./HeroProfile";
+import { HeroRibbons } from "./HeroRibbons";
 import { HeroPrograms, type ProgramInovasiItem } from "./HeroPrograms";
 import s from "./landing.module.css";
 import { LANDING_TEXT } from "./landing.text";
@@ -23,6 +24,7 @@ function LandingPage() {
 
   return (
     <section className={s.section} aria-labelledby={TITLE_ID}>
+      <HeroRibbons />
       <div className={s.copy}>
         <div className={s.identity}>
           <span className={s.logo}>
