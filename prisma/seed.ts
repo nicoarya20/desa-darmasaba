@@ -10,7 +10,6 @@ import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
 import { seedVideo } from "./_seeder_list/desa/gallery/video/seed_video";
 import { seedLayanan } from "./_seeder_list/desa/layanan/seed_layanan";
 import { seedMusikDesa } from "./_seeder_list/desa/musik-desa/seed_musik_desa";
-import { seedPenghargaan } from "./_seeder_list/desa/penghargaan/penghargaan";
 import { seedPengumuman } from "./_seeder_list/desa/pengumuman/seed_pengumuman";
 import { seedPotensi } from "./_seeder_list/desa/potensi/seed_potensi";
 import { seedProfileDesa } from "./_seeder_list/desa/profile-desa/seed_profile_desa";
@@ -264,9 +263,6 @@ import { isSeedOverwrite } from "./seed-prisma";
 
   // // =========== SUBMENU LAYANAN ===========
   await seedLayanan();
-
-  // // =========== PENGHARGAAN ===========
-  await seedPenghargaan();
 
   // // ====================== MENU KESEHATAN ========================
   // // ==================== SUBMENU BANJAR =========================

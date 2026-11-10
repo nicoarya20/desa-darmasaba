@@ -237,12 +237,12 @@ Gaya bersih apple.com. Folder: `_com/main-page/apbdes/` — `index.tsx` (section
 
 ### Prestasi dan Penghargaan Desa (Beranda & halaman gabungan)
 
-Section Penghargaan & Prestasi lama **digabung** (frontend dulu; tabel backend masih dua). Folder: `_com/main-page/prestasi/` — `index.tsx` (section beranda), `PrestasiHero.tsx` (video), `PrestasiGrid.tsx` (tile), `PrestasiListPage.tsx` (halaman gabungan), `use-prestasi-data.ts` (hook), `prestasi.source.ts` (**adapter sementara** dua endpoint), `prestasi.logic.ts` (helper murni), `prestasi.meta.ts` (limit, rute, video, warna), `prestasi.text.ts`, `prestasi.module.css`, `prestasi.page.module.css`. Test: `__tests__/api/prestasi_penghargaan_logic.test.ts`, `__tests__/api/prestasi_penghargaan_source.test.ts`.
+Section Penghargaan & Prestasi lama **digabung** — tampilan maupun data: satu tabel `PrestasiDesa`, penghargaan = kategori "Penghargaan" (field opsional `juara`). Folder: `_com/main-page/prestasi/` — `index.tsx` (section beranda), `PrestasiHero.tsx` (video), `PrestasiGrid.tsx` (tile), `PrestasiListPage.tsx` (halaman gabungan), `use-prestasi-data.ts` (hook), `prestasi.source.ts` (adapter satu endpoint), `PrestasiJuara.tsx` (juara di halaman detail), `prestasi.logic.ts` (helper murni), `prestasi.meta.ts` (limit, rute, video, warna), `prestasi.text.ts`, `prestasi.module.css`, `prestasi.page.module.css`. Test: `__tests__/api/prestasi_penghargaan_{logic,source,ui,merge_data}.test.ts(x)`, `__tests__/api/prestasi_desa_juara_api.test.ts`.
 
-- **Sumber data**: `find-many` prestasi desa + penghargaan (keduanya urut `createdAt desc`). Halaman *p* ukuran *n* = ambil *p×n* teratas tiap sumber → gabung urut terbaru → potong (`pageWindow` + `mergeNewest`); total = jumlah kedua total. Entri dobel antar-tabel **tidak** disaring (bersihkan datanya). Saat backend menyatukan tabel, cukup ganti isi `prestasi.source.ts` (keluaran `PrestasiPage` tetap).
+- **Sumber data**: satu `find-many` prestasi desa (`page`, `limit`, `search` — cari juga di `juara` — urut `createdAt desc`, `total` dari server). Keluaran `PrestasiPage` sama seperti era adapter dua endpoint; `source` = `penghargaan` bila kategori "Penghargaan".
 - **Hero**: video `award.mp4` apa adanya + poster `mangupuraaward.jpeg`, lapisan gelap `rgba(0,0,0,.6)→.85` dan tinggi min 720px (mobile 500px) sama seperti section Penghargaan lama. Teks putih di tengah: judul "Prestasi dan Penghargaan Desa" 56px (tablet 48, mobile 36), subtext 21px (19/17) maks 680px, pill CTA brand "Selengkapnya" → `/darmasaba/prestasi-desa`. Video `preload="none"`, diputar hanya saat terlihat (`useInViewport`), tidak autoplay bila `prefers-reduced-motion`; tombol jeda/putar bulat 36px kanan bawah (WCAG 2.2.2).
-- **Grid**: 4 entri terbaru gabungan, 2 kolom, gap 10px, tile 16:10 tanpa radius; seluruh tile = tautan ke detail sesuai sumber (`/darmasaba/prestasi-desa/{id}` atau `/darmasaba/penghargaan/{id}`), judul `name` kiri bawah (28px, tablet 24, mobile 21; maks 3 baris) di atas gradasi gelap. Ganjil → tile terakhir lebar 2 kolom (21:9); kosong → grid disembunyikan. Loading = placeholder abu. Mobile ≤734px: 1 kolom, tile 4:3. Hover foto zoom 1.03 700ms (mati saat reduced motion).
-- **Halaman gabungan** `/darmasaba/prestasi-desa`: latar putih, kepala max-width 1100px (kembali, judul `h1` 48px warna brand, subtext abu, cari 320px di kanan — mobile di bawah), grid tile yang sama, 8 per halaman + `Pagination` bila > 1 halaman. Cari debounce 400ms ke kedua sumber. `/darmasaba/penghargaan` dialihkan ke halaman ini; halaman detail `[id]` keduanya tetap. Menu navbar Desa → "Prestasi dan Penghargaan".
+- **Grid**: 4 entri terbaru gabungan, 2 kolom, gap 10px, tile 16:10 tanpa radius; seluruh tile = tautan ke detail `/darmasaba/prestasi-desa/{id}` (juga untuk penghargaan), judul `name` kiri bawah (28px, tablet 24, mobile 21; maks 3 baris) di atas gradasi gelap. Ganjil → tile terakhir lebar 2 kolom (21:9); kosong → grid disembunyikan. Loading = placeholder abu. Mobile ≤734px: 1 kolom, tile 4:3. Hover foto zoom 1.03 700ms (mati saat reduced motion).
+- **Halaman gabungan** `/darmasaba/prestasi-desa`: latar putih, kepala max-width 1100px (kembali, judul `h1` 48px warna brand, subtext abu, cari 320px di kanan — mobile di bawah), grid tile yang sama, 8 per halaman + `Pagination` bila > 1 halaman. Cari debounce 400ms. `/darmasaba/penghargaan` dan `/darmasaba/penghargaan/{id}` dialihkan permanen (next.config) ke halaman ini / detail prestasi dengan id sama; detail menampilkan `juara` bila ada. Menu navbar Desa → "Prestasi dan Penghargaan".
 
 ### Desa Anti Korupsi (Beranda)
 
@@ -385,12 +385,14 @@ File: `src/con/navbar-list-menu.ts`
 | 9 | Pendidikan | 7 |
 | 10 | Musik | 1 |
 
+Visibilitas submenu: field `hidden` di config = **default**; Super Admin/Developer (role 0/1) bisa menimpanya per submenu di admin **Pengaturan › Visibilitas Menu** (`/admin/pengaturan/visibilitas-menu`, tabel `MenuVisibility`, key = href submenu). Menu efektif dihitung di `src/app/darmasaba/_com/menu-visibility.logic.ts`, disuplai layout publik (server) lewat `MenuVisibilityProvider`, dan dipakai navbar, pencarian (menu + hasil konten), serta Peta Informasi. Submenu tersembunyi → halamannya (termasuk sub-path per segmen) 404 lewat `MenuVisibilityGuard`; menu utama yang semua submenunya tersembunyi ikut hilang.
+
 ### Sidebar Admin
 
 File: `src/app/admin/_com/list_PageAdmin.tsx` (re-export saja; data sebenarnya ada di `src/app/admin/_com/nav/domains.ts` dan dirakit di `src/app/admin/_com/nav/index.ts`)
 
 Export: `navBar` (semua domain), `role1`, `role2`, `role3` (role-based subset), `devBar`.  
-Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`. Filter berdasarkan `menuIds` (dengan normalisasi ID) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`).
+Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`. Filter berdasarkan `menuIds` (dengan normalisasi ID) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access.
 
 ---
 
@@ -711,7 +713,7 @@ p={{ base: "sm", md: "lg" }}
 | Domain | Konten Utama |
 |---|---|
 | PPID | Profil, Struktur, Visi Misi, Dasar Hukum, Permohonan Informasi |
-| Desa | Profil, Potensi, Berita, Pengumuman, Gallery, Layanan, Penghargaan, Agenda & Kalender Desa |
+| Desa | Profil, Potensi, Berita, Pengumuman, Gallery, Layanan, Agenda & Kalender Desa |
 | Kesehatan | Data Posyandu (balita, ibu hamil, ringkasan), Puskesmas, Program, Info Wabah |
 | Kependudukan | Dashboard statistik, Data Per Banjar, Dinamika, Distribusi Agama/Umur |
 | Ekonomi | UMKM, Lowongan Kerja, BUMDesa, PADesa, Transparansi APBDes (grafik + tabel) |

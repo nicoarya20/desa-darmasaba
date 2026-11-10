@@ -35,6 +35,7 @@ export async function storeImageAsWebp(file: File) {
       realName: file.name,
       path: "image",
       mimeType: "image/webp",
+      size: desktopBuffer.length, // ukuran WebP tersimpan (yang dilayani /api/img)
       category: "image",
       link: `/api/img/${finalName}`,
     },

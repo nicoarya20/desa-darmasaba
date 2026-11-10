@@ -1,4 +1,5 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
+import { isPathHidden } from './menu-visibility.logic';
 
 type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
 
@@ -12,7 +13,8 @@ const getDetailUrl = (item: SearchItem) => {
     desaantikorupsi: () => '/darmasaba/desa-anti-korupsi',
     sdgsdesa: () => '/darmasaba/sdgs-desa',
     apbdes: () => '/darmasaba/apbdes',
-    prestasidesa: () => '/darmasaba/prestasi-desa',
+    // Termasuk entri eks-Penghargaan (kini kategori "Penghargaan" di tabel PrestasiDesa).
+    prestasidesa: (id) => `/darmasaba/prestasi-desa/${id}`,
     pejabatdesa: () => '/darmasaba/ppid/profil-ppid',
     strukturppid: () => '/darmasaba/ppid/struktur-ppid',
     visimisippid: () => '/darmasaba/ppid/visi-misi-ppid',
@@ -38,7 +40,6 @@ const getDetailUrl = (item: SearchItem) => {
     pelayananPerizinanBerusaha: () => '/darmasaba/pemerintahan/layanan',
     pelayananTelunjukSaktiDesa: () => '/darmasaba/pemerintahan/layanan',
     pelayananPendudukNonPermanen: () => '/darmasaba/pemerintahan/layanan',
-    penghargaan: () => '/darmasaba/prestasi-desa',
     posyandu: (id) => `/darmasaba/kesehatan/posyandu/${id}`,
     fasilitasKesehatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     dokterdanTenagaMedis: () => '/darmasaba/kesehatan/data-kesehatan-warga',
@@ -104,5 +105,12 @@ const getDetailUrl = (item: SearchItem) => {
 
 /** Normalisasi `type` hasil pencarian sebelum lookup peta: hanya trim, huruf tidak diubah (kunci peta camelCase). */
 export const normalizeSearchType = (type: unknown) => String(type ?? '').trim();
+
+/**
+ * Benar bila hasil pencarian konten menuju halaman di bawah submenu tersembunyi (halaman itu 404),
+ * memakai pencocokan per segmen yang sama dengan guard 404.
+ */
+export const isSearchResultHidden = (item: SearchItem, hiddenHrefs: readonly string[]) =>
+  isPathHidden(getDetailUrl({ ...item, type: normalizeSearchType(item.type) }), hiddenHrefs);
 
 export default getDetailUrl;

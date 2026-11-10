@@ -3,7 +3,7 @@ export type MenuItem = {
     name: string;
     href?: string;
     children?: MenuItem[];
-    /** Disembunyikan dari menu publik (navbar & pencarian); halaman tetap bisa diakses via URL. */
+    /** DEFAULT tersembunyi dari menu publik & halamannya 404; bisa ditimpa di admin Pengaturan › Visibilitas Menu (tabel MenuVisibility). */
     hidden?: boolean;
 } & (
     { href: string; children?: MenuItem[] } | 

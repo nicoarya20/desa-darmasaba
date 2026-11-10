@@ -93,6 +93,14 @@ describe('pemetaan URL hasil pencarian global', () => {
     );
   });
 
+  it('prestasidesa (termasuk eks-penghargaan) membuka detail /darmasaba/prestasi-desa/[id]; tipe penghargaan sudah tidak dikirim API', () => {
+    expect(getDetailUrl({ type: 'prestasidesa', id: 'cmkal9dd70002vnexhvn4j2fv' })).toBe(
+      '/darmasaba/prestasi-desa/cmkal9dd70002vnexhvn4j2fv',
+    );
+    expect(types).not.toContain('penghargaan');
+    expect(readFileSync(FIND_MANY, 'utf8')).not.toMatch(/prisma\.penghargaan/);
+  });
+
   it('pasarDesa membuka detail produk UMKM', () => {
     expect(getDetailUrl({ type: 'pasarDesa', id: 'p1' })).toBe('/darmasaba/ekonomi/umkm/produk/p1');
   });

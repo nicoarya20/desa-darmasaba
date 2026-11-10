@@ -10,7 +10,7 @@ export const landingPageMenu: NavItem = {
     { id: "Landing_Page_2", name: "Desa Anti Korupsi", path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi" },
     { id: "Landing_Page_3", name: "SDGs", path: "/admin/landing-page/SDGs" },
     { id: "Landing_Page_4", name: "APBDes", path: "/admin/landing-page/apbdes" },
-    { id: "Landing_Page_5", name: "Prestasi Desa", path: "/admin/landing-page/prestasi-desa/list-prestasi-desa" },
+    { id: "Landing_Page_5", name: "Prestasi dan Penghargaan", path: "/admin/landing-page/prestasi-desa/list-prestasi-desa" },
   ],
 }
 
@@ -41,7 +41,6 @@ export const desaMenu: NavItem = {
     { id: "Desa_4", name: "Pengumuman", path: "/admin/pemerintahan/pengumuman/list-pengumuman" },
     { id: "Desa_5", name: "Gallery", path: "/admin/pemerintahan/gallery/foto" },
     { id: "Desa_6", name: "Layanan", path: "/admin/pemerintahan/layanan/pelayanan_surat_keterangan" },
-    { id: "Desa_7", name: "Penghargaan", path: "/admin/pemerintahan/penghargaan" },
     { id: "Desa_8", name: "Kegiatan Desa", path: "/admin/pemerintahan/kegiatan-desa/list-kegiatan-desa" },
     { id: "Desa_9", name: "Agenda & Kalender Desa", path: "/admin/pemerintahan/event-budaya" },
     { id: "Desa_10", name: "Banjar", path: "/admin/pemerintahan/banjar" },
@@ -166,5 +165,16 @@ export const userRoleMenu: NavItem = {
     { id: "User", name: "User", path: "/admin/user&role/user" },
     { id: "Role", name: "Role", path: "/admin/user&role/role" },
     { id: "Menu Access", name: "Menu Access", path: "/admin/user&role/menu-access" },
+  ],
+}
+
+// Hanya role "0"/"1" (ditambahkan getNavbar). Sengaja TIDAK masuk navBar/devBar supaya
+// tidak bisa diberikan ke role lain lewat halaman Menu Access.
+export const pengaturanMenu: NavItem = {
+  id: "Pengaturan",
+  name: "Pengaturan",
+  path: "",
+  children: [
+    { id: "Pengaturan_1", name: "Visibilitas Menu", path: "/admin/pengaturan/visibilitas-menu" },
   ],
 }

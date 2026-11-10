@@ -7,7 +7,7 @@ import { usePrestasiData } from "./use-prestasi-data";
 
 const TITLE_ID = "prestasi-title";
 
-/** Section beranda Prestasi dan Penghargaan Desa: hero video + grid 4 entri terbaru gabungan dua sumber. */
+/** Section beranda Prestasi dan Penghargaan Desa: hero video + grid 4 entri prestasi & penghargaan terbaru. */
 function Prestasi() {
   const { items, loading } = usePrestasiData({ page: 1, pageSize: PRESTASI_BERANDA_LIMIT });
 

@@ -245,8 +245,10 @@ describe('previewMenuResults', () => {
     expect(input).toEqual(make(4));
   });
 
-  it('hasil nyata "kesehatan" tertutup → 5 tampil, sisanya tersembunyi', () => {
-    const all = searchMenu('kesehatan');
+  // "pemerintahan" (bukan "kesehatan"): 4 submenu Kesehatan default-hidden, sisa hasilnya < 5.
+  it('hasil nyata "pemerintahan" tertutup → 5 tampil, sisanya tersembunyi', () => {
+    const all = searchMenu('pemerintahan');
+    expect(all.length).toBeGreaterThan(5);
     const { visible, hiddenCount } = previewMenuResults(all, false);
     expect(visible).toEqual(all.slice(0, 5));
     expect(hiddenCount).toBe(all.length - 5);
@@ -257,7 +259,8 @@ describe('globalSearch.tsx memakai hasil menu', () => {
   const src = readFileSync(GLOBAL_SEARCH, 'utf8');
 
   it('menghitung hasil menu dari searchMenu(query) tanpa menunggu API', () => {
-    expect(src).toMatch(/searchMenu\(snap\.query\)/);
+    // Menu efektif (default + override DB) dioper eksplisit dari useMenuVisibility.
+    expect(src).toMatch(/searchMenu\(snap\.query, searchMenus\)/);
   });
 
   it('menampilkan bagian "Halaman" dan "Tidak ada hasil" hanya bila menu & API kosong', () => {

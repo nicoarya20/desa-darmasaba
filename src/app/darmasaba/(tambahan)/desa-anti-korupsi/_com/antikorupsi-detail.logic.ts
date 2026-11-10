@@ -1,69 +1,48 @@
-/** Helper murni halaman detail Desa Anti Korupsi: baris indikator + info dokumen (surat PDF) tiap indikator. */
+/** Helper murni halaman detail Desa Anti Korupsi: baris indikator + ringkasan isi folder dokumen tiap indikator. */
 import {
   splitIndicatorNumber,
   toSentenceCase,
 } from '@/app/darmasaba/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
+import { programHref, ringkasanIsi } from '../_lib/program-folder';
 
-/** Bentuk minimal `FileStorage` yang dibaca halaman ini (relasi opsional `DesaAntiKorupsi.file`). */
-export type AntiKorupsiFile = {
-  link?: string | null;
-  mimeType?: string | null;
-  realName?: string | null;
-  name?: string | null;
-};
-
-/** Bentuk minimal item `desaAntikorupsi.findMany` yang dibaca halaman detail. */
+/**
+ * Bentuk minimal item `desaAntikorupsi.findMany` yang dibaca halaman detail. Dokumen kini disimpan per folder,
+ * jadi daftar hanya membawa jumlahnya; isi lengkap dibuka di halaman program.
+ */
 export type AntiKorupsiDetailApiItem = {
   id: string;
   name: string;
   kategori?: { name?: string | null } | null;
-  file?: AntiKorupsiFile | null;
+  jumlahFolder?: number | null;
+  jumlahDokumen?: number | null;
 };
 
-export type AntiKorupsiDokumen = {
+/** Isi dokumen satu indikator yang bisa dibuka: tautan ke halaman program + ringkasan "N folder · M dokumen". */
+export type AntiKorupsiIsi = {
   href: string;
-  /** Label jenis file untuk tombol, mis. "PDF", "DOCX", atau "dokumen" bila tak dikenali. */
-  type: string;
+  ringkasan: string;
 };
 
 export type AntiKorupsiDokumenRow = {
   id: string;
   number: string | null;
   text: string;
-  /** null = surat belum diunggah admin; baris tampil sebagai tempat kosong "Dokumen belum tersedia". */
-  dokumen: AntiKorupsiDokumen | null;
+  /** null = belum ada dokumen; baris tampil sebagai tempat kosong "Dokumen belum tersedia". */
+  isi: AntiKorupsiIsi | null;
 };
 
-/** Tautan relatif satu-garis-miring (`/api/fileStorage/...`) atau http(s); selain itu (mis. `javascript:`) ditolak. */
-const SAFE_HREF = /^(https?:\/\/|\/(?!\/))/i;
-const FILE_EXTENSION = /\.([a-z0-9]{1,5})$/i;
-const UNKNOWN_TYPE = 'dokumen';
-
-/** Href aman untuk membuka file, atau null bila link kosong/tidak aman. */
-export function documentHref(link: string | null | undefined): string | null {
-  const href = link?.trim();
-  return href && SAFE_HREF.test(href) ? href : null;
+/** Isi dokumen satu indikator, atau null bila belum ada dokumen sama sekali. */
+export function toIsi(item: AntiKorupsiDetailApiItem): AntiKorupsiIsi | null {
+  const jumlahDokumen = item.jumlahDokumen ?? 0;
+  if (jumlahDokumen <= 0) return null;
+  return { href: programHref(item.id), ringkasan: ringkasanIsi(item.jumlahFolder ?? 0, jumlahDokumen) };
 }
 
-/** Jenis file untuk label tombol: PDF dari mimeType, selain itu ekstensi nama file (huruf kapital). */
-export function documentType(file: AntiKorupsiFile): string {
-  if (file.mimeType?.toLowerCase() === 'application/pdf') return 'PDF';
-  const ext = FILE_EXTENSION.exec(file.realName ?? file.name ?? '');
-  return ext ? ext[1].toUpperCase() : UNKNOWN_TYPE;
-}
-
-/** Info dokumen satu indikator, atau null bila belum ada file yang bisa dibuka. */
-export function toDokumen(file: AntiKorupsiFile | null | undefined): AntiKorupsiDokumen | null {
-  if (!file) return null;
-  const href = documentHref(file.link);
-  return href ? { href, type: documentType(file) } : null;
-}
-
-/** Ubah item API jadi baris tampilan: nomor dipisah, teks sentence case, info dokumen. */
+/** Ubah item API jadi baris tampilan: nomor dipisah, teks sentence case, ringkasan isi folder. */
 export function toDokumenRows(items: readonly AntiKorupsiDetailApiItem[]): AntiKorupsiDokumenRow[] {
   return items.map((item) => {
     const { number, text } = splitIndicatorNumber(item.name);
-    return { id: item.id, number, text: toSentenceCase(text), dokumen: toDokumen(item.file) };
+    return { id: item.id, number, text: toSentenceCase(text), isi: toIsi(item) };
   });
 }
 
@@ -83,7 +62,7 @@ export function countByKategori(items: readonly AntiKorupsiDetailApiItem[]): Rec
   return counts;
 }
 
-/** Jumlah baris yang dokumennya sudah tersedia. */
+/** Jumlah indikator yang sudah punya dokumen. */
 export function countDokumen(rows: readonly AntiKorupsiDokumenRow[]): number {
-  return rows.filter((row) => row.dokumen !== null).length;
+  return rows.filter((row) => row.isi !== null).length;
 }

@@ -5,8 +5,17 @@
 // Roles desa-darmasaba (relasi tabel Role, id string):
 //   "0" DEVELOPER | "1" SUPER ADMIN | "2" ADMIN DESA
 //   "3" ADMIN KESEHATAN | "4" ADMIN PENDIDIKAN | "5" USER (Login Google)
+export const ROLE_DEVELOPER = "0";
 export const ROLE_SUPER_ADMIN = "1";
 export const ROLE_USER = "5";
+
+// Role yang boleh mengatur visibilitas menu website publik: hanya DEVELOPER & SUPER ADMIN.
+export const MENU_VISIBILITY_MANAGER_ROLES: readonly string[] = [ROLE_DEVELOPER, ROLE_SUPER_ADMIN];
+
+/** Apakah roleId boleh mengatur visibilitas menu publik (role "0" & "1"). */
+export function canManageMenuVisibility(roleId: string | number | null | undefined): boolean {
+  return roleId != null && MENU_VISIBILITY_MANAGER_ROLES.includes(String(roleId));
+}
 
 // roleId 0-4 = admin (boleh akses /admin); 5+ = user biasa.
 export const MAX_ADMIN_ROLE = 4;

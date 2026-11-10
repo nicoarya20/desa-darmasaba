@@ -40,8 +40,8 @@ function ListPrestasiDesa() {
   return (
     <Box>
       <HeaderSearch
-        title='Prestasi Desa'
-        placeholder='Cari nama prestasi...'
+        title='Prestasi dan Penghargaan'
+        placeholder='Cari prestasi atau penghargaan...'
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}

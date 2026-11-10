@@ -3,71 +3,84 @@ import { describe, expect, it } from 'vitest';
 import {
   countPages,
   isWideCard,
-  mergeNewest,
-  pageWindow,
+  safePage,
   toPrestasiItem,
   type PrestasiApiItem,
 } from '@/app/darmasaba/_com/main-page/prestasi/prestasi.logic';
 
-// test-only: bentuk meniru respons find-many prestasi desa & penghargaan.
-const api = (id: string, createdAt: string, name = `Item ${id}`, link: string | null = `/api/img/${id}.webp`): PrestasiApiItem => ({
+// test-only: bentuk meniru respons find-many prestasi desa (satu tabel, penghargaan = kategori "Penghargaan").
+const api = (
+  id: string,
+  createdAt: string,
+  name = `Item ${id}`,
+  link: string | null = `/api/img/${id}.webp`,
+  extra: Partial<PrestasiApiItem> = {},
+): PrestasiApiItem => ({
   id,
   name,
   createdAt,
   image: link === null ? null : { link },
+  kategori: { name: 'Olahraga dan Kepemudaan' },
+  ...extra,
 });
 
 describe('toPrestasiItem', () => {
-  it('href detail mengikuti sumbernya', () => {
-    expect(toPrestasiItem(api('p1', '2026-01-01'), 'prestasi').href).toBe('/darmasaba/prestasi-desa/p1');
-    expect(toPrestasiItem(api('h1', '2026-01-01'), 'penghargaan').href).toBe('/darmasaba/penghargaan/h1');
+  it('semua entri (termasuk eks-penghargaan) ke detail prestasi dengan id yang sama', () => {
+    expect(toPrestasiItem(api('p1', '2026-01-01')).href).toBe('/darmasaba/prestasi-desa/p1');
+    const eks = api('h1', '2026-01-01', 'Penghargaan A', null, { kategori: { name: 'Penghargaan' } });
+    expect(toPrestasiItem(eks).href).toBe('/darmasaba/prestasi-desa/h1');
+  });
+
+  it('source: kategori "Penghargaan" (trim, case-insensitive) → penghargaan; lainnya / tanpa kategori → prestasi', () => {
+    expect(toPrestasiItem(api('a', '2026-01-01', 'A', null, { kategori: { name: ' penghargaan ' } })).source).toBe('penghargaan');
+    expect(toPrestasiItem(api('b', '2026-01-01')).source).toBe('prestasi');
+    expect(toPrestasiItem(api('c', '2026-01-01', 'C', null, { kategori: null })).source).toBe('prestasi');
+  });
+
+  it('dengan juara: kartu tetap sama seperti sebelumnya (judul = name, juara hanya di halaman detail)', () => {
+    const withJuara = toPrestasiItem(
+      api('h2', '2026-11-03T10:00:00.000Z', ' Desa Raih Juara ', null, {
+        juara: 'Juara 1 Lomba Desa Provinsi Bali 2025',
+        kategori: { name: 'Penghargaan' },
+      }),
+    );
+    expect(withJuara).toEqual({
+      id: 'h2',
+      source: 'penghargaan',
+      name: 'Desa Raih Juara',
+      imageUrl: undefined,
+      createdAt: Date.parse('2026-11-03T10:00:00.000Z'),
+      href: '/darmasaba/prestasi-desa/h2',
+    });
+  });
+
+  it('tanpa juara (null / tidak ada) → bentuk kartu identik', () => {
+    const base = api('p3', '2026-11-03T10:00:00.000Z');
+    expect(toPrestasiItem({ ...base, juara: null })).toEqual(toPrestasiItem(base));
+    expect(Object.keys(toPrestasiItem(base)).sort()).toEqual(['createdAt', 'href', 'id', 'imageUrl', 'name', 'source']);
   });
 
   it('judul dirapikan, gambar dari image.link, createdAt jadi epoch ms (string maupun Date)', () => {
-    const item = toPrestasiItem(api('p1', '2026-11-03T10:00:00.000Z', '  Juara 1  '), 'prestasi');
+    const item = toPrestasiItem(api('p1', '2026-11-03T10:00:00.000Z', '  Juara 1  '));
     expect(item).toMatchObject({ id: 'p1', source: 'prestasi', name: 'Juara 1', imageUrl: '/api/img/p1.webp' });
     expect(item.createdAt).toBe(Date.parse('2026-11-03T10:00:00.000Z'));
-    const fromDate = toPrestasiItem({ ...api('p2', '2026-01-01'), createdAt: new Date('2026-11-03T10:00:00.000Z') }, 'prestasi');
+    const fromDate = toPrestasiItem({ ...api('p2', '2026-01-01'), createdAt: new Date('2026-11-03T10:00:00.000Z') });
     expect(fromDate.createdAt).toBe(item.createdAt);
   });
 
   it('tanpa gambar / link kosong → imageUrl undefined', () => {
-    expect(toPrestasiItem(api('a', '2026-01-01', 'A', null), 'prestasi').imageUrl).toBeUndefined();
-    expect(toPrestasiItem({ ...api('b', '2026-01-01'), image: { link: '' } }, 'penghargaan').imageUrl).toBeUndefined();
+    expect(toPrestasiItem(api('a', '2026-01-01', 'A', null)).imageUrl).toBeUndefined();
+    expect(toPrestasiItem({ ...api('b', '2026-01-01'), image: { link: '' } }).imageUrl).toBeUndefined();
   });
 });
 
-describe('mergeNewest', () => {
-  const prestasi = [api('p3', '2026-11-05'), api('p2', '2026-11-02'), api('p1', '2026-10-01')].map((i) => toPrestasiItem(i, 'prestasi'));
-  const penghargaan = [api('h2', '2026-11-04'), api('h1', '2026-11-03')].map((i) => toPrestasiItem(i, 'penghargaan'));
-
-  it('urut terbaru lintas sumber lalu dipotong', () => {
-    expect(mergeNewest([prestasi, penghargaan], 0, 4).map((i) => i.id)).toEqual(['p3', 'h2', 'h1', 'p2']);
-    expect(mergeNewest([prestasi, penghargaan], 4, 4).map((i) => i.id)).toEqual(['p1']);
-  });
-
-  it('waktu sama → urutan sumber dipertahankan (prestasi dulu)', () => {
-    const a = toPrestasiItem(api('pa', '2026-11-03'), 'prestasi');
-    const b = toPrestasiItem(api('hb', '2026-11-03'), 'penghargaan');
-    expect(mergeNewest([[a], [b]], 0, 2).map((i) => i.id)).toEqual(['pa', 'hb']);
-  });
-
-  it('entri dengan id sama dari dua sumber tetap dua kartu berbeda (tidak disaring)', () => {
-    const a = toPrestasiItem(api('x', '2026-11-03'), 'prestasi');
-    const b = toPrestasiItem(api('x', '2026-11-03'), 'penghargaan');
-    expect(mergeNewest([[a], [b]], 0, 4).map((i) => i.href)).toEqual(['/darmasaba/prestasi-desa/x', '/darmasaba/penghargaan/x']);
-  });
-
-  it('sumber kosong → hasil kosong', () => {
-    expect(mergeNewest([[], []], 0, 4)).toEqual([]);
-  });
-});
-
-describe('pageWindow & countPages', () => {
-  it('halaman p ukuran n → ambil p×n teratas tiap sumber, offset (p−1)×n', () => {
-    expect(pageWindow(1, 4)).toEqual({ fetchLimit: 4, offset: 0 });
-    expect(pageWindow(3, 8)).toEqual({ fetchLimit: 24, offset: 16 });
-    expect(pageWindow(0, 8)).toEqual({ fetchLimit: 8, offset: 0 });
+describe('safePage & countPages', () => {
+  it('nomor halaman dibulatkan ke bawah, minimal 1', () => {
+    expect(safePage(3)).toBe(3);
+    expect(safePage(2.7)).toBe(2);
+    expect(safePage(0)).toBe(1);
+    expect(safePage(-4)).toBe(1);
+    expect(safePage(Number.NaN)).toBe(1);
   });
 
   it('jumlah halaman minimal 1', () => {

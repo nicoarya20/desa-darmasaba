@@ -28,6 +28,7 @@ import Kependudukan from "./_lib/kependudukan";
 import User from "./_lib/user";
 import Role from "./_lib/user/role";
 import Search from "./_lib/search";
+import MenuVisibility from "./_lib/menu_visibility";
 
 const ROOT = process.cwd();
 
@@ -141,6 +142,7 @@ const ApiServer = new Elysia()
       .use(User)
       .use(Role)
       .use(Search)
+      .use(MenuVisibility)
       .get("/layanan", layanan)
       .get("/potensi", getPotensi)
       .get(

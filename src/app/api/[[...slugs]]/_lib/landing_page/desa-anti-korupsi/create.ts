@@ -1,14 +1,20 @@
 import prisma from "@/lib/prisma";
+import type { DokumenInput } from "@/lib/desa-anti-korupsi-dokumen";
+import type { FolderInput } from "@/lib/desa-anti-korupsi-folder";
+import { DESA_ANTI_KORUPSI_DETAIL_INCLUDE, toProgramDetail } from "@/lib/desa-anti-korupsi-view";
 import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Context } from "elysia";
+import { applyProgramSync, prepareProgramSync } from "./dokumen-sync";
 
 type FormCreate = {
   name: string;
   deskripsi: string;
-  fileId: string;
   kategoriId: string; // minimal satu kategori
+  folders?: FolderInput[]; // folder baru (tempKey); boleh kosong
+  dokumen?: DokumenInput[]; // isi program; boleh kosong
 };
 
+/** Admin: buat program beserta folder + dokumennya dalam satu transaksi. */
 export default async function desaAntiKorupsiCreate(context: Context) {
   const body = context.body as FormCreate;
 
@@ -16,24 +22,30 @@ export default async function desaAntiKorupsiCreate(context: Context) {
     throw new Error("kategoriId wajib diisi");
   }
 
+  // Program baru belum punya isi tersimpan → folder wajib tempKey, dokumen wajib tanpa id.
+  const sync = await prepareProgramSync(null, { folders: body.folders, dokumen: body.dokumen });
+  if (!sync.ok) {
+    context.set.status = 400;
+    return { success: false, message: sync.message };
+  }
+
   try {
-    // Create langsung data AdministrasiOnline
-    const result = await prisma.desaAntiKorupsi.create({
-      data: {
-        name: body.name,
-        deskripsi: body.deskripsi,
-        fileId: body.fileId,
-        kategoriId: body.kategoriId, // relasi ke JenisLayanan
-      },
-      include: {
-        kategori: true, // Include data relasi
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const program = await tx.desaAntiKorupsi.create({
+        data: { name: body.name, deskripsi: body.deskripsi, kategoriId: body.kategoriId },
+        select: { id: true },
+      });
+      await applyProgramSync(tx, program.id, sync.plan);
+      return tx.desaAntiKorupsi.findUniqueOrThrow({
+        where: { id: program.id },
+        include: DESA_ANTI_KORUPSI_DETAIL_INCLUDE,
+      });
     });
 
     return {
       success: true,
       message: "Berhasil membuat desa anti korupsi",
-      data: result,
+      data: toProgramDetail(result),
     };
   } catch (error) {
     // Nama unik (@unique) → 409 "Nama sudah dipakai"; error lain di-throw

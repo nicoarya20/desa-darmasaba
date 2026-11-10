@@ -4,6 +4,7 @@ import { Box, CloseButton, Container, SimpleGrid, Stack, Text, TextInput, Title 
 import { IconSearch } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import BackButton from '../../../(pages)/pemerintahan/layanan/_com/BackButto';
+import { useMenuVisibility } from '../../../_com/MenuVisibilityContext';
 import { countPages, petaInformasiGroups } from '../_lib/petaInformasi';
 import PetaInformasiGroupCard from './PetaInformasiGroupCard';
 
@@ -12,7 +13,8 @@ const textColor = colors['blue-button-7'];
 /** Halaman Peta Informasi: semua halaman website per menu utama, bisa disaring tanpa API. */
 export default function PetaInformasi() {
   const [query, setQuery] = useState('');
-  const groups = useMemo(() => petaInformasiGroups(query), [query]);
+  const { searchMenus } = useMenuVisibility();
+  const groups = useMemo(() => petaInformasiGroups(query, searchMenus), [query, searchMenus]);
   const isFiltering = query.trim() !== '';
 
   return (

@@ -55,6 +55,9 @@ model FileStorage {
   realName                       String
   path                           String
   mimeType                       String
+  // Ukuran isi berkas dalam byte (setelah dekompresi untuk dokumen ter-gzip). Nullable: baris
+  // lama belum terisi sampai prisma/backfill-file-size.ts dijalankan.
+  size                           Int?
   createdAt                      DateTime                   @default(now())
   updatedAt                      DateTime                   @updatedAt
   deletedAt                      DateTime?
@@ -68,7 +71,6 @@ model FileStorage {
   StrukturPPID                   StrukturPPID[]
   GalleryFoto                    GalleryFoto[]
   Pelapor                        Pelapor[]
-  Penghargaan                    Penghargaan[]
   ProfileDesaImage               ProfileDesaImage[]
   ProfilePPID                    ProfilePPID[]
   ProfilPerbekel                 ProfilPerbekel[]
@@ -91,7 +93,7 @@ model FileStorage {
   ProgramInovasi                 ProgramInovasi[]
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
-  DesaAntiKorupsi                DesaAntiKorupsi[]
+  DokumenDesaAntiKorupsi         DokumenDesaAntiKorupsi[]
   SDGSDesa                       SdgsDesa[]
   APBDesImage                    APBDes[]                   @relation("APBDesImage")
   APBDesFile                     APBDes[]                   @relation("APBDesFile")
@@ -158,17 +160,55 @@ model MediaSosial {
 
 //========================================= DESA ANTI KORUPSI ========================================= //
 model DesaAntiKorupsi {
-  id         String                  @id @default(cuid())
-  name       String                  @unique
-  deskripsi  String                  @db.Text
-  kategori   KategoriDesaAntiKorupsi @relation(fields: [kategoriId], references: [id])
+  id         String                         @id @default(cuid())
+  name       String                         @unique
+  deskripsi  String                         @db.Text
+  kategori   KategoriDesaAntiKorupsi        @relation(fields: [kategoriId], references: [id])
   kategoriId String
-  file       FileStorage?            @relation(fields: [fileId], references: [id])
-  fileId     String?
-  createdAt  DateTime                @default(now())
-  updatedAt  DateTime                @updatedAt
-  deletedAt  DateTime                @default(now())
-  isActive   Boolean                 @default(true)
+  dokumen    DokumenDesaAntiKorupsi[]
+  folders    FolderDokumenDesaAntiKorupsi[]
+  createdAt  DateTime                       @default(now())
+  updatedAt  DateTime                       @updatedAt
+  deletedAt  DateTime                       @default(now())
+  isActive   Boolean                        @default(true)
+}
+
+// "Folder" dokumen per program Desa Anti Korupsi: satu program bisa punya banyak berkas.
+model DokumenDesaAntiKorupsi {
+  id                String                        @id @default(cuid())
+  desaAntiKorupsi   DesaAntiKorupsi               @relation(fields: [desaAntiKorupsiId], references: [id], onDelete: Cascade)
+  desaAntiKorupsiId String
+  file              FileStorage                   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId            String
+  // null = dokumen ada di folder virtual "Umum" (bukan baris DB)
+  folder            FolderDokumenDesaAntiKorupsi? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  folderId          String?
+  judul             String
+  urutan            Int                           @default(0)
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
+  deletedAt         DateTime?
+  isActive          Boolean                       @default(true)
+
+  @@index([desaAntiKorupsiId])
+  @@index([folderId])
+}
+
+// Folder (satu tingkat) untuk memilah dokumen di dalam satu program Desa Anti Korupsi.
+// Hapus folder = soft delete; dokumennya dipindah ke "Umum" (folderId null), tidak ikut terhapus.
+model FolderDokumenDesaAntiKorupsi {
+  id                String                   @id @default(cuid())
+  desaAntiKorupsi   DesaAntiKorupsi          @relation(fields: [desaAntiKorupsiId], references: [id], onDelete: Cascade)
+  desaAntiKorupsiId String
+  nama              String
+  urutan            Int                      @default(0)
+  dokumen           DokumenDesaAntiKorupsi[]
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  deletedAt         DateTime?
+  isActive          Boolean                  @default(true)
+
+  @@index([desaAntiKorupsiId])
 }
 
 model KategoriDesaAntiKorupsi {
@@ -270,6 +310,8 @@ model PrestasiDesa {
   id         String               @id @default(cuid())
   name       String
   deskripsi  String               @db.Text
+  /// Capaian/peringkat, mis. "Juara 1 Lomba Desa Provinsi Bali 2025" (eks-kolom Penghargaan.juara).
+  juara      String?
   kategori   KategoriPrestasiDesa @relation(fields: [kategoriId], references: [id])
   kategoriId String
   image      FileStorage?         @relation(fields: [imageId], references: [id])
@@ -852,20 +894,6 @@ model AjukanPermohonan {
   updatedAt  DateTime                 @updatedAt
   deletedAt  DateTime                 @default(now())
   isActive   Boolean                  @default(true)
-}
-
-// ========================================= PENGHARGAAN ========================================= //
-model Penghargaan {
-  id        String       @id @default(cuid())
-  name      String
-  juara     String
-  deskripsi String       @db.Text
-  image     FileStorage? @relation(fields: [imageId], references: [id])
-  imageId   String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  deletedAt DateTime     @default(now())
-  isActive  Boolean      @default(true)
 }
 
 // ========================================= MENU KESEHATAN ========================================= //
@@ -2421,25 +2449,26 @@ model DataPendidikan {
 // ========================================= USER ========================================= //
 
 model User {
-  id             String           @id @default(cuid())
-  username       String
-  nomor          String?          @unique // nullable: user login Google tidak punya nomor HP
-  email          String?          @unique // identitas dari Google OAuth
-  googleId       String?          @unique // Google account ID, di-link saat login Google pertama
-  avatarUrl      String? // foto profil dari Google — dipetakan ke Better Auth `image`
-  emailVerified  Boolean          @default(false) // Better Auth core field
-  roleId         String           @default("2")
-  isActive       Boolean          @default(false)
-  sessionInvalid Boolean          @default(false)
-  lastLogin      DateTime?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now()) @updatedAt
-  permissions    Json?
-  sessions       UserSession[] // ⚠️ legacy JWT session — di-drop setelah cutover Better Auth
-  authSessions   Session[] // Better Auth session
-  accounts       Account[] // Better Auth account (provider google)
-  role           Role             @relation(fields: [roleId], references: [id])
-  menuAccesses   UserMenuAccess[]
+  id                    String           @id @default(cuid())
+  username              String
+  nomor                 String?          @unique // nullable: user login Google tidak punya nomor HP
+  email                 String?          @unique // identitas dari Google OAuth
+  googleId              String?          @unique // Google account ID, di-link saat login Google pertama
+  avatarUrl             String? // foto profil dari Google — dipetakan ke Better Auth `image`
+  emailVerified         Boolean          @default(false) // Better Auth core field
+  roleId                String           @default("2")
+  isActive              Boolean          @default(false)
+  sessionInvalid        Boolean          @default(false)
+  lastLogin             DateTime?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @default(now()) @updatedAt
+  permissions           Json?
+  sessions              UserSession[] // ⚠️ legacy JWT session — di-drop setelah cutover Better Auth
+  authSessions          Session[] // Better Auth session
+  accounts              Account[] // Better Auth account (provider google)
+  role                  Role             @relation(fields: [roleId], references: [id])
+  menuAccesses          UserMenuAccess[]
+  menuVisibilityUpdates MenuVisibility[]
 
   @@map("users")
 }
@@ -2494,6 +2523,19 @@ model UserMenuAccess {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, menuId]) // Satu user tidak bisa punya akses menu yang sama dua kali
+}
+
+// Override visibilitas submenu website publik (navbar/pencarian/Peta Informasi).
+// Tanpa row = pakai default `hidden` di src/con/navbar-list-menu.ts. menuKey = href
+// submenu (lebih stabil dari id urut "3.2"); divalidasi aplikasi terhadap config.
+model MenuVisibility {
+  id          String   @id @default(cuid())
+  menuKey     String   @unique
+  isVisible   Boolean
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // ===================================== BETTER AUTH ===================================== //

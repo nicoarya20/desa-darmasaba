@@ -2,6 +2,7 @@
 'use client'
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
 import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
+import { PrestasiJuara } from '@/app/darmasaba/_com/main-page/prestasi/PrestasiJuara';
 import colors from '@/con/colors';
 import { ActionIcon, Box, Container, Divider, Flex, Image, Skeleton, Stack, Text } from '@mantine/core';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
@@ -65,6 +66,7 @@ function Page() {
               <Text ta={"center"} fw={"bold"} fz={"1.5rem"}>
                 {state.findUnique.data.kategori?.name}
               </Text>
+              <PrestasiJuara juara={state.findUnique.data.juara} />
             </Box>
             {state.findUnique.data.image?.link && (
               <Image 

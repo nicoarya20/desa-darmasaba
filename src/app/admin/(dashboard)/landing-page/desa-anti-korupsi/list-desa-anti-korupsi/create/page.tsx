@@ -3,7 +3,6 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import colors from '@/con/colors';
-import ApiFetch from '@/lib/api-fetch';
 import {
   Box,
   Button,
@@ -15,14 +14,17 @@ import {
   TextInput,
   Title,
   Loader,
-  ActionIcon,
 } from '@mantine/core';
-import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconFile, IconUpload, IconX } from '@tabler/icons-react';
+import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { DokumenFolderEditor } from '../../_com/DokumenFolderEditor';
+import { isIsiDraftValid } from '../../_lib/dokumen-bulk-actions';
+import { uploadPendingDrafts } from '../../_lib/dokumen-draft';
+import { emptyIsiDraft, toIsiPayload, type IsiDraft } from '../../_lib/folder-draft';
+import { uploadDokumenFile } from '../../_lib/upload-dokumen';
 
 export default function CreateDesaAntiKorupsi() {
   const router = useRouter();
@@ -30,14 +32,13 @@ export default function CreateDesaAntiKorupsi() {
   // Snapshot cabang kategoriDesaAntiKorupsi agar Select re-render saat
   // findMany.load() async selesai — JSX sebelumnya baca raw proxy (race, STG).
   const kategoriState = useProxy(korupsiState.kategoriDesaAntiKorupsi);
-  const [previewFile, setPreviewFile] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [isi, setIsi] = useState<IsiDraft>(emptyIsiDraft);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid
   const isFormValid = () => {
     return (
-      file !== null &&
+      isIsiDraftValid(isi) &&
       stateKorupsi.create.form.name?.trim() !== '' &&
       stateKorupsi.create.form.kategoriId?.trim() !== ''
     );
@@ -53,37 +54,29 @@ export default function CreateDesaAntiKorupsi() {
       name: '',
       deskripsi: '',
       kategoriId: '',
-      fileId: '',
+      folders: [],
+      dokumen: [],
     };
-    setFile(null);
-    setPreviewFile(null);
+    setIsi(emptyIsiDraft());
   };
 
   const handleSubmit = async () => {
-    if (!file) {
-      return toast.warn('Pilih file dokumen terlebih dahulu');
-    }
     if (!stateKorupsi.create.form.name) {
-      return toast.warn('Masukkan judul dokumen');
+      return toast.warn('Masukkan nama program');
     }
     if (!stateKorupsi.create.form.kategoriId) {
-      return toast.warn('Pilih kategori dokumen');
+      return toast.warn('Pilih kategori program');
     }
 
     setIsSubmitting(true);
     try {
-      const res = await ApiFetch.api.fileStorage.create.post({
-        file,
-        name: file.name,
-      });
-
-      const uploaded = res.data?.data;
-
-      if (!uploaded?.id) {
-        throw new Error('Gagal mengunggah dokumen');
-      }
-
-      stateKorupsi.create.form.fileId = uploaded.id;
+      // Berkas diunggah saat simpan (bukan saat dipilih) agar batal = tidak ada file yatim.
+      const uploaded: IsiDraft = { ...isi, dokumen: await uploadPendingDrafts(isi.dokumen, uploadDokumenFile) };
+      setIsi(uploaded);
+      // Folder + dokumen dikirim bersama; folder baru dirujuk dokumen lewat tempKey.
+      const payload = toIsiPayload(uploaded);
+      stateKorupsi.create.form.folders = payload.folders;
+      stateKorupsi.create.form.dokumen = payload.dokumen;
       await stateKorupsi.create.create();
 
       toast.success('Data berhasil disimpan');
@@ -103,7 +96,7 @@ export default function CreateDesaAntiKorupsi() {
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} c="dark">
-          Tambah Dokumen Desa Anti Korupsi
+          Tambah Program Desa Anti Korupsi
         </Title>
       </Group>
 
@@ -116,83 +109,9 @@ export default function CreateDesaAntiKorupsi() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
-          <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Dokumen
-            </Text>
-            <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewFile(URL.createObjectURL(selectedFile));
-                }
-              }}
-              onReject={() => toast.error('File tidak valid, gunakan format dokumen')}
-              maxSize={5 * 1024 ** 2}
-              accept={{
-                'application/*': ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'],
-              }}
-              radius="md"
-            >
-              <Group justify="center" gap="xl" mih={180} style={{ pointerEvents: 'none' }}>
-                <Dropzone.Accept>
-                  <IconUpload size={48} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX size={48} color="var(--mantine-color-red-6)" stroke={1.5} />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconFile size={48} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                </Dropzone.Idle>
-                <div>
-                  <Text size="lg" inline>
-                    Seret dokumen ke sini atau klik untuk memilih file
-                  </Text>
-                  <Text size="sm" c="dimmed" inline mt={7}>
-                    Maksimal 5MB (PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX)
-                  </Text>
-                </div>
-              </Group>
-            </Dropzone>
-
-            {previewFile && (
-              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
-                <iframe
-                  src={previewFile}
-                  width="100%"
-                  height="500px"
-                  style={{
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '8px',
-                    maxWidth: '100%',
-                  }}
-                />
-                <ActionIcon
-                  variant="filled"
-                  color="red"
-                  radius="xl"
-                  size="sm"
-                  pos="absolute"
-                  top={5}
-                  right={5}
-                  onClick={() => {
-                    setPreviewFile(null);
-                    setFile(null);
-                  }}
-                  style={{
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                  }}
-                >
-                  <IconX size={14} />
-                </ActionIcon>
-              </Box>
-            )}
-          </Box>
-
           <TextInput
-            label="Judul Dokumen"
-            placeholder="Masukkan judul dokumen"
+            label="Nama Program"
+            placeholder="Masukkan nama program"
             value={stateKorupsi.create.form.name || ''}
             onChange={(e) => (stateKorupsi.create.form.name = e.target.value)}
             required
@@ -233,6 +152,8 @@ export default function CreateDesaAntiKorupsi() {
             nothingFoundMessage="Tidak ditemukan"
             required
           />
+
+          <DokumenFolderEditor value={isi} onChange={setIsi} />
 
           <Group justify="right">
             <Button

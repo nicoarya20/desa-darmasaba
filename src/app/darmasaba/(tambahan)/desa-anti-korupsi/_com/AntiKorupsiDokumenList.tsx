@@ -1,4 +1,5 @@
-import { IconArrowUpRight, IconClock, IconFileText, IconFileTypePdf } from '@tabler/icons-react';
+import { IconArrowRight, IconClock, IconFolder } from '@tabler/icons-react';
+import Link from 'next/link';
 import type { AntiKorupsiDokumenRow } from './antikorupsi-detail.logic';
 import s from './antikorupsi-detail.module.css';
 import { AK_DETAIL_TEXT } from './antikorupsi-detail.text';
@@ -26,15 +27,15 @@ function RowBody({ row }: { row: AntiKorupsiDokumenRow }) {
 }
 
 /**
- * Daftar indikator satu kategori. Indikator bersurat = seluruh baris tautan yang membuka file di tab baru;
- * indikator tanpa surat tetap tampil sebagai tempat kosong "Dokumen belum tersedia" sampai admin mengunggahnya.
+ * Daftar indikator satu kategori. Indikator yang sudah berisi dokumen = seluruh baris tautan ke halaman
+ * programnya (folder & dokumen); indikator kosong tetap tampil sebagai tempat kosong "Dokumen belum tersedia".
  */
 export function AntiKorupsiDokumenList({ rows, labelledBy }: { rows: readonly AntiKorupsiDokumenRow[]; labelledBy: string }) {
   return (
     <ul className={s.panel} aria-labelledby={labelledBy}>
       {rows.map((row) => {
-        const { dokumen } = row;
-        if (!dokumen) {
+        const { isi } = row;
+        if (!isi) {
           return (
             <li key={row.id} className={s.row}>
               <RowBody row={row} />
@@ -46,24 +47,17 @@ export function AntiKorupsiDokumenList({ rows, labelledBy }: { rows: readonly An
           );
         }
 
-        const Icon = dokumen.type === 'PDF' ? IconFileTypePdf : IconFileText;
         const indikator = row.number ? `${row.number} ${row.text}` : row.text;
         return (
           <li key={row.id}>
-            <a
-              className={`${s.row} ${s.rowLink}`}
-              href={dokumen.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={AK_DETAIL_TEXT.openLabel(indikator, dokumen.type)}
-            >
+            <Link className={`${s.row} ${s.rowLink}`} href={isi.href} aria-label={AK_DETAIL_TEXT.openLabel(indikator, isi.ringkasan)}>
               <RowBody row={row} />
               <span className={s.open} aria-hidden>
-                <Icon size={18} stroke={1.75} />
-                {AK_DETAIL_TEXT.open(dokumen.type)}
-                <IconArrowUpRight size={16} stroke={2} />
+                <IconFolder size={18} stroke={1.75} />
+                {isi.ringkasan}
+                <IconArrowRight size={16} stroke={2} />
               </span>
-            </a>
+            </Link>
           </li>
         );
       })}
