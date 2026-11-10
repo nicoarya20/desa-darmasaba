@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   Group,
-  Image,
   Paper,
   Stack,
   Text,
@@ -22,7 +21,7 @@ import {
   Badge,
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconFile, IconPhoto, IconUpload, IconX, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconArrowBack, IconFile, IconUpload, IconX, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -42,13 +41,11 @@ type ItemForm = {
 function CreateAPBDes() {
   const router = useRouter();
   const stateAPBDes = useProxy(apbdes, { sync: true }); // sync: cegah caret jump di controlled input
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [docFile, setDocFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Check if form is valid - hanya cek items, gambar dan file opsional
+  // Check if form is valid - hanya cek items, dokumen opsional
   const isFormValid = () => {
     return stateAPBDes.create.form.items.length > 0;
   };
@@ -68,9 +65,7 @@ function CreateAPBDes() {
 
   const resetForm = () => {
     stateAPBDes.create.reset();
-    setImageFile(null);
     setDocFile(null);
-    setPreviewImage(null);
     setPreviewDoc(null);
     setNewItem({
       kode: '',
@@ -89,18 +84,8 @@ function CreateAPBDes() {
     try {
       setIsSubmitting(true);
 
-      // Upload files hanya jika ada file yang dipilih
-      let imageId = '';
+      // Upload dokumen hanya jika ada file yang dipilih
       let fileId = '';
-
-      if (imageFile) {
-        const uploadImageRes = await ApiFetch.api.fileStorage.create.post({
-          file: imageFile,
-          name: imageFile.name,
-        });
-        imageId = uploadImageRes?.data?.data?.id || '';
-      }
-
       if (docFile) {
         const uploadDocRes = await ApiFetch.api.fileStorage.create.post({
           file: docFile,
@@ -109,8 +94,7 @@ function CreateAPBDes() {
         fileId = uploadDocRes?.data?.data?.id || '';
       }
 
-      // Update form dengan ID file (bisa kosong)
-      stateAPBDes.create.form.imageId = imageId;
+      // Update form dengan ID dokumen (bisa kosong)
       stateAPBDes.create.form.fileId = fileId;
 
       // create() menampilkan toast sukses/gagal sendiri & mengembalikan status.
@@ -183,83 +167,10 @@ function CreateAPBDes() {
         <Stack gap="md">
           {/* Info: File opsional */}
           <Text fz="sm" c="dimmed" mb="xs">
-            * Upload gambar dan dokumen bersifat opsional. Bisa dikosongkan jika belum ada.
+            * Upload dokumen bersifat opsional. Bisa dikosongkan jika belum ada.
           </Text>
 
           <Stack gap={"xs"}>
-            {/* Gambar APBDes */}
-            <Box>
-              <Text fw="bold" fz="sm" mb={6}>
-                Gambar APBDes (Opsional)
-              </Text>
-              <Dropzone
-                onDrop={(files) => {
-                  const selectedFile = files[0];
-                  if (selectedFile) {
-                    setImageFile(selectedFile);
-                    setPreviewImage(URL.createObjectURL(selectedFile));
-                  }
-                }}
-                onReject={() => toast.error('File tidak valid, gunakan format gambar')}
-                maxSize={5 * 1024 ** 2}
-                accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
-                radius="md"
-                p="xl"
-              >
-                <Group justify="center" gap="xl" mih={180}>
-                  <Dropzone.Accept>
-                    <IconUpload size={48} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={48} color="var(--mantine-color-red-6)" stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconPhoto size={48} color="#868e96" stroke={1.5} />
-                  </Dropzone.Idle>
-                  <Stack gap="xs" align="center">
-                    <Text size="md" fw={500}>
-                      Seret gambar atau klik untuk memilih
-                    </Text>
-                  </Stack>
-                </Group>
-              </Dropzone>
-              {previewImage && (
-                <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
-                  <Image
-                    src={previewImage}
-                    alt="Preview Gambar"
-                    radius="md"
-                    style={{
-                      maxHeight: 200,
-                      objectFit: 'contain',
-                      border: '1px solid #ddd',
-                    }}
-                    loading="lazy"
-                  />
-
-                  {/* Tombol hapus (pojok kanan atas) */}
-                  <ActionIcon
-                    variant="filled"
-                    color="red"
-                    radius="xl"
-                    size="sm"
-                    pos="absolute"
-                    top={5}
-                    right={5}
-                    onClick={() => {
-                      setPreviewImage(null);
-                      setImageFile(null);
-                    }}
-                    style={{
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                    }}
-                  >
-                    <IconX size={14} />
-                  </ActionIcon>
-                </Box>
-              )}
-            </Box>
-
             {/* Dokumen APBDes (Opsional) */}
             <Box>
               <Text fw="bold" fz="sm" mb={6}>

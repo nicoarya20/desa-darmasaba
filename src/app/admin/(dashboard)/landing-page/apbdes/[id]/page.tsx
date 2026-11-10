@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   Group,
-  Image,
   Paper,
   Skeleton,
   Stack,
@@ -127,24 +126,6 @@ function DetailAPBDes() {
                   </Text>
                 </Box>
               )}
-
-              <Box>
-                <Text fz="lg" fw="bold">Gambar</Text>
-                {data.image?.link ? (
-                  <Image
-                    src={data.image.link}
-                    alt={data.name || 'Gambar APBDes'}
-                    w={200}
-                    height={150}
-                    radius="md"
-                    fit="contain"
-                    style={{ border: '1px solid #ddd' }}
-                    loading="lazy"
-                  />
-                ) : (
-                  <Text fz="sm" c="dimmed">Tidak ada gambar</Text>
-                )}
-              </Box>
 
               <Box>
                 <Text fz="lg" fw="bold">Dokumen</Text>
