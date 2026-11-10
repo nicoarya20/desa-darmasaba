@@ -1,0 +1,161 @@
+/* Isi teks halaman PPID (Visi Misi, Dasar Hukum): bagian berlabel di kiri dan isi di kanan,
+   dipisah garis tipis, langsung di atas latar halaman — tanpa kartu. Semua rata kiri. */
+.sections {
+  /* Garis solid: garis transparan tampak berbeda di atas latar biru-abu halaman. */
+  --ppid-rule: #b1bdd1;
+  --ppid-text: #1d1d1f;
+  --ppid-muted: #515154;
+  max-width: 980px;
+  border-bottom: 1px solid var(--ppid-rule);
+}
+
+.section {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 12px 40px;
+  padding: 36px 0;
+  border-top: 1px solid var(--ppid-rule);
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--brand);
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+/* Subjudul dari CMS yang ditulis kapital semua: dikecilkan jadi label, bukan judul besar yang "berteriak". */
+.sectionLabel {
+  margin: 0;
+  padding-top: 5px;
+  color: var(--ppid-muted);
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.body {
+  color: var(--ppid-text);
+  font-size: 19px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.statement {
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.body p {
+  margin: 0 0 0.8em;
+}
+
+.body > :last-child {
+  margin-bottom: 0;
+}
+
+/* Daftar dari editor admin (<ol>/<ul>) → baris bergaris: nomor brand untuk <ol>, titik brand untuk <ul>. */
+.body ol,
+.body ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: ppid-item;
+}
+
+.body li {
+  position: relative;
+  padding: 14px 0 14px 44px;
+  border-top: 1px solid var(--ppid-rule);
+  counter-increment: ppid-item;
+}
+
+.body li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.body li:last-child {
+  padding-bottom: 0;
+}
+
+.body li::before {
+  position: absolute;
+  left: 0;
+  color: var(--brand);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.body ol > li::before {
+  content: counter(ppid-item);
+}
+
+.body ul > li::before {
+  content: '';
+  top: calc(14px + 0.775em - 3px);
+  left: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.body ul > li:first-child::before {
+  top: calc(0.775em - 3px);
+}
+
+.empty {
+  margin: 0;
+  padding: 36px 0;
+  color: var(--ppid-muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 980px;
+  padding-top: 36px;
+  border-top: 1px solid #b1bdd1;
+}
+
+@media (max-width: 734px) {
+  .section {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 28px 0;
+  }
+
+  .sectionTitle {
+    font-size: 21px;
+  }
+
+  .sectionLabel {
+    padding-top: 0;
+  }
+
+  .body {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .statement {
+    font-size: 22px;
+    line-height: 1.3;
+  }
+
+  .body li {
+    padding-left: 36px;
+  }
+
+  .empty,
+  .skeleton {
+    padding-top: 28px;
+  }
+}
