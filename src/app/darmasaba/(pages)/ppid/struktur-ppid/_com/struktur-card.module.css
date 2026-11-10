@@ -1,12 +1,13 @@
 /*
  * Kartu bagan Struktur PPID (ala referensi BKHM): jabatan huruf kapital + pil nama putih di kiri, foto di
  * kanan. Foto pegawai persegi berlatar tidak transparan → foto selebar tinggi kartu, tepi kirinya dipudarkan
- * dengan mask ke gradasi kartu. Warna gradasi per tingkat dari variabel --tone-* (struktur.meta.ts).
- * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ * dengan mask ke gradasi kartu. Warna gradasi per tingkat dari variabel --tone-* (struktur.meta.ts);
+ * ukuran dari --lg/--md/--leaf-* yang didefinisikan struktur-chart.module.css (fallback = ukuran desktop).
+ * ≤1068px (bagan bertumpuk) kartu selebar kolom.
  */
 .card {
-  --w: 340px;
-  --h: 144px;
+  --w: var(--md-w, 320px);
+  --h: var(--md-h, 136px);
   position: relative;
   display: flex;
   flex-shrink: 0;
@@ -23,13 +24,13 @@
 }
 
 .card[data-size="lg"] {
-  --w: 440px;
-  --h: 176px;
+  --w: var(--lg-w, 440px);
+  --h: var(--lg-h, 176px);
 }
 
 .card[data-size="sm"] {
-  --w: 300px;
-  --h: 124px;
+  --w: var(--leaf-w, 290px);
+  --h: var(--leaf-h, 120px);
 }
 
 .card[data-tone="0"] {
@@ -160,17 +161,8 @@
   }
 }
 
-@media (max-width: 734px) {
+@media (max-width: 1068px) {
   .card {
-    --h: 128px;
     width: 100%;
-  }
-
-  .card[data-size="lg"] {
-    --h: 148px;
-  }
-
-  .card[data-size="sm"] {
-    --h: 116px;
   }
 }

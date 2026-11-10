@@ -95,3 +95,21 @@ export function filterOrgTree(nodes: readonly OrgNode[], query: string): OrgNode
 export function toneForDepth(depth: number): 0 | 1 | 2 {
   return depth <= 0 ? 0 : depth === 1 ? 1 : 2;
 }
+
+/**
+ * Posisi kotak ke-`index` di grup bawahan daun (`count` kotak, maksimal `maxCols` kolom per baris).
+ * - `shift`  : geser baris terakhir yang tidak penuh ke tengah, dalam satuan lebar kolom + celah.
+ * - `offset` : jarak garis induk (tengah grid) dari tengah kotak setelah digeser, dalam satuan yang sama;
+ *              positif = garis induk di kanan kotak. Dipakai CSS untuk menggambar palang ke garis induk.
+ */
+export function leafSlot(
+  index: number,
+  count: number,
+  maxCols: number,
+): { cols: number; offset: number; shift: number } {
+  const cols = Math.max(1, Math.min(count, maxCols));
+  const column = (index % cols) + 1;
+  const lastRowStart = (Math.ceil(count / cols) - 1) * cols;
+  const shift = index >= lastRowStart ? (cols - (count - lastRowStart)) / 2 : 0;
+  return { cols, offset: (cols + 1) / 2 - column - shift, shift };
+}

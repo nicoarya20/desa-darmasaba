@@ -7,6 +7,12 @@ export const STRUKTUR_PEGAWAI_LIMIT = 100;
 /** Jeda saring pencarian (ms). */
 export const STRUKTUR_SEARCH_DEBOUNCE = 300;
 
+/**
+ * Kolom maksimal grup bawahan daun: laptop 2, layar ≥1800px 4 (lihat struktur-chart.module.css).
+ * Sengaja genap: saat grup lebih dari satu baris, garis induk turun di celah tengah, tidak menembus kartu.
+ */
+export const LEAF_COLS = { base: 2, wide: 4 } as const;
+
 /** Rute profil pegawai. */
 export const strukturDetailHref = (pegawaiId: string) => `/darmasaba/ppid/struktur-ppid/${pegawaiId}`;
 

@@ -1,24 +1,35 @@
 /*
- * Garis bagan Struktur PPID, digambar dengan pseudo-element pada <ul>/<li> bersarang.
- * - .row   : bawahan bercabang berjajar; garis turun dari kartu induk → palang atas → turun ke tiap kartu.
- * - .stack : bawahan daun bertumpuk (pola "Katim" referensi); rel vertikal di kiri + cabang ke tengah kartu.
- * Garis 2px dipusatkan dengan calc(50% - 1px) agar segmen dari ::before dan ::after segaris.
- * Mobile ≤734px: .row ikut jadi tumpukan sehingga tidak ada geser horizontal.
+ * Garis bagan Struktur PPID (pola bagan hierarki), digambar dengan pseudo-element pada <ul>/<li> bersarang.
+ * - .row    : bawahan yang punya bawahan berjajar; garis turun dari induk → palang → turun ke tiap kartu.
+ * - .leaves : bawahan daun dalam grid (2 kolom, ≥1800px 4 kolom — LEAF_COLS). Garis induk turun di tengah
+ *             grid sampai palang baris terakhir; tiap kartu menggambar palang dari tengahnya ke garis induk
+ *             sejauh --o × (lebar kolom + celah) (dihitung leafSlot), lalu turun ke kartunya. Baris terakhir
+ *             yang tidak penuh digeser ke tengah sejauh --s × (lebar kolom + celah).
+ * Garis 2px dipusatkan dengan calc(50% - 1px); warna solid (garis transparan menggelap saat tumpang-tindih).
+ * ≤1068px: semua bawahan bertumpuk berindentasi dengan rel kiri, tanpa geser horizontal.
+ * Ukuran kartu (--lg/--md/--leaf) didefinisikan di sini dan dibaca struktur-card.module.css.
  */
 .chart {
-  /* Warna garis solid (= brand 35% di atas latar #D1D9E8): garis transparan menggelap di titik tumpang-tindih. */
   --line: #8ba8c1;
   --v: 28px;
   --gap: 14px;
+  --col-gap: 20px;
+  --row-gap: 20px;
   --indent: 40px;
   --rail: 18px;
+  --lg-w: 440px;
+  --lg-h: 176px;
+  --md-w: 320px;
+  --md-h: 136px;
+  --leaf-w: 290px;
+  --leaf-h: 120px;
   overflow-x: auto;
   padding: 8px 0 24px;
 }
 
 .roots,
 .row,
-.stack {
+.leaves {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -57,7 +68,7 @@
 }
 
 .row > .branch {
-  padding: var(--v) 14px 0;
+  padding: var(--v) 12px 0;
 }
 
 .row > .branch::before,
@@ -103,40 +114,63 @@
   border-radius: 0;
 }
 
-/* ---- Tumpukan daun ---- */
-.stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-  width: calc(var(--indent) + 300px);
-  max-width: 100%;
-  padding: var(--gap) 0 0 var(--indent);
+/* ---- Grid bawahan daun ---- */
+.leaves {
+  --cols: var(--c2, 1);
+  --step: calc(var(--leaf-w) + var(--col-gap));
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--leaf-w));
+  gap: var(--row-gap) var(--col-gap);
+  padding-top: var(--v);
 }
 
-.stack > .branch {
-  align-items: flex-start;
-}
-
-.stack > .branch::before,
-.stack > .branch:not(:last-child)::after {
+.leaves::before {
   content: "";
   position: absolute;
-  left: calc(var(--rail) - var(--indent));
+  top: 0;
+  bottom: calc(var(--v) + var(--leaf-h));
+  left: calc(50% - 1px);
+  border-left: 2px solid var(--line);
 }
 
-.stack > .branch::before {
-  top: calc(-1 * var(--gap));
-  width: calc(var(--indent) - var(--rail));
-  height: calc(50% + var(--gap));
-  border-bottom: 2px solid var(--line);
-  border-left: 2px solid var(--line);
-  border-bottom-left-radius: 10px;
+.leaves > .branch {
+  --o: var(--o2, 0);
+  --a: var(--a2, 0);
+  --s: var(--s2, 0);
+  padding-top: var(--v);
+  transform: translateX(calc(var(--s) * var(--step)));
 }
 
-.stack > .branch:not(:last-child)::after {
-  top: 50%;
-  bottom: calc(-1 * var(--gap));
+.leaves > .branch::before,
+.leaves > .branch::after {
+  content: "";
+  position: absolute;
+  top: 0;
+}
+
+.leaves > .branch::before {
+  left: calc(50% + min(0px, var(--o) * var(--step)) - 1px);
+  width: calc(var(--a) * var(--step) + 2px);
+  border-top: 2px solid var(--line);
+}
+
+.leaves > .branch::after {
+  left: calc(50% - 1px);
+  height: var(--v);
   border-left: 2px solid var(--line);
+}
+
+@media (min-width: 1800px) {
+  .leaves {
+    --cols: var(--c4, 1);
+  }
+
+  .leaves > .branch {
+    --o: var(--o4, 0);
+    --a: var(--a4, 0);
+    --s: var(--s4, 0);
+  }
 }
 
 /* ---- Kerangka ---- */
@@ -155,9 +189,9 @@
 
 .skeletonCard {
   display: block;
-  width: 340px;
+  width: 320px;
   max-width: 100%;
-  height: 144px;
+  height: 136px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.55);
   animation: pulse 1.4s ease-in-out infinite;
@@ -180,79 +214,113 @@
   }
 }
 
-/* ---- Mobile: semua bawahan bertumpuk ---- */
-@media (max-width: 734px) {
+/* ---- Tablet & mobile: semua bawahan bertumpuk ---- */
+@media (max-width: 1068px) {
   .chart {
-    --indent: 28px;
-    --rail: 14px;
     overflow: visible;
   }
 
   .roots {
     flex-direction: column;
     width: 100%;
+    max-width: 560px;
   }
 
   .branch,
-  .stack > .branch {
+  .leaves > .branch {
     align-items: stretch;
   }
 
   .row,
-  .stack {
+  .leaves {
+    display: flex;
     flex-direction: column;
     gap: var(--gap);
     width: 100%;
     padding: var(--gap) 0 0 var(--indent);
   }
 
-  .row::before {
+  .row::before,
+  .leaves::before {
     display: none;
   }
 
   .row > .branch {
+    --mid: calc(var(--md-h) / 2);
     padding: 0;
   }
 
-  /* :nth-child(n) menaikkan spesifisitas agar menang atas aturan :first-child/:last-child/:only-child desktop. */
+  .leaves > .branch {
+    --mid: calc(var(--leaf-h) / 2);
+    padding: 0;
+    transform: none;
+  }
+
+  /* :nth-child(n) menaikkan spesifisitas agar menang atas aturan :first-child/:last-child/:only-child di atas.
+     Tengah kartu = --mid (bukan 50%), karena cabang di .row juga memuat daftar bawahannya. */
   .row > .branch:nth-child(n)::before,
-  .row > .branch:not(:last-child)::after {
+  .leaves > .branch:nth-child(n)::before {
     display: block;
+    top: calc(-1 * var(--gap));
     right: auto;
     left: calc(var(--rail) - var(--indent));
+    width: calc(var(--indent) - var(--rail));
+    height: calc(var(--mid) + var(--gap));
     border: 0;
+    border-bottom: 2px solid var(--line);
+    border-left: 2px solid var(--line);
+    border-radius: 0 0 0 10px;
+  }
+
+  .row > .branch:not(:last-child)::after,
+  .leaves > .branch:not(:last-child)::after {
+    display: block;
+    top: var(--mid);
+    bottom: calc(-1 * var(--gap));
+    left: calc(var(--rail) - var(--indent));
+    width: 0;
+    height: auto;
+    border: 0;
+    border-left: 2px solid var(--line);
     border-radius: 0;
   }
 
-  .row > .branch:last-child::after {
+  .row > .branch:last-child::after,
+  .leaves > .branch:last-child::after {
     display: none;
-  }
-
-  /* Kartu di baris punya sub-daftar di bawahnya, jadi tengah kartu = setengah tinggi kartu md mobile (128px). */
-  .row > .branch:nth-child(n)::before {
-    top: calc(-1 * var(--gap));
-    width: calc(var(--indent) - var(--rail));
-    height: calc(64px + var(--gap));
-    border-bottom: 2px solid var(--line);
-    border-left: 2px solid var(--line);
-    border-bottom-left-radius: 10px;
-  }
-
-  .row > .branch:not(:last-child)::after {
-    top: 64px;
-    bottom: calc(-1 * var(--gap));
-    height: auto;
-    border-left: 2px solid var(--line);
   }
 
   .skeletonRow {
     flex-direction: column;
     width: 100%;
+    max-width: 560px;
   }
 
   .skeletonCard,
   .skeletonCard[data-size="lg"] {
     width: 100%;
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 734px) {
+  .chart {
+    --indent: 28px;
+    --rail: 14px;
+    --lg-h: 148px;
+    --md-h: 128px;
+    --leaf-h: 116px;
+  }
+
+  .roots,
+  .skeletonRow,
+  .skeletonCard,
+  .skeletonCard[data-size="lg"] {
+    max-width: none;
+  }
+
+  .skeletonCard,
+  .skeletonCard[data-size="lg"] {
     height: 128px;
   }
 }

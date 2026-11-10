@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildOrgTree,
   filterOrgTree,
+  leafSlot,
   toneForDepth,
   type OrgNode,
   type PegawaiItem,
@@ -128,5 +129,36 @@ describe('filterOrgTree', () => {
 describe('toneForDepth', () => {
   it('akar 0, bawahan langsung 1, selebihnya 2', () => {
     expect([0, 1, 2, 5].map(toneForDepth)).toEqual([0, 1, 2, 2]);
+  });
+});
+
+describe('leafSlot', () => {
+  it('satu baris (jumlah ≤ kolom maksimal): palang tiap kotak ke tengah, kotak tengah tepat di bawah induk', () => {
+    expect([0, 1, 2].map((i) => leafSlot(i, 3, 4))).toEqual([
+      { cols: 3, offset: 1, shift: 0 },
+      { cols: 3, offset: 0, shift: 0 },
+      { cols: 3, offset: -1, shift: 0 },
+    ]);
+    expect(leafSlot(0, 1, 2)).toEqual({ cols: 1, offset: 0, shift: 0 });
+  });
+
+  it('5 Kadus di 2 kolom: 2 + 2 + 1, kotak terakhir digeser ke tengah tepat di bawah garis induk', () => {
+    const slots = [0, 1, 2, 3, 4].map((i) => leafSlot(i, 5, 2));
+    expect(slots.map((x) => x.offset)).toEqual([0.5, -0.5, 0.5, -0.5, 0]);
+    expect(slots.map((x) => x.shift)).toEqual([0, 0, 0, 0, 0.5]);
+  });
+
+  it('5 Kadus di 4 kolom: 4 + 1, kotak kelima digeser 1,5 kolom ke tengah', () => {
+    const slots = [0, 1, 2, 3, 4].map((i) => leafSlot(i, 5, 4));
+    expect(slots.map((x) => x.offset)).toEqual([1.5, 0.5, -0.5, -1.5, 0]);
+    expect(slots[4]).toEqual({ cols: 4, offset: 0, shift: 1.5 });
+  });
+
+  it('baris terakhir berisi 2 dari 4 kolom digeser 1 kolom', () => {
+    const slots = [4, 5].map((i) => leafSlot(i, 6, 4));
+    expect(slots).toEqual([
+      { cols: 4, offset: 0.5, shift: 1 },
+      { cols: 4, offset: -0.5, shift: 1 },
+    ]);
   });
 });

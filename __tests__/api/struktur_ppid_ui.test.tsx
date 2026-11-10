@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Halaman Struktur PPID: kartu bagan (tautan profil, kotak kosong, foto) dan susunan baris/tumpukan.
+// Halaman Struktur PPID: kartu bagan (tautan profil, kotak kosong, foto) dan susunan baris/grid daun.
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -67,16 +67,23 @@ describe('Struktur PPID — kartu bagan', () => {
     expect(count(html, 'tabler-icon-user-filled')).toBe(5);
   });
 
-  it('warna & ukuran per tingkat: akar lg/tone 0, bawahan langsung md/tone 1, daun di tumpukan sm/tone 2', () => {
+  it('warna & ukuran per tingkat: akar lg/tone 0, bawahan langsung md/tone 1, daun di grid sm/tone 2', () => {
     expect(html).toMatch(/data-tone="0" data-size="lg"[^>]*aria-label="Ida Bagus/);
     expect(html).toMatch(/data-tone="1" data-size="md"[^>]*aria-label="I Ketut/);
     expect(html).toMatch(/data-tone="2" data-size="sm"[^>]*aria-label="Si Gede/);
   });
 
-  it('bawahan bercabang → baris; bawahan daun semua → tumpukan', () => {
+  it('bawahan bercabang → baris; bawahan daun semua → grid dengan jumlah kolom per batas layar', () => {
     expect(count(html, /class="[^"]*_row_/)).toBe(1);
-    expect(count(html, /class="[^"]*_stack_/)).toBe(2);
+    expect(count(html, /class="[^"]*_leaves_/)).toBe(2);
+    expect(html).toMatch(/class="[^"]*_leaves_[^"]*" style="--c2:2;--c4:2"/);
+    expect(html).toMatch(/class="[^"]*_leaves_[^"]*" style="--c2:1;--c4:1"/);
     expect(html).toContain('aria-label="Bagan struktur organisasi PPID"');
+  });
+
+  it('kotak daun membawa geser palang (--o) dan geser baris (--s) dari leafSlot', () => {
+    expect(html).toContain('style="--o2:0.5;--a2:0.5;--s2:0;--o4:0.5;--a4:0.5;--s4:0"');
+    expect(html).toContain('style="--o2:-0.5;--a2:0.5;--s2:0;--o4:-0.5;--a4:0.5;--s4:0"');
   });
 });
 
