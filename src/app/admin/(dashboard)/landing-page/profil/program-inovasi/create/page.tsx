@@ -2,27 +2,18 @@
 'use client';
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import colors from '@/con/colors';
-import ApiFetch from '@/lib/api-fetch';
-import {
-  Box,
-  Button,
-  Group,
-  Image,
-  Paper,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-  ActionIcon,
-  Loader,
-} from '@mantine/core';
-import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { MAX_GAMBAR_DOKUMENTASI } from '@/lib/program-inovasi';
+import { Box, Button, Group, Loader, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useSnapshot } from 'valtio';
 import profileLandingPageState from '../../../../_state/landing-page/profile';
+import { emptyProgramInovasiForm } from '@/app/admin/(dashboard)/_state/landing-page/profile/program-inovasi';
+import { DokumentasiUploader } from '../_com/DokumentasiUploader';
+import { LogoDropzone } from '../_com/LogoDropzone';
+import { useProgramInovasiMedia } from '../_lib/useProgramInovasiMedia';
 
 function CreateProgramInovasi() {
   const router = useRouter();
@@ -32,59 +23,36 @@ function CreateProgramInovasi() {
   // tengah. Sync memaksa re-render di event yang sama → caret stabil.
   const stateProgramInovasi = profileLandingPageState.programInovasi;
   const snap = useSnapshot(profileLandingPageState.programInovasi, { sync: true });
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const media = useProgramInovasiMedia();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Check if form is valid
-  const isFormValid = () => {
-    return (
-      snap.create.form.name?.trim() !== '' &&
-      snap.create.form.description?.trim() !== '' &&
-      snap.create.form.link?.trim() !== '' &&
-      file !== null
-    );
-  };
+  // Logo & dokumentasi opsional: cukup nama + deskripsi.
+  const isFormValid = () =>
+    snap.create.form.name?.trim() !== '' && snap.create.form.description?.trim() !== '';
 
   useEffect(() => {
     stateProgramInovasi.findMany.load();
   }, []);
 
-  // ✅ Reset semua input form & gambar
+  // ✅ Reset semua input form, logo & dokumentasi
   const resetForm = () => {
-    stateProgramInovasi.create.form = {
-      name: '',
-      description: '',
-      imageId: '',
-      link: '',
-    };
-    setPreviewImage(null);
-    setFile(null);
+    stateProgramInovasi.create.form = emptyProgramInovasiForm();
+    media.muat();
   };
 
-  // ✅ Submit data
+  // ✅ Submit data: unggah logo & dokumentasi dulu, baru simpan program
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      if (!file) {
-        return toast.warn('Silakan pilih file gambar terlebih dahulu');
-      }
-      const res = await ApiFetch.api.fileStorage.create.post({
-        file,
-        name: file.name,
-      });
-      const uploaded = res.data?.data;
-      if (!uploaded?.id) {
-        return toast.error('Gagal mengunggah gambar, silakan coba lagi');
-      }
-      stateProgramInovasi.create.form.imageId = uploaded.id;
+      const { imageId, imageIds } = await media.unggah();
+      stateProgramInovasi.create.form.imageId = imageId;
+      stateProgramInovasi.create.form.imageIds = imageIds;
       await stateProgramInovasi.create.create();
 
       resetForm();
       router.push('/admin/landing-page/profil/program-inovasi');
     } catch (error) {
-      console.error(error);
-      toast.error('Gagal menambahkan program inovasi');
+      toast.error(error instanceof Error ? error.message : 'Gagal menambahkan program inovasi');
     } finally {
       setIsSubmitting(false);
     }
@@ -110,83 +78,7 @@ function CreateProgramInovasi() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
-          {/* ======= Upload Gambar ======= */}
-          <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Gambar Program Inovasi
-            </Text>
-            <Dropzone
-              onDrop={(files) => {
-                const selectedFile = files[0];
-                if (selectedFile) {
-                  setFile(selectedFile);
-                  setPreviewImage(URL.createObjectURL(selectedFile));
-                }
-              }}
-              onReject={() => toast.error('File tidak valid, gunakan format gambar')}
-              maxSize={5 * 1024 ** 2}
-              accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
-              radius="md"
-              p="xl"
-            >
-              <Group justify="center" gap="xl" mih={180}>
-                <Dropzone.Accept>
-                  <IconUpload size={48} color={colors['blue-button']} stroke={1.5} />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX size={48} color="red" stroke={1.5} />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconPhoto size={48} color="#868e96" stroke={1.5} />
-                </Dropzone.Idle>
-                <Stack gap="xs" align="center">
-                  <Text size="md" fw={500}>
-                    Seret gambar atau klik untuk memilih file
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                  Maksimal 5MB, format gambar .png, .jpg, .jpeg, webp
-                  </Text>
-                </Stack>
-              </Group>
-            </Dropzone>
-
-            {/* ✅ Preview gambar + tombol X */}
-            {previewImage && (
-              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
-                <Image
-                  src={previewImage}
-                  alt="Preview Gambar"
-                  radius="md"
-                  style={{
-                    maxHeight: 200,
-                    objectFit: 'contain',
-                    border: '1px solid #ddd',
-                  }}
-                  loading="lazy"
-                />
-
-                {/* Tombol hapus (pojok kanan atas) */}
-                <ActionIcon
-                  variant="filled"
-                  color="red"
-                  radius="xl"
-                  size="sm"
-                  pos="absolute"
-                  top={5}
-                  right={5}
-                  onClick={() => {
-                    setPreviewImage(null);
-                    setFile(null);
-                  }}
-                  style={{
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                  }}
-                >
-                  <IconX size={14} />
-                </ActionIcon>
-              </Box>
-            )}
-          </Box>
+          <LogoDropzone preview={media.logoPreview} onSelect={media.pilihLogo} onRemove={media.hapusLogo} />
 
           {/* ======= Input Nama ======= */}
           <TextInput
@@ -210,36 +102,27 @@ function CreateProgramInovasi() {
             />
           </Box>
 
-          {/* ======= Link Program ======= */}
-          <TextInput
-            label="Link Program Inovasi"
-            placeholder="Masukkan link program inovasi (opsional)"
-            value={snap.create.form.link || ''}
-            onChange={(e) => (stateProgramInovasi.create.form.link = e.target.value)}
+          <DokumentasiUploader
+            items={media.dokumentasi}
+            max={MAX_GAMBAR_DOKUMENTASI}
+            onAdd={media.tambahGambar}
+            onRemove={media.hapusGambar}
           />
 
           {/* ======= Tombol Aksi ======= */}
           <Group justify="right">
-            {/* Tombol Batal */}
-            <Button
-              variant="outline"
-              color="gray"
-              radius="md"
-              size="md"
-              onClick={resetForm}
-            >
+            <Button variant="outline" color="gray" radius="md" size="md" onClick={resetForm}>
               Reset
             </Button>
 
-            {/* Tombol Simpan */}
             <Button
               onClick={handleSubmit}
               radius="md"
               size="md"
               disabled={!isFormValid() || isSubmitting}
               style={{
-                background: !isFormValid() || isSubmitting 
-                  ? 'linear-gradient(135deg, #cccccc, #999999)' 
+                background: !isFormValid() || isSubmitting
+                  ? 'linear-gradient(135deg, #cccccc, #999999)'
                   : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',
                 boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
