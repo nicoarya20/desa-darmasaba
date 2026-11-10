@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 import BeritaCard from './_com/BeritaCard';
 import { CardSkeleton } from './_com/CardSkeleton';
 import EmptyState from './_com/EmptyState';

@@ -5,6 +5,8 @@ import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
 import searchExtraPages from '@/con/search-extra-pages';
 import { flattenMenu } from '@/app/darmasaba/_com/searchMenu';
+import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
+import { hiddenMenuHrefs, isPathHidden } from '@/app/darmasaba/_com/menu-visibility.logic';
 import {
   countPages,
   groupPetaInformasi,
@@ -72,8 +74,11 @@ describe('groupPetaInformasi / petaInformasiGroups (fixture)', () => {
 
 describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () => {
   const groups = petaInformasiGroups('');
-  const expected = [...flattenMenu(navbarListMenu), ...flattenMenu(searchExtraPages)]
+  // Halaman tambahan di bawah submenu yang default-hidden (mis. data-kesehatan-warga/*) ikut tersembunyi.
+  const defaultHidden = hiddenMenuHrefs({});
+  const expected = [...flattenMenu(visibleMenu(navbarListMenu)), ...flattenMenu(searchExtraPages)]
     .map((p) => p.href)
+    .filter((href) => !isPathHidden(href, defaultHidden))
     .filter((href) => href !== PETA_INFORMASI_HREF);
 
   it('setiap href navbar + halaman tambahan (kecuali peta) muncul tepat sekali', () => {
@@ -83,22 +88,24 @@ describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () =>
   });
 
   it('grup navbar dulu sesuai urutan navbar, lalu grup tambahan yang belum ada', () => {
-    const navbarNames = navbarListMenu.map((m) => m.name);
+    // Menu link langsung (mis. DAK) tidak punya submenu, jadi tidak membentuk grup sendiri.
+    const navbarNames = navbarListMenu.filter((m) => m.children?.length).map((m) => m.name);
     const extraOnly = searchExtraPages.map((m) => m.name).filter((n) => !navbarNames.includes(n) && n !== 'Informasi');
     expect(groups.map((g) => g.name)).toEqual([...navbarNames, ...extraOnly]);
   });
 
-  it('"Desa" dan "Kesehatan" navbar digabung dengan halaman tambahan bernama sama', () => {
+  it('"Pemerintahan" dan "Kesehatan" navbar digabung dengan halaman tambahan bernama sama', () => {
     const names = groups.map((g) => g.name);
-    expect(names.filter((n) => n === 'Desa')).toHaveLength(1);
+    expect(names.filter((n) => n === 'Pemerintahan')).toHaveLength(1);
     expect(names.filter((n) => n === 'Kesehatan')).toHaveLength(1);
-    const desa = groups.find((g) => g.name === 'Desa')!.pages.map((p) => p.href);
-    expect(desa).toContain('/darmasaba/desa/profil');
-    expect(desa).toContain('/darmasaba/desa/galery/video');
+    const desa = groups.find((g) => g.name === 'Pemerintahan')!.pages.map((p) => p.href);
+    expect(desa).toContain('/darmasaba/pemerintahan/profil');
+    expect(desa).toContain('/darmasaba/pemerintahan/galery/video');
     const kesehatan = groups.find((g) => g.name === 'Kesehatan')!.pages.map((p) => p.href);
-    expect(kesehatan).toContain('/darmasaba/kesehatan/data-kesehatan-warga/grafik-penyakit');
+    // Data Kesehatan Warga default-hidden → sub-halamannya (404) tidak boleh tampil di peta.
+    expect(kesehatan).not.toContain('/darmasaba/kesehatan/data-kesehatan-warga/grafik-penyakit');
     // urutan di dalam grup gabungan: halaman navbar dulu, halaman tambahan sesudahnya
-    expect(desa.indexOf('/darmasaba/desa/profil')).toBeLessThan(desa.indexOf('/darmasaba/desa/galery/video'));
+    expect(desa.indexOf('/darmasaba/pemerintahan/profil')).toBeLessThan(desa.indexOf('/darmasaba/pemerintahan/galery/video'));
   });
 
   it('saring "apbdes" hanya menampilkan APBDes di grup Transparansi', () => {
@@ -124,7 +131,8 @@ describe('route & pintu masuk Peta Informasi', () => {
     const view = read(path.join(PETA_DIR, '_com/PetaInformasi.tsx'));
     expect(view).toMatch(/<Title order=\{1\}[^>]*>\s*Peta Informasi/);
     expect(view).toMatch(/label="Saring halaman"/);
-    expect(view).toMatch(/petaInformasiGroups\(query\)/);
+    // Menu efektif (default + override DB) dari useMenuVisibility, bukan DEFAULT_SEARCH_MENUS statis.
+    expect(view).toMatch(/petaInformasiGroups\(query, searchMenus\)/);
     expect(view).toContain('Tidak ada halaman yang cocok');
     const card = read(path.join(PETA_DIR, '_com/PetaInformasiGroupCard.tsx'));
     expect(card).toMatch(/<Title[^>]*order=\{2\}/);

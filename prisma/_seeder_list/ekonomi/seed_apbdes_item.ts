@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { loadJsonData } from "../../load-json";
 
 const itemsJson = loadJsonData("ekonomi/apbdes/apbdes-items.json");

@@ -72,7 +72,7 @@ function DetailProgramKemiskinan() {
       >
         <Stack gap="md">
           <Text fz="2xl" fw="bold" c={colors['blue-button']}>
-            Detail Program Kemiskinan
+            Detail Program Pengentasan Kemiskinan
           </Text>
 
           {/* Detail Content */}

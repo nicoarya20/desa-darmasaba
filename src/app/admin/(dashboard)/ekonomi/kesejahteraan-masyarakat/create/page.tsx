@@ -24,7 +24,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/desa/gallery/lib/youtube-utils';
+import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/pemerintahan/gallery/lib/youtube-utils';
 
 export default function CreateKesejahteraan() {
   const state = useProxy(stateKesejahteraanMasyarakat, { sync: true }); // sync: cegah caret jump di controlled input

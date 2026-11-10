@@ -25,11 +25,14 @@ describe('proxy matcher — path publik tidak disentuh', () => {
   it.each([
     '/',
     '/darmasaba',
-    '/darmasaba/desa/layanan',
+    '/darmasaba/pemerintahan/layanan',
     '/login',
     '/profile',
     '/api/auth/get-session',
     '/api/fileStorage/findUnique/x',
+    // Unduh ZIP dokumen Desa Anti Korupsi: publik untuk warga tanpa login.
+    '/api/landingpage/desaantikorupsi/p1/zip',
+    '/api/landingpage/desaantikorupsi/p1/zip?folder=umum',
     '/administrasi', // prefix mirip "/admin" tapi bukan segmen /admin
   ])('%s → proxy tidak jalan', (url) => {
     expect(matches(url)).toBe(false);

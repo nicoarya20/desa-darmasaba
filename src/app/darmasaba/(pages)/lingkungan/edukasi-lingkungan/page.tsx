@@ -4,7 +4,7 @@ import { Box, Container, SimpleGrid, Skeleton, Stack, Text, Title } from '@manti
 import { useShallowEffect } from '@mantine/hooks';
 import { IconLeaf, IconPlant2, IconRecycle } from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 import stateEdukasiLingkungan from '@/app/admin/(dashboard)/_state/lingkungan/edukasi-lingkungan';
 import colors from '@/con/colors';

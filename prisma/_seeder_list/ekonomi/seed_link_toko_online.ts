@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { validateLinkTokoOnlineList } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
 import { loadJsonData } from "../../load-json";
 

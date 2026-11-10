@@ -8,6 +8,9 @@ import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { DokumenFolderView } from '../../_com/DokumenFolderView';
+import { DokumenSampahPanel } from '../../_com/DokumenSampahPanel';
+import { DokumenZipButton } from '../../_com/DokumenZipButton';
 
 
 export default function DetailKegiatanDesa() {
@@ -40,6 +43,7 @@ export default function DetailKegiatanDesa() {
   }
 
   const data = detailState.findUnique.data;
+  const totalDokumen = (data.dokumenUmum?.length ?? 0) + (data.folders ?? []).reduce((n, f) => n + f.dokumen.length, 0);
 
   return (
     <Box px={{ base: 0, md: 'xs' }} py="xs">
@@ -89,28 +93,24 @@ export default function DetailKegiatanDesa() {
               </Box>
 
               <Box>
-                <Text fz="lg" fw="bold" mb="xs">Dokumen</Text>
-                {data.file?.link ? (
-                  <Box 
-                    style={{
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '8px',
-                      overflow: 'hidden',
-                      height: '500px',
-                      width: '100%'
-                    }}
-                  >
-                    <iframe
-                      src={data.file.link}
-                      width="100%"
-                      height="100%"
-                      style={{ border: 'none' }}
-                    />
-                  </Box>
-                ) : (
-                  <Text fz="sm" c="dimmed">Tidak ada dokumen tersedia</Text>
-                )}
+                <Group justify="space-between" gap="xs" mb="xs">
+                  <Text fz="lg" fw="bold">Dokumen</Text>
+                  <DokumenZipButton
+                    programId={data.id}
+                    label="Unduh semua (ZIP)"
+                    target="semua dokumen"
+                    disabled={totalDokumen === 0}
+                  />
+                </Group>
+                <DokumenFolderView key={data.id} programId={data.id} folders={data.folders ?? []} dokumenUmum={data.dokumenUmum ?? []} />
               </Box>
+
+              <DokumenSampahPanel
+                key={`sampah-${data.id}`}
+                programId={data.id}
+                folders={data.folders ?? []}
+                onRestored={() => void detailState.findUnique.load(data.id)}
+              />
 
               <Group gap="sm" mt="md">
                   <Button

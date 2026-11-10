@@ -1,7 +1,6 @@
 /*
- * Section Kabar Desa beranda — pola apple.com Newsroom: latar putih, isi selebar layar dengan jarak tepi 24px
- * (sama seperti section Indeks Kepuasan Masyarakat),
- * kartu #f5f5f7 tanpa border/bayangan. Berita = foto bersudut lancip (1 utama + 3 kecil),
+ * Section Kabar Desa beranda — pola apple.com Newsroom: latar putih, isi selebar layar tanpa max-width
+ * dengan jarak tepi 24px, kartu #f5f5f7 tanpa border/bayangan. Berita = foto bersudut lancip (1 utama + 3 kecil),
  * pengumuman = daftar teks (gaya di kabar.pengumuman.module.css).
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
  */
@@ -12,7 +11,7 @@
   --tile: #f5f5f7;
   --line: rgba(0, 0, 0, 0.08);
   --radius: 18px;
-  /* = Stack p="sm" + Box px="sm" (12 + 12px) di section Kepuasan. */
+  /* Jarak tepi kiri/kanan; isi sengaja selebar layar (tanpa max-width). */
   --gutter: 24px;
   background: #fff;
   padding: var(--section-pad-y) var(--gutter);

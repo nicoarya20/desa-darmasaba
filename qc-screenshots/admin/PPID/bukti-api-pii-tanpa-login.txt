@@ -1,0 +1,14 @@
+Bukti: GET tanpa cookie/sesi (curl polos) ke endpoint PPID. Nilai data warga sengaja TIDAK disimpan.
+Waktu: 2026-11-03 15:39 +0800
+
+GET /api/ppid/permohonaninformasipublik/find-many?page=1&limit=100000 -> HTTP 200
+total(server)= 2 | baris dikembalikan= 2 | field= id,nomor,name,nik,notelp,alamat,email,jenisInformasiDimintaId,caraMemperolehInformasiId,caraMemperolehSalinanInformasiId,createdAt,updatedAt,deletedAt,isActive,jenisInformasiDiminta,caraMemperolehInformasi,caraMemperolehSalinanInformasi
+
+GET /api/ppid/permohonankeberataninformasipublik/find-many?page=1&limit=100000 -> HTTP 200
+total(server)= 4 | baris dikembalikan= 4 | field= id,name,email,notelp,alasan,createdAt,updatedAt,deletedAt,isActive
+
+GET /api/ppid/permohonaninformasipublik/<id> -> HTTP 200
+success= true | field= id,nomor,name,nik,notelp,alamat,email,jenisInformasiDimintaId,caraMemperolehInformasiId,caraMemperolehSalinanInformasiId,createdAt,updatedAt,deletedAt,isActive,jenisInformasiDiminta,caraMemperolehInformasi,caraMemperolehSalinanInformasi
+
+GET /api/landingpage/responden/findMany?page=1&limit=100000 (tanpa sesi) -> HTTP 200
+total= 6 | dikembalikan= 6 | field= id,name,tanggal,jenisKelaminId,ratingId,kelompokUmurId,createdAt,updatedAt,deletedAt,isActive,jenisKelamin,rating,kelompokUmur

@@ -35,9 +35,7 @@ const original = (items: ApbdesItemForm[]): ApbdesOriginalData => ({
   name: "APBDes 2025",
   deskripsi: "desk",
   jumlah: "1000",
-  imageId: "img1",
   fileId: "file1",
-  imageUrl: "http://x/img",
   fileUrl: "http://x/file",
   items,
 });
@@ -49,7 +47,7 @@ describe("buildResetForm — Batal memulihkan seluruh form termasuk items", () =
 
     expect(form.tahun).toBe(2025);
     expect(form.name).toBe("APBDes 2025");
-    expect(form.imageId).toBe("img1");
+    expect(form).not.toHaveProperty("imageId");
     expect(form.fileId).toBe("file1");
     expect(form.items).toHaveLength(2);
     expect(form.items.map((i) => i.kode)).toEqual(["4.1", "5.1"]);

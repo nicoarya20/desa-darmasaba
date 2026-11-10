@@ -10,8 +10,8 @@ export const PRESTASI_PAGE_SIZE = 8;
 /** Halaman gabungan; juga basis rute detail prestasi (`/darmasaba/prestasi-desa/{id}`). */
 export const PRESTASI_LIST_HREF = "/darmasaba/prestasi-desa";
 
-/** Basis rute detail penghargaan (`/darmasaba/penghargaan/{id}`); daftarnya dialihkan ke halaman gabungan. */
-export const PENGHARGAAN_DETAIL_BASE = "/darmasaba/penghargaan";
+/** Nama kategori prestasi yang menampung entri eks-Penghargaan (sama dengan migrasi & seed). */
+export const PENGHARGAAN_KATEGORI_NAME = "Penghargaan";
 
 /** Video latar hero (sama dengan section Penghargaan lama) + poster saat video belum/tidak diputar. */
 export const PRESTASI_HERO_VIDEO = {

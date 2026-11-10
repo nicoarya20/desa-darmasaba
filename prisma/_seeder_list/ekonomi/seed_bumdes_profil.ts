@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { PROFIL_BUMDES_ID } from "@/app/api/[[...slugs]]/_lib/ekonomi/bumdes/profil/validation";
 import { loadJsonData } from "../../load-json";
 

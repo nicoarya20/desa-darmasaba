@@ -37,12 +37,13 @@ type Row = { id: string; [k: string]: unknown };
 const ids = (rows: Row[]) => new Set(rows.map((r) => r.id));
 
 // [file pensiun, file JSON aktif, field penanda yang dicocokkan saat hapus]
-const RETIRED: [string, string, string][] = [
-  ["desa/berita/berita.retired.json", "desa/berita/berita.json", "judul"],
-  ["ekonomi/struktur-organisasi/pegawai-bumdes.retired.json", "ekonomi/struktur-organisasi/pegawai-bumdes.json", "namaLengkap"],
-  ["ekonomi/struktur-organisasi/posisi-organisasi-bumdes.retired.json", "ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json", "nama"],
-  ["desa/kegiatan-desa/kategori-kegiatan.retired.json", "desa/kegiatan-desa/kategori-kegiatan.json", "nama"],
-  ["pendidikan/perpustakaan-digital/perpustakaan-digital.retired.json", "pendidikan/perpustakaan-digital/perpustakaan-digital.json", "judul"],
+// Kategori Kegiatan hanya nama (tabelnya tidak punya deskripsi); Pegawai BUMDes nama + posisi.
+const RETIRED: [string, string, string[]][] = [
+  ["desa/berita/berita.retired.json", "desa/berita/berita.json", ["judul", "deskripsi"]],
+  ["ekonomi/struktur-organisasi/pegawai-bumdes.retired.json", "ekonomi/struktur-organisasi/pegawai-bumdes.json", ["namaLengkap", "posisiId"]],
+  ["ekonomi/struktur-organisasi/posisi-organisasi-bumdes.retired.json", "ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json", ["nama", "deskripsi"]],
+  ["desa/kegiatan-desa/kategori-kegiatan.retired.json", "desa/kegiatan-desa/kategori-kegiatan.json", ["nama"]],
+  ["pendidikan/perpustakaan-digital/perpustakaan-digital.retired.json", "pendidikan/perpustakaan-digital/perpustakaan-digital.json", ["judul", "deskripsi"]],
 ];
 
 describe("retireSeedRows", () => {
@@ -69,15 +70,17 @@ describe("retireSeedRows", () => {
 });
 
 describe("daftar *.retired.json", () => {
-  it.each(RETIRED)("%s tidak berisi id yang masih dipakai JSON aktif dan punya penanda", (retiredPath, activePath, field) => {
+  it.each(RETIRED)("%s tidak berisi id yang masih dipakai JSON aktif dan punya penanda", (retiredPath, activePath, fields) => {
     const retired = loadRetiredSeed<Row>(retiredPath);
     const active = loadJsonData<Row[] | Row[][]>(activePath).flat() as Row[];
     expect(retired.length).toBeGreaterThan(0);
     const activeIds = ids(active);
     for (const r of retired) {
       expect(activeIds.has(r.id)).toBe(false);
-      expect(typeof r[field]).toBe("string");
-      expect((r[field] as string).length).toBeGreaterThan(0);
+      for (const field of fields) {
+        expect(typeof r[field]).toBe("string");
+        expect((r[field] as string).length).toBeGreaterThan(0);
+      }
     }
     expect(ids(retired).size).toBe(retired.length);
   });
@@ -114,13 +117,15 @@ describe("kategori kegiatan & perpustakaan tidak dobel", () => {
 describe("seeder menghapus data pensiun dengan urutan aman", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("struktur BUMDes: pegawai pensiun dihapus sebelum posisi, dicocokkan id + nama", async () => {
+  it("struktur BUMDes: pegawai pensiun dihapus sebelum posisi, dicocokkan id + nama + posisi/deskripsi", async () => {
     await seedStrukturBumdes();
     const pegawai = prismaMock.pegawaiBumDes.deleteMany;
     const posisi = prismaMock.posisiOrganisasiBumDes.deleteMany;
-    const pegawaiPensiun = loadRetiredSeed<{ id: string; namaLengkap: string }>(RETIRED[1][0]);
-    expect(pegawai).toHaveBeenCalledTimes(pegawaiPensiun.length);
-    expect(pegawai).toHaveBeenCalledWith({ where: { id: pegawaiPensiun[0].id, namaLengkap: pegawaiPensiun[0].namaLengkap } });
+    const [pg] = loadRetiredSeed<{ id: string; namaLengkap: string; posisiId: string }>(RETIRED[1][0]);
+    const [ps] = loadRetiredSeed<{ id: string; nama: string; deskripsi: string }>(RETIRED[2][0]);
+    expect(pegawai).toHaveBeenCalledTimes(loadRetiredSeed(RETIRED[1][0]).length);
+    expect(pegawai).toHaveBeenCalledWith({ where: { id: pg.id, namaLengkap: pg.namaLengkap, posisiId: pg.posisiId } });
+    expect(posisi).toHaveBeenCalledWith({ where: { id: ps.id, nama: ps.nama, deskripsi: ps.deskripsi } });
     expect(Math.max(...pegawai.mock.invocationCallOrder)).toBeLessThan(Math.min(...posisi.mock.invocationCallOrder));
   });
 
@@ -140,14 +145,19 @@ describe("seeder menghapus data pensiun dengan urutan aman", () => {
     expect(moveOrder).toBeLessThan(deleteOrder);
   });
 
-  it("berita & buku pensiun dihapus berdasarkan id + judul", async () => {
+  it("berita & buku pensiun dihapus berdasarkan id + judul + deskripsi", async () => {
     await seedBerita();
     await seedDataPerpustakaan();
-    const berita = loadRetiredSeed<{ id: string; judul: string }>(RETIRED[0][0]);
-    const buku = loadRetiredSeed<{ id: string; judul: string }>(RETIRED[4][0]);
+    type Konten = { id: string; judul: string; deskripsi: string };
+    const berita = loadRetiredSeed<Konten>(RETIRED[0][0]);
+    const [buku] = loadRetiredSeed<Konten>(RETIRED[4][0]);
     expect(prismaMock.berita.deleteMany).toHaveBeenCalledTimes(berita.length);
-    expect(prismaMock.berita.deleteMany).toHaveBeenCalledWith({ where: { id: berita[0].id, judul: berita[0].judul } });
-    expect(prismaMock.dataPerpustakaan.deleteMany).toHaveBeenCalledWith({ where: { id: buku[0].id, judul: buku[0].judul } });
+    expect(prismaMock.berita.deleteMany).toHaveBeenCalledWith({
+      where: { id: berita[0].id, judul: berita[0].judul, deskripsi: berita[0].deskripsi },
+    });
+    expect(prismaMock.dataPerpustakaan.deleteMany).toHaveBeenCalledWith({
+      where: { id: buku.id, judul: buku.judul, deskripsi: buku.deskripsi },
+    });
   });
 });
 

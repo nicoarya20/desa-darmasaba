@@ -7,55 +7,47 @@ import {
   richTextLength,
   validateAlasanKeberatanLength,
 } from '@/lib/permohonan-keberatan';
-import {
-  Box,
-  Button,
-  Center,
-  Group,
-  Paper,
-  SimpleGrid,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-  Tooltip,
-} from '@mantine/core';
-import {
-  IconFileCheck,
-  IconForms,
-  IconHourglassOff,
-  IconPhoneRinging,
-} from '@tabler/icons-react';
+import { Button, Input, Text, TextInput, Tooltip } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import { PermohonanFormCard, PermohonanLayout } from '../_com/PermohonanLayout';
+import { PermohonanSteps } from '../_com/PermohonanSteps';
+import { PpidPage } from '../_com/PpidPage';
+import { PERMOHONAN_FIELD, type PermohonanStep } from '../_com/permohonan.meta';
+import s from '../_com/permohonan.module.css';
 
-const data = [
+const TEXT = {
+  title: 'Permohonan Keberatan Informasi Publik',
+  lead: 'Jika Anda merasa permohonan informasi tidak ditanggapi dengan baik atau ditolak, Anda berhak mengajukan keberatan melalui formulir berikut.',
+  stepsTitle: 'Alur Pengajuan Keberatan',
+  formTitle: 'Formulir Keberatan',
+  contactTitle: 'Kontak PPID',
+} as const;
+
+const steps: PermohonanStep[] = [
   {
-    id: 1,
-    icon: IconForms,
     title: 'Isi Formulir',
     desc: 'Lengkapi formulir keberatan secara online dengan mudah.',
   },
   {
-    id: 2,
-    icon: IconFileCheck,
     title: 'Verifikasi Data',
     desc: 'Tim PPID akan memeriksa dan memverifikasi permohonan Anda.',
   },
   {
-    id: 3,
-    icon: IconHourglassOff,
     title: 'Proses Keberatan',
     desc: 'Keberatan diproses maksimal dalam 30 hari kerja.',
   },
   {
-    id: 4,
-    icon: IconPhoneRinging,
     title: 'Hasil Dikirim',
     desc: 'Hasil keputusan dikirim melalui email atau WhatsApp.',
   },
+];
+
+// Nilai kontak dipertahankan apa adanya dari halaman lama (nomor WhatsApp masih placeholder — urusan data).
+const contacts = [
+  { label: 'Email', value: 'desadarmasaba@badungkab.go.id' },
+  { label: 'WhatsApp', value: '081-xxx-xxx-xxx' },
 ];
 
 function Page() {
@@ -132,229 +124,106 @@ function Page() {
   };
 
   return (
-    <Stack bg={colors.Bg} py="xl" gap={40}>
-      <Box px={{ base: 'md', md: 100 }}>
-        <BackButton />
-      </Box>
+    <PpidPage title={TEXT.title} lead={TEXT.lead}>
+      <PermohonanLayout aside={<PermohonanSteps title={TEXT.stepsTitle} steps={steps} />}>
+        <PermohonanFormCard title={TEXT.formTitle}>
+          <TextInput
+            {...PERMOHONAN_FIELD}
+            label="Nama Lengkap"
+            placeholder="Tulis nama lengkap Anda"
+            withAsterisk
+            error={nameError}
+            value={stateKeberatan.create.form.name || ''}
+            onChange={(val) =>
+              (stateKeberatan.create.form.name = val.target.value.replace(
+                /[0-9]/g,
+                ''
+              ))
+            }
+            onBlur={() => setTouched((t) => ({ ...t, name: true }))}
+          />
 
-      <Stack align="center" px={{ base: 'md', md: 100 }}>
-        <Title
-          order={1}
-          ta="center"
-          fz={{ base: '1.8rem', md: '2.6rem' }}
-          lh={1.2}
-          c={colors['blue-button']}
-          style={{ letterSpacing: -0.5 }}
-        >
-          Permohonan Keberatan Informasi Publik
-        </Title>
+          <TextInput
+            {...PERMOHONAN_FIELD}
+            label="Alamat Email"
+            placeholder="Contoh: nama@email.com"
+            type="email"
+            withAsterisk
+            error={emailError}
+            value={stateKeberatan.create.form.email || ''}
+            onChange={(val) =>
+              (stateKeberatan.create.form.email = val.target.value)
+            }
+            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+          />
 
-        <Paper
-          p="xl"
-          radius="xl"
-          bg={colors['white-trans-1']}
-          shadow="sm"
-          withBorder
-        >
-          <Stack gap="xl">
-            {/* Tentang */}
-            <Box>
-              <Title order={3} fz={{ base: 'lg', md: 'xl' }} lh={1.3} mb={8}>
-                Tentang Permohonan Keberatan
-              </Title>
+          <TextInput
+            {...PERMOHONAN_FIELD}
+            label="Nomor Telepon"
+            placeholder="Contoh: 081234567890"
+            withAsterisk
+            inputMode="numeric"
+            maxLength={13}
+            error={notelpError}
+            value={stateKeberatan.create.form.notelp || ''}
+            onChange={(val) =>
+              (stateKeberatan.create.form.notelp = val.target.value
+                .replace(/\D/g, '')
+                .slice(0, 13))
+            }
+            onBlur={() => setTouched((t) => ({ ...t, notelp: true }))}
+          />
 
-              <Text
-                ta="justify"
-                fz={{ base: 'sm', md: 'md' }}
-                lh={1.7}
-                c="black"
-              >
-                Jika Anda merasa permohonan informasi tidak ditanggapi dengan
-                baik atau ditolak, Anda berhak mengajukan keberatan melalui
-                formulir berikut.
-              </Text>
-            </Box>
+          <Input.Wrapper label="Alasan Keberatan" size={PERMOHONAN_FIELD.size} withAsterisk error={alasanError}>
+            <div className={s.editor}>
+              <PPIDTextEditor
+                showSubmit={false}
+                toolbar="basic"
+                onChange={(val) => {
+                  stateKeberatan.create.form.alasan = val;
+                  if (!touched.alasan)
+                    setTouched((t) => ({ ...t, alasan: true }));
+                }}
+              />
+            </div>
+            <Text
+              fz="xs"
+              mt={4}
+              c={alasanLength > ALASAN_KEBERATAN_MAX_LENGTH ? 'red' : 'dimmed'}
+            >
+              {alasanLength}/{ALASAN_KEBERATAN_MAX_LENGTH} karakter
+            </Text>
+          </Input.Wrapper>
 
-            {/* Alur */}
-            <Stack>
-              <Title
-                order={3}
-                ta="center"
-                fw={700}
-                fz={{ base: 'xl', md: '2xl' }}
-                lh={1.2}
-                style={{ letterSpacing: -0.5 }}
-              >
-                Alur Pengajuan Keberatan
-              </Title>
-
-              <SimpleGrid cols={{ base: 1, md: 4 }} spacing="lg">
-                {data.map((v) => (
-                  <Paper
-                    key={v.id}
-                    p="lg"
-                    radius="lg"
-                    bg={colors['blue-button']}
-                    shadow="md"
-                  >
-                    <Stack align="center" gap="sm">
-                      <Center>
-                        <v.icon size={48} color={colors['white-1']} />
-                      </Center>
-
-                      <Text
-                        ta="center"
-                        c={colors['white-1']}
-                        fw={700}
-                        fz="lg"
-                        lh={1.3}
-                      >
-                        {v.title}
-                      </Text>
-
-                      <Text
-                        ta="center"
-                        c={colors['white-1']}
-                        fz="sm"
-                        lh={1.6}
-                      >
-                        {v.desc}
-                      </Text>
-                    </Stack>
-                  </Paper>
-                ))}
-              </SimpleGrid>
-            </Stack>
-
-            {/* Form */}
-            <Group justify="center">
-              <Paper
-                p="xl"
+          <div className={s.actions}>
+            <Tooltip label="Pastikan semua data sudah diisi dengan benar">
+              <Button
+                onClick={submit}
+                size="md"
                 radius="xl"
-                bg={colors['white-1']}
-                shadow="md"
-                withBorder
-                maw={600}
-                w="100%"
+                fw={600}
+                bg={colors['blue-button']}
+                disabled={!isFormValid()}
               >
-                <Stack gap="md">
-                  <Title
-                    order={3}
-                    ta="center"
-                    fw={700}
-                    fz={{ base: 'lg', md: 'xl' }}
-                    lh={1.3}
-                    mb={4}
-                  >
-                    Formulir Keberatan
-                  </Title>
+                Kirim Permohonan
+              </Button>
+            </Tooltip>
+          </div>
+        </PermohonanFormCard>
 
-                  <TextInput
-                    label="Nama Lengkap"
-                    placeholder="Tulis nama lengkap Anda"
-                    radius="md"
-                    size="md"
-                    withAsterisk
-                    error={nameError}
-                    value={stateKeberatan.create.form.name || ''}
-                    onChange={(val) =>
-                      (stateKeberatan.create.form.name = val.target.value.replace(
-                        /[0-9]/g,
-                        ''
-                      ))
-                    }
-                    onBlur={() => setTouched((t) => ({ ...t, name: true }))}
-                  />
-
-                  <TextInput
-                    label="Alamat Email"
-                    placeholder="Contoh: nama@email.com"
-                    radius="md"
-                    size="md"
-                    type="email"
-                    withAsterisk
-                    error={emailError}
-                    value={stateKeberatan.create.form.email || ''}
-                    onChange={(val) =>
-                      (stateKeberatan.create.form.email = val.target.value)
-                    }
-                    onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                  />
-
-                  <TextInput
-                    label="Nomor Telepon"
-                    placeholder="Contoh: 081234567890"
-                    radius="md"
-                    size="md"
-                    withAsterisk
-                    inputMode="numeric"
-                    maxLength={13}
-                    error={notelpError}
-                    value={stateKeberatan.create.form.notelp || ''}
-                    onChange={(val) =>
-                      (stateKeberatan.create.form.notelp = val.target.value
-                        .replace(/\D/g, '')
-                        .slice(0, 13))
-                    }
-                    onBlur={() => setTouched((t) => ({ ...t, notelp: true }))}
-                  />
-
-                  <Box>
-                    <Text fw={600} fz="sm" lh={1.4} mb={6}>
-                      Alasan Keberatan
-                    </Text>
-                    <PPIDTextEditor
-                      showSubmit={false}
-                      onChange={(val) => {
-                        stateKeberatan.create.form.alasan = val;
-                        if (!touched.alasan)
-                          setTouched((t) => ({ ...t, alasan: true }));
-                      }}
-                    />
-                    <Text
-                      fz="xs"
-                      mt={4}
-                      c={alasanLength > ALASAN_KEBERATAN_MAX_LENGTH ? 'red' : 'dimmed'}
-                    >
-                      {alasanLength}/{ALASAN_KEBERATAN_MAX_LENGTH} karakter
-                    </Text>
-                    {alasanError && (
-                      <Text c="red" fz="xs" lh={1.4} mt={4}>
-                        {alasanError}
-                      </Text>
-                    )}
-                  </Box>
-
-                  <Tooltip label="Pastikan semua data sudah diisi dengan benar">
-                    <Button
-                      onClick={submit}
-                      size="md"
-                      radius="md"
-                      fw={600}
-                      bg={colors['blue-button']}
-                      disabled={!isFormValid()}
-                    >
-                      Kirim Permohonan
-                    </Button>
-                  </Tooltip>
-                </Stack>
-              </Paper>
-            </Group>
-
-            {/* Kontak */}
-            <Stack gap={4} pt="lg" align="center">
-              <Title order={4} fw={700} fz="lg" lh={1.3}>
-                Kontak PPID
-              </Title>
-
-              <Text fz="sm" lh={1.5} c="dimmed" ta="center">
-                Email: desadarmasaba@badungkab.go.id | WhatsApp: 081-xxx-xxx-xxx
-              </Text>
-            </Stack>
-          </Stack>
-        </Paper>
-      </Stack>
-    </Stack>
+        <section>
+          <h2 className={s.contactTitle}>{TEXT.contactTitle}</h2>
+          <dl className={s.contactList}>
+            {contacts.map((contact) => (
+              <div key={contact.label} className={s.contactRow}>
+                <dt>{contact.label}</dt>
+                <dd>{contact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      </PermohonanLayout>
+    </PpidPage>
   );
 }
 

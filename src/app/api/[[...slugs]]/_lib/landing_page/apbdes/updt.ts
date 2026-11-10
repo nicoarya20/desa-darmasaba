@@ -16,7 +16,6 @@ type FormUpdateBody = {
   name?: string;
   deskripsi?: string;
   jumlah?: string;
-  imageId?: string | null;
   fileId?: string | null;
   items: APBDesItemInput[];
 };
@@ -162,7 +161,6 @@ export default async function apbdesUpdate(context: Context) {
           name: body.name || `APBDes Tahun ${body.tahun}`,
           deskripsi: body.deskripsi,
           jumlah: body.jumlah,
-          imageId: body.imageId === "" ? null : body.imageId,
           fileId: body.fileId === "" ? null : body.fileId,
         },
       });

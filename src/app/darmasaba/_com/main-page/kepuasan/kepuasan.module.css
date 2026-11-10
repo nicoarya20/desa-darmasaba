@@ -1,0 +1,297 @@
+/*
+ * Section Indeks Kepuasan Masyarakat beranda — gaya bersih ala apple.com (sejalan APBDes):
+ * latar putih, isi max-width 1100px, kartu/panel #f5f5f7 radius 18px tanpa border/bayangan,
+ * tombol pil brand. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.section {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --subtle: #86868b;
+  --tile: #f5f5f7;
+  --radius: 18px;
+  background: #fff;
+  padding: var(--section-pad-y) 16px;
+  color: var(--ink);
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--brand);
+}
+
+.lead {
+  margin: 12px auto 0;
+  max-width: 720px;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Kosong ---------- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--tile);
+  border-radius: var(--radius);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.emptyBody {
+  margin: 0 0 16px;
+  max-width: 480px;
+  font-size: 17px;
+  line-height: 1.47;
+  color: var(--muted);
+}
+
+/* ---------- Panel grafik bulanan ---------- */
+.panel {
+  background: var(--tile);
+  border-radius: var(--radius);
+  padding: 28px;
+  min-width: 0;
+}
+
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px 24px;
+  margin-bottom: 24px;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.caption {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: none;
+}
+
+.totalLabel {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.totalValue {
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Kartu komposisi ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--tile);
+  border-radius: var(--radius);
+  padding: 28px;
+  min-width: 0;
+}
+
+.cardTitle {
+  margin: 0 0 16px;
+  font-size: 19px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.donut {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legendName {
+  flex: 1;
+  min-width: 0;
+}
+
+.legendValue {
+  font-weight: 600;
+}
+
+.legendShare {
+  min-width: 52px;
+  text-align: right;
+  color: var(--muted);
+}
+
+.note {
+  margin: 0;
+  padding: 24px 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- CTA ---------- */
+.cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.ctaButton:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ctaButton:hover {
+    background: var(--brand-hover);
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .panel,
+  .card {
+    padding: 24px;
+  }
+
+  .grid {
+    gap: 16px;
+  }
+
+  .totalValue {
+    font-size: 32px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .title {
+    font-size: 32px;
+  }
+
+  .lead {
+    font-size: 17px;
+  }
+
+  .content,
+  .grid {
+    gap: 12px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel,
+  .card {
+    padding: 20px;
+  }
+
+  .panelTitle {
+    font-size: 21px;
+  }
+
+  .panelHead {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .total {
+    align-items: flex-start;
+  }
+
+  .empty {
+    padding: 40px 20px;
+  }
+
+  .cta {
+    margin-top: 28px;
+  }
+}

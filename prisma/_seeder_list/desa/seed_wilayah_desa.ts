@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { WILAYAH_DESA_ID } from "@/app/api/[[...slugs]]/_lib/desa/profile/profile_desa/wilayah/validation";
 import { loadJsonData } from "../../load-json";
 

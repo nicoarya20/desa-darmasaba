@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
+import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import { Box, Center, Container, Image, Skeleton, Stack, Text } from '@mantine/core';
 import { useParams } from 'next/navigation';

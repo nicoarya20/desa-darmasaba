@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../../seed-prisma";
 import { loadJsonData } from "../../../load-json";
 import { PERKIRAAN_WAKTU_BIAYA, waktuBiayaUntukSeed } from "./perkiraan_waktu_biaya";
 

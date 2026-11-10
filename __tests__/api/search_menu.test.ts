@@ -9,6 +9,7 @@ import searchMenu, {
   MENU_PREVIEW_COUNT,
   previewMenuResults,
 } from '@/app/darmasaba/_com/searchMenu';
+import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
 import type { MenuItem } from '../../types/menu-item';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
@@ -19,6 +20,9 @@ const SHOW_MORE = path.resolve(__dirname, '../../src/app/darmasaba/_com/SearchSh
 const submenus = navbarListMenu.flatMap((menu) =>
   (menu.children ?? []).filter((c) => c.href).map((c) => ({ menu: menu.name, name: c.name, href: c.href })),
 );
+/** Submenu yang tampil di menu publik (item `hidden` dibuang) = yang boleh ditemukan pencarian. */
+const visibleHrefs = new Set(flattenMenu(visibleMenu(navbarListMenu)).map((m) => m.href));
+const visibleSubmenus = submenus.filter((s) => visibleHrefs.has(s.href));
 
 const FIXTURE: MenuItem[] = [
   {
@@ -62,7 +66,7 @@ describe('flattenMenu', () => {
 describe('searchMenu pada config navbar nyata', () => {
   it('setiap submenu ber-href ditemukan saat namanya dicari (asli & huruf kecil)', () => {
     const missing: string[] = [];
-    for (const s of submenus) {
+    for (const s of visibleSubmenus) {
       for (const q of [s.name, s.name.toLowerCase()]) {
         const hrefs = searchMenu(q).map((r) => r.href);
         if (!hrefs.includes(s.href)) missing.push(`${s.menu} › ${s.name} (q="${q}")`);
@@ -72,13 +76,13 @@ describe('searchMenu pada config navbar nyata', () => {
   });
 
   it('hasil pertama pencarian nama submenu berawalan nama itu (submenu itu sendiri atau senama/berawalan sama)', () => {
-    const wrongFirst = submenus
+    const wrongFirst = visibleSubmenus
       .filter((s) => !searchMenu(s.name)[0]?.label.toLowerCase().startsWith(s.name.toLowerCase()))
       .map((s) => s.name);
     expect(wrongFirst).toEqual([]);
     // "Profil PPID" (PPID) lebih dulu di config daripada "Profil" (Desa); keduanya berawalan "profil".
     expect(searchMenu('Profil').map((r) => r.href)).toEqual(
-      expect.arrayContaining(['/darmasaba/ppid/profil-ppid', '/darmasaba/desa/profil']),
+      expect.arrayContaining(['/darmasaba/ppid/profil-ppid', '/darmasaba/pemerintahan/profil']),
     );
   });
 
@@ -106,7 +110,7 @@ describe('searchMenu pada config navbar nyata', () => {
   it('tanpa batas default: query umum tidak memotong halaman yang cocok', () => {
     const labels = searchMenu('kesehatan').map((r) => `${r.parent} › ${r.label}`);
     expect(labels).toContain('Kesehatan › Kontak Darurat');
-    expect(labels).toContain('Kesehatan › Info Wabah/Penyakit');
+    expect(labels).toContain('Kesehatan › Program Kesehatan');
     expect(searchMenu('a').length).toBeGreaterThan(8);
     expect(searchMenu('a')).toEqual(searchMenu('a', undefined, Infinity));
   });
@@ -194,7 +198,7 @@ describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
     ['apbdes', 'APBDes', '/darmasaba/apbdes'],
     ['pengaduan', 'Pengaduan Masyarakat', '/darmasaba/inovasi/layanan-online-desa/pengaduan-masyarakat'],
     ['ajukan surat', 'Administrasi Online (Ajukan Surat)', '/darmasaba/inovasi/layanan-online-desa/administrasi-online'],
-    ['struktur perangkat', 'Struktur Perangkat Desa', '/darmasaba/desa/profil/struktur-perangkat-desa'],
+    ['struktur perangkat', 'Struktur Perangkat Desa', '/darmasaba/pemerintahan/profil/struktur-perangkat-desa'],
     ['anti korupsi', 'Desa Anti Korupsi', '/darmasaba/desa-anti-korupsi'],
     ['sdgs', 'SDGs Desa', '/darmasaba/sdgs-desa'],
   ])('default searchMenu("%s") → hasil pertama %s', (q, label, href) => {
@@ -202,10 +206,11 @@ describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
   });
 
   it('peringkat sama: submenu navbar tetap di atas halaman tambahan', () => {
-    // keduanya berawalan "desa": "Desa Digital/Smart Village" (navbar) & "Desa Anti Korupsi" (tambahan)
-    const labels = searchMenu('desa').map((r) => r.label);
-    expect(labels.indexOf('Desa Digital/Smart Village')).toBeGreaterThan(-1);
-    expect(labels.indexOf('Desa Digital/Smart Village')).toBeLessThan(labels.indexOf('Desa Anti Korupsi'));
+    // keduanya berawalan "struktur": "Struktur PPID" (navbar) & "Struktur Perangkat Desa" (tambahan)
+    const labels = searchMenu('struktur').map((r) => r.label);
+    expect(labels.indexOf('Struktur PPID')).toBeGreaterThan(-1);
+    expect(labels.indexOf('Struktur Perangkat Desa')).toBeGreaterThan(-1);
+    expect(labels.indexOf('Struktur PPID')).toBeLessThan(labels.indexOf('Struktur Perangkat Desa'));
   });
 
   it('halaman tambahan tidak ikut bila menus dioper sendiri (hanya navbar)', () => {
@@ -240,8 +245,10 @@ describe('previewMenuResults', () => {
     expect(input).toEqual(make(4));
   });
 
-  it('hasil nyata "kesehatan" tertutup → 5 tampil, sisanya tersembunyi', () => {
-    const all = searchMenu('kesehatan');
+  // "pemerintahan" (bukan "kesehatan"): 4 submenu Kesehatan default-hidden, sisa hasilnya < 5.
+  it('hasil nyata "pemerintahan" tertutup → 5 tampil, sisanya tersembunyi', () => {
+    const all = searchMenu('pemerintahan');
+    expect(all.length).toBeGreaterThan(5);
     const { visible, hiddenCount } = previewMenuResults(all, false);
     expect(visible).toEqual(all.slice(0, 5));
     expect(hiddenCount).toBe(all.length - 5);
@@ -252,7 +259,8 @@ describe('globalSearch.tsx memakai hasil menu', () => {
   const src = readFileSync(GLOBAL_SEARCH, 'utf8');
 
   it('menghitung hasil menu dari searchMenu(query) tanpa menunggu API', () => {
-    expect(src).toMatch(/searchMenu\(snap\.query\)/);
+    // Menu efektif (default + override DB) dioper eksplisit dari useMenuVisibility.
+    expect(src).toMatch(/searchMenu\(snap\.query, searchMenus\)/);
   });
 
   it('menampilkan bagian "Halaman" dan "Tidak ada hasil" hanya bila menu & API kosong', () => {

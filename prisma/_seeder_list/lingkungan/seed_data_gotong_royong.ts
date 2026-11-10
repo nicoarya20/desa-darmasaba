@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { loadJsonData } from "../../load-json";
 
 const kategoriGotongRoyong = loadJsonData("lingkungan/gotong-royong/kategori-gotong-royong.json");

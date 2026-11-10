@@ -6,10 +6,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Prisma } from "@prisma/client";
 
-const prismaMock = vi.hoisted(() => ({
-  desaAntiKorupsi: { create: vi.fn(), update: vi.fn() },
-  responden: { create: vi.fn(), update: vi.fn() },
-}));
+const prismaMock = vi.hoisted(() => {
+  const mock = {
+    desaAntiKorupsi: { create: vi.fn(), update: vi.fn() },
+    responden: { create: vi.fn(), update: vi.fn() },
+    // create DAK kini membuat program + folder/dokumen dalam satu interactive transaction
+    $transaction: vi.fn(),
+  };
+  mock.$transaction.mockImplementation(async (fn: (tx: typeof mock) => unknown) => fn(mock));
+  return mock;
+});
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
 
 import dakCreate from "@/app/api/[[...slugs]]/_lib/landing_page/desa-anti-korupsi/create";
@@ -32,7 +38,7 @@ const ctx = (body: any, id?: string): any => ({
   set: { status: 200 },
 });
 
-const dakBody = { name: "Program A", deskripsi: "x", fileId: "f", kategoriId: "k" };
+const dakBody = { name: "Program A", deskripsi: "x", kategoriId: "k" };
 const respondenBody = {
   name: "Budi",
   tanggal: "2026-01-01",

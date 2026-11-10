@@ -1,17 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { toDuplicateResponse } from "@/lib/prisma-error";
+import {
+  susunDataUpdate,
+  type ProgramInovasiUpdateBody,
+} from "@/lib/program-inovasi";
 import { Context } from "elysia";
 
-type FormUpdateProgramInovasi = {
-  name?: string;
-  description?: string;
-  imageId?: string;
-  link?: string;
-};
-
 export default async function programInovasiUpdate(context: Context) {
-  const body = context.body as FormUpdateProgramInovasi;
+  const body = context.body as ProgramInovasiUpdateBody;
 
   const id = context.params.id;
 
@@ -22,18 +19,22 @@ export default async function programInovasiUpdate(context: Context) {
     };
   }
 
+  const hasil = susunDataUpdate(body);
+  if (!hasil.ok) {
+    context.set.status = 400;
+    return { success: false, message: hasil.message };
+  }
+
   try {
     const updated = await prisma.programInovasi.update({
       where: { id },
       data: {
-        name: body.name,
-        description: body.description,
-        imageId: body.imageId,
-        link: body.link,
+        ...hasil.data,
         updatedAt: new Date(),
       },
       include: {
         image: true,
+        images: true,
       },
     });
 

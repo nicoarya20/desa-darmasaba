@@ -5,7 +5,7 @@ import { Box, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import { IconBell } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import AdministrasiOnline from './administrasi-online/page';
 import PengaduanMasyarakat from './pengaduan-masyarakat/page';
 

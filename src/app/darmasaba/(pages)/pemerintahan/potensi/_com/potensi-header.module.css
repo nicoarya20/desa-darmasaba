@@ -1,0 +1,108 @@
+/*
+ * Kepala halaman Potensi Desa: judul brand + pengantar rata kiri, lalu tombol pil saring dengan jumlah
+ * (menggantikan kotak angka biru). Pil aktif = latar brand; nonaktif = putih transparan di atas latar halaman.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.title {
+  margin: 0;
+  color: var(--brand);
+  font-size: 48px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.lead {
+  max-width: 640px;
+  margin: 0;
+  color: #515154;
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 10px 8px 18px;
+  border: 0;
+  border-radius: 980px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #1d1d1f;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--brand);
+  color: #fff;
+}
+
+.chip:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.chip:focus-visible {
+  outline: 3px solid #0071e3;
+  outline-offset: 2px;
+}
+
+.count {
+  min-width: 26px;
+  padding: 2px 8px;
+  border-radius: 980px;
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.chip[aria-pressed="true"] .count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .chip:not([aria-pressed="true"]):not(:disabled):hover {
+    background: #fff;
+  }
+}
+
+@media (max-width: 734px) {
+  .header {
+    gap: 10px;
+  }
+
+  .title {
+    font-size: 32px;
+    line-height: 1.12;
+  }
+
+  .lead {
+    font-size: 17px;
+    line-height: 1.47;
+  }
+
+  .filters {
+    gap: 8px;
+    margin-top: 10px;
+  }
+}

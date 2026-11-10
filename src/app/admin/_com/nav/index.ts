@@ -9,9 +9,12 @@ import {
   lingkunganMenu,
   musikMenu,
   pendidikanMenu,
+  pengaturanMenu,
   ppidMenu,
   userRoleMenu,
 } from "./domains"
+
+export { pengaturanMenu }
 
 const allDomains = [
   landingPageMenu,

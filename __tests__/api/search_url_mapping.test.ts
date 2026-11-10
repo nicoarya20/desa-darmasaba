@@ -71,14 +71,14 @@ describe('pemetaan URL hasil pencarian global', () => {
 
   it('(b) pencocok route tidak menganggap placeholder [sub] sebagai halaman nyata', () => {
     expect(matchesRealPage('/darmasaba/ekonomi/pasar-desa', routes)).toBe(false);
-    expect(matchesRealPage('/darmasaba/desa/potensi', routes)).toBe(true);
+    expect(matchesRealPage('/darmasaba/pemerintahan/potensi', routes)).toBe(true);
   });
 
   it('(c) normalisasi tipe hanya trim, tidak mengubah huruf camelCase', () => {
     expect(normalizeSearchType('galleryFoto')).toBe('galleryFoto');
     expect(normalizeSearchType('  programKesehatan ')).toBe('programKesehatan');
     expect(normalizeSearchType(undefined)).toBe('');
-    expect(getDetailUrl({ id: 1, type: normalizeSearchType(' galleryFoto ') })).toBe('/darmasaba/desa/galery/foto');
+    expect(getDetailUrl({ id: 1, type: normalizeSearchType(' galleryFoto ') })).toBe('/darmasaba/pemerintahan/galery/foto');
   });
 
   it('(c) handleSelect di globalSearch.tsx memakai normalizeSearchType, bukan toLowerCase', () => {
@@ -89,8 +89,16 @@ describe('pemetaan URL hasil pencarian global', () => {
 
   it('kategoriBerita membuka daftar berita kategori itu (slug lowercase seperti tab berita)', () => {
     expect(getDetailUrl({ type: 'kategoriBerita', id: 'k1', name: 'Pemerintahan' })).toBe(
-      '/darmasaba/desa/berita/pemerintahan',
+      '/darmasaba/pemerintahan/berita/pemerintahan',
     );
+  });
+
+  it('prestasidesa (termasuk eks-penghargaan) membuka detail /darmasaba/prestasi-desa/[id]; tipe penghargaan sudah tidak dikirim API', () => {
+    expect(getDetailUrl({ type: 'prestasidesa', id: 'cmkal9dd70002vnexhvn4j2fv' })).toBe(
+      '/darmasaba/prestasi-desa/cmkal9dd70002vnexhvn4j2fv',
+    );
+    expect(types).not.toContain('penghargaan');
+    expect(readFileSync(FIND_MANY, 'utf8')).not.toMatch(/prisma\.penghargaan/);
   });
 
   it('pasarDesa membuka detail produk UMKM', () => {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import prisma from "@/lib/prisma";
+import prisma from "./seed-prisma";
 import { seedBerita } from "./_seeder_list/desa/berita/seed_berita";
 import { seedKegiatanDesa } from "./_seeder_list/desa/seed_kegiatan_desa";
 import { seedWilayahDesa } from "./_seeder_list/desa/seed_wilayah_desa";
@@ -10,7 +10,6 @@ import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
 import { seedVideo } from "./_seeder_list/desa/gallery/video/seed_video";
 import { seedLayanan } from "./_seeder_list/desa/layanan/seed_layanan";
 import { seedMusikDesa } from "./_seeder_list/desa/musik-desa/seed_musik_desa";
-import { seedPenghargaan } from "./_seeder_list/desa/penghargaan/penghargaan";
 import { seedPengumuman } from "./_seeder_list/desa/pengumuman/seed_pengumuman";
 import { seedPotensi } from "./_seeder_list/desa/potensi/seed_potensi";
 import { seedProfileDesa } from "./_seeder_list/desa/profile-desa/seed_profile_desa";
@@ -95,8 +94,14 @@ import roles from "./data/user/roles.json";
 import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
 import seedAssets from "./seed_assets";
+import { isSeedOverwrite } from "./seed-prisma";
 
 (async () => {
+  console.log(
+    isSeedOverwrite()
+      ? "⚠️ SEED_OVERWRITE=true: data seed yang sudah ada DITIMPA dengan isi JSON (editan admin hilang)"
+      : "🛡️ Mode create-only: data yang sudah ada tidak diubah, hanya data baru yang dibuat (SEED_OVERWRITE=true untuk menimpa)",
+  );
   // Always run seedAssets to handle new images without duplication
   console.log("📂 Checking for new assets to seed...");
   await seedAssets();
@@ -258,9 +263,6 @@ import seedAssets from "./seed_assets";
 
   // // =========== SUBMENU LAYANAN ===========
   await seedLayanan();
-
-  // // =========== PENGHARGAAN ===========
-  await seedPenghargaan();
 
   // // ====================== MENU KESEHATAN ========================
   // // ==================== SUBMENU BANJAR =========================

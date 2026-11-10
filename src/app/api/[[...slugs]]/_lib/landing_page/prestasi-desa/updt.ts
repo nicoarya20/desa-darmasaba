@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { normalizeJuara } from "./juara";
 
 type FormUpdatePrestasiDesa = {
   name?: string;
   imageId?: string;
   deskripsi?: string;
+  juara?: string | null;
   kategoriId?: string;
 };
 
@@ -46,6 +48,7 @@ export default async function prestasiDesaUpdate(context: Context) {
         name: body.name,
         imageId: body.imageId,
         deskripsi: body.deskripsi,
+        juara: normalizeJuara(body.juara),
         kategoriId: body.kategoriId,
       },
       include: {

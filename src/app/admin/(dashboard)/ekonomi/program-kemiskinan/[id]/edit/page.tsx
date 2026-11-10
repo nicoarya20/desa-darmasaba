@@ -172,7 +172,7 @@ function EditProgramKemiskinan() {
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
-          Edit Program Kemiskinan
+          Edit Program Pengentasan Kemiskinan
         </Title>
       </Group>
 

@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import type { DokumenInput } from "@/lib/desa-anti-korupsi-dokumen";
+import type { FolderInput, FolderRef } from "@/lib/desa-anti-korupsi-folder";
+import type {
+  DesaAntiKorupsiDetail,
+  DesaAntiKorupsiRingkas,
+} from "@/lib/desa-anti-korupsi-view";
 import { getServerMessage } from "@/utils/api-message";
-import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
@@ -12,16 +17,43 @@ const templateDesaAntikorupsi = z.object({
   kategoriId: z.string().min(1, "Kategori harus dipilih"),
 });
 
-const defaultDesaAntikorupsi = {
+type FormDesaAntikorupsi = {
+  name: string;
+  deskripsi: string;
+  kategoriId: string;
+  folders: FolderInput[]; // set folder final; urutan = posisi di daftar
+  dokumen: DokumenInput[]; // set dokumen final; urutan = posisi di dalam foldernya
+};
+
+const defaultDesaAntikorupsi = (): FormDesaAntikorupsi => ({
   name: "",
   deskripsi: "",
   kategoriId: "",
-  fileId: "",
-};
+  folders: [],
+  dokumen: [],
+});
+
+/** Isi form edit dari detail program: folder tersimpan (id) + dokumen dengan rujukan foldernya. */
+function isiFormFromDetail(data: DesaAntiKorupsiDetail): Pick<FormDesaAntikorupsi, "folders" | "dokumen"> {
+  const toInput = (d: DesaAntiKorupsiDetail["dokumenUmum"][number], folder: FolderRef): DokumenInput => ({
+    id: d.id,
+    fileId: d.fileId,
+    judul: d.judul,
+    urutan: d.urutan,
+    folder,
+  });
+  return {
+    folders: data.folders.map((f) => ({ id: f.id, nama: f.nama, urutan: f.urutan })),
+    dokumen: [
+      ...data.folders.flatMap((f) => f.dokumen.map((d) => toInput(d, { id: f.id }))),
+      ...data.dokumenUmum.map((d) => toInput(d, null)),
+    ],
+  };
+}
 
 const desaAntikorupsi = proxy({
   create: {
-    form: { ...defaultDesaAntikorupsi },
+    form: defaultDesaAntikorupsi(),
     loading: false,
     async create() {
       const cek = templateDesaAntikorupsi.safeParse(desaAntikorupsi.create.form);
@@ -53,12 +85,7 @@ const desaAntikorupsi = proxy({
     },
   },
   findMany: {
-    data: [] as Prisma.DesaAntiKorupsiGetPayload<{
-      include: {
-        file: true;
-        kategori: true;
-      };
-    }>[],
+    data: [] as DesaAntiKorupsiRingkas[], // ringkas: jumlahFolder & jumlahDokumen, tanpa isi dokumen
     page: 1,
     totalPages: 1,
     loading: false,
@@ -93,12 +120,7 @@ const desaAntikorupsi = proxy({
     },
   },
   findUnique: {
-    data: null as Prisma.DesaAntiKorupsiGetPayload<{
-      include: {
-        file: true;
-        kategori: true;
-      };
-    }> | null,
+    data: null as DesaAntiKorupsiDetail | null, // folders[] + dokumenUmum
     loading: false,
     async load(id: string) {
       try {
@@ -149,10 +171,10 @@ const desaAntikorupsi = proxy({
   },
   edit: {
     id: "",
-    form: { ...defaultDesaAntikorupsi },
+    form: defaultDesaAntikorupsi(),
     loading: false,
 
-    async load(id: string) {
+    async load(id: string): Promise<DesaAntiKorupsiDetail | null> {
       if (!id) {
         toast.warn("ID tidak valid");
         return null;
@@ -163,13 +185,13 @@ const desaAntikorupsi = proxy({
           throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
         if (result?.success) {
-          const data = result.data;
+          const data = result.data as DesaAntiKorupsiDetail;
           desaAntikorupsi.edit.id = data.id;
           desaAntikorupsi.edit.form = {
             name: data.name,
             deskripsi: data.deskripsi,
             kategoriId: data.kategoriId,
-            fileId: data.fileId || "",
+            ...isiFormFromDetail(data),
           };
           return data;
         } else {
@@ -204,7 +226,8 @@ const desaAntikorupsi = proxy({
               name: desaAntikorupsi.edit.form.name,
               deskripsi: desaAntikorupsi.edit.form.deskripsi,
               kategoriId: desaAntikorupsi.edit.form.kategoriId,
-              fileId: desaAntikorupsi.edit.form.fileId,
+              folders: desaAntikorupsi.edit.form.folders,
+              dokumen: desaAntikorupsi.edit.form.dokumen,
             }),
           }
         );
@@ -236,7 +259,7 @@ const desaAntikorupsi = proxy({
     },
     reset() {
       desaAntikorupsi.edit.id = "";
-      desaAntikorupsi.edit.form = { ...defaultDesaAntikorupsi };
+      desaAntikorupsi.edit.form = defaultDesaAntikorupsi();
     },
   },
 });
