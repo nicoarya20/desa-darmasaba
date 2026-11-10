@@ -262,6 +262,20 @@ Daftar indikator per kategori, tiap indikator berisi surat (PDF). Folder `(tamba
 - **Dokumen**: sumber = relasi opsional `DesaAntiKorupsi.file` (admin: edit indikator → unggah dokumen; tersimpan di MinIO, link `/api/fileStorage/findUnique/...` dilayani inline). Ada file dengan link aman (relatif `/…` atau http(s); `documentHref`) → **seluruh baris tautan** `target="_blank"` ke file, pil putih "Buka PDF ↗" (ikon PDF; jenis lain → ekstensi, mis. "Buka DOCX") yang jadi brand saat hover. Tanpa file → baris bukan tautan, pil abu ikon jam + "Dokumen belum tersedia" — tempat ini terisi sendiri begitu admin mengunggah surat.
 - **Loading / kosong**: 5 baris placeholder berdenyut (tanpa denyut saat reduced motion); data kosong → "Belum ada indikator desa anti korupsi."; kategori tanpa butir → "Belum ada indikator untuk kategori ini.".
 
+### Desa Anti Korupsi — halaman utama (`/darmasaba/desa-anti-korupsi`)
+
+Memakai gaya section beranda (judul + pengantar + panel `#f5f5f7` grup per kategori), data dari `findMany.load(1, 100)` — kategori tidak lagi di-hardcode. File: `page.tsx`, `_com/AntiKorupsiUtama.tsx`, `_com/antikorupsi-utama.{data,text}.ts`, `_lib/antikorupsi-utama.logic.ts`. Test: `__tests__/api/desa_anti_korupsi_utama.test.tsx`, `__tests__/api/desa_anti_korupsi_groups_link.test.tsx`.
+
+- **Ringkasan**: strip kecil "N kategori · N indikator · N dokumen" di bawah pengantar.
+- **Tautan**: `AntiKorupsiGroups` menerima prop **opsional** `itemHref` (seluruh baris butir → `/darmasaba/desa-anti-korupsi/program/{id}`, hover brand, chevron, badge "N dokumen"/"Belum ada dokumen", focus-visible) dan `kategoriHref` (nama kategori → `/detail?kategori=` + petunjuk "Lihat dokumen →"). Tanpa prop itu (beranda) butir tetap teks biasa, limit 6, dan CTA "Selengkapnya" tetap ada; halaman utama tidak punya CTA.
+
+### Desa Anti Korupsi — halaman program (`/darmasaba/desa-anti-korupsi/program/{id}`)
+
+- **Kepala**: nomor indikator jadi badge brand, judul sentence case (`_lib/program-judul.ts`, 20px / md 26px). Deskripsi disembunyikan bila isinya hanya mengulang nama program (`isDeskripsiDuplikat`).
+- **Kartu folder** (`FolderGrid`, `_com/program-folder.module.css`): ikon folder dalam kotak tint brand, "N dokumen · ukuran", cuplikan 2 judul + "+N lainnya", "Diperbarui {tanggal unggah terbaru}" (`_lib/folder-kartu.ts`), hover naik + border brand. Folder kosong redup + badge "Kosong", tetap bisa dibuka.
+- **Folder terbuka** (`FolderAktif`): baris chip `FolderChips` untuk pindah folder (`aria-current`, `?urut=` ikut), "Unduh folder (ZIP)" tidak dirender bila folder kosong, empty state dengan subteks + tombol "Lihat semua folder".
+- Test: `__tests__/api/desa_anti_korupsi_program_tampilan.test.tsx`.
+
 ### SDGs Desa (Beranda)
 
 Folder: `_com/main-page/sdgs/` — `index.tsx` (section), `SdgsCards.tsx` (kartu + skeleton), `use-sdgs-data.ts` (hook), `sdgs.logic.ts` (helper murni, dites di `__tests__/api/sdgs_desa_logic.test.ts`), `sdgs.meta.ts` (endpoint, limit, rute, warna), `sdgs.text.ts`, `sdgs.module.css`.
