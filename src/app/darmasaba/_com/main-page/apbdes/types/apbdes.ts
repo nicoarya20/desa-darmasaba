@@ -37,18 +37,11 @@ export interface APBDes {
   jumlah: number;
   deskripsi?: string | null;
   items?: APBDesItem[];
-  image?: {
-    id: string;
-    link: string;
-    name?: string;
-    path?: string;
-  } | null;
   file?: {
     id: string;
     link: string;
     name?: string;
   } | null;
-  imageId?: string;
   fileId?: string;
   createdAt?: string | Date;
   updatedAt?: string | Date;
@@ -60,10 +53,6 @@ export interface APBDesResponse {
   name?: string | null;
   jumlah: number;
   items?: APBDesItem[];
-  image?: {
-    id: string;
-    link: string;
-  } | null;
   file?: {
     id: string;
     link: string;
