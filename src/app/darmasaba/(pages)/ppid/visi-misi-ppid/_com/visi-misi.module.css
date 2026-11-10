@@ -1,146 +1,110 @@
-/* Visi dan Misi PPID: tiga blok bertingkat — moto sebagai tipografi besar langsung di atas latar,
-   visi sebagai satu kartu biru brand, misi sebagai kisi kartu putih bernomor.
-   Satu motif pengikat: huruf garis tepi (`.outlined`) pada "Transparan." dan angka misi. */
-.root {
+/* Visi dan Misi PPID: satu kartu terang terpusat — lambang desa, moto, visi, lalu misi —
+   dengan pemisah berornamen. Judul dan kalimat pendek rata tengah; butir misi rata kiri
+   di kolom terpusat supaya tetap mudah dibaca. */
+.card {
   --vm-text: #1d1d1f;
-  --vm-muted: #515154;
-  --vm-on-brand: #fff;
-  --vm-on-brand-soft: #b8daef;
-  --vm-card: #fff;
-  --vm-surface: var(--ppid-bg);
-  --vm-stroke: 4px;
-  --vm-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --eyebrow-color: var(--brand);
-  display: grid;
-  gap: 56px;
-  max-width: var(--ppid-measure);
+  --vm-rule: #b1bdd1;
+  /* Panjang baris baca di dalam kartu (±70 karakter), bukan lebar isi halaman. */
+  --vm-measure: 46rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 48px 72px;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  border-radius: 32px;
+  background: var(--vm-card);
+  box-shadow: 0 16px 40px rgb(10 78 120 / 0.1);
+  animation: rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Muncul sekali saat isi selesai dimuat; prefers-reduced-motion ditangani global (globals.css). */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
 }
 
-.moto,
-.visi,
-.misi {
-  animation: rise 700ms var(--vm-ease) both;
-}
-
-.visi {
-  animation-delay: 90ms;
-}
-
-.misi {
-  animation-delay: 180ms;
-}
-
-/* Label bagian: garis pendek + nama, menggantikan judul kolom kiri. */
-.eyebrow {
+.section {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  width: 100%;
+  text-align: center;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 24px;
+  object-fit: contain;
+}
+
+.motoTitle,
+.title {
   margin: 0;
-  color: var(--eyebrow-color);
-  font-size: 15px;
-  line-height: 1.35;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.eyebrow::before {
-  content: '';
-  flex: none;
-  width: 28px;
-  height: 2px;
-  border-radius: 1px;
-  background: currentColor;
-}
-
-/* Huruf garis tepi: isi diwarnai sama dengan permukaan di belakangnya dan dilukis di atas garis
-   (paint-order), sehingga tampak tembus pandang tanpa garis ganda di lekuk huruf yang bertumpuk.
-   Karena separuh garis tertutup isi, tebal yang tampak = setengah --vm-stroke. */
-.outlined {
-  color: var(--vm-surface);
-  -webkit-text-stroke: var(--vm-stroke) var(--brand);
-  paint-order: stroke fill;
-  /* Sedikit renggang agar garis tepi huruf bersebelahan tidak saling menimpa. */
-  letter-spacing: 0.015em;
-}
-
-/* ── Moto ── */
-.motoText {
-  margin: 20px 0 0;
-}
-
-.motoLead {
-  display: block;
-  color: var(--vm-text);
-  font-size: 26px;
-  line-height: 1.25;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.motoValues {
-  display: block;
-  margin-top: 10px;
   color: var(--brand);
-  font-size: clamp(44px, 11vw, 88px);
-  line-height: 1.04;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 
-/* ── Visi ── */
-.visi {
-  --eyebrow-color: var(--vm-on-brand-soft);
-  position: relative;
-  overflow: hidden;
-  padding: 56px;
-  border-radius: 28px;
-  background: var(--brand);
-  color: var(--vm-on-brand);
+.motoTitle {
+  font-size: 36px;
+  line-height: 1.15;
 }
 
-/* Dua lingkaran garis tipis di pojok kanan atas — diam, satu warna. */
-.visi::before,
-.visi::after {
+.title {
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+/* Moto = kalimat kutipan yang ditonjolkan, bukan teks isi biasa. */
+.motoText {
+  max-width: 34rem;
+  margin: 16px 0 0;
+  color: var(--vm-text);
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.motoText::before {
+  content: '\201C';
+}
+
+.motoText::after {
+  content: '\201D';
+}
+
+/* Pemisah: garis pendek di kiri-kanan ornamen (bukan garis selebar kartu). */
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  margin: 48px 0;
+  color: var(--brand);
+}
+
+.ornament::before,
+.ornament::after {
   content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  border: 1px solid rgb(255 255 255 / 0.16);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.visi::before {
-  width: 360px;
-  height: 360px;
-  transform: translate(35%, -45%);
-}
-
-.visi::after {
-  width: 620px;
-  height: 620px;
-  transform: translate(35%, -45%);
+  flex: 0 1 140px;
+  height: 1px;
+  background: var(--vm-rule);
 }
 
 .visiText {
-  position: relative;
-  z-index: 1;
-  max-width: 30em;
-  margin-top: 24px;
-  font-size: clamp(22px, 2.5vw, 32px);
-  line-height: 1.32;
-  font-weight: 600;
-  letter-spacing: -0.012em;
-  text-wrap: pretty;
+  max-width: var(--vm-measure);
+  margin-top: 16px;
+  color: var(--vm-text);
+  font-size: 20px;
+  line-height: 1.65;
+  text-wrap: balance;
   overflow-wrap: anywhere;
 }
 
@@ -152,103 +116,116 @@
   margin-bottom: 0;
 }
 
-/* ── Misi ── */
-.misiGrid {
+.misiList {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin: 24px 0 0;
+  gap: 18px;
+  width: 100%;
+  max-width: var(--vm-measure);
+  margin: 28px 0 0;
   padding: 0;
   list-style: none;
+  text-align: left;
 }
 
-.misiCard {
-  --vm-surface: var(--vm-card);
-  --vm-stroke: 3px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 28px 32px 32px;
-  border-radius: 24px;
-  background: var(--vm-card);
-}
-
-/* Jumlah ganjil: kartu terakhir selebar kisi agar tidak menyisakan lubang. */
-.misiCard:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
+.misiItem {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
 }
 
 .misiNumber {
-  font-size: 56px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 16px;
   line-height: 1;
   font-weight: 700;
-  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
 .misiBody {
-  max-width: 34em;
   margin: 0;
+  /* Baris pertama sejajar tengah lencana 36px. */
+  padding-top: 3px;
   color: var(--vm-text);
   font-size: 19px;
-  line-height: 1.5;
+  line-height: 1.58;
   text-wrap: pretty;
   overflow-wrap: anywhere;
 }
 
 .misiRich {
-  margin-top: 24px;
+  width: 100%;
+  max-width: var(--vm-measure);
+  margin-top: 28px;
+  border-bottom: 0;
+  text-align: left;
 }
 
 @media (max-width: 734px) {
-  .root {
-    gap: 40px;
+  .card {
+    padding: 36px 20px 40px;
+    border-radius: 24px;
+  }
+
+  .logo {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 18px;
+  }
+
+  .motoTitle {
+    font-size: 26px;
+  }
+
+  .title {
+    font-size: 22px;
   }
 
   .motoText {
-    margin-top: 16px;
-  }
-
-  .motoLead {
+    margin-top: 12px;
     font-size: 19px;
   }
 
-  .visi {
-    padding: 28px 24px 32px;
-    border-radius: 22px;
+  .ornament {
+    margin: 32px 0;
   }
 
-  .visi::before {
-    width: 220px;
-    height: 220px;
-  }
-
-  .visi::after {
-    width: 380px;
-    height: 380px;
+  .ornament::before,
+  .ornament::after {
+    flex-basis: 72px;
   }
 
   .visiText {
-    margin-top: 18px;
+    margin-top: 12px;
+    font-size: 17px;
+    line-height: 1.6;
   }
 
-  .misiGrid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    margin-top: 18px;
-  }
-
-  .misiCard {
+  .misiList {
     gap: 14px;
-    padding: 22px 22px 24px;
-    border-radius: 20px;
+    margin-top: 20px;
+  }
+
+  .misiItem {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 12px;
   }
 
   .misiNumber {
-    font-size: 44px;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
   }
 
   .misiBody {
+    padding-top: 2px;
     font-size: 17px;
+    line-height: 1.5;
   }
 }

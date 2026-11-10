@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Halaman Visi Misi PPID (moto besar, kartu visi, kartu misi bernomor) dan Dasar Hukum (bagian rata kiri tanpa kartu).
+// Halaman Visi Misi PPID (satu kartu terpusat: lambang, moto, visi, misi bernomor) dan Dasar Hukum (bagian rata kiri tanpa kartu).
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup; aturan tampilan dibaca dari CSS module.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -38,62 +38,67 @@ beforeEach(() => {
 });
 
 describe('Visi dan Misi PPID', () => {
-  it('kepala bersama: satu h1 + pengantar, tanpa logo desa', () => {
+  it('satu h1 + pengantar tetap ada, tetapi hanya untuk pembaca layar (judul tampak ada di kartu)', () => {
     const html = render(<VisiMisiPage />);
-    expect(html).toMatch(/<h1[^>]*>Visi dan Misi PPID<\/h1>/);
     expect(count(html, '<h1')).toBe(1);
+    expect(html).toMatch(/<div class="[^"]*VisuallyHidden[^"]*">(?:(?!<\/header>).)*<h1[^>]*>Visi dan Misi PPID<\/h1>/);
     expect(html).toContain('Arah dan komitmen Pejabat Pengelola Informasi dan Dokumentasi');
-    expect(html).not.toContain('darmasaba-icon');
-    expect(html).not.toContain('<img');
   });
 
-  it('moto, visi, misi = tiga bagian h2 berurutan', () => {
+  it('satu kartu berisi tiga bagian h2 berurutan: moto, visi, misi', () => {
     const html = render(<VisiMisiPage />);
-    const idx = ['Moto', 'Visi', 'Misi'].map((t) => html.indexOf(`>${t}</h2>`));
+    const idx = ['Moto PPID Desa Darmasaba', 'Visi PPID', 'Misi PPID'].map((t) => html.indexOf(`>${t}</h2>`));
     idx.forEach((i) => expect(i).toBeGreaterThan(-1));
     expect([...idx].sort((a, b) => a - b)).toEqual(idx);
     expect(count(html, '<section')).toBe(3);
+    expect(count(html, /class="[^"]*_card_/)).toBe(1);
+    expect(html.indexOf('_card_')).toBeLessThan(idx[0]);
   });
 
-  it('moto: kalimat utuh untuk pembaca layar, empat nilai besar hanya tampilan, "Transparan." garis tepi', () => {
+  it('lambang desa di atas judul moto, dengan teks alternatif', () => {
     const html = render(<VisiMisiPage />);
-    expect(html).toMatch(/VisuallyHidden[^>]*>Memberikan informasi yang cepat, mudah, tepat, dan transparan<\/span>/);
-    expect(html).toMatch(/<span class="[^"]*_motoLead_[^"]*" aria-hidden="true">Memberikan informasi yang<\/span>/);
-    expect(html).toMatch(/<span class="[^"]*_motoValues_[^"]*" aria-hidden="true"><span>Cepat\. <\/span><span>Mudah\. <\/span><span>Tepat\. <\/span><span class="[^"]*_outlined_[^"]*">Transparan\. <\/span><\/span>/);
+    expect(count(html, '<img')).toBe(1);
+    expect(html).toMatch(/<img[^>]*src="\/darmasaba-icon\.png"[^>]*alt="Logo Desa Darmasaba"/);
+    expect(html.indexOf('<img')).toBeLessThan(html.indexOf('>Moto PPID Desa Darmasaba</h2>'));
   });
 
-  it('visi dari CMS dirender apa adanya di kartu visi', () => {
+  it('moto ditulis sebagai satu kalimat utuh (tanda kutip hanya hiasan CSS)', () => {
+    const html = render(<VisiMisiPage />);
+    expect(html).toMatch(/<p class="[^"]*_motoText_[^"]*">Memberikan informasi yang cepat, mudah, tepat, dan transparan<\/p>/);
+  });
+
+  it('dua pemisah berornamen di antara tiga bagian, disembunyikan dari pembaca layar', () => {
+    const html = render(<VisiMisiPage />);
+    expect(count(html, /<div class="[^"]*_ornament_[^"]*" aria-hidden="true">/)).toBe(2);
+  });
+
+  it('visi dari CMS dirender apa adanya', () => {
     const html = render(<VisiMisiPage />);
     expect(html).toMatch(/<div class="[^"]*_visiText_[^"]*">Visi uji\.<\/div>/);
   });
 
-  it('misi berupa daftar → kartu bernomor dalam <ol>, angka hiasan disembunyikan dari pembaca layar', () => {
+  it('misi berupa daftar → butir bernomor dalam <ol>, lencana angka disembunyikan dari pembaca layar', () => {
     const html = render(<VisiMisiPage />);
     expect(count(html, '<ol')).toBe(1);
-    expect(count(html, '_misiCard_')).toBe(2);
-    expect(html).toMatch(/<span class="[^"]*_misiNumber_[^"]*" aria-hidden="true">01<\/span><p class="[^"]*_misiBody_[^"]*">Misi uji satu\.<\/p>/);
-    expect(html).toMatch(/aria-hidden="true">02<\/span><p[^>]*>Misi uji dua\.<\/p>/);
+    expect(count(html, '_misiItem_')).toBe(2);
+    expect(html).toMatch(/<span class="[^"]*_misiNumber_[^"]*" aria-hidden="true">1<\/span><p class="[^"]*_misiBody_[^"]*">Misi uji satu\.<\/p>/);
+    expect(html).toMatch(/aria-hidden="true">2<\/span><p[^>]*>Misi uji dua\.<\/p>/);
   });
 
   it('misi yang bukan daftar teks polos dirender apa adanya', () => {
     visiMisi.findById.data = { id: '1', visi: 'Visi uji.', misi: MISI_RICH_HTML };
     const html = render(<VisiMisiPage />);
     expect(html).toContain(MISI_RICH_HTML);
-    expect(count(html, '_misiCard_')).toBe(0);
+    expect(count(html, '_misiItem_')).toBe(0);
   });
 
-  it('tanpa kartu Mantine/kaca, tanpa teks tengah/justify', () => {
-    const html = render(<VisiMisiPage />);
-    expect(html).not.toContain('mantine-Paper-root');
-    expect(html).not.toMatch(/text-align:\s*(center|justify)/);
-  });
-
-  it('data belum ada → kerangka memuat, kepala halaman tetap tampil', () => {
+  it('data belum ada → kerangka memuat, h1 tetap ada, kartu belum digambar', () => {
     visiMisi.findById.data = null;
     const html = render(<VisiMisiPage />);
     expect(html).toContain('role="status" aria-label="Memuat visi dan misi…"');
     expect(html).toMatch(/<h1[^>]*>Visi dan Misi PPID<\/h1>/);
     expect(count(html, '<section')).toBe(0);
+    expect(html).not.toContain('<img');
   });
 });
 
@@ -144,19 +149,31 @@ describe('Dasar Hukum PPID', () => {
 });
 
 describe('Gaya Visi dan Misi PPID (visi-misi.module.css)', () => {
-  it('rata kiri, satu warna: tanpa gradasi, bayangan, kaca, atau huruf kapital paksa', () => {
-    expect(visiMisiCss).not.toMatch(/text-align|text-transform|box-shadow|gradient|backdrop-filter/);
+  it('kartu terang terpusat: latar dari --vm-card, sudut bulat, bayangan lembut', () => {
+    expect(visiMisiCss).toMatch(/\.card\s*\{[^}]*align-items:\s*center;[^}]*border-radius:\s*32px;[^}]*background:\s*var\(--vm-card\);[^}]*box-shadow:/);
   });
 
-  it('selebar token --ppid-measure; kartu visi berlatar brand; misi 2 kolom, 1 kolom di ≤734px', () => {
-    expect(visiMisiCss).toMatch(/\.root\s*\{[^}]*max-width:\s*var\(--ppid-measure\)/);
-    expect(visiMisiCss).toMatch(/\.visi\s*\{[^}]*background:\s*var\(--brand\)/);
-    expect(visiMisiCss).toMatch(/\.misiGrid\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
-    expect(visiMisiCss).toMatch(/@media \(max-width: 734px\)[\s\S]*\.misiGrid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  it('judul dan kalimat pendek rata tengah; butir misi rata kiri di kolom baca terpusat', () => {
+    expect(visiMisiCss).toMatch(/\.section\s*\{[^}]*text-align:\s*center/);
+    expect(visiMisiCss).toMatch(/\.misiList\s*\{[^}]*max-width:\s*var\(--vm-measure\);[^}]*text-align:\s*left/);
+    expect(visiMisiCss).toMatch(/\.misiRich\s*\{[^}]*text-align:\s*left/);
   });
 
-  it('huruf garis tepi: isi sewarna permukaan dilukis di atas garis warna brand', () => {
-    expect(visiMisiCss).toMatch(/\.outlined\s*\{[^}]*color:\s*var\(--vm-surface\);[^}]*-webkit-text-stroke:[^;]*var\(--brand\);[^}]*paint-order:\s*stroke fill/);
+  it('tanpa justify, gradasi, kaca, atau huruf kapital paksa', () => {
+    expect(visiMisiCss).not.toMatch(/text-align:\s*justify|text-transform|gradient|backdrop-filter/);
+  });
+
+  it('pemisah = garis pendek di kiri-kanan ornamen, bukan garis selebar kartu', () => {
+    expect(visiMisiCss).toMatch(/\.ornament::before,\s*\.ornament::after\s*\{[^}]*flex:\s*0 1 140px/);
+  });
+
+  it('lencana angka misi bulat berlatar brand', () => {
+    expect(visiMisiCss).toMatch(/\.misiNumber\s*\{[^}]*border-radius:\s*50%;[^}]*background:\s*var\(--brand\)/);
+  });
+
+  it('≤734px: kartu, lambang, dan huruf mengecil', () => {
+    expect(visiMisiCss).toMatch(/@media \(max-width: 734px\)\s*\{\s*\.card\s*\{[^}]*padding:\s*36px 20px 40px/);
+    expect(visiMisiCss).toMatch(/@media \(max-width: 734px\)[\s\S]*\.logo\s*\{[^}]*width:\s*84px/);
   });
 });
 

@@ -71,4 +71,20 @@ describe('PpidPage', () => {
   it('hanya satu h1 per halaman', () => {
     expect(html.split('<h1').length - 1).toBe(1);
   });
+
+  it('kepala halaman tampak secara bawaan', () => {
+    expect(html).not.toContain('VisuallyHidden');
+  });
+
+  it('headerHidden: h1 + pengantar tetap ada untuk pembaca layar, isi tetap di luar pembungkus tersembunyi', () => {
+    const hidden = render(
+      <PpidPage title="Halaman Uji" lead="Pengantar halaman." headerHidden>
+        <p>Isi halaman</p>
+      </PpidPage>,
+    );
+    expect(hidden).toMatch(/<div class="[^"]*VisuallyHidden[^"]*"><header/);
+    expect(hidden.split('<h1').length - 1).toBe(1);
+    expect(hidden).toContain('Pengantar halaman.');
+    expect(hidden).toMatch(/<\/header><\/div><p>Isi halaman<\/p>/);
+  });
 });

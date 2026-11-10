@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.240] - 2026-11-10
+### Changed
+- Visi dan Misi PPID kembali ke tampilan kartu terpusat seperti semula — logo desa, moto, visi, lalu misi — dengan penyempurnaan: moto tampil sebagai kutipan yang menonjol, pemisah antarbagian lebih ringan, dan tiap misi bernomor dalam lencana bulat dengan teks rata kiri agar lebih mudah dibaca. Tampilan tulisan besar dan kartu biru dari versi 0.1.239 dihapus.
+
 ## [0.1.239] - 2026-11-10
 ### Changed
 - Visi dan Misi PPID tampil lebih hidup: moto menjadi tulisan besar "Cepat. Mudah. Tepat. Transparan.", visi berada di kartu biru tersendiri, dan tiap misi menjadi kartu bernomor yang mudah dipindai. Isi visi dan misi tetap diambil dari admin.

@@ -1,13 +1,17 @@
 'use client'
 import stateVisiMisiPPID from '@/app/admin/(dashboard)/_state/ppid/visi_misi_ppid/visimisiPPID'
+import colors from '@/con/colors'
 import { useShallowEffect } from '@mantine/hooks'
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { useProxy } from 'valtio/utils'
 import { PpidPage } from '../_com/PpidPage'
 import { PpidSectionsSkeleton } from '../_com/PpidSectionsSkeleton'
 import s from '../_com/ppid-sections.module.css'
 import { VisiMisiContent } from './_com/VisiMisiContent'
 import { VISI_MISI_TEXT } from './_com/visi-misi.text'
+
+/** Latar kartu putih tembus yang dibaca `visi-misi.module.css`. */
+const CARD_VARS = { '--vm-card': colors['white-trans-1'] } as CSSProperties
 
 /** Baris tunggal visi-misi PPID di CMS. */
 const VISI_MISI_ID = '1'
@@ -34,7 +38,7 @@ export default function Page() {
   }
 
   return (
-    <PpidPage title={VISI_MISI_TEXT.title} lead={VISI_MISI_TEXT.lead}>
+    <PpidPage title={VISI_MISI_TEXT.title} lead={VISI_MISI_TEXT.lead} headerHidden style={CARD_VARS}>
       {content}
     </PpidPage>
   )
