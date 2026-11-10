@@ -1,5 +1,5 @@
 import ApiFetch from "@/lib/api-fetch";
-import { Prisma } from "@prisma/client";
+import type { PengumumanDetail, PengumumanListItem } from "@/lib/pengumuman-lampiran";
 import { proxy } from "valtio";
 
 // Bagian baca (detail, terbaru) state pengumuman — dipisah dari pengumuman.ts agar file tetap
@@ -7,11 +7,7 @@ import { proxy } from "valtio";
 
 /** Detail satu pengumuman (`GET /api/desa/pengumuman/:id`). */
 export const pengumumanFindUnique = proxy({
-  data: null as Prisma.PengumumanGetPayload<{
-    include: {
-      CategoryPengumuman: true;
-    };
-  }> | null,
+  data: null as PengumumanDetail | null,
   async load(id: string) {
     try {
       const res = await fetch(`/api/desa/pengumuman/${id}`);
@@ -31,23 +27,14 @@ export const pengumumanFindUnique = proxy({
 
 /** Pengumuman terbaru (satu) untuk halaman informasi desa. */
 export const pengumumanFindFirst = proxy({
-  data: null as Prisma.PengumumanGetPayload<{
-    include: {
-      CategoryPengumuman: true;
-    };
-  }> | null,
+  data: null as PengumumanListItem | null,
   loading: false,
   async load() {
     this.loading = true;
     try {
       const res = await ApiFetch.api.desa.pengumuman["find-first"].get();
       if (res.status === 200 && res.data?.success) {
-        pengumumanFindFirst.data = res.data
-          .data as Prisma.PengumumanGetPayload<{
-          include: {
-            CategoryPengumuman: true;
-          };
-        }> | null;
+        pengumumanFindFirst.data = res.data.data as PengumumanListItem | null;
       }
     } catch (err) {
       console.error("Gagal fetch pengumuman terbaru:", err);
@@ -59,11 +46,7 @@ export const pengumumanFindFirst = proxy({
 
 /** Empat pengumuman terbaru. */
 export const pengumumanFindRecent = proxy({
-  data: [] as Prisma.PengumumanGetPayload<{
-    include: {
-      CategoryPengumuman: true;
-    };
-  }>[],
+  data: [] as PengumumanListItem[],
   loading: false,
 
   async load() {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
-import { Prisma } from "@prisma/client";
+import type { PengumumanListItem } from "@/lib/pengumuman-lampiran";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
@@ -22,6 +22,12 @@ const defaultForm = {
   deskripsi: "",
   content: "",
   categoryPengumumanId: "",
+  // Lampiran diisi halaman create/edit setelah berkas diunggah saat Simpan.
+  imageId: null as string | null,
+  imageIds: [] as string[],
+  dokumenIds: [] as string[],
+  /** `YYYY-MM-DD` (WITA); kosong = default hari ini (create) / tidak diubah (edit). */
+  tanggalTerbit: "",
 };
 
 const pengumuman = proxy({
@@ -34,7 +40,8 @@ const pengumuman = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return false;
       }
       try {
         pengumuman.create.loading = true;
@@ -43,25 +50,22 @@ const pengumuman = proxy({
         );
         if (res.status === 200) {
           pengumuman.findMany.load();
-          return toast.success("Sukses menambahkan");
+          toast.success("Sukses menambahkan");
+          return true;
         }
-        console.log(res);
-        return toast.error("failed create");
+        console.error("Gagal membuat pengumuman: HTTP", res.status);
+        toast.error("failed create");
+        return false;
       } catch (error) {
-        console.log((error as Error).message);
+        console.error("Gagal membuat pengumuman:", error);
+        return false;
       } finally {
         pengumuman.create.loading = false;
       }
     },
   },
   findMany: {
-    data: null as
-      | Prisma.PengumumanGetPayload<{
-          include: {
-            CategoryPengumuman: true;
-          };
-        }>[]
-      | null,
+    data: null as PengumumanListItem[] | null,
     page: 1,
     totalPages: 1,
     loading: false,
@@ -161,6 +165,10 @@ const pengumuman = proxy({
             deskripsi: data.deskripsi,
             content: data.content,
             categoryPengumumanId: data.categoryPengumumanId || "",
+            imageId: data.imageId ?? null,
+            imageIds: (data.images ?? []).map((f: { id: string }) => f.id),
+            dokumenIds: (data.dokumen ?? []).map((f: { id: string }) => f.id),
+            tanggalTerbit: "",
           };
           return data;
         } else {
@@ -198,6 +206,10 @@ const pengumuman = proxy({
             deskripsi: this.form.deskripsi,
             content: this.form.content,
             categoryPengumumanId: this.form.categoryPengumumanId || null,
+            imageId: this.form.imageId,
+            imageIds: this.form.imageIds,
+            dokumenIds: this.form.dokumenIds,
+            ...(this.form.tanggalTerbit ? { tanggalTerbit: this.form.tanggalTerbit } : {}),
           }),
         });
 

@@ -3,6 +3,7 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
+import { hariIniInput } from '@/lib/pengumuman-tanggal';
 import {
   Box,
   Button,
@@ -21,11 +22,14 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { LampiranFields } from '../_com/LampiranFields';
+import { useLampiranPengumuman } from '../_lib/useLampiranPengumuman';
 
 function CreatePengumuman() {
-  const pengumumanState = useProxy(stateDesaPengumuman);
+  const pengumumanState = useProxy(stateDesaPengumuman, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const lampiran = useLampiranPengumuman();
 
   // Helper function to check if HTML content is empty
   const isHtmlEmpty = (html: string) => {
@@ -40,12 +44,17 @@ function CreatePengumuman() {
       pengumumanState.pengumuman.create.form.judul?.trim() !== '' &&
       pengumumanState.pengumuman.create.form.categoryPengumumanId !== '' &&
       pengumumanState.pengumuman.create.form.deskripsi?.trim() !== '' &&
+      pengumumanState.pengumuman.create.form.tanggalTerbit !== '' &&
       !isHtmlEmpty(pengumumanState.pengumuman.create.form.content)
     );
   };
 
   useShallowEffect(() => {
     pengumumanState.category.findMany.load();
+    // Default Tanggal Terbit = hari ini (WITA); admin bisa mengubahnya untuk pengumuman lama.
+    if (!stateDesaPengumuman.pengumuman.create.form.tanggalTerbit) {
+      stateDesaPengumuman.pengumuman.create.form.tanggalTerbit = hariIniInput();
+    }
   }, []);
 
   const handleSubmit = async () => {
@@ -64,6 +73,11 @@ function CreatePengumuman() {
       return;
     }
     
+    if (!pengumumanState.pengumuman.create.form.tanggalTerbit) {
+      toast.error('Tanggal terbit wajib diisi');
+      return;
+    }
+
     if (isHtmlEmpty(pengumumanState.pengumuman.create.form.content)) {
       toast.error('Konten lengkap wajib diisi');
       return;
@@ -71,12 +85,16 @@ function CreatePengumuman() {
 
     try {
       setIsSubmitting(true);
-      await pengumumanState.pengumuman.create.create();
+      // Berkas diunggah ke MinIO baru sekarang (bukan saat dipilih) agar batal tidak meninggalkan berkas yatim.
+      const ids = await lampiran.unggah();
+      Object.assign(stateDesaPengumuman.pengumuman.create.form, ids);
+      const ok = await pengumumanState.pengumuman.create.create();
+      if (!ok) return;
       resetForm();
       router.push('/admin/pemerintahan/pengumuman/list-pengumuman');
     } catch (error) {
       console.error('Error creating pengumuman:', error);
-      toast.error('Terjadi kesalahan saat membuat pengumuman');
+      toast.error(error instanceof Error ? error.message : 'Terjadi kesalahan saat membuat pengumuman');
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +106,12 @@ function CreatePengumuman() {
       deskripsi: '',
       content: '',
       categoryPengumumanId: '',
+      imageId: null,
+      imageIds: [],
+      dokumenIds: [],
+      tanggalTerbit: hariIniInput(),
     };
+    lampiran.muat();
   };
 
   return (
@@ -148,6 +171,16 @@ function CreatePengumuman() {
             required
           />
 
+          {/* Tanggal Terbit */}
+          <TextInput
+            type="date"
+            label="Tanggal Terbit"
+            description="Tanggal asli pengumuman; default hari ini"
+            value={pengumumanState.pengumuman.create.form.tanggalTerbit}
+            onChange={(e) => (pengumumanState.pengumuman.create.form.tanggalTerbit = e.target.value)}
+            required
+          />
+
           {/* Deskripsi Singkat */}
           <TextInput
             value={pengumumanState.pengumuman.create.form.deskripsi}
@@ -169,6 +202,9 @@ function CreatePengumuman() {
               }}
             />
           </Box>
+
+          {/* Lampiran: gambar utama, galeri, dokumen PDF (semua opsional) */}
+          <LampiranFields lampiran={lampiran} />
 
           {/* Tombol Submit */}
           <Group justify="right">

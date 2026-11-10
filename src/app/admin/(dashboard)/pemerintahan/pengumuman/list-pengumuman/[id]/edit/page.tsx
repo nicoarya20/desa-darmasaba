@@ -4,6 +4,7 @@
 import EditEditor from "@/app/admin/(dashboard)/_com/editEditor";
 import stateDesaPengumuman from "@/app/admin/(dashboard)/_state/desa/pengumuman";
 import colors from "@/con/colors";
+import { tanggalKeInput, tanggalPengumuman } from "@/lib/pengumuman-tanggal";
 import {
   Box,
   Button,
@@ -18,9 +19,11 @@ import {
 } from "@mantine/core";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
+import { LampiranFields } from "../../_com/LampiranFields";
+import { useLampiranPengumuman, type LampiranAwal } from "../../_lib/useLampiranPengumuman";
 
 function EditPengumuman() {
   const editState = useProxy(stateDesaPengumuman);
@@ -32,9 +35,14 @@ function EditPengumuman() {
     deskripsi: "",
     categoryPengumumanId: "",
     content: "",
+    tanggalTerbit: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const lampiran = useLampiranPengumuman();
+  const { muat: muatLampiran } = lampiran;
+  // Lampiran tersimpan, untuk tombol Batal (kembali ke data awal).
+  const lampiranAwal = useRef<LampiranAwal | undefined>(undefined);
 
   // Helper function to check if HTML content is empty
   const isHtmlEmpty = (html: string) => {
@@ -49,6 +57,7 @@ function EditPengumuman() {
       formData.judul?.trim() !== '' &&
       formData.deskripsi?.trim() !== '' &&
       formData.categoryPengumumanId !== '' &&
+      formData.tanggalTerbit !== '' &&
       !isHtmlEmpty(formData.content)
     );
   };
@@ -58,6 +67,7 @@ function EditPengumuman() {
     deskripsi: "",
     categoryPengumumanId: "",
     content: "",
+    tanggalTerbit: "",
   });
 
   // Load kategori & pengumuman by id saat pertama kali
@@ -71,18 +81,21 @@ function EditPengumuman() {
       try {
         const data = await stateDesaPengumuman.pengumuman.edit.load(id);
         if (data) {
-          setFormData({
+          const awal = {
             judul: data.judul || "",
             deskripsi: data.deskripsi || "",
             categoryPengumumanId: data.categoryPengumumanId || "",
             content: data.content || "",
-          });
-          setOriginalData({
-            judul: data.judul || "",
-            deskripsi: data.deskripsi || "",
-            categoryPengumumanId: data.categoryPengumumanId || "",
-            content: data.content || "",
-          });
+            tanggalTerbit: tanggalKeInput(tanggalPengumuman(data)),
+          };
+          setFormData(awal);
+          setOriginalData(awal);
+          lampiranAwal.current = {
+            image: data.image ?? null,
+            images: data.images ?? [],
+            dokumen: data.dokumen ?? [],
+          };
+          muatLampiran(lampiranAwal.current);
         }
       } catch (error) {
         console.error("Error loading pengumuman:", error);
@@ -113,6 +126,11 @@ function EditPengumuman() {
       return;
     }
     
+    if (!formData.tanggalTerbit) {
+      toast.error('Tanggal terbit wajib diisi');
+      return;
+    }
+
     if (isHtmlEmpty(formData.content)) {
       toast.error('Konten lengkap wajib diisi');
       return;
@@ -120,30 +138,32 @@ function EditPengumuman() {
 
     try {
       setIsSubmitting(true);
+      // Berkas baru diunggah saat Simpan; lampiran yang dihapus cukup dilepas dari pengumuman.
+      const ids = await lampiran.unggah();
       // update global state hanya sekali pas submit
       editState.pengumuman.edit.form = {
         ...editState.pengumuman.edit.form,
         ...formData,
+        ...ids,
+        // Kirim tanggal hanya bila diubah, supaya jam asli (mis. hasil backfill createdAt) tidak tertimpa.
+        tanggalTerbit: formData.tanggalTerbit !== originalData.tanggalTerbit ? formData.tanggalTerbit : "",
       };
 
-      await editState.pengumuman.edit.update();
+      const ok = await editState.pengumuman.edit.update();
+      if (!ok) return;
       toast.success("Pengumuman berhasil diperbarui!");
       router.push("/admin/pemerintahan/pengumuman/list-pengumuman");
     } catch (error) {
       console.error("Error updating pengumuman:", error);
-      toast.error("Terjadi kesalahan saat memperbarui pengumuman");
+      toast.error(error instanceof Error ? error.message : "Terjadi kesalahan saat memperbarui pengumuman");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleResetForm = () => {
-    setFormData({
-      judul: originalData.judul,
-      deskripsi: originalData.deskripsi,
-      categoryPengumumanId: originalData.categoryPengumumanId,
-      content: originalData.content,
-    });
+    setFormData({ ...originalData });
+    muatLampiran(lampiranAwal.current);
     toast.info("Form dikembalikan ke data awal");
   };
 
@@ -207,6 +227,15 @@ function EditPengumuman() {
             }
           />
 
+          <TextInput
+            type="date"
+            label="Tanggal Terbit"
+            description="Tanggal asli pengumuman"
+            value={formData.tanggalTerbit}
+            onChange={(e) => handleChange("tanggalTerbit", e.target.value)}
+            required
+          />
+
           <Box>
             <Text fz="sm" fw="bold" mb={6}>
               Konten Lengkap
@@ -216,6 +245,8 @@ function EditPengumuman() {
               onChange={(htmlContent) => handleChange("content", htmlContent)}
             />
           </Box>
+
+          <LampiranFields lampiran={lampiran} />
 
           <Group justify="right">
             {/* Tombol Batal */}
