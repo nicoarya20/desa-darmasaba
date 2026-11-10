@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.232] - 2026-11-10
+### Changed
+- **Halaman Struktur Organisasi PPID didesain ulang.** Tiap jabatan kini tampil sebagai kartu biru memanjang: nama jabatan dan nama pegawai di kiri, foto di kanan. Tepi kiri foto dibuat memudar ke warna kartu, sehingga foto berlatar kotak biasa tetap menyatu dengan kartunya. Warna kartu makin terang di tiap tingkat di bawahnya: Kepala Desa paling gelap.
+- Bagan kini tersusun dari atas ke bawah: Kepala Desa di tengah atas, lalu bawahannya berjajar di bawahnya dengan garis penghubung. Para Kepala Dusun disusun dalam beberapa baris (2 kartu per baris di laptop, 4 di layar lebar), dan baris terakhir yang tidak penuh diletakkan di tengah. Seluruh bagan langsung terlihat tanpa perlu digeser, jadi tombol Zoom dan Fullscreen dihapus.
+- Di ponsel dan tablet, bagan kini tersusun ke bawah dengan garis penghubung di sisi kiri. Sebelumnya layar hampir kosong dan Kepala Desa berada di luar layar.
+- Seluruh kartu kini bisa diklik untuk membuka profil pegawai, menggantikan tombol "Lihat Detail".
+- Kotak pencarian dipindah ke samping judul dan langsung menyaring bagan saat mengetik.
+
+### Fixed
+- Kaur Keuangan kini tampil di bagan. Sebelumnya jabatan ini tidak muncul karena jabatan di atasnya, Kaur Umum & TU, belum diisi pegawai. Jabatan yang belum diisi kini tampil sebagai kartu bergaris putus bertuliskan "Belum ditugaskan".
+- Bagan kini menampilkan semua pegawai aktif. Sebelumnya hanya 10 pegawai pertama yang dimuat.
+- Jabatan yang diisi lebih dari satu pegawai kini menampilkan semua pegawainya, masing-masing dengan kartu sendiri yang berjajar di jabatan itu. Sebelumnya hanya satu pegawai yang tampil.
+- Garis dari Kepala Desa ke Sekretaris Desa kini terlihat, dan semua kartu di tingkat yang sama kini sama lebar.
+
 ## [0.1.231] - 2026-11-10
 ### Changed
 - **Halaman Profil PPID kini lebih rapi di layar lebar.** Pengalaman Organisasi dan Program Unggulan dipindah ke kolom kanan, tepat di bawah Riwayat Karir, sehingga tidak ada lagi ruang kosong besar di bawah Riwayat Karir. Sebelumnya keduanya tampil selebar halaman di bawah foto, dan sisi kanannya kosong.
