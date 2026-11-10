@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.237] - 2026-11-10
+### Fixed
+- Di ponsel, pita di belakang foto Perbekel kini tampil utuh: turun dari kiri atas foto lalu keluar sampai tepi kanan layar. Sebelumnya pita tergencet di sisi kiri dan terputus di belakang foto.
+
 ## [0.1.236] - 2026-11-10
 ### Changed
 - **Halaman PPID kini satu tampilan.** Visi dan Misi, Dasar Hukum, Permohonan Informasi Publik, Permohonan Keberatan, Daftar Informasi Publik (beserta detailnya), dan Indeks Kepuasan Masyarakat memakai kepala halaman yang sama dengan Struktur PPID: tombol kembali, judul besar rata kiri, dan satu kalimat pengantar. Logo besar, kartu di dalam kartu, dan teks rata kanan-kiri dihapus.

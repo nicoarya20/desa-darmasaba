@@ -316,6 +316,8 @@
     grid-area: profile;
     justify-self: start;
     width: calc(var(--bleed) * 1600 / 1100);
+    /* Reset global `svg { max-width: 100% }` menjepit lebar ke sel foto, sehingga pita tergencet di kiri. */
+    max-width: none;
     margin-left: calc(var(--gutter) * -1 - var(--bleed) * 500 / 1100);
   }
 
