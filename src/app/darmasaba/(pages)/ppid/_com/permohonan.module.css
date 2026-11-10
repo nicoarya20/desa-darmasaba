@@ -17,8 +17,8 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
+  /* Tanpa max-width: saat bertumpuk kartu selebar isi; di 2 kolom lebarnya sudah dibatasi kolom grid. */
   min-width: 0;
-  max-width: 680px;
 }
 
 /* ---------- Alur bernomor ---------- */
@@ -160,7 +160,8 @@
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: 64px;
     align-items: start;
-    max-width: 1200px;
+    /* Garis henti bersama halaman teks/formulir PPID; disetel PpidPage, fallback bila belum ada. */
+    max-width: var(--ppid-measure, 75rem);
   }
 
   .aside {
