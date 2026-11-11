@@ -4,13 +4,14 @@
 import { MantineProvider, Modal } from '@mantine/core';
 import type { AnchorHTMLAttributes } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
   useTransitionRouter: () => ({ back: vi.fn() }),
 }));
 
+import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import { AjukanPermohonanModal } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/detail/AjukanPermohonanModal';
 import { LayananDetail, LayananDetailBody } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/detail/LayananDetail';
 import { LAYANAN_DETAIL_TEXT as T } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/detail/layanan-detail.text';
@@ -76,5 +77,16 @@ describe('AjukanPermohonanModal', () => {
     expect(html).toMatch(/<button[^>]*disabled[^>]*>[\s\S]*Simpan/);
     // Bingkai Paper lama di dalam isi modal sudah dibuang (Modal.Content sendiri memang Paper).
     expect(html.split('mantine-Modal-body')[1]).not.toContain('mantine-Paper-root');
+  });
+
+  afterEach(() => {
+    stateLayananDesa.ajukanPermohonan.create.loading = false;
+  });
+
+  it('selama pengiriman berjalan tombol Simpan terkunci (loading) agar tidak terkirim ganda', () => {
+    expect(render(<AjukanPermohonanModal opened onClose={() => {}} />)).not.toContain('data-loading="true"');
+    stateLayananDesa.ajukanPermohonan.create.loading = true;
+    const html = render(<AjukanPermohonanModal opened onClose={() => {}} />);
+    expect(html).toMatch(/<button[^>]*data-loading="true"[^>]*disabled[^>]*>[\s\S]*Simpan/);
   });
 });

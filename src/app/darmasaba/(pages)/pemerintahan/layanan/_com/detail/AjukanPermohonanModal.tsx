@@ -195,6 +195,8 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
           bg={isFormValid() ? colors['blue-button'] : undefined}
           onClick={handleSubmit}
           disabled={!isFormValid()}
+          // Selama create() berjalan tombol terkunci (spinner) agar permohonan tidak terkirim ganda.
+          loading={stateCreate.create.loading}
         >
           Simpan
         </Button>
