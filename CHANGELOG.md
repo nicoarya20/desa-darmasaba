@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.250] - 2026-11-11
+### Changed
+- **Halaman Layanan (menu Pemerintahan) kini senada dengan galeri Layanan dan Potensi Desa di beranda.** Halaman berlatar putih dengan judul rata kiri, sama seperti halaman Berita dan Pengumuman. Setiap surat keterangan tampil sebagai kartu foto bergaya galeri beranda: nama layanan di kiri bawah dan tombol "Lihat layanan" di kanan bawah. Seluruh kartu bisa diklik untuk membuka detail layanan.
+- **Semua surat keterangan tampil sekaligus** tanpa nomor halaman. Kotak cari di samping judul bagian langsung menyaring saat mengetik.
+- **Alur pendaftaran NIB (Perizinan Berusaha melalui OSS)** kini menampilkan keenam langkah sekaligus, tanpa perlu menekan Lanjut satu per satu. Tombol "Buka oss.go.id" ada di bawahnya.
+- **Layanan Telunjuk Sakti Desa** tampil sebagai daftar baris. Nama layanan terbaca utuh (tidak terpotong), dan setiap baris membuka dokumen petunjuk di tab baru.
+- **Pelayanan Penduduk Non-Permanen** tampil dalam panel yang rapi.
+
+### Fixed
+- Surat keterangan ke-10 (Surat Keterangan Yatim Piatu) sebelumnya tidak pernah muncul di halaman Layanan karena jumlah item per halaman tidak konsisten.
+- Tautan Telunjuk Sakti yang diisi admin tanpa "https://" kini membuka situs yang dituju, bukan halaman tidak ditemukan.
+
+### Removed
+- Tanggal "25 Mei 2021" yang tidak sesuai dan empat tombol bagikan media sosial yang tidak berfungsi di bagian Penduduk Non-Permanen.
+
 ## [0.1.249] - 2026-11-11
 ### Changed
 - **Halaman Pengumuman (menu Pemerintahan) kini senada dengan panel Pengumuman di beranda dan halaman Berita.** Pengumuman tampil sebagai daftar baris dengan gambar kecil di kiri, kategori, judul, dan tanggal terbit. Gambar kecil itu memperlihatkan kop surat pengumuman; pengumuman tanpa gambar memakai ikon dokumen. Satu halaman kini memuat 10 pengumuman (sebelumnya 3), dan judul tidak lagi dipaksa huruf kapital.
