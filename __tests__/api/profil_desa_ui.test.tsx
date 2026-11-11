@@ -46,9 +46,9 @@ import ProfilPerbekel from '@/app/(public)/(pages)/pemerintahan/profil/ui/profil
 import SemuaPerbekel from '@/app/(public)/(pages)/pemerintahan/profil/ui/semuaPerbekel';
 import VisiMisiDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/visimisiDesa';
 import WilayahDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/wilayahDesa';
-import { StrukturBody } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/StrukturBody';
-import type { OrgNode } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur.logic';
-import type { StrukturData } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/use-struktur-data';
+import { StrukturBody } from '@/app/(public)/_com/struktur-organisasi/StrukturBody';
+import type { OrgNode } from '@/app/(public)/_com/struktur-organisasi/struktur.logic';
+import type { StrukturData } from '@/app/(public)/_com/struktur-organisasi/use-struktur-data';
 
 const render = (ui: ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const count = (source: string, needle: string | RegExp) => source.split(needle).length - 1;
