@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const SRC = readFileSync(
-  path.resolve(__dirname, '../../src/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto.tsx'),
+  path.resolve(__dirname, '../../src/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto.tsx'),
   'utf8',
 );
 

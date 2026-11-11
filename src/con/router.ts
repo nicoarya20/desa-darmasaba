@@ -3,23 +3,23 @@
 const pages = {
     "home": "/",
     "darmasaba": {
-        "home": "/daramasaba",
-        "desa": "/darmasaba/pemerintahan",
-        "ekonomi": "/darmasaba/ekonomi",
-        "keamanan": "/darmasaba/keamanan",
-        "kesehatan": "/darmasaba/kesehatan",
-        "inovasi": "/darmasaba/inovasi",
-        "lingkungan": "/darmasaba/lingkungan",
-        "pendidikan": "/darmasaba/pendidikan",
+        "home": "/",
+        "desa": "/pemerintahan",
+        "ekonomi": "/ekonomi",
+        "keamanan": "/keamanan",
+        "kesehatan": "/kesehatan",
+        "inovasi": "/inovasi",
+        "lingkungan": "/lingkungan",
+        "pendidikan": "/pendidikan",
         "module": {
-            "daves": "/darmasaba/module/daves",
-            "mangan": "/darmasaba/module/mangan",
-            "bicara-darma": "/darmasaba/module/bicara-darma",
-            "bares": "/darmasaba/module/bares",
-            "sajjana-dharma-raksaka": "/darmasaba/module/sajjana-dharma-raksaka",
-            "pdkt": "/darmasaba/module/pdkt",
-            "gelah-melah": "/darmasaba/module/gelah-melah",
-            "inovasi-desa-darmasaba": "/darmasaba/module/inovasi-desa-darmasaba"
+            "daves": "/module/daves",
+            "mangan": "/module/mangan",
+            "bicara-darma": "/module/bicara-darma",
+            "bares": "/module/bares",
+            "sajjana-dharma-raksaka": "/module/sajjana-dharma-raksaka",
+            "pdkt": "/module/pdkt",
+            "gelah-melah": "/module/gelah-melah",
+            "inovasi-desa-darmasaba": "/module/inovasi-desa-darmasaba"
         }
     },
 

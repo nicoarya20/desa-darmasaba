@@ -6,42 +6,42 @@ const navbarListMenu = [
             {
                 id: "1.1",
                 name: "Profil PPID",
-                href: "/darmasaba/ppid/profil-ppid"
+                href: "/ppid/profil-ppid"
             },
             {
                 id: "1.2",
                 name: "Struktur PPID",
-                href: "/darmasaba/ppid/struktur-ppid"
+                href: "/ppid/struktur-ppid"
             },
             {
                 id: "1.3",
                 name: "Visi Misi PPID",
-                href: "/darmasaba/ppid/visi-misi-ppid"
+                href: "/ppid/visi-misi-ppid"
             },
             {
                 id: "1.4",
                 name: "Dasar Hukum",
-                href: "/darmasaba/ppid/dasar-hukum"
+                href: "/ppid/dasar-hukum"
             },
             {
                 id: "1.5",
                 name: "Permohonan Informasi Publik",
-                href: "/darmasaba/ppid/permohonan-informasi-publik"
+                href: "/ppid/permohonan-informasi-publik"
             },
             {
                 id: "1.6",
                 name: "Permohonan Keberatan Informasi Publik",
-                href: "/darmasaba/ppid/permohonan-keberatan-informasi-publik"
+                href: "/ppid/permohonan-keberatan-informasi-publik"
             },
             {
                 id: "1.7",
                 name: "Daftar Informasi Publik",
-                href: "/darmasaba/ppid/daftar-informasi-publik"
+                href: "/ppid/daftar-informasi-publik"
             },
             {
                 id: "1.8",
                 name: "Indeks Kepuasan Masyarakat",
-                href: "/darmasaba/ppid/indeks-kepuasan-masyarakat"
+                href: "/ppid/indeks-kepuasan-masyarakat"
             },
 
         ]
@@ -54,52 +54,52 @@ const navbarListMenu = [
             {
                 id: "2.1",
                 name: "Profil",
-                href: "/darmasaba/pemerintahan/profil"
+                href: "/pemerintahan/profil"
             },
             {
                 id: "2.2",
                 name: "Potensi",
-                href: "/darmasaba/pemerintahan/potensi"
+                href: "/pemerintahan/potensi"
             },
             {
                 id: "2.3",
                 name: "Berita",
-                href: "/darmasaba/pemerintahan/berita/semua"
+                href: "/pemerintahan/berita/semua"
             },
             {
                 id: "2.4",
                 name: "Pengumuman",
-                href: "/darmasaba/pemerintahan/pengumuman"
+                href: "/pemerintahan/pengumuman"
             },
             {
                 id: "2.5",
                 name: "Gallery",
-                href: "/darmasaba/pemerintahan/galery/foto"
+                href: "/pemerintahan/galery/foto"
             },
             {
                 id: "2.6",
                 name: "Layanan",
-                href: "/darmasaba/pemerintahan/layanan"
+                href: "/pemerintahan/layanan"
             },
             {
                 id: "2.7",
                 name: "Prestasi dan Penghargaan",
-                href: "/darmasaba/prestasi-desa"
+                href: "/prestasi-desa"
             },
             {
                 id: "2.8",
                 name: "Kegiatan Desa",
-                href: "/darmasaba/pemerintahan/kegiatan-desa/semua"
+                href: "/pemerintahan/kegiatan-desa/semua"
             },
             {
                 id: "2.9",
                 name: "Agenda & Kalender Desa",
-                href: "/darmasaba/pemerintahan/event-budaya"
+                href: "/pemerintahan/event-budaya"
             },
             {
                 id: "2.10",
                 name: "Monev & Pembangunan",
-                href: "/darmasaba/pemerintahan/monev-pembangunan"
+                href: "/pemerintahan/monev-pembangunan"
             }
 
         ]
@@ -111,40 +111,40 @@ const navbarListMenu = [
             {
                 id: "3.1",
                 name: "Posyandu",
-                href: "/darmasaba/kesehatan/posyandu"
+                href: "/kesehatan/posyandu"
             },
             {
                 id: "3.2",
                 name: "Data Kesehatan Warga",
-                href: "/darmasaba/kesehatan/data-kesehatan-warga",
+                href: "/kesehatan/data-kesehatan-warga",
                 hidden: true
             },
             {
                 id: "3.3",
                 name: "Puskesmas",
-                href: "/darmasaba/kesehatan/puskesmas",
+                href: "/kesehatan/puskesmas",
                 hidden: true
             },
             {
                 id: "3.4",
                 name: "Program Kesehatan",
-                href: "/darmasaba/kesehatan/program-kesehatan"
+                href: "/kesehatan/program-kesehatan"
             },
             {
                 id: "3.5",
                 name: "Penanganan Darurat",
-                href: "/darmasaba/kesehatan/penanganan-darurat",
+                href: "/kesehatan/penanganan-darurat",
                 hidden: true
             },
             {
                 id: "3.6",
                 name: "Kontak Darurat",
-                href: "/darmasaba/kesehatan/kontak-darurat"
+                href: "/kesehatan/kontak-darurat"
             },
             {
                 id: "3.7",
                 name: "Info Wabah/Penyakit",
-                href: "/darmasaba/kesehatan/info-wabah-penyakit",
+                href: "/kesehatan/info-wabah-penyakit",
                 hidden: true
             }
         ]
@@ -156,37 +156,37 @@ const navbarListMenu = [
             {
                 id: "4.1",
                 name: "Keamanan Lingkungan (Pecalang/Patwal)",
-                href: "/darmasaba/keamanan/keamanan-lingkungan-pecalang-patwal"
+                href: "/keamanan/keamanan-lingkungan-pecalang-patwal"
             },
             {
                 id: "4.2",
                 name: "Polsek Terdekat",
-                href: "/darmasaba/keamanan/polsek-terdekat"
+                href: "/keamanan/polsek-terdekat"
             },
             {
                 id: "4.3",
                 name: "Kontak Darurat",
-                href: "/darmasaba/keamanan/kontak-darurat"
+                href: "/keamanan/kontak-darurat"
             },
             {
                 id: "4.4",
                 name: "Pencegahan Kriminalitas",
-                href: "/darmasaba/keamanan/pencegahan-kriminalitas"
+                href: "/keamanan/pencegahan-kriminalitas"
             },
             {
                 id: "4.5",
                 name: "Laporan Publik",
-                href: "/darmasaba/keamanan/laporan-publik"
+                href: "/keamanan/laporan-publik"
             },
             {
                 id: "4.6",
                 name: "Tips Keamanan",
-                href: "/darmasaba/keamanan/tips-keamanan"
+                href: "/keamanan/tips-keamanan"
             },
             {
                 id: "4.7",
                 name: "CCTV",
-                href: "/darmasaba/keamanan/cctv"
+                href: "/keamanan/cctv"
             }
         ]
     },
@@ -197,57 +197,57 @@ const navbarListMenu = [
             {
                 id: "5.1",
                 name: "UMKM",
-                href: "/darmasaba/ekonomi/umkm"
+                href: "/ekonomi/umkm"
             },
             {
                 id: "5.2",
                 name: "Lowongan Kerja Lokal",
-                href: "/darmasaba/ekonomi/lowongan-kerja-lokal"
+                href: "/ekonomi/lowongan-kerja-lokal"
             },
             {
                 id: "5.3",
                 name: "BUMDes",
-                href: "/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes"
+                href: "/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes"
             },
             {
                 id: "5.4",
                 name: "PADesa (Pendapatan Asli Desa)",
-                href: "/darmasaba/ekonomi/PADesa-pendapatan-asli-desa"
+                href: "/ekonomi/PADesa-pendapatan-asli-desa"
             },
             {
                 id: "5.5",
                 name: "Jumlah Pengangguran",
-                href: "/darmasaba/ekonomi/jumlah-pengangguran"
+                href: "/ekonomi/jumlah-pengangguran"
             },
             {
                 id: "5.6",
                 name: "Jumlah penduduk usia kerja yang menganggur",
-                href: "/darmasaba/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur"
+                href: "/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur"
             },
             {
                 id: "5.7",
                 name: "Jumlah Penduduk Miskin",
-                href: "/darmasaba/ekonomi/jumlah-penduduk-miskin"
+                href: "/ekonomi/jumlah-penduduk-miskin"
             },
             {
                 id: "5.8",
                 name: "Program Pengentasan Kemiskinan",
-                href: "/darmasaba/ekonomi/program-kemiskinan"
+                href: "/ekonomi/program-kemiskinan"
             },
             {
                 id: "5.9",
                 name: "Sektor Unggulan Desa",
-                href: "/darmasaba/ekonomi/sektor-unggulan-desa"
+                href: "/ekonomi/sektor-unggulan-desa"
             },
             {
                 id: "5.10",
                 name: "Demografi Pekerjaan",
-                href: "/darmasaba/ekonomi/demografi-pekerjaan"
+                href: "/ekonomi/demografi-pekerjaan"
             },
             {
                 id: "5.11",
                 name: "Kesejahteraan Masyarakat",
-                href: "/darmasaba/ekonomi/kesejahteraan-masyarakat"
+                href: "/ekonomi/kesejahteraan-masyarakat"
             }
         ]
     }, {
@@ -257,32 +257,32 @@ const navbarListMenu = [
             {
                 id: "6.1",
                 name: "Desa Digital/Smart Village",
-                href: "/darmasaba/inovasi/desa-digital-smart-village"
+                href: "/inovasi/desa-digital-smart-village"
             },
             {
                 id: "6.2",
                 name: "Layanan Online Desa",
-                href: "/darmasaba/inovasi/layanan-online-desa"
+                href: "/inovasi/layanan-online-desa"
             },
             {
                 id: "6.3",
                 name: "Program Kreatif Desa",
-                href: "/darmasaba/inovasi/program-kreatif-desa"
+                href: "/inovasi/program-kreatif-desa"
             },
             {
                 id: "6.4",
                 name: "Kolaborasi Inovasi",
-                href: "/darmasaba/inovasi/kolaborasi-inovasi"
+                href: "/inovasi/kolaborasi-inovasi"
             },
             {
                 id: "6.5",
                 name: "Info Teknologi Tepat Guna",
-                href: "/darmasaba/inovasi/info-teknologi-tepat-guna"
+                href: "/inovasi/info-teknologi-tepat-guna"
             },
             {
                 id: "6.6",
                 name: "Ajukan Ide Inovatif",
-                href: "/darmasaba/inovasi/ajukan-ide-inovatif"
+                href: "/inovasi/ajukan-ide-inovatif"
             }
 
         ]
@@ -293,32 +293,32 @@ const navbarListMenu = [
             {
                 id: "7.1",
                 name: "Pengelolaan Sampah (Bank Sampah)",
-                href: "/darmasaba/lingkungan/pengelolaan-sampah-bank-sampah"
+                href: "/lingkungan/pengelolaan-sampah-bank-sampah"
             },
             {
                 id: "7.2",
                 name: "Program Penghijauan",
-                href: "/darmasaba/lingkungan/program-penghijauan"
+                href: "/lingkungan/program-penghijauan"
             },
             {
                 id: "7.3",
                 name: "Data Lingkungan Desa",
-                href: "/darmasaba/lingkungan/data-lingkungan-desa"
+                href: "/lingkungan/data-lingkungan-desa"
             },
             {
                 id: "7.4",
                 name: "Gotong Royong",
-                href: "/darmasaba/lingkungan/gotong-royong/semua"
+                href: "/lingkungan/gotong-royong/semua"
             },
             {
                 id: "7.5",
                 name: "Edukasi Lingkungan",
-                href: "/darmasaba/lingkungan/edukasi-lingkungan"
+                href: "/lingkungan/edukasi-lingkungan"
             },
             {
                 id: "7.6",
                 name: "Konservasi Adat Bali",
-                href: "/darmasaba/lingkungan/konservasi-adat-bali"
+                href: "/lingkungan/konservasi-adat-bali"
             }
         ]
     }, 
@@ -329,27 +329,27 @@ const navbarListMenu = [
             {
                 id: "8.1",
                 name: "Dashboard Kependudukan",
-                href: "/darmasaba/kependudukan/dashboard"
+                href: "/kependudukan/dashboard"
             },
             {
                 id: "8.2",
                 name: "Data Per Banjar",
-                href: "/darmasaba/kependudukan/data-per-banjar"
+                href: "/kependudukan/data-per-banjar"
             },
             {
                 id: "8.3",
                 name: "Dinamika Penduduk",
-                href: "/darmasaba/kependudukan/dinamika-penduduk"
+                href: "/kependudukan/dinamika-penduduk"
             },
             {
                 id: "8.4",
                 name: "Distribusi Agama",
-                href: "/darmasaba/kependudukan/distribusi-agama"
+                href: "/kependudukan/distribusi-agama"
             },
             {
                 id: "8.5",
                 name: "Distribusi Umur",
-                href: "/darmasaba/kependudukan/distribusi-umur"
+                href: "/kependudukan/distribusi-umur"
             }
         ]
     },
@@ -360,37 +360,37 @@ const navbarListMenu = [
             {
                 id: "9.1",
                 name: "Info Sekolah",
-                href: "/darmasaba/pendidikan/info-sekolah/semua"
+                href: "/pendidikan/info-sekolah/semua"
             },
             {
                 id: "9.2",
                 name: "Beasiswa Desa",
-                href: "/darmasaba/pendidikan/beasiswa-desa"
+                href: "/pendidikan/beasiswa-desa"
             },
             {
                 id: "9.3",
                 name: "Program Pendidikan Anak",
-                href: "/darmasaba/pendidikan/program-pendidikan-anak"
+                href: "/pendidikan/program-pendidikan-anak"
             },
             {
                 id: "9.4",
                 name: "Bimbingan Belajar Desa",
-                href: "/darmasaba/pendidikan/bimbingan-belajar-desa"
+                href: "/pendidikan/bimbingan-belajar-desa"
             },
             {
                 id: "9.5",
                 name: "Pendidikan Non Formal",
-                href: "/darmasaba/pendidikan/pendidikan-non-formal"
+                href: "/pendidikan/pendidikan-non-formal"
             },
             {
                 id: "9.6",
                 name: "Perpustakaan Digital",
-                href: "/darmasaba/pendidikan/perpustakaan-digital/semua"
+                href: "/pendidikan/perpustakaan-digital/semua"
             },
             {
                 id: "9.7",
                 name: "Data Pendidikan",
-                href: "/darmasaba/pendidikan/data-pendidikan"
+                href: "/pendidikan/data-pendidikan"
             }
         ]
     },
@@ -401,7 +401,7 @@ const navbarListMenu = [
             {
                 id: "10.1",
                 name: "Musik Desa",
-                href: "/darmasaba/musik/musik-desa"
+                href: "/musik/musik-desa"
             }
         ]
     },
@@ -412,7 +412,7 @@ const navbarListMenu = [
             {
                 id: "11.1",
                 name: "Desa Anti Korupsi",
-                href: "/darmasaba/desa-anti-korupsi"
+                href: "/desa-anti-korupsi"
             }
         ]
     }

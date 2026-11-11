@@ -4,9 +4,9 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { MantineProvider } from "@mantine/core";
-import { ApbdesDocument } from "@/app/darmasaba/_com/main-page/apbdes/components/ApbdesDocument";
-import { APBDES_TEXT } from "@/app/darmasaba/_com/main-page/apbdes/apbdes.text";
-import type { APBDes } from "@/app/darmasaba/_com/main-page/apbdes/types/apbdes";
+import { ApbdesDocument } from "@/app/(public)/_com/main-page/apbdes/components/ApbdesDocument";
+import { APBDES_TEXT } from "@/app/(public)/_com/main-page/apbdes/apbdes.text";
+import type { APBDes } from "@/app/(public)/_com/main-page/apbdes/types/apbdes";
 
 const base: APBDes = { id: "a1", tahun: 2025, jumlah: 0, name: "APBDes 2025" };
 // Data lama di DB masih bisa membawa relasi image; komponen wajib mengabaikannya.

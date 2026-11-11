@@ -11,7 +11,7 @@ import {
   normalizeLoopIndex,
   realIndex,
   swipeStep,
-} from '@/app/darmasaba/_com/main-page/layanan-potensi/gallery.logic';
+} from '@/app/(public)/_com/main-page/layanan-potensi/gallery.logic';
 
 describe('buildLoopTrack', () => {
   it('mengulang item agar tiap sisi salinan tengah punya minimal buffer kartu', () => {
@@ -88,7 +88,7 @@ describe('gallery.module.css', () => {
   it('track tanpa padding agar flex-basis % dan translate % memakai acuan lebar yang sama', async () => {
     const { readFileSync } = await import('node:fs');
     const css = readFileSync(
-      `${process.cwd()}/src/app/darmasaba/_com/main-page/layanan-potensi/gallery.module.css`,
+      `${process.cwd()}/src/app/(public)/_com/main-page/layanan-potensi/gallery.module.css`,
       'utf8',
     );
     const trackRule = css.match(/\n\.track \{([^}]*)\}/)?.[1] ?? '';

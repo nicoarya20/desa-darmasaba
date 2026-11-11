@@ -4,11 +4,11 @@
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup (hover/klik diverifikasi manual).
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { AntiKorupsiGroups } from '@/app/darmasaba/_com/main-page/desaantikorupsi/AntiKorupsiGroups';
+import { AntiKorupsiGroups } from '@/app/(public)/_com/main-page/desaantikorupsi/AntiKorupsiGroups';
 import {
   groupByKategori,
   type AntiKorupsiApiItem,
-} from '@/app/darmasaba/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
+} from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
 
 // test-only: bentuk meniru item ringkas desaAntikorupsi.findMany.
 const items: AntiKorupsiApiItem[] = [

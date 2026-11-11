@@ -11,14 +11,14 @@ vi.mock('next-view-transitions', () => ({
   useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }),
 }));
 
-import { DaftarTable, DaftarTableSkeleton } from '@/app/darmasaba/(pages)/ppid/daftar-informasi-publik/_com/DaftarTable';
+import { DaftarTable, DaftarTableSkeleton } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/DaftarTable';
 import {
   daftarDetailHref,
   formatTanggal,
   rowNumber,
   type InformasiItem,
-} from '@/app/darmasaba/(pages)/ppid/daftar-informasi-publik/_com/daftar.logic';
-import { DAFTAR_TEXT } from '@/app/darmasaba/(pages)/ppid/daftar-informasi-publik/_com/daftar.text';
+} from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.logic';
+import { DAFTAR_TEXT } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.text';
 
 const render = (ui: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -45,7 +45,7 @@ describe('daftar.logic', () => {
   });
 
   it('daftarDetailHref menunjuk rute detail publik', () => {
-    expect(daftarDetailHref('a1')).toBe('/darmasaba/ppid/daftar-informasi-publik/a1');
+    expect(daftarDetailHref('a1')).toBe('/ppid/daftar-informasi-publik/a1');
   });
 });
 
@@ -72,7 +72,7 @@ describe('DaftarTable', () => {
   it('tautan Detail tiap baris menuju halaman detail dan punya nama aksesibel', () => {
     const html = render(<DaftarTable items={ITEMS} page={1} />);
     expect(html.match(/<a /g)).toHaveLength(ITEMS.length);
-    expect(html).toContain('href="/darmasaba/ppid/daftar-informasi-publik/a1"');
+    expect(html).toContain('href="/ppid/daftar-informasi-publik/a1"');
     expect(html).toContain(`aria-label="${DAFTAR_TEXT.detailLabel('Penyelenggaraan Informasi Publik')}"`);
   });
 

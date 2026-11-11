@@ -30,9 +30,9 @@ vi.mock('@/app/admin/(dashboard)/_state/ppid/profile_ppid/profile_PPID', () => (
   },
 }));
 
-import Page from '@/app/darmasaba/(pages)/ppid/profil-ppid/page';
+import Page from '@/app/(public)/(pages)/ppid/profil-ppid/page';
 
-const PAGE_DIR = path.join(process.cwd(), 'src/app/darmasaba/(pages)/ppid/profil-ppid');
+const PAGE_DIR = path.join(process.cwd(), 'src/app/(public)/(pages)/ppid/profil-ppid');
 const css = readFileSync(path.join(PAGE_DIR, 'profil-ppid.module.css'), 'utf8');
 const html = renderToStaticMarkup(
   <MantineProvider>

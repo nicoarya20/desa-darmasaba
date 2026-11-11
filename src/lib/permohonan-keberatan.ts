@@ -1,7 +1,7 @@
 // Aturan field "alasan keberatan" pada Permohonan Keberatan Informasi Publik —
 // fungsi & konstanta murni (tanpa I/O), dipakai bersama oleh form publik (klien)
 // dan endpoint create (server) supaya batasnya tunggal.
-import { richTextLength } from "@/app/darmasaba/(pages)/pendidikan/perpustakaan-digital/_lib/peminjamanForm";
+import { richTextLength } from "@/app/(public)/(pages)/pendidikan/perpustakaan-digital/_lib/peminjamanForm";
 
 export { richTextLength };
 

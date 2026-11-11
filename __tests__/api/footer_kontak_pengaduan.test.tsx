@@ -10,14 +10,14 @@ import { MantineProvider } from '@mantine/core';
 
 vi.mock('react-toastify', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import Footer from '@/app/darmasaba/_com/Footer';
-import { FooterKontakBupati } from '@/app/darmasaba/_com/FooterKontakBupati';
+import Footer from '@/app/(public)/_com/Footer';
+import { FooterKontakBupati } from '@/app/(public)/_com/FooterKontakBupati';
 import { KONTAK_BUPATI } from '@/con/kontak-bupati';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
 
-const FOOTER_SRC = readFileSync(path.resolve(__dirname, '../../src/app/darmasaba/_com/Footer.tsx'), 'utf8');
+const FOOTER_SRC = readFileSync(path.resolve(__dirname, '../../src/app/(public)/_com/Footer.tsx'), 'utf8');
 
 const anchorsTo = (html: string, href: string) =>
   html.match(new RegExp(`<a[^>]*href="${href.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}"[^>]*>`, 'g')) ?? [];
@@ -69,12 +69,12 @@ describe('Footer — Tautan Penting & slogan', () => {
     expect(html).toMatch(/<a[^>]*href="https:\/\/badungkab\.go\.id"[^>]*>Portal Badung<\/a>/);
     expect(anchors[0]).toContain('target="_blank"');
     expect(anchors[0]).toContain('rel="noopener noreferrer"');
-    expect(html).not.toMatch(/href="\/darmasaba\/pemerintahan\/berita\/semua"[^>]*>Portal Badung</);
+    expect(html).not.toMatch(/href="\/pemerintahan\/berita\/semua"[^>]*>Portal Badung</);
   });
 
   it('link internal tetap tanpa target _blank', () => {
     const html = render(<Footer />);
-    const internal = html.match(/<a[^>]*href="\/darmasaba\/[^"]*"[^>]*>/g) ?? [];
+    const internal = html.match(/<a[^>]*href="\/[^"]*"[^>]*>/g) ?? [];
     expect(internal.length).toBeGreaterThan(0);
     for (const a of internal) expect(a).not.toContain('target=');
   });
@@ -88,9 +88,9 @@ describe('Footer — Tautan Penting & slogan', () => {
 });
 
 describe('Footer — Pengaduan Masyarakat', () => {
-  it('menjadi tombol pemicu (button), bukan lagi link ke /darmasaba/keamanan/laporan-publik', () => {
+  it('menjadi tombol pemicu (button), bukan lagi link ke /keamanan/laporan-publik', () => {
     const html = render(<Footer />);
-    expect(html).not.toContain('/darmasaba/keamanan/laporan-publik');
+    expect(html).not.toContain('/keamanan/laporan-publik');
     expect(html).not.toMatch(/<a[^>]*>Pengaduan Masyarakat<\/a>/);
     // Grid desktop; panel accordion ponsel yang masih tertutup tidak ikut di-render saat SSR.
     expect(html.match(/<button[^>]*type="button"[^>]*>Pengaduan Masyarakat<\/button>/g)).toHaveLength(1);

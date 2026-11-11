@@ -4,9 +4,9 @@ import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirma
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
 import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
-import { DokumentasiGaleri } from '@/app/darmasaba/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
-import { PengumumanDokumenList } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanDokumenList';
-import { PengumumanGambarUtama } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran';
+import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
+import { PengumumanDokumenList } from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/PengumumanDokumenList';
+import { PengumumanGambarUtama } from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran';
 import {
   Box,
   Button,

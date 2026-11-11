@@ -11,22 +11,22 @@ import {
   isPathHidden,
   menuVisibilityGroups,
   toOverrides,
-} from '@/app/darmasaba/_com/menu-visibility.logic';
-import { flattenMenu } from '@/app/darmasaba/_com/searchMenu';
-import { petaInformasiGroups } from '@/app/darmasaba/(tambahan)/peta-informasi/_lib/petaInformasi';
-import { isSearchResultHidden } from '@/app/darmasaba/_com/searchUrl';
+} from '@/app/(public)/_com/menu-visibility.logic';
+import { flattenMenu } from '@/app/(public)/_com/searchMenu';
+import { petaInformasiGroups } from '@/app/(public)/(tambahan)/peta-informasi/_lib/petaInformasi';
+import { isSearchResultHidden } from '@/app/(public)/_com/searchUrl';
 import type { MenuItem } from '../../types/menu-item';
 
-const PUSKESMAS = '/darmasaba/kesehatan/puskesmas';
-const DATA_KESEHATAN = '/darmasaba/kesehatan/data-kesehatan-warga';
-const POSYANDU = '/darmasaba/kesehatan/posyandu';
-const CCTV = '/darmasaba/keamanan/cctv';
-const DAK = '/darmasaba/desa-anti-korupsi';
+const PUSKESMAS = '/kesehatan/puskesmas';
+const DATA_KESEHATAN = '/kesehatan/data-kesehatan-warga';
+const POSYANDU = '/kesehatan/posyandu';
+const CCTV = '/keamanan/cctv';
+const DAK = '/desa-anti-korupsi';
 const DEFAULT_HIDDEN = [
   DATA_KESEHATAN,
   PUSKESMAS,
-  '/darmasaba/kesehatan/penanganan-darurat',
-  '/darmasaba/kesehatan/info-wabah-penyakit',
+  '/kesehatan/penanganan-darurat',
+  '/kesehatan/info-wabah-penyakit',
 ];
 
 const navbarHrefs = (menus: readonly MenuItem[]) => flattenMenu(menus).map((m) => m.href);
@@ -85,7 +85,7 @@ describe('merge default config + override → menu efektif', () => {
   it('toOverrides mengabaikan baris DB dengan menuKey yang sudah tidak ada di config', () => {
     expect(toOverrides([
       { menuKey: CCTV, isVisible: false },
-      { menuKey: '/darmasaba/menu-lama', isVisible: true },
+      { menuKey: '/menu-lama', isVisible: true },
     ])).toEqual({ [CCTV]: false });
   });
 
@@ -113,7 +113,7 @@ describe('pencocokan path 404 per segmen', () => {
     expect(isPathHidden(PUSKESMAS, hiddenHrefs)).toBe(true);
     expect(isPathHidden(`${PUSKESMAS}/123`, hiddenHrefs)).toBe(true);
     expect(isPathHidden(POSYANDU, hiddenHrefs)).toBe(false);
-    expect(isPathHidden('/darmasaba', hiddenHrefs)).toBe(false);
+    expect(isPathHidden('/', hiddenHrefs)).toBe(false);
   });
 });
 
@@ -121,10 +121,10 @@ describe('validasi menuKey', () => {
   it('hanya href submenu navbar yang dikenal', () => {
     expect(isKnownMenuKey(CCTV)).toBe(true);
     expect(isKnownMenuKey(PUSKESMAS)).toBe(true);
-    expect(isKnownMenuKey('/darmasaba/tidak-ada')).toBe(false);
-    expect(isKnownMenuKey('/darmasaba')).toBe(false);
+    expect(isKnownMenuKey('/tidak-ada')).toBe(false);
+    expect(isKnownMenuKey('/')).toBe(false);
     expect(isKnownMenuKey('3.3')).toBe(false);
-    expect(isKnownMenuKey('/darmasaba/peta-informasi')).toBe(false); // halaman tambahan, bukan submenu navbar
+    expect(isKnownMenuKey('/peta-informasi')).toBe(false); // halaman tambahan, bukan submenu navbar
   });
 });
 

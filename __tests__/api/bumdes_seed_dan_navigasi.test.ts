@@ -12,7 +12,7 @@ type Posisi = { id: string; nama: string; deskripsi: string; hierarki: number; p
 const DATA_DIR = join(process.cwd(), "prisma/data/ekonomi/struktur-organisasi");
 const readJson = <T>(file: string): T => JSON.parse(readFileSync(join(DATA_DIR, file), "utf-8"));
 
-const BUMDES_PATH = "/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes";
+const BUMDES_PATH = "/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes";
 const PERANGKAT_DESA = /kepala desa|sekretaris desa|sekdes|perbekel|kaur|kasi\b|kepala dusun|kadus|staf desa|banjar dinas/i;
 
 describe("seed struktur BUMDes", () => {

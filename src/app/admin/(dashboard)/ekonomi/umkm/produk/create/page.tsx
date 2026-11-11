@@ -15,7 +15,7 @@ import {
   NumberInput,
   Switch
 } from '@mantine/core';
-import { SATUAN_PRESETS } from '@/app/darmasaba/(pages)/ekonomi/umkm/_lib/satuan';
+import { SATUAN_PRESETS } from '@/app/(public)/(pages)/ekonomi/umkm/_lib/satuan';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconArrowBack, IconPhoto,  IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';

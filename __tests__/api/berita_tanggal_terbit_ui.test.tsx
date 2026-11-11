@@ -5,9 +5,9 @@ import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TanggalTerbitInput } from '@/app/admin/(dashboard)/pemerintahan/berita/list-berita/_com/TanggalTerbitInput';
-import { BeritaTanggal } from '@/app/darmasaba/(pages)/pemerintahan/berita/_com/BeritaTanggal';
-import BeritaCard from '@/app/darmasaba/(pages)/inovasi/layanan-online-desa/informasi-desa/_com/BeritaCard';
-import { toBeritaItem } from '@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic';
+import { BeritaTanggal } from '@/app/(public)/(pages)/pemerintahan/berita/_com/BeritaTanggal';
+import BeritaCard from '@/app/(public)/(pages)/inovasi/layanan-online-desa/informasi-desa/_com/BeritaCard';
+import { toBeritaItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 
