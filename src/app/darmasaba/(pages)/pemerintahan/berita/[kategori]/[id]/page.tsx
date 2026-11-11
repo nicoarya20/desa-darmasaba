@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
-import NewsReader from '@/app/darmasaba/_com/NewsReader';
 import { BeritaTanggal } from '../../_com/BeritaTanggal';
 import colors from '@/con/colors';
 import {
@@ -85,10 +84,6 @@ function Page() {
 
   return (
     <Stack pos="relative" bg={colors.Bg} pb="xl" gap="xs" px={{ base: 'md', md: 0 }}>
-      <Group px={{ base: 'md', md: 100 }}>
-        <NewsReader />
-      </Group>
-
       <Container w={{ base: '100%', md: '60%' }}>
         <Box pb={20}>
           {/* Kategori Badge */}
@@ -106,7 +101,6 @@ function Page() {
 
           {/* Judul */}
           <Title
-            id="news-title"
             order={1}
             ta="center"
             c={colors['blue-button']}
@@ -140,7 +134,6 @@ function Page() {
             Deskripsi Berita
           </Title>
           <Text
-            id="news-content"
             pb={20}
             px={0}
             fz={{ base: 'sm', md: 'md' }}
