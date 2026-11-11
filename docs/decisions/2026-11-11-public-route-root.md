@@ -1,6 +1,6 @@
 # Website Publik di Root URL (tanpa prefix `/darmasaba`)
 
-Tanggal: 2026-11-11 · Migrasi: `20261111120000_strip_darmasaba_prefix_menu_key` (data-only)
+Tanggal: 2026-11-11 · Migrasi: `20261111130000_strip_darmasaba_prefix_menu_key` (data-only)
 
 ## Konteks
 Website publik dulu berada di `src/app/darmasaba/*`, sehingga semua URL berprefix (`/darmasaba`, `/darmasaba/ppid/profil-ppid`, …) dan `src/app/page.tsx` hanya `redirect("/darmasaba")`. Prefix itu redundan dengan domain desa, memperpanjang URL yang dibagikan warga, dan membuat beranda selalu butuh satu redirect.

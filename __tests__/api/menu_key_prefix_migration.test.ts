@@ -10,7 +10,7 @@ import { isKnownMenuKey } from '@/app/(public)/_com/menu-visibility.logic';
 
 const MIGRATION = path.resolve(
   __dirname,
-  '../../prisma/migrations/20261111120000_strip_darmasaba_prefix_menu_key/migration.sql',
+  '../../prisma/migrations/20261111130000_strip_darmasaba_prefix_menu_key/migration.sql',
 );
 const sql = readFileSync(MIGRATION, 'utf8');
 /** SQL tanpa komentar, spasi dinormalisasi. */
