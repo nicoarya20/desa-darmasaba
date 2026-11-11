@@ -35,7 +35,7 @@ import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 import umkmState from "../../../../../_state/ekonomi/umkm/umkm";
 import { LinkTokoOnlineField } from "../../_com/LinkTokoOnlineField";
-import type { LinkTokoOnlineInput } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
+import type { LinkTokoOnlineInput } from "@/lib/link-toko-online";
 
 interface ProdukData {
   id: string;

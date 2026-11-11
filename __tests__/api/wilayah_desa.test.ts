@@ -18,7 +18,7 @@ import {
   WILAYAH_DESA_ID,
   isHttpsUrl,
   parseWilayahDesaInput,
-} from "@/app/api/[[...slugs]]/_lib/desa/profile/profile_desa/wilayah/validation";
+} from "@/lib/wilayah-desa";
 import {
   toWilayahFormValues,
   toWilayahPayload,

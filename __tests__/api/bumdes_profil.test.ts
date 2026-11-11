@@ -14,7 +14,7 @@ import {
   PROFIL_BUMDES_ID,
   TAHUN_BERDIRI_MIN,
   profilBumDesSchema,
-} from "@/app/api/[[...slugs]]/_lib/ekonomi/bumdes/profil/validation";
+} from "@/lib/bumdes-profil";
 
 // Context Elysia minimal: body + set.status.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- stub context test
