@@ -14,7 +14,6 @@ import {
   Box,
   Button,
   Group,
-  Image,
   Loader,
   NumberInput,
   Paper,
@@ -30,7 +29,6 @@ import { Dropzone } from '@mantine/dropzone';
 import {
   IconArrowBack,
   IconFile,
-  IconPhoto,
   IconPlus,
   IconTrash,
   IconX
@@ -67,9 +65,7 @@ function EditAPBDes() {
     );
   };
 
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [docFile, setDocFile] = useState<File | null>(null);
 
   // Form input untuk item baru
@@ -90,9 +86,7 @@ function EditAPBDes() {
     name: '',
     deskripsi: '',
     jumlah: '',
-    imageId: '',
     fileId: '',
-    imageUrl: '',
     fileUrl: '',
     items: [] as ApbdesItemForm[], // snapshot item awal untuk tombol Batal
   });
@@ -109,7 +103,6 @@ function EditAPBDes() {
         if (!data) return;
 
         // Set preview dari data lama
-        setPreviewImage(data.image?.link || null);
         setPreviewDoc(data.file?.link || null);
 
         // Map item sekali; simpan dua salinan independen agar Batal bisa
@@ -132,20 +125,17 @@ function EditAPBDes() {
           name: data.name || '',
           deskripsi: data.deskripsi || '',
           jumlah: data.jumlah || '',
-          imageId: data.imageId || '',
           fileId: data.fileId || '',
-          imageUrl: data.image?.link || '',
           fileUrl: data.file?.link || '',
           items: loadedItems.map((it) => ({ ...it })),
         });
 
-        // Set form dengan data lama (termasuk imageId dan fileId)
+        // Set form dengan data lama (termasuk fileId)
         apbdesState.edit.form = {
           tahun: data.tahun || new Date().getFullYear(),
           name: data.name || '',
           deskripsi: data.deskripsi || '',
           jumlah: data.jumlah || '',
-          imageId: data.imageId || '',
           fileId: data.fileId || '',
           items: loadedItems.map((it) => ({ ...it })),
         };
@@ -158,17 +148,11 @@ function EditAPBDes() {
     loadData();
   }, [params?.id]);
 
-  const handleDrop = (fileType: 'image' | 'doc') => (files: File[]) => {
+  const handleDocDrop = (files: File[]) => {
     const file = files[0];
     if (!file) return;
-
-    if (fileType === 'image') {
-      setImageFile(file);
-      setPreviewImage(URL.createObjectURL(file));
-    } else {
-      setDocFile(file);
-      setPreviewDoc(URL.createObjectURL(file));
-    }
+    setDocFile(file);
+    setPreviewDoc(URL.createObjectURL(file));
   };
 
   const handleAddItem = () => {
@@ -214,18 +198,6 @@ function EditAPBDes() {
     try {
       setIsSubmitting(true);
 
-      // Upload file baru jika ada perubahan
-      if (imageFile) {
-        const res = await ApiFetch.api.fileStorage.create.post({
-          file: imageFile,
-          name: imageFile.name,
-        });
-        const imageId = res.data?.data?.id;
-        if (imageId) {
-          apbdesState.edit.form.imageId = imageId;
-        }
-      }
-
       if (docFile) {
         const res = await ApiFetch.api.fileStorage.create.post({
           file: docFile,
@@ -237,7 +209,7 @@ function EditAPBDes() {
         }
       }
 
-      // Image dan file sekarang opsional, tidak perlu validasi
+      // Dokumen opsional, tidak perlu validasi
       const success = await apbdesState.edit.update();
       if (success) {
         router.push('/admin/landing-page/apbdes');
@@ -257,11 +229,9 @@ function EditAPBDes() {
     apbdesState.edit.form = buildResetForm(originalData);
 
     // Reset preview ke data original
-    setPreviewImage(originalData.imageUrl || null);
     setPreviewDoc(originalData.fileUrl || null);
 
     // Reset file uploads
-    setImageFile(null);
     setDocFile(null);
 
     // Reset new item form
@@ -343,65 +313,14 @@ function EditAPBDes() {
             required
           />
 
-          {/* Gambar & Dokumen (Opsional) */}
+          {/* Dokumen (Opsional) */}
           <Stack gap="xs">
-            <Box>
-              <Text fw="bold" fz="sm" mb={6}>
-                Gambar APBDes (Opsional)
-              </Text>
-              <Dropzone
-                onDrop={handleDrop('image')}
-                onReject={() => toast.error('File gambar tidak valid')}
-                maxSize={5 * 1024 ** 2}
-                accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
-                radius="md"
-                p="xl"
-              >
-                <Group justify="center" gap="xl" mih={180}>
-                  <Dropzone.Idle>
-                    <IconPhoto size={48} color="#868e96" stroke={1.5} />
-                  </Dropzone.Idle>
-                  <Stack gap="xs" align="center">
-                    <Text size="md" fw={500}>
-                      {previewImage ? 'Ganti gambar' : 'Unggah gambar'}
-                    </Text>
-                  </Stack>
-                </Group>
-              </Dropzone>
-              {previewImage && (
-                <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
-                  <Image
-                    src={previewImage}
-                    alt="Preview"
-                    radius="md"
-                    style={{ maxHeight: 200, objectFit: 'contain', border: '1px solid #ddd' }}
-                  />
-                  <ActionIcon
-                    variant="filled"
-                    color="red"
-                    radius="xl"
-                    size="sm"
-                    pos="absolute"
-                    top={5}
-                    right={5}
-                    onClick={() => {
-                      setPreviewImage(null);
-                      setImageFile(null);
-                      apbdesState.edit.form.imageId = ''; // Clear imageId from form
-                    }}
-                  >
-                    <IconX size={14} />
-                  </ActionIcon>
-                </Box>
-              )}
-            </Box>
-
             <Box>
               <Text fw="bold" fz="sm" mb={6}>
                 Dokumen APBDes (Opsional)
               </Text>
               <Dropzone
-                onDrop={handleDrop('doc')}
+                onDrop={handleDocDrop}
                 onReject={() => toast.error('File dokumen tidak valid')}
                 maxSize={10 * 1024 ** 2}
                 accept={{

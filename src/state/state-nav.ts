@@ -1,20 +1,17 @@
 import { proxy } from "valtio"
-import { MenuItem } from "../../types/menu-item"
 
 const stateNav = proxy<{
-    hover: boolean,
-    item: MenuItem[] | null
+    /** id menu desktop yang flyout-nya sedang terbuka (null = tertutup) */
+    openMenuId: string | null
     isSearch: boolean,
     clear: () => void,
     module: string | null,
     mobileOpen: boolean
 }>({
-    hover: false,
-    item: null,
+    openMenuId: null,
     isSearch: false,
     clear: () => {
-        stateNav.hover = false
-        stateNav.item = null
+        stateNav.openMenuId = null
         stateNav.isSearch = false
     },
     module: null,

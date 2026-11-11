@@ -1,0 +1,45 @@
+{
+  "keterangan": "Pegawai BUMDes seed lama (nama perangkat desa) yang dikosongkan di commit 933cc499. Dihapus saat seed hanya bila nama dan posisinya belum diubah admin.",
+  "data": [
+    {
+      "id": "cmgewz4gt000704ib91i3f169",
+      "namaLengkap": "Ida Bagus Surya Prabhawa Manuaba, S.H.,M.H., NL.P.",
+      "posisiId": "kepala_desa"
+    },
+    {
+      "id": "cmgewxfvw000004ibee5013f4",
+      "namaLengkap": "I Ketut Suwanta",
+      "posisiId": "sekretaris_desa"
+    },
+    {
+      "id": "cmgewxvqw000104ibgm5l8fzs",
+      "namaLengkap": "Ni Wayan Supardiati",
+      "posisiId": "kaur_keuangan"
+    },
+    {
+      "id": "cmgewy1g9000204ib2n7hbx0i",
+      "namaLengkap": "I Wayan Agus Juni Artha Saputra",
+      "posisiId": "kadus_banjar_dinas_menesa"
+    },
+    {
+      "id": "cmgewybah000304ibgqhn1gm2",
+      "namaLengkap": "I Wayan Sueca",
+      "posisiId": "kadus_banjar_dinas_darmasaba"
+    },
+    {
+      "id": "cmgewygqz000404ib20sv8nvg",
+      "namaLengkap": "Si Gede Ketut Astawa",
+      "posisiId": "kadus_banjar_dinas_bucu"
+    },
+    {
+      "id": "cmgewyos1000504ibcu8o2gyk",
+      "namaLengkap": "I Kadek Arya Minarta",
+      "posisiId": "kadus_banjar_dinas_gulingan"
+    },
+    {
+      "id": "cmgewyxk7000604ib8djs3i6c",
+      "namaLengkap": "I Gede Andika Pradnya Diputra",
+      "posisiId": "kadus_banjar_dinas_taman"
+    }
+  ]
+}

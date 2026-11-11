@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
+import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import { ActionIcon, AspectRatio, Badge, Box, Button, Card, CopyButton, Divider, Grid, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
@@ -73,7 +73,7 @@ function Page() {
           <Skeleton h={64} radius="lg" />
         </Box>
         <Box px={{ base: 'md', md: 100 }}>
-          <Grid gutter="lg">
+          <Grid gap="lg">
             <Grid.Col span={{ base: 12, md: 8 }}>
               <Skeleton h={320} radius="lg" />
             </Grid.Col>
@@ -151,7 +151,7 @@ function Page() {
       </Box>
 
       <Box px={{ base: 'md', md: 100 }}>
-        <Grid gutter="lg">
+        <Grid gap="lg">
           <Grid.Col span={{ base: 12, md: 8 }}>
             <Card radius="xl" p="lg" withBorder>
               <Stack gap="md">

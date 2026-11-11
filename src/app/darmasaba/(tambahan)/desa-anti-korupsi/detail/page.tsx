@@ -1,146 +1,123 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-import React, { useEffect, useState } from 'react';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
-import colors from '@/con/colors';
-import { useProxy } from 'valtio/utils';
+import { toSentenceCase } from '@/app/darmasaba/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
+import { ANTIKORUPSI_BRAND_VARS } from '@/app/darmasaba/_com/main-page/desaantikorupsi/desaantikorupsi.meta';
+import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useSnapshot } from 'valtio';
+import { detailHref, filterByKategori, resolveInitialKategori } from '../_lib/kategori-tab';
+import { AntiKorupsiDokumenList, AntiKorupsiDokumenSkeleton } from '../_com/AntiKorupsiDokumenList';
+import { AntiKorupsiKategoriPills } from '../_com/AntiKorupsiKategoriPills';
 import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Paper,
-  SimpleGrid,
-  Stack,
-  Text,
-  ActionIcon,
-  Loader,
-  Tooltip,
-} from '@mantine/core';
-import { IconFile, IconInbox } from '@tabler/icons-react';
+  countByKategori,
+  countDokumen,
+  kategoriNames,
+  toDokumenRows,
+  type AntiKorupsiDetailApiItem,
+} from '../_com/antikorupsi-detail.logic';
+import s from '../_com/antikorupsi-detail.module.css';
+import { AK_DETAIL_TEXT } from '../_com/antikorupsi-detail.text';
 
-function Lokal() {
-  const [selectedKategori, setSelectedKategori] = useState<string>('PENGUATAN TATA LAKSANA');
+/** Semua indikator dimuat sekaligus (data desa ±18 butir); saring per kategori di klien. */
+const DETAIL_LIST_LIMIT = 100;
+const TITLE_ID = 'desa-anti-korupsi-detail-title';
+const LIST_TITLE_ID = 'desa-anti-korupsi-detail-kategori';
+
+function AntiKorupsiDetailContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data } = useSnapshot(korupsiState.desaAntikorupsi.findMany);
+  const [pickedKategori, setPickedKategori] = useState<string | null>(null);
+  // true sejak render pertama: store bisa berisi 10 butir sisa beranda sebelum muatan 100 butir selesai.
   const [loading, setLoading] = useState(true);
-  const state = useProxy(korupsiState);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        await state.desaAntikorupsi.findMany.load(1, 100);
-      } finally {
-        setLoading(false);
-      }
+    let active = true;
+    // load() menangani galatnya sendiri (data dikosongkan + console.error di state store).
+    void korupsiState.desaAntikorupsi.findMany.load(1, DETAIL_LIST_LIMIT).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => {
+      active = false;
     };
-    loadData();
   }, []);
 
-  const data = state.desaAntikorupsi.findMany.data || [];
-  const categories = [...new Set(data.filter(i => i.kategori?.name).map(i => i.kategori.name))];
-  const filteredData =
-    selectedKategori === 'PENGUATAN TATA LAKSANA'
-      ? data
-      : data.filter(i => i.kategori?.name === selectedKategori);
+  const items = data as readonly AntiKorupsiDetailApiItem[];
+  const categories = useMemo(() => kategoriNames(items), [items]);
+  const counts = useMemo(() => countByKategori(items), [items]);
+  const selectedKategori = pickedKategori ?? resolveInitialKategori(searchParams.get('kategori'), categories);
+  const rows = useMemo(() => toDokumenRows(filterByKategori(items, selectedKategori)), [items, selectedKategori]);
+
+  const selectKategori = (kategori: string) => {
+    setPickedKategori(kategori);
+    router.replace(detailHref(kategori), { scroll: false });
+  };
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap={32}>
-      <Box px={{ base: 'md', md: 100 }}>
+    <div className={s.page} style={ANTIKORUPSI_BRAND_VARS}>
+      <div className={s.inner}>
         <BackButton />
-      </Box>
 
-      <Container w={{ base: '100%', md: '80%' }}>
-        <Stack align="center" gap={4}>
-          <Text fz={{ base: 32, md: 44 }} fw={700} ta="center" c={colors['blue-button']}>
-            Desa Anti Korupsi
-          </Text>
-          <Text ta="center" fz="md" c="dimmed" maw={700}>
-            Desa antikorupsi mendorong pemerintahan jujur dan transparan. Keuangan desa dikelola
-            terbuka dengan melibatkan warga untuk mengawasi anggaran sehingga tepat sasaran sesuai
-            kebutuhan.
-          </Text>
-        </Stack>
-      </Container>
+        <header className={s.header}>
+          <h1 id={TITLE_ID} className={s.title}>
+            {AK_DETAIL_TEXT.title}
+          </h1>
+          <p className={s.lead}>{AK_DETAIL_TEXT.lead}</p>
+        </header>
 
-      <Container size="lg" px={{ base: 'md', md: 'xl' }}>
-        <Flex gap="sm" justify="center" mb="xl" wrap="wrap">
-          {categories.map(kategori => (
-            <Button
-              key={kategori}
-              onClick={() => setSelectedKategori(kategori)}
-              size="sm"
-              radius="xl"
-              variant={selectedKategori === kategori ? 'filled' : 'outline'}
-              color={selectedKategori === kategori ? colors['blue-button'] : 'gray'}
-            >
-              {kategori}
-            </Button>
-          ))}
-        </Flex>
-
-        {loading ? (
-          <Flex justify="center" align="center" h={200}>
-            <Loader color={colors['blue-button']} size="lg" />
-          </Flex>
-        ) : filteredData.length === 0 ? (
-          <Flex direction="column" align="center" justify="center" gap="sm" py="xl">
-            <IconInbox size={48} stroke={1.5} color={colors['blue-button']} />
-            <Text fz="lg" fw={500} c="dimmed">
-              Belum ada data untuk kategori ini
-            </Text>
-          </Flex>
-        ) : (
-          <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
-            {filteredData.map(item => {
-              const handleDownload = (e: React.MouseEvent) => {
-                e.stopPropagation();
-                if (!item?.file?.link) return;
-                const url = item.file.link.startsWith('http')
-                  ? item.file.link
-                  : `${window.location.origin}${item.file.link.startsWith('/') ? '' : '/'}${
-                      item.file.link
-                    }`;
-                window.open(url, '_blank');
-              };
-
-              return (
-                <Paper
-                  key={item.id}
-                  p="lg"
-                  shadow="md"
-                  radius="xl"
-                  withBorder
-                  style={{
-                    background: 'linear-gradient(135deg, #ffffff, #f8fbff)',
-                  }}
-                >
-                  <Stack h="100%" justify="space-between">
-                    <Text fz="lg" fw={600} c={colors['blue-button']}>
-                      {item.name}
-                    </Text>
-                    {item?.file && (
-                      <Tooltip label="Unduh file" withArrow>
-                        <ActionIcon
-                          variant="filled"
-                          color={colors['blue-button']}
-                          size="lg"
-                          radius="xl"
-                          onClick={handleDownload}
-                        >
-                          <IconFile size={20} />
-                        </ActionIcon>
-                      </Tooltip>
-                    )}
-                  </Stack>
-                </Paper>
-              );
-            })}
-          </SimpleGrid>
-        )}
-      </Container>
-    </Stack>
+        <div aria-busy={loading || undefined}>
+          {loading ? (
+            <>
+              <span className={s.srOnly}>{AK_DETAIL_TEXT.loading}</span>
+              <div className={s.listPlaceholder}>
+                <AntiKorupsiDokumenSkeleton />
+              </div>
+            </>
+          ) : categories.length === 0 ? (
+            <p className={s.empty}>{AK_DETAIL_TEXT.empty}</p>
+          ) : (
+            <>
+              <AntiKorupsiKategoriPills
+                categories={categories}
+                counts={counts}
+                selected={selectedKategori}
+                onSelect={selectKategori}
+              />
+              <div className={s.listHead}>
+                <h2 id={LIST_TITLE_ID} className={s.listTitle}>
+                  {toSentenceCase(selectedKategori)}
+                </h2>
+                <p className={s.summary}>{AK_DETAIL_TEXT.summary(countDokumen(rows), rows.length)}</p>
+              </div>
+              {rows.length === 0 ? (
+                <p className={s.empty}>{AK_DETAIL_TEXT.emptyKategori}</p>
+              ) : (
+                <AntiKorupsiDokumenList rows={rows} labelledBy={LIST_TITLE_ID} />
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
-export default Lokal;
+// useSearchParams di client page wajib dalam Suspense boundary agar `next build` tidak gagal.
+function AntiKorupsiDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className={s.page}>
+          <div className={s.inner}>
+            <AntiKorupsiDokumenSkeleton />
+          </div>
+        </div>
+      }
+    >
+      <AntiKorupsiDetailContent />
+    </Suspense>
+  );
+}
+
+export default AntiKorupsiDetailPage;

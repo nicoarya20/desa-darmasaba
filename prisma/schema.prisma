@@ -55,6 +55,9 @@ model FileStorage {
   realName                       String
   path                           String
   mimeType                       String
+  // Ukuran isi berkas dalam byte (setelah dekompresi untuk dokumen ter-gzip). Nullable: baris
+  // lama belum terisi sampai prisma/backfill-file-size.ts dijalankan.
+  size                           Int?
   createdAt                      DateTime                   @default(now())
   updatedAt                      DateTime                   @updatedAt
   deletedAt                      DateTime?
@@ -63,12 +66,14 @@ model FileStorage {
   category                       String // "image" / "document" / "audio" / "other"
   Berita                         Berita[]                   @relation("BeritaFeaturedImage")
   BeritaImages                   Berita[]                   @relation("BeritaImages")
+  PengumumanImage                Pengumuman[]               @relation("PengumumanImage")
+  PengumumanImages               Pengumuman[]               @relation("PengumumanImages")
+  PengumumanDokumen              Pengumuman[]               @relation("PengumumanDokumen")
   PotensiDesa                    PotensiDesa[]
   Posyandu                       Posyandu[]
   StrukturPPID                   StrukturPPID[]
   GalleryFoto                    GalleryFoto[]
   Pelapor                        Pelapor[]
-  Penghargaan                    Penghargaan[]
   ProfileDesaImage               ProfileDesaImage[]
   ProfilePPID                    ProfilePPID[]
   ProfilPerbekel                 ProfilPerbekel[]
@@ -87,10 +92,12 @@ model FileStorage {
   InfoTekno                      InfoTekno[]
   PengaduanMasyarakat            PengaduanMasyarakat[]
   KegiatanDesa                   KegiatanDesa[]
+  DokumenPerencanaan             DokumenPerencanaan[]
   ProgramInovasi                 ProgramInovasi[]
+  ProgramInovasiImages           ProgramInovasi[]           @relation("ProgramInovasiImages")
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
-  DesaAntiKorupsi                DesaAntiKorupsi[]
+  DokumenDesaAntiKorupsi         DokumenDesaAntiKorupsi[]
   SDGSDesa                       SdgsDesa[]
   APBDesImage                    APBDes[]                   @relation("APBDesImage")
   APBDesFile                     APBDes[]                   @relation("APBDesFile")
@@ -110,6 +117,9 @@ model FileStorage {
 
   KesejahteraanMasyarakat       KesejahteraanMasyarakat[] @relation("KesejahteraanFeaturedImage")
   KesejahteraanMasyarakatImages KesejahteraanMasyarakat[] @relation("KesejahteraanImages")
+
+  ProfilBumDes    ProfilBumDes[]
+  UnitUsahaBumDes UnitUsahaBumDes[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -133,6 +143,8 @@ model ProgramInovasi {
   image       FileStorage? @relation(fields: [imageId], references: [id])
   imageId     String?
   link        String?      @db.VarChar(255)
+  // Galeri dokumentasi kegiatan program (bukti pelaksanaan), terpisah dari logo/cover `image`.
+  images      FileStorage[] @relation("ProgramInovasiImages")
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?    @default(now())
@@ -154,17 +166,55 @@ model MediaSosial {
 
 //========================================= DESA ANTI KORUPSI ========================================= //
 model DesaAntiKorupsi {
-  id         String                  @id @default(cuid())
-  name       String                  @unique
-  deskripsi  String                  @db.Text
-  kategori   KategoriDesaAntiKorupsi @relation(fields: [kategoriId], references: [id])
+  id         String                         @id @default(cuid())
+  name       String                         @unique
+  deskripsi  String                         @db.Text
+  kategori   KategoriDesaAntiKorupsi        @relation(fields: [kategoriId], references: [id])
   kategoriId String
-  file       FileStorage?            @relation(fields: [fileId], references: [id])
-  fileId     String?
-  createdAt  DateTime                @default(now())
-  updatedAt  DateTime                @updatedAt
-  deletedAt  DateTime                @default(now())
-  isActive   Boolean                 @default(true)
+  dokumen    DokumenDesaAntiKorupsi[]
+  folders    FolderDokumenDesaAntiKorupsi[]
+  createdAt  DateTime                       @default(now())
+  updatedAt  DateTime                       @updatedAt
+  deletedAt  DateTime                       @default(now())
+  isActive   Boolean                        @default(true)
+}
+
+// "Folder" dokumen per program Desa Anti Korupsi: satu program bisa punya banyak berkas.
+model DokumenDesaAntiKorupsi {
+  id                String                        @id @default(cuid())
+  desaAntiKorupsi   DesaAntiKorupsi               @relation(fields: [desaAntiKorupsiId], references: [id], onDelete: Cascade)
+  desaAntiKorupsiId String
+  file              FileStorage                   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId            String
+  // null = dokumen ada di folder virtual "Umum" (bukan baris DB)
+  folder            FolderDokumenDesaAntiKorupsi? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  folderId          String?
+  judul             String
+  urutan            Int                           @default(0)
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
+  deletedAt         DateTime?
+  isActive          Boolean                       @default(true)
+
+  @@index([desaAntiKorupsiId])
+  @@index([folderId])
+}
+
+// Folder (satu tingkat) untuk memilah dokumen di dalam satu program Desa Anti Korupsi.
+// Hapus folder = soft delete; dokumennya dipindah ke "Umum" (folderId null), tidak ikut terhapus.
+model FolderDokumenDesaAntiKorupsi {
+  id                String                   @id @default(cuid())
+  desaAntiKorupsi   DesaAntiKorupsi          @relation(fields: [desaAntiKorupsiId], references: [id], onDelete: Cascade)
+  desaAntiKorupsiId String
+  nama              String
+  urutan            Int                      @default(0)
+  dokumen           DokumenDesaAntiKorupsi[]
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  deletedAt         DateTime?
+  isActive          Boolean                  @default(true)
+
+  @@index([desaAntiKorupsiId])
 }
 
 model KategoriDesaAntiKorupsi {
@@ -266,6 +316,8 @@ model PrestasiDesa {
   id         String               @id @default(cuid())
   name       String
   deskripsi  String               @db.Text
+  /// Capaian/peringkat, mis. "Juara 1 Lomba Desa Provinsi Bali 2025" (eks-kolom Penghargaan.juara).
+  juara      String?
   kategori   KategoriPrestasiDesa @relation(fields: [kategoriId], references: [id])
   kategoriId String
   image      FileStorage?         @relation(fields: [imageId], references: [id])
@@ -583,6 +635,26 @@ model VisiMisiDesa {
   isActive  Boolean   @default(true)
 }
 
+// Letak & batas wilayah desa. Singleton: hanya satu baris (id tetap
+// "wilayah-desa", di-upsert dari admin). Semua kolom nullable agar tabel boleh
+// kosong sebelum admin mengisi; aturan wajib-isi ditegakkan di API.
+model WilayahDesa {
+  id           String    @id @default(cuid())
+  batasUtara   String?
+  batasSelatan String?
+  batasTimur   String?
+  batasBarat   String?
+  // Satuan: hektar (ha).
+  luasWilayah  Float?
+  keterangan   String?   @db.Text
+  // URL embed peta (hanya https), dirender sebagai iframe di halaman publik.
+  petaEmbedUrl String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean   @default(true)
+}
+
 model LambangDesa {
   id        String    @id @default(cuid())
   judul     String
@@ -656,8 +728,11 @@ model Berita {
   isActive         Boolean         @default(true)
   kategoriBerita   KategoriBerita? @relation(fields: [kategoriBeritaId], references: [id])
   kategoriBeritaId String?
+  /// Tanggal asli berita (diisi admin, default sekarang); urutan list = tanggalTerbit desc, createdAt desc.
+  tanggalTerbit    DateTime        @default(now())
 
   @@index([kategoriBeritaId])
+  @@index([tanggalTerbit, createdAt])
 }
 
 model KategoriBerita {
@@ -724,6 +799,16 @@ model Pengumuman {
   isActive             Boolean             @default(true)
   CategoryPengumuman   CategoryPengumuman? @relation(fields: [categoryPengumumanId], references: [id])
   categoryPengumumanId String?
+  // Lampiran (ikut pola Berita): pengumuman resmi desa umumnya berupa scan dokumen + PDF,
+  // bukan teks. Semua opsional — pengumuman lama tanpa lampiran tetap valid.
+  image                FileStorage?        @relation("PengumumanImage", fields: [imageId], references: [id])
+  imageId              String? // gambar/poster utama (thumbnail kartu)
+  images               FileStorage[]       @relation("PengumumanImages") // galeri gambar tambahan
+  dokumen              FileStorage[]       @relation("PengumumanDokumen") // lampiran dokumen (PDF)
+  // Tanggal asli pengumuman (bisa beda dari createdAt untuk data impor). Baris lama di-backfill = createdAt.
+  tanggalTerbit        DateTime            @default(now())
+
+  @@index([categoryPengumumanId])
 }
 
 model CategoryPengumuman {
@@ -769,6 +854,8 @@ model PelayananSuratKeterangan {
   imageId          String?
   image2           FileStorage?       @relation("PelayananSuratKeteranganImage2", fields: [image2Id], references: [id])
   image2Id         String?
+  estimasiWaktu    String?
+  biaya            Int?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   deletedAt        DateTime           @default(now())
@@ -777,35 +864,41 @@ model PelayananSuratKeterangan {
 }
 
 model PelayananTelunjukSaktiDesa {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  link      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  link          String
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model PelayananPerizinanBerusaha {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  link      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  link          String
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model PelayananPendudukNonPermanen {
-  id        String   @id @default(cuid())
-  name      String
-  deskripsi String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id            String   @id @default(cuid())
+  name          String
+  deskripsi     String   @db.Text
+  estimasiWaktu String?
+  biaya         Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime @default(now())
+  isActive      Boolean  @default(true)
 }
 
 model AjukanPermohonan {
@@ -820,20 +913,6 @@ model AjukanPermohonan {
   updatedAt  DateTime                 @updatedAt
   deletedAt  DateTime                 @default(now())
   isActive   Boolean                  @default(true)
-}
-
-// ========================================= PENGHARGAAN ========================================= //
-model Penghargaan {
-  id        String       @id @default(cuid())
-  name      String
-  juara     String
-  deskripsi String       @db.Text
-  image     FileStorage? @relation(fields: [imageId], references: [id])
-  imageId   String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  deletedAt DateTime     @default(now())
-  isActive  Boolean      @default(true)
 }
 
 // ========================================= MENU KESEHATAN ========================================= //
@@ -1499,6 +1578,10 @@ model PasarDesa {
   umkm   Umkm    @relation(fields: [umkmId], references: [id])
   umkmId String
 
+  // Penanda "Produk Unggulan Desa" untuk katalog publik. NOT NULL DEFAULT false
+  // agar produk lama otomatis non-unggulan; admin menandai lewat form produk.
+  isUnggulan Boolean @default(false)
+
   // Relasi Penjualan
   penjualan PenjualanProduk[]
 
@@ -1510,6 +1593,25 @@ model PasarDesa {
   kategoriProduk   KategoriProdukUmkm? @relation(fields: [kategoriProdukId], references: [id])
   kategoriProdukId String?
   KategoriToPasar  KategoriToPasar[]
+  linkTokoOnline   LinkTokoOnline[]
+}
+
+// Link toko online (Shopee, Tokopedia, dll.) per produk UMKM. `platform` disimpan
+// sebagai String dan divalidasi aplikasi dari konstanta bernama (tanpa enum DB agar
+// platform baru tidak butuh migrasi tipe). URL divalidasi di boundary server.
+model LinkTokoOnline {
+  id        String    @id @default(uuid())
+  produk    PasarDesa @relation(fields: [produkId], references: [id], onDelete: Cascade)
+  produkId  String
+  platform  String
+  url       String
+  urutan    Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
+
+  @@index([produkId])
 }
 
 model KategoriProduk {
@@ -1617,6 +1719,38 @@ model StrukturOrganisasiBumDes {
   isActive             Boolean                @default(true)
 }
 
+// Profil BUMDes (singleton): satu baris dengan id tetap "profil-bumdes", ditulis lewat upsert.
+model ProfilBumDes {
+  id           String       @id @default("profil-bumdes")
+  nama         String       @db.VarChar(255)
+  deskripsi    String       @db.Text
+  alamat       String?      @db.Text
+  kontak       String?      @db.VarChar(255)
+  tahunBerdiri Int?
+  image        FileStorage? @relation(fields: [imageId], references: [id])
+  imageId      String?
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+}
+
+// Daftar unit usaha BUMDes; urutan menentukan posisi tampil di halaman publik.
+model UnitUsahaBumDes {
+  id        String       @id @default(cuid())
+  nama      String       @db.VarChar(255)
+  deskripsi String       @db.Text
+  image     FileStorage? @relation(fields: [imageId], references: [id])
+  imageId   String?
+  urutan    Int          @default(0)
+  isActive  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+
+  @@index([isActive, deletedAt, urutan])
+}
+
 // ========================================= PROGRAM KEMISKINAN ========================================= //
 model ProgramKemiskinan {
   id          String               @id @default(uuid())
@@ -1682,6 +1816,8 @@ model SektorUnggulanDesa {
   name        String   @unique @db.VarChar(100) // Nama sektor (e.g., "Sektor Pertanian", "Sektor Peternakan")
   description String?  @db.Text // Deskripsi lengkap tentang sektor
   value       Float? // Nilai kuantitatif sektor (misalnya, kontribusi PDB, jumlah produksi, dll.)
+  satuan      String?  @db.VarChar(20) // Satuan nilai (mis. "ton", "kg", "ha", "ekor", "%"); null = nilai tanpa satuan (indeks/skor lama)
+  periode     String?  @db.VarChar(50) // Periode nilai (mis. "2025", "Semester I 2026")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime @default(now())
@@ -1966,6 +2102,35 @@ model KegiatanDesa {
   isActive           Boolean          @default(true)
   kategoriKegiatan   KategoriKegiatan @relation(fields: [kategoriKegiatanId], references: [id])
   kategoriKegiatanId String
+
+  // Khusus kategori Pembangunan (KATEGORI_PEMBANGUNAN_ID) — nullable agar data lama aman
+  anggaran          Float? // Rupiah, tipe sama dengan APBDesItem.anggaran
+  progres           Int? // 0–100 (CHECK constraint di migrasi)
+  statusPembangunan String? // "rencana" | "berjalan" | "selesai" — divalidasi di API
+  sumberDana        String?
+
+  @@index([kategoriKegiatanId])
+}
+
+// Dokumen perencanaan desa: RPJM (periode 6/8 tahun), RKP (per tahun), dan berita acara musyawarah.
+model DokumenPerencanaan {
+  id              String       @id @default(cuid())
+  jenis           String // "RPJM" | "RKP" | "BERITA_ACARA_MUSYAWARAH" — divalidasi di API (src/lib/dokumen-perencanaan.ts)
+  judul           String
+  tahun           Int? // RKP & berita acara
+  tahunMulai      Int? // RPJM
+  tahunSelesai    Int? // RPJM (>= tahunMulai, divalidasi di API)
+  nomorPerdes     String?
+  ringkasan       String?      @db.Text
+  jenisMusyawarah String? // "MUSDES" | "MUSRENBANGDES" | "MMD" | "LAINNYA" — hanya berita acara
+  file            FileStorage? @relation(fields: [fileId], references: [id])
+  fileId          String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
+  isActive        Boolean      @default(true)
+
+  @@index([jenis, tahun])
 }
 
 model KategoriKegiatan {
@@ -2303,25 +2468,26 @@ model DataPendidikan {
 // ========================================= USER ========================================= //
 
 model User {
-  id             String           @id @default(cuid())
-  username       String
-  nomor          String?          @unique // nullable: user login Google tidak punya nomor HP
-  email          String?          @unique // identitas dari Google OAuth
-  googleId       String?          @unique // Google account ID, di-link saat login Google pertama
-  avatarUrl      String? // foto profil dari Google — dipetakan ke Better Auth `image`
-  emailVerified  Boolean          @default(false) // Better Auth core field
-  roleId         String           @default("2")
-  isActive       Boolean          @default(false)
-  sessionInvalid Boolean          @default(false)
-  lastLogin      DateTime?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now()) @updatedAt
-  permissions    Json?
-  sessions       UserSession[] // ⚠️ legacy JWT session — di-drop setelah cutover Better Auth
-  authSessions   Session[] // Better Auth session
-  accounts       Account[] // Better Auth account (provider google)
-  role           Role             @relation(fields: [roleId], references: [id])
-  menuAccesses   UserMenuAccess[]
+  id                    String           @id @default(cuid())
+  username              String
+  nomor                 String?          @unique // nullable: user login Google tidak punya nomor HP
+  email                 String?          @unique // identitas dari Google OAuth
+  googleId              String?          @unique // Google account ID, di-link saat login Google pertama
+  avatarUrl             String? // foto profil dari Google — dipetakan ke Better Auth `image`
+  emailVerified         Boolean          @default(false) // Better Auth core field
+  roleId                String           @default("2")
+  isActive              Boolean          @default(false)
+  sessionInvalid        Boolean          @default(false)
+  lastLogin             DateTime?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @default(now()) @updatedAt
+  permissions           Json?
+  sessions              UserSession[] // ⚠️ legacy JWT session — di-drop setelah cutover Better Auth
+  authSessions          Session[] // Better Auth session
+  accounts              Account[] // Better Auth account (provider google)
+  role                  Role             @relation(fields: [roleId], references: [id])
+  menuAccesses          UserMenuAccess[]
+  menuVisibilityUpdates MenuVisibility[]
 
   @@map("users")
 }
@@ -2376,6 +2542,19 @@ model UserMenuAccess {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, menuId]) // Satu user tidak bisa punya akses menu yang sama dua kali
+}
+
+// Override visibilitas submenu website publik (navbar/pencarian/Peta Informasi).
+// Tanpa row = pakai default `hidden` di src/con/navbar-list-menu.ts. menuKey = href
+// submenu (lebih stabil dari id urut "3.2"); divalidasi aplikasi terhadap config.
+model MenuVisibility {
+  id          String   @id @default(cuid())
+  menuKey     String   @unique
+  isVisible   Boolean
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // ===================================== BETTER AUTH ===================================== //
@@ -2681,12 +2860,16 @@ model RingkasanKesehatanDesa {
 
 // ========================================= EVENT BUDAYA ========================================= //
 model EventBudaya {
-  id        String   @id @default(cuid())
-  nama      String
-  tanggal   DateTime
-  lokasi    String
-  deskripsi String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isActive  Boolean  @default(true)
+  id             String    @id @default(cuid())
+  nama           String
+  tanggal        DateTime
+  tanggalSelesai DateTime?
+  kategori       String    @default("BUDAYA")
+  lokasi         String
+  deskripsi      String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  isActive       Boolean   @default(true)
+
+  @@index([tanggal])
 }

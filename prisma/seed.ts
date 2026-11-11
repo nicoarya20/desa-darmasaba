@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import prisma from "@/lib/prisma";
+import prisma from "./seed-prisma";
 import { seedBerita } from "./_seeder_list/desa/berita/seed_berita";
 import { seedKegiatanDesa } from "./_seeder_list/desa/seed_kegiatan_desa";
+import { seedWilayahDesa } from "./_seeder_list/desa/seed_wilayah_desa";
+import { seedBumdesProfil } from "./_seeder_list/ekonomi/seed_bumdes_profil";
 import { seedEventBudaya } from "./_seeder_list/desa/event-budaya/seed_event_budaya";
 import { seedFoto } from "./_seeder_list/desa/gallery/foto/seed_foto";
 import { seedVideo } from "./_seeder_list/desa/gallery/video/seed_video";
 import { seedLayanan } from "./_seeder_list/desa/layanan/seed_layanan";
 import { seedMusikDesa } from "./_seeder_list/desa/musik-desa/seed_musik_desa";
-import { seedPenghargaan } from "./_seeder_list/desa/penghargaan/penghargaan";
 import { seedPengumuman } from "./_seeder_list/desa/pengumuman/seed_pengumuman";
 import { seedPotensi } from "./_seeder_list/desa/potensi/seed_potensi";
 import { seedProfileDesa } from "./_seeder_list/desa/profile-desa/seed_profile_desa";
@@ -24,6 +25,7 @@ import { seedKategoriProduk, seedPasarDesa } from "./_seeder_list/ekonomi/seed_p
 import { seedPendapatanAsli } from "./_seeder_list/ekonomi/seed_pendapatan_asli";
 import { seedPendudukUsiaKerjaYangMenganggur } from "./_seeder_list/ekonomi/seed_penduduk_usia_kerja_yang_menganggur";
 import { seedProgramKemiskinan } from "./_seeder_list/ekonomi/seed_program_kemiskinan";
+import { seedLinkTokoOnline } from "./_seeder_list/ekonomi/seed_link_toko_online";
 import { seedSektorUnggulanDesa } from "./_seeder_list/ekonomi/seed_sektor_unggulan_desa";
 import { seedStrukturBumdes } from "./_seeder_list/ekonomi/seed_struktur_bumdes";
 import { seedUmkm } from "./_seeder_list/ekonomi/seed_umkm";
@@ -92,8 +94,14 @@ import roles from "./data/user/roles.json";
 import users from "./data/user/users.json";
 import { safeSeedUnique } from "./safeseedUnique";
 import seedAssets from "./seed_assets";
+import { isSeedOverwrite } from "./seed-prisma";
 
 (async () => {
+  console.log(
+    isSeedOverwrite()
+      ? "⚠️ SEED_OVERWRITE=true: data seed yang sudah ada DITIMPA dengan isi JSON (editan admin hilang)"
+      : "🛡️ Mode create-only: data yang sudah ada tidak diubah, hanya data baru yang dibuat (SEED_OVERWRITE=true untuk menimpa)",
+  );
   // Always run seedAssets to handle new images without duplication
   console.log("📂 Checking for new assets to seed...");
   await seedAssets();
@@ -238,6 +246,7 @@ import seedAssets from "./seed_assets";
   // // =========== SUBMENU PROFILE ===========
   await seedProfileDesa();
   await seedProfilePerbekel();
+  await seedWilayahDesa();
 
   // // =========== SUBMENU POTENSI DESA ===========
   await seedPotensi();
@@ -254,9 +263,6 @@ import seedAssets from "./seed_assets";
 
   // // =========== SUBMENU LAYANAN ===========
   await seedLayanan();
-
-  // // =========== PENGHARGAAN ===========
-  await seedPenghargaan();
 
   // // ====================== MENU KESEHATAN ========================
   // // ==================== SUBMENU BANJAR =========================
@@ -313,12 +319,14 @@ import seedAssets from "./seed_assets";
 
   // // ==================== SUBMENU PASAR DESA (PASAR) ============
   await seedPasarDesa();
+  await seedLinkTokoOnline();
 
   // // ==================== SUBMENU LOWONGAN KERJA LOKAL ==========
   await seedLowonganKerjaLokal();
 
   // // ==================== SUBMENU STRUKTUR ORGANISASI DAN SK PENGURUS BUMDES ==========
   await seedStrukturBumdes();
+  await seedBumdesProfil();
 
   // // ==================== SUBMENU PENDAPATAN ASLI DESA ==========
   await seedPendapatanAsli();

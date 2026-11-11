@@ -110,7 +110,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 
 type LayoutSekolahProps = {
   title?: string;

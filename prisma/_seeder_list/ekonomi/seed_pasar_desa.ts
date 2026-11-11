@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { loadJsonData } from "../../load-json";
 
 const kategoriProduk = loadJsonData("ekonomi/pasar-desa/kategori-produk.json");
@@ -64,6 +64,8 @@ export async function seedPasarDesa() {
           imageId,
           kategoriProdukId: p.kategoriProdukId,
           umkmId: umkmId,
+          // isUnggulan hanya ditimpa jika ada di JSON, agar tanda yang diubah admin tidak hilang tanpa sengaja.
+          ...(p.isUnggulan !== undefined && { isUnggulan: p.isUnggulan }),
         },
         create: {
           id: p.id,
@@ -77,6 +79,7 @@ export async function seedPasarDesa() {
           imageId,
           kategoriProdukId: p.kategoriProdukId,
           umkmId: umkmId,
+          isUnggulan: p.isUnggulan ?? false,
         },
       });
   

@@ -25,6 +25,8 @@ async function programInovasiFindMany(context: Context) {
         where,
         include: {
           image: true,
+          // Ringan: list & rel beranda hanya butuh jumlah foto, galeri penuh di findUnique.
+          _count: { select: { images: true } },
         },
         skip,
         take: limit,

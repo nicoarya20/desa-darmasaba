@@ -2,13 +2,14 @@ import "@mantine/core/styles.css";
 import "./globals.css"; // Sisanya import di globals.css
 
 import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
+import { GATE_SPLASH_HEAD_SCRIPT } from "@/app/darmasaba/_com/splash/gate-splash.session";
 import { MusicProvider } from "@/app/context/MusicContext";
 import {
   ColorSchemeScript,
   MantineProvider,
   createTheme,
   mantineHtmlProps,
-  // mantineHtmlProps,
+  v8CssVariablesResolver,
 } from "@mantine/core";
 import { Metadata, Viewport } from "next";
 import { ViewTransitions } from "next-view-transitions";
@@ -92,6 +93,20 @@ const theme = createTheme({
   fontFamily: "San Francisco, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif",
   fontFamilyMonospace: "SFMono-Regular, Menlo, Monaco, Consolas, monospace",
   headings: { fontFamily: "San Francisco, sans-serif" },
+  // Kompatibilitas Mantine 9: pertahankan tampilan v8 — radius default 'sm' (v9 = 'md')
+  // dan fontWeights.medium '500' (v9 = '600'). Hapus saat fondasi tema baru diterapkan
+  // (docs/decisions/2026-11-04-mantine-8-staged-upgrade.md).
+  defaultRadius: "sm",
+  fontWeights: { medium: "500" },
+  // v8 memakai 600 untuk Button (+ GroupSection), sedangkan label/input dsb. 500. Di v9
+  // semuanya memakai --mantine-font-weight-medium, jadi medium '500' saja menipiskan Button.
+  // Override var-nya di root (bukan font-weight langsung) agar `fw`/`style`/className
+  // pemakai tetap menang seperti di v8. Objek biasa, bukan `.extend()`: layout ini server component.
+  components: {
+    Button: { styles: { root: { "--mantine-font-weight-medium": "600" } } },
+    ButtonGroupSection: { styles: { groupSection: { "--mantine-font-weight-medium": "600" } } },
+    ActionIconGroupSection: { styles: { groupSection: { "--mantine-font-weight-medium": "600" } } },
+  },
 });
 
 export default function RootLayout({
@@ -104,11 +119,18 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <ColorSchemeScript defaultColorScheme="light" />
+        {/* Putuskan splash beranda sebelum paint (lihat gate-splash.session.ts); di root layout agar tak dirender ulang saat navigasi. */}
+        <script dangerouslySetInnerHTML={{ __html: GATE_SPLASH_HEAD_SCRIPT }} />
       </head>
       <body>
         <ViewTransitions>
           <MusicProvider>
-            <MantineProvider theme={theme} defaultColorScheme="light">
+            {/* v8CssVariablesResolver: pertahankan warna varian light/outline v8 selama migrasi Mantine 9 */}
+            <MantineProvider
+              theme={theme}
+              defaultColorScheme="light"
+              cssVariablesResolver={v8CssVariablesResolver}
+            >
               {children}
               <LoadDataFirstClient />
               <ToastContainer

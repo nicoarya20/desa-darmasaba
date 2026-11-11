@@ -1,12 +1,21 @@
 // Kebijakan role/akses Better Auth — fungsi murni, tanpa I/O.
 // Dipisah supaya bisa di-unit-test tanpa DB dan dipakai konsisten oleh
-// auth.ts (hook), middleware.ts (guard route), dan api-auth.ts (guard API).
+// auth.ts (hook), proxy.ts (guard route), dan api-auth.ts (guard API).
 
 // Roles desa-darmasaba (relasi tabel Role, id string):
 //   "0" DEVELOPER | "1" SUPER ADMIN | "2" ADMIN DESA
 //   "3" ADMIN KESEHATAN | "4" ADMIN PENDIDIKAN | "5" USER (Login Google)
+export const ROLE_DEVELOPER = "0";
 export const ROLE_SUPER_ADMIN = "1";
 export const ROLE_USER = "5";
+
+// Role yang boleh mengatur visibilitas menu website publik: hanya DEVELOPER & SUPER ADMIN.
+export const MENU_VISIBILITY_MANAGER_ROLES: readonly string[] = [ROLE_DEVELOPER, ROLE_SUPER_ADMIN];
+
+/** Apakah roleId boleh mengatur visibilitas menu publik (role "0" & "1"). */
+export function canManageMenuVisibility(roleId: string | number | null | undefined): boolean {
+  return roleId != null && MENU_VISIBILITY_MANAGER_ROLES.includes(String(roleId));
+}
 
 // roleId 0-4 = admin (boleh akses /admin); 5+ = user biasa.
 export const MAX_ADMIN_ROLE = 4;
@@ -36,11 +45,11 @@ export function isAccountActive(
 // Halaman profil publik untuk user non-admin (roleId 5+).
 export const PROFILE_PATH = "/profile";
 
-// Keputusan guard middleware untuk /admin/*. Fungsi murni supaya bisa di-test.
+// Keputusan guard proxy untuk /admin/*. Fungsi murni supaya bisa di-test.
 export type AdminAccessDecision = "allow" | "login" | "profile";
 
 /**
- * Tentukan akses /admin dari state cookie yang tersedia di middleware.
+ * Tentukan akses /admin dari state cookie yang tersedia di proxy (src/proxy.ts).
  *
  * Kunci fix "tiba-tiba logout": cookie cache Better Auth TTL pendek (60 dtk),
  * sedangkan session_token hidup 7 hari. Saat cache MISS tapi token masih ada,
@@ -89,6 +98,12 @@ export const PUBLIC_POST_PATHS: readonly string[] = [
   // Pendaftaran jadwal kegiatan kesehatan: warga mendaftar kegiatan di
   // /darmasaba/kesehatan. Jadwal kegiatan (master) di-CRUD admin, bukan path ini.
   "/api/kesehatan/pendaftaran-jadwal-kegiatan/create",
+  // Pesanan produk UMKM: warga anonim memesan dari /darmasaba/ekonomi/umkm/produk/:id.
+  // Harga dihitung server dari DB; CRUD penjualan admin (create/PUT/DELETE) tetap guard.
+  "/api/ekonomi/umkm/penjualan/pesan",
+  // Laporan keamanan lingkungan: warga anonim mengirim laporan dari /darmasaba
+  // /keamanan/laporan-publik. Update/hapus laporan (PUT/DELETE) tetap admin-only.
+  "/api/keamanan/laporanpublik/create",
 ];
 
 /**

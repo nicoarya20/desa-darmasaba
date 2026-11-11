@@ -26,8 +26,7 @@ const ApbdesFormSchema = z.object({
   name: z.string().optional(),
   deskripsi: z.string().optional(),
   jumlah: z.string().optional(),
-  // Image dan file opsional (bisa kosong)
-  imageId: z.string().optional(),
+  // Dokumen opsional (bisa kosong)
   fileId: z.string().optional(),
   items: z.array(ApbdesItemSchema).min(1, "Minimal ada 1 item"),
 });
@@ -38,7 +37,6 @@ const defaultApbdesForm = {
   name: "",
   deskripsi: "",
   jumlah: "",
-  imageId: "",
   fileId: "",
   items: [] as z.infer<typeof ApbdesItemSchema>[],
 };
@@ -267,7 +265,6 @@ const apbdes = proxy({
             name: data.name || "",
             deskripsi: data.deskripsi || "",
             jumlah: data.jumlah || "",
-            imageId: data.imageId || "",
             fileId: data.fileId || "",
             items: (data.items || []).map((item: any) => ({
               id: item.id, // pertahankan id agar realisasi tetap ter-link saat update
@@ -310,7 +307,6 @@ const apbdes = proxy({
           name: parsed.data.name,
           deskripsi: parsed.data.deskripsi,
           jumlah: parsed.data.jumlah,
-          imageId: parsed.data.imageId,
           fileId: parsed.data.fileId,
           id: this.id,
           items: parsed.data.items.map(item => ({

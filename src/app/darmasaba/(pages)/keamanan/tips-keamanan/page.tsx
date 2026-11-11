@@ -1,7 +1,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, Center, Grid, GridCol, Image, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { useProxy } from 'valtio/utils';
 import tipsKeamananState from '@/app/admin/(dashboard)/_state/keamanan/tips-keamanan';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';

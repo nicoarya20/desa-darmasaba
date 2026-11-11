@@ -8,6 +8,8 @@ import { z } from "zod";
 const templatePrestasiDesa = z.object({
   name: z.string().min(1, "Judul harus diisi"),
   deskripsi: z.string().min(1, "Deskripsi harus diisi"),
+  // Capaian/peringkat (eks-Penghargaan) — opsional; kosong disimpan null oleh API.
+  juara: z.string(),
   imageId: z.string().min(1, "Gambar harus dipilih"),
   kategoriId: z.string().min(1, "Kategori harus dipilih"),
 });
@@ -15,6 +17,7 @@ const templatePrestasiDesa = z.object({
 const defaultPrestasiDesa = {
   name: "",
   deskripsi: "",
+  juara: "",
   imageId: "",
   kategoriId: "",
 };
@@ -183,6 +186,7 @@ const prestasiDesa = proxy({
           prestasiDesa.edit.form = {
             name: data.name,
             deskripsi: data.deskripsi,
+            juara: data.juara ?? "",
             imageId: data.imageId,
             kategoriId: data.kategoriId,
           };
@@ -218,6 +222,7 @@ const prestasiDesa = proxy({
             body: JSON.stringify({
               name: prestasiDesa.edit.form.name,
               deskripsi: prestasiDesa.edit.form.deskripsi,
+              juara: prestasiDesa.edit.form.juara,
               imageId: prestasiDesa.edit.form.imageId,
               kategoriId: prestasiDesa.edit.form.kategoriId,
             }),

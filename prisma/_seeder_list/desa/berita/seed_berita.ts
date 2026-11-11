@@ -1,8 +1,12 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../../seed-prisma";
 import { loadJsonData } from "../../../load-json";
+import { loadRetiredSeed, retireSeedRows } from "../../../retire-seed-rows";
 
 const kategoriBerita = loadJsonData("desa/berita/kategori-berita.json");
 const beritaJson = loadJsonData("desa/berita/berita.json");
+const beritaPensiun = loadRetiredSeed<{ id: string; judul: string; deskripsi: string }>(
+  "desa/berita/berita.retired.json",
+);
 
 export async function seedBerita() {
   // ================== SUBMENU BERITA ========================
@@ -48,7 +52,24 @@ export async function seedBerita() {
 
     let imageId: string | null = null;
 
-    if (b.imageName) {
+    if (b.imageName && b.imageLink) {
+      // Gambar berita terbaru disajikan dari public/ (tanpa MinIO): link menunjuk path statis.
+      const image = await prisma.fileStorage.upsert({
+        where: { name: b.imageName },
+        update: { link: b.imageLink, isActive: true },
+        create: {
+          name: b.imageName,
+          realName: b.imageName,
+          path: "public",
+          mimeType: "image/webp",
+          category: "image",
+          link: b.imageLink,
+          isActive: true,
+        },
+        select: { id: true },
+      });
+      imageId = image.id;
+    } else if (b.imageName) {
       const image = await prisma.fileStorage.findUnique({
         where: { name: b.imageName },
         select: { id: true },
@@ -72,6 +93,7 @@ export async function seedBerita() {
           content: b.content,
           kategoriBeritaId: b.kategoriBeritaId,
           imageId,
+          ...(b.tanggal && { createdAt: new Date(b.tanggal), tanggalTerbit: new Date(b.tanggal) }),
         },
         create: {
           id: b.id,
@@ -80,6 +102,8 @@ export async function seedBerita() {
           content: b.content,
           kategoriBeritaId: b.kategoriBeritaId,
           imageId,
+          // tanggalTerbit = tanggal asli (urutan & tanggal tampil di website); createdAt ikut disamakan.
+          ...(b.tanggal && { createdAt: new Date(b.tanggal), tanggalTerbit: new Date(b.tanggal) }),
         },
       });
 
@@ -90,6 +114,10 @@ export async function seedBerita() {
       );
     }
   }
+
+  await retireSeedRows("Berita", beritaPensiun, (b) =>
+    prisma.berita.deleteMany({ where: { id: b.id, judul: b.judul, deskripsi: b.deskripsi } }),
+  );
 
   console.log("🎉 Berita seed selesai");
 }

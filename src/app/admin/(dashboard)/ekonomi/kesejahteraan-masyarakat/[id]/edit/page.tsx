@@ -32,7 +32,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
-import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/desa/gallery/lib/youtube-utils';
+import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/pemerintahan/gallery/lib/youtube-utils';
 
 interface ExistingImage {
   id: string;
@@ -414,7 +414,7 @@ function EditKesejahteraan() {
                   <IconPhoto size={40} color="#868e96" stroke={1.5} />
                 </Dropzone.Idle>
               </Group>
-              <Text ta="center" mt="sm" size="xs" color="dimmed">
+              <Text ta="center" mt="sm" size="xs" c="dimmed">
                 Seret gambar untuk menambahkan ke galeri
               </Text>
             </Dropzone>
@@ -425,7 +425,7 @@ function EditKesejahteraan() {
                 <Text fz="xs" fw="bold" mb={6} c="dimmed">
                   Gambar Existing ({existingGalleryImages.length})
                 </Text>
-                <Grid gutter="sm">
+                <Grid gap="sm">
                   {existingGalleryImages.map((img, index) => (
                     <Grid.Col span={4} key={img.id}>
                       <Card p="xs" radius="md" withBorder>
@@ -456,7 +456,7 @@ function EditKesejahteraan() {
                 <Text fz="xs" fw="bold" mb={6} c="dimmed">
                   Gambar Baru ({galleryPreviews.length})
                 </Text>
-                <Grid gutter="sm">
+                <Grid gap="sm">
                   {galleryPreviews.map((preview, index) => (
                     <Grid.Col span={4} key={index}>
                       <Card p="xs" radius="md" withBorder>

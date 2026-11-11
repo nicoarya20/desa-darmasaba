@@ -1,0 +1,95 @@
+{
+  "keterangan": "Berita seed lama yang diganti di commit 9cdf5e07 (berita Okt-Nov 2026). Dihapus saat seed hanya bila judul dan deskripsinya belum diubah admin.",
+  "data": [
+    {
+      "id": "cmk6ae8rz00003b6r06x7hsqi",
+      "judul": "TP. Posyandu Bali Gelar Aksi Sosial ‘Membina dan Berbagi’ di Desa Darmasaba",
+      "deskripsi": "<p>Kegiatan pembinaan dan bantuan kepada kader Posyandu Desa Darmasaba oleh TP Posyandu Provinsi Bali.</p>"
+    },
+    {
+      "id": "cmk6af7vf00013b6rj2br4nv8",
+      "judul": "Desa Darmasaba Gelar Temu Sadar Hukum, Bahas Isu KDRT",
+      "deskripsi": "<p>Temu Sadar Hukum untuk meningkatkan kesadaran hukum warga Desa Darmasaba.</p>"
+    },
+    {
+      "id": "cmk6afo0g00033b6rjc2pae67",
+      "judul": "Bicara Darmasaba Bahas Berbagai Persoalan, Dorong Warga Sampaikan Aspirasi",
+      "deskripsi": "<p>Ruang dialog terbuka di Desa Darmasaba untuk membahas persoalan sampah dan partisipasi publik.</p>"
+    },
+    {
+      "id": "cmk6ag56y00053b6rj9481z6m",
+      "judul": "Bicara Darmasaba Bahas ‘Sampah Kita, Tanggung Jawab Siapa?’",
+      "deskripsi": "<p>Diskusi terbuka antara pemerintah desa dan warga mengenai isu sampah.</p>"
+    },
+    {
+      "id": "cmk6agzxx00073b6rr3vhxcsj",
+      "judul": "Penutupan KKN-PMM Periode II Universitas Warmadewa di Desa Darmasaba",
+      "deskripsi": "<p>Penutupan program KKN-PMM yang berjalan dengan berbagai kegiatan pemberdayaan masyarakat.</p>"
+    },
+    {
+      "id": "cmk6agzxx00073b6rr3vhxasj",
+      "judul": "Desa Darmasaba Siap Kelola Sampah Mandiri, Anggarkan Rp1,5 Miliar",
+      "deskripsi": "<p>Desa Darmasaba mengalokasikan anggaran untuk pengelolaan sampah berbasis komunitas.</p>"
+    },
+    {
+      "id": "cmk6agzxx00073b6rr3vhxbsj",
+      "judul": "Sekda Adi Arnawa Buka Darmasaba Village Festival II",
+      "deskripsi": "<p>Pembukaan festival desa untuk mendorong UMKM dan ekonomi lokal.</p>"
+    },
+    {
+      "id": "cmk6agzxx00073b6rr3vhxdsj",
+      "judul": "Membangun Desa Berkelanjutan Melalui Ekowisata dan Kuliner di Darmasaba",
+      "deskripsi": "<p>Program inovatif untuk memperkuat ekonomi lokal melalui ekowisata dan kuliner.</p>"
+    },
+    {
+      "id": "cmk6agzxx00073b6rr3vhxesj",
+      "judul": "Inovasi Desa Darmasaba Lanjutkan Perjuangan ke Tingkat Nasional",
+      "deskripsi": "<p>Desa Darmasaba meraih penghargaan juara dalam evaluasi perkembangan desa untuk mendukung perekonomian dan pemerintahan lokal.</p>"
+    },
+    {
+      "id": "cmk6agzxx00073b6rr3vhxfsj",
+      "judul": "Desa Darmasaba Kembali Ukir Prestasi Internasional BAJRA",
+      "deskripsi": "<p>Prestasi desa dalam forum internasional mengenai penanggulangan rabies.</p>"
+    },
+    {
+      "id": "cmk6aih8f00093b6rqw63yp1z",
+      "judul": "Cegah Penyebaran Rabies, Darmasaba Keluarkan Larangan Membuang Hewan",
+      "deskripsi": "<p>Pemasangan spanduk larangan buang hewan sebagai langkah proteksi kesehatan masyarakat.</p>"
+    },
+    {
+      "id": "cmk6aih8f00093b6rqw63yp2z",
+      "judul": "TP. Posyandu Bali dan Pemerintah Desa Kolaborasi Tingkatkan Pelayanan",
+      "deskripsi": "<p>Kolaborasi pemerintahan desa dengan TP Posyandu untuk meningkatkan layanan masyarakat.</p>"
+    },
+    {
+      "id": "cmk6aih8f00093b6rqw63yp3z",
+      "judul": "Membangun Desa Berkelanjutan Melalui Inovasi Pengelolaan Sampah",
+      "deskripsi": "<p>Inisiatif pengelolaan sampah desa sebagai bagian dari inovasi teknologi lokal.</p>"
+    },
+    {
+      "id": "cmk6aih8f00093b6rqw63yp4z",
+      "judul": "Inovasi BAJRA Integrasikan Pelaporan Cepat Berbasis Data",
+      "deskripsi": "<p>Program BAJRA menerapkan mekanisme pelaporan cepat berbasis data untuk penanggulangan rabies.</p>"
+    },
+    {
+      "id": "cmk6aih8f00093b6rqw63yp5z",
+      "judul": "Digitalisasi Desa Darmasaba",
+      "deskripsi": "<p>Digitalisasi Desa Darmasaba Bersama PT. Bali Interaktif Perkasa.</p>"
+    },
+    {
+      "id": "cmk6aih8f00093b6rqw63yp6z",
+      "judul": "Festival Desa Tingkatkan Kreativitas Digital UMKM",
+      "deskripsi": "<p>Festival Darmasaba Village Festival II melibatkan promosi digital produk UMKM.</p>"
+    },
+    {
+      "id": "cmk6aih8f00093b6rqw63yp7z",
+      "judul": "Sekda Adi Arnawa dan Pementasan Seni Tradisional di Festival Darmasaba",
+      "deskripsi": "<p>Pementasan seni tradisional menjadi bagian dari Darmasaba Village Festival II.</p>"
+    },
+    {
+      "id": "cmk6aih8f00093b6rqw63yp8z",
+      "judul": "Dialog Publik Tingkatkan Partisipasi Budaya Lokal",
+      "deskripsi": "<p>Forum dialog desa mengangkat tema partisipasi masyarakat dalam kegiatan budaya lokal.</p>"
+    }
+  ]
+}

@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { Loader, ActionIcon, Box, Button, Group, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
-import { Dropzone } from '@mantine/dropzone';
+import { Loader, Box, Button, Group, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconFile, IconUpload, IconX } from '@tabler/icons-react';
+import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -13,13 +12,21 @@ import { useProxy } from 'valtio/utils';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import colors from '@/con/colors';
-import ApiFetch from '@/lib/api-fetch';
+import { DokumenFolderEditor } from '../../../_com/DokumenFolderEditor';
+import { isIsiDraftValid } from '../../../_lib/dokumen-bulk-actions';
+import { uploadPendingDrafts } from '../../../_lib/dokumen-draft';
+import {
+  emptyIsiDraft,
+  isiDraftFromDetail,
+  toIsiPayload,
+  type IsiDraft,
+} from '../../../_lib/folder-draft';
+import { uploadDokumenFile } from '../../../_lib/upload-dokumen';
 
 interface FormDesaAntiKorupsi {
   name: string;
   deskripsi: string;
   kategoriId: string;
-  fileId: string;
 }
 
 export default function EditDesaAntiKorupsi() {
@@ -34,7 +41,6 @@ export default function EditDesaAntiKorupsi() {
     name: '',
     deskripsi: '',
     kategoriId: '',
-    fileId: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,20 +50,18 @@ export default function EditDesaAntiKorupsi() {
     return (
       formData.name?.trim() !== '' &&
       formData.kategoriId?.trim() !== '' &&
-      (formData.fileId?.trim() !== '' || file !== null)
+      isIsiDraftValid(isi)
     );
   };
 
-  const [originalData, setOriginalData] = useState({
+  const [originalData, setOriginalData] = useState<FormDesaAntiKorupsi>({
     name: "",
     deskripsi: "",
     kategoriId: "",
-    fileId: "",
-    fileUrl: ""
   });
 
-  const [previewFile, setPreviewFile] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [isi, setIsi] = useState<IsiDraft>(emptyIsiDraft);
+  const [originalIsi, setOriginalIsi] = useState<IsiDraft>(emptyIsiDraft);
 
   // Load kategori
   useShallowEffect(() => {
@@ -74,25 +78,17 @@ export default function EditDesaAntiKorupsi() {
         const data = await desaAntiKorupsiState.edit.load(id);
         if (!data) return;
 
-        desaAntiKorupsiState.edit.id = id;
-        desaAntiKorupsiState.edit.form = { ...data };
-
-        setFormData({
+        const loaded = {
           name: data.name,
           deskripsi: data.deskripsi,
           kategoriId: data.kategoriId,
-          fileId: data.fileId,
-        });
+        };
+        setFormData(loaded);
+        setOriginalData(loaded);
 
-        setOriginalData({
-          name: data.name,
-          deskripsi: data.deskripsi,
-          kategoriId: data.kategoriId,
-          fileId: data.fileId,
-          fileUrl: data.file?.link || "",
-        });
-
-        if (data.file?.link) setPreviewFile(data.file.link);
+        const savedIsi = isiDraftFromDetail(data);
+        setIsi(savedIsi);
+        setOriginalIsi(savedIsi);
       } catch (err) {
         console.error(err);
         toast.error('Gagal memuat data Desa Anti Korupsi');
@@ -113,44 +109,27 @@ export default function EditDesaAntiKorupsi() {
     setFormData((prev) => ({ ...prev, [key]: value || '' }));
   };
 
-  const handleDrop = (files: File[]) => {
-    if (!files.length) return;
-    const selectedFile = files[0];
-    setFile(selectedFile);
-    setPreviewFile(URL.createObjectURL(selectedFile));
-  };
-
   const handleResetForm = () => {
-    setFormData({
-      name: originalData.name,
-      deskripsi: originalData.deskripsi,
-      kategoriId: originalData.kategoriId,
-      fileId: originalData.fileId,
-    });
-    setPreviewFile(originalData.fileUrl || null);
-    setFile(null);
+    setFormData({ ...originalData });
+    setIsi(originalIsi);
     toast.info("Form dikembalikan ke data awal");
   };
 
   const handleSubmit = async () => {
-    if (!formData.name) return toast.warn('Masukkan judul dokumen');
-    if (!formData.kategoriId) return toast.warn('Pilih kategori dokumen');
+    if (!formData.name) return toast.warn('Masukkan nama program');
+    if (!formData.kategoriId) return toast.warn('Pilih kategori program');
 
     try {
       setIsSubmitting(true);
-      // Update global state
-      desaAntiKorupsiState.edit.form = { ...desaAntiKorupsiState.edit.form, ...formData };
+      // Unggah berkas baru dulu, lalu kirim set folder + dokumen final dalam satu PUT
+      // (API menyinkronkan keduanya dalam satu transaksi).
+      const uploaded: IsiDraft = { ...isi, dokumen: await uploadPendingDrafts(isi.dokumen, uploadDokumenFile) };
+      setIsi(uploaded);
+      desaAntiKorupsiState.edit.form = { ...formData, ...toIsiPayload(uploaded) };
 
-      // Upload file jika ada
-      if (file) {
-        const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
-        const uploaded = res.data?.data;
-        if (!uploaded?.id) throw new Error('Gagal mengunggah dokumen');
-
-        desaAntiKorupsiState.edit.form.fileId = uploaded.id;
-      }
-
-      await desaAntiKorupsiState.edit.update();
+      // update() sudah menampilkan toast error (mis. 400 validasi dokumen) → tetap di halaman.
+      const ok = await desaAntiKorupsiState.edit.update();
+      if (!ok) return;
       toast.success('Data berhasil diperbarui');
       router.push('/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi');
     } catch (err) {
@@ -182,8 +161,8 @@ export default function EditDesaAntiKorupsi() {
       >
         <Stack gap="md">
           <TextInput
-            label="Judul Dokumen"
-            placeholder="Masukkan judul dokumen"
+            label="Nama Program"
+            placeholder="Masukkan nama program"
             value={formData.name}
             onChange={handleInputChange('name')}
             required
@@ -210,77 +189,11 @@ export default function EditDesaAntiKorupsi() {
             clearable
           />
 
-          <Box>
-            <Text fw="bold" fz="sm" mb={6}>
-              Dokumen
-            </Text>
-            <Dropzone
-              onDrop={handleDrop}
-              onReject={() => toast.error('File tidak valid, gunakan format dokumen')}
-              maxSize={5 * 1024 ** 2}
-              accept={{
-                'application/*': ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'],
-              }}
-              radius="md"
-            >
-              <Group justify="center" gap="xl" mih={180} style={{ pointerEvents: 'none' }}>
-                <Dropzone.Accept>
-                  <IconUpload size={48} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX size={48} color="var(--mantine-color-red-6)" stroke={1.5} />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconFile size={48} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                </Dropzone.Idle>
-                <div>
-                  <Text size="lg" inline>
-                    Seret dokumen ke sini atau klik untuk memilih file
-                  </Text>
-                  <Text size="sm" c="dimmed" inline mt={7}>
-                    Maksimal 5MB (PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX)
-                  </Text>
-                </div>
-              </Group>
-            </Dropzone>
-
-            {previewFile && (
-              <Box mt="sm" pos="relative" style={{ textAlign: 'center' }}>
-                <Text fw="bold" fz="sm" mb={6}>
-                  Pratinjau Dokumen
-                </Text>
-                <Box
-                  style={{
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    height: '500px',
-                    width: '100%',
-                  }}
-                >
-                  <iframe src={previewFile} width="100%" height="100%" style={{ border: 'none' }} />
-                </Box>
-                <ActionIcon
-                  variant="filled"
-                  color="red"
-                  radius="xl"
-                  size="sm"
-                  pos="absolute"
-                  top={5}
-                  right={5}
-                  onClick={() => {
-                    setPreviewFile(null);
-                    setFile(null);
-                  }}
-                  style={{
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                  }}
-                >
-                  <IconX size={14} />
-                </ActionIcon>
-              </Box>
-            )}
-          </Box>
+          <DokumenFolderEditor
+            value={isi}
+            onChange={setIsi}
+            programId={typeof params?.id === 'string' ? params.id : undefined}
+          />
 
           <Group justify="right">
             {/* Tombol Batal */}

@@ -1,31 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { LINK_TOKO_INCLUDE } from "./_link";
+import { buildProdukWhere } from "./_where";
 
 async function produkUmkmFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
-  const search = (context.query.search as string) || '';
-  const umkmId = context.query.umkmId as string | undefined;
-  const kategoriId = context.query.kategoriId as string | undefined;
+  const where = buildProdukWhere({
+    search: (context.query.search as string) || undefined,
+    umkmId: context.query.umkmId as string | undefined,
+    kategoriId: context.query.kategoriId as string | undefined,
+    unggulan: context.query.unggulan as string | undefined,
+  });
   const skip = (page - 1) * limit;
-
-  // Filter: ONLY active products
-  const where: any = {
-    deletedAt: null,
-    isActive: true,
-  };
-  if (umkmId) {
-    where.umkmId = umkmId;
-  }
-
-  if (kategoriId) {
-    where.kategoriProdukId = kategoriId;
-  }
-
-  if (search) {
-    where.nama = { contains: search, mode: 'insensitive' };
-  }
 
   try {
     const [data, total] = await Promise.all([
@@ -36,7 +23,8 @@ async function produkUmkmFindMany(context: Context) {
           umkm: {
             include: { kategori: true }
           },
-          kategoriProduk: true
+          kategoriProduk: true,
+          linkTokoOnline: LINK_TOKO_INCLUDE,
         },
         skip,
         take: limit,

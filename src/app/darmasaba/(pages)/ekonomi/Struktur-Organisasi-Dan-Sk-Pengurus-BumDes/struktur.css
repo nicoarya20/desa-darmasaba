@@ -1,0 +1,105 @@
+/* ============================================
+   STRUKTUR ORGANISASI PPID - STYLING
+   ============================================ */
+
+/* Tabel chart selalu center */
+.p-organizationchart-table {
+    margin: 0 auto !important;
+  }
+  
+  /* Jarak vertikal antar level - lebih lega */
+  .p-organizationchart-line-down {
+    height: 32px !important;
+  }
+  
+  /* Padding di dalam node - lebih rapi */
+  .p-organizationchart-node-content {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+  }
+  
+  /* Garis connector antar node - lebih tebal dan jelas */
+  .p-organizationchart-line-down,
+  .p-organizationchart-line-left,
+  .p-organizationchart-line-right,
+  .p-organizationchart-line-top {
+    border-color: rgba(28, 110, 164, 0.4) !important;
+    border-width: 2px !important;
+  }
+  
+  /* Garis horizontal */
+  .p-organizationchart-line-left,
+  .p-organizationchart-line-right {
+    border-top-width: 2px !important;
+  }
+  
+  /* Jarak horizontal antar node - lebih proporsional.
+     Selector di-scope hanya ke sel node (bukan sel garis .line-left/.line-right)
+     supaya padding tidak ikut menggandakan lebar sel garis dan menggeser
+     sambungan horizontal keluar dari titik turun vertikal. */
+  .p-organizationchart-table > tbody > tr > td:not(.p-organizationchart-line-left):not(.p-organizationchart-line-right) {
+    padding: 0 24px !important;
+    vertical-align: top !important;
+  }
+
+  /* Sel garis kiri/kanan tidak butuh padding tambahan */
+  .p-organizationchart-line-left,
+  .p-organizationchart-line-right {
+    padding: 0 !important;
+  }
+
+  /* Node container spacing */
+  .p-organizationchart-node {
+    padding: 8px !important;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .p-organizationchart-table > tbody > tr > td:not(.p-organizationchart-line-left):not(.p-organizationchart-line-right) {
+      padding: 0 12px !important;
+    }
+
+    .p-organizationchart-line-down {
+      height: 24px !important;
+    }
+  }
+  
+  /* Smooth transitions untuk zoom */
+  .p-organizationchart {
+    transition: transform 0.2s ease;
+  }
+  
+  /* Layout container chart (state normal, bukan fullscreen).
+     Dipindah dari inline style Box supaya rule :fullscreen di bawah bisa
+     menang tanpa perang spesifisitas melawan inline style. */
+  .struktur-fullscreen {
+    display: flex;
+    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 32px 16px;
+  }
+
+  /* Fullscreen mode adjustments
+     Elemen yang di-fullscreen-kan adalah container (.struktur-fullscreen),
+     bukan .p-organizationchart-table. Tanpa background, browser mengisi sisa
+     layar dengan ::backdrop hitam default → layar tampak hitam. Beri bg terang
+     senada halaman + override backdrop agar tidak ada area hitam/garis putih. */
+  .struktur-fullscreen:fullscreen,
+  .struktur-fullscreen:-webkit-full-screen,
+  .struktur-fullscreen:-moz-full-screen {
+    background: #D1D9E8;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 40px;
+    box-sizing: border-box;
+    overflow: auto;
+  }
+
+  .struktur-fullscreen:fullscreen::backdrop {
+    background: #D1D9E8;
+  }

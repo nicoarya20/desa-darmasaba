@@ -1,0 +1,14 @@
+[
+  {
+    "id": "unit-usaha-bumdes-tps3r",
+    "nama": "TPS3R Pudak Mesari",
+    "deskripsi": "Fasilitas pengelolaan sampah terpadu yang mengoptimalkan pemilahan, pengolahan, dan daur ulang sampah masyarakat sehingga mendukung lingkungan yang bersih dan berkelanjutan di Desa Darmasaba.",
+    "urutan": 1
+  },
+  {
+    "id": "unit-usaha-bumdes-jasa-komoditas",
+    "nama": "Usaha Jasa dan Komoditas Lokal",
+    "deskripsi": "Pengelolaan usaha jasa dan komoditas lokal Desa Darmasaba yang dikelola secara partisipatif untuk menambah pendapatan masyarakat.",
+    "urutan": 2
+  }
+]

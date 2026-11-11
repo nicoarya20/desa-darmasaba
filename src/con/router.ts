@@ -4,7 +4,7 @@ const pages = {
     "home": "/",
     "darmasaba": {
         "home": "/daramasaba",
-        "desa": "/darmasaba/desa",
+        "desa": "/darmasaba/pemerintahan",
         "ekonomi": "/darmasaba/ekonomi",
         "keamanan": "/darmasaba/keamanan",
         "kesehatan": "/darmasaba/kesehatan",

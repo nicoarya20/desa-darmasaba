@@ -1,8 +1,12 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { loadJsonData } from "../../load-json";
+import { loadRetiredSeed, retireSeedRows } from "../../retire-seed-rows";
 
 const dataPerpustakaan = loadJsonData("pendidikan/perpustakaan-digital/perpustakaan-digital.json");
 const kategoriBuku = loadJsonData("pendidikan/perpustakaan-digital/kategori-buku.json");
+const bukuPensiun = loadRetiredSeed<{ id: string; judul: string; deskripsi: string }>(
+  "pendidikan/perpustakaan-digital/perpustakaan-digital.retired.json",
+);
 
 export async function seedDataPerpustakaan() {
   console.log("🔄 Seeding Kategori Buku...");
@@ -61,6 +65,10 @@ export async function seedDataPerpustakaan() {
     });
   }
   console.log("✅ Data perpustakaan seeded successfully");
+
+  await retireSeedRows("Data Perpustakaan", bukuPensiun, (b) =>
+    prisma.dataPerpustakaan.deleteMany({ where: { id: b.id, judul: b.judul, deskripsi: b.deskripsi } }),
+  );
 }
 if (import.meta.main) {
   seedDataPerpustakaan()

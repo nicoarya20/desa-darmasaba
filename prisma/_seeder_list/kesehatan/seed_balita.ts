@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { JenisKelaminBalita, StatusStunting } from "@prisma/client";
 
 // Fokus data: proporsi stunting realistis untuk simulasi dashboard

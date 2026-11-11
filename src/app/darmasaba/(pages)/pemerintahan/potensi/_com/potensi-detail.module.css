@@ -1,0 +1,261 @@
+/*
+ * Overlay detail Potensi Desa (Modal Mantine, latar halaman di-blur): hero foto + kategori + judul, tombol ×,
+ * deskripsi lengkap, kotak Lokasi/Pengelola/Status, galeri Dokumentasi.
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.modalContent {
+  overflow-x: hidden;
+  background: #fff;
+}
+
+.hero {
+  position: relative;
+  aspect-ratio: 16 / 8.5;
+  overflow: hidden;
+  background: #1d1d1f;
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.35) 40%, rgba(0, 0, 0, 0) 72%);
+}
+
+.closeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(29, 29, 31, 0.55);
+  backdrop-filter: saturate(180%) blur(12px);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.closeButton:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.heroText {
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.heroBadge {
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 980px;
+  background: rgba(29, 29, 31, 0.55);
+  backdrop-filter: blur(8px);
+  color: #dbe6ff;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Dua kelas agar menang atas gaya bawaan Modal.Title (ukuran lg, font-weight 400). */
+.hero .heroTitle {
+  margin: 0;
+  color: #fff;
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.detailBody {
+  padding: 36px 48px 48px;
+}
+
+.richText {
+  margin: 0;
+  color: #3a3a3f;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.richText p {
+  margin: 0 0 1em;
+}
+
+.richText > :last-child {
+  margin-bottom: 0;
+}
+
+.richText ul,
+.richText ol {
+  margin: 0 0 1em;
+  padding-left: 1.4em;
+}
+
+/* Lokasi / Pengelola / Status: 3 kotak abu muda (mobile: bertumpuk). */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 32px 0 0;
+}
+
+.infoCard {
+  min-width: 0;
+  padding: 16px 20px;
+  border: 1px solid #edf0f5;
+  border-radius: 16px;
+  background: #f7f9fc;
+}
+
+.infoLabel {
+  margin: 0 0 6px;
+  color: #8e9aaf;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.infoValue {
+  margin: 0;
+  color: #1d1d1f;
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.infoStatus {
+  color: #1f8a4c;
+}
+
+.infoEmpty {
+  color: #a1a8b5;
+  font-weight: 500;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.dokumentasi {
+  margin-top: 32px;
+}
+
+.sectionLabel {
+  margin: 0 0 14px;
+  color: #8e9aaf;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dokumentasiGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dokumentasiImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #e3e3e6;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .closeButton:hover {
+    background: rgba(29, 29, 31, 0.75);
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .hero .heroTitle {
+    font-size: 34px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .hero {
+    aspect-ratio: 4 / 3;
+  }
+
+  .closeButton {
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .heroText {
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+    gap: 10px;
+  }
+
+  .hero .heroTitle {
+    font-size: 28px;
+    line-height: 1.14;
+  }
+
+  .detailBody {
+    padding: 28px 24px 32px;
+  }
+
+  .richText {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .infoCard {
+    padding: 14px 16px;
+  }
+
+  .dokumentasi {
+    margin-top: 24px;
+  }
+
+  .dokumentasiGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}

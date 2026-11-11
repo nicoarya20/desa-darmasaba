@@ -4,7 +4,7 @@ import { formatTime } from '@/app/context/music/format';
 import { ActionIcon, Avatar, Badge, Box, Card, Flex, Grid, Group, Paper, ScrollArea, Slider, Stack, Text, TextInput } from '@mantine/core';
 import { IconArrowsShuffle, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOff, IconSearch, IconVolume, IconVolumeOff, IconX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 const MusicPlayer = () => {
   const {
@@ -166,7 +166,7 @@ const MusicPlayer = () => {
                 <Text ta="center" c="dimmed">Tidak ada musik yang ditemukan</Text>
               ) : (
                 <ScrollArea.Autosize mah={400}>
-                  <Grid gutter="md">
+                  <Grid gap="md">
                     {filteredMusik.map((song) => (
                       <Grid.Col span={{ base: 12, sm: 6, lg: 4 }} key={song.id}>
                         <Card

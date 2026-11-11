@@ -8,7 +8,7 @@ import { IconArrowRight, IconCoin, IconInfoCircle, IconSchool, IconUsers } from 
 import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { BEASISWA_LIMIT, isBeasiswaFormValid, stripDigits } from './_lib/beasiswaForm';
 
 function formatDana(value: string | number): string {

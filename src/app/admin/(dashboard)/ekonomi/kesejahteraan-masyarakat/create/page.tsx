@@ -24,7 +24,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/desa/gallery/lib/youtube-utils';
+import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/pemerintahan/gallery/lib/youtube-utils';
 
 export default function CreateKesejahteraan() {
   const state = useProxy(stateKesejahteraanMasyarakat, { sync: true }); // sync: cegah caret jump di controlled input
@@ -236,7 +236,7 @@ export default function CreateKesejahteraan() {
                   <IconPhoto size={48} color="var(--mantine-color-dimmed)" stroke={1.5} />
                 </Dropzone.Idle>
               </Group>
-              <Text ta="center" mt="sm" size="sm" color="dimmed">
+              <Text ta="center" mt="sm" size="sm" c="dimmed">
                 Seret gambar atau klik untuk memilih file (maks 5MB)
               </Text>
             </Dropzone>
@@ -295,13 +295,13 @@ export default function CreateKesejahteraan() {
                   <IconPhoto size={40} color="var(--mantine-color-dimmed)" stroke={1.5} />
                 </Dropzone.Idle>
               </Group>
-              <Text ta="center" mt="sm" size="xs" color="dimmed">
+              <Text ta="center" mt="sm" size="xs" c="dimmed">
                 Seret gambar atau klik untuk menambahkan ke galeri
               </Text>
             </Dropzone>
 
             {galleryPreviews.length > 0 && (
-              <Grid mt="sm" gutter="sm">
+              <Grid mt="sm" gap="sm">
                 {galleryPreviews.map((preview, index) => (
                   <Grid.Col span={4} key={index}>
                     <Card p="xs" radius="md" withBorder>

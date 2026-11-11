@@ -470,7 +470,7 @@ Komponen yang sudah diupdate dengan dark mode:
 
 Komponen yang perlu diupdate (TODO):
 
-- [ ] Komponen di `src/app/admin/(dashboard)/desa/`
+- [ ] Komponen di `src/app/admin/(dashboard)/pemerintahan/`
 - [ ] Komponen di `src/app/admin/(dashboard)/ppid/`
 - [ ] Komponen di `src/app/admin/(dashboard)/kesehatan/`
 - [ ] Komponen di `src/app/admin/(dashboard)/pendidikan/`

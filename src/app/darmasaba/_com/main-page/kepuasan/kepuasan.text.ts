@@ -1,0 +1,38 @@
+/** Label UI section Indeks Kepuasan Masyarakat di beranda. */
+export const KEPUASAN_TEXT = {
+  title: "Indeks Kepuasan Masyarakat",
+  lead: "Ukur kebahagiaan warga, tingkatkan layanan desa! Dengan partisipasi aktif masyarakat, kami berkomitmen untuk terus memperbaiki layanan agar lebih transparan, efektif, dan sesuai dengan kebutuhan warga. Kepuasan Anda adalah prioritas utama kami dalam membangun desa yang lebih baik!",
+  cta: "Ajukan Responden",
+  loading: "Memuat data indeks kepuasan",
+  emptyTitle: "Belum ada responden",
+  emptyBody: "Jadilah warga pertama yang menilai pelayanan publik Desa Darmasaba.",
+  monthlyTitle: "Responden per bulan",
+  monthlyCaption: "Pelayanan terhadap publik Desa Darmasaba",
+  monthlySeries: "Responden",
+  total: "Total responden",
+  chartEmpty: "Belum ada data.",
+  jenisKelaminTitle: "Jenis kelamin",
+  ratingTitle: "Ulasan",
+  kelompokUmurTitle: "Umur",
+  form: {
+    title: "Ajukan Responden",
+    name: "Nama",
+    namePlaceholder: "Masukkan nama",
+    jenisKelamin: "Jenis Kelamin",
+    jenisKelaminPlaceholder: "Pilih jenis kelamin",
+    rating: "Rating",
+    ratingPlaceholder: "Pilih rating",
+    kelompokUmur: "Kelompok Umur",
+    kelompokUmurPlaceholder: "Pilih kelompok umur",
+    optionsLoading: "Memuat...",
+    unnamedOption: "Tanpa Nama",
+    submit: "Submit",
+    // Sama dengan pesan validasi zod di state store, agar teks di field dan di toast konsisten.
+    required: {
+      name: "Nama harus diisi",
+      jenisKelaminId: "Jenis kelamin harus diisi",
+      ratingId: "Rating harus diisi",
+      kelompokUmurId: "Kelompok umur harus diisi",
+    },
+  },
+} as const;

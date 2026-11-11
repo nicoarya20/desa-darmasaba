@@ -1,5 +1,6 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../../seed-prisma";
 import { loadJsonData } from "../../../load-json";
+import { PERKIRAAN_WAKTU_BIAYA, waktuBiayaUntukSeed } from "./perkiraan_waktu_biaya";
 
 const pelayananSuratKeterangan = loadJsonData("desa/layanan/pelayananSuratKeterangan.json");
 const pelayananTelunjukSaktiDesa = loadJsonData("desa/layanan/pelayananTelunjukSaktiDesa.json");
@@ -12,7 +13,7 @@ export async function seedLayanan() {
   for (const p of pelayananSuratKeterangan) {
     const existing = await prisma.pelayananSuratKeterangan.findUnique({
       where: { id: p.id },
-      select: { imageId: true, image2Id: true }, // 📌 tambahkan image2Id
+      select: { imageId: true, image2Id: true, estimasiWaktu: true, biaya: true }, // 📌 tambahkan image2Id
     });
 
     // 1️⃣ Handle imageId
@@ -51,6 +52,12 @@ export async function seedLayanan() {
       }
     }
 
+    // PERKIRAAN — verifikasi dengan Dokumen SP Kepbek 53/2022 (lihat perkiraan_waktu_biaya.ts)
+    const waktuBiaya = waktuBiayaUntukSeed(
+      existing,
+      PERKIRAAN_WAKTU_BIAYA.suratKeterangan[p.id],
+    );
+
     // 3️⃣ Upsert dengan kedua image
     await prisma.pelayananSuratKeterangan.upsert({
       where: { id: p.id },
@@ -59,6 +66,7 @@ export async function seedLayanan() {
         deskripsi: p.deskripsi,
         imageId,
         image2Id, // 📌 tambahkan ini
+        ...waktuBiaya,
       },
       create: {
         id: p.id,
@@ -66,6 +74,7 @@ export async function seedLayanan() {
         deskripsi: p.deskripsi,
         imageId,
         image2Id, // 📌 tambahkan ini
+        ...waktuBiaya,
       },
     });
   }
@@ -90,6 +99,15 @@ export async function seedLayanan() {
   console.log("pelayanan telunjuk sakti desa success ...");
 
   for (const l of pelayananPerizinanBerusaha) {
+    const existing = await prisma.pelayananPerizinanBerusaha.findUnique({
+      where: { id: l.id },
+      select: { estimasiWaktu: true, biaya: true },
+    });
+    // PERKIRAAN — verifikasi dengan Dokumen SP Kepbek 53/2022 (lihat perkiraan_waktu_biaya.ts)
+    const waktuBiaya = waktuBiayaUntukSeed(
+      existing,
+      PERKIRAAN_WAKTU_BIAYA.perizinanBerusaha[l.id],
+    );
     await prisma.pelayananPerizinanBerusaha.upsert({
       where: {
         id: l.id,
@@ -98,12 +116,14 @@ export async function seedLayanan() {
         name: l.name,
         deskripsi: l.deskripsi,
         link: l.link,
+        ...waktuBiaya,
       },
       create: {
         id: l.id,
         name: l.name,
         deskripsi: l.deskripsi,
         link: l.link,
+        ...waktuBiaya,
       },
     });
   }

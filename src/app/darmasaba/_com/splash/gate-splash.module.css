@@ -1,0 +1,142 @@
+/*
+ * Splash Candi Bentar. Tersembunyi secara default; tampil hanya saat skrip <head>
+ * menandai <html data-gate-splash="play"> (lihat gate-splash.session.ts).
+ *
+ * PENTING:
+ * - Tulis `mask-image`/`mask-composite` TANPA versi -webkit-: Lightning CSS (Next 16)
+ *   menambah prefix sendiri, dan menulis keduanya bisa membuat salah satunya hilang.
+ * - Jangan beri zoom besar, `filter: blur` atau `mix-blend-mode` pada layer selayar penuh:
+ *   di layar 4K/Retina eksternal teksturnya melebihi memori GPU (lihat gate-splash.timeline.ts).
+ */
+
+.root {
+  --navy-0: #041F32;
+  --navy-1: #062F49;
+  --navy-2: #0A4E78;
+  --sky-low: #2F6F9C;
+  --gold: #E2B54A;
+  --horizon: 76dvh;                                  /* garis air, diukur dari atas */
+  --gate-h: min(68dvh, 95vw);
+  --gate-w: calc(var(--gate-h) * 0.4326);            /* rasio siluet 876:2025 */
+  --gap: clamp(150px, calc(var(--gate-h) * 0.39), 340px);
+  --wall-h: calc(var(--gate-h) * 0.1674);            /* puncak tembok di siluet: y=1686/2025 */
+  --focus-y: calc(var(--horizon) - var(--gate-h) * 0.45);   /* posisi logo */
+  --zoom-y: calc(var(--horizon) - var(--gate-h) * 0.1);     /* kamera menembus ke sini */
+
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;                                    /* di atas navbar (100) & toast (9999) */
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--navy-0);
+  font-family: inherit;
+  /* Failsafe tanpa JS: pudar sendiri agar halaman tak terkunci. Dibatalkan player saat JS mengambil alih. */
+  animation: failsafe 400ms ease-out 6s forwards;
+}
+
+@media (max-aspect-ratio: 3/4) {
+  .root { --horizon: 66dvh; }
+}
+
+:global(html[data-gate-splash="play"]) .root {
+  display: block;
+}
+
+@keyframes failsafe {
+  to { opacity: 0; visibility: hidden; }
+}
+
+.scene { position: absolute; inset: 0; transform-origin: 50% var(--zoom-y); will-change: transform; }
+.sky {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 40%, var(--navy-2) 75%, var(--sky-low) var(--horizon));
+}
+
+/* Dunia di atas air: gerbang, tembok, cahaya. Dirender dua kali (asli + pantulan). */
+.world { position: absolute; left: 0; right: 0; top: 0; height: var(--horizon); }
+.dawn {
+  position: absolute; left: 0; right: 0; bottom: 0; height: var(--gate-h); opacity: 0;
+  background: linear-gradient(180deg, rgba(10, 78, 120, 0) 0%, #2F6F9C 40%, #E3A961 74%, #FFE2AE 88%, #FFF8E8 100%);
+}
+/* Tirai langit menutupi cahaya fajar di luar celah dan ikut bergeser dengan gerbang → cahaya melebar bersama celah. */
+.curtain {
+  position: absolute; top: 0; bottom: 0; background-size: 100% 100dvh; background-repeat: no-repeat;
+  background-image: linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 40%, var(--navy-2) 75%, var(--sky-low) var(--horizon));
+}
+.curtainL { left: 0; right: calc(50% + var(--gap) / 2 + 2px); }   /* berhenti 2px di balik tepi dalam gerbang */
+.curtainR { right: 0; left: calc(50% + var(--gap) / 2 + 2px); }
+.halo {
+  position: absolute; left: 50%; bottom: 0; width: calc(var(--gap) * 3); height: calc(var(--gate-h) * 0.7);
+  transform: translate(-50%, 50%); opacity: 0;
+  background: radial-gradient(closest-side, rgba(255, 214, 150, .3), rgba(255, 214, 150, 0));
+}
+/* Pembungkus gerbang (div) yang dianimasikan — elemen HTML agar animasinya di compositor. */
+.gate { position: absolute; bottom: 0; width: var(--gate-w); height: var(--gate-h); transform-origin: 50% 100%; }
+.gateL { left: calc(50% - var(--gap) / 2 - var(--gate-w)); }
+.gateR { left: calc(50% + var(--gap) / 2); }
+/* fill/stroke di <svg>, bukan di path: path ada di shadow tree <use> yang tak terjangkau selector. */
+.gateShape {
+  display: block; width: 100%; height: 100%; overflow: visible;
+  fill: var(--navy-0); stroke: var(--gold); stroke-opacity: .55;
+}
+.gateR .gateShape { transform: scaleX(-1); }   /* sisi kanan = cermin sisi kiri */
+/* Tembok di depan gerbang, menumpuk 12px agar sambungannya tak terlihat. */
+.wall {
+  position: absolute; bottom: 0; height: var(--wall-h); background: var(--navy-0);
+  border-top: 1.25px solid rgba(226, 181, 74, .55);
+  width: calc(50% - var(--gap) / 2 - var(--gate-w) + 12px);
+}
+.wallL { left: 0; transform-origin: 100% 100%; }
+.wallR { right: 0; transform-origin: 0% 100%; }
+.floor { position: absolute; left: 0; right: 0; bottom: 0; height: max(3px, calc(var(--gate-h) * 0.006)); background: var(--navy-0); }
+
+/* Air + pantulan */
+.water {
+  position: absolute; left: 0; right: 0; top: var(--horizon); bottom: 0; overflow: hidden;
+  background: linear-gradient(180deg, #0B3A5A 0%, var(--navy-0) 100%);
+}
+.reflection {
+  position: absolute; left: 0; right: 0; top: calc(-1 * var(--horizon)); height: var(--horizon);
+  transform: scaleY(-1); transform-origin: 50% 100%; opacity: .32;
+  mask-image: linear-gradient(0deg, #000 0%, transparent 75%), repeating-linear-gradient(0deg, #000 0 4px, rgba(0, 0, 0, .25) 4px 6px);
+  mask-composite: intersect;
+}
+.ripple {
+  position: absolute; right: 0; bottom: 0; will-change: transform;
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .35) 100%);
+}
+/* Satu tile ekstra di kiri & atas: timeline menggeser tepat 1 tile → loop mulus. */
+.rippleA {
+  left: -160px; top: -18px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='18'><path d='M0 4 Q20 1.5 40 4 T80 4 T120 4 T160 4' fill='none' stroke='rgba(255,255,255,.13)' stroke-width='1'/><path d='M0 12 Q20 15 40 12 T80 12 T120 12 T160 12' fill='none' stroke='rgba(4,31,50,.5)' stroke-width='2'/></svg>");
+}
+.rippleB {
+  left: -260px; top: -26px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='26'><path d='M0 7 Q32.5 3 65 7 T130 7 T195 7 T260 7' fill='none' stroke='rgba(255,244,214,.10)' stroke-width='1'/><path d='M0 19 Q32.5 23 65 19 T130 19 T195 19 T260 19' fill='none' stroke='rgba(4,31,50,.4)' stroke-width='2'/></svg>");
+}
+
+/* Logo & teks di celah gerbang */
+.brand {
+  position: absolute; left: 50%; top: var(--focus-y); width: calc(var(--gap) - 16px);
+  transform: translate(-50%, -50%); text-align: center; color: #fff; opacity: 0;
+  text-shadow: 0 2px 12px rgba(4, 31, 50, .6);
+}
+.logo { margin: 0 auto; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, .35)); }
+.sub {
+  margin-top: calc(var(--gap) * 0.04); font-size: max(11px, calc(var(--gap) * 0.05));
+  letter-spacing: .22em; text-transform: uppercase; opacity: .85; white-space: nowrap;
+}
+/* 0.12 x celah: "DARMASABA" muat di celah tersempit (150px, ponsel). */
+.name {
+  margin-top: 2px; font-size: calc(var(--gap) * 0.12); font-weight: 700; letter-spacing: .06em;
+  color: var(--gold); white-space: nowrap;
+}
+
+/* Cahaya terang memenuhi layar sebelum beranda tampil */
+.flash {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle at 50% var(--zoom-y), #FFF8E8 0%, #FFF1D6 45%, #F5F7FA 100%);
+}
+
+.defs { position: absolute; width: 0; height: 0; overflow: hidden; }

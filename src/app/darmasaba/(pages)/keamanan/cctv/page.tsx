@@ -21,7 +21,7 @@ import { IconCamera, IconClock, IconMapPin, IconSearch, IconVideo } from '@table
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 const CctvMapSection = dynamic(() => import('./_com/CctvMapSection'), { ssr: false });
 
@@ -156,7 +156,7 @@ function Page() {
             </Stack>
           </Center>
         ) : (
-          <Grid gutter="xl">
+          <Grid gap="xl">
             {data.map((item) => (
               <GridCol key={item.id} span={{ base: 12, sm: 6, md: 4 }}>
                 <Paper

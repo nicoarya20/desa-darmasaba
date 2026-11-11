@@ -1,5 +1,415 @@
 # Changelog
 
+## [0.1.244] - 2026-11-11
+### Added
+- **Tanggal Terbit berita.** Admin dapat mengisi tanggal asli berita di form tambah (default hari ini) dan edit, sehingga berita kegiatan lama yang diinput belakangan tampil dengan tanggal aslinya dan tidak lagi naik ke urutan teratas. Halaman detail berita di admin dan website kini menampilkan tanggal terbit.
+
+### Changed
+- Daftar berita (website, halaman informasi desa, Kabar Desa di beranda, dan pencarian) kini diurutkan dan diberi tanggal menurut Tanggal Terbit, bukan waktu data dibuat. Tanggal ditampilkan menurut waktu WITA, jadi tidak lagi bergeser sehari bagi pembaca di zona waktu lain. Berita yang sudah ada memakai tanggal pembuatannya sebagai tanggal terbit, sehingga tampilannya tidak berubah.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261111120000_berita_tanggal_terbit` (kolom `tanggalTerbit` di `Berita`, baris lama diisi dari `createdAt`, plus index urutan; murni tambahan, aman dijalankan ulang).
+- API `/api/desa/berita` create/update menerima field opsional `tanggalTerbit` (`YYYY-MM-DD` WITA atau ISO; lihat `docs/decisions/2026-11-11-berita-tanggal-terbit.md`) — dipakai untuk mengoreksi tanggal 22 berita hasil impor lewat form edit.
+
+## [0.1.243] - 2026-11-11
+### Changed
+- **Halaman Berita didesain ulang mengikuti section Kabar Desa di beranda.** Latar putih, kartu berita utama besar diikuti kartu berita bergaya sama dengan beranda, pencarian berbentuk kolom bulat, dan kategori berupa tombol pil (bisa digeser di ponsel). Tiap halaman kini menampilkan 7 berita (sebelumnya 3), dan berita utama tidak lagi muncul dua kali di halaman pertama.
+
+### Fixed
+- Pencarian dan nomor halaman kini juga berlaku saat membuka kategori tertentu (sebelumnya kata kunci diabaikan di halaman kategori), dan halaman yang sedang dibuka tersimpan di alamat sehingga bisa dibagikan atau dimuat ulang.
+
+## [0.1.242] - 2026-11-11
+### Added
+- **Pengumuman kini bisa membawa gambar dan dokumen PDF.** Di admin, form tambah dan edit pengumuman punya isian Gambar Utama, Galeri Gambar (maks. 10), dan Dokumen PDF (bisa lebih dari satu, maks. 10 MB per berkas) yang bisa dipratinjau sebelum disimpan; semuanya opsional dan berkas baru diunggah saat menekan Simpan. Saat edit, gambar utama bisa dihapus atau diganti, dan galeri maupun dokumen bisa ditambah atau dihapus. Halaman detail admin menampilkan semua lampiran.
+- **Tanggal Terbit pengumuman.** Admin dapat mengisi tanggal asli pengumuman (default hari ini), sehingga pengumuman lama yang diinput belakangan tetap tampil dengan tanggal aslinya.
+- Di website, halaman detail pengumuman menampilkan gambar utama di atas isi, lalu galeri gambar dan daftar dokumen PDF dengan tombol Pratinjau dan Unduh. Bagian yang tidak diisi tidak ditampilkan. Kartu daftar pengumuman menampilkan gambar utama sebagai thumbnail bila ada.
+
+### Changed
+- Daftar pengumuman (website, halaman informasi desa, dan Kabar Desa di beranda) kini diurutkan dan diberi tanggal menurut Tanggal Terbit, bukan waktu data dibuat. Jam tidak lagi ditampilkan di kartu pengumuman karena tanggal terbit hanya berupa tanggal. Pengumuman yang sudah ada memakai tanggal pembuatannya sebagai tanggal terbit.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261111090000_pengumuman_lampiran` (kolom `imageId` + `tanggalTerbit` di `Pengumuman` — `tanggalTerbit` baris lama diisi dari `createdAt` — tabel penghubung baru `_PengumumanImages` dan `_PengumumanDokumen`, index kategori; murni tambahan, aman dijalankan ulang).
+- API `/api/desa/pengumuman` create/update menerima field opsional `imageId`, `imageIds`, `dokumenIds`, `tanggalTerbit` (lihat `docs/decisions/2026-11-10-pengumuman-lampiran.md`) — bisa dipakai untuk impor pengumuman lama.
+
+## [0.1.241] - 2026-11-10
+### Added
+- **Program Inovasi: galeri dokumentasi.** Admin dapat mengunggah banyak foto dokumentasi sekaligus (maks. 20 per program) sebagai bukti program berjalan, melihat pratinjaunya, dan menghapus per foto. Di website, halaman detail program menampilkan bagian "Dokumentasi" berisi foto-foto tersebut (klik untuk memperbesar); bagian ini tidak tampil bila belum ada foto. Daftar program di admin kini menampilkan jumlah foto dokumentasi.
+
+### Changed
+- **Halaman utama Desa Anti Korupsi didesain ulang mengikuti tampilan di beranda.** Kartu lima kategori diganti panel berisi semua indikator per kategori, lengkap dengan ringkasan jumlah kategori, indikator, dan dokumen. Tiap indikator bisa diklik langsung ke halaman programnya dan menampilkan jumlah dokumen; nama kategori membuka daftar dokumen kategori tersebut. Kategori kini mengikuti data dari admin, tidak lagi tetap.
+- **Halaman program Desa Anti Korupsi diseragamkan dengan halaman detail dan lebih mudah dibaca.** Latar dan lebar halaman kini sama dengan daftar indikator, jadi berpindah dari daftar ke program tidak lagi terasa seperti pindah situs. Judul tidak lagi tampil huruf kapital semua, nomor indikator (mis. "1.1") tampil sebagai label, dan deskripsi yang hanya mengulang judul disembunyikan. Folder kini tampil sebagai daftar baris berisi jumlah dokumen, ukuran, tanggal unggah terbaru, cuplikan judul dokumen, dan label "Kosong" untuk folder tanpa dokumen. Program yang dokumennya hanya ada di satu folder langsung menampilkan dokumennya tanpa perlu memilih folder. Saat folder dibuka, ada deretan pilihan folder untuk berpindah, dan tombol Kembali kini kembali ke daftar folder program (sebelumnya langsung ke halaman daftar indikator). Tombol unduh ZIP disembunyikan bila folder kosong.
+- **Program Inovasi: gambar kini opsional dan kolom link dihapus.** Gambar program tetap dipakai sebagai logo di beranda bila diisi, dan bisa dikosongkan atau dihapus saat edit. Isian "Link Program Inovasi" dihapus dari form, detail, dan daftar admin. Link yang sudah tersimpan tidak dihapus dari database.
+
+### Removed
+- **APBDes tidak lagi memakai gambar.** Unggah, pratinjau, dan hapus gambar dihapus dari form tambah, edit, dan detail APBDes di admin, dan website hanya menampilkan dokumen APBDes. Data gambar lama tidak dihapus dari database.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261110170000_program_inovasi_images` (tabel penghubung baru `_ProgramInovasiImages`, murni tambahan, aman dijalankan ulang).
+
+## [0.1.240] - 2026-11-10
+### Changed
+- Visi dan Misi PPID kembali ke tampilan kartu terpusat seperti semula — logo desa, moto, visi, lalu misi — dengan penyempurnaan: moto tampil sebagai kutipan yang menonjol, pemisah antarbagian lebih ringan, dan tiap misi bernomor dalam lencana bulat dengan teks rata kiri agar lebih mudah dibaca. Tampilan tulisan besar dan kartu biru dari versi 0.1.239 dihapus.
+
+## [0.1.239] - 2026-11-10
+### Changed
+- Visi dan Misi PPID tampil lebih hidup: moto menjadi tulisan besar "Cepat. Mudah. Tepat. Transparan.", visi berada di kartu biru tersendiri, dan tiap misi menjadi kartu bernomor yang mudah dipindai. Isi visi dan misi tetap diambil dari admin.
+
+## [0.1.238] - 2026-11-10
+### Changed
+- Dasar Hukum PPID lebih nyaman dibaca: tiap peraturan kini bernomor, dengan nomor peraturan dicetak tebal dan perihalnya di baris bawah, serta baris teks yang lebih pendek sehingga mata tidak perlu menyapu selebar layar.
+
+## [0.1.237] - 2026-11-10
+### Fixed
+- Di ponsel, pita di belakang foto Perbekel kini tampil utuh: turun dari kiri atas foto lalu keluar sampai tepi kanan layar. Sebelumnya pita tergencet di sisi kiri dan terputus di belakang foto.
+
+## [0.1.236] - 2026-11-10
+### Changed
+- **Halaman PPID kini satu tampilan.** Visi dan Misi, Dasar Hukum, Permohonan Informasi Publik, Permohonan Keberatan, Daftar Informasi Publik (beserta detailnya), dan Indeks Kepuasan Masyarakat memakai kepala halaman yang sama dengan Struktur PPID: tombol kembali, judul besar rata kiri, dan satu kalimat pengantar. Logo besar, kartu di dalam kartu, dan teks rata kanan-kiri dihapus.
+- Visi dan Misi PPID: moto, visi, dan misi menjadi bagian terpisah; misi tampil sebagai daftar bernomor.
+- Dasar Hukum PPID tampil sebagai daftar peraturan yang mudah dipindai.
+- Permohonan Informasi Publik dan Permohonan Keberatan: alur langkah bernomor yang ringan (menempel di kiri pada layar lebar) dan formulir satu kolom dengan semua isian sama lebar. Editor "Alasan Keberatan" disederhanakan menjadi tebal, miring, dan daftar.
+- Daftar Informasi Publik: kotak cari di samping judul, dan daftar menampilkan jenis informasi serta deskripsi secara utuh (kartu bertumpuk di ponsel). Kotak cari tidak lagi kehilangan fokus saat daftar dimuat ulang, dan penomoran halaman hanya tampil bila lebih dari satu halaman.
+- Indeks Kepuasan Masyarakat (PPID) kini memakai grafik dan form yang sama dengan bagian Indeks Kepuasan di beranda. Pada form "Ajukan Responden", isian Tanggal dihapus (diisi otomatis dengan tanggal hari ini), pesan wajib isi tampil per isian, dan form tetap terbuka dengan isian dipertahankan bila pengiriman gagal.
+
+### Fixed
+- Visi dan Misi serta Dasar Hukum PPID tidak lagi menampilkan kerangka memuat tanpa akhir saat data tidak tersedia; kini muncul keterangan "belum tersedia".
+- Detail Informasi Publik dengan alamat yang tidak valid kini menampilkan "Informasi tidak ditemukan" beserta tautan kembali ke daftar.
+
+## [0.1.235] - 2026-11-10
+### Added
+- **Desa Anti Korupsi: dokumen tiap program kini bisa dipilah ke dalam folder.** Admin dapat membuat, mengganti nama, mengurutkan, dan menghapus folder (dokumen di folder yang dihapus pindah ke "Umum"), mengunggah beberapa dokumen sekaligus langsung ke folder pilihan, memindahkan dokumen antar folder, serta mengubah judul dan urutan dokumen. Halaman detail admin menampilkan dokumen per folder dalam tabel ringkas yang bisa dibuka-tutup. Di website, tiap indikator pada halaman detail Desa Anti Korupsi kini menampilkan ringkasan isinya (mis. "2 folder · 5 dokumen") dan membuka halaman program tersendiri berisi folder, pencarian dokumen, serta pratinjau dan unduh. Indikator yang belum berisi dokumen tetap tampil "Dokumen belum tersedia". Dokumen tunggal yang sudah ada otomatis masuk "Umum".
+- **Desa Anti Korupsi (admin): kelola banyak dokumen sekaligus.** Centang beberapa dokumen (ada "Pilih semua" per folder dan Shift+klik), lalu pindahkan, salin ke folder lain, atau hapus sekaligus. Menu ⋮ di tiap folder untuk ganti nama, duplikat folder beserta isinya, dan salin isi ke folder lain. File yang sama boleh ada di folder berbeda tanpa menggandakan file di penyimpanan; bila ada file kembar dalam satu folder, tombol Simpan dikunci dengan pesan.
+- **Desa Anti Korupsi: salin dokumen ke program lain** (langsung tersimpan; dokumen yang sudah ada di tujuan dilewati), **unduh ZIP** satu folder atau seluruh program di admin maupun website (maks. 100 MB per unduhan), **urutkan & cari dokumen** beserta kolom ukuran file dan tanggal unggah, serta **ganti nama dokumen/folder langsung** dengan klik tulisannya.
+- **Desa Anti Korupsi (admin): bagian "Dokumen terhapus"** di halaman detail program. Dokumen yang dihapus bisa dipulihkan atau dihapus permanen, dan terhapus permanen otomatis setelah 30 hari.
+- **Pengaturan visibilitas menu (khusus Super Admin dan Developer):** halaman baru Pengaturan › Visibilitas Menu untuk menampilkan atau menyembunyikan submenu website publik tanpa deploy ulang. Submenu yang disembunyikan hilang dari navbar, pencarian, dan Peta Informasi, dan halamannya menampilkan 404 bila dibuka langsung.
+
+### Changed
+- Daftar indikator di halaman detail Desa Anti Korupsi (tampilan baru 0.1.230) tidak lagi membuka satu surat PDF per indikator; dokumen kini dibuka lewat halaman program sehingga satu indikator bisa memuat banyak dokumen dalam folder. Ringkasan di atas daftar kini berbunyi, misalnya, "3 dari 5 indikator sudah ada dokumennya".
+- **Prestasi dan Penghargaan kini satu data.** Semua penghargaan dipindahkan menjadi prestasi berkategori "Penghargaan" lengkap dengan keterangan juara/capaian, dan dikelola di satu menu admin "Prestasi dan Penghargaan". Menu admin Penghargaan dihapus. Tautan lama `/darmasaba/penghargaan/...` dan `/admin/pemerintahan/penghargaan` dialihkan otomatis. Satu penghargaan yang judulnya sama persis dengan prestasi yang sudah ada digabung ke prestasi tersebut.
+- Submenu Kesehatan yang disembunyikan (Data Kesehatan Warga, Puskesmas, Penanganan Darurat, Info Wabah/Penyakit) kini menampilkan 404 bila dibuka langsung lewat URL, dan hasil pencarian konten kesehatan terkait tidak lagi ditampilkan. Super Admin dapat menampilkannya kembali lewat Pengaturan › Visibilitas Menu.
+- Halaman publik `/darmasaba` kini dirender per permintaan agar pengaturan visibilitas menu langsung berlaku.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261109103000_dokumen_desa_anti_korupsi`, `20261109120000_add_menu_visibility`, `20261109123000_merge_penghargaan_into_prestasi_desa` (tabel `Penghargaan` dihapus setelah datanya disalin), `20261109140000_folder_dokumen_desa_anti_korupsi`, `20261109150000_add_file_storage_size`.
+- Setelah migrasi, jalankan sekali `bun run backfill:file-size` untuk mengisi ukuran file lama (membaca berkas dari MinIO). Opsional: tanpa ini ukuran file lama tampil "—" dan unduh ZIP tetap berjalan.
+- Opsional env: `DAK_ZIP_MAX_BYTES` (batas ZIP, bawaan 100 MB) dan `DAK_SAMPAH_RETENSI_HARI` (masa simpan dokumen terhapus, bawaan 30 hari).
+
+## [0.1.234] - 2026-11-10
+### Changed
+- Di ponsel, pita biru, putih, emas, dan merah kini ikut tampil di belakang foto Perbekel pada bagian paling atas beranda. Sebelumnya pita hanya tampil di tablet dan komputer.
+- Jarak kosong antara ikon media sosial dan foto Perbekel di ponsel dirapatkan.
+
+## [0.1.233] - 2026-11-10
+### Changed
+- **Bagian paling atas beranda didesain ulang agar langsung terbaca sebagai situs Pemerintah Desa Darmasaba.** Kini tampil nama instansi dan wilayahnya (Kecamatan Abiansemal, Kabupaten Badung, Bali) di samping lambang desa, disusul sambutan "Om Swastyastu, Selamat datang di Desa Darmasaba". Foto Perbekel di sisi kanan kini lebih besar, setinggi seluruh bagian ini.
+- Status kantor kini satu baris: titik hijau atau merah, "Kantor buka" atau "Kantor tutup", lalu jam layanan hari itu atau nama hari liburnya. Sebelumnya informasi yang sama tampil dua kali dalam panel besar.
+- **Semua program inovasi kini bisa dilihat dari beranda.** Program tampil sebagai kotak berukuran sama berisi logo dan nama, 4 kotak sekaligus di kiri bawah; sisanya digeser ke samping dengan jari, trackpad, atau dua tombol panah di samping judul. Garis tipis di bawahnya menunjukkan posisi geseran, dan kotak di tepi memudar sebagai tanda masih ada program lain. Sebelumnya tampil 3 program dalam kotak kecil yang harus digulir.
+- Latar bagian ini kini dihiasi berkas pita biru, putih, emas, dan merah yang melengkung di belakang foto Perbekel. Pita tidak tampil di ponsel.
+- Ikon media sosial kini berupa tautan biasa, sehingga bisa dibuka di tab baru lewat klik kanan atau tekan lama.
+
+### Removed
+- Kalimat "Bagikan ide, kritik, atau saran Anda…" dihapus karena tidak mengarah ke halaman mana pun.
+- Tulisan "Belum ada foto" beserta ikon besarnya tidak lagi tampil saat foto Perbekel belum diunggah; cukup jabatan dan namanya.
+
+## [0.1.232] - 2026-11-10
+### Changed
+- **Halaman Struktur Organisasi PPID didesain ulang.** Tiap jabatan kini tampil sebagai kartu biru memanjang: nama jabatan dan nama pegawai di kiri, foto di kanan. Tepi kiri foto dibuat memudar ke warna kartu, sehingga foto berlatar kotak biasa tetap menyatu dengan kartunya. Warna kartu makin terang di tiap tingkat di bawahnya: Kepala Desa paling gelap.
+- Bagan kini tersusun dari atas ke bawah: Kepala Desa di tengah atas, lalu bawahannya berjajar di bawahnya dengan garis penghubung. Para Kepala Dusun disusun dalam beberapa baris (2 kartu per baris di laptop, 4 di layar lebar), dan baris terakhir yang tidak penuh diletakkan di tengah. Seluruh bagan langsung terlihat tanpa perlu digeser, jadi tombol Zoom dan Fullscreen dihapus.
+- Di ponsel dan tablet, bagan kini tersusun ke bawah dengan garis penghubung di sisi kiri. Sebelumnya layar hampir kosong dan Kepala Desa berada di luar layar.
+- Seluruh kartu kini bisa diklik untuk membuka profil pegawai, menggantikan tombol "Lihat Detail".
+- Kotak pencarian dipindah ke samping judul dan langsung menyaring bagan saat mengetik.
+
+### Fixed
+- Kaur Keuangan kini tampil di bagan. Sebelumnya jabatan ini tidak muncul karena jabatan di atasnya, Kaur Umum & TU, belum diisi pegawai. Jabatan yang belum diisi kini tampil sebagai kartu bergaris putus bertuliskan "Belum ditugaskan".
+- Bagan kini menampilkan semua pegawai aktif. Sebelumnya hanya 10 pegawai pertama yang dimuat.
+- Jabatan yang diisi lebih dari satu pegawai kini menampilkan semua pegawainya, masing-masing dengan kartu sendiri yang berjajar di jabatan itu. Sebelumnya hanya satu pegawai yang tampil.
+- Garis dari Kepala Desa ke Sekretaris Desa kini terlihat, dan semua kartu di tingkat yang sama kini sama lebar.
+
+## [0.1.231] - 2026-11-10
+### Changed
+- **Halaman Profil PPID kini lebih rapi di layar lebar.** Pengalaman Organisasi dan Program Unggulan dipindah ke kolom kanan, tepat di bawah Riwayat Karir, sehingga tidak ada lagi ruang kosong besar di bawah Riwayat Karir. Sebelumnya keduanya tampil selebar halaman di bawah foto, dan sisi kanannya kosong.
+- Saat halaman di-scroll, foto pejabat kini ikut turun di samping teks hingga akhir profil.
+- Tampilan 2 kolom (foto di kiri, teks di kanan) kini juga muncul di laptop dengan lebar layar mulai 1200px. Sebelumnya tampilan ini baru muncul mulai 1408px, sehingga di laptop foto tampil besar sendirian di atas teks. Di ponsel dan tablet, tampilan tetap bertumpuk seperti sebelumnya.
+- Ukuran huruf isi Pengalaman Organisasi dan Program Unggulan kini sama dengan Biografi dan Riwayat Karir.
+- Teks Biografi, Riwayat Karir, Pengalaman Organisasi, dan Program Unggulan kini rata kiri. Sebelumnya teks dibuat rata kanan-kiri, sehingga di laptop dan ponsel jarak antarkata sering melebar dan sulit dibaca.
+
+## [0.1.230] - 2026-11-09
+### Changed
+- **Halaman detail Desa Anti Korupsi diperbarui** agar senada dengan section-nya di beranda. Tampilannya kini bersih: judul dan pengantar rata kiri, tombol kategori dengan jumlah indikatornya, lalu daftar indikator bernomor dalam satu panel. Teks indikator yang sebelumnya huruf kapital semua kini ditulis dengan huruf biasa. Singkatan seperti Perdes, SOP, dan APBDes tetap ditulis seperti biasa.
+- **Tiap indikator kini punya tempat untuk suratnya (PDF).** Indikator yang suratnya sudah diunggah bisa diklik di bagian mana pun pada barisnya, lalu suratnya terbuka di tab baru. Indikator yang belum punya surat menampilkan label "Dokumen belum tersedia". Saat ini belum ada surat yang diunggah, jadi semua indikator masih menampilkan label tersebut.
+- Untuk menambahkan surat, buka **Admin → Landing Page → Desa Anti Korupsi**, pilih indikatornya, klik **Edit**, lalu unggah dokumennya. Surat langsung muncul di halaman detail tanpa perubahan kode.
+- Di atas daftar kini tampil jumlah dokumen yang sudah tersedia di kategori yang dipilih, misalnya "0 dari 5 dokumen tersedia".
+- Di ponsel, tombol kategori kini tampil dalam satu baris yang bisa digeser. Tombol yang aktif otomatis digeser ke tengah.
+
+## [0.1.229] - 2026-11-09
+### Changed
+- **Kepala halaman Potensi Desa diperbarui.** Kotak angka biru diganti tombol **Semua · Potensi · Wisata**, masing-masing dengan jumlahnya. Klik salah satu tombol untuk menampilkan potensi kategori itu saja. Paragraf pengantar kini rata kiri sehingga jarak antarkata tidak lagi melebar, dan judulnya sedikit lebih besar.
+- **Judul tiap potensi di halaman Potensi Desa kini langsung terlihat** di kiri bawah foto, seperti di halaman Prestasi dan Penghargaan. Sebelumnya judul baru muncul saat kursor diarahkan ke kartu, sehingga tidak terlihat sama sekali di ponsel.
+- Di bawah foto kini tampil deskripsi singkat tiap potensi dan tombol "Lihat Detail".
+- **"Lihat Detail" kini membuka jendela detail di atas halaman** dengan latar belakang yang diburamkan, berisi foto, kategori, judul, dan deskripsi lengkap. Pengunjung tidak lagi berpindah ke halaman lain dan tetap berada di posisi yang sama di daftar. Jendela ditutup lewat tombol ×, tombol Esc, atau klik di luar jendela. Seluruh kartu juga bisa diklik untuk membuka detail.
+- Jendela detail kini memiliki kotak **Lokasi, Pengelola, dan Status**, serta galeri foto **Dokumentasi**. Data keempatnya belum tersedia, sehingga untuk sementara kotak menampilkan tanda "–" dan galeri belum tampil. Isinya akan muncul otomatis setelah data dilengkapi.
+
+### Fixed
+- Halaman Potensi Desa kini menampilkan semua potensi. Sebelumnya hanya 10 potensi pertama yang tampil, sehingga sebagian potensi tidak terlihat dan jumlah Potensi/Wisata di kotak ringkasan kurang dari yang sebenarnya.
+
+## [0.1.228] - 2026-11-09
+### Changed
+- **Menu "Desa" kini bernama "Pemerintahan", termasuk alamat halamannya.** Halaman publik pindah dari `/darmasaba/desa/...` ke `/darmasaba/pemerintahan/...` dan halaman admin dari `/admin/desa/...` ke `/admin/pemerintahan/...`. Alamat lama (bookmark, link yang pernah dibagikan, hasil Google) otomatis dialihkan permanen ke alamat baru.
+- Submenu Ekonomi "Program Kemiskinan" kini bernama **"Program Pengentasan Kemiskinan"** di website dan admin (alamat halaman tetap).
+- **Menu baru "DAK" di navbar**, paling kanan setelah Musik. Saat diarahkan, muncul submenu "Desa Anti Korupsi" seperti menu Musik. Section Desa Anti Korupsi di beranda tetap ada.
+- Menu **Kesehatan** kini hanya menampilkan Posyandu, Program Kesehatan, dan Kontak Darurat. Data Kesehatan Warga, Puskesmas, Penanganan Darurat, dan Info Wabah/Penyakit disembunyikan dari menu, pencarian, dan Peta Informasi; halaman dan data admin-nya tetap ada.
+- **Footer:** tambah blok **Kontak Bupati** (saat ini berisi tautan website Pemkab Badung). "Pengaduan Masyarakat" di footer kini langsung membuka form pengaduan dalam jendela pop-up, sama dengan form di halaman Layanan Online Desa.
+- **Menjalankan seed ulang tidak lagi menimpa data yang sudah diedit admin.** Seed kini hanya menambahkan data yang belum ada. Data yang sudah ada di database (termasuk data contoh yang sudah diubah lewat admin) dibiarkan apa adanya. Saat seed dijalankan, baris pertama log menampilkan mode yang aktif.
+- Untuk sengaja mengembalikan data contoh ke isi aslinya, jalankan seed dengan `SEED_OVERWRITE=true`. Perhatian: mode ini menimpa editan admin pada data hasil seed.
+- Akibatnya, perbaikan isi data contoh di file seed tidak otomatis masuk ke database yang sudah terisi. Ubah lewat admin, atau jalankan dengan `SEED_OVERWRITE=true`.
+- Pembersihan data contoh lama (0.1.223) kini juga mencocokkan deskripsi: berita, jabatan BUMDes, atau buku lama yang judul **atau** deskripsinya sudah diubah admin tidak ikut terhapus. Pengurus BUMDes lama yang sudah dipindah ke jabatan lain juga tidak ikut terhapus.
+
+### Fixed
+- Tombol **Detail** pada tiap kategori Desa Anti Korupsi kini membuka tab kategori yang diklik (sebelumnya selalu ke Penguatan Tata Laksana).
+- Tab **Penguatan Tata Laksana** kini hanya menampilkan indikator kategorinya sendiri (sebelumnya menampilkan seluruh indikator).
+
+## [0.1.227] - 2026-11-09
+### Changed
+- **Warna grafik Ulasan di Indeks Kepuasan Masyarakat kini mengikuti skala penilaian yang umum**: Sangat Baik hijau tua, Baik hijau muda, Kurang Baik jingga, dan Sangat Kurang Baik merah, sehingga tiap penilaian mudah dibedakan. Grafik Jenis kelamin dan Umur tetap berwarna biru desa.
+- **Form "Ajukan Responden" tidak lagi meminta tanggal.** Tanggal pengisian tercatat otomatis sesuai hari saat form dikirim, termasuk bila dikirim lewat tengah malam.
+
+### Fixed
+- **Isian form "Ajukan Responden" tidak lagi hilang saat ada yang belum diisi.** Sebelumnya form langsung tertutup dan isian terhapus sehingga harus diulang dari awal. Kini form tetap terbuka, isian dipertahankan, dan kolom yang masih kosong diberi keterangan merah. Tombol Submit menampilkan tanda memuat selama pengiriman sehingga data tidak terkirim dua kali.
+- Grafik donat yang seluruhnya satu kategori (100%) tidak lagi menampilkan garis tipis putih di sisi kanan.
+
+## [0.1.226] - 2026-11-09
+### Changed
+- **Tampilan baru section Indeks Kepuasan Masyarakat di beranda**, senada dengan section APBDes dan Kabar Desa: latar putih, grafik dalam kartu abu muda tanpa bingkai, dan tombol "Ajukan Responden" berbentuk pil.
+- Grafik jumlah responden per bulan kini disertai total responden dalam angka besar. Komposisi jenis kelamin, ulasan, dan umur tampil sebagai grafik donat dengan jumlah dan persentase tiap kategori, dalam warna biru desa.
+- Saat belum ada responden, section hanya menampilkan satu kartu ringkas berisi ajakan mengisi survei, bukan grafik kosong dan tiga kotak "Belum ada data".
+- Isian form "Ajukan Responden" tidak berubah; label tanggal kini selalu "Tanggal Pengisian".
+
+## [0.1.225] - 2026-11-09
+### Changed
+- **Tampilan section SDGs Desa di beranda diperbarui** agar senada dengan section Kabar Desa dan APBDes: latar abu muda, kartu putih datar tanpa bayangan, ikon resmi tiap tujuan SDGs, nama tujuan rata kiri, dan skor besar dengan keterangan "Skor". Skor di semua kartu kini sejajar walaupun panjang nama tujuannya berbeda. Di layar ponsel, kartu tampil sebagai baris (ikon di kiri, nama dan skor di kanan) sehingga nama tujuan yang panjang tetap mudah dibaca.
+- Di atas kartu kini ada keterangan "Tujuan dengan skor tertinggi", karena beranda hanya menampilkan empat tujuan berskor tertinggi.
+- Tombol "Jelajahi semua tujuan SDGs Desa" kini berbentuk pil yang sama dengan tombol section lain.
+- Selama data dimuat, tampil kerangka kartu abu-abu; bila data kosong atau gagal dimuat, tampil satu pesan singkat.
+### Fixed
+- Urutan empat tujuan berskor tertinggi kini memperhitungkan angka di belakang koma (sebelumnya 35,47 dan 35,75 dianggap sama). Skor yang ditulis dengan koma desimal (mis. "52,62") juga terbaca dengan benar, dan tujuan tanpa skor tidak ikut tampil.
+
+## [0.1.224] - 2026-11-09
+### Changed
+- **Section Desa Anti Korupsi di beranda tampil baru dan lebih mudah dibaca.** Indikator kini ditulis dengan huruf biasa (bukan huruf kapital semua) dan dikelompokkan per kategori: nama kategori, misalnya "Penguatan tata laksana", cukup tampil sekali, diikuti butir-butirnya dengan nomor indikator (1.1, 1.2, …) sebagai pengganti ikon yang sama di setiap kartu.
+- Tampilannya kini senada dengan section Kabar Desa dan APBDes: latar putih, panel abu muda tanpa bayangan, dan tombol "Selengkapnya" berbentuk pil yang membuka halaman detail Desa Anti Korupsi. Di ponsel, nama kategori tampil di atas butirnya.
+
+## [0.1.223] - 2026-11-07
+### Fixed
+- **Data hasil seed tidak lagi tampil dobel setelah data contoh diganti.** Sebelumnya, data contoh versi lama tetap tersimpan saat isi seed diperbarui, sehingga tampil berdampingan dengan data baru. Saat seed dijalankan, data lama berikut kini dibersihkan otomatis:
+  - 18 berita lama (sebelum diganti berita Okt–Nov 2026)
+  - 22 jabatan perangkat desa dan 8 nama pengurus lama di Struktur Organisasi BUMDes
+  - kategori kegiatan "Sosial" yang muncul dua kali
+  - buku "Seni Berpikir Kritis" yang tercatat dua kali di Perpustakaan Digital
+- Data yang sudah diubah admin (judul/nama berbeda dari data contoh lama) tidak ikut terhapus. Kegiatan yang memakai kategori "Sosial" lama otomatis dipindah ke kategori "Sosial" yang tersisa. Jabatan BUMDes lama yang masih dipakai pengurus buatan admin juga dibiarkan.
+
+## [0.1.222] - 2026-11-07
+### Added
+- **Halaman Peta Informasi** (`/darmasaba/peta-informasi`): semua halaman website Desa Darmasaba dalam satu tempat, dikelompokkan per menu (PPID, Desa, Kesehatan, Keamanan, Ekonomi, Inovasi, Lingkungan, Kependudukan, Pendidikan, Musik, Transparansi, Layanan Online Desa), termasuk halaman yang tidak ada di menu seperti APBDes dan Grafik Penyakit. Ketik di kotak "Saring halaman" untuk langsung menyaring daftar, misalnya "apbdes" atau "posyandu". Setiap tautan bisa dibuka di tab baru.
+- Peta Informasi bisa dibuka dari footer (bagian "Tautan Penting"), dicari lewat kotak pencarian ("peta informasi"), dan muncul sebagai tautan "Buka Peta Informasi" saat pencarian tidak menemukan hasil.
+### Fixed
+- Tombol kembali (ikon panah) di halaman publik kini punya label "Kembali ke halaman sebelumnya", sehingga terbaca oleh pembaca layar dan menampilkan keterangan saat disorot mouse.
+
+## [0.1.221] - 2026-11-06
+### Added
+- **Nama menu dan submenu website kini bisa dicari.** Ketik nama halaman di kotak pencarian, misalnya "Polsek Terdekat", "Struktur PPID", atau cukup potongannya seperti "polsek", dan halamannya langsung muncul di bagian "Halaman" paling atas, lengkap dengan letaknya di menu (contoh: "Keamanan › Polsek Terdekat"). Mengetik nama menu utama, misalnya "Keamanan", menampilkan submenu di dalamnya. Hasil ini muncul seketika saat mengetik, di atas hasil pencarian konten seperti biasa.
+- Halaman yang tidak ada di menu juga bisa dicari dengan cara yang sama: APBDes, Desa Anti Korupsi, SDGs Desa, Struktur Perangkat Desa, Galeri Video, Administrasi Online (Ajukan Surat), Pengaduan Masyarakat, Informasi Desa, serta Fasilitas Kesehatan, Artikel Kesehatan, Jadwal Kegiatan Kesehatan, dan Grafik Penyakit. Contoh: ketik "apbdes" atau "ajukan surat".
+- Untuk kata kunci umum seperti "kesehatan" atau "desa", bagian "Halaman" menampilkan 5 halaman teratas dulu. Tekan "Tampilkan N halaman lainnya" untuk membuka semua halaman yang cocok tanpa meninggalkan kotak pencarian; tidak ada halaman yang terpotong.
+
+## [0.1.220] - 2026-11-06
+### Fixed
+- **Hasil pencarian kini membuka halaman yang benar.** Sebelumnya sebagian besar hasil pencarian di website publik (misalnya galeri foto, pasar desa, program kesehatan, pelayanan, dan banyak modul lain) malah membawa pengunjung kembali ke beranda.
+- Hasil pencarian Visi Misi PPID, Profil PPID, Galeri Foto/Video, dan Potensi Desa tidak lagi membuka halaman kosong.
+- Hasil pencarian produk pasar desa kini membuka halaman detail produk UMKM.
+- Hasil pencarian Indeks Kepuasan Masyarakat, kategori berita, Pelayanan Penduduk Non Permanen, serta Dokter dan Tenaga Medis kini membuka halamannya masing-masing. Hasil media sosial langsung membuka akun media sosial desa.
+
+## [0.1.219] - 2026-11-06
+### Added
+- **Dokumen Perencanaan** (RPJM Desa, RKP Desa, Berita Acara Musyawarah): admin mengelola dokumen (PDF, nomor Perdes, ringkasan, periode/tahun) lewat tab baru di admin Kegiatan Desa. Publik melihatnya di section baru pada halaman Monev & Pembangunan, dan ada tautan dari PPID > Daftar Informasi Publik. Kegiatan pembangunan kini berlabel "Bersumber dari RKP Desa {tahun}" dengan tautan ke dokumennya bila ada. Periode RPJM bebas (tahun mulai/selesai) sehingga 6 atau 8 tahun sama-sama bisa. Tabel baru `DokumenPerencanaan`.
+- **Waktu & Biaya Pelayanan**: setiap layanan desa punya "Estimasi Waktu" dan "Biaya (Rp)" opsional; tampil sebagai badge di kartu dan halaman detail ("1 hari kerja • Gratis"). Biaya kosong = belum diisi, 0 = Gratis. Kolom baru di empat tabel pelayanan.
+- **Agenda & Kalender Desa** (sebelumnya "Kalender Event Budaya", alamat halaman tidak berubah): agenda punya kategori (Budaya, Pemerintahan, Musyawarah, Kepemudaan, PKK & Perempuan, Pertanian & Peternakan, Lainnya), tanggal selesai opsional, filter tahun/bulan/kategori, penanda "Akan datang"/"Selesai", dan ringkasan jumlah acara per bulan.
+- **Link Toko Online di produk UMKM**: satu produk bisa punya hingga 5 link (Shopee, Tokopedia, TikTok Shop, Blibli, Lazada, atau lainnya) yang tampil sebagai tombol di samping tombol WhatsApp. Hanya URL https yang diterima dan domainnya divalidasi sesuai platform. Tabel baru `LinkTokoOnline`.
+- **Sektor Unggulan Desa**: nilai kini bisa disertai Satuan (mis. ton, kg, ha) dan Periode; grafik dan label mengikuti satuan.
+- **Ajukan Ide Inovatif**: blok pengantar yang menjelaskan ide warga dapat dibawa ke Musyawarah Desa/Musrenbangdes, dengan tautan ke Agenda & Kalender dan Dokumen Perencanaan.
+- **Kategori Kegiatan Desa** baru: "Kepemudaan" dan "PKK & Pemberdayaan Perempuan" (ditambahkan lewat migrasi sehingga ikut ke staging/produksi).
+
+### Changed
+- **Seed berita** diganti dengan 8 berita terbaru Desa Darmasaba (Okt–Nov 2026) lengkap dengan gambar di `public/assets/images/berita-terbaru/` dan tautan sumber di tiap berita. Seed hanya berpengaruh pada database yang di-seed ulang; staging/produksi perlu input lewat admin atau seed ulang.
+- **Seed agenda** ditambah agenda 2026 dari riset publik (HUT Sekaa Teruna Putra Laksana, Musdes/Musrenbangdes/MMD) dan seluruh agenda lama diberi kategori Budaya.
+
+### Notes untuk operator
+- 5 migrasi baru (`20261106100100`–`20261106100500`), semuanya idempoten dan dapat dijalankan ulang; tidak ada data lama yang diubah.
+- **Estimasi waktu/biaya layanan di seed adalah PERKIRAAN** ("1 hari kerja", Gratis) dan belum diverifikasi dengan Dokumen Standar Pelayanan (Kepbek 53/2022). Ganti lewat admin sebelum dianggap resmi.
+- Data nyata yang masih harus diinput lewat admin: dokumen RPJM/RKP, satuan dan periode sektor unggulan, link toko online produk, serta tanggal agenda yang belum pasti (mis. Gerakan Kulkul PKK & Posyandu).
+
+## [0.1.218] - 2026-11-06
+### Changed
+- **Jarak antar section di beranda kini seragam, sekitar 100px di layar lebar dan 72px di ponsel.** Sebelumnya jaraknya berbeda-beda: Kabar Desa ke APBDes terlalu jauh, sedangkan Prestasi ke Layanan dan Potensi Desa terlalu rapat. Judul "Desa Anti Korupsi" juga tidak lagi menempel ke tepi atas latar birunya.
+
+## [0.1.217] - 2026-11-06
+### Added
+- **Section "Kabar Desa" di beranda**, tepat di bawah bagian pembuka. Berita terbaru tampil besar dengan foto, kategori, tanggal, dan ringkasan, diikuti tiga berita berikutnya dalam kartu foto. Di bawahnya ada tiga pengumuman terbaru. Klik kartu atau baris mana pun untuk membuka detailnya, atau pakai tautan "Lihat semua berita" di samping judul dan "Semua pengumuman" di panel pengumuman.
+- Di ponsel, tiga kartu berita bisa digeser ke samping.
+
+### Removed
+- Panel melayang "Berita & Pengumuman" beserta tombol loncengnya. Panel ini tidak lagi terbuka sendiri dan menutupi bagian pembuka beranda. Isinya kini ada di section Kabar Desa.
+
+## [0.1.216] - 2026-11-06
+### Changed
+- **Prestasi Desa dan Penghargaan Desa kini menjadi satu: "Prestasi dan Penghargaan Desa".** Di beranda, section ini dibuka dengan video penghargaan yang sama seperti sebelumnya, berisi judul, kalimat pengantar, dan tombol "Selengkapnya". Daftar kartu penghargaan di atas video diganti grid berisi **4 prestasi atau penghargaan terbaru** dengan foto besar dan judul di pojok kiri bawah. Klik di mana saja pada foto untuk membuka detailnya. Entri yang baru ditambahkan admin langsung muncul paling depan.
+- Video kini hanya berputar saat terlihat di layar. Video bisa dijeda dan diputar lagi lewat tombol di pojok kanan bawah, dan tidak berputar otomatis bila pengguna mengaktifkan "kurangi gerakan".
+- **Halaman "Prestasi dan Penghargaan Desa"** (`/darmasaba/prestasi-desa`) kini menampilkan prestasi dan penghargaan sekaligus dalam grid foto yang sama dengan beranda, lengkap dengan pencarian dan halaman bernomor. Alamat lama `/darmasaba/penghargaan` otomatis diarahkan ke halaman ini, dan halaman detail setiap prestasi atau penghargaan tetap bisa dibuka seperti biasa.
+- Menu navbar "Penghargaan" berganti nama menjadi "Prestasi dan Penghargaan".
+- Urutan section beranda: Prestasi dan Penghargaan kini tepat di bawah APBDes, dan Indeks Kepuasan Masyarakat pindah ke paling bawah.
+
+### Fixed
+- Hasil pencarian untuk penghargaan tidak lagi membuka halaman yang tidak ada (`/darmasaba/desa/penghargaan`).
+
+## [0.1.215] - 2026-11-06
+### Changed
+- **Halaman "Lihat semua data APBDes" tampil baru**, senada dengan section APBDes di beranda: tombol tahun, tanggal "Data diperbarui", tiga kartu ringkasan, grafik pagu dan realisasi, lalu rincian anggaran per kategori yang langsung terbuka.
+- Rincian di halaman ini menambah kolom **Lebih/(Kurang)**, yaitu sisa anggaran setiap pos (anggaran dikurangi realisasi).
+- Dokumen APBDes (gambar dan tautan unduh) kini tampil satu panel untuk tahun yang dipilih. Panel ini hanya muncul bila admin sudah mengunggah dokumen untuk tahun itu. Grid kartu per tahun dan teks "jumlah" isian bebas tidak ditampilkan lagi.
+- Di ponsel, rincian tersusun ke bawah tanpa tabel yang perlu digeser ke samping.
+
+### Fixed
+- **Total di halaman APBDes tidak lagi dihitung berlipat** pada rincian bertingkat. Baris "JUMLAH" lama yang mencampur pendapatan, belanja, dan pembiayaan juga dihapus; total setiap kategori kini tertulis di judul kategorinya.
+
+## [0.1.214] - 2026-11-06
+### Changed
+- **Section APBDes di beranda tampil baru dan lebih ringkas.** Kini dibuka dengan tiga kartu ringkasan (Pendapatan, Belanja, Pembiayaan) berisi pagu dalam angka besar yang mudah dibaca (misalnya "Rp 23,14 M") beserta nilai lengkapnya, bilah realisasi, dan persennya. Di bawahnya ada grafik pagu dan realisasi, lalu rincian anggaran per kategori yang bisa dibuka-tutup. Tombol "Lihat semua data APBDes" pindah ke bagian bawah.
+- Tahun APBDes kini dipilih lewat tombol tahun di tengah (sebelumnya kotak pilihan).
+- Di bawah pilihan tahun kini tertulis tanggal terakhir data APBDes diperbarui, sehingga warga tahu seberapa baru angka yang ditampilkan.
+- Setiap pos di rincian anggaran kini punya bilah progres realisasi beserta persen dan nominalnya, jadi kemajuan penggunaan anggaran per pos langsung terlihat.
+- Ikon emoji diganti ikon garis yang seragam dengan bagian lain website.
+- Bila realisasi suatu tahun belum diinput, kartu menulis "Belum ada realisasi" (sebelumnya semua tampil merah dengan peringatan "Realisasi rendah, perlu perhatian khusus").
+
+### Fixed
+- **Total APBDes tidak lagi dihitung berlipat** pada tahun yang rinciannya bertingkat (misalnya "4 Pendapatan Desa" → "4.1 Pendapatan Asli Desa" → "4.1.1 Hasil Usaha Desa"). Sebelumnya induk dan anaknya dijumlahkan bersama sehingga total 2025 tampil berlipat: pendapatan sekitar dua kali (Rp 3,35 M, seharusnya Rp 1,5 M) dan belanja tiga kali (Rp 4,5 M, seharusnya Rp 1,5 M).
+- Di ponsel, tabel APBDes tidak lagi terpotong di sisi kanan dan nominal anggaran terbaca utuh.
+- Warna legenda grafik kini sesuai dengan batangnya, dan satuan sumbu memakai Jt/M/T (sebelumnya "B").
+
+## [0.1.213] - 2026-11-05
+### Changed
+- **Layar pembuka website baru: gerbang Candi Bentar.** Saat pertama kali membuka website, pengunjung kini disambut siluet Candi Bentar di tepi air pada malam menjelang fajar: logo dan tulisan "Pemerintah Desa Darmasaba" muncul di celah gerbang, lalu kamera seolah melangkah menembus celah — gerbang terbuka ke samping, cahaya fajar memenuhi layar, dan beranda tampil. Durasi sekitar 2,5 detik (sebelumnya layar logo diam selama 3 detik), dan bisa dilewati dengan klik/tap atau tombol Escape.
+- Layar pembuka hanya tampil sekali per tab dan hanya bila beranda adalah halaman pertama yang dibuka; membuka halaman lain langsung (misalnya dari tautan berita) tidak memunculkannya. Pengguna yang mengaktifkan "kurangi animasi" di perangkatnya mendapat versi tanpa gerakan (hanya fade).
+- Membuka alamat utama website (`/`) kini langsung diarahkan ke beranda tanpa menunggu.
+
+## [0.1.212] - 2026-11-05
+### Fixed
+- **Desa - Profil**: peta di section "Letak & Batas Wilayah" tidak lagi meluber keluar kartu dan menimpa logo/judul "Lambang Desa"; tinggi peta kini menyesuaikan ukuran layar (300px ponsel, 380px tablet, 450px desktop).
+
+## [0.1.211] - 2026-11-05
+### Added
+- **Pesanan produk UMKM kini bisa dibuat warga tanpa login** lewat endpoint publik baru. Setelah pesanan dibuat, muncul jendela konfirmasi "Pesanan Dibuat" dengan tautan WhatsApp yang diklik warga sendiri. Harga dihitung server dari data produk dan stok berkurang secara atomik.
+- **Batas panjang "alasan keberatan"** pada Permohonan Keberatan Informasi Publik (PPID): maksimal 2000 karakter, dengan penghitung karakter dan tombol kirim yang nonaktif bila melebihi batas. Server juga menolak input yang terlalu panjang.
+- **Galeri Foto**: klik kartu foto membuka jendela detail berisi foto utuh, deskripsi lengkap, dan tanggal.
+
+### Fixed
+- Warga yang belum login tidak bisa mengirim **Laporan Publik** (Keamanan) karena ditolak 401; kini bisa mengirim laporan.
+- Pesanan **UMKM** di ponsel gagal dengan pesan error umum, dan di laptop muncul "nomor WhatsApp tidak terdaftar" padahal pesanan tersimpan; keduanya diperbaiki, termasuk format nomor kontak yang tidak seragam.
+- **Beranda**: kotak input email di footer tidak lagi menutupi popup berita.
+- **Galeri Foto**: ukuran foto kini seragam (rasio 4:3).
+- **Desa - Layanan**: jarak judul dan deskripsi Pelayanan Telunjuk Sakti, tinggi kartu, dan jarak antar baris deskripsi pelayanan penduduk dirapikan.
+- **Struktur PPID**: bagan dan panel kontrol kini terpusat di desktop maupun ponsel.
+
+## [0.1.210] - 2026-11-05
+### Changed
+- **Footer di ponsel bergaya apple.com**: padding kiri-kanan footer di ponsel kini 16px (sebelumnya sekitar 80px sehingga teks sangat sempit). Grup link "Layanan Desa" dan "Tautan Penting" di ponsel tampil sebagai daftar lipat dengan panah — ketuk judul untuk membuka link-nya, dipisahkan garis tipis. Tampilan laptop/desktop tidak berubah.
+
+## [0.1.209] - 2026-11-05
+### Changed
+- **Footer halaman publik bergaya apple.com**: tepi kiri-kanan footer kini sejajar dengan konten "Komitmen Layanan Kami" dan "Visi Kami" di atasnya (sebelumnya melebar hampir selebar layar). Card berbayang di sekitar bagian Komitmen Layanan sampai "Desa Kuat, Warga Sejahtera!" dihapus; bagian itu kini dipisahkan dari daftar link cukup dengan garis tipis. Jarak vertikal seluruh footer kini seragam dan lebih rapat: 32px antar blok (termasuk di atas dan di bawah setiap garis pemisah) dan 10px antar baris di dalam blok, logo slogan sedikit diperkecil. Kolom "Layanan Desa" dan "Tautan Penting" tampil di baris atas; "Tentang Darmasaba" (beserta ikon media sosial) dan "Berlangganan Info" pindah ke baris di bawahnya. Ada garis tipis di atas daftar link dan di atas copyright, dan copyright kini rata kiri.
+
+## [0.1.208] - 2026-11-05
+### Changed
+- **Section Layanan dan Potensi Desa di beranda digabung** menjadi satu galeri bergaya apple.com berjudul "Layanan dan Potensi Desa": baris atas berisi layanan (kartu besar di tengah, kartu sebelahnya mengintip), baris bawah berisi potensi desa (kartu lebih kecil). Setiap 5 detik kedua baris bergeser satu kartu ke kiri dan berhenti dengan kartu aktif di tengah, berputar terus tanpa ujung. Kartu kini bersudut kotak, klik kartu membuka halaman detailnya.
+- Di ponsel kartu tampil tegak (potret) dengan judul dan tombol di tengah bawah, dan baris bisa digeser dengan jari.
+- Di laptop, galeri bisa digeser dengan dua jari di trackpad saat kursor berada di atas baris (satu gerakan = satu kartu), tanpa lagi memicu kembali ke halaman sebelumnya.
+- Kedua baris selalu bergerak bersama: menggeser baris layanan atau potensi, maupun mengklik titik penanda, menggeser layanan dan potensi sekaligus.
+- Penanda posisi berupa 5 titik dengan titik panjang selalu di tengah. Titik panjang berfungsi sebagai progress bar yang terisi hitam selama 5 detik sebelum galeri maju, lalu titik di sebelahnya bergeser ke tengah. Ada tombol jeda; gerak otomatis juga berhenti saat menavigasi kartu dengan keyboard, saat tab tidak aktif, atau bila perangkat mengaktifkan "kurangi animasi".
+- Potensi desa di beranda kini menampilkan hingga 10 potensi (sebelumnya 4).
+
+### Removed
+- Paragraf penjelasan di bawah judul Layanan dan Potensi Desa, tombol "Detail" ke daftar layanan, dan tombol "Lihat Semua Potensi" di beranda (halaman daftarnya tetap bisa dibuka dari navbar).
+
+## [0.1.207] - 2026-11-05
+### Changed
+- **Navbar desktop halaman publik bergaya apple.com**: saat cursor diarahkan ke menu, panel submenu kini mengembang halus dari bawah navbar, teks submenu muncul bertahap, dan konten halaman di belakangnya di-blur. Sebelumnya submenu muncul tiba-tiba tanpa animasi. Pindah antar menu langsung mengganti isi panel dengan tinggi yang menyesuaikan halus; panel tertutup saat cursor keluar dari navbar, tombol Escape, klik area blur, atau berpindah halaman. Pencarian memakai panel yang sama.
+- Submenu kini berupa link biasa: bisa dibuka di tab baru dan dinavigasi dengan keyboard. Pengguna yang mengaktifkan "kurangi animasi" di perangkatnya mendapat versi tanpa gerakan (hanya fade).
+- **Navbar mobile bergaya apple.com**: tombol menu membuka panel kaca yang mengembang halus dan mem-blur halaman di belakangnya. Panel awalnya hanya menampilkan menu utama; submenu dibuka per menu (geser masuk) dengan tombol "Kembali", jadi daftar tidak lagi panjang sekaligus. Halaman di belakang tidak ikut ter-scroll selama menu terbuka.
+
+### Fixed
+- Tombol "Kembali ke Admin" di navbar desktop kini muncul/hilang sesuai status login terkini (sebelumnya hanya dibaca sekali saat halaman dimuat).
+- Efek hover menu navbar desktop yang sebelumnya tidak pernah aktif.
+- Efek kaca buram (blur) yang hilang di Chrome sejak upgrade Next 16 kini kembali, termasuk pada kartu profil berlatar kaca.
+
+## [0.1.206] - 2026-11-04
+### Added
+- **Letak & Batas Wilayah di Profil Desa** (`/darmasaba/desa/profil`): section baru menampilkan batas utara/selatan/timur/barat, luas wilayah (hektar), keterangan, dan peta embed (hanya URL https). Diisi admin lewat tab "Letak & Batas Wilayah" di admin Profil Desa; bila belum diisi tampil empty-state. Model baru `WilayahDesa` (satu baris) + endpoint `GET /api/desa/profile/wilayah` (publik) dan `PUT` (admin). Tidak ada data wilayah di seed — wajib diisi lewat admin.
+- **Halaman BUMDes dengan profil dan unit usaha**: model baru `ProfilBumDes` dan `UnitUsahaBumDes`, endpoint API + admin CRUD (profil BUMDes dan daftar unit usaha). Halaman publik kini berurutan: profil BUMDes, unit usaha, lalu struktur pengurus & SK, masing-masing dengan empty-state.
+- **Produk Unggulan Desa di katalog UMKM**: kolom `PasarDesa.isUnggulan` (default false), parameter opsional `unggulan=true` pada list produk, toggle di form admin produk, badge "Unggulan" dan filter "Produk Unggulan" di katalog publik.
+- **Kegiatan Pembangunan dan halaman Monev & Pembangunan**: field opsional pada `KegiatanDesa` (`anggaran`, `progres` 0–100, `statusPembangunan` rencana/berjalan/selesai, `sumberDana`), kategori "Pembangunan", kartu dengan progress bar di Kegiatan Desa, halaman baru `/darmasaba/desa/monev-pembangunan` (ringkasan per status, total anggaran, rata-rata progres, tautan ke APBDes), dan entri menu "Monev & Pembangunan" di grup Desa.
+- **Seed data contoh untuk fitur baru**: wilayah desa (4 batas bertanda "data contoh", luas dan peta dikosongkan karena belum ada data resmi), profil dan 2 unit usaha BUMDes (teks diturunkan dari seed Potensi), 2 produk ditandai unggulan, dan 3 kegiatan Pembangunan contoh (rencana/berjalan/selesai). Semua seeder idempoten; tidak ada perubahan schema.
+### Changed
+- Menu `Ekonomi > Struktur Organisasi dan SK Pengurus BUMDesa` berlabel **"BUMDes"** (URL tetap sama agar link lama tidak putus).
+- Seed `struktur-bumdes` tidak lagi memuat perangkat desa (Kades, Sekdes, Kaur, Kadus); hanya jabatan generik tanpa nama orang.
+### Catatan operator
+- 4 migrasi baru (idempoten, tabel/kolom baru, tidak menghapus data): `20261103090747_add_wilayah_desa`, `20261103100000_add_profil_dan_unit_usaha_bumdes`, `20261103100200_add_produk_unggulan_flag`, `20261103100300_add_pembangunan_fields_kegiatan_desa`.
+- Data pegawai BUMDes lama yang berisi perangkat desa di DB staging/produksi TIDAK dihapus oleh rilis ini; pembersihan adalah keputusan terpisah.
+- Data batas wilayah, profil/unit usaha BUMDes, dan produk unggulan harus diinput lewat admin (tidak ada data karangan di seed).
+
+## [0.1.205] - 2026-11-04
+### Changed
+- **Library UI Mantine naik dari 8.3.18 ke 9.7.4** (tahap terakhir upgrade UI bertahap): seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di 9.7.4. Tampilan halaman publik dan admin dipertahankan sama seperti sebelumnya: radius sudut default, warna varian `light`/`outline`, serta ketebalan teks tombol (600) dan label input/menu (500) tetap seperti di Mantine 8.
+- **Upload file kini benar-benar membatasi ekstensi yang terdaftar.** Sebelumnya `image/*` di daftar format membuat semua jenis gambar lolos, padahal yang tercantum hanya 4 ekstensi. Sekarang:
+  - gambar hanya `.jpg`, `.jpeg`, `.png`, dan `.webp`, sehingga `.gif`, `.heic`, `.svg`, dan `.avif` ditolak. Ini berlaku di hampir semua form upload gambar. Form Data UMKM, Produk UMKM, dan halaman `/admin/images` tidak berubah, karena dari awal memakai daftar format gambar bawaan Mantine yang memang menerima semua format di atas;
+  - musik hanya `.mp3`, `.wav`, `.ogg`, dan `.m4a`, sehingga misalnya `.aac` dan `.flac` ditolak;
+  - dokumen Desa Anti Korupsi hanya `.pdf`, `.doc`/`.docx`, `.xls`/`.xlsx`, dan `.ppt`/`.pptx`.
+
+  File yang ditolak diperlakukan sama seperti file lain yang formatnya tidak didukung.
+- **Paste file ke area upload**: menempelkan file (Ctrl/Cmd+V) ke area upload yang sedang fokus kini diterima seperti file yang diseret ke sana. Aturan format dan ukuran filenya sama.
+
+### Fixed
+- **Grid tidak lagi melebar keluar tepi container**: Mantine 9 memakai jarak antar kolom berbasis CSS `gap`, bukan margin negatif, sehingga scroll horizontal kecil yang kadang muncul di layar HP bisa hilang. Lebar dan jarak kolom tetap sama.
+
+Tidak ada perubahan schema/database/API.
+
+## [0.1.204] - 2026-11-04
+### Changed
+- **Framework naik dari Next.js 15.5.14 ke 16.4.5, React ke 19.3.1**: fungsi halaman publik maupun admin tidak berubah. QA mencatat sedikit perubahan tampilan, dan ini akan dipoles setelah seluruh tahap upgrade UI selesai. Build dan dev server sekarang memakai Turbopack (bawaan Next 16), dan `next dev` menulis output ke `.next/dev`. Jumlah halaman hasil build kini 394 (sebelumnya 395) karena Next 16 tidak lagi membuat halaman `_app`/`_document`/`_error` Pages Router untuk project yang hanya memakai App Router. Daftar halaman aplikasi tidak berubah.
+- **Guard halaman admin pindah dari `src/middleware.ts` ke `src/proxy.ts`** (konvensi baru Next 16, selalu berjalan di runtime Node.js). Aturan aksesnya tidak berubah: `/admin`, `/validasi`, dan `/waiting-room` tetap mewajibkan login, dan akun non-admin tetap diarahkan ke `/profile`. Matcher-nya kini dikunci dengan unit test.
+- **Browser minimum naik** mengikuti default Next 16: Safari/iOS 16.4, serta Chrome, Edge, dan Firefox 111. Browser yang lebih lama bisa tidak memuat situs dengan benar.
+- **Image Docker dikunci ke `oven/bun:1.4.4-debian`** (sebelumnya tag floating `1-debian`). Saat ini keduanya menunjuk image yang sama persis (digest `sha256:93d5032f…`), jadi hasil build tidak berubah. Bedanya, rilis Bun baru tidak lagi ikut terpasang diam-diam.
+- **`next dev` tidak lagi mengubah `AGENTS.md`**: fitur `agentRules` Next 16, yang otomatis menyisipkan blok ke file itu, dimatikan karena file tersebut di-track git.
+- **ESLint tetap memakai `eslint-config-next` 15.5.12.** Versi 16 membutuhkan penulisan ulang config dan membawa aturan React Compiler yang bentrok dengan pola Valtio di sekitar 210 file. Upgrade lint dikerjakan sebagai task terpisah.
+
+### Fixed
+- **Akses dev server dari HP/perangkat lain di jaringan lokal**: `allowedDevOrigins` sebelumnya diisi URL lengkap (`http://192.168.1.82:3000`), padahal Next hanya mencocokkan hostname, sehingga entri itu tidak pernah berlaku. Sekarang ditulis `192.168.1.82`. `localhost` sudah diizinkan secara default.
+- **Keamanan: 28 advisory Next.js tertutup** (3 critical, 12 high, 11 moderate, 2 low pada 15.5.14). Di antaranya RCE tanpa autentikasi di Image Optimization API untuk file SVG ([GHSA-2464-fhr4-w9xw](https://github.com/advisories/GHSA-2464-fhr4-w9xw)) dan AVIF ([GHSA-2xp9-vwfh-vxw4](https://github.com/advisories/GHSA-2xp9-vwfh-vxw4)), RCE di server Windows ([GHSA-p293-qw3h-jr36](https://github.com/advisories/GHSA-p293-qw3h-jr36)), serta beberapa celah bypass middleware/proxy ([GHSA-492v-c6pp-mqqv](https://github.com/advisories/GHSA-492v-c6pp-mqqv), [GHSA-267c-6grr-h53f](https://github.com/advisories/GHSA-267c-6grr-h53f), [GHSA-26hh-7cqf-hhc6](https://github.com/advisories/GHSA-26hh-7cqf-hhc6)).
+- **Keamanan: pengolah gambar `sharp` naik dari 0.34.5 ke 0.35.5** (libvips 8.17.3 → 8.18.7). Ini menutup 3 advisory high di libvips, libheif, dan librsvg ([GHSA-f88m-g3jw-g9cj](https://github.com/advisories/GHSA-f88m-g3jw-g9cj), [GHSA-rgj7-g3m4-5g8c](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c), [GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w)), dan sekaligus menjadi mitigasi yang direkomendasikan untuk GHSA-2464-fhr4-w9xw. `sharp` dipakai untuk `/api/img` dan upload gambar, termasuk upload pengaduan publik. Gambar yang dihasilkan identik byte-per-byte dengan sebelumnya, dan salinan ganda `sharp` di dalam Next ikut hilang.
+
+Tidak ada perubahan schema/database/API.
+
+## [0.1.203] - 2026-11-04
+### Changed
+- **Library UI Mantine naik dari 7.17 ke 8.3.18**: seluruh paket Mantine (`core`, `hooks`, `dates`, `dropzone`, `tiptap`, `charts`) kini di satu versi yang sama, 8.3.18. Sebelumnya versinya campur (core 7.17, sedangkan dates/dropzone sudah 8.x), sehingga ada ketidakcocokan peer dependency. Tampilan halaman publik dan admin tidak berubah. Prop `color` pada `Text` yang sudah deprecated diganti `c` (19 halaman admin) tanpa efek visual.
+- **Editor teks (admin & form publik) pindah ke Tiptap 3**: semua editor rich text memakai Tiptap 3. Isi yang sudah tersimpan tetap sama persis, dan di halaman edit tombol Simpan/Batal tidak menganggap konten berubah sebelum benar-benar diketik. Satu perilaku baru dari Tiptap 3: menekan Backspace/Delete di awal atau akhir item list kini menggabungkan item atau mengangkatnya keluar dari list.
+
+### Fixed
+- **Keamanan editor teks**: lockfile sebelumnya menyimpan salinan lama `prosemirror-view` 1.41.8 yang rentan XSS saat menempel (paste) konten ([GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w)). Sekarang hanya ada satu salinan, 1.42.9, yang sudah diperbaiki. Salinan ganda paket inti editor (`prosemirror-model`/`-transform`/`-view`) juga dihapus.
+
+### Removed
+- **Paket yang tidak terpakai**: `@mantine/form`, `@mantine/modals`, `@mantine/carousel`, `embla-carousel`, `embla-carousel-autoplay`, `embla-carousel-react`, dan `@tiptap/extension-underline` (fitur underline sudah termasuk di StarterKit Tiptap 3).
+- **10 komponen editor duplikat yang tidak pernah dipakai** di halaman mana pun.
+- **Lockfile biner lama `bun.lockb`**: sudah basi sejak April 2026 dan tidak dipakai lagi. Satu-satunya lockfile sekarang `bun.lock`.
+
+Tidak ada perubahan schema/database/API.
+
 ## [0.1.196] - 2026-09-21
 ### Added
 - **Seed data untuk submenu Ekonomi > Kesejahteraan Masyarakat**: menambahkan 6 entri data program/kegiatan kesejahteraan masyarakat (BLT Dana Desa, verifikasi PKH, penyaluran BPNT/Kartu Sembako, bedah rumah RTLH, pendampingan PBI JKN-KIS, sosialisasi PIP) yang dikontekskan ke Desa Darmasaba, mengacu ke program bansos nasional yang benar-benar berjalan di level desa. Sebelumnya submenu ini (model `KesejahteraanMasyarakat`, fitur sudah ada di admin/API/public) tidak punya data seed sehingga tampil kosong di setup baru. Tidak ada perubahan schema/migration.

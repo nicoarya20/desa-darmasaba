@@ -6,7 +6,7 @@ import { Box, Paper, Skeleton, Stack, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 function Page() {
   type JPMGrafik = {

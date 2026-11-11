@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import {
+  toWaktuBiayaForm,
+  toWaktuBiayaPayload,
+  validateWaktuBiayaForm,
+} from "@/lib/pelayanan-waktu-biaya";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -17,6 +22,8 @@ const suratKeteranganForm = {
   deskripsi: "",
   imageId: "",
   image2Id: "",
+  estimasiWaktu: "",
+  biaya: "",
 };
 
 const suratKeterangan = proxy({
@@ -33,11 +40,16 @@ const suratKeterangan = proxy({
           .join("\n")}] required`;
         return toast.error(err);
       }
+      const waktuBiayaError = validateWaktuBiayaForm(suratKeterangan.create.form);
+      if (waktuBiayaError) return toast.error(waktuBiayaError);
       try {
         suratKeterangan.create.loading = true;
         const res = await ApiFetch.api.desa.layanan.pelayanansuratketerangan[
           "create"
-        ].post(suratKeterangan.create.form);
+        ].post({
+          ...suratKeterangan.create.form,
+          ...toWaktuBiayaPayload(suratKeterangan.create.form),
+        });
         if (res.status === 200) {
           suratKeterangan.findMany.load();
           return toast.success("Surat Keterangan berhasil disimpan!");
@@ -201,6 +213,7 @@ const suratKeterangan = proxy({
             deskripsi: data.deskripsi,
             imageId: data.imageId || "",
             image2Id: data.image2Id || "",
+            ...toWaktuBiayaForm(data),
           };
           return data;
         } else {
@@ -224,6 +237,8 @@ const suratKeterangan = proxy({
           .join("\n")}] required`;
         return toast.error(err);
       }
+      const waktuBiayaError = validateWaktuBiayaForm(suratKeterangan.edit.form);
+      if (waktuBiayaError) return toast.error(waktuBiayaError);
       try {
         suratKeterangan.edit.loading = true;
         const response = await fetch(
@@ -238,6 +253,7 @@ const suratKeterangan = proxy({
               deskripsi: this.form.deskripsi,
               imageId: this.form.imageId,
               image2Id: this.form.image2Id,
+              ...toWaktuBiayaPayload(this.form),
             }),
           }
         );

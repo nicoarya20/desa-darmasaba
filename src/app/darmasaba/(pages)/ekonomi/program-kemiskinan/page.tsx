@@ -7,7 +7,7 @@ import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { CartesianGrid, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 interface StatistikData {
   id: string;
@@ -82,7 +82,7 @@ function Page() {
               fw="bold"
               lh={{ base: 1.2, md: 1.2 }}
             >
-              Program Kemiskinan
+              Program Pengentasan Kemiskinan
             </Title>
           </GridCol>
           <GridCol span={{ base: 12, md: 3 }}>

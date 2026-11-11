@@ -13,7 +13,9 @@ import {
 } from '@mantine/core';
 import {
   IconBuildingCommunity,
+  IconBuildingStore,
   IconHierarchy,
+  IconId,
   IconUsers
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -24,6 +26,18 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const tabs = [
+    {
+      label: "Profil BUMDes",
+      value: "profil",
+      href: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/profil",
+      icon: <IconId size={18} stroke={1.8} />
+    },
+    {
+      label: "Unit Usaha",
+      value: "unitusaha",
+      href: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/unit-usaha",
+      icon: <IconBuildingStore size={18} stroke={1.8} />
+    },
     {
       label: "Pegawai",
       value: "pegawai",
@@ -67,7 +81,7 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
   return (
     <Stack gap="lg">
       <Title order={2} fw={700} style={{ color: "#1A1B1E" }}>
-        Struktur Organisasi & SK Pengurus BUMDes
+        BUMDes
       </Title>
 
       <Tabs

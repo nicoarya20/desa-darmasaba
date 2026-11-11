@@ -1,5 +1,6 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 import { loadJsonData } from "../../load-json";
+import { loadRetiredSeed, retireSeedRows } from "../../retire-seed-rows";
 
 interface PosisiOrganisasi {
   id: string;
@@ -22,7 +23,15 @@ interface PegawaiBumDes {
 }
 
 const posisiOrganisasiBumDes = loadJsonData<PosisiOrganisasi[][]>("ekonomi/struktur-organisasi/posisi-organisasi-bumdes.json");
+// Posisi = struktur jabatan generik BUMDes (tanpa nama orang). Data pengurus sengaja kosong:
+// nama pengurus BUMDes asli diinput admin lewat CMS, bukan di-seed (sebelumnya terisi perangkat desa).
 const pegawai = loadJsonData<PegawaiBumDes[]>("ekonomi/struktur-organisasi/pegawai-bumdes.json");
+const pegawaiPensiun = loadRetiredSeed<{ id: string; namaLengkap: string; posisiId: string }>(
+  "ekonomi/struktur-organisasi/pegawai-bumdes.retired.json",
+);
+const posisiPensiun = loadRetiredSeed<{ id: string; nama: string; deskripsi: string }>(
+  "ekonomi/struktur-organisasi/posisi-organisasi-bumdes.retired.json",
+);
 
 export async function seedStrukturBumdes() {
   const flattenedPosisi = posisiOrganisasiBumDes.flat();
@@ -77,4 +86,12 @@ export async function seedStrukturBumdes() {
     });
   }
   console.log("pegawai success ...");
+
+  // Pegawai dulu: PegawaiBumDes.posisiId wajib (ON DELETE RESTRICT), posisi tak bisa dihapus selama masih dipakai.
+  await retireSeedRows("Pegawai BUMDes", pegawaiPensiun, (p) =>
+    prisma.pegawaiBumDes.deleteMany({ where: { id: p.id, namaLengkap: p.namaLengkap, posisiId: p.posisiId } }),
+  );
+  await retireSeedRows("Posisi BUMDes", posisiPensiun, (p) =>
+    prisma.posisiOrganisasiBumDes.deleteMany({ where: { id: p.id, nama: p.nama, deskripsi: p.deskripsi } }),
+  );
 }

@@ -3,8 +3,8 @@ import umkmState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm';
 import colors from '@/con/colors';
 import { 
   Box, Center, Flex, Grid, GridCol, Image, Pagination, Paper, 
-  Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title, 
-  Tabs, Badge, Card
+  Select, SegmentedControl, SimpleGrid, Skeleton, Stack, Text, TextInput, Title, 
+  Tabs, Badge, Card, Group
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
 import { 
@@ -16,7 +16,9 @@ import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
+import { UnggulanBadge } from './_com/UnggulanBadge';
+import { LinkTokoOnlineButtons } from './_com/LinkTokoOnlineButtons';
 import { perSatuanSuffix } from './_lib/satuan';
 
 function Page() {
@@ -71,6 +73,7 @@ function TabProdukUmkm({ router }: { router: any }) {
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [onlyUnggulan, setOnlyUnggulan] = useState(false);
   
   const { data, page, loading, totalPages } = state.findMany;
 
@@ -79,12 +82,28 @@ function TabProdukUmkm({ router }: { router: any }) {
   }, []);
 
   useShallowEffect(() => {
-    umkmState.produk.findMany.load(page, 8, debouncedSearch, undefined, selectedCategory || undefined);
-  }, [page, debouncedSearch, selectedCategory]);
+    umkmState.produk.findMany.load(page, 8, debouncedSearch, undefined, selectedCategory || undefined, onlyUnggulan);
+  }, [page, debouncedSearch, selectedCategory, onlyUnggulan]);
+
+  const handleFilterUnggulan = (value: string) => {
+    umkmState.produk.findMany.page = 1;
+    setOnlyUnggulan(value === 'unggulan');
+  };
 
   return (
     <Stack gap="lg">
-      <Grid gutter="md" align="flex-end">
+      <SegmentedControl
+        value={onlyUnggulan ? 'unggulan' : 'semua'}
+        onChange={handleFilterUnggulan}
+        data={[
+          { value: 'semua', label: 'Semua Produk' },
+          { value: 'unggulan', label: 'Produk Unggulan' },
+        ]}
+        radius="md"
+        fullWidth
+        maw={{ base: '100%', sm: 360 }}
+      />
+      <Grid gap="md" align="flex-end">
         <GridCol span={{ base: 12, md: 8 }}>
           <TextInput
             label="Cari Produk UMKM"
@@ -114,6 +133,15 @@ function TabProdukUmkm({ router }: { router: any }) {
         <Skeleton h={400} radius="md" />
       ) : (
         <>
+          {data?.length === 0 && (
+            <Center py="xl">
+              <Text c="dimmed" ta="center">
+                {onlyUnggulan
+                  ? 'Belum ada produk unggulan desa.'
+                  : 'Produk tidak ditemukan.'}
+              </Text>
+            </Center>
+          )}
           <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="lg">
             {data?.map((v, k) => (
               <motion.div
@@ -133,9 +161,12 @@ function TabProdukUmkm({ router }: { router: any }) {
                     />
                   </Card.Section>
                   <Stack mt="md" gap="xs">
-                    <Badge color={v.stok > 0 ? 'teal' : 'red'}>
-                      {v.stok > 0 ? 'Tersedia' : 'Habis'}
-                    </Badge>
+                    <Group gap={6}>
+                      <Badge color={v.stok > 0 ? 'teal' : 'red'}>
+                        {v.stok > 0 ? 'Tersedia' : 'Habis'}
+                      </Badge>
+                      {v.isUnggulan && <UnggulanBadge />}
+                    </Group>
                     <Text fw={700} fz="md" lineClamp={1}>{v.nama}</Text>
                     <Text size="sm" c="blue" fw={500} style={{ cursor: 'pointer' }} onClick={(e) => {
                       e.stopPropagation();
@@ -149,13 +180,14 @@ function TabProdukUmkm({ router }: { router: any }) {
                         {perSatuanSuffix(v.satuan)}
                       </Text>
                     </Text>
+                    <LinkTokoOnlineButtons links={v.linkTokoOnline} compact />
                   </Stack>
                 </Card>
               </motion.div>
             ))}
           </SimpleGrid>
           <Center>
-            <Pagination total={totalPages} value={page} onChange={(p) => umkmState.produk.findMany.load(p)} radius="md" />
+            <Pagination total={totalPages} value={page} onChange={(p) => { umkmState.produk.findMany.page = p; }} radius="md" />
           </Center>
         </>
       )}

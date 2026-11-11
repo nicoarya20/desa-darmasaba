@@ -7,7 +7,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { IconSchool, IconSchoolOff, IconUserOff } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 type DataPengangguran = {
   id: string;

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
+import { PENGUMUMAN_LIST_INCLUDE, PENGUMUMAN_LIST_ORDER_BY } from "@/lib/pengumuman-lampiran";
 import { Context } from "elysia";
 
 async function pengumumanFindMany(context: Context) {
@@ -39,12 +40,10 @@ async function pengumumanFindMany(context: Context) {
     const [data, total] = await Promise.all([
       prisma.pengumuman.findMany({
         where,
-        include: {
-          CategoryPengumuman: true,
-        },
+        include: PENGUMUMAN_LIST_INCLUDE,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: PENGUMUMAN_LIST_ORDER_BY,
       }),
       prisma.pengumuman.count({ where }),
     ]);

@@ -1,26 +1,23 @@
-"use client";
+import { connection } from "next/server";
+import { getMenuVisibilityOverrides } from "@/lib/menu-visibility.server";
+import { DarmasabaShell } from "./_com/DarmasabaShell";
+import { MenuVisibilityProvider } from "./_com/MenuVisibilityContext";
+import { MenuVisibilityGuard } from "./_com/MenuVisibilityGuard";
 
-import colors from "@/con/colors";
-import { Box, Space, Stack } from "@mantine/core";
-
-import { Navbar } from "@/app/darmasaba/_com/Navbar";
-import Footer from "./_com/Footer";
-import FixedPlayerBar from "./_com/FixedPlayerBar";
-import { ImageErrorRetry } from "./_com/ImageErrorRetryMount";
-
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-    return (
-            <Stack gap={0} bg={colors.grey[1]}>
-                <ImageErrorRetry />
-                <Navbar />
-                <Space h={{
-                    base: "3.9rem",
-                    md: "2.5rem"
-                }} />
-                <Box>{children}</Box>
-                <Footer />
-                <FixedPlayerBar />
-            </Stack>
-    )
+/**
+ * Layout publik: override visibilitas menu dibaca di server lalu ikut HTML pertama, jadi
+ * navbar tidak "berkedip" dan halaman tersembunyi langsung 404 tanpa menunggu fetch client.
+ */
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  // Render per request (bukan prerender saat build): build Docker tidak punya akses DB, dan
+  // pengaturan harus berlaku tanpa deploy ulang. Query-nya sendiri di-cache via tag.
+  await connection();
+  const overrides = await getMenuVisibilityOverrides();
+  return (
+    <MenuVisibilityProvider overrides={overrides}>
+      <DarmasabaShell>
+        <MenuVisibilityGuard>{children}</MenuVisibilityGuard>
+      </DarmasabaShell>
+    </MenuVisibilityProvider>
+  );
 }

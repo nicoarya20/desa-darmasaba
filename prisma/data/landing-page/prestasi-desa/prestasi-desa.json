@@ -2,6 +2,7 @@
     {
         "id": "cmdws0sgq000bvnd32o7m94im",
         "name": "Desa Darmasaba Raih Juara 1 Lomba Desa Tingkat Provinsi Bali Tahun 2025",
+        "juara": "Juara 1 Lomba Desa Provinsi Bali 2025",
         "deskripsi": "<p>Pemerintah Desa Darmasaba meraih prestasi gemilang dengan menyabet Juara 1 Lomba Desa Tingkat Provinsi Bali Tahun 2025 dalam Peringatan Hari Jadi Pemerintah Provinsi Bali ke-67. Inovasi pelayanan publik dan sinergi masyarakat menjadi kunci keberhasilan.</p>",
         "kategoriId": "cmdwrp0pr0002vnd35w6nkjh0",
         "imageName": "_CIAQk1Yem-_6LFjrkmVg-mobile.webp"
@@ -26,5 +27,29 @@
         "deskripsi": "<p>KADARKUM Desa Darmasaba berhasil meraih Juara 3 dalam Lomba Keluarga Sadar Hukum Kabupaten Badung tahun 2024, bukti semangat kolaborasi masyarakat dengan perangkat desa dalam pendidikan hukum.</p>",
         "kategoriId": "cmdwrp0pr0002vnd35w6nkjh0",
         "imageName": "D4za5fHh_y92Bj9qZkp5j-mobile.webp"
+    },
+    {
+        "id": "cmkal9dd70002vnexhvn4j2fv",
+        "name": "Perbekel Darmasaba Terima Penghargaan pada Indonesia Alternative Dispute Resolution Awards 2025",
+        "juara": "Penghargaan IADRA 2025",
+        "deskripsi": "<p>Perbekel Darmasaba, Ida Bagus Surya Prabhawa Manuaba menerima penghargaan pada Indonesia Alternative Dispute Resolution Awards 2025 atas kontribusi dalam penyelesaian sengketa secara damai dan berkeadilan.</p>",
+        "kategoriId": "kategori-prestasi-penghargaan",
+        "imageName": "cte_gy0V8glhDcghMa3-B-mobile.webp"
+    },
+    {
+        "id": "cmkalfbux0005vnexj8zplube",
+        "name": "Penghargaan Bhawana Sewaka Nugraha kepada Perbekel Darmasaba",
+        "juara": "Penghargaan Bhawana Sewaka Nugraha",
+        "deskripsi": "<p>Penghargaan Bhawana Sewaka Nugraha diberikan kepada Perbekel Desa Darmasaba atas dedikasi dan komitmen dalam menjaga kelestarian lingkungan serta menginspirasi masyarakat untuk menciptakan desa yang hijau, bersih, dan berkelanjutan.</p>",
+        "kategoriId": "kategori-prestasi-penghargaan",
+        "imageName": "hLoy_DjB_3Yie2vjaXDYz-mobile.webp"
+    },
+    {
+        "id": "cmkalgucu000bvnexw2blt1v3",
+        "name": "Pemerintah Desa Darmasaba Raih Peringkat IV dalam Ajang Mangupura Award Tahun 2025",
+        "juara": "Peringkat IV Mangupura Award 2025",
+        "deskripsi": "<p>Desa Darmasaba mendapatkan penghargaan Peringkat IV pada Mangupura Award 2025 dari Pemerintah Kabupaten Badung atas tata kelola pemerintahan, inovasi layanan, dan pemberdayaan masyarakat.</p>",
+        "kategoriId": "kategori-prestasi-penghargaan",
+        "imageName": "xgrBxDdo8g7KA-3zNbRGj-mobile.webp"
     }
 ]

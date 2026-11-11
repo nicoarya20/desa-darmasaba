@@ -6,7 +6,6 @@ import PotensiDesa from "./potensi";
 import GalleryFoto from "./gallery/foto";
 import GalleryVideo from "./gallery/video";
 import LayananDesa from "./layanan";
-import Penghargaan from "./penghargaan";
 import KategoriPotensi from "./potensi/kategori-potensi";
 import KategoriBerita from "./berita/kategori-berita";
 import KategoriPengumuman from "./pengumuman/kategori-pengumuman";
@@ -17,6 +16,7 @@ import KegiatanDesa from "./kegiatan-desa";
 import KategoriKegiatan from "./kegiatan-desa/kategori-kegiatan";
 import EventBudaya from "./event-budaya";
 import Banjar from "./banjar";
+import DokumenPerencanaan from "./dokumen-perencanaan";
 
 
 const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
@@ -28,7 +28,6 @@ const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
   .use(GalleryVideo)
   .use(MantanPerbekel)
   .use(LayananDesa)
-  .use(Penghargaan)
   .use(KategoriPotensi)
   .use(KategoriBerita)
   .use(KategoriPengumuman)
@@ -38,6 +37,7 @@ const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
   .use(KategoriKegiatan)
   .use(EventBudaya)
   .use(Banjar)
+  .use(DokumenPerencanaan)
 
 
 export default Desa;

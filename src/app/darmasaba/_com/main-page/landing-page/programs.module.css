@@ -1,0 +1,267 @@
+/*
+ * Rel program inovasi di kiri bawah hero. 4 ubin terlihat penuh, ubin ke-5 mengintip sebagai petunjuk;
+ * sisanya digeser dengan scroll bawaan browser (scroll-snap) — seret, trackpad, atau tombol panah.
+ * Tanpa putar otomatis: galeri Layanan & Potensi di bawahnya sudah bergerak sendiri.
+ * Variabel --gutter, --ink, --muted, --brand, --tile diwarisi dari .section (landing.module.css).
+ */
+
+/* Terdaftar sebagai <length> supaya lebar gradasi tepi bisa bertransisi (tanpa ini berganti seketika). */
+@property --fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+.programs {
+  --gap: 12px;
+  --peek: 48px;
+  --fade: 72px; /* lebar gradasi pudar di tepi rel */
+  --visible-tiles: 4; /* harus sama dengan RAIL_VISIBLE_TILES di rail.logic.ts */
+  grid-area: programs;
+  position: relative;
+  min-width: 0;
+  margin-top: 28px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  margin-bottom: 6px;
+}
+
+.title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.empty {
+  margin: 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* ---------- Panah ---------- */
+.arrows {
+  display: flex;
+  gap: 8px;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--tile);
+  color: var(--brand);
+  cursor: pointer;
+  transition:
+    transform 200ms ease,
+    opacity 200ms ease;
+}
+
+.arrow:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.arrow:not(:disabled):active {
+  transform: scale(0.94);
+}
+
+/* ---------- Rel ---------- */
+/* Padding atas-bawah memberi ruang untuk ubin yang naik + bayangannya saat hover:
+   overflow-x: auto ikut memotong sumbu vertikal. */
+.rail {
+  display: flex;
+  gap: var(--gap);
+  margin: 0;
+  padding: 6px 0 18px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  /* Tepi rel memudar bertahap, bukan terpotong tajam. Sisi yang sudah mentok (tak ada ubin tersembunyi)
+     tetap utuh: --fade-start/--fade-end hanya diisi lewat data-fade-* dari posisi geser. */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent
+  );
+  transition:
+    --fade-start 240ms ease,
+    --fade-end 240ms ease;
+}
+
+.rail[data-fade-start] {
+  --fade-start: var(--fade);
+}
+
+.rail[data-fade-end] {
+  --fade-end: var(--fade);
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+.railItem {
+  flex: 0 0 calc((100% - var(--peek) - var(--visible-tiles) * var(--gap)) / var(--visible-tiles));
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.tile,
+.tileSkeleton {
+  min-height: 148px;
+  background: var(--tile);
+  border-radius: 16px;
+}
+
+.tileSkeleton {
+  background: rgb(255 255 255 / 55%);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  padding: 14px 10px 12px;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.tile .tileLogo,
+.tileLogoEmpty {
+  flex: none;
+  width: 100%;
+  height: 72px;
+}
+
+.tileLogoEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a1a1a6;
+}
+
+.tileName {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.tile:focus-visible,
+.arrow:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgb(6 47 73 / 12%);
+  }
+}
+
+.tile:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Garis posisi ---------- */
+.progress {
+  height: 3px;
+  margin-top: -6px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgb(10 78 120 / 14%);
+}
+
+.thumb {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--brand);
+}
+
+/* ---------- Gerak ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Masuk bergiliran, sekali. fill backwards saja: setelah selesai, transform hover kembali berlaku. */
+  .tile {
+    animation: tileIn 520ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+}
+
+@keyframes tileIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .arrow,
+  .rail {
+    transition: none;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .programs {
+    margin-top: 32px;
+  }
+
+  /* Layar sentuh: geser langsung dengan jari. */
+  .arrows {
+    display: none;
+  }
+
+  /* Rel sampai tepi layar; ubin lebar tetap, ubin berikutnya mengintip. */
+  .rail {
+    margin: 0 calc(var(--gutter) * -1);
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+    scroll-padding-left: var(--gutter);
+  }
+
+  .railItem {
+    flex-basis: 132px;
+  }
+
+  .programs {
+    --fade: 40px;
+  }
+}

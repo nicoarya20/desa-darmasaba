@@ -31,7 +31,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useProxy } from "valtio/utils";
-import BackButton from "../../desa/layanan/_com/BackButto";
+import BackButton from "../../pemerintahan/layanan/_com/BackButto";
 
 const manfaatProgram = [
   {
@@ -79,7 +79,7 @@ export default function Page() {
         <BackButton />
       </Box>
 
-      <Grid px={{ base: "md", md: 100 }} align="center" gutter="lg">
+      <Grid px={{ base: "md", md: 100 }} align="center" gap="lg">
         <GridCol span={{ base: 12, md: 8 }}>
           <Title
             order={1}

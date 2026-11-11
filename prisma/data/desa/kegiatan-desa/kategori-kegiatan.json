@@ -18,5 +18,17 @@
   {
     "id": "katpemberday01",
     "nama": "Pemberdayaan Masyarakat"
+  },
+  {
+    "id": "katpembangunan01",
+    "nama": "Pembangunan"
+  },
+  {
+    "id": "katkepemudaan01",
+    "nama": "Kepemudaan"
+  },
+  {
+    "id": "katpkkperempuan01",
+    "nama": "PKK & Pemberdayaan Perempuan"
   }
 ]

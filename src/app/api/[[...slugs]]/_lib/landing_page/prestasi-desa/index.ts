@@ -22,6 +22,8 @@ const PrestasiDesa = new Elysia({
       name: t.String(),
       imageId: t.String(),
       deskripsi: t.String(),
+      // Capaian/peringkat (eks-Penghargaan.juara); opsional, kosong → null.
+      juara: t.Optional(t.Nullable(t.String())),
       kategoriId: t.String(),
     }),
   })
@@ -32,6 +34,8 @@ const PrestasiDesa = new Elysia({
       name: t.String(),
       imageId: t.Optional(t.String()),
       deskripsi: t.Optional(t.String()),
+      // Tidak dikirim = tidak diubah; "" / null = dikosongkan.
+      juara: t.Optional(t.Nullable(t.String())),
       kategoriId: t.Optional(t.String()),
     }),
   })

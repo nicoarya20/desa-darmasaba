@@ -1,12 +1,13 @@
 'use client'
 import profileLandingPageState from '@/app/admin/(dashboard)/_state/landing-page/profile';
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
+import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import { Badge, Box, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconSparkles } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
+import { DokumentasiGaleri } from './_com/DokumentasiGaleri';
 
 function Page() {
   const params = useParams();
@@ -67,9 +68,9 @@ function Page() {
             {data?.name}
           </Title>
 
-          {data.image && (
+          {data.image?.link && (
             <Image
-              src={data.image?.link}
+              src={data.image.link}
               alt={data.name}
               fit="contain"
               mah={400}
@@ -90,6 +91,8 @@ function Page() {
             dangerouslySetInnerHTML={{ __html: data?.description || '-' }}
             style={{ wordBreak: "break-word", whiteSpace: "normal" }}
           />
+
+          <DokumentasiGaleri images={data.images} alt={`Dokumentasi ${data.name}`} />
         </Stack>
       </Paper>
     </Stack>

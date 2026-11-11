@@ -31,9 +31,23 @@ MINIO_USE_SSL="..."
 
 Seafile has been fully replaced by MinIO (see `prisma/migrate-seafile-to-minio.ts` for the one-off migration script). `SEAFILE_*` and `WIBU_UPLOAD_DIR`/`WIBU_DOWNLOAD_DIR` are still declared in `.env.example` but are leftovers — no active code path reads them (see `docs/DATABASE.md`).
 
+## Operator: backfill ukuran berkas (`FileStorage.size`)
+
+Migrasi `20261109150000_add_file_storage_size` menambah kolom `FileStorage.size` (byte, nullable). Upload baru langsung mengisinya; baris lama tetap `NULL` sampai backfill dijalankan **sekali** setelah migrasi, dari container/host yang punya `DATABASE_URL` + env MinIO yang sama dengan aplikasi:
+
+```bash
+bun run backfill:file-size   # = bun run prisma/backfill-file-size.ts
+```
+
+- Memproses baris `size IS NULL` per 100 (urut id), `statObject` ke `<path>/<name>` di `MINIO_BUCKET`; dokumen ter-gzip diisi ukuran aslinya (trailer gzip).
+- Idempoten — aman diulang; baris yang sudah terisi tidak disentuh.
+- Objek MinIO yang hilang/error dicatat (`gagal id=<id> (<kode>)`) lalu dilewati; exit code 1 bila ada yang gagal. Baris gagal tetap `NULL` (endpoint ZIP dokumen DAK fallback ke `statObject`).
+
 ## Docker
 
-Multi-stage build: `oven/bun:1-debian` → builder → runner. The runner creates a `nextjs` user (UID 1001), exposes port 3000, and mounts `/app/uploads` as a volume. Entrypoint runs migrations automatically (`bunx prisma migrate deploy`).
+Multi-stage build: `oven/bun:1.4.4-debian` (pinned) → builder → runner. The Dockerfile uses `COPY --chmod`, which needs BuildKit (`docker buildx`; CI uses `docker/setup-buildx-action`). The legacy builder fails at the runner stage. `next build` uses Turbopack (Next 16 default) and needs roughly 2.5 GB RAM inside the build container. The runner creates a `nextjs` user (UID 1001), exposes port 3000, and mounts `/app/uploads` as a volume. Entrypoint runs migrations automatically (`bunx prisma migrate deploy`).
+
+Since Next 16, `next dev` writes its output to `.next/dev`, separate from the `next build` output in `.next/`.
 
 ## CI/CD
 

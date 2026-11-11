@@ -10,7 +10,7 @@ export const landingPageMenu: NavItem = {
     { id: "Landing_Page_2", name: "Desa Anti Korupsi", path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi" },
     { id: "Landing_Page_3", name: "SDGs", path: "/admin/landing-page/SDGs" },
     { id: "Landing_Page_4", name: "APBDes", path: "/admin/landing-page/apbdes" },
-    { id: "Landing_Page_5", name: "Prestasi Desa", path: "/admin/landing-page/prestasi-desa/list-prestasi-desa" },
+    { id: "Landing_Page_5", name: "Prestasi dan Penghargaan", path: "/admin/landing-page/prestasi-desa/list-prestasi-desa" },
   ],
 }
 
@@ -32,19 +32,18 @@ export const ppidMenu: NavItem = {
 
 export const desaMenu: NavItem = {
   id: "Desa",
-  name: "Desa",
+  name: "Pemerintahan",
   path: "",
   children: [
-    { id: "Desa_1", name: "Profil", path: "/admin/desa/profil/profil-desa" },
-    { id: "Desa_2", name: "Potensi", path: "/admin/desa/potensi/list-potensi" },
-    { id: "Desa_3", name: "Berita", path: "/admin/desa/berita/list-berita" },
-    { id: "Desa_4", name: "Pengumuman", path: "/admin/desa/pengumuman/list-pengumuman" },
-    { id: "Desa_5", name: "Gallery", path: "/admin/desa/gallery/foto" },
-    { id: "Desa_6", name: "Layanan", path: "/admin/desa/layanan/pelayanan_surat_keterangan" },
-    { id: "Desa_7", name: "Penghargaan", path: "/admin/desa/penghargaan" },
-    { id: "Desa_8", name: "Kegiatan Desa", path: "/admin/desa/kegiatan-desa/list-kegiatan-desa" },
-    { id: "Desa_9", name: "Event Budaya", path: "/admin/desa/event-budaya" },
-    { id: "Desa_10", name: "Banjar", path: "/admin/desa/banjar" },
+    { id: "Desa_1", name: "Profil", path: "/admin/pemerintahan/profil/profil-desa" },
+    { id: "Desa_2", name: "Potensi", path: "/admin/pemerintahan/potensi/list-potensi" },
+    { id: "Desa_3", name: "Berita", path: "/admin/pemerintahan/berita/list-berita" },
+    { id: "Desa_4", name: "Pengumuman", path: "/admin/pemerintahan/pengumuman/list-pengumuman" },
+    { id: "Desa_5", name: "Gallery", path: "/admin/pemerintahan/gallery/foto" },
+    { id: "Desa_6", name: "Layanan", path: "/admin/pemerintahan/layanan/pelayanan_surat_keterangan" },
+    { id: "Desa_8", name: "Kegiatan Desa", path: "/admin/pemerintahan/kegiatan-desa/list-kegiatan-desa" },
+    { id: "Desa_9", name: "Agenda & Kalender Desa", path: "/admin/pemerintahan/event-budaya" },
+    { id: "Desa_10", name: "Banjar", path: "/admin/pemerintahan/banjar" },
   ],
 }
 
@@ -85,12 +84,12 @@ export const ekonomiMenu: NavItem = {
   children: [
     { id: "Ekonomi_UMKM_1", name: "UMKM", path: "/admin/ekonomi/umkm/dashboard" },
     { id: "Ekonomi_2", name: "Lowongan Kerja Lokal", path: "/admin/ekonomi/lowongan-kerja-lokal" },
-    { id: "Ekonomi_3", name: "Struktur Organisasi Dan Sk Pengurus Bumdesa", path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai" },
+    { id: "Ekonomi_3", name: "BUMDes", path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/profil" },
     { id: "Ekonomi_4", name: "PADesa (Pendapatan Asli Desa)", path: "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa" },
     { id: "Ekonomi_5", name: "Jumlah Pengangguran", path: "/admin/ekonomi/jumlah-pengangguran" },
     { id: "Ekonomi_6", name: "Jumlah penduduk usia kerja yang menganggur", path: "/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia" },
     { id: "Ekonomi_7", name: "Jumlah Penduduk Miskin", path: "/admin/ekonomi/jumlah-penduduk-miskin" },
-    { id: "Ekonomi_8", name: "Program Kemiskinan", path: "/admin/ekonomi/program-kemiskinan" },
+    { id: "Ekonomi_8", name: "Program Pengentasan Kemiskinan", path: "/admin/ekonomi/program-kemiskinan" },
     { id: "Ekonomi_9", name: "Sektor Unggulan Desa", path: "/admin/ekonomi/sektor-unggulan-desa" },
     { id: "Ekonomi_10", name: "Demografi Pekerjaan", path: "/admin/ekonomi/demografi-pekerjaan" },
     { id: "Ekonomi_11", name: "Kesejahteraan Masyarakat", path: "/admin/ekonomi/kesejahteraan-masyarakat" },
@@ -166,5 +165,16 @@ export const userRoleMenu: NavItem = {
     { id: "User", name: "User", path: "/admin/user&role/user" },
     { id: "Role", name: "Role", path: "/admin/user&role/role" },
     { id: "Menu Access", name: "Menu Access", path: "/admin/user&role/menu-access" },
+  ],
+}
+
+// Hanya role "0"/"1" (ditambahkan getNavbar). Sengaja TIDAK masuk navBar/devBar supaya
+// tidak bisa diberikan ke role lain lewat halaman Menu Access.
+export const pengaturanMenu: NavItem = {
+  id: "Pengaturan",
+  name: "Pengaturan",
+  path: "",
+  children: [
+    { id: "Pengaturan_1", name: "Visibilitas Menu", path: "/admin/pengaturan/visibilitas-menu" },
   ],
 }

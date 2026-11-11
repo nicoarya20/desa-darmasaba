@@ -3,6 +3,8 @@ import penjualanProdukCreate from "./create";
 import penjualanProdukDelete from "./del";
 import penjualanProdukFindMany from "./findMany";
 import penjualanProdukFindUnique from "./findUnique";
+import penjualanProdukPesan from "./pesan";
+import { PESAN_MAX_JUMLAH } from "./_pesan";
 import penjualanProdukUpdate from "./updt";
 
 const PenjualanProduk = new Elysia({
@@ -22,6 +24,13 @@ const PenjualanProduk = new Elysia({
       hargaSatuan: t.Number(),
       tanggal: t.Optional(t.String()),
       isActive: t.Optional(t.Boolean()),
+    }),
+  })
+  // Publik (whitelist PUBLIC_POST_PATHS): harga diambil server dari DB, bukan klien.
+  .post("/pesan", penjualanProdukPesan, {
+    body: t.Object({
+      produkId: t.String({ minLength: 1 }),
+      jumlah: t.Integer({ minimum: 1, maximum: PESAN_MAX_JUMLAH }),
     }),
   })
   .put("/:id", penjualanProdukUpdate, {

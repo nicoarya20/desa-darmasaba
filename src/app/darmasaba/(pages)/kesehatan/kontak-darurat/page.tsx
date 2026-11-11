@@ -23,7 +23,7 @@ import { IconSearch } from '@tabler/icons-react';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 
 /**
  * lineClamp Mantine memakai `display: -webkit-box`. Di WebKit, clamp gagal
@@ -74,7 +74,7 @@ function Page() {
         <BackButton />
       </Box>
 
-      <Grid align="center" px={{ base: 'md', md: 100 }} gutter="lg">
+      <Grid align="center" px={{ base: 'md', md: 100 }} gap="lg">
         <GridCol span={{ base: 12, md: 8 }}>
           <Title
             order={1}

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Context } from "elysia";
 import prisma from "@/lib/prisma";
+import { BERITA_LIST_ORDER_BY } from "@/lib/berita-data";
 
 export default async function searchFindMany(context: Context) {
   const { query, page = 1, limit = 10, type } = context.query as any;
@@ -114,6 +115,7 @@ export default async function searchFindMany(context: Context) {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
           { deskripsi: { contains: query, mode: "insensitive" } },
+          { juara: { contains: query, mode: "insensitive" } },
           { kategori: { name: { contains: query, mode: "insensitive" } } },
         ],
       },
@@ -371,6 +373,7 @@ export default async function searchFindMany(context: Context) {
           },
         ],
       },
+      orderBy: BERITA_LIST_ORDER_BY,
       skip,
       take: limitNum,
     });
@@ -501,22 +504,6 @@ export default async function searchFindMany(context: Context) {
       where: {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
-          { deskripsi: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      skip,
-      take: limitNum,
-    });
-    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
-  }
-
-  // ========================================= PENGHARGAAN ========================================= //
-  if (type === "penghargaan") {
-    const data = await prisma.penghargaan.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { juara: { contains: query, mode: "insensitive" } },
           { deskripsi: { contains: query, mode: "insensitive" } },
         ],
       },
@@ -1524,7 +1511,6 @@ export default async function searchFindMany(context: Context) {
     pelayananPerizinanBerusaha,
     pelayananTelunjukSaktiDesa,
     pelayananPendudukNonPermanen,
-    penghargaan,
     posyandu,
     fasilitasKesehatan,
     jadwalKegiatan,
@@ -1627,6 +1613,7 @@ export default async function searchFindMany(context: Context) {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
           { deskripsi: { contains: query, mode: "insensitive" } },
+          { juara: { contains: query, mode: "insensitive" } },
           { kategori: { name: { contains: query, mode: "insensitive" } } },
         ],
       },
@@ -1790,6 +1777,7 @@ export default async function searchFindMany(context: Context) {
           },
         ],
       },
+      orderBy: BERITA_LIST_ORDER_BY,
       take: limitNum,
     }),
     prisma.kategoriBerita.findMany({
@@ -1871,16 +1859,6 @@ export default async function searchFindMany(context: Context) {
       where: {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
-          { deskripsi: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      take: limitNum,
-    }),
-    prisma.penghargaan.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { juara: { contains: query, mode: "insensitive" } },
           { deskripsi: { contains: query, mode: "insensitive" } },
         ],
       },
@@ -2572,7 +2550,6 @@ export default async function searchFindMany(context: Context) {
         type: "pelayananPendudukNonPermanen",
         ...b,
       })),
-      ...penghargaan.map((b) => ({ type: "penghargaan", ...b })),
       ...posyandu.map((b) => ({ type: "posyandu", ...b })),
       ...fasilitasKesehatan.map((b) => ({ type: "fasilitasKesehatan", ...b })),
       ...dokterDanTenagaMedis.map((b) => ({ type: "dokterdanTenagaMedis", ...b })),

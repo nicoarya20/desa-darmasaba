@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../seed-prisma";
 
 const kategoriUmkmData = [
   { id: "4b95bge6-012e-5ged-9552-4d8g65d44959", nama: "Makanan" },

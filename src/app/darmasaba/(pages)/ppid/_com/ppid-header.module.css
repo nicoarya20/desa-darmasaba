@@ -1,0 +1,66 @@
+/* Kepala halaman PPID — pola kepala Potensi Desa (judul brand 48px, pengantar abu 19px). */
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 40px;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.title {
+  margin: 0;
+  color: var(--brand);
+  font-size: 48px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.lead {
+  max-width: 640px;
+  margin: 0;
+  color: #515154;
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.aside {
+  flex: 0 0 320px;
+}
+
+@media (max-width: 1068px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .aside {
+    flex-basis: auto;
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 734px) {
+  .intro {
+    gap: 10px;
+  }
+
+  .title {
+    font-size: 32px;
+    line-height: 1.12;
+  }
+
+  .lead {
+    font-size: 17px;
+    line-height: 1.47;
+  }
+
+  .aside {
+    max-width: none;
+  }
+}

@@ -1,3 +1,4 @@
+import { parseWaktuBiaya, toWaktuBiayaForm } from "@/lib/pelayanan-waktu-biaya";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -16,6 +17,8 @@ type pelayananPerizinanBerusahaForm =
       name: true;
       deskripsi: true;
       link: true;
+      estimasiWaktu: true;
+      biaya: true;
     };
   }>;
 
@@ -23,6 +26,8 @@ const pelayananPerizinanBerusahaDefaultForm = {
   name: "",
   deskripsi: "",
   link: "",
+  estimasiWaktu: "",
+  biaya: "",
 };
 
 const pelayananPerizinanBerusaha = proxy({
@@ -80,6 +85,7 @@ const pelayananPerizinanBerusaha = proxy({
             name: data.name,
             deskripsi: data.deskripsi,
             link: data.link,
+            ...toWaktuBiayaForm(data),
           };
           return data;
         } else {
@@ -100,6 +106,11 @@ const pelayananPerizinanBerusaha = proxy({
           .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
           .join(", ");
         toast.error(`Form tidak valid: ${errors}`);
+        return;
+      }
+      const waktuBiaya = parseWaktuBiaya(data);
+      if (!waktuBiaya.ok) {
+        toast.error(waktuBiaya.message);
         return;
       }
 

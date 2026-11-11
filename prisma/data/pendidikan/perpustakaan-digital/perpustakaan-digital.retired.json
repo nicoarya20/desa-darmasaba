@@ -1,0 +1,10 @@
+{
+  "keterangan": "Buku \"Seni Berpikir Kritis\" tertulis dua kali di perpustakaan-digital.json (judul, deskripsi, dan kategori sama). Entri kedua dihapus bila judul dan deskripsinya belum diubah admin; entri cmkqiyts2001evneahnk45ry5 dipertahankan.",
+  "data": [
+    {
+      "id": "cmkqj0nq0001hvnea06r8m3kj",
+      "judul": "Seni Berpikir Kritis",
+      "deskripsi": "<p>Buku yang membantu pembaca menghindari kesalahan berpikir dalam pengambilan keputusan</p>"
+    }
+  ]
+}

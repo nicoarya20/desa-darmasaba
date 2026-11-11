@@ -7,7 +7,7 @@ import { useProxy } from 'valtio/utils'
 
 import keamananLingkunganState from '@/app/admin/(dashboard)/_state/keamanan/keamanan-lingkungan'
 import colors from '@/con/colors'
-import BackButton from '../../../desa/layanan/_com/BackButto'
+import BackButton from '../../../pemerintahan/layanan/_com/BackButto'
 
 function DetailKeamananLingkunganUser() {
   const keamananState = useProxy(keamananLingkunganState)

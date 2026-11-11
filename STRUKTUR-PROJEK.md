@@ -10,7 +10,7 @@
 |----------|-----------|
 | **Framework Frontend** | Next.js 15 dengan App Router |
 | **Bahasa** | TypeScript (strict mode) |
-| **Styling** | Mantine UI v7/v8 + Custom CSS |
+| **Styling** | Mantine UI v9 + Custom CSS |
 | **Backend API** | Elysia.js (high-performance TypeScript framework) |
 | **Database** | PostgreSQL |
 | **ORM** | Prisma 6.3.1 |
@@ -269,14 +269,13 @@ desa-darmasaba/
 ## 4. Modul Domain
 
 ### 4.1 Profil Desa (Desa)
-**Admin**: `/admin/desa/*` | **Publik**: `/darmasaba/desa/*`
+**Admin**: `/admin/pemerintahan/*` | **Publik**: `/darmasaba/pemerintahan/*`
 
 | Sub-modul | Fungsi |
 |-----------|--------|
 | `berita` | CRUD berita/pengumuman desa |
 | `gallery` | Galeri foto dan video |
 | `layanan` | Manajemen layanan desa |
-| `penghargaan` | Penghargaan yang diraih |
 | `pengumuman` | Pengumuman publik |
 | `potensi` | Potensi desa (pertanian, pariwisata, dll) |
 | `profil` | Profil desa (sejarah, visi misi, lambang, maskot, perangkat) |
@@ -397,7 +396,7 @@ desa-darmasaba/
 | Sub-modul | Fungsi |
 |-----------|--------|
 | `desa-anti-korupsi` | Konten anti-korupsi |
-| `prestasi-desa` | Prestasi yang diraih |
+| `prestasi-desa` | Prestasi dan Penghargaan (penghargaan = kategori "Penghargaan", field opsional `juara`) |
 | `sdgs-desa` | SDGs (Sustainable Development Goals) |
 | `profil-landing-page` | Profil dan media sosial |
 
@@ -461,8 +460,7 @@ model AppMenu {
 - `ProfileDesaImage` - Gambar profil desa
 - `ProfilPerbekel` - Profil perbekel (kepala desa)
 - `PejabatDesa` - Pejabat desa
-- `Penghargaan` - Penghargaan
-- `PrestasiDesa` - Prestasi
+- `PrestasiDesa` - Prestasi & penghargaan (tabel `Penghargaan` lama digabung ke sini, lihat Landing Page)
 - `MediaSosial` - Media sosial desa
 
 #### Modul PPID
@@ -547,7 +545,7 @@ model AppMenu {
 #### Landing Page
 - `DesaAntiKorupsi` + `KategoriDesaAntiKorupsi`
 - `SdgsDesa` - SDGs
-- `PrestasiDesa` + `KategoriPrestasiDesa`
+- `PrestasiDesa` + `KategoriPrestasiDesa` — termasuk penghargaan (kategori "Penghargaan", `juara String?`); tabel `Penghargaan` dihapus di migrasi `20261109123000_merge_penghargaan_into_prestasi_desa`
 - `MediaSosial`
 - `LandingPage_Layanan`
 
@@ -643,7 +641,7 @@ Admin dashboard berada di `/admin` dengan route group `(dashboard)`.
 |---------|------|--------|
 | **Dashboard** | `/admin` | Dashboard utama |
 | **Autentikasi** | `/admin/auth` | Login admin |
-| **Desa** | `/admin/desa/*` | Berita, gallery, profil, layanan, penghargaan, pengumuman, potensi |
+| **Desa** | `/admin/pemerintahan/*` | Berita, gallery, profil, layanan, pengumuman, potensi |
 | **PPID** | `/admin/ppid/*` | Profil, struktur, visi-misi, daftar informasi, dasar hukum, permohonan, IKM |
 | **Kesehatan** | `/admin/kesehatan/*` | Puskesmas, posyandu, program kesehatan, wabah, kontak darurat |
 | **Ekonomi** | `/admin/ekonomi/*` | APBDes, PAD, demografi, pengangguran, kemiskinan, BUMDes, pasar desa |
@@ -653,7 +651,7 @@ Admin dashboard berada di `/admin` dengan route group `(dashboard)`.
 | **Lingkungan** | `/admin/lingkungan/*` | Data lingkungan, konservasi, bank sampah, penghijauan, gotong royong |
 | **Inovasi** | `/admin/inovasi/*` | Ide inovatif, desa digital, teknologi tepat guna, kolaborasi |
 | **Musik** | `/admin/musik/*` | Manajemen musik desa |
-| **Landing Page** | `/admin/landing-page/*` | Anti-korupsi, prestasi, SDGs, media sosial |
+| **Landing Page** | `/admin/landing-page/*` | Anti-korupsi, prestasi & penghargaan, SDGs, media sosial |
 | **User & Role** | `/admin/user&role/*` | Manajemen user dan role |
 | **Images** | `/admin/images/*` | Manajemen gambar |
 | **CSV** | `/admin/csv/*` | Upload/import CSV |

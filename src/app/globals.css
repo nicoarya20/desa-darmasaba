@@ -3,7 +3,6 @@
 /* ===================================
    1. IMPORT CSS LIBRARIES
    =================================== */
-@import "@mantine/carousel/styles.css";
 @import "@mantine/dropzone/styles.css";
 @import "@mantine/charts/styles.css";
 @import "@mantine/dates/styles.css";
@@ -50,32 +49,33 @@ body {
 }
 
 /* ===================================
+   3b. RITME SECTION BERANDA
+   ===================================
+   Satu-satunya pengatur jarak antar section beranda: ubah --section-gap saja.
+   Tiap section memberi padding atas & bawah = setengahnya, jadi jarak konten
+   section A → konten section B selalu ±--section-gap, baik latar keduanya sama
+   maupun berbeda (tiap warna latar kebagian setengah). */
+:root {
+  --section-gap: 100px;
+  --section-pad-y: calc(var(--section-gap) / 2);
+}
+
+/* = breakpoint mobile apple.com yang dipakai section beranda */
+@media (max-width: 734px) {
+  :root {
+    --section-gap: 72px;
+  }
+}
+
+/* ===================================
    4. GLASS EFFECTS - OPTIMIZED
    =================================== */
-.glass {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  position: fixed;
-  z-index: 50;
-  width: 100%;
-  height: 100vh;
-  will-change: transform; /* ✅ Hardware acceleration */
-}
-
-.glass2 {
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  position: fixed;
-  z-index: 1;
-  will-change: transform; /* ✅ Hardware acceleration */
-}
-
+/* Tulis `backdrop-filter` TANPA `-webkit-backdrop-filter` manual: Lightning CSS
+   (Turbopack, Next 16) menggabungkan keduanya jadi hanya versi -webkit- yang
+   diabaikan Chrome → blur hilang. Prefix ditambahkan otomatis oleh compiler. */
 .glass3 {
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
   will-change: transform; /* ✅ Hardware acceleration */
 }
 

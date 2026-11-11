@@ -1,36 +1,48 @@
-const getDetailUrl = (item: { type?: string; id: string | number;[key: string]: unknown }) => {
+import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
+import { isPathHidden } from './menu-visibility.logic';
+
+type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
+
+const getDetailUrl = (item: SearchItem) => {
   const { type, id, kategori } = item;
-  const map: Record<string, (id: string | number, kategori?: string) => string> = {
+  const map: Record<string, (id: string | number, kategori?: string, item?: SearchItem) => string> = {
     programinovasi: (id) => `/darmasaba/program-inovasi/${id}`,
+    // Tujuan media sosial adalah link eksternal; kosong → beranda (tempat ikon sosmed tampil).
+    mediaSosial: (_id, _kategori, item) =>
+      getSosmedHref(item?.icon as string | null, item?.iconUrl as string | null) ?? '/darmasaba',
     desaantikorupsi: () => '/darmasaba/desa-anti-korupsi',
     sdgsdesa: () => '/darmasaba/sdgs-desa',
     apbdes: () => '/darmasaba/apbdes',
-    prestasidesa: () => '/darmasaba/prestasi-desa',
+    // Termasuk entri eks-Penghargaan (kini kategori "Penghargaan" di tabel PrestasiDesa).
+    prestasidesa: (id) => `/darmasaba/prestasi-desa/${id}`,
     pejabatdesa: () => '/darmasaba/ppid/profil-ppid',
     strukturppid: () => '/darmasaba/ppid/struktur-ppid',
-    visimisippid: () => '/darmasaba/ppid/visi-misi',
+    visimisippid: () => '/darmasaba/ppid/visi-misi-ppid',
     dasarhukumppid: () => '/darmasaba/ppid/dasar-hukum',
-    profileppid: () => '/darmasaba/ppid/profil',
+    profileppid: () => '/darmasaba/ppid/profil-ppid',
     daftarinformasipublik: () => '/darmasaba/ppid/daftar-informasi-publik',
-    perbekeldarmasaba: () => '/darmasaba/desa/profil',
-    berita: (id, kategori) => `/darmasaba/desa/berita/${kategori}/${id}`,
-    pengumuman: (id, kategori) => `/darmasaba/desa/pengumuman/${kategori}/${id}`,
-    sejarahdesa: () => '/darmasaba/desa/profil',
-    visimisidesa: () => '/darmasaba/desa/profil',
-    lambangdesa: () => '/darmasaba/desa/profil',
-    maskotdesa: () => '/darmasaba/desa/profil',
-    profilperbekel: () => '/darmasaba/desa/profil',
-    potensi: () => '/darmasaba/desa/potensi-desa',
-    galleryFoto: () => '/darmasaba/desa/gallery/foto',
-    galleryVideo: () => '/darmasaba/desa/gallery/video',
-    pelayananSuratKeterangan: () => '/darmasaba/desa/layanan',
-    pelayananPerizinanBerusaha: () => '/darmasaba/desa/layanan',
-    pelayananTelunjukSaktiDesa: () => '/darmasaba/desa/layanan',
-    pelayananPendudukNonPermanent: () => '/darmasaba/desa/layanan',
-    penghargaan: () => '/darmasaba/desa/penghargaan',
+    ikm: () => '/darmasaba/ppid/indeks-kepuasan-masyarakat',
+    perbekeldarmasaba: () => '/darmasaba/pemerintahan/profil',
+    berita: (id, kategori) => `/darmasaba/pemerintahan/berita/${kategori}/${id}`,
+    // Slug lowercase, sama dengan tab kategori di halaman berita.
+    kategoriBerita: (_id, _kategori, item) =>
+      `/darmasaba/pemerintahan/berita/${encodeURIComponent(String(item?.name ?? '').toLowerCase())}`,
+    pengumuman: (id, kategori) => `/darmasaba/pemerintahan/pengumuman/${kategori}/${id}`,
+    sejarahdesa: () => '/darmasaba/pemerintahan/profil',
+    visimisidesa: () => '/darmasaba/pemerintahan/profil',
+    lambangdesa: () => '/darmasaba/pemerintahan/profil',
+    maskotdesa: () => '/darmasaba/pemerintahan/profil',
+    profilperbekel: () => '/darmasaba/pemerintahan/profil',
+    potensi: () => '/darmasaba/pemerintahan/potensi',
+    galleryFoto: () => '/darmasaba/pemerintahan/galery/foto',
+    galleryVideo: () => '/darmasaba/pemerintahan/galery/video',
+    pelayananSuratKeterangan: () => '/darmasaba/pemerintahan/layanan',
+    pelayananPerizinanBerusaha: () => '/darmasaba/pemerintahan/layanan',
+    pelayananTelunjukSaktiDesa: () => '/darmasaba/pemerintahan/layanan',
+    pelayananPendudukNonPermanen: () => '/darmasaba/pemerintahan/layanan',
     posyandu: (id) => `/darmasaba/kesehatan/posyandu/${id}`,
     fasilitasKesehatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
-    dokterDanTenagaMedis: () => '/darmasaba/kesehatan/data-kesehatan-warga',
+    dokterdanTenagaMedis: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     tarifDanLayanan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     jadwalKegiatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
     artikelKesehatan: () => '/darmasaba/kesehatan/data-kesehatan-warga',
@@ -45,7 +57,7 @@ const getDetailUrl = (item: { type?: string; id: string | number;[key: string]: 
     pencegahanKriminalitas: () => '/darmasaba/keamanan/pencegahan-kriminalitas',
     laporanPublik: () => '/darmasaba/keamanan/laporan-publik',
     tipsKeamanan: () => '/darmasaba/keamanan/tips-keamanan',
-    pasarDesa: () => '/darmasaba/ekonomi/pasar-desa',
+    pasarDesa: (id) => `/darmasaba/ekonomi/umkm/produk/${id}`,
     lowonganKerjaLokal: () => '/darmasaba/ekonomi/lowongan-kerja-lokal',
     strukturOrganisasi: () => '/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes',
     jumlahPendudukUsiaKerjaYangMenganggurUsia: () => '/darmasaba/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur',
@@ -87,8 +99,18 @@ const getDetailUrl = (item: { type?: string; id: string | number;[key: string]: 
 
   };
 
-  if (type && map[type]) return map[type](id, kategori as string | undefined);
+  if (type && map[type]) return map[type](id, kategori as string | undefined, item);
   return '/darmasaba';
 };
+
+/** Normalisasi `type` hasil pencarian sebelum lookup peta: hanya trim, huruf tidak diubah (kunci peta camelCase). */
+export const normalizeSearchType = (type: unknown) => String(type ?? '').trim();
+
+/**
+ * Benar bila hasil pencarian konten menuju halaman di bawah submenu tersembunyi (halaman itu 404),
+ * memakai pencocokan per segmen yang sama dengan guard 404.
+ */
+export const isSearchResultHidden = (item: SearchItem, hiddenHrefs: readonly string[]) =>
+  isPathHidden(getDetailUrl({ ...item, type: normalizeSearchType(item.type) }), hiddenHrefs);
 
 export default getDetailUrl;

@@ -1,118 +1,55 @@
 'use client'
-import stateDasarHukum from '@/app/admin/(dashboard)/_state/ppid/dasar_hukum/dasarHukum';
-import colors from '@/con/colors';
-import { Box, Paper, Skeleton, Stack, Text, Transition, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { useProxy } from 'valtio/utils';
-import { IconBook2 } from '@tabler/icons-react';
-import BackButton from '../../desa/layanan/_com/BackButto';
+import stateDasarHukum from '@/app/admin/(dashboard)/_state/ppid/dasar_hukum/dasarHukum'
+import { useShallowEffect } from '@mantine/hooks'
+import { useState } from 'react'
+import { useProxy } from 'valtio/utils'
+import { PpidPage } from '../_com/PpidPage'
+import { PpidSectionsSkeleton } from '../_com/PpidSectionsSkeleton'
+import s from '../_com/ppid-sections.module.css'
+import { DasarHukumList } from './_com/DasarHukumList'
+import { parseDasarHukumItems } from './_com/dasar-hukum.logic'
+import { DASAR_HUKUM_TEXT } from './_com/dasar-hukum.text'
 
-function Page() {
-  const state = useProxy(stateDasarHukum);
+/** Baris tunggal dasar hukum PPID di CMS. */
+const DASAR_HUKUM_ID = '1'
+
+/** Halaman publik Dasar Hukum PPID: subjudul dan daftar peraturan bernomor (isi dari CMS). */
+export default function Page() {
+  const state = useProxy(stateDasarHukum)
+  const [loaded, setLoaded] = useState(false)
 
   useShallowEffect(() => {
-    state.findById.load("1");
-  }, []);
+    // Loader menangkap galatnya sendiri (data tetap null) — finally hanya menandai selesai.
+    void state.findById.load(DASAR_HUKUM_ID).finally(() => setLoaded(true))
+  }, [])
 
-  if (!state.findById.data) {
-    return (
-      <Stack p="xl" gap="md">
-        <Skeleton h={70} radius="xl" />
-      </Stack>
-    );
+  const data = state.findById.data
+
+  let content
+  if (data) {
+    // Isi yang bukan satu daftar teks polos (null) dirender apa adanya agar tidak ada yang hilang.
+    const items = parseDasarHukumItems(data.content)
+    content = (
+      <div className={s.sections}>
+        <section className={s.section} aria-labelledby="ppid-dasar-hukum">
+          <h2 id="ppid-dasar-hukum" className={s.sectionLabel} dangerouslySetInnerHTML={{ __html: data.judul }} />
+          {items ? (
+            <DasarHukumList items={items} />
+          ) : (
+            <div className={s.body} dangerouslySetInnerHTML={{ __html: data.content }} />
+          )}
+        </section>
+      </div>
+    )
+  } else if (loaded) {
+    content = <p className={s.empty}>{DASAR_HUKUM_TEXT.empty}</p>
+  } else {
+    content = <PpidSectionsSkeleton label={DASAR_HUKUM_TEXT.loading} />
   }
 
-  const dataArray = Array.isArray(state.findById.data)
-    ? state.findById.data
-    : [state.findById.data];
-
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl">
-      <Box px={{ base: 'md', md: 100 }}>
-        <BackButton />
-      </Box>
-
-      {/* HEADER */}
-      <Stack align="center" gap="xs" px={{ base: 'md', md: 100 }}>
-        <IconBook2 size={42} stroke={1.5} color={colors["blue-button"]} />
-
-        <Title
-          order={1}
-          ta="center"
-          c={colors["blue-button"]}
-          fz={{ base: "1.8rem", md: "2.3rem" }}
-          lh={1.2}
-          style={{ letterSpacing: "-0.5px" }}
-        >
-          Dasar Hukum
-        </Title>
-
-        <Text
-          ta="center"
-          fz={{ base: "sm", md: "md" }}
-          lh={1.6}
-          c="black"
-        >
-          Informasi regulasi dan kebijakan resmi yang menjadi dasar hukum
-        </Text>
-      </Stack>
-
-      {/* CONTENT */}
-      <Box px={{ base: "md", md: 100 }}>
-        <Stack gap="lg">
-          {dataArray.map((item, k) => (
-            <Transition
-              key={k}
-              mounted
-              transition="fade-up"
-              duration={400}
-              timingFunction="ease"
-            >
-              {(styles) => (
-                <Paper
-                  p="xl"
-                  radius="xl"
-                  shadow="md"
-                  bg={colors['white-trans-1']}
-                  style={{
-                    ...styles,
-                    backdropFilter: "blur(10px)",
-                    border: `1px solid ${colors["blue-button"]}20`,
-                  }}
-                >
-                  <Stack gap="md">
-
-                    {/* JUDUL */}
-                    <Title
-                      order={3}
-                      ta="center"
-                      c="black"
-                      fz={{ base: "lg", md: "xl" }}
-                      lh={1.3}
-                      dangerouslySetInnerHTML={{ __html: item.judul }}
-                    />
-
-                    {/* CONTENT */}
-                    <Text
-                      c="black"
-                      ta="justify"
-                      fz={{ base: "sm", md: "md" }}
-                      lh={1.7}
-                      style={{
-                        wordBreak: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                      dangerouslySetInnerHTML={{ __html: item.content }}
-                    />
-                  </Stack>
-                </Paper>
-              )}
-            </Transition>
-          ))}
-        </Stack>
-      </Box>
-    </Stack>
-  );
+    <PpidPage title={DASAR_HUKUM_TEXT.title} lead={DASAR_HUKUM_TEXT.lead}>
+      {content}
+    </PpidPage>
+  )
 }
-
-export default Page;

@@ -1,0 +1,231 @@
+/* Visi dan Misi PPID: satu kartu terang terpusat — lambang desa, moto, visi, lalu misi —
+   dengan pemisah berornamen. Judul dan kalimat pendek rata tengah; butir misi rata kiri
+   di kolom terpusat supaya tetap mudah dibaca. */
+.card {
+  --vm-text: #1d1d1f;
+  --vm-rule: #b1bdd1;
+  /* Panjang baris baca di dalam kartu (±70 karakter), bukan lebar isi halaman. */
+  --vm-measure: 46rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 48px 72px;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  border-radius: 32px;
+  background: var(--vm-card);
+  box-shadow: 0 16px 40px rgb(10 78 120 / 0.1);
+  animation: rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Muncul sekali saat isi selesai dimuat; prefers-reduced-motion ditangani global (globals.css). */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 24px;
+  object-fit: contain;
+}
+
+.motoTitle,
+.title {
+  margin: 0;
+  color: var(--brand);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.motoTitle {
+  font-size: 36px;
+  line-height: 1.15;
+}
+
+.title {
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+/* Moto = kalimat kutipan yang ditonjolkan, bukan teks isi biasa. */
+.motoText {
+  max-width: 34rem;
+  margin: 16px 0 0;
+  color: var(--vm-text);
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.motoText::before {
+  content: '\201C';
+}
+
+.motoText::after {
+  content: '\201D';
+}
+
+/* Pemisah: garis pendek di kiri-kanan ornamen (bukan garis selebar kartu). */
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  margin: 48px 0;
+  color: var(--brand);
+}
+
+.ornament::before,
+.ornament::after {
+  content: '';
+  flex: 0 1 140px;
+  height: 1px;
+  background: var(--vm-rule);
+}
+
+.visiText {
+  max-width: var(--vm-measure);
+  margin-top: 16px;
+  color: var(--vm-text);
+  font-size: 20px;
+  line-height: 1.65;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.visiText p {
+  margin: 0 0 0.6em;
+}
+
+.visiText > :last-child {
+  margin-bottom: 0;
+}
+
+.misiList {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  max-width: var(--vm-measure);
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.misiItem {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.misiNumber {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.misiBody {
+  margin: 0;
+  /* Baris pertama sejajar tengah lencana 36px. */
+  padding-top: 3px;
+  color: var(--vm-text);
+  font-size: 19px;
+  line-height: 1.58;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+
+.misiRich {
+  width: 100%;
+  max-width: var(--vm-measure);
+  margin-top: 28px;
+  border-bottom: 0;
+  text-align: left;
+}
+
+@media (max-width: 734px) {
+  .card {
+    padding: 36px 20px 40px;
+    border-radius: 24px;
+  }
+
+  .logo {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 18px;
+  }
+
+  .motoTitle {
+    font-size: 26px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .motoText {
+    margin-top: 12px;
+    font-size: 19px;
+  }
+
+  .ornament {
+    margin: 32px 0;
+  }
+
+  .ornament::before,
+  .ornament::after {
+    flex-basis: 72px;
+  }
+
+  .visiText {
+    margin-top: 12px;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .misiList {
+    gap: 14px;
+    margin-top: 20px;
+  }
+
+  .misiItem {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .misiNumber {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .misiBody {
+    padding-top: 2px;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+}

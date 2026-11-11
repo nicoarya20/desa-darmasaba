@@ -1,6 +1,7 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../../seed-prisma";
 import { loadJsonData } from "../../../load-json";
 
+// Termasuk item eks-Penghargaan (kategori "Penghargaan", id sama dengan seed penghargaan lama).
 const prestasiDesa = loadJsonData("landing-page/prestasi-desa/prestasi-desa.json");
 const kategoriPrestasiDesa = loadJsonData("landing-page/prestasi-desa/kategori-prestasi.json");
 
@@ -44,6 +45,7 @@ for (const c of kategoriPrestasiDesa) {
       where: { id: m.id },
       update: {
         name: m.name,
+        juara: m.juara ?? null,
         deskripsi: m.deskripsi,
         kategoriId: m.kategoriId,
         imageId,
@@ -51,6 +53,7 @@ for (const c of kategoriPrestasiDesa) {
       create: {
         id: m.id,
         name: m.name,
+        juara: m.juara ?? null,
         deskripsi: m.deskripsi,
         kategoriId: m.kategoriId,
         imageId,

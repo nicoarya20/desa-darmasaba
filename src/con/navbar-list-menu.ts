@@ -49,52 +49,57 @@ const navbarListMenu = [
 
     {
         id: "2",
-        name: "Desa",
+        name: "Pemerintahan",
         children: [
             {
                 id: "2.1",
                 name: "Profil",
-                href: "/darmasaba/desa/profil"
+                href: "/darmasaba/pemerintahan/profil"
             },
             {
                 id: "2.2",
                 name: "Potensi",
-                href: "/darmasaba/desa/potensi"
+                href: "/darmasaba/pemerintahan/potensi"
             },
             {
                 id: "2.3",
                 name: "Berita",
-                href: "/darmasaba/desa/berita/semua"
+                href: "/darmasaba/pemerintahan/berita/semua"
             },
             {
                 id: "2.4",
                 name: "Pengumuman",
-                href: "/darmasaba/desa/pengumuman"
+                href: "/darmasaba/pemerintahan/pengumuman"
             },
             {
                 id: "2.5",
                 name: "Gallery",
-                href: "/darmasaba/desa/galery/foto"
+                href: "/darmasaba/pemerintahan/galery/foto"
             },
             {
                 id: "2.6",
                 name: "Layanan",
-                href: "/darmasaba/desa/layanan"
+                href: "/darmasaba/pemerintahan/layanan"
             },
             {
                 id: "2.7",
-                name: "Penghargaan",
-                href: "/darmasaba/penghargaan"
+                name: "Prestasi dan Penghargaan",
+                href: "/darmasaba/prestasi-desa"
             },
             {
                 id: "2.8",
                 name: "Kegiatan Desa",
-                href: "/darmasaba/desa/kegiatan-desa/semua"
+                href: "/darmasaba/pemerintahan/kegiatan-desa/semua"
             },
             {
                 id: "2.9",
-                name: "Kalender Event Budaya",
-                href: "/darmasaba/desa/event-budaya"
+                name: "Agenda & Kalender Desa",
+                href: "/darmasaba/pemerintahan/event-budaya"
+            },
+            {
+                id: "2.10",
+                name: "Monev & Pembangunan",
+                href: "/darmasaba/pemerintahan/monev-pembangunan"
             }
 
         ]
@@ -111,12 +116,14 @@ const navbarListMenu = [
             {
                 id: "3.2",
                 name: "Data Kesehatan Warga",
-                href: "/darmasaba/kesehatan/data-kesehatan-warga"
+                href: "/darmasaba/kesehatan/data-kesehatan-warga",
+                hidden: true
             },
             {
                 id: "3.3",
                 name: "Puskesmas",
-                href: "/darmasaba/kesehatan/puskesmas"
+                href: "/darmasaba/kesehatan/puskesmas",
+                hidden: true
             },
             {
                 id: "3.4",
@@ -126,7 +133,8 @@ const navbarListMenu = [
             {
                 id: "3.5",
                 name: "Penanganan Darurat",
-                href: "/darmasaba/kesehatan/penanganan-darurat"
+                href: "/darmasaba/kesehatan/penanganan-darurat",
+                hidden: true
             },
             {
                 id: "3.6",
@@ -136,7 +144,8 @@ const navbarListMenu = [
             {
                 id: "3.7",
                 name: "Info Wabah/Penyakit",
-                href: "/darmasaba/kesehatan/info-wabah-penyakit"
+                href: "/darmasaba/kesehatan/info-wabah-penyakit",
+                hidden: true
             }
         ]
     },
@@ -197,7 +206,7 @@ const navbarListMenu = [
             },
             {
                 id: "5.3",
-                name: "Struktur Organisasi dan SK Pengurus BUMDesa",
+                name: "BUMDes",
                 href: "/darmasaba/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes"
             },
             {
@@ -222,7 +231,7 @@ const navbarListMenu = [
             },
             {
                 id: "5.8",
-                name: "Program Kemiskinan",
+                name: "Program Pengentasan Kemiskinan",
                 href: "/darmasaba/ekonomi/program-kemiskinan"
             },
             {
@@ -393,6 +402,17 @@ const navbarListMenu = [
                 id: "10.1",
                 name: "Musik Desa",
                 href: "/darmasaba/musik/musik-desa"
+            }
+        ]
+    },
+    {
+        id: "11",
+        name: "DAK",
+        children: [
+            {
+                id: "11.1",
+                name: "Desa Anti Korupsi",
+                href: "/darmasaba/desa-anti-korupsi"
             }
         ]
     }

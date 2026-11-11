@@ -3,13 +3,16 @@
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
+import { tanggalPengumuman } from '@/lib/pengumuman-tanggal';
+import { tanggalTerbitAtauDibuat } from '@/lib/tanggal-terbit';
+import { PengumumanThumbnail } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran';
 import { Badge, Box, Button, Grid, GridCol, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconArrowRight, IconClock, IconNews, IconSpeakerphone } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../../desa/layanan/_com/BackButto';
+import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 import BeritaCard from './_com/BeritaCard';
 import { CardSkeleton } from './_com/CardSkeleton';
 import EmptyState from './_com/EmptyState';
@@ -77,7 +80,7 @@ function InformasiDesa() {
                 onClick={() => router.push(`${BASE}/detail-berita/${dataBerita.id}`)}
               >
                 <Paper shadow="md" radius="lg" p="lg" withBorder>
-                  <Grid align="stretch" gutter="xl">
+                  <Grid align="stretch" gap="xl">
                     <GridCol span={{ base: 12, md: 5 }}>
                       <Image
                         src={dataBerita.image?.link || '/no-image.jpg'}
@@ -104,7 +107,7 @@ function InformasiDesa() {
                         <Group gap={5} c="gray">
                           <IconClock size={15} />
                           <Text fz="sm" c="dimmed">
-                            {timeAgoId(dataBerita.createdAt)}
+                            {timeAgoId(tanggalTerbitAtauDibuat(dataBerita))}
                           </Text>
                         </Group>
                         <Text
@@ -145,7 +148,7 @@ function InformasiDesa() {
               subtitle="Kabar dan liputan kegiatan desa"
               icon={<IconNews size={22} />}
             />
-            <Grid gutter="lg">
+            <Grid gap="lg">
               {loadingBeritaRecent && recentBerita.length === 0
                 ? Array.from({ length: 4 }).map((_, i) => (
                     <GridCol span={{ base: 12, sm: 6, md: 3 }} key={i}>
@@ -161,7 +164,7 @@ function InformasiDesa() {
                           deskripsi={item.deskripsi}
                           imageLink={item.image?.link}
                           kategori={item.kategoriBerita?.name}
-                          createdAt={item.createdAt}
+                          tanggal={tanggalTerbitAtauDibuat(item)}
                           onClick={() => router.push(`${BASE}/detail-berita/${item.id}`)}
                         />
                       </GridCol>
@@ -170,7 +173,7 @@ function InformasiDesa() {
           </Stack>
 
           {/* === PENGUMUMAN === */}
-          <Grid gutter="xl" align="start">
+          <Grid gap="xl" align="start">
             {/* Pengumuman utama */}
             <GridCol span={{ base: 12, md: 5 }}>
               <Stack gap="md">
@@ -195,6 +198,7 @@ function InformasiDesa() {
                       style={{ borderLeft: `5px solid ${colors['blue-button']}` }}
                     >
                       <Stack gap="sm">
+                        <PengumumanThumbnail image={dataPengumuman.image} judul={dataPengumuman.judul} />
                         {dataPengumuman.CategoryPengumuman?.name && (
                           <Badge bg={colors['blue-button']} radius="sm" w="fit-content">
                             {dataPengumuman.CategoryPengumuman.name}
@@ -206,7 +210,7 @@ function InformasiDesa() {
                         <Group gap={5} c="gray">
                           <IconClock size={15} />
                           <Text fz="sm" c="dimmed">
-                            {timeAgoId(dataPengumuman.createdAt)}
+                            {timeAgoId(tanggalPengumuman(dataPengumuman))}
                           </Text>
                         </Group>
                         <Text
@@ -251,7 +255,7 @@ function InformasiDesa() {
                   subtitle="Daftar pengumuman lainnya"
                   icon={<IconSpeakerphone size={22} />}
                 />
-                <Grid gutter="md" align="stretch">
+                <Grid gap="md" align="stretch">
                   {loadingPengumumanRecent && recentPengumuman.length === 0
                     ? Array.from({ length: 4 }).map((_, i) => (
                         <GridCol span={{ base: 12, sm: 6 }} key={i}>
@@ -265,7 +269,7 @@ function InformasiDesa() {
                             <PengumumanCard
                               judul={item.judul}
                               deskripsi={item.deskripsi || item.content}
-                              createdAt={item.createdAt}
+                              createdAt={tanggalPengumuman(item)}
                               onClick={() => router.push(`${BASE}/detail-pengumuman/${item.id}`)}
                             />
                           </GridCol>

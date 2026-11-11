@@ -17,6 +17,7 @@ async function prestasiDesaFindMany(context: Context) {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { deskripsi: { contains: search, mode: 'insensitive' } },
+      { juara: { contains: search, mode: 'insensitive' } },
       { kategori: { name: { contains: search, mode: 'insensitive' } } },
     ];
     // Tetap filter hanya yang aktif saat melakukan pencarian

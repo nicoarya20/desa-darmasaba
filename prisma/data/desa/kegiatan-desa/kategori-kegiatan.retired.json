@@ -1,0 +1,6 @@
+{
+  "keterangan": "Kategori \"Sosial\" sempat didefinisikan dua kali (di kategori-kegiatan.json dan lingkungan/gotong-royong/kategori-gotong-royong.json) sehingga tampil dobel. Kegiatan yang memakainya dipindah ke kategori pengganti (replacedBy) sebelum id lama dihapus.",
+  "data": [
+    { "id": "cmknan39v000004l8eiql038q", "nama": "Sosial", "replacedBy": "katsosia000001" }
+  ]
+}

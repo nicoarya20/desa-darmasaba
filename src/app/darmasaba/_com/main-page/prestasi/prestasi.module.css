@@ -1,0 +1,279 @@
+/*
+ * Section Prestasi dan Penghargaan Desa beranda — pola promo apple.com: hero video full-bleed
+ * (teks di tengah) lalu grid 2 kolom tile foto. Seluruh tile = tautan ke detail; judul di kiri bawah di atas
+ * gradasi gelap. Tile & hero tanpa radius (senada galeri Layanan & Potensi).
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.section {
+  --ink: #1d1d1f;
+  --gap: 10px;
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding-bottom: var(--section-pad-y);
+  background: #fff;
+}
+
+/* ---------- Hero ---------- */
+/* Tinggi & lapisan gelap mengikuti section Penghargaan lama (min 720px; mobile 500px). Video sengaja
+ * dibiarkan apa adanya (640×368) — lapisan gelap menutupi resolusinya yang rendah. */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 720px;
+  overflow: hidden;
+  background: var(--ink);
+  color: #fff;
+}
+
+.heroVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85));
+}
+
+.heroContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 980px;
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: 56px;
+  line-height: 1.07;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.heroText {
+  max-width: 680px;
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.38;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.cta {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 24px;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+}
+
+.cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+/* Tombol jeda/putar video (WCAG 2.2.2: gerakan otomatis > 5 detik wajib bisa dijeda). */
+.videoToggle {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.videoToggle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ---------- Grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+  margin: 0;
+  padding: 0 var(--gap);
+  list-style: none;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.card {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--ink);
+  color: #fff;
+  text-decoration: none;
+}
+
+.wide .card {
+  aspect-ratio: 21 / 9;
+}
+
+.card:focus-visible {
+  outline: 3px solid #0071e3;
+  outline-offset: -3px;
+}
+
+.cardImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--ease);
+}
+
+.cardShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.4) 30%, rgba(0, 0, 0, 0) 58%);
+}
+
+.cardTitle {
+  position: absolute;
+  left: 40px;
+  bottom: 36px;
+  max-width: min(80%, 620px);
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 600;
+  letter-spacing: 0.004em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.placeholder {
+  aspect-ratio: 16 / 10;
+  background: #e3e3e6;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover {
+    background: var(--brand-hover);
+  }
+
+  .videoToggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .card:hover .cardImage {
+    transform: scale(1.03);
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .heroContent {
+    padding: 72px 24px;
+  }
+
+  .heroTitle {
+    font-size: 48px;
+    line-height: 1.08;
+  }
+
+  .heroText {
+    font-size: 19px;
+    line-height: 1.42;
+  }
+
+  .cardTitle {
+    left: 28px;
+    bottom: 26px;
+    font-size: 24px;
+    line-height: 1.17;
+  }
+}
+
+/* ---------- Mobile: satu kolom, tile 4:3 ---------- */
+@media (max-width: 734px) {
+  .hero {
+    min-height: 500px;
+  }
+
+  .heroContent {
+    gap: 12px;
+    padding: 56px 20px 72px;
+  }
+
+  .heroTitle {
+    font-size: 36px;
+    line-height: 1.11;
+  }
+
+  .videoToggle {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .heroText {
+    font-size: 17px;
+    line-height: 1.47;
+  }
+
+  .cta {
+    margin-top: 8px;
+    padding: 11px 22px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card,
+  .wide .card,
+  .placeholder {
+    aspect-ratio: 4 / 3;
+  }
+
+  .cardTitle {
+    left: 20px;
+    right: 20px;
+    bottom: 22px;
+    max-width: none;
+    font-size: 21px;
+    line-height: 1.19;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardImage,
+  .cta,
+  .videoToggle {
+    transition: none;
+  }
+}

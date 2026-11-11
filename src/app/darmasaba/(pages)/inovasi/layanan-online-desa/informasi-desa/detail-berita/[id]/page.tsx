@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
-import BackButton from '@/app/darmasaba/(pages)/desa/layanan/_com/BackButto';
+import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
+import { BeritaTanggal } from '@/app/darmasaba/(pages)/pemerintahan/berita/_com/BeritaTanggal';
 import colors from '@/con/colors';
 import { Box, Center, Container, Image, Skeleton, Stack, Text } from '@mantine/core';
 import { useParams } from 'next/navigation';
@@ -58,6 +59,7 @@ function Page() {
           <Text ta={"center"} fz={{ base: "1.5rem", md: "2.4rem" }} lh={{ base: 1.25, md: 1.2 }} c={colors["blue-button"]} fw={"bold"}>
             {state.findUnique.data?.judul}
           </Text>
+          <BeritaTanggal item={state.findUnique.data} />
         </Box>
         <Image src={state.findUnique.data?.image?.link || ''} alt='' w={"100%"} loading="lazy" />
       </Container>

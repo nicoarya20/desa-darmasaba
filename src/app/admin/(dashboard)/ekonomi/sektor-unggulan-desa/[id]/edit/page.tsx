@@ -20,6 +20,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { PERIODE_MAX_LENGTH, SATUAN_MAX_LENGTH } from '@/lib/sektor-unggulan';
 
 function EditSektorUnggulanDesa() {
   const router = useRouter();
@@ -33,12 +34,16 @@ function EditSektorUnggulanDesa() {
     name: '',
     description: '',
     value: 0,
+    satuan: '',
+    periode: '',
   });
 
   const [originalData, setOriginalData] = useState({
     name: '',
     description: '',
     value: 0,
+    satuan: '',
+    periode: '',
   });
 
   // Helper function to check if HTML content is empty
@@ -70,11 +75,15 @@ function EditSektorUnggulanDesa() {
               name: data.name || '',
               description: data.description || '',
               value: data.value || 0,
+              satuan: data.satuan || '',
+              periode: data.periode || '',
             });
             setOriginalData({
               name: data.name || '',
               description: data.description || '',
               value: data.value || 0,
+              satuan: data.satuan || '',
+              periode: data.periode || '',
             });
           }
         })
@@ -113,6 +122,8 @@ function EditSektorUnggulanDesa() {
       name: originalData.name,
       description: originalData.description,
       value: originalData.value,
+      satuan: originalData.satuan,
+      periode: originalData.periode,
     });
     toast.info('Form dikembalikan ke data awal');
   };
@@ -167,6 +178,22 @@ function EditSektorUnggulanDesa() {
             value={formData.value}
             onChange={handleChange('value')}
             required
+          />
+          <TextInput
+            label="Satuan"
+            description='Opsional. Contoh: ton, kg, ha, ekor, %'
+            placeholder="Masukkan satuan"
+            maxLength={SATUAN_MAX_LENGTH}
+            value={formData.satuan}
+            onChange={handleChange('satuan')}
+          />
+          <TextInput
+            label="Periode"
+            description='Opsional. Contoh: 2025, Semester I 2026'
+            placeholder="Masukkan periode"
+            maxLength={PERIODE_MAX_LENGTH}
+            value={formData.periode}
+            onChange={handleChange('periode')}
           />
 
           <Group justify="right">
