@@ -1,37 +1,48 @@
 import { useEffect, useState } from "react";
-import type { KabarItem } from "@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic";
-import { loadBeritaPage, type BeritaQuery } from "./berita-list.source";
+import type { KabarItem } from "../main-page/kabar-desa/kabar.logic";
+
+/** Query satu halaman daftar: halaman, ukuran, kata kunci, nama/slug kategori ('' = semua). */
+export type KabarPageQuery = { page: number; limit: number; search: string; kategori: string };
+
+export type KabarPage = { items: KabarItem[]; totalPages: number };
 
 type Loaded = { key: string; items: KabarItem[]; totalPages: number; failed: boolean };
 
-type BeritaListState = {
+export type KabarPageState = {
   items: KabarItem[];
   totalPages: number;
   loading: boolean;
   failed: boolean;
 };
 
-/** Daftar berita untuk satu kombinasi halaman/kategori/kata kunci; ganti query → muat ulang. */
-export function useBeritaList(query: BeritaQuery): BeritaListState {
+/**
+ * Satu halaman daftar untuk kombinasi halaman/kategori/kata kunci; ganti query → muat ulang.
+ * `load` harus stabil (fungsi modul), `source` dipakai di pesan log galat.
+ */
+export function useKabarPage(
+  load: (query: KabarPageQuery) => Promise<KabarPage>,
+  query: KabarPageQuery,
+  source: string,
+): KabarPageState {
   const { page, limit, search, kategori } = query;
   const key = `${page}|${limit}|${kategori}|${search}`;
   const [loaded, setLoaded] = useState<Loaded | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    loadBeritaPage({ page, limit, search, kategori }).then(
+    load({ page, limit, search, kategori }).then(
       ({ items, totalPages }) => {
         if (!cancelled) setLoaded({ key, items, totalPages, failed: false });
       },
       (error: unknown) => {
-        console.error(`Gagal memuat daftar berita (halaman ${page}, kategori "${kategori || "semua"}"):`, error);
+        console.error(`Gagal memuat daftar ${source} (halaman ${page}, kategori "${kategori || "semua"}"):`, error);
         if (!cancelled) setLoaded({ key, items: [], totalPages: 1, failed: true });
       },
     );
     return () => {
       cancelled = true;
     };
-  }, [key, page, limit, search, kategori]);
+  }, [load, source, key, page, limit, search, kategori]);
 
   // Hasil query sebelumnya dianggap usang → tampil kerangka; jumlah halaman lama dipertahankan agar paginasi tak melompat.
   const loading = loaded?.key !== key;

@@ -1,13 +1,10 @@
-import { toBeritaItem, type BeritaApiItem, type KabarItem } from "@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic";
+import type { KabarPage, KabarPageQuery } from "@/app/darmasaba/_com/kabar-list/use-kabar-page";
+import { toBeritaItem, type BeritaApiItem } from "@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic";
 import { readFindMany, type FindManyBody } from "@/app/darmasaba/_com/main-page/kabar-desa/kabar.source";
 import ApiFetch from "@/lib/api-fetch";
 
-export type BeritaQuery = { page: number; limit: number; search: string; kategori: string };
-
-export type BeritaPage = { items: KabarItem[]; totalPages: number };
-
 /** Satu halaman berita aktif terbaru, opsional disaring kata kunci dan/atau nama kategori. */
-export async function loadBeritaPage({ page, limit, search, kategori }: BeritaQuery): Promise<BeritaPage> {
+export async function loadBeritaPage({ page, limit, search, kategori }: KabarPageQuery): Promise<KabarPage> {
   const query: Record<string, string | number> = { page, limit };
   if (search) query.search = search;
   if (kategori) query.kategori = kategori;

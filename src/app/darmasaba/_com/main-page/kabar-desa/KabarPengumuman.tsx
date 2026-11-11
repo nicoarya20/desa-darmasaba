@@ -7,7 +7,7 @@ import { KABAR_TEXT } from "./kabar.text";
 
 const HEADING_ID = "kabar-pengumuman-title";
 
-/** Daftar teks pengumuman terbaru (pengumuman tidak punya foto). */
+/** Daftar teks pengumuman terbaru (sengaja tanpa gambar agar panel beranda ringkas). */
 export function KabarPengumuman({ items, loading }: { items: readonly KabarItem[]; loading: boolean }) {
   if (!loading && items.length === 0) return null;
 

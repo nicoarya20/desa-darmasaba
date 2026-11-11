@@ -1,0 +1,324 @@
+/*
+ * Detail pengumuman — artikel di `.section` Kabar Desa (latar putih, tepi --edge-gutter), kolom baca 860px di tengah.
+ * Gambar utama (umumnya pindaian surat) di panel #f5f5f7 seperti pratinjau dokumen; lampiran PDF berupa panel baris
+ * senada daftar pengumuman. Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line, --radius) dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.wrap > * {
+  width: 100%;
+}
+
+.wrap > :first-child {
+  width: auto;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  color: var(--subtle);
+  font-size: 15px;
+}
+
+.kategori {
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Gambar utama ---------- */
+.figure {
+  margin: 0;
+  padding: 32px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.figure a {
+  display: block;
+  border-radius: 6px;
+}
+
+.figureImg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: min(80vh, 900px);
+  margin: 0 auto;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- Isi ---------- */
+.content {
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.content > :first-child {
+  margin-top: 0;
+}
+
+.content > :last-child {
+  margin-bottom: 0;
+}
+
+.content p {
+  margin: 0 0 1em;
+}
+
+.content a {
+  color: var(--brand);
+  text-underline-offset: 3px;
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------- Galeri & lampiran ---------- */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+}
+
+.dokumen {
+  margin: 0;
+  padding: 4px 24px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  list-style: none;
+}
+
+.dokumenRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.dokumenRow + .dokumenRow {
+  border-top: 1px solid var(--line);
+}
+
+.dokumenIcon {
+  color: var(--brand);
+}
+
+.dokumenInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.dokumenName {
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.dokumenSize {
+  color: var(--subtle);
+  font-size: 13px;
+}
+
+.dokumenActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.btnPrimary {
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn:focus-visible,
+.kategori:focus-visible,
+.figure a:focus-visible,
+.emptyLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* ---------- Tidak ditemukan / galat ---------- */
+.emptyText {
+  margin: 0 0 12px;
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--brand);
+  font-size: 17px;
+  text-decoration: none;
+}
+
+/* ---------- Kerangka memuat ---------- */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bar {
+  display: block;
+  border-radius: 8px;
+  background: #e8e8ed;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.barMeta {
+  width: 30%;
+  height: 14px;
+}
+
+.barTitle {
+  width: 100%;
+  height: 40px;
+}
+
+.barTitleShort {
+  width: 60%;
+  height: 40px;
+}
+
+.barFigure {
+  height: 420px;
+  margin-top: 18px;
+  border-radius: var(--radius);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:not(.btnPrimary):hover {
+    background: #e8e8ed;
+  }
+
+  .btnPrimary:hover {
+    filter: brightness(1.12);
+  }
+
+  .kategori:hover,
+  .emptyLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .wrap {
+    gap: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+    line-height: 1.14;
+  }
+
+  .figure {
+    padding: 16px;
+  }
+
+  .content {
+    font-size: 17px;
+    line-height: 1.53;
+  }
+
+  .blockTitle {
+    font-size: 21px;
+  }
+
+  .dokumen {
+    padding: 4px 16px;
+  }
+
+  /* Tombol turun ke bawah nama berkas. */
+  .dokumenRow {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .dokumenActions {
+    grid-column: 2;
+  }
+
+  .barFigure {
+    height: 280px;
+  }
+}

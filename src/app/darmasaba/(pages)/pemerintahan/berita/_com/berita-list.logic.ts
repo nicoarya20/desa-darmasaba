@@ -1,3 +1,4 @@
+import { withListQuery } from "@/app/darmasaba/_com/kabar-list/kabar-list.logic";
 import { BERITA_BASE_HREF } from "@/app/darmasaba/_com/main-page/kabar-desa/kabar.meta";
 import { SEMUA_SLUG } from "./berita.meta";
 
@@ -6,20 +7,9 @@ export function kategoriSlug(name: string): string {
   return name.trim().toLowerCase();
 }
 
-/** Nomor halaman dari query `?page`; selain bilangan bulat positif → 1. */
-export function parsePage(raw: string | null | undefined): number {
-  const n = Number(raw);
-  return Number.isInteger(n) && n > 0 ? n : 1;
-}
-
 /** URL daftar berita `/berita/{slug}`; `search` kosong dan halaman 1 tidak ditulis ke query. */
 export function beritaListHref(slug: string, opts: { search?: string; page?: number } = {}): string {
-  const params = new URLSearchParams();
-  const search = opts.search?.trim();
-  if (search) params.set("search", search);
-  if (opts.page && opts.page > 1) params.set("page", String(opts.page));
-  const query = params.toString();
-  return `${BERITA_BASE_HREF}/${encodeURIComponent(slug)}${query ? `?${query}` : ""}`;
+  return withListQuery(`${BERITA_BASE_HREF}/${encodeURIComponent(slug)}`, opts);
 }
 
 /** Slug kategori aktif dari pathname daftar berita (segmen terakhir, huruf kecil). */

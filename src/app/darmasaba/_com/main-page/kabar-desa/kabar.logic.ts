@@ -20,6 +20,8 @@ export type PengumumanApiItem = {
   createdAt: string | Date;
   /** Tanggal asli pengumuman; dipakai bila ada (respons lama tanpa field ini → createdAt). */
   tanggalTerbit?: string | Date | null;
+  /** Gambar utama (thumbnail baris di halaman daftar; panel beranda tidak menampilkannya). */
+  image?: { link?: string | null } | null;
   CategoryPengumuman?: { name?: string | null } | null;
 };
 
@@ -81,6 +83,7 @@ export function toPengumumanItem(item: PengumumanApiItem): KabarItem {
     title: item.judul.trim(),
     summary: "",
     kategori,
+    imageUrl: item.image?.link || undefined,
     createdAt: new Date(item.tanggalTerbit ?? item.createdAt).getTime(),
     href: detailHref(PENGUMUMAN_BASE_HREF, kategori, item.id),
   };
