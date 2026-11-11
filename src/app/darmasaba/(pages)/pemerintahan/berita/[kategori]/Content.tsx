@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
+import { formatTanggalTerbit, tanggalTerbitAtauDibuat } from '@/lib/tanggal-terbit';
 import {
   Badge,
   Box,
@@ -101,11 +102,7 @@ export default function Content({ kategori }: { kategori: string }) {
                             lineHeight: '1.5rem',
                           }}
                         >
-                          {new Date(featured.createdAt).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })}
+                          {formatTanggalTerbit(tanggalTerbitAtauDibuat(featured), false)}
                         </Text>
                       </Group>
                       <Button
@@ -205,11 +202,7 @@ export default function Content({ kategori }: { kategori: string }) {
                       lh={1.4}
                       style={{ fontSize: '0.75rem', lineHeight: '1.125rem' }}
                     >
-                      {new Date(item.createdAt).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {formatTanggalTerbit(tanggalTerbitAtauDibuat(item), false, 'short')}
                     </Text>
                     <Badge color="gray" variant="outline">Baca Selengkapnya</Badge>
                   </Group>

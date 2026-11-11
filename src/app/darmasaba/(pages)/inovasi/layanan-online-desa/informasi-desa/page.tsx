@@ -4,6 +4,7 @@ import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
 import { tanggalPengumuman } from '@/lib/pengumuman-tanggal';
+import { tanggalTerbitAtauDibuat } from '@/lib/tanggal-terbit';
 import { PengumumanThumbnail } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran';
 import { Badge, Box, Button, Grid, GridCol, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconArrowRight, IconClock, IconNews, IconSpeakerphone } from '@tabler/icons-react';
@@ -106,7 +107,7 @@ function InformasiDesa() {
                         <Group gap={5} c="gray">
                           <IconClock size={15} />
                           <Text fz="sm" c="dimmed">
-                            {timeAgoId(dataBerita.createdAt)}
+                            {timeAgoId(tanggalTerbitAtauDibuat(dataBerita))}
                           </Text>
                         </Group>
                         <Text
@@ -163,7 +164,7 @@ function InformasiDesa() {
                           deskripsi={item.deskripsi}
                           imageLink={item.image?.link}
                           kategori={item.kategoriBerita?.name}
-                          createdAt={item.createdAt}
+                          tanggal={tanggalTerbitAtauDibuat(item)}
                           onClick={() => router.push(`${BASE}/detail-berita/${item.id}`)}
                         />
                       </GridCol>

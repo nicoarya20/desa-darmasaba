@@ -2,6 +2,7 @@
 'use client'
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import NewsReader from '@/app/darmasaba/_com/NewsReader';
+import { BeritaTanggal } from '../../_com/BeritaTanggal';
 import colors from '@/con/colors';
 import {
   Box,
@@ -39,6 +40,8 @@ interface BeritaDetail {
   images?: ExistingImage[];
   linkVideo?: string | null;
   kategoriBerita?: { name: string } | null;
+  tanggalTerbit?: string | null;
+  createdAt: string;
 }
 
 function Page() {
@@ -113,6 +116,7 @@ function Page() {
           >
             {data.judul}
           </Title>
+          <BeritaTanggal item={data} />
 
           <Divider my="xs" />
         </Box>

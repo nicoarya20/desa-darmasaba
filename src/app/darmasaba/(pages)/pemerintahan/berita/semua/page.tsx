@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
+import { formatTanggalTerbit, tanggalTerbitAtauDibuat } from '@/lib/tanggal-terbit';
 import {
   Badge, Box, Button, Card, Center, Container, Divider,
   Flex, Grid, GridCol, Group, Image, Pagination,
@@ -94,11 +95,7 @@ function Semua() {
                           fz={{ base: 'xs', md: 'sm' }}
                           lh={{ base: 1.4, md: 1.5 }}
                         >
-                          {new Date(featuredData.createdAt).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                          })}
+                          {formatTanggalTerbit(tanggalTerbitAtauDibuat(featuredData), false)}
                         </Text>
                       </Group>
                       <Button
@@ -179,11 +176,7 @@ function Semua() {
                       fz={{ base: 'xs', md: 'xs' }}
                       lh={{ base: 1.4, md: 1.4 }}
                     >
-                      {new Date(item.createdAt).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                      })}
+                      {formatTanggalTerbit(tanggalTerbitAtauDibuat(item), false, 'short')}
                     </Text>
                     <Button
                       p="xs"
