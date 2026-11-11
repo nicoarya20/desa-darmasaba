@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.248] - 2026-11-11
+### Changed
+- **Halaman Profil Desa (menu Pemerintahan) dirapikan menyeluruh.** Judul kini "Profil Desa" (sebelumnya "Profile Desa"), dengan satu tombol kembali di atas dan section yang tampil seragam sebagai kartu terang seperti Visi Misi PPID. Teks dibuat rata kiri dengan panjang baris yang nyaman dibaca, dan lambang desa tidak lagi tampil berulang.
+- **Struktur Perangkat Desa memakai bagan baru** yang sama dengan Struktur PPID, baik di halaman Profil Desa maupun di halaman Struktur Perangkat Desa. Seluruh jabatan kini tampil (sebelumnya Kaur Umum dan Kaur Keuangan tidak muncul dan bagan terpotong di kanan), ada kotak cari nama atau jabatan, dan tampilan tetap rapi di ponsel. Kontrol zoom dan layar penuh yang lama dihapus karena tidak diperlukan lagi. Kartu pegawai tetap membuka profil perangkat desa.
+- **Visi dan Misi Desa** tampil dengan kartu yang sama seperti Visi Misi PPID: lambang desa di atas, lalu visi, lalu misi sebagai daftar bernomor.
+- **Profil Perbekel** memakai tata letak dua kolom seperti Profil PPID. Foto dan nama ada di kiri dan tetap terlihat saat halaman digulir di desktop. Biodata, Pengalaman, Pengalaman Organisasi, dan Program Kerja Unggulan ada di kanan.
+- **Letak & Batas Wilayah** menampilkan batas keempat arah, luas wilayah, dan peta. Bila peta wilayah belum diisi admin, yang tampil adalah peta lokasi Kantor Perbekel; peta ini sebelumnya muncul tanpa judul di bagian atas halaman.
+- **Moto SIGAP** menampilkan setiap huruf berdampingan dengan nilainya (Santun, Inovatif, Gesit, Adaptif, Profesional), sesuai urutan akronim. Foto Maskot tersusun dalam galeri yang rata, dan **Perbekel dari Masa ke Masa** tampil sebagai kartu potret dengan nama, wilayah, dan periode.
+
 ## [0.1.247] - 2026-11-11
 ### Changed
 - Isi hero beranda tidak lagi menempel ke tepi kiri layar. Jarak tepi kini menyesuaikan lebar layar: dari 24px di layar sempit sampai 64px di desktop lebar (sekitar 59px di MacBook). Section Kabar Desa dan halaman "Lihat semua berita" ikut menyesuaikan supaya tepinya tetap sejajar dengan hero. Tampilan di ponsel tidak berubah.
