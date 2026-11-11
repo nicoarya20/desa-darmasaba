@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Pengurai isi Dasar Hukum PPID: HTML daftar dari CMS → butir { nomor, perihal }.
 import { describe, expect, it } from 'vitest';
-import { parseDasarHukumItems } from '@/app/darmasaba/(pages)/ppid/dasar-hukum/_com/dasar-hukum.logic';
+import { parseDasarHukumItems } from '@/app/(public)/(pages)/ppid/dasar-hukum/_com/dasar-hukum.logic';
 
 // test-only: semua isi di bawah fiktif.
 describe('parseDasarHukumItems', () => {

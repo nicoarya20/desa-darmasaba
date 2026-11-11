@@ -21,7 +21,7 @@ import {
   Center,
   Switch,
 } from "@mantine/core";
-import { SATUAN_PRESETS } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/satuan";
+import { SATUAN_PRESETS } from "@/app/(public)/(pages)/ekonomi/umkm/_lib/satuan";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import {
   IconArrowBack,
@@ -35,7 +35,7 @@ import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 import umkmState from "../../../../../_state/ekonomi/umkm/umkm";
 import { LinkTokoOnlineField } from "../../_com/LinkTokoOnlineField";
-import type { LinkTokoOnlineInput } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
+import type { LinkTokoOnlineInput } from "@/lib/link-toko-online";
 
 interface ProdukData {
   id: string;

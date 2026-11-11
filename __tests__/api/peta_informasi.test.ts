@@ -4,22 +4,22 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
 import searchExtraPages from '@/con/search-extra-pages';
-import { flattenMenu } from '@/app/darmasaba/_com/searchMenu';
-import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
-import { hiddenMenuHrefs, isPathHidden } from '@/app/darmasaba/_com/menu-visibility.logic';
+import { flattenMenu } from '@/app/(public)/_com/searchMenu';
+import { visibleMenu } from '@/app/(public)/_com/navbar-menu.logic';
+import { hiddenMenuHrefs, isPathHidden } from '@/app/(public)/_com/menu-visibility.logic';
 import {
   countPages,
   groupPetaInformasi,
   PETA_INFORMASI_HREF,
   petaInformasiGroups,
-} from '@/app/darmasaba/(tambahan)/peta-informasi/_lib/petaInformasi';
+} from '@/app/(public)/(tambahan)/peta-informasi/_lib/petaInformasi';
 import type { MenuItem } from '../../types/menu-item';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
 const ROOT = path.resolve(__dirname, '../..');
-const PETA_DIR = path.join(ROOT, 'src/app/darmasaba/(tambahan)/peta-informasi');
-const FOOTER = path.join(ROOT, 'src/app/darmasaba/_com/Footer.tsx');
-const GLOBAL_SEARCH = path.join(ROOT, 'src/app/darmasaba/_com/globalSearch.tsx');
+const PETA_DIR = path.join(ROOT, 'src/app/(public)/(tambahan)/peta-informasi');
+const FOOTER = path.join(ROOT, 'src/app/(public)/_com/Footer.tsx');
+const GLOBAL_SEARCH = path.join(ROOT, 'src/app/(public)/_com/globalSearch.tsx');
 
 const read = (file: string) => readFileSync(file, 'utf8');
 const hrefsOf = (groups: { pages: { href: string }[] }[]) => groups.flatMap((g) => g.pages.map((p) => p.href));
@@ -99,25 +99,25 @@ describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () =>
     expect(names.filter((n) => n === 'Pemerintahan')).toHaveLength(1);
     expect(names.filter((n) => n === 'Kesehatan')).toHaveLength(1);
     const desa = groups.find((g) => g.name === 'Pemerintahan')!.pages.map((p) => p.href);
-    expect(desa).toContain('/darmasaba/pemerintahan/profil');
-    expect(desa).toContain('/darmasaba/pemerintahan/galery/video');
+    expect(desa).toContain('/pemerintahan/profil');
+    expect(desa).toContain('/pemerintahan/galery/video');
     const kesehatan = groups.find((g) => g.name === 'Kesehatan')!.pages.map((p) => p.href);
     // Data Kesehatan Warga default-hidden → sub-halamannya (404) tidak boleh tampil di peta.
-    expect(kesehatan).not.toContain('/darmasaba/kesehatan/data-kesehatan-warga/grafik-penyakit');
+    expect(kesehatan).not.toContain('/kesehatan/data-kesehatan-warga/grafik-penyakit');
     // urutan di dalam grup gabungan: halaman navbar dulu, halaman tambahan sesudahnya
-    expect(desa.indexOf('/darmasaba/pemerintahan/profil')).toBeLessThan(desa.indexOf('/darmasaba/pemerintahan/galery/video'));
+    expect(desa.indexOf('/pemerintahan/profil')).toBeLessThan(desa.indexOf('/pemerintahan/galery/video'));
   });
 
   it('saring "apbdes" hanya menampilkan APBDes di grup Transparansi', () => {
     expect(petaInformasiGroups('apbdes')).toEqual([
-      { name: 'Transparansi', pages: [expect.objectContaining({ label: 'APBDes', href: '/darmasaba/apbdes' })] },
+      { name: 'Transparansi', pages: [expect.objectContaining({ label: 'APBDes', href: '/apbdes' })] },
     ]);
   });
 });
 
 describe('route & pintu masuk Peta Informasi', () => {
-  it('route /darmasaba/peta-informasi punya page.tsx nyata', () => {
-    expect(PETA_INFORMASI_HREF).toBe('/darmasaba/peta-informasi');
+  it('route /peta-informasi punya page.tsx nyata', () => {
+    expect(PETA_INFORMASI_HREF).toBe('/peta-informasi');
     expect(matchesRealPage(PETA_INFORMASI_HREF, publicRoutes())).toBe(true);
   });
 

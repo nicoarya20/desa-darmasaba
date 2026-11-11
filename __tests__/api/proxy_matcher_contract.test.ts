@@ -24,8 +24,7 @@ describe('proxy matcher — path yang dijaga', () => {
 describe('proxy matcher — path publik tidak disentuh', () => {
   it.each([
     '/',
-    '/darmasaba',
-    '/darmasaba/pemerintahan/layanan',
+    '/pemerintahan/layanan',
     '/login',
     '/profile',
     '/api/auth/get-session',

@@ -8,40 +8,40 @@ import {
   isAdminRole,
   isMenuActive,
   isPathActive,
-} from '@/app/darmasaba/_com/navbar-menu.logic';
+} from '@/app/(public)/_com/navbar-menu.logic';
 import type { MenuItem } from '../../types/menu-item';
 
 const PPID: MenuItem = {
   id: '1',
   name: 'PPID',
   children: [
-    { id: '1.1', name: 'Profil PPID', href: '/darmasaba/ppid/profil-ppid' },
-    { id: '1.2', name: 'Struktur PPID', href: '/darmasaba/ppid/struktur-ppid' },
+    { id: '1.1', name: 'Profil PPID', href: '/ppid/profil-ppid' },
+    { id: '1.2', name: 'Struktur PPID', href: '/ppid/struktur-ppid' },
   ],
 }; // test-only
 
 describe('isPathActive', () => {
   it('cocok untuk path persis dan sub-path', () => {
-    expect(isPathActive('/darmasaba/pemerintahan/profil', '/darmasaba/pemerintahan/profil')).toBe(true);
-    expect(isPathActive('/darmasaba/pemerintahan/profil/sejarah', '/darmasaba/pemerintahan/profil')).toBe(true);
+    expect(isPathActive('/pemerintahan/profil', '/pemerintahan/profil')).toBe(true);
+    expect(isPathActive('/pemerintahan/profil/sejarah', '/pemerintahan/profil')).toBe(true);
   });
 
   it('tidak cocok untuk prefix string yang bukan segmen path', () => {
-    expect(isPathActive('/darmasaba/pemerintahan/profil-lain', '/darmasaba/pemerintahan/profil')).toBe(false);
+    expect(isPathActive('/pemerintahan/profil-lain', '/pemerintahan/profil')).toBe(false);
   });
 
   it('false bila href kosong', () => {
-    expect(isPathActive('/darmasaba', undefined)).toBe(false);
+    expect(isPathActive('/', undefined)).toBe(false);
   });
 });
 
 describe('isMenuActive', () => {
   it('aktif bila path berada di salah satu submenu', () => {
-    expect(isMenuActive(PPID, '/darmasaba/ppid/struktur-ppid')).toBe(true);
+    expect(isMenuActive(PPID, '/ppid/struktur-ppid')).toBe(true);
   });
 
   it('tidak aktif di halaman domain lain', () => {
-    expect(isMenuActive(PPID, '/darmasaba/pemerintahan/profil')).toBe(false);
+    expect(isMenuActive(PPID, '/pemerintahan/profil')).toBe(false);
   });
 });
 
@@ -63,10 +63,10 @@ describe('navbarListMenu (data yang dipakai flyout)', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('setiap submenu punya href internal /darmasaba', () => {
+  it('setiap submenu punya href internal (diawali satu /, bukan URL eksternal)', () => {
     const hrefs = navbarListMenu.flatMap((m) => (m.children ?? []).map((c) => c.href));
     expect(hrefs.length).toBeGreaterThan(0);
-    expect(hrefs.every((href) => href?.startsWith('/darmasaba/'))).toBe(true);
+    expect(hrefs.every((href) => /^\/(?!\/)/.test(href ?? ''))).toBe(true);
   });
 });
 
@@ -84,8 +84,8 @@ describe('CSS ber-backdrop-filter (navbar & glass)', () => {
   // Lightning CSS (Turbopack) menggabungkan `backdrop-filter` + `-webkit-backdrop-filter`
   // menjadi hanya versi -webkit- yang diabaikan Chrome → blur hilang.
   const files = [
-    'src/app/darmasaba/_com/navbar.module.css',
-    'src/app/darmasaba/_com/navbar-mobile.module.css',
+    'src/app/(public)/_com/navbar.module.css',
+    'src/app/(public)/_com/navbar-mobile.module.css',
     'src/app/globals.css',
   ];
 

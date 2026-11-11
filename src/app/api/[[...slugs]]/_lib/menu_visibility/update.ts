@@ -3,7 +3,7 @@ import type { Context } from "elysia";
 import prisma from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-auth";
 import { canManageMenuVisibility } from "@/lib/auth-policy";
-import { isKnownMenuKey, MENU_VISIBILITY_TAG, type MenuVisibilityRow } from "@/app/darmasaba/_com/menu-visibility.logic";
+import { isKnownMenuKey, MENU_VISIBILITY_TAG, type MenuVisibilityRow } from "@/app/(public)/_com/menu-visibility.logic";
 
 type UpdateItem = { menuKey: string; isVisible: boolean | null };
 

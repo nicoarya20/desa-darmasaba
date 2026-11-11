@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Form publik Keamanan > Laporan Publik (/darmasaba/keamanan/laporan-publik):
+// Form publik Keamanan > Laporan Publik (/keamanan/laporan-publik):
 // warga anonim harus bisa POST laporan tanpa login; sisa endpoint tetap admin.
 import { describe, it, expect } from 'vitest';
 import { isPublicPostPath } from '@/lib/auth-policy';

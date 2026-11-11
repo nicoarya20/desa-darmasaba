@@ -35,20 +35,20 @@ vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () =>
     posisiOrganisasi: { findManyAll: { data: [], load: vi.fn() } },
   },
 }));
-vi.mock('@/app/darmasaba/(pages)/pemerintahan/profil/_com/use-load-once', () => ({ useLoadOnce: () => h.loaded }));
+vi.mock('@/app/(public)/(pages)/pemerintahan/profil/_com/use-load-once', () => ({ useLoadOnce: () => h.loaded }));
 
-import Page from '@/app/darmasaba/(pages)/pemerintahan/profil/page';
-import StrukturPerangkatPage from '@/app/darmasaba/(pages)/pemerintahan/profil/struktur-perangkat-desa/page';
-import { KANTOR_MAP_EMBED_URL, PERBEKEL_NAME, strukturPerangkatHref } from '@/app/darmasaba/(pages)/pemerintahan/profil/_com/profil.meta';
-import MaskotDesa from '@/app/darmasaba/(pages)/pemerintahan/profil/ui/maskotDesa';
-import MotoDesa from '@/app/darmasaba/(pages)/pemerintahan/profil/ui/motoDesa';
-import ProfilPerbekel from '@/app/darmasaba/(pages)/pemerintahan/profil/ui/profilPerbekel';
-import SemuaPerbekel from '@/app/darmasaba/(pages)/pemerintahan/profil/ui/semuaPerbekel';
-import VisiMisiDesa from '@/app/darmasaba/(pages)/pemerintahan/profil/ui/visimisiDesa';
-import WilayahDesa from '@/app/darmasaba/(pages)/pemerintahan/profil/ui/wilayahDesa';
-import { StrukturBody } from '@/app/darmasaba/(pages)/ppid/struktur-ppid/_com/StrukturBody';
-import type { OrgNode } from '@/app/darmasaba/(pages)/ppid/struktur-ppid/_com/struktur.logic';
-import type { StrukturData } from '@/app/darmasaba/(pages)/ppid/struktur-ppid/_com/use-struktur-data';
+import Page from '@/app/(public)/(pages)/pemerintahan/profil/page';
+import StrukturPerangkatPage from '@/app/(public)/(pages)/pemerintahan/profil/struktur-perangkat-desa/page';
+import { KANTOR_MAP_EMBED_URL, PERBEKEL_NAME, strukturPerangkatHref } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.meta';
+import MaskotDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/maskotDesa';
+import MotoDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/motoDesa';
+import ProfilPerbekel from '@/app/(public)/(pages)/pemerintahan/profil/ui/profilPerbekel';
+import SemuaPerbekel from '@/app/(public)/(pages)/pemerintahan/profil/ui/semuaPerbekel';
+import VisiMisiDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/visimisiDesa';
+import WilayahDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/wilayahDesa';
+import { StrukturBody } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/StrukturBody';
+import type { OrgNode } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur.logic';
+import type { StrukturData } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/use-struktur-data';
 
 const render = (ui: ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const count = (source: string, needle: string | RegExp) => source.split(needle).length - 1;
@@ -210,8 +210,8 @@ describe('Struktur Perangkat Desa — bagan baru', () => {
 
   it('kartu menaut ke profil perangkat desa, bukan ke rute PPID', () => {
     const html = render(<StrukturBody data={data} label="Bagan struktur perangkat desa" emptyHint="-" hrefFor={strukturPerangkatHref} />);
-    expect(html).toContain('href="/darmasaba/pemerintahan/profil/struktur-perangkat-desa/p1"');
-    expect(html).toContain('href="/darmasaba/pemerintahan/profil/struktur-perangkat-desa/p2"');
+    expect(html).toContain('href="/pemerintahan/profil/struktur-perangkat-desa/p1"');
+    expect(html).toContain('href="/pemerintahan/profil/struktur-perangkat-desa/p2"');
     expect(html).not.toContain('/ppid/struktur-ppid/');
     expect(html).toContain('aria-label="Bagan struktur perangkat desa"');
     expect(html).toContain('Belum ditugaskan');

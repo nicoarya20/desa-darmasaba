@@ -1,0 +1,409 @@
+/*
+ * Section Desa Anti Korupsi beranda — gaya bersih apple.com (sejalan Kabar Desa/APBDes):
+ * latar putih, satu panel #f5f5f7 radius 18px tanpa border/bayangan berisi grup per kategori
+ * ala halaman spesifikasi apple.com (nama kategori kiri, butir bernomor kanan, garis tipis pemisah).
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.section {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --subtle: #86868b;
+  --tile: #f5f5f7;
+  --line: rgba(0, 0, 0, 0.08);
+  --radius: 18px;
+  background: #fff;
+  padding: var(--section-pad-y) 16px;
+  color: var(--ink);
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--brand);
+}
+
+.lead {
+  margin: 12px auto 0;
+  max-width: 720px;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.empty {
+  margin: 0;
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--tile);
+  border-radius: var(--radius);
+}
+
+/* ---------- Panel indikator ---------- */
+.panel {
+  padding: 8px 40px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+/* Desktop: nama kategori di kolom kiri, daftar butir di kanan. */
+.group {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  gap: 8px 40px;
+  padding: 28px 0;
+}
+
+.group + .group {
+  border-top: 1px solid var(--line);
+}
+
+.groupTitle {
+  margin: 0;
+  padding-top: 2px;
+  font-size: 21px;
+  line-height: 1.24;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 3em minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.list > .item:first-child {
+  padding-top: 0;
+}
+
+.list > .item:last-child {
+  padding-bottom: 0;
+}
+
+.item + .item {
+  border-top: 1px solid var(--line);
+}
+
+.number {
+  font-size: 17px;
+  line-height: 1.47;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--brand);
+}
+
+/* Butir tanpa nomor: teks mengisi seluruh baris. */
+.itemText {
+  grid-column: 2;
+  font-size: 17px;
+  line-height: 1.47;
+  overflow-wrap: anywhere;
+}
+
+.item > .itemText:only-child {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Varian bertaut (halaman utama DAK; beranda tidak memakai kelas di bawah) ---------- */
+/* Baris bertaut: padding pindah ke <a> agar seluruh baris bisa diklik; margin negatif
+   melebarkan area hover ke tepi tanpa menggeser teks (panel punya padding ≥20px → tidak overflow). */
+.listLinked {
+  margin: -12px 0;
+}
+
+.list > .item.itemLinked {
+  display: block;
+  padding: 0;
+}
+
+.itemLink {
+  display: grid;
+  grid-template-columns: 3em minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: baseline;
+  margin: 0 -12px;
+  padding: 12px;
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.itemLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.itemBodyFull {
+  grid-column: 1 / 3;
+}
+
+.itemLinkText {
+  font-size: 17px;
+  line-height: 1.47;
+  overflow-wrap: anywhere;
+}
+
+.badge,
+.badgeEmpty {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.badge {
+  padding: 2px 10px;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.badgeEmpty {
+  color: var(--subtle);
+}
+
+.chevron {
+  align-self: center;
+  color: var(--subtle);
+  transition: color 200ms ease, transform 200ms ease;
+}
+
+.groupLink {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 6px;
+  color: inherit;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.groupLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+}
+
+.groupHint {
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--brand);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .itemLink:hover {
+    background: #fff;
+  }
+
+  .itemLink:hover .itemLinkText,
+  .itemLink:hover .chevron,
+  .groupLink:hover {
+    color: var(--brand);
+  }
+
+  .itemLink:hover .chevron {
+    transform: translateX(2px);
+  }
+
+  .itemLink:hover .badge {
+    background: var(--tile);
+  }
+
+  .groupLink:hover .groupHint {
+    text-decoration: underline;
+  }
+}
+
+/* ---------- Halaman utama DAK (/desa-anti-korupsi) ---------- */
+.section.pageLayout {
+  min-height: 70vh;
+  padding: 32px 16px 96px;
+}
+
+.back {
+  margin-bottom: 24px;
+}
+
+.ringkasan {
+  margin: 16px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--subtle);
+}
+
+/* ---------- Loading ---------- */
+.rowPlaceholder {
+  height: 22px;
+  margin: 20px 0;
+  border-radius: 6px;
+  background: #e8e8ed;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- CTA ---------- */
+.cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.ctaLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 22px;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+}
+
+.ctaLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ctaLink:hover {
+    background: var(--brand-hover);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rowPlaceholder {
+    animation: none;
+  }
+
+  .itemLink,
+  .chevron,
+  .groupLink {
+    transition: none;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .title {
+    font-size: 36px;
+  }
+
+  .panel {
+    padding: 8px 32px;
+  }
+
+  .group {
+    grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
+    gap: 8px 32px;
+  }
+
+  .groupTitle {
+    font-size: 19px;
+  }
+}
+
+/* ---------- Mobile: kategori di atas butirnya ---------- */
+@media (max-width: 734px) {
+  .header {
+    margin-bottom: 28px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .lead {
+    font-size: 17px;
+  }
+
+  .panel {
+    padding: 4px 20px;
+  }
+
+  .group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 24px 0;
+  }
+
+  .groupTitle {
+    padding-top: 0;
+    font-size: 19px;
+  }
+
+  .item {
+    grid-template-columns: 2.6em minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .number,
+  .itemText,
+  .itemLinkText {
+    font-size: 16px;
+  }
+
+  /* Kategori di atas butir: tanpa margin negatif vertikal agar hover tidak menimpa judul. */
+  .listLinked {
+    margin: 0;
+  }
+
+  .itemLink {
+    grid-template-columns: 2.6em minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .cta {
+    margin-top: 32px;
+  }
+}

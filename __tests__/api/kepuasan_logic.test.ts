@@ -14,14 +14,14 @@ import {
   toSelectOptions,
   todayLocalIsoDate,
   type RespondenItem,
-} from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.logic';
+} from '@/app/(public)/_com/main-page/kepuasan/kepuasan.logic';
 import {
   JENIS_KELAMIN,
   KELOMPOK_UMUR,
   RATING,
   RATING_FALLBACK_COLOR,
   ratingColor,
-} from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.meta';
+} from '@/app/(public)/_com/main-page/kepuasan/kepuasan.meta';
 
 // test-only: bentuk meniru respons responden.findMany. Tanggal di tengah bulan agar
 // tidak bergeser bulan di zona waktu mana pun (logika memakai waktu lokal seperti kode lama).

@@ -4,7 +4,7 @@ import { z } from "zod";
 import {
   validateLinkTokoOnlineList,
   type LinkTokoOnlineInput,
-} from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
+} from "@/lib/link-toko-online";
 
 const produkFormSchema = z.object({
   nama: z.string().min(1, "Nama produk minimal 1 karakter"),

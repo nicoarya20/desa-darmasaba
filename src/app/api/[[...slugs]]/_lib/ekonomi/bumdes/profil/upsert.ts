@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { IMAGE_SELECT, validationFailure, writeFailure } from "../http";
-import { PROFIL_BUMDES_ID, profilBumDesSchema } from "./validation";
+import { PROFIL_BUMDES_ID, profilBumDesSchema } from "@/lib/bumdes-profil";
 
 /** PUT (admin): buat/ubah profil BUMDes tunggal; field yang tidak dikirim dibiarkan, null/"" menghapus nilai. */
 export default async function profilBumDesUpsert(context: Context) {

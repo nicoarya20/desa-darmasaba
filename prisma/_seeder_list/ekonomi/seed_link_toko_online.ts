@@ -1,5 +1,5 @@
 import prisma from "../../seed-prisma";
-import { validateLinkTokoOnlineList } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
+import { validateLinkTokoOnlineList } from "@/lib/link-toko-online";
 import { loadJsonData } from "../../load-json";
 
 type LinkTokoOnlineSeed = { produkId: string; links: { platform: string; url: string }[] };

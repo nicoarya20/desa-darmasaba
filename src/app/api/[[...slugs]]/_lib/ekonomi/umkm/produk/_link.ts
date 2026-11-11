@@ -3,7 +3,7 @@ import {
   validateLinkTokoOnlineList,
   type LinkTokoOnlineNormal,
   type LinkValidation,
-} from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
+} from "@/lib/link-toko-online";
 
 /** Include relasi link untuk output produk: hanya link aktif, terurut `urutan` (satu query batch, tanpa N+1). */
 export const LINK_TOKO_INCLUDE = {

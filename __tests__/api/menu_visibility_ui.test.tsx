@@ -6,7 +6,7 @@ import path from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const nav = vi.hoisted(() => ({ pathname: '/darmasaba', overrides: {} as Record<string, boolean> }));
+const nav = vi.hoisted(() => ({ pathname: '/', overrides: {} as Record<string, boolean> }));
 
 vi.mock('next/navigation', () => ({
   usePathname: () => nav.pathname,
@@ -17,17 +17,17 @@ vi.mock('next/navigation', () => ({
 vi.mock('next/server', () => ({ connection: async () => undefined }));
 vi.mock('@/lib/menu-visibility.server', () => ({ getMenuVisibilityOverrides: async () => nav.overrides }));
 // Navbar/footer tidak relevan untuk guard; shell diganti pembungkus polos.
-vi.mock('@/app/darmasaba/_com/DarmasabaShell', () => ({
+vi.mock('@/app/(public)/_com/DarmasabaShell', () => ({
   DarmasabaShell: ({ children }: { children: React.ReactNode }) => <main>{children}</main>,
 }));
 
-import Layout from '@/app/darmasaba/layout';
-import { MenuVisibilityProvider, useMenuVisibility } from '@/app/darmasaba/_com/MenuVisibilityContext';
-import { flattenMenu } from '@/app/darmasaba/_com/searchMenu';
+import Layout from '@/app/(public)/layout';
+import { MenuVisibilityProvider, useMenuVisibility } from '@/app/(public)/_com/MenuVisibilityContext';
+import { flattenMenu } from '@/app/(public)/_com/searchMenu';
 import { getNavbar } from '@/app/admin/(dashboard)/user&role/_com/dynamicNavbar';
 
-const PUSKESMAS = '/darmasaba/kesehatan/puskesmas';
-const CCTV = '/darmasaba/keamanan/cctv';
+const PUSKESMAS = '/kesehatan/puskesmas';
+const CCTV = '/keamanan/cctv';
 const ROOT = path.resolve(__dirname, '../..');
 
 async function renderLayout(pathname: string, overrides: Record<string, boolean> = {}) {
@@ -38,13 +38,13 @@ async function renderLayout(pathname: string, overrides: Record<string, boolean>
 }
 
 beforeEach(() => {
-  nav.pathname = '/darmasaba';
+  nav.pathname = '/';
   nav.overrides = {};
 });
 
 describe('layout publik + guard 404', () => {
   it('halaman yang tampil dirender normal', async () => {
-    expect(await renderLayout('/darmasaba/kesehatan/posyandu')).toContain('isi halaman');
+    expect(await renderLayout('/kesehatan/posyandu')).toContain('isi halaman');
   });
 
   it('submenu default-hidden & sub-path-nya → notFound()', async () => {
@@ -55,7 +55,7 @@ describe('layout publik + guard 404', () => {
   it('override DB menampilkan kembali → tidak 404; override sembunyi → 404', async () => {
     expect(await renderLayout(`${PUSKESMAS}/123`, { [PUSKESMAS]: true })).toContain('isi halaman');
     await expect(renderLayout(`${CCTV}`, { [CCTV]: false })).rejects.toThrow(/404/);
-    expect(await renderLayout('/darmasaba/keamanan/cctv-lain', { [CCTV]: false })).toContain('isi halaman');
+    expect(await renderLayout('/keamanan/cctv-lain', { [CCTV]: false })).toContain('isi halaman');
   });
 });
 
@@ -83,11 +83,11 @@ describe('MenuVisibilityProvider', () => {
 
   it('Navbar, globalSearch & Peta Informasi membaca menu dari useMenuVisibility, bukan konstanta statis', () => {
     const read = (p: string) => readFileSync(path.join(ROOT, p), 'utf8');
-    const navbar = read('src/app/darmasaba/_com/Navbar.tsx');
+    const navbar = read('src/app/(public)/_com/Navbar.tsx');
     expect(navbar).toMatch(/useMenuVisibility\(\)/);
     expect(navbar).not.toMatch(/visibleMenu\(navbarListMenu\)/);
-    expect(read('src/app/darmasaba/_com/globalSearch.tsx')).toMatch(/isSearchResultHidden\(item, hiddenHrefs\)/);
-    expect(read('src/app/darmasaba/(tambahan)/peta-informasi/_com/PetaInformasi.tsx')).toMatch(/useMenuVisibility\(\)/);
+    expect(read('src/app/(public)/_com/globalSearch.tsx')).toMatch(/isSearchResultHidden\(item, hiddenHrefs\)/);
+    expect(read('src/app/(public)/(tambahan)/peta-informasi/_com/PetaInformasi.tsx')).toMatch(/useMenuVisibility\(\)/);
   });
 });
 

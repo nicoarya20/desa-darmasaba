@@ -20,10 +20,10 @@ vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () =>
   },
 }));
 
-import Page from '@/app/darmasaba/(pages)/ppid/struktur-ppid/page';
-import { StrukturChart } from '@/app/darmasaba/(pages)/ppid/struktur-ppid/_com/StrukturChart';
-import type { OrgNode } from '@/app/darmasaba/(pages)/ppid/struktur-ppid/_com/struktur.logic';
-import { strukturDetailHref } from '@/app/darmasaba/(pages)/ppid/struktur-ppid/_com/struktur.meta';
+import Page from '@/app/(public)/(pages)/ppid/struktur-ppid/page';
+import { StrukturChart } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/StrukturChart';
+import type { OrgNode } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur.logic';
+import { strukturDetailHref } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur.meta';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const LABEL = 'Bagan struktur organisasi PPID';
@@ -54,7 +54,7 @@ const count = (source: string, needle: string | RegExp) => source.split(needle).
 
 describe('Struktur PPID — kartu bagan', () => {
   it('kartu berpegawai = tautan ke profil dengan label jabatan', () => {
-    expect(html).toContain('href="/darmasaba/ppid/struktur-ppid/p1"');
+    expect(html).toContain('href="/ppid/struktur-ppid/p1"');
     expect(html).toContain('aria-label="Ida Bagus, Kepala Desa — lihat profil"');
     expect(count(html, '<a ')).toBe(5);
   });
@@ -112,7 +112,7 @@ describe('Struktur PPID — jabatan berisi beberapa pegawai', () => {
 
   it('semua pegawai tampil sebagai kartu bertaut masing-masing', () => {
     for (const id of ['sek1', 'sek2', 'staf1', 'staf2', 'staf3', 'bpd1', 'bpd2']) {
-      expect(multi).toContain(`href="/darmasaba/ppid/struktur-ppid/${id}"`);
+      expect(multi).toContain(`href="/ppid/struktur-ppid/${id}"`);
     }
     expect(multi).toContain('aria-label="sek2, Sekretaris Desa — lihat profil"');
   });
@@ -152,7 +152,7 @@ describe('Struktur PPID — halaman', () => {
 
   it('memuat pegawai dengan limit 100 + daftar jabatan (dipanggil di effect, dicek dari sumber)', () => {
     const src = readFileSync(
-      path.join(process.cwd(), 'src/app/darmasaba/(pages)/ppid/struktur-ppid/_com/use-struktur-data.ts'),
+      path.join(process.cwd(), 'src/app/(public)/(pages)/ppid/struktur-ppid/_com/use-struktur-data.ts'),
       'utf8',
     );
     expect(src).toContain('findMany.load(1, STRUKTUR_PEGAWAI_LIMIT)');

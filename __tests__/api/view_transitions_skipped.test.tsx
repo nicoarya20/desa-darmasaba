@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const routerPush = vi.hoisted(() => vi.fn());
 vi.mock('next/navigation', () => ({
-  usePathname: () => '/darmasaba',
+  usePathname: () => '/',
   useRouter: () => ({ push: routerPush, replace: vi.fn(), back: vi.fn(), forward: vi.fn(), refresh: vi.fn(), prefetch: vi.fn() }),
 }));
 
@@ -81,7 +81,7 @@ describe('next-view-transitions: transisi yang dilewati', () => {
     );
     const router = captureRouter();
 
-    router.push('/darmasaba/berita');
+    router.push('/berita');
     await flushRejections();
 
     expect(startViewTransition).toHaveBeenCalledTimes(1);
@@ -93,7 +93,7 @@ describe('next-view-transitions: transisi yang dilewati', () => {
     const onTransitionReady = vi.fn();
     const router = captureRouter();
 
-    router.push('/darmasaba/berita', { onTransitionReady });
+    router.push('/berita', { onTransitionReady });
     await flushRejections();
 
     expect(onTransitionReady).not.toHaveBeenCalled();
@@ -105,7 +105,7 @@ describe('next-view-transitions: transisi yang dilewati', () => {
     stubStartViewTransition(timeout);
     const router = captureRouter();
 
-    router.replace('/darmasaba/berita');
+    router.replace('/berita');
     await flushRejections();
 
     expect(unhandled).toEqual([timeout]);

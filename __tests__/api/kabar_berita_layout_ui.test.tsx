@@ -8,9 +8,9 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
 }));
-import { KabarBerita } from '@/app/darmasaba/_com/main-page/kabar-desa/KabarBerita';
-import type { KabarItem } from '@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic';
-import s from '@/app/darmasaba/_com/main-page/kabar-desa/kabar.module.css';
+import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
+import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
+import s from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 // test-only: entri berita siap tampil.
 const item = (id: string): KabarItem => ({
@@ -19,7 +19,7 @@ const item = (id: string): KabarItem => ({
   summary: 'Ringkasan',
   kategori: 'Budaya',
   createdAt: Date.UTC(2026, 10, 3, 2),
-  href: `/darmasaba/pemerintahan/berita/Budaya/${id}`,
+  href: `/pemerintahan/berita/Budaya/${id}`,
 });
 
 const render = (node: React.ReactElement) =>
