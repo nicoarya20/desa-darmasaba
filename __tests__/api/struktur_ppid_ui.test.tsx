@@ -66,9 +66,12 @@ describe('Struktur PPID — kartu bagan', () => {
     expect(html).toMatch(/<div[^>]*data-vacant="true"[^>]*>/);
   });
 
-  it('foto dari link pegawai; tanpa foto → siluet ikon', () => {
+  it('foto dari link pegawai; pegawai tanpa foto → inisial nama; jabatan kosong → siluet ikon', () => {
     expect(html).toContain('src="/api/img/kades.webp"');
-    expect(count(html, 'tabler-icon-user-filled')).toBe(5);
+    expect(count(html, 'data-initials="true"')).toBe(4);
+    expect(html).toMatch(/class="[^"]*_initials_[^"]*">IK<\/span>/); // I Ketut
+    expect(html).toMatch(/class="[^"]*_initials_[^"]*">NW<\/span>/); // Ni Wayan
+    expect(count(html, 'tabler-icon-user-filled')).toBe(1);
   });
 
   it('warna & ukuran per tingkat: akar lg/tone 0, bawahan langsung md/tone 1, daun di grid sm/tone 2', () => {
