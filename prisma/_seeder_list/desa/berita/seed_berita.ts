@@ -93,7 +93,7 @@ export async function seedBerita() {
           content: b.content,
           kategoriBeritaId: b.kategoriBeritaId,
           imageId,
-          ...(b.tanggal && { createdAt: new Date(b.tanggal) }),
+          ...(b.tanggal && { createdAt: new Date(b.tanggal), tanggalTerbit: new Date(b.tanggal) }),
         },
         create: {
           id: b.id,
@@ -102,8 +102,8 @@ export async function seedBerita() {
           content: b.content,
           kategoriBeritaId: b.kategoriBeritaId,
           imageId,
-          // createdAt = tanggal terbit asli; urutan "terbaru" di halaman publik memakai kolom ini.
-          ...(b.tanggal && { createdAt: new Date(b.tanggal) }),
+          // tanggalTerbit = tanggal asli (urutan & tanggal tampil di website); createdAt ikut disamakan.
+          ...(b.tanggal && { createdAt: new Date(b.tanggal), tanggalTerbit: new Date(b.tanggal) }),
         },
       });
 
