@@ -20,6 +20,9 @@ vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () =>
 import Page from '@/app/(public)/(pages)/ppid/struktur-ppid/page';
 import { StrukturChart } from '@/app/(public)/_com/struktur-organisasi/StrukturChart';
 import type { OrgNode } from '@/app/(public)/_com/struktur-organisasi/struktur.logic';
+import { StrukturBody } from '@/app/(public)/_com/struktur-organisasi/StrukturBody';
+import type { StrukturData } from '@/app/(public)/_com/struktur-organisasi/use-struktur-data';
+import { STRUKTUR_PPID_TEXT } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.text';
 import { strukturPpidSource } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.source';
 import { strukturDetailHref } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.meta';
 
@@ -153,5 +156,19 @@ describe('Struktur PPID — halaman', () => {
     expect(ppid.pegawai.findMany.load).toHaveBeenCalledWith(1, 100);
     expect(await strukturPpidSource.loadPosisi()).toEqual([]);
     expect(ppid.posisiOrganisasi.findManyAll.load).toHaveBeenCalledWith();
+  });
+});
+
+describe('Struktur PPID — tanpa data', () => {
+  const empty = { loading: false, tree: [], visible: [], search: '', setSearch: vi.fn(), query: '', reload: vi.fn() } as StrukturData;
+  const html = render(
+    <StrukturBody data={empty} label={LABEL} emptyHint={STRUKTUR_PPID_TEXT.emptyHint} hrefFor={strukturDetailHref} />,
+  );
+
+  it('judul "Data sedang disiapkan" + hint halaman + tombol Muat Ulang, tanpa bagan', () => {
+    expect(html).toContain('Data sedang disiapkan');
+    expect(html).toContain('Belum ada pegawai aktif yang tercatat untuk PPID.');
+    expect(html).toContain('Muat Ulang');
+    expect(html).not.toContain(`aria-label="${LABEL}"`);
   });
 });
