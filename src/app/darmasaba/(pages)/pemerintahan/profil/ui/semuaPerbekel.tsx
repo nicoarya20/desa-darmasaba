@@ -1,103 +1,64 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
-import { Box, Center, Image, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { useShallowEffect } from '@mantine/hooks';
-import { IconUser } from '@tabler/icons-react';
+import { Image, Skeleton } from '@mantine/core';
+import { IconUserFilled } from '@tabler/icons-react';
+import { useId } from 'react';
 import { useProxy } from 'valtio/utils';
+import { ProfilHeading } from '../_com/ProfilCard';
+import { RIWAYAT_PERBEKEL_LIMIT } from '../_com/profil.meta';
+import { PROFIL_TEXT } from '../_com/profil.text';
+import { useLoadOnce } from '../_com/use-load-once';
+import r from './riwayat-perbekel.module.css';
 
+const T = PROFIL_TEXT.riwayat;
+const SKELETON_COUNT = 3;
+
+/** Section Perbekel dari Masa ke Masa: grid kartu potret (foto, nama, wilayah, periode) berurutan dari CMS. */
 function SemuaPerbekel() {
+  const id = useId();
   const state = useProxy(stateProfileDesa.mantanPerbekel);
+  const loaded = useLoadOnce(() => state.findMany.load(1, RIWAYAT_PERBEKEL_LIMIT));
+  const { data } = state.findMany;
 
-  useShallowEffect(() => {
-    state.findMany.load();
-  }, []);
-
-  const { data, loading } = state.findMany;
-
-  if (loading || !data) {
-    return (
-      <Box py="xl">
-        <Skeleton h={500} radius="xl" />
-      </Box>
+  let content;
+  if (!loaded && !data) {
+    content = (
+      <div className={r.grid} role="status" aria-label={T.loading}>
+        {Array.from({ length: SKELETON_COUNT }, (_, i) => (
+          <Skeleton key={i} className={r.skeleton} radius={24} />
+        ))}
+      </div>
     );
-  }
-
-  if (data.length === 0) {
-    return (
-      <Center py="xl">
-        <Stack align="center" gap="sm">
-          <IconUser size={48} stroke={1.5} />
-          <Title order={2} ta="center">Belum ada data Perbekel</Title>
-          <Text c="dimmed" fz={{ base: 'xs', md: 'sm' }} lh={{ base: 1.4, md: 1.6 }} ta="center">
-            Data mantan Perbekel akan muncul di sini ketika sudah tersedia
-          </Text>
-        </Stack>
-      </Center>
+  } else if (!data || data.length === 0) {
+    content = <p className={r.empty}>{T.empty}</p>;
+  } else {
+    content = (
+      <ul className={r.grid}>
+        {data.map((item) => (
+          <li key={item.id} className={r.card}>
+            <div className={r.photo}>
+              {item.image?.link ? (
+                <Image src={item.image.link} alt={item.nama} className={r.photoImage} loading="lazy" />
+              ) : (
+                <IconUserFilled className={r.silhouette} aria-hidden />
+              )}
+            </div>
+            <div className={r.body}>
+              <h3 className={r.name}>{item.nama}</h3>
+              <p className={r.area}>{item.daerah}</p>
+              <p className={r.period}>{item.periode}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
     );
   }
 
   return (
-    <Box>
-      <Stack align="center" gap="lg">
-        <Title
-          order={1}
-          ta="center"
-          style={{
-            background: 'linear-gradient(45deg, blue, cyan)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-          fz={{ base: 28, md: 36 }}
-          lh={{ base: 1.2, md: 1.3 }}
-          fw={900}
-        >
-          Perbekel Dari Masa ke Masa
-        </Title>
-
-        <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl" w="100%">
-          {data.map((v: any, k: number) => (
-            <Paper
-              key={k}
-              radius="xl"
-              shadow="md"
-              withBorder
-              p="lg"
-              bg="white"
-              style={{ transition: "all 250ms ease" }}
-              className="hover:shadow-xl hover:scale-[1.02]"
-            >
-              <Stack gap="md" align="center">
-                <Box w="100%" h={500} style={{ overflow: "hidden", borderRadius: "1rem" }}>
-                  <Image
-                    src={v.image?.link}
-                    alt={v.nama || "Foto Perbekel"}
-                    fit="cover"
-                    h="100%"
-                    w="100%"
-                    loading="lazy"
-                  />
-                </Box>
-
-                <Stack gap={4} align="center">
-                  <Title order={3} fz={{ base: 18, md: 20 }} ta="center" fw={700}>
-                    {v.nama}
-                  </Title>
-
-                  <Text c="dimmed" fz={{ base: 12, md: 14 }} lh={{ base: 1.4, md: 1.6 }} ta="center">
-                    {v.daerah}
-                  </Text>
-
-                  <Text c="blue" fw={600} fz={{ base: 12, md: 14 }} lh={{ base: 1.4, md: 1.6 }} ta="center">
-                    {v.periode}
-                  </Text>
-                </Stack>
-              </Stack>
-            </Paper>
-          ))}
-        </SimpleGrid>
-      </Stack>
-    </Box>
+    <section aria-labelledby={id}>
+      <ProfilHeading id={id} title={T.title} />
+      {content}
+    </section>
   );
 }
 

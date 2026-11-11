@@ -1,0 +1,211 @@
+/* Halaman Profil Desa: kartu terang terpusat (keluarga kartu Visi Misi PPID) untuk section teks,
+   judul section h2 rata tengah, dan teks CMS rata kiri di kolom baca ±70 karakter. */
+.sections {
+  --p-text: #1d1d1f;
+  --p-muted: #515154;
+  --p-rule: #b1bdd1;
+  /* Panjang baris baca (±70 karakter) — sama dengan --vm-measure kartu Visi Misi. */
+  --p-measure: 46rem;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56px 48px 64px;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  border-radius: 32px;
+  background: var(--vm-card);
+  box-shadow: 0 16px 40px rgb(10 78 120 / 0.1);
+  animation: rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Muncul sekali saat isi selesai dimuat; prefers-reduced-motion ditangani global (globals.css). */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.emblem {
+  width: 140px;
+  height: 140px;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
+/* Judul section di dalam kartu maupun di atas isi tanpa kartu (bagan, daftar perbekel). */
+.title {
+  margin: 0;
+  color: var(--brand);
+  font-size: 36px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.headingLead {
+  max-width: 640px;
+  margin: 0;
+  color: var(--p-muted);
+  font-size: 19px;
+  line-height: 1.45;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.headingAside {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 12px;
+}
+
+/* Teks HTML dari editor admin. */
+.prose {
+  width: 100%;
+  max-width: var(--p-measure);
+  margin-top: 24px;
+  color: var(--p-text);
+  font-size: 19px;
+  line-height: 1.65;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.prose p {
+  margin: 0 0 0.9em;
+}
+
+.prose > :last-child {
+  margin-bottom: 0;
+}
+
+.prose h3 {
+  margin: 0 0 0.4em;
+  font-size: 1em;
+  font-weight: 700;
+}
+
+/* Daftar dari editor → baris bergaris dengan titik/nomor brand (pola daftar PPID). */
+.prose ul,
+.prose ol {
+  margin: 0 0 0.9em;
+  padding: 0;
+  list-style: none;
+  counter-reset: p-item;
+}
+
+.prose li {
+  position: relative;
+  padding: 12px 0 12px 32px;
+  border-top: 1px solid var(--p-rule);
+  counter-increment: p-item;
+}
+
+.prose li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.prose li:last-child {
+  padding-bottom: 0;
+}
+
+.prose li::before {
+  position: absolute;
+  left: 0;
+  color: var(--brand);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.prose ol > li::before {
+  content: counter(p-item);
+}
+
+.prose ul > li::before {
+  content: '';
+  top: calc(12px + 0.825em - 3px);
+  left: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.prose ul > li:first-child::before {
+  top: calc(0.825em - 3px);
+}
+
+.empty {
+  margin: 20px 0 0;
+  color: var(--p-muted);
+  font-size: 17px;
+  line-height: 1.47;
+  text-align: center;
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 56px 48px 64px;
+  border-radius: 32px;
+  background: var(--vm-card);
+}
+
+@media (max-width: 734px) {
+  .sections {
+    gap: 40px;
+  }
+
+  .card,
+  .skeleton {
+    padding: 36px 20px 40px;
+    border-radius: 24px;
+  }
+
+  .emblem {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+
+  .heading {
+    margin-bottom: 24px;
+  }
+
+  .headingLead {
+    font-size: 17px;
+    line-height: 1.47;
+  }
+
+  .prose {
+    margin-top: 18px;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .prose li {
+    padding-left: 26px;
+  }
+}

@@ -1,9 +1,9 @@
 import { Image } from '@mantine/core';
 import { IconSparkles } from '@tabler/icons-react';
+import { useId } from 'react';
 import { parsePlainListItems } from '../../_com/cms-list.logic';
 import shared from '../../_com/ppid-sections.module.css';
 import s from './visi-misi.module.css';
-import { VISI_MISI_TEXT } from './visi-misi.text';
 
 /** Lambang desa di kepala kartu. */
 const LOGO_SRC = '/darmasaba-icon.png';
@@ -13,6 +13,10 @@ type Props = {
   visi: string;
   /** HTML misi dari editor admin; satu daftar teks polos tampil sebagai butir bernomor. */
   misi: string;
+  /** Judul bagian dan teks alternatif lambang — tiap halaman punya sebutannya sendiri (PPID / Desa). */
+  labels: { visi: string; misi: string; logoAlt: string };
+  /** Moto di bawah lambang (opsional): judul + kalimat moto. Tanpa moto, lambang langsung di atas visi. */
+  moto?: { title: string; statement: string };
 };
 
 /** Pemisah antarbagian: dua garis pendek mengapit ornamen. */
@@ -24,30 +28,39 @@ function Ornament() {
   );
 }
 
-/** Isi halaman Visi dan Misi PPID: satu kartu terpusat berisi lambang desa, moto, visi, dan misi. */
-export function VisiMisiContent({ visi, misi }: Props) {
+/**
+ * Kartu Visi dan Misi: satu kartu terpusat berisi lambang desa, moto (opsional), visi, dan misi.
+ * Dipakai halaman Visi Misi PPID dan section Visi Misi di Profil Desa.
+ */
+export function VisiMisiContent({ visi, misi, labels, moto }: Props) {
+  const id = useId();
   // Isi yang bukan satu daftar teks polos (null) dirender apa adanya agar tidak ada yang hilang.
   const misiItems = parsePlainListItems(misi);
+  const logo = <Image className={s.logo} src={LOGO_SRC} alt={labels.logoAlt} />;
 
   return (
     <div className={s.card}>
-      <section className={s.section} aria-labelledby="ppid-moto">
-        <Image className={s.logo} src={LOGO_SRC} alt={VISI_MISI_TEXT.logoAlt} />
-        <h2 id="ppid-moto" className={s.motoTitle}>{VISI_MISI_TEXT.moto}</h2>
-        <p className={s.motoText}>{VISI_MISI_TEXT.motoStatement}</p>
-      </section>
+      {moto ? (
+        <>
+          <section className={s.section} aria-labelledby={`${id}-moto`}>
+            {logo}
+            <h2 id={`${id}-moto`} className={s.motoTitle}>{moto.title}</h2>
+            <p className={s.motoText}>{moto.statement}</p>
+          </section>
+          <Ornament />
+        </>
+      ) : null}
 
-      <Ornament />
-
-      <section className={s.section} aria-labelledby="ppid-visi">
-        <h2 id="ppid-visi" className={s.title}>{VISI_MISI_TEXT.visi}</h2>
+      <section className={s.section} aria-labelledby={`${id}-visi`}>
+        {moto ? null : logo}
+        <h2 id={`${id}-visi`} className={s.title}>{labels.visi}</h2>
         <div className={s.visiText} dangerouslySetInnerHTML={{ __html: visi }} />
       </section>
 
       <Ornament />
 
-      <section className={s.section} aria-labelledby="ppid-misi">
-        <h2 id="ppid-misi" className={s.title}>{VISI_MISI_TEXT.misi}</h2>
+      <section className={s.section} aria-labelledby={`${id}-misi`}>
+        <h2 id={`${id}-misi`} className={s.title}>{labels.misi}</h2>
         {misiItems ? (
           <ol className={s.misiList}>
             {misiItems.map((item, i) => (

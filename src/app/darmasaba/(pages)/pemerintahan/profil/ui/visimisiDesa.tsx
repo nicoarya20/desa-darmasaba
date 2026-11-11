@@ -1,110 +1,30 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
-import colors from '@/con/colors';
-import { Box, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
+import { VisiMisiContent } from '../../../ppid/visi-misi-ppid/_com/VisiMisiContent';
+import { ProfilCard, ProfilCardSkeleton, ProfilEmpty } from '../_com/ProfilCard';
+import { PROFIL_CMS_ID } from '../_com/profil.meta';
+import { PROFIL_TEXT } from '../_com/profil.text';
+import { useLoadOnce } from '../_com/use-load-once';
 
+const T = PROFIL_TEXT.visiMisi;
+const LABELS = { visi: T.visi, misi: T.misi, logoAlt: PROFIL_TEXT.logoAlt };
+
+/** Section Visi dan Misi Desa: kartu yang sama dengan halaman Visi Misi PPID (lambang, visi, misi bernomor). */
 function VisiMisiDesa() {
   const state = useProxy(stateProfileDesa.visiMisiDesa);
+  const loaded = useLoadOnce(() => state.findUnique.load(PROFIL_CMS_ID));
+  const { data } = state.findUnique;
 
-  useEffect(() => {
-    state.findUnique.load('edit');
-  }, []);
-
-  const { data, loading, error } = state.findUnique;
-
-  if (loading) {
+  if (!loaded && !data) return <ProfilCardSkeleton label={T.loading} rows={7} />;
+  if (!data) {
     return (
-      <Box py="xl">
-        <Skeleton h={500} radius="lg" />
-      </Box>
+      <ProfilCard title={T.title}>
+        <ProfilEmpty>{T.empty}</ProfilEmpty>
+      </ProfilCard>
     );
   }
-
-  if (error || !data) {
-    return (
-      <Box py="xl">
-        <Paper p="xl" radius="lg" shadow="md" withBorder>
-          <Title order={2} c="red" ta="center" mb="md">
-            Terjadi Kesalahan
-          </Title>
-          <Text ta="center" c="dimmed">
-            {error || 'Data visi dan misi desa tidak ditemukan'}
-          </Text>
-        </Paper>
-      </Box>
-    );
-  }
-
-  return (
-    <Box>
-      <Stack align="center" gap="xl">
-        <Image
-          src="/darmasaba-icon.png"
-          alt="Lambang Desa Darmasaba"
-          w={{ base: 160, md: 240 }}
-          radius="md"
-          loading="lazy"
-        />
-
-        {/* VISI */}
-        <Paper
-          p="xl"
-          radius="lg"
-          shadow="md"
-          withBorder
-          w="100%"
-          style={{ background: 'linear-gradient(145deg, #ffffff, #f5f7fa)' }}
-        >
-          <Title
-            order={1}
-            c={colors['blue-button']}
-            ta="center"
-            mb="md"
-          >
-            Visi Desa
-          </Title>
-
-          <Text
-            fz={{ base: 'sm', md: 'md' }}   // body text responsive
-            lh={1.7}
-            ta="center"
-            dangerouslySetInnerHTML={{ __html: data.visi }}
-            style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-          />
-        </Paper>
-
-        {/* MISI */}
-        <Paper
-          p="xl"
-          radius="lg"
-          shadow="md"
-          withBorder
-          w="100%"
-          style={{ background: 'linear-gradient(145deg, #ffffff, #f5f7fa)' }}
-        >
-          <Title
-            order={1}
-            c={colors['blue-button']}
-            ta="center"
-            mb="md"
-          >
-            Misi Desa
-          </Title>
-
-          <Text
-            fz={{ base: 'sm', md: 'md' }}   // body text responsive
-            lh={1.7}
-            ta="left"
-            dangerouslySetInnerHTML={{ __html: data.misi }}
-            style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-          />
-        </Paper>
-      </Stack>
-    </Box>
-  );
+  return <VisiMisiContent visi={data.visi} misi={data.misi} labels={LABELS} />;
 }
 
 export default VisiMisiDesa;
