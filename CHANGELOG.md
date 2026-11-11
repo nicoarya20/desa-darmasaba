@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.251] - 2026-11-12
+### Changed
+- **Halaman Layanan (menu Pemerintahan) kini senada dengan galeri Layanan dan Potensi Desa di beranda.** Halaman berlatar putih dengan judul rata kiri, sama seperti halaman Berita dan Pengumuman. Setiap surat keterangan tampil sebagai kartu foto bergaya galeri beranda: nama layanan di kiri bawah dan tombol "Lihat layanan" di kanan bawah. Seluruh kartu bisa diklik untuk membuka detail layanan.
+- **Semua surat keterangan tampil sekaligus** tanpa nomor halaman. Kotak cari di samping judul bagian langsung menyaring saat mengetik.
+- **Alur pendaftaran NIB (Perizinan Berusaha melalui OSS)** kini menampilkan keenam langkah sekaligus, tanpa perlu menekan Lanjut satu per satu. Tombol "Buka oss.go.id" ada di bawahnya.
+- **Layanan Telunjuk Sakti Desa** tampil sebagai daftar baris. Nama layanan terbaca utuh (tidak terpotong), dan setiap baris membuka dokumen petunjuk di tab baru.
+- **Pelayanan Penduduk Non-Permanen** tampil dalam panel yang rapi.
+- **Halaman detail layanan dirombak**: langsung ke persyaratan tanpa foto besar di atas, gaya sama dengan detail Pengumuman. Tombol "Ajukan Permohonan" ada di atas (di samping estimasi waktu & biaya) dan di panel penutup bawah. Gambar alur pelayanan tampil di panel abu dan bisa dibuka ukuran penuh. Bila layanan tidak ditemukan, kini ada tautan kembali ke daftar layanan.
+- **Formulir Ajukan Permohonan** tampil sebagai jendela di tengah layar yang lebih bersih.
+
+### Fixed
+- Bila pengiriman "Ajukan Permohonan" gagal, formulir tidak lagi dikosongkan dan ditutup — isian warga tetap ada sehingga bisa langsung dikirim ulang. Gangguan jaringan kini juga memunculkan pesan gagal (sebelumnya tidak ada pesan apa pun).
+- Tombol "Simpan" di formulir Ajukan Permohonan kini menampilkan tanda memuat dan tidak bisa ditekan lagi selama pengiriman, sehingga permohonan tidak terkirim dua kali.
+- Surat keterangan ke-10 (Surat Keterangan Yatim Piatu) sebelumnya tidak pernah muncul di halaman Layanan karena jumlah item per halaman tidak konsisten.
+- Tautan Telunjuk Sakti yang diisi admin tanpa "https://" kini membuka situs yang dituju, bukan halaman tidak ditemukan.
+
+### Removed
+- Tanggal "25 Mei 2021" yang tidak sesuai dan empat tombol bagikan media sosial yang tidak berfungsi di bagian Penduduk Non-Permanen.
+
 ## [0.1.250] - 2026-11-11
 ### Changed
 - **Alamat website publik tanpa `/darmasaba`.** Beranda kini langsung di `/` dan semua halaman publik tanpa prefix, misalnya `/ppid/profil-ppid` (sebelumnya `/darmasaba/ppid/profil-ppid`). Link lama yang sudah dibagikan atau terindeks mesin pencari tetap jalan lewat redirect permanen (301) ke alamat baru.

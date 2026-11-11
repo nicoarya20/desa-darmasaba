@@ -1,117 +1,63 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+'use client';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
-import { Box, Card, Flex, Grid, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { IconExternalLink } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import { useProxy } from 'valtio/utils';
+import { IconArrowUpRight, IconFileDescription } from '@tabler/icons-react';
+import { useEffect } from 'react';
+import { useSnapshot } from 'valtio';
+import { LayananSection } from './LayananSection';
+import { externalHref, type TelunjukSaktiItem } from './layanan.logic';
+import { LAYANAN_LIST_LIMIT } from './layanan.meta';
+import page from './layanan.module.css';
+import s from './layanan-info.module.css';
+import { LAYANAN_TEXT } from './layanan.text';
 
-// Jumlah baris maksimum agar tinggi card seragam di semua baris grid
-const TITLE_MAX_LINES = 2;
-const LINK_MAX_LINES = 2;
+const T = LAYANAN_TEXT.telunjuk;
+const PLACEHOLDER_COUNT = 3;
 
-interface ServiceItem {
-  name: string;
-  deskripsi: string;
-  link: string;
-}
-
+/** Bagian Telunjuk Sakti Desa: panel baris, tiap baris membuka dokumen petunjuk di tab baru. */
 function PelayananTelunjukSaktiDesa() {
-  const state = useProxy(stateLayananDesa);
-  const [loading, setLoading] = useState(false);
+  const snap = useSnapshot(stateLayananDesa.pelayananTelunjukSaktiDesa.findMany);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        await state.pelayananTelunjukSaktiDesa.findMany.load();
-      } catch (error) {
-        console.error('Gagal memuat data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+    void stateLayananDesa.pelayananTelunjukSaktiDesa.findMany.load(1, LAYANAN_LIST_LIMIT);
   }, []);
 
-  const data = (state.pelayananTelunjukSaktiDesa.findMany.data || []) as Array<{
-    name: string;
-    id: string;
-    deskripsi: string;
-    link: string;
-    estimasiWaktu: string | null;
-    biaya: number | null;
-    items: ServiceItem[];
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date | null;
-  }>;
+  const loading = snap.loading || snap.data === null;
+  const items = (snap.data ?? []) as TelunjukSaktiItem[];
 
   return (
-    <Box>
-      <Stack gap="xs" mb="lg">
-        <Title order={2} fw={700} lh={1.3} ta="left">
-          Layanan Telunjuk Sakti Desa
-        </Title>
-        <Text c="black" fz={{ base: 'sm', md: 'md' }} fw={400} lh={1.5}>
-          Terwujudnya sistem administrasi kependudukan terintegrasi berbasis elektronik, cerdas, dan aman
-        </Text>
-      </Stack>
-
+    <LayananSection title={T.title} lead={T.lead}>
       {loading ? (
-        <Skeleton h={400} radius="lg" />
-      ) : data.length === 0 ? (
-        <Card shadow="sm" radius="lg" withBorder>
-          <Text c="black" ta="center" py="xl" fz={{ base: 'sm', md: 'md' }} lh={1.5}>
-            Belum ada layanan tersedia untuk saat ini
-          </Text>
-        </Card>
-      ) : (
-        <Grid gap="lg">
-          {data.map((v, k) => (
-            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }} key={k}>
-              <Card
-                shadow="md"
-                radius="xl"
-                withBorder
-                p="lg"
-                h="100%"
-                style={{
-                  transition: 'all 0.3s ease',
-                  background: 'linear-gradient(145deg, #ffffff, #f8f9fa)',
-                }}
-              >
-                <Stack gap="sm">
-                  <Title order={3} fw={700} lh={1.3} mih="2.6em" lineClamp={TITLE_MAX_LINES} title={v.name}>
-                    {v.name}
-                  </Title>
-                  <LayananWaktuBiayaBadge estimasiWaktu={v.estimasiWaktu} biaya={v.biaya} />
-                  <Flex gap="xs" align="center">
-                    <IconExternalLink size={18} stroke={1.5} style={{ flexShrink: 0 }} />
-                    <Text
-                      component="a"
-                      href={v.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      fz={{ base: 'xs', md: 'sm' }}
-                      lh={1.5}
-                      lineClamp={LINK_MAX_LINES}
-                      title={v.deskripsi}
-                      miw={0}
-                      c="blue"
-                      td="underline"
-                      style={{ cursor: 'pointer', wordBreak: 'break-word' }}
-                    >
-                      {v.deskripsi}
-                    </Text>
-                  </Flex>
-                </Stack>
-              </Card>
-            </Grid.Col>
+        <ul className={s.panel} aria-busy="true" aria-label={T.loading}>
+          {Array.from({ length: PLACEHOLDER_COUNT }, (_, i) => (
+            <li key={i} aria-hidden>
+              <span className={s.rowPlaceholder} />
+            </li>
           ))}
-        </Grid>
+        </ul>
+      ) : items.length === 0 ? (
+        <p className={page.empty}>{T.empty}</p>
+      ) : (
+        <ul className={s.panel} aria-label={T.listLabel}>
+          {items.map((item) => (
+            <li key={item.id}>
+              <a className={s.row} href={externalHref(item.link)} target="_blank" rel="noopener noreferrer">
+                <span className={s.rowIcon} aria-hidden>
+                  <IconFileDescription size={22} stroke={1.6} />
+                </span>
+                <span className={s.rowBody}>
+                  <span className={s.rowTitle}>{item.name}</span>
+                  {item.deskripsi ? <span className={s.rowLink}>{item.deskripsi}</span> : null}
+                  <LayananWaktuBiayaBadge estimasiWaktu={item.estimasiWaktu} biaya={item.biaya} />
+                </span>
+                <IconArrowUpRight className={s.rowArrow} size={20} aria-hidden />
+                <span className={page.srOnly}>({T.linkHint})</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       )}
-    </Box>
+    </LayananSection>
   );
 }
 
