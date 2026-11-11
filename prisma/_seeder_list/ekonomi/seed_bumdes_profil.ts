@@ -1,5 +1,5 @@
 import prisma from "../../seed-prisma";
-import { PROFIL_BUMDES_ID } from "@/app/api/[[...slugs]]/_lib/ekonomi/bumdes/profil/validation";
+import { PROFIL_BUMDES_ID } from "@/lib/bumdes-profil";
 import { loadJsonData } from "../../load-json";
 
 interface ProfilBumDesSeed {

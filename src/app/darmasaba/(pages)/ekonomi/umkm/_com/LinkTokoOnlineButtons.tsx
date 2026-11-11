@@ -6,7 +6,7 @@ import {
   isPlatformTokoOnline,
   isSafeHttpsUrl,
   type PlatformTokoOnline,
-} from '../_lib/linkTokoOnline';
+} from '@/lib/link-toko-online';
 
 type LinkItem = { id?: string; platform: string; url: string };
 

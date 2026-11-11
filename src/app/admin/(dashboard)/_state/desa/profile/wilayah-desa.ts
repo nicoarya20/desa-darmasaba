@@ -1,4 +1,4 @@
-import { wilayahDesaSchema } from "@/app/api/[[...slugs]]/_lib/desa/profile/profile_desa/wilayah/validation";
+import { wilayahDesaSchema } from "@/lib/wilayah-desa";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 
