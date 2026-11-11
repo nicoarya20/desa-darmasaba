@@ -7,7 +7,8 @@ import {
   type PengumumanApiItem,
 } from "./kabar.logic";
 
-type FindManyBody = { success?: boolean; message?: string; data?: unknown } | null | undefined;
+/** Bentuk umum respons find-many (`success`, `message`, `data`). */
+export type FindManyBody = { success?: boolean; message?: string; data?: unknown } | null | undefined;
 
 /** Validasi respons find-many; gagal → Error dengan konteks sumber + status. */
 export function readFindMany<T>(source: string, status: number, body: FindManyBody): T[] {
