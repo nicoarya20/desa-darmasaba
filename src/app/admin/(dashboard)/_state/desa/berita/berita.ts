@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { tanggalKeInput, tanggalTerbitAtauDibuat } from "@/lib/tanggal-terbit";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -13,6 +14,7 @@ const templateForm = z.object({
   imageId: z.string().nonempty(),
   imageIds: z.array(z.string()),
   linkVideo: z.string().optional(),
+  tanggalTerbit: z.string().optional(),
 });
 
 const defaultForm = {
@@ -23,6 +25,8 @@ const defaultForm = {
   kategoriBeritaId: "",
   imageIds: [] as string[],
   linkVideo: "",
+  /** `YYYY-MM-DD` (WITA). Create: default hari ini; edit: "" = tidak diubah saat update. */
+  tanggalTerbit: "",
 };
 
 const berita = proxy({
@@ -191,6 +195,7 @@ const berita = proxy({
             imageId: data.imageId || "",
             imageIds: data.images?.map((img: any) => img.id) || [],
             linkVideo: data.linkVideo || "",
+            tanggalTerbit: tanggalKeInput(tanggalTerbitAtauDibuat(data)),
           };
           return data;
         } else {
@@ -231,6 +236,7 @@ const berita = proxy({
             imageId: this.form.imageId,
             imageIds: this.form.imageIds,
             linkVideo: this.form.linkVideo,
+            tanggalTerbit: this.form.tanggalTerbit,
           }),
         });
 

@@ -27,6 +27,8 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/pemerintahan/gallery/lib/youtube-utils';
+import { hariIniInput } from '@/lib/tanggal-terbit';
+import { TanggalTerbitInput } from '../_com/TanggalTerbitInput';
 
 export default function CreateBerita() {
   const beritaState = useProxy(stateDashboardBerita, { sync: true }); // sync: cegah caret jump di controlled input
@@ -56,6 +58,7 @@ export default function CreateBerita() {
     return (
       beritaState.berita.create.form.judul?.trim() !== '' &&
       beritaState.berita.create.form.kategoriBeritaId !== '' &&
+      beritaState.berita.create.form.tanggalTerbit !== '' &&
       !isHtmlEmpty(beritaState.berita.create.form.deskripsi) &&
       file !== null &&
       !isHtmlEmpty(beritaState.berita.create.form.content)
@@ -64,6 +67,8 @@ export default function CreateBerita() {
 
   useShallowEffect(() => {
     beritaState.kategoriBerita.findMany.load();
+    // Default Tanggal Terbit = hari ini (WITA); admin bisa mengubahnya untuk berita kegiatan lama.
+    if (!stateDashboardBerita.berita.create.form.tanggalTerbit) stateDashboardBerita.berita.create.form.tanggalTerbit = hariIniInput();
   }, []);
 
   const resetForm = () => {
@@ -75,6 +80,7 @@ export default function CreateBerita() {
       content: '',
       imageIds: [],
       linkVideo: '',
+      tanggalTerbit: hariIniInput(),
     };
     setPreviewImage(null);
     setFile(null);
@@ -114,6 +120,8 @@ export default function CreateBerita() {
       toast.error('Kategori wajib dipilih');
       return;
     }
+
+    if (!beritaState.berita.create.form.tanggalTerbit) return toast.error('Tanggal terbit wajib diisi');
 
     if (isHtmlEmpty(beritaState.berita.create.form.deskripsi)) {
       toast.error('Deskripsi singkat wajib diisi');
@@ -233,6 +241,11 @@ export default function CreateBerita() {
             clearable
             nothingFoundMessage="Tidak ditemukan"
             required
+          />
+
+          <TanggalTerbitInput
+            value={beritaState.berita.create.form.tanggalTerbit}
+            onChange={(v) => (beritaState.berita.create.form.tanggalTerbit = v)}
           />
 
           {/* Deskripsi */}
