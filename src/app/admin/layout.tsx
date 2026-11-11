@@ -237,7 +237,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             <Tooltip label="Kembali ke Website Desa" position="bottom" withArrow>
               <ActionIcon
-                onClick={() => router.push("/darmasaba")}
+                onClick={() => router.push("/")}
                 color={mounted ? tokens.colors.primary : '#3B82F6'}
                 radius="xl"
                 size="lg"

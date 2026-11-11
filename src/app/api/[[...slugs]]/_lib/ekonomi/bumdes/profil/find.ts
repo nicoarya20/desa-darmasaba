@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { IMAGE_SELECT } from "../http";
-import { PROFIL_BUMDES_ID } from "./validation";
+import { PROFIL_BUMDES_ID } from "@/lib/bumdes-profil";
 
 /** GET publik: profil BUMDes (singleton); `data: null` bila admin belum mengisi. */
 export default async function profilBumDesFind() {

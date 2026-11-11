@@ -1,5 +1,53 @@
 # Changelog
 
+## [0.1.250] - 2026-11-11
+### Changed
+- **Alamat website publik tanpa `/darmasaba`.** Beranda kini langsung di `/` dan semua halaman publik tanpa prefix, misalnya `/ppid/profil-ppid` (sebelumnya `/darmasaba/ppid/profil-ppid`). Link lama yang sudah dibagikan atau terindeks mesin pencari tetap jalan lewat redirect permanen (301) ke alamat baru.
+- Footer: blok "Kontak Bupati" kini berisi link **Kontak Bupati Badung** (kontak-bupati.badungkab.go.id) dan **LAPOR!** (lapor.go.id), keduanya dibuka di tab baru. Teks "Bupati Badung" dan link badungkab.go.id di blok ini dihapus.
+
+### Fixed
+- Link "Portal Badung" di footer kini membuka badungkab.go.id (sebelumnya salah mengarah ke daftar berita desa).
+- `bun run prisma/seed.ts` di container produksi tidak lagi gagal "Cannot find module": seeder kini hanya memakai modul `src/lib` yang ikut tersalin ke image.
+
+### Removed
+- Ikon maskot di samping slogan "Desa Kuat, Warga Sejahtera!" pada footer.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261111130000_strip_darmasaba_prefix_menu_key` (data-only: membuang prefix `/darmasaba` di `MenuVisibility.menuKey` agar pengaturan sembunyikan/tampilkan menu dari admin tetap berlaku; aman dijalankan ulang). Tanpa migrasi ini, menu yang disembunyikan admin akan tampil kembali.
+- Alasan & detail perpindahan route: `docs/decisions/2026-11-11-public-route-root.md`.
+## [0.1.249] - 2026-11-11
+### Changed
+- **Halaman Pengumuman (menu Pemerintahan) kini senada dengan panel Pengumuman di beranda dan halaman Berita.** Pengumuman tampil sebagai daftar baris dengan gambar kecil di kiri, kategori, judul, dan tanggal terbit. Gambar kecil itu memperlihatkan kop surat pengumuman; pengumuman tanpa gambar memakai ikon dokumen. Satu halaman kini memuat 10 pengumuman (sebelumnya 3), dan judul tidak lagi dipaksa huruf kapital.
+- **Kategori pengumuman menjadi pil di bawah judul**, sama seperti halaman Berita. Kategori yang belum berisi pengumuman tidak ditampilkan. Kotak cari dan halaman kategori memakai tampilan yang sama. Kata kunci pencarian dan nomor halaman tersimpan di alamat halaman, jadi bisa dibagikan.
+- **Halaman detail pengumuman dirapikan.** Di atas judul tampil kategori dan tanggal terbit, dan kategorinya bisa diklik untuk membuka daftar kategori itu. Gambar utama (misalnya surat yang dipindai) tampil dalam bingkai seperti pratinjau dokumen, diikuti isi pengumuman, galeri, dan lampiran PDF dengan tombol Pratinjau dan Unduh. Bila pengumuman tidak ditemukan, halaman menampilkan pesan dan tautan kembali ke daftar, tidak lagi memuat tanpa henti.
+
+## [0.1.248] - 2026-11-11
+### Changed
+- **Halaman Profil Desa (menu Pemerintahan) dirapikan menyeluruh.** Judul kini "Profil Desa" (sebelumnya "Profile Desa"), dengan satu tombol kembali di atas dan section yang tampil seragam sebagai kartu terang seperti Visi Misi PPID. Teks dibuat rata kiri dengan panjang baris yang nyaman dibaca, dan lambang desa tidak lagi tampil berulang.
+- **Struktur Perangkat Desa memakai bagan baru** yang sama dengan Struktur PPID, baik di halaman Profil Desa maupun di halaman Struktur Perangkat Desa. Seluruh jabatan kini tampil (sebelumnya Kaur Umum dan Kaur Keuangan tidak muncul dan bagan terpotong di kanan), ada kotak cari nama atau jabatan, dan tampilan tetap rapi di ponsel. Kontrol zoom dan layar penuh yang lama dihapus karena tidak diperlukan lagi. Kartu pegawai tetap membuka profil perangkat desa.
+- **Visi dan Misi Desa** tampil dengan kartu yang sama seperti Visi Misi PPID: lambang desa di atas, lalu visi, lalu misi sebagai daftar bernomor.
+- **Profil Perbekel** memakai tata letak dua kolom seperti Profil PPID. Foto dan nama ada di kiri dan tetap terlihat saat halaman digulir di desktop. Biodata, Pengalaman, Pengalaman Organisasi, dan Program Kerja Unggulan ada di kanan.
+- **Letak & Batas Wilayah** menampilkan batas keempat arah, luas wilayah, dan peta. Bila peta wilayah belum diisi admin, yang tampil adalah peta lokasi Kantor Perbekel; peta ini sebelumnya muncul tanpa judul di bagian atas halaman.
+- **Moto SIGAP** menampilkan setiap huruf berdampingan dengan nilainya (Santun, Inovatif, Gesit, Adaptif, Profesional), sesuai urutan akronim. Foto Maskot tersusun dalam galeri yang rata, dan **Perbekel dari Masa ke Masa** tampil sebagai kartu potret dengan nama, wilayah, dan periode.
+
+## [0.1.247] - 2026-11-11
+### Changed
+- Isi hero beranda tidak lagi menempel ke tepi kiri layar. Jarak tepi kini menyesuaikan lebar layar: dari 24px di layar sempit sampai 64px di desktop lebar (sekitar 59px di MacBook). Section Kabar Desa dan halaman "Lihat semua berita" ikut menyesuaikan supaya tepinya tetap sejajar dengan hero. Tampilan di ponsel tidak berubah.
+
+## [0.1.246] - 2026-11-11
+### Changed
+- **Tombol mode baca suara (ikon disabilitas) pindah ke navbar**, di sebelah kanan ikon cari di desktop dan di sebelah kiri tombol menu di ponsel. Sebelumnya tombol ini melayang di sisi kiri beranda dan menutupi konten. Kini tombolnya tersedia di semua halaman (bukan hanya beranda), statusnya terlihat jelas (terisi biru saat aktif), dan punya keterangan "Aktifkan/Matikan mode baca suara" untuk pembaca layar. Di ponsel, teks yang diketuk akan dibacakan.
+
+### Removed
+- Tombol ikon musik yang melayang di kiri halaman detail berita, pengumuman, dan kesejahteraan masyarakat. Tombol ini bukan pemutar musik melainkan pembaca teks, dan fungsinya kini sudah tercakup tombol mode baca suara di navbar.
+
+## [0.1.245] - 2026-11-11
+### Fixed
+- Berpindah halaman dengan cepat (mengeklik tautan lain atau menekan tombol kembali sebelum halaman sebelumnya selesai dimuat) tidak lagi memunculkan error "Transition was skipped" di console maupun overlay mode pengembangan. Navigasi tetap berjalan seperti biasa.
+
+### Operator
+- Build Docker kini menyalin folder `patches/` sebelum `bun install` karena `next-view-transitions` dipatch lewat `patchedDependencies` di `package.json`. Saat menaikkan versi library itu, patch harus dibuat ulang (lihat `docs/DEPLOYMENT.md`, bagian Docker).
+
 ## [0.1.244] - 2026-11-11
 ### Added
 - **Tanggal Terbit berita.** Admin dapat mengisi tanggal asli berita di form tambah (default hari ini) dan edit, sehingga berita kegiatan lama yang diinput belakangan tampil dengan tanggal aslinya dan tidak lagi naik ke urutan teratas. Halaman detail berita di admin dan website kini menampilkan tanggal terbit.

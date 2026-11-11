@@ -28,7 +28,7 @@ import {
 import {
   PENGANTAR_MUSYAWARAH_LINKS,
   PENGANTAR_MUSYAWARAH_TEKS,
-} from "@/app/darmasaba/(pages)/inovasi/ajukan-ide-inovatif/_com/pengantar-musyawarah.const";
+} from "@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/pengantar-musyawarah.const";
 import kategoriKegiatanJson from "../../prisma/data/desa/kegiatan-desa/kategori-kegiatan.json";
 
 const ROOT = path.resolve(__dirname, "../..");
@@ -229,15 +229,15 @@ describe("pengantar musyawarah Ajukan Ide", () => {
 
   it("memuat tautan ke Agenda & Kalender Desa dan Dokumen Perencanaan", () => {
     expect(PENGANTAR_MUSYAWARAH_LINKS.map((l) => l.href)).toEqual([
-      "/darmasaba/pemerintahan/event-budaya",
-      "/darmasaba/pemerintahan/monev-pembangunan",
+      "/pemerintahan/event-budaya",
+      "/pemerintahan/monev-pembangunan",
     ]);
   });
 
   it("setiap tautan menunjuk rute publik yang ada (page.tsx)", () => {
     for (const link of PENGANTAR_MUSYAWARAH_LINKS) {
-      const rute = link.href.replace("/darmasaba/", "");
-      const page = path.join(ROOT, "src/app/darmasaba/(pages)", rute, "page.tsx");
+      const rute = link.href.replace("/", "");
+      const page = path.join(ROOT, "src/app/(public)/(pages)", rute, "page.tsx");
       expect(existsSync(page), page).toBe(true);
     }
   });

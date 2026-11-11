@@ -1,5 +1,5 @@
 import prisma from "../../seed-prisma";
-import { WILAYAH_DESA_ID } from "@/app/api/[[...slugs]]/_lib/desa/profile/profile_desa/wilayah/validation";
+import { WILAYAH_DESA_ID } from "@/lib/wilayah-desa";
 import { loadJsonData } from "../../load-json";
 
 interface WilayahDesaSeed {

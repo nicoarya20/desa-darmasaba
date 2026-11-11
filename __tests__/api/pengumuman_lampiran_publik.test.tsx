@@ -4,13 +4,13 @@
 import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { PengumumanDokumenList } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanDokumenList';
+import { PengumumanDokumenList } from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/PengumumanDokumenList';
 import {
   PengumumanGambarUtama,
   PengumumanLampiranBawah,
   PengumumanThumbnail,
-} from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran';
-import { toPengumumanItem } from '@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic';
+} from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran';
+import { toPengumumanItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const count = (html: string, attr: string) => html.split(attr).length - 1;

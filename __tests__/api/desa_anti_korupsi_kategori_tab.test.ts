@@ -6,9 +6,9 @@ import {
   detailHref,
   filterByKategori,
   resolveInitialKategori,
-} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/kategori-tab';
+} from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/kategori-tab';
 
-const DAK_DIR = path.resolve(__dirname, '../../src/app/darmasaba/(tambahan)/desa-anti-korupsi');
+const DAK_DIR = path.resolve(__dirname, '../../src/app/(public)/(tambahan)/desa-anti-korupsi');
 // Source-check (bukan import): page.tsx menarik BackButton (next-view-transitions) yang tak bisa dimuat di env node.
 const CARD_PAGE_SRC = readFileSync(path.join(DAK_DIR, 'page.tsx'), 'utf8');
 const DETAIL_PAGE_SRC = readFileSync(path.join(DAK_DIR, 'detail/page.tsx'), 'utf8');
@@ -18,7 +18,7 @@ const CATEGORIES = ['PENGUATAN TATA LAKSANA', 'PENGUATAN PENGAWASAN', 'KEARIFAN 
 describe('detailHref', () => {
   it('membuat URL detail dengan query kategori ter-encode', () => {
     expect(detailHref('PENGUATAN PENGAWASAN')).toBe(
-      '/darmasaba/desa-anti-korupsi/detail?kategori=PENGUATAN%20PENGAWASAN',
+      '/desa-anti-korupsi/detail?kategori=PENGUATAN%20PENGAWASAN',
     );
   });
 
@@ -68,7 +68,7 @@ describe('filterByKategori', () => {
 describe('halaman utama Desa Anti Korupsi', () => {
   it('tidak lagi meng-hardcode daftar kategori maupun URL detail', () => {
     for (const kategori of CATEGORIES) expect(CARD_PAGE_SRC).not.toContain(kategori);
-    expect(CARD_PAGE_SRC).not.toContain('/darmasaba/desa-anti-korupsi/detail');
+    expect(CARD_PAGE_SRC).not.toContain('/desa-anti-korupsi/detail');
   });
 
   it('merender isi dari data findMany lewat hook + komponen halaman utama', () => {

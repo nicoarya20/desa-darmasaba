@@ -25,7 +25,7 @@ import {
   MAX_URL_LENGTH,
   validateLinkTokoOnline,
   validateLinkTokoOnlineList,
-} from '@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline';
+} from '@/lib/link-toko-online';
 
 const VALID_BODY = { nama: 'Genteng Press', harga: 5000, umkmId: 'u1', kategoriId: 'k1' };
 const UPDATE_BODY = { ...VALID_BODY, stok: 3, isActive: true };

@@ -36,23 +36,23 @@ vi.mock('valtio/utils', () => ({ useProxy: <T,>(value: T) => value }));
 vi.mock('@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik', () => ({
   default: mocks.store,
 }));
-vi.mock('@/app/darmasaba/_com/main-page/kepuasan/use-kepuasan-data', () => ({
+vi.mock('@/app/(public)/_com/main-page/kepuasan/use-kepuasan-data', () => ({
   useKepuasanData: () => mocks.kepuasan,
 }));
 // Grafik & form punya test sendiri (kepuasan_ui); di sini cukup penanda bahwa halaman memakainya.
-vi.mock('@/app/darmasaba/_com/main-page/kepuasan/components/KepuasanCharts', () => ({
+vi.mock('@/app/(public)/_com/main-page/kepuasan/components/KepuasanCharts', () => ({
   KepuasanCharts: ({ total }: { total: number }) => <div data-testid="charts" data-total={total} />,
 }));
-vi.mock('@/app/darmasaba/_com/main-page/kepuasan/components/RespondenFormModal', () => ({
+vi.mock('@/app/(public)/_com/main-page/kepuasan/components/RespondenFormModal', () => ({
   RespondenFormModal: ({ opened }: { opened: boolean }) => <div data-testid="modal" data-opened={String(opened)} />,
 }));
 
-import DaftarPage from '@/app/darmasaba/(pages)/ppid/daftar-informasi-publik/page';
-import DetailPage from '@/app/darmasaba/(pages)/ppid/daftar-informasi-publik/[id]/page';
-import { DAFTAR_TEXT } from '@/app/darmasaba/(pages)/ppid/daftar-informasi-publik/_com/daftar.text';
-import IkmPage from '@/app/darmasaba/(pages)/ppid/indeks-kepuasan-masyarakat/page';
-import { IKM_TEXT } from '@/app/darmasaba/(pages)/ppid/indeks-kepuasan-masyarakat/_com/ikm.text';
-import { KEPUASAN_TEXT } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.text';
+import DaftarPage from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/page';
+import DetailPage from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/[id]/page';
+import { DAFTAR_TEXT } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.text';
+import IkmPage from '@/app/(public)/(pages)/ppid/indeks-kepuasan-masyarakat/page';
+import { IKM_TEXT } from '@/app/(public)/(pages)/ppid/indeks-kepuasan-masyarakat/_com/ikm.text';
+import { KEPUASAN_TEXT } from '@/app/(public)/_com/main-page/kepuasan/kepuasan.text';
 import { DOKUMEN_PERENCANAAN_PUBLIC_HREF } from '@/lib/dokumen-perencanaan';
 
 const render = (ui: React.ReactElement) =>

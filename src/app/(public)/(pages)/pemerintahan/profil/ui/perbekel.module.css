@@ -1,0 +1,139 @@
+/* Profil Perbekel — tata letak Profil PPID: kartu foto kiri (sticky) | riwayat kanan. */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
+  width: 100%;
+  margin-top: 36px;
+}
+
+.photoColumn {
+  /* 44px = tinggi navbar desktop (--nav-h di _com/navbar.module.css) + jarak 32px. */
+  --perbekel-sticky-top: calc(44px + 32px);
+  display: flex;
+  justify-content: center;
+}
+
+.photoCard {
+  width: 100%;
+  max-width: 420px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.8);
+  border-radius: 24px;
+  background: #f5f7fb;
+  box-shadow: 0 12px 32px rgb(10 78 120 / 0.14);
+}
+
+.photoFrame {
+  padding: 32px 24px 0;
+}
+
+.photo {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  object-position: bottom center;
+}
+
+.nameBar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 24px 28px 28px;
+  background: var(--brand);
+  color: #fff;
+}
+
+.role {
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.name {
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  min-width: 0;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+}
+
+.blockTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--p-text);
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.blockTitle svg {
+  flex: none;
+  color: var(--brand);
+}
+
+.blockBody {
+  margin-top: 14px;
+}
+
+/* 75em = breakpoint lg tema Mantine (sama dengan Profil PPID); sticky hanya di 2 kolom,
+   di 1 kolom sticky akan menutupi teks di bawahnya. */
+@media (min-width: 75em) {
+  .grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 56px;
+  }
+
+  .photoColumn {
+    position: sticky;
+    top: var(--perbekel-sticky-top);
+    align-self: start;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 734px) {
+  .grid {
+    gap: 32px;
+    margin-top: 24px;
+  }
+
+  .photoFrame {
+    padding: 24px 16px 0;
+  }
+
+  .nameBar {
+    padding: 20px 20px 22px;
+  }
+
+  .name {
+    font-size: 20px;
+  }
+
+  .info {
+    gap: 28px;
+  }
+
+  .blockTitle {
+    font-size: 20px;
+  }
+}

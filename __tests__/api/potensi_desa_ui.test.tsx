@@ -9,9 +9,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const sanitize = vi.hoisted(() => vi.fn((html: string) => html.replace(/<script[\s\S]*?<\/script>/g, '')));
 vi.mock('dompurify', () => ({ default: { sanitize } }));
 
-import { PotensiCard } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/PotensiCard';
-import { PotensiHeader } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/PotensiHeader';
-import { PotensiDetailModal } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/PotensiDetailModal';
+import { PotensiCard } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/PotensiCard';
+import { PotensiHeader } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/PotensiHeader';
+import { PotensiDetailModal } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/PotensiDetailModal';
 import {
   POTENSI_LIST_LIMIT,
   RICH_TEXT_TAGS,
@@ -23,8 +23,8 @@ import {
   potensiInfoRows,
   sanitizePotensiHtml,
   type PotensiItem,
-} from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/potensi.logic';
-import { POTENSI_TEXT } from '@/app/darmasaba/(pages)/pemerintahan/potensi/_com/potensi.text';
+} from '@/app/(public)/(pages)/pemerintahan/potensi/_com/potensi.logic';
+import { POTENSI_TEXT } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/potensi.text';
 
 // test-only: item fiktif berbentuk respons potensiDesa.findMany.
 const item: PotensiItem = {
@@ -149,7 +149,7 @@ describe('PotensiCard', () => {
     expect(html).toContain(`aria-label="${POTENSI_TEXT.detailLabel(item.name)}"`);
     expect(html).toContain('aria-haspopup="dialog"');
     expect(html).not.toMatch(/<a[\s>]/);
-    expect(html).not.toContain('/darmasaba/desa/potensi/p1');
+    expect(html).not.toContain('/desa/potensi/p1');
   });
 
   it('tanpa deskripsi → tidak ada paragraf kosong', () => {

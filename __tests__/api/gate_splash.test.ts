@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import {
   GATE_PUSH_SCALE,
@@ -12,17 +12,17 @@ import {
   timelineEndMs,
   wallShiftPx,
   type GateStep,
-} from '@/app/darmasaba/_com/splash/gate-splash.timeline';
+} from '@/app/(public)/_com/splash/gate-splash.timeline';
 import {
   GATE_SPLASH_ATTR,
   GATE_SPLASH_HEAD_SCRIPT,
   GATE_SPLASH_STORAGE_KEY,
   markGateSplashSeen,
   readGateSplashState,
-} from '@/app/darmasaba/_com/splash/gate-splash.session';
+} from '@/app/(public)/_com/splash/gate-splash.session';
 
 const ROOT = path.resolve(__dirname, '../..');
-const SPLASH_DIR = path.join(ROOT, 'src/app/darmasaba/_com/splash');
+const SPLASH_DIR = path.join(ROOT, 'src/app/(public)/_com/splash');
 const css = readFileSync(path.join(SPLASH_DIR, 'gate-splash.module.css'), 'utf8');
 const METRICS = { viewportWidth: 1000, gateWidth: 200 }; // test-only
 
@@ -133,21 +133,20 @@ describe('timeline splash gerbang', () => {
 
 describe('skrip <head> splash', () => {
   it('memutar splash saat mendarat di beranda dan belum pernah melihatnya', () => {
-    expect(runHeadScript('/darmasaba', fakeStorage(false))).toBe('play');
-    expect(runHeadScript('/darmasaba/', fakeStorage(false))).toBe('play');
+    expect(runHeadScript('/', fakeStorage(false))).toBe('play');
   });
 
   it('melewati splash bila sudah dilihat di tab ini', () => {
-    expect(runHeadScript('/darmasaba', fakeStorage(true))).toBe('skip');
+    expect(runHeadScript('/', fakeStorage(true))).toBe('skip');
   });
 
   it('melewati splash bila mendarat di halaman lain', () => {
-    expect(runHeadScript('/darmasaba/pemerintahan/profil', fakeStorage(false))).toBe('skip');
+    expect(runHeadScript('/pemerintahan/profil', fakeStorage(false))).toBe('skip');
     expect(runHeadScript('/admin', fakeStorage(false))).toBe('skip');
   });
 
   it('tetap memutar splash bila sessionStorage diblokir', () => {
-    expect(runHeadScript('/darmasaba', blockedStorage)).toBe('play');
+    expect(runHeadScript('/', blockedStorage)).toBe('play');
   });
 });
 
@@ -202,10 +201,11 @@ describe('kontrak CSS & pemasangan splash', () => {
     expect(tsx).toMatch(/<div className=\{`\$\{s\.gate\} \$\{s\.gateL\}`\} data-part="gate-l">/);
   });
 
-  it('skrip <head> dipasang di root layout dan / redirect ke beranda', () => {
+  it('skrip <head> dipasang di root layout dan beranda publik (/) memuat splash', () => {
     const layout = readFileSync(path.join(ROOT, 'src/app/layout.tsx'), 'utf8');
     expect(layout).toContain('__html: GATE_SPLASH_HEAD_SCRIPT');
-    const home = readFileSync(path.join(ROOT, 'src/app/page.tsx'), 'utf8');
-    expect(home).toContain('redirect("/darmasaba")');
+    expect(existsSync(path.join(ROOT, 'src/app/page.tsx'))).toBe(false);
+    const home = readFileSync(path.join(ROOT, 'src/app/(public)/page.tsx'), 'utf8');
+    expect(home).toContain('<GateSplash />');
   });
 });

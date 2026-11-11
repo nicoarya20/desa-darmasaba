@@ -1,15 +1,15 @@
 // @vitest-environment node
-// Halaman utama Desa Anti Korupsi (/darmasaba/desa-anti-korupsi): gaya section beranda, tetapi SEMUA indikator
+// Halaman utama Desa Anti Korupsi (/desa-anti-korupsi): gaya section beranda, tetapi SEMUA indikator
 // tampil, tiap butir membuka halaman programnya dan nama kategori membuka halaman detail per kategori.
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup (hover/klik diverifikasi manual).
 import { MantineProvider } from '@mantine/core';
 import type { ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { AntiKorupsiUtama } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/AntiKorupsiUtama';
-import { buildAntiKorupsiUtamaView } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/antikorupsi-utama.logic';
-import type { AntiKorupsiApiItem } from '@/app/darmasaba/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
-import { ANTIKORUPSI_LIMIT } from '@/app/darmasaba/_com/main-page/desaantikorupsi/desaantikorupsi.meta';
+import { AntiKorupsiUtama } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/AntiKorupsiUtama';
+import { buildAntiKorupsiUtamaView } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/antikorupsi-utama.logic';
+import type { AntiKorupsiApiItem } from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
+import { ANTIKORUPSI_LIMIT } from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.meta';
 
 // test-only: 8 indikator (> batas beranda 6) berbentuk item ringkas desaAntikorupsi.findMany.
 const item = (id: string, name: string, kategoriId: string, kategori: string, jumlahDokumen?: number): AntiKorupsiApiItem => ({
@@ -53,7 +53,7 @@ describe('buildAntiKorupsiUtamaView', () => {
   });
 
   it('tautan kategori memakai nama kategori asli ke halaman detail', () => {
-    expect(view.kategoriLinks.k1).toBe('/darmasaba/desa-anti-korupsi/detail?kategori=PENGUATAN%20TATA%20LAKSANA');
+    expect(view.kategoriLinks.k1).toBe('/desa-anti-korupsi/detail?kategori=PENGUATAN%20TATA%20LAKSANA');
   });
 
   it('data kosong → tanpa grup dan ringkasan nol', () => {
@@ -75,12 +75,12 @@ describe('AntiKorupsiUtama — render', () => {
 
   it('setiap indikator bertaut ke halaman programnya', () => {
     for (const id of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']) {
-      expect(html).toContain(`href="/darmasaba/desa-anti-korupsi/program/${id}"`);
+      expect(html).toContain(`href="/desa-anti-korupsi/program/${id}"`);
     }
   });
 
   it('nama kategori bertaut ke detail?kategori= dengan petunjuk "Lihat dokumen"', () => {
-    expect(html).toContain('href="/darmasaba/desa-anti-korupsi/detail?kategori=KEARIFAN%20LOKAL"');
+    expect(html).toContain('href="/desa-anti-korupsi/detail?kategori=KEARIFAN%20LOKAL"');
     expect(html.match(/Lihat dokumen/g)).toHaveLength(5);
   });
 

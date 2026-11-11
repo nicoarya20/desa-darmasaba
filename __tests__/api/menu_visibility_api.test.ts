@@ -12,7 +12,7 @@ const { requireAuthMock, revalidateTagMock, prismaMock } = vi.hoisted(() => ({
     menuVisibility: {
       upsert: vi.fn((args: unknown) => ({ op: 'upsert', args })),
       deleteMany: vi.fn((args: unknown) => ({ op: 'deleteMany', args })),
-      findMany: vi.fn(async () => [{ menuKey: '/darmasaba/keamanan/cctv', isVisible: false }]),
+      findMany: vi.fn(async () => [{ menuKey: '/keamanan/cctv', isVisible: false }]),
     },
   },
 }));
@@ -26,10 +26,10 @@ vi.mock('next/cache', () => ({
 
 import menuVisibilityUpdate, { validateMenuVisibilityItems } from '@/app/api/[[...slugs]]/_lib/menu_visibility/update';
 import menuVisibilityFindMany from '@/app/api/[[...slugs]]/_lib/menu_visibility/findMany';
-import { MENU_VISIBILITY_TAG } from '@/app/darmasaba/_com/menu-visibility.logic';
+import { MENU_VISIBILITY_TAG } from '@/app/(public)/_com/menu-visibility.logic';
 
-const CCTV = '/darmasaba/keamanan/cctv';
-const PUSKESMAS = '/darmasaba/kesehatan/puskesmas';
+const CCTV = '/keamanan/cctv';
+const PUSKESMAS = '/kesehatan/puskesmas';
 
 type Item = { menuKey: string; isVisible: boolean | null };
 function ctx(items: Item[]) {
@@ -92,11 +92,11 @@ describe('PUT /menu-visibility/update — validasi menuKey', () => {
     asUser('1');
     const { context, set } = ctx([
       { menuKey: CCTV, isVisible: false },
-      { menuKey: '/darmasaba/tidak-ada', isVisible: true },
+      { menuKey: '/tidak-ada', isVisible: true },
     ]);
     const res = await menuVisibilityUpdate(context);
     expect(set.status).toBe(400);
-    expect(res).toMatchObject({ success: false, message: expect.stringContaining('/darmasaba/tidak-ada') });
+    expect(res).toMatchObject({ success: false, message: expect.stringContaining('/tidak-ada') });
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 

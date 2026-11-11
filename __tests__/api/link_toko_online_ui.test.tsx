@@ -9,7 +9,7 @@ const { toastMock } = vi.hoisted(() => ({
 }));
 vi.mock('react-toastify', () => ({ toast: toastMock }));
 
-import { LinkTokoOnlineButtons } from '@/app/darmasaba/(pages)/ekonomi/umkm/_com/LinkTokoOnlineButtons';
+import { LinkTokoOnlineButtons } from '@/app/(public)/(pages)/ekonomi/umkm/_com/LinkTokoOnlineButtons';
 import produkState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkmState/produk';
 
 // MantineProvider menyisipkan <style> global; dibuang agar tersisa markup komponen saja.

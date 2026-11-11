@@ -6,7 +6,7 @@ import {
   safePage,
   toPrestasiItem,
   type PrestasiApiItem,
-} from '@/app/darmasaba/_com/main-page/prestasi/prestasi.logic';
+} from '@/app/(public)/_com/main-page/prestasi/prestasi.logic';
 
 // test-only: bentuk meniru respons find-many prestasi desa (satu tabel, penghargaan = kategori "Penghargaan").
 const api = (
@@ -26,9 +26,9 @@ const api = (
 
 describe('toPrestasiItem', () => {
   it('semua entri (termasuk eks-penghargaan) ke detail prestasi dengan id yang sama', () => {
-    expect(toPrestasiItem(api('p1', '2026-01-01')).href).toBe('/darmasaba/prestasi-desa/p1');
+    expect(toPrestasiItem(api('p1', '2026-01-01')).href).toBe('/prestasi-desa/p1');
     const eks = api('h1', '2026-01-01', 'Penghargaan A', null, { kategori: { name: 'Penghargaan' } });
-    expect(toPrestasiItem(eks).href).toBe('/darmasaba/prestasi-desa/h1');
+    expect(toPrestasiItem(eks).href).toBe('/prestasi-desa/h1');
   });
 
   it('source: kategori "Penghargaan" (trim, case-insensitive) → penghargaan; lainnya / tanpa kategori → prestasi', () => {
@@ -50,7 +50,7 @@ describe('toPrestasiItem', () => {
       name: 'Desa Raih Juara',
       imageUrl: undefined,
       createdAt: Date.parse('2026-11-03T10:00:00.000Z'),
-      href: '/darmasaba/prestasi-desa/h2',
+      href: '/prestasi-desa/h2',
     });
   });
 

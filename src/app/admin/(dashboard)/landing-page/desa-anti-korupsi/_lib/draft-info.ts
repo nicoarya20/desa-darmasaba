@@ -1,6 +1,6 @@
 // Info ringkas draft dokumen di editor admin Desa Anti Korupsi (ukuran, tanggal unggah, label "Baru")
 // — murni, dipakai baris draft dan pengurutan isi folder.
-import { DESA_TIME_ZONE } from '@/app/darmasaba/_com/main-page/apbdes/apbdes.logic';
+import { DESA_TIME_ZONE } from '@/app/(public)/_com/main-page/apbdes/apbdes.logic';
 import { formatUkuran } from '@/lib/desa-anti-korupsi-sort';
 import type { DokumenDraft } from './dokumen-draft';
 

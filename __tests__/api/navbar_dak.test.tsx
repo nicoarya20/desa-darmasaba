@@ -6,7 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
 import type { AnchorHTMLAttributes } from 'react';
 
-vi.mock('next/navigation', () => ({ usePathname: () => '/darmasaba' }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/' }));
 vi.mock('next-view-transitions', () => ({
   Link: ({ href, children, ...rest }: AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a href={href} {...rest}>
@@ -15,16 +15,16 @@ vi.mock('next-view-transitions', () => ({
   ),
 }));
 // Panel pencarian (GlobalSearch + fetch) tidak relevan untuk menu bar; diganti stub.
-vi.mock('@/app/darmasaba/_com/NavBarSearch', () => ({ NavbarSearch: () => null }));
+vi.mock('@/app/(public)/_com/NavBarSearch', () => ({ NavbarSearch: () => null }));
 
 import navbarListMenu from '@/con/navbar-list-menu';
-import { NavbarMainMenu } from '@/app/darmasaba/_com/NavbarMainMenu';
-import { NavbarMobile } from '@/app/darmasaba/_com/NavbarMobile';
-import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
-import { DEFAULT_SEARCH_MENUS } from '@/app/darmasaba/_com/searchMenu';
+import { NavbarMainMenu } from '@/app/(public)/_com/NavbarMainMenu';
+import { NavbarMobile } from '@/app/(public)/_com/NavbarMobile';
+import { visibleMenu } from '@/app/(public)/_com/navbar-menu.logic';
+import { DEFAULT_SEARCH_MENUS } from '@/app/(public)/_com/searchMenu';
 import type { MenuItem } from '../../types/menu-item';
 
-const DAK_HREF = '/darmasaba/desa-anti-korupsi';
+const DAK_HREF = '/desa-anti-korupsi';
 
 // MantineProvider menyisipkan <style> global; dibuang agar tersisa markup komponen saja.
 const render = (node: React.ReactElement) =>

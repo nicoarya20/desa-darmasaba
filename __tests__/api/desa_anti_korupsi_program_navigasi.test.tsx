@@ -3,11 +3,11 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
-import { ProgramIsi } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
+import { ProgramIsi } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
 import {
   folderTunggalBerisi,
   tujuanKembali,
-} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/program-folder';
+} from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-folder';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { folderGroups, type DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
 
@@ -28,8 +28,8 @@ const dok = (id: string, judul: string): DokumenDesaAntiKorupsiView => ({
 
 const noop = () => undefined;
 const now = new Date();
-const KATEGORI_HREF = 'href="/darmasaba/desa-anti-korupsi/detail?kategori=PENGUATAN%20TATA%20LAKSANA"';
-const DAFTAR_FOLDER_HREF = 'href="/darmasaba/desa-anti-korupsi/program/p1"';
+const KATEGORI_HREF = 'href="/desa-anti-korupsi/detail?kategori=PENGUATAN%20TATA%20LAKSANA"';
+const DAFTAR_FOLDER_HREF = 'href="/desa-anti-korupsi/program/p1"';
 
 // test-only fixture: seperti data 1.1 — folder "2026" kosong, satu dokumen di "Umum".
 const tunggal: DesaAntiKorupsiDetail = {
@@ -73,14 +73,14 @@ describe('folderTunggalBerisi', () => {
 describe('tujuanKembali', () => {
   it('folder dibuka → daftar folder program (urut ikut); selain itu → tab kategori; tanpa kategori → halaman DAK', () => {
     expect(tujuanKembali({ programId: 'p1', kategori: 'X', folderDibuka: true, urut: 'judul-asc' })).toEqual({
-      href: '/darmasaba/desa-anti-korupsi/program/p1?urut=judul-asc',
+      href: '/desa-anti-korupsi/program/p1?urut=judul-asc',
       label: 'Kembali ke daftar folder',
     });
     expect(tujuanKembali({ programId: 'p1', kategori: 'PENGUATAN TATA LAKSANA', folderDibuka: false })).toEqual({
-      href: '/darmasaba/desa-anti-korupsi/detail?kategori=PENGUATAN%20TATA%20LAKSANA',
+      href: '/desa-anti-korupsi/detail?kategori=PENGUATAN%20TATA%20LAKSANA',
       label: 'Kembali ke daftar indikator',
     });
-    expect(tujuanKembali({ programId: 'p1', kategori: null, folderDibuka: false }).href).toBe('/darmasaba/desa-anti-korupsi');
+    expect(tujuanKembali({ programId: 'p1', kategori: null, folderDibuka: false }).href).toBe('/desa-anti-korupsi');
   });
 });
 

@@ -8,8 +8,8 @@ import {
   toBeritaItem,
   toPengumumanItem,
   type BeritaApiItem,
-} from '@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic';
-import { readFindMany } from '@/app/darmasaba/_com/main-page/kabar-desa/kabar.source';
+} from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
+import { readFindMany } from '@/app/(public)/_com/main-page/kabar-desa/kabar.source';
 
 // test-only: bentuk meniru respons find-many berita.
 const berita = (over: Partial<BeritaApiItem> = {}): BeritaApiItem => ({
@@ -37,7 +37,7 @@ describe('htmlToText', () => {
 
 describe('detailHref', () => {
   it('kategori di-encode', () => {
-    expect(detailHref('/darmasaba/pemerintahan/berita', 'Seni & Budaya', 'x1')).toBe('/darmasaba/pemerintahan/berita/Seni%20%26%20Budaya/x1');
+    expect(detailHref('/pemerintahan/berita', 'Seni & Budaya', 'x1')).toBe('/pemerintahan/berita/Seni%20%26%20Budaya/x1');
   });
 
   it('kategori kosong/null → "umum"', () => {
@@ -55,7 +55,7 @@ describe('toBeritaItem', () => {
       kategori: 'Budaya',
       imageUrl: '/api/img/b1.webp',
       createdAt: Date.parse('2026-11-03T02:00:00.000Z'),
-      href: '/darmasaba/pemerintahan/berita/Budaya/b1',
+      href: '/pemerintahan/berita/Budaya/b1',
     });
   });
 
@@ -64,7 +64,7 @@ describe('toBeritaItem', () => {
     expect(item.imageUrl).toBeUndefined();
     expect(item.kategori).toBeUndefined();
     expect(item.summary).toBe('');
-    expect(item.href).toBe('/darmasaba/pemerintahan/berita/umum/b1');
+    expect(item.href).toBe('/pemerintahan/berita/umum/b1');
   });
 });
 
@@ -78,7 +78,7 @@ describe('toPengumumanItem', () => {
     });
     expect(item).toMatchObject({ title: 'Jadwal KTP keliling', summary: '', kategori: 'Layanan' });
     expect(item.imageUrl).toBeUndefined();
-    expect(item.href).toBe('/darmasaba/pemerintahan/pengumuman/Layanan/p1');
+    expect(item.href).toBe('/pemerintahan/pengumuman/Layanan/p1');
   });
 });
 

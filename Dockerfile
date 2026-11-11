@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY package.json bun.lock* bun.lockb* ./
+# patchedDependencies (package.json) butuh folder patches/ saat bun install.
+COPY patches ./patches
 
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 ENV NEXT_TELEMETRY_DISABLED=1
