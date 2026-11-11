@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.249] - 2026-11-11
+### Changed
+- **Halaman Pengumuman (menu Pemerintahan) kini senada dengan panel Pengumuman di beranda dan halaman Berita.** Pengumuman tampil sebagai daftar baris dengan gambar kecil di kiri, kategori, judul, dan tanggal terbit. Gambar kecil itu memperlihatkan kop surat pengumuman; pengumuman tanpa gambar memakai ikon dokumen. Satu halaman kini memuat 10 pengumuman (sebelumnya 3), dan judul tidak lagi dipaksa huruf kapital.
+- **Kategori pengumuman menjadi pil di bawah judul**, sama seperti halaman Berita. Kategori yang belum berisi pengumuman tidak ditampilkan. Kotak cari dan halaman kategori memakai tampilan yang sama. Kata kunci pencarian dan nomor halaman tersimpan di alamat halaman, jadi bisa dibagikan.
+- **Halaman detail pengumuman dirapikan.** Di atas judul tampil kategori dan tanggal terbit, dan kategorinya bisa diklik untuk membuka daftar kategori itu. Gambar utama (misalnya surat yang dipindai) tampil dalam bingkai seperti pratinjau dokumen, diikuti isi pengumuman, galeri, dan lampiran PDF dengan tombol Pratinjau dan Unduh. Bila pengumuman tidak ditemukan, halaman menampilkan pesan dan tautan kembali ke daftar, tidak lagi memuat tanpa henti.
+
 ## [0.1.248] - 2026-11-11
 ### Changed
 - **Halaman Profil Desa (menu Pemerintahan) dirapikan menyeluruh.** Judul kini "Profil Desa" (sebelumnya "Profile Desa"), dengan satu tombol kembali di atas dan section yang tampil seragam sebagai kartu terang seperti Visi Misi PPID. Teks dibuat rata kiri dengan panjang baris yang nyaman dibaca, dan lambang desa tidak lagi tampil berulang.
