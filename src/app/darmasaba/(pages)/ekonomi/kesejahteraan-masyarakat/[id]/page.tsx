@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import stateKesejahteraanMasyarakat from '@/app/admin/(dashboard)/_state/ekonomi/kesejahteraan-masyarakat';
-import NewsReader from '@/app/darmasaba/_com/NewsReader';
 import colors from '@/con/colors';
 import {
   Box,
@@ -113,10 +112,6 @@ function Page() {
         </Button>
       </Box>
 
-      <Group px={{ base: 'md', md: 100 }}>
-        <NewsReader />
-      </Group>
-
       <Container w={{ base: '100%', md: '60%' }}>
         <Box pb={20}>
           {/* Badge */}
@@ -132,7 +127,6 @@ function Page() {
 
           {/* Judul */}
           <Title
-            id="news-title"
             order={1}
             ta="center"
             c={colors['blue-button']}
@@ -177,7 +171,6 @@ function Page() {
             Deskripsi Program
           </Title>
           <Text
-            id="news-content"
             py={20}
             px={{ base: 0, md: 'sm' }}
             fz={{ base: 'sm', md: 'md' }}

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.246] - 2026-11-11
+### Changed
+- **Tombol mode baca suara (ikon disabilitas) pindah ke navbar**, di sebelah kanan ikon cari di desktop dan di sebelah kiri tombol menu di ponsel. Sebelumnya tombol ini melayang di sisi kiri beranda dan menutupi konten. Kini tombolnya tersedia di semua halaman (bukan hanya beranda), statusnya terlihat jelas (terisi biru saat aktif), dan punya keterangan "Aktifkan/Matikan mode baca suara" untuk pembaca layar. Di ponsel, teks yang diketuk akan dibacakan.
+
+### Removed
+- Tombol ikon musik yang melayang di kiri halaman detail berita, pengumuman, dan kesejahteraan masyarakat. Tombol ini bukan pemutar musik melainkan pembaca teks, dan fungsinya kini sudah tercakup tombol mode baca suara di navbar.
+
 ## [0.1.245] - 2026-11-11
 ### Fixed
 - Berpindah halaman dengan cepat (mengeklik tautan lain atau menekan tombol kembali sebelum halaman sebelumnya selesai dimuat) tidak lagi memunculkan error "Transition was skipped" di console maupun overlay mode pengembangan. Navigasi tetap berjalan seperti biasa.

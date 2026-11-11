@@ -2,12 +2,11 @@
 import stateDesaPengumuman from '@/app/admin/(dashboard)/_state/desa/pengumuman';
 import colors from '@/con/colors';
 import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
-import { Box, Container, Group, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { Box, Container, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 
-import NewsReader from '@/app/darmasaba/_com/NewsReader';
 import BackButton from '../../../layanan/_com/BackButto';
 import { PengumumanGambarUtama, PengumumanLampiranBawah } from '../../_com/PengumumanLampiran';
 
@@ -35,10 +34,6 @@ function Page() {
       </Box>
       
       <Container size="lg" px="md">
-        <Group>
-          <NewsReader />
-        </Group>
-        
         <Stack gap="xs">
           <Paper
             bg={colors['blue-button']}
@@ -71,7 +66,6 @@ function Page() {
               <PengumumanGambarUtama image={detail.data.image} judul={detail.data.judul} />
               <Text
                 px="lg"
-                id="news-content"
                 fz={{ base: 14, md: 16 }}
                 lh={{ base: 1.6, md: 1.6 }}
                 style={{ 

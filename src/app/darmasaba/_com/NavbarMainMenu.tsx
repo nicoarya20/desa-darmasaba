@@ -7,6 +7,7 @@ import { Link } from "next-view-transitions"
 import { useSnapshot } from "valtio"
 import { MenuItem } from "../../../../types/menu-item"
 import { NavbarFlyout } from "./NavbarFlyout"
+import { NavbarSpeechToggle } from "./NavbarSpeechToggle"
 import { isAdminRole, isMenuActive } from "./navbar-menu.logic"
 import s from "./navbar.module.css"
 import { SEARCH_VIEW_ID, useNavbarFlyout } from "./useNavbarFlyout"
@@ -84,6 +85,8 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
                 <IconSearch size={18} stroke={1.75} />
               </button>
             </Tooltip>
+
+            <NavbarSpeechToggle />
 
             {isAdminRole(user?.roleId) && (
               <Tooltip label="Kembali ke Admin" position="bottom" withArrow>

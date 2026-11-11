@@ -14,11 +14,9 @@ import Prestasi from "./_com/main-page/prestasi";
 import ScrollToTopButton from "./_com/scrollToTopButton";
 import GateSplash from "./_com/splash/GateSplash";
 
-import NewsReaderLanding from "./_com/NewsReaderalanding";
-
 export default function Page() {
   return (
-    <Box id="page-root">
+    <Box>
       <GateSplash />
       <Stack bg={colors.grey[1]} gap={0}>
         <LandingPage />
@@ -30,7 +28,6 @@ export default function Page() {
         <SDGS />
         <Kepuasan />
       <ScrollToTopButton />
-      <NewsReaderLanding />
       </Stack>
 
     </Box>

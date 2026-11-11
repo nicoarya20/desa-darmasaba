@@ -165,7 +165,7 @@ Stack (gap=0, bg=grey[1])
 
 Gaya apple.com. File: `_com/NavbarMainMenu.tsx` (bar), `_com/NavbarFlyout.tsx` (panel), `_com/useNavbarFlyout.ts` (state & interaksi), `_com/navbar.module.css` (gaya + animasi, variabel warna di `.root`), `_com/navbar-menu.logic.ts` (helper murni, dites di `__tests__/api/navbar_menu_logic.test.ts`). State terbuka di `stateNav.openMenuId` / `stateNav.isSearch`.
 
-- **Bar**: tinggi 44px, `rgba(251,251,253,0.8)` + `backdrop-filter: saturate(180%) blur(20px)`, isi max-width 1100px. Menu aktif = teks biru brand 600. Jangan bungkus navbar dengan elemen ber-`backdrop-filter`/`filter`: induk seperti itu membuat overlay blur di dalamnya tidak bisa mem-blur halaman.
+- **Bar**: tinggi 44px, `rgba(251,251,253,0.8)` + `backdrop-filter: saturate(180%) blur(20px)`, isi max-width 1100px. Di 992–1099px padding item 5px & gap 6px (bukan 8px) supaya 12 menu + ikon cari + baca suara (+ admin) muat tanpa ikon terjepit. Menu aktif = teks biru brand 600. Jangan bungkus navbar dengan elemen ber-`backdrop-filter`/`filter`: induk seperti itu membuat overlay blur di dalamnya tidak bisa mem-blur halaman.
 - **Flyout**: hover menu (jeda 100ms) → latar `#fbfbfd` mengembang dari bawah bar (transisi `clip-path` 320ms `cubic-bezier(0.32,0.72,0,1)`, tinggi mengikuti isi yang diukur `ResizeObserver`, jadi pindah menu ikut retarget). Isi: label kecil abu + link 22px/600 dalam satu kolom (bila melebihi tinggi layar, panel bisa di-scroll).
 - **Reveal teks**: `opacity` + `translateY(-8px)` 300ms `cubic-bezier(0.23,1,0.32,1)`, stagger 30ms per baris.
 - **Blur halaman**: overlay `fixed` `backdrop-filter: blur(18px)` + tint, fade `opacity`. Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual: Lightning CSS (Turbopack) menggabungkan keduanya jadi hanya versi `-webkit-` yang diabaikan Chrome.
@@ -173,11 +173,19 @@ Gaya apple.com. File: `_com/NavbarMainMenu.tsx` (bar), `_com/NavbarFlyout.tsx` (
 - **Aksesibilitas**: menu utama `<button aria-expanded>`, submenu `<a>` (bisa keyboard & tab baru), Enter membuka + fokus link pertama, panel `inert` saat tertutup. `prefers-reduced-motion`: tanpa gerak, hanya fade. Hover warna hanya untuk `(hover: hover) and (pointer: fine)`.
 - **Pencarian** (`_com/globalSearch.tsx`): dropdown berisi bagian "Halaman" (submenu navbar yang cocok, dari `_com/searchMenu.ts` atas `src/con/navbar-list-menu.ts` lalu `src/con/search-extra-pages.ts` untuk halaman publik di luar navbar, langsung tanpa menunggu API) di atas "Konten" (hasil API). "Halaman" menampilkan 5 hasil dulu (`MENU_PREVIEW_COUNT`, `previewMenuResults`), sisanya dibuka di tempat lewat tombol "Tampilkan N halaman lainnya" (`_com/SearchShowMoreButton.tsx`); ketikan berubah → kembali 5. Baris dirender `_com/SearchResultRow.tsx`. Dites di `__tests__/api/search_menu.test.ts`.
 
+### Mode Baca Suara (aksesibilitas)
+
+Tombol ikon kursi roda di navbar, **kanan ikon cari** (desktop) dan **kiri burger** (mobile, selalu terlihat — tidak disembunyikan di panel). File: `_com/NavbarSpeechToggle.tsx` (tombol), `_com/useHoverSpeech.ts` (dipasang sekali di `Navbar.tsx`, berlaku di semua halaman publik), `_com/hover-speech.logic.ts` (teks yang dibaca; tombol & ikon dilewati), state `src/state/state-hover-speech.ts`. Dites di `__tests__/api/navbar_baca_suara.test.tsx`.
+
+- Aktif → teks yang diarahkan kursor dibacakan `speechSynthesis` (`id-ID`, jeda 250ms); di layar sentuh, teks yang diketuk. Status tetap saat pindah halaman (client-side), reset saat reload.
+- Tampilan: lingkaran 30px; aktif = terisi biru brand + ikon putih. `aria-pressed` + label/tooltip "Aktifkan/Matikan mode baca suara".
+- Menggantikan tombol melayang di kiri beranda (`NewsReaderalanding.tsx`) dan tombol ikon musik di detail berita/pengumuman/kesejahteraan (`NewsReader.tsx`); keduanya dihapus karena menimpa konten dan fungsinya sudah tercakup mode ini.
+
 ### Navbar Mobile
 
 Gaya apple.com. File: `_com/NavbarMobile.tsx` + `_com/navbar-mobile.module.css` (variabel warna/kurva dipakai bersama dari `.root` di `navbar.module.css`). State buka di `stateNav.mobileOpen`.
 
-- **Bar**: tinggi 48px, kaca sama dengan desktop, logo kiri, `Burger` kanan.
+- **Bar**: tinggi 48px, kaca sama dengan desktop, logo kiri, tombol baca suara + `Burger` kanan.
 - **Panel**: kaca penuh layar `rgba(251,251,253,0.82)` + `backdrop-filter: saturate(180%) blur(20px)` (halaman ter-blur), membuka dari bawah bar lewat `clip-path` 320ms. Scroll halaman dikunci selama terbuka.
 - **Drill-down**: awalnya hanya menu utama (24px/600 + chevron). Tap menu → submenu masuk dari kanan dengan tombol "Kembali"; kembali → menu utama masuk dari kiri. Reveal bertahap 25ms per baris.
 - **Tutup**: burger, Escape, klik link, atau route berganti. Panel `inert` saat tertutup.
