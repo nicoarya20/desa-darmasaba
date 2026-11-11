@@ -30,7 +30,14 @@ export default function Page() {
 
   let content
   if (data) {
-    content = <VisiMisiContent visi={data.visi} misi={data.misi} />
+    content = (
+      <VisiMisiContent
+        visi={data.visi}
+        misi={data.misi}
+        labels={{ visi: VISI_MISI_TEXT.visi, misi: VISI_MISI_TEXT.misi, logoAlt: VISI_MISI_TEXT.logoAlt }}
+        moto={{ title: VISI_MISI_TEXT.moto, statement: VISI_MISI_TEXT.motoStatement }}
+      />
+    )
   } else if (loaded) {
     content = <p className={s.empty}>{VISI_MISI_TEXT.empty}</p>
   } else {
