@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.245] - 2026-11-11
+### Fixed
+- Berpindah halaman dengan cepat (mengeklik tautan lain atau menekan tombol kembali sebelum halaman sebelumnya selesai dimuat) tidak lagi memunculkan error "Transition was skipped" di console maupun overlay mode pengembangan. Navigasi tetap berjalan seperti biasa.
+
+### Operator
+- Build Docker kini menyalin folder `patches/` sebelum `bun install` karena `next-view-transitions` dipatch lewat `patchedDependencies` di `package.json`. Saat menaikkan versi library itu, patch harus dibuat ulang (lihat `docs/DEPLOYMENT.md`, bagian Docker).
+
 ## [0.1.244] - 2026-11-11
 ### Added
 - **Tanggal Terbit berita.** Admin dapat mengisi tanggal asli berita di form tambah (default hari ini) dan edit, sehingga berita kegiatan lama yang diinput belakangan tampil dengan tanggal aslinya dan tidak lagi naik ke urutan teratas. Halaman detail berita di admin dan website kini menampilkan tanggal terbit.
