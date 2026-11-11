@@ -26,6 +26,13 @@
   background: var(--flyout-bg);
 }
 
+/* Kanan bar: tombol mode baca suara + burger (selalu terlihat, tidak disembunyikan di panel). */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .logo {
   display: block;
   width: 32px;

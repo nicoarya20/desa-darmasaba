@@ -69,6 +69,18 @@
   transition: color 240ms ease;
 }
 
+/* Layar 992-1099px: 12 menu + ikon cari + baca suara (+ admin) tidak muat dengan padding 8px,
+   item lalu menyusut dan logo/ikon terjepit. Padding & gap diperkecil hanya di rentang ini. */
+@media (max-width: 1099.98px) {
+  .barInner {
+    gap: 6px;
+  }
+
+  .barItem {
+    padding: 0 5px;
+  }
+}
+
 .barItem[data-active="true"] {
   color: var(--nav-accent);
   font-weight: 600;
@@ -90,6 +102,28 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
+}
+
+/* Tombol mode baca suara: lingkaran ikon; saat aktif terisi biru brand agar statusnya terlihat. */
+.speechToggle {
+  padding: 0 4px;
+}
+
+.speechIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.speechToggle[aria-pressed="true"] .speechIcon {
+  background: var(--nav-accent);
+  color: #fff;
 }
 
 /* ---------- Flyout ---------- */

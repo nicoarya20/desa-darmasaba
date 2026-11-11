@@ -9,6 +9,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 import { MenuItem } from "../../../../types/menu-item";
 import { isMenuActive, isPathActive } from "./navbar-menu.logic";
+import { NavbarSpeechToggle } from "./NavbarSpeechToggle";
 import m from "./navbar-mobile.module.css";
 import d from "./navbar.module.css";
 
@@ -80,15 +81,18 @@ export function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
         <Link href="/darmasaba" aria-label="Beranda Desa Darmasaba" onClick={close}>
           <Image src="/assets/images/darmasaba-icon.png" alt="" className={m.logo} />
         </Link>
-        <Burger
-          opened={mobileOpen}
-          onClick={() => (stateNav.mobileOpen = !stateNav.mobileOpen)}
-          color="var(--nav-accent)"
-          size="sm"
-          aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
-          aria-expanded={mobileOpen}
-          aria-controls={PANEL_ID}
-        />
+        <div className={m.actions}>
+          <NavbarSpeechToggle />
+          <Burger
+            opened={mobileOpen}
+            onClick={() => (stateNav.mobileOpen = !stateNav.mobileOpen)}
+            color="var(--nav-accent)"
+            size="sm"
+            aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
+            aria-expanded={mobileOpen}
+            aria-controls={PANEL_ID}
+          />
+        </div>
       </div>
 
       <nav id={PANEL_ID} className={m.panel} aria-label="Menu utama" inert={!mobileOpen}>
