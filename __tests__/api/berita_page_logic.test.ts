@@ -7,9 +7,10 @@ vi.mock('@/lib/api-fetch', () => ({
   default: { api: { desa: { berita: { 'find-many': { get: beritaGet } } } } },
 }));
 
-const { activeSlug, beritaListHref, kategoriLabel, kategoriSlug, parsePage } = await import(
+const { activeSlug, beritaListHref, kategoriLabel, kategoriSlug } = await import(
   '@/app/darmasaba/(pages)/pemerintahan/berita/_com/berita-list.logic'
 );
+const { parsePage } = await import('@/app/darmasaba/_com/kabar-list/kabar-list.logic');
 const { loadBeritaPage } = await import('@/app/darmasaba/(pages)/pemerintahan/berita/_com/berita-list.source');
 
 describe('parsePage', () => {

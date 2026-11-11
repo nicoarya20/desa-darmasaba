@@ -1,7 +1,7 @@
 /*
- * Halaman daftar berita — kepala (judul brand, pengantar, kolom cari, pil kategori) dan paginasi.
- * Kartu berita memakai KabarBerita + kabar.module.css dari beranda; variabel warna (--brand, --tile, --ink, …)
- * diwarisi dari `.section` Kabar Desa yang membungkus halaman (BeritaShell).
+ * Halaman daftar Kabar (Berita, Pengumuman) — kepala (judul brand, pengantar, kolom cari, pil kategori) dan paginasi.
+ * Variabel warna (--brand, --tile, --ink, …) diwarisi dari `.section` Kabar Desa (kabar.module.css) yang
+ * membungkus halaman (BeritaShell / PengumumanShell).
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
 .header {
