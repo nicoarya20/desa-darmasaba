@@ -4,7 +4,7 @@ import {
   MENU_VISIBILITY_TAG,
   toOverrides,
   type MenuVisibilityOverrides,
-} from "@/app/darmasaba/_com/menu-visibility.logic";
+} from "@/app/(public)/_com/menu-visibility.logic";
 
 /**
  * Override visibilitas menu publik dari DB, di-cache lintas request (tag MENU_VISIBILITY_TAG).

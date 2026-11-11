@@ -4,12 +4,12 @@
 import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it } from 'vitest';
-import { getSpeakableText, type SpeakableTarget } from '@/app/darmasaba/_com/hover-speech.logic';
+import { getSpeakableText, type SpeakableTarget } from '@/app/(public)/_com/hover-speech.logic';
 import {
   NavbarSpeechToggle,
   SPEECH_LABEL_OFF,
   SPEECH_LABEL_ON,
-} from '@/app/darmasaba/_com/NavbarSpeechToggle';
+} from '@/app/(public)/_com/NavbarSpeechToggle';
 import stateHoverSpeech from '@/state/state-hover-speech';
 
 // test-only: elemen tiruan tanpa DOM

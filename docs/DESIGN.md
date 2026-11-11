@@ -148,9 +148,9 @@ fz={{ base: "sm", md: "md" }}
 
 ---
 
-## 5. Layout Public Site (`/darmasaba/`)
+## 5. Layout Public Site (`/`)
 
-File: `src/app/darmasaba/layout.tsx`
+File: `src/app/(public)/layout.tsx`
 
 ```
 Stack (gap=0, bg=grey[1])
@@ -198,7 +198,7 @@ Layar pertama beranda: menjawab "ini situs siapa" sebelum yang lain. Folder: `_c
 - **Bentuk**: satu permukaan `#D1D9E8` (`colors.Bg`) selebar layar, jarak tepi `--edge-gutter` (`globals.css`: `clamp(24px, 4vw, 64px)`; mobile 16px), **tanpa kartu pembungkus**. Kiri: 2 logo (ubin putih 56px) + "PEMERINTAH DESA DARMASABA" (15px kapital, `blue-button`) + wilayah; `h1` sambutan (`clamp(2rem, 4.4vw, 3.6rem)`, `blue-button-7`) dengan baris salam di atasnya; status kantor; ikon media sosial (bulat putih 44px, tautan asli tab baru). Kanan: foto Perbekel `object-fit: contain` rata bawah **setinggi hero** (kolom kanan merentang dua baris grid: `"copy profile" / "programs profile"`, kolom `1.3fr / 1fr`), tinggi `--photo-h` = `clamp(340px, min(38vw, 66vh), 700px)` (ikut tinggi layar supaya hero tetap di layar pertama laptop), kartu nama putih menimpa dasar foto 32px. Tanpa foto → hanya kartu nama.
 - **Status kantor**: satu baris pil putih — titik hijau/merah, "Kantor buka/tutup", lalu "Jam layanan 07:30 - 15:30" atau nama hari libur/"Libur Akhir Pekan". Jam: Senin–Kamis 07:30–15:30, Jumat 07:30–12:00; hari libur nasional mengalahkan jam kerja; diperbarui tiap menit.
 - **Pita latar** (`HeroRibbons`): satu SVG diam di belakang semua isi — berkas 11 pita sejajar (biru brand, biru muda, putih, satu garis emas `#d4a72c`, satu garis merah `#c8102e`; warna dari seragam Perbekel) yang turun dari atas-tengah lalu mendatar di belakang foto sampai keluar tepi kanan; melebar 1,35× di pangkal (kipas), memudar ke atas lewat mask. Path dihitung sekali saat modul dimuat dari garis tengah Bézier (`ribbons.logic.ts`); `preserveAspectRatio="none"` supaya ikut ukuran hero. Tepi luar berkas tetap, jadi pita tidak pernah menyentuh teks sambutan. **Tanpa gerak.** Di mobile pita pindah ke sel foto saja (lihat butir Mobile). Alasan bentuk: panel warna di belakang foto dan foto desa sebagai latar penuh sudah dicoba dan ditolak.
-- **Program inovasi**: judul kecil kapital "Program Inovasi Desa" + rel geser berisi **semua program** (urutan dari API) di kiri bawah, di bawah teks. Ubin putih seragam (radius 16px, logo `contain` tinggi 72px, nama 14px maks 2 baris) → `/darmasaba/program-inovasi/{id}`. 4 ubin terlihat penuh (`RAIL_VISIBLE_TILES` = `--visible-tiles`), ubin ke-5 mengintip 48px. Geser dengan scroll bawaan browser (`scroll-snap-type: x mandatory`, berhenti di tepi ubin): seret, trackpad, atau 2 tombol panah bulat putih 40px di kanan judul (sekali klik = 2 ubin; mati di ujung). **Tanpa putar otomatis, tanpa loop** — logo yang berjalan sendiri terbaca seperti banner sponsor, dan galeri Layanan & Potensi di bawahnya sudah bergerak sendiri; mesin galeri itu sengaja tidak dipakai ulang. Tepi rel **memudar bertahap** (`mask-image`, 72px; mobile 40px) hanya di sisi yang masih punya ubin tersembunyi (`data-fade-start`/`data-fade-end` dari posisi geser; lebar gradasi bertransisi lewat `@property`). Di bawah rel: garis posisi 3px biru brand polos di lintasan biru tipis (lebar = porsi terlihat), ditulis langsung ke DOM tiap event scroll. Gerak lain: ubin masuk bergiliran sekali (70ms per ubin), hover naik 2px (pointer saja). ≤4 program → tanpa panah, garis posisi, dan gradasi. Reduced motion: tanpa animasi masuk/transisi, panah menggeser seketika.
+- **Program inovasi**: judul kecil kapital "Program Inovasi Desa" + rel geser berisi **semua program** (urutan dari API) di kiri bawah, di bawah teks. Ubin putih seragam (radius 16px, logo `contain` tinggi 72px, nama 14px maks 2 baris) → `/program-inovasi/{id}`. 4 ubin terlihat penuh (`RAIL_VISIBLE_TILES` = `--visible-tiles`), ubin ke-5 mengintip 48px. Geser dengan scroll bawaan browser (`scroll-snap-type: x mandatory`, berhenti di tepi ubin): seret, trackpad, atau 2 tombol panah bulat putih 40px di kanan judul (sekali klik = 2 ubin; mati di ujung). **Tanpa putar otomatis, tanpa loop** — logo yang berjalan sendiri terbaca seperti banner sponsor, dan galeri Layanan & Potensi di bawahnya sudah bergerak sendiri; mesin galeri itu sengaja tidak dipakai ulang. Tepi rel **memudar bertahap** (`mask-image`, 72px; mobile 40px) hanya di sisi yang masih punya ubin tersembunyi (`data-fade-start`/`data-fade-end` dari posisi geser; lebar gradasi bertransisi lewat `@property`). Di bawah rel: garis posisi 3px biru brand polos di lintasan biru tipis (lebar = porsi terlihat), ditulis langsung ke DOM tiap event scroll. Gerak lain: ubin masuk bergiliran sekali (70ms per ubin), hover naik 2px (pointer saja). ≤4 program → tanpa panah, garis posisi, dan gradasi. Reduced motion: tanpa animasi masuk/transisi, panah menggeser seketika.
 - **Tablet ≤1068px**: rel program melebar penuh di bawah teks dan foto (kolom kiri terlalu sempit untuk 4 ubin); foto `clamp(300px, 42vw, 460px)`.
 - **Mobile ≤734px**: satu kolom (teks → foto 320px → program); rel program sampai tepi layar (ubin 132px, ubin berikutnya mengintip), tanpa tombol panah. Pita latar hanya di belakang foto: SVG jadi item grid di sel `profile`, dilebarkan 1600/1100 kali lebar layar dan digeser ke kiri sehingga yang tampil potongan kanan gambar (x 500–1600) — turun dari kiri atas foto lalu keluar tepi kanan, tidak menyentuh teks. Jarak ikon media sosial → foto 16px.
 - **Loading**: placeholder berdenyut seukuran foto, pil status, dan 4 ubin (tanpa denyut saat reduced motion).
@@ -220,11 +220,11 @@ Gaya galeri apple.com ("Endless entertainment."). Folder: `_com/main-page/layana
 Berita + pengumuman terbaru, tepat di bawah Landing (hero) dan di atas APBDes. Menggantikan panel melayang "Berita & Pengumuman" (`ModernNewsNotification`, dihapus beserta polling 30 detiknya). Folder: `_com/main-page/kabar-desa/` — `index.tsx` (section), `KabarBerita.tsx` (utama + kartu), `KabarPengumuman.tsx` (daftar), `use-kabar-data.ts` (hook), `kabar.source.ts` (fetch + validasi respons), `kabar.logic.ts` (helper murni), `kabar.meta.ts` (limit, rute, warna), `kabar.text.ts`, `kabar.module.css`, `kabar.pengumuman.module.css`. Test: `__tests__/api/kabar_desa_logic.test.ts`.
 
 - **Sumber data**: `GET /api/desa/berita/find-many` (limit 4) dan `/api/desa/pengumuman/find-many` (limit 3) — keduanya sudah filter `isActive` dan urut `createdAt desc`. Dimuat paralel; satu gagal → bagian itu saja disembunyikan, keduanya gagal → pesan galat. `deskripsi` berita (HTML editor) ditampilkan sebagai teks polos (`htmlToText`), bukan `innerHTML`.
-- **Bentuk**: latar putih, isi selebar layar tanpa max-width dengan jarak tepi `--edge-gutter` (`globals.css`: `clamp(24px, 4vw, 64px)`, ≤734px tetap 24px; sama dengan hero supaya tepinya sejajar), kepala **rata kiri** sejajar tepi grid: judul "Kabar Desa" 40px (tablet 36, mobile 28) warna `blue-button` di kiri, tautan "Lihat semua berita ›" (17px, mobile 15px) → `/darmasaba/pemerintahan/berita/semua` di kanan (hanya bila ada berita), tanpa subjudul, jarak ke kartu 24px. Padding atas section 56px (mobile 40px). Kartu/panel `#f5f5f7` tanpa border/bayangan; kartu berita (dan fotonya) **bersudut lancip tanpa radius** (senada tile Prestasi), panel pengumuman radius 18px.
+- **Bentuk**: latar putih, isi selebar layar tanpa max-width dengan jarak tepi `--edge-gutter` (`globals.css`: `clamp(24px, 4vw, 64px)`, ≤734px tetap 24px; sama dengan hero supaya tepinya sejajar), kepala **rata kiri** sejajar tepi grid: judul "Kabar Desa" 40px (tablet 36, mobile 28) warna `blue-button` di kiri, tautan "Lihat semua berita ›" (17px, mobile 15px) → `/pemerintahan/berita/semua` di kanan (hanya bila ada berita), tanpa subjudul, jarak ke kartu 24px. Padding atas section 56px (mobile 40px). Kartu/panel `#f5f5f7` tanpa border/bayangan; kartu berita (dan fotonya) **bersudut lancip tanpa radius** (senada tile Prestasi), panel pengumuman radius 18px.
 - **Berita utama**: berita terbaru, satu kartu-tautan 2 kolom (foto 3fr | teks 2fr, tinggi min `clamp(440px, 32vw, 620px)`; tablet 320px): baris meta kategori (warna brand) · tanggal (12px kapital), judul 32px maks 4 baris, ringkasan 17px abu maks 3 baris.
 - **Kartu kecil**: 3 berita berikutnya, grid 3 kolom gap 20px, foto 16:10 di atas, meta + judul 19px maks 3 baris. Tanpa foto → ikon koran abu di latar `#e8e8ed`. Hover (pointer saja): foto zoom 1.03 700ms + judul bergaris bawah; mati saat reduced motion.
-- **Pengumuman**: panel berjudul "Pengumuman" + tautan "Semua pengumuman ›" (`/darmasaba/pemerintahan/pengumuman`), 3 baris (judul 1 baris · tanggal · chevron) dipisah garis tipis. Sengaja tanpa gambar di beranda (gambar utama hanya jadi thumbnail di halaman daftar Pengumuman).
-- **Tautan detail**: `/darmasaba/pemerintahan/berita/{kategori}/{id}` dan `/darmasaba/pemerintahan/pengumuman/{kategori}/{id}`; kategori di-`encodeURIComponent`, kosong → `umum` (halaman detail hanya membaca `id`).
+- **Pengumuman**: panel berjudul "Pengumuman" + tautan "Semua pengumuman ›" (`/pemerintahan/pengumuman`), 3 baris (judul 1 baris · tanggal · chevron) dipisah garis tipis. Sengaja tanpa gambar di beranda (gambar utama hanya jadi thumbnail di halaman daftar Pengumuman).
+- **Tautan detail**: `/pemerintahan/berita/{kategori}/{id}` dan `/pemerintahan/pengumuman/{kategori}/{id}`; kategori di-`encodeURIComponent`, kosong → `umum` (halaman detail hanya membaca `id`).
 - **Tanggal**: ringkas `3 Nov 2026`, zona WITA (`DESA_TIME_ZONE` dari `apbdes.logic.ts`).
 - **Mobile ≤734px**: berita utama bertumpuk (foto 16:9 di atas); 3 kartu kecil jadi baris geser horizontal sampai tepi layar (`scroll-snap`, kartu 78% lebar, kartu berikutnya mengintip); baris pengumuman: judul maks 2 baris, tanggal di bawahnya.
 - **Loading**: placeholder abu berdenyut seukuran kartu & baris (tanpa denyut saat reduced motion).
@@ -240,7 +240,7 @@ Gaya bersih apple.com. Folder: `_com/main-page/apbdes/` — `index.tsx` (section
 - **Grafik**: pagu (`blue-button-3`) vs realisasi (`blue-button`), legend di atas, grid horizontal, sumbu ringkas, tooltip Rupiah penuh. Bila realisasi tahun itu kosong muncul catatan di bawah grafik.
 - **Rincian**: `Accordion multiple` per kategori (tertutup awal), header = jumlah pos + pagu ringkas. Desktop: header kolom kecil (Uraian / Realisasi / Anggaran) lalu baris kode 72px | uraian (indentasi 16px per tingkat, induk tebal) | realisasi 220px (bar 6px warna aksen kategori + persen, nominal realisasi di bawahnya bila > 0) | anggaran 168px rata kanan. Pos beranggaran 0 tanpa bar. Tablet ≤1068px: kolom 64/160/150px. Mobile ≤734px: header kolom disembunyikan; di bawah uraian berturut-turut anggaran, bar + persen, "Realisasi Rp …" — tanpa scroll horizontal.
 - **Gerak**: konten fade + naik 6px 280ms tiap ganti tahun (`key=tahun`); progress bar transisi lebar 600ms. `prefers-reduced-motion`: keduanya mati. Loading = skeleton (bukan overlay).
-- **CTA**: pill "Lihat semua data APBDes" → `/darmasaba/apbdes`, di bawah section.
+- **CTA**: pill "Lihat semua data APBDes" → `/apbdes`, di bawah section.
 - **Halaman detail** `(tambahan)/apbdes/page.tsx`: memakai `ApbdesBody` (`components/ApbdesBody.tsx`) + hook `use-apbdes-data.ts` yang sama dengan beranda, `variant="full"` (beranda `"compact"`). Bedanya: `BackButton` di atas, judul `h1`, accordion terbuka semua sejak awal, kolom kelima **Lebih/(Kurang)** = anggaran − realisasi gabungan (desktop 72 | uraian | 200 | 160 | 160px; tablet 56/140/140/140; mobile baris ke-4 di bawah realisasi), dan panel dokumen (`components/ApbdesDocument.tsx`: judul + tombol "Unduh dokumen", tanpa gambar) yang hanya muncul bila tahun terpilih punya `file`.
 
 ### Prestasi dan Penghargaan Desa (Beranda & halaman gabungan)
@@ -248,9 +248,9 @@ Gaya bersih apple.com. Folder: `_com/main-page/apbdes/` — `index.tsx` (section
 Section Penghargaan & Prestasi lama **digabung** — tampilan maupun data: satu tabel `PrestasiDesa`, penghargaan = kategori "Penghargaan" (field opsional `juara`). Folder: `_com/main-page/prestasi/` — `index.tsx` (section beranda), `PrestasiHero.tsx` (video), `PrestasiGrid.tsx` (tile), `PrestasiListPage.tsx` (halaman gabungan), `use-prestasi-data.ts` (hook), `prestasi.source.ts` (adapter satu endpoint), `PrestasiJuara.tsx` (juara di halaman detail), `prestasi.logic.ts` (helper murni), `prestasi.meta.ts` (limit, rute, video, warna), `prestasi.text.ts`, `prestasi.module.css`, `prestasi.page.module.css`. Test: `__tests__/api/prestasi_penghargaan_{logic,source,ui,merge_data}.test.ts(x)`, `__tests__/api/prestasi_desa_juara_api.test.ts`.
 
 - **Sumber data**: satu `find-many` prestasi desa (`page`, `limit`, `search` — cari juga di `juara` — urut `createdAt desc`, `total` dari server). Keluaran `PrestasiPage` sama seperti era adapter dua endpoint; `source` = `penghargaan` bila kategori "Penghargaan".
-- **Hero**: video `award.mp4` apa adanya + poster `mangupuraaward.jpeg`, lapisan gelap `rgba(0,0,0,.6)→.85` dan tinggi min 720px (mobile 500px) sama seperti section Penghargaan lama. Teks putih di tengah: judul "Prestasi dan Penghargaan Desa" 56px (tablet 48, mobile 36), subtext 21px (19/17) maks 680px, pill CTA brand "Selengkapnya" → `/darmasaba/prestasi-desa`. Video `preload="none"`, diputar hanya saat terlihat (`useInViewport`), tidak autoplay bila `prefers-reduced-motion`; tombol jeda/putar bulat 36px kanan bawah (WCAG 2.2.2).
-- **Grid**: 4 entri terbaru gabungan, 2 kolom, gap 10px, tile 16:10 tanpa radius; seluruh tile = tautan ke detail `/darmasaba/prestasi-desa/{id}` (juga untuk penghargaan), judul `name` kiri bawah (28px, tablet 24, mobile 21; maks 3 baris) di atas gradasi gelap. Ganjil → tile terakhir lebar 2 kolom (21:9); kosong → grid disembunyikan. Loading = placeholder abu. Mobile ≤734px: 1 kolom, tile 4:3. Hover foto zoom 1.03 700ms (mati saat reduced motion).
-- **Halaman gabungan** `/darmasaba/prestasi-desa`: latar putih, kepala max-width 1100px (kembali, judul `h1` 48px warna brand, subtext abu, cari 320px di kanan — mobile di bawah), grid tile yang sama, 8 per halaman + `Pagination` bila > 1 halaman. Cari debounce 400ms. `/darmasaba/penghargaan` dan `/darmasaba/penghargaan/{id}` dialihkan permanen (next.config) ke halaman ini / detail prestasi dengan id sama; detail menampilkan `juara` bila ada. Menu navbar Desa → "Prestasi dan Penghargaan".
+- **Hero**: video `award.mp4` apa adanya + poster `mangupuraaward.jpeg`, lapisan gelap `rgba(0,0,0,.6)→.85` dan tinggi min 720px (mobile 500px) sama seperti section Penghargaan lama. Teks putih di tengah: judul "Prestasi dan Penghargaan Desa" 56px (tablet 48, mobile 36), subtext 21px (19/17) maks 680px, pill CTA brand "Selengkapnya" → `/prestasi-desa`. Video `preload="none"`, diputar hanya saat terlihat (`useInViewport`), tidak autoplay bila `prefers-reduced-motion`; tombol jeda/putar bulat 36px kanan bawah (WCAG 2.2.2).
+- **Grid**: 4 entri terbaru gabungan, 2 kolom, gap 10px, tile 16:10 tanpa radius; seluruh tile = tautan ke detail `/prestasi-desa/{id}` (juga untuk penghargaan), judul `name` kiri bawah (28px, tablet 24, mobile 21; maks 3 baris) di atas gradasi gelap. Ganjil → tile terakhir lebar 2 kolom (21:9); kosong → grid disembunyikan. Loading = placeholder abu. Mobile ≤734px: 1 kolom, tile 4:3. Hover foto zoom 1.03 700ms (mati saat reduced motion).
+- **Halaman gabungan** `/prestasi-desa`: latar putih, kepala max-width 1100px (kembali, judul `h1` 48px warna brand, subtext abu, cari 320px di kanan — mobile di bawah), grid tile yang sama, 8 per halaman + `Pagination` bila > 1 halaman. Cari debounce 400ms. `/penghargaan` dan `/penghargaan/{id}` dialihkan permanen (next.config) ke halaman ini / detail prestasi dengan id sama; detail menampilkan `juara` bila ada. Menu navbar Desa → "Prestasi dan Penghargaan".
 
 ### Desa Anti Korupsi (Beranda)
 
@@ -259,10 +259,10 @@ Gaya bersih apple.com, pola halaman spesifikasi. Folder: `_com/main-page/desaant
 - **Sumber data**: `korupsiState.desaAntikorupsi.findMany.load()` (default limit 10, urut `name asc`), tampil 6 butir pertama (`ANTIKORUPSI_LIMIT`).
 - **Teks**: data desa tersimpan HURUF KAPITAL dan diawali nomor indikator (`1.1 ADANYA ...`). Tampilan: nomor dipisah (`splitIndicatorNumber`), teks & nama kategori jadi sentence case (`toSentenceCase`, hanya bila teks tak memuat huruf kecil sama sekali) dengan ejaan singkatan dipertahankan lewat `KEEP_CASE_TERMS` (Perdes, SOP, APBDes, RKP, SKM, Trantibumlinmas). Data di DB tidak diubah. Nama dirender sebagai teks, bukan `innerHTML`.
 - **Bentuk**: latar putih, isi max-width 1100px, kepala tengah: judul `h2` 40px (tablet 36, mobile 28) warna `blue-button` + pengantar abu 19px (mobile 17). Satu panel `#f5f5f7` radius 18px tanpa border/bayangan; tiap kategori = satu grup (`groupByKategori`, urutan kemunculan) dipisah garis tipis: nama kategori `h3` 21px di kolom kiri 260px (tablet 200px), butir di kanan = nomor brand 600 tabular + teks 17px, antarbutir garis tipis. Tanpa ikon. Mobile ≤734px: nama kategori di atas butirnya.
-- **CTA**: pill "Selengkapnya ›" → `/darmasaba/desa-anti-korupsi/detail`, di bawah panel.
+- **CTA**: pill "Selengkapnya ›" → `/desa-anti-korupsi/detail`, di bawah panel.
 - **Loading / kosong**: 6 baris placeholder abu berdenyut (tanpa denyut saat reduced motion); data kosong → satu pesan "Belum ada indikator desa anti korupsi.".
 
-### Desa Anti Korupsi — halaman detail (`/darmasaba/desa-anti-korupsi/detail`)
+### Desa Anti Korupsi — halaman detail (`/desa-anti-korupsi/detail`)
 
 Daftar indikator per kategori, tiap indikator berisi surat (PDF). Folder `(tambahan)/desa-anti-korupsi/`: `detail/page.tsx` (muat `findMany.load(1, 100)`, state kategori, Suspense) → `_com/AntiKorupsiKategoriPills.tsx` (pil) + `_com/AntiKorupsiDokumenList.tsx` (daftar + kerangka), `_com/antikorupsi-detail.logic.ts` (`toDokumenRows`, `documentHref`, `documentType`, `kategoriNames`, `countByKategori`, `countDokumen`), `_com/antikorupsi-detail.text.ts`, `_com/antikorupsi-detail.module.css`; tab kategori dari `_lib/kategori-tab.ts` (`?kategori=` tetap). Teks memakai `toSentenceCase`/`splitIndicatorNumber` dari section beranda. Test: `__tests__/api/desa_anti_korupsi_detail.test.tsx`, `__tests__/api/desa_anti_korupsi_kategori_tab.test.ts`.
 
@@ -270,14 +270,14 @@ Daftar indikator per kategori, tiap indikator berisi surat (PDF). Folder `(tamba
 - **Dokumen**: sumber = relasi opsional `DesaAntiKorupsi.file` (admin: edit indikator → unggah dokumen; tersimpan di MinIO, link `/api/fileStorage/findUnique/...` dilayani inline). Ada file dengan link aman (relatif `/…` atau http(s); `documentHref`) → **seluruh baris tautan** `target="_blank"` ke file, pil putih "Buka PDF ↗" (ikon PDF; jenis lain → ekstensi, mis. "Buka DOCX") yang jadi brand saat hover. Tanpa file → baris bukan tautan, pil abu ikon jam + "Dokumen belum tersedia" — tempat ini terisi sendiri begitu admin mengunggah surat.
 - **Loading / kosong**: 5 baris placeholder berdenyut (tanpa denyut saat reduced motion); data kosong → "Belum ada indikator desa anti korupsi."; kategori tanpa butir → "Belum ada indikator untuk kategori ini.".
 
-### Desa Anti Korupsi — halaman utama (`/darmasaba/desa-anti-korupsi`)
+### Desa Anti Korupsi — halaman utama (`/desa-anti-korupsi`)
 
 Memakai gaya section beranda (judul + pengantar + panel `#f5f5f7` grup per kategori), data dari `findMany.load(1, 100)` — kategori tidak lagi di-hardcode. File: `page.tsx`, `_com/AntiKorupsiUtama.tsx`, `_com/antikorupsi-utama.{data,text}.ts`, `_lib/antikorupsi-utama.logic.ts`. Test: `__tests__/api/desa_anti_korupsi_utama.test.tsx`, `__tests__/api/desa_anti_korupsi_groups_link.test.tsx`.
 
 - **Ringkasan**: strip kecil "N kategori · N indikator · N dokumen" di bawah pengantar.
-- **Tautan**: `AntiKorupsiGroups` menerima prop **opsional** `itemHref` (seluruh baris butir → `/darmasaba/desa-anti-korupsi/program/{id}`, hover brand, chevron, badge "N dokumen"/"Belum ada dokumen", focus-visible) dan `kategoriHref` (nama kategori → `/detail?kategori=` + petunjuk "Lihat dokumen →"). Tanpa prop itu (beranda) butir tetap teks biasa, limit 6, dan CTA "Selengkapnya" tetap ada; halaman utama tidak punya CTA.
+- **Tautan**: `AntiKorupsiGroups` menerima prop **opsional** `itemHref` (seluruh baris butir → `/desa-anti-korupsi/program/{id}`, hover brand, chevron, badge "N dokumen"/"Belum ada dokumen", focus-visible) dan `kategoriHref` (nama kategori → `/detail?kategori=` + petunjuk "Lihat dokumen →"). Tanpa prop itu (beranda) butir tetap teks biasa, limit 6, dan CTA "Selengkapnya" tetap ada; halaman utama tidak punya CTA.
 
-### Desa Anti Korupsi — halaman program (`/darmasaba/desa-anti-korupsi/program/{id}`)
+### Desa Anti Korupsi — halaman program (`/desa-anti-korupsi/program/{id}`)
 
 Kerangka sama dengan halaman detail (`.page`/`.inner` dari `antikorupsi-detail.module.css`: latar putih, isi 1100px) supaya alur detail → program tidak terasa pindah situs. Gaya khusus di `_com/program-folder.module.css`.
 
@@ -295,7 +295,7 @@ Folder: `_com/main-page/sdgs/` — `index.tsx` (section), `SdgsCards.tsx` (kartu
 - **Sumber data**: `GET /api/landingpage/sdgsdesa/findMany` (respons paginasi default 10, sudah filter `isActive`). `jumlah` = string skor dari admin; dibaca `parseSkor` (titik atau koma desimal, kosong/tidak valid → dibuang), lalu 4 skor tertinggi (`pickTopSdgs`, skor sama = urutan asal). Label skor ditampilkan apa adanya.
 - **Bentuk**: latar `#f5f5f7`, isi max-width 1100px, kepala di tengah: judul `h2` "SDGs Desa" 40px (mobile 32) warna `blue-button` + paragraf abu 19px (mobile 17). Keterangan kecil "Tujuan dengan skor tertinggi" di atas kartu. Kartu putih radius 18px tanpa border/bayangan, grid 4 kolom (≤1068px 2 kolom): ikon SDG 72px (`alt` = nama tujuan; tanpa gambar → kotak abu `#e8e8ed`), nama tujuan 17px/600 rata kiri, lalu "Skor" (14px abu) + angka 40px/700 (tablet 32) di dasar kartu (`margin-top: auto`) sehingga sejajar antar kartu. Skor **bukan** heading.
 - **Mobile ≤734px**: 1 kolom, kartu baris — ikon 64px kiri, nama + skor (28px) kanan.
-- **CTA**: pill "Jelajahi semua tujuan SDGs Desa" → `/darmasaba/sdgs-desa` (pola `.ctaLink` APBDes).
+- **CTA**: pill "Jelajahi semua tujuan SDGs Desa" → `/sdgs-desa` (pola `.ctaLink` APBDes).
 - **Loading / kosong**: 4 skeleton kartu; kosong atau gagal → satu pesan di panel putih (galat dicatat `console.error`).
 
 ### Indeks Kepuasan Masyarakat (Beranda)
@@ -319,16 +319,16 @@ Stack bg="linear-gradient(180deg, #1C6EA4, #124170)"
     // Berlangganan
 ```
 
-### Potensi Desa (`/darmasaba/pemerintahan/potensi`)
+### Potensi Desa (`/pemerintahan/potensi`)
 
 Folder `(pages)/pemerintahan/potensi/`: `page.tsx` (tombol kembali + `_com/PotensiHeader.tsx`, state saring; muat `findMany.load(1, POTENSI_LIST_LIMIT)` = 100 agar semua potensi tampil, bukan default 10) → `_com/PotensiGrid.tsx` (grid + kerangka) → `_com/PotensiCard.tsx` (kartu) dan `_com/PotensiDetailModal.tsx` (overlay) + `_com/PotensiDetailInfo.tsx` (info + dokumentasi), `_com/potensi.logic.ts` (tipe, `htmlToPlainText`, `sanitizePotensiHtml`, `potensiInfoRows`, `dokumentasiImages`), `_com/potensi.text.ts`, `_com/potensi.meta.ts` (variabel warna brand di akar halaman), `_com/potensi.module.css` (kartu), `_com/potensi-header.module.css` (kepala), `_com/potensi-detail.module.css` (overlay). Data `potensiDesa.findMany` (`name`, `deskripsi`, `content`, `kategori`, `image`; `lokasi`, `pengelola`, `status`, `dokumentasi` **belum ada di backend** — TODO(potensi-info)). Test: `__tests__/api/potensi_desa_ui.test.tsx`.
 
 - **Kepala**: judul `h1` 48px (mobile 32) warna brand, pengantar 19px (17) abu `#515154` rata kiri maks 640px, lalu **pil saring** "Semua · Potensi · Wisata" dengan angka jumlah di dalam pil (menggantikan kotak angka biru). Wisata = kategori bernama "wisata" (abaikan huruf/spasi), sisanya Potensi (`countByFilter`, `filterPotensi`). Pil: tinggi 40px, putih 70% → aktif latar brand teks putih; `role="group"` + `aria-pressed`; selama memuat pil nonaktif tanpa angka. Saring di klien (semua data sudah dimuat); hasil kosong → "Belum ada data di kategori …".
 - **Kartu**: putih radius 24px, bayangan lembut; foto 4:3 dengan pil kategori putih kiri atas dan judul `name` **selalu tampil** kiri bawah (24px, tablet/mobile 22; maks 2 baris) di atas gradasi gelap — pola tile Prestasi. Di bawah foto: `deskripsi` sebagai teks polos (tag editor dibuang, maks 3 baris, 15px abu) lalu pil brand "Lihat Detail →". Grid 3/2/1 kolom (≤1068 / ≤734px), gap 28/24/20px. Hover: bayangan menebal + foto zoom 1.04 (mati saat reduced motion).
-- **Klik**: area klik seluruh kartu (`::after` tombol), satu kontrol fokus `button aria-haspopup="dialog"`. Membuka **overlay**, bukan pindah ke `/darmasaba/pemerintahan/potensi/{id}` (rute detail tetap ada karena galeri beranda masih menautkannya).
+- **Klik**: area klik seluruh kartu (`::after` tombol), satu kontrol fokus `button aria-haspopup="dialog"`. Membuka **overlay**, bukan pindah ke `/pemerintahan/potensi/{id}` (rute detail tetap ada karena galeri beranda masih menautkannya).
 - **Overlay**: `Modal.Root` Mantine 760px radius 28px, latar halaman di-blur (`Modal.Overlay` blur 10px, gelap 45%), transisi pop 220ms. Hero foto 16:8.5 (mobile 4:3) + gradasi; pil kategori gelap transparan huruf kapital + judul (`Modal.Title`, 40px / tablet 34 / mobile 28) kiri bawah; tombol × bulat 44px kanan atas. Isi (tanpa label judul): `content` yang disanitasi DOMPurify (tag `p, br, strong, em, u, ul, ol, li`, sama dengan admin; kosong → "Belum ada deskripsi…"), lalu `<dl>` 3 kotak abu muda radius 16px **Lokasi · Pengelola · Status** (label 13px abu, nilai 16px semibold; Status hijau `#1f8a4c`; kosong → "–" abu + teks pembaca layar "Belum ada data"; mobile bertumpuk 1 kolom), lalu label "DOKUMENTASI" + grid foto 3 kolom (mobile 2) 16:10 radius 16px — **disembunyikan bila tak ada foto**. Tutup: ×, Escape, klik luar. Kelas kartu putih dipasang lewat `classNames.content` (bukan `className` `Modal.Content`, yang ikut ke lapisan inner selebar layar).
 
-### Daftar Berita (`/darmasaba/pemerintahan/berita/{semua|kategori}`)
+### Daftar Berita (`/pemerintahan/berita/{semua|kategori}`)
 
 Halaman "Lihat semua berita" dari Kabar Desa, **memakai kartu yang sama dengan beranda** (`KabarBerita` + `kabar.module.css`, `layout="grid"`). Folder `(pages)/pemerintahan/berita/`: `layout.tsx` (detail `/{kategori}/{id}` tetap gaya lama; daftar → `_com/BeritaShell.tsx`), `_com/BeritaShell.tsx` (bungkus `.section` Kabar Desa: latar putih, tepi `--edge-gutter`, variabel warna kartu), `_com/BeritaHeader.tsx` (pil kategori berita → `KabarListHeader`), `_com/BeritaList.tsx` (daftar + paginasi), `_com/berita-list.source.ts`, `_com/berita-list.logic.ts`, `_com/berita.meta.ts`, `_com/berita.text.ts`. Kepala (kembali, judul, cari, pil), paginasi, hook muat-halaman, dan CSS-nya dipakai bersama Pengumuman dari `_com/kabar-list/` (`KabarListHeader.tsx`, `KabarListPagination.tsx`, `use-kabar-page.ts`, `kabar-list.logic.ts`, `kabar-list.meta.ts`, `kabar-list.module.css`). Test: `__tests__/api/berita_page_logic.test.ts`, `__tests__/api/kabar_berita_layout_ui.test.tsx`.
 
@@ -337,7 +337,7 @@ Halaman "Lihat semua berita" dari Kabar Desa, **memakai kartu yang sama dengan b
 - **Paginasi**: `Pagination` Mantine di tengah, tombol bulat 36px tanpa border, aktif latar brand; hanya tampil bila > 1 halaman.
 - **Kosong/galat**: kotak `#f5f5f7` — "Belum ada berita.", "Belum ada berita di kategori X.", "Tidak ada berita yang cocok dengan “…”.", atau "Berita gagal dimuat…" bila API gagal.
 
-### Pengumuman (`/darmasaba/pemerintahan/pengumuman[/{kategori}[/{id}]]`)
+### Pengumuman (`/pemerintahan/pengumuman[/{kategori}[/{id}]]`)
 
 Halaman "Semua pengumuman" dari panel Pengumuman Kabar Desa, senada panel beranda dan halaman Berita. Folder `(pages)/pemerintahan/pengumuman/`: `layout.tsx` (daftar → `_com/PengumumanShell.tsx`; detail punya kerangka sendiri), `page.tsx` & `[name]/page.tsx` (keduanya `PengumumanList`), `[name]/[id]/page.tsx` → `_com/detail/PengumumanDetail.tsx`. Test: `__tests__/api/pengumuman_page_logic.test.ts`, `__tests__/api/pengumuman_page_ui.test.tsx`.
 
@@ -346,38 +346,38 @@ Halaman "Semua pengumuman" dari panel Pengumuman Kabar Desa, senada panel berand
 - **Detail**: `.section` Kabar Desa, kolom 860px di tengah: kembali → baris meta (kategori kapital brand = tautan ke daftar kategori · tanggal terbit panjang) → judul `h1` 40px (mobile 28) warna tinta → gambar utama di panel `#f5f5f7` padding 32px (mobile 16) seperti pratinjau dokumen (maks tinggi `min(80vh, 900px)`, klik = ukuran penuh tab baru) → isi `content` 19px (mobile 17) → "Galeri" (`DokumentasiGaleri`) → "Lampiran Dokumen": panel baris PDF (ikon · nama + ukuran · pil putih "Pratinjau" · pil brand "Unduh"; mobile tombol turun ke bawah nama), pratinjau = `PengumumanPdfModal` (dipakai juga daftar lampiran admin). Bagian kosong tidak dirender. Memuat → kerangka; id tidak ada → "Pengumuman tidak ditemukan…" + tautan ke daftar; galat → pesan muat ulang.
 - Komponen lama `PengumumanThumbnail` / `PengumumanGambarUtama` / `PengumumanLampiranBawah` / `PengumumanDokumenList` tetap dipakai detail admin dan Informasi Desa.
 
-### Peta Informasi (`/darmasaba/peta-informasi`)
+### Peta Informasi (`/peta-informasi`)
 
 Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.tsx` (H1, `TextInput` berlabel "Saring halaman", ringkasan `aria-live`, `SimpleGrid` 1/2/3 kolom) → `_com/PetaInformasiGroupCard.tsx` (kartu per menu utama: H2 + `<ul>/<li>` `Anchor component={Link}`). Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, saring lewat `searchMenu` tanpa API. Pintu masuk: footer "Tautan Penting", entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Dites di `__tests__/api/peta_informasi.test.ts`.
 
 ### Kerangka halaman PPID (`(pages)/ppid/_com/`)
 
-Semua halaman `/darmasaba/ppid/*` memakai satu kerangka agar kepala halamannya identik. Test: `__tests__/api/ppid_page_shell_ui.test.tsx`.
+Semua halaman `/ppid/*` memakai satu kerangka agar kepala halamannya identik. Test: `__tests__/api/ppid_page_shell_ui.test.tsx`.
 
 - **`PpidPage`** (`PpidPage.tsx`; props `title`, `lead`, `aside?`, `headerHidden?`, `style?`, `children`): latar `colors.Bg`, tinggi minimal 100vh, jarak tepi `md` / desktop 100px, tombol kembali (`BackButton`), kepala halaman, lalu isi dengan jarak 40px. Menyediakan variabel `--brand` dan `--ppid-measure`; `style` untuk variabel CSS tambahan milik halaman. `headerHidden` menyembunyikan kepala halaman secara visual (`VisuallyHidden`; h1 + pengantar tetap ada untuk pembaca layar) — hanya untuk halaman yang judul tampaknya sudah ada di dalam isi (Visi Misi).
 - **Dua lebar isi, didefinisikan sekali di `PpidPage`**: (1) **selebar kerangka** untuk tabel, grafik, dan bagan (Daftar Informasi, IKM, Struktur); (2) **lebar baca/formulir** `--ppid-measure: 75rem` (1200px) untuk teks dan formulir (Visi Misi, Dasar Hukum, kedua Permohonan) — pakai `max-width: var(--ppid-measure)`, jangan menulis angka lebar sendiri di CSS halaman.
 - **`PpidHeader`** (`PpidHeader.tsx` + `ppid-header.module.css`; props `title`, `lead`, `aside?`): `h1` 48px (≤734px 32) warna brand dan satu kalimat pengantar abu `#515154` 19px (17) maks 640px, **rata kiri**. `aside` = kontrol di kanan judul selebar 320px (mis. kotak cari Struktur PPID); ≤1068px turun ke bawah pengantar.
 - **Aturan isi**: tanpa logo/ikon di atas judul, tanpa teks tengah atau justify, tanpa kartu di dalam kartu — isi langsung di atas latar halaman; kartu putih hanya untuk formulir, tabel, dan grafik. Pengecualian: Visi Misi PPID — satu kartu terang terpusat dengan lambang desa dan judul rata tengah (permintaan user: pertahankan rancangan awal halaman ini, lihat bagiannya).
 
-### Profil PPID (`/darmasaba/ppid/profil-ppid`)
+### Profil PPID (`/ppid/profil-ppid`)
 
 Satu file `(pages)/ppid/profil-ppid/page.tsx` + `profil-ppid.module.css`; data `stateProfilePPID.profile.load('edit')` (`name`, `image`, `biodata`, `riwayat`, `pengalaman`, `unggulan` — HTML dari editor admin). Test: `__tests__/api/profil_ppid_ui.test.tsx`.
 
 - **Grid 2 kolom mulai `lg` (Mantine 75em = 1200px)**, 1 kolom di bawahnya. Kiri: kartu foto + nama. Kanan, berurutan: Biografi, Riwayat Karir, Pengalaman Organisasi, Program Unggulan — keempatnya satu kolom agar tinggi kedua kolom seimbang (sebelumnya Organisasi & Program selebar kartu di bawah grid sehingga ada ruang kosong di bawah Riwayat Karir). Isi keempat section ukuran huruf sama: 1rem / md 1.1rem / lg 1.2rem, **rata kiri** (bukan justify — di kolom ±400px dan ponsel justify melebarkan celah antarkata).
 - **Kartu foto sticky** (`top` = navbar desktop 44px + 32px) hanya di ≥75em — breakpoint ditulis literal, bukan `$mantine-breakpoint-lg` (80em di `postcss.config.js`), agar sama persis dengan breakpoint grid. Di 1 kolom sticky dimatikan karena akan menutupi teks di bawahnya.
 
-### Struktur Organisasi PPID (`/darmasaba/ppid/struktur-ppid`)
+### Struktur Organisasi PPID (`/ppid/struktur-ppid`)
 
 Bagan hierarki atas-ke-bawah (pola "Hierarchical Structure") dengan kartu ala referensi BKHM, menggantikan bagan PrimeReact `OrganizationChart` (meluber ±1700px, hanya menggambar akar pertama) beserta kontrol Zoom/Fullscreen. Folder `(pages)/ppid/struktur-ppid/`: `page.tsx` (hanya merangkai) → kerangka bersama `ppid/_com/PpidPage.tsx` (kepala; kotak cari lewat `aside`), `_com/use-struktur-data.ts` (`useStrukturData`: muat `pegawai.findMany.load(1, 100)` + `posisiOrganisasi.findManyAll.load()`, susun pohon, saring debounce 300ms), `_com/StrukturBody.tsx` (`StrukturSearch` + `StrukturBody`: kerangka / kosong + Muat Ulang / tidak cocok / bagan), `_com/StrukturChart.tsx` (bagan + kerangka; props wajib `roots`, `label` = nama bagan untuk pembaca layar, `hrefFor(pegawaiId)` = rute profil — bagan dipakai bersama PPID dan Perangkat Desa), `_com/StrukturCard.tsx` (kartu), `_com/struktur.logic.ts` (`buildOrgTree`, `filterOrgTree`, `leafSlot`, `toneForDepth`), `_com/struktur.meta.ts` (limit, `LEAF_COLS`, rute profil, variabel warna), `_com/struktur.text.ts`, CSS `struktur-chart` / `struktur-card.module.css`. Test: `__tests__/api/struktur_ppid_logic.test.ts`, `__tests__/api/struktur_ppid_ui.test.tsx`.
 
 - **Pohon**: satu simpul per jabatan dari pegawai **aktif**; jabatan berisi beberapa pegawai menggambar **satu kartu per pegawai** (`cardsOf`). Di grid daun tiap pegawai jadi satu kotak grid; jabatan yang punya bawahan menjajarkan kartunya dalam grup berpalang kecil (atas: dari atasan, bawah: ke bawahan), dan di ≤1068px kartunya bertumpuk dengan rel kiri menyambung ke kartu pertama. Pencarian nama hanya menyisakan pegawai yang cocok; pencarian jabatan menyisakan semua pegawainya. Jabatan induk yang belum punya pegawai diambil dari daftar jabatan dan digambar sebagai kotak redup bergaris putus "Belum ditugaskan" (tanpa tautan) supaya bawahannya tetap di bawah induknya. API jabatan tidak mengirim `parentId`, jadi kotak tanpa induk ditempel ke akar utama bila tingkatnya lebih rendah; selain itu jadi akar terpisah. Anak diurut `hierarki` lalu nama jabatan.
-- **Kartu**: jabatan huruf kapital 13px/700 (akar 15px, maks 3 baris) + pil nama putih teks brand (maks 2 baris) di kiri; foto di kanan selebar tinggi kartu (`object-fit: cover`, fokus atas) dengan tepi kiri dipudarkan `mask-image` ke gradasi kartu — foto pegawai umumnya persegi berlatar tidak transparan. Tanpa foto → siluet `IconUserFilled` transparan. Ukuran (variabel di `.chart`, dibaca kartu): akar 440×176, bawahan bercabang 320×136, bawahan daun 290×120; radius 16px. Gradasi per tingkat (`--tone-*`): akar `#062F49→#0A4E78`, bawahan langsung `#0A4E78→#2F91CC`, selebihnya `#145F8F→#5DA9D8` (kiri digelapkan dari `#2F91CC` agar teks putih ≥ 4.5:1). Seluruh kartu = tautan ke `hrefFor(id)` (PPID: `/darmasaba/ppid/struktur-ppid/{id}`, Perangkat Desa: `/darmasaba/pemerintahan/profil/struktur-perangkat-desa/{id}`); hover naik 3px + foto zoom 1.04 (mati saat reduced motion).
+- **Kartu**: jabatan huruf kapital 13px/700 (akar 15px, maks 3 baris) + pil nama putih teks brand (maks 2 baris) di kiri; foto di kanan selebar tinggi kartu (`object-fit: cover`, fokus atas) dengan tepi kiri dipudarkan `mask-image` ke gradasi kartu — foto pegawai umumnya persegi berlatar tidak transparan. Tanpa foto → siluet `IconUserFilled` transparan. Ukuran (variabel di `.chart`, dibaca kartu): akar 440×176, bawahan bercabang 320×136, bawahan daun 290×120; radius 16px. Gradasi per tingkat (`--tone-*`): akar `#062F49→#0A4E78`, bawahan langsung `#0A4E78→#2F91CC`, selebihnya `#145F8F→#5DA9D8` (kiri digelapkan dari `#2F91CC` agar teks putih ≥ 4.5:1). Seluruh kartu = tautan ke `hrefFor(id)` (PPID: `/ppid/struktur-ppid/{id}`, Perangkat Desa: `/pemerintahan/profil/struktur-perangkat-desa/{id}`); hover naik 3px + foto zoom 1.04 (mati saat reduced motion).
 - **Garis**: `<ul>/<li>` bersarang + pseudo-element, warna solid `#8ba8c1` (garis transparan menggelap di titik tumpang-tindih). Bawahan yang punya bawahan → **baris berpalang** (turun dari induk, palang, turun ke tiap kartu). Bawahan yang semuanya daun → **grid** 2 kolom (≥1800px 4 kolom; `LEAF_COLS`, sengaja genap): garis induk turun di celah tengah sampai palang baris terakhir, tiap kartu menggambar palang dari tengahnya ke garis induk (`leafSlot().offset` × lebar kolom + celah). Jumlah ≤ kolom → satu baris biasa. Baris terakhir yang tidak penuh digeser ke tengah (`leafSlot().shift`). Bagan lebih lebar dari layar → geser horizontal (rata kiri), selain itu di tengah. Data stg: Kepala Desa → Kaur Umum (→ Kaur Keuangan) + Sekretaris (→ 5 Kadus: 2+2+1, ≥1800px 4+1), muat tanpa geser di 1200px.
 - **Tablet & mobile ≤1068px**: semua bawahan bertumpuk berindentasi (40px, mobile 28px) dengan rel kiri, kartu selebar kolom maks 560px (mobile selebar layar, tinggi 148/128/116px); tanpa geser horizontal.
 - **Kepala**: pola Potensi — `h1` 48px (mobile 32) brand, pengantar abu 19px (17) maks 640px, kotak cari pil 320px di kanan (≤1068px di bawah). Tidak ada yang cocok → "Tidak ada nama atau jabatan yang cocok dengan “…”".
 - **Loading / kosong**: kerangka 1 + 2 kartu berdenyut; tanpa pegawai aktif → pesan + pil "Muat Ulang".
 
-### Profil Desa (`/darmasaba/pemerintahan/profil`) dan Struktur Perangkat Desa
+### Profil Desa (`/pemerintahan/profil`) dan Struktur Perangkat Desa
 
 Halaman panjang di atas `PpidPage` (h1 "Profil Desa" + pengantar, satu tombol kembali). Folder `(pages)/pemerintahan/profil/`: `page.tsx` (server, hanya merangkai section) → `ui/*.tsx` (satu file per section, data dari `stateProfileDesa.*.findUnique.load('edit')`, riwayat `mantanPerbekel.findMany.load(1, 50)`), `_com/ProfilCard.tsx` (`ProfilCard`, `ProfilHeading`, `ProfilProse`, `ProfilEmpty`, `ProfilCardSkeleton`), `_com/use-load-once.ts` (loader CMS mulai `data: null` tanpa `loading` — hook ini membedakan "memuat" dari "kosong"), `_com/profil.text.ts`, `_com/profil.meta.ts` (id CMS, limit, aset, nama Perbekel, peta kantor, rute profil perangkat, variabel CSS), CSS `profil.module.css` + `ui/*.module.css`. Test: `__tests__/api/profil_desa_ui.test.tsx`.
 
@@ -389,7 +389,7 @@ Halaman panjang di atas `PpidPage` (h1 "Profil Desa" + pengantar, satu tombol ke
 - **Perbekel dari Masa ke Masa**: judul tanpa kartu (`ProfilHeading`, bukan teks gradasi) + grid kartu potret 4:5 (nama, wilayah, pil periode), 3/2/1 kolom, maks `--ppid-measure`.
 - **Struktur Perangkat Desa**: bagan baru Struktur PPID (data sama: `useStrukturData`), `hrefFor` = `strukturPerangkatHref`. Di Profil Desa sebagai section (`_com/StrukturPerangkat.tsx`: h2 + pengantar + cari, tanpa kartu); halaman mandiri `/profil/struktur-perangkat-desa` = `PpidPage` + `StrukturSearch` + `StrukturBody` (menggantikan PrimeReact + Zoom/Fullscreen yang memotong Kaur Umum & Kaur Keuangan). Halaman detail `[id]` belum diubah.
 
-### Permohonan Informasi & Keberatan PPID (`/darmasaba/ppid/permohonan-informasi-publik`, `/darmasaba/ppid/permohonan-keberatan-informasi-publik`)
+### Permohonan Informasi & Keberatan PPID (`/ppid/permohonan-informasi-publik`, `/ppid/permohonan-keberatan-informasi-publik`)
 
 Dua halaman formulir dengan satu susunan: `PpidPage` → `PermohonanLayout` (alur di `aside`, formulir di isi). Komponen bersama di `(pages)/ppid/_com/`: `PermohonanSteps.tsx`, `PermohonanLayout.tsx` (`PermohonanLayout`, `PermohonanFormCard`), `permohonan.module.css`, `permohonan.meta.ts`. Test: `__tests__/api/ppid_permohonan_ui.test.tsx`.
 
@@ -400,7 +400,7 @@ Dua halaman formulir dengan satu susunan: `PpidPage` → `PermohonanLayout` (alu
 - **Kontak PPID** (keberatan): `<dl>` Email / WhatsApp di bawah kartu formulir, langsung di atas latar.
 - Validasi, isi kiriman, dan notifikasi tidak diubah oleh desain ini.
 
-### Daftar Informasi Publik (`/darmasaba/ppid/daftar-informasi-publik` + `[id]`)
+### Daftar Informasi Publik (`/ppid/daftar-informasi-publik` + `[id]`)
 
 Folder `(pages)/ppid/daftar-informasi-publik/`: `page.tsx` (daftar) dan `[id]/page.tsx` (detail) di atas kerangka bersama `ppid/_com/PpidPage.tsx`; `_com/DaftarTable.tsx` (tabel + kerangka), `_com/DaftarKontak.tsx`, `_com/daftar.logic.ts` (`DAFTAR_PAGE_SIZE` 5, jeda cari 1000ms, `rowNumber`, `formatTanggal`, rute detail), `_com/daftar.text.ts`, `_com/daftar.module.css`. Test: `__tests__/api/ppid_daftar_informasi_ui.test.tsx`, `__tests__/api/ppid_daftar_ikm_pages_ui.test.tsx`.
 
@@ -411,7 +411,7 @@ Folder `(pages)/ppid/daftar-informasi-publik/`: `page.tsx` (daftar) dan `[id]/pa
 - **Kontak PPID**: `h2` + dua baris ikon (email, WhatsApp) langsung di latar, tanpa kartu.
 - **Detail**: `<dl>` Jenis (24px/600, mobile 21px) · Tanggal · Deskripsi (HTML dari editor admin, rata kiri, maks 760px) langsung di latar. Id tidak ada → "Informasi tidak ditemukan" + tautan kembali ke daftar. Detail basi milik id lain di store diabaikan.
 
-### Indeks Kepuasan Masyarakat — halaman PPID (`/darmasaba/ppid/indeks-kepuasan-masyarakat`)
+### Indeks Kepuasan Masyarakat — halaman PPID (`/ppid/indeks-kepuasan-masyarakat`)
 
 Halaman ini **tidak punya grafik/form sendiri**: `page.tsx` hanya merangkai kerangka `PpidPage` dengan modul section beranda `_com/main-page/kepuasan/` (`useKepuasanData`, `KepuasanCharts`, `KepuasanSkeleton`, `KepuasanEmpty`, `CtaButton`, `RespondenFormModal`, `KEPUASAN_BRAND_VARS`). Aturan grafik, warna seri, dan alur form ada di bagian Indeks Kepuasan beranda; perubahan di sana otomatis berlaku di sini. Lokal halaman: `_com/ikm.text.ts` (pengantar) dan `_com/ikm.module.css`.
 
@@ -438,7 +438,7 @@ Menggunakan Mantine `AppShell`:
 >
 ```
 
-### Visi Misi PPID dan Dasar Hukum (`/darmasaba/ppid/visi-misi-ppid`, `/darmasaba/ppid/dasar-hukum`)
+### Visi Misi PPID dan Dasar Hukum (`/ppid/visi-misi-ppid`, `/ppid/dasar-hukum`)
 
 Dua halaman teks di atas `PpidPage`; teks di `_com/visi-misi.text.ts` / `_com/dasar-hukum.text.ts`, kerangka memuat bersama `ppid/_com/PpidSectionsSkeleton.tsx`. Data: `stateVisiMisiPPID.findById.load('1')` (`visi`, `misi`) dan `stateDasarHukum.findById.load('1')` (`judul`, `content`) — HTML dari editor admin. Daftar dari CMS diurai pengurai bersama `ppid/_com/cms-list.logic.ts` (`parsePlainListItems`: satu `<ol>`/`<ul>` teks polos → teks per butir, selain itu `null`). Test: `__tests__/api/ppid_visi_misi_dasar_hukum_ui.test.tsx`, `ppid_cms_list_logic.test.ts`.
 
@@ -495,7 +495,7 @@ File: `src/con/navbar-list-menu.ts`
 | 9 | Pendidikan | 7 |
 | 10 | Musik | 1 |
 
-Visibilitas submenu: field `hidden` di config = **default**; Super Admin/Developer (role 0/1) bisa menimpanya per submenu di admin **Pengaturan › Visibilitas Menu** (`/admin/pengaturan/visibilitas-menu`, tabel `MenuVisibility`, key = href submenu). Menu efektif dihitung di `src/app/darmasaba/_com/menu-visibility.logic.ts`, disuplai layout publik (server) lewat `MenuVisibilityProvider`, dan dipakai navbar, pencarian (menu + hasil konten), serta Peta Informasi. Submenu tersembunyi → halamannya (termasuk sub-path per segmen) 404 lewat `MenuVisibilityGuard`; menu utama yang semua submenunya tersembunyi ikut hilang.
+Visibilitas submenu: field `hidden` di config = **default**; Super Admin/Developer (role 0/1) bisa menimpanya per submenu di admin **Pengaturan › Visibilitas Menu** (`/admin/pengaturan/visibilitas-menu`, tabel `MenuVisibility`, key = href submenu). Menu efektif dihitung di `src/app/(public)/_com/menu-visibility.logic.ts`, disuplai layout publik (server) lewat `MenuVisibilityProvider`, dan dipakai navbar, pencarian (menu + hasil konten), serta Peta Informasi. Submenu tersembunyi → halamannya (termasuk sub-path per segmen) 404 lewat `MenuVisibilityGuard`; menu utama yang semua submenunya tersembunyi ikut hilang.
 
 ### Sidebar Admin
 
@@ -756,7 +756,7 @@ Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual — Lightning
 
 ### Splash Pembuka Beranda (Candi Bentar)
 
-`src/app/darmasaba/_com/splash/` — kamera menembus celah Candi Bentar menuju cahaya fajar (±2,5 dtk), dipasang di beranda `/darmasaba`. `/` redirect server ke beranda.
+`src/app/(public)/_com/splash/` — kamera menembus celah Candi Bentar menuju cahaya fajar (±2,5 dtk), dipasang di beranda `/` (`src/app/(public)/page.tsx`).
 
 - **Kapan tampil:** hanya bila beranda adalah halaman pendaratan dan belum dilihat di tab ini (`sessionStorage`). Skrip inline di `<head>` root layout menulis `<html data-gate-splash="play|skip">` sebelum paint; CSS menampilkan splash hanya saat `play`, jadi tak ada kedipan bagi yang tak perlu splash. Selesai → `done`.
 - **Struktur:** `gate-splash.timeline.ts` (rencana animasi, data murni, diuji) → `gate-splash.player.ts` (Web Animations API per `data-part`) → `GateSplash.tsx`. Siluet = `gate-splash.path.ts` (hasil jiplak foto, jangan edit manual).
@@ -912,6 +912,6 @@ Pattern di halaman Create/Edit:
 | `src/app/admin/(dashboard)/_com/modalKonfirmasiHapus.tsx` | Modal konfirmasi delete |
 | `src/app/admin/(dashboard)/_com/createEditor.tsx` | Rich text editor wrapper |
 | `src/styles/dark-mode-table.css` | CSS override dark mode tabel |
-| `src/app/darmasaba/layout.tsx` | Public site layout |
+| `src/app/(public)/layout.tsx` | Public site layout |
 | `src/app/admin/layout.tsx` | Admin AppShell layout |
 | `src/app/admin/_com/list_PageAdmin.tsx` | Konfigurasi menu sidebar |

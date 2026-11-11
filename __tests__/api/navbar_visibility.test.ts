@@ -2,24 +2,24 @@
 // Visibilitas menu publik: item `hidden` di navbar-list-menu.ts disaring di satu tempat (`visibleMenu`).
 import { describe, it, expect } from 'vitest';
 import navbarListMenu from '@/con/navbar-list-menu';
-import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
-import searchMenu, { DEFAULT_SEARCH_MENUS, flattenMenu } from '@/app/darmasaba/_com/searchMenu';
+import { visibleMenu } from '@/app/(public)/_com/navbar-menu.logic';
+import searchMenu, { DEFAULT_SEARCH_MENUS, flattenMenu } from '@/app/(public)/_com/searchMenu';
 import type { MenuItem } from '../../types/menu-item';
 
 const HIDDEN_KESEHATAN = [
-  { name: 'Data Kesehatan Warga', href: '/darmasaba/kesehatan/data-kesehatan-warga' },
-  { name: 'Puskesmas', href: '/darmasaba/kesehatan/puskesmas' },
-  { name: 'Penanganan Darurat', href: '/darmasaba/kesehatan/penanganan-darurat' },
-  { name: 'Info Wabah/Penyakit', href: '/darmasaba/kesehatan/info-wabah-penyakit' },
+  { name: 'Data Kesehatan Warga', href: '/kesehatan/data-kesehatan-warga' },
+  { name: 'Puskesmas', href: '/kesehatan/puskesmas' },
+  { name: 'Penanganan Darurat', href: '/kesehatan/penanganan-darurat' },
+  { name: 'Info Wabah/Penyakit', href: '/kesehatan/info-wabah-penyakit' },
 ];
 
 const visible = visibleMenu(navbarListMenu);
 const kesehatanOf = (menus: readonly MenuItem[]) => menus.find((m) => m.name === 'Kesehatan');
 
 describe('visibleMenu pada config navbar nyata', () => {
-  it('memuat menu "DAK" dengan submenu "Desa Anti Korupsi" → /darmasaba/desa-anti-korupsi', () => {
+  it('memuat menu "DAK" dengan submenu "Desa Anti Korupsi" → /desa-anti-korupsi', () => {
     expect(visible.find((m) => m.name === 'DAK')?.children).toEqual([
-      { id: '11.1', name: 'Desa Anti Korupsi', href: '/darmasaba/desa-anti-korupsi' },
+      { id: '11.1', name: 'Desa Anti Korupsi', href: '/desa-anti-korupsi' },
     ]);
   });
 
@@ -52,8 +52,8 @@ describe('item tersembunyi tidak muncul di pencarian menu', () => {
   });
 
   it('submenu Kesehatan yang terlihat tetap bisa dicari', () => {
-    expect(searchMenu('Posyandu')[0]?.href).toBe('/darmasaba/kesehatan/posyandu');
-    expect(searchMenu('Program Kesehatan')[0]?.href).toBe('/darmasaba/kesehatan/program-kesehatan');
+    expect(searchMenu('Posyandu')[0]?.href).toBe('/kesehatan/posyandu');
+    expect(searchMenu('Program Kesehatan')[0]?.href).toBe('/kesehatan/program-kesehatan');
   });
 });
 

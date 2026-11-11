@@ -75,7 +75,7 @@ export function decideAdminAccess(
   return "allow";
 }
 
-// Endpoint API yang boleh di-POST warga anonim (form publik /darmasaba),
+// Endpoint API yang boleh di-POST warga anonim (form publik website),
 // tanpa login. Master data (jenislayanan/jenispengaduan) bertingkat di bawah
 // path ini & di-CRUD admin → sengaja TIDAK didaftarkan supaya tetap kena guard.
 // Karena itu pencocokan WAJIB exact-match (lihat isPublicPostPath), bukan prefix.
@@ -89,19 +89,19 @@ export const PUBLIC_POST_PATHS: readonly string[] = [
   // Pinjam buku: form publik warga anonim, data peminjam diisi manual di form.
   "/api/pendidikan/perpustakaandigital/peminjamanbuku/create",
   // Survei Indeks Kepuasan Masyarakat (IKM): warga anonim mengisi rating layanan
-  // di /darmasaba/ppid/indeks-kepuasan-masyarakat. Master data (jenis kelamin,
+  // di /ppid/indeks-kepuasan-masyarakat. Master data (jenis kelamin,
   // rating, kelompok umur) di path lain & tetap admin-only.
   "/api/landingpage/responden/create",
-  // Permohonan layanan surat: warga mengajukan surat keterangan dari /darmasaba
-  // /desa/layanan. Kategori/jenis layanan tetap admin-only (bukan path ini).
+  // Permohonan layanan surat: warga mengajukan surat keterangan dari
+  // /pemerintahan/layanan. Kategori/jenis layanan tetap admin-only (bukan path ini).
   "/api/desa/ajukanpermohonan/create",
   // Pendaftaran jadwal kegiatan kesehatan: warga mendaftar kegiatan di
-  // /darmasaba/kesehatan. Jadwal kegiatan (master) di-CRUD admin, bukan path ini.
+  // /kesehatan. Jadwal kegiatan (master) di-CRUD admin, bukan path ini.
   "/api/kesehatan/pendaftaran-jadwal-kegiatan/create",
-  // Pesanan produk UMKM: warga anonim memesan dari /darmasaba/ekonomi/umkm/produk/:id.
+  // Pesanan produk UMKM: warga anonim memesan dari /ekonomi/umkm/produk/:id.
   // Harga dihitung server dari DB; CRUD penjualan admin (create/PUT/DELETE) tetap guard.
   "/api/ekonomi/umkm/penjualan/pesan",
-  // Laporan keamanan lingkungan: warga anonim mengirim laporan dari /darmasaba
+  // Laporan keamanan lingkungan: warga anonim mengirim laporan dari
   // /keamanan/laporan-publik. Update/hapus laporan (PUT/DELETE) tetap admin-only.
   "/api/keamanan/laporanpublik/create",
 ];

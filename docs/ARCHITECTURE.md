@@ -15,7 +15,7 @@
 
 ```
 Browser → Next.js proxy (src/proxy.ts, runtime nodejs)
-       → Public pages: src/app/darmasaba/
+       → Public pages: src/app/(public)/
        → Admin pages:  src/app/admin/
        → API:          src/app/api/[[...slugs]]/route.ts (Elysia.js)
                        └── _lib/*.ts  (domain modules)
@@ -29,7 +29,7 @@ Note: `auth` login/session endpoints are now mostly handled by Better Auth's own
 Each domain (desa, kesehatan, ekonomi, etc.) has:
 - API handler in `src/app/api/[[...slugs]]/_lib/<domain>/`
 - Admin CMS pages in `src/app/admin/(dashboard)/<domain>/`
-- Public pages in `src/app/darmasaba/(pages)/<domain>/`
+- Public pages in `src/app/(public)/(pages)/<domain>/`
 
 Active domains: `desa`, `ekonomi`, `inovasi`, `keamanan`, `kependudukan`, `kesehatan`, `lingkungan`, `musik`, `pendidikan`, `ppid` — plus `landing_page` and `search` (API-only, no public/admin pages).
 

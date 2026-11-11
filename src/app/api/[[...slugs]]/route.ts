@@ -97,7 +97,7 @@ const ApiServer = new Elysia()
         // GET paths yang hanya boleh diakses admin
         const ADMIN_ONLY_GET_PATHS = ["/api/user", "/api/role", "/api/fileStorage", "/api/imgs"];
 
-        // Form publik /darmasaba (warga anonim) boleh POST tanpa login untuk
+        // Form publik website (warga anonim) boleh POST tanpa login untuk
         // path yang di-whitelist exact-match. Master data admin bertingkat di
         // bawahnya tetap butuh auth (tidak masuk whitelist).
         const isPublicWrite =

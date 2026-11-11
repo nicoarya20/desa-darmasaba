@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.250] - 2026-11-11
+### Changed
+- **Alamat website publik tanpa `/darmasaba`.** Beranda kini langsung di `/` dan semua halaman publik tanpa prefix, misalnya `/ppid/profil-ppid` (sebelumnya `/darmasaba/ppid/profil-ppid`). Link lama yang sudah dibagikan atau terindeks mesin pencari tetap jalan lewat redirect permanen (301) ke alamat baru.
+- Footer: blok "Kontak Bupati" kini berisi link **Kontak Bupati Badung** (kontak-bupati.badungkab.go.id) dan **LAPOR!** (lapor.go.id), keduanya dibuka di tab baru. Teks "Bupati Badung" dan link badungkab.go.id di blok ini dihapus.
+
+### Fixed
+- Link "Portal Badung" di footer kini membuka badungkab.go.id (sebelumnya salah mengarah ke daftar berita desa).
+- `bun run prisma/seed.ts` di container produksi tidak lagi gagal "Cannot find module": seeder kini hanya memakai modul `src/lib` yang ikut tersalin ke image.
+
+### Removed
+- Ikon maskot di samping slogan "Desa Kuat, Warga Sejahtera!" pada footer.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261111130000_strip_darmasaba_prefix_menu_key` (data-only: membuang prefix `/darmasaba` di `MenuVisibility.menuKey` agar pengaturan sembunyikan/tampilkan menu dari admin tetap berlaku; aman dijalankan ulang). Tanpa migrasi ini, menu yang disembunyikan admin akan tampil kembali.
+- Alasan & detail perpindahan route: `docs/decisions/2026-11-11-public-route-root.md`.
 ## [0.1.249] - 2026-11-11
 ### Changed
 - **Halaman Pengumuman (menu Pemerintahan) kini senada dengan panel Pengumuman di beranda dan halaman Berita.** Pengumuman tampil sebagai daftar baris dengan gambar kecil di kiri, kategori, judul, dan tanggal terbit. Gambar kecil itu memperlihatkan kop surat pengumuman; pengumuman tanpa gambar memakai ikon dokumen. Satu halaman kini memuat 10 pengumuman (sebelumnya 3), dan judul tidak lagi dipaksa huruf kapital.

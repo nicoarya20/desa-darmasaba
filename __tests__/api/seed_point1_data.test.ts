@@ -2,8 +2,8 @@
 // Seed data Point 1 (wilayah, BUMDes, produk unggulan, kegiatan pembangunan): bentuk data valid dan seeder idempoten.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadJsonData } from "../../prisma/load-json";
-import { WILAYAH_DESA_ID, isHttpsUrl } from "@/app/api/[[...slugs]]/_lib/desa/profile/profile_desa/wilayah/validation";
-import { PROFIL_BUMDES_ID } from "@/app/api/[[...slugs]]/_lib/ekonomi/bumdes/profil/validation";
+import { WILAYAH_DESA_ID, isHttpsUrl } from "@/lib/wilayah-desa";
+import { PROFIL_BUMDES_ID } from "@/lib/bumdes-profil";
 import {
   KATEGORI_PEMBANGUNAN_ID,
   PROGRES_MAX,

@@ -1,8 +1,8 @@
 import "@mantine/core/styles.css";
 import "./globals.css"; // Sisanya import di globals.css
 
-import LoadDataFirstClient from "@/app/darmasaba/_com/LoadDataFirstClient";
-import { GATE_SPLASH_HEAD_SCRIPT } from "@/app/darmasaba/_com/splash/gate-splash.session";
+import LoadDataFirstClient from "@/app/(public)/_com/LoadDataFirstClient";
+import { GATE_SPLASH_HEAD_SCRIPT } from "@/app/(public)/_com/splash/gate-splash.session";
 import { MusicProvider } from "@/app/context/MusicContext";
 import {
   ColorSchemeScript,

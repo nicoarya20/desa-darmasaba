@@ -1,6 +1,7 @@
 // @vitest-environment node
-// Footer publik: blok "Kontak Bupati" (field kosong tidak dirender) & item
-// "Pengaduan Masyarakat" yang menjadi pemicu modal form pengaduan, bukan link halaman.
+// Footer publik: blok "Kontak Bupati" (link eksternal tetap), "Portal Badung" ke situs
+// resmi Badung, maskot chatbot sudah dihapus, & item "Pengaduan Masyarakat" yang menjadi
+// pemicu modal form pengaduan, bukan link halaman.
 import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -9,59 +10,87 @@ import { MantineProvider } from '@mantine/core';
 
 vi.mock('react-toastify', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import Footer from '@/app/darmasaba/_com/Footer';
-import { FooterKontakBupati } from '@/app/darmasaba/_com/FooterKontakBupati';
-import { KONTAK_BUPATI, kontakBupatiLinks } from '@/con/kontak-bupati';
+import Footer from '@/app/(public)/_com/Footer';
+import { FooterKontakBupati } from '@/app/(public)/_com/FooterKontakBupati';
+import { KONTAK_BUPATI } from '@/con/kontak-bupati';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
 
-const FOOTER_SRC = readFileSync(path.resolve(__dirname, '../../src/app/darmasaba/_com/Footer.tsx'), 'utf8');
+const FOOTER_SRC = readFileSync(path.resolve(__dirname, '../../src/app/(public)/_com/Footer.tsx'), 'utf8');
+
+const anchorsTo = (html: string, href: string) =>
+  html.match(new RegExp(`<a[^>]*href="${href.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}"[^>]*>`, 'g')) ?? [];
 
 describe('Footer — Kontak Bupati', () => {
-  it('merender judul (grid desktop + accordion ponsel), jabatan & link website tab baru dengan rel aman', () => {
+  const LINKS = [
+    { label: 'Kontak Bupati Badung', href: 'https://kontak-bupati.badungkab.go.id/' },
+    { label: 'LAPOR!', href: 'https://www.lapor.go.id/' },
+  ];
+
+  it('data blok berisi judul + tepat dua link eksternal', () => {
+    expect(KONTAK_BUPATI.judul).toBe('Kontak Bupati');
+    expect(KONTAK_BUPATI.links).toEqual(LINKS);
+  });
+
+  it('FooterKontakBupati merender dua link tab baru dengan rel aman, tanpa "Bupati Badung" & badungkab.go.id', () => {
+    const html = render(<FooterKontakBupati fz="xs" />);
+    for (const { label, href } of LINKS) {
+      const anchors = anchorsTo(html, href);
+      expect(anchors).toHaveLength(1);
+      expect(anchors[0]).toContain('target="_blank"');
+      expect(anchors[0]).toContain('rel="noopener noreferrer"');
+      expect(html).toContain(`>${label}</a>`);
+    }
+    expect(html.match(/<a\b/g)).toHaveLength(2);
+    expect(html).not.toContain('>Bupati Badung<');
+    expect(html).not.toContain('href="https://badungkab.go.id');
+    expect(html).not.toContain('>badungkab.go.id<');
+  });
+
+  it('Footer merender judul (grid desktop + accordion ponsel) dan isi blok yang sama', () => {
     const html = render(<Footer />);
     // Teks judul (bukan atribut id/aria accordion).
     expect(html.match(/>Kontak Bupati</g)).toHaveLength(2);
-    expect(html).toContain('>Bupati Badung<');
-    const websiteLinks = html.match(/<a[^>]*href="https:\/\/badungkab\.go\.id"[^>]*>/g) ?? [];
+    expect(html).not.toContain('>Bupati Badung<');
     // Grid desktop; panel accordion ponsel yang tertutup tidak di-render saat SSR.
-    expect(websiteLinks).toHaveLength(1);
-    expect(websiteLinks[0]).toContain('target="_blank"');
-    expect(websiteLinks[0]).toContain('rel="noopener noreferrer"');
-    // Accordion ponsel memakai komponen isi yang sama.
+    for (const { href } of LINKS) expect(anchorsTo(html, href)).toHaveLength(1);
+    // Grid desktop & accordion ponsel memakai komponen isi yang sama.
+    expect(FOOTER_SRC).toContain('<FooterKontakBupati fz="xs" />');
     expect(FOOTER_SRC).toContain('<FooterKontakBupati fz="sm" />');
   });
+});
 
-  it('telepon & email kosong → tidak ada link tel:/mailto:', () => {
-    expect(KONTAK_BUPATI.telepon).toBe('');
-    expect(KONTAK_BUPATI.email).toBe('');
+describe('Footer — Tautan Penting & slogan', () => {
+  it('"Portal Badung" mengarah ke https://badungkab.go.id di tab baru', () => {
     const html = render(<Footer />);
-    expect(html).not.toContain('href="tel:');
-    expect(html).not.toContain('href="mailto:');
+    const anchors = anchorsTo(html, 'https://badungkab.go.id');
+    expect(anchors).toHaveLength(1);
+    expect(html).toMatch(/<a[^>]*href="https:\/\/badungkab\.go\.id"[^>]*>Portal Badung<\/a>/);
+    expect(anchors[0]).toContain('target="_blank"');
+    expect(anchors[0]).toContain('rel="noopener noreferrer"');
+    expect(html).not.toMatch(/href="\/pemerintahan\/berita\/semua"[^>]*>Portal Badung</);
   });
 
-  it('telepon & email terisi → link tel:/mailto: dirender tanpa target _blank', () => {
-    const html = render(
-      <FooterKontakBupati
-        fz="xs"
-        kontak={{ ...KONTAK_BUPATI, telepon: '(0361) 123-456', email: 'bupati@badungkab.go.id' }}
-      />,
-    );
-    expect(html).toMatch(/<a(?![^>]*target)[^>]*href="tel:0361123456"[^>]*>\(0361\) 123-456<\/a>/);
-    expect(html).toMatch(/<a(?![^>]*target)[^>]*href="mailto:bupati@badungkab.go.id"[^>]*>bupati@badungkab.go.id<\/a>/);
+  it('link internal tetap tanpa target _blank', () => {
+    const html = render(<Footer />);
+    const internal = html.match(/<a[^>]*href="\/[^"]*"[^>]*>/g) ?? [];
+    expect(internal.length).toBeGreaterThan(0);
+    for (const a of internal) expect(a).not.toContain('target=');
   });
 
-  it('kontakBupatiLinks melewati field kosong / berisi spasi saja', () => {
-    expect(kontakBupatiLinks({ ...KONTAK_BUPATI, telepon: '  ', email: ' ', website: '' })).toEqual([]);
-    expect(kontakBupatiLinks(KONTAK_BUPATI).map((l) => l.key)).toEqual(['website']);
+  it('slogan tetap ada, maskot chatbot tidak dirender', () => {
+    const html = render(<Footer />);
+    expect(html).toContain('Desa Kuat, Warga Sejahtera!');
+    expect(html).not.toContain('chatbot-removebg-preview');
+    expect(FOOTER_SRC).not.toContain('chatbot-removebg-preview');
   });
 });
 
 describe('Footer — Pengaduan Masyarakat', () => {
-  it('menjadi tombol pemicu (button), bukan lagi link ke /darmasaba/keamanan/laporan-publik', () => {
+  it('menjadi tombol pemicu (button), bukan lagi link ke /keamanan/laporan-publik', () => {
     const html = render(<Footer />);
-    expect(html).not.toContain('/darmasaba/keamanan/laporan-publik');
+    expect(html).not.toContain('/keamanan/laporan-publik');
     expect(html).not.toMatch(/<a[^>]*>Pengaduan Masyarakat<\/a>/);
     // Grid desktop; panel accordion ponsel yang masih tertutup tidak ikut di-render saat SSR.
     expect(html.match(/<button[^>]*type="button"[^>]*>Pengaduan Masyarakat<\/button>/g)).toHaveLength(1);

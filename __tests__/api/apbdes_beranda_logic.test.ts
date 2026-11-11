@@ -11,8 +11,8 @@ import {
   listYears,
   summarizeApbdes,
   summarizeCategory,
-} from '@/app/darmasaba/_com/main-page/apbdes/apbdes.logic';
-import type { APBDesItem } from '@/app/darmasaba/_com/main-page/apbdes/types/apbdes';
+} from '@/app/(public)/_com/main-page/apbdes/apbdes.logic';
+import type { APBDesItem } from '@/app/(public)/_com/main-page/apbdes/types/apbdes';
 
 // test-only: bentuk data meniru APBDes 2025 (berhirarki) dan 2026 (datar) di DB lokal.
 const item = (kode: string, anggaran: number, tipe: APBDesItem['tipe'], realisasi: number[] = []): APBDesItem => ({

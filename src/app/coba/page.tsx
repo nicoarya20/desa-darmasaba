@@ -1,7 +1,7 @@
 import colors from '@/con/colors';
 import { Stack, Container, Box, List, ListItem, Text, Image } from '@mantine/core';
 import React from 'react';
-import BackButton from '../darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
+import BackButton from '../(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 
 
 function Page() {

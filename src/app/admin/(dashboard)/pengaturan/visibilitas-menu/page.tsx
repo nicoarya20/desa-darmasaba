@@ -4,7 +4,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { useSnapshot } from 'valtio';
 import { authStore } from '@/store/authStore';
 import { canManageMenuVisibility } from '@/lib/auth-policy';
-import { menuVisibilityGroups, type MenuVisibilityItem } from '@/app/darmasaba/_com/menu-visibility.logic';
+import { menuVisibilityGroups, type MenuVisibilityItem } from '@/app/(public)/_com/menu-visibility.logic';
 import menuVisibilityState from '../../_state/pengaturan/menu-visibility-state';
 import { MenuVisibilityGroupCard } from './_com/MenuVisibilityGroupCard';
 

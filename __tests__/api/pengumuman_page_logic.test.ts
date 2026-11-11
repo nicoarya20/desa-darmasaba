@@ -8,16 +8,16 @@ vi.mock('@/lib/api-fetch', () => ({
 }));
 
 const { activeKategori, kategoriTerlihat, labelKategori, pengumumanListHref, samaKategori } = await import(
-  '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/pengumuman-list.logic'
+  '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/pengumuman-list.logic'
 );
-const { loadPengumumanPage } = await import('@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/pengumuman-list.source');
+const { loadPengumumanPage } = await import('@/app/(public)/(pages)/pemerintahan/pengumuman/_com/pengumuman-list.source');
 const { loadPengumumanDetail } = await import(
-  '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/detail/pengumuman-detail.source'
+  '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/detail/pengumuman-detail.source'
 );
-const { withListQuery } = await import('@/app/darmasaba/_com/kabar-list/kabar-list.logic');
-const { toPengumumanItem } = await import('@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic');
+const { withListQuery } = await import('@/app/(public)/_com/kabar-list/kabar-list.logic');
+const { toPengumumanItem } = await import('@/app/(public)/_com/main-page/kabar-desa/kabar.logic');
 
-const BASE = '/darmasaba/pemerintahan/pengumuman';
+const BASE = '/pemerintahan/pengumuman';
 
 describe('withListQuery', () => {
   it('cari di-trim, halaman > 1 ditulis; kosong & halaman 1 tidak', () => {
@@ -41,7 +41,7 @@ describe('activeKategori', () => {
     expect(activeKategori(`${BASE}/Lelang%20%26%20Pengadaan`)).toBe('Lelang & Pengadaan');
     expect(activeKategori(`${BASE}/Lelang & Pengadaan`)).toBe('Lelang & Pengadaan');
     expect(activeKategori(`${BASE}/100%`)).toBe('100%');
-    expect(activeKategori('/darmasaba/lain')).toBe('');
+    expect(activeKategori('/lain')).toBe('');
   });
 });
 

@@ -1,6 +1,6 @@
 import { Badge, Box, Button, Group, Paper, Stack, Text } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { UnggulanBadge } from '@/app/darmasaba/(pages)/ekonomi/umkm/_com/UnggulanBadge';
+import { UnggulanBadge } from '@/app/(public)/(pages)/ekonomi/umkm/_com/UnggulanBadge';
 
 type ProdukItem = {
   id: string;

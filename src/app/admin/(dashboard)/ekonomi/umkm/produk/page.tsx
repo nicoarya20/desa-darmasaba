@@ -25,7 +25,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import umkmState from '../../../_state/ekonomi/umkm/umkm';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
-import { UnggulanBadge } from '@/app/darmasaba/(pages)/ekonomi/umkm/_com/UnggulanBadge';
+import { UnggulanBadge } from '@/app/(public)/(pages)/ekonomi/umkm/_com/UnggulanBadge';
 import { ProdukMobileList } from './_com/ProdukMobileList';
 
 function ProdukUmkm() {

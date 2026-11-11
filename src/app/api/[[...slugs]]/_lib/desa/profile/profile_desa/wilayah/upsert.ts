@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { WILAYAH_DESA_SELECT } from "./find";
-import { WILAYAH_DESA_ID, parseWilayahDesaInput } from "./validation";
+import { WILAYAH_DESA_ID, parseWilayahDesaInput } from "@/lib/wilayah-desa";
 
 /** PUT admin: simpan (buat/perbarui) satu-satunya baris wilayah desa; idempoten. */
 export default async function wilayahDesaUpsert(body: unknown) {

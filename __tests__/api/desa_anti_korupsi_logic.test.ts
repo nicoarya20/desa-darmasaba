@@ -5,7 +5,7 @@ import {
   splitIndicatorNumber,
   toSentenceCase,
   type AntiKorupsiApiItem,
-} from '@/app/darmasaba/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
+} from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
 
 // test-only: bentuk meniru item desaAntikorupsi.findMany (nama tersimpan kapital seperti data desa).
 const item = (id: string, name: string, kategoriId: string, kategori: string): AntiKorupsiApiItem => ({

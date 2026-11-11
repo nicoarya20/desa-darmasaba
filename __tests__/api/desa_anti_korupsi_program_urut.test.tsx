@@ -3,27 +3,27 @@
 import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
-import { DokumenRingkasList } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/DokumenRingkasList';
-import { ProgramIsi } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
-import { UnduhZipButton } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/UnduhZipButton';
+import { DokumenRingkasList } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/DokumenRingkasList';
+import { ProgramIsi } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
+import { UnduhZipButton } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/UnduhZipButton';
 import {
   dokumenInfo,
   formatTanggalUnggah,
   ringkasInfo,
-} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/dokumen-info';
+} from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/dokumen-info';
 import {
   programHref,
   searchDokumen,
   totalUkuranFolder,
-} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/program-folder';
+} from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-folder';
 import {
   parseUrut,
   serializeUrut,
   URUT_DEFAULT,
   URUT_OPTIONS,
   urutkanItems,
-} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/program-urut';
-import { jalankanUnduhZip, ZIP_HINT } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/program-zip';
+} from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-urut';
+import { jalankanUnduhZip, ZIP_HINT } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-zip';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { folderGroups, type DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
 
@@ -97,9 +97,9 @@ describe('parseUrut / serializeUrut (?urut=<key>-<dir>)', () => {
   });
 
   it('programHref menyertakan urut non-default di samping folder', () => {
-    expect(programHref('p1', 'fa', 'judul-asc')).toBe('/darmasaba/desa-anti-korupsi/program/p1?folder=fa&urut=judul-asc');
-    expect(programHref('p1', null, 'tanggal-desc')).toBe('/darmasaba/desa-anti-korupsi/program/p1?urut=tanggal-desc');
-    expect(programHref('p1', 'fa', 'urutan-asc')).toBe('/darmasaba/desa-anti-korupsi/program/p1?folder=fa');
+    expect(programHref('p1', 'fa', 'judul-asc')).toBe('/desa-anti-korupsi/program/p1?folder=fa&urut=judul-asc');
+    expect(programHref('p1', null, 'tanggal-desc')).toBe('/desa-anti-korupsi/program/p1?urut=tanggal-desc');
+    expect(programHref('p1', 'fa', 'urutan-asc')).toBe('/desa-anti-korupsi/program/p1?folder=fa');
   });
 });
 
@@ -138,14 +138,14 @@ describe('urut + cari pada data contoh', () => {
     expect(html).toContain('aria-label="Urutkan dokumen"');
     expect(html).toContain('value="Judul A–Z"');
     // urut ikut di tautan kembali ke daftar folder
-    expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/p1?urut=judul-asc"');
+    expect(html).toContain('href="/desa-anti-korupsi/program/p1?urut=judul-asc"');
   });
 
   it('ProgramIsi: ?urut asing → urutan asli; grid folder tanpa Select, tautan folder membawa urut', () => {
     expect(ids(render(<ProgramIsi detail={detail} folderParam="fa" urutParam="acak" onUrutChange={noop} />))).toEqual(['a1', 'a2', 'a3']);
     const grid = render(<ProgramIsi detail={detail} folderParam={null} urutParam="tanggal-desc" onUrutChange={noop} />);
     expect(grid).not.toContain('aria-label="Urutkan dokumen"');
-    expect(grid).toContain('href="/darmasaba/desa-anti-korupsi/program/p1?folder=fa&amp;urut=tanggal-desc"');
+    expect(grid).toContain('href="/desa-anti-korupsi/program/p1?folder=fa&amp;urut=tanggal-desc"');
   });
 });
 

@@ -8,10 +8,10 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
 }));
-import { PengumumanDokumenRows } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/detail/PengumumanDokumenRows';
-import { PengumumanRows } from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/PengumumanRows';
-import s from '@/app/darmasaba/(pages)/pemerintahan/pengumuman/_com/pengumuman-list.module.css';
-import type { KabarItem } from '@/app/darmasaba/_com/main-page/kabar-desa/kabar.logic';
+import { PengumumanDokumenRows } from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/detail/PengumumanDokumenRows';
+import { PengumumanRows } from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/PengumumanRows';
+import s from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/pengumuman-list.module.css';
+import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -25,7 +25,7 @@ const item = (id: string, imageUrl?: string): KabarItem => ({
   kategori: 'Lelang & Pengadaan',
   imageUrl,
   createdAt: Date.UTC(2026, 8, 13, 16),
-  href: `/darmasaba/pemerintahan/pengumuman/Lelang%20%26%20Pengadaan/${id}`,
+  href: `/pemerintahan/pengumuman/Lelang%20%26%20Pengadaan/${id}`,
 });
 
 const rows = (props: Partial<React.ComponentProps<typeof PengumumanRows>>) =>
@@ -37,7 +37,7 @@ describe('PengumumanRows', () => {
   it('satu tautan per pengumuman; thumbnail bila ada gambar, ikon dokumen bila tidak', () => {
     const html = rows({ items: [item('a', '/api/img/a.webp'), item('b')] });
     expect(count(html, `class="${s.row}"`)).toBe(2);
-    expect(html).toContain('href="/darmasaba/pemerintahan/pengumuman/Lelang%20%26%20Pengadaan/a"');
+    expect(html).toContain('href="/pemerintahan/pengumuman/Lelang%20%26%20Pengadaan/a"');
     expect(html).toContain('src="/api/img/a.webp"');
     expect(count(html, s.thumbFallback)).toBe(1);
     // tanggal terbit WITA (13 Sep 16:00 UTC = 14 Sep WITA)

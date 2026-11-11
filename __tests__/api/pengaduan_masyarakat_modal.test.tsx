@@ -23,7 +23,7 @@ vi.mock('@/app/admin/(dashboard)/_com/createEditor', () => ({
   default: () => <textarea data-testid="editor-deskripsi" />,
 }));
 
-import PengaduanMasyarakatModal from '@/app/darmasaba/_com/pengaduan/PengaduanMasyarakatModal';
+import PengaduanMasyarakatModal from '@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal';
 
 // env="test" mematikan portal & transisi Mantine → isi Modal ikut ter-render di SSR.
 const render = (node: React.ReactElement) =>
@@ -57,16 +57,16 @@ describe('PengaduanMasyarakatModal', () => {
 describe('halaman layanan online desa — kartu Pengaduan Masyarakat', () => {
   it('memakai PengaduanMasyarakatModal yang sama, tertutup sampai kartu diklik', async () => {
     vi.resetModules();
-    vi.doMock('@/app/darmasaba/_com/pengaduan/PengaduanMasyarakatModal', () => ({
+    vi.doMock('@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal', () => ({
       default: ({ opened }: { opened: boolean }) => <div data-testid="pengaduan-modal" data-opened={String(opened)} />,
     }));
     const { default: PengaduanMasyarakat } = await import(
-      '@/app/darmasaba/(pages)/inovasi/layanan-online-desa/pengaduan-masyarakat/page'
+      '@/app/(public)/(pages)/inovasi/layanan-online-desa/pengaduan-masyarakat/page'
     );
     const html = render(<PengaduanMasyarakat />);
     expect(html).toContain('Pengaduan Masyarakat');
     expect(html).toContain('Sampaikan keluhan dan aspirasi Anda');
     expect(html).toContain('data-testid="pengaduan-modal" data-opened="false"');
-    vi.doUnmock('@/app/darmasaba/_com/pengaduan/PengaduanMasyarakatModal');
+    vi.doUnmock('@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal');
   });
 });

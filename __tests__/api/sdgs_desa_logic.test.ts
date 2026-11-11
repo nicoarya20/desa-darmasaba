@@ -5,7 +5,7 @@ import {
   pickTopSdgs,
   readSdgsList,
   type SdgsApiItem,
-} from '@/app/darmasaba/_com/main-page/sdgs/sdgs.logic';
+} from '@/app/(public)/_com/main-page/sdgs/sdgs.logic';
 
 // test-only: bentuk meniru respons /api/landingpage/sdgsdesa/findMany.
 const item = (id: string, jumlah: string | null | undefined, over: Partial<SdgsApiItem> = {}): SdgsApiItem => ({

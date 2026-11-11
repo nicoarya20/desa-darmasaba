@@ -4,7 +4,7 @@
  * waktu desa. Keputusan: docs/decisions/2026-11-10-pengumuman-lampiran.md (pola awal) dan
  * docs/decisions/2026-11-11-berita-tanggal-terbit.md (dipakai bersama Berita).
  */
-import { DESA_TIME_ZONE } from "@/app/darmasaba/_com/main-page/apbdes/apbdes.logic";
+import { DESA_TIME_ZONE } from "@/app/(public)/_com/main-page/apbdes/apbdes.logic";
 
 /** Offset UTC zona waktu desa (WITA, tanpa DST) untuk membaca input tanggal `YYYY-MM-DD`. */
 const DESA_UTC_OFFSET = "+08:00";

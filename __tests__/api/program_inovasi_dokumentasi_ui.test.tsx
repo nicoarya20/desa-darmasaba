@@ -17,7 +17,7 @@ import {
   tambahDokumentasi,
   type DokumentasiItem,
 } from '@/app/admin/(dashboard)/landing-page/profil/program-inovasi/_lib/dokumentasi.logic';
-import { DokumentasiGaleri } from '@/app/darmasaba/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
+import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const count = (html: string, attr: string) => html.split(attr).length - 1;

@@ -6,7 +6,7 @@ import {
   PLATFORM_TOKO_ONLINE,
   validateLinkTokoOnline,
   type LinkTokoOnlineInput,
-} from '@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline';
+} from '@/lib/link-toko-online';
 
 const PLATFORM_OPTIONS = PLATFORM_TOKO_ONLINE.map((p) => ({ value: p, label: PLATFORM_LABEL[p] }));
 const PLATFORM_DEFAULT = PLATFORM_TOKO_ONLINE[0];
