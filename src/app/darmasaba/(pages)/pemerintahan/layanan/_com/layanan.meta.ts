@@ -16,5 +16,8 @@ export const LAYANAN_BRAND_VARS = {
   "--brand-hover": colors["blue-button-6"],
 } as CSSProperties;
 
+/** Rute halaman daftar Layanan. */
+export const LAYANAN_LIST_HREF = "/darmasaba/pemerintahan/layanan";
+
 /** Rute detail satu layanan surat keterangan. */
-export const layananDetailHref = (id: string) => `/darmasaba/pemerintahan/layanan/${id}`;
+export const layananDetailHref = (id: string) => `${LAYANAN_LIST_HREF}/${id}`;

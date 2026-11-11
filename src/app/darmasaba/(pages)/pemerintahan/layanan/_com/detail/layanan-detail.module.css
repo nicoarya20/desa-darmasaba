@@ -1,0 +1,287 @@
+/*
+ * Detail layanan surat keterangan — kolom baca 860px di tengah kerangka `.page` (layanan.module.css: latar putih,
+ * tepi --edge-gutter, variabel --brand/--ink/--muted/--subtle/--tile/--radius). Pola detail Pengumuman:
+ * kategori → judul → isi → gambar di panel #f5f5f7 seperti pratinjau dokumen. Tanpa foto utama (keputusan user):
+ * persyaratan langsung terlihat di layar pertama. Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.wrap > * {
+  width: 100%;
+}
+
+.wrap > :first-child {
+  width: auto;
+}
+
+/* ---------- Kepala ---------- */
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.kategori {
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-top: 8px;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 22px;
+  border: 0;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.cta:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* ---------- Isi (persyaratan & alur dari editor admin) ---------- */
+.content {
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.content > :first-child {
+  margin-top: 0;
+}
+
+.content > :last-child {
+  margin-bottom: 0;
+}
+
+.content p,
+.content ul,
+.content ol {
+  margin: 0 0 0.75em;
+}
+
+.content ul,
+.content ol {
+  padding-left: 1.25em;
+}
+
+.content li + li {
+  margin-top: 0.25em;
+}
+
+.content a {
+  color: var(--brand);
+  text-underline-offset: 3px;
+}
+
+/* ---------- Gambar alur ---------- */
+.figure {
+  margin: 0;
+  padding: 32px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.figure a {
+  display: block;
+  border-radius: 6px;
+}
+
+.figureImg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: min(80vh, 900px);
+  margin: 0 auto;
+  border-radius: 6px;
+}
+
+/* ---------- Penutup: ajukan permohonan ---------- */
+.closing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  padding: 32px 40px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.closingText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.closingTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+}
+
+.closingText p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+/* ---------- Modal formulir (di portal; tanpa variabel halaman) ---------- */
+.modalTitle {
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+  color: #1d1d1f;
+}
+
+/* ---------- Tidak ditemukan ---------- */
+.emptyText {
+  margin: 0 0 12px;
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--brand);
+  font-size: 17px;
+  text-decoration: none;
+}
+
+/* ---------- Kerangka memuat ---------- */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bar {
+  display: block;
+  border-radius: 8px;
+  background: #e8e8ed;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.barMeta {
+  width: 180px;
+  height: 14px;
+}
+
+.barTitle {
+  width: 70%;
+  height: 44px;
+}
+
+.barText {
+  width: 90%;
+  height: 120px;
+  margin-top: 16px;
+}
+
+.barFigure {
+  width: 100%;
+  height: 360px;
+  border-radius: var(--radius);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover {
+    background: var(--brand-hover);
+  }
+
+  .kategori:hover,
+  .emptyLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+  }
+
+  .cta {
+    transition: none;
+  }
+}
+
+@media (max-width: 734px) {
+  .wrap {
+    gap: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+    line-height: 1.14;
+  }
+
+  .content {
+    font-size: 17px;
+  }
+
+  .figure {
+    padding: 16px;
+  }
+
+  .closing {
+    padding: 24px 20px;
+  }
+
+  .closingTitle {
+    font-size: 21px;
+  }
+
+  .barFigure {
+    height: 240px;
+  }
+}
