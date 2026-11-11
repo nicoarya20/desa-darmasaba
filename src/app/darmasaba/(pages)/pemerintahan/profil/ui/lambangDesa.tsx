@@ -1,85 +1,25 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile'
-import colors from '@/con/colors'
-import { Box, Center, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core'
-import { useEffect } from 'react'
-import { useProxy } from 'valtio/utils'
+import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
+import { useProxy } from 'valtio/utils';
+import { ProfilCard, ProfilCardSkeleton, ProfilEmpty, ProfilProse } from '../_com/ProfilCard';
+import { LOGO_DESA_SRC, PROFIL_CMS_ID } from '../_com/profil.meta';
+import { PROFIL_TEXT } from '../_com/profil.text';
+import { useLoadOnce } from '../_com/use-load-once';
 
+const T = PROFIL_TEXT.lambang;
+
+/** Section Lambang Desa: lambang + keterangan makna dari CMS. */
 function LambangDesa() {
-  const state = useProxy(stateProfileDesa.lambangDesa)
+  const state = useProxy(stateProfileDesa.lambangDesa);
+  const loaded = useLoadOnce(() => state.findUnique.load(PROFIL_CMS_ID));
+  const { data } = state.findUnique;
 
-  useEffect(() => {
-    state.findUnique.load("edit")
-  }, [])
-
-  const { data, loading } = state.findUnique
-
-  if (loading || !data) {
-    return (
-      <Box py="lg">
-        <Skeleton h={420} radius="xl" />
-      </Box>
-    )
-  }
-
+  if (!loaded && !data) return <ProfilCardSkeleton label={T.loading} />;
   return (
-    <Box>
-      <Stack align="center" gap="lg">
-        
-        {/* HEADER */}
-        <Box pb="lg">
-          <Center>
-            <Image
-              src={"/darmasaba-icon.png"}
-              alt="Lambang resmi desa"
-              w={{ base: 180, md: 280 }}
-              radius="md"
-              loading="lazy"
-            />
-          </Center>
-
-          {/* TITLE - H1 */}
-          <Title
-            order={1}
-            c={colors['blue-button']}
-            ta="center"
-            mt="sm"
-            style={{ letterSpacing: '-0.5px' }}
-          >
-            Lambang Desa
-          </Title>
-        </Box>
-
-        {/* DESKRIPSI */}
-        <Paper
-          p="xl"
-          radius="xl"
-          withBorder
-          shadow="sm"
-          w="100%"
-          style={{
-            background: 'linear-gradient(135deg, #ffffff 0%, #f3f7ff 100%)',
-            borderColor: '#e0e9ff',
-          }}
-        >
-          <Text
-            fz={{ base: 'sm', md: 'md' }}   // Body text mobile & desktop
-            lh={1.7}
-            c="dark"
-            ta="justify"
-            style={{
-              fontWeight: 400,
-              wordBreak: "break-word",
-              whiteSpace: "normal",
-            }}
-            dangerouslySetInnerHTML={{ __html: data.deskripsi }}
-          />
-        </Paper>
-
-      </Stack>
-    </Box>
-  )
+    <ProfilCard title={T.title} emblem={{ src: LOGO_DESA_SRC, alt: PROFIL_TEXT.logoAlt }}>
+      {data?.deskripsi ? <ProfilProse html={data.deskripsi} /> : <ProfilEmpty>{T.empty}</ProfilEmpty>}
+    </ProfilCard>
+  );
 }
 
-export default LambangDesa
+export default LambangDesa;

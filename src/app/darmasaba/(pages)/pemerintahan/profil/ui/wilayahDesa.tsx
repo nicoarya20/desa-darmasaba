@@ -1,9 +1,13 @@
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
-import colors from '@/con/colors';
-import { Box, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
+import { ProfilCard, ProfilCardSkeleton, ProfilEmpty } from '../_com/ProfilCard';
+import { KANTOR_MAP_EMBED_URL } from '../_com/profil.meta';
+import { PROFIL_TEXT } from '../_com/profil.text';
+import { useLoadOnce } from '../_com/use-load-once';
+import m from './media.module.css';
+
+const T = PROFIL_TEXT.wilayah;
 
 const ARAH_LIST = [
   { key: 'batasUtara', label: 'Utara' },
@@ -12,87 +16,57 @@ const ARAH_LIST = [
   { key: 'batasBarat', label: 'Barat' },
 ] as const;
 
-const EMPTY_MESSAGE = 'Data batas wilayah belum tersedia';
-const ERROR_MESSAGE = 'Data batas wilayah belum dapat dimuat. Silakan coba lagi nanti.';
-
-/** Section publik "Letak & Batas Wilayah" di halaman Profil Desa (selalu tampil, ada empty-state). */
+/**
+ * Section Letak & Batas Wilayah: batas empat arah, luas, keterangan, lalu peta. Peta wilayah dari CMS bila ada;
+ * bila belum diisi admin, tampil peta Kantor Perbekel (sebelumnya peta tanpa judul di puncak halaman).
+ */
 function WilayahDesa() {
   const state = useProxy(stateProfileDesa.wilayahDesa);
+  const loaded = useLoadOnce(() => state.findUnique.load());
+  const { data, error } = state.findUnique;
 
-  useEffect(() => {
-    state.findUnique.load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- load sekali saat mount; state proxy stabil
-  }, []);
+  if (!loaded && !data) return <ProfilCardSkeleton label={T.loading} rows={3} />;
 
-  const { data, loading, error } = state.findUnique;
-  const hasData =
-    !!data &&
-    (ARAH_LIST.some(({ key }) => !!data[key]) || data.luasWilayah != null || !!data.petaEmbedUrl);
+  const hasBatas = !!data && (ARAH_LIST.some(({ key }) => !!data[key]) || data.luasWilayah != null);
+  const mapUrl = data?.petaEmbedUrl || KANTOR_MAP_EMBED_URL;
+  const isOfficeMap = !data?.petaEmbedUrl;
 
   return (
-    <Box>
-      <Paper p="xl" radius="lg" shadow="md" withBorder style={{ background: 'linear-gradient(145deg, #ffffff, #f5f7fa)' }}>
-        <Stack gap="lg">
-          <Title order={1} c={colors['blue-button']} ta="center" fz={{ base: 'h2', md: 'h1' }}>
-            Letak & Batas Wilayah
-          </Title>
+    <ProfilCard title={T.title}>
+      {hasBatas && data ? (
+        <>
+          <dl className={m.sides}>
+            {ARAH_LIST.map(({ key, label }) => (
+              <div key={key} className={m.side}>
+                <dt className={m.sideLabel}>{T.side(label)}</dt>
+                <dd className={m.sideValue}>{data[key] || '–'}</dd>
+              </div>
+            ))}
+          </dl>
+          {data.luasWilayah != null ? (
+            <p className={m.area}>
+              {T.luas}: <strong>{new Intl.NumberFormat('id-ID').format(data.luasWilayah)} ha</strong>
+            </p>
+          ) : null}
+        </>
+      ) : (
+        <ProfilEmpty>{error ? T.error : T.empty}</ProfilEmpty>
+      )}
 
-          {loading && <Skeleton h={220} radius="lg" />}
+      {data?.keterangan ? <p className={m.note}>{data.keterangan}</p> : null}
 
-          {!loading && !hasData && (
-            <Text ta="center" c="dimmed" fz={{ base: 'sm', md: 'md' }}>
-              {error ? ERROR_MESSAGE : EMPTY_MESSAGE}
-            </Text>
-          )}
-
-          {!loading && hasData && data && (
-            <>
-              <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md">
-                {ARAH_LIST.map(({ key, label }) => (
-                  <Paper key={key} p="md" radius="md" withBorder bg={colors['blue-button-1']}>
-                    <Text fz="sm" fw={600} c={colors['blue-button']} tt="uppercase">
-                      Sebelah {label}
-                    </Text>
-                    <Text fz={{ base: 'md', md: 'lg' }} fw={500} style={{ wordBreak: 'break-word' }}>
-                      {data[key] || '-'}
-                    </Text>
-                  </Paper>
-                ))}
-              </SimpleGrid>
-
-              {data.luasWilayah != null && (
-                <Text ta="center" fz={{ base: 'md', md: 'lg' }}>
-                  Luas wilayah:{' '}
-                  <Text span fw={700} c={colors['blue-button']}>
-                    {new Intl.NumberFormat('id-ID').format(data.luasWilayah)} ha
-                  </Text>
-                </Text>
-              )}
-
-              {data.keterangan && (
-                <Text ta="justify" fz={{ base: 'sm', md: 'md' }} lh={1.7} style={{ whiteSpace: 'pre-line', wordBreak: 'break-word' }}>
-                  {data.keterangan}
-                </Text>
-              )}
-
-              {data.petaEmbedUrl && (
-                // Tinggi eksplisit: AspectRatio + mah membuat iframe meluber keluar Paper & menimpa section Lambang Desa.
-                <Box h={{ base: 300, sm: 380, md: 450 }} style={{ overflow: 'hidden', borderRadius: 12 }}>
-                  <iframe
-                    src={data.petaEmbedUrl}
-                    title="Peta wilayah Desa Darmasaba"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    sandbox="allow-scripts allow-same-origin allow-popups"
-                    style={{ border: 0, display: 'block', width: '100%', height: '100%' }}
-                  />
-                </Box>
-              )}
-            </>
-          )}
-        </Stack>
-      </Paper>
-    </Box>
+      <figure className={m.map}>
+        <iframe
+          src={mapUrl}
+          title={isOfficeMap ? T.officeMapTitle : T.mapTitle}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          sandbox="allow-scripts allow-same-origin allow-popups"
+          className={m.mapFrame}
+        />
+        {isOfficeMap ? <figcaption className={m.mapCaption}>{T.officeCaption}</figcaption> : null}
+      </figure>
+    </ProfilCard>
   );
 }
 

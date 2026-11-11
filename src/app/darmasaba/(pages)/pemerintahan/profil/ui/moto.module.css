@@ -1,0 +1,121 @@
+/* Moto SIGAP: 5 kolom (huruf di atas nilai) di layar lebar; ≤1068px baris (huruf kiri, nilai kanan). */
+.values {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin: 40px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.letter {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgb(10 78 120 / 0.22);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.valueTitle {
+  margin: 0;
+  color: var(--brand);
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.valueBody {
+  margin: 0;
+  color: var(--p-muted);
+  font-size: 16px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.quote {
+  max-width: 40rem;
+  margin: 48px 0 0;
+  color: var(--p-text);
+  font-size: 22px;
+  line-height: 1.45;
+  font-weight: 600;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.quote::before {
+  content: '\201C';
+}
+
+.quote::after {
+  content: '\201D';
+}
+
+.quote strong {
+  color: var(--brand);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 1068px) {
+  .values {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    max-width: var(--p-measure);
+  }
+
+  .value {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 18px;
+    text-align: left;
+  }
+}
+
+@media (max-width: 734px) {
+  .values {
+    margin-top: 28px;
+  }
+
+  .letter {
+    width: 52px;
+    height: 52px;
+    border-radius: 15px;
+    font-size: 23px;
+  }
+
+  .valueTitle {
+    font-size: 18px;
+  }
+
+  .valueBody {
+    font-size: 15px;
+  }
+
+  .quote {
+    margin-top: 36px;
+    font-size: 19px;
+  }
+}
