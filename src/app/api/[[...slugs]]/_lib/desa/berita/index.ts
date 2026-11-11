@@ -23,6 +23,8 @@ const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
       kategoriBeritaId: t.Union([t.String(), t.Null()]),
       imageIds: t.Array(t.String()),
       linkVideo: t.Optional(t.String()),
+      // Opsional (kontrak additive): `YYYY-MM-DD` WITA / ISO; dicek di `@/lib/tanggal-terbit` → 400.
+      tanggalTerbit: t.Optional(t.Union([t.String(), t.Null()])),
     }),
   })
   .get("/find-first", beritaFindFirst)
@@ -43,6 +45,7 @@ const Berita = new Elysia({ prefix: "/berita", tags: ["Desa/Berita"] })
         kategoriBeritaId: t.Union([t.String(), t.Null()]),
         imageIds: t.Array(t.String()),
         linkVideo: t.Optional(t.String()),
+        tanggalTerbit: t.Optional(t.Union([t.String(), t.Null()])),
       }),
     }
   );

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.244] - 2026-11-11
+### Added
+- **Tanggal Terbit berita.** Admin dapat mengisi tanggal asli berita di form tambah (default hari ini) dan edit, sehingga berita kegiatan lama yang diinput belakangan tampil dengan tanggal aslinya dan tidak lagi naik ke urutan teratas. Halaman detail berita di admin dan website kini menampilkan tanggal terbit.
+
+### Changed
+- Daftar berita (website, halaman informasi desa, Kabar Desa di beranda, dan pencarian) kini diurutkan dan diberi tanggal menurut Tanggal Terbit, bukan waktu data dibuat. Tanggal ditampilkan menurut waktu WITA, jadi tidak lagi bergeser sehari bagi pembaca di zona waktu lain. Berita yang sudah ada memakai tanggal pembuatannya sebagai tanggal terbit, sehingga tampilannya tidak berubah.
+
+### Operator
+- Jalankan migrasi database sebelum versi ini aktif: `20261111120000_berita_tanggal_terbit` (kolom `tanggalTerbit` di `Berita`, baris lama diisi dari `createdAt`, plus index urutan; murni tambahan, aman dijalankan ulang).
+- API `/api/desa/berita` create/update menerima field opsional `tanggalTerbit` (`YYYY-MM-DD` WITA atau ISO; lihat `docs/decisions/2026-11-11-berita-tanggal-terbit.md`) — dipakai untuk mengoreksi tanggal 22 berita hasil impor lewat form edit.
+
 ## [0.1.243] - 2026-11-11
 ### Changed
 - **Halaman Berita didesain ulang mengikuti section Kabar Desa di beranda.** Latar putih, kartu berita utama besar diikuti kartu berita bergaya sama dengan beranda, pencarian berbentuk kolom bulat, dan kategori berupa tombol pil (bisa digeser di ponsel). Tiap halaman kini menampilkan 7 berita (sebelumnya 3), dan berita utama tidak lagi muncul dua kali di halaman pertama.

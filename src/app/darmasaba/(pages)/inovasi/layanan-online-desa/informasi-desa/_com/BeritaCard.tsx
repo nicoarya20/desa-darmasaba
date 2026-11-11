@@ -10,7 +10,8 @@ interface BeritaCardProps {
   deskripsi?: string | null;
   imageLink?: string | null;
   kategori?: string | null;
-  createdAt: Date | string;
+  /** Tanggal terbit (`tanggalTerbit`, fallback `createdAt`) — ditampilkan relatif, mis. "3 bulan yang lalu". */
+  tanggal: Date | string;
   onClick: () => void;
 }
 
@@ -20,7 +21,7 @@ export default function BeritaCard({
   deskripsi,
   imageLink,
   kategori,
-  createdAt,
+  tanggal,
   onClick,
 }: BeritaCardProps) {
   return (
@@ -78,7 +79,7 @@ export default function BeritaCard({
           <Group gap={4} mt="auto" pt={4} c="gray">
             <IconClock size={13} />
             <Text fz="xs" c="gray">
-              {timeAgoId(createdAt)}
+              {timeAgoId(tanggal)}
             </Text>
           </Group>
         </Stack>

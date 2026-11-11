@@ -1,29 +1,28 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import { Prisma } from "@prisma/client";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
-
-type FormUpdate = {
-  id: string;
-  judul: string;
-  deskripsi: string;
-  content: string;
-  kategoriBeritaId: string;
-  imageId: string; // Featured image
-  imageIds?: string[]; // Multiple images for gallery
-  linkVideo?: string; // YouTube link
-};
+import { susunBeritaUpdate, type BeritaBody } from "@/lib/berita-data";
+import { parseTanggalTerbit } from "@/lib/tanggal-terbit";
 
 async function beritaUpdate(context: Context) {
   try {
     const id = context.params?.id as string;
-    const body = (await context.body) as Omit<FormUpdate, "id">;
+    const body = (await context.body) as BeritaBody;
 
-    const { judul, deskripsi, content, kategoriBeritaId, imageId, imageIds, linkVideo } = body;
+    const { imageId } = body;
 
     if (!id) {
       return new Response(
         JSON.stringify({ success: false, message: "ID tidak boleh kosong" }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    // Validasi sebelum menyentuh DB/MinIO: tanggal salah tidak boleh ikut menghapus gambar lama.
+    const tanggal = parseTanggalTerbit(body.tanggalTerbit);
+    if (!tanggal.ok) {
+      return new Response(
+        JSON.stringify({ success: false, message: tanggal.message }),
         { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
@@ -59,35 +58,9 @@ async function beritaUpdate(context: Context) {
       }
     }
 
-    // Build update data
-    const updateData: Prisma.BeritaUpdateInput = {
-      judul,
-      deskripsi,
-      content,
-      kategoriBerita: kategoriBeritaId ? { connect: { id: kategoriBeritaId } } : { disconnect: true },
-      image: imageId ? { connect: { id: imageId } } : { disconnect: true },
-      linkVideo,
-    };
-
-    // Handle multiple images update
-    if (imageIds !== undefined) {
-      // Disconnect all existing images first
-      updateData.images = {
-        set: [],
-      };
-      
-      // Connect new images if provided
-      if (imageIds.length > 0) {
-        updateData.images = {
-          ...updateData.images,
-          connect: imageIds.map((id) => ({ id })),
-        };
-      }
-    }
-
     const updated = await prisma.berita.update({
       where: { id },
-      data: updateData,
+      data: susunBeritaUpdate(body, tanggal.data),
       include: {
         image: true,
         images: true,

@@ -35,6 +35,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useProxy } from "valtio/utils";
 import { convertYoutubeUrlToEmbed } from '@/app/admin/(dashboard)/pemerintahan/gallery/lib/youtube-utils';
+import { tanggalTerbitJikaDiubah } from '@/lib/tanggal-terbit';
+import { TanggalTerbitInput } from '../../_com/TanggalTerbitInput';
 
 interface ExistingImage {
   id: string;
@@ -72,6 +74,7 @@ function EditBerita() {
   // YouTube link state
   const [youtubeLink, setYoutubeLink] = useState('');
   const [originalYoutubeLink, setOriginalYoutubeLink] = useState('');
+  const [tanggal, setTanggal] = useState({ value: '', original: '' }); // `YYYY-MM-DD` WITA
 
   const [formData, setFormData] = useState({
     judul: "",
@@ -120,6 +123,7 @@ function EditBerita() {
       try {
         const data = await stateDashboardBerita.berita.edit.load(id) as BeritaData | null;
         if (data) {
+          setTanggal({ value: stateDashboardBerita.berita.edit.form.tanggalTerbit, original: stateDashboardBerita.berita.edit.form.tanggalTerbit });
           setFormData({
             judul: data.judul || "",
             deskripsi: data.deskripsi || "",
@@ -209,6 +213,7 @@ function EditBerita() {
       return;
     }
 
+    if (!tanggal.value) return toast.error('Tanggal terbit wajib diisi');
     if (isHtmlEmpty(formData.deskripsi)) {
       toast.error('Deskripsi singkat wajib diisi');
       return;
@@ -231,6 +236,7 @@ function EditBerita() {
       beritaState.berita.edit.form = {
         ...beritaState.berita.edit.form,
         ...formData,
+        tanggalTerbit: tanggalTerbitJikaDiubah(tanggal.value, tanggal.original),
       };
 
       // Upload new featured image if changed
@@ -288,6 +294,7 @@ function EditBerita() {
       content: originalData.content,
       imageId: originalData.imageId,
     });
+    setTanggal((t) => ({ ...t, value: t.original }));
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
 
@@ -356,6 +363,8 @@ function EditBerita() {
             searchable
             required
           />
+
+          <TanggalTerbitInput value={tanggal.value} onChange={(v) => setTanggal((t) => ({ ...t, value: v }))} description="Tanggal asli berita/kegiatan" />
 
           {/* Deskripsi */}
           <Box>
