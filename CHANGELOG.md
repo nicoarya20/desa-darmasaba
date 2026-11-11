@@ -7,6 +7,8 @@
 - **Alur pendaftaran NIB (Perizinan Berusaha melalui OSS)** kini menampilkan keenam langkah sekaligus, tanpa perlu menekan Lanjut satu per satu. Tombol "Buka oss.go.id" ada di bawahnya.
 - **Layanan Telunjuk Sakti Desa** tampil sebagai daftar baris. Nama layanan terbaca utuh (tidak terpotong), dan setiap baris membuka dokumen petunjuk di tab baru.
 - **Pelayanan Penduduk Non-Permanen** tampil dalam panel yang rapi.
+- **Halaman detail layanan dirombak**: langsung ke persyaratan tanpa foto besar di atas, gaya sama dengan detail Pengumuman. Tombol "Ajukan Permohonan" ada di atas (di samping estimasi waktu & biaya) dan di panel penutup bawah. Gambar alur pelayanan tampil di panel abu dan bisa dibuka ukuran penuh. Bila layanan tidak ditemukan, kini ada tautan kembali ke daftar layanan.
+- **Formulir Ajukan Permohonan** tampil sebagai jendela di tengah layar yang lebih bersih.
 
 ### Fixed
 - Surat keterangan ke-10 (Surat Keterangan Yatim Piatu) sebelumnya tidak pernah muncul di halaman Layanan karena jumlah item per halaman tidak konsisten.
