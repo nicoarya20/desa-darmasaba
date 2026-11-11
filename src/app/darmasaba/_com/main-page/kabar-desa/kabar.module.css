@@ -11,8 +11,8 @@
   --tile: #f5f5f7;
   --line: rgba(0, 0, 0, 0.08);
   --radius: 18px;
-  /* Jarak tepi kiri/kanan; isi sengaja selebar layar (tanpa max-width). */
-  --gutter: 24px;
+  /* Jarak tepi kiri/kanan (token globals.css, sama dengan hero); isi sengaja selebar layar (tanpa max-width). */
+  --gutter: var(--edge-gutter);
   background: #fff;
   padding: var(--section-pad-y) var(--gutter);
   color: var(--ink);

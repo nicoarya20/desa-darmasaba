@@ -3,7 +3,7 @@
  * sambutan, status kantor, dan media sosial di kiri atas; rel program inovasi di kiri bawah
  * (programs.module.css);
  * foto Perbekel besar di kanan setinggi hero. Tanpa gerak otomatis: situs pemerintah harus tenang.
- * Isi selebar layar dengan jarak tepi 24px, sejajar tepi kiri-kanan Kabar Desa di bawahnya.
+ * Isi selebar layar dengan jarak tepi --edge-gutter (globals.css), sejajar tepi kiri-kanan Kabar Desa di bawahnya.
  * Breakpoint mengikuti section beranda lain: ≤1068px (tablet) dan ≤734px (mobile).
  */
 .section {
@@ -14,7 +14,7 @@
   --tile: #fff;
   --open: #1f9d55;
   --closed: #d9363e;
-  --gutter: 24px;
+  --gutter: var(--edge-gutter);
   /* Tinggi foto ikut lebar DAN tinggi layar, supaya seluruh hero tetap masuk layar pertama di laptop. */
   --photo-h: clamp(340px, min(38vw, 66vh), 700px);
   display: grid;

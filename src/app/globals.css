@@ -54,16 +54,21 @@ body {
    Satu-satunya pengatur jarak antar section beranda: ubah --section-gap saja.
    Tiap section memberi padding atas & bawah = setengahnya, jadi jarak konten
    section A → konten section B selalu ±--section-gap, baik latar keduanya sama
-   maupun berbeda (tiap warna latar kebagian setengah). */
+   maupun berbeda (tiap warna latar kebagian setengah).
+   --edge-gutter: jarak tepi kiri-kanan section yang isinya selebar layar (hero, Kabar Desa).
+   Ikut lebar layar: 24px di layar sempit, naik sampai 64px di desktop lebar supaya isi
+   tidak menempel ke tepi layar. */
 :root {
   --section-gap: 100px;
   --section-pad-y: calc(var(--section-gap) / 2);
+  --edge-gutter: clamp(24px, 4vw, 64px);
 }
 
 /* = breakpoint mobile apple.com yang dipakai section beranda */
 @media (max-width: 734px) {
   :root {
     --section-gap: 72px;
+    --edge-gutter: 24px;
   }
 }
 
