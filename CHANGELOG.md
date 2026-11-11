@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.247] - 2026-11-11
+### Changed
+- Isi hero beranda tidak lagi menempel ke tepi kiri layar. Jarak tepi kini menyesuaikan lebar layar: dari 24px di layar sempit sampai 64px di desktop lebar (sekitar 59px di MacBook). Section Kabar Desa dan halaman "Lihat semua berita" ikut menyesuaikan supaya tepinya tetap sejajar dengan hero. Tampilan di ponsel tidak berubah.
+
 ## [0.1.246] - 2026-11-11
 ### Changed
 - **Tombol mode baca suara (ikon disabilitas) pindah ke navbar**, di sebelah kanan ikon cari di desktop dan di sebelah kiri tombol menu di ponsel. Sebelumnya tombol ini melayang di sisi kiri beranda dan menutupi konten. Kini tombolnya tersedia di semua halaman (bukan hanya beranda), statusnya terlihat jelas (terisi biru saat aktif), dan punya keterangan "Aktifkan/Matikan mode baca suara" untuk pembaca layar. Di ponsel, teks yang diketuk akan dibacakan.
