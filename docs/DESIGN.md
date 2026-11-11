@@ -179,7 +179,7 @@ Tombol ikon kursi roda di navbar, **kanan ikon cari** (desktop) dan **kiri burge
 
 - Aktif → teks yang diarahkan kursor dibacakan `speechSynthesis` (`id-ID`, jeda 250ms); di layar sentuh, teks yang diketuk. Status tetap saat pindah halaman (client-side), reset saat reload.
 - Tampilan: lingkaran 30px; aktif = terisi biru brand + ikon putih. `aria-pressed` + label/tooltip "Aktifkan/Matikan mode baca suara".
-- Menggantikan tombol melayang di kiri beranda (`NewsReaderalanding.tsx`, dihapus) yang menimpa konten. `_com/NewsReader.tsx` (ikon musik, baca judul di detail berita/pengumuman) terpisah dan belum disatukan.
+- Menggantikan tombol melayang di kiri beranda (`NewsReaderalanding.tsx`) dan tombol ikon musik di detail berita/pengumuman/kesejahteraan (`NewsReader.tsx`); keduanya dihapus karena menimpa konten dan fungsinya sudah tercakup mode ini.
 
 ### Navbar Mobile
 
