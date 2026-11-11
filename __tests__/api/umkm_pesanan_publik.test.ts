@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Alur pesanan publik UMKM (/darmasaba/ekonomi/umkm/produk/:id):
+// Alur pesanan publik UMKM (/ekonomi/umkm/produk/:id):
 // (a) HP/warga anonim ditolak 401 karena endpoint tidak masuk whitelist,
 // (b) tab WhatsApp "nomor tidak terdaftar" karena nomor kontak tak dinormalisasi,
 // serta pesan error server yang hilang & race stok. Semua mock — tanpa DB.
@@ -17,7 +17,7 @@ import {
   isPesananBerhasil,
   normalizeWaNumber,
   pesanErrorMessage,
-} from '@/app/darmasaba/(pages)/ekonomi/umkm/_lib/pesanan';
+} from '@/app/(public)/(pages)/ekonomi/umkm/_lib/pesanan';
 
 const BASE = '/api/ekonomi/umkm/penjualan';
 

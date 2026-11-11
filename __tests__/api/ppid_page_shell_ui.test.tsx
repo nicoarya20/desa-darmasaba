@@ -9,13 +9,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-view-transitions', () => ({ useTransitionRouter: () => ({ back: vi.fn() }) }));
 
-import { PpidHeader } from '@/app/darmasaba/(pages)/ppid/_com/PpidHeader';
-import { PpidPage } from '@/app/darmasaba/(pages)/ppid/_com/PpidPage';
-import { BACK_BUTTON_LABEL } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
+import { PpidHeader } from '@/app/(public)/(pages)/ppid/_com/PpidHeader';
+import { PpidPage } from '@/app/(public)/(pages)/ppid/_com/PpidPage';
+import { BACK_BUTTON_LABEL } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const css = readFileSync(
-  path.join(process.cwd(), 'src/app/darmasaba/(pages)/ppid/_com/ppid-header.module.css'),
+  path.join(process.cwd(), 'src/app/(public)/(pages)/ppid/_com/ppid-header.module.css'),
   'utf8',
 );
 

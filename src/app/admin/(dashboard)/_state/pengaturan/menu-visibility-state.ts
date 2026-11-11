@@ -2,7 +2,7 @@ import { proxy } from "valtio";
 import { toast } from "react-toastify";
 import ApiFetch from "@/lib/api-fetch";
 import { getServerMessage } from "@/utils/api-message";
-import type { MenuVisibilityRow } from "@/app/darmasaba/_com/menu-visibility.logic";
+import type { MenuVisibilityRow } from "@/app/(public)/_com/menu-visibility.logic";
 
 /** Satu perubahan yang dikirim ke API; isVisible null = kembali ke default config. */
 export type MenuVisibilityChange = { menuKey: string; isVisible: boolean | null };

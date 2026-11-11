@@ -9,7 +9,7 @@ import {
   sanitizePhoneDigits,
   toPhoneDigits,
   toStoredPhone,
-} from '@/app/darmasaba/(pages)/pendidikan/perpustakaan-digital/_lib/notelp';
+} from '@/app/(public)/(pages)/pendidikan/perpustakaan-digital/_lib/notelp';
 
 describe('sanitizePhoneDigits', () => {
   it('buang huruf & simbol, sisakan digit', () => {

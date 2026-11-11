@@ -6,7 +6,7 @@ import {
   normalizeSatuan,
   perSatuanSuffix,
   withSatuan,
-} from '@/app/darmasaba/(pages)/ekonomi/umkm/_lib/satuan';
+} from '@/app/(public)/(pages)/ekonomi/umkm/_lib/satuan';
 
 describe('normalizeSatuan', () => {
   it('trim spasi', () => {

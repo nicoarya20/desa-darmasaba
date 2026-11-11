@@ -8,13 +8,13 @@ import searchMenu, {
   flattenMenu,
   MENU_PREVIEW_COUNT,
   previewMenuResults,
-} from '@/app/darmasaba/_com/searchMenu';
-import { visibleMenu } from '@/app/darmasaba/_com/navbar-menu.logic';
+} from '@/app/(public)/_com/searchMenu';
+import { visibleMenu } from '@/app/(public)/_com/navbar-menu.logic';
 import type { MenuItem } from '../../types/menu-item';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
-const GLOBAL_SEARCH = path.resolve(__dirname, '../../src/app/darmasaba/_com/globalSearch.tsx');
-const SHOW_MORE = path.resolve(__dirname, '../../src/app/darmasaba/_com/SearchShowMoreButton.tsx');
+const GLOBAL_SEARCH = path.resolve(__dirname, '../../src/app/(public)/_com/globalSearch.tsx');
+const SHOW_MORE = path.resolve(__dirname, '../../src/app/(public)/_com/SearchShowMoreButton.tsx');
 
 /** Semua submenu ber-href langsung dari config navbar (sumber kebenaran yang sama dengan navbar). */
 const submenus = navbarListMenu.flatMap((menu) =>
@@ -82,7 +82,7 @@ describe('searchMenu pada config navbar nyata', () => {
     expect(wrongFirst).toEqual([]);
     // "Profil PPID" (PPID) lebih dulu di config daripada "Profil" (Desa); keduanya berawalan "profil".
     expect(searchMenu('Profil').map((r) => r.href)).toEqual(
-      expect.arrayContaining(['/darmasaba/ppid/profil-ppid', '/darmasaba/pemerintahan/profil']),
+      expect.arrayContaining(['/ppid/profil-ppid', '/pemerintahan/profil']),
     );
   });
 
@@ -95,16 +95,16 @@ describe('searchMenu pada config navbar nyata', () => {
 
   it('substring "polsek" menemukan Polsek Terdekat', () => {
     expect(searchMenu('polsek')).toEqual([
-      { id: expect.any(String), label: 'Polsek Terdekat', parent: 'Keamanan', href: '/darmasaba/keamanan/polsek-terdekat' },
+      { id: expect.any(String), label: 'Polsek Terdekat', parent: 'Keamanan', href: '/keamanan/polsek-terdekat' },
     ]);
   });
 
   it('"Struktur PPID" menemukan halaman struktur PPID di urutan pertama', () => {
-    expect(searchMenu('Struktur PPID')[0]?.href).toBe('/darmasaba/ppid/struktur-ppid');
+    expect(searchMenu('Struktur PPID')[0]?.href).toBe('/ppid/struktur-ppid');
   });
 
   it('query dengan spasi di tepi tetap cocok', () => {
-    expect(searchMenu('  CCTV  ')[0]?.href).toBe('/darmasaba/keamanan/cctv');
+    expect(searchMenu('  CCTV  ')[0]?.href).toBe('/keamanan/cctv');
   });
 
   it('tanpa batas default: query umum tidak memotong halaman yang cocok', () => {
@@ -195,12 +195,12 @@ describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
   });
 
   it.each([
-    ['apbdes', 'APBDes', '/darmasaba/apbdes'],
-    ['pengaduan', 'Pengaduan Masyarakat', '/darmasaba/inovasi/layanan-online-desa/pengaduan-masyarakat'],
-    ['ajukan surat', 'Administrasi Online (Ajukan Surat)', '/darmasaba/inovasi/layanan-online-desa/administrasi-online'],
-    ['struktur perangkat', 'Struktur Perangkat Desa', '/darmasaba/pemerintahan/profil/struktur-perangkat-desa'],
-    ['anti korupsi', 'Desa Anti Korupsi', '/darmasaba/desa-anti-korupsi'],
-    ['sdgs', 'SDGs Desa', '/darmasaba/sdgs-desa'],
+    ['apbdes', 'APBDes', '/apbdes'],
+    ['pengaduan', 'Pengaduan Masyarakat', '/inovasi/layanan-online-desa/pengaduan-masyarakat'],
+    ['ajukan surat', 'Administrasi Online (Ajukan Surat)', '/inovasi/layanan-online-desa/administrasi-online'],
+    ['struktur perangkat', 'Struktur Perangkat Desa', '/pemerintahan/profil/struktur-perangkat-desa'],
+    ['anti korupsi', 'Desa Anti Korupsi', '/desa-anti-korupsi'],
+    ['sdgs', 'SDGs Desa', '/sdgs-desa'],
   ])('default searchMenu("%s") → hasil pertama %s', (q, label, href) => {
     expect(searchMenu(q)[0]).toMatchObject({ label, href });
   });

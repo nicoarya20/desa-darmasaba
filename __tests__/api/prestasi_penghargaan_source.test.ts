@@ -8,7 +8,7 @@ vi.mock('@/lib/api-fetch', () => ({
   default: { api: { landingpage: { prestasidesa: { 'find-many': { get: prestasiGet } } } } },
 }));
 
-const { loadPrestasiPage } = await import('@/app/darmasaba/_com/main-page/prestasi/prestasi.source');
+const { loadPrestasiPage } = await import('@/app/(public)/_com/main-page/prestasi/prestasi.source');
 
 // test-only: respons find-many sukses (data sudah urut createdAt desc + dipaginasi oleh backend).
 const ok = (rows: { id: string; createdAt: string; kategori?: string }[], total?: number) => ({
@@ -41,10 +41,10 @@ describe('loadPrestasiPage', () => {
     expect(prestasiGet).toHaveBeenCalledTimes(1);
     expect(prestasiGet).toHaveBeenCalledWith({ query: { page: 1, limit: 4 } });
     expect(res.items.map((i) => [i.id, i.source, i.href])).toEqual([
-      ['p2', 'prestasi', '/darmasaba/prestasi-desa/p2'],
-      ['h3', 'penghargaan', '/darmasaba/prestasi-desa/h3'],
-      ['h2', 'penghargaan', '/darmasaba/prestasi-desa/h2'],
-      ['p1', 'prestasi', '/darmasaba/prestasi-desa/p1'],
+      ['p2', 'prestasi', '/prestasi-desa/p2'],
+      ['h3', 'penghargaan', '/prestasi-desa/h3'],
+      ['h2', 'penghargaan', '/prestasi-desa/h2'],
+      ['p1', 'prestasi', '/prestasi-desa/p1'],
     ]);
     expect(res.total).toBe(8);
   });

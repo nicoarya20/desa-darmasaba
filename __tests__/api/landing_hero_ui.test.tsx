@@ -13,16 +13,16 @@ vi.mock('next-view-transitions', () => ({
   ),
 }));
 
-import { HeroSosmed, HeroStatus } from '@/app/darmasaba/_com/main-page/landing-page/HeroInfo';
-import { HeroProfile } from '@/app/darmasaba/_com/main-page/landing-page/HeroProfile';
-import { HeroRibbons } from '@/app/darmasaba/_com/main-page/landing-page/HeroRibbons';
-import { HeroPrograms, type ProgramInovasiItem } from '@/app/darmasaba/_com/main-page/landing-page/HeroPrograms';
+import { HeroSosmed, HeroStatus } from '@/app/(public)/_com/main-page/landing-page/HeroInfo';
+import { HeroProfile } from '@/app/(public)/_com/main-page/landing-page/HeroProfile';
+import { HeroRibbons } from '@/app/(public)/_com/main-page/landing-page/HeroRibbons';
+import { HeroPrograms, type ProgramInovasiItem } from '@/app/(public)/_com/main-page/landing-page/HeroPrograms';
 import {
   getInitialRailState,
   getRailState,
   getThumbStyle,
   RAIL_VISIBLE_TILES,
-} from '@/app/darmasaba/_com/main-page/landing-page/rail.logic';
+} from '@/app/(public)/_com/main-page/landing-page/rail.logic';
 import {
   describeWorkStatus,
   getCurrentTime,
@@ -30,15 +30,15 @@ import {
   getSosmedIconSrc,
   getTodayDate,
   getWorkStatus,
-} from '@/app/darmasaba/_com/main-page/landing-page/landing.logic';
+} from '@/app/(public)/_com/main-page/landing-page/landing.logic';
 import {
   buildRibbonPaths,
   RIBBON_STRIPES,
   RIBBON_VIEWBOX,
   ribbonScale,
-} from '@/app/darmasaba/_com/main-page/landing-page/ribbons.logic';
-import { LANDING_TEXT } from '@/app/darmasaba/_com/main-page/landing-page/landing.text';
-import type { PejabatItem, SosmedItem } from '@/app/darmasaba/_com/main-page/landing-page/use-landing-data';
+} from '@/app/(public)/_com/main-page/landing-page/ribbons.logic';
+import { LANDING_TEXT } from '@/app/(public)/_com/main-page/landing-page/landing.text';
+import type { PejabatItem, SosmedItem } from '@/app/(public)/_com/main-page/landing-page/use-landing-data';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -163,7 +163,7 @@ describe('HeroPrograms', () => {
     expect(html).toContain(LANDING_TEXT.programsTitle);
     expect(html.match(/<li/g)).toHaveLength(8);
     for (const item of items) {
-      expect(html).toContain(`href="/darmasaba/program-inovasi/${item.id}"`);
+      expect(html).toContain(`href="/program-inovasi/${item.id}"`);
       expect(html).toContain(`>${item.name}<`);
     }
   });

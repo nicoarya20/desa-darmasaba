@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Halaman daftar berita (/darmasaba/pemerintahan/berita/*): URL kategori/cari/halaman + pemuat find-many.
+// Halaman daftar berita (/pemerintahan/berita/*): URL kategori/cari/halaman + pemuat find-many.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const beritaGet = vi.fn();
@@ -8,9 +8,9 @@ vi.mock('@/lib/api-fetch', () => ({
 }));
 
 const { activeSlug, beritaListHref, kategoriLabel, kategoriSlug, parsePage } = await import(
-  '@/app/darmasaba/(pages)/pemerintahan/berita/_com/berita-list.logic'
+  '@/app/(public)/(pages)/pemerintahan/berita/_com/berita-list.logic'
 );
-const { loadBeritaPage } = await import('@/app/darmasaba/(pages)/pemerintahan/berita/_com/berita-list.source');
+const { loadBeritaPage } = await import('@/app/(public)/(pages)/pemerintahan/berita/_com/berita-list.source');
 
 describe('parsePage', () => {
   it('bilangan bulat positif dipakai, selain itu → 1', () => {
@@ -25,27 +25,27 @@ describe('parsePage', () => {
 
 describe('beritaListHref', () => {
   it('halaman 1 dan cari kosong tidak ditulis ke query', () => {
-    expect(beritaListHref('semua')).toBe('/darmasaba/pemerintahan/berita/semua');
-    expect(beritaListHref('budaya', { search: '   ', page: 1 })).toBe('/darmasaba/pemerintahan/berita/budaya');
+    expect(beritaListHref('semua')).toBe('/pemerintahan/berita/semua');
+    expect(beritaListHref('budaya', { search: '   ', page: 1 })).toBe('/pemerintahan/berita/budaya');
   });
 
   it('cari di-trim, halaman > 1 ditulis, slug di-encode', () => {
     expect(beritaListHref('semua', { search: ' festival desa ', page: 2 })).toBe(
-      '/darmasaba/pemerintahan/berita/semua?search=festival+desa&page=2',
+      '/pemerintahan/berita/semua?search=festival+desa&page=2',
     );
-    expect(beritaListHref('seni & budaya')).toBe('/darmasaba/pemerintahan/berita/seni%20%26%20budaya');
+    expect(beritaListHref('seni & budaya')).toBe('/pemerintahan/berita/seni%20%26%20budaya');
   });
 });
 
 describe('activeSlug / kategoriSlug / kategoriLabel', () => {
   it('slug = segmen terakhir pathname, di-decode dan huruf kecil', () => {
-    expect(activeSlug('/darmasaba/pemerintahan/berita/semua')).toBe('semua');
-    expect(activeSlug('/darmasaba/pemerintahan/berita/Budaya')).toBe('budaya');
-    expect(activeSlug('/darmasaba/pemerintahan/berita/seni%20%26%20budaya')).toBe('seni & budaya');
+    expect(activeSlug('/pemerintahan/berita/semua')).toBe('semua');
+    expect(activeSlug('/pemerintahan/berita/Budaya')).toBe('budaya');
+    expect(activeSlug('/pemerintahan/berita/seni%20%26%20budaya')).toBe('seni & budaya');
   });
 
   it('segmen % rusak tidak melempar galat', () => {
-    expect(activeSlug('/darmasaba/pemerintahan/berita/100%')).toBe('100%');
+    expect(activeSlug('/pemerintahan/berita/100%')).toBe('100%');
   });
 
   it('nama kategori → slug huruf kecil; slug → nama asli untuk ditampilkan', () => {
@@ -66,7 +66,7 @@ describe('loadBeritaPage', () => {
     const res = await loadBeritaPage({ page: 2, limit: 7, search: 'festival', kategori: 'budaya' });
     expect(beritaGet).toHaveBeenCalledWith({ query: { page: 2, limit: 7, search: 'festival', kategori: 'budaya' } });
     expect(res.totalPages).toBe(3);
-    expect(res.items[0]).toMatchObject({ id: 'b1', title: 'Festival', summary: 'Ringkas', kategori: 'Budaya', href: '/darmasaba/pemerintahan/berita/Budaya/b1' });
+    expect(res.items[0]).toMatchObject({ id: 'b1', title: 'Festival', summary: 'Ringkas', kategori: 'Budaya', href: '/pemerintahan/berita/Budaya/b1' });
 
     await loadBeritaPage({ page: 1, limit: 7, search: '', kategori: '' });
     expect(beritaGet).toHaveBeenLastCalledWith({ query: { page: 1, limit: 7 } });

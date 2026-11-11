@@ -3,13 +3,13 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
-import { ProgramIsi } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
+import { ProgramIsi } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
 import {
   programHref,
   resolveActiveFolder,
   ringkasanIsi,
   searchDokumen,
-} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/program-folder';
+} from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-folder';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { folderGroups, type DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
 
@@ -50,8 +50,8 @@ const detail: DesaAntiKorupsiDetail = {
 
 describe('program-folder helpers', () => {
   it('programHref & ringkasanIsi', () => {
-    expect(programHref('p 1')).toBe('/darmasaba/desa-anti-korupsi/program/p%201');
-    expect(programHref('p1', 'umum')).toBe('/darmasaba/desa-anti-korupsi/program/p1?folder=umum');
+    expect(programHref('p 1')).toBe('/desa-anti-korupsi/program/p%201');
+    expect(programHref('p1', 'umum')).toBe('/desa-anti-korupsi/program/p1?folder=umum');
     expect(ringkasanIsi(1, 0)).toBe('1 folder · 0 dokumen');
     expect(ringkasanIsi(0, 0)).toBe('0 dokumen');
   });
@@ -76,11 +76,11 @@ describe('program-folder helpers', () => {
   });
 });
 
-describe('ProgramIsi (halaman /darmasaba/desa-anti-korupsi/program/[id])', () => {
+describe('ProgramIsi (halaman /desa-anti-korupsi/program/[id])', () => {
   it('tanpa ?folder → grid folder termasuk Umum, dengan jumlah dokumen per folder', () => {
     const html = render(<ProgramIsi detail={detail} folderParam={null} urutParam={null} onUrutChange={noop} />);
     expect([...html.matchAll(/data-folder-key="([^"]+)"/g)].map((m) => m[1])).toEqual(['fa', 'fb', 'umum']);
-    expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/p1?folder=umum"');
+    expect(html).toContain('href="/desa-anti-korupsi/program/p1?folder=umum"');
     expect([...html.matchAll(/data-testid="jumlah-dokumen-folder"[^>]*>(\d+) dokumen</g)].map((m) => m[1])).toEqual(['2', '0', '1']);
     expect(html).not.toContain('data-dokumen-id');
     expect(html).toContain('Program Transparansi Anggaran');
@@ -89,14 +89,14 @@ describe('ProgramIsi (halaman /darmasaba/desa-anti-korupsi/program/[id])', () =>
 
   it('folder terbuka: kembali → daftar folder program; breadcrumb kategori → detail?kategori=<kategori program>', () => {
     const html = render(<ProgramIsi detail={detail} folderParam="fa" urutParam={null} onUrutChange={noop} />);
-    expect(html.match(/href="\/darmasaba\/desa-anti-korupsi\/detail\?kategori=PENGUATAN%20PENGAWASAN"/g)?.length).toBe(1);
+    expect(html.match(/href="\/desa-anti-korupsi\/detail\?kategori=PENGUATAN%20PENGAWASAN"/g)?.length).toBe(1);
     const kembali = /<a[^>]*data-testid="program-kembali"[^>]*>/.exec(html)?.[0] ?? '';
-    expect(kembali).toContain('href="/darmasaba/desa-anti-korupsi/program/p1"');
+    expect(kembali).toContain('href="/desa-anti-korupsi/program/p1"');
     expect(kembali).toContain('aria-label="Kembali ke daftar folder"');
-    expect(html).toContain('href="/darmasaba/desa-anti-korupsi"');
+    expect(html).toContain('href="/desa-anti-korupsi"');
     // folder aktif = crumb terakhir; nama program jadi tautan kembali ke grid folder
     expect(html).toMatch(/aria-current="page"[^>]*>Laporan Keuangan</);
-    expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/p1"');
+    expect(html).toContain('href="/desa-anti-korupsi/program/p1"');
   });
 
   it('?folder=<id> → daftar dokumen folder itu saja, dengan Pratinjau khusus PDF & Unduh', () => {

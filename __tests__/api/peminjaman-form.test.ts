@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
-import { isPeminjamanFormValid } from '@/app/darmasaba/(pages)/pendidikan/perpustakaan-digital/_lib/peminjamanForm';
+import { isPeminjamanFormValid } from '@/app/(public)/(pages)/pendidikan/perpustakaan-digital/_lib/peminjamanForm';
 
 const baseForm = {
   nama: 'Budi',

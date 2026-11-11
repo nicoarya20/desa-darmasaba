@@ -1,6 +1,6 @@
 'use client';
 import { Badge, Group, Paper, Stack, Switch, Text, Title } from '@mantine/core';
-import type { MenuVisibilityGroup, MenuVisibilityItem } from '@/app/darmasaba/_com/menu-visibility.logic';
+import type { MenuVisibilityGroup, MenuVisibilityItem } from '@/app/(public)/_com/menu-visibility.logic';
 
 type Props = {
   group: MenuVisibilityGroup;

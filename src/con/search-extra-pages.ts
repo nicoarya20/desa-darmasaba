@@ -13,16 +13,16 @@ const searchExtraPages: MenuItem[] = [
     id: 'x1',
     name: 'Transparansi',
     children: [
-      { id: 'x1.1', name: 'APBDes', href: '/darmasaba/apbdes' },
-      { id: 'x1.3', name: 'SDGs Desa', href: '/darmasaba/sdgs-desa' },
+      { id: 'x1.1', name: 'APBDes', href: '/apbdes' },
+      { id: 'x1.3', name: 'SDGs Desa', href: '/sdgs-desa' },
     ],
   },
   {
     id: 'x2',
     name: 'Pemerintahan',
     children: [
-      { id: 'x2.1', name: 'Struktur Perangkat Desa', href: '/darmasaba/pemerintahan/profil/struktur-perangkat-desa' },
-      { id: 'x2.2', name: 'Galeri Video', href: '/darmasaba/pemerintahan/galery/video' },
+      { id: 'x2.1', name: 'Struktur Perangkat Desa', href: '/pemerintahan/profil/struktur-perangkat-desa' },
+      { id: 'x2.2', name: 'Galeri Video', href: '/pemerintahan/galery/video' },
     ],
   },
   {
@@ -32,14 +32,14 @@ const searchExtraPages: MenuItem[] = [
       {
         id: 'x3.1',
         name: 'Administrasi Online (Ajukan Surat)',
-        href: '/darmasaba/inovasi/layanan-online-desa/administrasi-online',
+        href: '/inovasi/layanan-online-desa/administrasi-online',
       },
       {
         id: 'x3.2',
         name: 'Pengaduan Masyarakat',
-        href: '/darmasaba/inovasi/layanan-online-desa/pengaduan-masyarakat',
+        href: '/inovasi/layanan-online-desa/pengaduan-masyarakat',
       },
-      { id: 'x3.3', name: 'Informasi Desa', href: '/darmasaba/inovasi/layanan-online-desa/informasi-desa' },
+      { id: 'x3.3', name: 'Informasi Desa', href: '/inovasi/layanan-online-desa/informasi-desa' },
     ],
   },
   {
@@ -49,25 +49,25 @@ const searchExtraPages: MenuItem[] = [
       {
         id: 'x4.1',
         name: 'Fasilitas Kesehatan',
-        href: '/darmasaba/kesehatan/data-kesehatan-warga/fasilitas-kesehatan-page',
+        href: '/kesehatan/data-kesehatan-warga/fasilitas-kesehatan-page',
       },
       {
         id: 'x4.2',
         name: 'Artikel Kesehatan',
-        href: '/darmasaba/kesehatan/data-kesehatan-warga/artikel-kesehatan-page',
+        href: '/kesehatan/data-kesehatan-warga/artikel-kesehatan-page',
       },
       {
         id: 'x4.3',
         name: 'Jadwal Kegiatan Kesehatan',
-        href: '/darmasaba/kesehatan/data-kesehatan-warga/jadwal-kegiatan-page',
+        href: '/kesehatan/data-kesehatan-warga/jadwal-kegiatan-page',
       },
-      { id: 'x4.4', name: 'Grafik Penyakit', href: '/darmasaba/kesehatan/data-kesehatan-warga/grafik-penyakit' },
+      { id: 'x4.4', name: 'Grafik Penyakit', href: '/kesehatan/data-kesehatan-warga/grafik-penyakit' },
     ],
   },
   {
     id: 'x5',
     name: 'Informasi',
-    children: [{ id: 'x5.1', name: 'Peta Informasi (Semua Halaman)', href: '/darmasaba/peta-informasi' }],
+    children: [{ id: 'x5.1', name: 'Peta Informasi (Semua Halaman)', href: '/peta-informasi' }],
   },
 ];
 
