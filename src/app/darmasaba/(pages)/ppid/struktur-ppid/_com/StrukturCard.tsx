@@ -2,18 +2,23 @@ import { Image } from '@mantine/core';
 import { IconUserFilled } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import type { OrgCardItem } from './struktur.logic';
-import { strukturDetailHref } from './struktur.meta';
 import s from './struktur-card.module.css';
 import { STRUKTUR_TEXT } from './struktur.text';
 
-type Props = { item: OrgCardItem; tone: 0 | 1 | 2; size: 'lg' | 'md' | 'sm' };
+type Props = {
+  item: OrgCardItem;
+  tone: 0 | 1 | 2;
+  size: 'lg' | 'md' | 'sm';
+  /** Rute profil pegawai — tiap halaman bagan punya rute detailnya sendiri. */
+  hrefFor: (pegawaiId: string) => string;
+};
 
 /**
  * Kartu satu pegawai di satu jabatan: jabatan + pil nama di kiri, foto di kanan. Foto pegawai umumnya persegi berlatar
  * tidak transparan, jadi foto mengisi tinggi kartu dan tepi kirinya dipudarkan (mask) ke warna kartu.
  * Seluruh kartu = tautan ke profil; jabatan tanpa pegawai tampil redup tanpa tautan.
  */
-export function StrukturCard({ item, tone, size }: Props) {
+export function StrukturCard({ item, tone, size, hrefFor }: Props) {
   const { person, title } = item;
   const body = (
     <>
@@ -40,7 +45,7 @@ export function StrukturCard({ item, tone, size }: Props) {
   }
   return (
     <Link
-      href={strukturDetailHref(person.id)}
+      href={hrefFor(person.id)}
       className={s.card}
       data-tone={tone}
       data-size={size}
