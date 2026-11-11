@@ -1,12 +1,12 @@
-import { Suspense } from "react";
-import Content from "./Content";
+import { Suspense } from 'react';
+import { BeritaList } from '../_com/BeritaList';
 
-export default async function Page({ params }: { params: Promise<{ kategori: string }> }) {
-  const { kategori } = await params;
-
+/** Daftar berita satu kategori; kategori dibaca BeritaList dari URL. */
+export default function Page() {
+  // BeritaList membaca useSearchParams → wajib di dalam Suspense.
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Content kategori={kategori} />
+    <Suspense>
+      <BeritaList />
     </Suspense>
   );
 }
