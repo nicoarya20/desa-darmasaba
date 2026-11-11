@@ -91,7 +91,9 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
       toast.error('Kategori wajib dipilih');
       return;
     }
-    await stateCreate.create.create();
+    // Gagal (toast sudah tampil di create()) → biarkan modal terbuka berisi input warga agar bisa dikirim ulang.
+    const saved = await stateCreate.create.create();
+    if (!saved) return;
     resetForm();
     onClose();
   };
