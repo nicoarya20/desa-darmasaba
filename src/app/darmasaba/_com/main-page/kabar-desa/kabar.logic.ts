@@ -7,6 +7,8 @@ export type BeritaApiItem = {
   judul: string;
   deskripsi?: string | null;
   createdAt: string | Date;
+  /** Tanggal asli berita; dipakai bila ada (respons lama tanpa field ini → createdAt). */
+  tanggalTerbit?: string | Date | null;
   image?: { link?: string | null } | null;
   kategoriBerita?: { name?: string | null } | null;
 };
@@ -66,7 +68,7 @@ export function toBeritaItem(item: BeritaApiItem): KabarItem {
     summary: htmlToText(item.deskripsi),
     kategori,
     imageUrl: item.image?.link || undefined,
-    createdAt: new Date(item.createdAt).getTime(),
+    createdAt: new Date(item.tanggalTerbit ?? item.createdAt).getTime(),
     href: detailHref(BERITA_BASE_HREF, kategori, item.id),
   };
 }

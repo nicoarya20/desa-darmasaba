@@ -115,7 +115,7 @@ describe("seedBerita", () => {
     expect(first.create.link.startsWith("/api/img/")).toBe(false);
   });
 
-  it("menyetel createdAt dari tanggal berita dan imageId dari baris FileStorage", async () => {
+  it("menyetel createdAt & tanggalTerbit dari tanggal berita dan imageId dari baris FileStorage", async () => {
     await seedBerita();
 
     expect(prismaMock.berita.upsert).toHaveBeenCalledTimes(berita.length);
@@ -123,6 +123,7 @@ describe("seedBerita", () => {
       const call = prismaMock.berita.upsert.mock.calls[i][0];
       expect(call.where).toEqual({ id: b.id });
       expect(call.create.createdAt).toEqual(new Date(b.tanggal));
+      expect(call.create.tanggalTerbit).toEqual(new Date(b.tanggal));
       // create-only (seed-prisma): berita yang sudah ada tidak ditimpa, editan admin aman.
       expect(call.update).toEqual({});
       expect(call.create.imageId).toBe(`file-${b.imageName}`);

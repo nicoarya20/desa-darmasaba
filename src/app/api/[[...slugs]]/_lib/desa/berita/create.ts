@@ -1,34 +1,21 @@
 import prisma from "@/lib/prisma";
+import { susunBeritaCreate, type BeritaBody } from "@/lib/berita-data";
+import { parseTanggalTerbit } from "@/lib/tanggal-terbit";
 import { Context } from "elysia";
 
-type FormCreate = {
-  judul: string;
-  deskripsi: string;
-  content: string;
-  kategoriBeritaId: string;
-  imageId: string; // Featured image
-  imageIds?: string[]; // Multiple images for gallery
-  linkVideo?: string; // YouTube link
-};
-
+/** Buat berita; `tanggalTerbit` kosong = sekarang, tidak valid = 400 sebelum menyentuh DB. */
 async function beritaCreate(context: Context) {
-  const body = context.body as FormCreate;
+  const body = context.body as BeritaBody;
 
-  await prisma.berita.create({
-    data: {
-      content: body.content,
-      deskripsi: body.deskripsi,
-      imageId: body.imageId,
-      judul: body.judul,
-      kategoriBeritaId: body.kategoriBeritaId,
-      // Connect multiple images if provided
-      linkVideo: body.linkVideo,
-      images: body.imageIds && body.imageIds.length > 0
-      ? {
-        connect: body.imageIds.map((id) => ({ id })),
-      }
-      : undefined,
-    },
+  const tanggal = parseTanggalTerbit(body.tanggalTerbit);
+  if (!tanggal.ok) {
+    context.set.status = 400;
+    return { success: false, message: tanggal.message };
+  }
+
+  const created = await prisma.berita.create({
+    data: susunBeritaCreate(body, tanggal.data),
+    select: { id: true, tanggalTerbit: true },
   });
 
   return {
@@ -36,9 +23,9 @@ async function beritaCreate(context: Context) {
     message: "Sukses menambahkan berita",
     data: {
       ...body,
+      ...created,
     },
   };
 }
 
 export default beritaCreate
-

@@ -1,12 +1,13 @@
 // app/api/news/latest/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { BERITA_LIST_ORDER_BY } from "@/lib/berita-data";
 
 export async function GET() {
   try {
     const berita = await prisma.berita.findMany({
       take: 3,
-      orderBy: { createdAt: "desc" },
+      orderBy: BERITA_LIST_ORDER_BY,
       include: { kategoriBerita: true },
     });
 
@@ -22,7 +23,7 @@ export async function GET() {
         type: "berita" as const,
         title: b.judul,
         content: b.content,
-        timestamp: b.createdAt,
+        timestamp: b.tanggalTerbit,
         kategoriBerita: b.kategoriBerita || undefined,
       })),
       ...pengumuman.map((p) => ({

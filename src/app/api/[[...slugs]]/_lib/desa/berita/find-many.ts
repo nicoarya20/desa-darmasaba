@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
+import { BERITA_LIST_ORDER_BY } from "@/lib/berita-data";
 import { Context } from "elysia";
 
 async function beritaFindMany(context: Context) {
@@ -45,7 +46,7 @@ async function beritaFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: BERITA_LIST_ORDER_BY,
       }),
       prisma.berita.count({ where }),
     ]);

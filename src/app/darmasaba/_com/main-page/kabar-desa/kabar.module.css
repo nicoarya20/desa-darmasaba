@@ -283,6 +283,11 @@
   .cardTitle {
     font-size: 17px;
   }
+
+  /* Halaman daftar berita: 2 kolom di tablet agar 6 kartu per halaman tetap genap. */
+  .railGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ---------- Mobile ---------- */
@@ -337,5 +342,16 @@
   .rail > li {
     flex: 0 0 78%;
     scroll-snap-align: start;
+  }
+
+  /* Halaman daftar berita: kartu bertumpuk satu kolom (daftar panjang tidak digeser ke samping). */
+  .railGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
   }
 }

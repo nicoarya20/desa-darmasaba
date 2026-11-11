@@ -7,8 +7,8 @@ import dynamic from 'next/dynamic';
 import { Box } from '@mantine/core';
 import BackButton from '../layanan/_com/BackButto';
 import colors from '@/con/colors';
-const LayoutTabsBerita = dynamic(
-  () => import('./_lib/layoutTabs'),
+const BeritaShell = dynamic(
+  () => import('./_com/BeritaShell'),
   { ssr: false }
 );
 
@@ -39,6 +39,6 @@ export default function BeritaLayoutClient({
     );
   }
 
-  // Tampilkan dengan tab menu (untuk /semua atau /kategori)
-  return <LayoutTabsBerita>{children}</LayoutTabsBerita>;
+  // Daftar berita (/semua atau /{kategori}): kepala + pil kategori gaya Kabar Desa beranda
+  return <BeritaShell>{children}</BeritaShell>;
 }

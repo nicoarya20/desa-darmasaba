@@ -9,6 +9,7 @@ import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import colors from '@/con/colors';
+import { formatTanggalTerbit, tanggalTerbitAtauDibuat } from '@/lib/tanggal-terbit';
 
 interface ExistingImage {
   id: string;
@@ -25,6 +26,8 @@ interface BeritaDetail {
   images?: ExistingImage[];
   linkVideo?: string | null;
   kategoriBerita?: { name: string } | null;
+  tanggalTerbit?: string | null;
+  createdAt: string;
 }
 
 function DetailBerita() {
@@ -89,6 +92,11 @@ function DetailBerita() {
               <Box>
                 <Text fz="lg" fw="bold">Kategori</Text>
                 <Text fz="md" c="dimmed">{data.kategoriBerita?.name || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Tanggal Terbit</Text>
+                <Text fz="md" c="dimmed">{formatTanggalTerbit(tanggalTerbitAtauDibuat(data))}</Text>
               </Box>
 
               {/* Judul */}
