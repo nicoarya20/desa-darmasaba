@@ -12,6 +12,7 @@
 
 ### Fixed
 - Bila pengiriman "Ajukan Permohonan" gagal, formulir tidak lagi dikosongkan dan ditutup — isian warga tetap ada sehingga bisa langsung dikirim ulang. Gangguan jaringan kini juga memunculkan pesan gagal (sebelumnya tidak ada pesan apa pun).
+- Tombol "Simpan" di formulir Ajukan Permohonan kini menampilkan tanda memuat dan tidak bisa ditekan lagi selama pengiriman, sehingga permohonan tidak terkirim dua kali.
 - Surat keterangan ke-10 (Surat Keterangan Yatim Piatu) sebelumnya tidak pernah muncul di halaman Layanan karena jumlah item per halaman tidak konsisten.
 - Tautan Telunjuk Sakti yang diisi admin tanpa "https://" kini membuka situs yang dituju, bukan halaman tidak ditemukan.
 
