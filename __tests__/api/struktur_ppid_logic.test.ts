@@ -107,6 +107,74 @@ describe('buildOrgTree', () => {
   });
 });
 
+describe('buildOrgTree — jabatan dengan parentId & urutan (Perangkat Desa)', () => {
+  // test-only: mengikuti seed bagan resmi — perbekel → sekdes → kaur; kasi & sekdes selevel di bawah perbekel.
+  const pd = (id: string, nama: string, hierarki: number, parentId: string | null, urutan: number): PosisiItem => ({
+    id, nama, hierarki, parentId, urutan,
+  });
+  const JABATAN: PosisiItem[] = [
+    pd('pd-perbekel', 'Perbekel', 1, null, 1),
+    pd('pd-sekretaris-desa', 'Sekretaris Desa', 2, 'pd-perbekel', 1),
+    pd('pd-kasi-pemerintahan', 'Kasi Pemerintahan', 2, 'pd-perbekel', 2),
+    pd('pd-kasi-kesejahteraan', 'Kasi Kesejahteraan', 2, 'pd-perbekel', 3),
+    pd('pd-kasi-pelayanan', 'Kasi Pelayanan', 2, 'pd-perbekel', 4),
+    pd('pd-kaur-tata-usaha-umum', 'Kaur Tata Usaha & Umum', 3, 'pd-sekretaris-desa', 5),
+    pd('pd-kaur-keuangan', 'Kaur Keuangan', 3, 'pd-sekretaris-desa', 6),
+  ];
+  const at = (id: string, posisiId: string, extra: Partial<PegawaiItem['posisi']> = {}): PegawaiItem => {
+    const pos = JABATAN.find((j) => j.id === posisiId)!;
+    return pegawai(id, posisiId, pos.nama, pos.hierarki, pos.parentId ?? null, { posisi: { ...pos, ...extra } });
+  };
+
+  it('jabatan kosong ditempel ke induk sebenarnya dari posisiList, bukan ke akar', () => {
+    // Kaur TU kosong; bawahannya (Staf TU) berpegawai. Tanpa parentId Kaur TU akan menempel ke Perbekel.
+    const staf: PosisiItem = pd('pd-staf-tu', 'Staf Tata Usaha', 4, 'pd-kaur-tata-usaha-umum', 1);
+    const data = [at('a', 'pd-perbekel'), at('b', 'pd-sekretaris-desa'), pegawai('c', staf.id, staf.nama, 4, staf.parentId!)];
+    const [perbekel, ...rest] = buildOrgTree(data, [...JABATAN, staf]);
+    expect(rest).toEqual([]);
+    expect(titles(perbekel.children)).toEqual(['Sekretaris Desa']);
+    const [kaurTu] = perbekel.children[0].children;
+    expect(kaurTu.title).toBe('Kaur Tata Usaha & Umum');
+    expect(kaurTu.people).toEqual([]);
+    expect(titles(kaurTu.children)).toEqual(['Staf Tata Usaha']);
+  });
+
+  it('rantai leluhur kosong ikut digambar sampai akar (Perbekel & Sekdes belum ditugaskan)', () => {
+    const [perbekel] = buildOrgTree([at('k', 'pd-kaur-keuangan')], JABATAN);
+    expect(perbekel.title).toBe('Perbekel');
+    expect(perbekel.people).toEqual([]);
+    expect(titles(perbekel.children)).toEqual(['Sekretaris Desa']);
+    expect(titles(perbekel.children[0].children)).toEqual(['Kaur Keuangan']);
+  });
+
+  it('urutan dihormati untuk jabatan selevel (bukan abjad)', () => {
+    const data = ['pd-kasi-pelayanan', 'pd-kasi-kesejahteraan', 'pd-sekretaris-desa', 'pd-kasi-pemerintahan', 'pd-perbekel'].map(
+      (posisiId, i) => at(`p${i}`, posisiId),
+    );
+    const [perbekel] = buildOrgTree(data, JABATAN);
+    expect(titles(perbekel.children)).toEqual(['Sekretaris Desa', 'Kasi Pemerintahan', 'Kasi Kesejahteraan', 'Kasi Pelayanan']);
+  });
+
+  it('urutan dari posisi pegawai dipakai walau posisiList kosong; tanpa urutan di belakang lalu abjad', () => {
+    const data = [
+      at('a', 'pd-perbekel'),
+      at('b', 'pd-kasi-pelayanan', { urutan: 1 }),
+      at('c', 'pd-kasi-kesejahteraan', { urutan: null }),
+      at('d', 'pd-kasi-pemerintahan', { urutan: 2 }),
+      at('e', 'pd-sekretaris-desa', { urutan: null }),
+    ];
+    const [perbekel] = buildOrgTree(data, []);
+    expect(titles(perbekel.children)).toEqual(['Kasi Pelayanan', 'Kasi Pemerintahan', 'Kasi Kesejahteraan', 'Sekretaris Desa']);
+  });
+
+  it('parentId bersiklus: siklus diputus, semua jabatan tetap tergambar', () => {
+    const siklus = [pd('x', 'X', 2, 'y', 1), pd('y', 'Y', 2, 'x', 2)];
+    const [root, ...rest] = buildOrgTree([pegawai('a', 'x', 'X', 2, 'y')], siklus);
+    expect(rest).toEqual([]);
+    expect([root.title, ...titles(root.children)].sort()).toEqual(['X', 'Y']);
+  });
+});
+
 describe('filterOrgTree', () => {
   const tree = buildOrgTree(STG, POSISI);
 
