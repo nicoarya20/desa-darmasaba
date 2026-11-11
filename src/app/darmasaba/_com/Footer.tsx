@@ -1,5 +1,5 @@
 'use client'
-import { Accordion, ActionIcon, Anchor, Box, Button, Container, Divider, Flex, Group, Image, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
+import { Accordion, ActionIcon, Anchor, Box, Button, Container, Divider, Flex, Group, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandYoutube } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
@@ -14,8 +14,8 @@ import { FooterKontakBupati } from './FooterKontakBupati';
 // tiap halaman dan tidak memicu fetch jenis pengaduan sebelum dibutuhkan.
 const PengaduanMasyarakatModal = dynamic(() => import('./pengaduan/PengaduanMasyarakatModal'), { ssr: false });
 
-// Item footer berupa link biasa, atau pemicu modal pengaduan (bukan pindah halaman).
-type FooterLink = { title: string } & ({ link: string } | { opensPengaduanModal: true });
+// Item footer berupa link biasa (external: buka di tab baru), atau pemicu modal pengaduan (bukan pindah halaman).
+type FooterLink = { title: string } & ({ link: string; external?: true } | { opensPengaduanModal: true });
 
 const sosialMedia = [
   {
@@ -62,7 +62,8 @@ const layanandesa: FooterLink[] = [
 const tautanPenting: FooterLink[] = [
   {
     title: "Portal Badung",
-    link: "/darmasaba/pemerintahan/berita/semua",
+    link: "https://badungkab.go.id",
+    external: true,
   },
   {
     title: "E-Government",
@@ -104,7 +105,9 @@ function Footer() {
 
   const renderLink = (item: FooterLink, fz: 'xs' | 'sm') =>
     'link' in item ? (
-      <Anchor key={item.title} c="#F3F2EC" fz={fz} href={item.link}>{item.title}</Anchor>
+      <Anchor key={item.title} c="#F3F2EC" fz={fz} href={item.link} {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}>
+        {item.title}
+      </Anchor>
     ) : (
       <Anchor key={item.title} component="button" type="button" ta="left" c="#F3F2EC" fz={fz} onClick={openPengaduan}>
         {item.title}
@@ -187,12 +190,7 @@ function Footer() {
                 </Stack>
               </Box>
 
-              <Group align="center" gap="md">
-                <Text c="#F3F2EC" fz="md" fw={700} style={{ fontStyle: 'italic' }}>&quot;Desa Kuat, Warga Sejahtera!&quot;</Text>
-                <ActionIcon size={64} radius="xl" variant="transparent">
-                  <Image src="/chatbot-removebg-preview.png" alt="Logo Desa" width={64} height={64} loading="lazy" />
-                </ActionIcon>
-              </Group>
+              <Text c="#F3F2EC" fz="md" fw={700} style={{ fontStyle: 'italic' }}>&quot;Desa Kuat, Warga Sejahtera!&quot;</Text>
 
               <Divider color="white" opacity={0.2} />
 

@@ -1,25 +1,17 @@
 'use client'
-import { KONTAK_BUPATI, kontakBupatiLinks, type KontakBupati } from '@/con/kontak-bupati';
-import { Anchor, Text } from '@mantine/core';
+import { KONTAK_BUPATI } from '@/con/kontak-bupati';
+import { Anchor } from '@mantine/core';
 
 type FooterKontakBupatiProps = {
   fz: 'xs' | 'sm';
-  kontak?: KontakBupati;
 };
 
-/** Isi blok "Kontak Bupati" di footer: nama jabatan + link kontak yang terisi saja. */
-export function FooterKontakBupati({ fz, kontak = KONTAK_BUPATI }: FooterKontakBupatiProps) {
+/** Isi blok "Kontak Bupati" di footer: link eksternal kanal kontak Bupati, dibuka di tab baru. */
+export function FooterKontakBupati({ fz }: FooterKontakBupatiProps) {
   return (
     <>
-      <Text c="#F3F2EC" fz={fz}>{kontak.jabatan}</Text>
-      {kontakBupatiLinks(kontak).map((link) => (
-        <Anchor
-          key={link.key}
-          c="#F3F2EC"
-          fz={fz}
-          href={link.href}
-          {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-        >
+      {KONTAK_BUPATI.links.map((link) => (
+        <Anchor key={link.href} c="#F3F2EC" fz={fz} href={link.href} target="_blank" rel="noopener noreferrer">
           {link.label}
         </Anchor>
       ))}
