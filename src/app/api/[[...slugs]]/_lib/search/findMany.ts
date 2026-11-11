@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Context } from "elysia";
 import prisma from "@/lib/prisma";
+import { BERITA_LIST_ORDER_BY } from "@/lib/berita-data";
 
 export default async function searchFindMany(context: Context) {
   const { query, page = 1, limit = 10, type } = context.query as any;
@@ -372,6 +373,7 @@ export default async function searchFindMany(context: Context) {
           },
         ],
       },
+      orderBy: BERITA_LIST_ORDER_BY,
       skip,
       take: limitNum,
     });
@@ -1775,6 +1777,7 @@ export default async function searchFindMany(context: Context) {
           },
         ],
       },
+      orderBy: BERITA_LIST_ORDER_BY,
       take: limitNum,
     }),
     prisma.kategoriBerita.findMany({

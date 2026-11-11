@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // find-first.ts
 import prisma from "@/lib/prisma";
+import { BERITA_LIST_ORDER_BY } from "@/lib/berita-data";
 import { Context } from "elysia";
 
 async function beritaFindFirst(context: Context) {
@@ -21,7 +22,7 @@ async function beritaFindFirst(context: Context) {
         image: true,
         kategoriBerita: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: BERITA_LIST_ORDER_BY,
     });
 
     return {
