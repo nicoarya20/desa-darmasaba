@@ -728,8 +728,11 @@ model Berita {
   isActive         Boolean         @default(true)
   kategoriBerita   KategoriBerita? @relation(fields: [kategoriBeritaId], references: [id])
   kategoriBeritaId String?
+  /// Tanggal asli berita (diisi admin, default sekarang); urutan list = tanggalTerbit desc, createdAt desc.
+  tanggalTerbit    DateTime        @default(now())
 
   @@index([kategoriBeritaId])
+  @@index([tanggalTerbit, createdAt])
 }
 
 model KategoriBerita {
