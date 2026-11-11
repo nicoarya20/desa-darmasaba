@@ -1,0 +1,179 @@
+/*
+ * Daftar pengumuman — panel #f5f5f7 radius 18px berisi baris bergaris pemisah, sama dengan panel Pengumuman
+ * beranda (kabar.pengumuman.module.css) ditambah thumbnail kecil gambar utama di kiri.
+ * Variabel warna (--tile, --line, --brand, --ink, --subtle, --radius) diwarisi dari `.section` kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.panel {
+  margin: 0;
+  padding: 8px 32px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  list-style: none;
+}
+
+.panel > li + li {
+  border-top: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Gambar utama pengumuman umumnya pindaian surat: potong dari atas supaya kop surat yang terlihat. */
+.thumb {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background: #fff;
+  object-fit: cover;
+  object-position: top;
+}
+
+.thumbFallback {
+  display: grid;
+  place-items: center;
+  color: var(--subtle);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.kategori {
+  color: var(--brand);
+  font-size: 12px;
+  line-height: 1.33;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 500;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.date {
+  color: var(--subtle);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.chevron {
+  color: var(--subtle);
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* ---------- Kerangka memuat ---------- */
+.rowPlaceholder {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 20px;
+  padding: 18px 0;
+}
+
+.rowPlaceholder .thumb,
+.bar {
+  background: #e8e8ed;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.barGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bar {
+  height: 16px;
+  width: 70%;
+  border-radius: 6px;
+}
+
+.barShort {
+  width: 35%;
+  height: 12px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover .title {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rowPlaceholder .thumb,
+  .bar {
+    animation: none;
+  }
+}
+
+/* Mobile: thumbnail 56px, judul maks 3 baris, tanggal turun ke bawah judul, chevron di kanan. */
+@media (max-width: 734px) {
+  .panel {
+    padding: 4px 16px;
+  }
+
+  .row,
+  .rowPlaceholder {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 6px 14px;
+    padding: 16px 0;
+  }
+
+  .thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+  }
+
+  .row .thumb {
+    grid-row: 1 / span 2;
+    align-self: start;
+  }
+
+  .title {
+    -webkit-line-clamp: 3;
+  }
+
+  .date {
+    grid-row: 2;
+    grid-column: 2;
+    font-size: 13px;
+  }
+
+  .chevron {
+    grid-row: 1 / span 2;
+    grid-column: 3;
+  }
+}

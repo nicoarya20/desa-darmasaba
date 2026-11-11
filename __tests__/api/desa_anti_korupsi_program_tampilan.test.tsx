@@ -3,13 +3,13 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
-import { ProgramIsi } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
-import { cuplikanJudul, tanggalTerakhir } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/folder-kartu';
+import { ProgramIsi } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
+import { cuplikanJudul, tanggalTerakhir } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/folder-kartu';
 import {
   isDeskripsiDuplikat,
   judulProgram,
   teksPolos,
-} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_lib/program-judul';
+} from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-judul';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import type { DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
 
@@ -130,7 +130,7 @@ describe('ProgramIsi tampilan', () => {
     expect(fb).toMatch(/data-testid="badge-kosong"[\s\S]*?>Kosong</);
     expect(fb).not.toContain('data-testid="cuplikan-folder"');
     expect(fb).not.toContain('data-testid="tanggal-folder"');
-    expect(html).toMatch(/data-folder-key="fb"[^>]*href="\/darmasaba\/desa-anti-korupsi\/program\/p1\?folder=fb"/);
+    expect(html).toMatch(/data-folder-key="fb"[^>]*href="\/desa-anti-korupsi\/program\/p1\?folder=fb"/);
     expect(kartu(html, 'umum')).not.toContain('cuplikan-sisa');
   });
 
@@ -139,8 +139,8 @@ describe('ProgramIsi tampilan', () => {
     const chips = [...html.matchAll(/<a[^>]*data-folder-chip="([^"]+)"[^>]*>/g)];
     expect(chips.map((m) => m[1])).toEqual(['fa', 'fb', 'umum']);
     const chip = (key: string) => chips.find((m) => m[1] === key)?.[0] ?? '';
-    expect(chip('fa')).toContain('href="/darmasaba/desa-anti-korupsi/program/p1?folder=fa&amp;urut=judul-asc"');
-    expect(chip('umum')).toContain('href="/darmasaba/desa-anti-korupsi/program/p1?folder=umum&amp;urut=judul-asc"');
+    expect(chip('fa')).toContain('href="/desa-anti-korupsi/program/p1?folder=fa&amp;urut=judul-asc"');
+    expect(chip('umum')).toContain('href="/desa-anti-korupsi/program/p1?folder=umum&amp;urut=judul-asc"');
     expect(chip('fb')).toContain('aria-current="page"');
     expect(chip('fb')).toContain('data-active="true"');
     expect(chip('fa')).toContain('data-active="false"');
@@ -152,7 +152,7 @@ describe('ProgramIsi tampilan', () => {
     expect(html).not.toContain('data-zip-folder="fb"');
     expect(html).toContain('data-zip-folder="semua"');
     expect(html).toMatch(/data-testid="empty-state"[\s\S]*Folder ini belum berisi dokumen[\s\S]*Dokumen akan tampil di sini/);
-    expect(html).toMatch(/data-testid="empty-state"[\s\S]*href="\/darmasaba\/desa-anti-korupsi\/program\/p1"[^>]*>[\s\S]*?Kembali</);
+    expect(html).toMatch(/data-testid="empty-state"[\s\S]*href="\/desa-anti-korupsi\/program\/p1"[^>]*>[\s\S]*?Kembali</);
     expect(html).not.toContain('Semua folder');
     expect(isi('fa')).toContain('data-zip-folder="fa"');
   });

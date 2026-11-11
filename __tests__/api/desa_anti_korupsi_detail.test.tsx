@@ -4,8 +4,8 @@
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup (interaksi klik diverifikasi manual).
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { AntiKorupsiDokumenList } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/AntiKorupsiDokumenList';
-import { AntiKorupsiKategoriPills } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/AntiKorupsiKategoriPills';
+import { AntiKorupsiDokumenList } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/AntiKorupsiDokumenList';
+import { AntiKorupsiKategoriPills } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/AntiKorupsiKategoriPills';
 import {
   countByKategori,
   countDokumen,
@@ -13,8 +13,8 @@ import {
   toDokumenRows,
   toIsi,
   type AntiKorupsiDetailApiItem,
-} from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/antikorupsi-detail.logic';
-import { AK_DETAIL_TEXT } from '@/app/darmasaba/(tambahan)/desa-anti-korupsi/_com/antikorupsi-detail.text';
+} from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/antikorupsi-detail.logic';
+import { AK_DETAIL_TEXT } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/antikorupsi-detail.text';
 
 // test-only: item berbentuk respons desaAntikorupsi.findMany (data desa tersimpan kapital + bernomor).
 const items: AntiKorupsiDetailApiItem[] = [
@@ -32,8 +32,8 @@ const items: AntiKorupsiDetailApiItem[] = [
 
 describe('toIsi', () => {
   it('ada dokumen → tautan halaman program + ringkasan "N folder · M dokumen" (folder 0 disembunyikan)', () => {
-    expect(toIsi(items[0])).toEqual({ href: '/darmasaba/desa-anti-korupsi/program/a', ringkasan: '2 folder · 5 dokumen' });
-    expect(toIsi(items[3])).toEqual({ href: '/darmasaba/desa-anti-korupsi/program/d', ringkasan: '3 dokumen' });
+    expect(toIsi(items[0])).toEqual({ href: '/desa-anti-korupsi/program/a', ringkasan: '2 folder · 5 dokumen' });
+    expect(toIsi(items[3])).toEqual({ href: '/desa-anti-korupsi/program/d', ringkasan: '3 dokumen' });
   });
 
   it('tanpa dokumen (0 atau field kosong) → null walau sudah ada folder', () => {
@@ -88,7 +88,7 @@ describe('AntiKorupsiDokumenList', () => {
   const html = renderToStaticMarkup(<AntiKorupsiDokumenList rows={toDokumenRows(items.slice(0, 2))} labelledBy="judul" />);
 
   it('indikator berisi = tautan ke halaman program (tab yang sama) dengan ringkasan & label aksesibel', () => {
-    expect(html).toContain('href="/darmasaba/desa-anti-korupsi/program/a"');
+    expect(html).toContain('href="/desa-anti-korupsi/program/a"');
     expect(html).not.toContain('target="_blank"');
     expect(html).toContain('2 folder · 5 dokumen');
     expect(html).toContain('aria-label="Buka dokumen 1.1 Adanya Perdes/keputusan kepala desa/SOP tentang APBDes (2 folder · 5 dokumen)"');

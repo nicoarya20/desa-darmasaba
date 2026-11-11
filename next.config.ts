@@ -6,18 +6,26 @@ const nextConfig: NextConfig = {
   agentRules: false,
   // Next mencocokkan hostname saja (tanpa skema/port); localhost sudah diizinkan default.
   allowedDevOrigins: ["192.168.1.82"], // akses dev dari HP/device lain di LAN
-  // Menu "Desa" diganti "Pemerintahan": URL lama (bookmark, link eksternal, indeks
-  // mesin pencari) wajib tetap jalan. Source per-segmen, jadi /darmasaba/desa-anti-korupsi
-  // tidak ikut ter-redirect.
+  // Website publik pindah dari /darmasaba/* ke root (route group src/app/(public)). URL lama
+  // berprefix (dibagikan warga, terindeks mesin pencari, tersimpan di konten DB) wajib tetap
+  // jalan. Next memakai redirect PERTAMA yang cocok: entri spesifik di atas wildcard, dan URL
+  // lama berprefix langsung ke tujuan final supaya tidak terjadi redirect berantai.
+  // Menu "Desa" diganti "Pemerintahan", Penghargaan digabung ke Prestasi Desa (tabel
+  // PrestasiDesa, id sama). Source per-segmen, jadi /desa-anti-korupsi tidak ikut ter-redirect.
   async redirects() {
     return [
-      { source: '/darmasaba/desa', destination: '/darmasaba/pemerintahan', permanent: true },
-      { source: '/darmasaba/desa/:path*', destination: '/darmasaba/pemerintahan/:path*', permanent: true },
+      { source: '/darmasaba/desa', destination: '/pemerintahan', permanent: true },
+      { source: '/darmasaba/desa/:path*', destination: '/pemerintahan/:path*', permanent: true },
+      { source: '/darmasaba/penghargaan', destination: '/prestasi-desa', permanent: true },
+      { source: '/darmasaba/penghargaan/:id', destination: '/prestasi-desa/:id', permanent: true },
+      { source: '/darmasaba', destination: '/', permanent: true },
+      { source: '/darmasaba/:path*', destination: '/:path*', permanent: true },
+      { source: '/desa', destination: '/pemerintahan', permanent: true },
+      { source: '/desa/:path*', destination: '/pemerintahan/:path*', permanent: true },
+      { source: '/penghargaan', destination: '/prestasi-desa', permanent: true },
+      { source: '/penghargaan/:id', destination: '/prestasi-desa/:id', permanent: true },
       { source: '/admin/desa', destination: '/admin/pemerintahan', permanent: true },
       { source: '/admin/desa/:path*', destination: '/admin/pemerintahan/:path*', permanent: true },
-      // Penghargaan digabung ke Prestasi Desa (tabel PrestasiDesa, id sama): link lama tetap jalan.
-      { source: '/darmasaba/penghargaan', destination: '/darmasaba/prestasi-desa', permanent: true },
-      { source: '/darmasaba/penghargaan/:id', destination: '/darmasaba/prestasi-desa/:id', permanent: true },
       { source: '/admin/pemerintahan/penghargaan', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
       { source: '/admin/pemerintahan/penghargaan/:path*', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
     ];

@@ -2,7 +2,7 @@
 'use client';
 
 import { apiFetchRegister } from '@/app/api/auth/_lib/api_fetch_auth';
-import BackButton from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/BackButto';
+import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import colors from '@/con/colors';
 import {
   Box, Button, Center, Checkbox, Image, Paper, Stack, Text, TextInput, Title,

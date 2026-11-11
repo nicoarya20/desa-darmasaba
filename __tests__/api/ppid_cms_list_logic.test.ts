@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Pengurai daftar CMS bersama halaman PPID: HTML satu daftar → teks polos per butir.
 import { describe, expect, it } from 'vitest';
-import { parsePlainListItems } from '@/app/darmasaba/(pages)/ppid/_com/cms-list.logic';
+import { parsePlainListItems } from '@/app/(public)/(pages)/ppid/_com/cms-list.logic';
 
 // test-only: semua isi di bawah fiktif.
 describe('parsePlainListItems', () => {

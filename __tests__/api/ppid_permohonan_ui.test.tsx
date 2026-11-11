@@ -28,14 +28,14 @@ vi.mock('@/app/admin/(dashboard)/_state/ppid/permohonan_keberatan_informasi_publ
 }));
 
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
-import { PermohonanSteps } from '@/app/darmasaba/(pages)/ppid/_com/PermohonanSteps';
-import InformasiPage from '@/app/darmasaba/(pages)/ppid/permohonan-informasi-publik/page';
-import KeberatanPage from '@/app/darmasaba/(pages)/ppid/permohonan-keberatan-informasi-publik/page';
+import { PermohonanSteps } from '@/app/(public)/(pages)/ppid/_com/PermohonanSteps';
+import InformasiPage from '@/app/(public)/(pages)/ppid/permohonan-informasi-publik/page';
+import KeberatanPage from '@/app/(public)/(pages)/ppid/permohonan-keberatan-informasi-publik/page';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const count = (source: string, needle: string | RegExp) => source.split(needle).length - 1;
 const css = readFileSync(
-  path.join(process.cwd(), 'src/app/darmasaba/(pages)/ppid/_com/permohonan.module.css'),
+  path.join(process.cwd(), 'src/app/(public)/(pages)/ppid/_com/permohonan.module.css'),
   'utf8',
 );
 

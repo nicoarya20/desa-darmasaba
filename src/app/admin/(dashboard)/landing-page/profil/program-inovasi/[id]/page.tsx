@@ -9,7 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import DOMPurify from 'dompurify';
-import { DokumentasiGaleri } from '@/app/darmasaba/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
+import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 
 function DetailProgramInovasi() {
   const stateProgramInovasi = useProxy(profileLandingPageState.programInovasi)

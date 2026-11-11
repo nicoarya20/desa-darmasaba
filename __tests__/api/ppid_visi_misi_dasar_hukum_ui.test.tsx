@@ -23,10 +23,10 @@ vi.mock('next-view-transitions', () => ({ useTransitionRouter: () => ({ back: vi
 vi.mock('@/app/admin/(dashboard)/_state/ppid/visi_misi_ppid/visimisiPPID', () => ({ default: visiMisi }));
 vi.mock('@/app/admin/(dashboard)/_state/ppid/dasar_hukum/dasarHukum', () => ({ default: dasarHukum }));
 
-import VisiMisiPage from '@/app/darmasaba/(pages)/ppid/visi-misi-ppid/page';
-import DasarHukumPage from '@/app/darmasaba/(pages)/ppid/dasar-hukum/page';
+import VisiMisiPage from '@/app/(public)/(pages)/ppid/visi-misi-ppid/page';
+import DasarHukumPage from '@/app/(public)/(pages)/ppid/dasar-hukum/page';
 
-const PPID_DIR = path.join(process.cwd(), 'src/app/darmasaba/(pages)/ppid');
+const PPID_DIR = path.join(process.cwd(), 'src/app/(public)/(pages)/ppid');
 const css = readFileSync(path.join(PPID_DIR, '_com/ppid-sections.module.css'), 'utf8');
 const visiMisiCss = readFileSync(path.join(PPID_DIR, 'visi-misi-ppid/_com/visi-misi.module.css'), 'utf8');
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);

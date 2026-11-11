@@ -47,6 +47,8 @@ bun run backfill:file-size   # = bun run prisma/backfill-file-size.ts
 
 Multi-stage build: `oven/bun:1.4.4-debian` (pinned) → builder → runner. The Dockerfile uses `COPY --chmod`, which needs BuildKit (`docker buildx`; CI uses `docker/setup-buildx-action`). The legacy builder fails at the runner stage. `next build` uses Turbopack (Next 16 default) and needs roughly 2.5 GB RAM inside the build container. The runner creates a `nextjs` user (UID 1001), exposes port 3000, and mounts `/app/uploads` as a volume. Entrypoint runs migrations automatically (`bunx prisma migrate deploy`).
 
+**Patched dependencies.** `package.json` → `patchedDependencies` applies `patches/*.patch` during `bun install` (currently `next-view-transitions@0.3.5`: handles the `AbortError` from skipped view transitions). The Dockerfile copies `patches/` before `bun install --frozen-lockfile`; without it the install fails with `patch file not found`. Upgrading a patched package means recreating the patch (`bun patch <pkg>` → edit → `bun patch --commit`) or removing its entry.
+
 Since Next 16, `next dev` writes its output to `.next/dev`, separate from the `next build` output in `.next/`.
 
 ## CI/CD

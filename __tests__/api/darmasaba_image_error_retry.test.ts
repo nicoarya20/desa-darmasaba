@@ -11,7 +11,7 @@ import {
   attachImageErrorRetry,
   MAX_IMAGE_RETRIES,
   IMAGE_RETRY_DELAYS_MS,
-} from "@/app/darmasaba/_com/imageErrorRetry";
+} from "@/app/(public)/_com/imageErrorRetry";
 
 class FakeHTMLImageElement {
   src = "";

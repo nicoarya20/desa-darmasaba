@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Desa Darmasaba adalah platform manajemen desa digital untuk Desa Darmasaba, Badung, Bali. Melayani website publik (`/darmasaba/*`) dan admin CMS (`/admin/*`).
+Desa Darmasaba adalah platform manajemen desa digital untuk Desa Darmasaba, Badung, Bali. Melayani website publik (root `/*`, route group `src/app/(public)`) dan admin CMS (`/admin/*`).
 
 ## Commands
 

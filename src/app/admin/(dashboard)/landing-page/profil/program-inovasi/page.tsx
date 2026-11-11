@@ -20,7 +20,7 @@ import { labelJumlahDokumentasi } from './_lib/dokumentasi.logic';
  *
  * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR.
  * Pola sama dengan `toPlainText` di
- * src/app/darmasaba/(pages)/pendidikan/perpustakaan-digital/semua/content.tsx
+ * src/app/(public)/(pages)/pendidikan/perpustakaan-digital/semua/content.tsx
  */
 function toPlainText(html?: string | null) {
   if (!html) return '';

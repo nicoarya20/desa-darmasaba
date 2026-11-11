@@ -1,0 +1,54 @@
+diff --git a/dist/index.js b/dist/index.js
+index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..2e9c4fef0a7c4507a3b991c647af4cafffcf4b78 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -4,6 +4,23 @@ import NextLink from 'next/link';
+ import { usePathname, useRouter } from 'next/navigation';
+ import { useSyncExternalStore, useRef, useState, useEffect, use, createContext, useCallback, startTransition, useMemo } from 'react';
+ 
++// PATCH(desa-darmasaba): startViewTransition() saat masih ada transisi aktif
++// membatalkan transisi lama dan menolak promise `ready`-nya dengan AbortError
++// (spec CSS View Transitions 1, "skip the view transition"; `ready` TIDAK
++// otomatis marked-as-handled). Library ini tak pernah menangani `ready`, jadi
++// klik/back cepat saat route masih dimuat memicu unhandledrejection
++// "Transition was skipped". AbortError = wajar (navigasi digantikan navigasi
++// baru, callback lama tetap jalan); error lain dilempar ulang agar tetap terlihat.
++// Hapus patch ini bila upstream menangani `ready` sendiri.
++function handleSkippedTransition(transition) {
++    transition.ready.catch((error)=>{
++        if (error && error.name === 'AbortError') {
++            return;
++        }
++        throw error;
++    });
++}
++
+ function useHash() {
+     return useSyncExternalStore(subscribeHash, getHashSnapshot, getServerHashSnapshot);
+ }
+@@ -37,10 +54,11 @@ function useBrowserNativeTransitions() {
+             });
+             const pendingStartViewTransition = new Promise((resolve)=>{
+                 // @ts-ignore
+-                document.startViewTransition(()=>{
++                const transition = document.startViewTransition(()=>{
+                     resolve();
+                     return pendingViewTransition;
+                 });
++                handleSkippedTransition(transition);
+             });
+             setCurrentViewTransition([
+                 pendingStartViewTransition,
+@@ -142,8 +160,11 @@ function useTransitionRouter() {
+                         finishViewTransition(()=>resolve);
+                     });
+                 }));
++            handleSkippedTransition(transition);
+             if (onTransitionReady) {
+-                transition.ready.then(onTransitionReady);
++                // Rejection `ready` sudah dilaporkan handleSkippedTransition; handler
++                // kedua hanya mencegah rejection ganda dari rantai turunan ini.
++                transition.ready.then(onTransitionReady, ()=>{});
+             }
+         } else {
+             return cb();

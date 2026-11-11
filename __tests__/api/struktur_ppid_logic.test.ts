@@ -10,7 +10,7 @@ import {
   type OrgNode,
   type PegawaiItem,
   type PosisiItem,
-} from '@/app/darmasaba/(pages)/ppid/struktur-ppid/_com/struktur.logic';
+} from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur.logic';
 
 // test-only: bentuk data mengikuti respons stg 2026-11-10 (nama disingkat).
 const pegawai = (

@@ -4,7 +4,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadJsonData } from "../../prisma/load-json";
 import { formatSektorValue, parseSatuanPeriodeInput } from "@/lib/sektor-unggulan";
-import { validateLinkTokoOnlineList } from "@/app/darmasaba/(pages)/ekonomi/umkm/_lib/linkTokoOnline";
+import { validateLinkTokoOnlineList } from "@/lib/link-toko-online";
 
 const prismaMock = vi.hoisted(() => ({
   linkTokoOnline: { findMany: vi.fn(), createMany: vi.fn() },

@@ -3,11 +3,11 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
-import { KepuasanEmpty } from '@/app/darmasaba/_com/main-page/kepuasan/components/KepuasanEmpty';
-import { KepuasanCharts } from '@/app/darmasaba/_com/main-page/kepuasan/components/KepuasanCharts';
-import { KepuasanDonutCard } from '@/app/darmasaba/_com/main-page/kepuasan/components/KepuasanDonutCard';
-import { summarizeKepuasan } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.logic';
-import { KEPUASAN_TEXT } from '@/app/darmasaba/_com/main-page/kepuasan/kepuasan.text';
+import { KepuasanEmpty } from '@/app/(public)/_com/main-page/kepuasan/components/KepuasanEmpty';
+import { KepuasanCharts } from '@/app/(public)/_com/main-page/kepuasan/components/KepuasanCharts';
+import { KepuasanDonutCard } from '@/app/(public)/_com/main-page/kepuasan/components/KepuasanDonutCard';
+import { summarizeKepuasan } from '@/app/(public)/_com/main-page/kepuasan/kepuasan.logic';
+import { KEPUASAN_TEXT } from '@/app/(public)/_com/main-page/kepuasan/kepuasan.text';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>)

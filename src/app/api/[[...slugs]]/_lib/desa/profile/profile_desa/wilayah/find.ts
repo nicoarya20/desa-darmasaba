@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { WILAYAH_DESA_ID } from "./validation";
+import { WILAYAH_DESA_ID } from "@/lib/wilayah-desa";
 
 /** Kolom yang diekspos ke klien (kontrak output; hanya boleh bertambah). */
 export const WILAYAH_DESA_SELECT = {

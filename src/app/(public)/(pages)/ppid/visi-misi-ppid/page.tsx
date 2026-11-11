@@ -1,0 +1,52 @@
+'use client'
+import stateVisiMisiPPID from '@/app/admin/(dashboard)/_state/ppid/visi_misi_ppid/visimisiPPID'
+import colors from '@/con/colors'
+import { useShallowEffect } from '@mantine/hooks'
+import { useState, type CSSProperties } from 'react'
+import { useProxy } from 'valtio/utils'
+import { PpidPage } from '../_com/PpidPage'
+import { PpidSectionsSkeleton } from '../_com/PpidSectionsSkeleton'
+import s from '../_com/ppid-sections.module.css'
+import { VisiMisiContent } from './_com/VisiMisiContent'
+import { VISI_MISI_TEXT } from './_com/visi-misi.text'
+
+/** Latar kartu putih tembus yang dibaca `visi-misi.module.css`. */
+const CARD_VARS = { '--vm-card': colors['white-trans-1'] } as CSSProperties
+
+/** Baris tunggal visi-misi PPID di CMS. */
+const VISI_MISI_ID = '1'
+
+/** Halaman publik Visi dan Misi PPID: memuat visi dan misi dari CMS lalu menyerahkannya ke `VisiMisiContent`. */
+export default function Page() {
+  const state = useProxy(stateVisiMisiPPID)
+  const [loaded, setLoaded] = useState(false)
+
+  useShallowEffect(() => {
+    // Loader menangkap galatnya sendiri (data tetap null) — finally hanya menandai selesai.
+    void state.findById.load(VISI_MISI_ID).finally(() => setLoaded(true))
+  }, [])
+
+  const data = state.findById.data
+
+  let content
+  if (data) {
+    content = (
+      <VisiMisiContent
+        visi={data.visi}
+        misi={data.misi}
+        labels={{ visi: VISI_MISI_TEXT.visi, misi: VISI_MISI_TEXT.misi, logoAlt: VISI_MISI_TEXT.logoAlt }}
+        moto={{ title: VISI_MISI_TEXT.moto, statement: VISI_MISI_TEXT.motoStatement }}
+      />
+    )
+  } else if (loaded) {
+    content = <p className={s.empty}>{VISI_MISI_TEXT.empty}</p>
+  } else {
+    content = <PpidSectionsSkeleton label={VISI_MISI_TEXT.loading} rows={6} />
+  }
+
+  return (
+    <PpidPage title={VISI_MISI_TEXT.title} lead={VISI_MISI_TEXT.lead} headerHidden style={CARD_VARS}>
+      {content}
+    </PpidPage>
+  )
+}
