@@ -1,10 +1,11 @@
 'use client';
 import colors from '@/con/colors';
 import type { PengumumanFile } from '@/lib/pengumuman-lampiran';
-import { Anchor, Box, Button, Group, Modal, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconDownload, IconEye, IconFileTypePdf } from '@tabler/icons-react';
 import { useState } from 'react';
 import { formatUkuran } from '@/lib/desa-anti-korupsi-sort';
+import { PengumumanPdfModal } from './PengumumanPdfModal';
 
 type Props = {
   dokumen: PengumumanFile[] | null | undefined;
@@ -60,18 +61,7 @@ export function PengumumanDokumenList({ dokumen, judul = 'Lampiran Dokumen' }: P
         </Paper>
       ))}
 
-      <Modal opened={aktif !== null} onClose={() => setAktif(null)} size="xl" centered title={aktif?.realName}>
-        {aktif && (
-          <>
-            <Box style={{ border: '1px solid #e0e0e0', borderRadius: 8, overflow: 'hidden', height: '70vh' }}>
-              <iframe src={aktif.link} title={aktif.realName} width="100%" height="100%" style={{ border: 'none' }} />
-            </Box>
-            <Anchor href={aktif.link} target="_blank" rel="noopener noreferrer" fz="sm" mt="xs" display="inline-block">
-              Buka di tab baru
-            </Anchor>
-          </>
-        )}
-      </Modal>
+      <PengumumanPdfModal file={aktif} onClose={() => setAktif(null)} />
     </Stack>
   );
 }
