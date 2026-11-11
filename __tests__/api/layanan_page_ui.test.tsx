@@ -13,12 +13,12 @@ vi.mock('next-view-transitions', () => ({
 }));
 
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
-import Page from '@/app/darmasaba/(pages)/pemerintahan/layanan/page';
-import { SuratKeteranganCard } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/SuratKeteranganCard';
-import PelayananPendudukNonPermanent from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/pelayananPendudukNonPermanent';
-import PelayananSuratKeterangan from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/pelayananSuratKeterangan';
-import PelayananTelunjukSaktiDesa from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/pelayananTelunjukSaktiDesa';
-import { LAYANAN_TEXT } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/layanan.text';
+import Page from '@/app/(public)/(pages)/pemerintahan/layanan/page';
+import { SuratKeteranganCard } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/SuratKeteranganCard';
+import PelayananPendudukNonPermanent from '@/app/(public)/(pages)/pemerintahan/layanan/_com/pelayananPendudukNonPermanent';
+import PelayananSuratKeterangan from '@/app/(public)/(pages)/pemerintahan/layanan/_com/pelayananSuratKeterangan';
+import PelayananTelunjukSaktiDesa from '@/app/(public)/(pages)/pemerintahan/layanan/_com/pelayananTelunjukSaktiDesa';
+import { LAYANAN_TEXT } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/layanan.text';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -48,7 +48,7 @@ describe('SuratKeteranganCard', () => {
   it('seluruh kartu satu tautan ke detail: foto, nama h3, pil "Lihat layanan"', () => {
     const html = render(<SuratKeteranganCard item={surat('s1', 'Surat Keterangan Usaha')} />);
     expect(count(html, '<a ')).toBe(1);
-    expect(html).toContain('href="/darmasaba/pemerintahan/layanan/s1"');
+    expect(html).toContain('href="/pemerintahan/layanan/s1"');
     expect(html).toContain('src="https://example.test/s1.jpg"');
     expect(html).toMatch(/<h3[^>]*>Surat Keterangan Usaha<\/h3>/);
     expect(html).toContain(LAYANAN_TEXT.surat.cta);
@@ -71,7 +71,7 @@ describe('PelayananSuratKeterangan', () => {
   it('semua layanan tampil tanpa paginasi (dulu item ke-10 hilang)', () => {
     st.suratKeterangan.findMany.data = Array.from({ length: 11 }, (_, i) => surat(`s${i}`, `Surat ${i}`));
     const html = render(<PelayananSuratKeterangan />);
-    expect(count(html, 'href="/darmasaba/pemerintahan/layanan/s')).toBe(11);
+    expect(count(html, 'href="/pemerintahan/layanan/s')).toBe(11);
     expect(html).toContain('Surat 9');
     expect(html).not.toContain('mantine-Pagination');
     expect(html).toContain('role="search"');

@@ -1,4 +1,4 @@
-/** Label UI halaman daftar Layanan Desa (`/darmasaba/pemerintahan/layanan`). */
+/** Label UI halaman daftar Layanan Desa (`/pemerintahan/layanan`). */
 export const LAYANAN_TEXT = {
   title: "Layanan Desa Darmasaba",
   lead: "Informasi dan pelayanan administrasi desa secara digital.",

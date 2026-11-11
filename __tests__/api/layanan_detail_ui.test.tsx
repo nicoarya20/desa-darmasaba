@@ -12,10 +12,10 @@ vi.mock('next-view-transitions', () => ({
 }));
 
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
-import { AjukanPermohonanModal } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/detail/AjukanPermohonanModal';
-import { LayananDetail, LayananDetailBody } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/detail/LayananDetail';
-import { LAYANAN_DETAIL_TEXT as T } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/detail/layanan-detail.text';
-import type { LayananDetailData } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/detail/use-layanan-detail';
+import { AjukanPermohonanModal } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/AjukanPermohonanModal';
+import { LayananDetail, LayananDetailBody } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/LayananDetail';
+import { LAYANAN_DETAIL_TEXT as T } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/layanan-detail.text';
+import type { LayananDetailData } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/use-layanan-detail';
 
 // Modal di portal tidak dirender di server; matikan portal agar isi formulir bisa diperiksa.
 // `<Modal>` (bukan Modal.Root) membawa defaultProps sendiri (withinPortal: true) → extend Modal, bukan ModalRoot.
@@ -38,7 +38,7 @@ const data: LayananDetailData = {
 describe('LayananDetailBody', () => {
   it('kategori (tautan ke daftar), h1 nama, badge, persyaratan, gambar alur; tanpa foto utama', () => {
     const html = render(<LayananDetailBody data={data} onAjukan={() => {}} />);
-    expect(html).toContain(`href="/darmasaba/pemerintahan/layanan"`);
+    expect(html).toContain(`href="/pemerintahan/layanan"`);
     expect(html).toContain(T.kategori);
     expect(html).toMatch(/<h1[^>]*>Surat Keterangan Kelakuan Baik<\/h1>/);
     expect(html).toContain('1 hari kerja • Gratis');

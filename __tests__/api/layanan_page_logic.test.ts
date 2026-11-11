@@ -6,8 +6,8 @@ import {
   externalHref,
   filterByName,
   stepNumber,
-} from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/layanan.logic';
-import { LAYANAN_LIST_LIMIT, layananDetailHref } from '@/app/darmasaba/(pages)/pemerintahan/layanan/_com/layanan.meta';
+} from '@/app/(public)/(pages)/pemerintahan/layanan/_com/layanan.logic';
+import { LAYANAN_LIST_LIMIT, layananDetailHref } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/layanan.meta';
 
 // test-only: nama layanan berbentuk respons find-many.
 const items = [
@@ -66,6 +66,6 @@ describe('OSS & meta', () => {
 
   it('limit muat cukup untuk semua layanan (data ±11) dan rute detail', () => {
     expect(LAYANAN_LIST_LIMIT).toBeGreaterThanOrEqual(11);
-    expect(layananDetailHref('x1')).toBe('/darmasaba/pemerintahan/layanan/x1');
+    expect(layananDetailHref('x1')).toBe('/pemerintahan/layanan/x1');
   });
 });

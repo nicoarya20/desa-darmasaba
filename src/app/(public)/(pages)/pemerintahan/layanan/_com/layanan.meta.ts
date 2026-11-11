@@ -17,7 +17,7 @@ export const LAYANAN_BRAND_VARS = {
 } as CSSProperties;
 
 /** Rute halaman daftar Layanan. */
-export const LAYANAN_LIST_HREF = "/darmasaba/pemerintahan/layanan";
+export const LAYANAN_LIST_HREF = "/pemerintahan/layanan";
 
 /** Rute detail satu layanan surat keterangan. */
 export const layananDetailHref = (id: string) => `${LAYANAN_LIST_HREF}/${id}`;
