@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.243] - 2026-11-11
+### Changed
+- **Halaman Berita didesain ulang mengikuti section Kabar Desa di beranda.** Latar putih, kartu berita utama besar diikuti kartu berita bergaya sama dengan beranda, pencarian berbentuk kolom bulat, dan kategori berupa tombol pil (bisa digeser di ponsel). Tiap halaman kini menampilkan 7 berita (sebelumnya 3), dan berita utama tidak lagi muncul dua kali di halaman pertama.
+
+### Fixed
+- Pencarian dan nomor halaman kini juga berlaku saat membuka kategori tertentu (sebelumnya kata kunci diabaikan di halaman kategori), dan halaman yang sedang dibuka tersimpan di alamat sehingga bisa dibagikan atau dimuat ulang.
+
 ## [0.1.242] - 2026-11-11
 ### Added
 - **Pengumuman kini bisa membawa gambar dan dokumen PDF.** Di admin, form tambah dan edit pengumuman punya isian Gambar Utama, Galeri Gambar (maks. 10), dan Dokumen PDF (bisa lebih dari satu, maks. 10 MB per berkas) yang bisa dipratinjau sebelum disimpan; semuanya opsional dan berkas baru diunggah saat menekan Simpan. Saat edit, gambar utama bisa dihapus atau diganti, dan galeri maupun dokumen bisa ditambah atau dihapus. Halaman detail admin menampilkan semua lampiran.
