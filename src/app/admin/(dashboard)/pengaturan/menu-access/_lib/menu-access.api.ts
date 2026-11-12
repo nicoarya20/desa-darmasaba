@@ -1,9 +1,9 @@
-// Panggilan API halaman Menu Access (per user & Publik) + tree menu yang bisa diberikan.
+// Panggilan API halaman Menu Access + tree menu yang bisa diberikan.
 import { navBar } from '@/app/admin/_com/list_PageAdmin'
 import { withoutRestrictedSections } from '@/app/admin/_com/nav/menu-access.logic'
 
 // User & Role dan Pengaturan khusus role 0/1 (otomatis di sidebar mereka), jadi tidak
-// bisa diberikan lewat Menu Access — baik per user maupun Publik.
+// bisa diberikan lewat Menu Access.
 export const MENU_TREE = withoutRestrictedSections(navBar)
 
 /** Pesan error yang bisa ditampilkan dari nilai catch apa pun. */
@@ -31,15 +31,4 @@ export async function fetchUserMenuIds(userId: string): Promise<string[]> {
 /** Ganti seluruh menuIds seorang user. */
 export async function saveUserMenuIds(userId: string, menuIds: string[]): Promise<void> {
   await requestJson('/api/admin/user-menu-access', postJson({ userId, menuIds }))
-}
-
-/** menuIds Publik (terbuka untuk semua admin). */
-export async function fetchPublicMenuIds(): Promise<string[]> {
-  const data = await requestJson('/api/admin/public-menu-access')
-  return data.menuIds ?? []
-}
-
-/** Ganti seluruh menuIds Publik. */
-export async function savePublicMenuIds(menuIds: string[]): Promise<void> {
-  await requestJson('/api/admin/public-menu-access', postJson({ menuIds }))
 }

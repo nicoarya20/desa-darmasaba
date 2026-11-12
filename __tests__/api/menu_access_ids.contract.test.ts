@@ -110,7 +110,7 @@ const EXPECTED_IDS: Record<string, string[]> = {
   ],
   // 2026-11-12: Menu Access pindah dari User & Role ke Pengaturan (user-role.menu-access →
   // pengaturan.menu-access). Aman tanpa migrasi data: kedua section khusus role 0/1 dan tidak
-  // pernah bisa disimpan di UserMenuAccess/PublicMenuAccess (dibuang withoutRestrictedSections).
+  // pernah bisa disimpan di UserMenuAccess (dibuang withoutRestrictedSections).
   'Pengaturan': [
     'pengaturan.visibilitas-menu',
     'pengaturan.menu-access',

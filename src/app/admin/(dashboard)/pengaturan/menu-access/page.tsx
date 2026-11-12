@@ -2,12 +2,11 @@
 
 import { canManageMenuAccess } from '@/lib/auth-policy'
 import { authStore } from '@/store/authStore'
-import { Alert, Paper, Stack, Tabs, Title } from '@mantine/core'
+import { Alert, Paper, Stack, Title } from '@mantine/core'
 import { useSnapshot } from 'valtio'
-import { PerUserMenuTab } from './_com/PerUserMenuTab'
-import { PublicMenuTab } from './_com/PublicMenuTab'
+import { UserMenuAccessForm } from './_com/UserMenuAccessForm'
 
-/** Menu Access admin: tab Per User (batasi menu satu user) & Publik (menu untuk semua admin). */
+/** Pengaturan → Menu Access: batasi menu admin per user (kosong = menu bawaan role). */
 export default function MenuAccessPage() {
   const { user } = useSnapshot(authStore)
 
@@ -24,18 +23,7 @@ export default function MenuAccessPage() {
     <Stack>
       <Title order={2}>Menu Access</Title>
       <Paper p="xl" shadow="md" radius="md">
-        <Tabs defaultValue="per-user" keepMounted={false}>
-          <Tabs.List mb="lg">
-            <Tabs.Tab value="per-user">Per User</Tabs.Tab>
-            <Tabs.Tab value="publik">Publik</Tabs.Tab>
-          </Tabs.List>
-          <Tabs.Panel value="per-user">
-            <PerUserMenuTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="publik">
-            <PublicMenuTab />
-          </Tabs.Panel>
-        </Tabs>
+        <UserMenuAccessForm />
       </Paper>
     </Stack>
   )
