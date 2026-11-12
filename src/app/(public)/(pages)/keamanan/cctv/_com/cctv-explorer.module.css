@@ -1,0 +1,374 @@
+/*
+ * Panel peta + daftar CCTV (di dalam .panel APBDes). Desktop: peta | daftar bergulir setinggi peta.
+ * ≤1068px: peta di atas, daftar penuh di bawahnya. Variabel warna diwarisi dari .section APBDes.
+ */
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 20px;
+}
+
+.head h2 {
+  margin: 0;
+}
+
+.lead {
+  margin: 6px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ---------- Peta | daftar ---------- */
+.explorer {
+  --map-h: 560px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-rows: var(--map-h);
+  gap: 20px;
+}
+
+.mapFrame {
+  position: relative;
+  min-width: 0;
+  height: var(--map-h);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e8e8ed;
+  /* Panel Leaflet ber-z-index ratusan: kurung di sini agar tidak menimpa navbar. */
+  isolation: isolate;
+  scroll-margin-top: 64px;
+}
+
+.map,
+.mapSkeleton {
+  width: 100%;
+  height: 100%;
+}
+
+.map {
+  font: inherit;
+}
+
+.mapEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  color: var(--subtle);
+  background: #fff;
+}
+
+.mapEmpty p {
+  margin: 0;
+  max-width: 340px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* Tanpa koordinat sama sekali: pesan peta pendek di atas, daftar penuh di bawahnya (bukan kotak kosong 560px). */
+.noMap {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+}
+
+.noMap .mapFrame {
+  height: auto;
+}
+
+.noMap .mapEmpty {
+  padding: 28px 24px;
+}
+
+.noMap .rows {
+  overflow: visible;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+/* Kolom cari Layanan berlatar --tile; di dalam panel #f5f5f7 latarnya dijadikan putih. */
+.search {
+  --tile: #fff;
+  flex: none;
+}
+
+.noMatch {
+  margin: 0;
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* ---------- Baris ---------- */
+.rows {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+.rows > li + li {
+  border-top: 1px solid var(--line);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.rowStatic {
+  cursor: default;
+}
+
+.row[aria-pressed="true"] {
+  background: #fff;
+  box-shadow: inset 3px 0 0 var(--brand);
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+}
+
+/* Baris terpilih berlatar putih: hilangkan garis pemisah di sekitarnya agar tidak memotong sudut. */
+.rows > li:has(.row[aria-pressed="true"]),
+.rows > li:has(.row[aria-pressed="true"]) + li {
+  border-top-color: transparent;
+}
+
+.top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.name {
+  min-width: 0;
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.lokasi {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.lokasi > span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.lokasiIcon {
+  flex: none;
+  margin-top: 2px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.kode {
+  font-weight: 600;
+  color: var(--brand);
+  letter-spacing: 0.02em;
+}
+
+.kosong {
+  color: var(--subtle);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ---------- Penanda & popup Leaflet ---------- */
+.marker > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 2.5px solid #fff;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+  transition: transform 160ms ease;
+}
+
+.markerSelected > span {
+  border-width: 3px;
+  box-shadow: 0 0 0 3px rgba(10, 78, 120, 0.55), 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.marker:focus-visible {
+  outline: none;
+}
+
+.marker:focus-visible > span {
+  box-shadow: 0 0 0 3px #0a4e78, 0 1px 5px rgba(0, 0, 0, 0.45);
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 160px;
+  color: #1d1d1f;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.popupKode {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #0a4e78;
+}
+
+.popupName {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.popupLokasi {
+  color: #6e6e73;
+}
+
+.popupStatus {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:not(.rowStatic):not([aria-pressed="true"]):hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .marker:hover > span {
+    transform: scale(1.15);
+  }
+}
+
+/* ---------- Tablet: peta di atas, daftar penuh di bawahnya ---------- */
+@media (max-width: 1068px) {
+  .explorer {
+    --map-h: 440px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .rows {
+    overflow: visible;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .explorer {
+    --map-h: 340px;
+    gap: 14px;
+  }
+
+  .row {
+    padding: 12px 10px;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .marker > span {
+    transition: none;
+  }
+}
