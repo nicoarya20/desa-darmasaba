@@ -35,14 +35,19 @@ describe("kontrak rute struktur-bumdes (lama, dibekukan)", () => {
 });
 
 describe("kontrak rute BUMDes (baru, aditif)", () => {
-  it("profil + unit usaha berada di bawah /bumdes", () => {
+  it("profil + galeri foto + unit usaha berada di bawah /bumdes", () => {
     expect(routesOf(Bumdes)).toEqual([
+      "DELETE /bumdes/profil/foto/:id",
       "DELETE /bumdes/unit-usaha/del/:id",
       "GET /bumdes/profil/",
+      "GET /bumdes/profil/foto/",
       "GET /bumdes/unit-usaha/:id",
       "GET /bumdes/unit-usaha/find-many",
+      "POST /bumdes/profil/foto/",
       "POST /bumdes/unit-usaha/create",
       "PUT /bumdes/profil/",
+      "PUT /bumdes/profil/foto/:id",
+      "PUT /bumdes/profil/foto/urutan",
       "PUT /bumdes/unit-usaha/:id",
     ]);
   });
