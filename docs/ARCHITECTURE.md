@@ -35,7 +35,7 @@ Active domains: `desa`, `ekonomi`, `inovasi`, `keamanan`, `kependudukan`, `keseh
 
 Halaman admin yang sengaja disembunyikan sementara (bukan dihapus) beserta cara memunculkannya lagi dicatat sebagai hutang di `docs/debt/` (mis. tab admin UMKM).
 
-Admin also has non-domain sections not covered above: `auth` (login/registrasi/validasi admin pages) and `user&role` (user + role management, note the `&` in the folder name), and `pengaturan` (public menu visibility + admin Menu Access per user). Menu Access semantics (section vs submenu IDs, `basePath`, UI-only page guard) are documented under "Sidebar Admin" in `docs/DESIGN.md`.
+Admin also has non-domain sections not covered above: `auth` (login/registrasi/validasi admin pages) and `user&role` (user + role management, note the `&` in the folder name), and `pengaturan` (public menu visibility, admin Menu Access per user, and Sampah — trashed files & documents). Menu Access semantics (section vs submenu IDs, `basePath`, UI-only page guard) are documented under "Sidebar Admin" in `docs/DESIGN.md`.
 
 ## Key Files
 
