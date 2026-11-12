@@ -10,6 +10,7 @@ const TWO_DIGIT_AREA_CODES = ['21', '22', '24', '31', '61'];
 // Nomor seluler/tetap terpendek tanpa angka 0 di depan (kode wilayah 2 digit + 7 digit pelanggan).
 const MIN_NATIONAL_DIGITS = 8;
 const GROUP = 4;
+const SIX_DIGIT_SUBSCRIBER = 6;
 
 export type PhoneKind = 'mobile' | 'landline' | 'service';
 
@@ -37,13 +38,17 @@ function formatMobile(national: string): string {
   return groups.join(' ');
 }
 
-/** "(0361) 846 3263" — kode wilayah dalam kurung, nomor pelanggan dipisah sebelum 4 digit terakhir. */
+/**
+ * "(0361) 846 3263" — kode wilayah dalam kurung, nomor pelanggan dipisah sebelum 4 digit terakhir.
+ * Nomor pelanggan 6 digit (nomor lama, mis. 0361 411270) dibagi 3+3 → "(0361) 411 270", bukan "41 1270".
+ */
 function formatLandline(national: string): string {
   const areaLength = TWO_DIGIT_AREA_CODES.some((code) => national.startsWith(code)) ? 2 : 3;
   const area = national.slice(0, areaLength);
   const subscriber = national.slice(areaLength);
-  const head = subscriber.slice(0, -GROUP);
-  return `(0${area}) ${head ? `${head} ` : ''}${subscriber.slice(-GROUP)}`;
+  const tail = subscriber.length === SIX_DIGIT_SUBSCRIBER ? SIX_DIGIT_SUBSCRIBER / 2 : GROUP;
+  const head = subscriber.slice(0, -tail);
+  return `(0${area}) ${head ? `${head} ` : ''}${subscriber.slice(-tail)}`;
 }
 
 /**
