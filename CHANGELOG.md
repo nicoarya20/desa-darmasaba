@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.255] - 2026-11-12
+### Added
+- **Galeri Foto di Profil BUMDes.** Di admin (Ekonomi → BUMDes → Profil BUMDes) kini bisa mengunggah beberapa foto sekaligus, memberi keterangan (opsional), menghapus, dan mengurutkan. Foto/logo yang sudah ada tetap dipakai sebagai cover. Di website publik galeri tampil sebagai grid di bagian Profil BUMDes; klik foto untuk melihat ukuran penuh.
+
+### Changed
+- **Struktur PPID, Struktur BUMDes, dan Struktur Perangkat Desa kini memakai aturan dan tampilan yang sama.** Tambah/edit pegawai cukup mengisi **Nama** (sudah termasuk gelar) dan **Jabatan**; **Foto, Email, dan Nomor Telepon** boleh dikosongkan. Kolom Gelar, Tanggal Masuk, dan Alamat tidak ada lagi di form maupun di halaman profil pegawai.
+- **Deskripsi jabatan/posisi organisasi kini opsional** di ketiga struktur, **atasan jabatan bisa diatur langsung dari admin**, dan urutan jabatan yang selevel bisa diatur.
+- Tab admin Struktur PPID dan Struktur BUMDes kini bernama **Pegawai · Jabatan · Bagan** (sama seperti Perangkat Desa). Alamat lama (Posisi Organisasi, Struktur Organisasi) otomatis dialihkan.
+- Bagan struktur BUMDes di website publik kini sama dengan bagan PPID dan Perangkat Desa, dan profil pegawainya bisa dibuka.
+- **Menu UMKM di admin untuk sementara hanya menampilkan Data UMKM.** Tab Dashboard, Produk, Penjualan, dan Kategori Produk disembunyikan (tidak dihapus); cara memunculkannya lagi dicatat di `docs/debt/2026-11-12-umkm-tab-disembunyikan.md`.
+
+### Fixed
+- Menambah pegawai PPID atau BUMDes kedua tanpa email tidak lagi gagal dengan pesan "Email sudah digunakan".
+
+### Operator
+- Jalankan migrasi `20261112180000_struktur_fleksibel` dan `20261112190000_foto_profil_bumdes` (otomatis saat container start). Migrasi pertama **mengubah data**: gelar pegawai digabung ke nama ("I Made Ari" + "S.Kom" → "I Made Ari, S.Kom"; nama yang sudah memuat gelarnya tidak diubah), email kosong dijadikan kosong (NULL), dan email pegawai PPID/BUMDes tidak lagi harus unik. Kolom gelar/tanggal masuk/alamat tidak dihapus. Migrasi kedua murni menambah tabel galeri. Keduanya aman dijalankan ulang.
+- **Perhatian:** pesanan produk UMKM dari website publik masih bisa masuk walau tab Penjualan di admin disembunyikan — lihat catatan di `docs/debt/2026-11-12-umkm-tab-disembunyikan.md`.
+- Alasan & detail: `docs/decisions/2026-11-12-struktur-fleksibel.md`.
+
 ## [0.1.254] - 2026-11-12
 ### Changed
 - **Menu Access pindah ke Pengaturan** (Pengaturan → Menu Access), di samping Visibilitas Menu. Alamat lama `/admin/user&role/menu-access` otomatis dialihkan ke alamat baru. User & Role kini hanya berisi User dan Role.
