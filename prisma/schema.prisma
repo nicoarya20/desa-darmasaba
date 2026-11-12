@@ -2593,16 +2593,6 @@ model UserMenuAccess {
   @@unique([userId, menuId]) // Satu user tidak bisa punya akses menu yang sama dua kali
 }
 
-// Menu admin "Publik": terbuka untuk SEMUA admin, ditambahkan di atas Menu Access per user
-// (atau menu bawaan role). Dipisah dari UserMenuAccess karena tidak terikat satu user.
-// menuId = ID section (semua submenu) atau ID submenu `<section>.<submenu>`.
-model PublicMenuAccess {
-  id        String   @id @default(cuid())
-  menuId    String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 // Override visibilitas submenu website publik (navbar/pencarian/Peta Informasi).
 // Tanpa row = pakai default `hidden` di src/con/navbar-list-menu.ts. menuKey = href
 // submenu (lebih stabil dari id urut "3.2"); divalidasi aplikasi terhadap config.

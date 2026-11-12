@@ -70,17 +70,3 @@ export function firstAllowedPath(nav: readonly NavItem[]): string | null {
   }
   return null
 }
-
-/**
- * Gabungkan beberapa nav hasil saring (mis. akses per user/role + menu Publik) mengikuti
- * urutan `order`: section tampil bila ada di salah satu bagian, anaknya = gabungan anak.
- */
-export function unionNavs(order: readonly NavItem[], parts: readonly (readonly NavItem[])[]): NavItem[] {
-  return order.flatMap((section) => {
-    const matches = parts.flatMap((nav) => nav.filter((s) => s.id === section.id))
-    if (matches.length === 0) return []
-    if (!section.children || matches.some((s) => !s.children)) return [section]
-    const childIds = new Set(matches.flatMap((s) => (s.children ?? []).map((c) => c.id)))
-    return [{ ...section, children: section.children.filter((c) => childIds.has(c.id)) }]
-  })
-}

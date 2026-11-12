@@ -14,8 +14,8 @@ import { MenuAccessTree } from './MenuAccessTree'
 // login Google) diarahkan ke /profile tanpa menu dashboard, jadi tidak perlu muncul di sini.
 const ADMIN_ROLE_IDS = ['0', '1', '2', '3', '4']
 
-/** Tab "Per User": batasi menu admin untuk satu user tertentu. */
-export function PerUserMenuTab() {
+/** Form Menu Access: pilih user admin lalu atur menu yang bisa ia akses. */
+export function UserMenuAccessForm() {
   const stateUser = useProxy(user.userState)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const [selected, setSelected] = useState<Selection>(new Set())
@@ -67,8 +67,7 @@ export function PerUserMenuTab() {
         <>
           <Text fw={500}>Menu yang Bisa Diakses:</Text>
           <Text size="sm" c="dimmed">
-            Kosongkan semua untuk memakai menu bawaan role. Menu di tab Publik tetap terbuka untuk
-            user ini walau tidak dicentang di sini.
+            Kosongkan semua untuk memakai menu bawaan role.
           </Text>
           <MenuAccessTree tree={MENU_TREE} selected={selected} onChange={setSelected} />
           <Button onClick={handleSave} mt="md" w="fit-content">
