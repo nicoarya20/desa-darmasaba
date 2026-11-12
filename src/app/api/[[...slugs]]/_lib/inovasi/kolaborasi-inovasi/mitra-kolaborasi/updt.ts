@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 type FormUpdate = {
     id: string;
@@ -48,20 +48,6 @@ export default async function mitraKolaborasiUpdate(context: Context) {
             })
         }
 
-        if (existing.imageId && existing.imageId !== imageId) {
-        const oldImage = existing.image;
-        if (oldImage) {
-            try {
-                await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-                await prisma.fileStorage.delete({
-                    where: { id: oldImage.id },
-                });
-            } catch (error) {
-                console.error("Gagal hapus gambar lama:", error);
-            }
-        }
-        }
-
         const updated = await prisma.mitraKolaborasi.update({
             where: { id },
             data: {
@@ -69,6 +55,13 @@ export default async function mitraKolaborasiUpdate(context: Context) {
                 imageId,
             }
         })
+
+        if (existing.imageId && existing.imageId !== imageId) {
+        const oldImage = existing.image;
+        if (oldImage) {
+            await removeStoredFile(oldImage, "MitraKolaborasi");
+        }
+        }
         return new Response(JSON.stringify({
             success: true,
             message: "Mitra kolaborasi berhasil diupdate",
