@@ -26,6 +26,7 @@ import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import apbdes from '../../../_state/landing-page/apbdes';
 import RealisasiManager from './RealisasiManager';
 import { ApbdesDokumenList } from '../_com/ApbdesDokumenList';
+import { SampahPanel } from '../../../_com/sampah/SampahPanel';
 
 
 
@@ -131,6 +132,7 @@ function DetailAPBDes() {
               <Box>
                 <Text fz="lg" fw="bold">Dokumen</Text>
                 <ApbdesDokumenList apbdes={data} />
+                <SampahPanel sumber="dokumen-apbdes" scopeId={data.id} onPulihkan={() => apbdesState.findUnique.load(data.id)} />
               </Box>
 
               <Group gap="sm" mt="md">
