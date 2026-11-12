@@ -19,6 +19,17 @@ export function strukturAdminRoutes(base: string) {
 
 export type StrukturAdminRoutes = ReturnType<typeof strukturAdminRoutes>;
 
+/**
+ * Tujuan redirect URL lama tab "Posisi Organisasi" (`posisi-organisasi/[[...slug]]`) ke tab Jabatan:
+ * `[]` → daftar, `['create']` → tambah, `[id]` (dulu halaman edit) → edit jabatan; selain itu → daftar.
+ */
+export function legacyJabatanRedirect(routes: StrukturAdminRoutes, slug: readonly string[] | undefined): string {
+  const [first, ...rest] = slug ?? [];
+  if (!first || rest.length > 0) return routes.jabatan;
+  if (first === 'create') return routes.jabatanCreate;
+  return routes.jabatanEdit(first);
+}
+
 /** Teks halaman admin per struktur (label umum form/tabel ada di `struktur-admin.text.ts`). */
 export type StrukturAdminText = {
   title: string;
