@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
 import {
@@ -14,43 +13,29 @@ import {
 import { IconDashboard, IconBuildingStore, IconPackage, IconShoppingCart, IconTag } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { shouldShowUmkmTabBar, visibleUmkmTabs, type UmkmTab, type UmkmTabValue } from './umkm-tabs.logic';
 
-function LayoutTabs({ children }: { children: React.ReactNode }) {
+const TAB_ICONS: Record<UmkmTabValue, React.ReactNode> = {
+  "dashboard": <IconDashboard size={18} stroke={1.8} />,
+  "data-umkm": <IconBuildingStore size={18} stroke={1.8} />,
+  "produk": <IconPackage size={18} stroke={1.8} />,
+  "penjualan": <IconShoppingCart size={18} stroke={1.8} />,
+  "kategori-produk": <IconTag size={18} stroke={1.8} />,
+};
+
+// Dihitung sekali di level modul supaya referensinya stabil untuk dependency useEffect.
+const VISIBLE_TABS = visibleUmkmTabs();
+
+const PANEL_STYLE: React.CSSProperties = {
+  padding: "1.5rem",
+  background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
+  borderRadius: "1rem",
+  boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+};
+
+function UmkmTabbed({ tabs, children }: { tabs: UmkmTab[]; children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-
-  const tabs = [
-    {
-      label: "Dashboard",
-      value: "dashboard",
-      href: "/admin/ekonomi/umkm/dashboard",
-      icon: <IconDashboard size={18} stroke={1.8} />
-    },
-    {
-      label: "Data UMKM",
-      value: "data-umkm",
-      href: "/admin/ekonomi/umkm/data-umkm",
-      icon: <IconBuildingStore size={18} stroke={1.8} />
-    },
-    {
-      label: "Produk",
-      value: "produk",
-      href: "/admin/ekonomi/umkm/produk",
-      icon: <IconPackage size={18} stroke={1.8} />
-    },
-    {
-      label: "Penjualan",
-      value: "penjualan",
-      href: "/admin/ekonomi/umkm/penjualan",
-      icon: <IconShoppingCart size={18} stroke={1.8} />
-    },
-    {
-      label: "Kategori Produk",
-      value: "kategori-produk",
-      href: "/admin/ekonomi/umkm/kategori-produk",
-      icon: <IconTag size={18} stroke={1.8} />
-    },
-  ];
 
   const currentTab = tabs.find((tab) => pathname.startsWith(tab.href));
   const [activeTab, setActiveTab] = useState<string | null>(
@@ -70,7 +55,95 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
     if (match) {
       setActiveTab(match.value);
     }
-  }, [pathname]);
+  }, [pathname, tabs]);
+
+  return (
+    <Tabs
+      color={colors['blue-button']}
+      variant="pills"
+      value={activeTab}
+      onChange={handleTabChange}
+      radius="lg"
+      keepMounted={false}
+    >
+      <Box visibleFrom='md' pb={10}>
+        <ScrollArea type="hover" offsetScrollbars>
+          <TabsList
+            p="sm"
+            style={{
+              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+              borderRadius: "1rem",
+              boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+              display: "flex",
+              flexWrap: "nowrap",
+              gap: "0.5rem",
+              paddingInline: "0.5rem",
+            }}
+          >
+            {tabs.map((tab, i) => (
+              <TabsTab
+                key={i}
+                value={tab.value}
+                leftSection={TAB_ICONS[tab.value]}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s ease",
+                  flexShrink: 0,
+                }}
+              >
+                {tab.label}
+              </TabsTab>
+            ))}
+          </TabsList>
+        </ScrollArea>
+      </Box>
+
+      <Box hiddenFrom='md' pb={10}>
+        <ScrollArea type="hover" offsetScrollbars={false} w="100%">
+          <TabsList
+            p="xs"
+            style={{
+              background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
+              borderRadius: "1rem",
+              display: "flex",
+              flexWrap: "nowrap",
+              gap: "0.5rem",
+              width: "max-content",
+              maxWidth: "100%",
+            }}
+          >
+            {tabs.map((tab, i) => (
+              <TabsTab
+                key={i}
+                value={tab.value}
+                leftSection={TAB_ICONS[tab.value]}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  paddingInline: "0.75rem",
+                  flexShrink: 0,
+                }}
+              >
+                {tab.label}
+              </TabsTab>
+            ))}
+          </TabsList>
+        </ScrollArea>
+      </Box>
+
+      {tabs.map((tab, i) => (
+        <TabsPanel key={i} value={tab.value} style={PANEL_STYLE}>
+          {children}
+        </TabsPanel>
+      ))}
+    </Tabs>
+  );
+}
+
+/** Kerangka halaman admin UMKM: judul + bar tab (hanya bila tab tampil lebih dari satu) + konten. */
+function LayoutTabs({ children }: { children: React.ReactNode }) {
+  const tabs = VISIBLE_TABS;
 
   return (
     <Stack gap="lg">
@@ -78,95 +151,11 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
         Manajemen UMKM
       </Title>
 
-      <Tabs
-        color={colors['blue-button']}
-        variant="pills"
-        value={activeTab}
-        onChange={handleTabChange}
-        radius="lg"
-        keepMounted={false}
-      >
-        <Box visibleFrom='md' pb={10}>
-          <ScrollArea type="hover" offsetScrollbars>
-            <TabsList
-              p="sm"
-              style={{
-                background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-                borderRadius: "1rem",
-                boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-                display: "flex",
-                flexWrap: "nowrap",
-                gap: "0.5rem",
-                paddingInline: "0.5rem",
-              }}
-            >
-              {tabs.map((tab, i) => (
-                <TabsTab
-                  key={i}
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    transition: "all 0.2s ease",
-                    flexShrink: 0,
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              ))}
-            </TabsList>
-          </ScrollArea>
-        </Box>
-
-        <Box hiddenFrom='md' pb={10}>
-          <ScrollArea type="hover" offsetScrollbars={false} w="100%">
-            <TabsList
-              p="xs"
-              style={{
-                background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-                borderRadius: "1rem",
-                display: "flex",
-                flexWrap: "nowrap",
-                gap: "0.5rem",
-                width: "max-content",
-                maxWidth: "100%",
-              }}
-            >
-              {tabs.map((tab, i) => (
-                <TabsTab
-                  key={i}
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.9rem",
-                    paddingInline: "0.75rem",
-                    flexShrink: 0,
-                  }}
-                >
-                  {tab.label}
-                </TabsTab>
-              ))}
-            </TabsList>
-          </ScrollArea>
-        </Box>
-
-        {tabs.map((tab, i) => (
-          <TabsPanel
-            key={i}
-            value={tab.value}
-            style={{
-              padding: "1.5rem",
-              background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
-              borderRadius: "1rem",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
-            }}
-          >
-            {children}
-          </TabsPanel>
-        ))}
-      </Tabs>
+      {shouldShowUmkmTabBar(tabs) ? (
+        <UmkmTabbed tabs={tabs}>{children}</UmkmTabbed>
+      ) : (
+        <Box style={PANEL_STYLE}>{children}</Box>
+      )}
     </Stack>
   );
 }

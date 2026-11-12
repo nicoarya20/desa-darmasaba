@@ -89,7 +89,8 @@ export const ekonomiMenu: NavItem = {
   name: "Ekonomi",
   path: "",
   children: [
-    { id: "ekonomi.umkm", name: "UMKM", path: "/admin/ekonomi/umkm/dashboard", basePath: "/admin/ekonomi/umkm" },
+    // UMKM masuk lewat Data UMKM selama tab Dashboard disembunyikan — docs/debt/2026-11-12-umkm-tab-disembunyikan.md
+    { id: "ekonomi.umkm", name: "UMKM", path: "/admin/ekonomi/umkm/data-umkm", basePath: "/admin/ekonomi/umkm" },
     { id: "ekonomi.lowongan-kerja-lokal", name: "Lowongan Kerja Lokal", path: "/admin/ekonomi/lowongan-kerja-lokal", basePath: "/admin/ekonomi/lowongan-kerja-lokal" },
     { id: "ekonomi.bumdes", name: "BUMDes", path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/profil", basePath: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes" },
     { id: "ekonomi.padesa", name: "PADesa (Pendapatan Asli Desa)", path: "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa", basePath: "/admin/ekonomi/PADesa-pendapatan-asli-desa" },
