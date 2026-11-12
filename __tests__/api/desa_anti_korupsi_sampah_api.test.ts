@@ -240,18 +240,57 @@ describe('POST /sampah/:dokumenId/pulihkan', () => {
   });
 });
 
-describe('DELETE /sampah/:dokumenId', () => {
-  it('hapus permanen hanya baris nonaktif → 200', async () => {
-    tx.dokumenDesaAntiKorupsi.deleteMany.mockResolvedValueOnce({ count: 1 });
-    expect(await desaAntiKorupsiSampahHapus(ctx({ dokumenId: 'd1' }))).toEqual({ success: true, data: { id: 'd1' } });
-    expect(tx.dokumenDesaAntiKorupsi.deleteMany).toHaveBeenCalledWith({ where: { id: 'd1', isActive: false } });
+describe('DELETE /sampah/:dokumenId — jalur hapus permanen Sampah bersama', () => {
+  beforeEach(() => {
+    resetFileForeignKeysCache();
+    prismaMock.$queryRaw.mockResolvedValue([{ tabel: 'public."DokumenDesaAntiKorupsi"', kolom: '"fileId"' }]);
+    prismaMock.$queryRawUnsafe.mockResolvedValue([{ dirujuk: false }]);
+    prismaMock.fileStorage.findUnique.mockResolvedValue({ path: 'dak', name: 'a.pdf' });
+    tx.dokumenDesaAntiKorupsi.findFirst.mockResolvedValue({ file: { id: 'f1' } });
+    tx.dokumenDesaAntiKorupsi.deleteMany.mockResolvedValue({ count: 1 });
   });
 
-  it('tidak ada / masih aktif → 404', async () => {
+  it('baris di sampah → baris, FileStorage, lalu MinIO dihapus berurutan → 200 (respons tetap)', async () => {
+    expect(await desaAntiKorupsiSampahHapus(ctx({ dokumenId: 'd1' }))).toEqual({ success: true, data: { id: 'd1' } });
+    expect(tx.dokumenDesaAntiKorupsi.findFirst.mock.calls[0][0].where).toEqual({
+      id: 'd1',
+      isActive: false,
+      deletedAt: { not: null },
+    });
+    expect(tx.dokumenDesaAntiKorupsi.deleteMany).toHaveBeenCalledWith({
+      where: { id: 'd1', isActive: false, deletedAt: { not: null } },
+    });
+    expect(prismaMock.fileStorage.delete).toHaveBeenCalledWith({ where: { id: 'f1' } });
+    expect(minioMock.removeObject).toHaveBeenCalledWith('bucket-test', 'dak/a.pdf');
+    const order = (fn: { mock: { invocationCallOrder: number[] } }) => fn.mock.invocationCallOrder[0];
+    expect(order(tx.dokumenDesaAntiKorupsi.deleteMany)).toBeLessThan(order(prismaMock.fileStorage.delete));
+    expect(order(prismaMock.fileStorage.delete)).toBeLessThan(order(minioMock.removeObject));
+  });
+
+  it('berkas masih dipakai dokumen lain → hanya baris dihapus, FileStorage & MinIO dibiarkan', async () => {
+    prismaMock.$queryRawUnsafe.mockResolvedValue([{ dirujuk: true }]);
+    expect(await desaAntiKorupsiSampahHapus(ctx({ dokumenId: 'd1' }))).toEqual({ success: true, data: { id: 'd1' } });
+    expect(tx.dokumenDesaAntiKorupsi.deleteMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
+    expect(minioMock.removeObject).not.toHaveBeenCalled();
+  });
+
+  it('tidak ada / masih aktif → 404 tanpa menghapus apa pun', async () => {
+    tx.dokumenDesaAntiKorupsi.findFirst.mockResolvedValueOnce(null);
+    const c = ctx({ dokumenId: 'd1' });
+    expect(await desaAntiKorupsiSampahHapus(c)).toEqual({ success: false, message: 'Dokumen tidak ada di tempat sampah' });
+    expect(c.set.status).toBe(404);
+    expect(tx.dokumenDesaAntiKorupsi.deleteMany).not.toHaveBeenCalled();
+    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
+  });
+
+  it('baris sudah terhapus bersamaan (deleteMany 0) → 404, berkas tidak disentuh', async () => {
     tx.dokumenDesaAntiKorupsi.deleteMany.mockResolvedValueOnce({ count: 0 });
     const c = ctx({ dokumenId: 'd1' });
     expect(await desaAntiKorupsiSampahHapus(c)).toMatchObject({ success: false });
     expect(c.set.status).toBe(404);
+    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
+    expect(minioMock.removeObject).not.toHaveBeenCalled();
   });
 });
 

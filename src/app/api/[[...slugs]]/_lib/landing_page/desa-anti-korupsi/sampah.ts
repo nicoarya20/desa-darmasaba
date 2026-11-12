@@ -80,7 +80,8 @@ export async function desaAntiKorupsiSampahHapus(context: Context) {
   if (denied) return denied;
 
   const id = context.params.dokumenId;
-  const { count } = await prisma.dokumenDesaAntiKorupsi.deleteMany({ where: { id, isActive: false } });
-  if (count === 0) return gagal(context.set, 404, "Dokumen tidak ada di tempat sampah");
+  // Jalur hapus permanen Sampah bersama (baris → FileStorage → MinIO; berkas yang masih dirujuk dilewati).
+  const result = await dokumenDakSampahSource.destroy(id);
+  if (!result.ok) return gagal(context.set, 404, "Dokumen tidak ada di tempat sampah");
   return { success: true as const, data: { id } };
 }
