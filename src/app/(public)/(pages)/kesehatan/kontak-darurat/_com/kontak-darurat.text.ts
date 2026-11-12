@@ -31,7 +31,8 @@ export const NATIONAL_TEXT = {
     '112': NATIONAL_BASE_TEXT.emergency112,
     '119': {
       name: 'Ambulans gawat darurat (PSC 119)',
+      shortName: 'Ambulans',
       description: 'Layanan Public Safety Center Kemenkes untuk kegawatdaruratan medis.',
     },
-  } satisfies Record<NationalEmergencyNumber, { name: string; description: string }>,
+  } satisfies Record<NationalEmergencyNumber, { name: string; shortName: string; description: string }>,
 } as const;

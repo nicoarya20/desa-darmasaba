@@ -27,6 +27,7 @@ export const NATIONAL_BASE_TEXT = {
   /** 112 tampil di setiap halaman kontak darurat dengan teks yang sama. */
   emergency112: {
     name: 'Panggilan darurat terpadu',
+    shortName: 'Darurat terpadu',
     description: 'Satu nomor untuk polisi, ambulans, dan pemadam kebakaran.',
   },
 } as const;

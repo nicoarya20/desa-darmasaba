@@ -18,6 +18,8 @@ export const WHATSAPP_GREEN = '#25D366';
 export type NationalEmergencyEntry = {
   number: string;
   name: string;
+  /** Nama pendek untuk kartu ringkas 2×2 di mobile (≤734px), mis. "Basarnas". */
+  shortName: string;
   description: string;
   icon: Icon;
 };

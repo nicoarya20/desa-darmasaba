@@ -113,6 +113,8 @@ describe('Blok Darurat nasional', () => {
       expect(html).not.toContain(`wa.me/${number}`);
     }
     expect(html).toContain('Satu nomor untuk polisi, ambulans, dan pemadam kebakaran.');
+    // Nama pendek untuk kartu ringkas 2×2 di mobile.
+    expect(html).toContain(`>${N.items['119'].shortName}</span></h3>`);
   });
 
   it('tetap tampil saat daftar desa memuat, gagal, atau kosong', () => {

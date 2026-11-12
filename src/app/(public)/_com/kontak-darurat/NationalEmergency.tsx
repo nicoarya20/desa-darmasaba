@@ -11,7 +11,7 @@ const TITLE_ID = 'kontak-darurat-nasional';
 /**
  * Blok "Darurat nasional" di atas daftar kontak desa: statis, selalu tampil (juga saat daftar memuat/gagal)
  * dan tidak ikut disaring kolom cari, karena bukan data desa dan harus selalu terjangkau.
- * Kartu 2 kolom (1 kolom di tablet/mobile); isi nomor ditentukan halaman pemakai.
+ * Kartu 2 kolom, 1 kolom di tablet, ringkas 2×2 di mobile (nama pendek, tanpa deskripsi); isi dari halaman pemakai.
  */
 export function NationalEmergency({ entries }: { entries: readonly NationalEmergencyEntry[] }) {
   return (
@@ -23,7 +23,7 @@ export function NationalEmergency({ entries }: { entries: readonly NationalEmerg
         <p className={page.sectionLead}>{T.lead}</p>
       </div>
       <ul className={n.grid} aria-label={T.listLabel}>
-        {entries.map(({ number, name, description, icon: Icon }) => {
+        {entries.map(({ number, name, shortName, description, icon: Icon }) => {
           // Nomor pendek → phoneInfo kind 'service': `tel:112` apa adanya, tanpa WhatsApp.
           const telHref = phoneInfo(number)?.telHref ?? `tel:${number}`;
           return (
@@ -33,7 +33,11 @@ export function NationalEmergency({ entries }: { entries: readonly NationalEmerg
               </span>
               <div className={n.body}>
                 <p className={n.number}>{number}</p>
-                <h3 className={n.name}>{name}</h3>
+                {/* Satu dari dua nama tampil sesuai lebar layar (display: none juga menyembunyikan dari pembaca layar). */}
+                <h3 className={n.name}>
+                  <span className={n.nameFull}>{name}</span>
+                  <span className={n.nameShort}>{shortName}</span>
+                </h3>
                 <p className={n.desc}>{description}</p>
               </div>
               <a href={telHref} className={`${s.btn} ${s.btnCall} ${n.call}`} aria-label={T.callLabel(number, name)}>
