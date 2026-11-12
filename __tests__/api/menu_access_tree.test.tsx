@@ -10,8 +10,8 @@ import {
   selectionFromMenuIds,
   toggleLeaf,
   toggleSection,
-} from '@/app/admin/(dashboard)/user&role/menu-access/_lib/menu-tree.logic';
-import { MenuAccessTree } from '@/app/admin/(dashboard)/user&role/menu-access/_com/MenuAccessTree';
+} from '@/app/admin/(dashboard)/pengaturan/menu-access/_lib/menu-tree.logic';
+import { MenuAccessTree } from '@/app/admin/(dashboard)/pengaturan/menu-access/_com/MenuAccessTree';
 
 const child = (id: string, name: string) => ({ id, name, path: `/admin/${id}`, basePath: `/admin/${id}` });
 const LANDING: NavItem = {

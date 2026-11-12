@@ -118,7 +118,7 @@ describe('adminGuardRedirect (guard UI layout admin)', () => {
     expect(adminGuardRedirect({ pathname: '/admin/kesehatan/posyandu/list-posyandu', roleId: 3, nav })).toBe(
       '/admin/kesehatan/puskesmas',
     );
-    expect(adminGuardRedirect({ pathname: '/admin/user&role/menu-access', roleId: 3, nav })).toBe(
+    expect(adminGuardRedirect({ pathname: '/admin/pengaturan/menu-access', roleId: 3, nav })).toBe(
       '/admin/kesehatan/puskesmas',
     );
   });

@@ -172,7 +172,6 @@ export const userRoleMenu: NavItem = {
   children: [
     { id: "user-role.user", name: "User", path: "/admin/user&role/user", basePath: "/admin/user&role/user" },
     { id: "user-role.role", name: "Role", path: "/admin/user&role/role", basePath: "/admin/user&role/role" },
-    { id: "user-role.menu-access", name: "Menu Access", path: "/admin/user&role/menu-access", basePath: "/admin/user&role/menu-access" },
   ],
 }
 
@@ -184,5 +183,6 @@ export const pengaturanMenu: NavItem = {
   path: "",
   children: [
     { id: "pengaturan.visibilitas-menu", name: "Visibilitas Menu", path: "/admin/pengaturan/visibilitas-menu", basePath: "/admin/pengaturan/visibilitas-menu" },
+    { id: "pengaturan.menu-access", name: "Menu Access", path: "/admin/pengaturan/menu-access", basePath: "/admin/pengaturan/menu-access" },
   ],
 }
