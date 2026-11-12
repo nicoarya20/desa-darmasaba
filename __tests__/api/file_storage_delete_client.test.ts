@@ -47,6 +47,12 @@ describe('hapus dari pustaka file → request DELETE terkirim', () => {
     expect(deleteCalls()).toEqual(['/api/fileStorage/delete/img-9']);
   });
 
+  it('asal menu opsional dikirim sebagai ?from= (di-encode), tanpa body/Content-Type', async () => {
+    await hapusBerkasKeSampah('f6', 'ekonomi.bumdes');
+    expect(deleteCalls()).toEqual(['/api/fileStorage/delete/f6?from=ekonomi.bumdes']);
+    expect(fetchSpy.mock.calls[0][1]).toEqual({ method: 'DELETE' });
+  });
+
   it('409 masih dipakai → Error berkonteks memuat pesan server, daftar tidak dimuat ulang', async () => {
     stubFetch(() => json({ success: false, message: 'File masih dipakai data lain' }, 409));
     await expect(stateListImage.del({ id: 'f2' })).rejects.toThrow(
