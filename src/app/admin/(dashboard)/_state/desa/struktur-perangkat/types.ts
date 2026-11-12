@@ -1,14 +1,13 @@
-import type { PEGAWAI_SELECT, POSISI_SELECT } from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/http";
-import type { Prisma } from "@prisma/client";
+import type { StrukturPegawai, StrukturPosisi } from "@/app/api/[[...slugs]]/_lib/_struktur-organisasi";
 
 // Tipe diturunkan dari select API agar selalu sama dengan kontrak respons (type-only, tanpa kode server di bundle).
 // Field tanggal bertipe Date karena Eden (ApiFetch) mem-parse string ISO menjadi Date.
 
 /** Jabatan Struktur Perangkat Desa (kontrak `Posisi`). */
-export type Posisi = Prisma.PosisiPerangkatDesaGetPayload<{ select: typeof POSISI_SELECT }>;
+export type Posisi = StrukturPosisi;
 
 /** Pegawai Struktur Perangkat Desa (kontrak `Pegawai`). */
-export type Pegawai = Prisma.PerangkatDesaGetPayload<{ select: typeof PEGAWAI_SELECT }>;
+export type Pegawai = StrukturPegawai;
 
 /** Form admin jabatan; string kosong dikirim apa adanya dan disimpan server sebagai null. */
 export type PosisiForm = {

@@ -1,7 +1,7 @@
 import { toForeignKeyResponse } from "@/lib/prisma-error";
-import type { Prisma } from "@prisma/client";
 import type { NormalizeResult } from "@/lib/struktur-organisasi";
 import { z, type ZodError } from "zod";
+import { liveCount, type StrukturApiConfig } from "./config";
 
 // Context Elysia dilonggarkan: handler hanya menulis `set.status`.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- tipe status Elysia (union StatusMap) terlalu spesifik
@@ -50,6 +50,11 @@ export const POSISI_SELECT = {
   _count: { select: { pegawai: true } },
 } as const;
 
+/** `POSISI_SELECT` dengan jumlah pegawai yang belum dihapus (soft-delete). */
+export function posisiSelect(config: StrukturApiConfig) {
+  return { ...POSISI_SELECT, _count: { select: { pegawai: liveCount(config) } } };
+}
+
 /** Field pegawai yang dikirim ke klien (kontrak `Pegawai`); gambar tanpa path server. */
 export const PEGAWAI_SELECT = {
   id: true,
@@ -69,8 +74,8 @@ export const PEGAWAI_SELECT = {
 } as const;
 
 /** Urutan default list pegawai: level bagan, urutan jabatan, lalu nama. */
-export const PEGAWAI_ORDER: Prisma.PerangkatDesaOrderByWithRelationInput[] = [
+export const PEGAWAI_ORDER = [
   { posisi: { hierarki: "asc" } },
   { posisi: { urutan: "asc" } },
   { namaLengkap: "asc" },
-];
+] as const;
