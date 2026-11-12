@@ -23,6 +23,7 @@ export const APBDES_TEXT = {
   pageLead: "Laporan transparansi APBDes Desa Darmasaba sebagai bentuk keterbukaan dan akuntabilitas pengelolaan anggaran desa.",
   documentTitle: "Dokumen APBDes",
   download: "Unduh dokumen",
+  downloadLabel: (judul: string) => `Unduh ${judul}`,
   posCount: (n: number) => `${n} pos`,
   emptyAll: "Data APBDes belum tersedia.",
   emptyYear: (tahun: number) => `Belum ada rincian anggaran untuk tahun ${tahun}.`,
