@@ -20,7 +20,8 @@ const WARNA_BALI = { '--ev': '#e09a1a' } as CSSProperties;
 /**
  * Legenda kategori ala daftar kalender Outlook: kotak warna + nama + jumlah acara tahun ini.
  * Klik menyembunyikan/menampilkan kategori itu. Hanya kategori yang punya acara yang ditampilkan;
- * bila cuma satu, legenda tetap tampil sebagai keterangan warna (tanpa tombol). Di bawahnya saklar
+ * bila cuma satu, legenda tampil sebagai keterangan warna: titik warna, bukan kotak centang (kotak
+ * centang yang tak bisa diklik terbaca seperti tombol rusak). Di bawahnya saklar
  * lapisan "Rerainan Bali" (selalu ada, juga saat belum ada agenda).
  */
 export function AgendaKategori({ tersedia, tersembunyi, onToggle, tampilRerainan, onToggleRerainan }: Props) {
@@ -34,9 +35,13 @@ export function AgendaKategori({ tersedia, tersembunyi, onToggle, tampilRerainan
           const aktif = !tersembunyi.includes(kategori);
           const isi = (
             <>
-              <span className={s.legendBox} aria-hidden>
-                {aktif && <IconCheck size={12} stroke={3} />}
-              </span>
+              {bisaSaring ? (
+                <span className={s.legendBox} aria-hidden>
+                  {aktif && <IconCheck size={12} stroke={3} />}
+                </span>
+              ) : (
+                <span className={s.legendDot} aria-hidden />
+              )}
               <span className={s.legendName}>{KATEGORI_EVENT_LABEL[kategori]}</span>
               <span className={s.legendCount}>{jumlah}</span>
             </>

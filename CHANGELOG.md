@@ -9,6 +9,7 @@
 - Jumlah acara bulan ini kini tampil di bawah judul bulan, di samping keterangan sasih.
 - Garis warna kategori di kartu "Acara terdekat" kini berupa batang lurus.
 - Teks pengantar halaman Agenda tidak lagi memakai tanda pisah panjang (em dash).
+- Bila semua acara masih satu kategori (mis. Budaya), daftar Kategori kini menampilkan titik warna sebagai keterangan, bukan kotak centang yang tak bisa diklik. Kotak centang untuk menyaring muncul begitu ada lebih dari satu kategori.
 
 ## [0.1.253] - 2026-11-12
 ### Added
