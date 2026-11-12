@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
 import { susunBeritaUpdate, type BeritaBody } from "@/lib/berita-data";
 import { parseTanggalTerbit } from "@/lib/tanggal-terbit";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 async function beritaUpdate(context: Context) {
   try {
@@ -43,21 +43,6 @@ async function beritaUpdate(context: Context) {
       );
     }
 
-    // Delete old featured image if changed
-    if (existing.imageId && existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        try {
-          await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (err) {
-          console.error("Gagal hapus gambar lama:", err);
-        }
-      }
-    }
-
     const updated = await prisma.berita.update({
       where: { id },
       data: susunBeritaUpdate(body, tanggal.data),
@@ -67,6 +52,14 @@ async function beritaUpdate(context: Context) {
         kategoriBerita: true,
       },
     });
+
+    // Delete old featured image if changed
+    if (existing.imageId && existing.imageId !== imageId) {
+      const oldImage = existing.image;
+      if (oldImage) {
+        await removeStoredFile(oldImage, "Berita");
+      }
+    }
 
     return new Response(
       JSON.stringify({
