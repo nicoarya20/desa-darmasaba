@@ -4,7 +4,6 @@ import type { Tipe } from "./apbdes.logic";
 export const APBDES_TEXT = {
   title: "APBDes",
   lead: "Transparansi APBDes Darmasaba adalah langkah nyata menuju tata kelola desa yang bersih, terbuka, dan bertanggung jawab.",
-  yearLabel: "Pilih tahun APBDes",
   singleYear: (tahun: number) => `Tahun ${tahun}`,
   updatedAt: (tanggal: string) => `Data diperbarui ${tanggal}`,
   tipe: { pendapatan: "Pendapatan", belanja: "Belanja", pembiayaan: "Pembiayaan" } satisfies Record<Tipe, string>,
