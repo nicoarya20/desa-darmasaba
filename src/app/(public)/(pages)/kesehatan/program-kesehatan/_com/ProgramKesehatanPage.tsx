@@ -1,14 +1,14 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
-import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { paginate, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { ProgramManfaat } from './ProgramManfaat';
-import { paginate, programListHref } from './program.logic';
+import { programListHref } from './program.logic';
 import { PROGRAM_PAGE_LIMIT } from './program.meta';
 import s from './program.module.css';
 import { PROGRAM_TEXT as T } from './program.text';

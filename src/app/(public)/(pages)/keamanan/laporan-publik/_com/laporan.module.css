@@ -1,0 +1,206 @@
+/*
+ * Daftar Laporan Publik — di bawah kepala Kabar (`KabarListHeader`): baris judul bagian + tombol Tambah Laporan,
+ * lalu panel #f5f5f7 radius 18px berisi baris bergaris pemisah (pola daftar Pengumuman, tanpa thumbnail).
+ * Variabel warna (--brand, --tile, --line, --ink, --muted, --subtle, --radius) dari `.section` kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 20px;
+}
+
+.toolbarTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: filter 200ms ease;
+}
+
+.addButton:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* ---------- Panel baris ---------- */
+.panel {
+  margin: 0;
+  padding: 8px 32px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  list-style: none;
+}
+
+.panel > li + li {
+  border-top: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 20px 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 16px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.lokasi {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.lokasi svg {
+  flex: none;
+  color: var(--subtle);
+}
+
+.chevron {
+  color: var(--subtle);
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* ---------- Kerangka memuat ---------- */
+.rowPlaceholder {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 0;
+}
+
+.bar {
+  height: 16px;
+  width: 60%;
+  border-radius: 6px;
+  background: #e8e8ed;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.barShort {
+  width: 35%;
+  height: 12px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover .title {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .addButton:hover {
+    filter: brightness(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+  }
+}
+
+/* Mobile: status naik ke atas judul, lokasi & waktu bertumpuk, chevron di kanan. */
+@media (max-width: 734px) {
+  .toolbarTitle {
+    font-size: 21px;
+  }
+
+  .panel {
+    padding: 4px 16px;
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    padding: 16px 0;
+  }
+
+  .status {
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .body {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  .chevron {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+  }
+
+  .title {
+    -webkit-line-clamp: 3;
+  }
+
+  .meta {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+}

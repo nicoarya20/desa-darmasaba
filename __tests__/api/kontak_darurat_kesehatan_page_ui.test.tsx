@@ -15,10 +15,8 @@ import { KontakDaruratView } from '@/app/(public)/(pages)/kesehatan/kontak-darur
 import { KontakDaruratDetailView } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/detail/KontakDaruratDetail';
 import type { KontakDarurat } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/kontak-darurat.logic';
 import type { KontakListState } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/use-kontak-darurat';
-import {
-  KONTAK_SEARCH_THRESHOLD,
-  NATIONAL_EMERGENCY_NUMBERS,
-} from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/kontak-darurat.meta';
+import { NATIONAL_EMERGENCY_NUMBERS } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/kontak-darurat.meta';
+import { KONTAK_SEARCH_THRESHOLD } from '@/app/(public)/_com/kontak-darurat/kontak-darurat.meta';
 import {
   NATIONAL_TEXT as N,
   KONTAK_TEXT as T,
@@ -115,6 +113,8 @@ describe('Blok Darurat nasional', () => {
       expect(html).not.toContain(`wa.me/${number}`);
     }
     expect(html).toContain('Satu nomor untuk polisi, ambulans, dan pemadam kebakaran.');
+    // Nama pendek untuk kartu ringkas 2×2 di mobile.
+    expect(html).toContain(`>${N.items['119'].shortName}</span></h3>`);
   });
 
   it('tetap tampil saat daftar desa memuat, gagal, atau kosong', () => {

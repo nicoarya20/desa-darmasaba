@@ -1,8 +1,8 @@
 /*
- * Daftar Kontak Darurat Kesehatan — "call-first": panel #f5f5f7 radius 18px berisi baris bergaris pemisah
- * (pola panel Pengumuman), tiap baris menampilkan nomor besar + tombol Telepon/WhatsApp tanpa harus membuka detail.
- * Kerangka/kepala halaman dari layanan.module.css (variabel --ink, --muted, --subtle, --tile, --line, --radius);
- * --brand dari KONTAK_BRAND_VARS. Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
+ * Daftar kontak darurat "call-first" (dipakai Kesehatan & Keamanan): panel #f5f5f7 radius 18px berisi baris
+ * bergaris pemisah (pola panel Pengumuman), tiap baris menampilkan nomor besar + tombol Telepon/WhatsApp tanpa
+ * harus membuka detail. Kerangka/kepala halaman dari layanan.module.css (variabel --ink, --muted, --subtle,
+ * --tile, --line, --radius); --brand dari KONTAK_BRAND_VARS. Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
  * Thumbnail berukuran tetap (bukan aspect-ratio) supaya tinggi baris tidak bergantung pada resolusi Safari lama.
  */
 .panel {

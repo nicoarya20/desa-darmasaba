@@ -1,14 +1,14 @@
 import { IconBrandWhatsapp, IconPhone } from '@tabler/icons-react';
-import type { PhoneInfo } from './kontak-darurat.logic';
 import { WHATSAPP_GREEN } from './kontak-darurat.meta';
 import s from './kontak-darurat.module.css';
-import { KONTAK_TEXT as T, PHONE_KIND_LABEL } from './kontak-darurat.text';
+import { PHONE_KIND_LABEL, KONTAK_CALL_TEXT as T } from './kontak-darurat.text';
+import type { PhoneInfo } from './kontak-phone.logic';
 
 type Props = { name: string; phone: PhoneInfo | null; variant?: 'row' | 'detail' };
 
 /**
  * Nomor besar + tombol Telepon (`tel:`, tanpa tab baru) dan WhatsApp (wa.me, tab baru, hanya nomor seluler).
- * Nomor kosong → "Nomor belum diisi" tanpa tombol.
+ * Nomor kosong → "Nomor belum diisi" tanpa tombol. `variant="detail"`: panel nomor di halaman detail.
  */
 export function KontakActions({ name, phone, variant = 'row' }: Props) {
   const detail = variant === 'detail';

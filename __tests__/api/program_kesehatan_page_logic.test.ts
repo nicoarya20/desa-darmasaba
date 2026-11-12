@@ -7,8 +7,9 @@ vi.mock('@/lib/api-fetch', () => ({
   default: { api: { kesehatan: { programkesehatan: { 'find-many': { get: programGet } } } } },
 }));
 
-const { formatPersen, isIndikator, paginate, programDetailHref, programListHref, toKegiatanList, toProgramItem } =
+const { formatPersen, isIndikator, programDetailHref, programListHref, toKegiatanList, toProgramItem } =
   await import('@/app/(public)/(pages)/kesehatan/program-kesehatan/_com/program.logic');
+const { paginate } = await import('@/app/(public)/_com/kabar-list/kabar-list.logic');
 const { loadProgramDetail, loadProgramKesehatan } = await import(
   '@/app/(public)/(pages)/kesehatan/program-kesehatan/_com/program.source'
 );

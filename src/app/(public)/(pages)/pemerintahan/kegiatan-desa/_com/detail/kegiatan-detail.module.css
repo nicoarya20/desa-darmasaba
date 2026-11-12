@@ -1,6 +1,6 @@
 /*
  * Detail kegiatan — bagian khusus Kegiatan Desa di atas kerangka artikel bersama (kabar-list/kabar-detail.module.css):
- * ringkasan, baris lokasi/partisipan, foto dokumentasi bersudut lancip (senada kartu daftar), panel progres pembangunan.
+ * ringkasan, baris lokasi/partisipan, panel progres pembangunan (foto dokumentasi: `.photo` kabar-detail.module.css).
  * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --radius) dari kabar.module.css.
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
@@ -38,25 +38,6 @@
   color: var(--subtle);
 }
 
-/* ---------- Foto ---------- */
-.photo {
-  margin: 0;
-  overflow: hidden;
-  background: #e8e8ed;
-}
-
-.photo a {
-  display: block;
-}
-
-.photoImg {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: min(80vh, 720px);
-  object-fit: cover;
-}
-
 /* ---------- Progres pembangunan ---------- */
 .block {
   display: flex;
@@ -76,11 +57,6 @@
   padding: 24px;
   border-radius: var(--radius);
   background: var(--tile);
-}
-
-.photo a:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 3px;
 }
 
 /* ---------- Mobile ---------- */

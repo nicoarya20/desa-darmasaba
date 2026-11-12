@@ -2,7 +2,7 @@ import { formatHitungan, persenTampil, type BanjarStatsRow, type PersenKey, type
 import { banjarLabel } from "./posyandu.logic";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
 import { BanjarStatsPanel, type BanjarStatsData } from "./BanjarStatsPanel";
-import type { LoadState } from "./use-posyandu-data";
+import type { LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import r from "./posyandu-rows.module.css";
 
 const COLUMNS: { key: PersenKey; label: string }[] = [

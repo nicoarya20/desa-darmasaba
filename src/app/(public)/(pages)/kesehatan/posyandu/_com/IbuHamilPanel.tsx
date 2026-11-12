@@ -1,7 +1,7 @@
 import { banjarLabel, formatHitungan, type BanjarStatsRow, type PosyanduStats } from "./posyandu.logic";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
 import { BanjarStatsPanel, type BanjarStatsData } from "./BanjarStatsPanel";
-import type { LoadState } from "./use-posyandu-data";
+import type { LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import r from "./posyandu-rows.module.css";
 
 type Props = { desa: LoadState<PosyanduStats>; banjar: LoadState<BanjarStatsRow[]>; onRetry: () => void };

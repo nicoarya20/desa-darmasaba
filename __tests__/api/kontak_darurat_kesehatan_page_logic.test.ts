@@ -1,9 +1,9 @@
 // @vitest-environment node
 // Logika Kontak Darurat Kesehatan: jenis nomor, href tel:/wa.me, format tampil, deskripsi → teks, cari di klien.
 import { describe, expect, it } from 'vitest';
+import { phoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic';
 import {
   filterKontak,
-  phoneInfo,
   toPlainText,
   type KontakDarurat,
 } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/kontak-darurat.logic';

@@ -1,0 +1,41 @@
+/*
+ * Detail Pencegahan Kriminalitas — bagian khusus di atas kerangka artikel bersama (kabar-list/kabar-detail.module.css):
+ * ringkasan dan tautan video non-YouTube. Video YouTube memakai fasad di ../pencegahan.module.css.
+ * Variabel warna (--brand, --muted) dari kabar.module.css. Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 21px;
+  line-height: 1.43;
+  overflow-wrap: anywhere;
+}
+
+.videoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: auto;
+  color: var(--brand);
+  font-size: 17px;
+  text-decoration: none;
+}
+
+.videoLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .videoLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+@media (max-width: 734px) {
+  .lead {
+    font-size: 19px;
+    line-height: 1.42;
+  }
+}

@@ -20,10 +20,25 @@ type Props = {
   search: string;
   /** Kirim kata kunci baru ke URL (dipanggil setelah jeda ketik atau Enter). */
   onSearch: (next: string) => void;
+  /** `false` → kolom cari tidak dirender (daftar pendek); bawaan `true`. */
+  searchable?: boolean;
 };
 
-/** Kepala halaman daftar Kabar: kembali, judul + pengantar, kolom cari, lalu pil kategori (tautan; tidak dirender bila `tabs` kosong). */
-export function KabarListHeader({ title, lead, searchLabel, searchPlaceholder, kategoriLabel, tabs, search, onSearch }: Props) {
+/**
+ * Kepala halaman daftar Kabar: kembali, judul + pengantar, kolom cari (kecuali `searchable=false`), lalu pil kategori
+ * (tautan; tidak dirender bila `tabs` kosong).
+ */
+export function KabarListHeader({
+  title,
+  lead,
+  searchLabel,
+  searchPlaceholder,
+  kategoriLabel,
+  tabs,
+  search,
+  onSearch,
+  searchable = true,
+}: Props) {
   const searchId = useId();
   const [value, setValue] = useState(search);
   const [prevSearch, setPrevSearch] = useState(search);
@@ -73,21 +88,23 @@ export function KabarListHeader({ title, lead, searchLabel, searchPlaceholder, k
           <h1 className={s.title}>{title}</h1>
           <p className={s.lead}>{lead}</p>
         </div>
-        <form role="search" className={s.search} onSubmit={onSubmit}>
-          <label htmlFor={searchId} className={s.srOnly}>
-            {searchLabel}
-          </label>
-          <IconSearch className={s.searchIcon} size={18} stroke={1.75} aria-hidden />
-          <input
-            id={searchId}
-            type="search"
-            className={s.searchInput}
-            placeholder={searchPlaceholder}
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            autoComplete="off"
-          />
-        </form>
+        {searchable ? (
+          <form role="search" className={s.search} onSubmit={onSubmit}>
+            <label htmlFor={searchId} className={s.srOnly}>
+              {searchLabel}
+            </label>
+            <IconSearch className={s.searchIcon} size={18} stroke={1.75} aria-hidden />
+            <input
+              id={searchId}
+              type="search"
+              className={s.searchInput}
+              placeholder={searchPlaceholder}
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              autoComplete="off"
+            />
+          </form>
+        ) : null}
       </div>
       {/* Halaman tanpa kategori (Program Kesehatan) memberi `tabs=[]`: tanpa <nav> kosong & jarak sisa. */}
       {tabs.length > 0 ? (
