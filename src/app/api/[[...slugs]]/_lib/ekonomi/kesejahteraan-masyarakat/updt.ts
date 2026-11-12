@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { Prisma } from "@prisma/client";
-import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import removeReleasedFiles, { fileIds } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 type FormUpdate = {
   id: string;
@@ -77,13 +77,12 @@ async function kesejahteraanUpdate(context: Context) {
       },
     });
 
-    // Delete old featured image if changed
-    if (existing.imageId && existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        await removeStoredFile(oldImage, "KesejahteraanMasyarakat");
-      }
-    }
+    // Gambar utama & galeri yang dilepas dipindah ke Sampah setelah update sukses.
+    await removeReleasedFiles(
+      "KesejahteraanMasyarakat",
+      fileIds(existing.imageId, existing.images),
+      fileIds(updated.imageId, updated.images),
+    );
 
     return new Response(
       JSON.stringify({
