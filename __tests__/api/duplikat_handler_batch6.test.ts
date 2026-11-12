@@ -1,7 +1,8 @@
 // @vitest-environment node
 // Fase 1 batch 6: sisa marginal — program inovasi (name), pejabat desa (name),
-// pegawai bumdes (email), pegawai PPID (email). P2002 → 409 "<Field> sudah dipakai".
-// pejabat-desa & ppid-pegawai updt memakai Response.json → cek via res.status.
+// pegawai bumdes (email). P2002 → 409 "<Field> sudah dipakai".
+// pejabat-desa updt memakai Response.json → cek via res.status.
+// Pegawai PPID tidak lagi diuji di sini: email PPID tidak unik sejak migrasi 20261112180000_struktur_fleksibel.
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Prisma } from "@prisma/client";
 
@@ -9,7 +10,6 @@ const prismaMock = vi.hoisted(() => ({
   programInovasi: { create: vi.fn(), update: vi.fn() },
   pejabatDesa: { findUnique: vi.fn(), update: vi.fn() },
   pegawaiBumDes: { update: vi.fn() },
-  pegawaiPPID: { findUnique: vi.fn(), update: vi.fn() },
   fileStorage: { delete: vi.fn() },
 }));
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
@@ -22,7 +22,6 @@ import programInovasiCreate from "@/app/api/[[...slugs]]/_lib/landing_page/profi
 import programInovasiUpdate from "@/app/api/[[...slugs]]/_lib/landing_page/profile/program-inovasi/updt";
 import pejabatDesaUpdate from "@/app/api/[[...slugs]]/_lib/landing_page/profile/pejabat-desa/updt";
 import pegawaiBumdesUpdate from "@/app/api/[[...slugs]]/_lib/ekonomi/struktur-bumdes/pegawai/updt";
-import pegawaiPPIDUpdate from "@/app/api/[[...slugs]]/_lib/ppid/struktur_ppid/pegawai/updt";
 
 function p2002(target: string[]) {
   return new Prisma.PrismaClientKnownRequestError("Unique constraint failed", {
@@ -78,22 +77,12 @@ describe("pejabat desa — duplikat nama (Response.json 409)", () => {
   });
 });
 
-describe("pegawai bumdes & PPID — duplikat email → 409", () => {
+describe("pegawai bumdes — duplikat email → 409", () => {
   it("pegawai bumdes update P2002(email) → 409 'Email sudah dipakai'", async () => {
     prismaMock.pegawaiBumDes.update.mockRejectedValueOnce(p2002(["email"]));
     const c = ctx({ id: "pb1", namaLengkap: "A", email: "a@x.com" });
     const res = await pegawaiBumdesUpdate(c);
     expect(c.set.status).toBe(409);
     expect(res).toEqual({ success: false, message: "Email sudah dipakai" });
-  });
-
-  it("pegawai PPID update P2002(email) → Response 409 + body 'Email sudah dipakai'", async () => {
-    prismaMock.pegawaiPPID.findUnique.mockResolvedValueOnce({ id: "pp1", imageId: "i", image: null });
-    prismaMock.pegawaiPPID.update.mockRejectedValueOnce(p2002(["email"]));
-    const c = ctx({ name: "A", email: "a@x.com", imageId: "i" }, "pp1");
-    const res: Response = await pegawaiPPIDUpdate(c);
-    expect(res.status).toBe(409);
-    const body = await res.json();
-    expect(body).toEqual({ success: false, message: "Email sudah dipakai" });
   });
 });

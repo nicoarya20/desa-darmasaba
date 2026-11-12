@@ -7,11 +7,9 @@ import { desaMenu } from '@/app/admin/_com/nav/domains';
 import {
   alasanTolakHapus,
   atasanNama,
-  formatTanggal,
   isActiveDari,
   isPegawaiFormValid,
   isPosisiFormValid,
-  namaDenganGelar,
   parentOptions,
   pegawaiFormErrors,
   tampil,
@@ -27,12 +25,9 @@ const PATH = '/admin/pemerintahan/struktur-perangkat-desa/pegawai';
 // test-only: form kosong + jabatan seed (perbekel → sekdes → kaur, perbekel → kasi)
 const form = (over: Partial<PegawaiFormValues> = {}): PegawaiFormValues => ({
   namaLengkap: '',
-  gelarAkademik: '',
   imageId: '',
-  tanggalMasuk: '',
   email: '',
   telepon: '',
-  alamat: '',
   posisiId: '',
   isActive: true,
   ...over,
@@ -86,12 +81,6 @@ describe('validasi form pegawai', () => {
     expect(isPegawaiFormValid(form({ ...base, email: 'ari@darmasaba.id' }))).toBe(true);
     expect(isPegawaiFormValid(form({ ...base, email: '' }))).toBe(true);
   });
-
-  it('tanggal masuk dicek hanya bila diisi', () => {
-    const base = { namaLengkap: 'I Made Ari', posisiId: 'pd-perbekel' };
-    expect(pegawaiFormErrors(form({ ...base, tanggalMasuk: '2026-02-31' }))).toHaveProperty('tanggalMasuk');
-    expect(isPegawaiFormValid(form({ ...base, tanggalMasuk: '2026-02-28' }))).toBe(true);
-  });
 });
 
 describe('form jabatan', () => {
@@ -134,16 +123,7 @@ describe('tampilan nilai', () => {
     expect(tampil(' S.Kom ')).toBe('S.Kom');
   });
 
-  it('tanggal UTC berbahasa Indonesia; kosong/invalid → "—"', () => {
-    expect(formatTanggal(new Date('2026-11-12T00:00:00.000Z'))).toBe('12 November 2026');
-    expect(formatTanggal('2026-01-05T00:00:00.000Z')).toBe('5 Januari 2026');
-    expect(formatTanggal(null)).toBe('—');
-    expect(formatTanggal('bukan-tanggal')).toBe('—');
-  });
-
-  it('nama dengan gelar & filter status', () => {
-    expect(namaDenganGelar('I Made Ari', 'S.Kom')).toBe('I Made Ari, S.Kom');
-    expect(namaDenganGelar('I Made Ari', null)).toBe('I Made Ari');
+  it('filter status → parameter isActive', () => {
     expect([isActiveDari('semua'), isActiveDari('aktif'), isActiveDari('nonaktif')]).toEqual([undefined, true, false]);
   });
 });
