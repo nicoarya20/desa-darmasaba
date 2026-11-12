@@ -40,15 +40,16 @@ vi.mock('@/app/(public)/(pages)/pemerintahan/profil/_com/use-load-once', () => (
 import Page from '@/app/(public)/(pages)/pemerintahan/profil/page';
 import StrukturPerangkatPage from '@/app/(public)/(pages)/pemerintahan/profil/struktur-perangkat-desa/page';
 import { KANTOR_MAP_EMBED_URL, PERBEKEL_NAME, strukturPerangkatHref } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.meta';
+import { STRUKTUR_PERANGKAT_TEXT } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.text';
 import MaskotDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/maskotDesa';
 import MotoDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/motoDesa';
 import ProfilPerbekel from '@/app/(public)/(pages)/pemerintahan/profil/ui/profilPerbekel';
 import SemuaPerbekel from '@/app/(public)/(pages)/pemerintahan/profil/ui/semuaPerbekel';
 import VisiMisiDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/visimisiDesa';
 import WilayahDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/wilayahDesa';
-import { StrukturBody } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/StrukturBody';
-import type { OrgNode } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur.logic';
-import type { StrukturData } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/use-struktur-data';
+import { StrukturBody } from '@/app/(public)/_com/struktur-organisasi/StrukturBody';
+import type { OrgNode } from '@/app/(public)/_com/struktur-organisasi/struktur.logic';
+import type { StrukturData } from '@/app/(public)/_com/struktur-organisasi/use-struktur-data';
 
 const render = (ui: ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const count = (source: string, needle: string | RegExp) => source.split(needle).length - 1;
@@ -215,6 +216,13 @@ describe('Struktur Perangkat Desa — bagan baru', () => {
     expect(html).not.toContain('/ppid/struktur-ppid/');
     expect(html).toContain('aria-label="Bagan struktur perangkat desa"');
     expect(html).toContain('Belum ditugaskan');
+  });
+
+  it('tanpa data → "Data sedang disiapkan" + hint perangkat desa', () => {
+    const empty = { ...data, tree: [], visible: [] } as StrukturData;
+    const html = render(<StrukturBody data={empty} label="Bagan struktur perangkat desa" emptyHint={STRUKTUR_PERANGKAT_TEXT.emptyHint} hrefFor={strukturPerangkatHref} />);
+    expect(html).toContain('Data sedang disiapkan');
+    expect(html).toContain('Belum ada perangkat desa aktif yang tercatat.');
   });
 
   it('halaman mandiri: h1, kotak cari, kerangka saat memuat, tanpa zoom/fullscreen', () => {

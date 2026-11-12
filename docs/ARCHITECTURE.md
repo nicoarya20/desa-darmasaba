@@ -21,7 +21,7 @@ Browser → Next.js proxy (src/proxy.ts, runtime nodejs)
                        └── _lib/*.ts  (domain modules)
 ```
 
-The Elysia server is a single entry point with domain-specific modules: `desa/`, `kesehatan/`, `ekonomi/`, `keamanan/`, `lingkungan/`, `pendidikan/`, `kependudukan/`, `ppid/`, `inovasi/`, `landing_page/`, `search/`, `auth/`, `user/`, `fileStorage/`, `menu_visibility/` (override tampil/sembunyi submenu publik; GET publik, PUT khusus role 0/1). Swagger docs are auto-generated at `/api/docs`.
+The Elysia server is a single entry point with domain-specific modules: `desa/`, `kesehatan/`, `ekonomi/`, `keamanan/`, `lingkungan/`, `pendidikan/`, `kependudukan/`, `ppid/`, `inovasi/`, `landing_page/`, `search/`, `auth/`, `user/`, `fileStorage/`, `menu_visibility/` (override tampil/sembunyi submenu publik; GET publik, PUT khusus role 0/1). Swagger docs are auto-generated at `/api/docs`. Struktur organisasi (Perangkat Desa, PPID, BUMDes) memakai tabel terpisah per domain dengan kode bersama — lihat `docs/decisions/2026-11-12-struktur-perangkat-desa.md`.
 
 Note: `auth` login/session endpoints are now mostly handled by Better Auth's own catch-all route (`src/app/api/auth/[...all]/route.ts`), outside the Elysia server — the `auth/` module inside `_lib/` only covers the remaining custom auth-adjacent logic. `musik` is not a top-level API module; it's a sub-module nested under `desa/` (`_lib/desa/musik`), even though it has its own top-level admin/public page folders.
 

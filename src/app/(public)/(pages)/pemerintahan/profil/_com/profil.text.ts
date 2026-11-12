@@ -66,4 +66,5 @@ export const STRUKTUR_PERANGKAT_TEXT = {
   lead: 'Susunan perangkat Desa Darmasaba beserta pegawai yang bertugas. Pilih kartu untuk melihat profil lengkap.',
   chartLabel: 'Bagan struktur perangkat desa',
   emptyHint: 'Belum ada perangkat desa aktif yang tercatat.',
+  detail: { infoTitle: 'Informasi Pegawai', notFound: 'Profil perangkat desa tidak ditemukan.' },
 } as const;
