@@ -6,6 +6,15 @@ import {
 } from "@/lib/pengumuman-lampiran";
 import { Context } from "elysia";
 import { validasiLampiran } from "./lampiran-check";
+import removeReleasedFiles, { fileIds } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
+
+/** Rujukan berkas pengumuman yang dibandingkan sebelum/sesudah update. */
+const BERKAS_SELECT = {
+  id: true,
+  imageId: true,
+  images: { select: { id: true } },
+  dokumen: { select: { id: true } },
+} as const;
 
 const json = (body: unknown, status: number) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -20,7 +29,7 @@ async function pengumumanUpdate(context: Context) {
       return json({ success: false, message: "ID tidak boleh kosong" }, 400);
     }
 
-    const existing = await prisma.pengumuman.findUnique({ where: { id }, select: { id: true } });
+    const existing = await prisma.pengumuman.findUnique({ where: { id }, select: BERKAS_SELECT });
     if (!existing) {
       return json({ success: false, message: "pengumuman tidak ditemukan" }, 404);
     }
@@ -30,13 +39,18 @@ async function pengumumanUpdate(context: Context) {
       return json({ success: false, message: lampiran.message }, 400);
     }
 
-    // Berkas MinIO lampiran yang dilepas tidak dihapus (sama seperti dokumen Desa Anti Korupsi):
-    // repo belum punya pembersih berkas yatim — lihat docs/decisions/2026-11-10-pengumuman-lampiran.md.
     const updated = await prisma.pengumuman.update({
       where: { id },
       data: susunDataUpdate(body, lampiran.data),
       include: PENGUMUMAN_DETAIL_INCLUDE,
     });
+
+    // Berkas yang dilepas (gambar utama/galeri/dokumen) dipindah ke Sampah setelah update sukses.
+    await removeReleasedFiles(
+      "Pengumuman",
+      fileIds(existing.imageId, existing.images, existing.dokumen),
+      fileIds(updated.imageId, updated.images, updated.dokumen),
+    );
 
     return json({ success: true, message: "pengumuman berhasil diupdate", data: updated }, 200);
   } catch (error) {

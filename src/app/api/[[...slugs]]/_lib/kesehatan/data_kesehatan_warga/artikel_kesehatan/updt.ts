@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 type ArtikelKesehatanInput = {
   title: string;
@@ -99,6 +100,7 @@ const artikelKesehatanUpdate = async (context: Context) => {
       image: true,
     },
   });
+  await removeReleasedFiles("ArtikelKesehatan", [existing.imageId], [updated.imageId]);
 
   return {
     status: 200,

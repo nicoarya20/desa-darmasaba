@@ -6,6 +6,10 @@
 export const FILE_OWNER_MENU: Readonly<Record<string, string>> = {
   // Landing Page
   PejabatDesa: "landing-page.profil",
+  MediaSosial: "landing-page.profil",
+  ProgramInovasi: "landing-page.profil",
+  SdgsDesa: "landing-page.sdgs",
+  PrestasiDesa: "landing-page.prestasi-desa",
   // PPID
   ProfilePPID: "ppid.profil-ppid",
   PegawaiPPID: "ppid.struktur-ppid",
@@ -15,6 +19,7 @@ export const FILE_OWNER_MENU: Readonly<Record<string, string>> = {
   MaskotDesa: "desa.profil",
   PotensiDesa: "desa.potensi",
   Berita: "desa.berita",
+  Pengumuman: "desa.pengumuman",
   GalleryFoto: "desa.gallery",
   PelayananSuratKeterangan: "desa.layanan",
   PerangkatDesa: "desa.struktur-perangkat-desa",
@@ -25,6 +30,7 @@ export const FILE_OWNER_MENU: Readonly<Record<string, string>> = {
   PenangananDarurat: "kesehatan.penanganan-darurat",
   KontakDarurat: "kesehatan.kontak-darurat",
   InfoWabahPenyakit: "kesehatan.info-wabah-penyakit",
+  ArtikelKesehatan: "kesehatan.data-kesehatan-warga",
   // Keamanan
   KeamananLingkungan: "keamanan.keamanan-lingkungan-pecalang-patwal",
   MenuTipsKeamanan: "keamanan.tips-keamanan",
@@ -36,6 +42,10 @@ export const FILE_OWNER_MENU: Readonly<Record<string, string>> = {
   PengaduanMasyarakat: "inovasi.layanan-online-desa",
   MitraKolaborasi: "inovasi.kolaborasi-inovasi",
   InfoTekno: "inovasi.info-teknologi-tepat-guna",
+  // Lingkungan
+  KegiatanDesa: "lingkungan.gotong-royong",
+  // Pendidikan
+  DataPerpustakaan: "pendidikan.perpustakaan-digital",
   // Musik (section tanpa submenu)
   MusikDesa: "Musik",
 };

@@ -3,24 +3,16 @@
 Konteks: `docs/decisions/2026-11-12-sampah.md`. Semua handler yang dulu menghapus berkas langsung sudah dialihkan ke
 `removeStoredFile` (pindah ke Sampah). Sisa di bawah ini **belum** tercakup.
 
-## 1. Record dihapus, berkas dibiarkan aktif (yatim di pustaka file)
-Handler berikut menghapus record yang punya relasi FileStorage tanpa menyentuh berkasnya (perilaku lama, tidak
-diubah karena di luar "penghapusan langsung"). Berkasnya tetap aktif & tampil di pustaka file, tidak masuk Sampah:
-
-| Model | Handler (`src/app/api/[[...slugs]]/_lib/…`) |
-|---|---|
-| Pengumuman (gambar, galeri, lampiran) | `desa/pengumuman/del.ts` |
-| ArtikelKesehatan | `kesehatan/data_kesehatan_warga/artikel_kesehatan/del.ts` |
-| DataPerpustakaan | `pendidikan/perpustakaan-digital/data-perpustakaan/del.ts` |
-| KegiatanDesa | `lingkungan/gotong-royong/del.ts` |
-| MediaSosial | `landing_page/profile/media-sosial/del.ts` |
-| PrestasiDesa | `landing_page/prestasi-desa/del.ts` |
-| ProgramInovasi | `landing_page/profile/program-inovasi/del.ts` |
-| SdgsDesa | `landing_page/sdgs-desa/del.ts` |
-
-Cara menutup: setelah `prisma.<model>.delete` sukses, panggil `removeStoredFile(<relasi>, "<Model>")` per berkas dan
-tambahkan `<Model>: "<menuId>"` ke `FILE_OWNER_MENU`. Record yang soft-delete (mis. UMKM, Unit Usaha BUMDes, Pegawai
-PPID) tetap merujuk berkasnya — benar dibiarkan aktif.
+## 1. ~~Record dihapus, berkas dibiarkan aktif (yatim di pustaka file)~~ — SELESAI 2026-11-13
+Delete & update 8 model berikut kini memindahkan berkas yang dilepas ke Sampah **setelah** operasi DB sukses lewat
+`removeReleasedFiles(owner, sebelum, sesudah)` (`_lib/fileStorage/_lib/removeReleasedFiles.ts`, membungkus
+`removeStoredFile`); relasi galeri/lampiran m2m dibaca sebelum delete. Asal = `FILE_OWNER_MENU`:
+Pengumuman (gambar, galeri, lampiran) → `desa.pengumuman`, ArtikelKesehatan → `kesehatan.data-kesehatan-warga`,
+DataPerpustakaan → `pendidikan.perpustakaan-digital`, KegiatanDesa → `lingkungan.gotong-royong`,
+MediaSosial & ProgramInovasi (logo + galeri) → `landing-page.profil`, PrestasiDesa → `landing-page.prestasi-desa`,
+SdgsDesa → `landing-page.sdgs`. Kedelapan handler hapus memang hard delete (bukan soft delete). Record yang
+soft-delete (mis. UMKM, Unit Usaha BUMDes, Pegawai PPID) tetap merujuk berkasnya — benar dibiarkan aktif.
+Test: `__tests__/api/sampah_menu_sisa.test.ts`.
 
 ## 2. `DELETE /api/img/:name` untuk objek tanpa baris FileStorage
 `_lib/img-del.ts`: gambar yang tercatat di FileStorage masuk Sampah; objek MinIO lama (unggahan `upl-img` sebelum
@@ -31,7 +23,17 @@ klien admin yang memanggil endpoint ini saat ini.
 Endpoint membaca listing MinIO langsung, bukan FileStorage. Tidak dipakai UI admin saat ini (pustaka file memakai
 `fileStorage/findMany` yang sudah mengecualikan Sampah).
 
-## 4. Pembersihan "lazy" panel sampah DAK hanya menghapus baris
-`GET /api/landingpage/desaantikorupsi/:id/sampah` menghapus permanen dokumen DAK kedaluwarsa tanpa menyentuh
-FileStorage/MinIO (perilaku lama). Berkasnya jadi aktif-yatim bila tidak dipakai dokumen lain. Purge global
-(`purgeSampah`) menangani DAK lengkap (baris + berkas) bila berjalan lebih dulu.
+## 4. ~~Pembersihan "lazy" panel sampah DAK hanya menghapus baris~~ — SELESAI 2026-11-13
+`GET /api/landingpage/desaantikorupsi/:id/sampah` kini menghapus dokumen kedaluwarsa programnya lewat jalur hapus
+permanen yang sama dengan `purgeSampah` (`destroySafely(dokumenDakSampahSource, id)`: baris → FileStorage → MinIO,
+berkas yang masih dirujuk dokumen lain dilewati), dipaging per 100 ID. Respons endpoint tidak berubah.
+
+## 5. Hapus permanen satu dokumen di panel sampah DAK hanya menghapus baris (ditemukan 2026-11-13)
+`DELETE /api/landingpage/desaantikorupsi/sampah/:dokumenId` (`desaAntiKorupsiSampahHapus`) masih `deleteMany` baris
+dokumen saja, sehingga FileStorage/MinIO-nya jadi aktif-yatim (pola sama dengan poin 4 sebelum diperbaiki). Penutupan:
+alihkan ke `dokumenDakSampahSource.destroy` dengan menjaga 404 & bentuk respons.
+
+## 6. Galeri Berita & Kesejahteraan Masyarakat tidak ikut ke Sampah (ditemukan 2026-11-13)
+`desa/berita/{del,updt}.ts` dan `ekonomi/kesejahteraan-masyarakat/{del,updt}.ts` hanya memindahkan gambar utama;
+gambar galeri (m2m `images`) yang terlepas saat delete/update tetap aktif-yatim. Penutupan: pola
+`removeReleasedFiles` + `fileIds` seperti Pengumuman/ProgramInovasi.
