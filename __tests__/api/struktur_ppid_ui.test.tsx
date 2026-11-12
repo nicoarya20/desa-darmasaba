@@ -1,8 +1,6 @@
 // @vitest-environment node
 // Halaman Struktur PPID: kartu bagan (tautan profil, kotak kosong, foto) dan susunan baris/grid daun.
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup.
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
 import type { AnchorHTMLAttributes } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
@@ -13,17 +11,20 @@ vi.mock('next-view-transitions', () => ({
   useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }),
 }));
 vi.mock('valtio/utils', () => ({ useProxy: <T,>(x: T) => x }));
-vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () => ({
-  default: {
-    pegawai: { findMany: { data: null, load: vi.fn() } },
-    posisiOrganisasi: { findManyAll: { data: [], load: vi.fn() } },
-  },
+const ppid = vi.hoisted(() => ({
+  pegawai: { findMany: { data: null, load: vi.fn(() => Promise.resolve()) } },
+  posisiOrganisasi: { findManyAll: { data: null, load: vi.fn(() => Promise.resolve()) } },
 }));
+vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () => ({ default: ppid }));
 
 import Page from '@/app/(public)/(pages)/ppid/struktur-ppid/page';
-import { StrukturChart } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/StrukturChart';
-import type { OrgNode } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur.logic';
-import { strukturDetailHref } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur.meta';
+import { StrukturChart } from '@/app/(public)/_com/struktur-organisasi/StrukturChart';
+import type { OrgNode } from '@/app/(public)/_com/struktur-organisasi/struktur.logic';
+import { StrukturBody } from '@/app/(public)/_com/struktur-organisasi/StrukturBody';
+import type { StrukturData } from '@/app/(public)/_com/struktur-organisasi/use-struktur-data';
+import { STRUKTUR_PPID_TEXT } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.text';
+import { strukturPpidSource } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.source';
+import { strukturDetailHref } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.meta';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 const LABEL = 'Bagan struktur organisasi PPID';
@@ -65,9 +66,12 @@ describe('Struktur PPID — kartu bagan', () => {
     expect(html).toMatch(/<div[^>]*data-vacant="true"[^>]*>/);
   });
 
-  it('foto dari link pegawai; tanpa foto → siluet ikon', () => {
+  it('foto dari link pegawai; pegawai tanpa foto → inisial nama; jabatan kosong → siluet ikon', () => {
     expect(html).toContain('src="/api/img/kades.webp"');
-    expect(count(html, 'tabler-icon-user-filled')).toBe(5);
+    expect(count(html, 'data-initials="true"')).toBe(4);
+    expect(html).toMatch(/class="[^"]*_initials_[^"]*">IK<\/span>/); // I Ketut
+    expect(html).toMatch(/class="[^"]*_initials_[^"]*">NW<\/span>/); // Ni Wayan
+    expect(count(html, 'tabler-icon-user-filled')).toBe(1);
   });
 
   it('warna & ukuran per tingkat: akar lg/tone 0, bawahan langsung md/tone 1, daun di grid sm/tone 2', () => {
@@ -150,12 +154,24 @@ describe('Struktur PPID — halaman', () => {
     expect(page).toContain('role="status" aria-label="Memuat struktur organisasi…"');
   });
 
-  it('memuat pegawai dengan limit 100 + daftar jabatan (dipanggil di effect, dicek dari sumber)', () => {
-    const src = readFileSync(
-      path.join(process.cwd(), 'src/app/(public)/(pages)/ppid/struktur-ppid/_com/use-struktur-data.ts'),
-      'utf8',
-    );
-    expect(src).toContain('findMany.load(1, STRUKTUR_PEGAWAI_LIMIT)');
-    expect(src).toContain('findManyAll.load()');
+  it('adapter PPID memuat pegawai dengan limit 100 + daftar jabatan, data null → daftar kosong', async () => {
+    expect(await strukturPpidSource.loadPegawai()).toEqual([]);
+    expect(ppid.pegawai.findMany.load).toHaveBeenCalledWith(1, 100);
+    expect(await strukturPpidSource.loadPosisi()).toEqual([]);
+    expect(ppid.posisiOrganisasi.findManyAll.load).toHaveBeenCalledWith();
+  });
+});
+
+describe('Struktur PPID — tanpa data', () => {
+  const empty = { loading: false, tree: [], visible: [], search: '', setSearch: vi.fn(), query: '', reload: vi.fn() } as StrukturData;
+  const html = render(
+    <StrukturBody data={empty} label={LABEL} emptyHint={STRUKTUR_PPID_TEXT.emptyHint} hrefFor={strukturDetailHref} />,
+  );
+
+  it('judul "Data sedang disiapkan" + hint halaman + tombol Muat Ulang, tanpa bagan', () => {
+    expect(html).toContain('Data sedang disiapkan');
+    expect(html).toContain('Belum ada pegawai aktif yang tercatat untuk PPID.');
+    expect(html).toContain('Muat Ulang');
+    expect(html).not.toContain(`aria-label="${LABEL}"`);
   });
 });

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.252] - 2026-11-12
+### Added
+- **Menu admin baru: Pemerintahan → Struktur Perangkat Desa**, dengan tab Pegawai, Jabatan, dan Bagan. Hanya nama dan jabatan yang wajib diisi. Foto, gelar, tanggal masuk, email, telepon, dan alamat boleh dikosongkan dan dilengkapi belakangan. Atasan setiap jabatan bisa dipilih langsung di form jabatan, dan tab Bagan menampilkan semua pegawai per jabatan, termasuk jabatan yang belum terisi.
+- Daftar 20 jabatan awal sesuai bagan resmi Pemerintahan Desa Darmasaba (Perbup Badung No. 44 Tahun 2016): Perbekel; di bawahnya Sekretaris Desa, 3 Kepala Seksi, dan 12 Kelian Banjar Dinas; Sekretaris Desa membawahi 3 Kepala Urusan.
+
+### Changed
+- **Struktur Perangkat Desa kini punya data sendiri**, terpisah dari Struktur PPID. Sebelumnya halaman Profil Desa dan halaman Struktur Perangkat Desa menampilkan data Struktur PPID, sehingga mengubah salah satunya ikut mengubah yang lain. Data Struktur PPID yang sudah ada tidak diubah.
+- Bagan struktur (Perangkat Desa dan PPID) mengikuti atasan dan urutan jabatan, dan menampilkan "Data sedang disiapkan" bila belum ada data.
+- Halaman profil pegawai (Perangkat Desa dan PPID) menyembunyikan baris yang kosong dan menampilkan inisial nama bila belum ada foto.
+
+### Operator
+- Jalankan migrasi `20261112100000_struktur_perangkat_desa` (otomatis saat container start). Murni menambah tabel dan mengisi 20 jabatan; aman dijalankan ulang. Setelah deploy, Struktur Perangkat Desa di website publik kosong ("Data sedang disiapkan") sampai nama pegawai diisi lewat admin.
+- Alasan & detail: `docs/decisions/2026-11-12-struktur-perangkat-desa.md`.
+
 ## [0.1.251] - 2026-11-12
 ### Changed
 - **Halaman Layanan (menu Pemerintahan) kini senada dengan galeri Layanan dan Potensi Desa di beranda.** Halaman berlatar putih dengan judul rata kiri, sama seperti halaman Berita dan Pengumuman. Setiap surat keterangan tampil sebagai kartu foto bergaya galeri beranda: nama layanan di kiri bawah dan tombol "Lihat layanan" di kanan bawah. Seluruh kartu bisa diklik untuk membuka detail layanan.

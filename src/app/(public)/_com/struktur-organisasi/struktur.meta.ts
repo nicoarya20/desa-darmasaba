@@ -1,7 +1,7 @@
 import colors from '@/con/colors';
 import type { CSSProperties } from 'react';
 
-/** Jumlah pegawai yang dimuat sekaligus — default API 10 membuat pegawai ke-11 dst. tidak tampil di bagan. */
+/** Jumlah pegawai yang dimuat sumber sekaligus — default API 10 membuat pegawai ke-11 dst. tidak tampil di bagan. */
 export const STRUKTUR_PEGAWAI_LIMIT = 100;
 
 /** Jeda saring pencarian (ms). */
@@ -12,9 +12,6 @@ export const STRUKTUR_SEARCH_DEBOUNCE = 300;
  * Sengaja genap: saat grup lebih dari satu baris, garis induk turun di celah tengah, tidak menembus kartu.
  */
 export const LEAF_COLS = { base: 2, wide: 4 } as const;
-
-/** Rute profil pegawai. */
-export const strukturDetailHref = (pegawaiId: string) => `/ppid/struktur-ppid/${pegawaiId}`;
 
 /**
  * Gradasi kartu per tingkat (gelap → terang, teks putih di sisi kiri yang gelap):

@@ -114,6 +114,30 @@
   transform: translateY(12%) scale(1.05);
 }
 
+/* Pegawai tanpa foto: lingkaran inisial di tengah area foto (tanpa pudar tepi — tidak ada foto untuk dibaurkan). */
+.photo[data-initials] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  mask-image: none;
+}
+
+.initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56%;
+  aspect-ratio: 1;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: calc(var(--h) * 0.2);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
 /* Jabatan yang belum punya pegawai: kotak redup bergaris putus, tanpa tautan. */
 .card[data-vacant] {
   background: rgba(255, 255, 255, 0.55);
