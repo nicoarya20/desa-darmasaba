@@ -95,9 +95,9 @@ function Photo({ link, name }: { link: string; name: string }) {
   const [broken, setBroken] = useState(false);
   if (broken) return null;
   return (
-    <figure className={s.photo}>
+    <figure className={d.photo}>
       <a href={link} target="_blank" rel="noopener noreferrer" aria-label={T.fotoLabel(name)}>
-        <Image src={link} alt={name} className={s.photoImg} onError={() => setBroken(true)} />
+        <Image src={link} alt={name} className={d.photoImg} onError={() => setBroken(true)} />
       </a>
     </figure>
   );

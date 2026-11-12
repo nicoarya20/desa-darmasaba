@@ -55,7 +55,7 @@ describe('KegiatanDetailBody', () => {
     const html = render(
       <KegiatanDetailBody data={data({ image: null, lokasi: ' ', deskripsiSingkat: null, partisipan: null })} />,
     );
-    expect(html).not.toContain(s.photo);
+    expect(html).not.toContain(d.photo);
     expect(html).not.toContain(s.lead);
     expect(html).toContain('0 partisipan');
   });

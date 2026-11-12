@@ -1,7 +1,8 @@
 /*
  * Detail Kabar (Pengumuman, Kegiatan Desa) — artikel di `.section` Kabar Desa (latar putih, tepi --edge-gutter),
  * kolom baca 860px di tengah: kepala (kategori · tanggal, judul), isi HTML dari editor admin, keadaan kosong/galat,
- * dan kerangka memuat. Bagian khusus tiap halaman (gambar, lampiran, info) ada di modul halaman masing-masing.
+ * foto utama bersudut lancip (Kegiatan Desa, Posyandu, Program Kesehatan, Keamanan Lingkungan), dan kerangka memuat.
+ * Bagian khusus tiap halaman (lampiran, info, angka) ada di modul halaman masing-masing.
  * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line, --radius) dari kabar.module.css.
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
@@ -85,6 +86,30 @@
 .content img {
   max-width: 100%;
   height: auto;
+}
+
+/* ---------- Foto utama (bersudut lancip, senada kartu daftar; tautan ke ukuran penuh) ---------- */
+.photo {
+  margin: 0;
+  overflow: hidden;
+  background: #e8e8ed;
+}
+
+.photo a {
+  display: block;
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(80vh, 720px);
+  object-fit: cover;
+}
+
+.photo a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
 }
 
 /* ---------- Tidak ditemukan / galat ---------- */

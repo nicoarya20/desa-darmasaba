@@ -75,9 +75,9 @@ export function KegiatanDetailBody({ data }: { data: Detail }) {
       </header>
 
       {data.image?.link ? (
-        <figure className={s.photo}>
+        <figure className={d.photo}>
           <a href={data.image.link} target="_blank" rel="noopener noreferrer" aria-label={T.fotoLabel}>
-            <Image src={data.image.link} alt={data.judul} className={s.photoImg} />
+            <Image src={data.image.link} alt={data.judul} className={d.photoImg} />
           </a>
         </figure>
       ) : null}

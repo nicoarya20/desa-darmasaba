@@ -117,7 +117,7 @@ describe('ProgramDetailBody', () => {
     expect(html).toContain(`<span class="${d.kategori}">Indikator kesehatan</span>`);
     expect(html).toContain(`<span class="${ds.figureValue}">86%</span>`);
     expect(html).toContain('Data diperbarui 2 November 2026');
-    expect(html).not.toContain(ds.photo);
+    expect(html).not.toContain(d.photo);
   });
 });
 

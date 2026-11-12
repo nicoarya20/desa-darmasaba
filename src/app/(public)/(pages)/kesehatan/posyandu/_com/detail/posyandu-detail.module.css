@@ -1,31 +1,8 @@
 /*
  * Detail posyandu — bagian khusus di atas kerangka artikel kabar-detail.module.css (kolom 860px):
- * foto (hanya bila ada), panel info #f5f5f7 (banjar, jadwal, telepon), dan blok "Tentang posyandu".
+ * panel info #f5f5f7 (banjar, jadwal, telepon) dan blok "Tentang posyandu" (foto: `.photo` kabar-detail.module.css).
  * Variabel warna dari .section kabar.module.css. Breakpoint apple.com: ≤734px.
  */
-.photo {
-  margin: 0;
-  overflow: hidden;
-  background: #e8e8ed;
-}
-
-.photo a {
-  display: block;
-}
-
-.photoImg {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: min(80vh, 720px);
-  object-fit: cover;
-}
-
-.photo a:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 3px;
-}
-
 /* ---------- Panel info ---------- */
 .info {
   margin: 0;
