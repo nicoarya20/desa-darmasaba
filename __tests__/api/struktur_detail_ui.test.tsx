@@ -8,9 +8,9 @@ import { MantineProvider } from '@mantine/core';
 import { describe, expect, it, vi } from 'vitest';
 
 const ppid = vi.hoisted(() => ({
-  pegawai: { findUnique: { data: null as unknown, load: vi.fn(() => Promise.resolve()) } },
+  pegawai: { findUnique: { load: vi.fn(async (): Promise<unknown> => null) } },
 }));
-vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () => ({ default: ppid }));
+vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid', () => ({ default: ppid }));
 vi.mock('next-view-transitions', () => ({ useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }) }));
 vi.mock('next/navigation', () => ({ useParams: () => ({ id: 'p1' }) }));
 
@@ -118,11 +118,11 @@ describe('StrukturDetail & halaman pembungkus', () => {
     expect(render(<PerangkatDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
   });
 
-  it('pemuat PPID memanggil findUnique.load(id) dan mengembalikan datanya (null = tidak ditemukan)', async () => {
-    ppid.pegawai.findUnique.data = MINIMAL;
+  it('pemuat PPID memanggil findUnique.load(id) dan mengembalikan hasilnya (null = tidak ditemukan)', async () => {
+    ppid.pegawai.findUnique.load.mockResolvedValueOnce(MINIMAL);
     await expect(loadPegawaiPpidDetail('p9')).resolves.toBe(MINIMAL);
     expect(ppid.pegawai.findUnique.load).toHaveBeenCalledWith('p9');
-    ppid.pegawai.findUnique.data = null;
+    ppid.pegawai.findUnique.load.mockResolvedValueOnce(null);
     await expect(loadPegawaiPpidDetail('p9')).resolves.toBeNull();
   });
 });
