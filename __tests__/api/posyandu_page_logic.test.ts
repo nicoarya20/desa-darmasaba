@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Halaman publik Posyandu: ambang privasi "< 3", persentase yang disembunyikan, label banjar, tautan tel:,
+// Halaman publik Posyandu: hitungan angka asli, persentase yang disembunyikan, label banjar, tautan tel:,
 // batas paralel permintaan per banjar, dan sumber data (hanya endpoint agregat, bukan balita/ibuhamil find-many).
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -29,16 +29,16 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('formatHitungan (ambang privasi)', () => {
-  it('ambang yang disepakati adalah 3', () => {
+describe('formatHitungan', () => {
+  it('ambang privasi persentase tetap 3', () => {
     expect(PRIVASI_AMBANG).toBe(3);
   });
-  it('0 tetap 0, 1 dan 2 menjadi "< 3"', () => {
+  it('0, 1, 2 tampil angka asli (tanpa "< 3")', () => {
     expect(formatHitungan(0)).toBe('0');
-    expect(formatHitungan(1)).toBe('< 3');
-    expect(formatHitungan(2)).toBe('< 3');
+    expect(formatHitungan(1)).toBe('1');
+    expect(formatHitungan(2)).toBe('2');
   });
-  it('3 ke atas tampil apa adanya (pemisah ribuan Indonesia)', () => {
+  it('angka besar tampil apa adanya (pemisah ribuan Indonesia)', () => {
     expect(formatHitungan(3)).toBe('3');
     expect(formatHitungan(26)).toBe('26');
     expect(formatHitungan(1234)).toBe('1.234');

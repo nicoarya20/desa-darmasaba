@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Halaman publik Posyandu: ringkasan gaya APBDes, direktori baris (tanpa badge "Aktif" palsu & gambar "No image"),
-// tab Balita/Ibu Hamil berisi angka per banjar tanpa nama (1-2 → "< 3"), dan detail 860px.
+// tab Balita/Ibu Hamil berisi angka per banjar tanpa nama (angka asli), dan detail 860px.
 // jsdom rusak di repo ini → markup diuji via renderToStaticMarkup (efek/fetch tidak jalan di server).
 import { MantineProvider } from '@mantine/core';
 import type { AnchorHTMLAttributes } from 'react';
@@ -67,10 +67,11 @@ describe('Ringkasan', () => {
     expect(out).toContain(T.privacyNote);
   });
 
-  it('hitungan 1-2 → "< 3"; 0 tetap 0; persen disembunyikan bila balita < 3', () => {
+  it('hitungan 1-2 tampil angka asli; 0 tetap 0; persen disembunyikan bila balita < 3', () => {
     const out = text(render(<RingkasanContent stats={stats({ ibuHamilAktif: 2, balitaTerdaftar: 2, alertStunting: 0, imunisasiLengkapPct: 50, targetStuntingPct: 0 })} />));
-    expect(out).toContain('< 3 orang');
-    expect(out).toContain('< 3 balita');
+    expect(out).toContain('2 orang');
+    expect(out).toContain('2 balita');
+    expect(out).not.toContain('< 3');
     expect(out).toContain('0 balita');
     expect(out).toContain(T.pctTooFew);
     expect(out).not.toMatch(/\d+%/);
@@ -117,9 +118,11 @@ describe('Balita per banjar', () => {
     expect(out).not.toContain('Banjar Banjar');
   });
 
-  it('banjar dengan 2 balita: hitungan "< 3" dan persen "belum cukup data"', () => {
+  it('banjar dengan 2 balita: hitungan angka asli dan persen "belum cukup data"', () => {
     const r = rowText('Banjar Anggrek');
-    expect(r).toContain('< 3');
+    expect(r).toMatch(/Balita terdaftar 2 /);
+    expect(r).toMatch(/Alert stunting 1 /);
+    expect(r).not.toContain('< 3');
     expect(r).toContain(T.pctFewShort);
     expect(r).not.toContain('50%');
   });
@@ -144,7 +147,7 @@ describe('Balita per banjar', () => {
 });
 
 describe('Ibu hamil per banjar', () => {
-  it('ubin per banjar: 1-2 → "< 3", 0 tetap 0, desa angka penuh', () => {
+  it('ubin per banjar: angka asli (1 tetap 1), 0 tetap 0, desa angka penuh', () => {
     const rows: BanjarStatsRow[] = [
       { id: 'b1', name: 'Banjar Anggrek', stats: stats({ ibuHamilAktif: 1 }) },
       { id: 'b2', name: 'Banjar Dahlia', stats: stats({ ibuHamilAktif: 0 }) },
@@ -152,7 +155,7 @@ describe('Ibu hamil per banjar', () => {
     ];
     const out = text(render(<IbuHamilTiles desa={stats({ ibuHamilAktif: 11 })} rows={rows} />));
     expect(out).toContain(`${T.desaRow} 11 orang`);
-    expect(out).toContain('Banjar Anggrek < 3 orang');
+    expect(out).toContain('Banjar Anggrek 1 orang');
     expect(out).toContain('Banjar Dahlia 0 orang');
     expect(out).toContain('Banjar Mawar 5 orang');
   });
