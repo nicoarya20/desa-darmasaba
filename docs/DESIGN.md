@@ -516,7 +516,17 @@ Visibilitas submenu: field `hidden` di config = **default**; Super Admin/Develop
 File: `src/app/admin/_com/list_PageAdmin.tsx` (re-export saja; data sebenarnya ada di `src/app/admin/_com/nav/domains.ts` dan dirakit di `src/app/admin/_com/nav/index.ts`)
 
 Export: `navBar` (semua domain), `role1`, `role2`, `role3` (role-based subset), `devBar`.  
-Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`. Filter berdasarkan `menuIds` (dengan normalisasi ID) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access.
+Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`; logika murninya di `src/app/admin/_com/nav/menu-access.logic.ts`. Filter berdasarkan `menuIds` (tabel `UserMenuAccess`) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access. Section **User & Role** juga khusus roleId 0/1: dibuang untuk role lain walau tersimpan di DB, dan selalu ditambahkan untuk role 0/1.
+
+ID di `menuIds` (kontrak permanen, dijaga `__tests__/api/menu_access_ids.contract.test.ts`):
+
+- **ID section** (`"Landing Page"`, `"PPID"`, `"Desa"`, …) = akses ke semua submenu section itu. Data lama; dicocokkan dengan normalisasi trim + lowercase.
+- **ID submenu** = slug `<section-slug>.<submenu-slug>` (mis. `landing-page.apbdes`, `desa.struktur-perangkat-desa`) = akses ke submenu itu saja; section tampil dengan anak tersaring.
+- **`basePath`** per submenu = prefix folder route yang dicakup (list/create/edit/kategori), dicocokkan per segmen (`/admin/x/ab` tidak cocok dengan `/admin/x/a`).
+
+Halaman **User & Role › Menu Access** memakai checkbox pohon (section = induk, indeterminate bila sebagian); simpan ID section bila semua submenu dipilih, selain itu ID submenu. Kosong = fallback role.
+
+Guard halaman (`adminGuardRedirect` di `src/app/admin/_com/nav/menu-access.guard.ts`, dipanggil `admin/layout.tsx`): path admin yang dicakup menu tetapi tidak ada di sidebar user → redirect ke menu pertama yang diizinkan (atau `/profile` bila kosong). Role 0 dan path tanpa menu (`/admin`, `/admin/auth/*`, dll.) tidak dibatasi. **Ini pembatasan UI, bukan keamanan** — endpoint API per menu belum dijaga Menu Access.
 
 ---
 

@@ -4,11 +4,15 @@
 'use client'
 
 import { navBar } from '@/app/admin/_com/list_PageAdmin'
-import { Button, Checkbox, Group, Paper, Select, Stack, Text, Title } from '@mantine/core'
+import { withoutRestrictedSections } from '@/app/admin/_com/nav/menu-access.logic'
+import { Button, Group, Paper, Select, Stack, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { useProxy } from 'valtio/utils'
 import user from '../../_state/user/user-state'
 import { useShallowEffect } from '@mantine/hooks'
+import { MenuAccessTree } from './_com/MenuAccessTree'
+import { menuIdsFromSelection, selectionFromMenuIds, type Selection } from './_lib/menu-tree.logic'
 
 
 // Menu-access hanya relevan untuk akun admin (role 0-4). Warga publik (role "5",
@@ -16,56 +20,39 @@ import { useShallowEffect } from '@mantine/hooks'
 // muncul di sini.
 const ADMIN_ROLE_IDS = ["0", "1", "2", "3", "4"];
 
-// ✅ Helper: ekstrak semua menu ID dari struktur navBar
-const extractMenuIds = (navSections: typeof navBar) => {
-  return navSections.map(section => ({
-    value: section.id,      // "Landing Page", "Kesehatan", dll
-    label: section.name     // "Landing Page", "Kesehatan", dll
-  }));
-};
+// User & Role dan Pengaturan khusus role 0/1 (otomatis di sidebar mereka), jadi tidak
+// bisa diberikan lewat halaman ini.
+const MENU_TREE = withoutRestrictedSections(navBar);
+
+const errorText = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 function MenuAccessPage() {
   const stateUser = useProxy(user.userState)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
-  const [userMenus, setUserMenus] = useState<string[]>([])
+  const [selected, setSelected] = useState<Selection>(new Set())
 
   useShallowEffect(() => {
     stateUser.findMany.load()
   }, [])
 
-  // ✅ Gunakan helper untuk ekstrak menu
-  const availableMenus = extractMenuIds(navBar);
-
   // Ambil data menu akses user
-  const loadUserMenuAccess = async () => {
-    if (!selectedUserId) return
-
+  const loadUserMenuAccess = async (userId: string) => {
+    setSelected(new Set())
     try {
-      // ✅ Perbaiki URL: gunakan query string bukan dynamic route
-      const res = await fetch(`/api/admin/user-menu-access?userId=${selectedUserId}`)
+      const res = await fetch(`/api/admin/user-menu-access?userId=${encodeURIComponent(userId)}`)
       const data = await res.json()
-
-      if (data.success) {
-        setUserMenus(data.menuIds || [])
-      }
+      if (!res.ok || !data.success) throw new Error(data.message || `HTTP ${res.status}`)
+      setSelected(selectionFromMenuIds(MENU_TREE, data.menuIds || []))
     } catch (error) {
-      console.error('Gagal memuat menu akses:', error)
+      toast.error(`Gagal memuat menu akses: ${errorText(error)}`)
     }
   }
 
   useEffect(() => {
     if (selectedUserId) {
-      loadUserMenuAccess()
+      loadUserMenuAccess(selectedUserId)
     }
   }, [selectedUserId])
-
-  const handleToggleMenu = (menuId: string) => {
-    setUserMenus(prev => 
-      prev.includes(menuId)
-        ? prev.filter(id => id !== menuId)
-        : [...prev, menuId]
-    )
-  }
 
   const handleSave = async () => {
     if (!selectedUserId) return
@@ -74,16 +61,13 @@ function MenuAccessPage() {
       const res = await fetch('/api/admin/user-menu-access', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: selectedUserId, menuIds: userMenus }),
+        body: JSON.stringify({ userId: selectedUserId, menuIds: menuIdsFromSelection(MENU_TREE, selected) }),
       })
-
       const data = await res.json()
-      if (data.success) {
-        alert('Menu akses berhasil disimpan')
-      }
+      if (!res.ok || !data.success) throw new Error(data.message || `HTTP ${res.status}`)
+      toast.success('Menu akses berhasil disimpan')
     } catch (error) {
-      console.error('Gagal menyimpan menu akses:', error)
-      alert('Terjadi kesalahan')
+      toast.error(`Gagal menyimpan menu akses: ${errorText(error)}`)
     }
   }
 
@@ -111,16 +95,10 @@ function MenuAccessPage() {
           {selectedUserId && (
             <>
               <Text fw={500}>Menu yang Bisa Diakses:</Text>
-              <Stack>
-                {availableMenus.map(menu => (
-                  <Checkbox
-                    key={menu.value}
-                    label={menu.label}
-                    checked={userMenus.includes(menu.value)}
-                    onChange={() => handleToggleMenu(menu.value)}
-                  />
-                ))}
-              </Stack>
+              <Text size="sm" c="dimmed">
+                Kosongkan semua untuk memakai menu bawaan role.
+              </Text>
+              <MenuAccessTree tree={MENU_TREE} selected={selected} onChange={setSelected} />
 
               <Button onClick={handleSave} mt="md">
                 Simpan
