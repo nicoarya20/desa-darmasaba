@@ -37,7 +37,7 @@ describe('halaman Menu Access (Pengaturan)', () => {
 
   it('sidebar role 1: Menu Access di bawah Pengaturan, User & Role tinggal User dan Role', () => {
     const nav = getNavbar({ roleId: 1 });
-    expect(childIds(nav, 'Pengaturan')).toEqual(['pengaturan.visibilitas-menu', 'pengaturan.menu-access']);
+    expect(childIds(nav, 'Pengaturan')).toEqual(['pengaturan.visibilitas-menu', 'pengaturan.menu-access', 'pengaturan.sampah']);
     expect(childIds(nav, 'User & Role')).toEqual(['user-role.user', 'user-role.role']);
   });
 });
