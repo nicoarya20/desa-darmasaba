@@ -2,9 +2,19 @@
 // Alur pesanan publik UMKM (/ekonomi/umkm/produk/:id):
 // (a) HP/warga anonim ditolak 401 karena endpoint tidak masuk whitelist,
 // (b) tab WhatsApp "nomor tidak terdaftar" karena nomor kontak tak dinormalisasi,
-// serta pesan error server yang hilang & race stok. Semua mock — tanpa DB.
-import { describe, it, expect, vi } from 'vitest';
+// serta pesan error server yang hilang & race stok, dan saklar UMKM_PESANAN_TERCATAT
+// (src/lib/umkm-pesanan.ts) yang menolak /pesan selama tab Penjualan disembunyikan. Semua mock — tanpa DB.
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Context } from 'elysia';
+
+const prismaMock = vi.hoisted(() => ({ $transaction: vi.fn() }));
+vi.mock('@/lib/prisma', () => ({ default: prismaMock }));
+
 import { isPublicPostPath } from '@/lib/auth-policy';
+import { PESANAN_WEBSITE_NONAKTIF, UMKM_PESANAN_TERCATAT } from '@/lib/umkm-pesanan';
+import penjualanProdukPesan, {
+  createPenjualanProdukPesan,
+} from '@/app/api/[[...slugs]]/_lib/ekonomi/umkm/penjualan/pesan';
 import {
   buatPesanan,
   periodeOf,
@@ -93,6 +103,51 @@ describe('buatPesanan (inti API /pesan)', () => {
 
   it('periodeOf memakai format YYYY-MM dengan bulan 2 digit', () => {
     expect(periodeOf(new Date(2026, 0, 31))).toBe('2026-01');
+  });
+});
+
+describe('handler POST /pesan & saklar UMKM_PESANAN_TERCATAT', () => {
+  const ctx = (body: unknown) => ({ body, set: { status: 200 } }) as unknown as Context;
+
+  beforeEach(() => {
+    prismaMock.$transaction.mockReset();
+  });
+
+  it('saklar mati (default saat ini) → 403 dengan pesan WhatsApp, prisma tidak disentuh', async () => {
+    expect(UMKM_PESANAN_TERCATAT).toBe(false);
+    const c = ctx({ produkId: 'x', jumlah: 1 });
+
+    const res = await penjualanProdukPesan(c);
+
+    expect(c.set.status).toBe(403);
+    expect(res).toEqual({ success: false, message: PESANAN_WEBSITE_NONAKTIF });
+    expect(PESANAN_WEBSITE_NONAKTIF).toBe(
+      'Pemesanan lewat website sedang dinonaktifkan. Silakan hubungi penjual lewat WhatsApp.',
+    );
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('saklar nyala → pesanan dicatat lewat transaksi buatPesanan', async () => {
+    const { tx, create } = mockTx({ harga: 5000, stok: 4 }, 1);
+    prismaMock.$transaction.mockImplementation(async (fn: (t: PesanTx) => unknown) => fn(tx));
+    const c = ctx({ produkId: 'x', jumlah: 2 });
+
+    const res = await createPenjualanProdukPesan(true)(c);
+
+    expect(c.set.status).toBe(200);
+    expect(res).toMatchObject({ success: true, message: 'Pesanan berhasil dicatat' });
+    expect(create.mock.calls[0][0].data).toMatchObject({ produkId: 'x', jumlah: 2, totalNilai: 10000 });
+  });
+
+  it('saklar nyala + stok kalah race → status & pesan dari buatPesanan', async () => {
+    const { tx } = mockTx({ harga: 5000, stok: 1 }, 0);
+    prismaMock.$transaction.mockImplementation(async (fn: (t: PesanTx) => unknown) => fn(tx));
+    const c = ctx({ produkId: 'x', jumlah: 3 });
+
+    const res = await createPenjualanProdukPesan(true)(c);
+
+    expect(c.set.status).toBe(409);
+    expect(res).toEqual({ success: false, message: 'Stok tidak mencukupi. Tersedia: 1' });
   });
 });
 
