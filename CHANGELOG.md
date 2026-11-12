@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.1.256] - 2026-11-13
+### Added
+- **Sampah untuk foto & dokumen (Pengaturan → Sampah).** Foto dan dokumen yang dihapus dari menu mana pun kini tidak langsung hilang, tetapi masuk Sampah dan disimpan **30 hari**. Dari halaman Sampah admin bisa melihat item per kelompok menu (tab `Semua · Landing Page · PPID · Pemerintahan · … · Lainnya` lengkap dengan jumlahnya), mencari, melihat pratinjau, **Pulihkan**, **Hapus permanen**, atau **Kosongkan** satu kelompok. Setiap item menampilkan asal menu dan sisa hari sebelum terhapus otomatis (oranye bila tinggal 7 hari atau kurang).
+- Item yang tidak dipulihkan dalam 30 hari **terhapus permanen otomatis** (dicek sekali sehari oleh server).
+- Arti **Pulihkan**: dokumen Desa Anti Korupsi, dokumen APBDes, foto galeri BUMDes, dan Dokumen Perencanaan kembali ke tempat asalnya; foto/dokumen dari menu lain kembali ke Pustaka File dan bisa dipasang ulang di menu asalnya. Data utamanya (mis. berita yang dihapus) tetap terhapus seperti biasa.
+
+### Changed
+- Foto/dokumen yang ada di Sampah tidak bisa lagi dibuka oleh pengunjung website (tampil "tidak ditemukan") dan tidak muncul di Pustaka File; admin tetap bisa melihat pratinjaunya dari halaman Sampah.
+- Mengganti gambar/lampiran di menu mana pun kini memindahkan berkas lama ke Sampah (setelah perubahan tersimpan), bukan menghapusnya permanen.
+- Berkas yang masih dipakai data lain tidak ikut dipindah ke Sampah.
+
+### Fixed
+- **Hasil pencarian di website** untuk sekitar 50 jenis konten (mis. dokter & tenaga medis, tarif layanan, struktur BUMDes) sebelumnya diberi label dan tautan yang salah. Kini setiap hasil membuka halaman yang benar.
+- Tombol hapus di **Pustaka File** admin sebelumnya tidak melakukan apa-apa; kini berkas dipindah ke Sampah.
+- Foto galeri BUMDes yang gagal tersimpan kini benar-benar dibersihkan (masuk Sampah).
+- Delapan menu (Pengumuman, Artikel Kesehatan, Perpustakaan Digital, Gotong Royong, Media Sosial, Prestasi Desa, Program Inovasi, SDGs) sebelumnya membiarkan foto/lampiran tertinggal saat datanya dihapus; kini ikut masuk Sampah. Begitu juga galeri Berita dan Kesejahteraan Masyarakat.
+- Di banyak menu, berkas sebelumnya dihapus **sebelum** datanya; bila penghapusan data gagal, gambar sudah terlanjur hilang. Kini berkas baru dipindah setelah data berhasil dihapus/diubah.
+
+### Operator
+- Jalankan migrasi `20261112210000_sampah_file` (otomatis saat container start): menambah kolom `deletedFrom` dan index pada `FileStorage`, tanpa mengubah data. Aman dijalankan ulang.
+- Hapus permanen otomatis berjalan di dalam aplikasi (sekali saat start, lalu tiap 24 jam) dan **aktif secara default hanya di production**. Bisa dimatikan dengan env `SAMPAH_PURGE_SCHEDULER=off`. Hanya berjalan selama server hidup.
+- Alasan & detail: `docs/decisions/2026-11-12-sampah.md`; sisa yang belum tercakup: `docs/debt/2026-11-12-sampah-penghapusan-belum-dialihkan.md`.
+
 ## [0.1.255] - 2026-11-12
 ### Added
 - **Galeri Foto di Profil BUMDes.** Di admin (Ekonomi → BUMDes → Profil BUMDes) kini bisa mengunggah beberapa foto sekaligus, memberi keterangan (opsional), menghapus, dan mengurutkan. Foto/logo yang sudah ada tetap dipakai sebagai cover. Di website publik galeri tampil sebagai grid di bagian Profil BUMDes; klik foto untuk melihat ukuran penuh.
