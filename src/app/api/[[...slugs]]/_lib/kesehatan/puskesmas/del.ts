@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 const puskesmasDelete = async (context: Context) => {
   const id = context.params?.id as string;
@@ -24,20 +24,13 @@ const puskesmasDelete = async (context: Context) => {
     };
   }
 
-  if (puskesmas.image) {
-    try {
-      await minio.removeObject(MINIO_BUCKET, `${puskesmas.image.path}/${puskesmas.image.name}`);
-      await prisma.fileStorage.delete({
-        where: { id: puskesmas.image.id },
-      });
-    } catch (error) {
-      console.error("Gagal hapus file image:", error);
-    }
-  }
-
   await prisma.puskesmas.delete({
     where: { id },
   })
+
+  if (puskesmas.image) {
+    await removeStoredFile(puskesmas.image, "Puskesmas");
+  }
 
   return {
     success: true,

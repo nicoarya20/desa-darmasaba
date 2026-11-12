@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 const programKesehatanDelete = async (context: Context) => {
     const id = context.params?.id as string;
@@ -24,22 +24,15 @@ const programKesehatanDelete = async (context: Context) => {
         };
     }
 
-    // Hapus file gambar dari filesystem jika ada
-    if (programKesehatan.image) {
-        try {
-            await minio.removeObject(MINIO_BUCKET, `${programKesehatan.image.path}/${programKesehatan.image.name}`);
-            await prisma.fileStorage.delete({
-                where: { id: programKesehatan.image.id },
-            });
-        } catch (error) {
-            console.error("Gagal hapus file image:", error);
-        }
-    }
-
     // Hapus berita dari DB
     await prisma.programKesehatan.delete({
         where: { id },
     });
+
+    // Hapus file gambar dari filesystem jika ada
+    if (programKesehatan.image) {
+        await removeStoredFile(programKesehatan.image, "ProgramKesehatan");
+    }
 
     return {
         success: true,
