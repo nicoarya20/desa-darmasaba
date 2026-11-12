@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Profil pegawai dari bagan struktur (PPID & Perangkat Desa): satu komponen generik, baris kosong disembunyikan,
-// avatar inisial saat tanpa foto. jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup
+// Profil pegawai dari bagan struktur (PPID, Perangkat Desa, BUMDes): satu komponen generik, baris kosong disembunyikan,
+// avatar inisial saat tanpa foto; Alamat & Tanggal Masuk tidak lagi ditampilkan (keputusan coordinator, ADR fleksibel). jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup
 // (effect tidak jalan, jadi komponen penampung hanya teruji di keadaan memuat).
 import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -11,6 +11,7 @@ const ppid = vi.hoisted(() => ({
   pegawai: { findUnique: { load: vi.fn(async (): Promise<unknown> => null) } },
 }));
 vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid', () => ({ default: ppid }));
+vi.mock('@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi', () => ({ default: ppid }));
 vi.mock('next-view-transitions', () => ({ useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }) }));
 vi.mock('next/navigation', () => ({ useParams: () => ({ id: 'p1' }) }));
 
@@ -19,13 +20,13 @@ import { StrukturDetailView } from '@/app/(public)/_com/struktur-organisasi/Stru
 import {
   detailRows,
   displayName,
-  formatTanggalMasuk,
   initialsOf,
   type StrukturDetailData,
 } from '@/app/(public)/_com/struktur-organisasi/struktur-person.logic';
 import PpidDetailPage from '@/app/(public)/(pages)/ppid/struktur-ppid/[id]/page';
 import { loadPegawaiPpidDetail } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.source';
 import PerangkatDetailPage from '@/app/(public)/(pages)/pemerintahan/profil/struktur-perangkat-desa/[id]/page';
+import BumdesDetailPage from '@/app/(public)/(pages)/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/[id]/page';
 
 const render = (ui: ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
 
@@ -37,11 +38,10 @@ const MINIMAL: StrukturDetailData = {
   posisi: { nama: 'Kaur Keuangan' },
   email: null,
   telepon: '',
-  alamat: undefined,
-  tanggalMasuk: null,
   isActive: true,
 };
-const FULL: StrukturDetailData = {
+// Data lama di DB masih bisa membawa alamat/tanggalMasuk (API tetap mengirimnya); profil tidak boleh menampilkannya.
+const FULL: StrukturDetailData & { alamat: string; tanggalMasuk: string } = {
   ...MINIMAL,
   gelarAkademik: 'S.E.',
   image: { link: '/api/img/sari.webp' },
@@ -66,18 +66,10 @@ describe('struktur-person.logic', () => {
     expect(displayName(FULL)).toBe('Ni Wayan Sari, S.E.');
   });
 
-  it('formatTanggalMasuk: format Indonesia; kosong/tidak valid → null', () => {
-    expect(formatTanggalMasuk('2024-01-05T00:00:00.000Z')).toBe('05 Januari 2024');
-    expect(formatTanggalMasuk(null)).toBeNull();
-    expect(formatTanggalMasuk('bukan tanggal')).toBeNull();
-  });
-
-  it('detailRows: hanya baris yang terisi, urutan email → telepon → alamat → tanggal masuk', () => {
+  it('detailRows: hanya email → telepon yang terisi; alamat/tanggal masuk lama diabaikan', () => {
     expect(detailRows(MINIMAL)).toEqual([]);
-    expect(detailRows(FULL).map((row) => row.label)).toEqual(['Email', 'Telepon', 'Alamat', 'Tanggal Masuk']);
-    expect(detailRows({ ...MINIMAL, telepon: ' 0812 ' })).toEqual([
-      { key: 'telepon', label: 'Telepon', value: '0812', multiline: false },
-    ]);
+    expect(detailRows(FULL).map((row) => row.label)).toEqual(['Email', 'Telepon']);
+    expect(detailRows({ ...MINIMAL, telepon: ' 0812 ' })).toEqual([{ key: 'telepon', label: 'Telepon', value: '0812' }]);
   });
 });
 
@@ -94,15 +86,14 @@ describe('StrukturDetailView', () => {
     expect(html).toMatch(/>Status<\/dt>.*>Aktif<\/dd>/);
   });
 
-  it('profil lengkap: foto, nama + gelar, semua baris, status tidak aktif', () => {
+  it('profil lengkap: foto, nama + gelar, email/telepon, status tidak aktif; tanpa Alamat & Tanggal Masuk', () => {
     const html = render(<StrukturDetailView data={FULL} infoTitle="Informasi Pegawai" />);
     expect(html).toContain('src="/api/img/sari.webp"');
     expect(html).toContain('alt="Foto Ni Wayan Sari"');
     expect(html).not.toContain('data-initials');
     expect(html).toContain('Ni Wayan Sari, S.E.');
-    for (const value of ['sari@example.test', '0812000000', 'Banjar Bucu', '05 Januari 2024', 'Tidak Aktif']) {
-      expect(html).toContain(value);
-    }
+    for (const value of ['sari@example.test', '0812000000', 'Tidak Aktif']) expect(html).toContain(value);
+    for (const hidden of ['Alamat', 'Tanggal Masuk', 'Banjar Bucu', 'Januari 2024']) expect(html).not.toContain(hidden);
     expect(html).toMatch(/<h2[^>]*>Informasi Pegawai<\/h2>/);
   });
 });
@@ -113,9 +104,10 @@ describe('StrukturDetail & halaman pembungkus', () => {
     expect(html).toContain('role="status" aria-label="Memuat profil pegawai…"');
   });
 
-  it('halaman PPID & Perangkat Desa memakai komponen yang sama', () => {
+  it('halaman PPID, Perangkat Desa & BUMDes memakai komponen yang sama', () => {
     expect(render(<PpidDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
     expect(render(<PerangkatDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
+    expect(render(<BumdesDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
   });
 
   it('pemuat PPID memanggil findUnique.load(id) dan mengembalikan hasilnya (null = tidak ditemukan)', async () => {
