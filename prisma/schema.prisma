@@ -98,7 +98,8 @@ model FileStorage {
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
   DokumenDesaAntiKorupsi         DokumenDesaAntiKorupsi[]
-  SDGSDesa                       SdgsDesa[]
+  DokumenAPBDes                  DokumenAPBDes[]
+  SDGSDesa                      SdgsDesa[]
   APBDesImage                    APBDes[]                   @relation("APBDesImage")
   APBDesFile                     APBDes[]                   @relation("APBDesFile")
   PrestasiDesa                   PrestasiDesa[]
@@ -252,12 +253,58 @@ model APBDes {
   items     APBDesItem[]
   image     FileStorage? @relation("APBDesImage", fields: [imageId], references: [id])
   imageId   String?
-  file      FileStorage? @relation("APBDesFile", fields: [fileId], references: [id])
+  // Kolom lama (satu berkas per tahun), digantikan DokumenAPBDes. Migrasi 20261112150000 menyalin
+  // isinya; kolom dipertahankan satu rilis demi rollback & klien lama, lalu dihapus di rilis berikut.
+  file      FileStorage?          @relation("APBDesFile", fields: [fileId], references: [id])
   fileId    String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  dokumen   DokumenAPBDes[]
+  folders   FolderDokumenAPBDes[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
   deletedAt DateTime? // opsional, tidak perlu default now()
-  isActive  Boolean      @default(true)
+  isActive  Boolean               @default(true)
+}
+
+// Satu APBDes (per tahun) bisa punya banyak dokumen (Perdes, laporan semester, dst.), menggantikan
+// kolom tunggal APBDes.fileId. Pola sama dengan DokumenDesaAntiKorupsi agar editor admin dipakai ulang.
+model DokumenAPBDes {
+  id        String               @id @default(cuid())
+  // CASCADE: dokumen tidak berarti tanpa APBDes-nya.
+  apbdes    APBDes               @relation(fields: [apbdesId], references: [id], onDelete: Cascade)
+  apbdesId  String
+  // CASCADE: /api/fileStorage/delete menghapus berkas permanen; RESTRICT akan membuatnya gagal.
+  file      FileStorage          @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId    String
+  // null = dokumen ada di folder virtual "Umum" (bukan baris DB)
+  folder    FolderDokumenAPBDes? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  folderId  String?
+  judul     String
+  urutan    Int                  @default(0)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean              @default(true)
+
+  @@index([apbdesId])
+  @@index([folderId])
+}
+
+// Folder satu tingkat untuk memilah dokumen satu APBDes (nama bebas: "Semester I", "Perdes", ...).
+// Hanya mengelompokkan dokumen; angka anggaran tetap per tahun. Hapus folder = soft delete,
+// dokumennya dipindah ke "Umum" (folderId null), tidak ikut terhapus.
+model FolderDokumenAPBDes {
+  id        String          @id @default(cuid())
+  apbdes    APBDes          @relation(fields: [apbdesId], references: [id], onDelete: Cascade)
+  apbdesId  String
+  nama      String
+  urutan    Int             @default(0)
+  dokumen   DokumenAPBDes[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean         @default(true)
+
+  @@index([apbdesId])
 }
 
 model APBDesItem {
