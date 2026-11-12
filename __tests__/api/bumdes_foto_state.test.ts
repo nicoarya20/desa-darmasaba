@@ -70,6 +70,8 @@ describe("fotoProfilBumdes.upload", () => {
 
     expect(await fotoProfilBumdes.upload([file("1.png")])).toBe(false);
     expect(mocks.fileDeleteFn).toHaveBeenCalledWith({ id: "f1" });
+    // Berkas yatim masuk Sampah dengan asal menu BUMDes.
+    expect(mocks.fileDelete.delete).toHaveBeenCalledWith(undefined, { query: { from: "ekonomi.bumdes" } });
     expect(mocks.toast.error).toHaveBeenCalledWith("Isi profil BUMDes dulu sebelum menambah galeri foto");
   });
 });
