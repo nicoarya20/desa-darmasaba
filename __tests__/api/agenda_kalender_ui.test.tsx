@@ -171,7 +171,7 @@ describe('AgendaKalender (bilah alat & keadaan)', () => {
     expect(html).toMatch(/<h2[^>]*>November 2026<\/h2>/);
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Hari ini<\/button>/);
     expect(html).toContain('aria-label="Bulan sebelumnya"');
-    expect(html).toContain('>1 acara<');
+    expect(html).toContain('> · 1 acara<'); // menumpang di baris sasih
   });
 
   it('bulan kosong → pesan; galat → tombol coba lagi', () => {
@@ -187,10 +187,12 @@ describe('AgendaKalender (bilah alat & keadaan)', () => {
 describe('Legenda kategori & ringkasan tahun', () => {
   const bali = { tampilRerainan: true, onToggleRerainan: noop };
 
-  it('satu kategori → keterangan warna saja; banyak → tombol aria-pressed', () => {
+  it('satu kategori → keterangan warna (titik, bukan kotak centang); banyak → tombol aria-pressed bercentang', () => {
     const satu = render(<AgendaKategori tersedia={[{ kategori: 'BUDAYA', jumlah: 14 }]} tersembunyi={[]} onToggle={noop} {...bali} />);
     expect(satu).toContain('Budaya');
     expect(satu).toContain('data-static');
+    expect(count(satu, 'legendDot')).toBe(1);
+    expect(count(satu, 'legendBox')).toBe(1); // hanya kotak saklar Rerainan Bali
     expect(count(satu, '<button')).toBe(1); // hanya saklar Rerainan Bali
     const dua = render(
       <AgendaKategori
@@ -205,6 +207,8 @@ describe('Legenda kategori & ringkasan tahun', () => {
     );
     expect(count(dua, 'aria-pressed="true"')).toBe(2); // Budaya + Rerainan Bali
     expect(dua).toContain('aria-pressed="false"');
+    expect(dua).not.toContain('legendDot');
+    expect(count(dua, 'legendBox')).toBe(3); // 2 kategori + Rerainan Bali
     const kosong = render(<AgendaKategori tersedia={[]} tersembunyi={[]} onToggle={noop} {...bali} />);
     expect(count(kosong, '<button')).toBe(1);
     expect(kosong).toContain(AGENDA_TEXT.bali.legend);
