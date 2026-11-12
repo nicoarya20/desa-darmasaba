@@ -33,6 +33,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getNavbar } from "./(dashboard)/user&role/_com/dynamicNavbar";
 import { adminGuardRedirect } from "./_com/nav/menu-access.guard";
+import { loadMenuAccess } from "./_com/nav/load-menu-access";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { isDark } = useDarkMode();
@@ -66,20 +67,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             return;
           }
 
-          const menuRes = await fetch(`/api/admin/user-menu-access?userId=${data.user.id}`, {
-            credentials: 'include'
-          });
-          const menuData = await menuRes.json();
-
-          const menuIds = menuData.success && Array.isArray(menuData.menuIds)
-            ? [...menuData.menuIds]
-            : null;
+          const { menuIds, publicMenuIds } = await loadMenuAccess(data.user.id);
 
           authStore.setUser({
             id: data.user.id,
             name: data.user.name,
             roleId: Number(data.user.roleId),
             menuIds,
+            publicMenuIds,
             isActive: data.user.isActive
           });
 
@@ -112,7 +107,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const user = authStore.user;
     if (loading || !user) return;
-    const nav = getNavbar({ roleId: user.roleId, menuIds: user.menuIds });
+    const nav = getNavbar({ roleId: user.roleId, menuIds: user.menuIds, publicMenuIds: user.publicMenuIds });
     const target = adminGuardRedirect({ pathname, roleId: user.roleId, nav });
     if (target) router.replace(target);
   }, [loading, pathname, router]);
@@ -145,7 +140,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   const currentNav = authStore.user
-    ? getNavbar({ roleId: authStore.user.roleId, menuIds: authStore.user.menuIds })
+    ? getNavbar({ roleId: authStore.user.roleId, menuIds: authStore.user.menuIds, publicMenuIds: authStore.user.publicMenuIds })
     : [];
 
   const pathSeg = (p: string) => p.split('?')[0].split('/').filter(Boolean);
