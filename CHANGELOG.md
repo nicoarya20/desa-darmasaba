@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.254] - 2026-11-12
+### Fixed
+- **Tampilan Agenda & Kalender Desa dirapikan.** Ikon belah ketupat rerainan tidak lagi terpotong di sisi kiri. Ikon Purnama/Tilem kini sejajar di samping angka tanggal, tidak lagi menempel di pojok atas angka. Garis pemisah di kolom wuku kini segaris dengan garis kalender.
+
+### Changed
+- Kartu "Hari ini" kini menampilkan info Bali per baris: hari Bali dan wuku, tanggal sasih, lalu rerainan berikutnya.
+- Jumlah acara bulan ini kini tampil di bawah judul bulan, di samping keterangan sasih.
+- Garis warna kategori di kartu "Acara terdekat" kini berupa batang lurus.
+- Teks pengantar halaman Agenda tidak lagi memakai tanda pisah panjang (em dash).
+
 ## [0.1.253] - 2026-11-12
 ### Added
 - **Kalender Bali di halaman Agenda & Kalender Desa.** Setiap tanggal kini menampilkan wuku dan wewaran (mis. "Anggara Kliwon"), tanda Purnama dan Tilem, serta rerainan seperti Galungan, Kuningan, Nyepi, Saraswati, Pagerwesi, Siwaratri, Tumpek, dan Kajeng Kliwon. Klik sebuah tanggal untuk melihat wariga lengkap hari itu: sasih, penanggal/pangelong, tahun Çaka, dan Eka sampai Dasa Wara. Semua dihitung otomatis untuk tahun berapa pun, jadi admin tidak perlu mengisi hari raya Bali satu per satu. Hasilnya sudah dicocokkan dengan kalenderbali.org untuk tahun 2026–2030. Bulan sisipan disebut "Mala", sama seperti di kalenderbali.org.
