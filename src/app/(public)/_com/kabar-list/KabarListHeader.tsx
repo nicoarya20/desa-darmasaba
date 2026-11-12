@@ -22,7 +22,7 @@ type Props = {
   onSearch: (next: string) => void;
 };
 
-/** Kepala halaman daftar Kabar: kembali, judul + pengantar, kolom cari, lalu pil kategori (tautan). */
+/** Kepala halaman daftar Kabar: kembali, judul + pengantar, kolom cari, lalu pil kategori (tautan; tidak dirender bila `tabs` kosong). */
 export function KabarListHeader({ title, lead, searchLabel, searchPlaceholder, kategoriLabel, tabs, search, onSearch }: Props) {
   const searchId = useId();
   const [value, setValue] = useState(search);
@@ -89,13 +89,16 @@ export function KabarListHeader({ title, lead, searchLabel, searchPlaceholder, k
           />
         </form>
       </div>
-      <nav ref={pillsRef} className={s.pills} aria-label={kategoriLabel}>
-        {tabs.map((tab) => (
-          <Link key={tab.key} href={tab.href} className={s.pill} aria-current={tab.active ? 'page' : undefined}>
-            {tab.label}
-          </Link>
-        ))}
-      </nav>
+      {/* Halaman tanpa kategori (Program Kesehatan) memberi `tabs=[]`: tanpa <nav> kosong & jarak sisa. */}
+      {tabs.length > 0 ? (
+        <nav ref={pillsRef} className={s.pills} aria-label={kategoriLabel}>
+          {tabs.map((tab) => (
+            <Link key={tab.key} href={tab.href} className={s.pill} aria-current={tab.active ? 'page' : undefined}>
+              {tab.label}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
     </header>
   );
 }
