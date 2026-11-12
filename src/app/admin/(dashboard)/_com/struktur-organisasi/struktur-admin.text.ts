@@ -1,4 +1,4 @@
-/** Teks UI admin struktur organisasi (dipakai bersama Perangkat Desa; siap dipakai PPID/BumDes). */
+/** Teks UI admin struktur organisasi (dipakai bersama Perangkat Desa, PPID, dan BUMDes). */
 export const STRUKTUR_ADMIN_TEXT = {
   empty: '—',
   back: 'Kembali',
@@ -16,9 +16,8 @@ export const STRUKTUR_ADMIN_TEXT = {
   filter: { semua: 'Semua', aktif: 'Aktif', nonaktif: 'Nonaktif', label: 'Filter status' },
   pegawai: {
     namaLengkap: 'Nama Lengkap',
-    namaPlaceholder: 'Masukkan nama lengkap',
-    gelarAkademik: 'Gelar Akademik',
-    gelarPlaceholder: 'Contoh: S.Kom',
+    namaPlaceholder: 'Contoh: I Made Ari, S.Kom',
+    namaHint: 'Tulis beserta gelar bila ada',
     jabatan: 'Jabatan',
     jabatanPlaceholder: 'Pilih jabatan',
     foto: 'Foto',
@@ -28,13 +27,10 @@ export const STRUKTUR_ADMIN_TEXT = {
     fotoRemove: 'Hapus foto',
     fotoKosong: 'Belum ada foto',
     uploadGagal: 'Gagal mengunggah foto, silakan coba lagi',
-    tanggalMasuk: 'Tanggal Masuk',
     email: 'Email',
     emailPlaceholder: 'Contoh: nama@email.com',
     telepon: 'Nomor Telepon',
     teleponPlaceholder: 'Contoh: 08123456789',
-    alamat: 'Alamat',
-    alamatPlaceholder: 'Contoh: Jl. Raya Darmasaba No. 1',
     status: 'Status',
     aksi: 'Aksi',
     kosong: 'Belum ada data pegawai',
