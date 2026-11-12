@@ -114,6 +114,8 @@ const EXPECTED_IDS: Record<string, string[]> = {
   'Pengaturan': [
     'pengaturan.visibilitas-menu',
     'pengaturan.menu-access',
+    // 2026-11-13: submenu baru Sampah (aditif).
+    'pengaturan.sampah',
   ],
 }; // test-only
 

@@ -2,6 +2,7 @@ import path from "path";
 import fs from "fs/promises";
 import sharp from "sharp";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
+import prisma from "@/lib/prisma";
 
 const MIME_MAP: Record<string, string> = {
   ".webp": "image/webp",
@@ -10,6 +11,20 @@ const MIME_MAP: Record<string, string> = {
   ".png": "image/png",
   ".gif": "image/gif",
 };
+
+/**
+ * True bila gambar tercatat di FileStorage dan sedang di Sampah. Gambar tanpa baris FileStorage (aset lama)
+ * tetap dilayani. Gagal membaca DB → dicatat dan dianggap tidak di Sampah (gambar publik tetap tampil).
+ */
+async function isImageInSampah(name: string): Promise<boolean> {
+  try {
+    const row = await prisma.fileStorage.findUnique({ where: { name }, select: { deletedAt: true } });
+    return row?.deletedAt != null;
+  } catch (error) {
+    console.error(`[img] Gagal cek status Sampah gambar ${name}:`, error);
+    return false;
+  }
+}
 
 async function img({
   name,
@@ -42,6 +57,14 @@ async function img({
   // browser modern tidak pernah kirim param ini, jadi tidak ada perubahan
   // perilaku/performa buat mereka.
   const convertToJpeg = format === "jpeg" && ext === ".webp";
+
+  // Gambar di Sampah tidak dilayani publik; pratinjau admin lewat /api/pengaturan/sampah/:id/pratinjau.
+  if (await isImageInSampah(name)) {
+    return new Response(JSON.stringify({ success: false, message: "File not found" }), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const stream = await minio.getObject(MINIO_BUCKET, `image/${name}`);

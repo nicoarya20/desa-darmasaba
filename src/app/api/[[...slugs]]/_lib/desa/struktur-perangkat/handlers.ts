@@ -8,4 +8,5 @@ export const strukturPerangkatHandlers = createStrukturHandlers({
   pegawaiLabel: "Perangkat desa",
   pegawaiLabelLower: "perangkat desa",
   softDelete: false,
+  fileOwner: "PerangkatDesa",
 });

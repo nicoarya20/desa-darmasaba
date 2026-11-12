@@ -19,12 +19,13 @@ const { prismaMock, minioMock } = vi.hoisted(() => ({
       update: vi.fn(),
       delete: vi.fn(),
     },
-    fileStorage: { delete: vi.fn() },
+    fileStorage: { delete: vi.fn(), updateMany: vi.fn(async () => ({ count: 1 })) },
   },
   minioMock: { removeObject: vi.fn() },
 }));
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
 vi.mock("@/lib/minio", () => ({ default: minioMock, MINIO_BUCKET: "bucket-test" }));
+vi.mock("@/app/api/[[...slugs]]/_lib/fileStorage/_lib/fileReferences", () => ({ isFileReferenced: vi.fn(async () => false) }));
 
 import { strukturPerangkatHandlers } from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/handlers";
 
@@ -103,8 +104,10 @@ describe("pegawai create", () => {
   });
 });
 
-describe("pegawai update & delete: hapus gambar lama", () => {
-  it("imageId dikosongkan → update dulu, lalu FileStorage + objek MinIO lama dihapus", async () => {
+describe("pegawai update & delete: gambar lama ke Sampah", () => {
+  const SAMPAH_DATA = { deletedAt: expect.any(Date), isActive: false, deletedFrom: "desa.struktur-perangkat-desa" };
+
+  it("imageId dikosongkan → update dulu, lalu gambar lama dipindah ke Sampah (MinIO tidak disentuh)", async () => {
     pegawaiDb.findUnique.mockResolvedValueOnce({ id: "p1", imageId: oldImage.id, image: oldImage });
     pegawaiDb.update.mockResolvedValueOnce({ id: "p1", imageId: null });
     const c = ctx({ id: "p1", body: { namaLengkap: "A", posisiId: "pd-perbekel", imageId: "" } });
@@ -112,20 +115,23 @@ describe("pegawai update & delete: hapus gambar lama", () => {
 
     expect(res).toMatchObject({ success: true });
     expect(pegawaiDb.update.mock.calls[0][0].data.imageId).toBeNull();
-    expect(prismaMock.fileStorage.delete).toHaveBeenCalledWith({ where: { id: "img-lama" } });
-    expect(minioMock.removeObject).toHaveBeenCalledWith("bucket-test", "image/lama.webp");
+    expect(prismaMock.fileStorage.updateMany).toHaveBeenCalledWith({
+      where: { id: "img-lama", deletedAt: null },
+      data: SAMPAH_DATA,
+    });
+    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
+    expect(minioMock.removeObject).not.toHaveBeenCalled();
     const updateOrder = pegawaiDb.update.mock.invocationCallOrder[0];
-    expect(prismaMock.fileStorage.delete.mock.invocationCallOrder[0]).toBeGreaterThan(updateOrder);
+    expect(prismaMock.fileStorage.updateMany.mock.invocationCallOrder[0]).toBeGreaterThan(updateOrder);
   });
 
-  it("imageId tetap sama atau tidak dikirim → gambar tidak dihapus", async () => {
+  it("imageId tetap sama atau tidak dikirim → gambar tidak dipindah", async () => {
     for (const imageId of [oldImage.id, undefined]) {
       pegawaiDb.findUnique.mockResolvedValueOnce({ id: "p1", imageId: oldImage.id, image: oldImage });
       pegawaiDb.update.mockResolvedValueOnce({ id: "p1" });
       await pegawaiUpdate(ctx({ id: "p1", body: { namaLengkap: "A", posisiId: "pd-perbekel", imageId } }));
     }
-    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
-    expect(minioMock.removeObject).not.toHaveBeenCalled();
+    expect(prismaMock.fileStorage.updateMany).not.toHaveBeenCalled();
   });
 
   it("update gagal → gambar lama tidak disentuh", async () => {
@@ -134,17 +140,18 @@ describe("pegawai update & delete: hapus gambar lama", () => {
     await expect(
       pegawaiUpdate(ctx({ id: "p1", body: { namaLengkap: "A", posisiId: "pd-perbekel", imageId: "baru" } }))
     ).rejects.toThrow("db down");
-    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
+    expect(prismaMock.fileStorage.updateMany).not.toHaveBeenCalled();
   });
 
-  it("gagal hapus MinIO dicatat dengan konteks, update tetap sukses", async () => {
+  it("gagal memindah ke Sampah dicatat dengan konteks, update tetap sukses", async () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
     pegawaiDb.findUnique.mockResolvedValueOnce({ id: "p1", imageId: oldImage.id, image: oldImage });
     pegawaiDb.update.mockResolvedValueOnce({ id: "p1" });
-    minioMock.removeObject.mockRejectedValueOnce(new Error("minio down"));
+    prismaMock.fileStorage.updateMany.mockRejectedValueOnce(new Error("db down"));
     const res = await pegawaiUpdate(ctx({ id: "p1", body: { namaLengkap: "A", posisiId: "pd-perbekel", imageId: "baru" } }));
     expect(res).toMatchObject({ success: true });
     expect(String(spy.mock.calls[0][0])).toContain("img-lama");
+    expect(String(spy.mock.calls[0][0])).toContain("PerangkatDesa");
     spy.mockRestore();
   });
 
@@ -155,14 +162,14 @@ describe("pegawai update & delete: hapus gambar lama", () => {
     expect(c.set.status).toBe(404);
   });
 
-  it("delete pegawai → baris dihapus dulu, lalu fotonya", async () => {
+  it("delete pegawai → baris dihapus dulu, lalu fotonya ke Sampah", async () => {
     pegawaiDb.findUnique.mockResolvedValueOnce({ id: "p1", image: oldImage });
     pegawaiDb.delete.mockResolvedValueOnce({ id: "p1" });
     expect(await pegawaiDelete(ctx({ id: "p1" }))).toMatchObject({ success: true, data: { id: "p1" } });
-    expect(prismaMock.fileStorage.delete.mock.invocationCallOrder[0]).toBeGreaterThan(
+    expect(prismaMock.fileStorage.updateMany.mock.invocationCallOrder[0]).toBeGreaterThan(
       pegawaiDb.delete.mock.invocationCallOrder[0]
     );
-    expect(minioMock.removeObject).toHaveBeenCalledWith("bucket-test", "image/lama.webp");
+    expect(minioMock.removeObject).not.toHaveBeenCalled();
   });
 });
 

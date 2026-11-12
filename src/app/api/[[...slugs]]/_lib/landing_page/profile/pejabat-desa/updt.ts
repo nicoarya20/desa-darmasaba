@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { toDuplicateResponse } from "@/lib/prisma-error";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 type FormUpdate = Prisma.PejabatDesaGetPayload<{
   select: {
@@ -58,20 +58,6 @@ export default async function pejabatDesaUpdate(context: Context) {
       );
     }
 
-    if (existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        try {
-          await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (error) {
-          console.error("Gagal hapus gambar lama:", error);
-        }
-      }
-    }
-
     const updated = await prisma.pejabatDesa.update({
       where: {
         id,
@@ -82,6 +68,13 @@ export default async function pejabatDesaUpdate(context: Context) {
         imageId,
       },
     });
+
+    if (existing.imageId !== imageId) {
+      const oldImage = existing.image;
+      if (oldImage) {
+        await removeStoredFile(oldImage, "PejabatDesa");
+      }
+    }
 
     return new Response(
       JSON.stringify({

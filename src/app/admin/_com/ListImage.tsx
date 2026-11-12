@@ -1,4 +1,5 @@
 "use client";
+import { PESAN_BERKAS_KE_SAMPAH } from "@/lib/file-storage-delete.client";
 import stateListImage from "@/state/state-list-image";
 import {
   ActionIcon,
@@ -25,8 +26,6 @@ export default function ListImage() {
   const [loading, setLoading] = useState(false);
 
   useShallowEffect(() => {
-    // get url
-    console.log(window.location.origin);
     stateListImage.load();
   }, []);
 
@@ -111,9 +110,13 @@ export default function ListImage() {
                         loading={loading}
                         size="compact-xs"
                         onClick={() => {
-                          stateListImage.del({ id: v.id }).finally(() => {
-                            setLoading(false);
-                          });
+                          stateListImage
+                            .del({ id: v.id })
+                            .then(() => toast(PESAN_BERKAS_KE_SAMPAH))
+                            .catch((err: unknown) => toast(err instanceof Error ? err.message : String(err)))
+                            .finally(() => {
+                              setLoading(false);
+                            });
                         }}
                       >
                         delete

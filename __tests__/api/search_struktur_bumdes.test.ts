@@ -56,9 +56,7 @@ describe('search strukturOrganisasi (Struktur BUMDes)', () => {
     expect(pegawai()).toHaveBeenCalledTimes(1);
     expect(pegawai().mock.calls[0][0]).toMatchObject({ take: 10 });
     expect(pegawai().mock.calls[0][0].where.OR).toContainEqual({ posisi: { nama: { contains: 'ayu', mode: 'insensitive' } } });
-    // Label `type` di blok gabungan tidak di-assert: urutan destructuring Promise.all pre-existing bergeser
-    // (dilaporkan ke coordinator, task W6) sehingga hasil modul indeks ≥34 berlabel tipe lain.
-    expect(res.data).toContainEqual(expect.objectContaining({ id: 'peg-1', name: 'Ni Kadek Ayu, S.E.', jabatan: 'Bendahara' }));
+    expect(res.data).toContainEqual({ type: 'strukturOrganisasi', id: 'peg-1', name: 'Ni Kadek Ayu, S.E.', jabatan: 'Bendahara' });
   });
 
   it('hasil strukturOrganisasi bertaut ke profil pegawai BUMDes', () => {

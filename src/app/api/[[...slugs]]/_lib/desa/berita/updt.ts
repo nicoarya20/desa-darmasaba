@@ -1,15 +1,13 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
 import { susunBeritaUpdate, type BeritaBody } from "@/lib/berita-data";
 import { parseTanggalTerbit } from "@/lib/tanggal-terbit";
+import removeReleasedFiles, { fileIds } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 async function beritaUpdate(context: Context) {
   try {
     const id = context.params?.id as string;
     const body = (await context.body) as BeritaBody;
-
-    const { imageId } = body;
 
     if (!id) {
       return new Response(
@@ -43,21 +41,6 @@ async function beritaUpdate(context: Context) {
       );
     }
 
-    // Delete old featured image if changed
-    if (existing.imageId && existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        try {
-          await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (err) {
-          console.error("Gagal hapus gambar lama:", err);
-        }
-      }
-    }
-
     const updated = await prisma.berita.update({
       where: { id },
       data: susunBeritaUpdate(body, tanggal.data),
@@ -67,6 +50,13 @@ async function beritaUpdate(context: Context) {
         kategoriBerita: true,
       },
     });
+
+    // Gambar utama & galeri yang dilepas dipindah ke Sampah setelah update sukses.
+    await removeReleasedFiles(
+      "Berita",
+      fileIds(existing.imageId, existing.images),
+      fileIds(updated.imageId, updated.images),
+    );
 
     return new Response(
       JSON.stringify({

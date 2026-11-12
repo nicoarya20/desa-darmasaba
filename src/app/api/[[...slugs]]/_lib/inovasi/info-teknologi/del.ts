@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 export default async function infoTeknoDelete(context: Context) {
   const id = context.params?.id as string;
@@ -26,20 +26,13 @@ export default async function infoTeknoDelete(context: Context) {
     };
   }
 
-  if (infoTekno.image) {
-    try {
-      await minio.removeObject(MINIO_BUCKET, `${infoTekno.image.path}/${infoTekno.image.name}`);
-      await prisma.fileStorage.delete({
-        where: { id: infoTekno.image.id },
-      });
-    } catch (error) {
-      console.error("Gagal hapus file image:", error);
-    }
-  }
-
   await prisma.infoTekno.delete({
     where: { id },
   });
+
+  if (infoTekno.image) {
+    await removeStoredFile(infoTekno.image, "InfoTekno");
+  }
 
   return {
     success: true,

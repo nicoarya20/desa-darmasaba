@@ -8,7 +8,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Prisma } from "@prisma/client";
 
 const prismaMock = vi.hoisted(() => ({
-  programInovasi: { create: vi.fn(), update: vi.fn() },
+  programInovasi: { create: vi.fn(), update: vi.fn(), findUnique: vi.fn() }, // findUnique: gambar lama sebelum update
   pejabatDesa: { findUnique: vi.fn(), update: vi.fn() },
   fileStorage: { delete: vi.fn() },
 }));

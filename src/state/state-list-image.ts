@@ -1,4 +1,5 @@
 import ApiFetch from "@/lib/api-fetch";
+import { hapusBerkasKeSampah } from "@/lib/file-storage-delete.client";
 import { proxy } from "valtio";
 
 interface FileStorageItem {
@@ -75,13 +76,8 @@ const stateListImage = proxy<{
   },
   
   async del({ id }: { id: string }) {
-    try {
-      await ApiFetch.api.fileStorage.delete({ id });
-      await this.load({ page: this.page });
-    } catch (error) {
-      console.error("Error deleting image:", error);
-      throw error;
-    }
+    await hapusBerkasKeSampah(id);
+    await this.load({ page: this.page });
   },
 });
 

@@ -21,7 +21,7 @@ Browser → Next.js proxy (src/proxy.ts, runtime nodejs)
                        └── _lib/*.ts  (domain modules)
 ```
 
-The Elysia server is a single entry point with domain-specific modules: `desa/`, `kesehatan/`, `ekonomi/`, `keamanan/`, `lingkungan/`, `pendidikan/`, `kependudukan/`, `ppid/`, `inovasi/`, `landing_page/`, `search/`, `auth/`, `user/`, `fileStorage/`, `menu_visibility/` (override tampil/sembunyi submenu publik; GET publik, PUT khusus role 0/1). Swagger docs are auto-generated at `/api/docs`. Struktur organisasi (Perangkat Desa, PPID, BUMDes) memakai tabel terpisah per domain dengan kode bersama (`_lib/_struktur-organisasi/`) — lihat `docs/decisions/2026-11-12-struktur-perangkat-desa.md` dan `docs/decisions/2026-11-12-struktur-fleksibel.md`.
+The Elysia server is a single entry point with domain-specific modules: `desa/`, `kesehatan/`, `ekonomi/`, `keamanan/`, `lingkungan/`, `pendidikan/`, `kependudukan/`, `ppid/`, `inovasi/`, `landing_page/`, `search/`, `auth/`, `user/`, `fileStorage/`, `menu_visibility/` (override tampil/sembunyi submenu publik; GET publik, PUT khusus role 0/1), `pengaturan/sampah/` (Sampah berkas & dokumen semua menu, khusus role 0/1 — `docs/decisions/2026-11-12-sampah.md`). Swagger docs are auto-generated at `/api/docs`. Struktur organisasi (Perangkat Desa, PPID, BUMDes) memakai tabel terpisah per domain dengan kode bersama (`_lib/_struktur-organisasi/`) — lihat `docs/decisions/2026-11-12-struktur-perangkat-desa.md` dan `docs/decisions/2026-11-12-struktur-fleksibel.md`.
 
 Note: `auth` login/session endpoints are now mostly handled by Better Auth's own catch-all route (`src/app/api/auth/[...all]/route.ts`), outside the Elysia server — the `auth/` module inside `_lib/` only covers the remaining custom auth-adjacent logic. `musik` is not a top-level API module; it's a sub-module nested under `desa/` (`_lib/desa/musik`), even though it has its own top-level admin/public page folders.
 
@@ -35,7 +35,7 @@ Active domains: `desa`, `ekonomi`, `inovasi`, `keamanan`, `kependudukan`, `keseh
 
 Halaman admin yang sengaja disembunyikan sementara (bukan dihapus) beserta cara memunculkannya lagi dicatat sebagai hutang di `docs/debt/` (mis. tab admin UMKM).
 
-Admin also has non-domain sections not covered above: `auth` (login/registrasi/validasi admin pages) and `user&role` (user + role management, note the `&` in the folder name), and `pengaturan` (public menu visibility + admin Menu Access per user). Menu Access semantics (section vs submenu IDs, `basePath`, UI-only page guard) are documented under "Sidebar Admin" in `docs/DESIGN.md`.
+Admin also has non-domain sections not covered above: `auth` (login/registrasi/validasi admin pages) and `user&role` (user + role management, note the `&` in the folder name), and `pengaturan` (public menu visibility, admin Menu Access per user, and Sampah — trashed files & documents). Menu Access semantics (section vs submenu IDs, `basePath`, UI-only page guard) are documented under "Sidebar Admin" in `docs/DESIGN.md`.
 
 ## Key Files
 

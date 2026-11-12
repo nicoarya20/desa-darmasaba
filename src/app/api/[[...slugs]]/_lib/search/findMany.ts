@@ -1490,6 +1490,8 @@ export default async function searchFindMany(context: Context) {
     pelayananPendudukNonPermanen,
     posyandu,
     fasilitasKesehatan,
+    dokterDanTenagaMedis,
+    tarifDanLayanan,
     jadwalKegiatan,
     artikelKesehatan,
     puskesmas,
@@ -1541,9 +1543,7 @@ export default async function searchFindMany(context: Context) {
     tempatKegiatan,
     jenisProgramYangDiselenggarakan,
     dataPerpustakaan,
-    dataPendidikan,
-    dokterDanTenagaMedis,
-    tarifDanLayanan 
+    dataPendidikan
   ] = await Promise.all([
     prisma.pejabatDesa.findMany({
       where: { name: { contains: query, mode: "insensitive" } },

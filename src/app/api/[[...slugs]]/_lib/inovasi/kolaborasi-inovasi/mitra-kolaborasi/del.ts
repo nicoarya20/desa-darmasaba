@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 export default async function mitraKolaborasiDelete(context: Context) {
   const id = context.params?.id as string;
@@ -26,20 +26,13 @@ export default async function mitraKolaborasiDelete(context: Context) {
     };
   }
 
-  if (mitraKolaborasi.image) {
-    try {
-      await minio.removeObject(MINIO_BUCKET, `${mitraKolaborasi.image.path}/${mitraKolaborasi.image.name}`);
-      await prisma.fileStorage.delete({
-        where: { id: mitraKolaborasi.image.id },
-      });
-    } catch (error) {
-      console.error("Gagal hapus file image:", error);
-    }
-  }
-
   await prisma.mitraKolaborasi.delete({
     where: { id },
   });
+
+  if (mitraKolaborasi.image) {
+    await removeStoredFile(mitraKolaborasi.image, "MitraKolaborasi");
+  }
 
   return {
     success: true,

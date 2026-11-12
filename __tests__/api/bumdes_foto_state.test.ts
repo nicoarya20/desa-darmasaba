@@ -1,6 +1,6 @@
 // @vitest-environment node
 // State galeri foto BUMDes (admin): unggah banyak + bersihkan berkas bila gagal, geser urutan.
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => {
   const fotoById = { put: vi.fn(), delete: vi.fn() };
@@ -9,12 +9,9 @@ const mocks = vi.hoisted(() => {
     post: vi.fn(),
     urutan: { put: vi.fn() },
   });
-  const fileDelete = { delete: vi.fn() };
   return {
     fotoById,
     fotoRoot,
-    fileDelete,
-    fileDeleteFn: vi.fn(() => fileDelete),
     upload: vi.fn(),
     toast: { success: vi.fn(), error: vi.fn() },
   };
@@ -23,7 +20,8 @@ const mocks = vi.hoisted(() => {
 vi.mock("@/lib/api-fetch", () => ({
   default: {
     api: {
-      fileStorage: { create: { post: mocks.upload }, delete: mocks.fileDeleteFn },
+      // Tanpa `delete`: pembersihan berkas yatim lewat fetch biasa (helper), bukan Eden.
+      fileStorage: { create: { post: mocks.upload } },
       ekonomi: { bumdes: { profil: { foto: mocks.fotoRoot } } },
     },
   },
@@ -42,9 +40,22 @@ const foto = (id: string): FotoProfilBumdesData => ({
   image: { id: `img-${id}`, name: id, link: `/api/img/${id}` },
 });
 
+// Pembersihan berkas yatim memakai global fetch: stub supaya URL/method yang benar-benar terkirim bisa dicek.
+const fetchSpy = vi.fn(async () => new Response(JSON.stringify({ message: "ok", deletedId: "x" }), { status: 200 }));
+const deleteCalls = () =>
+  fetchSpy.mock.calls
+    .map((args) => args as unknown as [string, RequestInit | undefined])
+    .filter(([, init]) => init?.method === "DELETE")
+    .map(([url]) => url);
+
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.stubGlobal("fetch", fetchSpy);
   fotoProfilBumdes.data = null;
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
 });
 
 describe("fotoProfilBumdes.upload", () => {
@@ -56,7 +67,7 @@ describe("fotoProfilBumdes.upload", () => {
     expect(await fotoProfilBumdes.upload([file("1.png"), file("2.png")])).toBe(true);
     expect(mocks.fotoRoot.post).toHaveBeenCalledWith({ items: [{ imageId: "f1" }, { imageId: "f2" }] });
     expect(fotoProfilBumdes.data).toHaveLength(1);
-    expect(mocks.fileDeleteFn).not.toHaveBeenCalled();
+    expect(deleteCalls()).toEqual([]);
   });
 
   it("POST ditolak (mis. profil belum diisi) → berkas terunggah dihapus, pesan server ditampilkan", async () => {
@@ -66,10 +77,10 @@ describe("fotoProfilBumdes.upload", () => {
       data: null,
       error: { value: { message: "Isi profil BUMDes dulu sebelum menambah galeri foto" } },
     });
-    mocks.fileDelete.delete.mockResolvedValue(ok());
 
     expect(await fotoProfilBumdes.upload([file("1.png")])).toBe(false);
-    expect(mocks.fileDeleteFn).toHaveBeenCalledWith({ id: "f1" });
+    // Berkas yatim masuk Sampah dengan asal menu BUMDes (dulu Eden mengirim DELETE /api/fileStorage lalu TypeError).
+    expect(deleteCalls()).toEqual(["/api/fileStorage/delete/f1?from=ekonomi.bumdes"]);
     expect(mocks.toast.error).toHaveBeenCalledWith("Isi profil BUMDes dulu sebelum menambah galeri foto");
   });
 });
