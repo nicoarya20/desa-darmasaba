@@ -7,7 +7,6 @@ import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
 import { buildResetForm, type ApbdesItemForm } from './_lib/resetForm';
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import colors from '@/con/colors';
-import ApiFetch from '@/lib/api-fetch';
 import {
   ActionIcon,
   Badge,
@@ -25,18 +24,19 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { Dropzone } from '@mantine/dropzone';
 import {
   IconArrowBack,
-  IconFile,
   IconPlus,
   IconTrash,
-  IconX
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { isIsiDraftValid } from '../../../desa-anti-korupsi/_lib/dokumen-bulk-actions';
+import { emptyIsiDraft, isiDraftFromDetail, type IsiDraft } from '../../../desa-anti-korupsi/_lib/folder-draft';
+import { ApbdesDokumenSection } from '../../_com/ApbdesDokumenSection';
+import { prepareApbdesIsi } from '../../_lib/dokumen-isi';
 
 // Tipe untuk form item
 type ItemForm = {
@@ -61,12 +61,13 @@ function EditAPBDes() {
   // Check if form is valid
   const isFormValid = () => {
     return (
-      apbdesState.edit.form.items.length > 0
+      apbdesState.edit.form.items.length > 0 && isIsiDraftValid(isi)
     );
   };
 
-  const [previewDoc, setPreviewDoc] = useState<string | null>(null);
-  const [docFile, setDocFile] = useState<File | null>(null);
+  // Isi dokumen + folder (draft editor); snapshot awal untuk tombol Batal.
+  const [isi, setIsi] = useState<IsiDraft>(emptyIsiDraft);
+  const [originalIsi, setOriginalIsi] = useState<IsiDraft>(emptyIsiDraft);
 
   // Form input untuk item baru
   const [newItem, setNewItem] = useState<ItemForm>({
@@ -102,8 +103,9 @@ function EditAPBDes() {
 
         if (!data) return;
 
-        // Set preview dari data lama
-        setPreviewDoc(data.file?.link || null);
+        const savedIsi = isiDraftFromDetail(data);
+        setIsi(savedIsi);
+        setOriginalIsi(savedIsi);
 
         // Map item sekali; simpan dua salinan independen agar Batal bisa
         // memulihkan item ke kondisi awal tanpa terpengaruh editan di form.
@@ -148,13 +150,6 @@ function EditAPBDes() {
     loadData();
   }, [params?.id]);
 
-  const handleDocDrop = (files: File[]) => {
-    const file = files[0];
-    if (!file) return;
-    setDocFile(file);
-    setPreviewDoc(URL.createObjectURL(file));
-  };
-
   const handleAddItem = () => {
     const { kode, uraian, anggaran, level, tipe, realisasi, selisih, persentase } = newItem;
     if (!kode || !uraian) {
@@ -198,19 +193,10 @@ function EditAPBDes() {
     try {
       setIsSubmitting(true);
 
-      if (docFile) {
-        const res = await ApiFetch.api.fileStorage.create.post({
-          file: docFile,
-          name: docFile.name,
-        });
-        const fileId = res.data?.data?.id;
-        if (fileId) {
-          apbdesState.edit.form.fileId = fileId;
-        }
-      }
-
-      // Dokumen opsional, tidak perlu validasi
-      const success = await apbdesState.edit.update();
+      // Unggah berkas baru dulu, lalu kirim set folder + dokumen final bersama PUT (satu transaksi di API).
+      const prepared = await prepareApbdesIsi(isi);
+      setIsi(prepared.isi);
+      const success = await apbdesState.edit.update(prepared.payload);
       if (success) {
         router.push('/admin/landing-page/apbdes');
       }
@@ -228,11 +214,8 @@ function EditAPBDes() {
     // berikutnya tak memutasi snapshot).
     apbdesState.edit.form = buildResetForm(originalData);
 
-    // Reset preview ke data original
-    setPreviewDoc(originalData.fileUrl || null);
-
-    // Reset file uploads
-    setDocFile(null);
+    // Reset dokumen + folder ke kondisi awal
+    setIsi(originalIsi);
 
     // Reset new item form
     setNewItem({
@@ -313,68 +296,7 @@ function EditAPBDes() {
             required
           />
 
-          {/* Dokumen (Opsional) */}
-          <Stack gap="xs">
-            <Box>
-              <Text fw="bold" fz="sm" mb={6}>
-                Dokumen APBDes (Opsional)
-              </Text>
-              <Dropzone
-                onDrop={handleDocDrop}
-                onReject={() => toast.error('File dokumen tidak valid')}
-                maxSize={10 * 1024 ** 2}
-                accept={{
-                  'application/pdf': ['.pdf'],
-                  'application/msword': ['.doc'],
-                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-                  'application/vnd.ms-excel': ['.xls'],
-                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-                }}
-                radius="md"
-                p="xl"
-              >
-                <Group justify="center" gap="xl" mih={180}>
-                  <Dropzone.Idle>
-                    <IconFile size={48} color="#868e96" stroke={1.5} />
-                  </Dropzone.Idle>
-                  <Stack gap="xs" align="center">
-                    <Text size="md" fw={500}>
-                      {previewDoc ? 'Ganti dokumen' : 'Unggah dokumen'}
-                    </Text>
-                  </Stack>
-                </Group>
-              </Dropzone>
-              {previewDoc && (
-                <Box mt="sm">
-                  <Button
-                    component="a"
-                    href={previewDoc}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="light"
-                    size="xs"
-                    leftSection={<IconFile size={14} />}
-                  >
-                    Lihat Dokumen
-                  </Button>
-                  <ActionIcon
-                    variant="filled"
-                    color="red"
-                    radius="xl"
-                    size="sm"
-                    ml="sm"
-                    onClick={() => {
-                      setPreviewDoc(null);
-                      setDocFile(null);
-                      apbdesState.edit.form.fileId = ''; // Clear fileId from form
-                    }}
-                  >
-                    <IconX size={14} />
-                  </ActionIcon>
-                </Box>
-              )}
-            </Box>
-          </Stack>
+          <ApbdesDokumenSection value={isi} onChange={setIsi} />
 
           {/* Input Item Baru */}
           <Paper withBorder p="md" radius="md">
