@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { assignParentIdsToApbdesItems } from "./lib/getParentsID";
+import { applyApbdesIsiSync, prepareApbdesIsiSync, type ApbdesIsiBody } from "./dokumen-sync";
+import { APBDES_DOKUMEN_INCLUDE, toApbdesDokumenView } from "@/lib/apbdes-dokumen-view";
 
 type APBDesItemInput = {
   id?: string; // id item lama; kosong = item baru
@@ -18,7 +20,7 @@ type FormUpdateBody = {
   jumlah?: string;
   fileId?: string | null;
   items: APBDesItemInput[];
-};
+} & ApbdesIsiBody; // + folders/dokumen: undefined = tidak diubah, array = set final
 
 export default async function apbdesUpdate(context: Context) {
   const body = context.body as FormUpdateBody;
@@ -56,6 +58,12 @@ export default async function apbdesUpdate(context: Context) {
         success: false,
         message: `APBDes tahun ${body.tahun} sudah tersedia. Pilih tahun lain atau ubah data yang sudah ada.`,
       };
+    }
+
+    const isi = await prepareApbdesIsiSync(id, { folders: body.folders, dokumen: body.dokumen });
+    if (!isi.ok) {
+      context.set.status = 400;
+      return { success: false, message: isi.message };
     }
 
     const existingItems = existing.items;
@@ -164,6 +172,9 @@ export default async function apbdesUpdate(context: Context) {
           fileId: body.fileId === "" ? null : body.fileId,
         },
       });
+
+      // 3e. Folder + dokumen (fileId lama dikosongkan bila `dokumen` dikirim).
+      await applyApbdesIsiSync(tx, id, isi.plan);
     });
 
     // 4. Perbarui parentId untuk item aktif (kode bisa berubah → hierarki ikut).
@@ -189,13 +200,14 @@ export default async function apbdesUpdate(context: Context) {
         },
         image: true,
         file: true,
+        ...APBDES_DOKUMEN_INCLUDE,
       },
     });
 
     return {
       success: true,
       message: "Berhasil memperbarui APBDes",
-      data: result,
+      data: result ? toApbdesDokumenView(result) : result,
     };
   } catch (error) {
     console.error("Error updating APBDes:", error);

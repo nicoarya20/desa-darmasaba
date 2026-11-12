@@ -3,6 +3,7 @@
 import type { Prisma } from "@prisma/client";
 import type { DokumenDesaAntiKorupsiView } from "./desa-anti-korupsi-dokumen";
 import { FOLDER_UMUM_KEY, FOLDER_UMUM_LABEL } from "./desa-anti-korupsi-folder";
+import { groupDokumenPerFolder } from "./dokumen-folder-view";
 
 /** Include daftar program: kategori + jumlah folder & dokumen aktif (satu query, tanpa N+1). */
 export const DESA_ANTI_KORUPSI_RINGKAS_INCLUDE = {
@@ -62,19 +63,7 @@ export function toProgramRingkas(row: RingkasRow): DesaAntiKorupsiRingkas {
 /** Kelompokkan dokumen detail per folder; dokumen tanpa folder aktif masuk `dokumenUmum`. */
 export function toProgramDetail(row: DetailRow): DesaAntiKorupsiDetail {
   const { folders, dokumen, ...program } = row;
-  const byFolder = new Map<string, DokumenDesaAntiKorupsiView[]>(folders.map((f) => [f.id, []]));
-  const dokumenUmum: DokumenDesaAntiKorupsiView[] = [];
-
-  for (const { folderId, createdAt, ...item } of dokumen) {
-    const bucket = folderId ? byFolder.get(folderId) : undefined;
-    (bucket ?? dokumenUmum).push({ ...item, createdAt: createdAt.toISOString() });
-  }
-
-  return {
-    ...program,
-    folders: folders.map((f) => ({ ...f, dokumen: byFolder.get(f.id) ?? [] })),
-    dokumenUmum,
-  };
+  return { ...program, ...groupDokumenPerFolder(folders, dokumen) };
 }
 
 /** Satu kelompok tampilan: folder nyata (key = id folder) atau folder virtual "Umum" (key = "umum"). */

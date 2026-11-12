@@ -75,7 +75,8 @@ function seedExisting() {
   // activeItems untuk assignParentIds (dipanggil setelah transaksi)
   prismaMock.aPBDesItem.findMany.mockResolvedValue([{ id: "itemA", kode: "4.1a" }]);
   // Panggilan kedua findUnique: hasil akhir untuk response
-  prismaMock.aPBDes.findUnique.mockResolvedValueOnce({ id: "apbdes1", tahun: 2025, items: [] });
+  // (respons akhir kini ikut membawa relasi folder & dokumen — APBDES_DOKUMEN_INCLUDE)
+  prismaMock.aPBDes.findUnique.mockResolvedValueOnce({ id: "apbdes1", tahun: 2025, items: [], folders: [], dokumen: [] });
 }
 
 beforeEach(() => {
