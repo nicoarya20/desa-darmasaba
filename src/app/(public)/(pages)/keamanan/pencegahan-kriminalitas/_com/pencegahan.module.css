@@ -1,0 +1,266 @@
+/*
+ * Halaman Pencegahan Kriminalitas — bagian khusus di atas kerangka Kabar (`.section` kabar.module.css + kepala
+ * kabar-list): sorotan video (pola kartu utama Kabar Desa), fasad video YouTube, judul blok kartu, lencana putar.
+ * Variabel warna (--brand, --ink, --muted, --subtle, --tile) dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* ---------- Sorotan ---------- */
+.sorotan {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  overflow: hidden;
+  background: var(--tile);
+}
+
+/* Tanpa video: panel teks saja, lebar baca dibatasi. */
+.sorotanPlain {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.sorotanPlain .sorotanBody {
+  max-width: 860px;
+}
+
+.sorotanBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  min-width: 0;
+}
+
+.sorotanTitle {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.125;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  overflow-wrap: anywhere;
+}
+
+.sorotanTitle a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sorotanSummary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+  color: var(--brand);
+  font-size: 17px;
+  text-decoration: none;
+}
+
+/* ---------- Fasad video ---------- */
+.video {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  /* Sama dengan latar foto Kabar: tidak ada garis hitam di tepi ubin "Video tidak tersedia" saat dibulatkan subpiksel. */
+  background: #e8e8ed;
+}
+
+.videoButton {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.videoThumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.videoFrame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.playBadge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  /* Hanya properti standar: Lightning CSS menambah prefix sendiri (lihat catatan navbar/globals.css). */
+  backdrop-filter: blur(12px) saturate(180%);
+  color: #fff;
+  transform: translate(-50%, -50%);
+  transition: transform 200ms ease, background-color 200ms ease;
+}
+
+/* Ikon segitiga tampak tidak di tengah secara optik; geser sedikit ke kanan. */
+.playBadge svg {
+  margin-left: 4px;
+}
+
+.videoButton:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: -3px;
+}
+
+/* Video tidak tersedia (pratinjau YouTube 404): ubin gelap berlabel, tanpa tombol putar. */
+.videoMissing {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #e8e8ed;
+  color: var(--subtle);
+  font-size: 15px;
+}
+
+/*
+ * Pratinjau `hqdefault` 4:3 berpita hitam di atas/bawah video 16:9; kotak kartu 16:10 masih menyisakan pita tipis
+ * setelah `cover`, jadi diperbesar 12% (properti `scale`, terpisah dari transform hover kartu Kabar).
+ */
+.cardThumb {
+  scale: 1.12;
+}
+
+/* Lencana kecil di pratinjau kartu yang punya video. */
+.cardPlay {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+.cardPlay svg {
+  margin-left: 2px;
+}
+
+.sorotanTitle a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .videoButton:hover .videoThumb {
+    transform: scale(1.03);
+  }
+
+  .videoButton:hover .playBadge {
+    background: var(--brand);
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+
+  .sorotanTitle a:hover,
+  .more:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .videoThumb,
+  .playBadge {
+    transition: none;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .sorotanBody {
+    padding: 32px;
+  }
+
+  .sorotanTitle {
+    font-size: 28px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .stack {
+    gap: 48px;
+  }
+
+  .block {
+    gap: 20px;
+  }
+
+  .blockTitle {
+    font-size: 24px;
+    line-height: 1.17;
+  }
+
+  .sorotan {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sorotanBody {
+    padding: 24px 24px 28px;
+  }
+
+  .sorotanTitle {
+    font-size: 24px;
+  }
+
+  .playBadge {
+    width: 60px;
+    height: 60px;
+  }
+}
