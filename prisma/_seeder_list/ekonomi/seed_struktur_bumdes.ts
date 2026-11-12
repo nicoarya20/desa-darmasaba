@@ -1,3 +1,4 @@
+import { gabungGelarKeNama } from "@/lib/struktur-organisasi";
 import prisma from "../../seed-prisma";
 import { loadJsonData } from "../../load-json";
 import { loadRetiredSeed, retireSeedRows } from "../../retire-seed-rows";
@@ -62,9 +63,11 @@ export async function seedStrukturBumdes() {
       where: {
         id: p.id,
       },
+      // Gelar digabung ke nama (aturan sama dengan migrasi struktur_fleksibel) agar seed ulang tidak
+      // memisahkan gelar lagi; form admin tidak lagi punya field gelar.
       update: {
-        namaLengkap: p.namaLengkap,
-        gelarAkademik: p.gelarAkademik,
+        namaLengkap: gabungGelarKeNama(p.namaLengkap, p.gelarAkademik),
+        gelarAkademik: null,
         tanggalMasuk: new Date(p.tanggalMasuk),
         email: p.email,
         telepon: p.telepon,
@@ -74,8 +77,8 @@ export async function seedStrukturBumdes() {
       },
       create: {
         id: p.id,
-        namaLengkap: p.namaLengkap,
-        gelarAkademik: p.gelarAkademik,
+        namaLengkap: gabungGelarKeNama(p.namaLengkap, p.gelarAkademik),
+        gelarAkademik: null,
         tanggalMasuk: new Date(p.tanggalMasuk),
         email: p.email,
         telepon: p.telepon,
