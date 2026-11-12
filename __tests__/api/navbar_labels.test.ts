@@ -35,9 +35,10 @@ describe('label menu "Pemerintahan" (sebelumnya "Desa")', () => {
     expect(desaMenu.id).toBe('Desa');
     expect(desaMenu.name).toBe('Pemerintahan');
     expect(desaMenu.children?.[0]).toEqual({
-      id: 'Desa_1',
+      id: 'desa.profil',
       name: 'Profil',
       path: '/admin/pemerintahan/profil/profil-desa',
+      basePath: '/admin/pemerintahan/profil',
     });
   });
 });
@@ -48,8 +49,8 @@ describe('route admin grup Pemerintahan', () => {
   const paths = (desaMenu.children ?? []).map((c) => c.path);
 
   it('semua path menu diawali /admin/pemerintahan/ dan tidak ada yang masih di route lama "desa"', () => {
-    // 10: menu Penghargaan (Desa_7) dihapus — dikelola di Landing Page > Prestasi dan Penghargaan;
-    // Struktur Perangkat Desa (Desa_11) ditambahkan.
+    // 10: menu Penghargaan (dulu Desa_7) dihapus — dikelola di Landing Page > Prestasi dan Penghargaan;
+    // Struktur Perangkat Desa (desa.struktur-perangkat-desa) ditambahkan.
     expect(paths).toHaveLength(10);
     expect(paths).not.toContain('/admin/pemerintahan/penghargaan');
     for (const p of paths) expect(p, p).toMatch(/^\/admin\/pemerintahan\//);
@@ -79,10 +80,11 @@ describe('label submenu "Program Pengentasan Kemiskinan"', () => {
   });
 
   it('admin: ekonomiMenu berlabel baru dengan path tetap', () => {
-    expect(ekonomiMenu.children?.find((c) => c.id === 'Ekonomi_8')).toEqual({
-      id: 'Ekonomi_8',
+    expect(ekonomiMenu.children?.find((c) => c.id === 'ekonomi.program-kemiskinan')).toEqual({
+      id: 'ekonomi.program-kemiskinan',
       name: LABEL,
       path: '/admin/ekonomi/program-kemiskinan',
+      basePath: '/admin/ekonomi/program-kemiskinan',
     });
   });
 

@@ -54,8 +54,13 @@ const LIST = [
 ];
 
 describe('menu admin Pemerintahan → Struktur Perangkat Desa', () => {
-  it('desaMenu punya entri Desa_11 dengan path tab Pegawai', () => {
-    expect(desaMenu.children).toContainEqual({ id: 'Desa_11', name: 'Struktur Perangkat Desa', path: PATH });
+  it('desaMenu punya entri desa.struktur-perangkat-desa dengan path tab Pegawai', () => {
+    expect(desaMenu.children).toContainEqual({
+      id: 'desa.struktur-perangkat-desa',
+      name: 'Struktur Perangkat Desa',
+      path: PATH,
+      basePath: '/admin/pemerintahan/struktur-perangkat-desa',
+    });
   });
 
   it('halaman tab Pegawai, Jabatan, dan Bagan ada', () => {
