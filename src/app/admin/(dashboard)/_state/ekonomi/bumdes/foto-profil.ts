@@ -17,7 +17,7 @@ export type FotoProfilBumdesData = {
 const pesanError = (error: unknown, fallback: string) => (error instanceof Error ? error.message : fallback);
 
 /**
- * Pindahkan berkas yang sudah terunggah tetapi gagal didaftarkan ke galeri ke Sampah (kelompok BUMDes).
+ * Hapus permanen berkas yang sudah terunggah tetapi gagal didaftarkan ke galeri (tidak ada yang bisa dipulihkan).
  * Aman: belum ada baris galeri yang mereferensikannya. Kegagalan dicatat agar berkas yatim bisa dilacak.
  */
 async function hapusUnggahanYatim(imageIds: readonly string[]) {

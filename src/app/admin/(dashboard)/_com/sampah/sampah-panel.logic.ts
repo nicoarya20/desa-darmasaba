@@ -1,38 +1,23 @@
 // Panel Sampah per fitur (APBDes, Galeri BUMDes, Dokumen Perencanaan) — tipe kontrak `/api/sampah/:sumber`
 // dan fungsi tampilan murni (tanpa I/O): label sisa hari, info item, teks konfirmasi, pagination.
 import { formatUkuran } from '@/lib/desa-anti-korupsi-sort';
+import type { SampahItem, SampahListData } from '@/lib/sampah/sampah-item';
 import { SAMPAH_RETENSI_HARI } from '@/lib/sampah/sampah-retensi';
 import { formatTanggalId } from '../../landing-page/desa-anti-korupsi/_lib/detail-view';
 
-/** Sumber Sampah per fitur yang dilayani `/api/sampah/:sumber` (DAK memakai endpoint sampahnya sendiri). */
-export type SampahSumber = 'dokumen-apbdes' | 'foto-bumdes' | 'dokumen-perencanaan';
+// Tipe kontrak API satu sumber dengan backend (`src/lib/sampah/sampah-item.ts`) — jangan didefinisikan ulang di sini.
+export type { SampahSumber } from '@/lib/sampah/sampah-item';
 
 /** Cakupan panel: `scopeId` wajib untuk dokumen APBDes (= apbdesId), diabaikan sumber lain. */
 export type SampahPanelTarget =
   | { sumber: 'dokumen-apbdes'; scopeId: string }
   | { sumber: 'foto-bumdes' | 'dokumen-perencanaan'; scopeId?: undefined };
 
-/** Satu item di Sampah fitur (bentuk `SampahItem` di kontrak API; tanggal berupa string ISO). */
-export type SampahPanelItem = {
-  id: string;
-  judul: string;
-  mimeType: string;
-  kategori: 'image' | 'document' | 'audio' | 'other';
-  ukuran: number | null;
-  pratinjauUrl: string | null;
-  dihapusPada: string;
-  sisaHari: number;
-  folderNama: string | null;
-};
+/** Satu item di Sampah fitur (= `SampahItem` kontrak API). */
+export type SampahPanelItem = SampahItem;
 
-/** Isi `data` respons GET `/api/sampah/:sumber`. */
-export type SampahPanelHalaman = {
-  items: SampahPanelItem[];
-  total: number;
-  page: number;
-  limit: number;
-  retensiHari: number;
-};
+/** Isi `data` respons GET `/api/sampah/:sumber` (= `SampahListData`). */
+export type SampahPanelHalaman = SampahListData;
 
 /** Jumlah item per halaman panel. */
 export const SAMPAH_PANEL_LIMIT = 20;
