@@ -28,12 +28,14 @@ Endpoint membaca listing MinIO langsung, bukan FileStorage. Tidak dipakai UI adm
 permanen yang sama dengan `purgeSampah` (`destroySafely(dokumenDakSampahSource, id)`: baris → FileStorage → MinIO,
 berkas yang masih dirujuk dokumen lain dilewati), dipaging per 100 ID. Respons endpoint tidak berubah.
 
-## 5. Hapus permanen satu dokumen di panel sampah DAK hanya menghapus baris (ditemukan 2026-11-13)
-`DELETE /api/landingpage/desaantikorupsi/sampah/:dokumenId` (`desaAntiKorupsiSampahHapus`) masih `deleteMany` baris
-dokumen saja, sehingga FileStorage/MinIO-nya jadi aktif-yatim (pola sama dengan poin 4 sebelum diperbaiki). Penutupan:
-alihkan ke `dokumenDakSampahSource.destroy` dengan menjaga 404 & bentuk respons.
+## 5. ~~Hapus permanen satu dokumen di panel sampah DAK hanya menghapus baris~~ — SELESAI 2026-11-13
+`DELETE /api/landingpage/desaantikorupsi/sampah/:dokumenId` kini memakai `dokumenDakSampahSource.destroy` (jalur yang
+dibungkus `destroySafely` pada purge global: baris → FileStorage → MinIO, berkas yang masih dirujuk dilewati). Dipanggil
+langsung, bukan lewat `destroySafely`, agar error DB tetap menjadi 500 dan tidak tersamar sebagai 404. Respons & 404 tetap.
 
-## 6. Galeri Berita & Kesejahteraan Masyarakat tidak ikut ke Sampah (ditemukan 2026-11-13)
-`desa/berita/{del,updt}.ts` dan `ekonomi/kesejahteraan-masyarakat/{del,updt}.ts` hanya memindahkan gambar utama;
-gambar galeri (m2m `images`) yang terlepas saat delete/update tetap aktif-yatim. Penutupan: pola
-`removeReleasedFiles` + `fileIds` seperti Pengumuman/ProgramInovasi.
+## 6. ~~Galeri Berita & Kesejahteraan Masyarakat tidak ikut ke Sampah~~ — SELESAI 2026-11-13
+`desa/berita/{del,updt}.ts` dan `ekonomi/kesejahteraan-masyarakat/{del,updt}.ts` memakai `removeReleasedFiles` +
+`fileIds` (gambar utama + galeri m2m): delete → semua ke Sampah, update → yang dilepas saja, keduanya setelah operasi
+DB sukses. Audit relasi m2m implisit ke FileStorage (`BeritaImages`, `KesejahteraanImages`, `PengumumanImages`,
+`PengumumanDokumen`, `ProgramInovasiImages`) — kelimanya kini tercakup; tidak ada relasi galeri/dokumen m2m lain.
+Test: `__tests__/api/sampah_galeri.test.ts`.
