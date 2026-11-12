@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.253] - 2026-11-12
+### Added
+- **APBDes kini bisa punya banyak dokumen, dikelompokkan dalam folder** seperti Desa Anti Korupsi. Di admin (buat/edit APBDes) dokumen bisa diunggah sekaligus, diberi judul, dipindah antar folder, dan diurutkan. Nama folder bebas, misalnya per bulan ("Januari"), per semester, atau per jenis ("Perdes"). Dokumen tanpa folder masuk ke "Umum". Di website publik dokumen tampil per folder dengan tombol unduh.
+- **Menu Access (User & Role) kini bisa diatur per submenu.** Pilihannya berbentuk pohon: centang section untuk semua submenu-nya, atau centang submenu tertentu saja. Pengaturan lama per section tetap berlaku (dibaca sebagai "semua submenu").
+
+### Changed
+- **APBDes di website publik hanya menampilkan satu tahun**, yaitu tahun terbaru yang sudah punya rincian anggaran, di beranda maupun halaman APBDes. Pilihan tahun dihapus.
+- Admin yang membuka alamat halaman di luar Menu Access-nya kini dialihkan ke menu pertama yang boleh ia buka. Ini pembatasan tampilan, bukan pengamanan data.
+- Menu "User & Role" dan "Pengaturan" hanya untuk Developer dan Super Admin, dan tidak bisa lagi diberikan ke role lain lewat Menu Access.
+
+### Fixed
+- **Celah keamanan:** data Menu Access bisa dibaca dan diubah tanpa login. Kini wajib login; admin hanya bisa membaca Menu Access miliknya sendiri, dan hanya Developer/Super Admin yang bisa mengubah Menu Access user lain.
+
+### Operator
+- Jalankan migrasi `20261112150000_apbdes_dokumen` (otomatis saat container start). Menambah tabel dokumen & folder APBDes dan menyalin dokumen APBDes lama menjadi dokumen di "Umum"; aman dijalankan ulang. Kolom lama `APBDes.fileId` sengaja belum dihapus agar rollback ke versi sebelumnya tetap aman.
+- Alasan & detail: `docs/decisions/2026-11-12-apbdes-dokumen.md`.
+
 ## [0.1.252] - 2026-11-12
 ### Added
 - **Menu admin baru: Pemerintahan → Struktur Perangkat Desa**, dengan tab Pegawai, Jabatan, dan Bagan. Hanya nama dan jabatan yang wajib diisi. Foto, gelar, tanggal masuk, email, telepon, dan alamat boleh dikosongkan dan dilengkapi belakangan. Atasan setiap jabatan bisa dipilih langsung di form jabatan, dan tab Bagan menampilkan semua pegawai per jabatan, termasuk jabatan yang belum terisi.
