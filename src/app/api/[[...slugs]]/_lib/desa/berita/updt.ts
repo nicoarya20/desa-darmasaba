@@ -2,14 +2,12 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { susunBeritaUpdate, type BeritaBody } from "@/lib/berita-data";
 import { parseTanggalTerbit } from "@/lib/tanggal-terbit";
-import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import removeReleasedFiles, { fileIds } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 async function beritaUpdate(context: Context) {
   try {
     const id = context.params?.id as string;
     const body = (await context.body) as BeritaBody;
-
-    const { imageId } = body;
 
     if (!id) {
       return new Response(
@@ -53,13 +51,12 @@ async function beritaUpdate(context: Context) {
       },
     });
 
-    // Delete old featured image if changed
-    if (existing.imageId && existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        await removeStoredFile(oldImage, "Berita");
-      }
-    }
+    // Gambar utama & galeri yang dilepas dipindah ke Sampah setelah update sukses.
+    await removeReleasedFiles(
+      "Berita",
+      fileIds(existing.imageId, existing.images),
+      fileIds(updated.imageId, updated.images),
+    );
 
     return new Response(
       JSON.stringify({
