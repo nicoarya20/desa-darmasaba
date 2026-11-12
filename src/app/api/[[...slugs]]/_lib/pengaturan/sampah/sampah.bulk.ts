@@ -18,7 +18,7 @@ async function forEachSampahId(source: SampahSource, query: SampahIdQuery, fn: (
 }
 
 /** Hapus permanen satu item; gagal/dilewati (mis. berkas masih dirujuk) → false, error dicatat dengan konteks. */
-async function destroySafely(source: SampahSource, id: string): Promise<boolean> {
+export async function destroySafely(source: SampahSource, id: string): Promise<boolean> {
   try {
     return (await source.destroy(id)).ok;
   } catch (error) {

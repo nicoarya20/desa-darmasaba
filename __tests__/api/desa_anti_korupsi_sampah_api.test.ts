@@ -3,7 +3,7 @@
 // 404/409, purge lazy sebelum daftar dibaca, transaksi salin; plus regresi soft delete sinkron (deletedAt).
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { requireAuthMock, prismaMock, tx } = vi.hoisted(() => {
+const { requireAuthMock, prismaMock, tx, minioMock } = vi.hoisted(() => {
   const dokumen = {
     deleteMany: vi.fn(),
     findMany: vi.fn(),
@@ -18,11 +18,19 @@ const { requireAuthMock, prismaMock, tx } = vi.hoisted(() => {
   return {
     requireAuthMock: vi.fn(),
     tx,
-    prismaMock: { ...tx, $transaction: vi.fn(async (fn: (t: typeof tx) => unknown) => fn(tx)) },
+    prismaMock: {
+      ...tx,
+      $transaction: vi.fn(async (fn: (t: typeof tx) => unknown) => fn(tx)),
+      fileStorage: { findUnique: vi.fn(), delete: vi.fn() },
+      $queryRaw: vi.fn(),
+      $queryRawUnsafe: vi.fn(),
+    },
+    minioMock: { removeObject: vi.fn() },
   };
 });
 vi.mock('@/lib/api-auth', () => ({ requireAuth: () => requireAuthMock() }));
 vi.mock('@/lib/prisma', () => ({ default: prismaMock }));
+vi.mock('@/lib/minio', () => ({ default: minioMock, MINIO_BUCKET: 'bucket-test' }));
 
 import {
   desaAntiKorupsiSampahHapus,
@@ -31,6 +39,7 @@ import {
 } from '@/app/api/[[...slugs]]/_lib/landing_page/desa-anti-korupsi/sampah';
 import salinKeProgram from '@/app/api/[[...slugs]]/_lib/landing_page/desa-anti-korupsi/salin';
 import { applyProgramSync } from '@/app/api/[[...slugs]]/_lib/landing_page/desa-anti-korupsi/dokumen-sync';
+import { resetFileForeignKeysCache } from '@/app/api/[[...slugs]]/_lib/fileStorage/_lib/fileReferences';
 
 const HARI = 24 * 60 * 60 * 1000;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Context Elysia tiruan minimal
@@ -98,7 +107,7 @@ describe('GET /:id/sampah', () => {
   it('purge kedaluwarsa dulu, baru daftar terbaru dulu dengan folderNama & sisaHari', async () => {
     const now = Date.now();
     tx.desaAntiKorupsi.findUnique.mockResolvedValueOnce({ id: 'p1' });
-    tx.dokumenDesaAntiKorupsi.deleteMany.mockResolvedValueOnce({ count: 2 });
+    tx.dokumenDesaAntiKorupsi.findMany.mockResolvedValueOnce([]); // tidak ada yang kedaluwarsa
     const deletedAt = new Date(now - 3 * HARI);
     tx.dokumenDesaAntiKorupsi.findMany.mockResolvedValueOnce([
       { id: 'd1', judul: 'A', folderId: 'fo1', folder: { nama: 'Laporan' }, file, deletedAt },
@@ -106,13 +115,11 @@ describe('GET /:id/sampah', () => {
 
     const res = await desaAntiKorupsiSampahList(ctx({ id: 'p1' }));
 
-    const purge = tx.dokumenDesaAntiKorupsi.deleteMany.mock;
-    const list = tx.dokumenDesaAntiKorupsi.findMany.mock;
-    expect(purge.invocationCallOrder[0]).toBeLessThan(list.invocationCallOrder[0]);
-    const where = purge.calls[0][0].where;
-    expect(where).toMatchObject({ desaAntiKorupsiId: 'p1', isActive: false });
-    expect(Math.abs(where.deletedAt.lte.getTime() - (now - 30 * HARI))).toBeLessThan(5000);
-    expect(list.calls[0][0]).toMatchObject({
+    const [purge, list] = tx.dokumenDesaAntiKorupsi.findMany.mock.calls.map((c) => c[0]);
+    expect(purge).toMatchObject({ where: { desaAntiKorupsiId: 'p1', isActive: false }, select: { id: true } });
+    expect(Math.abs(purge.where.deletedAt.lte.getTime() - (now - 30 * HARI))).toBeLessThan(5000);
+    expect(tx.dokumenDesaAntiKorupsi.deleteMany).not.toHaveBeenCalled();
+    expect(list).toMatchObject({
       where: { desaAntiKorupsiId: 'p1', isActive: false, deletedAt: { not: null } },
       orderBy: { deletedAt: 'desc' },
     });
@@ -120,6 +127,66 @@ describe('GET /:id/sampah', () => {
       success: true,
       data: [{ id: 'd1', judul: 'A', folderId: 'fo1', folderNama: 'Laporan', file, deletedAt, sisaHari: 27 }],
     });
+  });
+});
+
+describe('GET /:id/sampah — pembersihan lazy lewat jalur hapus permanen Sampah', () => {
+  const trashedFile = { id: 'f1', path: 'dak', name: 'a.pdf', mimeType: 'application/pdf', category: 'document', size: 1 };
+
+  beforeEach(() => {
+    resetFileForeignKeysCache();
+    tx.desaAntiKorupsi.findUnique.mockResolvedValue({ id: 'p1' });
+    prismaMock.$queryRaw.mockResolvedValue([{ tabel: 'public."DokumenDesaAntiKorupsi"', kolom: '"fileId"' }]);
+    prismaMock.$queryRawUnsafe.mockResolvedValue([{ dirujuk: false }]);
+    prismaMock.fileStorage.findUnique.mockResolvedValue({ path: 'dak', name: 'a.pdf' });
+    tx.dokumenDesaAntiKorupsi.findFirst.mockResolvedValue({ file: trashedFile });
+    tx.dokumenDesaAntiKorupsi.deleteMany.mockResolvedValue({ count: 1 });
+  });
+
+  it('dokumen kedaluwarsa dihapus berurutan baris → FileStorage → MinIO, lalu daftar dibaca', async () => {
+    tx.dokumenDesaAntiKorupsi.findMany.mockResolvedValueOnce([{ id: 'd1' }]).mockResolvedValueOnce([]);
+
+    expect(await desaAntiKorupsiSampahList(ctx({ id: 'p1' }))).toEqual({ success: true, data: [] });
+
+    expect(tx.dokumenDesaAntiKorupsi.deleteMany).toHaveBeenCalledWith({
+      where: { id: 'd1', isActive: false, deletedAt: { not: null } },
+    });
+    expect(prismaMock.fileStorage.delete).toHaveBeenCalledWith({ where: { id: 'f1' } });
+    expect(minioMock.removeObject).toHaveBeenCalledWith('bucket-test', 'dak/a.pdf');
+    const order = (fn: { mock: { invocationCallOrder: number[] } }) => fn.mock.invocationCallOrder[0];
+    expect(order(tx.dokumenDesaAntiKorupsi.deleteMany)).toBeLessThan(order(prismaMock.fileStorage.delete));
+    expect(order(prismaMock.fileStorage.delete)).toBeLessThan(order(minioMock.removeObject));
+    expect(tx.dokumenDesaAntiKorupsi.findMany.mock.calls[1][0].where).toMatchObject({ deletedAt: { not: null } });
+  });
+
+  it('berkas masih dipakai dokumen lain → baris dihapus, berkas & MinIO dibiarkan', async () => {
+    prismaMock.$queryRawUnsafe.mockResolvedValue([{ dirujuk: true }]);
+    tx.dokumenDesaAntiKorupsi.findMany.mockResolvedValueOnce([{ id: 'd1' }]).mockResolvedValueOnce([]);
+
+    await desaAntiKorupsiSampahList(ctx({ id: 'p1' }));
+
+    expect(tx.dokumenDesaAntiKorupsi.deleteMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
+    expect(minioMock.removeObject).not.toHaveBeenCalled();
+  });
+
+  it('dipaging per 100 ID dengan cursor; gagal satu dokumen tidak menghentikan yang lain', async () => {
+    const batch = Array.from({ length: 100 }, (_, i) => ({ id: `d${String(i).padStart(3, '0')}` }));
+    tx.dokumenDesaAntiKorupsi.findMany
+      .mockResolvedValueOnce(batch)
+      .mockResolvedValueOnce([{ id: 'd100' }])
+      .mockResolvedValueOnce([]);
+    tx.dokumenDesaAntiKorupsi.findFirst.mockRejectedValueOnce(new Error('db putus'));
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    expect(await desaAntiKorupsiSampahList(ctx({ id: 'p1' }))).toEqual({ success: true, data: [] });
+
+    const calls = tx.dokumenDesaAntiKorupsi.findMany.mock.calls.map((c) => c[0]);
+    expect(calls[0]).toMatchObject({ orderBy: { id: 'asc' }, take: 100 });
+    expect(calls[1].where.id).toEqual({ gt: 'd099' });
+    expect(tx.dokumenDesaAntiKorupsi.deleteMany).toHaveBeenCalledTimes(100);
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('dak:d000'), expect.any(Error));
+    errorSpy.mockRestore();
   });
 });
 
