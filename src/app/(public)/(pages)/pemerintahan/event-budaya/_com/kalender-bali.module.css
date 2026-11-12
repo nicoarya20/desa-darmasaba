@@ -1,0 +1,359 @@
+/*
+ * Lapisan kalender Bali di halaman Agenda: rerainan (teks + belah ketupat, sengaja BUKAN blok berwarna
+ * seperti agenda desa agar agenda tetap jadi fokus), ikon purnama/tilem, nama hari Bali, label wuku,
+ * kartu "Hari ini", dan wariga di modal hari. --muted/--subtle/--line/--ink dari `.page` / `.modalContent`.
+ */
+.sel,
+.rr,
+.modalRingkas {
+  --bali-besar: #8a4b00;
+  --bali-tanda: #e09a1a;
+}
+
+/* ---------- Rerainan ---------- */
+.rr {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Nama yang menyusut (min-width: 0) & terpotong "…" di sel sempit; white-space ikut .rr (normal di daftar/modal). */
+.rrNama {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rr::before {
+  content: "";
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border: 1.5px solid currentColor;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+
+.rr[data-ikon]::before {
+  display: none;
+}
+
+.rr[data-tingkat="besar"] {
+  color: var(--bali-besar);
+  font-weight: 650;
+}
+
+.rr[data-tingkat="besar"]::before {
+  border-color: var(--bali-tanda);
+  background: var(--bali-tanda);
+  opacity: 1;
+}
+
+/* Tumpukan rerainan di sel desktop (baris ke-2 grid minggu, di bawah tanggal). */
+.sel {
+  z-index: 1;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  margin: -4px 6px 1px;
+  padding: 1px 3px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sel > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selLebih {
+  padding-left: 11px;
+  color: var(--subtle);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 600;
+}
+
+.sel:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+/* ---------- Ikon bulan ---------- */
+.bulan {
+  flex-shrink: 0;
+  max-width: none;
+}
+
+.bulan[data-fase="purnama"] circle {
+  fill: #ffd84d;
+  stroke: #b47f00;
+  stroke-width: 1.5;
+}
+
+.bulan[data-fase="tilem"] circle {
+  fill: #3a3a3c;
+  stroke: #3a3a3c;
+  stroke-width: 1;
+}
+
+/* ---------- Kepala sel desktop & label wuku ---------- */
+.kepala {
+  /* Wadah kueri: lebar sisa kepala sel (setelah angka tanggal) menentukan wewaran tampil atau tidak. */
+  container-type: inline-size;
+  display: flex;
+  flex: 1 1 0;
+  justify-content: flex-end;
+  min-width: 0;
+  color: var(--subtle);
+  font-size: 11px;
+  line-height: 12px;
+  text-align: right;
+}
+
+/* Satu kata per baris bila perlu (maks 2 baris = 24px, muat di baris tanggal 30px) — tak pernah terpotong. */
+.wewaran {
+  overflow-wrap: normal;
+}
+
+/* Kata wewaran terlebar ("Saniscara") 45px pada 11px; di bawah itu lebih baik disembunyikan (lengkap di modal). */
+@container (max-width: 46px) {
+  .wewaran {
+    display: none;
+  }
+}
+
+/* Ikon bulan sebagai lencana di sudut kanan atas angka tanggal: margin negatif = tak menambah lebar. */
+.lencana {
+  align-self: flex-start;
+  margin: -1px -4px 0 -10px; /* kiri -10 = menumpang angka; kanan -4 = menetralkan gap kedua */
+  position: relative;
+}
+
+.wuku {
+  position: absolute;
+  top: -1px;
+  bottom: 0;
+  right: 100%;
+  width: var(--wuku-w);
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: right;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  overflow: hidden;
+}
+
+.wukuKata {
+  color: var(--subtle);
+  font-weight: 500;
+}
+
+/* ---------- Kalender ringkas ponsel ---------- */
+.tanda {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: #e09a1a;
+  transform: rotate(45deg) scale(0.85);
+}
+
+/* ---------- Daftar hari ponsel ---------- */
+.baliBaris {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.baliLink {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.baliBaris:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.daftarRerainan {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 2px;
+  padding: 0;
+  list-style: none;
+}
+
+.daftarRerainan .rr,
+.modalRerainan .rr {
+  font-size: 14.5px;
+  line-height: 20px;
+  white-space: normal;
+}
+
+.daftarRerainan .rr::before,
+.modalRerainan .rr::before {
+  width: 7px;
+  height: 7px;
+}
+
+/* ---------- Kartu "Hari ini" ---------- */
+.hariIni {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.berikut strong {
+  color: #8a4b00;
+  font-weight: 650;
+}
+
+/* ---------- Modal hari ---------- */
+.modalBali {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.modalRingkas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.modalBlok {
+  margin-top: 18px;
+}
+
+.modalJudul {
+  margin: 0 0 8px;
+  color: var(--subtle);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.modalRerainan {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.modalCatatan {
+  margin: 8px 0 0;
+  color: var(--subtle);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.wariga + .wariga {
+  margin-top: 14px;
+}
+
+.warigaJudul {
+  margin: 0 0 6px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.warigaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+
+.warigaGrid > div {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #f5f5f7;
+}
+
+.warigaGrid dt {
+  color: var(--subtle);
+  font-size: 11.5px;
+  line-height: 1.3;
+}
+
+.warigaGrid dd {
+  margin: 1px 0 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sel:hover {
+    background: rgba(224, 154, 26, 0.1);
+  }
+}
+
+@media (max-width: 900px) {
+  .wewaran {
+    display: none;
+  }
+
+  .sel {
+    margin: -2px 3px 1px;
+  }
+
+  .rr {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 734px) {
+  .warigaGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

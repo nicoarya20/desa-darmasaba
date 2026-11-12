@@ -7,10 +7,11 @@ vi.mock('@/lib/api-fetch', () => ({
   default: { api: { desa: { berita: { 'find-many': { get: beritaGet } } } } },
 }));
 
-const { activeSlug, beritaListHref, kategoriLabel, kategoriSlug } = await import(
-  '@/app/(public)/(pages)/pemerintahan/berita/_com/berita-list.logic'
+const { beritaListHref } = await import('@/app/(public)/(pages)/pemerintahan/berita/_com/berita-list.logic');
+// Helper slug kategori kini di modul bersama kabar-list (dipakai juga Kegiatan Desa); perilaku sama.
+const { activeSlug, kategoriLabel, kategoriSlug, parsePage } = await import(
+  '@/app/(public)/_com/kabar-list/kabar-list.logic'
 );
-const { parsePage } = await import('@/app/(public)/_com/kabar-list/kabar-list.logic');
 const { loadBeritaPage } = await import('@/app/(public)/(pages)/pemerintahan/berita/_com/berita-list.source');
 
 describe('parsePage', () => {

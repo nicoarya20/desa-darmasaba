@@ -1,35 +1,17 @@
-'use client'
-import colors from '@/con/colors';
-import { Box } from '@mantine/core';
+'use client';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { ReactNode } from 'react';
-import BackButton from '../layanan/_com/BackButto';
+import type { ReactNode } from 'react';
 
-const LayoutTabsKegiatanDesa = dynamic(
-  () => import('./_lib/layoutTabs'),
-  { ssr: false }
-);
+// Kepala membaca useSearchParams; dimuat di klien saja (sama dengan halaman Berita & Pengumuman).
+const KegiatanShell = dynamic(() => import('./_com/KegiatanShell'), { ssr: false });
 
+/**
+ * Daftar (`/kegiatan-desa/semua`, `/kegiatan-desa/{kategori}`) dibungkus kepala + pil kategori;
+ * detail (`/kegiatan-desa/{kategori}/{id}`) punya kerangka sendiri.
+ */
 export default function KegiatanDesaLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-
-  // /pemerintahan/kegiatan-desa/semua          → 3 segments → list
-  // /pemerintahan/kegiatan-desa/[kategori]     → 3 segments → list
-  // /pemerintahan/kegiatan-desa/[kategori]/[id]→ 4 segments → detail
-  const segments = pathname.split('/').filter(Boolean);
-  const isDetailPage = segments.length === 4;
-
-  if (isDetailPage) {
-    return (
-      <Box bg={colors.Bg}>
-        <Box pt={33} px={{ base: 'md', md: 100 }}>
-          <BackButton />
-        </Box>
-        {children}
-      </Box>
-    );
-  }
-
-  return <LayoutTabsKegiatanDesa>{children}</LayoutTabsKegiatanDesa>;
+  const segments = usePathname().split('/').filter(Boolean);
+  const isDetail = segments.length - segments.indexOf('kegiatan-desa') > 2;
+  return isDetail ? <>{children}</> : <KegiatanShell>{children}</KegiatanShell>;
 }

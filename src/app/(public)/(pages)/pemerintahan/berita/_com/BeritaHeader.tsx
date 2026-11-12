@@ -5,8 +5,8 @@ import { useTransitionRouter } from 'next-view-transitions';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
-import { activeSlug, beritaListHref, kategoriSlug } from './berita-list.logic';
-import { SEMUA_SLUG } from './berita.meta';
+import { activeSlug, kategoriSlug, SEMUA_SLUG } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { beritaListHref } from './berita-list.logic';
 import { BERITA_TEXT } from './berita.text';
 
 /** Kepala halaman daftar berita: pil "Semua" + kategori berita; kategori aktif dari segmen URL. */
