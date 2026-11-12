@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.254] - 2026-11-12
+### Added
+- **Menu Access kini punya tab "Publik"**: menu admin yang dicentang di sini terbuka untuk **semua admin** sekaligus, tanpa perlu diatur satu per satu. Menu Publik ditambahkan ke menu per user atau menu bawaan role masing-masing, jadi tidak pernah mengurangi akses siapa pun. Tab "Per User" tetap untuk membatasi menu satu user.
+
+### Changed
+- **Menu Access pindah ke Pengaturan** (Pengaturan → Menu Access), di samping Visibilitas Menu. Alamat lama `/admin/user&role/menu-access` otomatis dialihkan ke alamat baru. User & Role kini hanya berisi User dan Role.
+- Daftar user di tab Per User bisa dicari dengan mengetik.
+
+### Operator
+- Jalankan migrasi `20261112170000_public_menu_access` (otomatis saat container start). Murni menambah tabel kosong; aman dijalankan ulang. Selama tab Publik belum diisi, menu setiap admin sama seperti sebelumnya.
+
 ## [0.1.253] - 2026-11-12
 ### Added
 - **APBDes kini bisa punya banyak dokumen, dikelompokkan dalam folder** seperti Desa Anti Korupsi. Di admin (buat/edit APBDes) dokumen bisa diunggah sekaligus, diberi judul, dipindah antar folder, dan diurutkan. Nama folder bebas, misalnya per bulan ("Januari"), per semester, atau per jenis ("Perdes"). Dokumen tanpa folder masuk ke "Umum". Di website publik dokumen tampil per folder dengan tombol unduh.
