@@ -457,6 +457,8 @@ model PosisiOrganisasiPPID {
   nama                   String                   @db.VarChar(100)
   deskripsi              String?                  @db.Text
   hierarki               Int
+  // Urutan antar-jabatan selevel di bagan (kecil dulu); sama dengan Struktur Perangkat Desa.
+  urutan                 Int                      @default(0)
   pegawai                PegawaiPPID[]
   strukturOrganisasi     StrukturPPID[] // Relasi balik
   parentId               String?
@@ -476,7 +478,8 @@ model PegawaiPPID {
   image                  FileStorage?             @relation(fields: [imageId], references: [id])
   imageId                String?
   tanggalMasuk           DateTime?                @db.Date
-  email                  String?                  @unique @db.VarChar(255)
+  // Tidak unik: email opsional, boleh kosong (null) untuk banyak pegawai.
+  email                  String?                  @db.VarChar(255)
   telepon                String?                  @db.VarChar(20)
   alamat                 String?                  @db.Text
   posisiId               String                   @db.VarChar(50)
@@ -1725,6 +1728,8 @@ model PosisiOrganisasiBumDes {
   nama                     String                     @db.VarChar(100)
   deskripsi                String?                    @db.Text
   hierarki                 Int
+  // Urutan antar-jabatan selevel di bagan (kecil dulu); sama dengan Struktur Perangkat Desa.
+  urutan                   Int                        @default(0)
   pegawai                  PegawaiBumDes[]
   strukturOrganisasi       StrukturBumDes[] // Relasi balik
   parentId                 String?
@@ -1743,7 +1748,8 @@ model PegawaiBumDes {
   image                    FileStorage?               @relation(fields: [imageId], references: [id])
   imageId                  String?
   tanggalMasuk             DateTime?                  @db.Date
-  email                    String?                    @unique @db.VarChar(255)
+  // Tidak unik: email opsional, boleh kosong (null) untuk banyak pegawai.
+  email                    String?                    @db.VarChar(255)
   telepon                  String?                    @db.VarChar(20)
   alamat                   String?                    @db.Text
   posisiId                 String                     @db.VarChar(50)
