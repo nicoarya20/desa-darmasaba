@@ -25,7 +25,8 @@ const ajukanPermohonan = proxy({
   create: {
     form: { ...defaultAjukanForm },
     loading: false,
-    async create() {
+    /** Kirim formulir permohonan; true = tersimpan, false = validasi/API/jaringan gagal (pemanggil hanya reset bila true). */
+    async create(): Promise<boolean> {
       const cek = templateAjukanForm.safeParse(
         ajukanPermohonan.create.form
       );
@@ -33,7 +34,8 @@ const ajukanPermohonan = proxy({
         const err = `[${cek.error.issues
           .map((v) => `${v.path.join(".")}`)
           .join("\n")}] required`;
-        return toast.error(err);
+        toast.error(err);
+        return false;
       }
       try {
         ajukanPermohonan.create.loading = true;
@@ -42,11 +44,15 @@ const ajukanPermohonan = proxy({
         ].post(ajukanPermohonan.create.form);
         if (res.status === 200) {
           ajukanPermohonan.findMany.load();
-          return toast.success("Ajukan permohonan berhasil disimpan!");
+          toast.success("Ajukan permohonan berhasil disimpan!");
+          return true;
         }
-        return toast.error("Gagal menyimpan ajukan permohonan");
+        toast.error("Gagal menyimpan ajukan permohonan");
+        return false;
       } catch (error) {
-        console.log((error as Error).message);
+        console.error("Gagal mengirim ajukan permohonan:", (error as Error).message);
+        toast.error("Gagal menyimpan ajukan permohonan");
+        return false;
       } finally {
         ajukanPermohonan.create.loading = false;
       }
