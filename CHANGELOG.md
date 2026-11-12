@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.253] - 2026-11-12
+### Added
+- **Kalender Bali di halaman Agenda & Kalender Desa.** Setiap tanggal kini menampilkan wuku dan wewaran (mis. "Anggara Kliwon"), tanda Purnama dan Tilem, serta rerainan seperti Galungan, Kuningan, Nyepi, Saraswati, Pagerwesi, Siwaratri, Tumpek, dan Kajeng Kliwon. Klik sebuah tanggal untuk melihat wariga lengkap hari itu: sasih, penanggal/pangelong, tahun Çaka, dan Eka sampai Dasa Wara. Semua dihitung otomatis untuk tahun berapa pun, jadi admin tidak perlu mengisi hari raya Bali satu per satu. Hasilnya sudah dicocokkan dengan kalenderbali.org untuk tahun 2026–2030. Bulan sisipan disebut "Mala", sama seperti di kalenderbali.org.
+- Kegiatan Desa kini punya halaman per kategori (mis. Gotong Royong, Festival) dengan pil kategori di bagian atas, seperti halaman Berita.
+
+### Changed
+- **Halaman Agenda & Kalender Desa dirombak menjadi kalender ala Outlook.** Di bagian atas ada daftar acara terdekat dengan hitung mundur ("Hari ini", "Besok", "8 hari lagi", "2 minggu lagi"). Di bawahnya ada kalender bulanan yang menampilkan nama acara langsung di tanggalnya, dengan warna per kategori. Klik acara untuk membuka detailnya. Di ponsel, kalender tampil ringkas dengan daftar acara per hari di bawahnya. Bila agenda desa jatuh di hari yang sama dengan hari raya Bali bernama sama, yang tampil adalah agenda desa.
+- **Halaman Kegiatan Desa kini bergaya halaman Berita**, dengan kartu foto, label kategori, kotak cari, dan nomor halaman. Halaman detail kegiatan memakai tata letak yang sama dengan detail Pengumuman.
+- **Halaman Monev & Pembangunan kini bergaya halaman APBDes.** Ringkasan di bagian atas menampilkan jumlah kegiatan, sebaran status, total anggaran, dan rata-rata progres. Di bawahnya ada daftar kegiatan pembangunan dalam baris berisi status, progres, dan anggaran (bisa disaring per status), lalu dokumen perencanaan (RPJM Desa, RKP Desa, Berita Acara) dengan tombol Lihat PDF dan Unduh. Anggaran atau progres yang belum diisi admin ditulis "Belum diisi" (sebelumnya tampil Rp 0). Ada tautan ke halaman Realisasi APBDes.
+
+### Operator
+- Dependency baru `balinese-date-js-lib` (^0.4.3, lisensi Apache-2.0, ±9,5 KB gzip) untuk perhitungan kalender Bali. Tidak ada migrasi database.
+- Catatan data stg (isian admin, bukan kode): agenda "Hari Raya Galungan" tercatat 1 Agustus 2026 (seharusnya 17 Juni; 1 Agustus adalah Tumpek Krulut), "Hari Raya Kuningan" tercatat 14 Maret & 11 Agustus 2026 (seharusnya 27 Juni), dan "Perayaan Galungan dan Kuningan" tercatat 4 Maret 2026. Sebaiknya dikoreksi lewat admin.
+
 ## [0.1.252] - 2026-11-12
 ### Added
 - **Menu admin baru: Pemerintahan → Struktur Perangkat Desa**, dengan tab Pegawai, Jabatan, dan Bagan. Hanya nama dan jabatan yang wajib diisi. Foto, gelar, tanggal masuk, email, telepon, dan alamat boleh dikosongkan dan dilengkapi belakangan. Atasan setiap jabatan bisa dipilih langsung di form jabatan, dan tab Bagan menampilkan semua pegawai per jabatan, termasuk jabatan yang belum terisi.
