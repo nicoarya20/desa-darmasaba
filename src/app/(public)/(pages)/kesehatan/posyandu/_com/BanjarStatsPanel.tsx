@@ -5,7 +5,7 @@ import { hasUnassigned } from "./posyandu.logic";
 import s from "./posyandu.module.css";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
 import { PosyanduEmpty, PosyanduNotice, PosyanduSkeleton } from "./PosyanduStates";
-import type { LoadState } from "./use-posyandu-data";
+import type { LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 
 /** `desa` null = angka seluruh desa gagal dimuat (baris tetap tampil dengan keterangan gagal). */
 export type BanjarStatsData = { desa: PosyanduStats | null; rows: BanjarStatsRow[] };

@@ -8,7 +8,7 @@ import { ACCENT } from "./posyandu.meta";
 import s from "./posyandu.module.css";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
 import { PosyanduNotice, PosyanduSkeleton } from "./PosyanduStates";
-import type { LoadState } from "./use-posyandu-data";
+import type { LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 
 const TITLE_ID = "posyandu-ringkasan-title";
 

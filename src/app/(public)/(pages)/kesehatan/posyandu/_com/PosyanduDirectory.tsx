@@ -8,7 +8,7 @@ import type { PosyanduItem } from "./posyandu.source";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
 import { PosyanduRow } from "./PosyanduRow";
 import { PosyanduEmpty, PosyanduNotice, PosyanduSkeleton } from "./PosyanduStates";
-import type { LoadState } from "./use-posyandu-data";
+import type { LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import r from "./posyandu-rows.module.css";
 
 const TITLE_ID = "posyandu-daftar-title";

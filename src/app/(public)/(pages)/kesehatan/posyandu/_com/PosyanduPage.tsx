@@ -1,4 +1,5 @@
 'use client';
+import { useLazyLoad } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import apb from "@/app/(public)/_com/main-page/apbdes/apbdes.module.css";
 import BackButton from "@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,7 +14,7 @@ import { POSYANDU_TEXT as T } from "./posyandu.text";
 import { PosyanduDirectory } from "./PosyanduDirectory";
 import { PosyanduTabs } from "./PosyanduTabs";
 import { RingkasanPanel } from "./RingkasanPanel";
-import { loadBanjarStats, useLazyLoad } from "./use-posyandu-data";
+import { loadBanjarStats } from "./use-posyandu-data";
 
 const TITLE_ID = "posyandu-page-title";
 const loadDesaStats = () => loadStats();
