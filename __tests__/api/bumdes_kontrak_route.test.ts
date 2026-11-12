@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Kontrak rute (AI-CONTRACT §10): endpoint struktur-bumdes lama TIDAK boleh berubah;
-// endpoint profil/unit usaha BUMDes hanya menambah rute baru di bawah /bumdes.
+// Kontrak rute (AI-CONTRACT §10): endpoint profil/unit usaha BUMDes hanya menambah rute baru di bawah /bumdes;
+// rute struktur-bumdes dikunci di sini dan, lebih rinci (bentuk respons), di struktur_bumdes_kontrak_route.test.ts.
 import { describe, it, expect, vi } from "vitest";
 import Elysia from "elysia";
 
@@ -14,20 +14,20 @@ function routesOf(plugin: Elysia<any, any, any, any, any, any, any>): string[] {
   return app.routes.map((r) => `${r.method} ${r.path}`).sort();
 }
 
-describe("kontrak rute struktur-bumdes (lama, dibekukan)", () => {
-  it("daftar method+path tidak berubah", () => {
+describe("kontrak rute struktur-bumdes", () => {
+  // Struktur BUMDes pindah ke kode struktur bersama (ADR 2026-11-12-struktur-fleksibel): path lama dipertahankan;
+  // `GET|PUT /struktur-organisasi/:id` (tabel lama StrukturBumDes) dan `GET posisi-organisasi/find-many` dihapus
+  // karena tidak dipakai konsumen mana pun lagi.
+  it("daftar method+path", () => {
     expect(routesOf(StrukturBumdes)).toEqual([
       "DELETE /struktur-organisasi/pegawai/del/:id",
       "DELETE /struktur-organisasi/posisi-organisasi/del/:id",
-      "GET /struktur-organisasi/:id",
       "GET /struktur-organisasi/pegawai/:id",
       "GET /struktur-organisasi/pegawai/find-many",
       "GET /struktur-organisasi/posisi-organisasi/:id",
-      "GET /struktur-organisasi/posisi-organisasi/find-many",
       "GET /struktur-organisasi/posisi-organisasi/find-many-all",
       "POST /struktur-organisasi/pegawai/create",
       "POST /struktur-organisasi/posisi-organisasi/create",
-      "PUT /struktur-organisasi/:id",
       "PUT /struktur-organisasi/pegawai/:id",
       "PUT /struktur-organisasi/posisi-organisasi/:id",
     ]);

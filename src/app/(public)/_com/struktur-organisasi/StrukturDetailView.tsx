@@ -61,7 +61,7 @@ export function StrukturDetailView({ data, infoTitle }: Props) {
         <Title order={2} fz={{ base: 'lg', md: 'xl' }} lh={1.3}>{infoTitle}</Title>
         <dl style={{ margin: 0, display: 'grid', gap: 'var(--mantine-spacing-md)' }}>
           {detailRows(data).map((row) => (
-            <InfoRow key={row.key} label={row.label} multiline={row.multiline}>{row.value}</InfoRow>
+            <InfoRow key={row.key} label={row.label}>{row.value}</InfoRow>
           ))}
           <InfoRow label={T.status} color={data.isActive ? 'green' : 'red'}>
             {data.isActive ? T.aktif : T.tidakAktif}
@@ -72,14 +72,14 @@ export function StrukturDetailView({ data, infoTitle }: Props) {
   );
 }
 
-type RowProps = { label: string; children: ReactNode; color?: string; multiline?: boolean };
+type RowProps = { label: string; children: ReactNode; color?: string };
 
-function InfoRow({ label, children, color, multiline }: RowProps) {
+function InfoRow({ label, children, color }: RowProps) {
   return (
     <div>
       <Text component="dt" fz={{ base: 'sm', md: 'md' }} fw={600} lh={1.3} c="dark">{label}</Text>
       <Text component="dd" m={0} fz={{ base: 'sm', md: 'md' }} lh={1.5} c={color ?? 'dimmed'}
-        style={{ whiteSpace: multiline ? 'pre-line' : 'normal', overflowWrap: 'anywhere' }}>
+        style={{ overflowWrap: 'anywhere' }}>
         {children}
       </Text>
     </div>
