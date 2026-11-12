@@ -31,11 +31,14 @@
   text-overflow: ellipsis;
 }
 
+/* Kotak 6px diputar 45° selebar ~8,5px: margin 2px kiri-kanan menampung ujungnya, agar tak terpotong
+   overflow: hidden milik .rr (diperlukan untuk elipsis nama). */
 .rr::before {
   content: "";
   flex-shrink: 0;
   width: 6px;
   height: 6px;
+  margin: 0 2px;
   border: 1.5px solid currentColor;
   border-radius: 1px;
   transform: rotate(45deg);
@@ -81,7 +84,7 @@
 }
 
 .selLebih {
-  padding-left: 11px;
+  padding-left: 15px; /* sejajar nama: margin 2 + ketupat 6 + margin 2 + gap 5 */
   color: var(--subtle);
   font-size: 11px;
   line-height: 14px;
@@ -137,11 +140,10 @@
   }
 }
 
-/* Ikon bulan sebagai lencana di sudut kanan atas angka tanggal: margin negatif = tak menambah lebar. */
-.lencana {
-  align-self: flex-start;
-  margin: -1px -4px 0 -10px; /* kiri -10 = menumpang angka; kanan -4 = menetralkan gap kedua */
-  position: relative;
+/* Ikon bulan sejajar tengah tepat di kanan angka tanggal (gap .dayHead); tak lagi menumpang di sudut
+   atas angka — di sana ia terbaca seperti titik nyasar / ikon terpotong. */
+.bulanTanggal {
+  margin-left: -4px; /* menetralkan gap 4px: angka sudah berjarak di tengah tombol min 30px; tak menimpa lingkaran hari ini */
 }
 
 .wuku {
@@ -151,7 +153,8 @@
   right: 100%;
   width: var(--wuku-w);
   padding: 10px 0;
-  border-top: 1px solid var(--line);
+  /* Elemen diputar 180°, jadi border-bottom tergambar di atas — tepat di garis border-top baris minggu. */
+  border-bottom: 1px solid var(--line);
   color: var(--ink);
   font-size: 11px;
   font-weight: 600;
@@ -240,6 +243,10 @@
   font-size: 13.5px;
   line-height: 1.4;
   font-weight: 400;
+}
+
+.hariIniBaris {
+  text-wrap: balance;
 }
 
 .berikut strong {

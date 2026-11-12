@@ -1,7 +1,7 @@
 /** Teks tampilan halaman Agenda & Kalender Desa. */
 export const AGENDA_TEXT = {
   title: 'Agenda & Kalender Desa',
-  lead: 'Jadwal kegiatan Desa Darmasaba — upacara adat, musyawarah, kegiatan pemuda, dan lainnya. Lihat acara terdekat atau buka kalender per bulan.',
+  lead: 'Jadwal kegiatan Desa Darmasaba: upacara adat, musyawarah, kegiatan pemuda, dan lainnya. Lihat acara terdekat atau buka kalender per bulan.',
   hariIni: 'Hari ini',
   mendatang: {
     title: 'Acara mendatang',

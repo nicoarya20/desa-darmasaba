@@ -72,9 +72,9 @@ describe('Kalender bulan desktop — lapisan Bali', () => {
     expect(count(html, 'aria-label="Tilem"')).toBe(1); // 9 Nov
   });
 
-  it('ikon bulan = lencana di sebelah angka tanggal, di luar blok wewaran (wewaran tak terpotong)', () => {
-    // 24 Nov: tombol tanggal → svg lencana → blok wewaran; svg tidak berada di dalam blok wewaran.
-    expect(html).toMatch(/>24<\/button><svg class="[^"]*bulan[^"]*lencana[^"]*" data-fase="purnama"[^>]*>.*?<\/svg><span class="[^"]*kepala[^"]*"><span class="[^"]*wewaran[^"]*">Anggara Kliwon</);
+  it('ikon bulan tepat di kanan angka tanggal, di luar blok wewaran (wewaran tak terpotong)', () => {
+    // 24 Nov: tombol tanggal → svg ikon bulan → blok wewaran; svg tidak berada di dalam blok wewaran.
+    expect(html).toMatch(/>24<\/button><svg class="[^"]*bulan[^"]*bulanTanggal[^"]*" data-fase="purnama"[^>]*>.*?<\/svg><span class="[^"]*kepala[^"]*"><span class="[^"]*wewaran[^"]*">Anggara Kliwon</);
   });
 
   it('rerainan = teks bertingkat, bukan blok agenda; agenda tetap blok berwarna', () => {
@@ -132,13 +132,14 @@ describe('Bilah alat & kartu Hari ini', () => {
         onPilihHari={noop}
       />,
     );
-    expect(html).toMatch(/<h2[^>]*>November 2026<\/h2><p[^>]*>Sasih Kalima – Kanem · Çaka 1948<\/p>/);
+    // Jumlah acara menumpang di baris sasih (1 acara: Pujawali 20 Nov).
+    expect(html).toMatch(/<h2[^>]*>November 2026<\/h2><p[^>]*>Sasih Kalima – Kanem · Çaka 1948<span class="[^"]*monthCount[^"]*"> · 1 acara<\/span><\/p>/);
   });
 
-  it('Hari ini: tanggal Bali + rerainan berikutnya; saklar mati → tanpa rerainan berikutnya', () => {
+  it('Hari ini: hari Bali & wuku, tanggal sasih, rerainan berikutnya (tiap info satu baris); saklar mati → tanpa rerainan berikutnya', () => {
     const props = { data: { items: [], total: 0 }, error: false, now: NOW, onPilih: noop };
     const html = render(<AgendaMendatang {...props} tampilRerainan />);
-    expect(html).toContain('Wraspati Pon · Wuku Landep · Penanggal 3, Sasih Kanem');
+    expect(html).toMatch(/<span class="[^"]*hariIniBaris[^"]*">Wraspati Pon · Wuku Landep<\/span><span class="[^"]*hariIniBaris[^"]*">Penanggal 3 · Sasih Kanem<\/span>/);
     expect(html).toContain(`${AGENDA_TEXT.bali.berikutnya}: <strong>Tumpek Landep</strong> · 2 hari lagi`);
     expect(render(<AgendaMendatang {...props} tampilRerainan={false} />)).not.toContain(AGENDA_TEXT.bali.berikutnya);
   });

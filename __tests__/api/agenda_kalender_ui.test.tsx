@@ -171,7 +171,7 @@ describe('AgendaKalender (bilah alat & keadaan)', () => {
     expect(html).toMatch(/<h2[^>]*>November 2026<\/h2>/);
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Hari ini<\/button>/);
     expect(html).toContain('aria-label="Bulan sebelumnya"');
-    expect(html).toContain('>1 acara<');
+    expect(html).toContain('> · 1 acara<'); // menumpang di baris sasih
   });
 
   it('bulan kosong → pesan; galat → tombol coba lagi', () => {

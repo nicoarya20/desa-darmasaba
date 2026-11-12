@@ -54,14 +54,14 @@ export function RerainanSel({ list, onClick, style }: { list: Rerainan[]; onClic
 }
 
 /**
- * Kepala sel desktop: ikon bulan menempel di sudut angka tanggal (tanpa makan lebar) + nama hari Bali,
- * mis. "Wraspati Pon" — turun ke 2 baris bila sel sempit, disembunyikan bila satu kata pun tak muat.
+ * Kepala sel desktop: ikon bulan sejajar tengah di kanan angka tanggal + nama hari Bali, mis. "Wraspati Pon"
+ * (turun ke 2 baris bila sel sempit, disembunyikan bila satu kata pun tak muat).
  */
 export function KepalaSelBali({ info, tampilBulan }: { info: HariBali; tampilBulan: boolean }) {
   const fase = faseBulan(info);
   return (
     <>
-      {tampilBulan && fase && <IkonBulan fase={fase} size={10} className={s.lencana} />}
+      {tampilBulan && fase && <IkonBulan fase={fase} size={11} className={s.bulanTanggal} />}
       <span className={s.kepala}>
         <span className={s.wewaran}>{namaHariBali(info)}</span>
       </span>
@@ -86,13 +86,16 @@ export function TandaRingkas({ info, rerainan }: { info: HariBali; rerainan: Rer
   return rerainan.some((r) => r.tingkat === 'besar') ? <span className={s.tanda} /> : null;
 }
 
-/** Baris Bali di kartu "Hari ini": tanggal Bali + rerainan besar berikutnya. */
+/** Baris Bali di kartu "Hari ini": hari Bali & wuku, tanggal sasih, lalu rerainan besar berikutnya — tiap info satu baris. */
 export function HariIniBali({ info, tampilRerainan }: { info: HariBali; tampilRerainan: boolean }) {
   const berikut = useMemo(() => (tampilRerainan ? rerainanBerikutnya(info.hari) : null), [info.hari, tampilRerainan]);
   return (
     <span className={s.hariIni}>
-      <span>
-        {namaHariBali(info)} · {T.wuku} {info.wuku} · {teksTanggalSasih(info)}, Sasih {info.sasih}
+      <span className={s.hariIniBaris}>
+        {namaHariBali(info)} · {T.wuku} {info.wuku}
+      </span>
+      <span className={s.hariIniBaris}>
+        {teksTanggalSasih(info)} · Sasih {info.sasih}
       </span>
       {berikut && (
         <span className={s.berikut}>

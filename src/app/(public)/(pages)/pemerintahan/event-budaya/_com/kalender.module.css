@@ -115,10 +115,11 @@
   color: var(--ink);
 }
 
+/* Jumlah acara menumpang di baris sasih, dekat judul — bukan terpencil di ujung kanan bilah. */
 .monthCount {
-  margin-left: auto;
-  color: var(--muted);
-  font-size: 15px;
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .todayBtn:focus-visible,
@@ -453,10 +454,6 @@ button.dayNum {
 
   .monthTitle {
     font-size: 22px;
-  }
-
-  .monthCount {
-    font-size: 14px;
   }
 
   .loading {

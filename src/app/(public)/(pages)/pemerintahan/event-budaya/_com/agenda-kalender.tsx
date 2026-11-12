@@ -42,7 +42,7 @@ type Props = {
 };
 
 /**
- * Panel kalender: bilah alat (Hari ini, ‹ ›, judul bulan + sasih/Çaka) + kalender bulan (desktop) /
+ * Panel kalender: bilah alat (Hari ini, ‹ ›, judul bulan + sasih/Çaka · jumlah acara) + kalender bulan (desktop) /
  * ringkas + daftar (ponsel). Hitungan Bali dibuat sekali per bulan tampil.
  */
 export function AgendaKalender(p: Props) {
@@ -76,9 +76,11 @@ export function AgendaKalender(p: Props) {
         </div>
         <div className={s.monthHead} aria-live="polite">
           <h2 className={s.monthTitle}>{judul}</h2>
-          <p className={s.monthBali}>{sasih}</p>
+          <p className={s.monthBali}>
+            {sasih}
+            {bulanIni && <span className={s.monthCount}> · {T.jumlahBulan(bulanIni.length)}</span>}
+          </p>
         </div>
-        {bulanIni && <span className={s.monthCount}>{T.jumlahBulan(bulanIni.length)}</span>}
       </div>
 
       {p.error ? (
