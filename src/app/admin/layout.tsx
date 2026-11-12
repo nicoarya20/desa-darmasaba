@@ -67,14 +67,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             return;
           }
 
-          const { menuIds, publicMenuIds } = await loadMenuAccess(data.user.id);
+          const menuIds = await loadMenuAccess(data.user.id);
 
           authStore.setUser({
             id: data.user.id,
             name: data.user.name,
             roleId: Number(data.user.roleId),
             menuIds,
-            publicMenuIds,
             isActive: data.user.isActive
           });
 
@@ -107,7 +106,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const user = authStore.user;
     if (loading || !user) return;
-    const nav = getNavbar({ roleId: user.roleId, menuIds: user.menuIds, publicMenuIds: user.publicMenuIds });
+    const nav = getNavbar({ roleId: user.roleId, menuIds: user.menuIds });
     const target = adminGuardRedirect({ pathname, roleId: user.roleId, nav });
     if (target) router.replace(target);
   }, [loading, pathname, router]);
@@ -140,7 +139,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   const currentNav = authStore.user
-    ? getNavbar({ roleId: authStore.user.roleId, menuIds: authStore.user.menuIds, publicMenuIds: authStore.user.publicMenuIds })
+    ? getNavbar({ roleId: authStore.user.roleId, menuIds: authStore.user.menuIds })
     : [];
 
   const pathSeg = (p: string) => p.split('?')[0].split('/').filter(Boolean);
