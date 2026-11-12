@@ -1,7 +1,7 @@
 'use client';
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
-import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { activeSlug, kategoriLabel, parsePage, SEMUA_SLUG } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import s from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { useKabarPage } from '@/app/(public)/_com/kabar-list/use-kabar-page';
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
@@ -9,9 +9,9 @@ import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
-import { activeSlug, beritaListHref, kategoriLabel } from './berita-list.logic';
+import { beritaListHref } from './berita-list.logic';
 import { loadBeritaPage } from './berita-list.source';
-import { BERITA_PAGE_LIMIT, SEMUA_SLUG } from './berita.meta';
+import { BERITA_PAGE_LIMIT } from './berita.meta';
 import { BERITA_TEXT } from './berita.text';
 
 const TITLE_ID = 'berita-list-title';
