@@ -1,7 +1,8 @@
 import { Image, Modal } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { PotensiDetailInfo } from "./PotensiDetailInfo";
-import { sanitizePotensiHtml, type PotensiItem } from "./potensi.logic";
+import { sanitizeRichText } from "@/lib/rich-text";
+import type { PotensiItem } from "./potensi.logic";
 import s from "./potensi-detail.module.css";
 import { POTENSI_TEXT } from "./potensi.text";
 
@@ -9,7 +10,7 @@ type Props = { item: PotensiItem | null; opened: boolean; onClose: () => void };
 
 /** Isi overlay: hero foto (kategori + judul), deskripsi lengkap, info (lokasi/pengelola/status) + dokumentasi. Modal.Title/Body memberi nama & deskripsi dialog. */
 function DetailContent({ item, onClose }: { item: PotensiItem; onClose: () => void }) {
-  const content = sanitizePotensiHtml(item.content);
+  const content = sanitizeRichText(item.content);
   const kategori = item.kategori?.nama;
 
   return (
