@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const prismaMock = vi.hoisted(() => ({
   prestasiDesa: {
     findFirst: vi.fn(),
+    findUnique: vi.fn(), // gambar lama dibaca sebelum update (pindah ke Sampah)
     findMany: vi.fn(),
     count: vi.fn(),
     create: vi.fn(),
