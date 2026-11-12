@@ -17,6 +17,23 @@ export function canManageMenuVisibility(roleId: string | number | null | undefin
   return roleId != null && MENU_VISIBILITY_MANAGER_ROLES.includes(String(roleId));
 }
 
+// Role yang boleh mengelola Menu Access user lain: hanya DEVELOPER & SUPER ADMIN
+// (sama dengan role yang melihat menu "User & Role" di sidebar admin).
+export const MENU_ACCESS_MANAGER_ROLES: readonly string[] = [ROLE_DEVELOPER, ROLE_SUPER_ADMIN];
+
+/** Apakah roleId boleh membaca/mengubah Menu Access user lain (role "0" & "1"). */
+export function canManageMenuAccess(roleId: string | number | null | undefined): boolean {
+  return roleId != null && MENU_ACCESS_MANAGER_ROLES.includes(String(roleId));
+}
+
+/** Apakah actor boleh membaca Menu Access targetUserId: milik sendiri atau pengelola. */
+export function canReadMenuAccess(
+  actor: { id: string; roleId: string | number | null | undefined },
+  targetUserId: string,
+): boolean {
+  return actor.id === targetUserId || canManageMenuAccess(actor.roleId);
+}
+
 // roleId 0-4 = admin (boleh akses /admin); 5+ = user biasa.
 export const MAX_ADMIN_ROLE = 4;
 
