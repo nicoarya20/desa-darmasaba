@@ -1,4 +1,4 @@
-/** Helper murni halaman daftar Kabar (Berita, Pengumuman, Kegiatan Desa): nomor halaman, query URL, slug kategori. */
+/** Helper murni halaman daftar Kabar (Berita, Pengumuman, Kegiatan Desa, …): nomor halaman, paginasi klien, query URL, slug kategori. */
 
 /** Nomor halaman dari query `?page`; selain bilangan bulat positif → 1. */
 export function parsePage(raw: string | null | undefined): number {
@@ -14,6 +14,13 @@ export function withListQuery(path: string, opts: { search?: string; page?: numb
   if (opts.page && opts.page > 1) params.set("page", String(opts.page));
   const query = params.toString();
   return query ? `${path}?${query}` : path;
+}
+
+/** Satu halaman dari daftar yang dipaginasi di klien (Program Kesehatan, Pencegahan Kriminalitas); halaman di luar jangkauan → halaman terakhir. */
+export function paginate<T>(items: readonly T[], page: number, size: number): { items: T[]; page: number; totalPages: number } {
+  const totalPages = Math.max(1, Math.ceil(items.length / size));
+  const current = Math.min(Math.max(1, page), totalPages);
+  return { items: items.slice((current - 1) * size, current * size), page: current, totalPages };
 }
 
 /** Segmen URL daftar untuk semua kategori (Berita, Kegiatan Desa). */

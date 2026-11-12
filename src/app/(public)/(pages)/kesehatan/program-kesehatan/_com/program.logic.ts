@@ -57,13 +57,6 @@ export function toKegiatanList(items: readonly ProgramApiItem[]): KabarItem[] {
   return items.filter((item) => !isIndikator(item)).map(toProgramItem);
 }
 
-/** Satu halaman dari daftar di klien; halaman di luar jangkauan → halaman terakhir. */
-export function paginate<T>(items: readonly T[], page: number, size: number): { items: T[]; page: number; totalPages: number } {
-  const totalPages = Math.max(1, Math.ceil(items.length / size));
-  const current = Math.min(Math.max(1, page), totalPages);
-  return { items: items.slice((current - 1) * size, current * size), page: current, totalPages };
-}
-
 /** Angka persen tampilan detail indikator, mis. `92%` / `8,5%` (format Indonesia). */
 export function formatPersen(value: number): string {
   return `${value.toLocaleString("id-ID", { maximumFractionDigits: 1 })}%`;
