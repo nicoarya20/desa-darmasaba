@@ -1,6 +1,6 @@
 import { Context } from "elysia";
 import removeStoredFile, { type StoredFileRef } from "../fileStorage/_lib/removeStoredFile";
-import { liveWhere, type StrukturApiConfig } from "./config";
+import { hardDeleteRow, liveWhere, type StrukturApiConfig } from "./config";
 import { fail, PEGAWAI_SELECT, validationFailure, writeFailure } from "./http";
 import type { StrukturPegawai } from "./types";
 import { pegawaiBodySchema } from "./validation";
@@ -94,7 +94,7 @@ export function createPegawaiWriteHandlers(config: StrukturApiConfig) {
     if (config.softDelete) {
       await db().update({ where: { id }, data: { deletedAt: new Date(), isActive: false } });
     } else {
-      await db().delete({ where: { id } });
+      await hardDeleteRow(config, "pegawai", id);
       if (existing.image) await removeStoredFile(existing.image, owner(id));
     }
     return { success: true as const, message: `${config.pegawaiLabel} berhasil dihapus`, data: { id } };
