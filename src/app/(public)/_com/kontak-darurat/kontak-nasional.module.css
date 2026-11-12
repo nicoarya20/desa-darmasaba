@@ -1,6 +1,6 @@
 /*
- * Blok "Darurat nasional" (112, 119) di atas daftar Kontak Darurat Kesehatan. Senada baris kontak desa
- * (ubin #f5f5f7, nomor tabular, pil brand "Telepon"), dibedakan lewat kartu berdampingan, nomor lebih besar,
+ * Blok "Darurat nasional" (nomor nasional statis) di atas daftar kontak darurat desa (Kesehatan, Keamanan).
+ * Senada baris kontak desa (ubin #f5f5f7, nomor tabular, pil brand "Telepon"), dibedakan lewat kartu berdampingan, nomor lebih besar,
  * dan ikon dalam lingkaran merah muda. Tombol memakai kelas .btn/.btnCall dari kontak-darurat.module.css.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
  */

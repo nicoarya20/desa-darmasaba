@@ -15,10 +15,8 @@ import { KontakDaruratView } from '@/app/(public)/(pages)/kesehatan/kontak-darur
 import { KontakDaruratDetailView } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/detail/KontakDaruratDetail';
 import type { KontakDarurat } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/kontak-darurat.logic';
 import type { KontakListState } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/use-kontak-darurat';
-import {
-  KONTAK_SEARCH_THRESHOLD,
-  NATIONAL_EMERGENCY_NUMBERS,
-} from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/kontak-darurat.meta';
+import { NATIONAL_EMERGENCY_NUMBERS } from '@/app/(public)/(pages)/kesehatan/kontak-darurat/_com/kontak-darurat.meta';
+import { KONTAK_SEARCH_THRESHOLD } from '@/app/(public)/_com/kontak-darurat/kontak-darurat.meta';
 import {
   NATIONAL_TEXT as N,
   KONTAK_TEXT as T,

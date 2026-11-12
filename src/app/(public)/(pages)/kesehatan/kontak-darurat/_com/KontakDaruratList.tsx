@@ -1,18 +1,34 @@
 'use client';
+import { KontakRow, KontakRowPlaceholder } from '@/app/(public)/_com/kontak-darurat/KontakRow';
+import { NationalEmergency } from '@/app/(public)/_com/kontak-darurat/NationalEmergency';
+import {
+  KONTAK_BRAND_VARS,
+  KONTAK_SEARCH_THRESHOLD,
+  type NationalEmergencyEntry,
+} from '@/app/(public)/_com/kontak-darurat/kontak-darurat.meta';
+import s from '@/app/(public)/_com/kontak-darurat/kontak-darurat.module.css';
+import { phoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic';
+import { IconAmbulance, IconFirstAidKit, IconSos } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 import { LayananSearch } from '../../../pemerintahan/layanan/_com/LayananSearch';
 import page from '../../../pemerintahan/layanan/_com/layanan.module.css';
-import { KontakRow, KontakRowPlaceholder } from './KontakRow';
-import { NationalEmergency } from './NationalEmergency';
-import { filterKontak, phoneInfo } from './kontak-darurat.logic';
-import { KONTAK_BRAND_VARS, KONTAK_SEARCH_THRESHOLD } from './kontak-darurat.meta';
-import s from './kontak-darurat.module.css';
-import { KONTAK_TEXT as T } from './kontak-darurat.text';
+import { filterKontak, toPlainText } from './kontak-darurat.logic';
+import { NATIONAL_EMERGENCY_NUMBERS, kontakDetailHref, type NationalEmergencyNumber } from './kontak-darurat.meta';
+import { NATIONAL_TEXT as N, KONTAK_TEXT as T } from './kontak-darurat.text';
 import { useKontakDaruratList, type KontakListState } from './use-kontak-darurat';
 
 const PLACEHOLDER_ROWS = 4;
 const LIST_TITLE_ID = 'kontak-darurat-desa';
+const NATIONAL_ICONS: Record<NationalEmergencyNumber, NationalEmergencyEntry['icon']> = {
+  '112': IconSos,
+  '119': IconAmbulance,
+};
+const NATIONAL_ENTRIES: NationalEmergencyEntry[] = NATIONAL_EMERGENCY_NUMBERS.map((number) => ({
+  number,
+  ...N.items[number],
+  icon: NATIONAL_ICONS[number],
+}));
 
 /** Halaman daftar Kontak Darurat Kesehatan: blok Darurat nasional (112/119), lalu semua kontak desa sekaligus. */
 export function KontakDaruratList() {
@@ -42,7 +58,7 @@ export function KontakDaruratView({ state, onRetry }: { state: KontakListState; 
         </div>
       </header>
 
-      <NationalEmergency />
+      <NationalEmergency entries={NATIONAL_ENTRIES} />
 
       <section className={page.section} aria-labelledby={LIST_TITLE_ID}>
         <div className={page.sectionHead}>
@@ -83,7 +99,16 @@ export function KontakDaruratView({ state, onRetry }: { state: KontakListState; 
         {visible.length > 0 ? (
           <ul className={s.panel} aria-label={T.listLabel}>
             {visible.map((item) => (
-              <KontakRow key={item.id} item={item} />
+              <KontakRow
+                key={item.id}
+                name={item.name}
+                phone={phoneInfo(item.whatsapp)}
+                icon={<IconFirstAidKit size={28} stroke={1.5} />}
+                photo={item.image?.link}
+                description={toPlainText(item.deskripsi)}
+                href={kontakDetailHref(item.id)}
+                linkLabel={T.detailLabel(item.name)}
+              />
             ))}
           </ul>
         ) : null}

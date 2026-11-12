@@ -1,19 +1,19 @@
-import { IconAmbulance, IconSos, IconPhone } from '@tabler/icons-react';
-import page from '../../../pemerintahan/layanan/_com/layanan.module.css';
-import { phoneInfo } from './kontak-darurat.logic';
-import { NATIONAL_EMERGENCY_NUMBERS, type NationalEmergencyNumber } from './kontak-darurat.meta';
+import { IconPhone } from '@tabler/icons-react';
+import page from '../../(pages)/pemerintahan/layanan/_com/layanan.module.css';
+import type { NationalEmergencyEntry } from './kontak-darurat.meta';
 import s from './kontak-darurat.module.css';
-import { NATIONAL_TEXT as T, KONTAK_TEXT } from './kontak-darurat.text';
+import { KONTAK_CALL_TEXT, NATIONAL_BASE_TEXT as T } from './kontak-darurat.text';
+import { phoneInfo } from './kontak-phone.logic';
 import n from './kontak-nasional.module.css';
 
-const ICONS: Record<NationalEmergencyNumber, typeof IconSos> = { '112': IconSos, '119': IconAmbulance };
 const TITLE_ID = 'kontak-darurat-nasional';
 
 /**
- * Blok "Darurat nasional" (112, 119) di atas daftar kontak desa: statis, selalu tampil (juga saat daftar
- * memuat/gagal) dan tidak ikut disaring kolom cari, karena bukan data desa dan harus selalu terjangkau.
+ * Blok "Darurat nasional" di atas daftar kontak desa: statis, selalu tampil (juga saat daftar memuat/gagal)
+ * dan tidak ikut disaring kolom cari, karena bukan data desa dan harus selalu terjangkau.
+ * Kartu 2 kolom (1 kolom di tablet/mobile); isi nomor ditentukan halaman pemakai.
  */
-export function NationalEmergency() {
+export function NationalEmergency({ entries }: { entries: readonly NationalEmergencyEntry[] }) {
   return (
     <section className={page.section} aria-labelledby={TITLE_ID}>
       <div className={page.sectionIntro}>
@@ -23,9 +23,7 @@ export function NationalEmergency() {
         <p className={page.sectionLead}>{T.lead}</p>
       </div>
       <ul className={n.grid} aria-label={T.listLabel}>
-        {NATIONAL_EMERGENCY_NUMBERS.map((number) => {
-          const Icon = ICONS[number];
-          const { name, description } = T.items[number];
+        {entries.map(({ number, name, description, icon: Icon }) => {
           // Nomor pendek → phoneInfo kind 'service': `tel:112` apa adanya, tanpa WhatsApp.
           const telHref = phoneInfo(number)?.telHref ?? `tel:${number}`;
           return (
@@ -40,7 +38,7 @@ export function NationalEmergency() {
               </div>
               <a href={telHref} className={`${s.btn} ${s.btnCall} ${n.call}`} aria-label={T.callLabel(number, name)}>
                 <IconPhone size={18} stroke={2} aria-hidden />
-                {KONTAK_TEXT.call}
+                {KONTAK_CALL_TEXT.call}
               </a>
             </li>
           );
