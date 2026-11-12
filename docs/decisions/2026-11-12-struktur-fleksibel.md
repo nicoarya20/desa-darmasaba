@@ -11,7 +11,7 @@ Struktur Perangkat Desa sudah memakai kode bersama, tetapi Struktur PPID (dan BU
 - **Kode bersama, tabel terpisah.**
   - API: factory `src/app/api/[[...slugs]]/_lib/_struktur-organisasi/` — `createStrukturHandlers({ posisi, pegawai, pegawaiLabel, pegawaiLabelLower, softDelete })` + `createStrukturModule({ prefix, posisiPath, pegawaiPath, tag, logTag }, handlers)`. Delegate Prisma dibaca lazy.
   - `softDelete`: PPID `true` (punya `deletedAt` dan dirujuk tabel lama `StrukturPPID`/`StrukturOrganisasiPPID`; hapus = isi `deletedAt` + nonaktif, foto dibiarkan, semua baca mengabaikan baris terhapus). Perangkat Desa & BUMDes `false` (tanpa `deletedAt`; hapus baris + foto).
-  - `hardDelete` (opsional, untuk `softDelete: false`): fungsi hapus khusus per tabel. BUMDes memakainya untuk menghapus baris tabel lama `StrukturOrganisasiBumDes` yang merujuk pegawai/jabatan (FK `ON DELETE RESTRICT`) dalam satu `$transaction` dengan hapus barisnya, agar hapus tidak gagal FK. Tabel itu tidak pernah ditulis/dibaca kode mana pun (dicek di seluruh riwayat git), jadi barisnya — bila ada — adalah sisa usang. `StrukturBumDes` ber-FK `ON DELETE SET NULL`, tidak perlu ditangani. Jabatan yang masih dipakai pegawai/bawahan tetap ditolak 409.
+  - Hapus jabatan yang masih dipakai pegawai/bawahan ditolak 409. (Opsi `hardDelete` untuk membersihkan rujukan tabel lama `StrukturOrganisasiBumDes` sudah dihapus bersama tabelnya — lihat bagian di bawah.)
   - State: `src/app/admin/(dashboard)/_state/struktur-organisasi/` — `createStrukturState({ logTag, pegawaiLabel, pegawaiLabelLower, api: { posisi, pegawai } })` (node Eden API struktur itu).
   - Admin: halaman bersama di `src/app/admin/(dashboard)/_com/struktur-organisasi/halaman/` (Pegawai list/detail/tambah/edit, Jabatan list/tambah/edit, Bagan, layout tab) dikonfigurasi `StrukturAdminConfig` = `{ state, routes: strukturAdminRoutes(base), text }`. Halaman per struktur hanya pembungkus tipis.
   - Publik: bagan + profil memakai adapter `StrukturSource` per struktur.
@@ -24,4 +24,11 @@ Struktur Perangkat Desa sudah memakai kode bersama, tetapi Struktur PPID (dan BU
 ## Konsekuensi
 - Ketiga struktur (Perangkat Desa, PPID, BUMDes) kini memakai factory API, state, halaman admin, dan bagan/profil publik yang sama; tiap struktur hanya punya config (delegate, label, rute, teks) dan adapter sumber publik.
 - `primereact` tidak lagi dipakai komponen mana pun (sisa: import CSS tema di `src/app/globals.css`); dependency belum dihapus — keputusan terpisah.
-- Tabel `StrukturBumDes` masih dibaca pencarian global (`_lib/search/findMany.ts`) walau tidak ada lagi cara mengisinya; `StrukturOrganisasiBumDes` tidak dipakai sama sekali. Penghapusan tabel/kolom lama = migrasi terpisah.
+- Tabel lama `StrukturBumDes` & `StrukturOrganisasiBumDes` dihapus — lihat bagian berikut.
+
+## Tabel usang BUMDes dihapus
+Migrasi: `20261112200000_drop_struktur_bumdes_lama`.
+- `StrukturOrganisasiBumDes` (tak pernah ditulis/dibaca kode) dan `StrukturBumDes` (tak ada lagi UI/API pengisinya) dihapus dari schema Prisma beserta relasi baliknya di `PosisiOrganisasiBumDes`, `PegawaiBumDes`, dan `FileStorage`. Data pegawai/jabatan BUMDes ada di `PegawaiBumDes`/`PosisiOrganisasiBumDes` dan tidak tersentuh.
+- Pencarian publik tipe `strukturOrganisasi` (per-tipe & gabungan) kini membaca pegawai BUMDes aktif pada jabatan aktif (`_lib/search/struktur-bumdes.search.ts`; cocok ke nama, email, telepon, nama jabatan). Item `{ id, name, jabatan }`; tautannya ke profil pegawai `/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/[id]` (`searchUrl.tsx`).
+- Factory struktur tidak lagi punya opsi `hardDelete`; hapus pegawai/jabatan BUMDes memakai `delete` biasa seperti Perangkat Desa.
+- **Bila tabel berisi.** Migrasi hanya `DROP TABLE` bila tabel kosong. Bila berisi, DROP dilewati (deploy tidak gagal) dan `RAISE NOTICE` mencetak nama tabel + jumlah baris. Aplikasi tetap jalan karena Prisma tidak lagi memetakan tabel itu; operator memutuskan manual (periksa isi, lalu DROP). Selama `StrukturOrganisasiBumDes` berisi masih ada, FK `ON DELETE RESTRICT`-nya tetap menolak hapus pegawai/jabatan yang dirujuknya.
