@@ -1,5 +1,7 @@
 'use client'
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import { SampahPanel } from '@/app/admin/(dashboard)/_com/sampah/SampahPanel';
+import { teksKonfirmasiPindahKeSampah } from '@/app/admin/(dashboard)/_com/sampah/sampah-panel.logic';
 import stateBumdes from '@/app/admin/(dashboard)/_state/ekonomi/bumdes/bumdes';
 import colors from '@/con/colors';
 import { MAX_FOTO_GALERI } from '@/lib/bumdes-foto-profil';
@@ -14,6 +16,8 @@ import GaleriFotoAdminGrid from './GaleriFotoAdminGrid';
 export default function GaleriFotoBumdesAdmin({ profilTersimpan }: { profilTersimpan: boolean }) {
   const galeri = useProxy(stateBumdes.fotoProfil);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  // Penghitung hapus: memicu panel Sampah memuat ulang setelah foto dipindah ke Sampah.
+  const [hapusKe, setHapusKe] = useState(0);
 
   useEffect(() => {
     void stateBumdes.fotoProfil.load();
@@ -25,7 +29,9 @@ export default function GaleriFotoBumdesAdmin({ profilTersimpan }: { profilTersi
   const handleDelete = async () => {
     if (!deleteId) return;
     const ok = await stateBumdes.fotoProfil.remove(deleteId);
-    if (ok) setDeleteId(null);
+    if (!ok) return;
+    setDeleteId(null);
+    setHapusKe((n) => n + 1);
   };
 
   return (
@@ -67,12 +73,14 @@ export default function GaleriFotoBumdesAdmin({ profilTersimpan }: { profilTersi
         )}
       </Box>
 
+      {profilTersimpan && <SampahPanel sumber="foto-bumdes" reloadKey={hapusKe} onPulihkan={() => void stateBumdes.fotoProfil.load()} />}
+
       <ModalKonfirmasiHapus
         opened={deleteId !== null}
         loading={galeri.deleting}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        text="Apakah Anda yakin ingin menghapus foto ini dari galeri?"
+        text={teksKonfirmasiPindahKeSampah('Foto')}
       />
     </Paper>
   );

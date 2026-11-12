@@ -7,7 +7,7 @@ export async function register() {
   const { startSampahScheduler } = await import("./lib/sampah/sampah-scheduler");
   startSampahScheduler({
     run: async () => {
-      const { purgeSampah } = await import("./app/api/[[...slugs]]/_lib/pengaturan/sampah/sampah.bulk");
+      const { purgeSampah } = await import("./app/api/[[...slugs]]/_lib/sampah/sampah.purge");
       return purgeSampah();
     },
   });

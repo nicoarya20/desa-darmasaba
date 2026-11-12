@@ -17,7 +17,7 @@ const beritaDelete = async (context: Context) => {
   // 1. HAPUS BERITA DULU
   await prisma.berita.delete({ where: { id } });
 
-  // 2. BARU PINDAHKAN BERKAS (gambar utama + galeri) KE SAMPAH
+  // 2. BARU HAPUS PERMANEN BERKAS (gambar utama + galeri) YANG TIDAK DIRUJUK DATA LAIN
   await removeReleasedFiles("Berita", fileIds(berita.imageId, berita.images));
 
   return {

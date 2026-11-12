@@ -16,9 +16,6 @@ const FileStorage = new Elysia({
   })
   .get("/findUnique/:name", fileStorageFindUnique)
   .get("/findMany", fileStorageFindMany)
-  // Pindah ke Sampah; `from` = ID menu sidebar asal (opsional) untuk pengelompokan di Pengaturan → Sampah.
-  .delete("/delete/:id", fileStorageDelete, {
-    query: t.Object({ from: t.Optional(t.String()) }),
-  });
+  .delete("/delete/:id", fileStorageDelete);
 
 export default FileStorage;

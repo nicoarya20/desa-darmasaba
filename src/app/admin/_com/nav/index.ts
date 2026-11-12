@@ -16,8 +16,7 @@ import {
 
 export { pengaturanMenu, userRoleMenu }
 
-// Section domain sidebar sesuai urutan tampil; juga urutan kelompok di Pengaturan → Sampah.
-export const allDomains = [
+const allDomains = [
   landingPageMenu,
   ppidMenu,
   desaMenu,

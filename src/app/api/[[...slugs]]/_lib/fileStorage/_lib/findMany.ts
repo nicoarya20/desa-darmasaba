@@ -4,7 +4,6 @@ import { Context } from "elysia";
 type WhereClause = {
   category?: string;
   isActive?: boolean;
-  deletedAt?: null;
   OR?: Array<{
     name?: { contains: string; mode: 'insensitive' };
     realName?: { contains: string; mode: 'insensitive' };
@@ -21,8 +20,7 @@ export const fileStorageFindMany = async (context: Context) => {
     const skip = (page - 1) * limit;
 
     // Build where clause with proper TypeScript types
-    // Berkas di Sampah (deletedAt terisi) tidak tampil di pustaka file admin.
-    const where: WhereClause = { isActive: true, deletedAt: null };
+    const where: WhereClause = { isActive: true };
     
     if (category) where.category = category;
     if (search) {

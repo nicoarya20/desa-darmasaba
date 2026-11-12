@@ -185,6 +185,5 @@ export const pengaturanMenu: NavItem = {
   children: [
     { id: "pengaturan.visibilitas-menu", name: "Visibilitas Menu", path: "/admin/pengaturan/visibilitas-menu", basePath: "/admin/pengaturan/visibilitas-menu" },
     { id: "pengaturan.menu-access", name: "Menu Access", path: "/admin/pengaturan/menu-access", basePath: "/admin/pengaturan/menu-access" },
-    { id: "pengaturan.sampah", name: "Sampah", path: "/admin/pengaturan/sampah", basePath: "/admin/pengaturan/sampah" },
   ],
 }

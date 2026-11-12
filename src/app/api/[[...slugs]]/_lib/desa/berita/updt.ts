@@ -51,7 +51,7 @@ async function beritaUpdate(context: Context) {
       },
     });
 
-    // Gambar utama & galeri yang dilepas dipindah ke Sampah setelah update sukses.
+    // Gambar utama & galeri yang dilepas dihapus permanen setelah update sukses.
     await removeReleasedFiles(
       "Berita",
       fileIds(existing.imageId, existing.images),

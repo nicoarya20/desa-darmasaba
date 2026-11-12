@@ -6,8 +6,8 @@ import { pulihkanDokumenFolder, type PulihkanDokumenResult } from "@/lib/dokumen
 export const dakRetensiHari = () => resolveRetensiHari(process.env.DAK_SAMPAH_RETENSI_HARI);
 
 /**
- * Pulihkan dokumen DAK dari sampah dalam satu transaksi. Dipakai panel sampah DAK dan Pengaturan → Sampah
- * supaya perilakunya identik.
+ * Pulihkan dokumen DAK dari sampah dalam satu transaksi (panel sampah DAK; aturan folder yang sama dipakai
+ * Sampah APBDes).
  */
 export function pulihkanDokumenDak(id: string, now: Date = new Date()): Promise<PulihkanDokumenResult> {
   const cutoff = sampahCutoff(now, dakRetensiHari());

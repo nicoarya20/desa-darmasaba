@@ -45,7 +45,7 @@ async function pengumumanUpdate(context: Context) {
       include: PENGUMUMAN_DETAIL_INCLUDE,
     });
 
-    // Berkas yang dilepas (gambar utama/galeri/dokumen) dipindah ke Sampah setelah update sukses.
+    // Berkas yang dilepas (gambar utama/galeri/dokumen) dihapus permanen setelah update sukses.
     await removeReleasedFiles(
       "Pengumuman",
       fileIds(existing.imageId, existing.images, existing.dokumen),

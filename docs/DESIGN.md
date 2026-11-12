@@ -517,7 +517,7 @@ Visibilitas submenu: field `hidden` di config = **default**; Super Admin/Develop
 File: `src/app/admin/_com/list_PageAdmin.tsx` (re-export saja; data sebenarnya ada di `src/app/admin/_com/nav/domains.ts` dan dirakit di `src/app/admin/_com/nav/index.ts`)
 
 Export: `navBar` (semua domain), `role1`, `role2`, `role3` (role-based subset), `devBar`.  
-Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`; logika murninya di `src/app/admin/_com/nav/menu-access.logic.ts`. Filter berdasarkan `menuIds` (tabel `UserMenuAccess`) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu, Menu Access & Sampah) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access. Section **User & Role** juga khusus roleId 0/1: dibuang untuk role lain walau tersimpan di DB, dan selalu ditambahkan untuk role 0/1.
+Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`; logika murninya di `src/app/admin/_com/nav/menu-access.logic.ts`. Filter berdasarkan `menuIds` (tabel `UserMenuAccess`) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu & Menu Access) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access. Section **User & Role** juga khusus roleId 0/1: dibuang untuk role lain walau tersimpan di DB, dan selalu ditambahkan untuk role 0/1.
 
 ID di `menuIds` (kontrak permanen, dijaga `__tests__/api/menu_access_ids.contract.test.ts`):
 
@@ -527,7 +527,7 @@ ID di `menuIds` (kontrak permanen, dijaga `__tests__/api/menu_access_ids.contrac
 
 Halaman **Pengaturan › Menu Access** (`/admin/pengaturan/menu-access`; URL lama `/admin/user&role/menu-access` di-redirect) membatasi menu admin per user (tabel `UserMenuAccess`; kosong = fallback role) dengan checkbox pohon (section = induk, indeterminate bila sebagian); simpan ID section bila semua submenu dipilih, selain itu ID submenu. Section User & Role dan Pengaturan tidak bisa dipilih.
 
-Halaman **Pengaturan › Sampah** (`/admin/pengaturan/sampah`, guard role 0/1 via `canManageSampah`): foto & dokumen terhapus dari semua menu, dikelompokkan per section sidebar + "Lainnya" (kontrak & aturan: `docs/decisions/2026-11-12-sampah.md`). Pola halaman: judul + keterangan retensi (angka dari `SAMPAH_RETENSI_HARI`), Alert arti Pulihkan, **bar tab ber-jumlah** (lihat §11), kotak cari debounced di kanan atas, tombol **Kosongkan** (kelompok aktif; nonaktif saat kelompok kosong atau sedang mencari), lalu kartu item bertumpuk (thumbnail/ikon kategori → modal pratinjau, judul, `Kelompok › Menu`, ukuran, tanggal hapus, badge sisa hari oranye bila ≤ 7) dengan aksi Pulihkan / Hapus permanen. Hapus permanen & Kosongkan lewat `ModalKonfirmasiHapus` dengan teks "tidak bisa dibatalkan". File: `src/app/admin/(dashboard)/pengaturan/sampah/` (logika tampilan murni di `_lib/sampah-view.logic.ts`), state `_state/pengaturan/sampah-state.ts`.
+Sampah **bukan** menu sidebar: dokumen/foto yang bisa dipulihkan utuh (DAK, APBDes, galeri BUMDes, Dokumen Perencanaan) punya panel Sampah di halaman fiturnya masing-masing (kontrak `/api/sampah/:sumber`: `docs/decisions/2026-11-12-sampah.md`). Logika tampilan item murni bersama: `src/app/admin/(dashboard)/_com/sampah/sampah-item.logic.ts` (badge sisa hari oranye bila ≤ 7, info folder/ukuran/tanggal, paging, teks konfirmasi hapus permanen "tidak bisa dibatalkan"). Menu lain menghapus berkas permanen.
 
 Guard halaman (`adminGuardRedirect` di `src/app/admin/_com/nav/menu-access.guard.ts`, dipanggil `admin/layout.tsx`): path admin yang dicakup menu tetapi tidak ada di sidebar user → redirect ke menu pertama yang diizinkan (atau `/profile` bila kosong). Role 0 dan path tanpa menu (`/admin`, `/admin/auth/*`, dll.) tidak dibatasi. **Ini pembatasan UI, bukan keamanan** — endpoint API per menu belum dijaga Menu Access.
 
@@ -737,8 +737,6 @@ File: `src/app/admin/(dashboard)/kesehatan/posyandu/_com/layoutTabs.tsx`
 ```
 
 Tab routing berbasis URL — setiap tab = path unik. Tab aktif dideteksi dari URL segment.
-
-**Bar tab ber-jumlah (filter, bukan routing)** — `pengaturan/sampah/_com/SampahKelompokTabs.tsx`: pill tersegmentasi `Semua (n) | Landing Page (n) | … | Lainnya (n)`; `UnstyledButton` (`role="tab"`, `aria-selected`) dengan latar `bg.card` + bayangan untuk tab aktif, `Divider` vertikal tipis antar tab, wadah `bg.surface` ber-border dari `themeTokens`, `overflowX: auto` agar bisa di-scroll horizontal di layar sempit. Semua tab selalu tampil walau jumlahnya 0 (label dari `labelTabSampah`). Ganti tab = ganti filter state + kembali ke halaman 1.
 
 ---
 

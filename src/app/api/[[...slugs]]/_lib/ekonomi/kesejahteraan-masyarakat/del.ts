@@ -17,7 +17,7 @@ const kesejahteraanDelete = async (context: Context) => {
   // 1. HAPUS RECORD DULU
   await prisma.kesejahteraanMasyarakat.delete({ where: { id } });
 
-  // 2. BARU PINDAHKAN BERKAS (gambar utama + galeri) KE SAMPAH
+  // 2. BARU HAPUS PERMANEN BERKAS (gambar utama + galeri) YANG TIDAK DIRUJUK DATA LAIN
   await removeReleasedFiles("KesejahteraanMasyarakat", fileIds(item.imageId, item.images));
 
   return {

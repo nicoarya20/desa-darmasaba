@@ -4,7 +4,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { prismaMock, minioMock } = vi.hoisted(() => ({
-  prismaMock: { fileStorage: { delete: vi.fn(), updateMany: vi.fn(async () => ({ count: 1 })) } },
+  // findUnique: path/nama berkas dibaca purgeStoredFile sebelum baris & objek MinIO dihapus.
+  prismaMock: { fileStorage: { delete: vi.fn(), findUnique: vi.fn(async () => ({ path: "image", name: "a.webp" })) } },
   minioMock: { removeObject: vi.fn() },
 }));
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
@@ -29,7 +30,7 @@ const handlersFor = (softDelete: boolean) =>
     pegawaiLabel: "Pegawai uji",
     pegawaiLabelLower: "pegawai uji",
     softDelete,
-    fileOwner: "PegawaiUji", // test-only: owner tak dikenal → kelompok "Lainnya"
+    fileOwner: "PegawaiUji", // test-only: nama pemilik hanya untuk konteks log
   });
 const hard = handlersFor(false); // seperti Perangkat Desa / BUMDes
 const soft = handlersFor(true); // seperti PPID
@@ -132,16 +133,12 @@ describe("jabatan", () => {
 });
 
 describe("hapus sesuai opsi soft-delete", () => {
-  it("hard-delete pegawai: baris dihapus lalu fotonya ke Sampah", async () => {
+  it("hard-delete pegawai: baris dihapus lalu fotonya", async () => {
     db.pegawai.findUnique.mockResolvedValueOnce({ id: "p1", imageId: foto.id, image: foto });
     expect(await hard.pegawai.delete(ctx({ id: "p1" }))).toMatchObject({ success: true, data: { id: "p1" } });
     expect(db.pegawai.delete).toHaveBeenCalledWith({ where: { id: "p1" } });
     expect(db.pegawai.update).not.toHaveBeenCalled();
-    expect(prismaMock.fileStorage.updateMany).toHaveBeenCalledWith({
-      where: { id: foto.id, deletedAt: null },
-      data: { deletedAt: expect.any(Date), isActive: false, deletedFrom: null },
-    });
-    expect(minioMock.removeObject).not.toHaveBeenCalled();
+    expect(prismaMock.fileStorage.delete).toHaveBeenCalledWith({ where: { id: foto.id } });
   });
 
   it("soft-delete pegawai: deletedAt diisi + nonaktif, baris & foto tidak dihapus", async () => {
@@ -151,7 +148,7 @@ describe("hapus sesuai opsi soft-delete", () => {
     expect(args.where).toEqual({ id: "p1" });
     expect(args.data).toEqual({ deletedAt: expect.any(Date), isActive: false });
     expect(db.pegawai.delete).not.toHaveBeenCalled();
-    expect(prismaMock.fileStorage.updateMany).not.toHaveBeenCalled();
+    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
   });
 
   it("jabatan: hard-delete menghapus baris, soft-delete mengisi deletedAt; 409 tetap berlaku", async () => {

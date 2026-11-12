@@ -114,8 +114,9 @@ const EXPECTED_IDS: Record<string, string[]> = {
   'Pengaturan': [
     'pengaturan.visibilitas-menu',
     'pengaturan.menu-access',
-    // 2026-11-13: submenu baru Sampah (aditif).
-    'pengaturan.sampah',
+    // 2026-11-13: submenu Sampah (ditambahkan di 0.1.256 yang belum dirilis) dihapus lagi — Sampah kini panel per
+    // fitur koleksi, bukan menu global. Aman tanpa migrasi data: section Pengaturan khusus role 0/1 sehingga ID-nya
+    // tidak pernah tersimpan di UserMenuAccess (dibuang withoutRestrictedSections).
   ],
 }; // test-only
 

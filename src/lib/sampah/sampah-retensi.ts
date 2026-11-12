@@ -1,5 +1,5 @@
 // Aturan retensi Sampah (berkas & dokumen terhapus) — fungsi & konstanta murni tanpa I/O.
-// Dipakai Sampah global (Pengaturan → Sampah, purge harian) dan tempat sampah Desa Anti Korupsi.
+// Dipakai Sampah per fitur koleksi (DAK, APBDes, galeri BUMDes, perencanaan) dan purge harian.
 
 /** Lama item terhapus disimpan di Sampah sebelum dihapus permanen otomatis (hari). Satu-satunya sumber nilai default. */
 export const SAMPAH_RETENSI_HARI = 30;
