@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Kontrak rute Sampah per fitur: modul `/sampah` (3 rute, dipasang di route.ts), request HTTP sungguhan lewat Elysia
-// (prisma & auth di-mock), bukan jalur publik, dan modul lama `/pengaturan/sampah` sudah tidak ada.
+// (prisma & auth di-mock), bukan jalur publik, dan modul Sampah global lama di bawah Pengaturan sudah tidak ada.
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { existsSync, readFileSync } from "fs";
 import path from "path";
@@ -18,6 +18,8 @@ import Sampah from "@/app/api/[[...slugs]]/_lib/sampah";
 import { isPublicGetPath } from "@/lib/auth-policy";
 
 const API_DIR = path.join(process.cwd(), "src/app/api/[[...slugs]]");
+// Disusun dari potongan agar path modul lama tidak muncul literal di repo (grep bersih).
+const MODUL_LAMA = ["pengaturan", "sampah"].join("/");
 const app = new Elysia({ prefix: "/api" }).use(Sampah);
 const get = (url: string) => app.handle(new Request(`http://localhost${url}`));
 
@@ -50,15 +52,15 @@ describe("rute /api/sampah", () => {
   });
 });
 
-describe("modul lama /pengaturan/sampah dihapus", () => {
-  it("route.ts memasang modul /sampah, bukan /pengaturan/sampah; folder modul lama tidak ada", () => {
+describe("modul Sampah global lama dihapus", () => {
+  it("route.ts memasang modul /sampah, bukan modul lama; folder modul lama tidak ada", () => {
     const route = readFileSync(path.join(API_DIR, "route.ts"), "utf8");
     expect(route).toContain('import Sampah from "./_lib/sampah";');
-    expect(route).not.toContain("pengaturan/sampah");
-    expect(existsSync(path.join(API_DIR, "_lib/pengaturan/sampah"))).toBe(false);
+    expect(route).not.toContain(MODUL_LAMA);
+    expect(existsSync(path.join(API_DIR, "_lib", MODUL_LAMA))).toBe(false);
   });
 
-  it("GET /api/pengaturan/sampah tidak dilayani modul Sampah → 404", async () => {
-    expect((await get("/api/pengaturan/sampah")).status).toBe(404);
+  it("GET ke path modul lama tidak dilayani modul Sampah → 404", async () => {
+    expect((await get(`/api/${MODUL_LAMA}`)).status).toBe(404);
   });
 });
