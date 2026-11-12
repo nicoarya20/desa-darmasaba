@@ -5,8 +5,9 @@ import { Box, Button, Group, NumberInput, Paper, Skeleton, Stack, Text, Textarea
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BumdesImageField from '../_lib/BumdesImageField';
+import GaleriFotoBumdesAdmin from '../_lib/GaleriFotoBumdesAdmin';
 
-/** Admin: form ubah profil BUMDes (singleton, disimpan lewat upsert). */
+/** Admin: form ubah profil BUMDes (singleton, disimpan lewat upsert) + galeri foto di bawahnya. */
 function ProfilBumdesAdmin() {
   const profil = useProxy(stateBumdes.profil, { sync: true }); // sync: cegah caret jump di controlled input
   const [file, setFile] = useState<File | null>(null);
@@ -98,6 +99,7 @@ function ProfilBumdesAdmin() {
           </Group>
         </Stack>
       </Paper>
+      <GaleriFotoBumdesAdmin profilTersimpan={profil.data !== null} />
     </Box>
   );
 }

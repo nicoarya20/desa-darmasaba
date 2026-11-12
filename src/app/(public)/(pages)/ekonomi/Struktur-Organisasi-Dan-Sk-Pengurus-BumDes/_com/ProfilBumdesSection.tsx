@@ -5,13 +5,16 @@ import { IconBuildingCommunity, IconCalendar, IconMapPin, IconPhone } from '@tab
 import { useEffect } from 'react'
 import { useProxy } from 'valtio/utils'
 import BumdesSection, { BumdesEmptyState } from './BumdesSection'
+import GaleriFotoBumdes from './GaleriFotoBumdes'
 
-/** Section profil BUMDes (nama, deskripsi, tahun berdiri, alamat, kontak); empty-state bila belum diisi admin. */
+/** Section profil BUMDes (nama, deskripsi, tahun berdiri, alamat, kontak, galeri foto); empty-state bila belum diisi admin. */
 export default function ProfilBumdesSection() {
   const profil = useProxy(stateBumdes.profil)
+  const galeri = useProxy(stateBumdes.fotoProfil)
 
   useEffect(() => {
     void stateBumdes.profil.load()
+    void stateBumdes.fotoProfil.load()
   }, [])
 
   const data = profil.data
@@ -67,6 +70,11 @@ export default function ProfilBumdesSection() {
               </Box>
             </Stack>
           </SimpleGrid>
+          {galeri.data && galeri.data.length > 0 && (
+            <Box mt="xl">
+              <GaleriFotoBumdes foto={galeri.data} namaBumdes={data.nama} />
+            </Box>
+          )}
         </Paper>
       )}
     </BumdesSection>
