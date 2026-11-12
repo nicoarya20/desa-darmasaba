@@ -61,6 +61,9 @@ model FileStorage {
   createdAt                      DateTime                   @default(now())
   updatedAt                      DateTime                   @updatedAt
   deletedAt                      DateTime?
+  // ID submenu sidebar asal berkas saat dipindah ke Sampah (mis. "desa.berita"); null = tidak diketahui
+  // (kelompok "Lainnya"). Lihat docs/decisions/2026-11-12-sampah.md.
+  deletedFrom                    String?
   isActive                       Boolean                    @default(true)
   link                           String
   category                       String // "image" / "document" / "audio" / "other"
@@ -123,6 +126,9 @@ model FileStorage {
   FotoProfilBumDes FotoProfilBumDes[]
 
   PerangkatDesa PerangkatDesa[]
+
+  // Daftar Sampah & purge harian memfilter/mengurutkan berdasarkan deletedAt.
+  @@index([deletedAt])
 }
 
 //========================================= MENU LANDING PAGE ========================================= //

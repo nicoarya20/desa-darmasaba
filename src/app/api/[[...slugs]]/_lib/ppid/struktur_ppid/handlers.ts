@@ -11,4 +11,5 @@ export const strukturPpidHandlers = createStrukturHandlers({
   pegawaiLabel: "Pegawai PPID",
   pegawaiLabelLower: "pegawai PPID",
   softDelete: true,
+  fileOwner: "PegawaiPPID",
 });

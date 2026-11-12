@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
 import { parseWaktuBiaya } from "@/lib/pelayanan-waktu-biaya";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 type FormUpdate = Prisma.PelayananSuratKeteranganGetPayload<{
     select: {
@@ -57,34 +57,6 @@ export default async function updatePelayananSuratKeterangan(context: Context) {
             });
         }
 
-        if (existing.imageId && existing.imageId !== imageId) {
-            const oldImage = existing.image;
-            if (oldImage) {
-                try {
-                    await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-                    await prisma.fileStorage.delete({
-                        where: { id: oldImage.id },
-                    });
-                } catch (err) {
-                    console.error("Gagal hapus gambar lama:", err);
-                }
-            }
-        }
-
-        if (existing.image2Id && existing.image2Id !== image2Id) {
-            const oldImage = existing.image2;
-            if (oldImage) {
-                try {
-                    await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-                    await prisma.fileStorage.delete({
-                        where: { id: oldImage.id },
-                    });
-                } catch (err) {
-                    console.error("Gagal hapus gambar lama:", err);
-                }
-            }
-        }
-
         const updated = await prisma.pelayananSuratKeterangan.update({
             where: { id },
             data: {
@@ -95,6 +67,20 @@ export default async function updatePelayananSuratKeterangan(context: Context) {
                 ...waktuBiaya.data,
             },
         })
+
+        if (existing.imageId && existing.imageId !== imageId) {
+            const oldImage = existing.image;
+            if (oldImage) {
+                await removeStoredFile(oldImage, "PelayananSuratKeterangan");
+            }
+        }
+
+        if (existing.image2Id && existing.image2Id !== image2Id) {
+            const oldImage = existing.image2;
+            if (oldImage) {
+                await removeStoredFile(oldImage, "PelayananSuratKeterangan");
+            }
+        }
 
         return new Response(JSON.stringify({
             success: true,

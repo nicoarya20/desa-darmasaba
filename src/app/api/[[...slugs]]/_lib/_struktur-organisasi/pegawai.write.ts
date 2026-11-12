@@ -6,12 +6,11 @@ import type { StrukturPegawai } from "./types";
 import { pegawaiBodySchema } from "./validation";
 
 type PegawaiFile = { id: string; imageId: string | null; image: StoredFileRef | null };
-const FILE_SELECT = { id: true, imageId: true, image: { select: { id: true, path: true, name: true } } } as const;
+const FILE_SELECT = { id: true, imageId: true, image: { select: { id: true } } } as const;
 
 /** Handler tulis pegawai (admin) untuk satu struktur: tambah, ubah, hapus (beserta foto). */
 export function createPegawaiWriteHandlers(config: StrukturApiConfig) {
   const db = config.pegawai;
-  const owner = (id: string) => `${config.pegawaiLabelLower} ${id}`;
 
   /** True bila jabatan ada (dan belum dihapus) — cek sebelum tulis agar 400 jelas, bukan FK error. */
   async function posisiExists(posisiId: string): Promise<boolean> {
@@ -55,7 +54,7 @@ export function createPegawaiWriteHandlers(config: StrukturApiConfig) {
 
   /**
    * PUT (admin): ubah pegawai; field kosong dikosongkan (null), field tidak dikirim dibiarkan. Bila `imageId`
-   * diganti atau dikosongkan, FileStorage + objek MinIO lama dihapus SETELAH update berhasil.
+   * diganti atau dikosongkan, foto lama dipindah ke Sampah SETELAH update berhasil.
    */
   async function update(context: Context) {
     const { id } = context.params as { id: string };
@@ -77,13 +76,13 @@ export function createPegawaiWriteHandlers(config: StrukturApiConfig) {
 
     // imageId undefined = tidak dikirim → gambar tidak berubah.
     const imageReplaced = body.imageId !== undefined && body.imageId !== existing.imageId;
-    if (imageReplaced && existing.image) await removeStoredFile(existing.image, owner(id));
+    if (imageReplaced && existing.image) await removeStoredFile(existing.image, config.fileOwner);
 
     return { success: true as const, message: `${config.pegawaiLabel} berhasil diperbarui`, data };
   }
 
   /**
-   * DELETE (admin): hapus pegawai. Hard-delete: baris dihapus lalu fotonya (FileStorage + MinIO).
+   * DELETE (admin): hapus pegawai. Hard-delete: baris dihapus lalu fotonya dipindah ke Sampah.
    * Soft-delete: `deletedAt` diisi + nonaktif; foto dibiarkan karena baris masih merujuknya.
    */
   async function remove(context: Context) {
@@ -95,7 +94,7 @@ export function createPegawaiWriteHandlers(config: StrukturApiConfig) {
       await db().update({ where: { id }, data: { deletedAt: new Date(), isActive: false } });
     } else {
       await db().delete({ where: { id } });
-      if (existing.image) await removeStoredFile(existing.image, owner(id));
+      if (existing.image) await removeStoredFile(existing.image, config.fileOwner);
     }
     return { success: true as const, message: `${config.pegawaiLabel} berhasil dihapus`, data: { id } };
   }

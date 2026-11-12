@@ -16,7 +16,7 @@ const { prismaMock, minioMock } = vi.hoisted(() => {
     prismaMock: {
       posisiOrganisasiBumDes: delegate(),
       pegawaiBumDes: delegate(),
-      fileStorage: { delete: vi.fn() },
+      fileStorage: { delete: vi.fn(), updateMany: vi.fn(async () => ({ count: 1 })) },
       $transaction: vi.fn(),
     },
     minioMock: { removeObject: vi.fn() },
@@ -24,6 +24,7 @@ const { prismaMock, minioMock } = vi.hoisted(() => {
 });
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
 vi.mock("@/lib/minio", () => ({ default: minioMock, MINIO_BUCKET: "bucket-test" }));
+vi.mock("@/app/api/[[...slugs]]/_lib/fileStorage/_lib/fileReferences", () => ({ isFileReferenced: vi.fn(async () => false) }));
 
 import { strukturBumdesHandlers as H } from "@/app/api/[[...slugs]]/_lib/ekonomi/struktur-bumdes/handlers";
 
@@ -75,7 +76,7 @@ describe("pegawai BUMDes", () => {
     expect([a, b]).toMatchObject([{ success: true, data: { id: "p1" } }, { success: true, data: { id: "p2" } }]);
   });
 
-  it("hapus: `delete` biasa tanpa transaksi, lalu foto", async () => {
+  it("hapus: `delete` biasa tanpa transaksi, lalu foto ke Sampah (kelompok BUMDes)", async () => {
     const foto = { id: "img-1", path: "image", name: "a.webp" };
     pegawai.findUnique.mockResolvedValueOnce({ id: "p1", imageId: foto.id, image: foto });
     expect(await H.pegawai.delete(ctx({ id: "p1" }))).toMatchObject({ success: true, data: { id: "p1" } });
@@ -83,7 +84,12 @@ describe("pegawai BUMDes", () => {
     expect(pegawai.delete).toHaveBeenCalledWith({ where: { id: "p1" } });
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
     expect(pegawai.update).not.toHaveBeenCalled();
-    expect(prismaMock.fileStorage.delete).toHaveBeenCalledWith({ where: { id: foto.id } });
+    expect(prismaMock.fileStorage.updateMany).toHaveBeenCalledWith({
+      where: { id: foto.id, deletedAt: null },
+      data: { deletedAt: expect.any(Date), isActive: false, deletedFrom: "ekonomi.bumdes" },
+    });
+    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
+    expect(minioMock.removeObject).not.toHaveBeenCalled();
   });
 
   it("hapus pegawai yang tidak ada → 404 tanpa menghapus", async () => {

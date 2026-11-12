@@ -8,4 +8,5 @@ export const strukturBumdesHandlers = createStrukturHandlers({
   pegawaiLabel: "Pegawai BUMDes",
   pegawaiLabelLower: "pegawai BUMDes",
   softDelete: false,
+  fileOwner: "PegawaiBumDes",
 });

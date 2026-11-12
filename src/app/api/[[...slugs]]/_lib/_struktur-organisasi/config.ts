@@ -29,6 +29,8 @@ export type StrukturApiConfig = {
    * mengabaikan baris terhapus. false (Perangkat Desa, BUMDes): hapus baris sungguhan.
    */
   softDelete: boolean;
+  /** Nama model pemilik foto untuk `removeStoredFile` (menentukan kelompok asal di Sampah, lihat FILE_OWNER_MENU). */
+  fileOwner: string;
 };
 
 /** Filter baris yang belum dihapus (soft-delete); kosong bila tabel tidak memakai soft-delete. */

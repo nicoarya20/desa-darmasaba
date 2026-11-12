@@ -16,12 +16,12 @@ export type FotoProfilBumdesData = {
 const pesanError = (error: unknown, fallback: string) => (error instanceof Error ? error.message : fallback);
 
 /**
- * Hapus berkas yang sudah terunggah tetapi gagal didaftarkan ke galeri. Aman: belum ada
- * baris galeri yang mereferensikannya. Kegagalan dicatat agar berkas yatim bisa dilacak.
+ * Pindahkan berkas yang sudah terunggah tetapi gagal didaftarkan ke galeri ke Sampah (kelompok BUMDes).
+ * Aman: belum ada baris galeri yang mereferensikannya. Kegagalan dicatat agar berkas yatim bisa dilacak.
  */
 async function hapusUnggahanYatim(imageIds: readonly string[]) {
   const hasil = await Promise.allSettled(
-    imageIds.map((id) => ApiFetch.api.fileStorage.delete({ id }).delete()),
+    imageIds.map((id) => ApiFetch.api.fileStorage.delete({ id }).delete(undefined, { query: { from: "ekonomi.bumdes" } })),
   );
   const gagal = imageIds.filter((_, i) => hasil[i].status === "rejected");
   if (gagal.length > 0) {
