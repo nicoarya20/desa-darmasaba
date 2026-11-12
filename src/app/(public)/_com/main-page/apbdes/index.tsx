@@ -11,7 +11,7 @@ import { useApbdesData } from './use-apbdes-data'
 
 const DETAIL_HREF = '/apbdes'
 
-/** Section beranda: ringkasan, grafik, dan rincian APBDes per tahun. */
+/** Section beranda: ringkasan, grafik, dan rincian APBDes tahun terbaru. */
 function Apbdes() {
   const data = useApbdesData()
 

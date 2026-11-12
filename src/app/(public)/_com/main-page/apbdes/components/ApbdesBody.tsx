@@ -6,7 +6,7 @@ import { ApbdesDetail, type DetailVariant } from "./ApbdesDetail";
 import { ApbdesDocument } from "./ApbdesDocument";
 import { ApbdesSkeleton } from "./ApbdesSkeleton";
 import { ApbdesSummary } from "./ApbdesSummary";
-import { ApbdesYearPicker } from "./ApbdesYearPicker";
+import { ApbdesYearCaption } from "./ApbdesYearCaption";
 
 type Props = {
   data: ReturnType<typeof useApbdesData>;
@@ -14,18 +14,17 @@ type Props = {
   variant: DetailVariant;
 };
 
-/** Isi APBDes bersama beranda & halaman detail: loading, kosong, pilihan tahun, ringkasan, grafik, rincian. */
+/** Isi APBDes bersama beranda & halaman detail: loading, kosong, keterangan tahun terbaru, ringkasan, grafik, rincian. */
 export function ApbdesBody({ data, variant }: Props) {
-  const { list, years, year, setYear, current, categories, updated, hasItems } = data;
+  const { list, year, current, categories, updated, hasItems } = data;
 
   if (list === null) return <ApbdesSkeleton />;
   if (year === null) return <p className={s.empty}>{APBDES_TEXT.emptyAll}</p>;
 
   return (
     <>
-      <ApbdesYearPicker years={years} year={year} onChange={setYear} updated={updated} />
-      {/* key=tahun: konten dipasang ulang agar animasi masuk berjalan tiap ganti tahun */}
-      <div key={year} className={s.content}>
+      <ApbdesYearCaption year={year} updated={updated} />
+      <div className={s.content}>
         {hasItems ? (
           <>
             <ApbdesSummary categories={categories} />
