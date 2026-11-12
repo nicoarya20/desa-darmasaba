@@ -4,7 +4,7 @@
 // /api/fileStorage/delete/:id. Klien Eden asli dipakai untuk load(); hanya global fetch yang di-stub.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import stateFileStorage from '@/app/admin/(dashboard)/_state/state-file-storage';
-import { hapusBerkasKeSampah, PESAN_BERKAS_KE_SAMPAH } from '@/lib/file-storage-delete.client';
+import { hapusBerkas, PESAN_BERKAS_DIHAPUS } from '@/lib/file-storage-delete.client';
 import ApiFetch from '@/lib/api-fetch';
 import stateListImage from '@/state/state-list-image';
 
@@ -27,7 +27,7 @@ const deleteCalls = () =>
   fetchSpy.mock.calls.filter(([, init]) => (init as RequestInit | undefined)?.method === 'DELETE').map(([url]) => String(url));
 
 beforeEach(() => {
-  stubFetch(() => json({ message: 'File dipindahkan ke Sampah', deletedId: 'f1' }));
+  stubFetch(() => json({ message: 'File berhasil dihapus', deletedId: 'f1' }));
 });
 
 afterEach(() => {
@@ -47,28 +47,28 @@ describe('hapus dari pustaka file → request DELETE terkirim', () => {
     expect(deleteCalls()).toEqual(['/api/fileStorage/delete/img-9']);
   });
 
-  it('asal menu opsional dikirim sebagai ?from= (di-encode), tanpa body/Content-Type', async () => {
-    await hapusBerkasKeSampah('f6', 'ekonomi.bumdes');
-    expect(deleteCalls()).toEqual(['/api/fileStorage/delete/f6?from=ekonomi.bumdes']);
+  it('id di-encode ke path, tanpa query, body, maupun Content-Type', async () => {
+    await hapusBerkas('f/6');
+    expect(deleteCalls()).toEqual(['/api/fileStorage/delete/f%2F6']);
     expect(fetchSpy.mock.calls[0][1]).toEqual({ method: 'DELETE' });
   });
 
   it('409 masih dipakai → Error berkonteks memuat pesan server, daftar tidak dimuat ulang', async () => {
     stubFetch(() => json({ success: false, message: 'File masih dipakai data lain' }, 409));
     await expect(stateListImage.del({ id: 'f2' })).rejects.toThrow(
-      'Gagal memindahkan berkas f2 ke Sampah: File masih dipakai data lain',
+      'Gagal menghapus berkas f2: File masih dipakai data lain',
     );
     expect(fetchSpy.mock.calls.some(([url]) => String(url).includes('findMany'))).toBe(false);
   });
 
   it('body 404 tanpa deletedId (status HTTP 200) tetap dianggap gagal', async () => {
     stubFetch(() => json({ status: 404, body: 'File tidak ditemukan di database' }));
-    await expect(hapusBerkasKeSampah('f3')).rejects.toThrow('Gagal memindahkan berkas f3 ke Sampah');
+    await expect(hapusBerkas('f3')).rejects.toThrow('Gagal menghapus berkas f3');
   });
 
   it('jaringan putus → Error berkonteks', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('network down'); }));
-    await expect(hapusBerkasKeSampah('f4')).rejects.toThrow('Gagal memindahkan berkas f4 ke Sampah: network down');
+    await expect(hapusBerkas('f4')).rejects.toThrow('Gagal menghapus berkas f4: network down');
   });
 
   it('bukti akar bug: Eden memperlakukan segmen "delete" sebagai method → DELETE /api/fileStorage', async () => {
@@ -76,7 +76,7 @@ describe('hapus dari pustaka file → request DELETE terkirim', () => {
     expect(deleteCalls()).toEqual([expect.stringMatching(/\/api\/fileStorage$/)]);
   });
 
-  it('pesan sukses menyebut Sampah & masa retensi', () => {
-    expect(PESAN_BERKAS_KE_SAMPAH).toBe('Berkas dipindah ke Sampah, terhapus permanen setelah 30 hari');
+  it('pesan sukses menyatakan hapus permanen (bukan Sampah)', () => {
+    expect(PESAN_BERKAS_DIHAPUS).toBe('Berkas dihapus permanen');
   });
 });

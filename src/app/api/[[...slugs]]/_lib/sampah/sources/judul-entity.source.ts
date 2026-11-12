@@ -1,5 +1,5 @@
 import { createEntitySource, type EntityAdapter, type EntityFile, type EntityRow } from "./entity.source";
-import { ENTITY_FILE_SELECT, idPageWhere, judulContains, TRASHED_ORDER_BY, TRASHED_WHERE } from "./entity-select";
+import { ENTITY_FILE_SELECT, idPageWhere, listWhere, TRASHED_ORDER_BY, TRASHED_WHERE } from "./entity-select";
 
 // Argumen query Prisma berbeda tipe per model; bentuk hasil dijaga oleh `select` di bawah.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- delegate Prisma beda model tidak punya supertipe bersama
@@ -13,26 +13,38 @@ export type JudulEntityDelegate = {
   deleteMany(args: DelegateArgs): Promise<{ count: number }>;
 };
 
-type JudulEntityConfig = Pick<EntityAdapter, "key" | "menuId" | "retensiHari" | "restore"> & {
+type JudulEntityConfig = Pick<EntityAdapter, "key" | "retensiHari" | "restore"> & {
   /** Delegate dibaca saat dipakai (lazy) agar mock prisma di test ikut terpakai. */
   db: () => JudulEntityDelegate;
+  /** Kolom pemilik untuk filter `scopeId` (mis. "apbdesId"); kosong = sumber tanpa scope. */
+  scopeField?: string;
+  /** True bila entitas punya relasi `folder` (nama folder asal ditampilkan). */
+  berFolder?: boolean;
 };
 
-type ListRow = { id: string; judul: string; deletedAt: Date | null; file: EntityFile | null };
+type ListRow = { id: string; judul: string; deletedAt: Date | null; file: EntityFile | null; folder?: { nama: string } | null };
 
 /** Sumber Sampah untuk entitas dokumen ber-`judul` + `file`; aturan pulihkan tetap milik domain (`restore`). */
-export function createJudulEntitySource({ db, ...config }: JudulEntityConfig) {
+export function createJudulEntitySource({ db, scopeField, berFolder = false, ...config }: JudulEntityConfig) {
   return createEntitySource({
     ...config,
-    count: (cari) => db().count({ where: { ...TRASHED_WHERE, ...judulContains(cari) } }),
-    async list(cari, take): Promise<EntityRow[]> {
+    butuhScope: scopeField !== undefined,
+    count: (filter) => db().count({ where: listWhere(filter, scopeField) }),
+    async list(filter, skip, take): Promise<EntityRow[]> {
       const rows = (await db().findMany({
-        where: { ...TRASHED_WHERE, ...judulContains(cari) },
+        where: listWhere(filter, scopeField),
         orderBy: [...TRASHED_ORDER_BY],
+        skip,
         take,
-        select: { id: true, judul: true, deletedAt: true, file: ENTITY_FILE_SELECT },
+        select: {
+          id: true,
+          judul: true,
+          deletedAt: true,
+          file: ENTITY_FILE_SELECT,
+          ...(berFolder ? { folder: { select: { nama: true } } } : {}),
+        },
       })) as ListRow[];
-      return rows.map((r) => ({ ...r, deletedAt: r.deletedAt as Date }));
+      return rows.map(({ folder, ...r }) => ({ ...r, deletedAt: r.deletedAt as Date, folderNama: folder?.nama ?? null }));
     },
     async findIds(deletedBefore, take, afterId) {
       const rows = (await db().findMany({
@@ -44,8 +56,8 @@ export function createJudulEntitySource({ db, ...config }: JudulEntityConfig) {
       return rows.map((r) => r.id);
     },
     async findTrashed(id) {
-      return (await db().findFirst({ where: { id, ...TRASHED_WHERE }, select: { file: ENTITY_FILE_SELECT } })) as {
-        file: EntityFile | null;
+      return (await db().findFirst({ where: { id, ...TRASHED_WHERE }, select: { file: { select: { id: true } } } })) as {
+        file: { id: string } | null;
       } | null;
     },
     async deleteTrashed(id) {

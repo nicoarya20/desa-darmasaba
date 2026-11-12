@@ -59,7 +59,7 @@ export default async function maskotDesaUpdate(context: Context) {
       },
     });
 
-    // Gambar lama ke Sampah SETELAH update sukses; gambar yang dipakai lagi tetap aktif (masih dirujuk).
+    // Gambar lama dihapus permanen SETELAH update sukses; gambar yang dipakai lagi tetap utuh (masih dirujuk).
     for (const old of existing.images) {
       if (old.image) await removeStoredFile(old.image, "MaskotDesa");
     }

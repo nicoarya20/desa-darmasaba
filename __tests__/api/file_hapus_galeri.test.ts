@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Galeri many-to-many Berita & Kesejahteraan Masyarakat: delete memindahkan gambar utama + seluruh galeri ke Sampah,
-// update memindahkan yang dilepas saja — keduanya SETELAH operasi DB sukses; operasi gagal → berkas tidak disentuh.
+// Galeri many-to-many Berita & Kesejahteraan Masyarakat: delete menghapus permanen gambar utama + seluruh galeri,
+// update menghapus yang dilepas saja — keduanya SETELAH operasi DB sukses; operasi gagal → berkas tidak disentuh.
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { prismaMock, removeStoredFileMock } = vi.hoisted(() => {
@@ -24,7 +24,7 @@ const ctx = (body: unknown = {}): any => ({ params: { id: "r1" }, body, set: {} 
 type Handler = (c: any) => Promise<unknown>;
 type Delegate = (typeof prismaMock)["berita"];
 
-const trashed = () => removeStoredFileMock.mock.calls.map(([file, owner]) => [file.id, owner]);
+const dihapus = () => removeStoredFileMock.mock.calls.map(([file, owner]) => [file.id, owner]);
 const afterDb = (fn: { mock: { invocationCallOrder: number[] } }) =>
   removeStoredFileMock.mock.calls.length > 0 &&
   removeStoredFileMock.mock.invocationCallOrder.every((o) => o > fn.mock.invocationCallOrder[0]);
@@ -45,12 +45,12 @@ beforeEach(() => {
 });
 
 describe.each(domain)("%s", (owner, del, update, db) => {
-  it("delete → gambar utama + seluruh galeri ke Sampah setelah delete sukses", async () => {
+  it("delete → gambar utama + seluruh galeri dihapus permanen setelah delete sukses", async () => {
     db.findUnique.mockResolvedValue({ id: "r1", imageId: "utama", images: galeri("g1", "g2") });
     db.delete.mockResolvedValue({ id: "r1" });
     expect(await del(ctx())).toMatchObject({ success: true });
     expect(db.findUnique.mock.calls[0][0].include).toMatchObject({ images: { select: { id: true } } });
-    expect(trashed()).toEqual(["utama", "g1", "g2"].map((id) => [id, owner]));
+    expect(dihapus()).toEqual(["utama", "g1", "g2"].map((id) => [id, owner]));
     expect(afterDb(db.delete)).toBe(true);
   });
 
@@ -61,16 +61,16 @@ describe.each(domain)("%s", (owner, del, update, db) => {
     expect(removeStoredFileMock).not.toHaveBeenCalled();
   });
 
-  it("update → gambar utama & galeri yang dilepas ke Sampah; yang tetap/dipindah ke galeri tidak", async () => {
+  it("update → gambar utama & galeri yang dilepas dihapus permanen; yang tetap/dipindah ke galeri tidak", async () => {
     db.findUnique.mockResolvedValue({ id: "r1", imageId: "utama", images: galeri("g1", "g2", "g3") });
     db.update.mockResolvedValue({ id: "r1", imageId: "g3", images: galeri("g2", "utama") });
     const res = (await update(ctx({ ...BODY, imageId: "g3", imageIds: ["g2", "utama"] }))) as Response;
     expect(res.status).toBe(200);
-    expect(trashed()).toEqual([["g1", owner]]);
+    expect(dihapus()).toEqual([["g1", owner]]);
     expect(afterDb(db.update)).toBe(true);
   });
 
-  it("update tanpa imageIds → galeri tidak diubah, tidak ada yang dipindah", async () => {
+  it("update tanpa imageIds → galeri tidak diubah, tidak ada yang dihapus", async () => {
     db.findUnique.mockResolvedValue({ id: "r1", imageId: "utama", images: galeri("g1") });
     db.update.mockResolvedValue({ id: "r1", imageId: "utama", images: galeri("g1") });
     await update(ctx({ ...BODY, imageId: "utama" }));

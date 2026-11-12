@@ -77,7 +77,7 @@ async function kesejahteraanUpdate(context: Context) {
       },
     });
 
-    // Gambar utama & galeri yang dilepas dipindah ke Sampah setelah update sukses.
+    // Gambar utama & galeri yang dilepas dihapus permanen setelah update sukses.
     await removeReleasedFiles(
       "KesejahteraanMasyarakat",
       fileIds(existing.imageId, existing.images),

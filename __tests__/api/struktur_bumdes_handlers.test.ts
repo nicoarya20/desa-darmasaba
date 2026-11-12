@@ -16,7 +16,8 @@ const { prismaMock, minioMock } = vi.hoisted(() => {
     prismaMock: {
       posisiOrganisasiBumDes: delegate(),
       pegawaiBumDes: delegate(),
-      fileStorage: { delete: vi.fn(), updateMany: vi.fn(async () => ({ count: 1 })) },
+      // findUnique: path/nama berkas dibaca purgeStoredFile sebelum baris & objek MinIO dihapus.
+      fileStorage: { delete: vi.fn(), findUnique: vi.fn(async () => ({ path: "image", name: "a.webp" })) },
       $transaction: vi.fn(),
     },
     minioMock: { removeObject: vi.fn() },
@@ -76,7 +77,7 @@ describe("pegawai BUMDes", () => {
     expect([a, b]).toMatchObject([{ success: true, data: { id: "p1" } }, { success: true, data: { id: "p2" } }]);
   });
 
-  it("hapus: `delete` biasa tanpa transaksi, lalu foto ke Sampah (kelompok BUMDes)", async () => {
+  it("hapus: `delete` biasa tanpa transaksi, lalu foto", async () => {
     const foto = { id: "img-1", path: "image", name: "a.webp" };
     pegawai.findUnique.mockResolvedValueOnce({ id: "p1", imageId: foto.id, image: foto });
     expect(await H.pegawai.delete(ctx({ id: "p1" }))).toMatchObject({ success: true, data: { id: "p1" } });
@@ -84,12 +85,8 @@ describe("pegawai BUMDes", () => {
     expect(pegawai.delete).toHaveBeenCalledWith({ where: { id: "p1" } });
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
     expect(pegawai.update).not.toHaveBeenCalled();
-    expect(prismaMock.fileStorage.updateMany).toHaveBeenCalledWith({
-      where: { id: foto.id, deletedAt: null },
-      data: { deletedAt: expect.any(Date), isActive: false, deletedFrom: "ekonomi.bumdes" },
-    });
-    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
-    expect(minioMock.removeObject).not.toHaveBeenCalled();
+    expect(prismaMock.fileStorage.delete).toHaveBeenCalledWith({ where: { id: foto.id } });
+    expect(minioMock.removeObject).toHaveBeenCalledWith("bucket-test", "image/a.webp");
   });
 
   it("hapus pegawai yang tidak ada → 404 tanpa menghapus", async () => {

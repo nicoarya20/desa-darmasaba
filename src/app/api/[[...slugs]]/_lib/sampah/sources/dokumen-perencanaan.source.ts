@@ -4,8 +4,7 @@ import { TRASHED_WHERE } from "./entity-select";
 
 /** Sumber Sampah: dokumen perencanaan (RPJM/RKP/berita acara) yang dihapus; pulihkan = aktif lagi apa adanya. */
 export const dokumenPerencanaanSampahSource = createJudulEntitySource({
-  key: "perencanaan",
-  menuId: "desa.kegiatan-desa",
+  key: "dokumen-perencanaan",
   db: () => prisma.dokumenPerencanaan,
   async restore(id) {
     const { count } = await prisma.dokumenPerencanaan.updateMany({

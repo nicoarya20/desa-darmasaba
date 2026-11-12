@@ -29,7 +29,7 @@ import User from "./_lib/user";
 import Role from "./_lib/user/role";
 import Search from "./_lib/search";
 import MenuVisibility from "./_lib/menu_visibility";
-import Sampah from "./_lib/pengaturan/sampah";
+import Sampah from "./_lib/sampah";
 
 const ROOT = process.cwd();
 

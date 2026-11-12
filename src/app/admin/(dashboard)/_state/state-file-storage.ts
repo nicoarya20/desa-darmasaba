@@ -1,5 +1,5 @@
 import ApiFetch from "@/lib/api-fetch";
-import { hapusBerkasKeSampah } from "@/lib/file-storage-delete.client";
+import { hapusBerkas } from "@/lib/file-storage-delete.client";
 import { proxy } from "valtio";
 
 interface FileItem {
@@ -51,7 +51,7 @@ const stateFileStorage = proxy<{
     }
   },
   async del({ id }: { id: string }) {
-    await hapusBerkasKeSampah(id);
+    await hapusBerkas(id);
     await this.load();
   },
 });

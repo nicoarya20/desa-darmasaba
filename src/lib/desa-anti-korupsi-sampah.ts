@@ -4,10 +4,10 @@
 import { DOKUMEN_MAX_PER_PROGRAM } from "./desa-anti-korupsi-dokumen";
 import { isSampahKedaluwarsa, SAMPAH_RETENSI_HARI, sampahCutoff, sisaHariSampah } from "./sampah/sampah-retensi";
 
-// Fungsi retensi kini milik modul Sampah global; diekspor ulang agar konsumen DAK lama tidak berubah.
+// Fungsi retensi milik modul Sampah bersama (src/lib/sampah); diekspor ulang agar konsumen DAK lama tidak berubah.
 export { isSampahKedaluwarsa, sampahCutoff, sisaHariSampah };
 
-/** Lama dokumen terhapus disimpan di tempat sampah sebelum dihapus permanen (hari); default = retensi Sampah global. */
+/** Lama dokumen terhapus disimpan di tempat sampah sebelum dihapus permanen (hari); default = retensi Sampah bersama. */
 export const DAK_SAMPAH_RETENSI_HARI = SAMPAH_RETENSI_HARI;
 /** Batas baris daftar sampah per program yang dikirim (terbaru dulu); sisanya tetap dibersihkan sesuai retensi. */
 export const DAK_SAMPAH_MAX_DAFTAR = 200;

@@ -33,8 +33,8 @@ Seafile has been fully replaced by MinIO (see `prisma/migrate-seafile-to-minio.t
 
 ## Sampah: purge otomatis (scheduler in-app)
 
-Foto & dokumen yang dihapus dari menu mana pun masuk **Pengaturan → Sampah** dan dihapus permanen setelah 30 hari
-oleh scheduler di dalam proses aplikasi (`src/instrumentation.ts`): sekali 5 menit setelah server start, lalu tiap
+Dokumen DAK, dokumen APBDes, foto galeri BUMDes, dan dokumen perencanaan yang dihapus masuk Sampah fiturnya masing-masing
+dan dihapus permanen setelah 30 hari oleh scheduler di dalam proses aplikasi (`src/instrumentation.ts`): sekali 5 menit setelah server start, lalu tiap
 24 jam. Tidak ada cron/infra tambahan. Saklar env `SAMPAH_PURGE_SCHEDULER=on|off` (kosong = on hanya di
 production). Keterbatasan: hanya jalan selama server hidup; bila ada >1 instance, tiap instance menjalankan purge
 (aman — hapus idempoten, hanya kerja dobel). Detail: `docs/decisions/2026-11-12-sampah.md`.

@@ -42,7 +42,7 @@ export function buildFileReferenceSql(foreignKeys: readonly FileForeignKey[]): s
 /**
  * True bila berkas masih dirujuk baris mana pun (aktif maupun soft-delete) lewat FK. Setara dengan perilaku
  * lama: dulu `fileStorage.delete` gagal (FK RESTRICT) atau ikut menghapus data lain (CASCADE) — kini berkas
- * yang masih dipakai tidak dipindah ke Sampah / tidak dihapus permanen.
+ * yang masih dipakai tidak dihapus permanen.
  */
 export async function isFileReferenced(fileId: string): Promise<boolean> {
   const foreignKeys = await loadFileForeignKeys();

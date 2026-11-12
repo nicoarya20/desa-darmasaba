@@ -9,9 +9,9 @@ export function fileIds(...refs: (FileIdRef | readonly { id: string }[])[]): Fil
 }
 
 /**
- * Pindahkan ke Sampah berkas yang dirujuk record `sebelum` operasi DB tetapi tidak lagi dirujuk `sesudah`-nya
+ * Hapus permanen berkas yang dirujuk record `sebelum` operasi DB tetapi tidak lagi dirujuk `sesudah`-nya
  * (delete: `sesudah` kosong). Dipanggil SETELAH delete/update record sukses; berkas yang masih dirujuk data lain
- * tetap aktif (`removeStoredFile`). Duplikat diabaikan, urutan pertama dipertahankan.
+ * dibiarkan (`removeStoredFile`). Duplikat diabaikan, urutan pertama dipertahankan.
  */
 export default async function removeReleasedFiles(
   owner: string,
