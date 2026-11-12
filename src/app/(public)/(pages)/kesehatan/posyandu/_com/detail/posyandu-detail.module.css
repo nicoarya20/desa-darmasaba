@@ -1,0 +1,178 @@
+/*
+ * Detail posyandu — bagian khusus di atas kerangka artikel kabar-detail.module.css (kolom 860px):
+ * foto (hanya bila ada), panel info #f5f5f7 (banjar, jadwal, telepon), dan blok "Tentang posyandu".
+ * Variabel warna dari .section kabar.module.css. Breakpoint apple.com: ≤734px.
+ */
+.photo {
+  margin: 0;
+  overflow: hidden;
+  background: #e8e8ed;
+}
+
+.photo a {
+  display: block;
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(80vh, 720px);
+  object-fit: cover;
+}
+
+.photo a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* ---------- Panel info ---------- */
+.info {
+  margin: 0;
+  padding: 8px 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.infoRow {
+  display: grid;
+  grid-template-columns: 40px 180px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 16px;
+  padding: 18px 0;
+}
+
+.infoRow + .infoRow {
+  border-top: 1px solid var(--line);
+}
+
+.infoIcon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--brand);
+}
+
+.infoLabel {
+  padding-top: 9px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.infoValue {
+  margin: 0;
+  padding-top: 7px;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.jadwalList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.jadwalList strong {
+  font-weight: 600;
+}
+
+.phone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: -6px;
+}
+
+.phoneNumber {
+  font-variant-numeric: tabular-nums;
+}
+
+.call {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 18px;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.call:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.kosong {
+  color: var(--subtle);
+}
+
+/* ---------- Tentang ---------- */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blockTitle {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .call:hover {
+    filter: brightness(1.12);
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .info {
+    padding: 4px 16px;
+  }
+
+  /* Ikon · label di atas nilai. */
+  .infoRow {
+    grid-template-columns: 36px minmax(0, 1fr);
+    row-gap: 4px;
+    column-gap: 12px;
+    padding: 16px 0;
+  }
+
+  .infoIcon {
+    grid-row: 1 / span 2;
+    width: 36px;
+    height: 36px;
+  }
+
+  .infoLabel {
+    padding-top: 0;
+    font-size: 13px;
+  }
+
+  .infoValue {
+    padding-top: 0;
+    font-size: 17px;
+  }
+
+  .phone {
+    margin-top: 4px;
+  }
+
+  .blockTitle {
+    font-size: 21px;
+  }
+}
