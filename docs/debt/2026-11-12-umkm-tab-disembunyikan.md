@@ -8,7 +8,8 @@ dihapus**:
 
 - Halaman (`src/app/admin/(dashboard)/ekonomi/umkm/{dashboard,produk,penjualan,kategori-produk}`),
   state Valtio (`src/app/admin/(dashboard)/_state/ekonomi/umkm/`), dan API
-  (`src/app/api/[[...slugs]]/_lib/ekonomi/umkm/`) tetap ada dan tidak diubah.
+  (`src/app/api/[[...slugs]]/_lib/ekonomi/umkm/`) tetap ada dan tidak diubah — kecuali
+  `POST .../penjualan/pesan` publik yang ditolak selama saklar pesanan mati (lihat di bawah).
 - Halaman tersebut masih bisa dibuka lewat URL langsung — yang hilang hanya tombol tab
   dan entry point menu.
 - Karena tinggal satu tab, bar tab (desktop & mobile) tidak dirender; layout hanya
@@ -22,6 +23,8 @@ dihapus**:
 | `src/app/admin/(dashboard)/ekonomi/umkm/_lib/layoutTabs.tsx` | Merender bar tab hanya bila `shouldShowUmkmTabBar()` true |
 | `src/app/admin/_com/nav/domains.ts` (entri `ekonomi.umkm`) | `path` sidebar diarahkan ke `/admin/ekonomi/umkm/data-umkm` (semula `/dashboard`); `id` & `basePath` tidak berubah |
 | `__tests__/api/umkm_tab_disembunyikan.test.tsx` | Mengunci perilaku di atas |
+| `src/lib/umkm-pesanan.ts` | `UMKM_PESANAN_TERCATAT` (saklar pesanan website, saat ini `false`) — lihat bagian risiko di bawah |
+| `__tests__/api/umkm_hubungi_penjual_wa.test.tsx` | Mengunci saklar ↔ tab `penjualan` dan tombol WhatsApp di halaman produk publik |
 
 ## Cara memunculkan lagi
 
@@ -34,24 +37,29 @@ dihapus**:
    pointer di atas entri tersebut.
 3. Sesuaikan `__tests__/api/umkm_tab_disembunyikan.test.tsx` (ekspektasi daftar tersembunyi,
    tab tampil, label yang tidak dirender, dan `path` sidebar).
-4. Bila semua tab sudah tampil kembali, hapus komentar hutang di `HIDDEN_UMKM_TABS` dan file ini.
+4. **Tab Penjualan & saklar pesanan diubah bersamaan.** Saat `penjualan` dihapus dari
+   `HIDDEN_UMKM_TABS`, ubah `UMKM_PESANAN_TERCATAT` di `src/lib/umkm-pesanan.ts` menjadi `true`
+   (dan sebaliknya). Test `umkm_hubungi_penjual_wa.test.tsx` gagal bila keduanya tidak selaras.
+   Sebaiknya tab Produk ikut dimunculkan agar admin bisa mengisi ulang stok. Setelah itu sesuaikan
+   test yang mengunci keadaan nonaktif (`umkm_hubungi_penjual_wa.test.tsx` blok SSR & "keadaan saat
+   ini", serta test "saklar mati" di `umkm_pesanan_publik.test.ts`).
+5. Bila semua tab sudah tampil kembali, hapus komentar hutang di `HIDDEN_UMKM_TABS` dan file ini.
 
-## Risiko terbuka (keputusan belum diambil user)
+## Risiko pesanan publik — DITUTUP (opsi C, 2026-11-12)
 
-Halaman publik produk UMKM **masih aktif**: warga bisa membuka `/ekonomi/umkm/produk/:id`
-dan mengirim pesanan lewat form pesanan → `POST /api/ekonomi/umkm/penjualan/pesan`
-(ada di whitelist `PUBLIC_POST_PATHS`, `src/lib/auth-policy.ts`). Pesanan tetap tercatat
-di tabel penjualan dan mengurangi stok, tetapi **tidak ada admin yang melihatnya** karena
-tab Penjualan (dan Produk untuk mengelola stok) disembunyikan.
+Sebelumnya halaman publik `/ekonomi/umkm/produk/:id` tetap menerima pesanan lewat
+`POST /api/ekonomi/umkm/penjualan/pesan` (whitelist `PUBLIC_POST_PATHS`, `src/lib/auth-policy.ts`):
+pesanan tercatat dan stok berkurang, padahal tidak ada admin yang melihatnya.
 
-Opsi mitigasi — **belum diputuskan user**, jangan dieksekusi tanpa persetujuan:
+User memilih **opsi C**, diatur satu saklar `UMKM_PESANAN_TERCATAT = false`
+(`src/lib/umkm-pesanan.ts`, konstanta kode — bukan env var):
 
-- **A. Pengaturan → Visibilitas Menu** (`/admin/pengaturan/visibilitas-menu`): sembunyikan
-  submenu publik UMKM (menuKey `/ekonomi/umkm`). Tanpa kode, bisa dibalik kapan saja. Efek:
-  seluruh halaman publik UMKM (daftar UMKM + detail produk) ikut tersembunyi, bukan hanya form
-  pesanan. Catatan: guard ini di sisi UI — endpoint `POST .../penjualan/pesan` masih menerima
-  request langsung.
-- **B. Biarkan apa adanya**: halaman publik tetap tampil; pesanan masuk dan menumpuk sampai
-  tab Penjualan dimunculkan lagi (data tidak hilang, hanya tidak dipantau).
-- **C. Ubah kode publik** (mis. sembunyikan form pesanan saja / tutup endpoint) — di luar
-  scope perubahan ini karena tampilan publik sengaja tidak disentuh.
+- **Publik:** tombol "Pesan Sekarang" diganti **"Hubungi Penjual (WhatsApp)"** — tautan `wa.me`
+  ke nomor penjual (dinormalisasi `normalizeWaNumber`) dengan pesan pembuka berisi nama produk.
+  Tidak mencatat pesanan, tidak mengurangi stok. Nomor kosong/tidak valid → tombol disabled +
+  penjelasan. `PesananModal` tidak dirender (kodenya tetap ada). Tombol toko online tetap.
+- **Server:** handler `pesan.ts` menolak dengan **403** `{ success: false, message: "Pemesanan
+  lewat website sedang dinonaktifkan. ..." }` sebelum menyentuh DB, sehingga request langsung
+  ke endpoint juga tidak mencatat apa pun. Logika pencatatan (`_pesan.ts`) tidak dihapus.
+
+Untuk menyalakan lagi: ikuti langkah 4 di "Cara memunculkan lagi".
