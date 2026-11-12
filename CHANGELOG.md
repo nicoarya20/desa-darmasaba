@@ -10,13 +10,18 @@
 - Tab admin Struktur PPID dan Struktur BUMDes kini bernama **Pegawai · Jabatan · Bagan** (sama seperti Perangkat Desa). Alamat lama (Posisi Organisasi, Struktur Organisasi) otomatis dialihkan.
 - Bagan struktur BUMDes di website publik kini sama dengan bagan PPID dan Perangkat Desa, dan profil pegawainya bisa dibuka.
 - **Menu UMKM di admin untuk sementara hanya menampilkan Data UMKM.** Tab Dashboard, Produk, Penjualan, dan Kategori Produk disembunyikan (tidak dihapus); cara memunculkannya lagi dicatat di `docs/debt/2026-11-12-umkm-tab-disembunyikan.md`.
+- **Selama tab Penjualan disembunyikan, tombol "Pesan Sekarang" di halaman produk UMKM diganti "Hubungi Penjual (WhatsApp)"**: pembeli langsung diarahkan ke WhatsApp penjual. Pesanan tidak dicatat dan stok tidak berkurang. Bila nomor WhatsApp penjual belum ada, tombol nonaktif dengan keterangan.
+- Pencarian di website untuk struktur BUMDes kini menemukan pegawai BUMDes (nama, jabatan, email, telepon) dan membuka profilnya.
 
 ### Fixed
 - Menambah pegawai PPID atau BUMDes kedua tanpa email tidak lagi gagal dengan pesan "Email sudah digunakan".
 
+### Removed
+- Tabel lama struktur BUMDes (`StrukturBumDes`, `StrukturOrganisasiBumDes`) yang sudah tidak dipakai. Data pegawai dan jabatan BUMDes tidak terpengaruh.
+
 ### Operator
-- Jalankan migrasi `20261112180000_struktur_fleksibel` dan `20261112190000_foto_profil_bumdes` (otomatis saat container start). Migrasi pertama **mengubah data**: gelar pegawai digabung ke nama ("I Made Ari" + "S.Kom" → "I Made Ari, S.Kom"; nama yang sudah memuat gelarnya tidak diubah), email kosong dijadikan kosong (NULL), dan email pegawai PPID/BUMDes tidak lagi harus unik. Kolom gelar/tanggal masuk/alamat tidak dihapus. Migrasi kedua murni menambah tabel galeri. Keduanya aman dijalankan ulang.
-- **Perhatian:** pesanan produk UMKM dari website publik masih bisa masuk walau tab Penjualan di admin disembunyikan — lihat catatan di `docs/debt/2026-11-12-umkm-tab-disembunyikan.md`.
+- Jalankan migrasi `20261112180000_struktur_fleksibel`, `20261112190000_foto_profil_bumdes`, dan `20261112200000_drop_struktur_bumdes_lama` (otomatis saat container start). Migrasi pertama **mengubah data**: gelar pegawai digabung ke nama ("I Made Ari" + "S.Kom" → "I Made Ari, S.Kom"; nama yang sudah memuat gelarnya tidak diubah), email kosong dijadikan kosong (NULL), dan email pegawai PPID/BUMDes tidak lagi harus unik. Kolom gelar/tanggal masuk/alamat tidak dihapus. Migrasi kedua murni menambah tabel galeri. Migrasi ketiga menghapus dua tabel lama BUMDes **hanya bila kosong**; bila berisi, tabel dibiarkan dan log deploy menampilkan NOTICE berisi nama tabel + jumlah baris (deploy tetap sukses) — periksa lalu hapus manual bila memang sisa usang. Ketiganya aman dijalankan ulang.
+- Endpoint pesanan UMKM publik (`POST /api/ekonomi/umkm/penjualan/pesan`) sementara menolak dengan status 403. Untuk menyalakan lagi, ikuti langkah di `docs/debt/2026-11-12-umkm-tab-disembunyikan.md` (tab Penjualan dan saklar pesanan dinyalakan bersamaan).
 - Alasan & detail: `docs/decisions/2026-11-12-struktur-fleksibel.md`.
 
 ## [0.1.254] - 2026-11-12
