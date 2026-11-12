@@ -120,6 +120,8 @@ model FileStorage {
 
   ProfilBumDes    ProfilBumDes[]
   UnitUsahaBumDes UnitUsahaBumDes[]
+
+  PerangkatDesa PerangkatDesa[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -2872,4 +2874,48 @@ model EventBudaya {
   isActive       Boolean   @default(true)
 
   @@index([tanggal])
+}
+
+// ========================================= STRUKTUR PERANGKAT DESA ========================================= //
+// Tabel sendiri, terpisah dari PPID & BUMDes: mengubah perangkat desa tidak menyentuh struktur lain
+// (sebelumnya halaman Struktur Perangkat Desa menumpang data Struktur PPID).
+model PosisiPerangkatDesa {
+  id        String                @id @default(cuid())
+  nama      String                @db.VarChar(100)
+  deskripsi String?               @db.Text
+  // Level bagan (1 = puncak). Urutan antar-jabatan selevel diatur `urutan` (kecil dulu).
+  hierarki  Int
+  urutan    Int                   @default(0)
+  // Atasan langsung; null = puncak bagan. Bisa diatur dari admin.
+  parentId  String?
+  parent    PosisiPerangkatDesa?  @relation("PosisiPerangkatDesaParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children  PosisiPerangkatDesa[] @relation("PosisiPerangkatDesaParent")
+  pegawai   PerangkatDesa[]
+  isActive  Boolean               @default(true)
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  @@index([parentId])
+}
+
+// Hanya nama + jabatan yang wajib; data lain boleh kosong (null) dan dilengkapi belakangan.
+model PerangkatDesa {
+  id            String              @id @default(cuid())
+  namaLengkap   String              @db.VarChar(255)
+  gelarAkademik String?             @db.VarChar(100)
+  image         FileStorage?        @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId       String?
+  tanggalMasuk  DateTime?           @db.Date
+  // Tidak unik: boleh kosong untuk banyak orang.
+  email         String?             @db.VarChar(255)
+  telepon       String?             @db.VarChar(20)
+  alamat        String?             @db.Text
+  posisiId      String
+  posisi        PosisiPerangkatDesa @relation(fields: [posisiId], references: [id])
+  isActive      Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([posisiId])
+  @@index([imageId])
 }

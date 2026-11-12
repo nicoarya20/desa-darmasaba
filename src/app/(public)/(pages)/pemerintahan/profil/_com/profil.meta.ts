@@ -1,6 +1,6 @@
 import colors from '@/con/colors';
 import type { CSSProperties } from 'react';
-import { STRUKTUR_VARS } from '../../../ppid/struktur-ppid/_com/struktur.meta';
+import { STRUKTUR_VARS } from '@/app/(public)/_com/struktur-organisasi/struktur.meta';
 
 /** ID baris tunggal (singleton) section Profil Desa di CMS — sama dengan yang dipakai form admin. */
 export const PROFIL_CMS_ID = 'edit';

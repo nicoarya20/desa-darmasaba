@@ -1,17 +1,19 @@
 'use client'
 import ScrollToTopButton from '@/app/(public)/_com/scrollToTopButton'
+import { StrukturBody, StrukturSearch } from '@/app/(public)/_com/struktur-organisasi/StrukturBody'
+import { STRUKTUR_VARS } from '@/app/(public)/_com/struktur-organisasi/struktur.meta'
+import { useStrukturData } from '@/app/(public)/_com/struktur-organisasi/use-struktur-data'
 import { PpidPage } from '../_com/PpidPage'
-import { StrukturBody, StrukturSearch } from './_com/StrukturBody'
-import { STRUKTUR_VARS, strukturDetailHref } from './_com/struktur.meta'
-import { STRUKTUR_TEXT } from './_com/struktur.text'
-import { useStrukturData } from './_com/use-struktur-data'
+import { strukturDetailHref } from './_com/struktur-ppid.meta'
+import { strukturPpidSource } from './_com/struktur-ppid.source'
+import { STRUKTUR_PPID_TEXT as T } from './_com/struktur-ppid.text'
 
 /** Halaman publik Struktur Organisasi PPID: bagan jabatan + pegawai aktif, bisa disaring. */
 export default function Page() {
-  const data = useStrukturData()
+  const data = useStrukturData(strukturPpidSource)
   return (
-    <PpidPage title={STRUKTUR_TEXT.title} lead={STRUKTUR_TEXT.lead} aside={<StrukturSearch data={data} />} style={STRUKTUR_VARS}>
-      <StrukturBody data={data} label={STRUKTUR_TEXT.chartLabel} emptyHint={STRUKTUR_TEXT.emptyHint} hrefFor={strukturDetailHref} />
+    <PpidPage title={T.title} lead={T.lead} aside={<StrukturSearch data={data} />} style={STRUKTUR_VARS}>
+      <StrukturBody data={data} label={T.chartLabel} emptyHint={T.emptyHint} hrefFor={strukturDetailHref} />
       <ScrollToTopButton />
     </PpidPage>
   )

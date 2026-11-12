@@ -1,112 +1,54 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-"use client";
-
+'use client';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
-import colors from '@/con/colors';
-import { ActionIcon, Box, Divider, Flex, Group, Skeleton, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { useProxy } from 'valtio/utils';
-import classes from './pelayananPendudukNonPermanent.module.css';
+import { useSnapshot } from 'valtio';
+import { LayananSection } from './LayananSection';
+import type { LayananSingleton } from './layanan.logic';
+import { LAYANAN_SINGLETON_ID } from './layanan.meta';
+import page from './layanan.module.css';
+import s from './layanan-info.module.css';
+import { LAYANAN_TEXT } from './layanan.text';
 
+const T = LAYANAN_TEXT.nonPermanen;
+
+/** Bagian Penduduk Non-Permanen: judul & isi dari admin di panel abu, beserta badge waktu & biaya. */
 function PelayananPendudukNonPermanent() {
-  const state = useProxy(stateLayananDesa);
-  const [loading, setLoading] = useState(false);
+  const snap = useSnapshot(stateLayananDesa.pelayananPendudukNonPermanen.findById);
+
+  // `findById.data` tetap null saat gagal, jadi selesai-memuat dilacak terpisah agar tidak tertukar dengan "kosong".
+  const [settled, setSettled] = useState(false);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        await state.pelayananPendudukNonPermanen.findById.load('edit');
-      } catch (error) {
-        console.error('Gagal memuat data:', error);
-      } finally {
-        setLoading(false);
-      }
+    let alive = true;
+    void stateLayananDesa.pelayananPendudukNonPermanen.findById
+      .load(LAYANAN_SINGLETON_ID)
+      .finally(() => {
+        if (alive) setSettled(true);
+      });
+    return () => {
+      alive = false;
     };
-    loadData();
   }, []);
 
-  const data = state.pelayananPendudukNonPermanen.findById.data;
+  const data = snap.data as LayananSingleton | null;
 
   return (
-    <Box py="lg">
-      {loading ? (
-        <Stack gap="lg">
-          <Skeleton height={40} radius="md" />
-          <Skeleton height={200} radius="md" />
-          <Skeleton height={30} radius="md" />
-        </Stack>
+    <LayananSection
+      title={data?.name?.trim() || T.fallbackTitle}
+      meta={data ? <LayananWaktuBiayaBadge estimasiWaktu={data.estimasiWaktu} biaya={data.biaya} /> : null}
+    >
+      {!settled && !data ? (
+        <span className={s.cardPlaceholder} aria-hidden />
+      ) : data?.deskripsi ? (
+        <div className={s.card}>
+          {/* HTML dari editor admin (sumber tepercaya, pola sama dengan bagian lain halaman ini). */}
+          <div className={s.richText} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
+        </div>
       ) : (
-        <Stack gap="xl">
-          <Box>
-            <Title
-              order={1}
-              fz={{ base: 'lg', md: 'xl' }}
-              fw={700}
-              lh={{ base: 1.3, md: 1.3 }}
-              c="dark"
-            >
-              {data?.name || "Judul belum tersedia"}
-            </Title>
-          </Box>
-
-          <LayananWaktuBiayaBadge estimasiWaktu={data?.estimasiWaktu} biaya={data?.biaya} />
-
-          <Box>
-            {data?.deskripsi ? (
-              <Text
-                component="div"
-                className={classes.richText}
-                fz={{ base: 'sm', md: 'md' }}
-                lh={1.5}
-                ta="justify"
-                c="black"
-                dangerouslySetInnerHTML={{ __html: data?.deskripsi }}
-                style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-              />
-            ) : (
-              <Text fz="xs" c="gray">
-                Deskripsi belum tersedia.
-              </Text>
-            )}
-          </Box>
-
-          <Divider color={colors["blue-button"]} size="sm" />
-
-          <Flex justify="space-between" align="center" wrap="wrap" gap="md">
-            <Text fz={{ base: 'xs', md: 'sm' }} lh={{ base: 1.4, md: 1.5 }} c="black">
-              25 Mei 2021 • Darmasaba
-            </Text>
-            <Group gap="md">
-              <Tooltip label="Bagikan ke Facebook" withArrow>
-                <ActionIcon size="lg" radius="xl" variant="subtle" color="blue">
-                  <IconBrandFacebook size={24} />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label="Bagikan ke Instagram" withArrow>
-                <ActionIcon size="lg" radius="xl" variant="subtle" color="pink">
-                  <IconBrandInstagram size={24} />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label="Bagikan ke Twitter" withArrow>
-                <ActionIcon size="lg" radius="xl" variant="subtle" color="blue">
-                  <IconBrandTwitter size={24} />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label="Bagikan ke WhatsApp" withArrow>
-                <ActionIcon size="lg" radius="xl" variant="subtle" color="green">
-                  <IconBrandWhatsapp size={24} />
-                </ActionIcon>
-              </Tooltip>
-            </Group>
-          </Flex>
-
-          <Divider color={colors["blue-button"]} size="sm" />
-        </Stack>
+        <p className={page.empty}>{T.empty}</p>
       )}
-    </Box>
+    </LayananSection>
   );
 }
 
