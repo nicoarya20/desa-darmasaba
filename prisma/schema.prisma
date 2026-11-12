@@ -110,7 +110,6 @@ model FileStorage {
   MitraKolaborasi MitraKolaborasi[]
 
   ArtikelKesehatan ArtikelKesehatan[]
-  StrukturBumDes   StrukturBumDes[]
 
   MusikDesaAudio MusikDesa[] @relation("MusikAudioFile")
   MusikDesaCover MusikDesa[] @relation("MusikCoverImage")
@@ -1709,21 +1708,6 @@ model LowonganPekerjaan {
 
 // ========================================= STRUKTUR ORGANISASI ========================================= //
 
-model StrukturBumDes {
-  id                       String                  @id @default(cuid())
-  name                     String                  @db.Text
-  image                    FileStorage?            @relation(fields: [imageId], references: [id])
-  imageId                  String?
-  createdAt                DateTime                @default(now())
-  updatedAt                DateTime                @updatedAt
-  deletedAt                DateTime                @default(now())
-  isActive                 Boolean                 @default(true)
-  PosisiOrganisasiBumDes   PosisiOrganisasiBumDes? @relation(fields: [posisiOrganisasiBumDesId], references: [id])
-  posisiOrganisasiBumDesId String?
-  PegawaiBumDes            PegawaiBumDes?          @relation(fields: [pegawaiBumDesId], references: [id])
-  pegawaiBumDesId          String?
-}
-
 model PosisiOrganisasiBumDes {
   id                       String                     @id @default(cuid())
   nama                     String                     @db.VarChar(100)
@@ -1732,14 +1716,12 @@ model PosisiOrganisasiBumDes {
   // Urutan antar-jabatan selevel di bagan (kecil dulu); sama dengan Struktur Perangkat Desa.
   urutan                   Int                        @default(0)
   pegawai                  PegawaiBumDes[]
-  strukturOrganisasi       StrukturBumDes[] // Relasi balik
   parentId                 String?
   isActive                 Boolean                    @default(true)
   createdAt                DateTime                   @default(now())
   updatedAt                DateTime                   @updatedAt
   parent                   PosisiOrganisasiBumDes?    @relation("Parent", fields: [parentId], references: [id])
   children                 PosisiOrganisasiBumDes[]   @relation("Parent")
-  StrukturOrganisasiBumDes StrukturOrganisasiBumDes[]
 }
 
 model PegawaiBumDes {
@@ -1758,21 +1740,6 @@ model PegawaiBumDes {
   createdAt                DateTime                   @default(now())
   updatedAt                DateTime                   @updatedAt
   posisi                   PosisiOrganisasiBumDes     @relation(fields: [posisiId], references: [id])
-  strukturOrganisasi       StrukturBumDes[] // Relasi balik
-  StrukturOrganisasiBumDes StrukturOrganisasiBumDes[]
-}
-
-model StrukturOrganisasiBumDes {
-  id                   String                 @id @default(uuid())
-  posisiOrganisasiId   String                 @db.VarChar(50)
-  pegawaiId            String
-  hubunganOrganisasiId String
-  posisiOrganisasi     PosisiOrganisasiBumDes @relation(fields: [posisiOrganisasiId], references: [id])
-  pegawai              PegawaiBumDes          @relation(fields: [pegawaiId], references: [id])
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  deletedAt            DateTime?
-  isActive             Boolean                @default(true)
 }
 
 // Profil BUMDes (singleton): satu baris dengan id tetap "profil-bumdes", ditulis lewat upsert.
