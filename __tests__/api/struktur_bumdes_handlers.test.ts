@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Handler Struktur BUMDes lewat factory struktur bersama (prisma di-mock): hanya nama + jabatan wajib, email tidak
-// unik, deskripsi jabatan opsional, atasan siklus ditolak, hapus = hard-delete + bersihkan rujukan tabel lama.
+// unik, deskripsi jabatan opsional, atasan siklus ditolak, hapus = `delete` biasa (tanpa transaksi tabel lama).
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { prismaMock, minioMock } = vi.hoisted(() => {
@@ -11,13 +11,11 @@ const { prismaMock, minioMock } = vi.hoisted(() => {
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
-    deleteMany: vi.fn(),
   });
   return {
     prismaMock: {
       posisiOrganisasiBumDes: delegate(),
       pegawaiBumDes: delegate(),
-      strukturOrganisasiBumDes: delegate(),
       fileStorage: { delete: vi.fn() },
       $transaction: vi.fn(),
     },
@@ -31,7 +29,6 @@ import { strukturBumdesHandlers as H } from "@/app/api/[[...slugs]]/_lib/ekonomi
 
 const posisi = prismaMock.posisiOrganisasiBumDes;
 const pegawai = prismaMock.pegawaiBumDes;
-const lama = prismaMock.strukturOrganisasiBumDes;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- stub context Elysia minimal
 const ctx = (opts: { body?: unknown; id?: string } = {}): any => ({
@@ -44,8 +41,6 @@ const ctx = (opts: { body?: unknown; id?: string } = {}): any => ({
 beforeEach(() => {
   vi.clearAllMocks();
   posisi.findUnique.mockResolvedValue({ id: "direktur" });
-  // Transaksi batch: kembalikan hasil tiap operasi (mock delegate sudah dipanggil saat array dibuat).
-  prismaMock.$transaction.mockImplementation(async (ops: unknown[]) => Promise.all(ops));
 });
 
 describe("pegawai BUMDes", () => {
@@ -80,23 +75,23 @@ describe("pegawai BUMDes", () => {
     expect([a, b]).toMatchObject([{ success: true, data: { id: "p1" } }, { success: true, data: { id: "p2" } }]);
   });
 
-  it("hapus: hard-delete + rujukan StrukturOrganisasiBumDes dibersihkan dalam satu transaksi, lalu foto", async () => {
+  it("hapus: `delete` biasa tanpa transaksi, lalu foto", async () => {
     const foto = { id: "img-1", path: "image", name: "a.webp" };
     pegawai.findUnique.mockResolvedValueOnce({ id: "p1", imageId: foto.id, image: foto });
     expect(await H.pegawai.delete(ctx({ id: "p1" }))).toMatchObject({ success: true, data: { id: "p1" } });
-    expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
-    expect(lama.deleteMany).toHaveBeenCalledWith({ where: { pegawaiId: "p1" } });
+    expect(pegawai.delete).toHaveBeenCalledTimes(1);
     expect(pegawai.delete).toHaveBeenCalledWith({ where: { id: "p1" } });
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
     expect(pegawai.update).not.toHaveBeenCalled();
     expect(prismaMock.fileStorage.delete).toHaveBeenCalledWith({ where: { id: foto.id } });
   });
 
-  it("hapus pegawai yang tidak ada → 404 tanpa transaksi", async () => {
+  it("hapus pegawai yang tidak ada → 404 tanpa menghapus", async () => {
     pegawai.findUnique.mockResolvedValueOnce(null);
     const c = ctx({ id: "x" });
     expect(await H.pegawai.delete(c)).toEqual({ success: false, message: "Pegawai BUMDes tidak ditemukan" });
     expect(c.set.status).toBe(404);
-    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(pegawai.delete).not.toHaveBeenCalled();
   });
 });
 
@@ -127,17 +122,18 @@ describe("jabatan BUMDes", () => {
     expect(posisi.update).not.toHaveBeenCalled();
   });
 
-  it("hapus: 409 bila masih dipakai pegawai; bila kosong hard-delete + bersihkan rujukan tabel lama", async () => {
+  it("hapus: 409 bila masih dipakai pegawai; bila kosong `delete` biasa tanpa transaksi", async () => {
     posisi.findUnique.mockResolvedValueOnce({ id: "direktur", _count: { pegawai: 2, children: 0 } });
     const dipakai = ctx({ id: "direktur" });
     expect(await H.posisi.delete(dipakai)).toMatchObject({ success: false, message: expect.stringContaining("2 pegawai") });
     expect(dipakai.set.status).toBe(409);
-    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(posisi.delete).not.toHaveBeenCalled();
 
     posisi.findUnique.mockResolvedValueOnce({ id: "bendahara", _count: { pegawai: 0, children: 0 } });
     expect(await H.posisi.delete(ctx({ id: "bendahara" }))).toMatchObject({ success: true, data: { id: "bendahara" } });
-    expect(lama.deleteMany).toHaveBeenCalledWith({ where: { posisiOrganisasiId: "bendahara" } });
+    expect(posisi.delete).toHaveBeenCalledTimes(1);
     expect(posisi.delete).toHaveBeenCalledWith({ where: { id: "bendahara" } });
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
     expect(posisi.update).not.toHaveBeenCalled();
   });
 });

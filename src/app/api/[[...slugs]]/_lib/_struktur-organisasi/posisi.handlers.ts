@@ -1,6 +1,6 @@
 import { parseOptionalBoolean, validateParent, type HierarchyNode, type ParentValidation } from "@/lib/struktur-organisasi";
 import { Context } from "elysia";
-import { hardDeleteRow, liveCount, liveWhere, type StrukturApiConfig } from "./config";
+import { liveCount, liveWhere, type StrukturApiConfig } from "./config";
 import { fail, posisiSelect, validationFailure } from "./http";
 import type { StrukturPosisi } from "./types";
 import { posisiCreateSchema, posisiUpdateSchema } from "./validation";
@@ -95,7 +95,7 @@ export function createPosisiHandlers(config: StrukturApiConfig) {
     if (config.softDelete) {
       await db().update({ where: { id }, data: { deletedAt: new Date(), isActive: false } });
     } else {
-      await hardDeleteRow(config, "posisi", id);
+      await db().delete({ where: { id } });
     }
     return { success: true as const, message: "Jabatan berhasil dihapus", data: { id } };
   }

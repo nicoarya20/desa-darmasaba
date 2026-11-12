@@ -29,18 +29,7 @@ export type StrukturApiConfig = {
    * mengabaikan baris terhapus. false (Perangkat Desa, BUMDes): hapus baris sungguhan.
    */
   softDelete: boolean;
-  /**
-   * Hapus sungguhan khusus per tabel (opsional, hanya bila `softDelete: false`), mis. BUMDes: bersihkan baris
-   * tabel turunan usang ber-FK RESTRICT lalu hapus barisnya dalam satu transaksi. Default: `delegate.delete`.
-   */
-  hardDelete?: { posisi?: (id: string) => Promise<unknown>; pegawai?: (id: string) => Promise<unknown> };
 };
-
-/** Hapus sungguhan satu baris jabatan/pegawai: pakai `hardDelete` khusus bila ada, selain itu `delegate.delete`. */
-export function hardDeleteRow(config: StrukturApiConfig, table: "posisi" | "pegawai", id: string): Promise<unknown> {
-  const custom = config.hardDelete?.[table];
-  return custom ? custom(id) : config[table]().delete({ where: { id } });
-}
 
 /** Filter baris yang belum dihapus (soft-delete); kosong bila tabel tidak memakai soft-delete. */
 export function liveWhere(config: StrukturApiConfig): { deletedAt?: null } {
