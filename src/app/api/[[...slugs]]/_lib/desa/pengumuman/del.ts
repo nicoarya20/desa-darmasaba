@@ -32,7 +32,7 @@ const pengumumanDelete = async (context: Context) => {
         where: {id},
     })
 
-    // Berkas dipindah ke Sampah setelah delete sukses (relasi galeri/dokumen sudah ikut terhapus).
+    // Berkas dihapus permanen setelah delete sukses (relasi galeri/dokumen sudah ikut terhapus).
     await removeReleasedFiles("Pengumuman", fileIds(pengumuman.imageId, pengumuman.images, pengumuman.dokumen))
 
     return {

@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Sisa menu yang dialihkan ke Sampah: hapus/ubah record di 8 menu memindahkan berkas yang dilepas (termasuk galeri &
-// lampiran) ke Sampah SETELAH operasi DB sukses, dengan pemilik yang benar; operasi gagal → berkas tidak disentuh.
+// 8 menu sisa: hapus/ubah record menghapus permanen berkas yang dilepas (termasuk galeri & lampiran) SETELAH operasi
+// DB sukses, dengan pemilik yang benar (konteks log); operasi gagal → berkas tidak disentuh.
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { prismaMock, removeStoredFileMock } = vi.hoisted(() => {
@@ -29,8 +29,6 @@ const { prismaMock, removeStoredFileMock } = vi.hoisted(() => {
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
 vi.mock("@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile", () => ({ default: removeStoredFileMock }));
 
-import { FILE_OWNER_MENU } from "@/lib/sampah/sampah-file-owner";
-import { isKnownSampahMenuId } from "@/lib/sampah/sampah-kelompok";
 import removeReleasedFiles, { fileIds } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 import pengumumanDelete from "@/app/api/[[...slugs]]/_lib/desa/pengumuman/del";
 import pengumumanUpdate from "@/app/api/[[...slugs]]/_lib/desa/pengumuman/updt";
@@ -56,8 +54,8 @@ type Handler = (c: any) => Promise<unknown>;
 type Delegate = (typeof prismaMock)["pengumuman"];
 
 /** ID berkas yang dikirim ke `removeStoredFile` beserta pemiliknya, urut pemanggilan. */
-const trashed = () => removeStoredFileMock.mock.calls.map(([file, owner]) => [file.id, owner]);
-/** Semua pemindahan ke Sampah terjadi setelah operasi DB `fn`. */
+const dihapus = () => removeStoredFileMock.mock.calls.map(([file, owner]) => [file.id, owner]);
+/** Semua penghapusan berkas terjadi setelah operasi DB `fn`. */
 const afterDb = (fn: { mock: { invocationCallOrder: number[] } }) =>
   removeStoredFileMock.mock.invocationCallOrder.every((o) => o > fn.mock.invocationCallOrder[0]);
 
@@ -67,28 +65,10 @@ beforeEach(() => {
   removeStoredFileMock.mockResolvedValue(undefined);
 });
 
-describe("registry FILE_OWNER_MENU untuk 8 menu sisa", () => {
-  const harapan = {
-    Pengumuman: "desa.pengumuman",
-    ArtikelKesehatan: "kesehatan.data-kesehatan-warga",
-    DataPerpustakaan: "pendidikan.perpustakaan-digital",
-    KegiatanDesa: "lingkungan.gotong-royong",
-    MediaSosial: "landing-page.profil",
-    PrestasiDesa: "landing-page.prestasi-desa",
-    ProgramInovasi: "landing-page.profil",
-    SdgsDesa: "landing-page.sdgs",
-  };
-
-  it("memuat ke-8 model dengan ID submenu sidebar yang ada", () => {
-    expect(FILE_OWNER_MENU).toMatchObject(harapan);
-    for (const menuId of Object.values(harapan)) expect(isKnownSampahMenuId(menuId)).toBe(true);
-  });
-});
-
 describe("removeReleasedFiles", () => {
   it("hanya berkas yang dilepas, tanpa duplikat & kosong, urut pertama", async () => {
     await removeReleasedFiles("Pengumuman", ["a", null, "b", "", "a", "c", undefined], ["b", null]);
-    expect(trashed()).toEqual([
+    expect(dihapus()).toEqual([
       ["a", "Pengumuman"],
       ["c", "Pengumuman"],
     ]);
@@ -108,16 +88,16 @@ const hapusSederhana: [string, Handler, Delegate][] = [
   ["SdgsDesa", sdgsDesaDelete, prismaMock.sdgsDesa],
 ];
 
-describe("hapus record → berkas ke Sampah setelah delete sukses", () => {
-  it.each(hapusSederhana)("%s: gambar dipindah dengan pemilik yang benar", async (owner, handler, db) => {
+describe("hapus record → berkas dihapus permanen setelah delete sukses", () => {
+  it.each(hapusSederhana)("%s: gambar dihapus dengan pemilik yang benar", async (owner, handler, db) => {
     db.delete.mockResolvedValue({ id: "r1", imageId: "img1" });
     await handler(ctx());
     expect(db.delete).toHaveBeenCalledWith({ where: { id: "r1" } });
-    expect(trashed()).toEqual([["img1", owner]]);
+    expect(dihapus()).toEqual([["img1", owner]]);
     expect(afterDb(db.delete)).toBe(true);
   });
 
-  it.each(hapusSederhana)("%s: tanpa gambar → tidak ada yang dipindah", async (_owner, handler, db) => {
+  it.each(hapusSederhana)("%s: tanpa gambar → tidak ada yang dihapus", async (_owner, handler, db) => {
     db.delete.mockResolvedValue({ id: "r1", imageId: null });
     await handler(ctx());
     expect(removeStoredFileMock).not.toHaveBeenCalled();
@@ -142,7 +122,7 @@ describe("hapus record → berkas ke Sampah setelah delete sukses", () => {
       images: { select: { id: true } },
       dokumen: { select: { id: true } },
     });
-    expect(trashed()).toEqual(["img1", "g1", "g2", "pdf1"].map((id) => [id, "Pengumuman"]));
+    expect(dihapus()).toEqual(["img1", "g1", "g2", "pdf1"].map((id) => [id, "Pengumuman"]));
     expect(afterDb(prismaMock.pengumuman.delete)).toBe(true);
   });
 
@@ -157,7 +137,7 @@ describe("hapus record → berkas ke Sampah setelah delete sukses", () => {
     prismaMock.artikelKesehatan.findUnique.mockResolvedValue({ id: "r1", imageId: "img1" });
     prismaMock.artikelKesehatan.delete.mockResolvedValueOnce({ id: "r1" });
     expect(await artikelKesehatanDelete(ctx())).toMatchObject({ status: 200 });
-    expect(trashed()).toEqual([["img1", "ArtikelKesehatan"]]);
+    expect(dihapus()).toEqual([["img1", "ArtikelKesehatan"]]);
     expect(afterDb(prismaMock.artikelKesehatan.delete)).toBe(true);
 
     removeStoredFileMock.mockClear();
@@ -173,7 +153,7 @@ describe("hapus record → berkas ke Sampah setelah delete sukses", () => {
     expect(prismaMock.programInovasi.findUnique.mock.invocationCallOrder[0]).toBeLessThan(
       prismaMock.programInovasi.delete.mock.invocationCallOrder[0],
     );
-    expect(trashed()).toEqual([
+    expect(dihapus()).toEqual([
       ["logo", "ProgramInovasi"],
       ["g1", "ProgramInovasi"],
     ]);
@@ -197,17 +177,17 @@ const ubahSederhana: [string, Handler, Delegate, Record<string, unknown>, boolea
   ["SdgsDesa", sdgsDesaUpdate, prismaMock.sdgsDesa, { name: "SDG 1" }, false],
 ];
 
-describe("update ganti gambar → gambar lama ke Sampah setelah update sukses", () => {
-  it.each(ubahSederhana)("%s: gambar lama dipindah, baru tidak", async (owner, handler, db, body) => {
+describe("update ganti gambar → gambar lama dihapus permanen setelah update sukses", () => {
+  it.each(ubahSederhana)("%s: gambar lama dihapus, baru tidak", async (owner, handler, db, body) => {
     db.findUnique.mockResolvedValue({ imageId: "lama" });
     db.findFirst.mockResolvedValue(null);
     db.update.mockResolvedValue({ id: "r1", imageId: "baru" });
     await handler(ctx({ ...body, imageId: "baru" }));
-    expect(trashed()).toEqual([["lama", owner]]);
+    expect(dihapus()).toEqual([["lama", owner]]);
     expect(afterDb(db.update)).toBe(true);
   });
 
-  it.each(ubahSederhana)("%s: gambar sama → tidak ada yang dipindah", async (_owner, handler, db, body) => {
+  it.each(ubahSederhana)("%s: gambar sama → tidak ada yang dihapus", async (_owner, handler, db, body) => {
     db.findUnique.mockResolvedValue({ imageId: "sama" });
     db.findFirst.mockResolvedValue(null);
     db.update.mockResolvedValue({ id: "r1", imageId: "sama" });
@@ -225,11 +205,11 @@ describe("update ganti gambar → gambar lama ke Sampah setelah update sukses", 
     expect(removeStoredFileMock).not.toHaveBeenCalled();
   });
 
-  it("ArtikelKesehatan: gambar lama dipindah setelah update artikel", async () => {
+  it("ArtikelKesehatan: gambar lama dihapus setelah update artikel", async () => {
     prismaMock.artikelKesehatan.findUnique.mockResolvedValue({ id: "r1", imageId: "lama" });
     prismaMock.artikelKesehatan.update.mockResolvedValueOnce({ id: "r1", imageId: "baru" });
     await artikelKesehatanUpdate(ctx({ title: "T", imageId: "baru" }));
-    expect(trashed()).toEqual([["lama", "ArtikelKesehatan"]]);
+    expect(dihapus()).toEqual([["lama", "ArtikelKesehatan"]]);
     expect(afterDb(prismaMock.artikelKesehatan.update)).toBe(true);
 
     removeStoredFileMock.mockClear();
@@ -238,7 +218,7 @@ describe("update ganti gambar → gambar lama ke Sampah setelah update sukses", 
     expect(removeStoredFileMock).not.toHaveBeenCalled();
   });
 
-  it("Pengumuman: gambar utama, galeri & dokumen yang dilepas dipindah; yang tetap dirujuk tidak", async () => {
+  it("Pengumuman: gambar utama, galeri & dokumen yang dilepas dihapus; yang tetap dirujuk tidak", async () => {
     prismaMock.pengumuman.findUnique.mockResolvedValue({
       id: "r1",
       imageId: "lama",
@@ -253,7 +233,7 @@ describe("update ganti gambar → gambar lama ke Sampah setelah update sukses", 
     const body = { judul: "J", deskripsi: "D", content: "C", categoryPengumumanId: null };
     const res = (await pengumumanUpdate(ctx({ ...body, imageId: "baru", imageIds: ["g2"], dokumenIds: [] }))) as Response;
     expect(res.status).toBe(200);
-    expect(trashed()).toEqual(["lama", "g1", "pdf1"].map((id) => [id, "Pengumuman"]));
+    expect(dihapus()).toEqual(["lama", "g1", "pdf1"].map((id) => [id, "Pengumuman"]));
     expect(afterDb(prismaMock.pengumuman.update)).toBe(true);
   });
 
@@ -266,11 +246,11 @@ describe("update ganti gambar → gambar lama ke Sampah setelah update sukses", 
     expect(removeStoredFileMock).not.toHaveBeenCalled();
   });
 
-  it("ProgramInovasi: logo & galeri yang dilepas dipindah; gagal update → tidak disentuh", async () => {
+  it("ProgramInovasi: logo & galeri yang dilepas dihapus; gagal update → tidak disentuh", async () => {
     prismaMock.programInovasi.findUnique.mockResolvedValue({ imageId: "logo", images: [{ id: "g1" }, { id: "g2" }] });
     prismaMock.programInovasi.update.mockResolvedValueOnce({ id: "r1", imageId: "logo2", images: [{ id: "g2" }] });
     expect(await programInovasiUpdate(ctx({ imageId: "logo2", imageIds: ["g2"] }))).toMatchObject({ success: true });
-    expect(trashed()).toEqual([
+    expect(dihapus()).toEqual([
       ["logo", "ProgramInovasi"],
       ["g1", "ProgramInovasi"],
     ]);

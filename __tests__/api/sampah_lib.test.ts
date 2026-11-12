@@ -1,8 +1,7 @@
 // @vitest-environment node
-// Modul murni Sampah: registry pemilik berkas → menu, kelompok sidebar, bentuk item, validasi query, retensi.
+// Modul murni Sampah: kelompok sidebar, bentuk item, validasi query, retensi.
 import { describe, it, expect } from "vitest";
 import { allDomains } from "@/app/admin/_com/nav";
-import { FILE_OWNER_MENU, menuIdForOwner } from "@/lib/sampah/sampah-file-owner";
 import {
   isKnownSampahMenuId,
   kelompokIdOfMenu,
@@ -17,21 +16,6 @@ import { DAK_SAMPAH_RETENSI_HARI } from "@/lib/desa-anti-korupsi-sampah";
 import { canManageSampah } from "@/lib/sampah/sampah-access";
 
 const HARI = 24 * 60 * 60 * 1000;
-
-describe("registry pemilik berkas → menu", () => {
-  it("semua ID menu di registry adalah menu sidebar yang ada (tidak bisa jatuh diam-diam ke Lainnya)", () => {
-    const tidakDikenal = Object.entries(FILE_OWNER_MENU).filter(([, menuId]) => !isKnownSampahMenuId(menuId));
-    expect(tidakDikenal).toEqual([]);
-  });
-
-  it("memetakan pemilik yang dikenal dan mengembalikan null untuk pemilik tak dikenal", () => {
-    expect(menuIdForOwner("Berita")).toBe("desa.berita");
-    expect(menuIdForOwner("PegawaiPPID")).toBe("ppid.struktur-ppid");
-    expect(menuIdForOwner("MusikDesa")).toBe("Musik");
-    expect(menuIdForOwner("ModelTidakAda")).toBeNull();
-    expect(menuIdForOwner("toString")).toBeNull();
-  });
-});
 
 describe("kelompok Sampah", () => {
   it("daftar = section sidebar sesuai urutan + Lainnya di akhir", () => {

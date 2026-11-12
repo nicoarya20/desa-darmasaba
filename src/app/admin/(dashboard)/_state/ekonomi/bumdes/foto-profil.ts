@@ -1,6 +1,6 @@
 import { moveDokumen } from "@/app/admin/(dashboard)/landing-page/desa-anti-korupsi/_lib/dokumen-draft";
 import ApiFetch from "@/lib/api-fetch";
-import { hapusBerkasKeSampah } from "@/lib/file-storage-delete.client";
+import { hapusBerkas } from "@/lib/file-storage-delete.client";
 import { getServerMessage } from "@/utils/api-message";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -22,7 +22,7 @@ const pesanError = (error: unknown, fallback: string) => (error instanceof Error
  */
 async function hapusUnggahanYatim(imageIds: readonly string[]) {
   const hasil = await Promise.allSettled(
-    imageIds.map((id) => hapusBerkasKeSampah(id, "ekonomi.bumdes")),
+    imageIds.map((id) => hapusBerkas(id)),
   );
   const gagal = imageIds.filter((_, i) => hasil[i].status === "rejected");
   if (gagal.length > 0) {

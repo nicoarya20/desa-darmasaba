@@ -5,8 +5,8 @@ import { parseRangeHeader } from "./parseRange";
 /** Data berkas yang dibutuhkan untuk mengalirkan isinya dari MinIO. */
 export type ServableFile = { path: string; name: string; mimeType: string };
 
-/** Cache publik default (berkas aktif); pratinjau Sampah memakai `private, no-store`. */
-export const PUBLIC_FILE_CACHE = "public, max-age=3600, stale-while-revalidate=600";
+/** Cache publik berkas. */
+const PUBLIC_FILE_CACHE = "public, max-age=3600, stale-while-revalidate=600";
 
 async function readAll(stream: AsyncIterable<Buffer | Uint8Array | string>): Promise<Buffer> {
   const chunks: Buffer[] = [];
@@ -15,7 +15,7 @@ async function readAll(stream: AsyncIterable<Buffer | Uint8Array | string>): Pro
 }
 
 /** Kirim isi berkas MinIO (mendukung Range untuk seek audio/video); objek tidak ada → 404. */
-export async function serveStoredFile(context: Context, data: ServableFile, cacheControl: string = PUBLIC_FILE_CACHE) {
+export async function serveStoredFile(context: Context, data: ServableFile) {
   const objectPath = `${data.path}/${data.name}`;
 
   try {
@@ -38,7 +38,7 @@ export async function serveStoredFile(context: Context, data: ServableFile, cach
           "Content-Length": String(chunkSize),
           "Content-Range": `bytes ${start}-${end}/${stat.size}`,
           "Accept-Ranges": "bytes",
-          "Cache-Control": cacheControl,
+          "Cache-Control": PUBLIC_FILE_CACHE,
         };
 
         return file;
@@ -53,7 +53,7 @@ export async function serveStoredFile(context: Context, data: ServableFile, cach
       "Content-Length": String(file.length),
       // Wajib ada supaya browser tahu resource ini bisa di-seek via Range request.
       "Accept-Ranges": "bytes",
-      "Cache-Control": cacheControl,
+      "Cache-Control": PUBLIC_FILE_CACHE,
     };
 
     return file;

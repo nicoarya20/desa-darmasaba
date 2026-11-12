@@ -54,7 +54,7 @@ export function createPegawaiWriteHandlers(config: StrukturApiConfig) {
 
   /**
    * PUT (admin): ubah pegawai; field kosong dikosongkan (null), field tidak dikirim dibiarkan. Bila `imageId`
-   * diganti atau dikosongkan, foto lama dipindah ke Sampah SETELAH update berhasil.
+   * diganti atau dikosongkan, foto lama dihapus permanen SETELAH update berhasil.
    */
   async function update(context: Context) {
     const { id } = context.params as { id: string };
@@ -82,7 +82,7 @@ export function createPegawaiWriteHandlers(config: StrukturApiConfig) {
   }
 
   /**
-   * DELETE (admin): hapus pegawai. Hard-delete: baris dihapus lalu fotonya dipindah ke Sampah.
+   * DELETE (admin): hapus pegawai. Hard-delete: baris dihapus lalu fotonya dihapus permanen.
    * Soft-delete: `deletedAt` diisi + nonaktif; foto dibiarkan karena baris masih merujuknya.
    */
   async function remove(context: Context) {

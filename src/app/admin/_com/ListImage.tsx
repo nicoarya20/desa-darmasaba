@@ -1,5 +1,5 @@
 "use client";
-import { PESAN_BERKAS_KE_SAMPAH } from "@/lib/file-storage-delete.client";
+import { PESAN_BERKAS_DIHAPUS } from "@/lib/file-storage-delete.client";
 import stateListImage from "@/state/state-list-image";
 import {
   ActionIcon,
@@ -112,7 +112,7 @@ export default function ListImage() {
                         onClick={() => {
                           stateListImage
                             .del({ id: v.id })
-                            .then(() => toast(PESAN_BERKAS_KE_SAMPAH))
+                            .then(() => toast(PESAN_BERKAS_DIHAPUS))
                             .catch((err: unknown) => toast(err instanceof Error ? err.message : String(err)))
                             .finally(() => {
                               setLoading(false);

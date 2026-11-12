@@ -79,8 +79,8 @@ describe("fotoProfilBumdes.upload", () => {
     });
 
     expect(await fotoProfilBumdes.upload([file("1.png")])).toBe(false);
-    // Berkas yatim masuk Sampah dengan asal menu BUMDes (dulu Eden mengirim DELETE /api/fileStorage lalu TypeError).
-    expect(deleteCalls()).toEqual(["/api/fileStorage/delete/f1?from=ekonomi.bumdes"]);
+    // Berkas yatim dihapus permanen lewat route yang benar (dulu Eden mengirim DELETE /api/fileStorage lalu TypeError).
+    expect(deleteCalls()).toEqual(["/api/fileStorage/delete/f1"]);
     expect(mocks.toast.error).toHaveBeenCalledWith("Isi profil BUMDes dulu sebelum menambah galeri foto");
   });
 });
