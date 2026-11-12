@@ -6,6 +6,7 @@ export type User = {
   name: string;
   roleId: number;
   menuIds?: string[] | null; // ✅ Pastikan pakai `string[]`
+  publicMenuIds?: string[] | null; // menu admin "Publik" (terbuka untuk semua admin)
   isActive?: boolean;
 };
 

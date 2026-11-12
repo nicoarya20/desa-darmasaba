@@ -33,7 +33,7 @@ Each domain (desa, kesehatan, ekonomi, etc.) has:
 
 Active domains: `desa`, `ekonomi`, `inovasi`, `keamanan`, `kependudukan`, `kesehatan`, `lingkungan`, `musik`, `pendidikan`, `ppid` — plus `landing_page` and `search` (API-only, no public/admin pages).
 
-Admin also has non-domain sections not covered above: `auth` (login/registrasi/validasi admin pages) and `user&role` (user + role + menu-access management, note the `&` in the folder name). Menu Access semantics (section vs submenu IDs, `basePath`, UI-only page guard) are documented under "Sidebar Admin" in `docs/DESIGN.md`.
+Admin also has non-domain sections not covered above: `auth` (login/registrasi/validasi admin pages) and `user&role` (user + role management, note the `&` in the folder name), and `pengaturan` (public menu visibility + admin Menu Access per user/Publik). Menu Access semantics (section vs submenu IDs, `basePath`, UI-only page guard) are documented under "Sidebar Admin" in `docs/DESIGN.md`.
 
 ## Key Files
 
