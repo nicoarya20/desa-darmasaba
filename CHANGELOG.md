@@ -15,6 +15,7 @@
 - **Hasil pencarian di website** untuk sekitar 50 jenis konten (mis. dokter & tenaga medis, tarif layanan, struktur BUMDes) sebelumnya diberi label dan tautan yang salah. Kini setiap hasil membuka halaman yang benar.
 - Tombol hapus di **Pustaka File** admin sebelumnya tidak melakukan apa-apa; kini berkas dipindah ke Sampah.
 - Foto galeri BUMDes yang gagal tersimpan kini benar-benar dibersihkan (masuk Sampah).
+- Menghapus data **Pembiayaan** (Ekonomi → Pendapatan Asli Desa) di admin sebelumnya selalu gagal; kini berhasil.
 - Delapan menu (Pengumuman, Artikel Kesehatan, Perpustakaan Digital, Gotong Royong, Media Sosial, Prestasi Desa, Program Inovasi, SDGs) sebelumnya membiarkan foto/lampiran tertinggal saat datanya dihapus; kini ikut masuk Sampah. Begitu juga galeri Berita dan Kesejahteraan Masyarakat.
 - Di banyak menu, berkas sebelumnya dihapus **sebelum** datanya; bila penghapusan data gagal, gambar sudah terlanjur hilang. Kini berkas baru dipindah setelah data berhasil dihapus/diubah.
 
