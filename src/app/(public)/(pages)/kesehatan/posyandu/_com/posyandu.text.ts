@@ -11,7 +11,7 @@ export const POSYANDU_TEXT = {
   tabIbuHamil: "Ibu Hamil",
 
   privacyNote:
-    "Semua angka adalah jumlah gabungan. Nama dan data pribadi balita maupun ibu hamil tidak ditampilkan. Jumlah 1 atau 2 ditulis “< 3”.",
+    "Semua angka adalah jumlah gabungan. Nama dan data pribadi balita maupun ibu hamil tidak ditampilkan.",
   retry: "Coba lagi",
 
   // Ringkasan

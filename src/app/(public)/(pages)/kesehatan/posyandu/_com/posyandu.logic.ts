@@ -18,9 +18,8 @@ export type PersenKey = "imunisasiLengkapPct" | "giziBaikPct" | "pemeriksaanRuti
 /** Angka satu banjar; `stats` null = permintaan banjar itu gagal. */
 export type BanjarStatsRow = { id: string; name: string; stats: PosyanduStats | null };
 
-/** Hitungan untuk publik: 0 tetap 0, 1 sampai di bawah ambang jadi "< 3", sisanya angka biasa. */
+/** Hitungan untuk publik: angka asli berpemisah ribuan Indonesia (tanpa samaran "< 3", keputusan user 2026-11-12). */
 export function formatHitungan(n: number): string {
-  if (n > 0 && n < PRIVASI_AMBANG) return `< ${PRIVASI_AMBANG}`;
   return n.toLocaleString("id-ID");
 }
 

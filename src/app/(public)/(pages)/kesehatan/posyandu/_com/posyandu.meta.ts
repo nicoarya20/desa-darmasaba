@@ -12,8 +12,8 @@ export type PosyanduTab = (typeof POSYANDU_TABS)[number];
 export const DEFAULT_TAB: PosyanduTab = "ringkasan";
 
 /**
- * Ambang privasi: hitungan 1 sampai (AMBANG - 1) ditulis "< AMBANG", dan persentase banjar dengan
- * balita di bawah ambang tidak ditampilkan, karena angka sekecil itu bisa menunjuk ke orang tertentu.
+ * Ambang privasi persentase: persen banjar dengan balita di bawah ambang tidak ditampilkan, karena
+ * persen dari 1-2 anak bisa menunjuk ke anak tertentu. Hitungan (jumlah orang) selalu tampil apa adanya.
  */
 export const PRIVASI_AMBANG = 3;
 
