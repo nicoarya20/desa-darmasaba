@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 type FormUpdate = {
     judul: string;
@@ -13,6 +14,7 @@ export default async function dataPerpustakaanUpdate(context: Context) {
     const id = context.params.id as string;
 
     try {
+        const before = await prisma.dataPerpustakaan.findUnique({ where: { id }, select: { imageId: true } });
         const result = await prisma.dataPerpustakaan.update({
             where: { id },
             data: {
@@ -22,6 +24,7 @@ export default async function dataPerpustakaanUpdate(context: Context) {
                 kategoriId: body.kategoriId,
             },
         });
+        await removeReleasedFiles("DataPerpustakaan", [before?.imageId], [result.imageId]);
         return {
             success: true,
             message: "Berhasil mengupdate data perpustakaan",
