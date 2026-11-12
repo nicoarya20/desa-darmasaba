@@ -18,8 +18,6 @@ export const STRUKTUR_DETAIL_TEXT = {
   photoAlt: (name: string) => `Foto ${name}`,
   email: 'Email',
   telepon: 'Telepon',
-  alamat: 'Alamat',
-  tanggalMasuk: 'Tanggal Masuk',
   status: 'Status',
   aktif: 'Aktif',
   tidakAktif: 'Tidak Aktif',

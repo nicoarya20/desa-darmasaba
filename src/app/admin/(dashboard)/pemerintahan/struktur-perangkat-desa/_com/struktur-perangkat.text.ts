@@ -1,3 +1,5 @@
+import type { StrukturAdminText } from '@/app/admin/(dashboard)/_com/struktur-organisasi/struktur-admin.config';
+
 /** Teks halaman admin Struktur Perangkat Desa (label umum form/tabel ada di `struktur-admin.text.ts`). */
 export const STRUKTUR_PERANGKAT_ADMIN_TEXT = {
   title: 'Struktur Perangkat Desa',
@@ -25,4 +27,4 @@ export const STRUKTUR_PERANGKAT_ADMIN_TEXT = {
     title: 'Bagan Struktur Perangkat Desa',
     label: 'Bagan struktur perangkat desa',
   },
-} as const;
+} as const satisfies StrukturAdminText;

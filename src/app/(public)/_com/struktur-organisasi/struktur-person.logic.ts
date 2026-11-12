@@ -1,6 +1,9 @@
 import { STRUKTUR_DETAIL_TEXT as T } from './struktur.text';
 
-/** Profil satu pegawai sebagaimana dikirim sumber (`pegawai/:id`); field opsional boleh kosong. */
+/**
+ * Profil satu pegawai sebagaimana dikirim sumber (`pegawai/:id`); field opsional boleh kosong. Alamat & tanggal
+ * masuk sengaja tidak ditampilkan lagi (tidak bisa diedit admin; nilai lama di DB dibiarkan) — ADR struktur fleksibel.
+ */
 export type StrukturDetailData = {
   namaLengkap: string;
   gelarAkademik?: string | null;
@@ -8,8 +11,6 @@ export type StrukturDetailData = {
   posisi?: { nama: string } | null;
   email?: string | null;
   telepon?: string | null;
-  alamat?: string | null;
-  tanggalMasuk?: string | Date | null;
   isActive: boolean;
 };
 
@@ -33,29 +34,19 @@ export function displayName(data: Pick<StrukturDetailData, 'namaLengkap' | 'gela
   return gelar ? `${data.namaLengkap.trim()}, ${gelar}` : data.namaLengkap.trim();
 }
 
-/** Tanggal masuk dalam format Indonesia ("05 Januari 2024"); kosong/tidak valid → null. */
-export function formatTanggalMasuk(value: StrukturDetailData['tanggalMasuk']): string | null {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' });
-}
-
 /** Satu baris info profil. */
-export type DetailRow = { key: string; label: string; value: string; multiline?: boolean };
+export type DetailRow = { key: string; label: string; value: string };
 
-/** Baris info yang berisi saja — email/telepon/alamat/tanggal masuk kosong tidak ditampilkan. */
+/** Baris info yang berisi saja — email/telepon kosong tidak ditampilkan. */
 export function detailRows(data: StrukturDetailData): DetailRow[] {
   const rows: (DetailRow | null)[] = [
     textRow('email', T.email, data.email),
     textRow('telepon', T.telepon, data.telepon),
-    textRow('alamat', T.alamat, data.alamat, true),
-    textRow('tanggalMasuk', T.tanggalMasuk, formatTanggalMasuk(data.tanggalMasuk)),
   ];
   return rows.filter((row): row is DetailRow => row !== null);
 }
 
-function textRow(key: string, label: string, value: string | null | undefined, multiline = false): DetailRow | null {
+function textRow(key: string, label: string, value: string | null | undefined): DetailRow | null {
   const text = value?.trim();
-  return text ? { key, label, value: text, multiline } : null;
+  return text ? { key, label, value: text } : null;
 }
