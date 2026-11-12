@@ -3,8 +3,8 @@ import prisma from "@/lib/prisma";
 import { DAK_SAMPAH_MAX_DAFTAR, sampahPurgeWhere, toSampahItems } from "@/lib/desa-anti-korupsi-sampah";
 import { guardAdmin } from "./admin-guard";
 import { dakRetensiHari, pulihkanDokumenDak } from "./sampah-pulihkan";
-import { destroySafely } from "../../pengaturan/sampah/sampah.bulk";
-import { dokumenDakSampahSource } from "../../pengaturan/sampah/sources/dokumen-dak.source";
+import { destroySafely } from "../../sampah/sampah.purge";
+import { dokumenDakSampahSource } from "../../sampah/sources/dokumen-dak.source";
 
 /** Ukuran batch ID dokumen kedaluwarsa per query saat pembersihan lazy. */
 const PURGE_BATCH = 100;
@@ -20,7 +20,7 @@ const SAMPAH_SELECT = {
 
 /**
  * Hapus permanen dokumen sampah program yang melewati retensi lewat jalur hapus permanen Sampah yang sama dengan
- * purge global (baris → FileStorage → MinIO; berkas yang masih dirujuk dokumen lain dilewati). Dipaging per ID.
+ * purge harian (baris → FileStorage → MinIO; berkas yang masih dirujuk dokumen lain dilewati). Dipaging per ID.
  */
 async function purgeDokumenKedaluwarsa(programId: string, now: Date, retensiHari: number) {
   let afterId: string | undefined;

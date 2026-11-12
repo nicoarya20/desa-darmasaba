@@ -1,20 +1,10 @@
 import prisma from "@/lib/prisma";
 import { MAX_FOTO_GALERI } from "@/lib/bumdes-foto-profil";
 import { urutanFotoBaru } from "@/lib/bumdes-foto-urutan";
-import { FOTO_AKTIF_WHERE } from "../../../ekonomi/bumdes/profil/foto/query";
+import { FOTO_AKTIF_WHERE } from "../../ekonomi/bumdes/profil/foto/query";
 import { createEntitySource } from "./entity.source";
-import { ENTITY_FILE_SELECT, idPageWhere, TRASHED_ORDER_BY, TRASHED_WHERE } from "./entity-select";
+import { ENTITY_FILE_SELECT, idPageWhere, listWhere, TRASHED_ORDER_BY, TRASHED_WHERE } from "./entity-select";
 import type { SampahActionResult } from "./types";
-
-const cariWhere = (cari: string) =>
-  cari
-    ? {
-        OR: [
-          { keterangan: { contains: cari, mode: "insensitive" as const } },
-          { image: { realName: { contains: cari, mode: "insensitive" as const } } },
-        ],
-      }
-    : {};
 
 /** Pulihkan foto galeri ke posisi terakhir; ditolak bila berkasnya sudah tidak aktif atau galeri penuh. */
 async function pulihkanFoto(id: string): Promise<SampahActionResult> {
@@ -38,23 +28,25 @@ async function pulihkanFoto(id: string): Promise<SampahActionResult> {
   return { ok: true, message: "Foto dipulihkan ke galeri BUMDes" };
 }
 
-/** Sumber Sampah: foto galeri Profil BUMDes yang dihapus (judul = keterangan, atau nama berkas). */
+/** Sumber Sampah: foto galeri Profil BUMDes (profil tunggal, tanpa scope) yang dihapus; judul = keterangan/nama berkas. */
 export const fotoBumdesSampahSource = createEntitySource({
-  key: "bumdes-foto",
-  menuId: "ekonomi.bumdes",
-  count: (cari) => prisma.fotoProfilBumDes.count({ where: { ...TRASHED_WHERE, ...cariWhere(cari) } }),
-  async list(cari, take) {
+  key: "foto-bumdes",
+  butuhScope: false,
+  count: (filter) => prisma.fotoProfilBumDes.count({ where: listWhere(filter) }),
+  async list(filter, skip, take) {
     const rows = await prisma.fotoProfilBumDes.findMany({
-      where: { ...TRASHED_WHERE, ...cariWhere(cari) },
+      where: listWhere(filter),
       orderBy: [...TRASHED_ORDER_BY],
+      skip,
       take,
       select: { id: true, keterangan: true, deletedAt: true, image: { select: { ...ENTITY_FILE_SELECT.select, realName: true } } },
     });
-    return rows.map((r) => ({
+    return rows.map(({ image: { realName, ...file }, ...r }) => ({
       id: r.id,
-      judul: r.keterangan?.trim() || r.image.realName,
+      judul: r.keterangan?.trim() || realName,
       deletedAt: r.deletedAt as Date,
-      file: r.image,
+      folderNama: null,
+      file,
     }));
   },
   async findIds(deletedBefore, take, afterId) {
@@ -67,7 +59,7 @@ export const fotoBumdesSampahSource = createEntitySource({
     return rows.map((r) => r.id);
   },
   async findTrashed(id) {
-    const foto = await prisma.fotoProfilBumDes.findFirst({ where: { id, ...TRASHED_WHERE }, select: { image: ENTITY_FILE_SELECT } });
+    const foto = await prisma.fotoProfilBumDes.findFirst({ where: { id, ...TRASHED_WHERE }, select: { image: { select: { id: true } } } });
     return foto ? { file: foto.image } : null;
   },
   async deleteTrashed(id) {

@@ -1,11 +1,12 @@
 // @vitest-environment node
-// Purge Sampah (hanya item > retensi, `now` diinjeksi, dryRun tidak menghapus, log hanya jumlah) dan scheduler
-// in-app (sekali per proses, jeda awal lalu 24 jam, saklar env, error tidak membuat crash).
+// Purge Sampah 4 fitur koleksi (hanya item > retensi, `now` diinjeksi, dryRun tidak menghapus, log hanya jumlah) dan
+// scheduler in-app (sekali per proses, jeda awal lalu 24 jam, saklar env, error tidak membuat crash).
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { prismaMock, minioMock } = vi.hoisted(() => ({
   prismaMock: {
-    fileStorage: { findMany: vi.fn(), findFirst: vi.fn(), findUnique: vi.fn(), delete: vi.fn() },
+    fileStorage: { findUnique: vi.fn(), delete: vi.fn() },
+    dokumenAPBDes: { findMany: vi.fn(), findFirst: vi.fn(), deleteMany: vi.fn() },
     $queryRaw: vi.fn(),
     $queryRawUnsafe: vi.fn(),
   },
@@ -14,9 +15,10 @@ const { prismaMock, minioMock } = vi.hoisted(() => ({
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
 vi.mock("@/lib/minio", () => ({ default: minioMock, MINIO_BUCKET: "bucket-test" }));
 
-import { purgeSampah } from "@/app/api/[[...slugs]]/_lib/pengaturan/sampah/sampah.bulk";
-import { fileSampahSource } from "@/app/api/[[...slugs]]/_lib/pengaturan/sampah/sources/file.source";
-import type { SampahSource } from "@/app/api/[[...slugs]]/_lib/pengaturan/sampah/sources/types";
+import { purgeSampah } from "@/app/api/[[...slugs]]/_lib/sampah/sampah.purge";
+import { SAMPAH_SOURCES } from "@/app/api/[[...slugs]]/_lib/sampah/sources";
+import { dokumenApbdesSampahSource } from "@/app/api/[[...slugs]]/_lib/sampah/sources/dokumen-apbdes.source";
+import type { SampahSource } from "@/app/api/[[...slugs]]/_lib/sampah/sources/types";
 import { resetFileForeignKeysCache } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/fileReferences";
 import {
   isSampahSchedulerEnabled,
@@ -34,12 +36,13 @@ function fakeSource(key: string, umur: Record<string, number>, retensi = 30): Sa
   return {
     key,
     destroyed,
+    butuhScope: false,
     retensiHari: () => retensi,
-    countByKelompok: async () => ({}),
+    count: async () => 0,
     list: async () => [],
-    async findIds({ deletedBefore }, take, afterId) {
+    async findIds(deletedBefore, take, afterId) {
       return Object.entries(umur)
-        .filter(([, h]) => !deletedBefore || NOW.getTime() - h * HARI < deletedBefore.getTime())
+        .filter(([, h]) => NOW.getTime() - h * HARI < deletedBefore.getTime())
         .map(([id]) => id)
         .filter((id) => !afterId || id > afterId)
         .sort()
@@ -51,7 +54,6 @@ function fakeSource(key: string, umur: Record<string, number>, retensi = 30): Sa
       destroyed.push(id);
       return { ok: true, message: "" };
     },
-    previewFile: async () => null,
   };
 }
 
@@ -61,20 +63,24 @@ beforeEach(() => {
 });
 
 describe("purgeSampah", () => {
+  it("cakupan purge = 4 fitur koleksi (tanpa sumber berkas tingkat FileStorage)", () => {
+    expect(SAMPAH_SOURCES.map((x) => x.key)).toEqual(["dokumen-dak", "dokumen-apbdes", "foto-bumdes", "dokumen-perencanaan"]);
+  });
+
   it("hanya item yang lebih tua dari retensi sumbernya yang dihapus; log hanya jumlah", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
-    const file = fakeSource("file", { baru: 29, pas: 30, lama: 31, dipakai: 40 });
+    const foto = fakeSource("foto-bumdes", { baru: 29, pas: 30, lama: 31, dipakai: 40 });
     const dak = fakeSource("dak", { d1: 31, d2: 50 }, 45);
-    const summary = await purgeSampah({ now: NOW }, [file, dak]);
+    const summary = await purgeSampah({ now: NOW }, [foto, dak]);
 
-    expect(file.destroyed).toEqual(["lama"]);
+    expect(foto.destroyed).toEqual(["lama"]);
     expect(dak.destroyed).toEqual(["d2"]);
     expect(summary).toEqual({
       dryRun: false,
       kedaluwarsa: 3,
       dihapus: 2,
       dilewati: 1,
-      perSumber: { file: { kedaluwarsa: 2, dihapus: 1, dilewati: 1 }, dak: { kedaluwarsa: 1, dihapus: 1, dilewati: 0 } },
+      perSumber: { "foto-bumdes": { kedaluwarsa: 2, dihapus: 1, dilewati: 1 }, dak: { kedaluwarsa: 1, dihapus: 1, dilewati: 0 } },
     });
     expect(info).toHaveBeenCalledWith("[sampah] Purge selesai: kedaluwarsa=3 dihapus=2 dilewati=1");
     info.mockRestore();
@@ -82,9 +88,9 @@ describe("purgeSampah", () => {
 
   it("dryRun hanya menghitung, tidak menghapus apa pun", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
-    const file = fakeSource("file", { lama: 31, lebihLama: 90 });
-    const summary = await purgeSampah({ now: NOW, dryRun: true }, [file]);
-    expect(file.destroyed).toEqual([]);
+    const foto = fakeSource("foto-bumdes", { lama: 31, lebihLama: 90 });
+    const summary = await purgeSampah({ now: NOW, dryRun: true }, [foto]);
+    expect(foto.destroyed).toEqual([]);
     expect(summary).toMatchObject({ dryRun: true, kedaluwarsa: 2, dihapus: 0, dilewati: 0 });
     info.mockRestore();
   });
@@ -92,39 +98,51 @@ describe("purgeSampah", () => {
   it("paging cursor melewati batch penuh (100) tanpa memuat semua sekaligus", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
     const umur = Object.fromEntries(Array.from({ length: 250 }, (_, i) => [`f${String(i).padStart(3, "0")}`, 60]));
-    const file = fakeSource("file", umur);
-    const findIds = vi.spyOn(file, "findIds");
-    expect((await purgeSampah({ now: NOW }, [file])).dihapus).toBe(250);
+    const foto = fakeSource("foto-bumdes", umur);
+    const findIds = vi.spyOn(foto, "findIds");
+    expect((await purgeSampah({ now: NOW }, [foto])).dihapus).toBe(250);
     expect(findIds).toHaveBeenCalledTimes(3);
     expect(findIds.mock.calls.every(([, take]) => take === 100)).toBe(true);
     info.mockRestore();
   });
 
-  it("sumber berkas nyata: filter deletedAt < now − 30 hari, hapus baris lalu MinIO", async () => {
+  it("sumber nyata (dokumen APBDes): filter deletedAt < now − 30 hari, hapus baris → FileStorage → MinIO", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
     prismaMock.$queryRaw.mockResolvedValue([]);
-    prismaMock.fileStorage.findMany.mockResolvedValueOnce([{ id: "f1" }]);
-    prismaMock.fileStorage.findFirst.mockResolvedValueOnce({ id: "f1" });
-    prismaMock.fileStorage.findUnique.mockResolvedValueOnce({ path: "image", name: "a.webp" });
+    prismaMock.dokumenAPBDes.findMany.mockResolvedValueOnce([{ id: "a1" }]);
+    prismaMock.dokumenAPBDes.findFirst.mockResolvedValueOnce({ file: { id: "f1" } });
+    prismaMock.dokumenAPBDes.deleteMany.mockResolvedValueOnce({ count: 1 });
+    prismaMock.fileStorage.findUnique.mockResolvedValueOnce({ path: "document", name: "a.pdf" });
 
-    expect(await purgeSampah({ now: NOW }, [fileSampahSource])).toMatchObject({ dihapus: 1 });
-    const where = prismaMock.fileStorage.findMany.mock.calls[0][0].where;
-    expect(where.deletedAt).toEqual({ lt: new Date(NOW.getTime() - 30 * HARI) });
+    expect(await purgeSampah({ now: NOW }, [dokumenApbdesSampahSource])).toMatchObject({ dihapus: 1 });
+    const where = prismaMock.dokumenAPBDes.findMany.mock.calls[0][0].where;
+    expect(where).toEqual({ isActive: false, deletedAt: { lt: new Date(NOW.getTime() - 30 * HARI) } });
     expect(prismaMock.fileStorage.delete).toHaveBeenCalledWith({ where: { id: "f1" } });
-    expect(minioMock.removeObject).toHaveBeenCalledWith("bucket-test", "image/a.webp");
+    expect(minioMock.removeObject).toHaveBeenCalledWith("bucket-test", "document/a.pdf");
+    expect(prismaMock.fileStorage.delete.mock.invocationCallOrder[0]).toBeGreaterThan(prismaMock.dokumenAPBDes.deleteMany.mock.invocationCallOrder[0]);
+    info.mockRestore();
+  });
+
+  it("dryRun sumber nyata: hanya membaca ID, tidak ada delete", async () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
+    prismaMock.dokumenAPBDes.findMany.mockResolvedValueOnce([{ id: "a1" }, { id: "a2" }]);
+    expect(await purgeSampah({ now: NOW, dryRun: true }, [dokumenApbdesSampahSource])).toMatchObject({ dryRun: true, kedaluwarsa: 2, dihapus: 0 });
+    expect(prismaMock.dokumenAPBDes.deleteMany).not.toHaveBeenCalled();
+    expect(prismaMock.fileStorage.delete).not.toHaveBeenCalled();
+    expect(info).toHaveBeenCalledWith("[sampah] Purge (dry run) selesai: kedaluwarsa=2 dihapus=0 dilewati=0");
     info.mockRestore();
   });
 
   it("error satu item dicatat dengan konteks dan purge berlanjut", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
     const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const file = fakeSource("file", { a: 40, b: 40 });
-    file.destroy = vi.fn(async (id: string) => {
+    const foto = fakeSource("foto-bumdes", { a: 40, b: 40 });
+    foto.destroy = vi.fn(async (id: string) => {
       if (id === "a") throw new Error("db down");
       return { ok: true as const, message: "" };
     });
-    expect(await purgeSampah({ now: NOW }, [file])).toMatchObject({ dihapus: 1, dilewati: 1 });
-    expect(String(err.mock.calls[0][0])).toContain("file:a");
+    expect(await purgeSampah({ now: NOW }, [foto])).toMatchObject({ dihapus: 1, dilewati: 1 });
+    expect(String(err.mock.calls[0][0])).toContain("foto-bumdes:a");
     info.mockRestore();
     err.mockRestore();
   });
