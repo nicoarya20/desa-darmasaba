@@ -1,0 +1,298 @@
+/*
+ * Panel saring katalog UMKM gaya Decathlon: grup akordeon (baris label + ikon +/−, garis bawah), kotak centang
+ * dengan jumlah, isian rentang harga gaya Tokopedia, dan lembar drawer bawah untuk ≤1068px.
+ * Variabel warna diwarisi dari `.page` (katalog-layout.module.css); drawer di-portal ke body → nilai cadangan.
+ */
+.panel {
+  color: var(--ink, #1d1d1f);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ---------- Grup akordeon ---------- */
+.group {
+  border-bottom: 1px solid var(--line, #d2d2d7);
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 17px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.groupHead:focus-visible {
+  outline: 2px solid var(--brand, #0a4e78);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.groupLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.groupBadge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 980px;
+  background: var(--brand, #0a4e78);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.groupBody {
+  padding: 0 0 16px;
+}
+
+/* ---------- Kotak centang ---------- */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.option[data-disabled] {
+  color: var(--subtle, #86868b);
+  cursor: not-allowed;
+}
+
+.checkbox {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--brand, #0a4e78);
+  cursor: inherit;
+}
+
+.checkbox:focus-visible {
+  outline: 2px solid var(--brand, #0a4e78);
+  outline-offset: 2px;
+}
+
+.optionLabel {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.optionCount {
+  color: var(--muted, #6e6e73);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.more {
+  margin-top: 8px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--brand, #0a4e78);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.more:focus-visible {
+  outline: 2px solid var(--brand, #0a4e78);
+  outline-offset: 2px;
+}
+
+/* ---------- Rentang harga ---------- */
+.price {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.priceField {
+  display: flex;
+  align-items: stretch;
+  height: 44px;
+  overflow: hidden;
+  border: 1px solid var(--line, #d2d2d7);
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color 200ms ease;
+}
+
+.priceField:focus-within {
+  border-color: var(--brand, #0a4e78);
+}
+
+.pricePrefix {
+  display: grid;
+  place-items: center;
+  padding: 0 12px;
+  border-right: 1px solid var(--line, #d2d2d7);
+  background: var(--tile, #f5f5f7);
+  color: var(--muted, #6e6e73);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.priceInput {
+  flex: 1;
+  min-width: 0;
+  padding: 0 12px;
+  border: 0;
+  background: none;
+  color: var(--ink, #1d1d1f);
+  font: inherit;
+  font-size: 16px; /* ≥16px: iOS tidak memperbesar halaman saat fokus */
+  font-variant-numeric: tabular-nums;
+}
+
+.priceInput:focus {
+  outline: none;
+}
+
+.priceInput::placeholder {
+  color: var(--subtle, #86868b);
+}
+
+/* ---------- Kerangka memuat ---------- */
+.skeletonRow {
+  height: 22px;
+  margin: 18px 0;
+  border-radius: 6px;
+  background: var(--tile, #f5f5f7);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ---------- Drawer (≤1068px) ---------- */
+.drawer {
+  max-height: 85dvh;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerHeader {
+  padding: 20px 20px 4px;
+}
+
+.drawerTitle {
+  margin: 0;
+  color: #1d1d1f;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.drawerBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+}
+
+.drawerScroll {
+  flex: 1;
+  min-height: 0;
+  padding: 0 20px 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.drawerFooter {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid #d2d2d7;
+  background: #fff;
+}
+
+.drawerClear {
+  padding: 8px 4px;
+  border: 0;
+  background: none;
+  color: var(--brand, #0a4e78);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.drawerApply {
+  height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 980px;
+  background: var(--brand, #0a4e78);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.drawerClear:focus-visible,
+.drawerApply:focus-visible {
+  outline: 2px solid var(--brand, #0a4e78);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .more:hover,
+  .drawerClear:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonRow {
+    animation: none;
+  }
+
+  .priceField {
+    transition: none;
+  }
+}
