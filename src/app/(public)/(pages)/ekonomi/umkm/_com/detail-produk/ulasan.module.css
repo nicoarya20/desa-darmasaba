@@ -1,0 +1,162 @@
+/*
+ * Bagian Ulasan detail produk UMKM (gaya Decathlon): ringkasan kiri, sebaran bintang kanan.
+ * Token (--ink, --muted, --line) dari akar halaman; nilai cadangan bila dirender terpisah.
+ * Breakpoint apple.com: ≤734px (mobile).
+ */
+.section {
+  margin-top: 72px;
+  color: var(--ink, #1d1d1f);
+}
+
+.title {
+  margin: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line, #d2d2d7);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
+  padding: 32px 0;
+}
+
+/* ---------- Ringkasan ---------- */
+.summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.scoreStar {
+  color: var(--ink, #1d1d1f);
+}
+
+.scoreValue {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.count {
+  margin: 8px 0 0;
+  color: var(--muted, #6e6e73);
+  font-size: 17px;
+}
+
+.empty {
+  margin: 16px 0 0;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.write {
+  min-height: 44px;
+  margin-top: 20px;
+  padding: 10px 24px;
+  border: 1px solid var(--ink, #1d1d1f);
+  border-radius: 980px;
+  background: #fff;
+  color: var(--ink, #1d1d1f);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.write:disabled {
+  border-color: var(--line, #d2d2d7);
+  color: var(--muted, #6e6e73);
+  cursor: not-allowed;
+}
+
+.note {
+  margin: 8px 0 0;
+  color: var(--muted, #6e6e73);
+  font-size: 13px;
+}
+
+/* ---------- Sebaran bintang ---------- */
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rowLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.track {
+  position: relative;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8e8ed;
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: var(--ink, #1d1d1f);
+}
+
+.rowCount {
+  color: var(--muted, #6e6e73);
+  text-align: right;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .section {
+    margin-top: 56px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding: 24px 0;
+  }
+
+  .scoreValue {
+    font-size: 40px;
+  }
+}
