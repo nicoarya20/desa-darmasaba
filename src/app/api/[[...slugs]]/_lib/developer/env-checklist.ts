@@ -15,7 +15,6 @@ export const SYSTEM_ENV_ALLOWLIST: readonly string[] = [
   "MINIO_USE_SSL",
   "JENNA_CREDENTIALS_KEY",
   "NEXT_PUBLIC_BASE_URL",
-  "ELEVENLABS_API_KEY",
 ];
 
 export function buildEnvChecklist(

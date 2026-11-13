@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.256] - 2026-11-13
+### Removed
+- Env `ELEVENLABS_API_KEY` dihapus dari contoh env (`.env.example`) dan dari daftar env di halaman Ringkasan Sistem (`/dev/ringkasan`), karena tidak ada fitur yang memakainya. Fitur baca berita memakai suara bawaan browser, bukan ElevenLabs.
+
+### Operator
+- `ELEVENLABS_API_KEY` boleh dihapus dari env stg/prod. Tidak perlu migrasi.
+
 ## [0.1.255] - 2026-11-13
 ### Added
 - **Developer Console (`/dev`)**, halaman khusus akun dengan role DEVELOPER, terpisah dari halaman admin dan punya tampilan sendiri. Akun DEVELOPER langsung masuk ke sini setelah login, dan tetap bisa membuka admin lewat tautan "Buka Admin". Di sidebar admin, akun DEVELOPER mendapat menu "Developer" untuk kembali ke konsol. Role lain tidak melihat menu ini, tidak bisa membuka `/dev` (admin dikembalikan ke halaman admin, warga ke profil), dan menu ini tidak bisa diberikan ke role lain lewat halaman Menu Access.

@@ -29,7 +29,7 @@ MINIO_USE_SSL="..."
 # Jenna (asisten AI) — optional; encrypts provider API keys stored in DB (AES-256-GCM)
 JENNA_CREDENTIALS_KEY="..."  # 64 hex chars: openssl rand -hex 32
 
-# Other integrations (WhatsApp, email, Telegram bot, ElevenLabs) also exist in
+# Other integrations (WhatsApp, email, Telegram bot) also exist in
 # .env.example — check there before assuming a var is unused.
 ```
 
