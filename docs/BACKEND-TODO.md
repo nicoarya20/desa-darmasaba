@@ -50,6 +50,14 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: UMKM yang dinonaktifkan admin tetap muncul di tab Toko. Frontend sementara menyaring `isActive` di klien dan menghitung jumlah produk per toko dari daftar produk yang dimuat.
   - Usul: filter `isActive: true` untuk publik (admin tetap butuh semua, jadi pakai param atau endpoint terpisah), dan sertakan `_count.produk` (hanya produk aktif & belum dihapus).
 
+- [ ] **Detail produk UMKM publik mengirim produk terhapus/nonaktif, data penjualan, dan tanpa foto UMKM** (terverifikasi: `ekonomi/umkm/produk/findUnique.ts:9-22`, 2026-11-13)
+  - `where: { id }` saja: produk yang `deletedAt`/`isActive: false`, atau milik UMKM nonaktif, tetap bisa dibuka lewat URL.
+  - Include `penjualan` (10 transaksi terakhir: jumlah, harga, total) ikut terkirim ke publik padahal halaman publik tidak memakainya.
+  - Tidak ditemukan dibalas HTTP 200 `{ success: false }`, sama bentuknya dengan galat server; frontend membedakan lewat teks pesan "tidak ditemukan".
+  - `umkm: true` tanpa `image`, jadi panel Penjual di detail memakai inisial, bukan foto UMKM.
+  - Mitigasi frontend (MITIGASI SEMENTARA umkm-detail): `/ekonomi/umkm/produk/[id]` menampilkan "Produk tidak ditemukan" untuk produk terhapus/nonaktif/UMKM nonaktif dan untuk pesan "tidak ditemukan".
+  - Usul: endpoint publik memfilter `deletedAt: null, isActive: true, umkm: { isActive: true }`, membuang `penjualan` (admin pakai endpoint sendiri), membalas 404 untuk tidak ditemukan, dan menyertakan `umkm.image`.
+
 - [ ] **Pencegahan Kriminalitas find-many tanpa offset/skip**
   - Halaman publik mengeluarkan item sorotan dari daftar, jadi butuh offset. Sementara: muat `limit=100` sekali lalu paginasi klien (ditandai MITIGASI SEMENTARA di `(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/pencegahan.meta.ts`, `console.warn` bila total > 100).
   - Usul: dukung `?offset=` (atau `skip`). Setelah ada, hapus mitigasinya.
@@ -74,6 +82,12 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Lokasi: `PasarDesa.rating Float @default(0)` di `prisma/schema.prisma`. Tidak ada input di form admin produk dan tidak ada model ulasan. Nilai di stg (4,2–4,6) berasal dari seed, bukan penilaian warga.
   - Frontend: kartu katalog `/ekonomi/umkm` menampilkan slot rating "Belum ada ulasan" dan **sengaja tidak membaca `rating`** (keputusan user 2026-11-13).
   - Usul: putuskan sumber rating (ulasan warga + moderasi, atau input admin), lalu kirim `rating` + `jumlahUlasan` di find-many/findUnique produk. Reset nilai seed ke 0 supaya tidak tampil sebagai penilaian asli begitu frontend membacanya.
+  - Detail produk `/ekonomi/umkm/produk/[id]` (v0.1.266) sudah punya bagian **Ulasan** gaya Decathlon (nilai rata-rata, jumlah ulasan, bar distribusi 5→1, tombol "Tulis ulasan") yang sengaja kosong dan tombolnya nonaktif (`TODO(umkm-ulasan)`). Bentuk data yang ditunggu frontend: `{ rataRata: number | null, jumlah: number, distribusi: { 1..5: number } }` + daftar ulasan berpaginasi.
+  - Usul lanjutan: model `UlasanProduk` (produkId, nama/penanda pengulas, bintang 1–5, teks, status moderasi), endpoint kirim ulasan dengan anti-spam, dan antrean moderasi di admin sebelum tampil.
+
+- [ ] **Produk UMKM hanya bisa punya satu foto** (terverifikasi: `PasarDesa.imageId` tunggal di `prisma/schema.prisma`, 2026-11-13)
+  - Frontend: galeri detail produk sudah mendukung banyak foto (foto utama + strip thumbnail dengan panah), tapi strip baru muncul bila foto ≥2. Kini selalu satu foto.
+  - Usul: relasi foto berurutan (mis. tabel `PasarDesaFoto { produkId, fileStorageId, urutan }`), unggah banyak foto di form admin produk, dan kirim `fotos[]` (urut) di findUnique. Foto pertama tetap jadi sampul kartu katalog.
 
 - [ ] **Form admin Polsek mewajibkan semua field** (terverifikasi)
   - Lokasi: `_state/keamanan/polsekTerdekat/polsek-terdekat.ts:9-12` (`z.string().min(1)` untuk nomorTelepon, jamOperasional, dst.).
