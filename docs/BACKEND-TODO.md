@@ -41,6 +41,15 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
+- [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/umkm/produk/findMany.ts` + `_where.ts`. Hanya mendukung `search`, `umkmId`, `kategoriId` (satu nilai), dan `unggulan`. Urutan tetap `createdAt desc`, dan tidak ada jumlah produk per kategori/toko.
+  - Mitigasi frontend (MITIGASI SEMENTARA): halaman `/ekonomi/umkm` (rombak gaya katalog, v0.1.264) memuat maks 100 produk sekaligus (`KATALOG_LIST_LIMIT`), lalu menyaring (kategori & toko banyak pilihan, rentang harga, unggulan), mengurutkan, dan menghitung di klien. Ada `console.warn` bila total > 100. Data stg 2026-11-13: 7 produk.
+  - Usul: `kategoriId` & `umkmId` banyak nilai (`in`), `hargaMin`/`hargaMax`, `sort=terbaru|harga-asc|harga-desc|nama`, dan jumlah (facet) per kategori & toko. Setelah tersedia, frontend kembali ke paginasi server.
+
+- [ ] **Daftar UMKM publik ikut mengirim UMKM nonaktif & tanpa jumlah produk** (terverifikasi: `ekonomi/umkm/findMany.ts:12` `where = { deletedAt: null }`)
+  - Dampak: UMKM yang dinonaktifkan admin tetap muncul di tab Toko. Frontend sementara menyaring `isActive` di klien dan menghitung jumlah produk per toko dari daftar produk yang dimuat.
+  - Usul: filter `isActive: true` untuk publik (admin tetap butuh semua, jadi pakai param atau endpoint terpisah), dan sertakan `_count.produk` (hanya produk aktif & belum dihapus).
+
 - [ ] **Pencegahan Kriminalitas find-many tanpa offset/skip**
   - Halaman publik mengeluarkan item sorotan dari daftar, jadi butuh offset. Sementara: muat `limit=100` sekali lalu paginasi klien (ditandai MITIGASI SEMENTARA di `(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/pencegahan.meta.ts`, `console.warn` bila total > 100).
   - Usul: dukung `?offset=` (atau `skip`). Setelah ada, hapus mitigasinya.
@@ -60,6 +69,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Kategori kontak darurat keamanan memakai `GET /api/keamanan/kontakdaruratkeamanan/findMany` (camelCase), domain lain `find-many`.
 
 ## P3. Schema & form admin
+
+- [ ] **Rating produk UMKM tidak punya sumber data** (terverifikasi, 2026-11-13)
+  - Lokasi: `PasarDesa.rating Float @default(0)` di `prisma/schema.prisma`. Tidak ada input di form admin produk dan tidak ada model ulasan. Nilai di stg (4,2–4,6) berasal dari seed, bukan penilaian warga.
+  - Frontend: kartu katalog `/ekonomi/umkm` menampilkan slot rating "Belum ada ulasan" dan **sengaja tidak membaca `rating`** (keputusan user 2026-11-13).
+  - Usul: putuskan sumber rating (ulasan warga + moderasi, atau input admin), lalu kirim `rating` + `jumlahUlasan` di find-many/findUnique produk. Reset nilai seed ke 0 supaya tidak tampil sebagai penilaian asli begitu frontend membacanya.
 
 - [ ] **Form admin Polsek mewajibkan semua field** (terverifikasi)
   - Lokasi: `_state/keamanan/polsekTerdekat/polsek-terdekat.ts:9-12` (`z.string().min(1)` untuk nomorTelepon, jamOperasional, dst.).
@@ -87,6 +101,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 ## Isi data (urusan admin konten, bukan kode)
 
+- UMKM: ada 2 kategori produk/usaha bernama sama "Makanan" (`KategoriProdukUmkm` id `4b95bge6-012e-5ged-9552-4d8g65d44959` dan `cmoi3j4iy0000mk1daifarcnt`, stg 2026-11-13). Halaman `/ekonomi/umkm` sementara menggabungkannya berdasarkan nama (MITIGASI SEMENTARA umkm-kategori-ganda). Usul: gabungkan jadi satu kategori di admin dan pindahkan produk/UMKM-nya, lalu hapus mitigasi itu.
 - Pencegahan Kriminalitas: "PROFIL DESA DARMASABA" bukan program keamanan (dan jadi sorotan karena terbaru); "Maling Motor…" ringkasan & isi tertukar; video "Mencegah Pencurian…" sudah tidak tersedia di YouTube.
 - Laporan Publik: "LAPORAN REALISASI APBDES SEMESTER I" bukan laporan keamanan; penanganan ganda identik di "Aksi Penanganan … Sampah Liar"; "WIB" seharusnya WITA.
 - Kontak Darurat Keamanan (stg): kategori uji "Chtvfyy"; item yatim "Test 0852…"; nomor Polsek Darmasaba 0361123456 / Polres 0361123999 tampak nomor contoh; BPBD & Damkar memakai nomor sama 0361900113.
