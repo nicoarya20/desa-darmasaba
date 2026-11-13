@@ -1,5 +1,6 @@
-// Hook start server Next.js. Saat ini hanya memasang scheduler purge Sampah (runtime Node.js saja;
-// Edge tidak punya Prisma/MinIO). Saklar: env SAMPAH_PURGE_SCHEDULER=on|off (default on di production).
+// Hook start server Next.js. Memasang scheduler purge Sampah dan retensi percakapan Jenna (runtime Node.js
+// saja; Edge tidak punya Prisma/MinIO). Sampah: env SAMPAH_PURGE_SCHEDULER=on|off (default on di production).
+// Jenna: selalu on di production, tanpa env.
 
 /** Dipanggil Next.js sekali per proses server saat start. */
 export async function register() {
@@ -11,4 +12,6 @@ export async function register() {
       return purgeSampah();
     },
   });
+  const { startJennaRetentionScheduler } = await import("./lib/jenna/chat/retention");
+  startJennaRetentionScheduler();
 }

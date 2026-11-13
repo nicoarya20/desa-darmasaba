@@ -1,35 +1,8 @@
 // Klien HTTP/SSE widget Jenna publik. Pesan error dari server sudah berbahasa Indonesia dan aman ditampilkan.
+import type { JennaChatRequest, JennaDone, JennaSource, JennaStatus } from "@/lib/jenna/chat-types";
 import { readSseStream } from "@/lib/jenna/runtime/sse-parser";
 
-export interface JennaSource {
-  title: string;
-  url: string;
-}
-
-export interface JennaStatus {
-  enabled: boolean;
-  assistantName: string;
-  maxInputChars: number;
-}
-
-export interface JennaPageContext {
-  route: string;
-  title: string;
-}
-
-export interface JennaChatRequest {
-  message: string;
-  conversationId?: string;
-  pageContext?: JennaPageContext;
-  /** Honeypot: selalu kosong untuk manusia. */
-  website: string;
-}
-
-export interface JennaDone {
-  conversationId: string;
-  text: string;
-  sources: JennaSource[];
-}
+export type { JennaChatRequest, JennaDone, JennaPageContext, JennaSource, JennaStatus } from "@/lib/jenna/chat-types";
 
 export interface JennaStreamHandlers {
   onMeta?: (conversationId: string) => void;
