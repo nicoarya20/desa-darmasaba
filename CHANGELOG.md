@@ -4,6 +4,12 @@
 ### Fixed
 - Alamat `/keamanan` tidak lagi menampilkan halaman kosong bertuliskan "keamanan", dan alamat salah ketik di bawah `/keamanan/` tidak lagi menampilkan judul mentah. Keduanya kini menampilkan halaman tidak ditemukan (404). Semua halaman di menu Keamanan tetap bisa dibuka seperti biasa.
 - Alamat salah ketik di bawah `/kesehatan/` juga tidak lagi menampilkan potongan alamatnya sebagai teks, kini 404. Halaman menu Kesehatan tidak berubah.
+- Hal yang sama berlaku untuk menu lain. Alamat menu `/pemerintahan`, `/ekonomi`, `/inovasi`, `/lingkungan`, `/pendidikan`, dan `/module` kini 404, begitu juga alamat salah ketik di bawahnya. Sebelumnya alamat-alamat itu menampilkan teks kosong, data teknis, atau halaman "Desa Darmasaba" versi lama. Semua halaman di dalam menu tetap seperti biasa.
+- Tautan "Informasi Publik" dan "Transparansi" di footer kini membuka Daftar Informasi Publik. Sebelumnya keduanya menuju halaman yang tidak ada.
+- Tombol "Kembali ke Galeri" di halaman video yang tidak ditemukan kini kembali ke Galeri Video.
+
+### Removed
+- Halaman uji yang tidak ditaut dari mana pun: `/coba`, `/percobaan`, dan `/permohonan/gagal`.
 
 ## [0.1.254] - 2026-11-12
 ### Fixed
