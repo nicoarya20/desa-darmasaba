@@ -1,5 +1,5 @@
 import { IconBuildingStore, IconMapPin, IconUser } from '@tabler/icons-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { alamatTampil, fotoSrc, tokoHref } from './katalog-card.logic';
 import { KATALOG_CARD_TEXT as T } from './katalog-card.text';
 import type { KatalogToko } from './katalog.types';
@@ -21,7 +21,7 @@ export function TokoCard({ toko, jumlahProduk }: Props) {
       />
       <div className={s.body}>
         {toko.kategori && <p className={s.kategori}>{toko.kategori.nama}</p>}
-        <h2 className={s.name}>{toko.nama}</h2>
+        <h3 className={s.name}>{toko.nama}</h3>
         {pemilik && (
           <p className={s.pemilik}>
             <IconUser size={14} stroke={1.75} aria-hidden="true" />

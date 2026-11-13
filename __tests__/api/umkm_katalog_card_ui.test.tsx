@@ -6,8 +6,8 @@ import type { AnchorHTMLAttributes } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('next/link', () => ({
-  default: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+vi.mock('next-view-transitions', () => ({
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
 }));
 
 import { KatalogEmpty } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/KatalogEmpty';
@@ -56,6 +56,8 @@ describe('ProdukCard', () => {
     const html = render(<ProdukCard produk={produk()} />);
     expect(count(html, '<a ')).toBe(1);
     expect(html).toContain('href="/ekonomi/umkm/produk/p1"');
+    expect(html).toMatch(/<h3 [^>]*>Ayam Kampung Organik<\/h3>/);
+    expect(html).not.toContain('<h2');
     expect(text(html)).toBe(`Rp80.000 / ekor Ayam Kampung Organik Peternakan Sari ${T.ratingKosong}`);
     expect(html).toContain('loading="lazy"');
     expect(html).toContain('alt="Ayam Kampung Organik"');
@@ -103,6 +105,7 @@ describe('TokoCard', () => {
     const html = render(<TokoCard toko={toko()} jumlahProduk={3} />);
     expect(count(html, '<a ')).toBe(1);
     expect(html).toContain('href="/ekonomi/umkm/u1"');
+    expect(html).toMatch(/<h3 [^>]*>Peternakan Sari<\/h3>/);
     expect(text(html)).toBe(`Peternakan Peternakan Sari Made Sari Br. Tengah ${T.jumlahProduk(3)}`);
   });
 

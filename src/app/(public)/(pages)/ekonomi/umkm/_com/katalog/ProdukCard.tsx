@@ -1,5 +1,5 @@
 import { IconPhoto, IconStar } from '@tabler/icons-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { fotoSrc, hargaParts, produkHref, produkLabel } from './katalog-card.logic';
 import { KATALOG_CARD_TEXT as T } from './katalog-card.text';
 import type { KatalogProduk } from './katalog.types';
@@ -30,7 +30,7 @@ export function ProdukCard({ produk }: { produk: KatalogProduk }) {
           <span className={s.amount}>{harga}</span>
           {satuan && <span className={s.unit}>{satuan}</span>}
         </p>
-        <h2 className={s.name}>{produk.nama}</h2>
+        <h3 className={s.name}>{produk.nama}</h3>
         {produk.umkm && <p className={s.brand}>{produk.umkm.nama}</p>}
         {/* TODO(umkm-rating): rating belum punya sumber data — docs/BACKEND-TODO.md P3 */}
         <p className={s.rating}>
