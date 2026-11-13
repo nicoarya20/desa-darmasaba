@@ -2,11 +2,11 @@
 
 ## [0.1.265] - 2026-11-13
 ### Changed
-- **Halaman UMKM & Produk Desa dirombak menjadi katalog.** Produk kini tampil dalam grid kartu yang bersih: foto persegi, harga, nama produk, dan nama UMKM penjualnya. Kartu menampilkan label "Unggulan" atau "Habis" di pojok foto. Seluruh kartu bisa diklik untuk membuka detail produk.
-- Di sebelah kiri ada panel **Saring**: pilih satu atau beberapa kategori dan toko (lengkap dengan jumlah produknya), atur rentang harga, tampilkan hanya yang tersedia, atau hanya produk unggulan. Hasil bisa diurutkan dari yang terbaru, harga terendah, harga tertinggi, atau nama. Saringan yang aktif tampil sebagai chip yang bisa dihapus satu per satu atau sekaligus.
-- Tab **Produk** dan **Toko** menggantikan tab "Katalog Produk" dan "Direktori Bisnis". Tab Toko menampilkan kartu UMKM dengan kategori usaha, pemilik, alamat, dan jumlah produknya, serta bisa disaring per kategori usaha.
-- Pencarian, tab, dan saringan tersimpan di alamat halaman, sehingga hasilnya bisa dibagikan dan tombol Kembali di browser tetap bekerja.
-- Di ponsel, produk tampil 2 kolom dan saringan dibuka lewat tombol "Saring" yang memunculkan panel dari bawah.
+- **Halaman UMKM & Produk Desa dirombak menjadi katalog.** Produk kini tampil dalam grid kartu yang bersih: foto persegi, harga, nama produk, dan nama UMKM penjualnya. Produk unggulan diberi label "Unggulan" di pojok foto. Status stok tidak lagi ditampilkan, karena pemesanan dilakukan lewat WhatsApp penjual. Seluruh kartu bisa diklik untuk membuka detail produk.
+- Di sebelah kiri ada panel **Filter**: pilih satu atau beberapa kategori dan toko (lengkap dengan jumlah produknya), atur rentang harga, atau tampilkan hanya produk unggulan. Hasil bisa diurutkan dari yang terbaru, harga terendah, harga tertinggi, atau nama. Filter yang aktif tampil sebagai chip yang bisa dihapus satu per satu atau sekaligus.
+- Tab **Produk** dan **Toko** menggantikan tab "Katalog Produk" dan "Direktori Bisnis". Tab Toko menampilkan kartu UMKM dengan kategori usaha, pemilik, alamat, dan jumlah produknya, serta bisa difilter per kategori usaha.
+- Pencarian, tab, dan filter tersimpan di alamat halaman, sehingga hasilnya bisa dibagikan dan tombol Kembali di browser tetap bekerja.
+- Di ponsel, produk tampil 2 kolom dan filter dibuka lewat tombol "Filter" yang memunculkan panel dari bawah.
 - Kartu produk menyiapkan tempat untuk rating dengan keterangan "Belum ada ulasan", sampai sistem ulasan tersedia.
 
 ## [0.1.264] - 2026-11-13

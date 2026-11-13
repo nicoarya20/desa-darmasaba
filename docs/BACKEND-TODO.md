@@ -43,8 +43,8 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
   - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/umkm/produk/findMany.ts` + `_where.ts`. Hanya mendukung `search`, `umkmId`, `kategoriId` (satu nilai), dan `unggulan`. Urutan tetap `createdAt desc`, dan tidak ada jumlah produk per kategori/toko.
-  - Mitigasi frontend (MITIGASI SEMENTARA): halaman `/ekonomi/umkm` (rombak gaya katalog, v0.1.264) memuat maks 100 produk sekaligus (`KATALOG_LIST_LIMIT`), lalu menyaring (kategori & toko banyak pilihan, rentang harga, ketersediaan, unggulan), mengurutkan, dan menghitung di klien. Ada `console.warn` bila total > 100. Data stg 2026-11-13: 7 produk.
-  - Usul: `kategoriId` & `umkmId` banyak nilai (`in`), `hargaMin`/`hargaMax`, `tersedia=true` (stok > 0), `sort=terbaru|harga-asc|harga-desc|nama`, dan jumlah (facet) per kategori & toko. Setelah tersedia, frontend kembali ke paginasi server.
+  - Mitigasi frontend (MITIGASI SEMENTARA): halaman `/ekonomi/umkm` (rombak gaya katalog, v0.1.264) memuat maks 100 produk sekaligus (`KATALOG_LIST_LIMIT`), lalu menyaring (kategori & toko banyak pilihan, rentang harga, unggulan), mengurutkan, dan menghitung di klien. Ada `console.warn` bila total > 100. Data stg 2026-11-13: 7 produk.
+  - Usul: `kategoriId` & `umkmId` banyak nilai (`in`), `hargaMin`/`hargaMax`, `sort=terbaru|harga-asc|harga-desc|nama`, dan jumlah (facet) per kategori & toko. Setelah tersedia, frontend kembali ke paginasi server.
 
 - [ ] **Daftar UMKM publik ikut mengirim UMKM nonaktif & tanpa jumlah produk** (terverifikasi: `ekonomi/umkm/findMany.ts:12` `where = { deletedAt: null }`)
   - Dampak: UMKM yang dinonaktifkan admin tetap muncul di tab Toko. Frontend sementara menyaring `isActive` di klien dan menghitung jumlah produk per toko dari daftar produk yang dimuat.
