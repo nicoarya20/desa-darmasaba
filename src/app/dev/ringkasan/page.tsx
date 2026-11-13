@@ -1,5 +1,5 @@
 'use client';
-import { Box, Button, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
+import { Button, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import {
   IconBrandDocker,
@@ -34,7 +34,7 @@ export default function RingkasanSistemPage() {
   const data = snap.data;
 
   return (
-    <Box p={{ base: 'sm', sm: 'md' }}>
+    <>
       <DeveloperPageHeader
         title="Ringkasan Sistem"
         subtitle="Kondisi aplikasi dan layanan pendukung saat ini."
@@ -72,7 +72,7 @@ export default function RingkasanSistemPage() {
           <SystemOverview data={data} />
         </Stack>
       )}
-    </Box>
+    </>
   );
 }
 

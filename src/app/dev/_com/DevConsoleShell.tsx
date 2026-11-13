@@ -153,7 +153,7 @@ export function DevConsoleShell({ version, nodeEnv, children }: Props) {
       </AppShell.Navbar>
 
       <AppShell.Main style={{ background: tokens.colors.bg.base, minHeight: '100vh' }}>
-        <Box maw={1280} mx="auto">
+        <Box maw={1280} mx="auto" p={{ base: 'sm', sm: 'md' }}>
           {children}
         </Box>
       </AppShell.Main>

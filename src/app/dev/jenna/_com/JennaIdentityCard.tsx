@@ -1,5 +1,5 @@
 'use client';
-import { Stack, Text, TextInput, Textarea } from '@mantine/core';
+import { SimpleGrid, Stack, Text, TextInput, Textarea } from '@mantine/core';
 import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { JENNA_SETTINGS_LIMITS, type JennaSettingsDTO } from '@/lib/jenna/types';
@@ -53,15 +53,17 @@ export function JennaIdentityCard({ settings }: { settings: JennaSettingsDTO }) 
       }}
     >
       <Stack gap="md">
-        <TextInput
-          label="Nama asisten"
-          description="Ditampilkan di jendela chat website publik."
-          required
-          maxLength={JENNA_SETTINGS_LIMITS.assistantName.maxLength}
-          value={form.assistantName}
-          onChange={(e) => setForm((f) => ({ ...f, assistantName: e.currentTarget.value }))}
-          error={errors.assistantName}
-        />
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+          <TextInput
+            label="Nama asisten"
+            description="Ditampilkan di jendela chat website publik."
+            required
+            maxLength={JENNA_SETTINGS_LIMITS.assistantName.maxLength}
+            value={form.assistantName}
+            onChange={(e) => setForm((f) => ({ ...f, assistantName: e.currentTarget.value }))}
+            error={errors.assistantName}
+          />
+        </SimpleGrid>
         <Stack gap={4}>
           <Textarea
             label="Catatan persona"

@@ -1,5 +1,5 @@
 'use client';
-import { Alert, Box, Button, Stack, Text } from '@mantine/core';
+import { Alert, Button, Stack, Text } from '@mantine/core';
 import { IconRefresh, IconShieldLock } from '@tabler/icons-react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -44,7 +44,7 @@ export default function JennaLayout({ children }: { children: React.ReactNode })
   const updatedBy = config?.updatedBy;
 
   return (
-    <Box p={{ base: 'sm', sm: 'md' }} maw={960}>
+    <>
       <DeveloperPageHeader
         title={meta.title}
         subtitle={meta.subtitle}
@@ -105,6 +105,6 @@ export default function JennaLayout({ children }: { children: React.ReactNode })
         onConfirm={reload}
         onClose={() => setConfirmReload(false)}
       />
-    </Box>
+    </>
   );
 }

@@ -2,7 +2,6 @@
 import {
   Alert,
   Badge,
-  Box,
   Button,
   Group,
   NumberInput,
@@ -102,36 +101,38 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
         )}
       </Group>
 
-      <TextInput
-        label="Base URL"
-        description={
-          protocol === 'openai'
-            ? 'Endpoint OpenAI atau layanan yang kompatibel. Wajib https.'
-            : 'Endpoint Anthropic Messages API. Wajib https.'
-        }
-        placeholder={BASE_URL_PLACEHOLDER[protocol]}
-        required
-        type="url"
-        inputMode="url"
-        autoComplete="off"
-        spellCheck={false}
-        maxLength={JENNA_PROVIDER_LIMITS.baseUrl.maxLength}
-        value={form.baseUrl}
-        onChange={(e) => set('baseUrl', e.currentTarget.value)}
-        error={dirty ? errors.baseUrl : undefined}
-      />
-      <TextInput
-        label="Model"
-        description="ID model persis seperti di dokumentasi provider."
-        placeholder={MODEL_PLACEHOLDER[protocol]}
-        required
-        autoComplete="off"
-        spellCheck={false}
-        maxLength={JENNA_PROVIDER_LIMITS.model.maxLength}
-        value={form.model}
-        onChange={(e) => set('model', e.currentTarget.value)}
-        error={dirty ? errors.model : undefined}
-      />
+      <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+        <TextInput
+          label="Base URL"
+          description={
+            protocol === 'openai'
+              ? 'Endpoint OpenAI atau layanan yang kompatibel. Wajib https.'
+              : 'Endpoint Anthropic Messages API. Wajib https.'
+          }
+          placeholder={BASE_URL_PLACEHOLDER[protocol]}
+          required
+          type="url"
+          inputMode="url"
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={JENNA_PROVIDER_LIMITS.baseUrl.maxLength}
+          value={form.baseUrl}
+          onChange={(e) => set('baseUrl', e.currentTarget.value)}
+          error={dirty ? errors.baseUrl : undefined}
+        />
+        <TextInput
+          label="Model"
+          description="ID model persis seperti di dokumentasi provider."
+          placeholder={MODEL_PLACEHOLDER[protocol]}
+          required
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={JENNA_PROVIDER_LIMITS.model.maxLength}
+          value={form.model}
+          onChange={(e) => set('model', e.currentTarget.value)}
+          error={dirty ? errors.model : undefined}
+        />
+      </SimpleGrid>
 
       <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
         <NumberInput
@@ -179,59 +180,61 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
         />
       </SimpleGrid>
 
-      <Box>
-        {!cryptoConfigured ? (
-          <Alert color="orange" variant="light" icon={<IconKey size={16} />} title="API key tidak dapat disimpan">
-            Kunci enkripsi server (JENNA_CREDENTIALS_KEY) belum diatur. Base URL dan model tetap bisa disimpan.
-          </Alert>
-        ) : replacingKey ? (
-          <Stack gap={4}>
-            <PasswordInput
-              label="API key"
-              description={
-                provider.hasApiKey
-                  ? 'Masukkan kunci baru. Kosongkan untuk tetap memakai kunci lama.'
-                  : 'Disimpan terenkripsi di server dan tidak pernah ditampilkan ulang.'
-              }
-              placeholder={provider.hasApiKey ? 'Kunci baru' : 'sk-…'}
-              autoComplete="new-password"
-              spellCheck={false}
-              maxLength={JENNA_PROVIDER_LIMITS.apiKey.maxLength}
-              value={form.apiKey}
-              onChange={(e) => set('apiKey', e.currentTarget.value)}
-              error={errors.apiKey}
-            />
-            {provider.hasApiKey && (
-              <Group justify="flex-end">
-                <Button
-                  variant="subtle"
-                  size="xs"
-                  onClick={() => {
-                    set('apiKey', '');
-                    setReplacingKey(false);
-                  }}
-                >
-                  Batal ganti kunci
-                </Button>
-              </Group>
-            )}
-          </Stack>
-        ) : (
-          <Group gap="sm" align="flex-end" wrap="wrap">
-            <TextInput
-              label="API key"
-              description="Tersimpan terenkripsi."
-              readOnly
-              value={`••••${provider.apiKeyHint ?? ''}`}
-              style={{ flex: '1 1 220px' }}
-              aria-label="API key tersimpan (disamarkan)"
-            />
-            <Button variant="light" leftSection={<IconKey size={16} />} onClick={() => setReplacingKey(true)}>
-              Ganti kunci
-            </Button>
-          </Group>
-        )}
-      </Box>
+      {!cryptoConfigured ? (
+        <Alert color="orange" variant="light" icon={<IconKey size={16} />} title="API key tidak dapat disimpan">
+          Kunci enkripsi server (JENNA_CREDENTIALS_KEY) belum diatur. Base URL dan model tetap bisa disimpan.
+        </Alert>
+      ) : (
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+          {replacingKey ? (
+            <Stack gap={4}>
+              <PasswordInput
+                label="API key"
+                description={
+                  provider.hasApiKey
+                    ? 'Masukkan kunci baru. Kosongkan untuk tetap memakai kunci lama.'
+                    : 'Disimpan terenkripsi di server dan tidak pernah ditampilkan ulang.'
+                }
+                placeholder={provider.hasApiKey ? 'Kunci baru' : 'sk-…'}
+                autoComplete="new-password"
+                spellCheck={false}
+                maxLength={JENNA_PROVIDER_LIMITS.apiKey.maxLength}
+                value={form.apiKey}
+                onChange={(e) => set('apiKey', e.currentTarget.value)}
+                error={errors.apiKey}
+              />
+              {provider.hasApiKey && (
+                <Group justify="flex-end">
+                  <Button
+                    variant="subtle"
+                    size="xs"
+                    onClick={() => {
+                      set('apiKey', '');
+                      setReplacingKey(false);
+                    }}
+                  >
+                    Batal ganti kunci
+                  </Button>
+                </Group>
+              )}
+            </Stack>
+          ) : (
+            <Group gap="sm" align="flex-end" wrap="wrap">
+              <TextInput
+                label="API key"
+                description="Tersimpan terenkripsi."
+                readOnly
+                value={`••••${provider.apiKeyHint ?? ''}`}
+                style={{ flex: '1 1 220px' }}
+                aria-label="API key tersimpan (disamarkan)"
+              />
+              <Button variant="light" leftSection={<IconKey size={16} />} onClick={() => setReplacingKey(true)}>
+                Ganti kunci
+              </Button>
+            </Group>
+          )}
+        </SimpleGrid>
+      )}
 
       <Stack gap={4}>
         <Text size="sm" fw={500} c={tokens.colors.text.primary}>
