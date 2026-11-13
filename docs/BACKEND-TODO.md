@@ -50,6 +50,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: UMKM yang dinonaktifkan admin tetap muncul di tab Toko. Frontend sementara menyaring `isActive` di klien dan menghitung jumlah produk per toko dari daftar produk yang dimuat.
   - Usul: filter `isActive: true` untuk publik (admin tetap butuh semua, jadi pakai param atau endpoint terpisah), dan sertakan `_count.produk` (hanya produk aktif & belum dihapus).
 
+- [ ] **Daftar produk UMKM publik ikut mengirim produk milik UMKM nonaktif** (terverifikasi: `ekonomi/umkm/produk/_where.ts` `buildProdukWhere`, 2026-11-13)
+  - Where hanya `deletedAt: null, isActive: true` milik produk; status UMKM pemiliknya tidak dicek. UMKM yang dinonaktifkan atau dihapus (`del.ts` juga mengeset `isActive: false`) produknya tetap terkirim, dan `total` ikut menghitungnya.
+  - Mitigasi frontend (sementara): `isProdukTampil` (`(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-adapter.logic.ts`) membuang produk milik UMKM `isActive: false` di klien, dipakai katalog `/ekonomi/umkm` dan rel "Produk serupa" di detail produk. Akibatnya jumlah per halaman dari server tidak sama dengan yang tampil, jadi paginasi server belum bisa dipakai.
+  - Usul: tambah `umkm: { isActive: true, deletedAt: null }` ke where publik. Endpoint ini juga dipakai state admin (`admin/(dashboard)/_state/ekonomi/umkm/umkmState/produk.ts`), jadi cek dulu apakah admin perlu melihat produk dari UMKM nonaktif. Setelah tersedia, `isProdukTampil` bisa dihapus.
+
 - [ ] **Detail produk UMKM publik mengirim produk terhapus/nonaktif, data penjualan, dan tanpa foto UMKM** (terverifikasi: `ekonomi/umkm/produk/findUnique.ts:9-22`, 2026-11-13)
   - `where: { id }` saja: produk yang `deletedAt`/`isActive: false`, atau milik UMKM nonaktif, tetap bisa dibuka lewat URL.
   - Include `penjualan` (10 transaksi terakhir: jumlah, harga, total) ikut terkirim ke publik padahal halaman publik tidak memakainya.
