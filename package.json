@@ -1,6 +1,6 @@
 {
   "name": "desa-darmasaba",
-  "version": "0.1.266",
+  "version": "0.1.267",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -97,6 +97,7 @@
     "react-zoom-pan-pinch": "^3.7.0",
     "readdirp": "^4.1.1",
     "recharts": "^3.8.0",
+    "sanitize-html": "2.18.1",
     "sharp": "^0.35.5",
     "swr": "^2.3.2",
     "uuid": "^11.1.0",
@@ -114,6 +115,7 @@
     "@types/node": "^20",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/sanitize-html": "2.16.2",
     "@vitest/ui": "^4.0.18",
     "eslint": "^9",
     "eslint-config-next": "15.5.12",
