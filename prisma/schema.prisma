@@ -2562,7 +2562,7 @@ model MenuVisibility {
 }
 
 // ===================================== JENNA (asisten AI) ===================================== //
-// Diatur di /admin/developer/jenna (khusus role "0"). Singleton: id selalu "global".
+// Diatur di /dev/jenna (khusus role "0"). Singleton: id selalu "global".
 // Batas nilai divalidasi aplikasi (src/lib/jenna/types.ts JENNA_SETTINGS_LIMITS).
 model JennaSettings {
   id                 String   @id @default("global")

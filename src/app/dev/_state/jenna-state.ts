@@ -14,7 +14,7 @@ const BASE = "/api/developer/jenna";
 /** Bagian halaman Pengaturan Jenna yang disimpan terpisah. */
 export type JennaSection = "status" | "identity" | "limits" | "protocol" | JennaSlot;
 
-/** State halaman admin Developer › Pengaturan Jenna. */
+/** State Developer Console › Pengaturan Jenna. */
 const jennaState = proxy({
   config: null as JennaConfigResponse | null,
   loading: false,

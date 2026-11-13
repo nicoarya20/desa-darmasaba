@@ -2,7 +2,7 @@ import { proxy } from "valtio";
 import type { SystemOverviewResponse } from "@/lib/jenna/types";
 import { developerRequest, errorMessage } from "./developer-api";
 
-/** State halaman admin Developer › Ringkasan Sistem. */
+/** State Developer Console › Ringkasan Sistem. */
 const systemState = proxy({
   data: null as SystemOverviewResponse | null,
   loading: false,

@@ -18,7 +18,7 @@ import { useSnapshot } from 'valtio';
 import { JENNA_PROVIDER_LIMITS, type JennaProviderDTO } from '@/lib/jenna/types';
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
-import jennaState from '../../../_state/developer/jenna-state';
+import jennaState from '../../_state/jenna-state';
 import { ConfirmModal } from '../../_com/ConfirmModal';
 import { formatDateTime } from '../../_com/format';
 import { SaveActions } from '../../_com/SectionCard';

@@ -102,6 +102,30 @@ export function decideAdminAccess(
   return "allow";
 }
 
+// Konsol developer (/dev/*), terpisah dari layout admin; khusus role DEVELOPER "0".
+export const DEV_HOME_PATH = "/dev";
+// Beranda admin role 0/1/2. Juga tujuan "Buka Admin" dari /dev: bukan /admin root,
+// yang me-redirect sendiri per role.
+export const ADMIN_HOME_PATH = "/admin/landing-page/profil/program-inovasi";
+
+// "admin": role admin non-developer diarahkan ke /admin (layout admin memilih halaman per role).
+export type DevAccessDecision = "allow" | "login" | "admin" | "profile";
+
+/**
+ * Akses /dev dari state cookie di proxy; aturan cache miss sama dengan
+ * decideAdminAccess (token ada → allow, layout & API /api/developer memvalidasi penuh).
+ * Juga dipakai layout /dev dengan user dari /api/auth/me.
+ */
+export function decideDevAccess(
+  cachedUser: { roleId?: string | number | null; isActive?: boolean | null } | null,
+  hasToken: boolean,
+): DevAccessDecision {
+  if (!cachedUser) return hasToken ? "allow" : "login";
+  if (!isAccountActive(cachedUser.isActive)) return "login";
+  if (isDeveloperRole(cachedUser.roleId)) return "allow";
+  return isAdminRole(cachedUser.roleId) ? "admin" : "profile";
+}
+
 // Endpoint API yang boleh di-POST warga anonim (form publik website),
 // tanpa login. Master data (jenislayanan/jenispengaduan) bertingkat di bawah
 // path ini & di-CRUD admin → sengaja TIDAK didaftarkan supaya tetap kena guard.
@@ -171,13 +195,14 @@ export function publicOriginFromHeaders(get: (name: string) => string | null): s
   return `${proto}://${host}`;
 }
 
-/** Tujuan redirect setelah login berdasar role (admin → dashboard, user → profil). */
+/** Tujuan redirect setelah login berdasar role (developer → /dev, admin → dashboard, user → profil). */
 export function defaultRouteForRole(roleId: string | number | null | undefined): string {
   switch (Number(roleId)) {
     case 0:
+      return DEV_HOME_PATH;
     case 1:
     case 2:
-      return "/admin/landing-page/profil/program-inovasi";
+      return ADMIN_HOME_PATH;
     case 3:
       return "/admin/kesehatan/posyandu/list-posyandu";
     case 4:

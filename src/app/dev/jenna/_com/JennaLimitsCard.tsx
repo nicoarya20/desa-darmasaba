@@ -3,7 +3,7 @@ import { NumberInput, SimpleGrid } from '@mantine/core';
 import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { JENNA_SETTINGS_LIMITS, type JennaSettingsDTO } from '@/lib/jenna/types';
-import jennaState from '../../../_state/developer/jenna-state';
+import jennaState from '../../_state/jenna-state';
 import { formatNumber } from '../../_com/format';
 import { SectionCard } from '../../_com/SectionCard';
 import {

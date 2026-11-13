@@ -13,12 +13,10 @@ describe('sidebar admin: Developer', () => {
     expect(hasSection('Developer', 0, ['Landing Page'])).toBe(true);
   });
 
-  it('section Developer berisi Ringkasan Sistem & Pengaturan Jenna', () => {
+  it('Developer = satu item tanpa children yang membuka Developer Console /dev', () => {
     const dev = getNavbar({ roleId: 0 }).find((s) => s.id === 'Developer');
-    expect(dev?.children?.map((c) => c.path)).toEqual([
-      '/admin/developer/ringkasan',
-      '/admin/developer/jenna',
-    ]);
+    expect(dev?.path).toBe('/dev');
+    expect(dev?.children).toBeUndefined();
   });
 
   it.each([1, 2, 3, 4, 5])('role %i tidak melihat Developer, walau Menu Access memuatnya', (roleId) => {

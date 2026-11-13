@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import jennaState, { type JennaSection } from '../../../_state/developer/jenna-state';
+import jennaState, { type JennaSection } from '../../_state/jenna-state';
 
 /** Laporkan status draf satu bagian ke state global (untuk peringatan beforeunload). */
 export function useReportDirty(section: JennaSection, dirty: boolean) {

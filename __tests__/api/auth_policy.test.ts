@@ -13,6 +13,10 @@ import {
   publicOriginFromHeaders,
   isPublicPostPath,
   isPublicGetPath,
+  decideDevAccess,
+  defaultRouteForRole,
+  DEV_HOME_PATH,
+  ADMIN_HOME_PATH,
 } from '@/lib/auth-policy';
 
 describe('resolveRoleForNewUser', () => {
@@ -232,5 +236,53 @@ describe('isPublicGetPath', () => {
   it('path admin-only lain tidak ikut terbuka', () => {
     expect(isPublicGetPath('/api/user')).toBe(false);
     expect(isPublicGetPath('/api/imgs')).toBe(false);
+  });
+});
+
+describe('decideDevAccess (guard /dev di proxy & layout /dev)', () => {
+  it('cache miss: token ada → allow (layout & API memvalidasi penuh), tanpa token → login', () => {
+    expect(decideDevAccess(null, true)).toBe('allow');
+    expect(decideDevAccess(null, false)).toBe('login');
+  });
+
+  it('developer aktif → allow (roleId string atau number)', () => {
+    expect(decideDevAccess({ roleId: '0', isActive: true }, true)).toBe('allow');
+    expect(decideDevAccess({ roleId: 0 }, false)).toBe('allow');
+  });
+
+  it('akun nonaktif → login, termasuk developer', () => {
+    expect(decideDevAccess({ roleId: '0', isActive: false }, true)).toBe('login');
+    expect(decideDevAccess({ roleId: '5', isActive: false }, true)).toBe('login');
+  });
+
+  it.each(['1', '2', '3', '4'])('role admin %s (bukan developer) → admin', (roleId) => {
+    expect(decideDevAccess({ roleId, isActive: true }, true)).toBe('admin');
+  });
+
+  it('user biasa / roleId kosong → profile', () => {
+    expect(decideDevAccess({ roleId: '5', isActive: true }, true)).toBe('profile');
+    expect(decideDevAccess({ isActive: true }, true)).toBe('profile');
+  });
+});
+
+describe('defaultRouteForRole (tujuan setelah login)', () => {
+  it('developer ("0") → Developer Console /dev', () => {
+    expect(DEV_HOME_PATH).toBe('/dev');
+    expect(defaultRouteForRole('0')).toBe('/dev');
+    expect(defaultRouteForRole(0)).toBe('/dev');
+  });
+
+  it('role admin lain tidak berubah', () => {
+    expect(ADMIN_HOME_PATH).toBe('/admin/landing-page/profil/program-inovasi');
+    expect(defaultRouteForRole('1')).toBe(ADMIN_HOME_PATH);
+    expect(defaultRouteForRole('2')).toBe(ADMIN_HOME_PATH);
+    expect(defaultRouteForRole('3')).toBe('/admin/kesehatan/posyandu/list-posyandu');
+    expect(defaultRouteForRole('4')).toBe('/admin/pendidikan/info-sekolah/jenjang-pendidikan');
+  });
+
+  it('user biasa / tidak dikenal → /profile', () => {
+    expect(defaultRouteForRole('5')).toBe('/profile');
+    expect(defaultRouteForRole(undefined)).toBe('/profile');
+    expect(defaultRouteForRole('x')).toBe('/profile');
   });
 });

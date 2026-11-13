@@ -15,7 +15,7 @@ import { UnifiedCard } from '@/components/admin/UnifiedSurface';
 import type { ServiceStatus, SystemOverviewResponse } from '@/lib/jenna/types';
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
-import systemState from '../../_state/developer/system-state';
+import systemState from '../_state/system-state';
 import { DeveloperPageHeader } from '../_com/DeveloperPageHeader';
 import { ErrorState } from '../_com/ErrorState';
 import { formatDateTime } from '../_com/format';
@@ -130,7 +130,7 @@ function SystemOverview({ data }: { data: Snapshot<SystemOverviewResponse> }) {
           value={jenna.enabled ? 'Aktif' : 'Nonaktif'}
           status={jennaStatus}
           details={
-            <Link href="/admin/developer/jenna" style={{ color: tokens.colors.text.link }}>
+            <Link href="/dev/jenna" style={{ color: tokens.colors.text.link }}>
               Buka Pengaturan Jenna
             </Link>
           }

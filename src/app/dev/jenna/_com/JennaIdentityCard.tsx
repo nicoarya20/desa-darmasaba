@@ -5,7 +5,7 @@ import { useSnapshot } from 'valtio';
 import { JENNA_SETTINGS_LIMITS, type JennaSettingsDTO } from '@/lib/jenna/types';
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
-import jennaState from '../../../_state/developer/jenna-state';
+import jennaState from '../../_state/jenna-state';
 import { SectionCard } from '../../_com/SectionCard';
 import {
   hasErrors,

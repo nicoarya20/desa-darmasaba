@@ -11,7 +11,7 @@ import {
 } from '@/lib/jenna/types';
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
-import jennaState from '../../../_state/developer/jenna-state';
+import jennaState from '../../_state/jenna-state';
 import { ConfirmModal } from '../../_com/ConfirmModal';
 import { SectionCard } from '../../_com/SectionCard';
 import { JennaProviderForm } from './JennaProviderForm';
