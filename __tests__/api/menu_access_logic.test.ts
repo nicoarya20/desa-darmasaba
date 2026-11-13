@@ -59,9 +59,14 @@ describe('getNavbar dengan menuIds', () => {
     expect(ids(getNavbar({ roleId }))).not.toContain('User & Role');
   });
 
-  it.each([0, 1])('role %i tetap punya User & Role + Pengaturan di akhir (fallback & menuIds)', (roleId) => {
-    expect(ids(getNavbar({ roleId })).slice(-2)).toEqual(['User & Role', 'Pengaturan']);
-    expect(ids(getNavbar({ roleId, menuIds: ['Kesehatan'] }))).toEqual(['Kesehatan', 'User & Role', 'Pengaturan']);
+  it('role 1 tetap punya User & Role + Pengaturan di akhir (fallback & menuIds)', () => {
+    expect(ids(getNavbar({ roleId: 1 })).slice(-2)).toEqual(['User & Role', 'Pengaturan']);
+    expect(ids(getNavbar({ roleId: 1, menuIds: ['Kesehatan'] }))).toEqual(['Kesehatan', 'User & Role', 'Pengaturan']);
+  });
+
+  it('role 0 tetap punya User & Role + Pengaturan + Developer di akhir (fallback & menuIds)', () => {
+    expect(ids(getNavbar({ roleId: 0 })).slice(-3)).toEqual(['User & Role', 'Pengaturan', 'Developer']);
+    expect(ids(getNavbar({ roleId: 0, menuIds: ['Kesehatan'] }))).toEqual(['Kesehatan', 'User & Role', 'Pengaturan', 'Developer']);
   });
 
   it('role 1 fallback: urutan sidebar sama dengan sebelumnya', () => {
