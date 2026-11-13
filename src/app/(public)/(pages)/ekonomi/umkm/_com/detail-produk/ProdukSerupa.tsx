@@ -1,10 +1,11 @@
 'use client';
 import { useRailScroll } from '@/app/(public)/_com/main-page/landing-page/use-rail-scroll';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { useEffect, useRef } from 'react';
 import { ProdukCard } from '../katalog/ProdukCard';
 import s from './produk-serupa.module.css';
 import { PRODUK_SERUPA_TEXT as T } from './produk-serupa.text';
-import type { ProdukSerupaAcuan } from './produk-serupa.logic';
+import { panahPenggantiFokus, type ProdukSerupaAcuan, type RelArah } from './produk-serupa.logic';
 import { useProdukSerupa } from './use-produk-serupa';
 
 const TITLE_ID = 'produk-serupa-judul';
@@ -17,6 +18,22 @@ export function ProdukSerupa({ current }: { current: ProdukSerupaAcuan }) {
   const { state, retry } = useProdukSerupa(current);
   const items = state.status === 'ready' ? state.data : [];
   const { railRef, state: rail, step } = useRailScroll(items.length);
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+  const diklikRef = useRef<RelArah | null>(null);
+  const geser = (arah: RelArah) => {
+    diklikRef.current = arah;
+    step(arah);
+  };
+
+  // Panah yang diklik hilang saat rel sampai ujung → fokus ke panah sisi lain, hanya bila fokus memang jatuh ke body
+  // (bukan merebut fokus yang sudah dipindah pengguna ke tempat lain).
+  useEffect(() => {
+    const target = panahPenggantiFokus(diklikRef.current, rail.canPrev, rail.canNext);
+    if (diklikRef.current === 1 ? !rail.canNext : !rail.canPrev) diklikRef.current = null;
+    const fokusJatuh = document.activeElement == null || document.activeElement === document.body;
+    if (target && fokusJatuh) (target === 'prev' ? prevRef : nextRef).current?.focus();
+  }, [rail.canPrev, rail.canNext]);
 
   if (state.status === 'ready' && items.length === 0) return null;
 
@@ -57,12 +74,24 @@ export function ProdukSerupa({ current }: { current: ProdukSerupaAcuan }) {
             ))}
           </ul>
           {rail.canPrev && (
-            <button type="button" className={`${s.arrow} ${s.prev}`} onClick={() => step(-1)} aria-label={T.sebelumnya}>
+            <button
+              ref={prevRef}
+              type="button"
+              className={`${s.arrow} ${s.prev}`}
+              onClick={() => geser(-1)}
+              aria-label={T.sebelumnya}
+            >
               <IconChevronLeft size={20} stroke={2} aria-hidden="true" />
             </button>
           )}
           {rail.canNext && (
-            <button type="button" className={`${s.arrow} ${s.next}`} onClick={() => step(1)} aria-label={T.berikutnya}>
+            <button
+              ref={nextRef}
+              type="button"
+              className={`${s.arrow} ${s.next}`}
+              onClick={() => geser(1)}
+              aria-label={T.berikutnya}
+            >
               <IconChevronRight size={20} stroke={2} aria-hidden="true" />
             </button>
           )}

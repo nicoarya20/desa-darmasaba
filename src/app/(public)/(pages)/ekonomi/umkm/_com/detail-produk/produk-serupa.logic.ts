@@ -26,3 +26,15 @@ export function pickProdukSerupa(
     : [];
   return [...sekategori, ...setoko].slice(0, Math.max(0, max));
 }
+
+export type RelArah = 1 | -1;
+
+/**
+ * Panah rel disembunyikan di ujung; bila panah yang baru diklik (`diklik`) ikut hilang, fokus pindah ke panah sisi
+ * lain supaya tidak jatuh ke body. null = fokus tidak perlu dipindah (panah masih ada, atau sisi lain juga hilang).
+ */
+export function panahPenggantiFokus(diklik: RelArah | null, canPrev: boolean, canNext: boolean): 'prev' | 'next' | null {
+  if (diklik === 1 && !canNext) return canPrev ? 'prev' : null;
+  if (diklik === -1 && !canPrev) return canNext ? 'next' : null;
+  return null;
+}

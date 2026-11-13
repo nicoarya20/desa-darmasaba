@@ -2,6 +2,7 @@
 // Pilihan Produk serupa di detail produk UMKM: kategori sama (nama ternormalisasi), lalu UMKM sama, maks 12.
 import { describe, expect, it } from 'vitest';
 import {
+  panahPenggantiFokus,
   pickProdukSerupa,
   PRODUK_SERUPA_MAX,
   type ProdukSerupaAcuan,
@@ -74,5 +75,27 @@ describe('pickProdukSerupa', () => {
   it('tidak ada yang serupa → daftar kosong', () => {
     expect(pickProdukSerupa([produk('p2', 'Sembako', 'u2')], acuan())).toEqual([]);
     expect(pickProdukSerupa([], acuan())).toEqual([]);
+  });
+});
+
+describe('panahPenggantiFokus', () => {
+  it('panah kanan diklik lalu hilang di ujung kanan → fokus ke panah kiri', () => {
+    expect(panahPenggantiFokus(1, true, false)).toBe('prev');
+  });
+
+  it('panah kiri diklik lalu hilang di ujung kiri → fokus ke panah kanan', () => {
+    expect(panahPenggantiFokus(-1, false, true)).toBe('next');
+  });
+
+  it('panah yang diklik masih tampil → fokus tetap', () => {
+    expect(panahPenggantiFokus(1, true, true)).toBeNull();
+    expect(panahPenggantiFokus(-1, true, true)).toBeNull();
+    expect(panahPenggantiFokus(1, false, true)).toBeNull();
+  });
+
+  it('belum ada klik, atau kedua panah hilang (rel tak lagi bisa digeser) → tidak dipindah', () => {
+    expect(panahPenggantiFokus(null, true, false)).toBeNull();
+    expect(panahPenggantiFokus(1, false, false)).toBeNull();
+    expect(panahPenggantiFokus(-1, false, false)).toBeNull();
   });
 });
