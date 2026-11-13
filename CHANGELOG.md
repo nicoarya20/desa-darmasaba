@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.267] - 2026-11-13
+### Changed
+- **Halaman detail toko UMKM dirombak** agar seragam dengan katalog dan detail produk. Bagian atas menampilkan foto toko (atau inisial nama toko bila belum ada foto), kategori usaha, nama toko, pemilik, alamat, jumlah produk, deskripsi, dan tombol **Hubungi Penjual (WhatsApp)** dengan pesan pembuka tentang toko tersebut.
+- Produk toko tampil dengan kartu yang sama seperti di katalog dan bisa diurutkan (terbaru, harga terendah, harga tertinggi, nama). Status stok tidak lagi ditampilkan.
+- Tombol kembali kini membuka katalog langsung di tab Toko.
+
+### Fixed
+- Deskripsi toko tidak lagi menampilkan kode HTML mentah dari editor admin.
+- Toko yang sudah dihapus atau dinonaktifkan menampilkan "Toko tidak ditemukan", produk yang dinonaktifkan tidak ikut tampil, dan bila gagal memuat ada tombol "Coba lagi" (sebelumnya kerangka memuat tampil terus).
+
 ## [0.1.266] - 2026-11-13
 ### Changed
 - **Halaman detail produk UMKM dirombak.** Foto produk tampil di kiri dengan ukuran pas, dan di sampingnya ada nama toko, kategori, nama produk, harga per satuan, serta tombol besar **Hubungi Penjual (WhatsApp)** yang langsung membuka chat dengan pesan berisi nama produk. Kolom ini ikut menempel saat halaman di-scroll di komputer.
