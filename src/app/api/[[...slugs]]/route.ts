@@ -29,6 +29,7 @@ import User from "./_lib/user";
 import Role from "./_lib/user/role";
 import Search from "./_lib/search";
 import MenuVisibility from "./_lib/menu_visibility";
+import Developer from "./_lib/developer";
 
 const ROOT = process.cwd();
 
@@ -95,7 +96,7 @@ const ApiServer = new Elysia()
         const { pathname } = new URL(request.url);
 
         // GET paths yang hanya boleh diakses admin
-        const ADMIN_ONLY_GET_PATHS = ["/api/user", "/api/role", "/api/fileStorage", "/api/imgs"];
+        const ADMIN_ONLY_GET_PATHS = ["/api/user", "/api/role", "/api/fileStorage", "/api/imgs", "/api/developer"];
 
         // Form publik website (warga anonim) boleh POST tanpa login untuk
         // path yang di-whitelist exact-match. Master data admin bertingkat di
@@ -143,6 +144,7 @@ const ApiServer = new Elysia()
       .use(Role)
       .use(Search)
       .use(MenuVisibility)
+      .use(Developer)
       .get("/layanan", layanan)
       .get("/potensi", getPotensi)
       .get(

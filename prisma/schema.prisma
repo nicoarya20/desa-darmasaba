@@ -2490,6 +2490,8 @@ model User {
   role                  Role             @relation(fields: [roleId], references: [id])
   menuAccesses          UserMenuAccess[]
   menuVisibilityUpdates MenuVisibility[]
+  jennaSettingsUpdates  JennaSettings[]  @relation("JennaSettingsUpdatedBy")
+  jennaProviderUpdates  JennaProvider[]  @relation("JennaProviderUpdatedBy")
 
   @@map("users")
 }
@@ -2557,6 +2559,45 @@ model MenuVisibility {
   updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ===================================== JENNA (asisten AI) ===================================== //
+// Diatur di /admin/developer/jenna (khusus role "0"). Singleton: id selalu "global".
+// Batas nilai divalidasi aplikasi (src/lib/jenna/types.ts JENNA_SETTINGS_LIMITS).
+model JennaSettings {
+  id                 String   @id @default("global")
+  enabled            Boolean  @default(false)
+  assistantName      String   @default("Jenna")
+  personaNote        String   @default("") @db.VarChar(1500)
+  maxInputChars      Int      @default(2000)
+  historyWindow      Int      @default(6)
+  rateLimitPerMinute Int      @default(10)
+  dailyMessagesUser  Int      @default(100)
+  dailyTokensGlobal  Int      @default(0) // 0 = tanpa batas
+  retentionDays      Int      @default(90)
+  chatProtocol       String   @default("openai") // "openai" | "anthropic"
+  updatedAt          DateTime @updatedAt
+  updatedById        String?
+  updatedBy          User?    @relation("JennaSettingsUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+// Satu row per slot provider ("chat_openai" | "chat_anthropic"). apiKeyEnc = AES-256-GCM
+// (src/lib/jenna/crypto.ts, format "v1:..."), tidak pernah dikirim ke klien.
+model JennaProvider {
+  slot            String    @id
+  baseUrl         String    @default("")
+  apiKeyEnc       String?
+  apiKeyHint      String?   @db.VarChar(4)
+  model           String    @default("")
+  temperature     Float?
+  maxTokens       Int?
+  timeoutMs       Int       @default(30000)
+  lastTestAt      DateTime?
+  lastTestOk      Boolean?
+  lastTestMessage String?
+  updatedAt       DateTime  @updatedAt
+  updatedById     String?
+  updatedBy       User?     @relation("JennaProviderUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 // ===================================== BETTER AUTH ===================================== //
