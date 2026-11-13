@@ -1,6 +1,6 @@
 # Menu Developer: Ringkasan Sistem & Pengaturan Jenna
 
-Tanggal: 2026-11-13 · Versi: 0.1.255 · Migrasi: `20261113100000_jenna_settings` (additive: `JennaSettings`, `JennaProvider`)
+Tanggal: 2026-11-13 · Versi: 0.1.253 · Migrasi: `20261113100000_jenna_settings` (additive: `JennaSettings`, `JennaProvider`)
 
 ## Konteks
 Jenna (asisten AI desa) butuh tempat untuk mengatur provider AI (base URL, model, API key) dan batas pemakaian tanpa redeploy. Mengatur lewat env berarti setiap ganti model/key harus edit env stack + restart container, dan tidak ada tes koneksi. Developer juga tidak punya satu halaman untuk melihat kondisi runtime (versi yang aktif, koneksi DB/MinIO, env mana yang belum diisi) tanpa masuk ke server. Role DEVELOPER ("0") sudah ada dan kini bisa diberikan lewat `DEVELOPER_EMAIL` (0.1.253), tetapi belum punya menu khusus.
@@ -19,7 +19,7 @@ Jenna (asisten AI desa) butuh tempat untuk mengatur provider AI (base URL, model
 - **API key plaintext di DB**: backup/dump DB atau akses baca DB langsung membocorkan key provider berbayar.
 - **Menu di bawah Pengaturan (role 0/1)**: SUPER ADMIN tidak perlu mengatur provider AI atau melihat detail infrastruktur; memisahkan section menjaga Pengaturan tetap untuk konten.
 - **Developer sebagai section Menu Access biasa**: section di `navBar` bisa dicentang untuk role mana pun lewat halaman Menu Access, sehingga gating role bisa terlewati tanpa sengaja.
-- **`/admin/developer/*` di dalam layout admin** (keputusan awal 0.1.254, diganti sebelum rilis): alat developer bercampur dengan CMS konten di sidebar yang sama, terikat pola sidebar 2 level admin, dan developer harus melewati dashboard konten dulu. Auth dan tema tetap bisa dipakai bersama tanpa berbagi layout, jadi duplikasinya kecil (guard sesi ringan + shell).
+- **`/admin/developer/*` di dalam layout admin** (keputusan awal di branch ini, diganti sebelum rilis): alat developer bercampur dengan CMS konten di sidebar yang sama, terikat pola sidebar 2 level admin, dan developer harus melewati dashboard konten dulu. Auth dan tema tetap bisa dipakai bersama tanpa berbagi layout, jadi duplikasinya kecil (guard sesi ringan + shell).
 - **Aplikasi terpisah (repo/deploy sendiri)**: menduplikasi auth Better Auth, DB, dan pipeline rilis tanpa manfaat untuk dua halaman.
 
 ## Konsekuensi
