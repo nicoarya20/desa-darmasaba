@@ -1,8 +1,8 @@
 # Changelog
 
-## [0.1.254] - 2026-11-13
+## [0.1.255] - 2026-11-13
 ### Added
-- **Menu admin baru: Developer**, hanya terlihat dan bisa dibuka oleh akun dengan role DEVELOPER. Role lain tidak melihat menu ini, dan menu ini tidak bisa diberikan ke role lain lewat halaman Menu Access.
+- **Developer Console (`/dev`)**, halaman khusus akun dengan role DEVELOPER, terpisah dari halaman admin dan punya tampilan sendiri. Akun DEVELOPER langsung masuk ke sini setelah login, dan tetap bisa membuka admin lewat tautan "Buka Admin". Di sidebar admin, akun DEVELOPER mendapat menu "Developer" untuk kembali ke konsol. Role lain tidak melihat menu ini, tidak bisa membuka `/dev` (admin dikembalikan ke halaman admin, warga ke profil), dan menu ini tidak bisa diberikan ke role lain lewat halaman Menu Access.
   - **Ringkasan Sistem**: versi aplikasi, environment, lama server berjalan, status koneksi database dan penyimpanan berkas (MinIO) beserta kecepatannya, kesiapan Jenna, dan daftar env yang sudah atau belum diisi (hanya nama env, nilainya tidak pernah ditampilkan).
   - **Pengaturan Jenna** (asisten AI desa): aktif/nonaktif, nama asisten dan catatan persona, batas pemakaian (panjang pesan, jumlah pesan per menit dan per hari, batas token harian, lama penyimpanan riwayat), serta pengaturan penyedia AI (OpenAI-compatible atau Anthropic): alamat server, model, dan API key, lengkap dengan tombol "Tes koneksi". API key disimpan terenkripsi dan tidak pernah ditampilkan kembali; yang terlihat hanya 4 karakter terakhirnya.
 - Tahap ini baru menyimpan pengaturan. Jenna belum menjawab pesan warga (chat, suara, dan statistik pemakaian menyusul di tahap berikutnya).

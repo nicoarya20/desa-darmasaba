@@ -37,7 +37,7 @@ Seafile has been fully replaced by MinIO (see `prisma/migrate-seafile-to-minio.t
 
 ## Operator: `JENNA_CREDENTIALS_KEY`
 
-Provider AI Jenna (base URL, model, API key) diatur di `/admin/developer/jenna` (role DEVELOPER "0"), bukan lewat env. API key disimpan terenkripsi di tabel `JennaProvider` dengan kunci dari `JENNA_CREDENTIALS_KEY`:
+Provider AI Jenna (base URL, model, API key) diatur di Developer Console `/dev/jenna` (role DEVELOPER "0"), bukan lewat env. API key disimpan terenkripsi di tabel `JennaProvider` dengan kunci dari `JENNA_CREDENTIALS_KEY`:
 
 - Generate sekali per environment: `openssl rand -hex 32` (64 karakter hex), simpan di env stack.
 - Opsional: tanpa kunci (atau format salah) aplikasi tetap boot, halaman Jenna menampilkan peringatan dan **menolak** menyimpan API key (fail-closed, tidak pernah plaintext).

@@ -488,6 +488,16 @@ Deteksi aktif: `useSelectedLayoutSegments()` dari Next.js App Router.
 
 `AppShellMain` bg `#f6f9fc`.
 
+### Developer Console (`/dev`, layout terpisah)
+
+File: `src/app/dev/layout.tsx` (server: versi `package.json` + `NODE_ENV`) → `src/app/dev/_com/DevConsoleShell.tsx`. Khusus role DEVELOPER "0"; bukan bagian layout admin (alasan: `docs/decisions/2026-11-13-developer-menu-jenna.md`).
+
+- `AppShell` header 60px + navbar 240px (`lg` 260px), breakpoint `sm`, burger di mobile (navbar tertutup saat item diklik).
+- **Header**: ikon terminal + "Developer Console" / "Desa Darmasaba" | badge `NODE_ENV` (production oranye, development teal) + badge versi | menu akun (nama/email, Buka Admin, Website Desa, Keluar via `logoutAndRedirect` di `src/lib/client-logout.ts`).
+- **Navbar**: item dari `_com/dev-nav.ts` (`DEV_NAV`, aktif via `isDevNavActive`: path sama atau sub-path); bagian bawah "Buka Admin" (`ADMIN_HOME_PATH`, bukan `/admin` root) dan "Website Desa".
+- **Warna**: semua dari `themeTokens(isDark)` (store `darmasaba-admin-dark-mode`, tanpa toggle — sama seperti admin). Hover NavLink/Menu lewat `--dev-hover` (`dev-console.module.css`), karena hover bawaan Mantine selalu skema terang.
+- **Guard**: sampai `/api/auth/me` mengonfirmasi role 0 aktif (`useDeveloperSession` + `decideDevAccess`), hanya loader tanpa warna tema yang dirender, jadi halaman dan fetch `/api/developer/*` tidak jalan.
+
 ---
 
 ## 7. Menu Navigasi
@@ -516,7 +526,7 @@ Visibilitas submenu: field `hidden` di config = **default**; Super Admin/Develop
 File: `src/app/admin/_com/list_PageAdmin.tsx` (re-export saja; data sebenarnya ada di `src/app/admin/_com/nav/domains.ts` dan dirakit di `src/app/admin/_com/nav/index.ts`)
 
 Export: `navBar` (semua domain), `role1`, `role2`, `role3` (role-based subset), `devBar`.  
-Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`. Filter berdasarkan `menuIds` (dengan normalisasi ID) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access.
+Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`. Filter berdasarkan `menuIds` (dengan normalisasi ID) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access. Sama untuk `developerMenu`: satu item tanpa children ke `/dev` (Developer Console), hanya roleId 0.
 
 ---
 
