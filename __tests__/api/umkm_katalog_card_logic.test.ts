@@ -1,14 +1,12 @@
 // @vitest-environment node
-// Logika kartu katalog UMKM publik: format harga, label stok/unggulan, foto & alamat pengganti, rute detail.
+// Logika kartu katalog UMKM publik: format harga, foto & alamat pengganti, rute detail.
 import { describe, expect, it } from 'vitest';
 import {
   alamatTampil,
   formatHarga,
   fotoSrc,
   hargaParts,
-  isHabis,
   produkHref,
-  produkLabel,
   tokoHref,
 } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-card.logic';
 import { KATALOG_CARD_TEXT as T } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-card.text';
@@ -34,24 +32,6 @@ describe('hargaParts', () => {
   it('satuan kosong atau null → tanpa akhiran', () => {
     expect(hargaParts({ harga: 5000, satuan: null }).satuan).toBe('');
     expect(hargaParts({ harga: 5000, satuan: '  ' }).satuan).toBe('');
-  });
-});
-
-describe('produkLabel', () => {
-  it('stok ≤ 0 → habis', () => {
-    expect(isHabis(0)).toBe(true);
-    expect(isHabis(-2)).toBe(true);
-    expect(isHabis(1)).toBe(false);
-    expect(produkLabel({ stok: 0, isUnggulan: false })).toBe('habis');
-  });
-
-  it('unggulan hanya bila stok masih ada; habis mengalahkan unggulan', () => {
-    expect(produkLabel({ stok: 3, isUnggulan: true })).toBe('unggulan');
-    expect(produkLabel({ stok: 0, isUnggulan: true })).toBe('habis');
-  });
-
-  it('tersedia dan bukan unggulan → tanpa label', () => {
-    expect(produkLabel({ stok: 5, isUnggulan: false })).toBeNull();
   });
 });
 

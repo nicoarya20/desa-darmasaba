@@ -1,14 +1,16 @@
 import { IconPhoto, IconStar } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
-import { fotoSrc, hargaParts, produkHref, produkLabel } from './katalog-card.logic';
+import { fotoSrc, hargaParts, produkHref } from './katalog-card.logic';
 import { KATALOG_CARD_TEXT as T } from './katalog-card.text';
 import type { KatalogProduk } from './katalog.types';
 import { KatalogMedia } from './KatalogMedia';
 import s from './produk-card.module.css';
 
-/** Kartu produk gaya Decathlon: seluruh kartu satu tautan ke detail produk. */
+/**
+ * Kartu produk gaya Decathlon: seluruh kartu satu tautan ke detail produk.
+ * Stok sengaja tidak ditampilkan: pemesanan lewat WhatsApp penjual dan stok tidak dirawat admin (keputusan user 2026-11-13).
+ */
 export function ProdukCard({ produk }: { produk: KatalogProduk }) {
-  const label = produkLabel(produk);
   const { harga, satuan } = hargaParts(produk);
 
   return (
@@ -17,13 +19,8 @@ export function ProdukCard({ produk }: { produk: KatalogProduk }) {
         src={fotoSrc(produk.imageUrl)}
         alt={produk.nama}
         fallback={<IconPhoto size={40} stroke={1.5} />}
-        dimmed={label === 'habis'}
       >
-        {label && (
-          <span className={s.label} data-variant={label}>
-            {T[label]}
-          </span>
-        )}
+        {produk.isUnggulan && <span className={s.label}>{T.unggulan}</span>}
       </KatalogMedia>
       <div className={s.body}>
         <p className={s.price}>

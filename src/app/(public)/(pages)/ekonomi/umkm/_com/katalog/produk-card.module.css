@@ -16,7 +16,7 @@
   outline-offset: 2px;
 }
 
-/* Label pojok kiri atas, bersudut lancip seperti "Turun Harga" Decathlon. */
+/* Label "Unggulan" pojok kiri atas, bersudut lancip seperti "Turun Harga" Decathlon. */
 .label {
   position: absolute;
   top: 8px;
@@ -25,16 +25,8 @@
   font-size: 13px;
   font-weight: 600;
   line-height: 1.2;
-}
-
-.label[data-variant="unggulan"] {
   background: #ffd43b;
   color: #1d1d1f;
-}
-
-.label[data-variant="habis"] {
-  background: #1d1d1f;
-  color: #fff;
 }
 
 .body {

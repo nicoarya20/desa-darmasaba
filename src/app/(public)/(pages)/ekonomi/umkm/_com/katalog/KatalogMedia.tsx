@@ -7,16 +7,14 @@ type Props = {
   alt: string;
   /** Ikon pengganti saat tidak ada foto. */
   fallback: ReactNode;
-  /** Redupkan foto (mis. produk habis). */
-  dimmed?: boolean;
   /** Lapisan di atas foto (label pojok). */
   children?: ReactNode;
 };
 
 /** Bingkai foto persegi kartu katalog: foto lazy atau ikon pengganti di atas latar abu. */
-export function KatalogMedia({ src, alt, fallback, dimmed, children }: Props) {
+export function KatalogMedia({ src, alt, fallback, children }: Props) {
   return (
-    <div className={s.media} data-dimmed={dimmed || undefined}>
+    <div className={s.media}>
       {src ? (
         <Image src={src} alt={alt} loading="lazy" decoding="async" className={s.img} />
       ) : (

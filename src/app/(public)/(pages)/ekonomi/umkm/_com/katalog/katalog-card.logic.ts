@@ -2,9 +2,6 @@ import { perSatuanSuffix } from '../../_lib/satuan';
 import { KATALOG_CARD_TEXT as T } from './katalog-card.text';
 import type { KatalogProduk } from './katalog.types';
 
-/** Label pojok foto produk; "habis" mengalahkan "unggulan" bila keduanya berlaku. */
-export type ProdukLabel = 'habis' | 'unggulan';
-
 const RUPIAH = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 });
 
 /** Harga ringkas tanpa spasi gaya katalog, mis. 80000 → "Rp80.000". */
@@ -15,17 +12,6 @@ export function formatHarga(harga: number): string {
 /** Harga + akhiran satuan terpisah agar bisa diberi gaya berbeda, mis. { harga: "Rp80.000", satuan: " / ekor" }. */
 export function hargaParts(produk: Pick<KatalogProduk, 'harga' | 'satuan'>) {
   return { harga: formatHarga(produk.harga), satuan: perSatuanSuffix(produk.satuan) };
-}
-
-/** Status stok yang ditandai di kartu: stok ≤ 0 = habis (semantik halaman lama). */
-export function isHabis(stok: number): boolean {
-  return stok <= 0;
-}
-
-/** Label pojok foto produk, atau null bila tidak ada yang perlu ditandai. */
-export function produkLabel(produk: Pick<KatalogProduk, 'stok' | 'isUnggulan'>): ProdukLabel | null {
-  if (isHabis(produk.stok)) return 'habis';
-  return produk.isUnggulan ? 'unggulan' : null;
 }
 
 /** URL foto yang layak dipakai; kosong/spasi → null (kartu menampilkan ikon pengganti). */

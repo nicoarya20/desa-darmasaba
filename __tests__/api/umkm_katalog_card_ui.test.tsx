@@ -17,6 +17,7 @@ import { TokoCard } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/TokoC
 import { KATALOG_CARD_TEXT as T } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-card.text';
 import type { KatalogProduk, KatalogToko } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog.types';
 import g from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-grid.module.css';
+import p from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/produk-card.module.css';
 import m from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-media.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -72,24 +73,28 @@ describe('ProdukCard', () => {
     expect(out).not.toContain('4,8');
   });
 
-  it('tanpa label bila tersedia dan bukan unggulan', () => {
+  it('bukan unggulan → tanpa label pojok', () => {
     const html = render(<ProdukCard produk={produk()} />);
-    expect(html).not.toContain('data-variant=');
-    expect(html).not.toContain('data-dimmed');
+    expect(html).not.toContain(`class="${p.label}"`);
+    expect(text(html)).not.toContain(T.unggulan);
   });
 
-  it('unggulan → label "Unggulan"', () => {
+  it('unggulan → satu label "Unggulan"', () => {
     const html = render(<ProdukCard produk={produk({ isUnggulan: true })} />);
-    expect(html).toContain('data-variant="unggulan"');
+    expect(count(html, `class="${p.label}"`)).toBe(1);
     expect(text(html)).toContain(T.unggulan);
   });
 
-  it('stok habis → label "Habis" saja (mengalahkan unggulan) dan foto diredupkan', () => {
-    const html = render(<ProdukCard produk={produk({ stok: 0, isUnggulan: true })} />);
-    expect(html).toContain('data-variant="habis"');
-    expect(html).not.toContain('data-variant="unggulan"');
-    expect(html).toContain('data-dimmed="true"');
-    expect(count(text(html), T.habis)).toBe(1);
+  it('stok 0 tidak ditandai: tanpa "Habis", foto tidak diredupkan, unggulan tetap tampil', () => {
+    const plain = render(<ProdukCard produk={produk({ stok: 0 })} />);
+    expect(text(plain)).not.toMatch(/habis/i);
+    expect(plain).not.toContain(`class="${p.label}"`);
+    expect(plain).not.toContain('data-dimmed');
+    expect(plain).not.toContain('opacity');
+
+    const unggulan = render(<ProdukCard produk={produk({ stok: 0, isUnggulan: true })} />);
+    expect(text(unggulan)).not.toMatch(/habis/i);
+    expect(text(unggulan)).toContain(T.unggulan);
   });
 
   it('tanpa foto → ikon pengganti, tanpa <img>; tanpa satuan & toko → baris itu tidak muncul', () => {
