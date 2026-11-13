@@ -101,6 +101,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 ## Isi data (urusan admin konten, bukan kode)
 
+- UMKM: ada 2 kategori produk/usaha bernama sama "Makanan" (`KategoriProdukUmkm` id `4b95bge6-012e-5ged-9552-4d8g65d44959` dan `cmoi3j4iy0000mk1daifarcnt`, stg 2026-11-13). Halaman `/ekonomi/umkm` sementara menggabungkannya berdasarkan nama (MITIGASI SEMENTARA umkm-kategori-ganda). Usul: gabungkan jadi satu kategori di admin dan pindahkan produk/UMKM-nya, lalu hapus mitigasi itu.
 - Pencegahan Kriminalitas: "PROFIL DESA DARMASABA" bukan program keamanan (dan jadi sorotan karena terbaru); "Maling Motor…" ringkasan & isi tertukar; video "Mencegah Pencurian…" sudah tidak tersedia di YouTube.
 - Laporan Publik: "LAPORAN REALISASI APBDES SEMESTER I" bukan laporan keamanan; penanganan ganda identik di "Aksi Penanganan … Sampah Liar"; "WIB" seharusnya WITA.
 - Kontak Darurat Keamanan (stg): kategori uji "Chtvfyy"; item yatim "Test 0852…"; nomor Polsek Darmasaba 0361123456 / Polres 0361123999 tampak nomor contoh; BPBD & Damkar memakai nomor sama 0361900113.
