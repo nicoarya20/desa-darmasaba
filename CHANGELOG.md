@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.267] - 2026-11-13
+### Changed
+- **Halaman detail toko UMKM dirombak** agar seragam dengan katalog dan detail produk. Bagian atas menampilkan foto toko (atau inisial nama toko bila belum ada foto), kategori usaha, nama toko, pemilik, alamat, jumlah produk, deskripsi, dan tombol **Hubungi Penjual (WhatsApp)** dengan pesan pembuka tentang toko tersebut.
+- Produk toko tampil dengan kartu yang sama seperti di katalog dan bisa diurutkan (terbaru, harga terendah, harga tertinggi, nama). Status stok tidak lagi ditampilkan.
+- Tombol kembali kini membuka katalog langsung di tab Toko.
+
+### Fixed
+- Deskripsi toko tidak lagi menampilkan kode HTML mentah dari editor admin.
+- Toko yang sudah dihapus atau dinonaktifkan menampilkan "Toko tidak ditemukan", produk yang dinonaktifkan tidak ikut tampil, dan bila gagal memuat ada tombol "Coba lagi" (sebelumnya kerangka memuat tampil terus).
+
+## [0.1.266] - 2026-11-13
+### Changed
+- **Halaman detail produk UMKM dirombak.** Foto produk tampil di kiri dengan ukuran pas, dan di sampingnya ada nama toko, kategori, nama produk, harga per satuan, serta tombol besar **Hubungi Penjual (WhatsApp)** yang langsung membuka chat dengan pesan berisi nama produk. Kolom ini ikut menempel saat halaman di-scroll di komputer.
+- Panel baru **Cara memesan** menjelaskan alurnya: hubungi penjual lewat WhatsApp, sepakati jumlah dan cara terima (ambil sendiri atau diantar), lalu bayar langsung ke penjual. Panel **Penjual** menampilkan nama UMKM, pemilik, alamat, dan tautan ke semua produk toko tersebut.
+- Deskripsi produk tampil di bawah foto. Stok tidak lagi ditampilkan.
+- Bagian **Ulasan** baru (nilai rata-rata, jumlah ulasan, dan sebaran bintang 5 sampai 1). Untuk sementara masih kosong dan tombol "Tulis ulasan" belum aktif, sampai sistem ulasan tersedia.
+- Bagian **Produk serupa** di bawah ulasan: deretan produk dengan kategori sama atau dari toko yang sama, bisa digeser.
+- Produk yang sudah dihapus atau dinonaktifkan kini menampilkan "Produk tidak ditemukan", dan bila gagal memuat ada tombol "Coba lagi" (sebelumnya halaman terus menampilkan kerangka memuat).
+
 ## [0.1.265] - 2026-11-13
 ### Changed
 - **Halaman UMKM & Produk Desa dirombak menjadi katalog.** Produk kini tampil dalam grid kartu yang bersih: foto persegi, harga, nama produk, dan nama UMKM penjualnya. Produk unggulan diberi label "Unggulan" di pojok foto. Status stok tidak lagi ditampilkan, karena pemesanan dilakukan lewat WhatsApp penjual. Seluruh kartu bisa diklik untuk membuka detail produk.

@@ -1,12 +1,11 @@
 'use client';
-import { Select } from '@mantine/core';
 import { IconAdjustmentsHorizontal, IconX } from '@tabler/icons-react';
-import { useId } from 'react';
-import { urutOptions, type FilterChip } from './katalog-filter.logic';
+import type { FilterChip } from './katalog-filter.logic';
 import type { KatalogTab, KatalogUrut } from './katalog-filter.meta';
 import { KATALOG_FILTER_TEXT as T } from './katalog-filter.text';
 import type { KatalogParams } from './katalog-params.logic';
 import s from './katalog-layout.module.css';
+import { KatalogUrutSelect } from './KatalogUrutSelect';
 
 type Props = {
   tab: KatalogTab;
@@ -24,8 +23,6 @@ type Props = {
 
 /** Baris alat di atas grid: jumlah hasil, pil Filter (tablet/ponsel), Urutkan, lalu chip saringan aktif. */
 export function KatalogToolbar({ tab, count, urut, onUrut, chips, activeCount, onApply, onClearAll, onOpenSaring }: Props) {
-  const urutId = useId();
-  const options = urutOptions(tab);
   return (
     <div className={s.toolbar}>
       <div className={s.toolbarRow}>
@@ -42,23 +39,7 @@ export function KatalogToolbar({ tab, count, urut, onUrut, chips, activeCount, o
               </span>
             ) : null}
           </button>
-          <label htmlFor={urutId} className={s.urutLabel}>
-            {T.urutkan}
-          </label>
-          <Select
-            id={urutId}
-            className={s.urut}
-            data={options}
-            value={urut}
-            onChange={(value) => {
-              const next = options.find((o) => o.value === value)?.value;
-              if (next) onUrut(next);
-            }}
-            allowDeselect={false}
-            checkIconPosition="right"
-            radius="xl"
-            comboboxProps={{ position: 'bottom-end', width: 200 }}
-          />
+          <KatalogUrutSelect tab={tab} value={urut} onChange={onUrut} />
         </div>
       </div>
       {chips.length > 0 ? (

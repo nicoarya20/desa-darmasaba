@@ -1,0 +1,28 @@
+/** Teks UI halaman detail produk UMKM publik (tanpa em dash). */
+export const DETAIL_PRODUK_TEXT = {
+  backToList: 'Katalog UMKM',
+  memuat: 'Memuat produk',
+  notFoundTitle: 'Produk tidak ditemukan',
+  notFoundDesc: 'Produk ini sudah tidak ditampilkan atau alamatnya salah.',
+  errorTitle: 'Produk gagal dimuat',
+  errorDesc: 'Periksa koneksi internet lalu coba lagi.',
+  retry: 'Coba lagi',
+  unggulan: 'Unggulan',
+  ratingKosong: 'Belum ada ulasan',
+  galeriLabel: 'Foto produk',
+  fotoKe: (n: number, total: number) => `Foto ${n} dari ${total}`,
+  fotoSebelumnya: 'Foto sebelumnya',
+  fotoBerikutnya: 'Foto berikutnya',
+  caraMemesan: 'Cara memesan',
+  langkahPesan: [
+    'Hubungi penjual lewat WhatsApp dengan tombol di atas.',
+    'Sepakati jumlah dan cara terima: ambil sendiri atau diantar.',
+    'Bayar langsung ke penjual.',
+  ],
+  catatanPesan: 'Website desa hanya menampilkan produk UMKM. Transaksi terjadi langsung antara pembeli dan penjual.',
+  penjual: 'Penjual',
+  pemilik: (nama: string) => `Pemilik: ${nama}`,
+  lihatProdukToko: 'Lihat semua produk toko ini',
+  deskripsi: 'Deskripsi produk',
+  deskripsiKosong: 'Penjual belum menambahkan deskripsi.',
+} as const;

@@ -1,6 +1,6 @@
 {
   "name": "desa-darmasaba",
-  "version": "0.1.265",
+  "version": "0.1.267",
   "private": true,
   "scripts": {
     "dev": "next dev",
