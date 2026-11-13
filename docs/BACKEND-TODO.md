@@ -10,10 +10,10 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 ## P1. Keamanan & privasi (kerjakan dulu)
 
-- [ ] **XSS tersimpan di detail admin Laporan Publik** (terverifikasi)
-  - Lokasi: `src/app/admin/(dashboard)/keamanan/laporan-publik/[id]/page.tsx:123` (`kronologi`) dan `:134` (`penanganan[].deskripsi`) dirender dengan `dangerouslySetInnerHTML` tanpa sanitasi; `src/app/api/[[...slugs]]/_lib/keamanan/laporan-publik/create.ts` menyimpan HTML mentah dari publik.
-  - Dampak: siapa pun bisa mengirim laporan berisi skrip yang berjalan di sesi admin yang membukanya.
-  - Usul: sanitasi di `create.ts` (allowlist tag teks dasar) **dan** di detail admin. Halaman publik sudah menyanitasi (`sanitizePotensiHtml`), admin belum.
+- [ ] **XSS tersimpan Laporan Publik: sanitasi di server belum ada** (terverifikasi)
+  - Selesai (v0.1.266, branch `fix/laporan-publik-xss`): detail admin kini merender `kronologi` & `penanganan[].deskripsi` lewat `sanitizeRichText` (`src/lib/rich-text.ts`), sama seperti halaman publik — celah aktif di sesi admin tertutup, termasuk untuk data lama. Test: `__tests__/api/laporan_publik_admin_xss.test.tsx`.
+  - Sisa: `src/app/api/[[...slugs]]/_lib/keamanan/laporan-publik/create.ts` (dan `updt.ts`) masih menyimpan HTML mentah dari publik. Konsumen baru yang lupa menyanitasi akan rentan lagi.
+  - Usul: sanitasi saat simpan (allowlist `RICH_TEXT_TAGS`, tanpa atribut). Catatan: `dompurify` butuh DOM, sedangkan `jsdom` hanya devDependency dan saat ini gagal dimuat di Node 22 (`cssstyle` → ERR_REQUIRE_ASYNC_MODULE); perlu keputusan dependency (mis. `isomorphic-dompurify`/`sanitize-html`) atau sanitizer server lain.
 
 - [ ] **Laporan Publik bisa dikirim tanpa auth & tanpa moderasi** (terverifikasi)
   - Lokasi: `POST /api/keamanan/laporanpublik/create` (laporan-publik/index.ts `.post("/create")`), schema `LaporanPublik.isActive @default(true)`.
@@ -30,9 +30,9 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: entri yang dinonaktifkan admin tetap bisa dibuka lewat URL detail (frontend publik kini menganggapnya "tidak ditemukan", tapi API tetap mengirim data).
   - Usul: `where: { id, isActive: true }` untuk endpoint publik.
 
-- [ ] **Debug log mencetak isi laporan** (terverifikasi)
-  - Lokasi: `src/app/admin/(dashboard)/_state/keamanan/laporan-publik.ts:78` (`console.log("Sending form data:", formData)`) dan `:94`.
-  - Usul: hapus. Sekalian: `create()` hanya memunculkan toast saat validasi gagal tanpa sinyal gagal ke pemanggil (frontend publik kini memvalidasi sendiri).
+- [ ] **`create()` state Laporan Publik tidak memberi sinyal gagal validasi** (terverifikasi)
+  - Debug log `console.log(formData)` & `console.log(res)` sudah dihapus (v0.1.266).
+  - Sisa: `src/app/admin/(dashboard)/_state/keamanan/laporan-publik.ts` `create()` hanya memunculkan toast saat validasi gagal tanpa sinyal gagal ke pemanggil (frontend publik kini memvalidasi sendiri).
 
 - [ ] **Endpoint OTP lama masih hidup: siapa pun bisa memicu kiriman WhatsApp** (terverifikasi 2026-11-13)
   - Lokasi: `src/app/api/auth/register/route.ts` tanpa login dan tanpa rate limit (beda dengan `resend` & `send-otp-register` yang memakai `otpSendLimiter`), mengirim kode OTP lewat `wa.wibudev.com` ke nomor apa pun yang belum terdaftar, lalu menulis ke `KodeOtp`. Halaman `/registrasi` (membungkus `admin/(dashboard)/auth/registrasi-admin`) masih memanggilnya, padahal login kini Google-only dan `/validasi` sudah dialihkan ke `/login` (pendaftaran tak pernah bisa selesai).

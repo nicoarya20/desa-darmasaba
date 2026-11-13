@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.266] - 2026-11-13
+### Fixed
+- **Keamanan: halaman detail Laporan Publik di admin kini aman dibuka.** Sebelumnya, laporan yang dikirim warga lewat form publik bisa disisipi kode berbahaya yang ikut berjalan saat admin membuka detailnya. Isi kronologi dan penanganan sekarang dibersihkan dulu sebelum ditampilkan. Format teks dasar (paragraf, tebal, miring, garis bawah, daftar) tetap tampil, sedangkan skrip, tautan, gambar, dan atribut lain dibuang, sama seperti di halaman publik. Pengecekan laporan yang sudah tersimpan (lokal & stg) tidak menemukan kiriman berbahaya.
+- Form tambah laporan publik di admin tidak lagi mencetak isi laporan ke console browser.
+
 ## [0.1.265] - 2026-11-13
 ### Changed
 - **Halaman UMKM & Produk Desa dirombak menjadi katalog.** Produk kini tampil dalam grid kartu yang bersih: foto persegi, harga, nama produk, dan nama UMKM penjualnya. Produk unggulan diberi label "Unggulan" di pojok foto. Status stok tidak lagi ditampilkan, karena pemesanan dilakukan lewat WhatsApp penjual. Seluruh kartu bisa diklik untuk membuka detail produk.
