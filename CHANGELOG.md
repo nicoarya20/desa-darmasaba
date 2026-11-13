@@ -3,6 +3,7 @@
 ## [0.1.258] - 2026-11-13
 ### Fixed
 - Alamat `/keamanan` tidak lagi menampilkan halaman kosong bertuliskan "keamanan", dan alamat salah ketik di bawah `/keamanan/` tidak lagi menampilkan judul mentah. Keduanya kini menampilkan halaman tidak ditemukan (404). Semua halaman di menu Keamanan tetap bisa dibuka seperti biasa.
+- Alamat salah ketik di bawah `/kesehatan/` juga tidak lagi menampilkan potongan alamatnya sebagai teks, kini 404. Halaman menu Kesehatan tidak berubah.
 
 ## [0.1.254] - 2026-11-12
 ### Fixed
