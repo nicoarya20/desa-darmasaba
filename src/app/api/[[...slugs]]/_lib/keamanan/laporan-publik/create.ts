@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { sanitizeRichTextForStorage } from "@/lib/rich-text-server";
 import { Context } from "elysia";
 
 type LaporanPublikInput = {
@@ -17,7 +18,8 @@ const laporanPublikCreate = async (context: Context) => {
             judul,
             lokasi,
             tanggalWaktu: new Date(tanggalWaktu),
-            kronologi,
+            // Endpoint publik tanpa login: HTML kiriman warga dibersihkan sebelum disimpan (cegah XSS tersimpan).
+            kronologi: kronologi === undefined ? undefined : sanitizeRichTextForStorage(kronologi),
         }
     })
 
