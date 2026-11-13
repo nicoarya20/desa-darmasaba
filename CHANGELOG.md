@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.264] - 2026-11-13
+### Added
+- **Section baru "Layanan Masyarakat" di beranda**, tepat di bawah Indeks Kepuasan Masyarakat. Empat layanan yang sebelumnya hanya ada di footer (Administrasi Kependudukan, Layanan Sosial, Pengaduan Masyarakat, Informasi Publik) kini tampil sebagai kartu dengan penjelasan singkat dan tombol aksi, jadi warga tidak perlu scroll sampai footer. Kartu Pengaduan Masyarakat membuka form pengaduan yang sama dengan footer.
+
+### Changed
+- Tautan "Administrasi Kependudukan" di footer kini langsung ke `/pemerintahan/layanan` (tanpa garis miring di akhir), jadi tidak lagi dialihkan dulu oleh server. Tautan di footer tetap ada.
+
 ## [0.1.263] - 2026-11-13
 ### Added
 - **Sampah di Dokumen APBDes, Galeri Foto BUMDes, dan Dokumen Perencanaan**, seperti yang sudah ada di Desa Anti Korupsi. Dokumen/foto yang dihapus di fitur-fitur ini tidak langsung hilang: masuk panel **Sampah** di halaman fitur itu sendiri (APBDes: halaman detail tiap tahun; BUMDes: bagian Galeri Foto di Profil BUMDes; Dokumen Perencanaan: halaman daftarnya) dan disimpan **30 hari**. Dari panel itu admin bisa **Pulihkan** (kembali utuh ke tempat asalnya) atau **Hapus permanen**. Setiap item menampilkan sisa hari sebelum terhapus otomatis (oranye bila tinggal 7 hari atau kurang).
