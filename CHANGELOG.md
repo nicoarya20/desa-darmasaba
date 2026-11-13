@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.259] - 2026-11-13
+### Changed
+- **Halaman "tidak ditemukan" (404) baru.** Alamat yang salah kini menampilkan halaman bergaya situs desa: navbar dan footer seperti biasa, kalimat besar "Halaman yang Anda cari tidak ditemukan.", dan kolom pencarian lebar untuk langsung mencari halaman atau konten yang dimaksud. Sebelumnya yang muncul halaman polos berbahasa Inggris ("This is the not found page") tanpa menu.
+
 ## [0.1.258] - 2026-11-13
 ### Fixed
 - Alamat `/keamanan` tidak lagi menampilkan halaman kosong bertuliskan "keamanan", dan alamat salah ketik di bawah `/keamanan/` tidak lagi menampilkan judul mentah. Keduanya kini menampilkan halaman tidak ditemukan (404). Semua halaman di menu Keamanan tetap bisa dibuka seperti biasa.
