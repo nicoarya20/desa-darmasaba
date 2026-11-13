@@ -3,6 +3,7 @@
 import DesaAntiKorupsi from "@/app/(public)/_com/main-page/desaantikorupsi";
 import Kepuasan from "@/app/(public)/_com/main-page/kepuasan";
 import LandingPage from "@/app/(public)/_com/main-page/landing-page";
+import LayananMasyarakat from "@/app/(public)/_com/main-page/layanan-masyarakat";
 import LayananPotensi from "@/app/(public)/_com/main-page/layanan-potensi";
 import colors from "@/con/colors";
 import SDGS from "./_com/main-page/sdgs";
@@ -27,6 +28,7 @@ export default function Page() {
         <DesaAntiKorupsi />
         <SDGS />
         <Kepuasan />
+        <LayananMasyarakat />
       <ScrollToTopButton />
       </Stack>
 

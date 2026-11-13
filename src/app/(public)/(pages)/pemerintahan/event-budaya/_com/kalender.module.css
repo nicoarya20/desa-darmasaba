@@ -1,0 +1,476 @@
+/*
+ * Halaman Agenda & Kalender Desa — kerangka, tata letak 2 kolom (pola Outlook: panel kiri + kalender),
+ * bilah alat, kalender bulan desktop, kalender ringkas + daftar ponsel.
+ * Senada halaman Pengumuman/Layanan: latar putih, tepi --edge-gutter, kepala dari kabar-list.module.css.
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
+ */
+.page {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --subtle: #86868b;
+  --tile: #f5f5f7;
+  --line: rgba(0, 0, 0, 0.08);
+  --sunday: #c8102e;
+  --gutter: var(--edge-gutter);
+  padding: var(--section-pad-y) var(--gutter) 120px;
+  background: #fff;
+  color: var(--ink);
+}
+
+/* ---------- Tata letak ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
+  grid-template-areas: "side main";
+  gap: 32px;
+  align-items: start;
+}
+
+.side {
+  grid-area: side;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.areaMain {
+  grid-area: main;
+  min-width: 0;
+}
+
+/* ---------- Panel kalender & bilah alat ---------- */
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.todayBtn {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid #d2d2d7;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 200ms ease, opacity 200ms ease;
+}
+
+.todayBtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.navs {
+  display: flex;
+  gap: 2px;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.monthHead {
+  min-width: 0;
+  margin-left: 4px;
+}
+
+.monthBali {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.monthTitle {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* Jumlah acara menumpang di baris sasih, dekat judul — bukan terpencil di ujung kanan bilah. */
+.monthCount {
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.todayBtn:focus-visible,
+.navBtn:focus-visible,
+.dayNum:focus-visible,
+.event:focus-visible,
+.more:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Isi bulan bergeser masuk searah tombol yang ditekan. */
+.body[data-arah="1"],
+.body[data-arah="-1"] {
+  animation: geserMasuk 240ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.body[data-arah="-1"] {
+  --dx: -1;
+}
+
+@keyframes geserMasuk {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--dx, 1) * 16px));
+  }
+}
+
+.mobileOnly {
+  display: none;
+}
+
+/* ---------- Kalender bulan (desktop/tablet) ---------- */
+.month {
+  --wuku-w: 28px;
+  min-width: 0;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-left: var(--wuku-w);
+  padding: 10px 0;
+  color: var(--subtle);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.weekdays > span {
+  padding: 0 12px;
+}
+
+.weekdays > span[data-minggu] {
+  color: var(--sunday);
+}
+
+.wdShort {
+  display: none;
+}
+
+.week {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-left: var(--wuku-w);
+  /* Tanggal, rerainan Bali (setinggi isinya, 0 bila kosong), lajur acara setinggi isinya (nama boleh
+     2 baris), lalu sisa tinggi minggu ke baris "+N lainnya". */
+  grid-template-rows: 38px auto repeat(3, minmax(26px, auto)) minmax(24px, 1fr);
+  row-gap: 3px;
+  min-height: 140px;
+  padding-bottom: 6px;
+  border-top: 1px solid var(--line);
+}
+
+.day {
+  grid-row: 1 / -1;
+  margin-bottom: -6px;
+  padding: 6px 8px;
+}
+
+.day + .day {
+  border-left: 1px solid var(--line);
+}
+
+.day[data-luar] {
+  background: #fafafc;
+}
+
+.day[data-hari-ini] {
+  background: #f3f8fc;
+}
+
+.dayHead {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dayNum {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 980px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+button.dayNum {
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.day[data-minggu] .dayNum {
+  color: var(--sunday);
+}
+
+.day[data-luar] .dayNum {
+  color: #c7c7cc;
+  font-weight: 500;
+}
+
+.day[data-hari-ini] .dayNum {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* Blok acara: latar pucat + garis tebal warna kategori di kiri (Outlook). */
+/* Satu hari: nama maks 2 baris; pita beberapa hari: satu baris (lebarnya cukup). */
+.event {
+  z-index: 1;
+  align-self: start;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  min-width: 0;
+  margin: 0 6px;
+  padding: 4px 8px;
+  border: 0;
+  border-left: 4px solid var(--ev);
+  border-radius: 6px;
+  background: var(--ev-bg);
+  color: var(--ev-ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 600;
+  text-align: left;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: filter 200ms ease;
+}
+
+.event[data-panjang] {
+  -webkit-line-clamp: 1;
+}
+
+/* Pita yang berlanjut dari minggu/bulan sebelumnya atau ke sesudahnya: tepi terpotong rata. */
+.event[data-lanjut-kiri] {
+  margin-left: 0;
+  padding-left: 12px;
+  border-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.event[data-lanjut-kanan] {
+  margin-right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.event[data-lewat] {
+  opacity: 0.65;
+}
+
+.more {
+  z-index: 1;
+  align-self: start;
+  justify-self: start;
+  margin: 0 6px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.empty {
+  margin: 0;
+  padding: 20px 16px 24px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 15px;
+  text-align: center;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 16px;
+  color: var(--muted);
+}
+
+.state p {
+  margin: 0;
+}
+
+.loading {
+  height: 560px;
+  margin: 16px;
+  border-radius: 12px;
+  background: var(--tile);
+  animation: denyut 1.4s ease-in-out infinite;
+}
+
+@keyframes denyut {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- Hover (pointer saja) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .todayBtn:not(:disabled):hover,
+  .navBtn:hover,
+  button.dayNum:hover {
+    background: var(--tile);
+  }
+
+  .day[data-hari-ini] button.dayNum:hover {
+    background: var(--brand);
+  }
+
+  .event:hover {
+    filter: brightness(0.96) saturate(1.1);
+  }
+
+  .more:hover {
+    color: var(--brand);
+    text-decoration: underline;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+    gap: 24px;
+  }
+
+  /* Isi panel kiri jadi item grid sendiri: Acara mendatang → kategori → kalender → ringkasan tahun. */
+  .side {
+    display: contents;
+  }
+
+  .areaMain {
+    grid-area: auto;
+    order: 3;
+  }
+
+  .areaYear {
+    order: 4;
+  }
+}
+
+@media (max-width: 900px) {
+  .wdLong {
+    display: none;
+  }
+
+  .wdShort {
+    display: inline;
+  }
+
+  .month {
+    --wuku-w: 22px;
+  }
+
+  .week {
+    grid-template-rows: 34px auto repeat(3, minmax(22px, auto)) minmax(22px, 1fr);
+    min-height: 120px;
+  }
+
+  .event {
+    margin: 0 3px;
+    padding: 3px 5px;
+    border-left-width: 3px;
+    font-size: 12px;
+    line-height: 15px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+
+  .toolbar {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .monthHead {
+    order: -1;
+    flex: 1 0 100%;
+    margin: 0 0 4px;
+  }
+
+  .monthTitle {
+    font-size: 22px;
+  }
+
+  .loading {
+    height: 420px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body[data-arah="1"],
+  .body[data-arah="-1"],
+  .loading {
+    animation: none;
+  }
+}
+
+.areaUpcoming,
+.areaLegend,
+.areaYear {
+  min-width: 0;
+}

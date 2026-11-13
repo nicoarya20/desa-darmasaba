@@ -1,0 +1,211 @@
+/*
+ * Kalender ringkas + daftar acara per hari untuk ponsel (≤734px; disembunyikan di layar lebih besar oleh
+ * `.mobileOnly` di kalender.module.css). Variabel warna (--ink, --muted, --line, --brand, --sunday) dari `.page`;
+ * warna kategori (--ev, --ev-bg, --ev-ink) dari style inline tiap acara.
+ */
+.mini {
+  padding: 8px 12px 12px;
+}
+
+.miniHead,
+.miniGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.miniHead {
+  padding: 4px 0 6px;
+  color: var(--subtle);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.miniHead > span[data-minggu] {
+  color: var(--sunday);
+}
+
+.miniDay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  height: 48px;
+  padding: 2px 0 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+}
+
+button.miniDay {
+  cursor: pointer;
+}
+
+.miniNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.miniDay[data-ada] .miniNum {
+  font-weight: 700;
+}
+
+.miniDay[data-minggu] .miniNum {
+  color: var(--sunday);
+}
+
+.miniDay[data-luar] .miniNum {
+  color: #c7c7cc;
+}
+
+.miniDay[data-hari-ini] .miniNum {
+  background: var(--brand);
+  color: #fff;
+}
+
+.miniDots {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 7px;
+}
+
+.miniDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ev);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.group {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  padding: 16px;
+  scroll-margin-top: 64px;
+}
+
+.group + .group {
+  border-top: 1px solid var(--line);
+}
+
+.groupDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.groupWd {
+  color: var(--subtle);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.groupNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.groupDate[data-minggu] .groupWd,
+.groupDate[data-minggu] .groupNum {
+  color: var(--sunday);
+}
+
+.groupDate[data-hari-ini] .groupNum {
+  background: var(--brand);
+  color: #fff;
+}
+
+.groupItems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  border-left: 4px solid var(--ev);
+  border-radius: 10px;
+  background: var(--ev-bg);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card[data-lewat] {
+  opacity: 0.6;
+}
+
+.cardKategori {
+  color: var(--ev-ink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.cardNama {
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.cardTanggal,
+.cardLokasi {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.cardLokasi {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.cardLokasi svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.card > :last-child:not(.cardLokasi):not(.cardTanggal) {
+  margin-top: 6px;
+}
+
+.miniDay:focus-visible,
+.card:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}

@@ -1,0 +1,385 @@
+/*
+ * Baris direktori posyandu, tabel balita per banjar, dan ubin ibu hamil per banjar (di dalam .panel APBDes).
+ * Variabel warna diwarisi dari .section APBDes. Breakpoint apple.com: ≤1068px dan ≤734px.
+ */
+/* ---------- Direktori posyandu ---------- */
+.rows,
+.statList,
+.tiles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto 18px;
+  align-items: center;
+  column-gap: 20px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.thumb {
+  display: block;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  background: #e8e8ed;
+  object-fit: cover;
+}
+
+.thumbFallback {
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: var(--subtle);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.kicker {
+  margin: 0;
+  color: var(--brand);
+  font-size: 12px;
+  line-height: 1.33;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.name {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+  text-decoration: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+/* Seluruh baris dapat diklik lewat tautan nama; pil telepon di atasnya tetap bisa diklik sendiri. */
+.name::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.name:focus-visible {
+  outline: none;
+}
+
+.row:focus-within:has(.name:focus-visible) {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.jadwal {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.jadwal > span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.jadwalIcon {
+  flex: none;
+  margin-top: 2px;
+}
+
+.actions {
+  position: relative;
+  z-index: 1;
+}
+
+.call {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--brand);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.call:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.kosong {
+  color: var(--subtle);
+  font-size: 15px;
+}
+
+.chevron {
+  color: var(--subtle);
+}
+
+/* ---------- Tabel balita per banjar ---------- */
+.statRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) repeat(5, minmax(0, 1fr));
+  align-items: center;
+  column-gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.statHead {
+  padding: 0 0 8px;
+  border-top: 0;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--subtle);
+}
+
+.statHead > :not(:first-child),
+.cell {
+  text-align: right;
+}
+
+.statName {
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.cellLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.cellValue {
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cellValue.kosong {
+  font-size: 14px;
+}
+
+.statTotal .statName,
+.statTotal .cellValue {
+  font-weight: 700;
+}
+
+.statTotal .statName {
+  color: var(--brand);
+}
+
+.statFailed {
+  grid-column: 2 / -1;
+  text-align: right;
+}
+
+/* ---------- Ubin ibu hamil per banjar ---------- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.tileTotal {
+  grid-column: 1 / -1;
+}
+
+.tileName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.tileTotal .tileName {
+  color: var(--brand);
+}
+
+.tileValue {
+  font-size: 32px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tileUnit {
+  margin-left: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+.tileFailed {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--subtle);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover .name {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .call:hover {
+    background: #e8e8ed;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .statRow {
+    grid-template-columns: minmax(0, 1.3fr) repeat(5, minmax(0, 1fr));
+    column-gap: 12px;
+  }
+
+  .statName,
+  .cellValue {
+    font-size: 15px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  /* Foto · isi · chevron; pil telepon turun ke bawah jadwal. */
+  .row {
+    grid-template-columns: 56px minmax(0, 1fr) 18px;
+    column-gap: 14px;
+    row-gap: 10px;
+    align-items: start;
+  }
+
+  .thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+  }
+
+  .row > :first-child {
+    grid-row: 1 / span 2;
+  }
+
+  .actions {
+    grid-row: 2;
+    grid-column: 2;
+  }
+
+  .chevron {
+    grid-row: 1 / span 2;
+    grid-column: 3;
+    align-self: center;
+  }
+
+  /* Tabel jadi kartu per banjar: nama di atas, angka berlabel 2 kolom. */
+  .statHead {
+    display: none;
+  }
+
+  /* 6 lajur: 2 hitungan selebar setengah, 3 persentase selebar sepertiga. */
+  .statRow {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px 12px;
+    padding: 16px 0;
+  }
+
+  .statRow > .cell:nth-child(-n + 3) {
+    grid-column: span 3;
+  }
+
+  .statRow > .cell:nth-child(n + 4) {
+    grid-column: span 2;
+  }
+
+  .statName {
+    grid-column: 1 / -1;
+    font-size: 17px;
+  }
+
+  .cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+  }
+
+  .cellLabel {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .cellValue {
+    font-size: 17px;
+  }
+
+  .cellValue.kosong {
+    font-size: 13px;
+  }
+
+  .statFailed {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tile {
+    padding: 16px;
+  }
+
+  .tileName {
+    font-size: 14px;
+  }
+
+  .tileValue {
+    font-size: 28px;
+  }
+}

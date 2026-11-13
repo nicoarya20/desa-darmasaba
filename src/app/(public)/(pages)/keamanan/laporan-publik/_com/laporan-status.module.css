@@ -1,0 +1,49 @@
+/*
+ * Label status laporan (daftar & detail): pil berisi titik warna + teks. Makna dibawa teks ("Selesai",
+ * "Dalam proses", "Gagal", "Baru"); warna hanya penguat. Kontras teks ≥ 4.5:1 di atas latar tintanya.
+ */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 3px 12px 3px 10px;
+  border-radius: 980px;
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.selesai {
+  background: #e6f4ea;
+  color: #19733a;
+}
+
+.proses {
+  background: #fdf1dc;
+  color: #8f5100;
+}
+
+.gagal {
+  background: #fde8ea;
+  color: #c4001a;
+}
+
+.baru {
+  background: #e6eef6;
+  color: var(--brand);
+}
+
+.lain {
+  background: #ececf0;
+  color: #6e6e73;
+}

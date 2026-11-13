@@ -1,6 +1,7 @@
 import Elysia, { t } from "elysia";
 import profilBumDesFind from "./find";
 import profilBumDesUpsert from "./upsert";
+import FotoProfilBumDes from "./foto";
 
 const ProfilBumDes = new Elysia({
   prefix: "/profil",
@@ -16,6 +17,7 @@ const ProfilBumDes = new Elysia({
       tahunBerdiri: t.Optional(t.Nullable(t.Number())),
       imageId: t.Optional(t.Nullable(t.String())),
     }),
-  });
+  })
+  .use(FotoProfilBumDes);
 
 export default ProfilBumDes;

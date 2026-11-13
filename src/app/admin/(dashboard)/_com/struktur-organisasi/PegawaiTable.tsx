@@ -34,8 +34,7 @@ export function PegawaiTable({ items, onDetail }: Props) {
         <Table highlightOnHover layout="fixed">
           <Table.Thead>
             <Table.Tr>
-              <Table.Th w="32%">{T.pegawai.namaLengkap}</Table.Th>
-              <Table.Th>{T.pegawai.gelarAkademik}</Table.Th>
+              <Table.Th w="36%">{T.pegawai.namaLengkap}</Table.Th>
               <Table.Th>{T.pegawai.jabatan}</Table.Th>
               <Table.Th>{T.pegawai.telepon}</Table.Th>
               <Table.Th>{T.pegawai.status}</Table.Th>
@@ -51,7 +50,6 @@ export function PegawaiTable({ items, onDetail }: Props) {
                     <Text fw={500} truncate="end">{item.namaLengkap}</Text>
                   </Group>
                 </Table.Td>
-                <Table.Td>{tampil(item.gelarAkademik)}</Table.Td>
                 <Table.Td>{tampil(item.posisi?.nama)}</Table.Td>
                 <Table.Td>{tampil(item.telepon)}</Table.Td>
                 <Table.Td><StatusBadge isActive={item.isActive} /></Table.Td>
@@ -67,7 +65,6 @@ export function PegawaiTable({ items, onDetail }: Props) {
           <Paper key={item.id} withBorder p="md" radius="md">
             <Stack gap="xs">
               <Field label={T.pegawai.namaLengkap} value={item.namaLengkap} />
-              <Field label={T.pegawai.gelarAkademik} value={tampil(item.gelarAkademik)} />
               <Field label={T.pegawai.jabatan} value={tampil(item.posisi?.nama)} />
               <Field label={T.pegawai.telepon} value={tampil(item.telepon)} />
               <StatusBadge isActive={item.isActive} />

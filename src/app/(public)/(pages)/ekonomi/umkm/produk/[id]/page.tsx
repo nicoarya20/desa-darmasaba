@@ -25,9 +25,11 @@ import { useShallowEffect } from '@mantine/hooks';
 import colors from '@/con/colors';
 import umkmState from '@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm';
 import ApiFetch from '@/lib/api-fetch';
+import { UMKM_PESANAN_TERCATAT } from '@/lib/umkm-pesanan';
 import { perSatuanSuffix, withSatuan } from '../../_lib/satuan';
 import { PesananModal, type OrderForm } from '../../_com/PesananModal';
 import { LinkTokoOnlineButtons } from '../../_com/LinkTokoOnlineButtons';
+import { HubungiPenjualButton } from '../../_com/HubungiPenjualButton';
 import {
   PESAN_KONEKSI_GAGAL,
   buildOrderMessage,
@@ -179,14 +181,24 @@ function DetailProdukPasarUser() {
                 dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
               />
 
-              <Button
-                leftSection={<IconShoppingCart />}
-                disabled={data.stok === 0}
-                onClick={() => setModalOpen(true)}
-                mt="sm"
-              >
-                Pesan Sekarang
-              </Button>
+              {/* Selama pesanan website nonaktif (tab Penjualan admin disembunyikan), warga
+                  langsung diarahkan ke WhatsApp penjual — lihat src/lib/umkm-pesanan.ts. */}
+              {UMKM_PESANAN_TERCATAT ? (
+                <Button
+                  leftSection={<IconShoppingCart />}
+                  disabled={data.stok === 0}
+                  onClick={() => setModalOpen(true)}
+                  mt="sm"
+                >
+                  Pesan Sekarang
+                </Button>
+              ) : (
+                <HubungiPenjualButton
+                  kontak={data.umkm?.kontak}
+                  umkmNama={data.umkm?.nama}
+                  produkNama={data.nama}
+                />
+              )}
 
               <LinkTokoOnlineButtons links={data.linkTokoOnline} withLabel />
             </Stack>
@@ -194,18 +206,20 @@ function DetailProdukPasarUser() {
         </Grid>
       </Paper>
 
-      <PesananModal
-        opened={modalOpen}
-        onClose={handleClose}
-        satuan={data.satuan}
-        stok={data.stok}
-        form={form}
-        onFormChange={setForm}
-        error={error}
-        loading={loading}
-        onSubmit={handleOrder}
-        ordered={ordered}
-      />
+      {UMKM_PESANAN_TERCATAT && (
+        <PesananModal
+          opened={modalOpen}
+          onClose={handleClose}
+          satuan={data.satuan}
+          stok={data.stok}
+          form={form}
+          onFormChange={setForm}
+          error={error}
+          loading={loading}
+          onSubmit={handleOrder}
+          ordered={ordered}
+        />
+      )}
     </Box>
   );
 }

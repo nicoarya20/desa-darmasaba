@@ -1,22 +1,34 @@
 'use client'
+import apb from '@/app/(public)/_com/main-page/apbdes/apbdes.module.css';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import stateDokumenPerencanaanPublik from '@/app/admin/(dashboard)/_state/desa/dokumenPerencanaanPublik';
-import colors from '@/con/colors';
+import type { DokumenPerencanaanItem } from '@/app/admin/(dashboard)/_state/desa/dokumenPerencanaan';
 import {
   DOKUMEN_PERENCANAAN_SECTION_ID,
   JENIS_DOKUMEN,
   JENIS_DOKUMEN_LABEL,
   type JenisDokumen,
 } from '@/lib/dokumen-perencanaan';
-import { Alert, Button, Center, Group, Pagination, ScrollArea, SegmentedControl, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { ScrollArea, SegmentedControl } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import DokumenPerencanaanCard from './DokumenPerencanaanCard';
+import { DokumenPerencanaanRow } from './DokumenPerencanaanRow';
+import s from './monev.module.css';
+import r from './monev-rows.module.css';
+import { MONEV_TEXT } from './monev.text';
+import { MonevNotice, RowsSkeleton } from './MonevStates';
 
-const SKELETON_COUNT = 3;
-const tabOptions = JENIS_DOKUMEN.map((v) => ({ value: v, label: JENIS_DOKUMEN_LABEL[v] }));
+const SKELETON_ROWS = 3;
+const TITLE_ID = 'dokumen-perencanaan-title';
+// Label panjang disingkat di ponsel (sisa label disembunyikan CSS) agar ketiga tab muat tanpa digeser.
+const tabOptions = JENIS_DOKUMEN.map((v) => {
+  const full = JENIS_DOKUMEN_LABEL[v];
+  const short = MONEV_TEXT.docTabShort[v];
+  if (!short || !full.startsWith(short)) return { value: v, label: full };
+  return { value: v, label: <span>{short}<span className={r.wideOnly}>{full.slice(short.length)}</span></span> };
+});
 
-/** Section publik "Dokumen Perencanaan": tab RPJM | RKP | Berita Acara, kartu dokumen, empty-state. */
+/** Section publik "Dokumen Perencanaan": tab RPJM | RKP | Berita Acara, baris dokumen, keadaan kosong. */
 export default function DokumenPerencanaanSection() {
   const state = useProxy(stateDokumenPerencanaanPublik);
   const [jenis, setJenis] = useState<JenisDokumen>('RPJM');
@@ -28,57 +40,62 @@ export default function DokumenPerencanaanSection() {
   useEffect(() => { reload(); }, [jenis, page]);
 
   return (
-    <Stack gap="md" id={DOKUMEN_PERENCANAAN_SECTION_ID} style={{ scrollMarginTop: 80 }}>
-      <Stack gap={4}>
-        <Title order={2} fz={{ base: '1.5rem', md: '2rem' }} c={colors['blue-button']}>
-          Dokumen Perencanaan
-        </Title>
-        <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">
-          RPJM Desa, RKP Desa, dan berita acara musyawarah sebagai dasar kegiatan pembangunan.
-        </Text>
-      </Stack>
-
-      <ScrollArea type="never">
-        <SegmentedControl
-          data={tabOptions}
-          value={jenis}
-          onChange={(value) => { setJenis(value as JenisDokumen); setPage(1); }}
-          radius="lg"
+    <>
+      <section
+        id={DOKUMEN_PERENCANAAN_SECTION_ID}
+        className={`${apb.panel} ${r.docPanel}`}
+        aria-labelledby={TITLE_ID}
+      >
+        <div className={s.panelHead}>
+          <div>
+            <h2 id={TITLE_ID} className={apb.panelTitle}>{MONEV_TEXT.docTitle}</h2>
+            <p className={s.panelLead}>{MONEV_TEXT.docLead}</p>
+          </div>
+          <ScrollArea type="never" className={s.segScroll}>
+            <SegmentedControl
+              aria-label={MONEV_TEXT.docTabsLabel}
+              radius="xl"
+              data={tabOptions}
+              value={jenis}
+              onChange={(value) => { setJenis(value as JenisDokumen); setPage(1); }}
+              classNames={{ root: s.segRoot }}
+            />
+          </ScrollArea>
+        </div>
+        <DokumenList
+          jenis={jenis}
+          items={state.data}
+          loading={state.loading}
+          failed={state.failed}
+          onRetry={reload}
         />
-      </ScrollArea>
+      </section>
+      <KabarListPagination
+        total={state.totalPages}
+        value={page}
+        label={MONEV_TEXT.docPagination}
+        onChange={setPage}
+      />
+    </>
+  );
+}
 
-      {state.failed && (
-        <Alert color="red" icon={<IconAlertCircle size={18} />} title="Gagal memuat dokumen">
-          <Group justify="space-between">
-            <Text fz="sm">Dokumen perencanaan belum dapat ditampilkan.</Text>
-            <Button size="compact-sm" variant="light" color="red" onClick={reload}>Coba lagi</Button>
-          </Group>
-        </Alert>
-      )}
+type ListProps = {
+  jenis: JenisDokumen;
+  items: readonly DokumenPerencanaanItem[];
+  loading: boolean;
+  failed: boolean;
+  onRetry: () => void;
+};
 
-      {state.loading ? (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-          {Array.from({ length: SKELETON_COUNT }, (_, i) => <Skeleton key={i} h={200} radius="lg" />)}
-        </SimpleGrid>
-      ) : state.data.length === 0 ? (
-        !state.failed && (
-          <Center py="xl">
-            <Text c="dimmed" fz="sm" ta="center">
-              Belum ada dokumen {JENIS_DOKUMEN_LABEL[jenis]}. Dokumen akan tampil setelah ditambahkan oleh admin desa.
-            </Text>
-          </Center>
-        )
-      ) : (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-          {state.data.map((item) => <DokumenPerencanaanCard key={item.id} item={item} />)}
-        </SimpleGrid>
-      )}
-
-      {state.totalPages > 1 && (
-        <Center>
-          <Pagination value={page} onChange={setPage} total={state.totalPages} radius="xl" />
-        </Center>
-      )}
-    </Stack>
+/** Isi panel dokumen: memuat → kerangka, galat → coba lagi, kosong → pesan, berisi → baris. */
+export function DokumenList({ jenis, items, loading, failed, onRetry }: ListProps) {
+  if (loading) return <RowsSkeleton count={SKELETON_ROWS} label={MONEV_TEXT.docLoading} />;
+  if (failed) return <MonevNotice message={MONEV_TEXT.docFailed} onRetry={onRetry} />;
+  if (items.length === 0) return <p className={s.notice}>{MONEV_TEXT.docEmpty(jenis)}</p>;
+  return (
+    <ul className={r.rows}>
+      {items.map((item) => <DokumenPerencanaanRow key={item.id} item={item} />)}
+    </ul>
   );
 }

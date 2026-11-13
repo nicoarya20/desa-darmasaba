@@ -12,12 +12,12 @@ const mocks = vi.hoisted(() => ({
   },
   ppid: {
     pegawai: { findMany: { load: vi.fn() }, findUnique: { load: vi.fn() } },
-    posisiOrganisasi: { findManyAll: { load: vi.fn() } },
+    posisi: { findManyAll: { load: vi.fn() } },
   },
 }));
 
 vi.mock('@/app/admin/(dashboard)/_state/desa/struktur-perangkat', () => ({ default: mocks.perangkat }));
-vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () => ({ default: mocks.ppid }));
+vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid', () => ({ default: mocks.ppid }));
 
 import {
   loadPerangkatDetail,
@@ -58,7 +58,7 @@ describe('strukturPerangkatSource', () => {
 
     await expect(strukturPerangkatSource.loadPosisi()).resolves.toEqual([posisi]);
     expect(mocks.perangkat.posisi.findManyAll.load).toHaveBeenCalledWith(true);
-    expect(mocks.ppid.posisiOrganisasi.findManyAll.load).not.toHaveBeenCalled();
+    expect(mocks.ppid.posisi.findManyAll.load).not.toHaveBeenCalled();
   });
 
   it('data null (galat/ kosong) dibaca sebagai daftar kosong', async () => {

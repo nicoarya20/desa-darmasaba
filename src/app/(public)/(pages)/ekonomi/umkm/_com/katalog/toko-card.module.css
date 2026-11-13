@@ -1,0 +1,109 @@
+/*
+ * Kartu UMKM (toko) katalog: pola sama dengan kartu produk (tanpa latar/border/radius).
+ * Foto & zoom hover ada di katalog-media.module.css. Brand dari --brand di akar halaman.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: #1d1d1f;
+  text-decoration: none;
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--brand, #0a4e78);
+  outline-offset: 2px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+}
+
+.kategori {
+  margin: 0 0 4px;
+  color: var(--brand, #0a4e78);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.name {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: #1d1d1f;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.pemilik,
+.alamat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.pemilik {
+  color: #515154;
+}
+
+.alamat {
+  color: #6e6e73;
+}
+
+.pemilik svg,
+.alamat svg {
+  flex: none;
+}
+
+.alamat span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count {
+  margin: 8px 0 0;
+  color: #6e6e73;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .name {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+@media (max-width: 734px) {
+  .kategori {
+    font-size: 11px;
+  }
+
+  .name {
+    font-size: 15px;
+  }
+
+  .pemilik,
+  .alamat {
+    font-size: 13px;
+  }
+
+  .count {
+    font-size: 12px;
+  }
+}

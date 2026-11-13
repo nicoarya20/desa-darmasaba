@@ -1,0 +1,380 @@
+/*
+ * Baris daftar kegiatan & dokumen perencanaan halaman Monev (di dalam .panel APBDes).
+ * Variabel warna diwarisi dari .section APBDes; --accent/--tint per status diset inline (monev.meta.ts).
+ * Breakpoint apple.com: ≤1068px dan ≤734px.
+ */
+/* ---------- Baris kegiatan ---------- */
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row,
+.rowHead {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 220px 168px;
+  column-gap: 24px;
+  align-items: center;
+}
+
+.rowHead {
+  padding: 0 0 8px;
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.rowHead > :first-child {
+  grid-column: 1 / 3;
+}
+
+.rowHead > :last-child {
+  text-align: right;
+}
+
+.row {
+  position: relative;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.thumbFallback {
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: var(--subtle);
+}
+
+.rowMain {
+  min-width: 0;
+}
+
+.rowTitle {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* Seluruh baris dapat diklik lewat tautan judul; tautan RKP di atasnya tetap bisa diklik sendiri. */
+.rowTitle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.rowTitle:focus-visible {
+  outline: none;
+}
+
+.rowTitle:focus-visible::after {
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+  border-radius: 10px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover .rowTitle {
+    color: var(--brand);
+  }
+}
+
+.rowMeta,
+.rowRkp {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.rowRkp a {
+  position: relative;
+  z-index: 1;
+  color: var(--brand);
+}
+
+.rowProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pil putih + titik warna status: tint pucat tak terbaca di atas ubin #f5f5f7, teks berwarna hijau kurang kontras. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px 2px 8px;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pill::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.pillMuted {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.progressLine {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  gap: 10px;
+}
+
+.rowBar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.rowBarFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.progressPct {
+  min-width: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.progressNone {
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.rowAnggaran {
+  text-align: right;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.anggaranNone {
+  color: var(--subtle);
+}
+
+.cellLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Dokumen perencanaan ---------- */
+.docPanel {
+  scroll-margin-top: 80px;
+}
+
+.docRow {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  column-gap: 20px;
+  align-items: start;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.docIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--brand);
+}
+
+.docMain {
+  min-width: 0;
+}
+
+.docMeta {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.docTitle {
+  margin: 4px 0 0;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.docNomor {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--subtle);
+}
+
+.docRingkasan {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.docActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.docNoFile {
+  margin: 0;
+  font-size: 14px;
+  color: var(--subtle);
+  white-space: nowrap;
+}
+
+.pillButton,
+.pillPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 980px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 200ms ease;
+}
+
+.pillButton {
+  background: #fff;
+  color: var(--brand);
+}
+
+.pillPrimary {
+  background: var(--brand);
+  color: #fff;
+}
+
+.pillButton:focus-visible,
+.pillPrimary:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pillPrimary:hover {
+    background: var(--brand-hover);
+  }
+
+  .pillButton:hover {
+    background: var(--brand-tint);
+  }
+}
+
+.wideOnly {
+  display: inline;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .row,
+  .rowHead {
+    grid-template-columns: 56px minmax(0, 1fr) 170px 140px;
+    column-gap: 16px;
+  }
+
+  .thumb {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .rowHead {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 56px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+  }
+
+  .rowProgress,
+  .rowAnggaran {
+    grid-column: 2;
+  }
+
+  .rowAnggaran {
+    display: flex;
+    gap: 6px;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .cellLabel {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    color: var(--muted);
+  }
+
+  .docRow {
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 12px;
+  }
+
+  .docIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .docActions {
+    grid-column: 2;
+  }
+
+  .wideOnly {
+    display: none;
+  }
+}

@@ -13,9 +13,9 @@ vi.mock('next-view-transitions', () => ({
 vi.mock('valtio/utils', () => ({ useProxy: <T,>(x: T) => x }));
 const ppid = vi.hoisted(() => ({
   pegawai: { findMany: { data: null, load: vi.fn(() => Promise.resolve()) } },
-  posisiOrganisasi: { findManyAll: { data: null, load: vi.fn(() => Promise.resolve()) } },
+  posisi: { findManyAll: { data: null, load: vi.fn(() => Promise.resolve()) } },
 }));
-vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () => ({ default: ppid }));
+vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid', () => ({ default: ppid }));
 
 import Page from '@/app/(public)/(pages)/ppid/struktur-ppid/page';
 import { StrukturChart } from '@/app/(public)/_com/struktur-organisasi/StrukturChart';
@@ -23,7 +23,6 @@ import type { OrgNode } from '@/app/(public)/_com/struktur-organisasi/struktur.l
 import { StrukturBody } from '@/app/(public)/_com/struktur-organisasi/StrukturBody';
 import type { StrukturData } from '@/app/(public)/_com/struktur-organisasi/use-struktur-data';
 import { STRUKTUR_PPID_TEXT } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.text';
-import { strukturPpidSource } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.source';
 import { strukturDetailHref } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.meta';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
@@ -152,13 +151,6 @@ describe('Struktur PPID — halaman', () => {
 
   it('selama memuat menampilkan kerangka', () => {
     expect(page).toContain('role="status" aria-label="Memuat struktur organisasi…"');
-  });
-
-  it('adapter PPID memuat pegawai dengan limit 100 + daftar jabatan, data null → daftar kosong', async () => {
-    expect(await strukturPpidSource.loadPegawai()).toEqual([]);
-    expect(ppid.pegawai.findMany.load).toHaveBeenCalledWith(1, 100);
-    expect(await strukturPpidSource.loadPosisi()).toEqual([]);
-    expect(ppid.posisiOrganisasi.findManyAll.load).toHaveBeenCalledWith();
   });
 });
 

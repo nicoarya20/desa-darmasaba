@@ -15,7 +15,7 @@ import {
   userRoleMenu,
 } from "./domains"
 
-export { developerMenu, pengaturanMenu }
+export { developerMenu, pengaturanMenu, userRoleMenu }
 
 const allDomains = [
   landingPageMenu,

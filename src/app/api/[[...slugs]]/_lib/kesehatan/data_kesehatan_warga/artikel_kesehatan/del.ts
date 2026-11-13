@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 const artikelKesehatanDelete = async (context: Context) => {
     const id = context.params?.id as string;
@@ -31,6 +32,7 @@ const artikelKesehatanDelete = async (context: Context) => {
     }
 
     await prisma.artikelKesehatan.delete({ where: { id } })
+    await removeReleasedFiles("ArtikelKesehatan", [artikelKesehatan.imageId])
 
     return {
         status: 200,

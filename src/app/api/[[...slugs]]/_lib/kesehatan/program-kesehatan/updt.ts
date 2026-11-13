@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 type FormUpdate = Prisma.ProgramKesehatanGetPayload<{
   select: {
@@ -56,20 +56,6 @@ export default async function programKesehatanUpdate(context: Context) {
       );
     }
 
-    if (existing.imageId && existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        try {
-          await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (err) {
-          console.error("Gagal hapus gambar lama:", err);
-        }
-      }
-    }
-
     const updated = await prisma.programKesehatan.update({
       where: { id },
       data: {
@@ -79,6 +65,13 @@ export default async function programKesehatanUpdate(context: Context) {
         imageId,
       },
     });
+
+    if (existing.imageId && existing.imageId !== imageId) {
+      const oldImage = existing.image;
+      if (oldImage) {
+        await removeStoredFile(oldImage, "ProgramKesehatan");
+      }
+    }
 
     return new Response(
       JSON.stringify({

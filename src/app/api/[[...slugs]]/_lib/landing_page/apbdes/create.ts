@@ -2,6 +2,8 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { assignParentIdsToApbdesItems } from "./lib/getParentsID";
+import { applyApbdesIsiSync, prepareApbdesIsiSync, type ApbdesIsiBody } from "./dokumen-sync";
+import { APBDES_DOKUMEN_INCLUDE, toApbdesDokumenView } from "@/lib/apbdes-dokumen-view";
 
 
 type APBDesItemInput = {
@@ -19,7 +21,7 @@ type FormCreate = {
   jumlah?: string;
   fileId?: string | null; // Opsional
   items: APBDesItemInput[];
-};
+} & ApbdesIsiBody; // + folders/dokumen opsional (boleh kosong)
 
 export default async function apbdesCreate(context: Context) {
   const body = context.body as FormCreate;
@@ -47,6 +49,13 @@ export default async function apbdesCreate(context: Context) {
         success: false,
         message: `APBDes tahun ${body.tahun} sudah tersedia. Pilih tahun lain atau ubah data yang sudah ada.`,
       };
+    }
+
+    // Folder + dokumen divalidasi sebelum menulis apa pun (400 + pesan, sama dengan DAK).
+    const isi = await prepareApbdesIsiSync(null, { folders: body.folders, dokumen: body.dokumen });
+    if (!isi.ok) {
+      context.set.status = 400;
+      return { success: false, message: isi.message };
     }
 
     // 1. Buat APBDes + items dengan auto-calculate fields
@@ -88,6 +97,7 @@ export default async function apbdesCreate(context: Context) {
         })
       );
 
+      await applyApbdesIsiSync(prisma, apbdes.id, isi.plan);
       return { ...apbdes, items };
     });
 
@@ -101,6 +111,7 @@ export default async function apbdesCreate(context: Context) {
         include: {
           image: true,
           file: true,
+          ...APBDES_DOKUMEN_INCLUDE,
           items: {
             where: { isActive: true },
             orderBy: { kode: 'asc' },
@@ -119,7 +130,7 @@ export default async function apbdesCreate(context: Context) {
       return {
         success: true,
         message: "Berhasil membuat APBDes",
-        data: result,
+        data: result ? toApbdesDokumenView(result) : result,
       };
     } catch (innerError) {
       console.error('Error in post-creation steps:', innerError);

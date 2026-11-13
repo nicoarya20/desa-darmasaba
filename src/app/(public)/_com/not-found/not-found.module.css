@@ -1,0 +1,63 @@
+/*
+ * Halaman 404 — pola apple.com: satu kalimat besar di tengah lalu kolom cari lebar, tanpa angka 404,
+ * ilustrasi, atau tombol. Navbar & footer berasal dari DarmasabaShell (src/app/not-found.tsx).
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.section {
+  --ink: #1d1d1f;
+  --subtle: #86868b;
+  --line: #d2d2d7;
+  --brand: #0a4e78;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 56px;
+  padding: 104px var(--edge-gutter) 168px;
+  background: #fff;
+  color: var(--ink);
+  text-align: center;
+}
+
+.title {
+  max-width: 13em;
+  margin: 0;
+  font-size: 56px;
+  line-height: 1.07;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.search {
+  width: min(100%, 560px);
+  text-align: start;
+}
+
+.searchInput {
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.searchInput::placeholder {
+  color: var(--subtle);
+}
+
+.searchInput:focus {
+  border-color: var(--brand);
+}
+
+.searchIcon {
+  color: var(--subtle);
+}
+
+@media (max-width: 734px) {
+  .section {
+    gap: 40px;
+    padding: 72px var(--edge-gutter) 112px;
+  }
+
+  .title {
+    font-size: 36px;
+    line-height: 1.1;
+  }
+}

@@ -1,27 +1,19 @@
-import Elysia, { t } from "elysia";
-import strukturPPIDFindById from "./find-by-id";
-import strukturPPIDUpdate from "./update";
-import Pegawai from "./pegawai";
-import PosisiOrganisasi from "./posisi-organisasi";
+import { createStrukturModule } from "../../_struktur-organisasi";
+import { strukturPpidHandlers } from "./handlers";
 
-const StrukturPPID = new Elysia({
+/**
+ * API Struktur PPID (`/ppid/strukturppid/{posisiorganisasi,pegawai}`) — path lama dipertahankan, kode bersama
+ * dengan Struktur Perangkat Desa (`_struktur-organisasi`).
+ */
+const StrukturPPID = createStrukturModule(
+  {
     prefix: "/strukturppid",
-    tags: ["PPID/Struktur PPID"]
-})
-.get("/:id", async (context) => {
-    const response = await strukturPPIDFindById(context.request)
-    return response
-})
-.use(Pegawai)
-.use(PosisiOrganisasi)
-.put("/:id", async (context) => {
-    const response = await strukturPPIDUpdate(context)
-    return response
-}, {
-    body: t.Object({
-        name: t.String(),
-        imageId: t.String(),
-    })
-})
+    posisiPath: "/posisiorganisasi",
+    pegawaiPath: "/pegawai",
+    tag: "PPID/Struktur PPID",
+    logTag: "strukturppid",
+  },
+  strukturPpidHandlers
+);
 
-export default StrukturPPID
+export default StrukturPPID;

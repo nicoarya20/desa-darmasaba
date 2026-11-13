@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 export default async function desaDigitalDelete(context: Context) {
   const id = context.params?.id as string;
@@ -26,20 +26,13 @@ export default async function desaDigitalDelete(context: Context) {
     };
   }
 
-  if (desaDigital.image) {
-    try {
-      await minio.removeObject(MINIO_BUCKET, `${desaDigital.image.path}/${desaDigital.image.name}`);
-      await prisma.fileStorage.delete({
-        where: { id: desaDigital.image.id },
-      });
-    } catch (error) {
-      console.error("Gagal hapus file image:", error);
-    }
-  }
-
   await prisma.desaDigital.delete({
     where: { id },
   });
+
+  if (desaDigital.image) {
+    await removeStoredFile(desaDigital.image, "DesaDigital");
+  }
 
   return {
     success: true,

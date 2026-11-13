@@ -35,6 +35,14 @@ JENNA_CREDENTIALS_KEY="..."  # 64 hex chars: openssl rand -hex 32
 
 Seafile has been fully replaced by MinIO (see `prisma/migrate-seafile-to-minio.ts` for the one-off migration script). `SEAFILE_*` and `WIBU_UPLOAD_DIR`/`WIBU_DOWNLOAD_DIR` are still declared in `.env.example` but are leftovers — no active code path reads them (see `docs/DATABASE.md`).
 
+## Sampah: purge otomatis (scheduler in-app)
+
+Dokumen DAK, dokumen APBDes, foto galeri BUMDes, dan dokumen perencanaan yang dihapus masuk Sampah fiturnya masing-masing
+dan dihapus permanen setelah 30 hari oleh scheduler di dalam proses aplikasi (`src/instrumentation.ts`): sekali 5 menit setelah server start, lalu tiap
+24 jam. Tidak ada cron/infra tambahan. Saklar env `SAMPAH_PURGE_SCHEDULER=on|off` (kosong = on hanya di
+production). Keterbatasan: hanya jalan selama server hidup; bila ada >1 instance, tiap instance menjalankan purge
+(aman — hapus idempoten, hanya kerja dobel). Detail: `docs/decisions/2026-11-12-sampah.md`.
+
 ## Operator: `JENNA_CREDENTIALS_KEY`
 
 Provider AI Jenna (base URL, model, API key) diatur di Developer Console `/dev/jenna/provider` (role DEVELOPER "0"), bukan lewat env. API key disimpan terenkripsi di tabel `JennaProvider` dengan kunci dari `JENNA_CREDENTIALS_KEY`:

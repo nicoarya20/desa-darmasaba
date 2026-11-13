@@ -1,34 +1,9 @@
 'use client'
+import { StrukturAdminLayout } from '@/app/admin/(dashboard)/_com/struktur-organisasi/halaman/StrukturAdminLayout';
+import type { ReactNode } from 'react';
+import { STRUKTUR_PPID_ADMIN } from './_com/struktur-ppid.config';
 
-import { usePathname } from "next/navigation";
-import LayoutTabs from "./_lib/layoutTabs"
-import { Box } from "@mantine/core";
-
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
-  // Contoh path:
-  // - /darmasaba/pemerintahan/berita/semua → panjang 5 → list
-  // - /darmasaba/pemerintahan/berita/Pemerintahan → panjang 5 → list
-  // - /darmasaba/pemerintahan/berita/Pemerintahan/123 → panjang 6 → detail
-
-  const segments = pathname.split('/').filter(Boolean);
-  const isDetailPage = segments.length >= 5;
-
-  if (isDetailPage) {
-    // Tampilkan tanpa tab menu
-    return (
-      <Box>
-        {children}
-      </Box>
-    );
-  }
-
-
-  return (
-    <LayoutTabs>
-      {children}
-    </LayoutTabs>
-  )
+/** Tab Pegawai · Jabatan · Bagan Struktur PPID; halaman tambah/detail/edit tampil tanpa tab. */
+export default function Layout({ children }: { children: ReactNode }) {
+  return <StrukturAdminLayout config={STRUKTUR_PPID_ADMIN}>{children}</StrukturAdminLayout>;
 }

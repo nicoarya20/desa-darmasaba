@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 type FormUpdate = Prisma.ProfilPerbekelGetPayload<{
   select: {
@@ -59,20 +59,6 @@ export default async function profilePerbekelUpdate(context: Context) {
       );
     }
 
-    if (exisitng.imageId !== imageId) {
-      const oldImage = exisitng.image;
-      if (oldImage) {
-        try {
-          await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (error) {
-          console.error("Gagal hapus gambar lama:", error);
-        }
-      }
-    }
-
     const updated = await prisma.profilPerbekel.update({
         where: {id},
         data: {
@@ -83,6 +69,13 @@ export default async function profilePerbekelUpdate(context: Context) {
             imageId,
         }
     })
+
+    if (exisitng.imageId !== imageId) {
+      const oldImage = exisitng.image;
+      if (oldImage) {
+        await removeStoredFile(oldImage, "ProfilPerbekel");
+      }
+    }
 
     return new Response(
         JSON.stringify({

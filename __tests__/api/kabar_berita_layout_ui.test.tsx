@@ -48,3 +48,18 @@ describe('KabarBerita layout', () => {
     expect(count(html, `${s.card} ${s.placeholder}`)).toBe(6);
   });
 });
+
+describe('KabarBerita label pembaca layar', () => {
+  it('bawaan (beranda & Berita): "Berita terbaru" dan "Memuat kabar desa"', () => {
+    expect(render(<KabarBerita items={[item('a'), item('b')]} loading={false} />)).toContain('aria-label="Berita terbaru"');
+    expect(render(<KabarBerita items={[]} loading />)).toContain('aria-label="Memuat kabar desa"');
+  });
+
+  it('kustom (Kegiatan Desa): label daftar dan label memuat dipakai', () => {
+    const list = render(<KabarBerita items={[item('a'), item('b')]} loading={false} listLabel="Kegiatan lainnya" />);
+    expect(list).toContain('aria-label="Kegiatan lainnya"');
+    expect(list).not.toContain('Berita terbaru');
+    const busy = render(<KabarBerita items={[]} loading loadingLabel="Memuat kegiatan desa" />);
+    expect(busy).toContain('aria-label="Memuat kegiatan desa"');
+  });
+});

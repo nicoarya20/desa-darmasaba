@@ -1,0 +1,62 @@
+/*
+ * Modal Tambah Laporan — kartu putih radius 18px (Mantine Modal), isian satu kolom ukuran md, catatan privasi
+ * di panel #f5f5f7, tombol pil (Batal putih, Kirim brand) rata kanan; mobile tombol bertumpuk selebar modal.
+ * Modal dirender di portal (di luar `.section`); warna brand tombol Kirim lewat prop `color` Mantine.
+ */
+.modalHeader {
+  padding-bottom: 8px;
+}
+
+.modalTitle {
+  color: #1d1d1f;
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.note {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #f5f5f7;
+  color: #6e6e73;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* Area tulis editor cukup tinggi untuk beberapa kalimat kronologi. */
+.editor :global(.ProseMirror) {
+  min-height: 140px;
+}
+
+.editor :global(.mantine-InputWrapper-description) {
+  margin-bottom: 6px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+@media (max-width: 734px) {
+  .modalTitle {
+    font-size: 21px;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions > * {
+    width: 100%;
+    height: 48px;
+  }
+}

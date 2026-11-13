@@ -1,0 +1,53 @@
+/*
+ * Kontak Darurat Keamanan: kelompok per kategori (judul berikon + panel baris dari modul bersama
+ * _com/kontak-darurat/kontak-darurat.module.css). Variabel --ink/--tile/--brand dari layanan.module.css .page
+ * dan KONTAK_BRAND_VARS. Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.24;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.groupIcon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--tile);
+  color: var(--brand);
+}
+
+@media (max-width: 734px) {
+  .groups {
+    gap: 40px;
+  }
+
+  .group {
+    gap: 12px;
+  }
+
+  .groupTitle {
+    font-size: 19px;
+  }
+}

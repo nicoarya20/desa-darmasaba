@@ -1,29 +1,19 @@
-import Elysia, { t } from "elysia";
-import PosisiOrganisasi from "./posisi-organisasi";
-import Pegawai from "./pegawai";
-import strukturBumDesFindById from "./find-by-id";
-import strukturBumDesUpdate from "./update";
+import { createStrukturModule } from "../../_struktur-organisasi";
+import { strukturBumdesHandlers } from "./handlers";
 
-
-const StrukturOrganisasi = new Elysia({
+/**
+ * API Struktur BUMDes (`/ekonomi/struktur-organisasi/{posisi-organisasi,pegawai}`) — path lama dipertahankan,
+ * kode bersama dengan Struktur Perangkat Desa & PPID (`_struktur-organisasi`).
+ */
+const StrukturOrganisasi = createStrukturModule(
+  {
     prefix: "/struktur-organisasi",
-    tags: ["Ekonomi/Struktur Organisasi"],
-})
-.get("/:id", async (context) => {
-    const response = await strukturBumDesFindById(context.request)
-    return response
-})
-.use(PosisiOrganisasi)
-.use(Pegawai)
-.put("/:id", async (context) => {
-    const response = await strukturBumDesUpdate(context)
-    return response
-}, {
-    body: t.Object({
-        name: t.String(),
-        imageId: t.String(),
-    })
-})
-
+    posisiPath: "/posisi-organisasi",
+    pegawaiPath: "/pegawai",
+    tag: "Ekonomi/Struktur BUMDes",
+    logTag: "strukturbumdes",
+  },
+  strukturBumdesHandlers
+);
 
 export default StrukturOrganisasi;

@@ -2,13 +2,15 @@
 // Dokumen terhapus (soft delete: isActive=false + deletedAt) disimpan sekian hari, lalu dihapus
 // permanen secara "lazy" saat daftar sampah dibuka (repo tidak punya cron).
 import { DOKUMEN_MAX_PER_PROGRAM } from "./desa-anti-korupsi-dokumen";
+import { isSampahKedaluwarsa, SAMPAH_RETENSI_HARI, sampahCutoff, sisaHariSampah } from "./sampah/sampah-retensi";
 
-/** Lama dokumen terhapus disimpan di tempat sampah sebelum dihapus permanen (hari). */
-export const DAK_SAMPAH_RETENSI_HARI = 30;
+// Fungsi retensi milik modul Sampah bersama (src/lib/sampah); diekspor ulang agar konsumen DAK lama tidak berubah.
+export { isSampahKedaluwarsa, sampahCutoff, sisaHariSampah };
+
+/** Lama dokumen terhapus disimpan di tempat sampah sebelum dihapus permanen (hari); default = retensi Sampah bersama. */
+export const DAK_SAMPAH_RETENSI_HARI = SAMPAH_RETENSI_HARI;
 /** Batas baris daftar sampah per program yang dikirim (terbaru dulu); sisanya tetap dibersihkan sesuai retensi. */
 export const DAK_SAMPAH_MAX_DAFTAR = 200;
-
-const MS_PER_HARI = 24 * 60 * 60 * 1000;
 
 type Fail = { ok: false; message: string };
 
@@ -16,22 +18,6 @@ type Fail = { ok: false; message: string };
 export function resolveRetensiHari(raw: string | undefined): number {
   const n = Number(raw);
   return raw !== undefined && raw.trim() !== "" && Number.isInteger(n) && n >= 1 ? n : DAK_SAMPAH_RETENSI_HARI;
-}
-
-/** Batas waktu: dokumen dengan `deletedAt <= cutoff` sudah melewati retensi (tepat N hari ikut kedaluwarsa). */
-export function sampahCutoff(now: Date, retensiHari: number): Date {
-  return new Date(now.getTime() - retensiHari * MS_PER_HARI);
-}
-
-/** Apakah dokumen terhapus sudah melewati retensi sehingga harus dihapus permanen. */
-export function isSampahKedaluwarsa(deletedAt: Date, now: Date, retensiHari: number): boolean {
-  return deletedAt.getTime() <= sampahCutoff(now, retensiHari).getTime();
-}
-
-/** Sisa hari sebelum dihapus permanen, dibulatkan ke atas (baru dihapus = N, tepat N hari = 0). */
-export function sisaHariSampah(deletedAt: Date, now: Date, retensiHari: number): number {
-  const sisaMs = deletedAt.getTime() + retensiHari * MS_PER_HARI - now.getTime();
-  return Math.min(retensiHari, Math.max(0, Math.ceil(sisaMs / MS_PER_HARI)));
 }
 
 /** Filter Prisma baris sampah program yang kedaluwarsa (dipakai `deleteMany` sebelum daftar dibaca). */

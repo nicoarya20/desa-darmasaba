@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Admin Struktur Perangkat Desa: markup list/detail (field kosong "—"), tanda wajib di form, tabel jabatan, bagan.
+// Admin struktur bersama (Perangkat Desa/PPID): markup list/detail (field kosong "—"), field form, tabel jabatan, bagan.
 // jsdom gagal start di repo ini → markup via renderToStaticMarkup; klik tidak diuji.
 import type { AnchorHTMLAttributes } from 'react';
 import { MantineProvider } from '@mantine/core';
@@ -23,15 +23,12 @@ const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider
 const count = (html: string, needle: string) => html.split(needle).length - 1;
 const REQUIRED = 'mantine-InputWrapper-required';
 
-// test-only: pegawai tanpa field opsional
+// test-only: pegawai tanpa field opsional (nama sudah termasuk gelar)
 const PEGAWAI: PegawaiRow = {
   id: 'pg-1',
-  namaLengkap: 'I Made Ari',
-  gelarAkademik: null,
+  namaLengkap: 'I Made Ari, S.Kom',
   email: null,
   telepon: '',
-  alamat: null,
-  tanggalMasuk: null,
   isActive: true,
   image: null,
   posisi: { nama: 'Perbekel' },
@@ -40,26 +37,30 @@ const POSISI: PosisiRow[] = [
   { id: 'pd-perbekel', nama: 'Perbekel', hierarki: 1, urutan: 1, parentId: null, isActive: true, _count: { pegawai: 1 } },
   { id: 'pd-sekretaris-desa', nama: 'Sekretaris Desa', hierarki: 2, urutan: null, parentId: 'pd-perbekel', isActive: false, _count: { pegawai: 3 } },
 ];
-const EMPTY_FORM = { namaLengkap: '', gelarAkademik: '', imageId: '', tanggalMasuk: '', email: '', telepon: '', alamat: '', posisiId: '', isActive: true };
+const EMPTY_FORM = { namaLengkap: '', imageId: '', email: '', telepon: '', posisiId: '', isActive: true };
+/** Field lama yang sudah dihapus dari form, detail, dan list admin (gelar digabung ke nama). */
+const FIELD_DIHAPUS = ['Gelar Akademik', 'Tanggal Masuk', 'Alamat'];
 const noop = () => {};
 
 /** Teks label input beserta penanda wajib (bila ada) — dari <label> sampai </label>. */
 const labelOf = (html: string, text: string) => html.match(new RegExp(`<label[^>]*>${text}(.*?)</label>`))?.[0] ?? '';
 
 describe('list & detail pegawai', () => {
-  it('tabel menampilkan "—" untuk gelar & telepon kosong', () => {
+  it('tabel menampilkan nama (beserta gelar) dan "—" untuk telepon kosong, tanpa kolom gelar', () => {
     const html = render(<PegawaiTable items={[PEGAWAI]} onDetail={noop} />);
-    expect(html).toContain('I Made Ari');
+    expect(html).toContain('I Made Ari, S.Kom');
     expect(html).toContain('Perbekel');
-    // desktop (gelar + telepon) + kartu ponsel (gelar + telepon)
-    expect(count(html, '>—<')).toBe(4);
+    // desktop (telepon) + kartu ponsel (telepon)
+    expect(count(html, '>—<')).toBe(2);
+    for (const label of FIELD_DIHAPUS) expect(html, label).not.toContain(label);
   });
 
-  it('detail menampilkan "—" untuk semua field opsional kosong dan teks foto kosong', () => {
+  it('detail menampilkan "—" untuk email & telepon kosong dan teks foto kosong, tanpa gelar/tanggal/alamat', () => {
     const html = render(<PegawaiDetail data={PEGAWAI} />);
-    expect(count(html, '>—<')).toBe(5); // gelar, tanggal masuk, email, telepon, alamat
+    expect(count(html, '>—<')).toBe(2); // email, telepon
     expect(html).toContain('Belum ada foto');
     expect(html).toContain('Aktif');
+    for (const label of FIELD_DIHAPUS) expect(html, label).not.toContain(label);
   });
 });
 
@@ -77,11 +78,18 @@ describe('form pegawai', () => {
     expect(count(html, REQUIRED)).toBe(2);
     expect(labelOf(html, 'Nama Lengkap')).toContain(REQUIRED);
     expect(labelOf(html, 'Jabatan')).toContain(REQUIRED);
-    for (const opsional of ['Gelar Akademik', 'Tanggal Masuk', 'Email', 'Nomor Telepon', 'Alamat']) {
+    for (const opsional of ['Email', 'Nomor Telepon']) {
       const label = labelOf(html, opsional);
       expect(label, opsional).not.toBe('');
       expect(label, opsional).not.toContain(REQUIRED);
     }
+  });
+
+  it('tidak merender Gelar Akademik, Tanggal Masuk, maupun Alamat; nama diberi petunjuk gelar', () => {
+    for (const label of FIELD_DIHAPUS) expect(html, label).not.toContain(label);
+    expect(html).not.toContain('type="date"');
+    expect(html).not.toContain('<textarea');
+    expect(html).toContain('Tulis beserta gelar bila ada');
   });
 
   it('foto opsional (tanpa tanda wajib) dan form kosong belum menampilkan error', () => {

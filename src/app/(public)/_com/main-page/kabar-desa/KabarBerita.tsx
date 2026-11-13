@@ -36,15 +36,26 @@ type Props = {
   layout?: "rail" | "grid";
   /** Jumlah kerangka kartu kecil saat memuat. */
   placeholderCards?: number;
+  /** Label pembaca layar daftar kartu kecil (bawaan: "Berita terbaru"). */
+  listLabel?: string;
+  /** Label pembaca layar saat memuat (bawaan: "Memuat kabar desa"). */
+  loadingLabel?: string;
 };
 
 /** Berita terbaru: 1 kartu utama besar + kartu kecil sisanya; seluruh kartu = tautan detail. */
-export function KabarBerita({ items, loading, layout = "rail", placeholderCards = KABAR_BERITA_LIMIT - 1 }: Props) {
+export function KabarBerita({
+  items,
+  loading,
+  layout = "rail",
+  placeholderCards = KABAR_BERITA_LIMIT - 1,
+  listLabel = KABAR_TEXT.beritaLabel,
+  loadingLabel = KABAR_TEXT.loading,
+}: Props) {
   const railClass = layout === "grid" ? `${s.rail} ${s.railGrid}` : s.rail;
 
   if (loading) {
     return (
-      <div className={s.berita} aria-busy="true" aria-label={KABAR_TEXT.loading}>
+      <div className={s.berita} aria-busy="true" aria-label={loadingLabel}>
         <div className={`${s.featured} ${s.placeholder}`} aria-hidden />
         <ul className={railClass}>
           {Array.from({ length: placeholderCards }, (_, i) => (
@@ -72,7 +83,7 @@ export function KabarBerita({ items, loading, layout = "rail", placeholderCards 
       </Link>
 
       {rest.length > 0 ? (
-        <ul className={railClass} aria-label={KABAR_TEXT.beritaLabel}>
+        <ul className={railClass} aria-label={listLabel}>
           {rest.map((item) => (
             <li key={item.id}>
               <Link href={item.href} className={s.card}>

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { APBDES_DOKUMEN_INCLUDE, toApbdesDokumenView } from "@/lib/apbdes-dokumen-view";
 import { Context } from "elysia";
 
 export default async function apbdesFindUnique(context: Context) {
@@ -52,6 +53,7 @@ export default async function apbdesFindUnique(context: Context) {
         },
         image: true,
         file: true,
+        ...APBDES_DOKUMEN_INCLUDE,
       },
     });
 
@@ -65,7 +67,7 @@ export default async function apbdesFindUnique(context: Context) {
 
     return {
       success: true,
-      data: result,
+      data: toApbdesDokumenView(result), // { ..., folders: [{ ..., dokumen }], dokumenUmum }
     };
   } catch (error) {
     console.error("❌ Error in apbdesFindUnique:", error);

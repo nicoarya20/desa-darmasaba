@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 export default async function maskotDesaUpdate(context: Context) {
   try {
@@ -35,19 +36,6 @@ export default async function maskotDesaUpdate(context: Context) {
       );
     }
 
-    // Hapus semua gambar lama (dan file-nya jika perlu)
-    for (const old of existing.images) {
-      try {
-        if (old.imageId) {
-          await prisma.fileStorage.delete({ where: { id: old.imageId } });
-        }
-        // opsional: hapus file dari disk juga kalau kamu simpan file fisik
-        // await fs.unlink(path.join(old.image.path, old.image.name));
-      } catch (error) {
-        console.warn("Gagal hapus gambar lama:", error);
-      }
-    }
-
     // Update profile & re-create images
     const updated = await prisma.maskotDesa.update({
       where: { id },
@@ -70,6 +58,11 @@ export default async function maskotDesaUpdate(context: Context) {
         },
       },
     });
+
+    // Gambar lama dihapus permanen SETELAH update sukses; gambar yang dipakai lagi tetap utuh (masih dirujuk).
+    for (const old of existing.images) {
+      if (old.image) await removeStoredFile(old.image, "MaskotDesa");
+    }
 
     return new Response(
       JSON.stringify({

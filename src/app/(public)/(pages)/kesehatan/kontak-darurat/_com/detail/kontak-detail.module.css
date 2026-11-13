@@ -1,0 +1,28 @@
+/*
+ * Detail Kontak Darurat Kesehatan — tambahan di atas kerangka kabar-detail.module.css (kolom 860px):
+ * panel nomor #f5f5f7 dengan nomor besar + tombol, dan foto bersudut lancip di bawah deskripsi.
+ * Nomor & tombol memakai kelas KontakActions (kontak-darurat.module.css) varian `callDetail`.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.callPanel {
+  padding: 28px 32px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.figure {
+  margin: 0;
+}
+
+.figureImg {
+  display: block;
+  width: 100%;
+  max-height: min(70vh, 560px);
+  object-fit: cover;
+}
+
+@media (max-width: 734px) {
+  .callPanel {
+    padding: 20px 16px;
+  }
+}

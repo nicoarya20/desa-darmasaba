@@ -1,18 +1,15 @@
 // Logika murni admin struktur organisasi (tanpa I/O): tampilan nilai kosong, validasi form pegawai,
-// opsi pilihan jabatan/atasan, dan pohon bagan. Bentuk data mengikuti kontrak API Struktur Perangkat Desa.
+// opsi pilihan jabatan/atasan, dan pohon bagan. Bentuk data mengikuti kontrak API struktur bersama.
 import { validateParent } from '@/lib/struktur-organisasi/struktur-organisasi.hierarchy';
-import { parseOptionalDate, parseOptionalEmail } from '@/lib/struktur-organisasi/struktur-organisasi.normalize';
+import { parseOptionalEmail } from '@/lib/struktur-organisasi/struktur-organisasi.normalize';
 import { STRUKTUR_ADMIN_TEXT as T } from './struktur-admin.text';
 
-/** Nilai form pegawai (hanya `namaLengkap` + `posisiId` wajib; `tanggalMasuk` berformat YYYY-MM-DD). */
+/** Nilai form pegawai: hanya `namaLengkap` (sudah termasuk gelar) + `posisiId` wajib; foto/email/telepon opsional. */
 export type PegawaiFormValues = {
   namaLengkap: string;
-  gelarAkademik: string;
   imageId: string;
-  tanggalMasuk: string;
   email: string;
   telepon: string;
-  alamat: string;
   posisiId: string;
   isActive: boolean;
 };
@@ -43,11 +40,8 @@ export type PosisiRow = {
 export type PegawaiRow = {
   id: string;
   namaLengkap: string;
-  gelarAkademik: string | null;
   email: string | null;
   telepon: string | null;
-  alamat: string | null;
-  tanggalMasuk: Date | string | null;
   isActive: boolean;
   image: { link: string } | null;
   posisi: { nama: string } | null;
@@ -63,30 +57,15 @@ export function tampil(value: string | null | undefined): string {
   return value && value.trim() ? value.trim() : T.empty;
 }
 
-/** Tanggal (Date/ISO) → "12 November 2026" (zona UTC agar tanggal tidak bergeser); kosong/invalid → "—". */
-export function formatTanggal(value: Date | string | null | undefined): string {
-  if (!value) return T.empty;
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return T.empty;
-  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-}
+export type PegawaiFormErrors = Partial<Record<'namaLengkap' | 'posisiId' | 'email', string>>;
 
-/** Nama lengkap diikuti gelar (bila ada), mis. "I Made Ari, S.Kom". */
-export function namaDenganGelar(nama: string, gelar: string | null | undefined): string {
-  return gelar && gelar.trim() ? `${nama}, ${gelar.trim()}` : nama;
-}
-
-export type PegawaiFormErrors = Partial<Record<'namaLengkap' | 'posisiId' | 'email' | 'tanggalMasuk', string>>;
-
-/** Error per field form pegawai: nama + jabatan wajib; email & tanggal hanya dicek bila diisi. */
+/** Error per field form pegawai: nama + jabatan wajib; email hanya dicek bila diisi. */
 export function pegawaiFormErrors(form: PegawaiFormValues): PegawaiFormErrors {
   const errors: PegawaiFormErrors = {};
   if (!form.namaLengkap.trim()) errors.namaLengkap = 'Nama lengkap wajib diisi';
   if (!form.posisiId.trim()) errors.posisiId = 'Jabatan wajib dipilih';
   const email = parseOptionalEmail(form.email);
   if (!email.ok) errors.email = email.message;
-  const tanggal = parseOptionalDate(form.tanggalMasuk);
-  if (!tanggal.ok) errors.tanggalMasuk = tanggal.message;
   return errors;
 }
 

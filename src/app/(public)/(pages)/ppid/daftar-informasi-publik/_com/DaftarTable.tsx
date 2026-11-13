@@ -1,4 +1,4 @@
-import { htmlToPlainText } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/potensi.logic';
+import { htmlToPlainText } from '@/lib/rich-text';
 import { Skeleton } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';

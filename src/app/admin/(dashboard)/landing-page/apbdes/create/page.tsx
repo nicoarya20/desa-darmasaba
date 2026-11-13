@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import colors from '@/con/colors';
-import ApiFetch from '@/lib/api-fetch';
 import {
   Box,
   Button,
@@ -20,14 +19,17 @@ import {
   Table,
   Badge,
 } from '@mantine/core';
-import { Dropzone } from '@mantine/dropzone';
-import { IconArrowBack, IconFile, IconUpload, IconX, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconArrowBack, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import apbdes from '../../../_state/landing-page/apbdes';
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
+import { isIsiDraftValid } from '../../desa-anti-korupsi/_lib/dokumen-bulk-actions';
+import { emptyIsiDraft, type IsiDraft } from '../../desa-anti-korupsi/_lib/folder-draft';
+import { ApbdesDokumenSection } from '../_com/ApbdesDokumenSection';
+import { prepareApbdesIsi } from '../_lib/dokumen-isi';
 
 // Tipe item untuk form
 type ItemForm = {
@@ -41,13 +43,12 @@ type ItemForm = {
 function CreateAPBDes() {
   const router = useRouter();
   const stateAPBDes = useProxy(apbdes, { sync: true }); // sync: cegah caret jump di controlled input
-  const [previewDoc, setPreviewDoc] = useState<string | null>(null);
-  const [docFile, setDocFile] = useState<File | null>(null);
+  const [isi, setIsi] = useState<IsiDraft>(emptyIsiDraft); // draft dokumen + folder
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if form is valid - hanya cek items, dokumen opsional
   const isFormValid = () => {
-    return stateAPBDes.create.form.items.length > 0;
+    return stateAPBDes.create.form.items.length > 0 && isIsiDraftValid(isi);
   };
 
   // Form sementara untuk input item baru
@@ -65,8 +66,7 @@ function CreateAPBDes() {
 
   const resetForm = () => {
     stateAPBDes.create.reset();
-    setDocFile(null);
-    setPreviewDoc(null);
+    setIsi(emptyIsiDraft());
     setNewItem({
       kode: '',
       uraian: '',
@@ -84,23 +84,14 @@ function CreateAPBDes() {
     try {
       setIsSubmitting(true);
 
-      // Upload dokumen hanya jika ada file yang dipilih
-      let fileId = '';
-      if (docFile) {
-        const uploadDocRes = await ApiFetch.api.fileStorage.create.post({
-          file: docFile,
-          name: docFile.name,
-        });
-        fileId = uploadDocRes?.data?.data?.id || '';
-      }
-
-      // Update form dengan ID dokumen (bisa kosong)
-      stateAPBDes.create.form.fileId = fileId;
+      // Unggah berkas draft dulu; folder + dokumen dibuat bersama APBDes dalam satu transaksi di API.
+      const prepared = await prepareApbdesIsi(isi);
+      setIsi(prepared.isi);
 
       // create() menampilkan toast sukses/gagal sendiri & mengembalikan status.
       // Hanya lanjut reset + redirect kalau benar-benar sukses — mencegah toast
       // "berhasil" + "gagal" muncul bersamaan saat tahun duplikat (409).
-      const ok = await stateAPBDes.create.create();
+      const ok = await stateAPBDes.create.create(prepared.payload);
       if (!ok) return;
 
       resetForm();
@@ -165,86 +156,7 @@ function CreateAPBDes() {
         style={{ border: '1px solid #e0e0e0' }}
       >
         <Stack gap="md">
-          {/* Info: File opsional */}
-          <Text fz="sm" c="dimmed" mb="xs">
-            * Upload dokumen bersifat opsional. Bisa dikosongkan jika belum ada.
-          </Text>
-
-          <Stack gap={"xs"}>
-            {/* Dokumen APBDes (Opsional) */}
-            <Box>
-              <Text fw="bold" fz="sm" mb={6}>
-                Dokumen APBDes (Opsional)
-              </Text>
-              <Dropzone
-                onDrop={(files) => {
-                  const selectedFile = files[0];
-                  if (selectedFile) {
-                    setDocFile(selectedFile);
-                    setPreviewDoc(URL.createObjectURL(selectedFile));
-                  }
-                }}
-                onReject={() => toast.error('File tidak valid')}
-                maxSize={5 * 1024 ** 2}
-                accept={{
-                  'application/pdf': ['.pdf'],
-                  'application/msword': ['.doc'],
-                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-                }}
-                radius="md"
-                p="xl"
-              >
-                <Group justify="center" gap="xl" mih={180}>
-                  <Dropzone.Accept>
-                    <IconUpload size={48} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX size={48} color="var(--mantine-color-red-6)" stroke={1.5} />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconFile size={48} color="#868e96" stroke={1.5} />
-                  </Dropzone.Idle>
-                  <Stack gap="xs" align="center">
-                    <Text size="md" fw={500}>
-                      Seret dokumen atau klik untuk memilih
-                    </Text>
-                  </Stack>
-                </Group>
-              </Dropzone>
-              {previewDoc && (
-                <Box mt="md" pos="relative" style={{ textAlign: 'center' }}>
-                  <Text fw="bold" fz="sm" mb={6}>
-                    Pratinjau Dokumen
-                  </Text>
-                  <iframe
-                    src={previewDoc}
-                    width="100%"
-                    height="500px"
-                    style={{ border: '1px solid #ddd', borderRadius: '8px' }}
-                  />
-
-                  <ActionIcon
-                    variant="filled"
-                    color="red"
-                    radius="xl"
-                    size="sm"
-                    pos="absolute"
-                    top={5}
-                    right={5}
-                    onClick={() => {
-                      setPreviewDoc(null);
-                      setDocFile(null);
-                    }}
-                    style={{
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                    }}
-                  >
-                    <IconX size={14} />
-                  </ActionIcon>
-                </Box>
-              )}
-            </Box>
-          </Stack>
+          <ApbdesDokumenSection value={isi} onChange={setIsi} />
 
           {/* Form Header */}
           <TextInput

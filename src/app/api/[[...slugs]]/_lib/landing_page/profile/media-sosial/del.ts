@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 export default async function mediaSosialDelete(context: Context) {
   const { params } = context;
@@ -12,6 +13,7 @@ export default async function mediaSosialDelete(context: Context) {
   const deleted = await prisma.mediaSosial.delete({
     where: { id },
   });
+  await removeReleasedFiles("MediaSosial", [deleted.imageId]);
 
   return {
     success: true,

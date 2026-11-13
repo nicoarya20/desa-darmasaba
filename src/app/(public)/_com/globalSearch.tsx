@@ -1,7 +1,7 @@
 'use client';
 
 import searchState, { debouncedFetch } from '@/app/api/[[...slugs]]/_lib/search/searchState';
-import { Anchor, Box, Center, Loader, Popover, Stack, Text, TextInput } from '@mantine/core';
+import { Anchor, Box, Center, Loader, Popover, Stack, Text, TextInput, type TextInputProps } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
@@ -14,6 +14,9 @@ import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInfor
 
 type SearchResultItem = (typeof searchState.results)[number];
 
+/** Tampilan kolom cari yang boleh diubah pemakai; isi & tombol hapus tetap dikendalikan komponen ini. */
+export type GlobalSearchInputProps = Omit<TextInputProps, 'value' | 'onChange' | 'rightSection'>;
+
 /** Judul kecil pemisah bagian di dropdown pencarian. */
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -23,7 +26,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function GlobalSearch() {
+/** Kolom pencarian situs (halaman navbar + konten API) dengan dropdown hasil. */
+export default function GlobalSearch({ inputProps }: { inputProps?: GlobalSearchInputProps } = {}) {
   const snap = useSnapshot(searchState);
   const [opened, setOpened] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -156,6 +160,7 @@ export default function GlobalSearch() {
             }}
             radius="xl"
             size="md"
+            {...inputProps}
             rightSection={
               snap.query ? (
                 <IconX

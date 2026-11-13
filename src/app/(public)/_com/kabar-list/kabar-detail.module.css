@@ -1,0 +1,209 @@
+/*
+ * Detail Kabar (Pengumuman, Kegiatan Desa) — artikel di `.section` Kabar Desa (latar putih, tepi --edge-gutter),
+ * kolom baca 860px di tengah: kepala (kategori · tanggal, judul), isi HTML dari editor admin, keadaan kosong/galat,
+ * foto utama bersudut lancip (Kegiatan Desa, Posyandu, Program Kesehatan, Keamanan Lingkungan), dan kerangka memuat.
+ * Bagian khusus tiap halaman (lampiran, info, angka) ada di modul halaman masing-masing.
+ * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line, --radius) dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.wrap > * {
+  width: 100%;
+}
+
+.wrap > :first-child {
+  width: auto;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  color: var(--subtle);
+  font-size: 15px;
+}
+
+.kategori {
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Isi ---------- */
+.content {
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.content > :first-child {
+  margin-top: 0;
+}
+
+.content > :last-child {
+  margin-bottom: 0;
+}
+
+.content p {
+  margin: 0 0 1em;
+}
+
+.content a {
+  color: var(--brand);
+  text-underline-offset: 3px;
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------- Foto utama (bersudut lancip, senada kartu daftar; tautan ke ukuran penuh) ---------- */
+.photo {
+  margin: 0;
+  overflow: hidden;
+  background: #e8e8ed;
+}
+
+.photo a {
+  display: block;
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(80vh, 720px);
+  object-fit: cover;
+}
+
+.photo a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* ---------- Tidak ditemukan / galat ---------- */
+.emptyText {
+  margin: 0 0 12px;
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--brand);
+  font-size: 17px;
+  text-decoration: none;
+}
+
+/* ---------- Kerangka memuat ---------- */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bar {
+  display: block;
+  border-radius: 8px;
+  background: #e8e8ed;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.barMeta {
+  width: 30%;
+  height: 14px;
+}
+
+.barTitle {
+  width: 100%;
+  height: 40px;
+}
+
+.barTitleShort {
+  width: 60%;
+  height: 40px;
+}
+
+.barFigure {
+  height: 420px;
+  margin-top: 18px;
+  border-radius: var(--radius);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.kategori:focus-visible,
+.emptyLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kategori:hover,
+  .emptyLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .wrap {
+    gap: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+    line-height: 1.14;
+  }
+
+  .content {
+    font-size: 17px;
+    line-height: 1.53;
+  }
+
+  .barFigure {
+    height: 280px;
+  }
+}

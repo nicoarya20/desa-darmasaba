@@ -1,34 +1,31 @@
 // src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts
-import { devBar, navBar, pengaturanMenu, role1, role2, role3 } from '@/app/admin/_com/list_PageAdmin';
+import { devBar, navBar, pengaturanMenu, role1, role2, role3, userRoleMenu } from '@/app/admin/_com/list_PageAdmin';
 import { developerMenu } from '@/app/admin/_com/nav';
-import { canManageMenuVisibility, isDeveloperRole } from '@/lib/auth-policy';
-
-// ✅ Helper: normalisasi ID menu agar konsisten
-const normalizeMenuId = (id: string): string => {
-  return id.trim().toLowerCase();
-};
+import { filterNavByMenuIds, withoutRestrictedSections } from '@/app/admin/_com/nav/menu-access.logic';
+import { canManageMenuAccess, canManageMenuVisibility, isDeveloperRole } from '@/lib/auth-policy';
 
 type NavbarInput = { roleId: number; menuIds?: string[] | null };
 
-/** Sidebar admin: section sesuai Menu Access/role, plus Pengaturan (role 0/1) dan Developer (role 0). */
+/**
+ * Sidebar admin untuk user: section/submenu sesuai Menu Access/role, plus User & Role
+ * dan Pengaturan yang khusus role 0/1, dan Developer khusus role 0 — apa pun isi Menu Access-nya.
+ */
 export function getNavbar(input: NavbarInput) {
-  const sections = sectionsFor(input);
-  // Pengaturan & Developer ditentukan role, apa pun isi Menu Access-nya.
-  const withPengaturan = canManageMenuVisibility(input.roleId) ? [...sections, pengaturanMenu] : sections;
-  return isDeveloperRole(input.roleId) ? [...withPengaturan, developerMenu] : withPengaturan;
+  // User & Role / Pengaturan dibuang dulu (walau tersimpan di DB untuk role 2–4),
+  // lalu ditambahkan kembali di akhir hanya untuk role yang berhak — urutan tetap.
+  // Developer tidak ada di navBar, jadi tidak bisa diberikan lewat Menu Access.
+  const sections = withoutRestrictedSections(sectionsFor(input));
+  return [
+    ...sections,
+    ...(canManageMenuAccess(input.roleId) ? [userRoleMenu] : []),
+    ...(canManageMenuVisibility(input.roleId) ? [pengaturanMenu] : []),
+    ...(isDeveloperRole(input.roleId) ? [developerMenu] : []),
+  ];
 }
 
 function sectionsFor({ roleId, menuIds }: NavbarInput) {
-  // ✅ Jika menuIds tersedia, gunakan untuk filter — dengan normalisasi
-  if (menuIds && menuIds.length > 0) {
-    // Normalisasi semua menuIds dari DB/state
-    const normalizedMenuSet = new Set(menuIds.map(id => normalizeMenuId(id)));
-
-    return navBar.filter(section => {
-      const normalizedSectionId = normalizeMenuId(section.id);
-      return normalizedMenuSet.has(normalizedSectionId);
-    });
-  }
+  // menuIds berisi ID section (semua submenu) dan/atau ID submenu.
+  if (menuIds && menuIds.length > 0) return filterNavByMenuIds(navBar, menuIds);
 
   // 🔁 Fallback ke role-based navigation
   if (roleId === 0) return devBar;

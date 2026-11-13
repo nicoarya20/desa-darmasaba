@@ -1,5 +1,5 @@
 'use client'
-import { Select, Switch, Textarea, TextInput } from '@mantine/core';
+import { Select, Switch, TextInput } from '@mantine/core';
 import { FotoPegawaiInput } from './FotoPegawaiInput';
 import { pegawaiFormErrors, type PegawaiFormValues, type SelectOption, type SetField } from './struktur-admin.logic';
 import { STRUKTUR_ADMIN_TEXT as T } from './struktur-admin.text';
@@ -18,8 +18,8 @@ type Props = {
 };
 
 /**
- * Field form pegawai struktur organisasi. Hanya Nama Lengkap + Jabatan bertanda wajib; email & tanggal masuk
- * hanya divalidasi bila diisi (pesan tampil setelah field diisi, bukan saat form masih kosong).
+ * Field form pegawai struktur organisasi: Nama Lengkap* (beserta gelar), Jabatan*, Foto, Email, Nomor Telepon.
+ * Email hanya divalidasi bila diisi (pesan tampil setelah field diisi, bukan saat form masih kosong).
  */
 export function PegawaiFormFields({ values, onChange, posisiOptions, foto, withStatus }: Props) {
   const errors = pegawaiFormErrors(values);
@@ -29,6 +29,7 @@ export function PegawaiFormFields({ values, onChange, posisiOptions, foto, withS
         required
         label={T.pegawai.namaLengkap}
         placeholder={T.pegawai.namaPlaceholder}
+        description={T.pegawai.namaHint}
         value={values.namaLengkap}
         onChange={(e) => onChange('namaLengkap', e.currentTarget.value)}
       />
@@ -42,20 +43,7 @@ export function PegawaiFormFields({ values, onChange, posisiOptions, foto, withS
         onChange={(value) => onChange('posisiId', value ?? '')}
         nothingFoundMessage={T.posisi.kosong}
       />
-      <TextInput
-        label={T.pegawai.gelarAkademik}
-        placeholder={T.pegawai.gelarPlaceholder}
-        value={values.gelarAkademik}
-        onChange={(e) => onChange('gelarAkademik', e.currentTarget.value)}
-      />
       <FotoPegawaiInput {...foto} />
-      <TextInput
-        type="date"
-        label={T.pegawai.tanggalMasuk}
-        value={values.tanggalMasuk}
-        error={values.tanggalMasuk ? errors.tanggalMasuk : undefined}
-        onChange={(e) => onChange('tanggalMasuk', e.currentTarget.value)}
-      />
       <TextInput
         type="email"
         label={T.pegawai.email}
@@ -70,14 +58,6 @@ export function PegawaiFormFields({ values, onChange, posisiOptions, foto, withS
         placeholder={T.pegawai.teleponPlaceholder}
         value={values.telepon}
         onChange={(e) => onChange('telepon', e.currentTarget.value.replace(/\D/g, '').slice(0, MAX_TELEPON))}
-      />
-      <Textarea
-        autosize
-        minRows={2}
-        label={T.pegawai.alamat}
-        placeholder={T.pegawai.alamatPlaceholder}
-        value={values.alamat}
-        onChange={(e) => onChange('alamat', e.currentTarget.value)}
       />
       {withStatus ? (
         <Switch

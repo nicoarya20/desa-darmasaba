@@ -1,0 +1,105 @@
+/*
+ * Halaman Program Kesehatan — bagian khusus di atas kerangka Kabar (`.section` kabar.module.css + kepala kabar-list):
+ * blok berjudul (daftar program, manfaat) dan ubin manfaat statis.
+ * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --radius) dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.block + .block {
+  margin-top: var(--section-pad-y);
+}
+
+.blockHead {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.blockLead {
+  max-width: 640px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+/* ---------- Ubin manfaat (statis, tanpa hover) ---------- */
+.manfaat {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.manfaatTile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.manfaatIcon {
+  margin-bottom: 6px;
+  color: var(--brand);
+}
+
+.manfaatTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.19;
+  font-weight: 600;
+}
+
+.manfaatDesc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .manfaatTile {
+    padding: 24px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .block {
+    gap: 20px;
+  }
+
+  .blockTitle {
+    font-size: 24px;
+    line-height: 1.17;
+  }
+
+  .manfaat {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .manfaatTitle {
+    font-size: 19px;
+  }
+}

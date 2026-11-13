@@ -49,7 +49,6 @@ describe("template zod", () => {
     expect(templatePegawai.safeParse({ namaLengkap: "A", posisiId: "" }).success).toBe(false);
     expect(templatePegawai.safeParse({ namaLengkap: "A", posisiId: "x", email: "" }).success).toBe(true);
     expect(templatePegawai.safeParse({ namaLengkap: "A", posisiId: "x", email: "salah" }).success).toBe(false);
-    expect(templatePegawai.safeParse({ namaLengkap: "A", posisiId: "x", tanggalMasuk: "2024-02-30" }).success).toBe(false);
   });
 
   it("jabatan: nama + hierarki wajib", () => {
@@ -93,7 +92,7 @@ describe("pegawai state", () => {
     expect(mocks.toast.error).toHaveBeenCalledWith("Jabatan tidak ditemukan");
   });
 
-  it("update.load mengisi form (tanggal → YYYY-MM-DD, null → '') lalu submit PUT ke id", async () => {
+  it("update.load mengisi form (null → '') lalu submit PUT ke id tanpa field lama", async () => {
     mocks.byId.get.mockResolvedValue(
       ok({
         id: "p1",
@@ -110,14 +109,26 @@ describe("pegawai state", () => {
       })
     );
     expect(await pegawai.update.load("p1")).toBe(true);
-    expect(pegawai.update.form).toMatchObject({ tanggalMasuk: "2021-03-04", gelarAkademik: "", imageId: "img1" });
+    // Gelar, tanggal masuk, alamat tidak lagi ada di form (hanya Nama*, Foto, Email, Telepon, Jabatan*).
+    expect(pegawai.update.form).toEqual({
+      namaLengkap: "Made",
+      imageId: "img1",
+      email: "",
+      telepon: "",
+      posisiId: "pd-perbekel",
+      isActive: true,
+    });
     expect(pegawai.update.imageLink).toBe("/api/img/a.webp");
 
     mocks.byId.put.mockResolvedValue(ok({ id: "p1" }));
     pegawai.update.form.imageId = "";
     expect(await pegawai.update.submit()).toBe(true);
     expect(mocks.pegawai).toHaveBeenLastCalledWith({ id: "p1" });
-    expect(mocks.byId.put).toHaveBeenCalledWith(expect.objectContaining({ imageId: "", tanggalMasuk: "2021-03-04" }));
+    expect(mocks.byId.put).toHaveBeenCalledWith(expect.objectContaining({ imageId: "", namaLengkap: "Made" }));
+    // Field yang tidak ada di form tidak dikirim → nilai lama di DB tidak diubah server.
+    for (const field of ["gelarAkademik", "tanggalMasuk", "alamat"]) {
+      expect(mocks.byId.put.mock.calls[0][0]).not.toHaveProperty(field);
+    }
   });
 
   it("delete → toast sukses", async () => {

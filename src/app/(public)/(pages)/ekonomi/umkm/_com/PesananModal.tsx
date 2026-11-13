@@ -3,6 +3,7 @@
 import { Alert, Button, Modal, NumberInput, Stack, Text, TextInput, Textarea } from '@mantine/core';
 import { IconBrandWhatsapp } from '@tabler/icons-react';
 
+import { WA_PENJUAL_TIDAK_VALID } from '../_lib/pesanan';
 import { jumlahLabel } from '../_lib/satuan';
 
 export interface OrderForm {
@@ -64,8 +65,8 @@ export function PesananModal({
             </>
           ) : (
             <Alert color="yellow">
-              Nomor WhatsApp penjual belum tersedia atau tidak valid, sehingga pesan tidak dapat
-              dikirim otomatis. Pesanan Anda tetap sudah tercatat.
+              {WA_PENJUAL_TIDAK_VALID}, sehingga pesan tidak dapat dikirim otomatis. Pesanan Anda
+              tetap sudah tercatat.
             </Alert>
           )}
 

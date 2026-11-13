@@ -1,0 +1,279 @@
+/*
+ * Halaman Monev & Pembangunan — gaya halaman APBDes (apbdes.module.css: .section, .card, .panel, …).
+ * File ini hanya menambah bagian khusus Monev; variabel warna (--ink, --muted, --subtle, --tile,
+ * --line, --radius, --brand) diwarisi dari .section APBDes. Breakpoint apple.com: ≤1068px dan ≤734px.
+ */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Ringkasan ---------- */
+.summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.unit {
+  margin-left: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+/* Batang sebaran status: satu baris bertumpuk, potongan selebar porsi tiap status. */
+.stack {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+  margin: 20px 0 16px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.stackPart {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: flex-basis 600ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: auto 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.legendCount {
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.foot {
+  margin: auto 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.amountEmpty {
+  color: var(--subtle);
+}
+
+/* ---------- Kosong / galat ---------- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--tile);
+  border-radius: var(--radius);
+}
+
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brand-tint);
+  color: var(--brand);
+}
+
+.emptyTitle {
+  margin: 4px 0 0;
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.emptyBody {
+  margin: 0;
+  max-width: 520px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.notice {
+  margin: 0;
+  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.notice > p {
+  margin: 0;
+}
+
+.retry {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--brand);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.retry:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* ---------- Tautan APBDes ---------- */
+.apbdes {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.apbdesText {
+  flex: 1;
+  min-width: 0;
+}
+
+.apbdesTitle {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.apbdesBody {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* ---------- Kepala panel (judul + pengantar | saring) ---------- */
+.panelHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: 20px;
+}
+
+.panelHead h2 {
+  margin: 0;
+}
+
+.panelLead {
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.segScroll {
+  flex: none;
+  max-width: 100%;
+}
+
+.segRoot {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .body {
+    gap: 12px;
+  }
+
+  /* Kartu kegiatan selebar penuh; anggaran + progres berdampingan di bawahnya (bukan 2+2+1). */
+  .summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .summary > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .small {
+    padding: 18px;
+  }
+
+  .small > :first-child {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .small h3 {
+    font-size: 15px;
+  }
+
+  .small .smallAmount {
+    font-size: 24px;
+  }
+
+  .small .smallFull {
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+
+  .foot {
+    font-size: 13px;
+  }
+
+  .empty {
+    padding: 36px 20px;
+  }
+
+  .emptyTitle {
+    font-size: 19px;
+  }
+
+  .emptyBody {
+    font-size: 15px;
+  }
+
+  .apbdes {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .panelHead {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stackPart {
+    transition: none;
+  }
+}

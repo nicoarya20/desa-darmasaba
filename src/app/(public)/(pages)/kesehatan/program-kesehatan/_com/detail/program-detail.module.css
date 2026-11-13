@@ -1,0 +1,54 @@
+/*
+ * Detail program kesehatan — bagian khusus di atas kerangka artikel bersama (kabar-list/kabar-detail.module.css):
+ * ringkasan dan panel angka indikator (foto: `.photo` kabar-detail.module.css).
+ * Variabel warna (--brand, --ink, --muted, --tile, --radius) dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 21px;
+  line-height: 1.43;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Angka indikator ---------- */
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 40px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.figureValue {
+  color: var(--brand);
+  font-size: 80px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+}
+
+.figureNote {
+  color: var(--subtle);
+  font-size: 14px;
+  line-height: 1.43;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .lead {
+    font-size: 19px;
+    line-height: 1.42;
+  }
+
+  .figure {
+    padding: 24px;
+  }
+
+  .figureValue {
+    font-size: 56px;
+  }
+}

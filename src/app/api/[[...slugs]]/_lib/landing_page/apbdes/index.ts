@@ -8,6 +8,7 @@ import apbdesUpdate from "./updt";
 import realisasiCreate from "./realisasi/create";
 import realisasiUpdate from "./realisasi/update";
 import realisasiDelete from "./realisasi/delete";
+import { dokumenBody, foldersBody } from "@/lib/dokumen-folder-body";
 
 // Definisikan skema untuk item APBDes (tanpa realisasi field)
 const ApbdesItemSchema = t.Object({
@@ -39,8 +40,11 @@ const APBDes = new Elysia({
       name: t.Optional(t.String()),
       deskripsi: t.Optional(t.String()),
       jumlah: t.Optional(t.String()),
-      fileId: t.Optional(t.String()),
+      fileId: t.Optional(t.String()), // lama (satu berkas); klien baru memakai `dokumen`
       items: t.Array(ApbdesItemSchema),
+      // tidak dikirim = isi dokumen tidak diubah; array = set final (folder hilang → dokumennya ke "Umum")
+      folders: t.Optional(foldersBody),
+      dokumen: t.Optional(dokumenBody),
     }),
   })
 
@@ -52,8 +56,11 @@ const APBDes = new Elysia({
       name: t.Optional(t.String()),
       deskripsi: t.Optional(t.String()),
       jumlah: t.Optional(t.String()),
-      fileId: t.Optional(t.String()),
+      fileId: t.Optional(t.String()), // lama (satu berkas); klien baru memakai `dokumen`
       items: t.Array(ApbdesItemSchema),
+      // tidak dikirim = isi dokumen tidak diubah; array = set final (folder hilang → dokumennya ke "Umum")
+      folders: t.Optional(foldersBody),
+      dokumen: t.Optional(dokumenBody),
     }),
   })
 

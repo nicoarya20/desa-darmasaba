@@ -27,9 +27,9 @@ judul/deskripsi/content/kategori dan tidak punya tanggal terbit, sehingga tangga
   gambar 5 MB seperti dropzone lain.
 - **Upload saat Simpan**, bukan saat dipilih (pola Desa Anti Korupsi) lewat `POST /api/fileStorage/create`, agar
   batal/reset tidak meninggalkan berkas yatim.
-- **Berkas yang dilepas tidak dihapus dari MinIO** (beda dengan Berita yang menghapus gambar utama lama): satu berkas
-  bisa dirujuk ulang dan repo belum punya pembersih berkas yatim — utang yang sama dengan dokumen Desa Anti Korupsi.
-  Bila create/update gagal setelah upload, berkas yang sudah terunggah juga tertinggal.
+- **Berkas yang dilepas** (gambar utama/galeri/dokumen saat update, semuanya saat delete) dihapus permanen setelah
+  operasi DB sukses — berkas yang masih dirujuk data lain dibiarkan (lihat `docs/decisions/2026-11-12-sampah.md`,
+  berlaku sejak 2026-11-13). Bila create/update gagal setelah upload, berkas yang sudah terunggah tetap tertinggal.
 - **List tetap ringan**: `find-many`, `find-first`, `find-recent` hanya membawa `image` (thumbnail) + `tanggalTerbit`;
   galeri & dokumen hanya di `GET /:id`.
 - Logika murni (normalisasi, batas, cek jenis berkas, data Prisma) di `src/lib/pengumuman-lampiran.ts`; handler

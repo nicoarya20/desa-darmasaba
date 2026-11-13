@@ -14,14 +14,11 @@ import { PotensiHeader } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/
 import { PotensiDetailModal } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/PotensiDetailModal';
 import {
   POTENSI_LIST_LIMIT,
-  RICH_TEXT_TAGS,
   countByFilter,
   dokumentasiImages,
   filterPotensi,
   isWisata,
-  htmlToPlainText,
   potensiInfoRows,
-  sanitizePotensiHtml,
   type PotensiItem,
 } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/potensi.logic';
 import { POTENSI_TEXT } from '@/app/(public)/(pages)/pemerintahan/potensi/_com/potensi.text';
@@ -44,30 +41,6 @@ const render = (node: React.ReactElement) =>
 
 beforeEach(() => {
   sanitize.mockClear();
-});
-
-describe('htmlToPlainText', () => {
-  it('buang tag, pisahkan paragraf, decode entitas', () => {
-    expect(htmlToPlainText('<p>Satu <strong>dua</strong></p><p>tiga&nbsp;&amp; &#8211; &lt;b&gt;</p>')).toBe('Satu dua tiga & – <b>');
-  });
-
-  it('kosong / null → string kosong', () => {
-    expect(htmlToPlainText('<p></p>')).toBe('');
-    expect(htmlToPlainText(null)).toBe('');
-  });
-});
-
-describe('sanitizePotensiHtml', () => {
-  it('memakai DOMPurify dengan tag format dasar saja, tanpa atribut', () => {
-    expect(sanitizePotensiHtml('<p>a</p><script>x</script>')).toBe('<p>a</p>');
-    expect(sanitize).toHaveBeenCalledWith('<p>a</p><script>x</script>', { ALLOWED_TAGS: RICH_TEXT_TAGS, ALLOWED_ATTR: [] });
-  });
-
-  it('isian kosong dari editor dianggap tidak ada isi', () => {
-    expect(sanitizePotensiHtml('<p>&nbsp; </p>')).toBe('');
-    expect(sanitizePotensiHtml(undefined)).toBe('');
-    expect(sanitize).not.toHaveBeenCalled();
-  });
 });
 
 describe('potensiInfoRows & dokumentasiImages', () => {

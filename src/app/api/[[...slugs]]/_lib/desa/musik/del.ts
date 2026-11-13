@@ -1,6 +1,6 @@
 import { Context } from "elysia";
 import prisma from "@/lib/prisma";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 const musikDelete = async (context: Context) => {
   const { id } = context.params as { id: string };
@@ -17,28 +17,12 @@ const musikDelete = async (context: Context) => {
 
   // 2. HAPUS FILE AUDIO (jika ada)
   if (musik.audioFile) {
-    try {
-      await minio.removeObject(MINIO_BUCKET, `${musik.audioFile.path}/${musik.audioFile.name}`);
-
-      await prisma.fileStorage.delete({
-        where: { id: musik.audioFile.id },
-      });
-    } catch (error) {
-      console.error("Error deleting audio file:", error);
-    }
+    await removeStoredFile(musik.audioFile, "MusikDesa");
   }
 
   // 3. HAPUS FILE COVER (jika ada)
   if (musik.coverImage) {
-    try {
-      await minio.removeObject(MINIO_BUCKET, `${musik.coverImage.path}/${musik.coverImage.name}`);
-
-      await prisma.fileStorage.delete({
-        where: { id: musik.coverImage.id },
-      });
-    } catch (error) {
-      console.error("Error deleting cover image:", error);
-    }
+    await removeStoredFile(musik.coverImage, "MusikDesa");
   }
 
   return {

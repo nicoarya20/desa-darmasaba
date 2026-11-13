@@ -1,0 +1,72 @@
+/* Panel dokumen APBDes (halaman detail): daftar dokumen per folder, tiap baris judul + tombol unduh.
+   Variabel warna (--ink, --muted, --line, --brand) diwarisi dari .section di apbdes.module.css. */
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.groupTitle {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.item:first-child {
+  border-top: none;
+}
+
+.judul {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.download {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+}
+
+.download:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .download:hover {
+    background: var(--brand-hover);
+  }
+}
+
+@media (max-width: 734px) {
+  .item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

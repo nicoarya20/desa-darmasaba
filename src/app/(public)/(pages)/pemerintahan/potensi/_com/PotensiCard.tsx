@@ -1,6 +1,7 @@
 import { Image } from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
-import { htmlToPlainText, type PotensiItem } from "./potensi.logic";
+import { htmlToPlainText } from "@/lib/rich-text";
+import type { PotensiItem } from "./potensi.logic";
 import s from "./potensi.module.css";
 import { POTENSI_TEXT } from "./potensi.text";
 

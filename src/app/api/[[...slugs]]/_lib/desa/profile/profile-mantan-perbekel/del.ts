@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 const profileMantanPerbekelDelete = async (context: Context) => {
     const id = context.params?.id as string;
@@ -26,21 +26,14 @@ const profileMantanPerbekelDelete = async (context: Context) => {
         };
     }
 
-    // Hapus file gambar dari filesystem jika ada
-    if (foto.image) {
-        try {
-            await minio.removeObject(MINIO_BUCKET, `${foto.image.path}/${foto.image.name}`);
-            await prisma.fileStorage.delete({
-                where: { id: foto.image.id },
-            });
-        } catch (err) {
-            console.error("Gagal hapus gambar lama:", err);
-        }
-    }
-
     await prisma.perbekelDariMasaKeMasa.delete({
         where: { id },
     });
+
+    // Hapus file gambar dari filesystem jika ada
+    if (foto.image) {
+        await removeStoredFile(foto.image, "PerbekelDariMasaKeMasa");
+    }
 
     return {
         status: 200,

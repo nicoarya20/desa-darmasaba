@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 import { normalizeJuara } from "./juara";
 
 type FormUpdatePrestasiDesa = {
@@ -42,6 +43,7 @@ export default async function prestasiDesaUpdate(context: Context) {
       }
     }
 
+    const before = await prisma.prestasiDesa.findUnique({ where: { id }, select: { imageId: true } });
     const updated = await prisma.prestasiDesa.update({
       where: { id },
       data: {
@@ -56,6 +58,7 @@ export default async function prestasiDesaUpdate(context: Context) {
         kategori: true,
       },
     });
+    await removeReleasedFiles("PrestasiDesa", [before?.imageId], [updated.imageId]);
 
     return {
       success: true,

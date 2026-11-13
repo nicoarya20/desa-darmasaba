@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { Prisma } from "@prisma/client";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeReleasedFiles, { fileIds } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 type FormUpdate = {
   id: string;
@@ -45,24 +45,6 @@ async function kesejahteraanUpdate(context: Context) {
       );
     }
 
-    // Delete old featured image if changed
-    if (existing.imageId && existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        try {
-          await minio.removeObject(
-            MINIO_BUCKET,
-            `${oldImage.path}/${oldImage.name}`,
-          );
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (err) {
-          console.error("Gagal hapus gambar lama:", err);
-        }
-      }
-    }
-
     // Build update data
     const updateData: Prisma.KesejahteraanMasyarakatUpdateInput = {
       judul,
@@ -94,6 +76,13 @@ async function kesejahteraanUpdate(context: Context) {
         images: true,
       },
     });
+
+    // Gambar utama & galeri yang dilepas dihapus permanen setelah update sukses.
+    await removeReleasedFiles(
+      "KesejahteraanMasyarakat",
+      fileIds(existing.imageId, existing.images),
+      fileIds(updated.imageId, updated.images),
+    );
 
     return new Response(
       JSON.stringify({

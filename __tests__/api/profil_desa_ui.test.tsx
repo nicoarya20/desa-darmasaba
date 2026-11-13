@@ -29,10 +29,10 @@ vi.mock('next-view-transitions', () => ({
 }));
 vi.mock('valtio/utils', () => ({ useProxy: <T,>(x: T) => x }));
 vi.mock('@/app/admin/(dashboard)/_state/desa/profile', () => ({ default: h.profile }));
-vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid/struktur_PPID', () => ({
+vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid', () => ({
   default: {
     pegawai: { findMany: { data: null, load: vi.fn() } },
-    posisiOrganisasi: { findManyAll: { data: [], load: vi.fn() } },
+    posisi: { findManyAll: { data: [], load: vi.fn() } },
   },
 }));
 vi.mock('@/app/(public)/(pages)/pemerintahan/profil/_com/use-load-once', () => ({ useLoadOnce: () => h.loaded }));

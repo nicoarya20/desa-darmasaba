@@ -14,4 +14,4 @@ Section "Struktur Perangkat Desa" di Profil Desa dan halaman `/pemerintahan/prof
 ## Konsekuensi
 - API: `/api/desa/strukturperangkat/{posisi,pegawai}` (GET publik, mutasi lewat guard admin global). Kontrak dikunci `__tests__/api/struktur_perangkat_kontrak_route.test.ts`.
 - Admin: Pemerintahan → Struktur Perangkat Desa (`/admin/pemerintahan/struktur-perangkat-desa/{pegawai,jabatan,bagan}`).
-- Fase berikutnya (tugas terpisah): pindahkan API/state/admin PPID dan BUMDes ke kode bersama yang sama, supaya field opsional, atasan yang bisa diatur, dan bagan admin yang benar juga berlaku di sana. Kolom tabel mereka sudah nullable; `urutan` perlu migrasi bila ingin dipakai.
+- Fase berikutnya: pindahkan API/state/admin PPID dan BUMDes ke kode bersama yang sama, supaya field opsional, atasan yang bisa diatur, dan bagan admin yang benar juga berlaku di sana. **PPID selesai** (lihat `2026-11-12-struktur-fleksibel.md`, migrasi `20261112180000_struktur_fleksibel` menambah `urutan`); BUMDes menyusul memakai factory yang sama.

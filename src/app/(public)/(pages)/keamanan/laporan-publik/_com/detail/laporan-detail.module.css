@@ -1,0 +1,228 @@
+/*
+ * Detail Laporan Publik — bagian khusus di atas kerangka artikel Kabar (kabar-detail.module.css, kolom 860px):
+ * panel fakta (lokasi, waktu kejadian) dan linimasa vertikal Kronologi → Penanganan → Status saat ini.
+ * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line, --radius) dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.meta {
+  align-items: center;
+}
+
+/* ---------- Lokasi & waktu ---------- */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 24px 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 12px;
+  align-content: start;
+}
+
+.factIcon {
+  grid-row: 1 / span 2;
+  margin-top: 1px;
+  color: var(--brand);
+}
+
+.factLabel {
+  color: var(--subtle);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.factValue {
+  margin: 0;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.4;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Linimasa ---------- */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+}
+
+.timeline {
+  --marker: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  padding: 0 0 32px 36px;
+}
+
+/* Rel penghubung antarlangkah; langkah terakhir tanpa rel. */
+.step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--marker) + 8px);
+  bottom: 2px;
+  left: calc(var(--marker) / 2 - 1px);
+  width: 2px;
+  border-radius: 1px;
+  background: var(--line);
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.marker {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: var(--marker);
+  height: var(--marker);
+  border: 3px solid var(--brand);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.step[data-tone="kosong"] .marker {
+  border-color: #c7c7cc;
+}
+
+.step[data-tone="selesai"] .marker {
+  border-color: #19733a;
+  background: #19733a;
+}
+
+.step[data-tone="proses"] .marker {
+  border-color: #8f5100;
+}
+
+.step[data-tone="gagal"] .marker {
+  border-color: #c4001a;
+  background: #c4001a;
+}
+
+.step[data-tone="lain"] .marker {
+  border-color: #86868b;
+}
+
+.stepHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 8px;
+}
+
+.stepLabel {
+  margin: 0;
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.stepTime {
+  color: var(--subtle);
+  font-size: 15px;
+}
+
+.stepContent {
+  font-size: 17px;
+  line-height: 1.53;
+}
+
+.stepEmpty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.statusDesc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+/* ---------- Galat & kerangka ---------- */
+.retry {
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.retry:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.barFacts {
+  height: 96px;
+  margin-top: 18px;
+  border-radius: var(--radius);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .retry:hover {
+    background: #e8e8ed;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 20px;
+  }
+
+  .blockTitle {
+    font-size: 21px;
+  }
+
+  .step {
+    padding: 0 0 28px 30px;
+  }
+
+  .stepLabel {
+    font-size: 17px;
+  }
+
+  .stepTime {
+    flex-basis: 100%;
+    font-size: 14px;
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import type { PengumumanDetail as Detail } from '@/lib/pengumuman-lampiran';
 import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
@@ -20,14 +21,14 @@ export function PengumumanDetail({ id }: { id: string }) {
 
   return (
     <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
-      <div className={s.wrap}>
+      <div className={d.wrap}>
         <BackButton />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
         {state.status === 'ready' ? <DetailBody data={state.data} /> : null}
         {state.status === 'notfound' || state.status === 'error' ? (
           <div className={kabar.empty}>
-            <p className={s.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
-            <Link href={pengumumanListHref('')} className={s.emptyLink}>
+            <p className={d.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
+            <Link href={pengumumanListHref('')} className={d.emptyLink}>
               {T.backToList}
               <IconChevronRight size={16} stroke={2} aria-hidden />
             </Link>
@@ -46,16 +47,16 @@ function DetailBody({ data }: { data: Detail }) {
 
   return (
     <>
-      <header className={s.head}>
-        <p className={s.meta}>
+      <header className={d.head}>
+        <p className={d.meta}>
           {kategori ? (
-            <Link href={pengumumanListHref(kategori)} className={s.kategori}>
+            <Link href={pengumumanListHref(kategori)} className={d.kategori}>
               {kategori}
             </Link>
           ) : null}
           <time dateTime={tanggal.toISOString()}>{formatTanggalTerbit(tanggal)}</time>
         </p>
-        <h1 className={s.title}>{data.judul}</h1>
+        <h1 className={d.title}>{data.judul}</h1>
       </header>
 
       {data.image?.link ? (
@@ -67,7 +68,7 @@ function DetailBody({ data }: { data: Detail }) {
       ) : null}
 
       {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
-      <div className={s.content} dangerouslySetInnerHTML={{ __html: data.content }} />
+      <div className={d.content} dangerouslySetInnerHTML={{ __html: data.content }} />
 
       {galeri.length > 0 ? (
         <section className={s.block} aria-label={T.galeri}>
@@ -88,11 +89,11 @@ function DetailBody({ data }: { data: Detail }) {
 
 function DetailPlaceholder() {
   return (
-    <div className={s.placeholder} aria-label={T.loading}>
-      <span className={`${s.bar} ${s.barMeta}`} />
-      <span className={`${s.bar} ${s.barTitle}`} />
-      <span className={`${s.bar} ${s.barTitleShort}`} />
-      <span className={`${s.bar} ${s.barFigure}`} />
+    <div className={d.placeholder} aria-label={T.loading}>
+      <span className={`${d.bar} ${d.barMeta}`} />
+      <span className={`${d.bar} ${d.barTitle}`} />
+      <span className={`${d.bar} ${d.barTitleShort}`} />
+      <span className={`${d.bar} ${d.barFigure}`} />
     </div>
   );
 }

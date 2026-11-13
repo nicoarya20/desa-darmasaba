@@ -1,5 +1,7 @@
 'use client'
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import { SampahPanel } from '@/app/admin/(dashboard)/_com/sampah/SampahPanel';
+import { teksKonfirmasiPindahKeSampah } from '@/app/admin/(dashboard)/_com/sampah/sampah-panel.logic';
 import stateDokumenPerencanaan, {
   type DokumenPerencanaanItem,
 } from '@/app/admin/(dashboard)/_state/desa/dokumenPerencanaan';
@@ -68,6 +70,8 @@ function DokumenList({ search }: { search: string }) {
   const [debouncedSearch] = useDebouncedValue(search, 800);
   const [filter, setFilter] = useState(FILTER_ALL);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  // Penghitung hapus: memicu panel Sampah memuat ulang setelah dokumen dipindah ke Sampah.
+  const [hapusKe, setHapusKe] = useState(0);
 
   const { data, page, totalPages, loading, load } = state.findMany;
   const jenis = filter === FILTER_ALL ? '' : filter;
@@ -80,6 +84,7 @@ function DokumenList({ search }: { search: string }) {
     if (!deleteId) return;
     await stateDokumenPerencanaan.delete.byId(deleteId);
     setDeleteId(null);
+    setHapusKe((n) => n + 1);
   };
 
   return (
@@ -175,6 +180,8 @@ function DokumenList({ search }: { search: string }) {
             <Pagination value={page} onChange={(p) => load(p, debouncedSearch, jenis)} total={totalPages} radius="xl" />
           </Center>
         )}
+
+        <SampahPanel sumber="dokumen-perencanaan" reloadKey={hapusKe} onPulihkan={() => load(page, debouncedSearch, jenis)} />
       </Paper>
 
       <ModalKonfirmasiHapus
@@ -182,7 +189,7 @@ function DokumenList({ search }: { search: string }) {
         loading={state.delete.loading}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        text="Apakah Anda yakin ingin menghapus dokumen perencanaan ini?"
+        text={teksKonfirmasiPindahKeSampah('Dokumen')}
       />
     </Box>
   );

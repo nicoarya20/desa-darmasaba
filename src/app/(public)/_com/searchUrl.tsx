@@ -59,7 +59,8 @@ const getDetailUrl = (item: SearchItem) => {
     tipsKeamanan: () => '/keamanan/tips-keamanan',
     pasarDesa: (id) => `/ekonomi/umkm/produk/${id}`,
     lowonganKerjaLokal: () => '/ekonomi/lowongan-kerja-lokal',
-    strukturOrganisasi: () => '/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes',
+    // Pegawai BUMDes → profilnya di bawah halaman Struktur Pengurus BUMDes.
+    strukturOrganisasi: (id) => `/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/${id}`,
     jumlahPendudukUsiaKerjaYangMenganggurUsia: () => '/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur',
     jumlahPendudukUsiaKerjaYangMenganggurPendidikan: () => '/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur',
     jumlahPendudukMiskin: () => '/ekonomi/jumlah-penduduk-miskin',

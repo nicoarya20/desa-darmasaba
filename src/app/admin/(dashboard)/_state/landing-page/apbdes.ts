@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import type { DokumenInput } from "@/lib/desa-anti-korupsi-dokumen";
+import type { FolderInput } from "@/lib/desa-anti-korupsi-folder";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -30,6 +32,9 @@ const ApbdesFormSchema = z.object({
   fileId: z.string().optional(),
   items: z.array(ApbdesItemSchema).min(1, "Minimal ada 1 item"),
 });
+
+/** Set final folder + dokumen APBDes (hasil toIsiPayload editor) yang ikut dikirim saat create/update. */
+export type ApbdesIsiPayload = { folders: FolderInput[]; dokumen: DokumenInput[] };
 
 // --- Default Form ---
 const defaultApbdesForm = {
@@ -83,7 +88,7 @@ const apbdes = proxy({
       this.form = { ...defaultApbdesForm };
     },
 
-    async create(): Promise<boolean> {
+    async create(isi?: ApbdesIsiPayload): Promise<boolean> {
       const parsed = ApbdesFormSchema.safeParse(this.form);
       if (!parsed.success) {
         const errors = parsed.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
@@ -93,7 +98,7 @@ const apbdes = proxy({
 
       try {
         this.loading = true;
-        const res = await ApiFetch.api.landingpage.apbdes["create"].post(parsed.data);
+        const res = await ApiFetch.api.landingpage.apbdes["create"].post({ ...parsed.data, ...isi });
 
         if (res.data?.success) {
           toast.success("APBDes berhasil dibuat");
@@ -290,7 +295,7 @@ const apbdes = proxy({
       }
     },
 
-    async update() {
+    async update(isi?: ApbdesIsiPayload) {
       const parsed = ApbdesFormSchema.safeParse(this.form);
       if (!parsed.success) {
         const errors = parsed.error.issues.map((issue) => `${issue.path.join(".")} - ${issue.message}`);
@@ -317,6 +322,7 @@ const apbdes = proxy({
             level: item.level,
             tipe: item.tipe ?? null,
           })),
+          ...isi,
         };
 
         const res = await (ApiFetch.api.landingpage.apbdes as any)[this.id].put(requestData);
@@ -326,7 +332,9 @@ const apbdes = proxy({
           apbdes.findMany.load();
           return true;
         } else {
-          throw new Error(res.data?.message || "Gagal memperbarui APBDes");
+          // Non-2xx (mis. 400 validasi dokumen): body ada di res.error.value, bukan res.data.
+          const errValue = (res as any)?.error?.value;
+          throw new Error(errValue?.message || res.data?.message || "Gagal memperbarui APBDes");
         }
       } catch (error: any) {
         console.error("Update error:", error);
