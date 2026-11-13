@@ -55,7 +55,7 @@ const layanandesa: FooterLink[] = [
   },
   {
     title: "Informasi Publik",
-    link: "/ppid/daftar-informasi-publik-desa-darmasaba",
+    link: "/ppid/daftar-informasi-publik",
   },
 ]
 
@@ -71,7 +71,7 @@ const tautanPenting: FooterLink[] = [
   },
   {
     title: "Transparansi",
-    link: "/ppid/daftar-informasi-publik-desa-darmasaba",
+    link: "/ppid/daftar-informasi-publik",
   },
   {
     title: "Peta Informasi",

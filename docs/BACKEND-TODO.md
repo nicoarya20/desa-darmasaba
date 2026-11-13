@@ -34,6 +34,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Lokasi: `src/app/admin/(dashboard)/_state/keamanan/laporan-publik.ts:78` (`console.log("Sending form data:", formData)`) dan `:94`.
   - Usul: hapus. Sekalian: `create()` hanya memunculkan toast saat validasi gagal tanpa sinyal gagal ke pemanggil (frontend publik kini memvalidasi sendiri).
 
+- [ ] **Endpoint OTP lama masih hidup: siapa pun bisa memicu kiriman WhatsApp** (terverifikasi 2026-11-13)
+  - Lokasi: `src/app/api/auth/register/route.ts` tanpa login dan tanpa rate limit (beda dengan `resend` & `send-otp-register` yang memakai `otpSendLimiter`), mengirim kode OTP lewat `wa.wibudev.com` ke nomor apa pun yang belum terdaftar, lalu menulis ke `KodeOtp`. Halaman `/registrasi` (membungkus `admin/(dashboard)/auth/registrasi-admin`) masih memanggilnya, padahal login kini Google-only dan `/validasi` sudah dialihkan ke `/login` (pendaftaran tak pernah bisa selesai).
+  - Dampak: gateway WhatsApp desa bisa dipakai untuk spam ke nomor sembarang; baris `KodeOtp` sampah.
+  - Usul: pasang `otpSendLimiter` atau matikan route OTP lama di `src/app/api/auth/` bila memang tak dipakai lagi dan alihkan `/registrasi` ke `/login` di `src/proxy.ts` seperti `/validasi`. User menyerahkan ke rekan (2026-11-13): frontend tidak mengubah `/registrasi` maupun `proxy.ts`.
+
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
 - [ ] **Pencegahan Kriminalitas find-many tanpa offset/skip**
