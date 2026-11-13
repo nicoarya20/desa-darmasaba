@@ -3,7 +3,12 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import prisma from "./prisma";
 import { env } from "./env";
-import { ROLE_SUPER_ADMIN, ROLE_USER, resolveRoleForNewUser } from "./auth-policy";
+import { ROLE_USER, resolveRoleForNewUser, shouldPromoteRole } from "./auth-policy";
+
+const roleEmailLists = {
+  developerEmails: env.DEVELOPER_EMAILS,
+  superAdminEmails: env.SUPER_ADMIN_EMAILS,
+};
 
 // Pola mengikuti base-template2 (standar tim), dengan 3 penyesuaian:
 //  (A) TANPA secondaryStorage (Redis) — session store Postgres saja.
@@ -86,13 +91,13 @@ export const auth = betterAuth({
     },
   },
 
-  // ─── User BARU dari SUPER_ADMIN_EMAILS → roleId "1" sejak sesi pertama ─
+  // ─── User BARU dari DEVELOPER_EMAILS → "0", SUPER_ADMIN_EMAILS → "1" sejak sesi pertama ─
   databaseHooks: {
     user: {
       create: {
         before: async (userData) => {
           const email = (userData as { email?: string }).email ?? "";
-          const roleId = resolveRoleForNewUser(email, env.SUPER_ADMIN_EMAILS);
+          const roleId = resolveRoleForNewUser(email, roleEmailLists);
           if (roleId !== ROLE_USER) {
             return { data: { ...userData, roleId } };
           }
@@ -101,7 +106,7 @@ export const auth = betterAuth({
     },
   },
 
-  // ─── After sign-in: tolak user non-aktif + promote existing super admin ─
+  // ─── After sign-in: tolak user non-aktif + promote existing developer/super admin ─
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
       const isSignIn =
@@ -127,14 +132,17 @@ export const auth = betterAuth({
         });
       }
 
-      // Promote existing user ∈ SUPER_ADMIN_EMAILS (env ditambah setelah user ada).
+      // Promote existing user ∈ DEVELOPER_EMAILS / SUPER_ADMIN_EMAILS (env ditambah
+      // setelah user ada). Hanya menaikkan role, tidak pernah menurunkan.
+      const targetRoleId = resolveRoleForNewUser(user?.email, roleEmailLists);
       if (
-        env.SUPER_ADMIN_EMAILS.includes(user?.email ?? "") &&
-        user?.roleId !== ROLE_SUPER_ADMIN
+        user &&
+        targetRoleId !== ROLE_USER &&
+        shouldPromoteRole(user.roleId, targetRoleId)
       ) {
         await prisma.user.update({
           where: { id: newSession.user.id },
-          data: { roleId: ROLE_SUPER_ADMIN },
+          data: { roleId: targetRoleId },
         });
       }
     }),

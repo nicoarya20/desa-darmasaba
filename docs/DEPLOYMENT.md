@@ -16,7 +16,8 @@ BETTER_AUTH_SECRET="..."
 BETTER_AUTH_URL="..."
 GOOGLE_CLIENT_ID="..."
 GOOGLE_CLIENT_SECRET="..."
-SUPER_ADMIN_EMAIL="..."
+SUPER_ADMIN_EMAIL="..."     # comma-separated → roleId "1"
+DEVELOPER_EMAIL="..."       # comma-separated → roleId "0" (optional)
 
 # MinIO — sole object storage backend (replaced Seafile)
 MINIO_ENDPOINT="..."
@@ -25,11 +26,22 @@ MINIO_SECRET_KEY="..."
 MINIO_BUCKET="..."
 MINIO_USE_SSL="..."
 
+# Jenna (asisten AI) — optional; encrypts provider API keys stored in DB (AES-256-GCM)
+JENNA_CREDENTIALS_KEY="..."  # 64 hex chars: openssl rand -hex 32
+
 # Other integrations (WhatsApp, email, Telegram bot, ElevenLabs) also exist in
 # .env.example — check there before assuming a var is unused.
 ```
 
 Seafile has been fully replaced by MinIO (see `prisma/migrate-seafile-to-minio.ts` for the one-off migration script). `SEAFILE_*` and `WIBU_UPLOAD_DIR`/`WIBU_DOWNLOAD_DIR` are still declared in `.env.example` but are leftovers — no active code path reads them (see `docs/DATABASE.md`).
+
+## Operator: `JENNA_CREDENTIALS_KEY`
+
+Provider AI Jenna (base URL, model, API key) diatur di `/admin/developer/jenna` (role DEVELOPER "0"), bukan lewat env. API key disimpan terenkripsi di tabel `JennaProvider` dengan kunci dari `JENNA_CREDENTIALS_KEY`:
+
+- Generate sekali per environment: `openssl rand -hex 32` (64 karakter hex), simpan di env stack.
+- Opsional: tanpa kunci (atau format salah) aplikasi tetap boot, halaman Jenna menampilkan peringatan dan **menolak** menyimpan API key (fail-closed, tidak pernah plaintext).
+- Mengganti/menghapus kunci membuat API key lama tidak bisa didekripsi — tes koneksi akan gagal dan API key harus diisi ulang di halaman Jenna.
 
 ## Operator: backfill ukuran berkas (`FileStorage.size`)
 

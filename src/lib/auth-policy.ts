@@ -17,16 +17,43 @@ export function canManageMenuVisibility(roleId: string | number | null | undefin
   return roleId != null && MENU_VISIBILITY_MANAGER_ROLES.includes(String(roleId));
 }
 
+/** Apakah roleId DEVELOPER ("0") — satu-satunya role yang boleh mengakses menu Developer. */
+export function isDeveloperRole(roleId: string | number | null | undefined): boolean {
+  return roleId != null && String(roleId) === ROLE_DEVELOPER;
+}
+
 // roleId 0-4 = admin (boleh akses /admin); 5+ = user biasa.
 export const MAX_ADMIN_ROLE = 4;
 
-/** Role untuk user Google BARU: SUPER ADMIN jika email terdaftar, else USER. */
+/**
+ * Role dari daftar email env: DEVELOPER bila di developerEmails, SUPER ADMIN bila
+ * di superAdminEmails, else USER. DEVELOPER menang bila email ada di keduanya.
+ */
 export function resolveRoleForNewUser(
   email: string | null | undefined,
-  superAdminEmails: readonly string[],
+  lists: { developerEmails: readonly string[]; superAdminEmails: readonly string[] },
 ): string {
-  if (email && superAdminEmails.includes(email)) return ROLE_SUPER_ADMIN;
+  if (!email) return ROLE_USER;
+  const normalized = email.trim().toLowerCase();
+  const inList = (list: readonly string[]) => list.some((e) => e.toLowerCase() === normalized);
+  if (inList(lists.developerEmails)) return ROLE_DEVELOPER;
+  if (inList(lists.superAdminEmails)) return ROLE_SUPER_ADMIN;
   return ROLE_USER;
+}
+
+/**
+ * Apakah role user existing perlu dinaikkan ke targetRoleId. Hanya menaikkan
+ * (angka lebih kecil = lebih tinggi), supaya env tidak menurunkan role yang
+ * di-set manual, mis. DEVELOPER yang emailnya juga ada di SUPER_ADMIN_EMAIL.
+ * Role non-numerik (custom) dianggap paling rendah.
+ */
+export function shouldPromoteRole(
+  currentRoleId: string | number | null | undefined,
+  targetRoleId: string,
+): boolean {
+  const current = Number(currentRoleId ?? ROLE_USER);
+  if (!Number.isFinite(current)) return true;
+  return Number(targetRoleId) < current;
 }
 
 /** Apakah roleId punya hak akses area admin (roleId <= 4). */
