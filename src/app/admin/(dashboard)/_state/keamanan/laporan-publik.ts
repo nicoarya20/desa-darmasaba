@@ -75,8 +75,6 @@ const laporanPublikState = proxy({
           tanggalWaktu: new Date(laporanPublikState.create.form.tanggalWaktu).toISOString()
         };
         
-        console.log("Sending form data:", formData); // Debug log
-        
         const res = await ApiFetch.api.keamanan.laporanpublik["create"].post(
           formData
         );
@@ -91,7 +89,6 @@ const laporanPublikState = proxy({
           return toast.success("Sukses menambahkan");
         }
         
-        console.log(res);
         return toast.error("failed create");
       } catch (error) {
         console.error("Error creating laporan publik:", error);
