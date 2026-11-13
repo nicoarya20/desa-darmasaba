@@ -193,7 +193,7 @@ const pembiayaan = proxy({
         pembiayaan.delete.loading = true;
 
         const response = await fetch(
-          `/api/ekonomi/pendapatanaslidesa/pembiayaan/del/${id}`,
+          `/api/ekonomi/pendapatanaslidesa/pembiayaan/delete/${id}`,
           {
             method: "DELETE",
             headers: {

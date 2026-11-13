@@ -98,7 +98,8 @@ model FileStorage {
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
   DokumenDesaAntiKorupsi         DokumenDesaAntiKorupsi[]
-  SDGSDesa                       SdgsDesa[]
+  DokumenAPBDes                  DokumenAPBDes[]
+  SDGSDesa                      SdgsDesa[]
   APBDesImage                    APBDes[]                   @relation("APBDesImage")
   APBDesFile                     APBDes[]                   @relation("APBDesFile")
   PrestasiDesa                   PrestasiDesa[]
@@ -109,7 +110,6 @@ model FileStorage {
   MitraKolaborasi MitraKolaborasi[]
 
   ArtikelKesehatan ArtikelKesehatan[]
-  StrukturBumDes   StrukturBumDes[]
 
   MusikDesaAudio MusikDesa[] @relation("MusikAudioFile")
   MusikDesaCover MusikDesa[] @relation("MusikCoverImage")
@@ -118,8 +118,9 @@ model FileStorage {
   KesejahteraanMasyarakat       KesejahteraanMasyarakat[] @relation("KesejahteraanFeaturedImage")
   KesejahteraanMasyarakatImages KesejahteraanMasyarakat[] @relation("KesejahteraanImages")
 
-  ProfilBumDes    ProfilBumDes[]
-  UnitUsahaBumDes UnitUsahaBumDes[]
+  ProfilBumDes     ProfilBumDes[]
+  UnitUsahaBumDes  UnitUsahaBumDes[]
+  FotoProfilBumDes FotoProfilBumDes[]
 
   PerangkatDesa PerangkatDesa[]
 }
@@ -252,12 +253,58 @@ model APBDes {
   items     APBDesItem[]
   image     FileStorage? @relation("APBDesImage", fields: [imageId], references: [id])
   imageId   String?
-  file      FileStorage? @relation("APBDesFile", fields: [fileId], references: [id])
+  // Kolom lama (satu berkas per tahun), digantikan DokumenAPBDes. Migrasi 20261112150000 menyalin
+  // isinya; kolom dipertahankan satu rilis demi rollback & klien lama, lalu dihapus di rilis berikut.
+  file      FileStorage?          @relation("APBDesFile", fields: [fileId], references: [id])
   fileId    String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  dokumen   DokumenAPBDes[]
+  folders   FolderDokumenAPBDes[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
   deletedAt DateTime? // opsional, tidak perlu default now()
-  isActive  Boolean      @default(true)
+  isActive  Boolean               @default(true)
+}
+
+// Satu APBDes (per tahun) bisa punya banyak dokumen (Perdes, laporan semester, dst.), menggantikan
+// kolom tunggal APBDes.fileId. Pola sama dengan DokumenDesaAntiKorupsi agar editor admin dipakai ulang.
+model DokumenAPBDes {
+  id        String               @id @default(cuid())
+  // CASCADE: dokumen tidak berarti tanpa APBDes-nya.
+  apbdes    APBDes               @relation(fields: [apbdesId], references: [id], onDelete: Cascade)
+  apbdesId  String
+  // CASCADE: /api/fileStorage/delete menghapus berkas permanen; RESTRICT akan membuatnya gagal.
+  file      FileStorage          @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId    String
+  // null = dokumen ada di folder virtual "Umum" (bukan baris DB)
+  folder    FolderDokumenAPBDes? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  folderId  String?
+  judul     String
+  urutan    Int                  @default(0)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean              @default(true)
+
+  @@index([apbdesId])
+  @@index([folderId])
+}
+
+// Folder satu tingkat untuk memilah dokumen satu APBDes (nama bebas: "Semester I", "Perdes", ...).
+// Hanya mengelompokkan dokumen; angka anggaran tetap per tahun. Hapus folder = soft delete,
+// dokumennya dipindah ke "Umum" (folderId null), tidak ikut terhapus.
+model FolderDokumenAPBDes {
+  id        String          @id @default(cuid())
+  apbdes    APBDes          @relation(fields: [apbdesId], references: [id], onDelete: Cascade)
+  apbdesId  String
+  nama      String
+  urutan    Int             @default(0)
+  dokumen   DokumenAPBDes[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean         @default(true)
+
+  @@index([apbdesId])
 }
 
 model APBDesItem {
@@ -410,6 +457,8 @@ model PosisiOrganisasiPPID {
   nama                   String                   @db.VarChar(100)
   deskripsi              String?                  @db.Text
   hierarki               Int
+  // Urutan antar-jabatan selevel di bagan (kecil dulu); sama dengan Struktur Perangkat Desa.
+  urutan                 Int                      @default(0)
   pegawai                PegawaiPPID[]
   strukturOrganisasi     StrukturPPID[] // Relasi balik
   parentId               String?
@@ -429,7 +478,8 @@ model PegawaiPPID {
   image                  FileStorage?             @relation(fields: [imageId], references: [id])
   imageId                String?
   tanggalMasuk           DateTime?                @db.Date
-  email                  String?                  @unique @db.VarChar(255)
+  // Tidak unik: email opsional, boleh kosong (null) untuk banyak pegawai.
+  email                  String?                  @db.VarChar(255)
   telepon                String?                  @db.VarChar(20)
   alamat                 String?                  @db.Text
   posisiId               String                   @db.VarChar(50)
@@ -1658,35 +1708,20 @@ model LowonganPekerjaan {
 
 // ========================================= STRUKTUR ORGANISASI ========================================= //
 
-model StrukturBumDes {
-  id                       String                  @id @default(cuid())
-  name                     String                  @db.Text
-  image                    FileStorage?            @relation(fields: [imageId], references: [id])
-  imageId                  String?
-  createdAt                DateTime                @default(now())
-  updatedAt                DateTime                @updatedAt
-  deletedAt                DateTime                @default(now())
-  isActive                 Boolean                 @default(true)
-  PosisiOrganisasiBumDes   PosisiOrganisasiBumDes? @relation(fields: [posisiOrganisasiBumDesId], references: [id])
-  posisiOrganisasiBumDesId String?
-  PegawaiBumDes            PegawaiBumDes?          @relation(fields: [pegawaiBumDesId], references: [id])
-  pegawaiBumDesId          String?
-}
-
 model PosisiOrganisasiBumDes {
   id                       String                     @id @default(cuid())
   nama                     String                     @db.VarChar(100)
   deskripsi                String?                    @db.Text
   hierarki                 Int
+  // Urutan antar-jabatan selevel di bagan (kecil dulu); sama dengan Struktur Perangkat Desa.
+  urutan                   Int                        @default(0)
   pegawai                  PegawaiBumDes[]
-  strukturOrganisasi       StrukturBumDes[] // Relasi balik
   parentId                 String?
   isActive                 Boolean                    @default(true)
   createdAt                DateTime                   @default(now())
   updatedAt                DateTime                   @updatedAt
   parent                   PosisiOrganisasiBumDes?    @relation("Parent", fields: [parentId], references: [id])
   children                 PosisiOrganisasiBumDes[]   @relation("Parent")
-  StrukturOrganisasiBumDes StrukturOrganisasiBumDes[]
 }
 
 model PegawaiBumDes {
@@ -1696,7 +1731,8 @@ model PegawaiBumDes {
   image                    FileStorage?               @relation(fields: [imageId], references: [id])
   imageId                  String?
   tanggalMasuk             DateTime?                  @db.Date
-  email                    String?                    @unique @db.VarChar(255)
+  // Tidak unik: email opsional, boleh kosong (null) untuk banyak pegawai.
+  email                    String?                    @db.VarChar(255)
   telepon                  String?                    @db.VarChar(20)
   alamat                   String?                    @db.Text
   posisiId                 String                     @db.VarChar(50)
@@ -1704,37 +1740,44 @@ model PegawaiBumDes {
   createdAt                DateTime                   @default(now())
   updatedAt                DateTime                   @updatedAt
   posisi                   PosisiOrganisasiBumDes     @relation(fields: [posisiId], references: [id])
-  strukturOrganisasi       StrukturBumDes[] // Relasi balik
-  StrukturOrganisasiBumDes StrukturOrganisasiBumDes[]
-}
-
-model StrukturOrganisasiBumDes {
-  id                   String                 @id @default(uuid())
-  posisiOrganisasiId   String                 @db.VarChar(50)
-  pegawaiId            String
-  hubunganOrganisasiId String
-  posisiOrganisasi     PosisiOrganisasiBumDes @relation(fields: [posisiOrganisasiId], references: [id])
-  pegawai              PegawaiBumDes          @relation(fields: [pegawaiId], references: [id])
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  deletedAt            DateTime?
-  isActive             Boolean                @default(true)
 }
 
 // Profil BUMDes (singleton): satu baris dengan id tetap "profil-bumdes", ditulis lewat upsert.
 model ProfilBumDes {
-  id           String       @id @default("profil-bumdes")
-  nama         String       @db.VarChar(255)
-  deskripsi    String       @db.Text
-  alamat       String?      @db.Text
-  kontak       String?      @db.VarChar(255)
+  id           String             @id @default("profil-bumdes")
+  nama         String             @db.VarChar(255)
+  deskripsi    String             @db.Text
+  alamat       String?            @db.Text
+  kontak       String?            @db.VarChar(255)
   tahunBerdiri Int?
-  image        FileStorage? @relation(fields: [imageId], references: [id])
+  image        FileStorage?       @relation(fields: [imageId], references: [id])
   imageId      String?
-  isActive     Boolean      @default(true)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  isActive     Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
   deletedAt    DateTime?
+  galeri       FotoProfilBumDes[]
+}
+
+// Galeri foto Profil BUMDes. Desa mengirim banyak foto, sedangkan ProfilBumDes.image hanya satu
+// (tetap dipakai sebagai logo/cover), jadi tiap foto galeri butuh baris sendiri dengan keterangan
+// dan urutan tampil. Hapus dari admin = soft delete (FileStorage tidak disentuh). Cascade di kedua FK:
+// foto tidak berarti tanpa profilnya, dan hapus berkas permanen lewat /fileStorage/delete tidak boleh
+// gagal karena berkas masih direferensikan.
+model FotoProfilBumDes {
+  id         String       @id @default(cuid())
+  profil     ProfilBumDes @relation(fields: [profilId], references: [id], onDelete: Cascade)
+  profilId   String       @default("profil-bumdes")
+  image      FileStorage  @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId    String
+  keterangan String?
+  urutan     Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  isActive   Boolean      @default(true)
+  deletedAt  DateTime?
+
+  @@index([profilId, urutan])
 }
 
 // Daftar unit usaha BUMDes; urutan menentukan posisi tampil di halaman publik.

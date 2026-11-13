@@ -1,185 +1,21 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import colors from '@/con/colors';
-import {
-  Box,
-  ScrollArea,
-  Stack,
-  Tabs,
-  TabsList,
-  TabsPanel,
-  TabsTab,
-  Title
-} from '@mantine/core';
-import {
-  IconBuildingCommunity,
-  IconBuildingStore,
-  IconHierarchy,
-  IconId,
-  IconUsers
-} from '@tabler/icons-react';
-import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { strukturTabs } from '@/app/admin/(dashboard)/_com/struktur-organisasi/halaman/StrukturAdminLayout';
+import { StrukturTabs, type StrukturTab } from '@/app/admin/(dashboard)/_com/struktur-organisasi/StrukturTabs';
+import { IconBuildingStore, IconId } from '@tabler/icons-react';
+import type { ReactNode } from 'react';
+import { STRUKTUR_BUMDES_ADMIN } from '../_com/struktur-bumdes.config';
+import { BUMDES_ADMIN_BASE } from '../_com/struktur-bumdes.routes';
 
-function LayoutTabs({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const pathname = usePathname();
+/** Tab admin BUMDes: Profil BUMDes · Unit Usaha, lalu tab struktur bersama Pegawai · Jabatan · Bagan. */
+export const BUMDES_TABS: StrukturTab[] = [
+  { label: 'Profil BUMDes', href: `${BUMDES_ADMIN_BASE}/profil`, icon: <IconId size={18} stroke={1.8} /> },
+  { label: 'Unit Usaha', href: `${BUMDES_ADMIN_BASE}/unit-usaha`, icon: <IconBuildingStore size={18} stroke={1.8} /> },
+  ...strukturTabs(STRUKTUR_BUMDES_ADMIN),
+];
 
-  const tabs = [
-    {
-      label: "Profil BUMDes",
-      value: "profil",
-      href: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/profil",
-      icon: <IconId size={18} stroke={1.8} />
-    },
-    {
-      label: "Unit Usaha",
-      value: "unitusaha",
-      href: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/unit-usaha",
-      icon: <IconBuildingStore size={18} stroke={1.8} />
-    },
-    {
-      label: "Pegawai",
-      value: "pegawai",
-      href: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/pegawai",
-      icon: <IconUsers size={18} stroke={1.8} />
-    },
-    {
-      label: "Posisi Organisasi",
-      value: "posisiorganisasi",
-      href: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/posisi-organisasi",
-      icon: <IconHierarchy size={18} stroke={1.8} />
-    },
-    {
-      label: "Struktur Organisasi",
-      value: "strukturorganisasi",
-      href: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/struktur-organisasi",
-      icon: <IconBuildingCommunity size={18} stroke={1.8} />
-    }
-  ];
-
-  const currentTab = tabs.find((tab) => tab.href === pathname);
-  const [activeTab, setActiveTab] = useState<string | null>(
-    currentTab?.value || tabs[0].value
-  );
-
-  const handleTabChange = (value: string | null) => {
-    const tab = tabs.find((t) => t.value === value);
-    if (tab) {
-      router.push(tab.href);
-    }
-    setActiveTab(value);
-  };
-
-  useEffect(() => {
-    const match = tabs.find((tab) => tab.href === pathname);
-    if (match) {
-      setActiveTab(match.value);
-    }
-  }, [pathname]);
-
-  return (
-    <Stack gap="lg">
-      <Title order={2} fw={700} style={{ color: "#1A1B1E" }}>
-        BUMDes
-      </Title>
-
-      <Tabs
-        color={colors["blue-button"]}
-        variant="pills"
-        value={activeTab}
-        onChange={handleTabChange}
-        radius="lg"
-        keepMounted={false}
-      >
-        {/* ✅ Scroll horizontal biar rapi kalau label panjang */}
-        <Box visibleFrom='md' pb={10}>
-                 <ScrollArea type="hover" offsetScrollbars>
-                   <TabsList
-                     p="sm"
-                     style={{
-                       background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-                       borderRadius: "1rem",
-                       boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-                       display: "flex",
-                       flexWrap: "nowrap",
-                       gap: "0.5rem",
-                       paddingInline: "0.5rem", // ✅ biar nggak nempel ke tepi
-                     }}
-                   >
-                     {tabs.map((tab, i) => (
-                       <TabsTab
-                         key={i}
-                         value={tab.value}
-                         leftSection={tab.icon}
-                         style={{
-                           fontWeight: 600,
-                           fontSize: "0.9rem",
-                           transition: "all 0.2s ease",
-                           flexShrink: 0, // ✅ jangan mengecil aneh-aneh
-                         }}
-                       >
-                         {tab.label}
-                       </TabsTab>
-                     ))}
-                   </TabsList>
-                 </ScrollArea>
-               </Box>
-       
-               <Box hiddenFrom='md' pb={10}>
-                 <ScrollArea
-                   type="hover"
-                   offsetScrollbars={false}
-                   w="100%"
-                 >
-       
-                   <TabsList
-                     p="xs" // lebih kecil
-                     style={{
-                       background: "linear-gradient(135deg, #e7ebf7, #f9faff)",
-                       borderRadius: "1rem",
-                       display: "flex",
-                       flexWrap: "nowrap",
-                       gap: "0.5rem",
-                       width: "max-content", // ⬅️ kunci
-                       maxWidth: "100%",     // ⬅️ penting
-                     }}
-                   >
-                     {tabs.map((tab, i) => (
-                       <TabsTab
-                         key={i}
-                         value={tab.value}
-                         leftSection={tab.icon}
-                         style={{
-                           fontWeight: 600,
-                           fontSize: "0.9rem",
-                           paddingInline: "0.75rem", // ⬅️ lebih ramping
-                           flexShrink: 0, // ✅ jangan mengecil aneh-aneh
-                         }}
-                       >
-                         {tab.label}
-                       </TabsTab>
-                     ))}
-                   </TabsList>
-                 </ScrollArea>
-               </Box>
-        {tabs.map((tab, i) => (
-          <TabsPanel
-            key={i}
-            value={tab.value}
-            style={{
-              padding: "1.5rem",
-              background: "linear-gradient(180deg, #ffffff, #f5f6fa)",
-              borderRadius: "1rem",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
-            }}
-          >
-            {children}
-          </TabsPanel>
-        ))}
-      </Tabs>
-    </Stack >
-  );
+/** Kerangka tab admin BUMDes; halaman tambah/detail/edit (di luar tab) tampil tanpa baris tab. */
+function LayoutTabs({ children }: { children: ReactNode }) {
+  return <StrukturTabs title={STRUKTUR_BUMDES_ADMIN.text.title} tabs={BUMDES_TABS}>{children}</StrukturTabs>;
 }
 
 export default LayoutTabs;

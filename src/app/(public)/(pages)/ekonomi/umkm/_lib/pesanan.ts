@@ -13,6 +13,7 @@ const WA_MOBILE_PREFIX = '8';
 export const PESAN_GAGAL_DEFAULT = 'Gagal membuat pesanan. Silakan coba lagi.';
 export const PESAN_KONEKSI_GAGAL =
   'Tidak dapat terhubung ke server. Periksa koneksi internet lalu coba lagi.';
+export const WA_PENJUAL_TIDAK_VALID = 'Nomor WhatsApp penjual belum tersedia atau tidak valid';
 const PESAN_INPUT_TIDAK_VALID = 'Data pesanan tidak valid. Periksa kembali jumlah pesanan.';
 const HTTP_UNPROCESSABLE = 422;
 
@@ -44,11 +45,12 @@ export type OrderMessageInput = {
 };
 
 const formatRupiah = (n: number) => `Rp ${n.toLocaleString('id-ID')}`;
+const sapaPenjual = (umkmNama?: string | null) => `Halo *${umkmNama ?? 'Penjual'}*`;
 
 /** Teks pesan WhatsApp ke penjual. */
 export function buildOrderMessage(o: OrderMessageInput): string {
   return [
-    `Halo *${o.umkmNama ?? 'Penjual'}*, saya ingin memesan:`,
+    `${sapaPenjual(o.umkmNama)}, saya ingin memesan:`,
     '',
     `*${o.produkNama}*`,
     `Jumlah: ${withSatuan(o.jumlah, o.satuan)}`,
@@ -65,6 +67,23 @@ export function buildOrderMessage(o: OrderMessageInput): string {
 /** URL wa.me siap dipakai sebagai href tautan. */
 export function buildWaUrl(waNumber: string, message: string): string {
   return `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+}
+
+export type HubungiPenjualInput = {
+  kontak?: string | null;
+  umkmNama?: string | null;
+  produkNama: string;
+};
+
+/** Pesan pembuka WhatsApp untuk menanyakan produk (tanpa pesanan tercatat). */
+export function buildHubungiPenjualMessage(o: Omit<HubungiPenjualInput, 'kontak'>): string {
+  return `${sapaPenjual(o.umkmNama)}, saya tertarik dengan produk *${o.produkNama}*. Apakah masih tersedia?`;
+}
+
+/** URL wa.me untuk menghubungi penjual; null bila nomor kontak UMKM tidak valid. */
+export function buildHubungiPenjualUrl(o: HubungiPenjualInput): string | null {
+  const waNumber = normalizeWaNumber(o.kontak);
+  return waNumber ? buildWaUrl(waNumber, buildHubungiPenjualMessage(o)) : null;
 }
 
 type ApiResult = {

@@ -19,21 +19,21 @@ const { prismaMock, minioMock } = vi.hoisted(() => ({
       update: vi.fn(),
       delete: vi.fn(),
     },
-    fileStorage: { delete: vi.fn() },
+    // findUnique: path/nama berkas dibaca purgeStoredFile sebelum baris & objek MinIO dihapus.
+    fileStorage: { delete: vi.fn(), findUnique: vi.fn(async () => ({ path: "image", name: "lama.webp" })) },
   },
   minioMock: { removeObject: vi.fn() },
 }));
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
 vi.mock("@/lib/minio", () => ({ default: minioMock, MINIO_BUCKET: "bucket-test" }));
+vi.mock("@/app/api/[[...slugs]]/_lib/fileStorage/_lib/fileReferences", () => ({ isFileReferenced: vi.fn(async () => false) }));
 
-import posisiCreate from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/posisi/create";
-import posisiUpdate from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/posisi/updt";
-import posisiDelete from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/posisi/del";
-import posisiFindManyAll from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/posisi/findManyAll";
-import pegawaiCreate from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/pegawai/create";
-import pegawaiUpdate from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/pegawai/updt";
-import pegawaiDelete from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/pegawai/del";
-import pegawaiFindMany from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/pegawai/findMany";
+import { strukturPerangkatHandlers } from "@/app/api/[[...slugs]]/_lib/desa/struktur-perangkat/handlers";
+
+const {
+  posisi: { create: posisiCreate, update: posisiUpdate, delete: posisiDelete, findManyAll: posisiFindManyAll },
+  pegawai: { create: pegawaiCreate, update: pegawaiUpdate, delete: pegawaiDelete, findMany: pegawaiFindMany },
+} = strukturPerangkatHandlers;
 
 const posisiDb = prismaMock.posisiPerangkatDesa;
 const pegawaiDb = prismaMock.perangkatDesa;

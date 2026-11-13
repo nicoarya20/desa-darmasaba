@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 const kontakDaruratDelete = async (context: Context) => {
     const id = context.params?.id as string;
@@ -24,21 +24,14 @@ const kontakDaruratDelete = async (context: Context) => {
         };
     }
 
-    // Hapus file gambar dari filesystem jika ada
-    if (kontakDarurat.image) {
-        try {
-            await minio.removeObject(MINIO_BUCKET, `${kontakDarurat.image.path}/${kontakDarurat.image.name}`);
-            await prisma.fileStorage.delete({
-                where: { id: kontakDarurat.image.id },
-              });
-        } catch (error) {
-            console.error("Error deleting image file:", error);
-        }
-    }
-
     await prisma.kontakDarurat.delete({
         where: { id },
     });
+
+    // Hapus file gambar dari filesystem jika ada
+    if (kontakDarurat.image) {
+        await removeStoredFile(kontakDarurat.image, "KontakDarurat");
+    }
 
     return {
         status: 200,

@@ -2,10 +2,21 @@
 
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { requireAuth } from '@/lib/api-auth'
+import { canManageMenuAccess, canReadMenuAccess } from '@/lib/auth-policy'
 
-// ❌ HAPUS { params } karena tidak dipakai
+const forbidden = () =>
+  NextResponse.json(
+    { success: false, message: 'Forbidden - Anda tidak berhak mengelola menu akses user ini' },
+    { status: 403 }
+  )
+
+/** Menu Access user: milik sendiri (semua role) atau user lain (hanya role 0/1). */
 export async function GET(request: Request) {
   try {
+    const authResult = await requireAuth()
+    if (!authResult.authenticated) return authResult.response
+
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('userId')
 
@@ -15,6 +26,8 @@ export async function GET(request: Request) {
         { status: 400 }
       )
     }
+
+    if (!canReadMenuAccess(authResult.user, userId)) return forbidden()
 
     const menuAccess = await prisma.userMenuAccess.findMany({
       where: { userId },
@@ -34,9 +47,13 @@ export async function GET(request: Request) {
   }
 }
 
-// POST tetap sama (tanpa perubahan)
+/** Ganti seluruh Menu Access seorang user — hanya role 0/1. */
 export async function POST(request: Request) {
   try {
+    const authResult = await requireAuth()
+    if (!authResult.authenticated) return authResult.response
+    if (!canManageMenuAccess(authResult.user.roleId)) return forbidden()
+
     const { userId, menuIds } = await request.json()
 
     if (!userId || !Array.isArray(menuIds)) {

@@ -31,6 +31,14 @@ MINIO_USE_SSL="..."
 
 Seafile has been fully replaced by MinIO (see `prisma/migrate-seafile-to-minio.ts` for the one-off migration script). `SEAFILE_*` and `WIBU_UPLOAD_DIR`/`WIBU_DOWNLOAD_DIR` are still declared in `.env.example` but are leftovers — no active code path reads them (see `docs/DATABASE.md`).
 
+## Sampah: purge otomatis (scheduler in-app)
+
+Dokumen DAK, dokumen APBDes, foto galeri BUMDes, dan dokumen perencanaan yang dihapus masuk Sampah fiturnya masing-masing
+dan dihapus permanen setelah 30 hari oleh scheduler di dalam proses aplikasi (`src/instrumentation.ts`): sekali 5 menit setelah server start, lalu tiap
+24 jam. Tidak ada cron/infra tambahan. Saklar env `SAMPAH_PURGE_SCHEDULER=on|off` (kosong = on hanya di
+production). Keterbatasan: hanya jalan selama server hidup; bila ada >1 instance, tiap instance menjalankan purge
+(aman — hapus idempoten, hanya kerja dobel). Detail: `docs/decisions/2026-11-12-sampah.md`.
+
 ## Operator: backfill ukuran berkas (`FileStorage.size`)
 
 Migrasi `20261109150000_add_file_storage_size` menambah kolom `FileStorage.size` (byte, nullable). Upload baru langsung mengisinya; baris lama tetap `NULL` sampai backfill dijalankan **sekali** setelah migrasi, dari container/host yang punya `DATABASE_URL` + env MinIO yang sama dengan aplikasi:

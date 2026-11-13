@@ -1,0 +1,26 @@
+/** Teks UI halaman detail Laporan Publik. */
+export const LAPORAN_DETAIL_TEXT = {
+  kategori: "Laporan Publik",
+  lokasi: "Lokasi",
+  waktu: "Waktu kejadian",
+  lokasiEmpty: "Belum diisi",
+  waktuEmpty: "Belum diisi",
+  linimasa: "Perkembangan laporan",
+  kronologi: "Kronologi",
+  kronologiEmpty: "Kronologi belum diisi pelapor.",
+  penanganan: "Penanganan",
+  penangananN: (n: number) => `Penanganan ${n}`,
+  penangananEmpty: "Belum ada penanganan dari pemerintah desa.",
+  statusTitle: "Status saat ini",
+  statusDesc: {
+    Selesai: "Laporan sudah selesai ditangani.",
+    Proses: "Laporan sedang ditindaklanjuti.",
+    Gagal: "Laporan ditutup tanpa penyelesaian.",
+    Baru: "Laporan baru diterima dan menunggu tindak lanjut.",
+  } as Record<string, string>,
+  loading: "Memuat detail laporan publik",
+  notFound: "Laporan tidak ditemukan atau sudah tidak ditampilkan.",
+  error: "Detail laporan gagal dimuat. Coba muat ulang halaman.",
+  backToList: "Lihat semua laporan",
+  retry: "Coba lagi",
+} as const;

@@ -25,4 +25,6 @@ Auth was rewritten to **Better Auth with Google OAuth only** (no more phone OTP)
 ## File Handling
 All uploaded files reference the `FileStorage` Prisma model. **MinIO is the primary and only active storage backend** — see `src/lib/minio.ts` and usage in `src/app/api/[[...slugs]]/_lib/fileStorage/_lib/{create,del,findUniq}.ts` and `upl-img*.ts` (configured via `MINIO_ENDPOINT`/`MINIO_ACCESS_KEY`/`MINIO_SECRET_KEY`/`MINIO_BUCKET`/`MINIO_USE_SSL`).
 
+**Hapus berkas = permanen**, lewat `removeStoredFile(file, "<Model>")` SETELAH operasi DB record sukses (baris FileStorage dulu, lalu objek MinIO; berkas yang masih dirujuk FK lain dibiarkan). Jangan panggil `minio.removeObject`/`fileStorage.delete` langsung dari handler fitur. Sampah (soft delete + purge 30 hari) hanya untuk 4 fitur koleksi: dokumen DAK, dokumen APBDes, galeri foto BUMDes, dokumen perencanaan — lihat `docs/decisions/2026-11-12-sampah.md`.
+
 Seafile was the previous storage backend and has been fully migrated to MinIO (`prisma/migrate-seafile-to-minio.ts`). `WIBU_UPLOAD_DIR` (local disk) and Seafile (`src/lib/seafile-auth-service.ts`, `SEAFILE_*` env vars) are both leftovers — still declared in `.env.example` but not referenced by any active upload/read/delete path. Don't rely on either for new file-handling code; use MinIO.

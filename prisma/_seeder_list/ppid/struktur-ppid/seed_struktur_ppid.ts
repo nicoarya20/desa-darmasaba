@@ -1,3 +1,4 @@
+import { gabungGelarKeNama } from "@/lib/struktur-organisasi";
 import prisma from "../../../seed-prisma";
 import { loadJsonData } from "../../../load-json";
 
@@ -20,6 +21,8 @@ interface PosisiOrganisasiPPID {
   deskripsi: string;
   hierarki: number;
   parentId: string | null;
+  /** Urutan antar-jabatan selevel; bila tidak ada di JSON, kolom memakai default DB (0). */
+  urutan?: number;
 }
 
 const pegawaiPpid = loadJsonData<PegawaiPPID[]>("ppid/struktur-ppid/pegawai-PPID.json");
@@ -74,9 +77,11 @@ const flattenedPosisi = posisiOrganisasiPPID.flat();
 
     await prisma.pegawaiPPID.upsert({
       where: { id: m.id },
+      // Gelar digabung ke nama (aturan sama dengan migrasi struktur_fleksibel) agar seed ulang tidak
+      // memisahkan gelar lagi; form admin tidak lagi punya field gelar.
       update: {
-        namaLengkap: m.namaLengkap,
-        gelarAkademik: m.gelarAkademik,
+        namaLengkap: gabungGelarKeNama(m.namaLengkap, m.gelarAkademik),
+        gelarAkademik: null,
         tanggalMasuk: m.tanggalMasuk,
         email: m.email,
         telepon: m.telepon,
@@ -87,8 +92,8 @@ const flattenedPosisi = posisiOrganisasiPPID.flat();
       },
       create: {
         id: m.id,
-        namaLengkap: m.namaLengkap,
-        gelarAkademik: m.gelarAkademik,
+        namaLengkap: gabungGelarKeNama(m.namaLengkap, m.gelarAkademik),
+        gelarAkademik: null,
         tanggalMasuk: m.tanggalMasuk,
         email: m.email,
         telepon: m.telepon,

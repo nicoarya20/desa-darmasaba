@@ -1,0 +1,166 @@
+/*
+ * Halaman CCTV Keamanan Desa: gaya halaman APBDes/Monev (apbdes.module.css: .section, .card, .panel, …).
+ * File ini hanya menambah ringkasan dan ubin kosong/galat; variabel warna (--ink, --muted, --subtle, --tile,
+ * --line, --radius, --brand) diwarisi dari .section APBDes. Breakpoint apple.com: ≤1068px dan ≤734px.
+ */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Ringkasan ---------- */
+.summaryWrap > :last-child {
+  margin-top: 14px;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.unit {
+  margin-left: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+.foot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: auto 0 0;
+  padding-top: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.footLine {
+  color: var(--subtle);
+}
+
+/* ---------- Kosong / galat ---------- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--tile);
+  border-radius: var(--radius);
+}
+
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brand-tint);
+  color: var(--brand);
+}
+
+.emptyTitle {
+  margin: 4px 0 0;
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.emptyBody {
+  margin: 0;
+  max-width: 520px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.retry {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--brand);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.retry:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .retry:hover {
+    background: #e8e8ed;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .body {
+    gap: 12px;
+  }
+
+  /* Ubin jumlah titik selebar penuh; online + offline berdampingan di bawahnya (bukan 3 bertumpuk). */
+  .summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .summary > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .small {
+    padding: 18px;
+  }
+
+  .small > :first-child {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .small .cardLabel {
+    font-size: 15px;
+  }
+
+  .small .smallAmount {
+    font-size: 28px;
+  }
+
+  .small .unit {
+    margin-left: 6px;
+    font-size: 15px;
+  }
+
+  .foot {
+    padding-top: 14px;
+    font-size: 13px;
+  }
+
+  .summaryWrap > :last-child {
+    text-align: left;
+  }
+
+  .empty {
+    padding: 36px 20px;
+  }
+
+  .emptyTitle {
+    font-size: 19px;
+  }
+
+  .emptyBody {
+    font-size: 15px;
+  }
+}

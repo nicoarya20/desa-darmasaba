@@ -6,6 +6,10 @@ import {
   type ProgramInovasiUpdateBody,
 } from "@/lib/program-inovasi";
 import { Context } from "elysia";
+import removeReleasedFiles, { fileIds } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
+
+/** Rujukan berkas (logo + galeri) yang dibandingkan sebelum/sesudah update. */
+const GAMBAR_SELECT = { imageId: true, images: { select: { id: true } } } as const;
 
 export default async function programInovasiUpdate(context: Context) {
   const body = context.body as ProgramInovasiUpdateBody;
@@ -26,6 +30,7 @@ export default async function programInovasiUpdate(context: Context) {
   }
 
   try {
+    const before = await prisma.programInovasi.findUnique({ where: { id }, select: GAMBAR_SELECT });
     const updated = await prisma.programInovasi.update({
       where: { id },
       data: {
@@ -37,6 +42,11 @@ export default async function programInovasiUpdate(context: Context) {
         images: true,
       },
     });
+    await removeReleasedFiles(
+      "ProgramInovasi",
+      fileIds(before?.imageId, before?.images ?? []),
+      fileIds(updated.imageId, updated.images),
+    );
 
     return {
       success: true,

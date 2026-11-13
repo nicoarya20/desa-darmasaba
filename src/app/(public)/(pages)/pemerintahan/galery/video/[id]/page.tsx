@@ -80,7 +80,7 @@ export default function DetailVideoUser() {
         <Button
           leftSection={<IconArrowBack size={16} />}
           mt="md"
-          onClick={() => router.push('/galeri/video')}
+          onClick={() => router.push('/pemerintahan/galery/video')}
           variant="outline"
         >
           Kembali ke Galeri

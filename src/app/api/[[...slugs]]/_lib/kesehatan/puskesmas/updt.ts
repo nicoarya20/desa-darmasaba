@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 type FormUpdate = Prisma.PuskesmasGetPayload<{
   select: {
@@ -60,20 +60,6 @@ export default async function puskesmasUpdate(context: Context) {
       );
     }
 
-    if (existing.imageId && existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        try {
-          await minio.removeObject(MINIO_BUCKET, `${oldImage.path}/${oldImage.name}`);
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (err) {
-          console.error("Gagal hapus gambar lama:", err);
-        }
-      }
-    }
-
     await prisma.jamOperasional.update({
       where: { id: existing.jamId },
       data: {
@@ -103,6 +89,13 @@ export default async function puskesmasUpdate(context: Context) {
         kontakId: kontak.id,
       },
     });
+
+    if (existing.imageId && existing.imageId !== imageId) {
+      const oldImage = existing.image;
+      if (oldImage) {
+        await removeStoredFile(oldImage, "Puskesmas");
+      }
+    }
 
     return new Response(
       JSON.stringify({

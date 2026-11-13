@@ -17,7 +17,7 @@ import {
   TableTr,
   Text
 } from '@mantine/core';
-import { IconArrowBack, IconEdit, IconFile, IconTrash } from '@tabler/icons-react';
+import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -25,6 +25,8 @@ import colors from '@/con/colors';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import apbdes from '../../../_state/landing-page/apbdes';
 import RealisasiManager from './RealisasiManager';
+import { ApbdesDokumenList } from '../_com/ApbdesDokumenList';
+import { SampahPanel } from '../../../_com/sampah/SampahPanel';
 
 
 
@@ -129,22 +131,8 @@ function DetailAPBDes() {
 
               <Box>
                 <Text fz="lg" fw="bold">Dokumen</Text>
-                {data.file?.link ? (
-                  <Button
-                    component="a"
-                    href={data.file.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="light"
-                    leftSection={<IconFile size={18} />}
-                    size="sm"
-                    mt="xs"
-                  >
-                    Lihat Dokumen
-                  </Button>
-                ) : (
-                  <Text fz="sm" c="dimmed">Tidak ada dokumen</Text>
-                )}
+                <ApbdesDokumenList apbdes={data} />
+                <SampahPanel sumber="dokumen-apbdes" scopeId={data.id} onPulihkan={() => apbdesState.findUnique.load(data.id)} />
               </Box>
 
               <Group gap="sm" mt="md">

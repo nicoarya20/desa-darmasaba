@@ -87,10 +87,21 @@ export function summarizeApbdes(items: readonly APBDesItem[]): CategorySummary[]
   return TIPE_ORDER.map((tipe) => summarizeCategory(tipe, items));
 }
 
-/** Daftar tahun unik, terbaru di depan. */
-export function listYears(data: readonly Pick<APBDes, "tahun">[]): number[] {
-  const years = data.map((d) => d.tahun).filter((t): t is number => typeof t === "number");
-  return Array.from(new Set(years)).sort((a, b) => b - a);
+type YearEntry = { tahun?: number | null; items?: readonly unknown[] | null };
+
+function newestByYear<T extends YearEntry>(list: readonly T[]): T | null {
+  let best: T | null = null;
+  for (const a of list) {
+    if (typeof a.tahun !== "number") continue;
+    if (best === null || a.tahun > (best.tahun ?? -Infinity)) best = a;
+  }
+  return best;
+}
+
+/** APBDes publik yang ditampilkan: tahun terbesar yang sudah punya item; bila tak ada, tahun terbesar apa pun. */
+export function pickLatestApbdes<T extends YearEntry>(list: readonly T[] | null | undefined): T | null {
+  if (!list) return null;
+  return newestByYear(list.filter((a) => (a.items?.length ?? 0) > 0)) ?? newestByYear(list);
 }
 
 const rupiahFormatter = new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 });

@@ -1,16 +1,22 @@
-export type NavChild = { id: string; name: string; path: string }
-export type NavItem = { id: string; name: string; path: string; children?: NavChild[] }
+// ID adalah kontrak permanen: tersimpan di tabel UserMenuAccess (menuId).
+// - ID section ("Landing Page", "Desa", …) = akses ke SEMUA submenu-nya. Jangan diubah.
+// - ID submenu = slug `<section-slug>.<submenu-slug>` = akses ke submenu itu saja.
+// basePath = prefix folder route yang dicakup menu (halaman list/create/edit/kategori
+// di bawahnya), dicocokkan per segmen oleh menu-access.logic.ts. Dijaga contract test
+// __tests__/api/menu_access_ids.contract.test.ts — jangan ubah tanpa migrasi data.
+export type NavChild = { id: string; name: string; path: string; basePath: string }
+export type NavItem = { id: string; name: string; path: string; basePath?: string; children?: NavChild[] }
 
 export const landingPageMenu: NavItem = {
   id: "Landing Page",
   name: "Landing Page",
   path: "",
   children: [
-    { id: "Landing_Page_1", name: "Profil", path: "/admin/landing-page/profil/program-inovasi" },
-    { id: "Landing_Page_2", name: "Desa Anti Korupsi", path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi" },
-    { id: "Landing_Page_3", name: "SDGs", path: "/admin/landing-page/SDGs" },
-    { id: "Landing_Page_4", name: "APBDes", path: "/admin/landing-page/apbdes" },
-    { id: "Landing_Page_5", name: "Prestasi dan Penghargaan", path: "/admin/landing-page/prestasi-desa/list-prestasi-desa" },
+    { id: "landing-page.profil", name: "Profil", path: "/admin/landing-page/profil/program-inovasi", basePath: "/admin/landing-page/profil" },
+    { id: "landing-page.desa-anti-korupsi", name: "Desa Anti Korupsi", path: "/admin/landing-page/desa-anti-korupsi/list-desa-anti-korupsi", basePath: "/admin/landing-page/desa-anti-korupsi" },
+    { id: "landing-page.sdgs", name: "SDGs", path: "/admin/landing-page/SDGs", basePath: "/admin/landing-page/SDGs" },
+    { id: "landing-page.apbdes", name: "APBDes", path: "/admin/landing-page/apbdes", basePath: "/admin/landing-page/apbdes" },
+    { id: "landing-page.prestasi-desa", name: "Prestasi dan Penghargaan", path: "/admin/landing-page/prestasi-desa/list-prestasi-desa", basePath: "/admin/landing-page/prestasi-desa" },
   ],
 }
 
@@ -19,14 +25,14 @@ export const ppidMenu: NavItem = {
   name: "PPID",
   path: "",
   children: [
-    { id: "PPID_1", name: "Profil PPID", path: "/admin/ppid/profil-ppid" },
-    { id: "PPID_2", name: "Struktur PPID", path: "/admin/ppid/struktur-ppid/pegawai" },
-    { id: "PPID_3", name: "Visi Misi PPID", path: "/admin/ppid/visi-misi-ppid" },
-    { id: "PPID_4", name: "Dasar Hukum", path: "/admin/ppid/dasar-hukum" },
-    { id: "PPID_5", name: "Permohonan Informasi Publik", path: "/admin/ppid/permohonan-informasi-publik" },
-    { id: "PPID_6", name: "Permohonan Keberatan Informasi Publik", path: "/admin/ppid/permohonan-keberatan-informasi-publik" },
-    { id: "PPID_7", name: "Daftar Informasi Publik", path: "/admin/ppid/daftar-informasi-publik" },
-    { id: "PPID_8", name: "Indeks Kepuasan Masyarakat", path: "/admin/ppid/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat" },
+    { id: "ppid.profil-ppid", name: "Profil PPID", path: "/admin/ppid/profil-ppid", basePath: "/admin/ppid/profil-ppid" },
+    { id: "ppid.struktur-ppid", name: "Struktur PPID", path: "/admin/ppid/struktur-ppid/pegawai", basePath: "/admin/ppid/struktur-ppid" },
+    { id: "ppid.visi-misi-ppid", name: "Visi Misi PPID", path: "/admin/ppid/visi-misi-ppid", basePath: "/admin/ppid/visi-misi-ppid" },
+    { id: "ppid.dasar-hukum", name: "Dasar Hukum", path: "/admin/ppid/dasar-hukum", basePath: "/admin/ppid/dasar-hukum" },
+    { id: "ppid.permohonan-informasi-publik", name: "Permohonan Informasi Publik", path: "/admin/ppid/permohonan-informasi-publik", basePath: "/admin/ppid/permohonan-informasi-publik" },
+    { id: "ppid.permohonan-keberatan-informasi-publik", name: "Permohonan Keberatan Informasi Publik", path: "/admin/ppid/permohonan-keberatan-informasi-publik", basePath: "/admin/ppid/permohonan-keberatan-informasi-publik" },
+    { id: "ppid.daftar-informasi-publik", name: "Daftar Informasi Publik", path: "/admin/ppid/daftar-informasi-publik", basePath: "/admin/ppid/daftar-informasi-publik" },
+    { id: "ppid.indeks-kepuasan-masyarakat", name: "Indeks Kepuasan Masyarakat", path: "/admin/ppid/indeks-kepuasan-masyarakat/grafik-kepuasan-masyarakat", basePath: "/admin/ppid/indeks-kepuasan-masyarakat" },
   ],
 }
 
@@ -35,16 +41,16 @@ export const desaMenu: NavItem = {
   name: "Pemerintahan",
   path: "",
   children: [
-    { id: "Desa_1", name: "Profil", path: "/admin/pemerintahan/profil/profil-desa" },
-    { id: "Desa_2", name: "Potensi", path: "/admin/pemerintahan/potensi/list-potensi" },
-    { id: "Desa_3", name: "Berita", path: "/admin/pemerintahan/berita/list-berita" },
-    { id: "Desa_4", name: "Pengumuman", path: "/admin/pemerintahan/pengumuman/list-pengumuman" },
-    { id: "Desa_5", name: "Gallery", path: "/admin/pemerintahan/gallery/foto" },
-    { id: "Desa_6", name: "Layanan", path: "/admin/pemerintahan/layanan/pelayanan_surat_keterangan" },
-    { id: "Desa_8", name: "Kegiatan Desa", path: "/admin/pemerintahan/kegiatan-desa/list-kegiatan-desa" },
-    { id: "Desa_9", name: "Agenda & Kalender Desa", path: "/admin/pemerintahan/event-budaya" },
-    { id: "Desa_10", name: "Banjar", path: "/admin/pemerintahan/banjar" },
-    { id: "Desa_11", name: "Struktur Perangkat Desa", path: "/admin/pemerintahan/struktur-perangkat-desa/pegawai" },
+    { id: "desa.profil", name: "Profil", path: "/admin/pemerintahan/profil/profil-desa", basePath: "/admin/pemerintahan/profil" },
+    { id: "desa.potensi", name: "Potensi", path: "/admin/pemerintahan/potensi/list-potensi", basePath: "/admin/pemerintahan/potensi" },
+    { id: "desa.berita", name: "Berita", path: "/admin/pemerintahan/berita/list-berita", basePath: "/admin/pemerintahan/berita" },
+    { id: "desa.pengumuman", name: "Pengumuman", path: "/admin/pemerintahan/pengumuman/list-pengumuman", basePath: "/admin/pemerintahan/pengumuman" },
+    { id: "desa.gallery", name: "Gallery", path: "/admin/pemerintahan/gallery/foto", basePath: "/admin/pemerintahan/gallery" },
+    { id: "desa.layanan", name: "Layanan", path: "/admin/pemerintahan/layanan/pelayanan_surat_keterangan", basePath: "/admin/pemerintahan/layanan" },
+    { id: "desa.kegiatan-desa", name: "Kegiatan Desa", path: "/admin/pemerintahan/kegiatan-desa/list-kegiatan-desa", basePath: "/admin/pemerintahan/kegiatan-desa" },
+    { id: "desa.event-budaya", name: "Agenda & Kalender Desa", path: "/admin/pemerintahan/event-budaya", basePath: "/admin/pemerintahan/event-budaya" },
+    { id: "desa.banjar", name: "Banjar", path: "/admin/pemerintahan/banjar", basePath: "/admin/pemerintahan/banjar" },
+    { id: "desa.struktur-perangkat-desa", name: "Struktur Perangkat Desa", path: "/admin/pemerintahan/struktur-perangkat-desa/pegawai", basePath: "/admin/pemerintahan/struktur-perangkat-desa" },
   ],
 }
 
@@ -53,13 +59,13 @@ export const kesehatanMenu: NavItem = {
   name: "Kesehatan",
   path: "",
   children: [
-    { id: "Kesehatan_1", name: "Posyandu", path: "/admin/kesehatan/posyandu/list-posyandu" },
-    { id: "Kesehatan_2", name: "Data Kesehatan Warga", path: "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian" },
-    { id: "Kesehatan_3", name: "Puskesmas", path: "/admin/kesehatan/puskesmas" },
-    { id: "Kesehatan_4", name: "Program Kesehatan", path: "/admin/kesehatan/program-kesehatan" },
-    { id: "Kesehatan_5", name: "Penanganan Darurat", path: "/admin/kesehatan/penanganan-darurat" },
-    { id: "Kesehatan_6", name: "Kontak Darurat", path: "/admin/kesehatan/kontak-darurat" },
-    { id: "Kesehatan_7", name: "Info Wabah/Penyakit", path: "/admin/kesehatan/info-wabah-penyakit" },
+    { id: "kesehatan.posyandu", name: "Posyandu", path: "/admin/kesehatan/posyandu/list-posyandu", basePath: "/admin/kesehatan/posyandu" },
+    { id: "kesehatan.data-kesehatan-warga", name: "Data Kesehatan Warga", path: "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian", basePath: "/admin/kesehatan/data-kesehatan-warga" },
+    { id: "kesehatan.puskesmas", name: "Puskesmas", path: "/admin/kesehatan/puskesmas", basePath: "/admin/kesehatan/puskesmas" },
+    { id: "kesehatan.program-kesehatan", name: "Program Kesehatan", path: "/admin/kesehatan/program-kesehatan", basePath: "/admin/kesehatan/program-kesehatan" },
+    { id: "kesehatan.penanganan-darurat", name: "Penanganan Darurat", path: "/admin/kesehatan/penanganan-darurat", basePath: "/admin/kesehatan/penanganan-darurat" },
+    { id: "kesehatan.kontak-darurat", name: "Kontak Darurat", path: "/admin/kesehatan/kontak-darurat", basePath: "/admin/kesehatan/kontak-darurat" },
+    { id: "kesehatan.info-wabah-penyakit", name: "Info Wabah/Penyakit", path: "/admin/kesehatan/info-wabah-penyakit", basePath: "/admin/kesehatan/info-wabah-penyakit" },
   ],
 }
 
@@ -68,13 +74,13 @@ export const keamananMenu: NavItem = {
   name: "Keamanan",
   path: "",
   children: [
-    { id: "Keamanan_1", name: "Keamanan Lingkungan (Pecalang/Patwal)", path: "/admin/keamanan/keamanan-lingkungan-pecalang-patwal" },
-    { id: "Keamanan_2", name: "Polsek Terdekat", path: "/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat" },
-    { id: "Keamanan_3", name: "Kontak Darurat", path: "/admin/keamanan/kontak-darurat/kontak-darurat-keamanan" },
-    { id: "Keamanan_4", name: "Pencegahan Kriminalitas", path: "/admin/keamanan/pencegahan-kriminalitas" },
-    { id: "Keamanan_5", name: "Laporan Publik", path: "/admin/keamanan/laporan-publik" },
-    { id: "Keamanan_6", name: "Tips Keamanan", path: "/admin/keamanan/tips-keamanan" },
-    { id: "Keamanan_7", name: "CCTV", path: "/admin/keamanan/cctv" },
+    { id: "keamanan.keamanan-lingkungan-pecalang-patwal", name: "Keamanan Lingkungan (Pecalang/Patwal)", path: "/admin/keamanan/keamanan-lingkungan-pecalang-patwal", basePath: "/admin/keamanan/keamanan-lingkungan-pecalang-patwal" },
+    { id: "keamanan.polsek-terdekat", name: "Polsek Terdekat", path: "/admin/keamanan/polsek-terdekat/daftar-polsek-terdekat", basePath: "/admin/keamanan/polsek-terdekat" },
+    { id: "keamanan.kontak-darurat", name: "Kontak Darurat", path: "/admin/keamanan/kontak-darurat/kontak-darurat-keamanan", basePath: "/admin/keamanan/kontak-darurat" },
+    { id: "keamanan.pencegahan-kriminalitas", name: "Pencegahan Kriminalitas", path: "/admin/keamanan/pencegahan-kriminalitas", basePath: "/admin/keamanan/pencegahan-kriminalitas" },
+    { id: "keamanan.laporan-publik", name: "Laporan Publik", path: "/admin/keamanan/laporan-publik", basePath: "/admin/keamanan/laporan-publik" },
+    { id: "keamanan.tips-keamanan", name: "Tips Keamanan", path: "/admin/keamanan/tips-keamanan", basePath: "/admin/keamanan/tips-keamanan" },
+    { id: "keamanan.cctv", name: "CCTV", path: "/admin/keamanan/cctv", basePath: "/admin/keamanan/cctv" },
   ],
 }
 
@@ -83,17 +89,18 @@ export const ekonomiMenu: NavItem = {
   name: "Ekonomi",
   path: "",
   children: [
-    { id: "Ekonomi_UMKM_1", name: "UMKM", path: "/admin/ekonomi/umkm/dashboard" },
-    { id: "Ekonomi_2", name: "Lowongan Kerja Lokal", path: "/admin/ekonomi/lowongan-kerja-lokal" },
-    { id: "Ekonomi_3", name: "BUMDes", path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/profil" },
-    { id: "Ekonomi_4", name: "PADesa (Pendapatan Asli Desa)", path: "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa" },
-    { id: "Ekonomi_5", name: "Jumlah Pengangguran", path: "/admin/ekonomi/jumlah-pengangguran" },
-    { id: "Ekonomi_6", name: "Jumlah penduduk usia kerja yang menganggur", path: "/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia" },
-    { id: "Ekonomi_7", name: "Jumlah Penduduk Miskin", path: "/admin/ekonomi/jumlah-penduduk-miskin" },
-    { id: "Ekonomi_8", name: "Program Pengentasan Kemiskinan", path: "/admin/ekonomi/program-kemiskinan" },
-    { id: "Ekonomi_9", name: "Sektor Unggulan Desa", path: "/admin/ekonomi/sektor-unggulan-desa" },
-    { id: "Ekonomi_10", name: "Demografi Pekerjaan", path: "/admin/ekonomi/demografi-pekerjaan" },
-    { id: "Ekonomi_11", name: "Kesejahteraan Masyarakat", path: "/admin/ekonomi/kesejahteraan-masyarakat" },
+    // UMKM masuk lewat Data UMKM selama tab Dashboard disembunyikan — docs/debt/2026-11-12-umkm-tab-disembunyikan.md
+    { id: "ekonomi.umkm", name: "UMKM", path: "/admin/ekonomi/umkm/data-umkm", basePath: "/admin/ekonomi/umkm" },
+    { id: "ekonomi.lowongan-kerja-lokal", name: "Lowongan Kerja Lokal", path: "/admin/ekonomi/lowongan-kerja-lokal", basePath: "/admin/ekonomi/lowongan-kerja-lokal" },
+    { id: "ekonomi.bumdes", name: "BUMDes", path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/profil", basePath: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes" },
+    { id: "ekonomi.padesa", name: "PADesa (Pendapatan Asli Desa)", path: "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa", basePath: "/admin/ekonomi/PADesa-pendapatan-asli-desa" },
+    { id: "ekonomi.jumlah-pengangguran", name: "Jumlah Pengangguran", path: "/admin/ekonomi/jumlah-pengangguran", basePath: "/admin/ekonomi/jumlah-pengangguran" },
+    { id: "ekonomi.jumlah-penduduk-usia-kerja-yang-menganggur", name: "Jumlah penduduk usia kerja yang menganggur", path: "/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur/pengangguran_berdasarkan_usia", basePath: "/admin/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur" },
+    { id: "ekonomi.jumlah-penduduk-miskin", name: "Jumlah Penduduk Miskin", path: "/admin/ekonomi/jumlah-penduduk-miskin", basePath: "/admin/ekonomi/jumlah-penduduk-miskin" },
+    { id: "ekonomi.program-kemiskinan", name: "Program Pengentasan Kemiskinan", path: "/admin/ekonomi/program-kemiskinan", basePath: "/admin/ekonomi/program-kemiskinan" },
+    { id: "ekonomi.sektor-unggulan-desa", name: "Sektor Unggulan Desa", path: "/admin/ekonomi/sektor-unggulan-desa", basePath: "/admin/ekonomi/sektor-unggulan-desa" },
+    { id: "ekonomi.demografi-pekerjaan", name: "Demografi Pekerjaan", path: "/admin/ekonomi/demografi-pekerjaan", basePath: "/admin/ekonomi/demografi-pekerjaan" },
+    { id: "ekonomi.kesejahteraan-masyarakat", name: "Kesejahteraan Masyarakat", path: "/admin/ekonomi/kesejahteraan-masyarakat", basePath: "/admin/ekonomi/kesejahteraan-masyarakat" },
   ],
 }
 
@@ -102,12 +109,12 @@ export const inovasiMenu: NavItem = {
   name: "Inovasi",
   path: "",
   children: [
-    { id: "Inovasi_1", name: "Desa Digital/Smart Village", path: "/admin/inovasi/desa-digital-smart-village" },
-    { id: "Inovasi_2", name: "Layanan Online Desa", path: "/admin/inovasi/layanan-online-desa/administrasi-online" },
-    { id: "Inovasi_3", name: "Program Kreatif Desa", path: "/admin/inovasi/program-kreatif-desa" },
-    { id: "Inovasi_4", name: "Kolaborasi Inovasi", path: "/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi" },
-    { id: "Inovasi_5", name: "Info Teknologi Tepat Guna", path: "/admin/inovasi/info-teknologi-tepat-guna" },
-    { id: "Inovasi_6", name: "Ajukan Ide Inovatif", path: "/admin/inovasi/ajukan-ide-inovatif" },
+    { id: "inovasi.desa-digital-smart-village", name: "Desa Digital/Smart Village", path: "/admin/inovasi/desa-digital-smart-village", basePath: "/admin/inovasi/desa-digital-smart-village" },
+    { id: "inovasi.layanan-online-desa", name: "Layanan Online Desa", path: "/admin/inovasi/layanan-online-desa/administrasi-online", basePath: "/admin/inovasi/layanan-online-desa" },
+    { id: "inovasi.program-kreatif-desa", name: "Program Kreatif Desa", path: "/admin/inovasi/program-kreatif-desa", basePath: "/admin/inovasi/program-kreatif-desa" },
+    { id: "inovasi.kolaborasi-inovasi", name: "Kolaborasi Inovasi", path: "/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi", basePath: "/admin/inovasi/kolaborasi-inovasi" },
+    { id: "inovasi.info-teknologi-tepat-guna", name: "Info Teknologi Tepat Guna", path: "/admin/inovasi/info-teknologi-tepat-guna", basePath: "/admin/inovasi/info-teknologi-tepat-guna" },
+    { id: "inovasi.ajukan-ide-inovatif", name: "Ajukan Ide Inovatif", path: "/admin/inovasi/ajukan-ide-inovatif", basePath: "/admin/inovasi/ajukan-ide-inovatif" },
   ],
 }
 
@@ -116,12 +123,12 @@ export const lingkunganMenu: NavItem = {
   name: "Lingkungan",
   path: "",
   children: [
-    { id: "Lingkungan_1", name: "Pengelolaan Sampah (Bank Sampah)", path: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah" },
-    { id: "Lingkungan_2", name: "Program Penghijauan", path: "/admin/lingkungan/program-penghijauan" },
-    { id: "Lingkungan_3", name: "Data Lingkungan Desa", path: "/admin/lingkungan/data-lingkungan-desa" },
-    { id: "Lingkungan_4", name: "Gotong Royong", path: "/admin/lingkungan/gotong-royong/kegiatan-desa" },
-    { id: "Lingkungan_5", name: "Edukasi Lingkungan", path: "/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan" },
-    { id: "Lingkungan_6", name: "Konservasi Adat Bali", path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana" },
+    { id: "lingkungan.pengelolaan-sampah-bank-sampah", name: "Pengelolaan Sampah (Bank Sampah)", path: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah", basePath: "/admin/lingkungan/pengelolaan-sampah-bank-sampah" },
+    { id: "lingkungan.program-penghijauan", name: "Program Penghijauan", path: "/admin/lingkungan/program-penghijauan", basePath: "/admin/lingkungan/program-penghijauan" },
+    { id: "lingkungan.data-lingkungan-desa", name: "Data Lingkungan Desa", path: "/admin/lingkungan/data-lingkungan-desa", basePath: "/admin/lingkungan/data-lingkungan-desa" },
+    { id: "lingkungan.gotong-royong", name: "Gotong Royong", path: "/admin/lingkungan/gotong-royong/kegiatan-desa", basePath: "/admin/lingkungan/gotong-royong" },
+    { id: "lingkungan.edukasi-lingkungan", name: "Edukasi Lingkungan", path: "/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan", basePath: "/admin/lingkungan/edukasi-lingkungan" },
+    { id: "lingkungan.konservasi-adat-bali", name: "Konservasi Adat Bali", path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana", basePath: "/admin/lingkungan/konservasi-adat-bali" },
   ],
 }
 
@@ -130,13 +137,13 @@ export const pendidikanMenu: NavItem = {
   name: "Pendidikan",
   path: "",
   children: [
-    { id: "Pendidikan_1", name: "Info Sekolah", path: "/admin/pendidikan/info-sekolah/jenjang-pendidikan" },
-    { id: "Pendidikan_2", name: "Beasiswa Desa", path: "/admin/pendidikan/beasiswa-desa/beasiswa-pendaftar" },
-    { id: "Pendidikan_3", name: "Program Pendidikan Anak", path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program" },
-    { id: "Pendidikan_4", name: "Bimbingan Belajar Desa", path: "/admin/pendidikan/bimbingan-belajar-desa/tujuan-program" },
-    { id: "Pendidikan_5", name: "Pendidikan Non Formal", path: "/admin/pendidikan/pendidikan-non-formal/tujuan-program" },
-    { id: "Pendidikan_6", name: "Perpustakaan Digital", path: "/admin/pendidikan/perpustakaan-digital/data-perpustakaan" },
-    { id: "Pendidikan_7", name: "Data Pendidikan", path: "/admin/pendidikan/data-pendidikan" },
+    { id: "pendidikan.info-sekolah", name: "Info Sekolah", path: "/admin/pendidikan/info-sekolah/jenjang-pendidikan", basePath: "/admin/pendidikan/info-sekolah" },
+    { id: "pendidikan.beasiswa-desa", name: "Beasiswa Desa", path: "/admin/pendidikan/beasiswa-desa/beasiswa-pendaftar", basePath: "/admin/pendidikan/beasiswa-desa" },
+    { id: "pendidikan.program-pendidikan-anak", name: "Program Pendidikan Anak", path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program", basePath: "/admin/pendidikan/program-pendidikan-anak" },
+    { id: "pendidikan.bimbingan-belajar-desa", name: "Bimbingan Belajar Desa", path: "/admin/pendidikan/bimbingan-belajar-desa/tujuan-program", basePath: "/admin/pendidikan/bimbingan-belajar-desa" },
+    { id: "pendidikan.pendidikan-non-formal", name: "Pendidikan Non Formal", path: "/admin/pendidikan/pendidikan-non-formal/tujuan-program", basePath: "/admin/pendidikan/pendidikan-non-formal" },
+    { id: "pendidikan.perpustakaan-digital", name: "Perpustakaan Digital", path: "/admin/pendidikan/perpustakaan-digital/data-perpustakaan", basePath: "/admin/pendidikan/perpustakaan-digital" },
+    { id: "pendidikan.data-pendidikan", name: "Data Pendidikan", path: "/admin/pendidikan/data-pendidikan", basePath: "/admin/pendidikan/data-pendidikan" },
   ],
 }
 
@@ -145,10 +152,10 @@ export const kependudukanMenu: NavItem = {
   name: "Kependudukan",
   path: "",
   children: [
-    { id: "Kependudukan_1", name: "Distribusi Agama", path: "/admin/kependudukan/distribusi-agama" },
-    { id: "Kependudukan_2", name: "Distribusi Umur", path: "/admin/kependudukan/distribusi-umur" },
-    { id: "Kependudukan_3", name: "Data Banjar", path: "/admin/kependudukan/data-banjar" },
-    { id: "Kependudukan_4", name: "Migrasi Penduduk", path: "/admin/kependudukan/migrasi-penduduk" },
+    { id: "kependudukan.distribusi-agama", name: "Distribusi Agama", path: "/admin/kependudukan/distribusi-agama", basePath: "/admin/kependudukan/distribusi-agama" },
+    { id: "kependudukan.distribusi-umur", name: "Distribusi Umur", path: "/admin/kependudukan/distribusi-umur", basePath: "/admin/kependudukan/distribusi-umur" },
+    { id: "kependudukan.data-banjar", name: "Data Banjar", path: "/admin/kependudukan/data-banjar", basePath: "/admin/kependudukan/data-banjar" },
+    { id: "kependudukan.migrasi-penduduk", name: "Migrasi Penduduk", path: "/admin/kependudukan/migrasi-penduduk", basePath: "/admin/kependudukan/migrasi-penduduk" },
   ],
 }
 
@@ -156,6 +163,7 @@ export const musikMenu: NavItem = {
   id: "Musik",
   name: "Musik",
   path: "/admin/musik",
+  basePath: "/admin/musik",
 }
 
 export const userRoleMenu: NavItem = {
@@ -163,9 +171,8 @@ export const userRoleMenu: NavItem = {
   name: "User & Role",
   path: "",
   children: [
-    { id: "User", name: "User", path: "/admin/user&role/user" },
-    { id: "Role", name: "Role", path: "/admin/user&role/role" },
-    { id: "Menu Access", name: "Menu Access", path: "/admin/user&role/menu-access" },
+    { id: "user-role.user", name: "User", path: "/admin/user&role/user", basePath: "/admin/user&role/user" },
+    { id: "user-role.role", name: "Role", path: "/admin/user&role/role", basePath: "/admin/user&role/role" },
   ],
 }
 
@@ -176,6 +183,7 @@ export const pengaturanMenu: NavItem = {
   name: "Pengaturan",
   path: "",
   children: [
-    { id: "Pengaturan_1", name: "Visibilitas Menu", path: "/admin/pengaturan/visibilitas-menu" },
+    { id: "pengaturan.visibilitas-menu", name: "Visibilitas Menu", path: "/admin/pengaturan/visibilitas-menu", basePath: "/admin/pengaturan/visibilitas-menu" },
+    { id: "pengaturan.menu-access", name: "Menu Access", path: "/admin/pengaturan/menu-access", basePath: "/admin/pengaturan/menu-access" },
   ],
 }
