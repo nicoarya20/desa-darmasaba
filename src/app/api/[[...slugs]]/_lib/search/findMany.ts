@@ -2,6 +2,7 @@
 import { Context } from "elysia";
 import prisma from "@/lib/prisma";
 import { BERITA_LIST_ORDER_BY } from "@/lib/berita-data";
+import { searchStrukturBumdes } from "./struktur-bumdes.search";
 
 export default async function searchFindMany(context: Context) {
   const { query, page = 1, limit = 10, type } = context.query as any;
@@ -904,31 +905,7 @@ export default async function searchFindMany(context: Context) {
   }
   // ========================================= STRUKTUR ORGANISASI ========================================= //
   if (type === "strukturOrganisasi") {
-    const data = await prisma.strukturBumDes.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          {
-            PosisiOrganisasiBumDes: {
-              nama: { contains: query, mode: "insensitive" },
-            },
-          },
-          {
-            PegawaiBumDes: {
-              OR: [
-                { namaLengkap: { contains: query, mode: "insensitive" } },
-                { email: { contains: query, mode: "insensitive" } },
-                { telepon: { contains: query, mode: "insensitive" } },
-                { alamat: { contains: query, mode: "insensitive" } },
-                { gelarAkademik: { contains: query, mode: "insensitive" } },
-              ],
-            },
-          },
-        ],
-      },
-      skip,
-      take: limitNum,
-    });
+    const data = await searchStrukturBumdes(query, { skip, take: limitNum });
     return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
   }
 
@@ -1513,6 +1490,8 @@ export default async function searchFindMany(context: Context) {
     pelayananPendudukNonPermanen,
     posyandu,
     fasilitasKesehatan,
+    dokterDanTenagaMedis,
+    tarifDanLayanan,
     jadwalKegiatan,
     artikelKesehatan,
     puskesmas,
@@ -1564,9 +1543,7 @@ export default async function searchFindMany(context: Context) {
     tempatKegiatan,
     jenisProgramYangDiselenggarakan,
     dataPerpustakaan,
-    dataPendidikan,
-    dokterDanTenagaMedis,
-    tarifDanLayanan 
+    dataPendidikan
   ] = await Promise.all([
     prisma.pejabatDesa.findMany({
       where: { name: { contains: query, mode: "insensitive" } },
@@ -2139,30 +2116,7 @@ export default async function searchFindMany(context: Context) {
       },
       take: limitNum,
     }),
-    prisma.strukturBumDes.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          {
-            PosisiOrganisasiBumDes: {
-              nama: { contains: query, mode: "insensitive" },
-            },
-          },
-          {
-            PegawaiBumDes: {
-              OR: [
-                { namaLengkap: { contains: query, mode: "insensitive" } },
-                { email: { contains: query, mode: "insensitive" } },
-                { telepon: { contains: query, mode: "insensitive" } },
-                { alamat: { contains: query, mode: "insensitive" } },
-                { gelarAkademik: { contains: query, mode: "insensitive" } },
-              ],
-            },
-          },
-        ],
-      },
-      take: limitNum,
-    }),
+    searchStrukturBumdes(query, { take: limitNum }),
     prisma.grafikMenganggurBerdasarkanUsia.findMany({
       where: {
         OR: [

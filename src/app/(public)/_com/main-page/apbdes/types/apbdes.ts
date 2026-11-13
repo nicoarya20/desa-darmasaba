@@ -43,8 +43,27 @@ export interface APBDes {
     name?: string;
   } | null;
   fileId?: string;
+  // Dokumen per folder (respons API terbaru); kosong/tidak ada pada data lama → fallback ke `file`.
+  folders?: APBDesFolderDokumen[];
+  dokumenUmum?: APBDesDokumen[];
   createdAt?: string | Date;
   updatedAt?: string | Date;
+}
+
+/** Satu dokumen APBDes (aktif) beserta berkasnya. */
+export interface APBDesDokumen {
+  id: string;
+  judul: string;
+  urutan?: number;
+  file: { id: string; link: string; realName?: string; mimeType?: string | null };
+}
+
+/** Folder dokumen APBDes (satu tingkat) beserta dokumennya, terurut. */
+export interface APBDesFolderDokumen {
+  id: string;
+  nama: string;
+  urutan?: number;
+  dokumen: APBDesDokumen[];
 }
 
 export interface APBDesResponse {

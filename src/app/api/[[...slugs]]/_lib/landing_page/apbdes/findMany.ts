@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/api/.../apbdes/findMany.ts
 import prisma from "@/lib/prisma";
+import { APBDES_DOKUMEN_INCLUDE, toApbdesDokumenView } from "@/lib/apbdes-dokumen-view";
 import { Context } from "elysia";
 
 export default async function apbdesFindMany(context: Context) {
@@ -47,6 +48,7 @@ export default async function apbdesFindMany(context: Context) {
         include: {
           image: true,
           file: true,
+          ...APBDES_DOKUMEN_INCLUDE, // folder & dokumen aktif (terurut) untuk panel dokumen publik
           items: {
             where: { isActive: true },
             orderBy: { kode: "asc" },
@@ -64,7 +66,7 @@ export default async function apbdesFindMany(context: Context) {
 
     return {
       success: true,
-      data,
+      data: data.map(toApbdesDokumenView),
       meta: {
         page: pageNumber,
         limit: limitNumber,

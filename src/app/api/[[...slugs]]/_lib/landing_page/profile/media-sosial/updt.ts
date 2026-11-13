@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 type FormUpdateMediaSosial = {
   name?: string;
@@ -37,6 +38,7 @@ export default async function mediaSosialUpdate(context: Context) {
   }
 
   try {
+    const before = await prisma.mediaSosial.findUnique({ where: { id }, select: { imageId: true } });
     const updated = await prisma.mediaSosial.update({
       where: { id },
       data: {
@@ -49,6 +51,7 @@ export default async function mediaSosialUpdate(context: Context) {
         image: true,
       },
     });
+    await removeReleasedFiles("MediaSosial", [before?.imageId], [updated.imageId]);
 
     return {
       success: true,

@@ -32,7 +32,8 @@ beforeEach(() => {
 
 describe("apbdesCreate — tanpa gambar", () => {
   it("mengabaikan imageId dari body, tetap menulis fileId", async () => {
-    prismaMock.aPBDes.findUnique.mockResolvedValue({ id: "apbdes1", tahun: 2025, items: [] });
+    // Respons akhir kini ikut membawa relasi folder & dokumen (APBDES_DOKUMEN_INCLUDE).
+    prismaMock.aPBDes.findUnique.mockResolvedValue({ id: "apbdes1", tahun: 2025, items: [], folders: [], dokumen: [] });
 
     const res = await apbdesCreate(ctx({ tahun: 2025, imageId: "img-lama", fileId: "doc1", items: [item] }));
 
@@ -47,7 +48,7 @@ describe("apbdesUpdate — tanpa gambar", () => {
   it("tidak menyentuh kolom imageId (tidak ditulis, tidak di-null-kan), fileId tetap ditulis", async () => {
     prismaMock.aPBDes.findUnique
       .mockResolvedValueOnce({ id: "apbdes1", tahun: 2025, items: [] })
-      .mockResolvedValueOnce({ id: "apbdes1", tahun: 2025, items: [] });
+      .mockResolvedValueOnce({ id: "apbdes1", tahun: 2025, items: [], folders: [], dokumen: [] });
 
     const res = await apbdesUpdate(
       ctx({ tahun: 2025, imageId: "", fileId: "doc2", items: [item] }, "apbdes1")

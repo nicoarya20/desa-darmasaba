@@ -1,14 +1,13 @@
 import type { Context } from "elysia";
 import prisma from "@/lib/prisma";
-import {
-  DAK_SAMPAH_MAX_DAFTAR,
-  planPulihkan,
-  resolveRetensiHari,
-  sampahCutoff,
-  sampahPurgeWhere,
-  toSampahItems,
-} from "@/lib/desa-anti-korupsi-sampah";
+import { DAK_SAMPAH_MAX_DAFTAR, sampahPurgeWhere, toSampahItems } from "@/lib/desa-anti-korupsi-sampah";
 import { guardAdmin } from "./admin-guard";
+import { dakRetensiHari, pulihkanDokumenDak } from "./sampah-pulihkan";
+import { destroySafely } from "../../sampah/sampah.purge";
+import { dokumenDakSampahSource } from "../../sampah/sources/dokumen-dak.source";
+
+/** Ukuran batch ID dokumen kedaluwarsa per query saat pembersihan lazy. */
+const PURGE_BATCH = 100;
 
 const SAMPAH_SELECT = {
   id: true,
@@ -19,7 +18,24 @@ const SAMPAH_SELECT = {
   deletedAt: true,
 } as const;
 
-const retensiHari = () => resolveRetensiHari(process.env.DAK_SAMPAH_RETENSI_HARI);
+/**
+ * Hapus permanen dokumen sampah program yang melewati retensi lewat jalur hapus permanen Sampah yang sama dengan
+ * purge harian (baris → FileStorage → MinIO; berkas yang masih dirujuk dokumen lain dilewati). Dipaging per ID.
+ */
+async function purgeDokumenKedaluwarsa(programId: string, now: Date, retensiHari: number) {
+  let afterId: string | undefined;
+  for (;;) {
+    const rows = await prisma.dokumenDesaAntiKorupsi.findMany({
+      where: { ...sampahPurgeWhere(programId, now, retensiHari), ...(afterId ? { id: { gt: afterId } } : {}) },
+      orderBy: { id: "asc" },
+      take: PURGE_BATCH,
+      select: { id: true },
+    });
+    for (const { id } of rows) await destroySafely(dokumenDakSampahSource, id);
+    if (rows.length < PURGE_BATCH) return;
+    afterId = rows[rows.length - 1].id;
+  }
+}
 
 const gagal = (set: Context["set"], status: number, message: string) => {
   set.status = status;
@@ -36,9 +52,9 @@ export async function desaAntiKorupsiSampahList(context: Context) {
   if (!program) return gagal(context.set, 404, "Desa anti korupsi tidak ditemukan");
 
   const now = new Date();
-  const retensi = retensiHari();
-  // Pembersihan "lazy" (tanpa cron). Objek MinIO tidak dihapus: FileStorage bisa dipakai dokumen lain.
-  await prisma.dokumenDesaAntiKorupsi.deleteMany({ where: sampahPurgeWhere(programId, now, retensi) });
+  const retensi = dakRetensiHari();
+  // Pembersihan "lazy" saat panel dibuka (melengkapi purge global harian).
+  await purgeDokumenKedaluwarsa(programId, now, retensi);
   const rows = await prisma.dokumenDesaAntiKorupsi.findMany({
     where: { desaAntiKorupsiId: programId, isActive: false, deletedAt: { not: null } },
     orderBy: { deletedAt: "desc" },
@@ -53,40 +69,7 @@ export async function desaAntiKorupsiSampahPulihkan(context: Context) {
   const denied = await guardAdmin(context.set);
   if (denied) return denied;
 
-  const id = context.params.dokumenId;
-  const cutoff = sampahCutoff(new Date(), retensiHari());
-  const result = await prisma.$transaction(async (tx) => {
-    // Dokumen yang sudah melewati retensi dianggap hilang walau belum dibersihkan.
-    const doc = await tx.dokumenDesaAntiKorupsi.findFirst({
-      where: { id, isActive: false, deletedAt: { gt: cutoff } },
-      select: {
-        id: true,
-        desaAntiKorupsiId: true,
-        fileId: true,
-        folderId: true,
-        folder: { select: { isActive: true } },
-        file: { select: { isActive: true } },
-      },
-    });
-    if (!doc) return { ok: false, status: 404, message: "Dokumen tidak ada di tempat sampah" } as const;
-
-    const aktif = await tx.dokumenDesaAntiKorupsi.findMany({
-      where: { desaAntiKorupsiId: doc.desaAntiKorupsiId, isActive: true },
-      select: { folderId: true, fileId: true, urutan: true },
-    });
-    const plan = planPulihkan(
-      { fileId: doc.fileId, folderId: doc.folderId, folderAktif: doc.folder?.isActive === true, fileAktif: doc.file.isActive },
-      aktif,
-    );
-    if (!plan.ok) return { ok: false, status: 409, message: plan.message } as const;
-
-    await tx.dokumenDesaAntiKorupsi.update({
-      where: { id },
-      data: { isActive: true, deletedAt: null, folderId: plan.folderId, urutan: plan.urutan },
-    });
-    return { ok: true, data: { id: doc.id, folderId: plan.folderId } } as const;
-  });
-
+  const result = await pulihkanDokumenDak(context.params.dokumenId);
   if (!result.ok) return gagal(context.set, result.status, result.message);
   return { success: true as const, data: result.data };
 }
@@ -97,7 +80,8 @@ export async function desaAntiKorupsiSampahHapus(context: Context) {
   if (denied) return denied;
 
   const id = context.params.dokumenId;
-  const { count } = await prisma.dokumenDesaAntiKorupsi.deleteMany({ where: { id, isActive: false } });
-  if (count === 0) return gagal(context.set, 404, "Dokumen tidak ada di tempat sampah");
+  // Jalur hapus permanen Sampah bersama (baris → FileStorage → MinIO; berkas yang masih dirujuk dilewati).
+  const result = await dokumenDakSampahSource.destroy(id);
+  if (!result.ok) return gagal(context.set, 404, "Dokumen tidak ada di tempat sampah");
   return { success: true as const, data: { id } };
 }

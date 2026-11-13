@@ -60,7 +60,7 @@ describe("navigasi BUMDes", () => {
   });
 
   it("menu admin: entri BUMDes mengarah ke halaman admin BUMDes", () => {
-    const admin = ekonomiMenu.children?.find((c) => c.id === "Ekonomi_3");
+    const admin = ekonomiMenu.children?.find((c) => c.id === "ekonomi.bumdes");
     expect(admin?.name).toBe("BUMDes");
     expect(admin?.path.startsWith("/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/")).toBe(true);
   });

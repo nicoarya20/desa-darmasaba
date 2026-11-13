@@ -7,7 +7,7 @@ import { APBDES_TEXT } from '../../_com/main-page/apbdes/apbdes.text'
 import { ApbdesBody } from '../../_com/main-page/apbdes/components/ApbdesBody'
 import { useApbdesData } from '../../_com/main-page/apbdes/use-apbdes-data'
 
-/** Halaman detail APBDes: ringkasan, grafik, rincian lengkap (dengan selisih), dan dokumen per tahun. */
+/** Halaman detail APBDes: ringkasan, grafik, rincian lengkap (dengan selisih), dan dokumen APBDes tahun terbaru. */
 function Page() {
   const data = useApbdesData()
 

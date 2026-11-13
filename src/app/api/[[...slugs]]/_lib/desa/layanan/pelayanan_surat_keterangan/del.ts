@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import minio, { MINIO_BUCKET } from "@/lib/minio";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 const pelayananSuratKeteranganDelete = async (context: Context) => {
     const id = context.params?.id as string;
@@ -27,32 +27,18 @@ const pelayananSuratKeteranganDelete = async (context: Context) => {
         };
     }
 
-    // Hapus file gambar dari filesystem jika ada
-    if (pelayananSuratKeterangan.image) {
-        try {
-            await minio.removeObject(MINIO_BUCKET, `${pelayananSuratKeterangan.image.path}/${pelayananSuratKeterangan.image.name}`);
-            await prisma.fileStorage.delete({
-                where: { id: pelayananSuratKeterangan.image.id },
-            });
-        } catch (err) {
-            console.error("Gagal hapus gambar lama:", err);
-        }
-    }
-
-    if (pelayananSuratKeterangan.image2) {
-        try {
-            await minio.removeObject(MINIO_BUCKET, `${pelayananSuratKeterangan.image2.path}/${pelayananSuratKeterangan.image2.name}`);
-            await prisma.fileStorage.delete({
-                where: { id: pelayananSuratKeterangan.image2.id },
-            });
-        } catch (err) {
-            console.error("Gagal hapus gambar lama:", err);
-        }
-    }
-
     const deleted = await prisma.pelayananSuratKeterangan.delete({
         where: { id },
     });
+
+    // Hapus file gambar dari filesystem jika ada
+    if (pelayananSuratKeterangan.image) {
+        await removeStoredFile(pelayananSuratKeterangan.image, "PelayananSuratKeterangan");
+    }
+
+    if (pelayananSuratKeterangan.image2) {
+        await removeStoredFile(pelayananSuratKeterangan.image2, "PelayananSuratKeterangan");
+    }
 
     return {
         status: 200,

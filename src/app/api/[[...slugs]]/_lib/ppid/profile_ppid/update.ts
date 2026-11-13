@@ -1,8 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
-import fs from "fs/promises";
-import path from "path";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
 type FormUpdate = Prisma.ProfilePPIDGetPayload<{
   select: {
@@ -61,21 +60,6 @@ export default async function profilePPIDUpdate(context: Context) {
       );
     }
 
-    if (existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        try {
-          const filePath = path.join(oldImage.path, oldImage.name);
-          await fs.unlink(filePath);
-          await prisma.fileStorage.delete({
-            where: { id: oldImage.id },
-          });
-        } catch (error) {
-          console.error("Gagal hapus gambar lama:", error);
-        }
-      }
-    }
-
     const updated = await prisma.profilePPID.update({
       where: {
         id,
@@ -89,6 +73,13 @@ export default async function profilePPIDUpdate(context: Context) {
         unggulan,
       },
     });
+
+    if (existing.imageId !== imageId) {
+      const oldImage = existing.image;
+      if (oldImage) {
+        await removeStoredFile(oldImage, "ProfilePPID");
+      }
+    }
 
     return new Response(
       JSON.stringify({

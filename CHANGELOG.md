@@ -1,5 +1,75 @@
 # Changelog
 
+## [0.1.263] - 2026-11-13
+### Added
+- **Sampah di Dokumen APBDes, Galeri Foto BUMDes, dan Dokumen Perencanaan**, seperti yang sudah ada di Desa Anti Korupsi. Dokumen/foto yang dihapus di fitur-fitur ini tidak langsung hilang: masuk panel **Sampah** di halaman fitur itu sendiri (APBDes: halaman detail tiap tahun; BUMDes: bagian Galeri Foto di Profil BUMDes; Dokumen Perencanaan: halaman daftarnya) dan disimpan **30 hari**. Dari panel itu admin bisa **Pulihkan** (kembali utuh ke tempat asalnya) atau **Hapus permanen**. Setiap item menampilkan sisa hari sebelum terhapus otomatis (oranye bila tinggal 7 hari atau kurang).
+- Item yang tidak dipulihkan dalam 30 hari **terhapus permanen otomatis** (dicek sekali sehari oleh server), termasuk dokumen di Sampah Desa Anti Korupsi.
+
+### Changed
+- **Website & admin lebih ringan**: CSS tema PrimeReact (±190 KB per halaman, ±22 KB setelah kompresi) yang sudah tidak dipakai komponen mana pun tidak lagi dimuat. Tampilan tidak berubah, kecuali di **admin mode gelap**: scrollbar, pemilih tanggal, dropdown bawaan browser, dan isian otomatis kini ikut gelap (sebelumnya dipaksa terang).
+
+### Fixed
+- **Hasil pencarian di website** untuk sekitar 50 jenis konten (mis. dokter & tenaga medis, tarif layanan, struktur BUMDes) sebelumnya diberi label dan tautan yang salah. Kini setiap hasil membuka halaman yang benar.
+- Tombol hapus di **Pustaka File** admin sebelumnya tidak melakukan apa-apa; kini berkas benar-benar terhapus (berkas yang masih dipakai di menu lain tidak ikut terhapus).
+- Foto galeri BUMDes yang gagal tersimpan kini benar-benar dibersihkan.
+- Menghapus data **Pembiayaan** (Ekonomi → Pendapatan Asli Desa) di admin sebelumnya selalu gagal; kini berhasil.
+- Delapan menu (Pengumuman, Artikel Kesehatan, Perpustakaan Digital, Gotong Royong, Media Sosial, Prestasi Desa, Program Inovasi, SDGs) serta galeri Berita dan Kesejahteraan Masyarakat sebelumnya meninggalkan foto/lampiran yang tak terpakai saat datanya dihapus atau gambarnya diganti; kini berkas itu ikut dihapus.
+- Di banyak menu, berkas sebelumnya dihapus **sebelum** datanya; bila penghapusan data gagal, gambar sudah terlanjur hilang (termasuk saat menyimpan Maskot desa). Kini berkas baru dihapus setelah data berhasil dihapus/diubah, dan berkas yang masih dipakai data lain tidak ikut terhapus.
+
+### Removed
+- Paket `primereact` dan `primeicons` (tidak dipakai lagi).
+
+### Operator
+- Tidak ada migrasi database baru di versi ini.
+- Hapus permanen otomatis berjalan di dalam aplikasi (sekali saat start, lalu tiap 24 jam) dan **aktif secara default hanya di production**. Bisa dimatikan dengan env `SAMPAH_PURGE_SCHEDULER=off`. Hanya berjalan selama server hidup.
+- Alasan & detail: `docs/decisions/2026-11-12-sampah.md`.
+
+## [0.1.262] - 2026-11-12
+### Added
+- **Galeri Foto di Profil BUMDes.** Di admin (Ekonomi → BUMDes → Profil BUMDes) kini bisa mengunggah beberapa foto sekaligus, memberi keterangan (opsional), menghapus, dan mengurutkan. Foto/logo yang sudah ada tetap dipakai sebagai cover. Di website publik galeri tampil sebagai grid di bagian Profil BUMDes; klik foto untuk melihat ukuran penuh.
+
+### Changed
+- **Struktur PPID, Struktur BUMDes, dan Struktur Perangkat Desa kini memakai aturan dan tampilan yang sama.** Tambah/edit pegawai cukup mengisi **Nama** (sudah termasuk gelar) dan **Jabatan**; **Foto, Email, dan Nomor Telepon** boleh dikosongkan. Kolom Gelar, Tanggal Masuk, dan Alamat tidak ada lagi di form maupun di halaman profil pegawai.
+- **Deskripsi jabatan/posisi organisasi kini opsional** di ketiga struktur, **atasan jabatan bisa diatur langsung dari admin**, dan urutan jabatan yang selevel bisa diatur.
+- Tab admin Struktur PPID dan Struktur BUMDes kini bernama **Pegawai · Jabatan · Bagan** (sama seperti Perangkat Desa). Alamat lama (Posisi Organisasi, Struktur Organisasi) otomatis dialihkan.
+- Bagan struktur BUMDes di website publik kini sama dengan bagan PPID dan Perangkat Desa, dan profil pegawainya bisa dibuka.
+- **Menu UMKM di admin untuk sementara hanya menampilkan Data UMKM.** Tab Dashboard, Produk, Penjualan, dan Kategori Produk disembunyikan (tidak dihapus); cara memunculkannya lagi dicatat di `docs/debt/2026-11-12-umkm-tab-disembunyikan.md`.
+- **Selama tab Penjualan disembunyikan, tombol "Pesan Sekarang" di halaman produk UMKM diganti "Hubungi Penjual (WhatsApp)"**: pembeli langsung diarahkan ke WhatsApp penjual. Pesanan tidak dicatat dan stok tidak berkurang. Bila nomor WhatsApp penjual belum ada, tombol nonaktif dengan keterangan.
+- Pencarian di website untuk struktur BUMDes kini menemukan pegawai BUMDes (nama, jabatan, email, telepon) dan membuka profilnya.
+
+### Fixed
+- Menambah pegawai PPID atau BUMDes kedua tanpa email tidak lagi gagal dengan pesan "Email sudah digunakan".
+
+### Removed
+- Tabel lama struktur BUMDes (`StrukturBumDes`, `StrukturOrganisasiBumDes`) yang sudah tidak dipakai. Data pegawai dan jabatan BUMDes tidak terpengaruh.
+
+### Operator
+- Jalankan migrasi `20261112180000_struktur_fleksibel`, `20261112190000_foto_profil_bumdes`, dan `20261112200000_drop_struktur_bumdes_lama` (otomatis saat container start). Migrasi pertama **mengubah data**: gelar pegawai digabung ke nama ("I Made Ari" + "S.Kom" → "I Made Ari, S.Kom"; nama yang sudah memuat gelarnya tidak diubah), email kosong dijadikan kosong (NULL), dan email pegawai PPID/BUMDes tidak lagi harus unik. Kolom gelar/tanggal masuk/alamat tidak dihapus. Migrasi kedua murni menambah tabel galeri. Migrasi ketiga menghapus dua tabel lama BUMDes **hanya bila kosong**; bila berisi, tabel dibiarkan dan log deploy menampilkan NOTICE berisi nama tabel + jumlah baris (deploy tetap sukses) — periksa lalu hapus manual bila memang sisa usang. Ketiganya aman dijalankan ulang.
+- Endpoint pesanan UMKM publik (`POST /api/ekonomi/umkm/penjualan/pesan`) sementara menolak dengan status 403. Untuk menyalakan lagi, ikuti langkah di `docs/debt/2026-11-12-umkm-tab-disembunyikan.md` (tab Penjualan dan saklar pesanan dinyalakan bersamaan).
+- Alasan & detail: `docs/decisions/2026-11-12-struktur-fleksibel.md`.
+
+## [0.1.261] - 2026-11-12
+### Changed
+- **Menu Access pindah ke Pengaturan** (Pengaturan → Menu Access), di samping Visibilitas Menu. Alamat lama `/admin/user&role/menu-access` otomatis dialihkan ke alamat baru. User & Role kini hanya berisi User dan Role.
+- Daftar user di Menu Access bisa dicari dengan mengetik.
+
+## [0.1.260] - 2026-11-12
+### Added
+- **APBDes kini bisa punya banyak dokumen, dikelompokkan dalam folder** seperti Desa Anti Korupsi. Di admin (buat/edit APBDes) dokumen bisa diunggah sekaligus, diberi judul, dipindah antar folder, dan diurutkan. Nama folder bebas, misalnya per bulan ("Januari"), per semester, atau per jenis ("Perdes"). Dokumen tanpa folder masuk ke "Umum". Di website publik dokumen tampil per folder dengan tombol unduh.
+- **Menu Access (User & Role) kini bisa diatur per submenu.** Pilihannya berbentuk pohon: centang section untuk semua submenu-nya, atau centang submenu tertentu saja. Pengaturan lama per section tetap berlaku (dibaca sebagai "semua submenu").
+
+### Changed
+- **APBDes di website publik hanya menampilkan satu tahun**, yaitu tahun terbaru yang sudah punya rincian anggaran, di beranda maupun halaman APBDes. Pilihan tahun dihapus.
+- Admin yang membuka alamat halaman di luar Menu Access-nya kini dialihkan ke menu pertama yang boleh ia buka. Ini pembatasan tampilan, bukan pengamanan data.
+- Menu "User & Role" dan "Pengaturan" hanya untuk Developer dan Super Admin, dan tidak bisa lagi diberikan ke role lain lewat Menu Access.
+
+### Fixed
+- **Celah keamanan:** data Menu Access bisa dibaca dan diubah tanpa login. Kini wajib login; admin hanya bisa membaca Menu Access miliknya sendiri, dan hanya Developer/Super Admin yang bisa mengubah Menu Access user lain.
+
+### Operator
+- Jalankan migrasi `20261112150000_apbdes_dokumen` (otomatis saat container start). Menambah tabel dokumen & folder APBDes dan menyalin dokumen APBDes lama menjadi dokumen di "Umum"; aman dijalankan ulang. Kolom lama `APBDes.fileId` sengaja belum dihapus agar rollback ke versi sebelumnya tetap aman.
+- Alasan & detail: `docs/decisions/2026-11-12-apbdes-dokumen.md`.
+
 ## [0.1.259] - 2026-11-13
 ### Changed
 - **Halaman "tidak ditemukan" (404) baru.** Alamat yang salah kini menampilkan halaman bergaya situs desa: navbar dan footer seperti biasa, kalimat besar "Halaman yang Anda cari tidak ditemukan.", dan kolom pencarian lebar untuk langsung mencari halaman atau konten yang dimaksud. Sebelumnya yang muncul halaman polos berbahasa Inggris ("This is the not found page") tanpa menu.

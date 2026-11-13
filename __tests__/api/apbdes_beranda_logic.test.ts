@@ -8,7 +8,7 @@ import {
   formatRupiahCompact,
   formatTanggal,
   latestUpdate,
-  listYears,
+  pickLatestApbdes,
   summarizeApbdes,
   summarizeCategory,
 } from '@/app/(public)/_com/main-page/apbdes/apbdes.logic';
@@ -96,9 +96,33 @@ describe('summarizeApbdes', () => {
   });
 });
 
-describe('listYears', () => {
-  it('unik dan terbaru di depan', () => {
-    expect(listYears([{ tahun: 2025 }, { tahun: 2026 }, { tahun: 2025 }])).toEqual([2026, 2025]);
+describe('pickLatestApbdes', () => {
+  // test-only: hanya tahun + jumlah item yang relevan untuk pemilihan.
+  const apb = (tahun: number | null, items: APBDesItem[] = []) => ({ id: `apb-${tahun}`, tahun, items });
+  const isi = [item('4.1', 100, 'pendapatan')];
+
+  it('tahun terbaru belum punya item → pakai tahun terbesar yang sudah punya item', () => {
+    expect(pickLatestApbdes([apb(2026), apb(2025, isi), apb(2024, isi)])?.tahun).toBe(2025);
+  });
+
+  it('semua punya item → tahun terbesar, apa pun urutan list', () => {
+    expect(pickLatestApbdes([apb(2024, isi), apb(2026, isi), apb(2025, isi)])?.tahun).toBe(2026);
+  });
+
+  it('tidak ada yang punya item → tahun terbesar (empty-state tahun tetap tampil)', () => {
+    expect(pickLatestApbdes([apb(2025), apb(2026)])?.tahun).toBe(2026);
+  });
+
+  it('list kosong / null / undefined → null', () => {
+    expect(pickLatestApbdes([])).toBeNull();
+    expect(pickLatestApbdes(null)).toBeNull();
+    expect(pickLatestApbdes(undefined)).toBeNull();
+  });
+
+  it('entri dengan tahun null diabaikan', () => {
+    expect(pickLatestApbdes([apb(null, isi), apb(2024, isi)])?.tahun).toBe(2024);
+    expect(pickLatestApbdes([apb(null, isi), apb(2025)])?.tahun).toBe(2025);
+    expect(pickLatestApbdes([apb(null, isi)])).toBeNull();
   });
 });
 

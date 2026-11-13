@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
 type FormUpdateKegiatanDesa = {
   judul?: string;
@@ -26,6 +27,7 @@ export default async function kegiatanDesaUpdate(context: Context) {
   }
 
   try {
+    const before = await prisma.kegiatanDesa.findUnique({ where: { id }, select: { imageId: true } });
     const updated = await prisma.kegiatanDesa.update({
       where: { id },
       data: {
@@ -43,6 +45,7 @@ export default async function kegiatanDesaUpdate(context: Context) {
         kategoriKegiatan: true,
       },
     });
+    await removeReleasedFiles("KegiatanDesa", [before?.imageId], [updated.imageId]);
 
     return {
       success: true,
