@@ -4,6 +4,7 @@ import { env } from "@/lib/env";
 import { runConnectionTest } from "./connection-test";
 import { apiKeyHint, decryptSecret, encryptSecret, isCredentialsKeyValid } from "./crypto";
 import { JENNA_SETTINGS_ID, toProviderDTO, toProviderDTOs, toSettingsDTO } from "./mappers";
+import { invalidateJennaRuntimeCache } from "./provider/active";
 import { JENNA_PROTOCOL_SLOT, type JennaConfigResponse, type JennaProviderTestResponse, type JennaSettingsUpdateInput, type JennaSlot } from "./types";
 import { validateBaseUrl, type ProviderUpdateValue } from "./validation";
 
@@ -44,6 +45,7 @@ export async function updateJennaSettings(userId: string, value: JennaSettingsUp
     create: { id: JENNA_SETTINGS_ID, ...value, updatedById: userId },
     update: { ...value, updatedById: userId },
   });
+  invalidateJennaRuntimeCache();
 }
 
 export type ProviderUpdateResult = { ok: true } | { ok: false; status: number; message: string };
@@ -75,6 +77,7 @@ export async function updateJennaProvider(
     updatedById: userId,
   };
   await prisma.jennaProvider.upsert({ where: { slot }, create: { slot, ...data }, update: data });
+  invalidateJennaRuntimeCache();
   return { ok: true };
 }
 

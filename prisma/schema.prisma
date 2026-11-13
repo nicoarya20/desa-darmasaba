@@ -2643,6 +2643,43 @@ model JennaProvider {
   updatedBy       User?     @relation("JennaProviderUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
+// Percakapan pengunjung anonim (tanpa relasi User). sessionHash/ipHash = hash, bukan nilai mentah.
+// Dihapus otomatis setelah JennaSettings.retentionDays.
+model JennaConversation {
+  id            String         @id @default(cuid())
+  sessionHash   String
+  ipHash        String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lastMessageAt DateTime       @default(now())
+  messages      JennaMessage[]
+
+  @@index([sessionHash])
+}
+
+// content sudah dimask (NIK/HP/email) oleh pemanggil sebelum disimpan.
+// sessionHash/ipHash didenormalisasi untuk hitung kuota harian tanpa join.
+model JennaMessage {
+  id             String            @id @default(cuid())
+  conversationId String
+  conversation   JennaConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String // "user" | "assistant"
+  content        String            @db.Text
+  status         String            @default("ok") // "ok" | "error"
+  errorCode      String?
+  inputTokens    Int               @default(0)
+  outputTokens   Int               @default(0)
+  toolsUsed      String[]
+  sessionHash    String
+  ipHash         String
+  createdAt      DateTime          @default(now())
+
+  @@index([sessionHash, createdAt])
+  @@index([ipHash, createdAt])
+  @@index([createdAt])
+  @@index([conversationId, createdAt])
+}
+
 // ===================================== BETTER AUTH ===================================== //
 // Model wajib Better Auth (pola base-template2). Session store di Postgres (tanpa Redis).
 

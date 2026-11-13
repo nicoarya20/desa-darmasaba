@@ -1,7 +1,6 @@
 // Tes koneksi provider Jenna dari server. Pesan hasil tidak pernah memuat API key atau body vendor.
+import { ANTHROPIC_VERSION, anthropicMessagesUrl } from "./provider/common";
 import type { JennaSlot } from "./types";
-
-export const ANTHROPIC_VERSION = "2023-06-01";
 
 export type ConnectionTestConfig = {
   baseUrl: string;
@@ -16,12 +15,9 @@ export function buildConnectionTestRequest(
   slot: JennaSlot,
   cfg: Omit<ConnectionTestConfig, "timeoutMs">,
 ): { url: string; init: RequestInit } {
-  const base = cfg.baseUrl.replace(/\/+$/, "");
   if (slot === "chat_anthropic") {
-    // Terima base "https://api.anthropic.com" maupun ".../v1".
-    const url = /\/v1$/.test(base) ? `${base}/messages` : `${base}/v1/messages`;
     return {
-      url,
+      url: anthropicMessagesUrl(cfg.baseUrl),
       init: {
         method: "POST",
         headers: {
@@ -34,7 +30,7 @@ export function buildConnectionTestRequest(
     };
   }
   return {
-    url: `${base}/models`,
+    url: `${cfg.baseUrl.replace(/\/+$/, "")}/models`,
     init: { method: "GET", headers: { authorization: `Bearer ${cfg.apiKey}` } },
   };
 }

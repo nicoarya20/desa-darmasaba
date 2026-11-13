@@ -2,13 +2,16 @@
 
 import colors from "@/con/colors";
 import { Box, Space, Stack } from "@mantine/core";
+import dynamic from "next/dynamic";
 
 import { Navbar } from "@/app/(public)/_com/Navbar";
 import Footer from "./Footer";
 import FixedPlayerBar from "./FixedPlayerBar";
 import { ImageErrorRetry } from "./ImageErrorRetryMount";
 
-/** Kerangka halaman publik (route group (public)): navbar, konten, footer, dan pemutar musik. */
+const JennaWidget = dynamic(() => import("./jenna/JennaWidget"), { ssr: false });
+
+/** Kerangka halaman publik (route group (public)): navbar, konten, footer, pemutar musik, dan asisten Jenna. */
 export function DarmasabaShell({ children }: { children: React.ReactNode }) {
     return (
             <Stack gap={0} bg={colors.grey[1]}>
@@ -21,6 +24,7 @@ export function DarmasabaShell({ children }: { children: React.ReactNode }) {
                 <Box>{children}</Box>
                 <Footer />
                 <FixedPlayerBar />
+                <JennaWidget />
             </Stack>
     )
 }
