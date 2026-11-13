@@ -5,6 +5,7 @@ import { IconAt, IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBra
 import dynamic from 'next/dynamic';
 import { useRef, useState } from 'react';
 import { KONTAK_BUPATI } from '@/con/kontak-bupati';
+import { LAYANAN_DESA } from '@/con/layanan-desa';
 import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInformasi';
 import { toast } from 'react-toastify';
 import { FooterKontakBupati } from './FooterKontakBupati';
@@ -40,24 +41,10 @@ const sosialMedia = [
   },
 ]
 
-const layanandesa: FooterLink[] = [
-  {
-    title: "Administrasi Kependudukan",
-    link: "/pemerintahan/layanan/",
-  },
-  {
-    title: "Layanan Sosial",
-    link: "/ekonomi/program-kemiskinan",
-  },
-  {
-    title: "Pengaduan Masyarakat",
-    opensPengaduanModal: true,
-  },
-  {
-    title: "Informasi Publik",
-    link: "/ppid/daftar-informasi-publik",
-  },
-]
+// Daftar yang sama dipakai section "Layanan Masyarakat" di beranda.
+const layanandesa: FooterLink[] = LAYANAN_DESA.map((item) =>
+  'link' in item ? { title: item.title, link: item.link } : { title: item.title, opensPengaduanModal: true },
+)
 
 const tautanPenting: FooterLink[] = [
   {
