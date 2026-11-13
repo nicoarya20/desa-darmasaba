@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Kerangka katalog UMKM: tab, panel saring (grup Decathlon), baris alat (jumlah, urutkan, chip), keadaan badan.
+// Kerangka katalog UMKM: tab, panel filter (grup Decathlon), baris alat (jumlah, urutkan, chip), keadaan badan.
 // jsdom rusak di repo ini → markup diuji via renderToStaticMarkup; interaksi (klik, drawer) diverifikasi manual.
 import { MantineProvider } from '@mantine/core';
 import type { AnchorHTMLAttributes } from 'react';
@@ -62,19 +62,18 @@ describe('KatalogTabs', () => {
 });
 
 describe('SaringPanel', () => {
-  it('tab Produk: judul h2, 5 grup, Kategori & Toko terbuka bawaan, jumlah per pilihan', () => {
+  it('tab Produk: judul h2 "Filter", 4 grup tanpa Ketersediaan, Kategori & Toko terbuka bawaan, jumlah per pilihan', () => {
     const html = render(<SaringPanel params={params()} facets={produkFacets(produk)} update={noop} withTitle />);
-    expect(html).toContain(`<h2 class="${s.title}">`);
+    expect(html).toMatch(new RegExp(`<h2 class="${s.title}">.*?Filter</h2>`));
     const heads = [...html.matchAll(/aria-expanded="(true|false)"[^>]*>([\s\S]*?)<\/button>/g)].map((m) => [text(m[2]), m[1]]);
     expect(heads).toEqual([
       ['Kategori', 'true'],
       ['Toko', 'true'],
       ['Harga', 'false'],
-      ['Ketersediaan', 'false'],
       ['Produk unggulan', 'false'],
     ]);
     expect(text(html)).toContain('Kerajinan 4 Makanan 3');
-    expect(text(html)).toContain('Hanya yang tersedia 6');
+    expect(text(html)).not.toMatch(/tersedia|Ketersediaan/i);
   });
 
   it('Toko > 5 → 5 pilihan + "Lihat semua (7)"; pilihan tercentang di luar batas tetap tampil', () => {
@@ -92,14 +91,13 @@ describe('SaringPanel', () => {
   });
 
   it('grup dengan nilai aktif dari URL terbuka saat dirender', () => {
-    const html = render(<SaringPanel params={params({ min: 5000, tersedia: true })} facets={produkFacets(produk)} update={noop} />);
+    const html = render(<SaringPanel params={params({ min: 5000, unggulan: true })} facets={produkFacets(produk)} update={noop} />);
     const heads = [...html.matchAll(/aria-expanded="(true|false)"[^>]*>([\s\S]*?)<\/button>/g)].map((m) => [text(m[2]), m[1]]);
     expect(heads).toEqual([
       ['Kategori', 'true'],
       ['Toko', 'true'],
       ['Harga 1', 'true'],
-      ['Ketersediaan 1', 'true'],
-      ['Produk unggulan', 'false'],
+      ['Produk unggulan 1', 'true'],
     ]);
   });
 
@@ -138,20 +136,20 @@ describe('KatalogToolbar', () => {
     expect(text(toolbar({ count: null }))).not.toContain('Menampilkan');
   });
 
-  it('Urutkan menampilkan label urutan aktif; pil Saring dengan badge', () => {
+  it('Urutkan menampilkan label urutan aktif; pil Filter dengan badge', () => {
     const html = toolbar({ urut: 'harga-asc', activeCount: 2 });
     expect(html).toContain('value="Harga terendah"');
     expect(html).toContain('>Urutkan</label>');
-    expect(html).toContain(`class="${l.saringPill}"`);
-    expect(html).toContain('aria-label="2 saringan aktif"');
+    expect(html).toMatch(new RegExp(`class="${l.saringPill}"[^>]*>.*?Filter<span`));
+    expect(html).toContain('aria-label="2 filter aktif"');
   });
 
-  it('chip aktif + "Hapus semua" hanya bila ada saringan', () => {
+  it('chip aktif + "Hapus semua" hanya bila ada filter', () => {
     expect(toolbar()).not.toContain('Hapus semua');
-    const p = params({ kategori: ['k1'], tersedia: true });
+    const p = params({ kategori: ['k1'], min: 5000 });
     const html = toolbar({ chips: activeChips(p, produkFacets(produk)), activeCount: 2 });
-    expect(html).toContain('aria-label="Hapus saringan Makanan"');
-    expect(html).toContain('aria-label="Hapus saringan Tersedia"');
+    expect(html).toContain('aria-label="Hapus filter Makanan"');
+    expect(html).toContain('aria-label="Hapus filter Mulai Rp5.000"');
     expect(text(html)).toContain('Hapus semua');
   });
 });
@@ -180,20 +178,21 @@ describe('KatalogBody', () => {
     expect(html).toContain('Menampilkan <strong>7</strong> produk');
   });
 
-  it('saringan diterapkan + id tak dikenal diabaikan', () => {
-    const html = body(ready, params({ kategori: ['k1', 'asing'], tersedia: true }));
-    expect(html).toContain('Menampilkan <strong>2</strong> dari 7 produk');
-    expect(count(html, 'href="/ekonomi/umkm/produk/')).toBe(2);
-    expect(html).not.toContain('Hapus saringan asing');
+  it('filter diterapkan + id tak dikenal diabaikan; produk stok 0 tetap tampil (stok tidak dipakai)', () => {
+    const html = body(ready, params({ kategori: ['k1', 'asing'] }));
+    expect(html).toContain('Menampilkan <strong>3</strong> dari 7 produk');
+    expect(count(html, 'href="/ekonomi/umkm/produk/')).toBe(3);
+    expect(html).toContain('href="/ekonomi/umkm/produk/p0"');
+    expect(html).not.toContain('Hapus filter asing');
   });
 
   it('hasil saring kosong vs. data kosong', () => {
     const filtered = text(body(ready, params({ q: 'tidak ada' })));
     expect(filtered).toContain('Tidak ada produk yang cocok');
-    expect(filtered).toContain('Hapus semua saringan');
+    expect(filtered).toContain('Hapus semua filter');
     const none = text(body({ status: 'ready', data: { produk: [], toko: [] } }));
     expect(none).toContain('Belum ada produk UMKM');
-    expect(none).not.toContain('Hapus semua saringan');
+    expect(none).not.toContain('Hapus semua filter');
   });
 
   it('tab Toko: kartu toko + jumlah produk', () => {

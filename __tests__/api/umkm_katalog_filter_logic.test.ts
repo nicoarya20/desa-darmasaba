@@ -91,13 +91,20 @@ describe('parseKatalogParams & katalogHref', () => {
   });
 
   it('membaca semua saringan produk; id dipisah koma, unik, tanpa yang kosong', () => {
-    const p = url('q=%20kopi%20&kategori=k1,,k2,k1&toko=u2&min=1000&max=50000&tersedia=1&unggulan=1&urut=harga-desc');
-    expect(p).toEqual({ tab: 'produk', q: 'kopi', kategori: ['k1', 'k2'], toko: ['u2'], min: 1000, max: 50000, tersedia: true, unggulan: true, urut: 'harga-desc' });
-    expect(katalogHref(p)).toBe('/ekonomi/umkm?q=kopi&kategori=k1,k2&toko=u2&min=1000&max=50000&tersedia=1&unggulan=1&urut=harga-desc');
+    const p = url('q=%20kopi%20&kategori=k1,,k2,k1&toko=u2&min=1000&max=50000&unggulan=1&urut=harga-desc');
+    expect(p).toEqual({ tab: 'produk', q: 'kopi', kategori: ['k1', 'k2'], toko: ['u2'], min: 1000, max: 50000, unggulan: true, urut: 'harga-desc' });
+    expect(katalogHref(p)).toBe('/ekonomi/umkm?q=kopi&kategori=k1,k2&toko=u2&min=1000&max=50000&unggulan=1&urut=harga-desc');
+  });
+
+  it('param lama ?tersedia=1 diabaikan (stok tidak dipakai) dan tidak ditulis ulang', () => {
+    const p = url('tersedia=1&kategori=k1');
+    expect(p).toEqual({ ...emptyParams('produk'), kategori: ['k1'] });
+    expect(p).not.toHaveProperty('tersedia');
+    expect(katalogHref(p)).toBe('/ekonomi/umkm?kategori=k1');
   });
 
   it('nilai tak dikenal diabaikan; min > maks ditukar', () => {
-    const p = url('tab=lain&urut=acak&min=abc&max=-5&tersedia=ya');
+    const p = url('tab=lain&urut=acak&min=abc&max=-5&unggulan=ya');
     expect(p).toEqual(emptyParams('produk'));
     expect(url('min=90000&max=1000')).toMatchObject({ min: 1000, max: 90000 });
   });
@@ -119,18 +126,18 @@ describe('parseKatalogParams & katalogHref', () => {
 
 describe('pengubah params', () => {
   it('switchTab mempertahankan q, membuang saringan & urutan; tab sama → tetap', () => {
-    const p = params({ q: 'kopi', kategori: ['k1'], tersedia: true, urut: 'nama' });
+    const p = params({ q: 'kopi', kategori: ['k1'], unggulan: true, urut: 'nama' });
     expect(switchTab(p, 'toko')).toEqual(emptyParams('toko', 'kopi'));
     expect(switchTab(p, 'produk')).toBe(p);
   });
 
   it('clearFilters mempertahankan tab, q, urutan', () => {
-    const p = params({ q: 'kopi', kategori: ['k1'], toko: ['u1'], min: 1, max: 2, tersedia: true, unggulan: true, urut: 'nama' });
+    const p = params({ q: 'kopi', kategori: ['k1'], toko: ['u1'], min: 1, max: 2, unggulan: true, urut: 'nama' });
     expect(clearFilters(p)).toEqual({ ...emptyParams('produk', 'kopi'), urut: 'nama' });
   });
 
   it('countActiveFilters: tiap id satu, rentang harga satu', () => {
-    expect(countActiveFilters(params({ kategori: ['a', 'b'], toko: ['u'], min: 5, max: 9, tersedia: true }))).toBe(5);
+    expect(countActiveFilters(params({ kategori: ['a', 'b'], toko: ['u'], min: 5, max: 9, unggulan: true }))).toBe(5);
     expect(countActiveFilters(params({ q: 'kopi' }))).toBe(0);
   });
 
@@ -199,14 +206,14 @@ describe('cari, saring, urut', () => {
     expect(filterProduk(produk, params({ q: 'TELUR' })).map((p) => p.id)).toEqual(['telur']);
   });
 
-  it('saringan produk: kategori/toko banyak pilihan, harga inklusif, tersedia, unggulan', () => {
+  it('filter produk: kategori/toko banyak pilihan, harga inklusif, unggulan; stok tidak menyaring', () => {
     const ids = (p: Partial<KatalogParams>) => filterProduk(produk, params(p)).map((x) => x.id);
     expect(ids({ kategori: ['k2'] })).toEqual(['kopi', 'arak']);
     expect(ids({ kategori: ['k1', 'k2'] })).toEqual(['telur', 'kopi', 'arak']);
     expect(ids({ toko: ['u1', 'u3'] })).toEqual(['telur', 'arak']);
     expect(ids({ min: 30000, max: 30000 })).toEqual(['telur', 'arak']);
     expect(ids({ max: 5000 })).toEqual(['tanpa']);
-    expect(ids({ tersedia: true })).not.toContain('kopi');
+    expect(ids({})).toContain('kopi');
     expect(ids({ unggulan: true })).toEqual(['kopi']);
   });
 
@@ -239,7 +246,7 @@ describe('facet, chip, tampilan', () => {
       { id: 'k2', ids: ['k2'], label: 'Minuman', count: 2 },
     ]);
     expect(f.toko.map((t) => t.label)).toEqual(['Kopi Darmasaba', 'Tirta', 'Warung Bu Made']);
-    expect(f.tersedia).toBe(3);
+    expect(f).not.toHaveProperty('tersedia');
     expect(f.unggulan).toBe(1);
     expect(tokoFacets(toko).kategori).toEqual([
       { id: 'k1', ids: ['k1'], label: 'Makanan', count: 1 },
@@ -258,9 +265,9 @@ describe('facet, chip, tampilan', () => {
     expect(hargaLabel(10000, null)).toBe('Mulai Rp10.000');
     expect(hargaLabel(null, 50000)).toBe('Sampai Rp50.000');
     expect(hargaLabel(null, null)).toBeNull();
-    const p = params({ q: 'x', kategori: ['k2'], toko: ['u3'], min: 1000, tersedia: true, unggulan: true });
+    const p = params({ q: 'x', kategori: ['k2'], toko: ['u3'], min: 1000, unggulan: true });
     const chips = activeChips(p, produkFacets(produk));
-    expect(chips.map((c) => c.label)).toEqual(['Minuman', 'Tirta', 'Mulai Rp1.000', 'Tersedia', 'Unggulan']);
+    expect(chips.map((c) => c.label)).toEqual(['Minuman', 'Tirta', 'Mulai Rp1.000', 'Unggulan']);
     expect(chips[0].next.kategori).toEqual([]);
     expect(chips[2].next).toMatchObject({ min: null, max: null, q: 'x', toko: ['u3'] });
   });
