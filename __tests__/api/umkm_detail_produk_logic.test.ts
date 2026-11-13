@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Detail produk UMKM publik: baca respons API (siap / tidak ditemukan / galat), saring produk yang tak boleh tampil
-// (MITIGASI SEMENTARA umkm-detail), adapter ke bentuk halaman, inisial avatar penjual, dan sumber data.
+// (MITIGASI SEMENTARA umkm-detail), adapter ke bentuk halaman, dan sumber data.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const h = vi.hoisted(() => ({ res: { status: 200, data: null as unknown }, ids: [] as string[] }));
@@ -27,7 +27,6 @@ import {
   type ProdukDetailApiItem,
 } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/detail-produk.adapter.logic';
 import { loadDetailProduk } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/detail-produk.source';
-import { inisialNama } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/detail-produk.view.logic';
 
 // test-only: bentuk respons GET /api/ekonomi/umkm/produk/:id (stg 2026-11-13).
 const item = (over: Partial<ProdukDetailApiItem> = {}): ProdukDetailApiItem => ({
@@ -142,18 +141,6 @@ describe('toDetailProduk', () => {
 
   it('sanitize bawaan (DOMPurify) di lingkungan tanpa DOM → "" (tidak merender HTML mentah)', () => {
     expect(toDetailProduk(item({ deskripsi: '<img src=x onerror=alert(1)>' })).deskripsiHtml).toBe('');
-  });
-});
-
-describe('inisialNama', () => {
-  it.each([
-    ['Warung Bu Made', 'WB'],
-    ['kopi', 'K'],
-    ['  sari   rasa  ', 'SR'],
-    ['', '?'],
-    ['   ', '?'],
-  ])('%j → %j', (nama, hasil) => {
-    expect(inisialNama(nama)).toBe(hasil);
   });
 });
 

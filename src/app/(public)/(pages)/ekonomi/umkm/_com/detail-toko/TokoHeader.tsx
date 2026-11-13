@@ -1,6 +1,6 @@
 import { Image } from '@mantine/core';
 import { IconMapPin, IconShoppingBag, IconUser } from '@tabler/icons-react';
-import { inisialNama } from '../detail-produk/detail-produk.view.logic';
+import { inisialNama } from '../detail-umkm/detail-umkm.logic';
 import { HubungiPenjualButton } from '../HubungiPenjualButton';
 import { DETAIL_TOKO_TEXT as T } from './detail-toko.text';
 import type { DetailToko } from './detail-toko.types';

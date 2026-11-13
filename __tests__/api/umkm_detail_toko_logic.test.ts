@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Detail toko UMKM publik: baca respons API (siap / tidak ditemukan / galat), saring toko & produk yang tak boleh tampil
-// (MITIGASI SEMENTARA umkm-detail-toko), adapter ke bentuk halaman, sumber data, dan pesan WhatsApp toko.
+// Detail toko UMKM publik: baca respons API (siap / tidak ditemukan / galat), adapter ke bentuk halaman (produk nonaktif
+// disembunyikan), sumber data (toko nonaktif → null; MITIGASI SEMENTARA umkm-detail-toko), dan pesan WhatsApp toko.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const h = vi.hoisted(() => ({ res: { status: 200, data: null as unknown }, ids: [] as string[] }));
@@ -19,8 +19,6 @@ vi.mock('@/lib/api-fetch', () => ({
 }));
 
 import {
-  isProdukTokoTampil,
-  isTokoTampil,
   readTokoBody,
   toDetailToko,
   type TokoDetailApiItem,
@@ -79,22 +77,6 @@ describe('readTokoBody', () => {
     expect(() => readTokoBody('umkm-3', 500, null)).toThrow(/HTTP 500/);
     expect(() => readTokoBody('umkm-3', 200, { success: true, data: null })).toThrow(/respons tidak valid/);
     expect(() => readTokoBody('umkm-3', 200, undefined)).toThrow(/respons tidak valid/);
-  });
-});
-
-describe('isTokoTampil / isProdukTokoTampil (MITIGASI SEMENTARA umkm-detail-toko)', () => {
-  it('aktif tampil; kolom kosong = aktif', () => {
-    expect(isTokoTampil(toko())).toBe(true);
-    expect(isTokoTampil(toko({ isActive: null }))).toBe(true);
-    expect(isProdukTokoTampil(produk({ isActive: null }))).toBe(true);
-  });
-
-  it.each([
-    ['terhapus', { deletedAt: '2026-11-01T00:00:00.000Z' }],
-    ['nonaktif', { isActive: false }],
-  ])('%s → tidak tampil', (_, over) => {
-    expect(isTokoTampil(toko(over))).toBe(false);
-    expect(isProdukTokoTampil(produk(over))).toBe(false);
   });
 });
 

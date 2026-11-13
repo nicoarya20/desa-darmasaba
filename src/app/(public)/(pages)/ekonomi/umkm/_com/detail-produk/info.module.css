@@ -1,6 +1,6 @@
 /*
  * Kolom info detail produk UMKM (merek, nama, rating, harga, CTA, panel Cara memesan & Penjual).
- * Token warna dari akar halaman (detail-produk.module.css). Breakpoint apple.com: ≤734px (mobile).
+ * Token warna dari akar halaman (../detail-umkm/detail-umkm.module.css). Breakpoint apple.com: ≤734px (mobile).
  */
 .info {
   display: flex;

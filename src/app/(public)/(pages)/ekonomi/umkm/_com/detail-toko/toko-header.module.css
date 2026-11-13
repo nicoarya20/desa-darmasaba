@@ -1,6 +1,6 @@
 /*
  * Kepala toko halaman detail UMKM: foto persegi 160px (tanpa foto → inisial), kategori, nama, meta, deskripsi, CTA
- * WhatsApp, garis pemisah di bawah. Token (--ink, --muted, --tile, --line) dari .page detail-produk.module.css.
+ * WhatsApp, garis pemisah di bawah. Token (--ink, --muted, --tile, --line) dari .page detail-umkm.module.css.
  */
 .header {
   display: grid;

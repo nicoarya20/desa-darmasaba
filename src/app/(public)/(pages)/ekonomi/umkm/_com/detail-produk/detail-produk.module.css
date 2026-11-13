@@ -1,41 +1,8 @@
 /*
- * Kerangka halaman detail produk UMKM (`/ekonomi/umkm/produk/[id]`): tautan kembali, grid galeri + info menempel,
- * deskripsi di bawah galeri, keadaan memuat. Token & breakpoint ikut katalog-layout.module.css:
- * ≤1068px (tablet), ≤734px (mobile). `--brand` dipasang inline (KATALOG_BRAND_VARS).
+ * Isi halaman detail produk UMKM (`/ekonomi/umkm/produk/[id]`): grid galeri + info menempel, deskripsi di bawah
+ * galeri, keadaan memuat. Kerangka .page/.inner/.back + token (--ink, --muted, --tile, --line) ada di
+ * ../detail-umkm/detail-umkm.module.css. Breakpoint ikut katalog-layout.module.css: ≤1068px (tablet), ≤734px (mobile).
  */
-.page {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #86868b;
-  --tile: #f5f5f7;
-  --line: #d2d2d7;
-  background: #fff;
-  color: var(--ink);
-  padding: 40px var(--edge-gutter) 96px;
-}
-
-/* Lebar isi dibatasi (480 + 56 + info ±584) agar CTA, panel, Ulasan, dan Produk serupa tidak membentang di layar lebar. */
-.inner {
-  max-width: 1120px;
-  margin-inline: auto;
-}
-
-.back {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  color: var(--brand);
-  font-size: 15px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.back:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
 .grid {
   display: grid;
   grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
@@ -148,13 +115,6 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .back:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .skeletonMedia,
   .skeletonLine {
@@ -177,10 +137,6 @@
 
 /* ---------- Mobile: satu kolom galeri → info → deskripsi, tanpa sticky ---------- */
 @media (max-width: 734px) {
-  .page {
-    padding-top: 24px;
-  }
-
   .grid {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:

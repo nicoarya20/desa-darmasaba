@@ -1,6 +1,6 @@
 /*
  * Keadaan selain siap di halaman detail toko UMKM: kerangka kepala (kotak 160px + 4 baris) + grid produk, atau panel
- * kosong/galat. Kerangka halaman (.page/.inner/.back + token) dipakai bersama dari detail-produk.module.css.
+ * kosong/galat. Kerangka halaman (.page/.inner/.back + token) dipakai bersama dari ../detail-umkm/detail-umkm.module.css.
  */
 .status {
   margin-top: 24px;

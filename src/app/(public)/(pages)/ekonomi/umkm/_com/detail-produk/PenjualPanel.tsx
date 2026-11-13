@@ -1,8 +1,8 @@
 import { IconMapPin } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
+import { inisialNama } from '../detail-umkm/detail-umkm.logic';
 import { tokoHref } from '../katalog/katalog-card.logic';
 import { emptyParams, katalogHref } from '../katalog/katalog-params.logic';
-import { inisialNama } from './detail-produk.view.logic';
 import { DETAIL_PRODUK_TEXT as T } from './detail-produk.text';
 import type { DetailPenjual } from './detail-produk.types';
 import s from './info.module.css';
