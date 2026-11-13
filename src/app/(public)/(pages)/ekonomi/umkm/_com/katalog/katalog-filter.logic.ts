@@ -4,8 +4,11 @@ import { KATALOG_FILTER_TEXT as T } from './katalog-filter.text';
 import type { KatalogParams } from './katalog-params.logic';
 import type { KatalogProduk, KatalogRef, KatalogToko } from './katalog.types';
 
-/** Satu pilihan kotak centang di panel saring beserta jumlah entri dari data yang dimuat. */
-export type FacetOption = { id: string; label: string; count: number };
+/**
+ * Satu pilihan kotak centang di panel saring beserta jumlah entri dari data yang dimuat. `id` = id wakil yang ditulis
+ * ke URL; `ids` = semua id yang digabung ke pilihan ini (kategori bernama sama), dipakai saat menyaring.
+ */
+export type FacetOption = { id: string; ids: string[]; label: string; count: number };
 
 export type ProdukFacets = { kategori: FacetOption[]; toko: FacetOption[]; tersedia: number; unggulan: number };
 export type TokoFacets = { kategori: FacetOption[] };
@@ -26,23 +29,39 @@ export function matchesSearch(query: string, fields: readonly (string | null | u
   return words.every((word) => haystack.includes(word));
 }
 
-/** Pilihan unik dari relasi bernama, dengan jumlahnya, urut nama; relasi kosong tidak dihitung. */
-function facetOf<T>(items: readonly T[], pick: (item: T) => KatalogRef | null): FacetOption[] {
-  const map = new Map<string, FacetOption>();
+/**
+ * Pilihan dari relasi bernama, dengan jumlahnya, urut nama; relasi kosong tidak dihitung.
+ * `mergeByName` menggabungkan id berbeda yang namanya sama (setelah dinormalisasi) jadi satu pilihan; id wakil =
+ * id terkecil secara leksikal supaya URL & label stabil walau urutan data berubah.
+ */
+function facetOf<T>(items: readonly T[], pick: (item: T) => KatalogRef | null, mergeByName = false): FacetOption[] {
+  const groups = new Map<string, { names: Map<string, string>; count: number }>();
   for (const item of items) {
     const ref = pick(item);
     if (!ref) continue;
-    const option = map.get(ref.id) ?? { id: ref.id, label: ref.nama, count: 0 };
-    option.count += 1;
-    map.set(ref.id, option);
+    const key = mergeByName ? normalizeSearch(ref.nama) : ref.id;
+    const group = groups.get(key) ?? { names: new Map<string, string>(), count: 0 };
+    group.names.set(ref.id, ref.nama.trim());
+    group.count += 1;
+    groups.set(key, group);
   }
-  return [...map.values()].sort((a, b) => a.label.localeCompare(b.label, 'id', { sensitivity: 'base' }));
+  return [...groups.values()]
+    .map(({ names, count }) => {
+      const ids = [...names.keys()].sort();
+      // Label dari id wakil (bukan entri pertama) agar tidak berubah mengikuti urutan data.
+      return { id: ids[0], ids, label: names.get(ids[0]) ?? '', count };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label, 'id', { sensitivity: 'base' }));
 }
+
+// MITIGASI SEMENTARA(umkm-kategori-ganda): data kategori ganda di admin — docs/BACKEND-TODO.md (Isi data).
+// Stg 2026-11-13 punya dua kategori "Makanan" berbeda id; tanpa penggabungan panel menampilkan dua baris bernama sama.
+const MERGE_KATEGORI_BY_NAME = true;
 
 /** Pilihan & jumlah panel saring tab Produk, dari seluruh produk yang dimuat (bukan hasil saring). */
 export function produkFacets(items: readonly KatalogProduk[]): ProdukFacets {
   return {
-    kategori: facetOf(items, (p) => p.kategori),
+    kategori: facetOf(items, (p) => p.kategori, MERGE_KATEGORI_BY_NAME),
     toko: facetOf(items, (p) => p.umkm),
     tersedia: items.filter((p) => p.stok > 0).length,
     unggulan: items.filter((p) => p.isUnggulan).length,
@@ -51,19 +70,34 @@ export function produkFacets(items: readonly KatalogProduk[]): ProdukFacets {
 
 /** Pilihan & jumlah panel saring tab Toko. */
 export function tokoFacets(items: readonly KatalogToko[]): TokoFacets {
-  return { kategori: facetOf(items, (t) => t.kategori) };
+  return { kategori: facetOf(items, (t) => t.kategori, MERGE_KATEGORI_BY_NAME) };
 }
 
-const knownOnly = (ids: readonly string[], options: readonly FacetOption[]) =>
-  ids.filter((id) => options.some((option) => option.id === id));
+/** Id URL → id wakil pilihannya (id mana pun dalam grup memilih grup itu); id tak dikenal dibuang, tanpa duplikat. */
+function toRepresentative(ids: readonly string[], options: readonly FacetOption[]): string[] {
+  const reps = ids.flatMap((id) => options.find((option) => option.ids.includes(id))?.id ?? []);
+  return [...new Set(reps)];
+}
 
-/** Buang id kategori/toko di URL yang tidak ada di data (nilai tak dikenal diabaikan). */
+/** Ganti id di URL dengan id wakil pilihan yang ada di data (nilai tak dikenal diabaikan). */
 export function resolveParams(params: KatalogParams, facets: ProdukFacets | TokoFacets): KatalogParams {
-  const toko = 'toko' in facets ? knownOnly(params.toko, facets.toko) : [];
-  return { ...params, kategori: knownOnly(params.kategori, facets.kategori), toko };
+  const toko = 'toko' in facets ? toRepresentative(params.toko, facets.toko) : [];
+  return { ...params, kategori: toRepresentative(params.kategori, facets.kategori), toko };
 }
 
-/** Produk yang lolos kata kunci & saringan (params sudah di-resolve). */
+/** Semua id anggota dari id wakil terpilih (untuk menyaring data). */
+export function expandIds(selected: readonly string[], options: readonly FacetOption[]): string[] {
+  return options.filter((option) => selected.includes(option.id)).flatMap((option) => option.ids);
+}
+
+/** Centang/lepas satu pilihan: bila salah satu id grupnya terpilih → semua id grup dilepas, selain itu id wakil ditambah. */
+export function toggleOption(ids: readonly string[], option: FacetOption): string[] {
+  return ids.some((id) => option.ids.includes(id))
+    ? ids.filter((id) => !option.ids.includes(id))
+    : [...ids, option.id];
+}
+
+/** Produk yang lolos kata kunci & saringan (`kategori`/`toko` = semua id anggota, lihat expandIds). */
 export function filterProduk(items: readonly KatalogProduk[], p: KatalogParams): KatalogProduk[] {
   return items.filter(
     (item) =>
@@ -77,7 +111,7 @@ export function filterProduk(items: readonly KatalogProduk[], p: KatalogParams):
   );
 }
 
-/** Toko yang lolos kata kunci (nama, pemilik, alamat) & kategori usaha. */
+/** Toko yang lolos kata kunci (nama, pemilik, alamat) & kategori usaha (`kategori` = semua id anggota). */
 export function filterToko(items: readonly KatalogToko[], p: KatalogParams): KatalogToko[] {
   return items.filter(
     (item) =>

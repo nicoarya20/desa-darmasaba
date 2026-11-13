@@ -106,8 +106,3 @@ export function parseHargaInput(text: string): number | null {
   const digits = text.replace(/\D/g, '').slice(0, 12);
   return digits === '' ? null : Number(digits);
 }
-
-/** Tambah/hapus satu id dari pilihan banyak. */
-export function toggleId(ids: readonly string[], id: string): string[] {
-  return ids.includes(id) ? ids.filter((value) => value !== id) : [...ids, id];
-}

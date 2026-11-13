@@ -11,13 +11,15 @@ type GroupProps = {
   label: string;
   /** Banyak nilai aktif di grup ini; > 0 → angka kecil di samping label. */
   activeCount: number;
+  /** Terbuka saat pertama dirender; grup dengan nilai aktif selalu terbuka saat pertama dirender. */
   defaultOpen?: boolean;
   children: ReactNode;
 };
 
 /** Satu grup akordeon panel saring gaya Decathlon: baris label + ikon +/−, isi dibuka/tutup beranimasi. */
 export function SaringGroup({ label, activeCount, defaultOpen = false, children }: GroupProps) {
-  const [open, setOpen] = useState(defaultOpen);
+  // Grup yang sudah punya nilai aktif (dari URL) terbuka saat pertama dirender.
+  const [open, setOpen] = useState(defaultOpen || activeCount > 0);
   const contentId = useId();
   return (
     <div className={s.group}>
@@ -63,7 +65,7 @@ export function SaringCheck({ label, count, checked, disabled, onChange }: Check
 type ListProps = {
   options: readonly FacetOption[];
   selected: readonly string[];
-  onToggle: (id: string) => void;
+  onToggle: (option: FacetOption) => void;
   /** Batasi tampilan ke beberapa pilihan pertama + tombol "Lihat semua (n)". */
   collapsible?: boolean;
 };
@@ -71,7 +73,9 @@ type ListProps = {
 /** Daftar kotak centang banyak pilihan; pilihan yang sedang dicentang selalu tampil walau di luar batas. */
 export function SaringCheckList({ options, selected, onToggle, collapsible = false }: ListProps) {
   const [showAll, setShowAll] = useState(false);
-  const limited = collapsible && !showAll && options.length > TOKO_FACET_VISIBLE;
+  // Menyembunyikan satu pilihan saja tidak sepadan dengan tombolnya: batasi hanya bila ≥2 tersembunyi.
+  const canCollapse = collapsible && options.length > TOKO_FACET_VISIBLE + 1;
+  const limited = canCollapse && !showAll;
   const visible = limited
     ? options.filter((o, i) => i < TOKO_FACET_VISIBLE || selected.includes(o.id))
     : options;
@@ -84,12 +88,12 @@ export function SaringCheckList({ options, selected, onToggle, collapsible = fal
               label={option.label}
               count={option.count}
               checked={selected.includes(option.id)}
-              onChange={() => onToggle(option.id)}
+              onChange={() => onToggle(option)}
             />
           </li>
         ))}
       </ul>
-      {collapsible && options.length > TOKO_FACET_VISIBLE ? (
+      {canCollapse ? (
         <button type="button" className={s.more} onClick={() => setShowAll((v) => !v)}>
           {showAll ? T.lebihSedikit : T.lihatSemua(options.length)}
         </button>

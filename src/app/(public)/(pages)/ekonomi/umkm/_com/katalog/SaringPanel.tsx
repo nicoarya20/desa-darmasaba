@@ -1,8 +1,8 @@
 'use client';
 import { IconAdjustmentsHorizontal } from '@tabler/icons-react';
-import type { ProdukFacets, TokoFacets } from './katalog-filter.logic';
+import { toggleOption, type ProdukFacets, type TokoFacets } from './katalog-filter.logic';
 import { KATALOG_FILTER_TEXT as T } from './katalog-filter.text';
-import { toggleId, type KatalogParams } from './katalog-params.logic';
+import type { KatalogParams } from './katalog-params.logic';
 import { SaringCheck, SaringCheckList, SaringGroup } from './SaringGroup';
 import { SaringHarga } from './SaringHarga';
 import s from './saring.module.css';
@@ -43,7 +43,7 @@ export function SaringPanel({ params, facets, update, withTitle = false }: Props
           <SaringCheckList
             options={facets.kategori}
             selected={params.kategori}
-            onToggle={(id) => update((p) => ({ ...p, kategori: toggleId(p.kategori, id) }))}
+            onToggle={(option) => update((p) => ({ ...p, kategori: toggleOption(p.kategori, option) }))}
           />
         </SaringGroup>
       )}
@@ -62,7 +62,7 @@ function ProdukGroups({ params, facets, update }: GroupsProps) {
           <SaringCheckList
             options={facets.kategori}
             selected={params.kategori}
-            onToggle={(id) => update((p) => ({ ...p, kategori: toggleId(p.kategori, id) }))}
+            onToggle={(option) => update((p) => ({ ...p, kategori: toggleOption(p.kategori, option) }))}
           />
         </SaringGroup>
       ) : null}
@@ -71,7 +71,7 @@ function ProdukGroups({ params, facets, update }: GroupsProps) {
           <SaringCheckList
             options={facets.toko}
             selected={params.toko}
-            onToggle={(id) => update((p) => ({ ...p, toko: toggleId(p.toko, id) }))}
+            onToggle={(option) => update((p) => ({ ...p, toko: toggleOption(p.toko, option) }))}
             collapsible
           />
         </SaringGroup>

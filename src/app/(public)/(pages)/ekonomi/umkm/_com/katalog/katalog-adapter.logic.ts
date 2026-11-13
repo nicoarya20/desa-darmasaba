@@ -13,7 +13,8 @@ export type ProdukApiItem = {
   isUnggulan?: boolean | null;
   createdAt: string;
   image?: { link?: string | null } | null;
-  umkm?: ApiRef;
+  /** `include: { umkm }` ikut membawa kolom skalar UMKM, termasuk `isActive`. */
+  umkm?: (NonNullable<ApiRef> & { isActive?: boolean | null }) | null;
   kategoriProduk?: ApiRef;
 };
 
@@ -67,6 +68,11 @@ export function toKatalogToko(item: TokoApiItem): KatalogToko {
  */
 export function isTokoAktif(item: Pick<TokoApiItem, 'isActive'>): boolean {
   return item.isActive !== false;
+}
+
+/** Produk yang boleh tampil: milik UMKM nonaktif disembunyikan (senada tab Toko); produk tanpa relasi UMKM tetap tampil. */
+export function isProdukTampil(item: Pick<ProdukApiItem, 'umkm'>): boolean {
+  return !item.umkm || isTokoAktif(item.umkm);
 }
 
 /** Jumlah produk per id UMKM dari daftar produk yang dimuat (API UMKM tidak mengirim jumlah produk). */

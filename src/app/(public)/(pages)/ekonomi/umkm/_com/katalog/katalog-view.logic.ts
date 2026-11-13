@@ -1,6 +1,7 @@
 import { countProdukPerToko } from './katalog-adapter.logic';
 import {
   activeChips,
+  expandIds,
   filterProduk,
   filterToko,
   produkFacets,
@@ -38,7 +39,7 @@ export function buildKatalogView(data: { produk: KatalogProduk[]; toko: KatalogT
       tab: 'toko',
       facets,
       params,
-      items: sortToko(filterToko(data.toko, params), params.urut),
+      items: sortToko(filterToko(data.toko, { ...params, kategori: expandIds(params.kategori, facets.kategori) }), params.urut),
       total: data.toko.length,
       chips: activeChips(params, facets),
       activeCount: countActiveFilters(params),
@@ -47,11 +48,12 @@ export function buildKatalogView(data: { produk: KatalogProduk[]; toko: KatalogT
   }
   const facets = produkFacets(data.produk);
   const params = resolveParams(raw, facets);
+  const filterBy = { ...params, kategori: expandIds(params.kategori, facets.kategori), toko: expandIds(params.toko, facets.toko) };
   return {
     tab: 'produk',
     facets,
     params,
-    items: sortProduk(filterProduk(data.produk, params), params.urut),
+    items: sortProduk(filterProduk(data.produk, filterBy), params.urut),
     total: data.produk.length,
     chips: activeChips(params, facets),
     activeCount: countActiveFilters(params),

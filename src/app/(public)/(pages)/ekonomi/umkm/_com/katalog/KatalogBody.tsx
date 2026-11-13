@@ -1,6 +1,8 @@
 'use client';
 import type { LoadState } from '@/app/(public)/_com/lazy-load/use-lazy-load';
+import { useMediaQuery } from '@mantine/hooks';
 import { useMemo, useState } from 'react';
+import { KATALOG_DRAWER_QUERY } from './katalog-filter.meta';
 import { KATALOG_FILTER_TEXT as T } from './katalog-filter.text';
 import { clearFilters, emptyParams, type KatalogParams } from './katalog-params.logic';
 import { buildKatalogView, type KatalogView } from './katalog-view.logic';
@@ -27,6 +29,10 @@ const LIST_TITLE_ID = 'katalog-list-title';
 /** Badan katalog tab aktif: panel saring kiri (desktop) / drawer (≤1068px), baris alat, lalu grid kartu. */
 export function KatalogBody({ state, params, update, onRetry }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const narrow = useMediaQuery(KATALOG_DRAWER_QUERY);
+  // Layar dilebarkan melewati 1068px saat drawer terbuka → tutup (panel kiri sudah tampil). `narrow` baru terbaca
+  // setelah mount, tetapi drawer hanya bisa dibuka lewat pil Saring yang tampil di layar sempit (sesudah terbaca).
+  if (drawerOpen && !narrow) setDrawerOpen(false);
   const view = useMemo(() => (state.status === 'ready' ? buildKatalogView(state.data, params) : null), [state, params]);
   const p = view?.params ?? params;
   const facets = view?.facets ?? null;

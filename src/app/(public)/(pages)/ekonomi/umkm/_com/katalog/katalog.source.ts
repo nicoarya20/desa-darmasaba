@@ -1,6 +1,7 @@
 import { readFindMany, type FindManyBody } from '@/app/(public)/_com/main-page/kabar-desa/kabar.source';
 import ApiFetch from '@/lib/api-fetch';
 import {
+  isProdukTampil,
   isTokoAktif,
   toKatalogProduk,
   toKatalogToko,
@@ -20,7 +21,7 @@ function warnTruncated(what: string, body: ListBody, loaded: number) {
   }
 }
 
-/** Produk UMKM aktif (maks KATALOG_LIST_LIMIT, urut terbaru); galat → Error berkonteks. */
+/** Produk UMKM aktif (maks KATALOG_LIST_LIMIT, urut terbaru), tanpa produk milik UMKM nonaktif; galat → Error berkonteks. */
 export async function loadKatalogProduk(): Promise<KatalogProduk[]> {
   const res = await ApiFetch.api.ekonomi.umkm.produk['find-many'].get({
     query: { page: 1, limit: KATALOG_LIST_LIMIT },
@@ -28,7 +29,7 @@ export async function loadKatalogProduk(): Promise<KatalogProduk[]> {
   const body = res.data as ListBody;
   const items = readFindMany<ProdukApiItem>('produk UMKM', res.status, body);
   warnTruncated('produk', body, items.length);
-  return items.map(toKatalogProduk);
+  return items.filter(isProdukTampil).map(toKatalogProduk);
 }
 
 /** UMKM (maks KATALOG_LIST_LIMIT), tanpa yang nonaktif; galat → Error berkonteks. */

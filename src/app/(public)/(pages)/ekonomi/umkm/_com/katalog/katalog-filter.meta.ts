@@ -23,8 +23,11 @@ export const PRODUK_URUT = ['terbaru', 'harga-asc', 'harga-desc', 'nama'] as con
 export const TOKO_URUT = ['nama', 'terbaru'] as const;
 export type KatalogUrut = (typeof PRODUK_URUT)[number] | (typeof TOKO_URUT)[number];
 
-/** Pilihan toko yang tampil sebelum "Lihat semua" di grup Toko. */
+/** Pilihan toko yang tampil sebelum "Lihat semua" di grup Toko (tombol hanya bila ≥2 pilihan tersembunyi). */
 export const TOKO_FACET_VISIBLE = 5;
+
+/** Lebar tempat panel kiri diganti tombol Saring + drawer (sama dengan breakpoint CSS 1068px). */
+export const KATALOG_DRAWER_QUERY = '(max-width: 1068px)';
 
 /** Variabel warna brand untuk akar halaman katalog (judul, tab, fokus, kartu). */
 export const KATALOG_BRAND_VARS = {
