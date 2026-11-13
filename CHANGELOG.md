@@ -5,6 +5,9 @@
 - **Sampah di Dokumen APBDes, Galeri Foto BUMDes, dan Dokumen Perencanaan**, seperti yang sudah ada di Desa Anti Korupsi. Dokumen/foto yang dihapus di fitur-fitur ini tidak langsung hilang: masuk panel **Sampah** di halaman fitur itu sendiri (APBDes: halaman detail tiap tahun; BUMDes: bagian Galeri Foto di Profil BUMDes; Dokumen Perencanaan: halaman daftarnya) dan disimpan **30 hari**. Dari panel itu admin bisa **Pulihkan** (kembali utuh ke tempat asalnya) atau **Hapus permanen**. Setiap item menampilkan sisa hari sebelum terhapus otomatis (oranye bila tinggal 7 hari atau kurang).
 - Item yang tidak dipulihkan dalam 30 hari **terhapus permanen otomatis** (dicek sekali sehari oleh server), termasuk dokumen di Sampah Desa Anti Korupsi.
 
+### Changed
+- **Website & admin lebih ringan**: CSS tema PrimeReact (±190 KB per halaman, ±22 KB setelah kompresi) yang sudah tidak dipakai komponen mana pun tidak lagi dimuat. Tampilan tidak berubah, kecuali di **admin mode gelap**: scrollbar, pemilih tanggal, dropdown bawaan browser, dan isian otomatis kini ikut gelap (sebelumnya dipaksa terang).
+
 ### Fixed
 - **Hasil pencarian di website** untuk sekitar 50 jenis konten (mis. dokter & tenaga medis, tarif layanan, struktur BUMDes) sebelumnya diberi label dan tautan yang salah. Kini setiap hasil membuka halaman yang benar.
 - Tombol hapus di **Pustaka File** admin sebelumnya tidak melakukan apa-apa; kini berkas benar-benar terhapus (berkas yang masih dipakai di menu lain tidak ikut terhapus).
@@ -12,6 +15,9 @@
 - Menghapus data **Pembiayaan** (Ekonomi → Pendapatan Asli Desa) di admin sebelumnya selalu gagal; kini berhasil.
 - Delapan menu (Pengumuman, Artikel Kesehatan, Perpustakaan Digital, Gotong Royong, Media Sosial, Prestasi Desa, Program Inovasi, SDGs) serta galeri Berita dan Kesejahteraan Masyarakat sebelumnya meninggalkan foto/lampiran yang tak terpakai saat datanya dihapus atau gambarnya diganti; kini berkas itu ikut dihapus.
 - Di banyak menu, berkas sebelumnya dihapus **sebelum** datanya; bila penghapusan data gagal, gambar sudah terlanjur hilang (termasuk saat menyimpan Maskot desa). Kini berkas baru dihapus setelah data berhasil dihapus/diubah, dan berkas yang masih dipakai data lain tidak ikut terhapus.
+
+### Removed
+- Paket `primereact` dan `primeicons` (tidak dipakai lagi).
 
 ### Operator
 - Tidak ada migrasi database baru di versi ini.
