@@ -9,9 +9,14 @@ import type { ThemeTokens } from '@/utils/themeTokens';
 import css from './dev-console.module.css';
 import type { DevSessionUser } from './useDeveloperSession';
 
-type Props = { user: DevSessionUser; tokens: ThemeTokens };
+type Props = {
+  user: DevSessionUser;
+  tokens: ThemeTokens;
+  /** Dipanggil saat link internal diklik (penjaga draf belum disimpan). */
+  onLinkClick: (e: React.MouseEvent, href: string) => void;
+};
 
-export function DevUserMenu({ user, tokens }: Props) {
+export function DevUserMenu({ user, tokens, onLinkClick }: Props) {
   const [loggingOut, setLoggingOut] = useState(false);
   const displayName = user.name || 'Developer';
 
@@ -65,10 +70,20 @@ export function DevUserMenu({ user, tokens }: Props) {
           )}
         </Menu.Label>
         <Menu.Divider />
-        <Menu.Item component={Link} href={ADMIN_HOME_PATH} leftSection={<IconLayoutDashboard size={16} />}>
+        <Menu.Item
+          component={Link}
+          href={ADMIN_HOME_PATH}
+          leftSection={<IconLayoutDashboard size={16} />}
+          onClick={(e) => onLinkClick(e, ADMIN_HOME_PATH)}
+        >
           Buka Admin
         </Menu.Item>
-        <Menu.Item component={Link} href="/" leftSection={<IconWorld size={16} />}>
+        <Menu.Item
+          component={Link}
+          href="/"
+          leftSection={<IconWorld size={16} />}
+          onClick={(e) => onLinkClick(e, '/')}
+        >
           Website Desa
         </Menu.Item>
         <Menu.Divider />

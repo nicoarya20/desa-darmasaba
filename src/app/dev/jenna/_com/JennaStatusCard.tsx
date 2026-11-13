@@ -90,7 +90,7 @@ export function JennaStatusCard() {
         {!providerReady && (
           <Text size="xs" c={tokens.colors.text.muted}>
             {cryptoConfigured
-              ? 'Lengkapi Base URL, model, dan API key provider aktif di bagian Provider.'
+              ? 'Lengkapi Base URL, model, dan API key provider aktif di halaman Provider.'
               : 'Kunci enkripsi server belum diatur, sehingga API key tidak dapat dipakai.'}
           </Text>
         )}

@@ -11,7 +11,7 @@ import { developerRequest, errorMessage } from "./developer-api";
 
 const BASE = "/api/developer/jenna";
 
-/** Bagian halaman Pengaturan Jenna yang disimpan terpisah. */
+/** Bagian pengaturan Jenna yang disimpan terpisah (tersebar di sub-halaman /dev/jenna/*). */
 export type JennaSection = "status" | "identity" | "limits" | "protocol" | JennaSlot;
 
 /** State Developer Console › Pengaturan Jenna. */
@@ -24,7 +24,7 @@ const jennaState = proxy({
   /** Bagian yang sedang disimpan (satu per waktu supaya respons tidak saling menimpa). */
   saving: null as JennaSection | null,
   testingSlot: null as JennaSlot | null,
-  /** Bagian yang punya perubahan belum disimpan (untuk peringatan beforeunload). */
+  /** Bagian yang punya perubahan belum disimpan (peringatan beforeunload & pindah halaman). */
   dirty: {} as Partial<Record<JennaSection, boolean>>,
 
   async load() {
