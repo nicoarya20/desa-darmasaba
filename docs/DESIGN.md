@@ -626,6 +626,14 @@ Gaya halaman Monev/Posyandu. Kerangka `.section`/`.page`/`.inner`/`.header`/`.ca
 
 Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.tsx` (H1, `TextInput` berlabel "Saring halaman", ringkasan `aria-live`, `SimpleGrid` 1/2/3 kolom) → `_com/PetaInformasiGroupCard.tsx` (kartu per menu utama: H2 + `<ul>/<li>` `Anchor component={Link}`). Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, saring lewat `searchMenu` tanpa API. Pintu masuk: footer "Tautan Penting", entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Dites di `__tests__/api/peta_informasi.test.ts`.
 
+### Halaman 404 (`src/app/not-found.tsx`)
+
+Pola apple.com: satu kalimat besar "Halaman yang Anda cari tidak ditemukan." (h1 56px/700, mobile ≤734px 36px, `text-wrap: balance`, warna `#1d1d1f`) lalu kolom cari lebar (maks 560px, `GlobalSearch` dengan `inputProps` size `xl`, radius 12px, ikon kaca pembesar kiri, border `#d2d2d7` → brand `#0a4e78` saat fokus). Tanpa angka 404, ilustrasi, tombol, atau tautan tambahan (keputusan user). Latar putih, padding 104/168px (mobile 72/112px).
+- Satu file untuk seluruh situs: URL tak dikenal, `notFound()` di halaman, submenu tersembunyi (`MenuVisibilityGuard`), dan URL admin tak dikenal. Karena dirender di luar layout publik, file ini memasang sendiri `MenuVisibilityProvider` + `DarmasabaShell` (navbar, footer).
+- Metadata: judul tab "Halaman tidak ditemukan", `robots` noindex (menimpa "index, follow" root layout).
+- Submenu tersembunyi: `notFound()` dilempar komponen client, jadi isi 404 dirender setelah hidrasi (status tetap 404).
+- Teks: `_com/not-found/not-found.text.ts`. Dites di `__tests__/api/not_found_page.test.tsx`.
+
 ### Kerangka halaman PPID (`(pages)/ppid/_com/`)
 
 Semua halaman `/ppid/*` memakai satu kerangka agar kepala halamannya identik. Test: `__tests__/api/ppid_page_shell_ui.test.tsx`.
