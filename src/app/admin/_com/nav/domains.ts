@@ -179,3 +179,15 @@ export const pengaturanMenu: NavItem = {
     { id: "Pengaturan_1", name: "Visibilitas Menu", path: "/admin/pengaturan/visibilitas-menu" },
   ],
 }
+
+// Hanya role "0" (ditambahkan getNavbar). Sengaja TIDAK masuk navBar/devBar/role* supaya
+// tidak bisa diberikan ke role lain lewat halaman Menu Access.
+export const developerMenu: NavItem = {
+  id: "Developer",
+  name: "Developer",
+  path: "",
+  children: [
+    { id: "Developer_1", name: "Ringkasan Sistem", path: "/admin/developer/ringkasan" },
+    { id: "Developer_2", name: "Pengaturan Jenna", path: "/admin/developer/jenna" },
+  ],
+}

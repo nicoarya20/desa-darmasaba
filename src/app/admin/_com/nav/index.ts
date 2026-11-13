@@ -1,5 +1,6 @@
 import {
   desaMenu,
+  developerMenu,
   ekonomiMenu,
   inovasiMenu,
   keamananMenu,
@@ -14,7 +15,7 @@ import {
   userRoleMenu,
 } from "./domains"
 
-export { pengaturanMenu }
+export { developerMenu, pengaturanMenu }
 
 const allDomains = [
   landingPageMenu,
