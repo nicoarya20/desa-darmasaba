@@ -1,0 +1,71 @@
+/*
+ * Keadaan selain siap di halaman detail toko UMKM: kerangka kepala (kotak 160px + 4 baris) + grid produk, atau panel
+ * kosong/galat. Kerangka halaman (.page/.inner/.back + token) dipakai bersama dari ../detail-umkm/detail-umkm.module.css.
+ */
+.status {
+  margin-top: 24px;
+}
+
+.skeletonHeader {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--line);
+}
+
+.skeletonFoto,
+.skeletonLine {
+  background: var(--tile);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonFoto {
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+}
+
+.skeletonLines {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skeletonLine {
+  height: 18px;
+  border-radius: 4px;
+}
+
+.skeletonProduk {
+  margin-top: 48px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonFoto,
+  .skeletonLine {
+    animation: none;
+  }
+}
+
+@media (max-width: 734px) {
+  .skeletonHeader {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding-bottom: 32px;
+  }
+
+  .skeletonFoto {
+    width: 96px;
+  }
+
+  .skeletonProduk {
+    margin-top: 32px;
+  }
+}

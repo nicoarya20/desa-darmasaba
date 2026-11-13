@@ -11,8 +11,8 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 ## P1. Keamanan & privasi (kerjakan dulu)
 
 - [x] **XSS tersimpan Laporan Publik** (terverifikasi) — selesai di dua lapis, dikerjakan sisi frontend (P1 Laporan Publik memang dialokasikan ke sini):
-  - Render (v0.1.266, `fix/laporan-publik-xss`): detail admin merender `kronologi` & `penanganan[].deskripsi` lewat `sanitizeRichText`. Test: `__tests__/api/laporan_publik_admin_xss.test.tsx`.
-  - Simpan (v0.1.267, `fix/laporan-publik-sanitasi-server`): `create.ts` & `updt.ts` menyimpan lewat `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`, `sanitize-html` dengan allowlist `RICH_TEXT_TAGS` yang sama, tanpa atribut). Data lama tidak diubah (prod 2026-11-13: 2 laporan, hanya `<p>`). Test: `__tests__/api/laporan_publik_sanitasi_server.test.ts`.
+  - Render (v0.1.268, `fix/laporan-publik-xss`): detail admin merender `kronologi` & `penanganan[].deskripsi` lewat `sanitizeRichText`. Test: `__tests__/api/laporan_publik_admin_xss.test.tsx`.
+  - Simpan (v0.1.269, `fix/laporan-publik-sanitasi-server`): `create.ts` & `updt.ts` menyimpan lewat `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`, `sanitize-html` dengan allowlist `RICH_TEXT_TAGS` yang sama, tanpa atribut). Data lama tidak diubah (prod 2026-11-13: 2 laporan, hanya `<p>`). Test: `__tests__/api/laporan_publik_sanitasi_server.test.ts`.
 
 - [ ] **Laporan Publik bisa dikirim tanpa auth & tanpa moderasi** (terverifikasi)
   - Lokasi: `POST /api/keamanan/laporanpublik/create` (laporan-publik/index.ts `.post("/create")`), schema `LaporanPublik.isActive @default(true)`.
@@ -30,7 +30,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Usul: `where: { id, isActive: true }` untuk endpoint publik.
 
 - [ ] **`create()` state Laporan Publik tidak memberi sinyal gagal validasi** (terverifikasi)
-  - Debug log `console.log(formData)` & `console.log(res)` sudah dihapus (v0.1.266).
+  - Debug log `console.log(formData)` & `console.log(res)` sudah dihapus (v0.1.268).
   - Sisa: `src/app/admin/(dashboard)/_state/keamanan/laporan-publik.ts` `create()` hanya memunculkan toast saat validasi gagal tanpa sinyal gagal ke pemanggil (frontend publik kini memvalidasi sendiri).
 
 - [ ] **Endpoint OTP lama masih hidup: siapa pun bisa memicu kiriman WhatsApp** (terverifikasi 2026-11-13)
@@ -48,6 +48,24 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - [ ] **Daftar UMKM publik ikut mengirim UMKM nonaktif & tanpa jumlah produk** (terverifikasi: `ekonomi/umkm/findMany.ts:12` `where = { deletedAt: null }`)
   - Dampak: UMKM yang dinonaktifkan admin tetap muncul di tab Toko. Frontend sementara menyaring `isActive` di klien dan menghitung jumlah produk per toko dari daftar produk yang dimuat.
   - Usul: filter `isActive: true` untuk publik (admin tetap butuh semua, jadi pakai param atau endpoint terpisah), dan sertakan `_count.produk` (hanya produk aktif & belum dihapus).
+
+- [ ] **Daftar produk UMKM publik ikut mengirim produk milik UMKM nonaktif** (terverifikasi: `ekonomi/umkm/produk/_where.ts` `buildProdukWhere`, 2026-11-13)
+  - Where hanya `deletedAt: null, isActive: true` milik produk; status UMKM pemiliknya tidak dicek. UMKM yang dinonaktifkan atau dihapus (`del.ts` juga mengeset `isActive: false`) produknya tetap terkirim, dan `total` ikut menghitungnya.
+  - Mitigasi frontend (sementara): `isProdukTampil` (`(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-adapter.logic.ts`) membuang produk milik UMKM `isActive: false` di klien, dipakai katalog `/ekonomi/umkm` dan rel "Produk serupa" di detail produk. Akibatnya jumlah per halaman dari server tidak sama dengan yang tampil, jadi paginasi server belum bisa dipakai.
+  - Usul: tambah `umkm: { isActive: true, deletedAt: null }` ke where publik. Endpoint ini juga dipakai state admin (`admin/(dashboard)/_state/ekonomi/umkm/umkmState/produk.ts`), jadi cek dulu apakah admin perlu melihat produk dari UMKM nonaktif. Setelah tersedia, `isProdukTampil` bisa dihapus.
+
+- [ ] **Detail produk UMKM publik mengirim produk terhapus/nonaktif, data penjualan, dan tanpa foto UMKM** (terverifikasi: `ekonomi/umkm/produk/findUnique.ts:9-22`, 2026-11-13)
+  - `where: { id }` saja: produk yang `deletedAt`/`isActive: false`, atau milik UMKM nonaktif, tetap bisa dibuka lewat URL.
+  - Include `penjualan` (10 transaksi terakhir: jumlah, harga, total) ikut terkirim ke publik padahal halaman publik tidak memakainya.
+  - Tidak ditemukan dibalas HTTP 200 `{ success: false }`, sama bentuknya dengan galat server; frontend membedakan lewat teks pesan "tidak ditemukan".
+  - `umkm: true` tanpa `image`, jadi panel Penjual di detail memakai inisial, bukan foto UMKM.
+  - Mitigasi frontend (MITIGASI SEMENTARA umkm-detail): `/ekonomi/umkm/produk/[id]` menampilkan "Produk tidak ditemukan" untuk produk terhapus/nonaktif/UMKM nonaktif dan untuk pesan "tidak ditemukan".
+  - Usul: endpoint publik memfilter `deletedAt: null, isActive: true, umkm: { isActive: true }`, membuang `penjualan` (admin pakai endpoint sendiri), membalas 404 untuk tidak ditemukan, dan menyertakan `umkm.image`.
+
+- [ ] **Detail UMKM publik mengirim UMKM nonaktif/terhapus dan produk nonaktif** (terverifikasi: `ekonomi/umkm/findUnique.ts:8-17`, 2026-11-13)
+  - `where: { id }` saja, dan `produk` hanya disaring `deletedAt: null`, jadi produk `isActive: false` ikut terkirim. Produk tidak membawa relasi kategori (hanya `kategoriProdukId`). Tidak ditemukan juga dibalas HTTP 200 `{ success: false }`.
+  - Mitigasi frontend (MITIGASI SEMENTARA umkm-detail-toko): `/ekonomi/umkm/[id]` menampilkan "Toko tidak ditemukan" untuk UMKM terhapus/nonaktif dan pesan "tidak ditemukan", serta menyembunyikan produk nonaktif.
+  - Usul: endpoint publik memfilter `deletedAt: null, isActive: true` untuk UMKM dan produknya, menyertakan `kategoriProduk` per produk, dan membalas 404 untuk tidak ditemukan.
 
 - [ ] **Pencegahan Kriminalitas find-many tanpa offset/skip**
   - Halaman publik mengeluarkan item sorotan dari daftar, jadi butuh offset. Sementara: muat `limit=100` sekali lalu paginasi klien (ditandai MITIGASI SEMENTARA di `(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/pencegahan.meta.ts`, `console.warn` bila total > 100).
@@ -73,6 +91,12 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Lokasi: `PasarDesa.rating Float @default(0)` di `prisma/schema.prisma`. Tidak ada input di form admin produk dan tidak ada model ulasan. Nilai di stg (4,2–4,6) berasal dari seed, bukan penilaian warga.
   - Frontend: kartu katalog `/ekonomi/umkm` menampilkan slot rating "Belum ada ulasan" dan **sengaja tidak membaca `rating`** (keputusan user 2026-11-13).
   - Usul: putuskan sumber rating (ulasan warga + moderasi, atau input admin), lalu kirim `rating` + `jumlahUlasan` di find-many/findUnique produk. Reset nilai seed ke 0 supaya tidak tampil sebagai penilaian asli begitu frontend membacanya.
+  - Detail produk `/ekonomi/umkm/produk/[id]` (v0.1.266) sudah punya bagian **Ulasan** gaya Decathlon (nilai rata-rata, jumlah ulasan, bar distribusi 5→1, tombol "Tulis ulasan") yang sengaja kosong dan tombolnya nonaktif (`TODO(umkm-ulasan)`). Bentuk data yang ditunggu frontend: `{ rataRata: number | null, jumlah: number, distribusi: { 1..5: number } }` + daftar ulasan berpaginasi.
+  - Usul lanjutan: model `UlasanProduk` (produkId, nama/penanda pengulas, bintang 1–5, teks, status moderasi), endpoint kirim ulasan dengan anti-spam, dan antrean moderasi di admin sebelum tampil.
+
+- [ ] **Produk UMKM hanya bisa punya satu foto** (terverifikasi: `PasarDesa.imageId` tunggal di `prisma/schema.prisma`, 2026-11-13)
+  - Frontend: galeri detail produk sudah mendukung banyak foto (foto utama + strip thumbnail dengan panah), tapi strip baru muncul bila foto ≥2. Kini selalu satu foto.
+  - Usul: relasi foto berurutan (mis. tabel `PasarDesaFoto { produkId, fileStorageId, urutan }`), unggah banyak foto di form admin produk, dan kirim `fotos[]` (urut) di findUnique. Foto pertama tetap jadi sampul kartu katalog.
 
 - [ ] **Form admin Polsek mewajibkan semua field** (terverifikasi)
   - Lokasi: `_state/keamanan/polsekTerdekat/polsek-terdekat.ts:9-12` (`z.string().min(1)` untuk nomorTelepon, jamOperasional, dst.).

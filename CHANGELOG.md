@@ -1,13 +1,32 @@
 # Changelog
 
-## [0.1.267] - 2026-11-13
+## [0.1.269] - 2026-11-13
 ### Fixed
 - **Keamanan: isi Laporan Publik kini dibersihkan sejak disimpan.** Kronologi dari form publik serta kronologi dan penanganan yang diedit admin hanya disimpan dengan format teks dasar (paragraf, tebal, miring, garis bawah, daftar). Skrip dan kode berbahaya dibuang sebelum masuk database, jadi tetap aman walaupun kelak ada tampilan baru yang lupa menyaringnya. Laporan yang sudah ada tidak diubah. Tautan, judul, sorotan, dan perataan teks yang sebelumnya memang tidak ditampilkan kini juga tidak lagi tersimpan; teksnya tetap utuh.
 
-## [0.1.266] - 2026-11-13
+## [0.1.268] - 2026-11-13
 ### Fixed
 - **Keamanan: halaman detail Laporan Publik di admin kini aman dibuka.** Sebelumnya, laporan yang dikirim warga lewat form publik bisa disisipi kode berbahaya yang ikut berjalan saat admin membuka detailnya. Isi kronologi dan penanganan sekarang dibersihkan dulu sebelum ditampilkan. Format teks dasar (paragraf, tebal, miring, garis bawah, daftar) tetap tampil, sedangkan skrip, tautan, gambar, dan atribut lain dibuang, sama seperti di halaman publik. Pengecekan laporan yang sudah tersimpan (lokal & stg) tidak menemukan kiriman berbahaya.
 - Form tambah laporan publik di admin tidak lagi mencetak isi laporan ke console browser.
+
+## [0.1.267] - 2026-11-13
+### Changed
+- **Halaman detail toko UMKM dirombak** agar seragam dengan katalog dan detail produk. Bagian atas menampilkan foto toko (atau inisial nama toko bila belum ada foto), kategori usaha, nama toko, pemilik, alamat, jumlah produk, deskripsi, dan tombol **Hubungi Penjual (WhatsApp)** dengan pesan pembuka tentang toko tersebut.
+- Produk toko tampil dengan kartu yang sama seperti di katalog dan bisa diurutkan (terbaru, harga terendah, harga tertinggi, nama). Status stok tidak lagi ditampilkan.
+- Tombol kembali kini membuka katalog langsung di tab Toko.
+
+### Fixed
+- Deskripsi toko tidak lagi menampilkan kode HTML mentah dari editor admin.
+- Toko yang sudah dihapus atau dinonaktifkan menampilkan "Toko tidak ditemukan", produk yang dinonaktifkan tidak ikut tampil, dan bila gagal memuat ada tombol "Coba lagi" (sebelumnya kerangka memuat tampil terus).
+
+## [0.1.266] - 2026-11-13
+### Changed
+- **Halaman detail produk UMKM dirombak.** Foto produk tampil di kiri dengan ukuran pas, dan di sampingnya ada nama toko, kategori, nama produk, harga per satuan, serta tombol besar **Hubungi Penjual (WhatsApp)** yang langsung membuka chat dengan pesan berisi nama produk. Kolom ini ikut menempel saat halaman di-scroll di komputer.
+- Panel baru **Cara memesan** menjelaskan alurnya: hubungi penjual lewat WhatsApp, sepakati jumlah dan cara terima (ambil sendiri atau diantar), lalu bayar langsung ke penjual. Panel **Penjual** menampilkan nama UMKM, pemilik, alamat, dan tautan ke semua produk toko tersebut.
+- Deskripsi produk tampil di bawah foto. Stok tidak lagi ditampilkan.
+- Bagian **Ulasan** baru (nilai rata-rata, jumlah ulasan, dan sebaran bintang 5 sampai 1). Untuk sementara masih kosong dan tombol "Tulis ulasan" belum aktif, sampai sistem ulasan tersedia.
+- Bagian **Produk serupa** di bawah ulasan: deretan produk dengan kategori sama atau dari toko yang sama, bisa digeser.
+- Produk yang sudah dihapus atau dinonaktifkan kini menampilkan "Produk tidak ditemukan", dan bila gagal memuat ada tombol "Coba lagi" (sebelumnya halaman terus menampilkan kerangka memuat).
 
 ## [0.1.265] - 2026-11-13
 ### Changed

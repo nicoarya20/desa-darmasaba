@@ -72,12 +72,17 @@ export function buildWaUrl(waNumber: string, message: string): string {
 export type HubungiPenjualInput = {
   kontak?: string | null;
   umkmNama?: string | null;
-  produkNama: string;
+  /** Kosong (halaman detail toko) → pesan umum tentang toko. */
+  produkNama?: string;
 };
 
-/** Pesan pembuka WhatsApp untuk menanyakan produk (tanpa pesanan tercatat). */
+/** Pesan pembuka WhatsApp untuk menanyakan produk, atau toko bila tanpa `produkNama` (tanpa pesanan tercatat). */
 export function buildHubungiPenjualMessage(o: Omit<HubungiPenjualInput, 'kontak'>): string {
-  return `${sapaPenjual(o.umkmNama)}, saya tertarik dengan produk *${o.produkNama}*. Apakah masih tersedia?`;
+  const sapa = sapaPenjual(o.umkmNama);
+  if (!o.produkNama) {
+    return `${sapa}, saya melihat toko Anda di website Desa Darmasaba dan ingin bertanya tentang produknya.`;
+  }
+  return `${sapa}, saya tertarik dengan produk *${o.produkNama}*. Apakah masih tersedia?`;
 }
 
 /** URL wa.me untuk menghubungi penjual; null bila nomor kontak UMKM tidak valid. */
