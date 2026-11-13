@@ -22,7 +22,7 @@ type Props = {
   onOpenSaring: () => void;
 };
 
-/** Baris alat di atas grid: jumlah hasil, pil Saring (tablet/ponsel), Urutkan, lalu chip saringan aktif. */
+/** Baris alat di atas grid: jumlah hasil, pil Filter (tablet/ponsel), Urutkan, lalu chip saringan aktif. */
 export function KatalogToolbar({ tab, count, urut, onUrut, chips, activeCount, onApply, onClearAll, onOpenSaring }: Props) {
   const urutId = useId();
   const options = urutOptions(tab);

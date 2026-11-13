@@ -53,7 +53,7 @@ export function SaringPanel({ params, facets, update, withTitle = false }: Props
 
 type GroupsProps = { params: KatalogParams; facets: ProdukFacets; update: KatalogUpdate };
 
-/** Grup saring tab Produk: kategori, toko, harga, ketersediaan, unggulan. */
+/** Grup filter tab Produk: kategori, toko, harga, unggulan. */
 function ProdukGroups({ params, facets, update }: GroupsProps) {
   return (
     <>
@@ -78,14 +78,6 @@ function ProdukGroups({ params, facets, update }: GroupsProps) {
       ) : null}
       <SaringGroup label={T.group.harga} activeCount={params.min !== null || params.max !== null ? 1 : 0}>
         <SaringHarga min={params.min} max={params.max} onChange={(range) => update((p) => ({ ...p, ...range }))} />
-      </SaringGroup>
-      <SaringGroup label={T.group.tersedia} activeCount={Number(params.tersedia)}>
-        <SaringCheck
-          label={T.tersediaOption}
-          count={facets.tersedia}
-          checked={params.tersedia}
-          onChange={() => update((p) => ({ ...p, tersedia: !p.tersedia }))}
-        />
       </SaringGroup>
       <SaringGroup label={T.group.unggulan} activeCount={Number(params.unggulan)}>
         <SaringCheck

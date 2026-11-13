@@ -1,6 +1,6 @@
 import type { KatalogTab, KatalogUrut } from './katalog-filter.meta';
 
-/** Teks UI kerangka halaman katalog UMKM: kepala, tab, panel saring, baris alat, keadaan. */
+/** Teks UI kerangka halaman katalog UMKM: kepala, tab, panel filter, baris alat, keadaan. */
 export const KATALOG_FILTER_TEXT = {
   title: 'UMKM & Produk Desa Darmasaba',
   lead:
@@ -12,17 +12,15 @@ export const KATALOG_FILTER_TEXT = {
   tab: { produk: 'Produk', toko: 'Toko' } satisfies Record<KatalogTab, string>,
   listTitle: { produk: 'Daftar produk', toko: 'Daftar toko' } satisfies Record<KatalogTab, string>,
   noun: { produk: 'produk', toko: 'toko' } satisfies Record<KatalogTab, string>,
-  saring: 'Saring',
-  saringAktif: (n: number) => `${n} saringan aktif`,
+  saring: 'Filter',
+  saringAktif: (n: number) => `${n} filter aktif`,
   group: {
     kategori: 'Kategori',
     toko: 'Toko',
     harga: 'Harga',
-    tersedia: 'Ketersediaan',
     unggulan: 'Produk unggulan',
     kategoriUsaha: 'Kategori usaha',
   },
-  tersediaOption: 'Hanya yang tersedia',
   unggulanOption: 'Hanya produk unggulan',
   lihatSemua: (n: number) => `Lihat semua (${n})`,
   lebihSedikit: 'Tampilkan lebih sedikit',
@@ -31,9 +29,8 @@ export const KATALOG_FILTER_TEXT = {
   hargaMax: 'Harga maksimum',
   chipHargaMin: (rp: string) => `Mulai ${rp}`,
   chipHargaMax: (rp: string) => `Sampai ${rp}`,
-  chipTersedia: 'Tersedia',
   chipUnggulan: 'Unggulan',
-  hapusChip: (label: string) => `Hapus saringan ${label}`,
+  hapusChip: (label: string) => `Hapus filter ${label}`,
   hapusSemua: 'Hapus semua',
   urutkan: 'Urutkan',
   urut: {
@@ -44,12 +41,12 @@ export const KATALOG_FILTER_TEXT = {
   } satisfies Record<KatalogUrut, string>,
   menampilkan: 'Menampilkan',
   dari: (total: number, noun: string) => `dari ${total} ${noun}`,
-  tutup: 'Tutup saringan',
+  tutup: 'Tutup filter',
   tampilkan: (n: number, noun: string) => `Tampilkan ${n} ${noun}`,
-  memuatSaring: 'Memuat saringan',
+  memuatSaring: 'Memuat filter',
   emptyFiltered: { produk: 'Tidak ada produk yang cocok', toko: 'Tidak ada toko yang cocok' },
-  emptyFilteredDesc: 'Coba kata kunci lain atau kurangi saringan.',
-  emptyFilteredAction: 'Hapus semua saringan',
+  emptyFilteredDesc: 'Coba kata kunci lain atau kurangi filter.',
+  emptyFilteredAction: 'Hapus semua filter',
   emptyData: { produk: 'Belum ada produk UMKM', toko: 'Belum ada UMKM terdaftar' },
   emptyDataDesc: 'Produk dan usaha warga akan tampil di sini setelah ditambahkan.',
   errorTitle: 'Katalog belum dapat dimuat',

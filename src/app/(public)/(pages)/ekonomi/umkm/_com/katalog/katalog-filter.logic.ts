@@ -10,7 +10,7 @@ import type { KatalogProduk, KatalogRef, KatalogToko } from './katalog.types';
  */
 export type FacetOption = { id: string; ids: string[]; label: string; count: number };
 
-export type ProdukFacets = { kategori: FacetOption[]; toko: FacetOption[]; tersedia: number; unggulan: number };
+export type ProdukFacets = { kategori: FacetOption[]; toko: FacetOption[]; unggulan: number };
 export type TokoFacets = { kategori: FacetOption[] };
 
 /** Chip saringan aktif: label + params bila chip dihapus. */
@@ -63,7 +63,6 @@ export function produkFacets(items: readonly KatalogProduk[]): ProdukFacets {
   return {
     kategori: facetOf(items, (p) => p.kategori, MERGE_KATEGORI_BY_NAME),
     toko: facetOf(items, (p) => p.umkm),
-    tersedia: items.filter((p) => p.stok > 0).length,
     unggulan: items.filter((p) => p.isUnggulan).length,
   };
 }
@@ -106,7 +105,6 @@ export function filterProduk(items: readonly KatalogProduk[], p: KatalogParams):
       (p.toko.length === 0 || (item.umkm !== null && p.toko.includes(item.umkm.id))) &&
       (p.min === null || item.harga >= p.min) &&
       (p.max === null || item.harga <= p.max) &&
-      (!p.tersedia || item.stok > 0) &&
       (!p.unggulan || item.isUnggulan),
   );
 }
@@ -164,7 +162,6 @@ export function activeChips(p: KatalogParams, facets: ProdukFacets | TokoFacets)
   }
   const harga = hargaLabel(p.min, p.max);
   if (harga) chips.push({ key: 'harga', label: harga, next: { ...p, min: null, max: null } });
-  if (p.tersedia) chips.push({ key: 'tersedia', label: T.chipTersedia, next: { ...p, tersedia: false } });
   if (p.unggulan) chips.push({ key: 'unggulan', label: T.chipUnggulan, next: { ...p, unggulan: false } });
   return chips;
 }

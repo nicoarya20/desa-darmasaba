@@ -235,7 +235,7 @@
   }
 }
 
-/* ---------- Tablet: panel kiri → tombol Saring + drawer ---------- */
+/* ---------- Tablet: panel kiri → tombol Filter + drawer ---------- */
 @media (max-width: 1068px) {
   .body {
     grid-template-columns: minmax(0, 1fr);

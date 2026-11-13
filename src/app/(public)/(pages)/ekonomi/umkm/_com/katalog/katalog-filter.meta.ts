@@ -6,7 +6,7 @@ import type { CSSProperties } from 'react';
 /**
  * Banyak produk / UMKM yang dimuat sekaligus (satu permintaan find-many per daftar).
  * MITIGASI SEMENTARA(umkm-katalog): saring di klien sampai API mendukung — docs/BACKEND-TODO.md P2.
- * API hanya menyaring satu kategori/toko, tanpa rentang harga, ketersediaan, urutan, maupun jumlah per kategori,
+ * API hanya menyaring satu kategori/toko, tanpa rentang harga, urutan, maupun jumlah per kategori,
  * jadi semua itu dihitung di klien dari daftar ini. Stg 2026-11-13: 7 produk, 8 UMKM. Entri ke-101 dst. tidak
  * tampil (ada console.warn). Hapus bila backend menambah saringan & facet, lalu kembali ke paginasi server.
  */

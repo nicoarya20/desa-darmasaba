@@ -8,7 +8,8 @@ import {
 
 /**
  * Keadaan katalog yang disimpan di URL: `tab`, `q`, `kategori`/`toko` (id dipisah koma), `min`, `max`,
- * `tersedia=1`, `unggulan=1`, `urut`. Saringan khusus produk selalu kosong di tab Toko.
+ * `unggulan=1`, `urut`. Saringan khusus produk selalu kosong di tab Toko. Status stok tidak dipakai: pemesanan lewat
+ * WhatsApp penjual, jadi param lama `tersedia` diabaikan.
  */
 export type KatalogParams = {
   tab: KatalogTab;
@@ -17,7 +18,6 @@ export type KatalogParams = {
   toko: string[];
   min: number | null;
   max: number | null;
-  tersedia: boolean;
   unggulan: boolean;
   urut: KatalogUrut;
 };
@@ -28,7 +28,7 @@ const defaultUrut = (tab: KatalogTab): KatalogUrut => (tab === 'toko' ? TOKO_URU
 
 /** Params kosong satu tab (urutan bawaan, tanpa kata kunci & saringan). */
 export function emptyParams(tab: KatalogTab, q = ''): KatalogParams {
-  return { tab, q, kategori: [], toko: [], min: null, max: null, tersedia: false, unggulan: false, urut: defaultUrut(tab) };
+  return { tab, q, kategori: [], toko: [], min: null, max: null, unggulan: false, urut: defaultUrut(tab) };
 }
 
 /** Daftar id unik dari "a,b,,a" → ["a","b"]. */
@@ -62,7 +62,6 @@ export function parseKatalogParams(search: Reader): KatalogParams {
     urut,
     toko: parseIds(search.get('toko')),
     ...normalizeRange(parseHargaParam(search.get('min')), parseHargaParam(search.get('max'))),
-    tersedia: search.get('tersedia') === '1',
     unggulan: search.get('unggulan') === '1',
   };
 }
@@ -78,7 +77,6 @@ export function katalogHref(p: KatalogParams): string {
     if (p.toko.length) add('toko', p.toko.map(encodeURIComponent).join(','));
     if (p.min !== null) add('min', String(p.min));
     if (p.max !== null) add('max', String(p.max));
-    if (p.tersedia) add('tersedia', '1');
     if (p.unggulan) add('unggulan', '1');
   }
   if (p.urut !== defaultUrut(p.tab)) add('urut', p.urut);
@@ -98,7 +96,7 @@ export function clearFilters(p: KatalogParams): KatalogParams {
 /** Banyak saringan aktif (tiap kategori/toko dihitung satu; rentang harga satu). */
 export function countActiveFilters(p: KatalogParams): number {
   const harga = p.min !== null || p.max !== null ? 1 : 0;
-  return p.kategori.length + p.toko.length + harga + Number(p.tersedia) + Number(p.unggulan);
+  return p.kategori.length + p.toko.length + harga + Number(p.unggulan);
 }
 
 /** Isian harga → angka (hanya digit yang dibaca, mis. "Rp10.000" → 10000); kosong → null. */
