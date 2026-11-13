@@ -17,7 +17,6 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 | `@tabler/icons-react` | ^3.30.0 | Semua ikon (Tabler Icons) |
 | `framer-motion` | ^12.38.0 | Animasi (hover cards, stagger) |
 | `recharts` | ^3.8.0 | Grafik langsung di beberapa halaman data (pendidikan, kesehatan, ekonomi) |
-| `primereact` | ^10.9.6 | Beberapa komponen tabel |
 | `@mantine/hooks` | 9.7.4 | Hooks pendukung Mantine (dipakai luas bareng `@mantine/core`) |
 | `chart.js` | ^4.4.8 | Grafik tambahan di luar `@mantine/charts` |
 

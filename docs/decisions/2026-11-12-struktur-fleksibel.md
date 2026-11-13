@@ -23,7 +23,7 @@ Struktur Perangkat Desa sudah memakai kode bersama, tetapi Struktur PPID (dan BU
 
 ## Konsekuensi
 - Ketiga struktur (Perangkat Desa, PPID, BUMDes) kini memakai factory API, state, halaman admin, dan bagan/profil publik yang sama; tiap struktur hanya punya config (delegate, label, rute, teks) dan adapter sumber publik.
-- `primereact` tidak lagi dipakai komponen mana pun (sisa: import CSS tema di `src/app/globals.css`); dependency belum dihapus — keputusan terpisah.
+- `primereact` tidak lagi dipakai komponen mana pun; `primereact` + `primeicons` beserta import CSS temanya di `src/app/globals.css` sudah dihapus (branch `chore/remove-primereact`). Satu-satunya warisan tema yang dipertahankan: `font-feature-settings` di `:root` (varian glyph SF Pro).
 - Tabel lama `StrukturBumDes` & `StrukturOrganisasiBumDes` dihapus — lihat bagian berikut.
 
 ## Tabel usang BUMDes dihapus
