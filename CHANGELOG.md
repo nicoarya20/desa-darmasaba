@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.1.266] - 2026-11-13
+### Added
+- **Env baru `DEVELOPER_EMAIL`** (opsional, dipisah koma). Email yang terdaftar otomatis menjadi DEVELOPER (roleId "0") saat login pertama, atau dinaikkan ke DEVELOPER saat login berikutnya bila akunnya sudah ada. Bila email ada di `DEVELOPER_EMAIL` dan `SUPER_ADMIN_EMAIL`, DEVELOPER yang dipakai.
+- **Developer Console (`/dev`)**, halaman khusus akun dengan role DEVELOPER, terpisah dari halaman admin dan punya tampilan sendiri. Akun DEVELOPER langsung masuk ke sini setelah login, dan tetap bisa membuka admin lewat tautan "Buka Admin". Di sidebar admin, akun DEVELOPER mendapat menu "Developer" untuk kembali ke konsol. Role lain tidak melihat menu ini, tidak bisa membuka `/dev` (admin dikembalikan ke halaman admin, warga ke profil), dan menu ini tidak bisa diberikan ke role lain lewat halaman Menu Access.
+  - **Ringkasan Sistem**: versi aplikasi, environment, lama server berjalan, status koneksi database dan penyimpanan berkas (MinIO) beserta kecepatannya, kesiapan Jenna, dan daftar env yang sudah atau belum diisi (hanya nama env, nilainya tidak pernah ditampilkan).
+  - **Pengaturan Jenna** (asisten AI desa), dibagi menjadi tiga halaman di menu Jenna:
+    - **Umum**: status Jenna, aktif/nonaktif, nama asisten, dan catatan persona.
+    - **Batas Pemakaian**: panjang pesan, jumlah pesan per menit dan per hari, batas token harian, dan lama penyimpanan riwayat percakapan.
+    - **Provider**: penyedia AI (OpenAI-compatible atau Anthropic) dengan alamat server, model, dan API key, lengkap dengan tombol "Tes koneksi". API key disimpan terenkripsi dan tidak pernah ditampilkan kembali; yang terlihat hanya 4 karakter terakhirnya.
+  - Bila ada perubahan yang belum disimpan, konsol meminta konfirmasi sebelum pindah ke halaman lain lewat menu konsol, atau sebelum halaman di-refresh/ditutup, supaya isian tidak hilang tanpa sengaja.
+- Tahap ini baru menyimpan pengaturan. Jenna belum menjawab pesan warga (chat, suara, dan statistik pemakaian menyusul di tahap berikutnya).
+
+### Fixed
+- Login dengan email yang terdaftar di `SUPER_ADMIN_EMAIL` tidak lagi menurunkan akun DEVELOPER menjadi SUPER ADMIN. Promosi dari env kini hanya menaikkan role, tidak pernah menurunkan.
+- Pencocokan email di `SUPER_ADMIN_EMAIL` dan `DEVELOPER_EMAIL` kini tidak membedakan huruf besar/kecil. Sebelumnya email yang ditulis dengan huruf kapital di env (mis. `Admin@Desa.id`) tidak dikenali saat login sehingga akunnya tidak mendapat role yang seharusnya.
+
+### Removed
+- Env `ELEVENLABS_API_KEY` dihapus dari contoh env (`.env.example`) dan dari daftar env di halaman Ringkasan Sistem, karena tidak ada fitur yang memakainya. Fitur baca berita memakai suara bawaan browser, bukan ElevenLabs.
+
+### Operator
+- Jalankan migrasi `20261113100000_jenna_settings` (otomatis saat container start). Murni menambah 2 tabel (`JennaSettings`, `JennaProvider`); data lain tidak diubah.
+- Env baru `DEVELOPER_EMAIL` (opsional): tambahkan ke env stg/prod bila perlu, lalu restart container. Tanpa env ini perilaku sama seperti sebelumnya.
+- Env baru `JENNA_CREDENTIALS_KEY` (opsional) untuk mengenkripsi API key penyedia AI. Buat sekali per environment dengan `openssl rand -hex 32` (64 karakter), tambahkan ke env stg/prod, lalu restart container. Tanpa env ini aplikasi tetap berjalan, tetapi halaman Pengaturan Jenna menampilkan peringatan dan API key tidak bisa disimpan.
+- **Jangan mengganti atau menghapus `JENNA_CREDENTIALS_KEY` setelah dipakai.** API key yang sudah tersimpan tidak bisa dibuka lagi dengan kunci baru, sehingga tes koneksi gagal dan API key harus diisi ulang di halaman Pengaturan Jenna › Provider.
+- `ELEVENLABS_API_KEY` boleh dihapus dari env stg/prod.
+- Alasan & detail: `docs/decisions/2026-11-13-developer-menu-jenna.md`.
+
 ## [0.1.265] - 2026-11-13
 ### Changed
 - **Halaman UMKM & Produk Desa dirombak menjadi katalog.** Produk kini tampil dalam grid kartu yang bersih: foto persegi, harga, nama produk, dan nama UMKM penjualnya. Produk unggulan diberi label "Unggulan" di pojok foto. Status stok tidak lagi ditampilkan, karena pemesanan dilakukan lewat WhatsApp penjual. Seluruh kartu bisa diklik untuk membuka detail produk.

@@ -1,6 +1,7 @@
 'use client'
 
 import { DarkModeToggle } from "@/components/admin/DarkModeToggle";
+import { logoutAndRedirect } from "@/lib/client-logout";
 import { useDarkMode } from "@/state/darkModeStore";
 import { authStore } from "@/store/authStore";
 import { themeTokens } from "@/utils/themeTokens";
@@ -148,30 +149,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     pathSeg(section.path || section.children?.[0]?.path || '')[1];
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     try {
-      setIsLoggingOut(true);
-
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
-      const result = await response.json();
-
-      if (result.success) {
-        authStore.setUser(null);
-        localStorage.removeItem('auth_nomor');
-        localStorage.removeItem('auth_kodeId');
-        localStorage.removeItem('auth_username');
-        window.location.href = '/login';
-      } else {
-        console.error('Logout failed:', result.message);
-        authStore.setUser(null);
-        window.location.href = '/login';
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-      authStore.setUser(null);
-      window.location.href = '/login';
+      await logoutAndRedirect();
     } finally {
       setIsLoggingOut(false);
     }

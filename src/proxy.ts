@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getCookieCache, getSessionCookie } from "better-auth/cookies";
-import { decideAdminAccess } from "./lib/auth-policy";
+import { decideAdminAccess, decideDevAccess } from "./lib/auth-policy";
 
 // User dari cookie cache Better Auth (additionalFields roleId/isActive ikut).
 type CachedUser = { id: string; roleId?: string; isActive?: boolean };
@@ -47,7 +47,23 @@ export async function proxy(request: NextRequest) {
     user = null;
   }
 
-  switch (decideAdminAccess(user, hasSessionToken(request))) {
+  const hasToken = hasSessionToken(request);
+
+  // /dev/*: konsol developer, khusus role "0"; role admin lain dikembalikan ke /admin.
+  if (path === "/dev" || path.startsWith("/dev/")) {
+    switch (decideDevAccess(user, hasToken)) {
+      case "login":
+        return NextResponse.redirect(loginUrl);
+      case "admin":
+        return NextResponse.redirect(new URL("/admin", request.url));
+      case "profile":
+        return NextResponse.redirect(new URL("/profile", request.url));
+      default:
+        return NextResponse.next();
+    }
+  }
+
+  switch (decideAdminAccess(user, hasToken)) {
     case "login":
       return NextResponse.redirect(loginUrl);
     case "profile":
@@ -58,5 +74,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/validasi", "/waiting-room"],
+  matcher: ["/admin/:path*", "/dev/:path*", "/validasi", "/waiting-room"],
 };

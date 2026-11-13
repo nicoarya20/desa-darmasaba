@@ -16,7 +16,8 @@ BETTER_AUTH_SECRET="..."
 BETTER_AUTH_URL="..."
 GOOGLE_CLIENT_ID="..."
 GOOGLE_CLIENT_SECRET="..."
-SUPER_ADMIN_EMAIL="..."
+SUPER_ADMIN_EMAIL="..."     # comma-separated → roleId "1"
+DEVELOPER_EMAIL="..."       # comma-separated → roleId "0" (optional)
 
 # MinIO — sole object storage backend (replaced Seafile)
 MINIO_ENDPOINT="..."
@@ -25,7 +26,10 @@ MINIO_SECRET_KEY="..."
 MINIO_BUCKET="..."
 MINIO_USE_SSL="..."
 
-# Other integrations (WhatsApp, email, Telegram bot, ElevenLabs) also exist in
+# Jenna (asisten AI) — optional; encrypts provider API keys stored in DB (AES-256-GCM)
+JENNA_CREDENTIALS_KEY="..."  # 64 hex chars: openssl rand -hex 32
+
+# Other integrations (WhatsApp, email, Telegram bot) also exist in
 # .env.example — check there before assuming a var is unused.
 ```
 
@@ -38,6 +42,14 @@ dan dihapus permanen setelah 30 hari oleh scheduler di dalam proses aplikasi (`s
 24 jam. Tidak ada cron/infra tambahan. Saklar env `SAMPAH_PURGE_SCHEDULER=on|off` (kosong = on hanya di
 production). Keterbatasan: hanya jalan selama server hidup; bila ada >1 instance, tiap instance menjalankan purge
 (aman — hapus idempoten, hanya kerja dobel). Detail: `docs/decisions/2026-11-12-sampah.md`.
+
+## Operator: `JENNA_CREDENTIALS_KEY`
+
+Provider AI Jenna (base URL, model, API key) diatur di Developer Console `/dev/jenna/provider` (role DEVELOPER "0"), bukan lewat env. API key disimpan terenkripsi di tabel `JennaProvider` dengan kunci dari `JENNA_CREDENTIALS_KEY`:
+
+- Generate sekali per environment: `openssl rand -hex 32` (64 karakter hex), simpan di env stack.
+- Opsional: tanpa kunci (atau format salah) aplikasi tetap boot, halaman Jenna menampilkan peringatan dan **menolak** menyimpan API key (fail-closed, tidak pernah plaintext).
+- Mengganti/menghapus kunci membuat API key lama tidak bisa didekripsi — tes koneksi akan gagal dan API key harus diisi ulang di halaman Jenna.
 
 ## Operator: backfill ukuran berkas (`FileStorage.size`)
 

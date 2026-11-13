@@ -784,6 +784,19 @@ Deteksi aktif: `useSelectedLayoutSegments()` dari Next.js App Router.
 
 `AppShellMain` bg `#f6f9fc`.
 
+### Developer Console (`/dev`, layout terpisah)
+
+File: `src/app/dev/layout.tsx` (server: versi `package.json` + `NODE_ENV`) → `src/app/dev/_com/DevConsoleShell.tsx`. Khusus role DEVELOPER "0"; bukan bagian layout admin (alasan: `docs/decisions/2026-11-13-developer-menu-jenna.md`).
+
+- `AppShell` header 60px + navbar 240px (`lg` 260px), breakpoint `sm`, burger di mobile (navbar tertutup saat item diklik).
+- **Header**: ikon terminal + "Developer Console" / "Desa Darmasaba" | badge `NODE_ENV` (production oranye, development teal) + badge versi | menu akun (nama/email, Buka Admin, Website Desa, Keluar via `logoutAndRedirect` di `src/lib/client-logout.ts`).
+- **Navbar**: item dari `_com/dev-nav.ts` (`DEV_NAV`): link biasa atau grup (`children`, NavLink Mantine bertingkat, ikon tiap item). Aktif via `isDevNavActive`: path sama atau sub-path, kecuali item `exact` (Jenna › Umum `/dev/jenna` hanya aktif di path itu persis). Grup terbuka otomatis saat path di dalam `basePath`-nya (`openActiveGroups`), selain itu mengikuti klik pengguna; grup tertutup yang memuat halaman aktif disorot. Bagian bawah "Buka Admin" (`ADMIN_HOME_PATH`, bukan `/admin` root) dan "Website Desa".
+- **Draf belum disimpan**: klik link konsol (navbar + menu akun) ke path lain saat `jennaState.dirty` berisi bagian dirty → `ConfirmModal` "Buang perubahan?" (`_com/useLeaveGuard.ts`, logika murni `leave-guard.logic.ts`); klik tab baru (Ctrl/Cmd/tengah) tidak ditahan. Refresh/tutup tab tetap lewat `beforeunload`. Tombol back browser tidak dijaga (butuh internal router).
+- **Lebar isi**: satu container untuk semua halaman `/dev` — `Box maw={1280} mx="auto" p={{ base: 'sm', sm: 'md' }}` di `DevConsoleShell`; halaman/layout tidak menulis `p`/`maw` sendiri. Isian teks pendek (Base URL, Model, API key, Nama asisten) di `SimpleGrid cols={{ base: 1, md: 2 }}` supaya tidak selebar kartu; textarea dan tabel tetap selebar kartu.
+- **Halaman Jenna**: `jenna/layout.tsx` merender header per sub-halaman (`jenna-pages.ts`: judul, subjudul, bentuk skeleton) + tombol Muat ulang, memuat config sekali, dan menampilkan status bersama (skeleton, galat, peringatan kunci enkripsi, "Terakhir diubah oleh"). Sub-halaman (`page.tsx`, `batas/`, `provider/`) hanya merender kartunya dengan `key={loadVersion}`.
+- **Warna**: semua dari `themeTokens(isDark)` (store `darmasaba-admin-dark-mode`, tanpa toggle — sama seperti admin). Hover NavLink/Menu lewat `--dev-hover` (`dev-console.module.css`), karena hover bawaan Mantine selalu skema terang.
+- **Guard**: sampai `/api/auth/me` mengonfirmasi role 0 aktif (`useDeveloperSession` + `decideDevAccess`), hanya loader tanpa warna tema yang dirender, jadi halaman dan fetch `/api/developer/*` tidak jalan.
+
 ---
 
 ## 7. Menu Navigasi
@@ -812,7 +825,7 @@ Visibilitas submenu: field `hidden` di config = **default**; Super Admin/Develop
 File: `src/app/admin/_com/list_PageAdmin.tsx` (re-export saja; data sebenarnya ada di `src/app/admin/_com/nav/domains.ts` dan dirakit di `src/app/admin/_com/nav/index.ts`)
 
 Export: `navBar` (semua domain), `role1`, `role2`, `role3` (role-based subset), `devBar`.  
-Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`; logika murninya di `src/app/admin/_com/nav/menu-access.logic.ts`. Filter berdasarkan `menuIds` (tabel `UserMenuAccess`) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu & Menu Access) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access. Section **User & Role** juga khusus roleId 0/1: dibuang untuk role lain walau tersimpan di DB, dan selalu ditambahkan untuk role 0/1.
+Logic pemilihan: `getNavbar({ roleId, menuIds })` — ada di `src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts`, dipakai di `src/app/admin/layout.tsx`; logika murninya di `src/app/admin/_com/nav/menu-access.logic.ts`. Filter berdasarkan `menuIds` (tabel `UserMenuAccess`) jika tersedia, fallback ke role (`roleId 0→devBar, 1→navBar, 2→role1, 3→role2, 4→role3`). Section `pengaturanMenu` (Pengaturan › Visibilitas Menu & Menu Access) tidak ada di `navBar`/`devBar`; `getNavbar` menambahkannya hanya untuk roleId 0/1, apa pun isi Menu Access. Section **User & Role** juga khusus roleId 0/1: dibuang untuk role lain walau tersimpan di DB, dan selalu ditambahkan untuk role 0/1. Sama untuk `developerMenu`: satu item tanpa children ke `/dev` (Developer Console), tidak ada di `navBar`/`devBar` (tidak bisa diberikan lewat Menu Access), ditambahkan `getNavbar` hanya untuk roleId 0.
 
 ID di `menuIds` (kontrak permanen, dijaga `__tests__/api/menu_access_ids.contract.test.ts`):
 
