@@ -307,6 +307,14 @@ Gaya bersih apple.com, sejalan APBDes. Folder: `_com/main-page/kepuasan/` — `i
 - **0 responden**: satu kartu pesan "Belum ada responden" + pil "Ajukan Responden"; tanpa grafik kosong.
 - **Form** (`RespondenFormModal`): field Nama, Jenis Kelamin, Rating, Kelompok Umur (wajib, bertanda bintang). Kontrak payload tetap — `indeksKepuasanState.responden.create.form` `{ name, tanggal, jenisKelaminId, ratingId, kelompokUmurId }` lalu `create.create()`; `tanggal` diisi otomatis saat submit = hari ini jam lokal `YYYY-MM-DD` (`todayLocalIsoDate`, bukan `toISOString` yang mundur sehari di WITA 00:00–07:59). `create()` mengembalikan `true`/`false`; form direset + modal ditutup hanya bila `true` (`submitResponden`), bila gagal isian tetap. Setelah percobaan submit pertama field wajib yang kosong menampilkan pesan (`missingFormFields`, teks sama dengan zod store). Tombol Submit `loading` selama `create.loading`. Form admin create/edit responden tetap memakai input tanggal manual.
 
+### Layanan Masyarakat (Beranda)
+
+Akses utama ke 4 layanan desa, tepat di bawah Indeks Kepuasan Masyarakat dan di atas footer. Folder: `_com/main-page/layanan-masyarakat/` — `index.tsx` (section + modal pengaduan), `LayananCard.tsx` (kartu), `layanan-masyarakat.meta.ts` (ikon + warna), `layanan-masyarakat.text.ts`, `layanan-masyarakat.module.css`. Daftar layanan (judul, deskripsi, label aksi, tujuan) ada di `src/con/layanan-desa.ts` (`LAYANAN_DESA`), **sumber yang sama dengan grup "Layanan Desa" di footer**: ubah di sana, keduanya ikut berubah. Test: `__tests__/api/layanan_masyarakat_ui.test.tsx`.
+
+- **Bentuk**: latar `#f5f5f7` (pembeda dari IKM yang putih), isi max-width 1100px, judul 40px (mobile 32px) warna `blue-button` + pengantar abu 19px (mobile 17px), rata tengah. 4 kartu putih radius 18px tanpa border: ikon Tabler dalam lingkaran `blue-button-1`, judul h3 21px, deskripsi abu 15px, label aksi brand + chevron di dasar kartu. Grid 4 kolom → 2 (≤1068px) → 1 (≤734px).
+- **Interaksi**: seluruh kartu bisa diklik. Kartu tautan = `next/link` (tab yang sama). Kartu Pengaduan = `<button aria-haspopup="dialog">` yang membuka `PengaduanMasyarakatModal` yang sama dengan footer (dimuat `dynamic`, baru dipasang saat pertama dibuka). Hover (pointer halus saja): kartu naik 2px + bayangan tipis, label aksi bergaris bawah; tanpa gerak bila `prefers-reduced-motion`.
+- **Label aksi** menyebut apa yang terjadi ("Lihat layanan surat", "Sampaikan pengaduan", …), bukan "Selengkapnya" seragam. Tidak ada "Lihat Semua Layanan" karena belum ada halaman yang menghimpun keempatnya.
+
 ### Footer
 
 ```tsx
@@ -317,6 +325,8 @@ Stack bg="linear-gradient(180deg, #1C6EA4, #124170)"
     // Tautan Penting
     // Berlangganan
 ```
+
+Isi grup "Layanan Desa" diambil dari `LAYANAN_DESA` (`src/con/layanan-desa.ts`), sama dengan section Layanan Masyarakat beranda.
 
 ### Potensi Desa (`/pemerintahan/potensi`)
 
