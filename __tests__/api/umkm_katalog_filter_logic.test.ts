@@ -10,6 +10,7 @@ vi.mock('@/lib/api-fetch', () => {
 
 import {
   countProdukPerToko,
+  isProdukTampil,
   isTokoAktif,
   toKatalogProduk,
   toKatalogToko,
@@ -17,6 +18,7 @@ import {
 } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-adapter.logic';
 import {
   activeChips,
+  expandIds,
   filterProduk,
   filterToko,
   hargaLabel,
@@ -26,6 +28,7 @@ import {
   resolveParams,
   sortProduk,
   sortToko,
+  toggleOption,
   tokoFacets,
   urutOptions,
 } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-filter.logic';
@@ -38,7 +41,6 @@ import {
   parseHargaInput,
   parseKatalogParams,
   switchTab,
-  toggleId,
   type KatalogParams,
 } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-params.logic';
 import { buildKatalogView } from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-view.logic';
@@ -137,11 +139,6 @@ describe('pengubah params', () => {
     expect(parseHargaInput('  ')).toBeNull();
     expect(parseHargaInput('0')).toBe(0);
   });
-
-  it('toggleId menambah/menghapus', () => {
-    expect(toggleId(['a'], 'b')).toEqual(['a', 'b']);
-    expect(toggleId(['a', 'b'], 'a')).toEqual(['b']);
-  });
 });
 
 describe('adapter API → kartu', () => {
@@ -171,6 +168,14 @@ describe('adapter API → kartu', () => {
     expect(isTokoAktif({ isActive: false })).toBe(false);
     expect(isTokoAktif({ isActive: true })).toBe(true);
     expect(isTokoAktif({})).toBe(true);
+  });
+
+  it('isProdukTampil: produk UMKM nonaktif disembunyikan, tanpa relasi UMKM tetap tampil', () => {
+    expect(isProdukTampil({ umkm: { id: 'u', nama: 'U', isActive: false } })).toBe(false);
+    expect(isProdukTampil({ umkm: { id: 'u', nama: 'U', isActive: true } })).toBe(true);
+    expect(isProdukTampil({ umkm: { id: 'u', nama: 'U' } })).toBe(true);
+    expect(isProdukTampil({ umkm: null })).toBe(true);
+    expect(isProdukTampil({})).toBe(true);
   });
 
   it('countProdukPerToko menghitung dari daftar produk', () => {
@@ -229,11 +234,17 @@ describe('cari, saring, urut', () => {
 describe('facet, chip, tampilan', () => {
   it('produkFacets: hanya kategori/toko yang punya produk, urut nama, dengan jumlah', () => {
     const f = produkFacets(produk);
-    expect(f.kategori).toEqual([{ id: 'k1', label: 'Makanan', count: 1 }, { id: 'k2', label: 'Minuman', count: 2 }]);
+    expect(f.kategori).toEqual([
+      { id: 'k1', ids: ['k1'], label: 'Makanan', count: 1 },
+      { id: 'k2', ids: ['k2'], label: 'Minuman', count: 2 },
+    ]);
     expect(f.toko.map((t) => t.label)).toEqual(['Kopi Darmasaba', 'Tirta', 'Warung Bu Made']);
     expect(f.tersedia).toBe(3);
     expect(f.unggulan).toBe(1);
-    expect(tokoFacets(toko).kategori).toEqual([{ id: 'k1', label: 'Makanan', count: 1 }, { id: 'k2', label: 'Minuman', count: 1 }]);
+    expect(tokoFacets(toko).kategori).toEqual([
+      { id: 'k1', ids: ['k1'], label: 'Makanan', count: 1 },
+      { id: 'k2', ids: ['k2'], label: 'Minuman', count: 1 },
+    ]);
   });
 
   it('resolveParams membuang id yang tidak ada di data', () => {
@@ -271,6 +282,11 @@ describe('facet, chip, tampilan', () => {
     expect(view.chips).toEqual([]);
   });
 
+  it('produkFacets toko: tidak digabung walau nama sama (id berbeda = toko berbeda)', () => {
+    const twin = [...produk, P({ id: 'x', umkm: { id: 'u9', nama: 'Tirta' } })];
+    expect(produkFacets(twin).toko.filter((t) => t.label === 'Tirta').map((t) => t.id)).toEqual(['u3', 'u9']);
+  });
+
   it('combineLoad: galat menang, siap bila keduanya siap', () => {
     expect(combineLoad({ status: 'error' }, { status: 'loading' })).toEqual({ status: 'error' });
     expect(combineLoad({ status: 'ready', data: [] }, { status: 'loading' })).toEqual({ status: 'loading' });
@@ -278,6 +294,50 @@ describe('facet, chip, tampilan', () => {
       status: 'ready',
       data: { produk, toko },
     });
+  });
+});
+
+// test-only: kasus stg 2026-11-13, dua kategori "Makanan" berbeda id (nama beda spasi/kapital).
+describe('kategori bernama sama digabung', () => {
+  const dup = [
+    P({ id: 'a', kategori: { id: 'zz-makanan', nama: '  makanan ' } }),
+    P({ id: 'b', kategori: { id: 'aa-makanan', nama: 'Makanan ' } }),
+    P({ id: 'c', kategori: { id: 'zz-makanan', nama: '  makanan ' } }),
+    P({ id: 'd', kategori: { id: 'k2', nama: 'Minuman' } }),
+  ];
+  const facets = produkFacets(dup);
+
+  it('satu baris berjumlah total; id wakil = id terkecil, label dari id wakil (stabil)', () => {
+    expect(facets.kategori[0]).toEqual({ id: 'aa-makanan', ids: ['aa-makanan', 'zz-makanan'], label: 'Makanan', count: 3 });
+    expect(facets.kategori).toHaveLength(2);
+    expect(produkFacets([...dup].reverse()).kategori[0]).toMatchObject({ id: 'aa-makanan', label: 'Makanan' });
+  });
+
+  it('id mana pun dari grup di URL memilih grupnya; URL ditulis dengan id wakil', () => {
+    const p = resolveParams(url('kategori=zz-makanan,aa-makanan'), facets);
+    expect(p.kategori).toEqual(['aa-makanan']);
+    expect(katalogHref(p)).toBe('/ekonomi/umkm?kategori=aa-makanan');
+  });
+
+  it('saringan memakai semua id grup; chip satu per grup', () => {
+    const view = buildKatalogView({ produk: dup, toko: [] }, url('kategori=zz-makanan'));
+    expect(view.items.map((x) => x.id).sort()).toEqual(['a', 'b', 'c']);
+    expect(view.chips.map((c) => c.label)).toEqual(['Makanan']);
+    expect(view.chips[0].next.kategori).toEqual([]);
+    expect(expandIds(['aa-makanan'], facets.kategori)).toEqual(['aa-makanan', 'zz-makanan']);
+  });
+
+  it('toggleOption: id anggota mana pun terpilih → seluruh grup dilepas; belum → id wakil ditambah', () => {
+    const makanan = facets.kategori[0];
+    expect(toggleOption(['zz-makanan', 'k2'], makanan)).toEqual(['k2']);
+    expect(toggleOption(['k2'], makanan)).toEqual(['k2', 'aa-makanan']);
+  });
+
+  it('tab Toko ikut digabung', () => {
+    const t = [T({ id: 't1', kategori: { id: 'zz', nama: 'Makanan' } }), T({ id: 't2', kategori: { id: 'aa', nama: 'MAKANAN' } })];
+    expect(tokoFacets(t).kategori).toEqual([{ id: 'aa', ids: ['aa', 'zz'], label: 'MAKANAN', count: 2 }]);
+    const view = buildKatalogView({ produk: [], toko: t }, url('tab=toko&kategori=zz'));
+    expect(view.items).toHaveLength(2);
   });
 });
 
@@ -305,6 +365,19 @@ describe('katalog.source', () => {
   it('respons gagal → Error berkonteks (tidak ditelan)', async () => {
     produkGet.mockResolvedValue({ status: 500, data: { success: false, message: 'Gagal mengambil data produk UMKM' } });
     await expect(loadKatalogProduk()).rejects.toThrow('find-many produk UMKM gagal (HTTP 500): Gagal mengambil data produk UMKM');
+  });
+
+  it('produk milik UMKM nonaktif dibuang', async () => {
+    const item = (id: string, umkm: unknown) => ({ id, nama: id, harga: 1, stok: 1, createdAt: 'c', umkm });
+    produkGet.mockResolvedValue({
+      status: 200,
+      data: { success: true, data: [
+        item('aktif', { id: 'u1', nama: 'A', isActive: true }),
+        item('mati', { id: 'u2', nama: 'B', isActive: false }),
+        item('yatim', null),
+      ] },
+    });
+    expect((await loadKatalogProduk()).map((p) => p.id)).toEqual(['aktif', 'yatim']);
   });
 
   it('UMKM nonaktif dibuang', async () => {

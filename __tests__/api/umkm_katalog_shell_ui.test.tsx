@@ -85,6 +85,24 @@ describe('SaringPanel', () => {
     expect(text(html)).toContain('Toko 6');
   });
 
+  it('6 toko (hanya 1 yang akan tersembunyi) → semua tampil tanpa "Lihat semua"', () => {
+    const html = render(<SaringPanel params={params()} facets={produkFacets(produk.slice(0, 6))} update={noop} />);
+    expect(text(html)).not.toContain('Lihat semua');
+    expect(text(html)).toContain('Toko 5');
+  });
+
+  it('grup dengan nilai aktif dari URL terbuka saat dirender', () => {
+    const html = render(<SaringPanel params={params({ min: 5000, tersedia: true })} facets={produkFacets(produk)} update={noop} />);
+    const heads = [...html.matchAll(/aria-expanded="(true|false)"[^>]*>([\s\S]*?)<\/button>/g)].map((m) => [text(m[2]), m[1]]);
+    expect(heads).toEqual([
+      ['Kategori', 'true'],
+      ['Toko', 'true'],
+      ['Harga 1', 'true'],
+      ['Ketersediaan 1', 'true'],
+      ['Produk unggulan', 'false'],
+    ]);
+  });
+
   it('angka kecil di grup yang aktif; unggulan 0 → nonaktif', () => {
     const html = render(<SaringPanel params={params({ kategori: ['k1', 'k2'], min: 5000 })} facets={produkFacets(produk)} update={noop} />);
     expect(html).toContain(`Kategori<span class="${s.groupBadge}">2</span>`);
