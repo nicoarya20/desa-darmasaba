@@ -1,0 +1,26 @@
+# Menu Developer: Ringkasan Sistem & Pengaturan Jenna
+
+Tanggal: 2026-11-13 · Versi: 0.1.254 · Migrasi: `20261113100000_jenna_settings` (additive: `JennaSettings`, `JennaProvider`)
+
+## Konteks
+Jenna (asisten AI desa) butuh tempat untuk mengatur provider AI (base URL, model, API key) dan batas pemakaian tanpa redeploy. Mengatur lewat env berarti setiap ganti model/key harus edit env stack + restart container, dan tidak ada tes koneksi. Developer juga tidak punya satu halaman untuk melihat kondisi runtime (versi yang aktif, koneksi DB/MinIO, env mana yang belum diisi) tanpa masuk ke server. Role DEVELOPER ("0") sudah ada dan kini bisa diberikan lewat `DEVELOPER_EMAIL` (0.1.253), tetapi belum punya menu khusus.
+
+## Keputusan
+- **Lokasi `/admin/developer/*` di dalam layout admin**, bukan aplikasi/route terpisah. Memakai sesi Better Auth, sidebar, dan tema admin yang sudah ada. Halaman: `ringkasan` (Ringkasan Sistem) dan `jenna` (Pengaturan Jenna); `/admin/developer` redirect ke `ringkasan`.
+- **Hanya role "0".** `isDeveloperRole` (`src/lib/auth-policy.ts`) dipakai di tiga lapis: sidebar (`developerMenu` ditambahkan `getNavbar` hanya untuk role 0, sengaja **tidak** dimasukkan ke `navBar`/`devBar`/role arrays supaya tidak bisa diberikan lewat Menu Access), layout halaman (role lain melihat "Akses ditolak" dan tidak fetch API), dan API (setiap handler `requireDeveloper` → 401 tanpa sesi, 403 bukan developer). `/api/developer` juga masuk `ADMIN_ONLY_GET_PATHS` di guard global sebagai lapis tambahan, karena GET di project ini publik secara default.
+- **API key provider disimpan di DB, terenkripsi AES-256-GCM** (`src/lib/jenna/crypto.ts`, `node:crypto`, format berversi `v1:iv:tag:ct`). Kunci dari env `JENNA_CREDENTIALS_KEY` (64 hex), opsional agar app tetap boot. Fail-closed: tanpa kunci valid, simpan API key ditolak, tidak pernah jatuh ke plaintext. API key tidak pernah dikembalikan API; respons hanya `hasApiKey` + `apiKeyHint` (4 karakter terakhir). Field API key kosong saat simpan = pertahankan key lama.
+- **Tes koneksi dari server**, memakai key tersimpan: OpenAI-compatible `GET {baseUrl}/models`, Anthropic `POST {baseUrl}/v1/messages` (`max_tokens: 1`). Timeout per provider, `redirect: "manual"`, pesan galat disanitasi. Base URL wajib https; http hanya untuk localhost/127.0.0.1 di luar production; kredensial/query/hash di URL ditolak.
+- **Ringkasan Sistem read-only**: versi (`package.json`), `NODE_ENV`, uptime, ping DB & MinIO + latensi, kesiapan Jenna, dan checklist env berdasarkan allowlist nama (hanya `set`/belum, nilai tidak pernah dikirim).
+- **Scope tahap 1: pengaturan saja.** `JennaSettings` (singleton `id = 'global'`) + `JennaProvider` (PK slot `chat_openai` | `chat_anthropic`). Tidak termasuk runtime chat, voice, statistik pemakaian, error log, maupun riwayat percakapan. Kolom batas (rate limit, kuota harian, retensi) disimpan sekarang supaya runtime tahap berikutnya tinggal membaca.
+
+## Alternatif yang ditolak
+- **Konfigurasi provider lewat env** (`JENNA_API_KEY`, `JENNA_MODEL`, …): setiap perubahan butuh edit env + restart, tidak ada tes koneksi, dan developer tidak bisa mengubahnya dari admin.
+- **API key plaintext di DB**: backup/dump DB atau akses baca DB langsung membocorkan key provider berbayar.
+- **Menu di bawah Pengaturan (role 0/1)**: SUPER ADMIN tidak perlu mengatur provider AI atau melihat detail infrastruktur; memisahkan section menjaga Pengaturan tetap untuk konten.
+- **Developer sebagai section Menu Access biasa**: section di `navBar` bisa dicentang untuk role mana pun lewat halaman Menu Access, sehingga gating role bisa terlewati tanpa sengaja.
+- **Aplikasi/route developer terpisah di luar `/admin`**: menduplikasi auth, layout, dan tema tanpa manfaat.
+
+## Konsekuensi
+- API: `GET /api/developer/system`, `GET /api/developer/jenna`, `PUT /api/developer/jenna/settings`, `PUT /api/developer/jenna/providers/:slot`, `POST /api/developer/jenna/providers/:slot/test` (`src/app/api/[[...slugs]]/_lib/developer/`). Format galat seragam `{ success: false, message }`.
+- Operator: generate `JENNA_CREDENTIALS_KEY` sekali per environment (`openssl rand -hex 32`). Mengganti/menghapus kunci membuat API key lama tidak bisa didekripsi: tes koneksi gagal dan key harus diisi ulang. Detail di `docs/DEPLOYMENT.md`.
+- Tahap berikutnya (tugas terpisah): runtime chat Jenna yang membaca `JennaSettings`/`JennaProvider` dan menegakkan batas pemakaian, lalu voice dan statistik.
