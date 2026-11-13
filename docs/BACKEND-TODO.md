@@ -10,10 +10,9 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 ## P1. Keamanan & privasi (kerjakan dulu)
 
-- [ ] **XSS tersimpan Laporan Publik: sanitasi di server belum ada** (terverifikasi)
-  - Selesai (v0.1.266, branch `fix/laporan-publik-xss`): detail admin kini merender `kronologi` & `penanganan[].deskripsi` lewat `sanitizeRichText` (`src/lib/rich-text.ts`), sama seperti halaman publik — celah aktif di sesi admin tertutup, termasuk untuk data lama. Test: `__tests__/api/laporan_publik_admin_xss.test.tsx`.
-  - Sisa: `src/app/api/[[...slugs]]/_lib/keamanan/laporan-publik/create.ts` (dan `updt.ts`) masih menyimpan HTML mentah dari publik. Konsumen baru yang lupa menyanitasi akan rentan lagi.
-  - Usul: sanitasi saat simpan (allowlist `RICH_TEXT_TAGS`, tanpa atribut). Catatan: `dompurify` butuh DOM, sedangkan `jsdom` hanya devDependency dan saat ini gagal dimuat di Node 22 (`cssstyle` → ERR_REQUIRE_ASYNC_MODULE); perlu keputusan dependency (mis. `isomorphic-dompurify`/`sanitize-html`) atau sanitizer server lain.
+- [x] **XSS tersimpan Laporan Publik** (terverifikasi) — selesai di dua lapis, dikerjakan sisi frontend (P1 Laporan Publik memang dialokasikan ke sini):
+  - Render (v0.1.266, `fix/laporan-publik-xss`): detail admin merender `kronologi` & `penanganan[].deskripsi` lewat `sanitizeRichText`. Test: `__tests__/api/laporan_publik_admin_xss.test.tsx`.
+  - Simpan (v0.1.267, `fix/laporan-publik-sanitasi-server`): `create.ts` & `updt.ts` menyimpan lewat `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`, `sanitize-html` dengan allowlist `RICH_TEXT_TAGS` yang sama, tanpa atribut). Data lama tidak diubah (prod 2026-11-13: 2 laporan, hanya `<p>`). Test: `__tests__/api/laporan_publik_sanitasi_server.test.ts`.
 
 - [ ] **Laporan Publik bisa dikirim tanpa auth & tanpa moderasi** (terverifikasi)
   - Lokasi: `POST /api/keamanan/laporanpublik/create` (laporan-publik/index.ts `.post("/create")`), schema `LaporanPublik.isActive @default(true)`.

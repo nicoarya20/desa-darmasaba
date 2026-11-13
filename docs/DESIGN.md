@@ -1178,7 +1178,7 @@ Wrapper `Mantine RichTextEditor` (`@mantine/tiptap`) dengan ekstensi:
 - Alignment: Left, Center, Right, Justify
 - History: Undo, Redo
 
-Halaman publik yang menampilkan HTML editor memakai `src/lib/rich-text.ts`: `sanitizeRichText` (DOMPurify, hanya tag `RICH_TEXT_TAGS` `p, br, strong, em, u, ul, ol, li`, tanpa atribut; string kosong bila tanpa DOM atau isi kosong) untuk dirender sebagai HTML, dan `htmlToPlainText` untuk teks polos di daftar. Dipakai Potensi Desa, Daftar Informasi Publik, dan Laporan Publik. Jangan menulis sanitasi sendiri per halaman.
+Halaman publik yang menampilkan HTML editor memakai `src/lib/rich-text.ts`: `sanitizeRichText` (DOMPurify, hanya tag `RICH_TEXT_TAGS` `p, br, strong, em, u, ul, ol, li`, tanpa atribut; string kosong bila tanpa DOM atau isi kosong) untuk dirender sebagai HTML, dan `htmlToPlainText` untuk teks polos di daftar. Dipakai Potensi Desa, Daftar Informasi Publik, dan Laporan Publik. Jangan menulis sanitasi sendiri per halaman. Untuk sanitasi **saat simpan** di API (server, tanpa DOM) pakai `sanitizeRichTextForStorage` dari `src/lib/rich-text-server.ts` (`sanitize-html`, allowlist sama); dipakai create/update Laporan Publik.
 
 ---
 

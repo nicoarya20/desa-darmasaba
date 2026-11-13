@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.267] - 2026-11-13
+### Fixed
+- **Keamanan: isi Laporan Publik kini dibersihkan sejak disimpan.** Kronologi dari form publik serta kronologi dan penanganan yang diedit admin hanya disimpan dengan format teks dasar (paragraf, tebal, miring, garis bawah, daftar). Skrip dan kode berbahaya dibuang sebelum masuk database, jadi tetap aman walaupun kelak ada tampilan baru yang lupa menyaringnya. Laporan yang sudah ada tidak diubah. Tautan, judul, sorotan, dan perataan teks yang sebelumnya memang tidak ditampilkan kini juga tidak lagi tersimpan; teksnya tetap utuh.
+
 ## [0.1.266] - 2026-11-13
 ### Fixed
 - **Keamanan: halaman detail Laporan Publik di admin kini aman dibuka.** Sebelumnya, laporan yang dikirim warga lewat form publik bisa disisipi kode berbahaya yang ikut berjalan saat admin membuka detailnya. Isi kronologi dan penanganan sekarang dibersihkan dulu sebelum ditampilkan. Format teks dasar (paragraf, tebal, miring, garis bawah, daftar) tetap tampil, sedangkan skrip, tautan, gambar, dan atribut lain dibuang, sama seperti di halaman publik. Pengecekan laporan yang sudah tersimpan (lokal & stg) tidak menemukan kiriman berbahaya.

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
+import { sanitizeRichTextForStorage } from "@/lib/rich-text-server";
 import { Context } from "elysia";
 
 type LaporanPublikUpdateInput = {
@@ -23,20 +24,22 @@ const LaporanPublikUpdate = async (context: Context) => {
   if (lokasi !== undefined) updateData.lokasi = lokasi;
   if (tanggalWaktu !== undefined) updateData.tanggalWaktu = new Date(tanggalWaktu);
   if (status !== undefined) updateData.status = status;
-  if (kronologi !== undefined) updateData.kronologi = kronologi;
+  // Kronologi berasal dari kiriman publik & penanganan dari editor: simpan hanya format teks dasar (cegah XSS tersimpan).
+  if (kronologi !== undefined) updateData.kronologi = sanitizeRichTextForStorage(kronologi);
 
   // Handle penanganan update if provided
   if (penanganan !== undefined) {
+    const deskripsi = sanitizeRichTextForStorage(penanganan);
     // Delete existing penanganan
     await prisma.penangananLaporanPublik.deleteMany({
       where: { laporanId: id },
     });
 
     // Add new penanganan if not empty
-    if (penanganan.trim()) {
+    if (deskripsi.trim()) {
       updateData.penanganan = {
         create: {
-          deskripsi: penanganan,
+          deskripsi,
         },
       };
     }
