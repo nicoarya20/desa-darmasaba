@@ -58,6 +58,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Mitigasi frontend (MITIGASI SEMENTARA umkm-detail): `/ekonomi/umkm/produk/[id]` menampilkan "Produk tidak ditemukan" untuk produk terhapus/nonaktif/UMKM nonaktif dan untuk pesan "tidak ditemukan".
   - Usul: endpoint publik memfilter `deletedAt: null, isActive: true, umkm: { isActive: true }`, membuang `penjualan` (admin pakai endpoint sendiri), membalas 404 untuk tidak ditemukan, dan menyertakan `umkm.image`.
 
+- [ ] **Detail UMKM publik mengirim UMKM nonaktif/terhapus dan produk nonaktif** (terverifikasi: `ekonomi/umkm/findUnique.ts:8-17`, 2026-11-13)
+  - `where: { id }` saja, dan `produk` hanya disaring `deletedAt: null`, jadi produk `isActive: false` ikut terkirim. Produk tidak membawa relasi kategori (hanya `kategoriProdukId`). Tidak ditemukan juga dibalas HTTP 200 `{ success: false }`.
+  - Mitigasi frontend (MITIGASI SEMENTARA umkm-detail-toko): `/ekonomi/umkm/[id]` menampilkan "Toko tidak ditemukan" untuk UMKM terhapus/nonaktif dan pesan "tidak ditemukan", serta menyembunyikan produk nonaktif.
+  - Usul: endpoint publik memfilter `deletedAt: null, isActive: true` untuk UMKM dan produknya, menyertakan `kategoriProduk` per produk, dan membalas 404 untuk tidak ditemukan.
+
 - [ ] **Pencegahan Kriminalitas find-many tanpa offset/skip**
   - Halaman publik mengeluarkan item sorotan dari daftar, jadi butuh offset. Sementara: muat `limit=100` sekali lalu paginasi klien (ditandai MITIGASI SEMENTARA di `(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/pencegahan.meta.ts`, `console.warn` bila total > 100).
   - Usul: dukung `?offset=` (atau `skip`). Setelah ada, hapus mitigasinya.
