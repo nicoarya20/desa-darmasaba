@@ -13,6 +13,7 @@ const PILL = { fullWidth: true, radius: 'xl', h: 48, fz: 16 } as const;
 /**
  * Tombol pengganti "Pesan Sekarang" selama pesanan website nonaktif (`UMKM_PESANAN_TERCATAT`):
  * langsung membuka WhatsApp penjual tanpa mencatat pesanan atau mengurangi stok.
+ * Tanpa `produkNama` (detail toko) pesannya umum tentang toko.
  */
 export function HubungiPenjualButton({ kontak, umkmNama, produkNama }: HubungiPenjualInput) {
   const waUrl = buildHubungiPenjualUrl({ kontak, umkmNama, produkNama });
