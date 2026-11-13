@@ -1,0 +1,145 @@
+/*
+ * Kepala toko halaman detail UMKM: foto persegi 160px (tanpa foto → inisial), kategori, nama, meta, deskripsi, CTA
+ * WhatsApp, garis pemisah di bawah. Token (--ink, --muted, --tile, --line) dari .page detail-produk.module.css.
+ */
+.header {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+  margin-top: 24px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--line);
+}
+
+.foto {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+  background: var(--tile);
+}
+
+.fotoImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inisial {
+  color: var(--muted);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kategori {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nama {
+  margin: 0;
+  color: var(--ink);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 38px;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.metaItem svg {
+  flex: 0 0 auto;
+}
+
+.deskripsi {
+  max-width: 68ch;
+  margin-top: 20px;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.deskripsi > :first-child {
+  margin-top: 0;
+}
+
+.deskripsi > :last-child {
+  margin-bottom: 0;
+}
+
+.deskripsi ul,
+.deskripsi ol {
+  padding-left: 1.25em;
+}
+
+.cta {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 24px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Mobile: satu kolom, foto 96px ---------- */
+@media (max-width: 734px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding-bottom: 32px;
+  }
+
+  .foto {
+    width: 96px;
+  }
+
+  .inisial {
+    font-size: 32px;
+  }
+
+  .nama {
+    font-size: 26px;
+    line-height: 32px;
+  }
+}
