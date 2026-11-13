@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.258] - 2026-11-13
+### Fixed
+- Alamat `/keamanan` tidak lagi menampilkan halaman kosong bertuliskan "keamanan", dan alamat salah ketik di bawah `/keamanan/` tidak lagi menampilkan judul mentah. Keduanya kini menampilkan halaman tidak ditemukan (404). Semua halaman di menu Keamanan tetap bisa dibuka seperti biasa.
+
 ## [0.1.254] - 2026-11-12
 ### Fixed
 - **Tampilan Agenda & Kalender Desa dirapikan.** Ikon belah ketupat rerainan tidak lagi terpotong di sisi kiri. Ikon Purnama/Tilem kini sejajar di samping angka tanggal, tidak lagi menempel di pojok atas angka. Garis pemisah di kolom wuku kini segaris dengan garis kalender.
