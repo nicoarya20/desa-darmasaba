@@ -22,15 +22,17 @@ export function DetailProdukView({ id }: { id: string }) {
 
   return (
     <div className={s.page} style={KATALOG_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
-      <Link href={KATALOG_BASE_HREF} className={s.back}>
-        <IconChevronLeft size={16} stroke={2} aria-hidden="true" />
-        {T.backToList}
-      </Link>
-      {state.status === 'ready' ? (
-        <DetailBody produk={state.data} onReload={reload} />
-      ) : (
-        <DetailProdukStatus status={state.status} onRetry={reload} />
-      )}
+      <div className={s.inner}>
+        <Link href={KATALOG_BASE_HREF} className={s.back}>
+          <IconChevronLeft size={16} stroke={2} aria-hidden="true" />
+          {T.backToList}
+        </Link>
+        {state.status === 'ready' ? (
+          <DetailBody produk={state.data} onReload={reload} />
+        ) : (
+          <DetailProdukStatus status={state.status} onRetry={reload} />
+        )}
+      </div>
     </div>
   );
 }
