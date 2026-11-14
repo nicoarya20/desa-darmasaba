@@ -663,6 +663,16 @@ Seragam dengan detail produk; **tanpa** panel Cara memesan, rel UMKM lain, Filte
 - **Produk toko** (`TokoProduk`): `h2` "Produk" + "N produk" (disembunyikan bila 0), kanan `KatalogUrutSelect` (komponen Urutkan bersama katalog, state lokal, bawaan Terbaru, tampil mulai 2 produk; ≤734 turun ke baris bawah rata kanan). `KatalogGrid` + `ProdukCard` hasil `sortProduk`; kosong → "Toko ini belum menambahkan produk."
 - **Status**: kerangka kepala + 4 kartu; "Toko tidak ditemukan"; "Toko gagal dimuat" + "Coba lagi".
 
+### Info Sekolah (`/pendidikan/info-sekolah[/{lembaga|siswa|pengajar}]`)
+
+Folder `(pages)/pendidikan/info-sekolah/`: `layout.tsx` (latar `colors.Bg` + tombol kembali saja, **tanpa pil jenjang**), `page.tsx` (ringkasan), `lembaga|siswa|pengajar/page.tsx` (tabel), `[jenjangPendidikan]/page.tsx` (hanya redirect tautan lama). Pendukung di `_com/`: `InfoSekolahListPanel.tsx` (panel tabel bersama), `InfoSekolahStatCard.tsx`, `info-sekolah.logic.ts`, `use-info-sekolah-query.ts`, `use-info-sekolah-data.ts`. Test: `__tests__/api/info_sekolah_logic.test.ts`, `info_sekolah_ui.test.tsx`, `info_sekolah_redirects.test.ts`.
+
+- **Ringkasan**: kartu judul "Cari Informasi Sekolah" + pengantar, lalu tiga kartu angka (Lembaga Pendidikan, Siswa Terdaftar, Tenaga Pengajar) = **total semua jenjang**; "Lihat Detail" → tabelnya. "Segarkan Data" memuat ulang; gagal → pesan merah.
+- **Tabel**: kepala = ikon + judul kiri; kanan `Select` "Semua jenjang" (clearable, opsi dari `jenjangPendidikan.findMany`) + kolom cari (jeda 500ms, Enter langsung). Filter jenjang **hanya di sini** — satu konsep di satu tempat, bukan pil navigasi di atas halaman. Di atas tabel "Menampilkan N {lembaga|siswa|pengajar}". 10 baris per halaman, paginasi hanya bila > 1 halaman. Saat memuat kontrol tetap terpasang (fokus kolom cari tidak hilang), hanya isi tabel jadi kerangka.
+- **URL = sumber kebenaran**: `?jenjang=` (nama huruf kecil, filter API case-insensitive), `?search=`, `?page=`; ganti jenjang/kata kunci → halaman 1 (`router.replace`, tanpa scroll).
+- **Kosong**: "Belum ada data X.", "Belum ada data X di jenjang SD.", "Tidak ada X yang cocok dengan “…”.", atau "Tidak ada X “…” di jenjang SD.".
+- **Tautan lama** (permanen): `/semua` & `/{jenjang}` → ringkasan (page `[jenjangPendidikan]`); `/semua/{tabel}` → `/{tabel}`; `/{jenjang}/{tabel}` → `/{tabel}?jenjang={jenjang}` (`next.config.ts`).
+
 ### Peta Informasi (`/peta-informasi`)
 
 Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.tsx` (H1, `TextInput` berlabel "Saring halaman", ringkasan `aria-live`, `SimpleGrid` 1/2/3 kolom) → `_com/PetaInformasiGroupCard.tsx` (kartu per menu utama: H2 + `<ul>/<li>` `Anchor component={Link}`). Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, saring lewat `searchMenu` tanpa API. Pintu masuk: footer "Tautan Penting", entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Dites di `__tests__/api/peta_informasi.test.ts`.

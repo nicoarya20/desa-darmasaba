@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.271] - 2026-11-14
+### Changed
+- **Info Sekolah: filter jenjang kini ada di dalam tabel.** Tombol jenjang (Semua/SMA/SMK/SMP/SD/TK/PAUD) di atas halaman dihapus. Di halaman Daftar Lembaga Pendidikan, Daftar Siswa, dan Daftar Pengajar kini ada pilihan **Jenjang** di sebelah kolom pencarian; memilihnya langsung menyaring tabel, bukan lagi memindahkan pengunjung ke halaman lain. Jumlah hasil ditampilkan di atas tabel.
+- Halaman ringkasan Info Sekolah kini selalu menampilkan total semua jenjang dan beralamat `/pendidikan/info-sekolah` (menu Pendidikan → Info Sekolah sudah diarahkan ke sana).
+- Alamat tabel menyimpan jenjang, kata kunci, dan halaman (mis. `/pendidikan/info-sekolah/lembaga?jenjang=sd`), jadi tautan yang dibagikan dan tombol kembali browser menampilkan hasil yang sama. Tautan lama (`/pendidikan/info-sekolah/semua/...`, `/pendidikan/info-sekolah/sd/lembaga`, dll.) otomatis dialihkan ke alamat baru.
+
+### Fixed
+- Mengetik di kolom pencarian atau mengganti jenjang saat berada di halaman 2 dan seterusnya kini kembali ke halaman 1, tidak lagi menampilkan tabel kosong.
+- Kolom pencarian tabel Info Sekolah tidak lagi kehilangan kursor setiap kali data dimuat.
+- Berpindah halaman tabel tidak lagi memuat data dua kali (sebelumnya sesaat menampilkan hasil tanpa filter pencarian).
+
 ## [0.1.270] - 2026-11-14
 ### Added
 - **Laporan Publik kini diverifikasi admin sebelum tampil.** Laporan yang dikirim warga lewat form di halaman Laporan Keamanan Lingkungan tidak lagi langsung muncul di situs: laporan masuk dengan status **Baru** dan baru tampil di daftar, halaman detail, dan pencarian setelah admin menyetujuinya. Pelapor mendapat pesan "Laporan terkirim. Akan tampil setelah diverifikasi admin desa."
