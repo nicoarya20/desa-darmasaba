@@ -214,4 +214,18 @@ describe('find-many jenjang', () => {
     const page2: any = await jenjangFindMany(ctx({ page: '2', limit: '4' }));
     expect(page2.data.map((j: { nama: string }) => j.nama)).toEqual(['SMA', 'SMK']);
   });
+
+  it('?search= → cari di nama jenjang ATAU nama lembaga aktifnya (relasi lewat `some`)', async () => {
+    const res: any = await jenjangFindMany(ctx({ search: 'Darmasaba' }));
+    expect(res.success).toBe(true);
+    expect(prismaMock.jenjangPendidikan.findMany).toHaveBeenCalledWith({
+      where: {
+        isActive: true,
+        OR: [
+          { nama: { contains: 'Darmasaba', mode: 'insensitive' } },
+          { lembagas: { some: { isActive: true, nama: { contains: 'Darmasaba', mode: 'insensitive' } } } },
+        ],
+      },
+    });
+  });
 });

@@ -16,11 +16,12 @@ export default async function jenjangPendidikanFindMany(context: Context) {
   const where: any = { isActive: true };
   if (hasLembaga) where.lembagas = { some: { isActive: true } };
 
-  // Tambahkan pencarian (jika ada)
+  // Pencarian: nama jenjang, atau nama lembaga aktif di jenjang itu ("Darmasaba" → SD). `lembagas` adalah relasi
+  // daftar, jadi wajib lewat `some` — `contains` langsung di relasi ditolak Prisma dan membuat pencarian selalu gagal.
   if (search) {
     where.OR = [
       { nama: { contains: search, mode: "insensitive" } },
-      { lembagas: { contains: search, mode: "insensitive" } },
+      { lembagas: { some: { isActive: true, nama: { contains: search, mode: "insensitive" } } } },
     ];
   }
 
