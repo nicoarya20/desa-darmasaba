@@ -1,0 +1,38 @@
+.cover {
+  position: relative;
+  display: block;
+  flex: none;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  isolation: isolate;
+}
+
+.cover[data-size='fill'] {
+  width: 100%;
+}
+
+.icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  color: var(--m-subtle, rgba(255, 255, 255, 0.42));
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
