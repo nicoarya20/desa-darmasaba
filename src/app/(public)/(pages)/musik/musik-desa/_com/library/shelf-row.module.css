@@ -51,7 +51,7 @@
   cursor: pointer;
 }
 
-.arrow:disabled {
+.arrow[aria-disabled='true'] {
   color: var(--m-subtle, #6e6e73);
   opacity: 0.5;
   cursor: default;

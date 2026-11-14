@@ -70,6 +70,12 @@ describe('MusikHomeView', () => {
     expect(count(html, `aria-label="${T.geserKanan}"`)).toBe(3);
   });
 
+  it('panah rak di ujung: aria-disabled (fokus tetap), bukan atribut disabled', () => {
+    const html = render(<MusikHomeView {...lib()} />);
+    expect(html).not.toMatch(/<button[^>]*\sdisabled/);
+    expect(count(html, 'aria-disabled="true"')).toBe(6); // 3 rak gulir × ‹ ›, awal render = kedua ujung
+  });
+
   it('ubin artis & genre menaut ke Jelajahi tersaring; "Pop" dan "pop" satu ubin', () => {
     const html = render(<MusikHomeView {...lib()} />);
     expect(html).toContain('href="/musik/musik-desa/jelajahi?artis=kadek+wira"');

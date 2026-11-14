@@ -20,7 +20,10 @@ type Props = {
 /** Satu klik panah menggeser 90% lebar rak supaya kartu terakhir tetap terlihat sebagai jangkar. */
 const PAGE_RATIO = 0.9;
 
-/** Rak berjudul (h2) dengan "Lihat semua"; rak horizontal punya panah ‹ › yang nonaktif di ujung. */
+/**
+ * Rak berjudul (h2) dengan "Lihat semua"; rak horizontal punya panah ‹ › yang nonaktif di ujung (`aria-disabled`,
+ * bukan `disabled`: tombol yang baru dipakai tetap memegang fokus saat rak mencapai ujung).
+ */
 export function ShelfRow({ title, href, layout, children }: Props) {
   const headingId = useId();
   const listRef = useRef<HTMLUListElement>(null);
@@ -52,7 +55,8 @@ export function ShelfRow({ title, href, layout, children }: Props) {
 
   const page = (direction: -1 | 1) => {
     const el = listRef.current;
-    if (!el) return;
+    // Panah di ujung hanya aria-disabled (fokus tetap di tombol), jadi kliknya diabaikan di sini.
+    if (!el || (direction < 0 ? edges.start : edges.end)) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     el.scrollBy({ left: direction * el.clientWidth * PAGE_RATIO, behavior: reduce ? 'auto' : 'smooth' });
   };
@@ -71,10 +75,22 @@ export function ShelfRow({ title, href, layout, children }: Props) {
           ) : null}
           {layout === 'scroll' ? (
             <>
-              <button type="button" className={s.arrow} aria-label={T.geserKiri} disabled={edges.start} onClick={() => page(-1)}>
+              <button
+                type="button"
+                className={s.arrow}
+                aria-label={T.geserKiri}
+                aria-disabled={edges.start}
+                onClick={() => page(-1)}
+              >
                 <IconChevronLeft size={18} aria-hidden="true" />
               </button>
-              <button type="button" className={s.arrow} aria-label={T.geserKanan} disabled={edges.end} onClick={() => page(1)}>
+              <button
+                type="button"
+                className={s.arrow}
+                aria-label={T.geserKanan}
+                aria-disabled={edges.end}
+                onClick={() => page(1)}
+              >
                 <IconChevronRight size={18} aria-hidden="true" />
               </button>
             </>
