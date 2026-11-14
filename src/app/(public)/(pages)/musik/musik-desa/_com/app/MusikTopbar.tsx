@@ -1,10 +1,11 @@
 'use client';
 
-import { IconSearch } from '@tabler/icons-react';
+import { IconPlaylist, IconSearch } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { activeMusikNav, keepsPendingSearch, musikSearchNavigation, reconcileSentQ } from './musik-nav.logic';
 import { MUSIK_APP_TEXT as T, MUSIK_SEARCH_DEBOUNCE_MS } from './musik-nav.meta';
+import { useMusikUi } from './musik-ui.context';
 import s from './musik-app.module.css';
 
 /**
@@ -12,9 +13,10 @@ import s from './musik-app.module.css';
  * (genre/artis dipertahankan), dari menu lain URL didorong ke riwayat. Nilai mengikuti `?q=` di Jelajahi,
  * kecuali `?q=` itu gema kiriman sendiri (ketikan saat navigasi lambat tidak ditimpa). Pindah ke menu selain
  * Jelajahi membatalkan ketikan yang masih menunggu jeda.
+ * `aside` = kontrol di kanan kolom cari (tombol Antrean cadangan).
  * Memakai useSearchParams → pemanggil wajib membungkusnya dengan `<Suspense>`.
  */
-export function MusikTopbar() {
+export function MusikTopbar({ aside = null }: { aside?: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -97,6 +99,25 @@ export function MusikTopbar() {
           }}
         />
       </form>
+      {aside}
     </div>
+  );
+}
+
+/** Tombol Antrean kecil di topbar selama bar pemutar belum ada (tanpa ini antrean tak bisa dibuka lagi). */
+export function QueueTopbarToggle() {
+  const { queueOpen, toggleQueue, queueTopbarToggleRef, queuePanelId } = useMusikUi();
+  return (
+    <button
+      ref={queueTopbarToggleRef}
+      type="button"
+      className={s.queueToggle}
+      onClick={toggleQueue}
+      aria-label={T.queueOpen}
+      aria-expanded={queueOpen}
+      aria-controls={queuePanelId}
+    >
+      <IconPlaylist size={20} stroke={1.75} aria-hidden />
+    </button>
   );
 }

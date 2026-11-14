@@ -151,6 +151,21 @@ describe('MusikApp', () => {
     expect(render(<MusikApp>isi</MusikApp>)).toContain('data-bar="on"');
   });
 
+  it('tanpa bar pemutar: tombol Antrean cadangan di topbar (aria-expanded false, aria-controls ke panel)', () => {
+    const html = render(<MusikApp>isi</MusikApp>);
+    const button = html.match(new RegExp(`<button[^>]*aria-label="${T.queueOpen}"[^>]*>`))?.[0] ?? '';
+    expect(button).toContain('aria-expanded="false"');
+    const controls = button.match(/aria-controls="([^"]+)"/)?.[1];
+    expect(controls).toBeTruthy();
+    // Tombol berada di topbar, setelah form cari.
+    expect(html.indexOf('role="search"')).toBeLessThan(html.indexOf(`aria-label="${T.queueOpen}"`));
+  });
+
+  it('bar pemutar ada → tombol cadangan topbar tidak dirender (tombol Antrean di bar dipakai)', () => {
+    music.currentSong = { id: 'lagu-1' };
+    expect(render(<MusikApp>isi</MusikApp>)).not.toContain(`aria-label="${T.queueOpen}"`);
+  });
+
   it('render server: antrean tertutup (kolom kanan & Drawer belum ada) sampai status dibaca setelah mount', () => {
     const html = render(<MusikApp>isi</MusikApp>);
     expect(html).toContain('data-queue="false"');
@@ -164,7 +179,7 @@ describe('QueueDrawer', () => {
   const renderDrawer = (sheet: boolean) =>
     renderToStaticMarkup(
       <MantineProvider theme={theme}>
-        <QueueDrawer opened sheet={sheet} onClose={() => {}} />
+        <QueueDrawer opened sheet={sheet} onClose={() => {}} panelId="antrean-panel" />
       </MantineProvider>,
     ).replace(/<style[\s\S]*?<\/style>/g, '');
   const classOf = (html: string, marker: string) => html.match(new RegExp(`class="([^"]*${marker}[^"]*)"`))?.[1] ?? '';
@@ -185,5 +200,9 @@ describe('QueueDrawer', () => {
 
   it('dialog berlabel Antrean', () => {
     expect(renderDrawer(false)).toMatch(/role="dialog"[^>]*aria-label="Antrean"|aria-label="Antrean"[^>]*role="dialog"/);
+  });
+
+  it('dialog membawa id panel (tujuan aria-controls tombol Antrean)', () => {
+    expect(renderDrawer(false)).toMatch(/<section[^>]*id="antrean-panel"[^>]*role="dialog"|<section[^>]*role="dialog"[^>]*id="antrean-panel"/);
   });
 });

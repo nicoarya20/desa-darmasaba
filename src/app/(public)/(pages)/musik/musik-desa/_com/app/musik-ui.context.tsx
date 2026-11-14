@@ -1,6 +1,17 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { MUSIK_QUEUE_COLUMN_QUERY } from './musik-layout';
 
 /** Kunci localStorage preferensi panel Antrean (terbuka/tertutup). */
@@ -9,7 +20,14 @@ export const QUEUE_OPEN_STORAGE_KEY = 'musik-desa:queue-open';
 type MusikUiValue = {
   queueOpen: boolean;
   toggleQueue: () => void;
+  /** Tutup antrean (× kolom, Escape/overlay Drawer); fokus lalu kembali ke tombol Antrean yang tampil. */
   closeQueue: () => void;
+  /** Tombol Antrean di bar pemutar (dipasang NowPlayingBar); null selama bar belum dirender. */
+  queueToggleRef: RefObject<HTMLButtonElement | null>;
+  /** Tombol Antrean cadangan di topbar, hanya ada selama bar belum dirender & antrean tertutup. */
+  queueTopbarToggleRef: RefObject<HTMLButtonElement | null>;
+  /** id elemen panel antrean (kolom kanan atau Drawer) untuk `aria-controls` tombol Antrean. */
+  queuePanelId: string;
 };
 
 const MusikUiContext = createContext<MusikUiValue | undefined>(undefined);
@@ -53,10 +71,27 @@ function writeStoredQueueOpen(open: boolean) {
   }
 }
 
+/** Tujuan fokus setelah antrean ditutup: tombol di bar bila ada, selain itu tombol cadangan di topbar. */
+export function queueFocusTarget<T>(barToggle: T | null, topbarToggle: T | null): T | null {
+  return barToggle ?? topbarToggle;
+}
+
 /** Status UI aplikasi Musik Desa (panel Antrean) yang dibagi sidebar, bar pemutar, dan panel. */
 export function MusikUiProvider({ children }: { children: ReactNode }) {
   // SSR & render pertama selalu tertutup supaya markup server = klien; nilai asli dibaca setelah mount.
   const [queueOpen, setQueueOpen] = useState(false);
+  const queueToggleRef = useRef<HTMLButtonElement | null>(null);
+  const queueTopbarToggleRef = useRef<HTMLButtonElement | null>(null);
+  const queuePanelId = useId();
+  // Diset closeQueue: kolom kanan di-unmount saat ditutup (fokus jatuh ke body), dan tombol topbar
+  // dipasang ulang setelah Drawer tertutup (target returnFocus Mantine sudah terlepas).
+  const restoreFocus = useRef(false);
+
+  useEffect(() => {
+    if (queueOpen || !restoreFocus.current) return;
+    restoreFocus.current = false;
+    queueFocusTarget(queueToggleRef.current, queueTopbarToggleRef.current)?.focus();
+  }, [queueOpen]);
 
   useEffect(() => {
     const columnQuery = window.matchMedia(MUSIK_QUEUE_COLUMN_QUERY);
@@ -76,11 +111,15 @@ export function MusikUiProvider({ children }: { children: ReactNode }) {
   }, [queueOpen]);
 
   const closeQueue = useCallback(() => {
+    restoreFocus.current = true;
     setQueueOpen(false);
     writeStoredQueueOpen(false);
   }, []);
 
-  const value = useMemo(() => ({ queueOpen, toggleQueue, closeQueue }), [queueOpen, toggleQueue, closeQueue]);
+  const value = useMemo(
+    () => ({ queueOpen, toggleQueue, closeQueue, queueToggleRef, queueTopbarToggleRef, queuePanelId }),
+    [queueOpen, toggleQueue, closeQueue, queuePanelId]
+  );
 
   return <MusikUiContext.Provider value={value}>{children}</MusikUiContext.Provider>;
 }

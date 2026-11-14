@@ -29,4 +29,5 @@ export const MUSIK_APP_TEXT = {
   searchLabel: 'Cari musik',
   searchPlaceholder: 'Cari lagu, artis, atau genre',
   queueLabel: 'Antrean',
+  queueOpen: 'Buka antrean',
 } as const;

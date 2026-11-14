@@ -15,7 +15,11 @@ import {
   MUSIK_QUEUE_COLUMN_MIN_PX,
 } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-layout';
 import { MUSIK_NAV_ITEMS } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.meta';
-import { queueOpenForViewport, parseQueueOpen } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
+import {
+  parseQueueOpen,
+  queueFocusTarget,
+  queueOpenForViewport,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
 
 describe('activeMusikNav', () => {
   it('akar aplikasi = Musik, dengan atau tanpa garis miring akhir', () => {
@@ -166,5 +170,13 @@ describe('status awal panel Antrean', () => {
   it('<1280px (Drawer) selalu mulai tertutup walau preferensi terbuka', () => {
     expect(queueOpenForViewport(false, null)).toBe(false);
     expect(queueOpenForViewport(false, true)).toBe(false);
+  });
+});
+
+describe('fokus setelah antrean ditutup', () => {
+  it('tombol Antrean di bar diutamakan; tanpa bar → tombol cadangan topbar', () => {
+    expect(queueFocusTarget('bar', 'topbar')).toBe('bar');
+    expect(queueFocusTarget(null, 'topbar')).toBe('topbar');
+    expect(queueFocusTarget(null, null)).toBeNull();
   });
 });

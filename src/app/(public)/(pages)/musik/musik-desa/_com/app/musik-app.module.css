@@ -114,7 +114,8 @@
 
 .navItem:focus-visible,
 .pill:focus-visible,
-.searchInput:focus-visible {
+.searchInput:focus-visible,
+.queueToggle:focus-visible {
   outline: 2px solid var(--m-accent);
   outline-offset: 2px;
 }
@@ -154,11 +155,32 @@
 }
 
 .topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0 0 28px;
 }
 
 .search {
   position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Tombol Antrean cadangan (selama bar pemutar belum ada): lingkaran setinggi kolom cari. */
+.queueToggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--m-elev);
+  color: var(--m-ink);
+  cursor: pointer;
 }
 
 .searchIcon {
@@ -192,10 +214,16 @@
   -webkit-appearance: none;
 }
 
-/* Layar sentuh: iOS memperbesar halaman saat fokus ke input <16px, jadi di sana tetap 16px. */
+/* Layar sentuh: iOS memperbesar halaman saat fokus ke input <16px, jadi di sana tetap 16px;
+   tombol Antrean cadangan dibesarkan ke target sentuh 44px. */
 @media (pointer: coarse) {
   .searchInput {
     font-size: 16px;
+  }
+
+  .queueToggle {
+    width: 44px;
+    height: 44px;
   }
 }
 
@@ -240,6 +268,10 @@
   .navItem:hover:not([aria-current='page']) {
     background: var(--m-hover);
     color: var(--m-ink);
+  }
+
+  .queueToggle:hover {
+    background: var(--m-active);
   }
 
   /* Pil sudah berlatar --m-elev; di tema terang --m-hover justru lebih pucat → cukup tinta menguat. */
@@ -321,6 +353,7 @@
 
 /* Pengganti kolom cari selama useSearchParams menunggu (Suspense): tinggi sama → tanpa geser tata letak. */
 .searchFallback {
+  flex: 1;
   height: 40px;
   border-radius: 999px;
   background: var(--m-elev);
