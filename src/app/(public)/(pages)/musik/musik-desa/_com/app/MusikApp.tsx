@@ -3,6 +3,7 @@
 import { Drawer } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Suspense, type ReactNode } from 'react';
+import { useMusic } from '@/app/context/MusicContext';
 import { NowPlayingBar } from '../player/NowPlayingBar';
 import { QueuePanel } from '../player/QueuePanel';
 import { MUSIK_APP_TEXT as T } from './musik-nav.meta';
@@ -26,13 +27,15 @@ export function MusikApp({ children }: { children: ReactNode }) {
 /** Grid aplikasi; dipisah dari provider supaya bisa membaca `useMusikUi()`. */
 export function MusikAppFrame({ children }: { children: ReactNode }) {
   const { queueOpen, closeQueue } = useMusikUi();
+  // Predikat sama dengan NowPlayingBar (`currentSong != null`): bar belum dirender → tanpa ruang bar.
+  const barOn = useMusic().currentSong != null;
   // Nilai awal false (SSR & render pertama), dibaca ulang setelah mount bersama status antrean.
   const isColumn = useMediaQuery(QUEUE_COLUMN_QUERY, false);
   const isSheet = useMediaQuery(QUEUE_SHEET_QUERY, false);
   const inColumn = queueOpen && isColumn;
 
   return (
-    <div className={s.app} data-queue={inColumn ? 'true' : 'false'}>
+    <div className={s.app} data-queue={inColumn ? 'true' : 'false'} data-bar={barOn ? 'on' : 'off'}>
       <MusikSidebar />
       <MusikNavPills />
       <div className={s.center}>

@@ -22,6 +22,9 @@
   --m-on-solid: #fff;
   --m-track: rgba(0, 0, 0, 0.12);
   --m-bar-h: 88px; /* tinggi NowPlayingBar */
+  /* Ruang yang dipakai bar di bawah layar: 0 sampai lagu pertama dipilih (NowPlayingBar belum
+     dirender), lalu tinggi bar + safe-area bawah (iPhone). Diatur lewat data-bar di .app. */
+  --m-bar-space: 0px;
   --m-left-w: 264px;
   --m-right-w: 360px;
   /* Tinggi navbar situs: --nav-h (44px) hanya terdefinisi di dalam navbar, jadi disalin di sini.
@@ -44,8 +47,14 @@
   }
 }
 
+.app[data-bar='on'] {
+  --m-bar-space: calc(var(--m-bar-h) + env(safe-area-inset-bottom, 0px));
+}
+
 .app {
   min-height: calc(100dvh - var(--m-nav));
+  /* Isi terakhir tidak tertutup bar fixed (border-box: tetap setinggi layar). */
+  padding-bottom: var(--m-bar-space);
   background: var(--m-bg);
   display: grid;
   grid-template-columns: var(--m-left-w) minmax(0, 1fr);
@@ -61,8 +70,7 @@
 .right {
   position: sticky;
   top: var(--m-nav);
-  /* Bar pemutar = --m-bar-h + safe-area bawah (iPhone), lihat NowPlayingBar. */
-  height: calc(100dvh - var(--m-nav) - var(--m-bar-h) - env(safe-area-inset-bottom, 0px));
+  height: calc(100dvh - var(--m-nav) - var(--m-bar-space));
 }
 
 .sidebar {

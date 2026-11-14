@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const nav = vi.hoisted(() => ({ pathname: '/musik/musik-desa', search: '' }));
+const music = vi.hoisted(() => ({ currentSong: null as { id: string } | null }));
 
 vi.mock('next/navigation', () => ({
   usePathname: () => nav.pathname,
@@ -28,6 +29,8 @@ vi.mock('@/app/(public)/_com/ImageErrorRetryMount', () => ({ ImageErrorRetry: ()
 vi.mock('@/app/(public)/(pages)/musik/musik-desa/_com/player/NowPlayingBar', () => ({
   NowPlayingBar: () => <div data-testid="now-playing-bar" />,
 }));
+// Hanya `currentSong` yang dibaca MusikApp (penentu ruang bar pemutar).
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => music }));
 vi.mock('@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel', () => ({
   QueuePanel: () => <div data-testid="queue-panel" />,
 }));
@@ -46,6 +49,7 @@ const currentLinks = (html: string) => [...html.matchAll(/<a[^>]*aria-current="p
 beforeEach(() => {
   nav.pathname = '/musik/musik-desa';
   nav.search = '';
+  music.currentSong = null;
 });
 
 describe('MusikSidebar', () => {
@@ -137,6 +141,12 @@ describe('MusikApp', () => {
     expect(html).toContain('role="search"');
     expect(html).toMatch(/<main[^>]*><h1>Musik Desa<\/h1><\/main>/);
     expect(html.match(/now-playing-bar/g)).toHaveLength(1);
+  });
+
+  it('belum ada lagu dipilih → data-bar="off" (tanpa ruang bar); ada lagu (walau dijeda) → "on"', () => {
+    expect(render(<MusikApp>isi</MusikApp>)).toContain('data-bar="off"');
+    music.currentSong = { id: 'lagu-1' };
+    expect(render(<MusikApp>isi</MusikApp>)).toContain('data-bar="on"');
   });
 
   it('render server: antrean tertutup (kolom kanan & Drawer belum ada) sampai status dibaca setelah mount', () => {
