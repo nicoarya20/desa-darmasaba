@@ -131,7 +131,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 - [ ] **Lowongan Kerja: `gaji` dan `tipePekerjaan` teks bebas; tidak ada batas lamaran, wilayah, maupun logo** (terverifikasi di schema & form admin, 2026-11-14)
   - Lokasi: `model LowonganPekerjaan` (`prisma/schema.prisma`), form `src/app/admin/(dashboard)/ekonomi/lowongan-kerja-lokal/create/page.tsx` (semua `TextInput`).
-  - `gaji String`: stg berisi `"2.500.000"` dan `"2000000"`. Frontend publik membaca digitnya saja; nilai tanpa digit tampil "Gaji tidak dicantumkan". Usul: `Int` (rupiah per bulan) + isian angka; pertimbangkan `gajiMaks` opsional untuk rentang.
+  - `gaji String`: stg berisi `"2.500.000"` dan `"2000000"`. Frontend publik hanya membaca teks yang memuat tepat satu angka; rentang ("2.000.000 - 3.000.000"), ribuan berspasi, atau angka dengan keterangan berangka tampil "Gaji tidak dicantumkan" (`lowongan-adapter.logic.ts`). Usul: `Int` (rupiah per bulan) + isian angka; `gajiMaks` opsional untuk rentang.
   - `tipePekerjaan String`: stg berisi "Full Time", "Freelance", dan "Menjaga Toko" (itu deskripsi kerja, bukan tipe). Pilihan filter publik diturunkan dari nilai ini, jadi salah isi langsung jadi pilihan filter. Usul: `Select` berisi pilihan tetap (Penuh waktu, Paruh waktu, Lepas, Harian, Magang) atau enum.
   - Tidak ada tanggal batas lamaran: lowongan lama (stg: April 2026) tetap tampil sampai admin menonaktifkan manual. Usul: `batasLamaran DateTime?` + sembunyikan otomatis setelah lewat.
   - Tidak ada wilayah/banjar: `lokasi` alamat teks bebas, jadi filter Lokasi tidak bisa dibuat. Usul: `Select` banjar/wilayah (atau "Luar desa") di samping alamat.
