@@ -17,13 +17,13 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--m-muted, rgba(255, 255, 255, 0.64));
+  color: var(--m-ink, #1d1d1f);
   cursor: pointer;
-  transition: color 150ms ease, transform 150ms ease;
+  transition: background-color 150ms ease, transform 150ms ease;
 }
 
 .btn:hover:not(:disabled) {
-  color: var(--m-ink, #fff);
+  background: var(--m-hover, rgba(0, 0, 0, 0.05));
 }
 
 .btn:active:not(:disabled) {
@@ -31,7 +31,7 @@
 }
 
 .btn:focus-visible {
-  outline: 2px solid var(--m-accent, #5da9d8);
+  outline: 2px solid var(--m-accent, #0a4e78);
   outline-offset: 2px;
 }
 
@@ -43,12 +43,12 @@
 .main {
   width: 48px;
   height: 48px;
-  color: var(--m-ink, #fff);
+  color: var(--m-ink, #1d1d1f);
 }
 
 /* Acak/ulang aktif: warna aksen + titik 4px di bawah ikon. */
 .btn[data-active='true'] {
-  color: var(--m-accent, #5da9d8);
+  color: var(--m-accent, #0a4e78);
 }
 
 .btn[data-active='true']::after {

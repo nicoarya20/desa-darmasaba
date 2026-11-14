@@ -2,15 +2,12 @@
 
 import { Slider } from '@mantine/core';
 import { IconVolume, IconVolume3 } from '@tabler/icons-react';
-import type { CSSProperties } from 'react';
 import { useMusic } from '@/app/context/MusicContext';
+import { SLIDER_FILL, SLIDER_VARS } from './PlayerProgress';
 import { PLAYER_TEXT } from './player.text';
 import controls from './player-controls.module.css';
 import s from './player-progress.module.css';
 import bar from './now-playing-bar.module.css';
-
-// Lihat PlayerProgress: warna trek lewat variabel inline supaya mengalahkan aturan skema warna Mantine.
-const SLIDER_VARS = { '--slider-track-bg': 'rgba(255, 255, 255, 0.2)' } as CSSProperties;
 
 /** Tombol bisu/bunyi + slider volume 110px (slider disembunyikan di bawah 1068px lewat CSS bar). */
 export function VolumeControl() {
@@ -34,7 +31,7 @@ export function VolumeControl() {
         style={SLIDER_VARS}
         size={4}
         thumbSize={12}
-        color="#fff"
+        color={SLIDER_FILL}
         radius="xl"
         min={0}
         max={100}

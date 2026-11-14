@@ -120,6 +120,9 @@ describe('NowPlayingBar', () => {
     expect(html).toContain('4:10');
     expect(html).toMatch(/<img[^>]*src="https:\/\/example.test\/a.jpg"[^>]*alt=""[^>]*aria-hidden="true"/);
     expect(button(html, PLAYER_TEXT.pause)).not.toContain('disabled');
+    // Slider tema terang: isi = tinta, rel = token --m-track.
+    expect(html).toContain('--slider-color:var(--m-ink, #1d1d1f)');
+    expect(html).toContain('--slider-track-bg:var(--m-track, rgba(0, 0, 0, 0.12))');
   });
 
   it('lagu tanpa audio: putar nonaktif, next tetap aktif, keterangan audio belum tersedia', () => {
@@ -151,6 +154,19 @@ describe('NowPlayingBar', () => {
     );
     expect(css).toMatch(/^\s*backdrop-filter:\s*blur\(24px\)/m);
     expect(css).not.toMatch(/-webkit-backdrop-filter\s*:/);
+  });
+
+  it('tema terang: kaca putih di bar, tanpa cadangan warna gelap di modul pemutar', async () => {
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const dir = 'src/app/(public)/(pages)/musik/musik-desa/_com/player';
+    const bar = readFileSync(`${dir}/now-playing-bar.module.css`, 'utf8');
+    expect(bar).toContain('background: rgba(255, 255, 255, 0.82);');
+    const sources = readdirSync(dir)
+      .filter((f) => /\.(css|tsx?)$/.test(f))
+      .map((f) => readFileSync(`${dir}/${f}`, 'utf8'))
+      .join('\n');
+    // Cadangan lama tema gelap (tinta putih, permukaan #121214, aksen #5da9d8, tint gelap).
+    expect(sources).not.toMatch(/var\(--m-ink, #fff\)|#121214|#5da9d8|rgba\(18, 18, 20/i);
   });
 });
 

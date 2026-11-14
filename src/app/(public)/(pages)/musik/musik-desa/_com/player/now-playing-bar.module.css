@@ -1,7 +1,11 @@
 /*
- * Bar pemutar bawah. Lapisan: (1) kaca blur halaman di belakang bar, (2) sampul lagu blur .5,
- * (3) tint gelap .74, (4) isi. Hanya `backdrop-filter` standar: Lightning CSS menambah prefix
+ * Bar pemutar bawah (tema terang). Lapisan: (1) kaca blur halaman di belakang bar, (2) sampul lagu
+ * blur .4, (3) kaca putih .82, (4) isi. Hanya `backdrop-filter` standar: Lightning CSS menambah prefix
  * -webkit- sendiri, dan menulis keduanya membuat versi standar dibuang (blur hilang di Chrome).
+ *
+ * Kontras: kasus terburuk (halaman & sampul hitam di belakang) kaca .82 menghasilkan abu ±#d1d1d1.
+ * --m-muted #6e6e73 di situ hanya ±3,3:1, jadi teks sekunder bar memakai --bar-muted #515154 (±5,2:1);
+ * judul memakai --m-ink (±11:1). Jangan turunkan opasitas kaca tanpa menghitung ulang.
  */
 .bar {
   position: fixed;
@@ -13,9 +17,10 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
   overflow: hidden;
   isolation: isolate;
-  border-top: 1px solid var(--m-line, rgba(255, 255, 255, 0.1));
-  color: var(--m-ink, #fff);
-  backdrop-filter: blur(24px) saturate(1.2);
+  border-top: 1px solid var(--m-line, #d2d2d7);
+  color: var(--m-ink, #1d1d1f);
+  backdrop-filter: blur(24px) saturate(1.4);
+  --bar-muted: #515154;
 }
 
 .art {
@@ -27,7 +32,7 @@
   max-width: none;
   object-fit: cover;
   filter: blur(48px) saturate(1.4);
-  opacity: 0.5;
+  opacity: 0.4;
   animation: art-in 300ms ease;
   pointer-events: none;
 }
@@ -42,7 +47,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: rgba(18, 18, 20, 0.74);
+  background: rgba(255, 255, 255, 0.82);
   pointer-events: none;
 }
 
@@ -92,7 +97,7 @@
 .artist {
   font-size: 14px;
   line-height: 1.35;
-  color: var(--m-muted, rgba(255, 255, 255, 0.64));
+  color: var(--bar-muted);
 }
 
 .meta {
@@ -102,12 +107,12 @@
   margin-top: 2px;
   font-size: 13px;
   line-height: 1.3;
-  color: var(--m-subtle, rgba(255, 255, 255, 0.42));
+  color: var(--bar-muted);
 }
 
 .idle {
   font-size: 15px;
-  color: var(--m-muted, rgba(255, 255, 255, 0.64));
+  color: var(--bar-muted);
 }
 
 .center {
