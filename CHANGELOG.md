@@ -2,8 +2,9 @@
 
 ## [0.1.271] - 2026-11-14
 ### Changed
-- **Halaman Lowongan Kerja Lokal dirombak.** Panel **Filter** kini ada di kiri dan daftar lowongan di kanan. Lowongan bisa disaring menurut tipe pekerjaan, gaji minimal per bulan, pemberi kerja, dan waktu tayang, serta diurutkan dari yang terbaru, gaji tertinggi, atau gaji terendah. Filter yang sedang dipakai tampil di kotak "Pilihan Anda" dan bisa dilepas satu per satu atau sekaligus.
+- **Halaman Lowongan Kerja Lokal dirombak.** Panel **Filter** kini ada di kiri dan daftar lowongan di kanan. Lowongan bisa disaring menurut tipe pekerjaan, lokasi kerja (di dalam atau di luar desa), gaji minimal per bulan, dan waktu tayang, serta diurutkan dari yang terbaru, gaji tertinggi, atau gaji terendah. Filter yang sedang dipakai tampil di kotak "Pilihan Anda" dan bisa dilepas satu per satu atau sekaligus.
 - Tiap lowongan tampil sebagai kartu lebar berisi posisi, pemberi kerja, ringkasan pekerjaan, tipe, gaji per bulan, lokasi, dan tanggal tayang. Seluruh kartu bisa diklik untuk membuka detail.
+- Lokasi kerja ditentukan dari alamat lowongan: alamat yang menyebut "Darmasaba" dihitung di dalam desa. Admin sebaiknya menulis nama desa di kolom lokasi supaya lowongan masuk kelompok yang benar.
 - Di ponsel, filter dibuka lewat tombol **Filter** yang memunculkan panel dari bawah.
 - Pilihan filter dan kata kunci tersimpan di alamat halaman, jadi hasil saringan bisa dibagikan atau dibuka ulang.
 
