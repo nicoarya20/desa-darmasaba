@@ -36,7 +36,7 @@ const findManyFn = vi.fn(async ({ where, skip, take }: any) =>
 );
 
 const prismaMock = vi.hoisted(() => ({
-  jenjangPendidikan: { findMany: vi.fn(), findFirst: vi.fn(), count: vi.fn() },
+  jenjangPendidikan: { findMany: vi.fn(), findFirst: vi.fn() },
   lembaga: { findMany: vi.fn(), count: vi.fn() },
   siswa: { findMany: vi.fn(), count: vi.fn() },
   pengajar: { findMany: vi.fn(), count: vi.fn() },
@@ -189,20 +189,29 @@ describe('find-many pengajar ?sort=jenjang', () => {
   });
 });
 
-describe('find-many jenjang ?hasLembaga=true', () => {
-  it('hanya jenjang yang punya lembaga aktif (PAUD/SMK tanpa sekolah tidak ditawarkan)', async () => {
-    prismaMock.jenjangPendidikan.count.mockResolvedValue(4);
+describe('find-many jenjang', () => {
+  it('?hasLembaga=true → hanya jenjang yang punya lembaga aktif (PAUD/SMK tanpa sekolah tidak ditawarkan)', async () => {
     await jenjangFindMany(ctx({ page: '1', limit: '100', hasLembaga: 'true' }));
-    const where = { isActive: true, lembagas: { some: { isActive: true } } };
-    expect(prismaMock.jenjangPendidikan.findMany).toHaveBeenCalledWith(expect.objectContaining({ where }));
-    expect(prismaMock.jenjangPendidikan.count).toHaveBeenCalledWith({ where });
+    expect(prismaMock.jenjangPendidikan.findMany).toHaveBeenCalledWith({
+      where: { isActive: true, lembagas: { some: { isActive: true } } },
+    });
   });
 
-  it('tanpa parameter (admin) → semua jenjang aktif, seperti sebelumnya', async () => {
-    prismaMock.jenjangPendidikan.count.mockResolvedValue(6);
+  it('tanpa parameter (admin) → semua jenjang aktif', async () => {
     await jenjangFindMany(ctx({ page: '1', limit: '10' }));
-    expect(prismaMock.jenjangPendidikan.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { isActive: true } }),
-    );
+    expect(prismaMock.jenjangPendidikan.findMany).toHaveBeenCalledWith({ where: { isActive: true } });
+  });
+
+  it('selalu urut baku (admin & publik), total & paginasi dihitung setelah diurutkan', async () => {
+    prismaMock.jenjangPendidikan.findMany.mockResolvedValue([
+      ...JENJANG,
+      { id: 'j-smk', nama: 'SMK' },
+      { id: 'j-paud', nama: 'PAUD' },
+    ]);
+    const page1: any = await jenjangFindMany(ctx({ page: '1', limit: '4' }));
+    expect(page1.data.map((j: { nama: string }) => j.nama)).toEqual(['PAUD', 'TK', 'SD', 'SMP']);
+    expect(page1).toMatchObject({ success: true, total: 6, totalPages: 2 });
+    const page2: any = await jenjangFindMany(ctx({ page: '2', limit: '4' }));
+    expect(page2.data.map((j: { nama: string }) => j.nama)).toEqual(['SMA', 'SMK']);
   });
 });
