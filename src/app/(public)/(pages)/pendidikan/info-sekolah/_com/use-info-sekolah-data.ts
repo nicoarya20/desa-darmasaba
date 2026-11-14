@@ -1,6 +1,6 @@
 'use client';
 import infoSekolahPaud from '@/app/admin/(dashboard)/_state/pendidikan/info-sekolah-paud';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { INFO_SEKOLAH_PAGE_SIZE, type InfoSekolahQuery } from './info-sekolah.logic';
 
@@ -9,7 +9,7 @@ const JENJANG_LIMIT = 100;
 
 type ListState = {
   data: unknown;
-  load: (page: number, limit: number, search: string, jenjang: string) => Promise<unknown>;
+  load: (page: number, limit: number, search: string, jenjang: string, sortByJenjang: boolean) => Promise<unknown>;
 };
 
 /**
@@ -20,7 +20,8 @@ type ListState = {
 export function useInfoSekolahLoad(state: ListState, { page, search, jenjang }: InfoSekolahQuery): void {
   const { load } = state;
   useEffect(() => {
-    void load(page, INFO_SEKOLAH_PAGE_SIZE, search, jenjang);
+    // Publik: baris urut jenjang (TK, SD, SMP, …), di dalam jenjang urut nama.
+    void load(page, INFO_SEKOLAH_PAGE_SIZE, search, jenjang, true);
   }, [load, page, search, jenjang]);
   useEffect(
     () => () => {
@@ -30,13 +31,16 @@ export function useInfoSekolahLoad(state: ListState, { page, search, jenjang }: 
   );
 }
 
-/** Nama semua jenjang pendidikan untuk opsi filter; dimuat sekali bila belum ada. */
+/**
+ * Nama jenjang yang punya lembaga aktif, untuk opsi filter (jenjang kosong seperti PAUD tanpa sekolah tidak ditawarkan).
+ * Selalu dimuat ulang saat dibuka: state ini dipakai bersama admin yang memuat semua jenjang.
+ */
 export function useJenjangNames(): string[] {
   const snap = useSnapshot(infoSekolahPaud.jenjangPendidikan.findMany);
   const { load } = infoSekolahPaud.jenjangPendidikan.findMany;
-  const loaded = snap.data !== null;
+  const [ready, setReady] = useState(false);
   useEffect(() => {
-    if (!loaded) void load(1, JENJANG_LIMIT);
-  }, [loaded, load]);
-  return (snap.data ?? []).map((jenjang) => jenjang.nama);
+    void load(1, JENJANG_LIMIT, '', true).then(() => setReady(true));
+  }, [load]);
+  return ready ? (snap.data ?? []).map((jenjang) => jenjang.nama) : [];
 }

@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+import { SORT_BY_JENJANG } from "@/lib/jenjang-pendidikan-urutan";
 
 const lembagaPendidikanForm = z.object({
   nama: z.string().min(1, "Nama minimal 1 karakter"),
@@ -64,7 +65,8 @@ const lembagaPendidikan = proxy({
     total: 0,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "") => {
+    /** `sortByJenjang` → baris urut PAUD, TK, SD, SMP, SMA, SMK (dipakai halaman publik; admin tetap urut nama). */
+    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "", sortByJenjang = false) => {
       lembagaPendidikan.findMany.loading = true;
       lembagaPendidikan.findMany.page = page;
       lembagaPendidikan.findMany.search = search;
@@ -74,14 +76,11 @@ const lembagaPendidikan = proxy({
           page,
           limit,
           ...(search && { search }),
-          ...(jenjangPendidikan && { jenjangPendidikanId: jenjangPendidikan })
+          ...(jenjangPendidikan && { jenjangPendidikanId: jenjangPendidikan }),
+          ...(sortByJenjang && { sort: SORT_BY_JENJANG }),
         };
 
-        console.log("Fetching lembaga with query:", query);
-
         const res = await ApiFetch.api.pendidikan.infosekolahpaud.lembagapendidikan["find-many"].get({ query });
-
-        console.log("API Response:", res);
 
         if (res.status === 200 && res.data?.success) {
           const data = Array.isArray(res.data.data) ? res.data.data : [];
@@ -91,12 +90,6 @@ const lembagaPendidikan = proxy({
           lembagaPendidikan.findMany.data = data;
           lembagaPendidikan.findMany.total = total;
           lembagaPendidikan.findMany.totalPages = totalPages;
-
-          console.log("Successfully loaded lembaga data:", {
-            count: data.length,
-            total,
-            totalPages
-          });
         } else {
           console.error(
             "Failed to load lembaga pendidikan:",

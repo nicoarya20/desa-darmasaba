@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+import { SORT_BY_JENJANG } from "@/lib/jenjang-pendidikan-urutan";
 
 const pengajarForm = z.object({
   nama: z.string().min(1, "Nama minimal 1 karakter"),
@@ -63,7 +64,8 @@ const pengajar = proxy({
     loading: false,
     search: "",
     jenjangPendidikan: "",
-    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "") => {
+    /** `sortByJenjang` → baris urut PAUD, TK, SD, SMP, SMA, SMK (dipakai halaman publik; admin tetap urut nama). */
+    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "", sortByJenjang = false) => {
       pengajar.findMany.loading = true;
       pengajar.findMany.page = page;
       pengajar.findMany.search = search;
@@ -72,6 +74,7 @@ const pengajar = proxy({
         const query: any = { page, limit };
         if (search) query.search = search;
         if (jenjangPendidikan) query.jenjangPendidikanId = jenjangPendidikan;
+        if (sortByJenjang) query.sort = SORT_BY_JENJANG;
         const res = await ApiFetch.api.pendidikan.infosekolahpaud.pengajar[
           "find-many"
         ].get({

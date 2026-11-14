@@ -8,8 +8,12 @@ export default async function jenjangPendidikanFindMany(context: Context) {
   const search = (context.query.search as string) || "";
   const skip = (page - 1) * limit;
 
+  // Opsional (halaman publik): hanya jenjang yang punya lembaga aktif, supaya filter tidak menawarkan jenjang kosong.
+  const hasLembaga = context.query.hasLembaga === "true";
+
   // Buat where clause
   const where: any = { isActive: true };
+  if (hasLembaga) where.lembagas = { some: { isActive: true } };
 
   // Tambahkan pencarian (jika ada)
   if (search) {

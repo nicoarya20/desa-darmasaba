@@ -1,4 +1,5 @@
 /** Helper murni halaman publik Info Sekolah: URL daftar, opsi filter jenjang, dan pesan kosong. */
+import { compareJenjang } from "@/lib/jenjang-pendidikan-urutan";
 
 export const INFO_SEKOLAH_PATH = "/pendidikan/info-sekolah";
 
@@ -25,25 +26,14 @@ export function buildListHref(path: string, query: Partial<InfoSekolahQuery> = {
 export type JenjangOption = { value: string; label: string };
 
 /**
- * Urutan tampil jenjang = urutan sekolah dari usia termuda (huruf kecil). Tabel jenjang di DB tidak punya kolom urutan,
- * dan API mengurutkan menurut nama (SMA, SMK, SMP, SD, …) yang membingungkan warga. Jenjang lain → di belakang, A–Z.
- */
-export const JENJANG_ORDER: readonly string[] = ["paud", "tk", "sd", "smp", "sma", "smk"];
-
-function jenjangRank(value: string): number {
-  const i = JENJANG_ORDER.indexOf(value);
-  return i === -1 ? JENJANG_ORDER.length : i;
-}
-
-/**
- * Opsi `Select` jenjang dari nama jenjang di DB (value = huruf kecil, sama dengan URL), diurutkan menurut `JENJANG_ORDER`.
+ * Opsi `Select` jenjang dari nama jenjang di DB (value = huruf kecil, sama dengan URL), diurutkan menurut `JENJANG_ORDER` (`@/lib/jenjang-pendidikan-urutan`).
  * Jenjang aktif yang belum/tidak ada di daftar tetap dimunculkan agar `Select` tidak kosong saat memuat.
  */
 export function jenjangOptions(names: readonly string[], current: string): JenjangOption[] {
   const options = names.map((nama) => ({ value: nama.trim().toLowerCase(), label: nama }));
   const active = current.trim().toLowerCase();
   if (active && !options.some((o) => o.value === active)) options.push({ value: active, label: current });
-  return options.sort((a, b) => jenjangRank(a.value) - jenjangRank(b.value) || a.value.localeCompare(b.value));
+  return options.sort((a, b) => compareJenjang(a.value, b.value));
 }
 
 /** Pesan saat tabel kosong: beda antara memang belum ada data dan hasil filter/pencarian yang nihil. */
