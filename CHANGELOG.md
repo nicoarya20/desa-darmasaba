@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.276] - 2026-11-14
+### Added
+- **Menu admin baru Kependudukan › Dinamika Penduduk.** Admin mengisi total kelahiran, kematian, pindah masuk, dan pindah keluar per tahun. Satu tahun hanya boleh punya satu data; kalau tahunnya sudah ada, form menampilkan "Tahun sudah dipakai". Admin yang aksesnya dibatasi lewat Menu Access perlu diberi akses ke submenu ini dulu.
+
+### Changed
+- **Halaman publik Dinamika Penduduk** kini menampilkan angka resmi desa per tahun: kartu untuk tahun terbaru beserta pertumbuhan alami dan migrasi bersih, ditambah tabel perbandingan antar tahun. Sebelumnya angka dihitung dari jumlah catatan kelahiran/kematian di menu Kesehatan dan data migrasi tahun berjalan, sehingga periodenya tidak sama dan tidak cocok dengan rekap desa.
+- Kartu Dinamika Penduduk di Dashboard Kependudukan memakai data yang sama dan menampilkan tahun datanya.
+- Data seed kependudukan diganti dengan data resmi: 12 Banjar Dinas (Laporan Penduduk September 2026, total 10.262 jiwa / 2.308 KK) dan dinamika penduduk 2023–2025. Seed tidak menimpa data yang sudah ada di database.
+
+### Fixed
+- Kolom "Penduduk Miskin" diganti menjadi **"Keluarga Miskin"**, karena angkanya adalah jumlah KK penerima BLT Dana Desa, bukan jumlah jiwa. Halaman Data per Banjar diberi keterangan, dan form admin Data Banjar menjelaskan apa yang harus diisi.
+
 ## [0.1.275] - 2026-11-14
 ### Changed
 - **Halaman Musik Desa dirombak** menjadi pemutar musik bergaya aplikasi streaming, tetap bertema terang seperti bagian situs lainnya. Sidebar kiri berisi menu **Musik**, **Jelajahi**, dan **Playlist**; di ponsel menu ini menjadi tombol pil di atas halaman.
