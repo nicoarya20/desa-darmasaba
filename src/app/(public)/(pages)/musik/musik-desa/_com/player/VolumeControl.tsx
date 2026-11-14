@@ -10,7 +10,10 @@ import controls from './player-controls.module.css';
 import s from './player-progress.module.css';
 import bar from './now-playing-bar.module.css';
 
-/** Tombol bisu/bunyi + slider volume 110px (slider disembunyikan di bawah 1068px lewat CSS bar). */
+/**
+ * Tombol bisu/bunyi + slider volume 110px. CSS bar: ≤1068px hanya slider yang disembunyikan (tombol bisu
+ * tetap), ≤734px seluruh kontrol volume disembunyikan (ponsel memakai tombol volume perangkat).
+ */
 export function VolumeControl() {
   const { volume, isMuted, setVolume, toggleMute } = useMusic();
   const silent = isMuted || volume === 0;

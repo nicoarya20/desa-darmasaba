@@ -201,6 +201,24 @@ describe('NowPlayingBar', () => {
     expect(css).not.toMatch(/-webkit-backdrop-filter\s*:/);
   });
 
+  it('735–1068px: hanya slider volume yang disembunyikan, tombol bisu tetap; ≤734px seluruh volume', async () => {
+    const { readFileSync } = await import('node:fs');
+    const css = readFileSync(
+      'src/app/(public)/(pages)/musik/musik-desa/_com/player/now-playing-bar.module.css',
+      'utf8'
+    );
+    const media = (query: string) => {
+      const start = css.indexOf(`@media (${query}) {`);
+      expect(start, query).toBeGreaterThan(-1);
+      // Blok @media berakhir di "}" pertama yang berada di awal baris.
+      return css.slice(start, css.indexOf('\n}', start));
+    };
+    const tablet = media('max-width: 1068px');
+    expect(tablet).toMatch(/\.volume \.volumeSlider\s*\{\s*display: none;/);
+    expect(tablet).not.toMatch(/(^|\s)\.volume\s*\{/m);
+    expect(media('max-width: 734px')).toMatch(/\.volume\s*\{\s*display: none;/);
+  });
+
   it('tema terang: kaca putih di bar, tanpa cadangan warna gelap di modul pemutar', async () => {
     const { readFileSync, readdirSync } = await import('node:fs');
     const dir = 'src/app/(public)/(pages)/musik/musik-desa/_com/player';
