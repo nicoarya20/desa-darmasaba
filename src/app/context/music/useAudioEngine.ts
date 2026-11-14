@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { errorName, playAudio } from './audioPlayback';
 import { MUSIC_TEXT } from './music.text';
 import { computeNextIndex, computePrevAction } from './musicNavigation';
 import type { Musik } from './music.types';
+import { hasAudio } from './playable';
 import { useAudioElement, type AudioHandlers } from './useAudioElement';
 import { useMusicLibraryLoader } from './useMusicLibraryLoader';
 import { usePlayQueue } from './usePlayQueue';
@@ -13,14 +15,19 @@ import { DEFAULT_VOLUME, useVolume } from './useVolume';
 
 export type { Musik };
 
+/** toastId react-toastify: toast yang sama tidak menumpuk saat dipicu beruntun (mis. beberapa file rusak). */
+const TOAST_ID = { noAudio: 'musik-no-audio', playFailed: 'musik-play-failed', fileBroken: 'musik-file-broken' } as const;
+
 const NOOP_HANDLERS: AudioHandlers = {
   onLoadedMetadata: () => {},
   onTimeUpdate: () => {},
   onSeeked: () => {},
   onPlay: () => {},
+  onPlaying: () => {},
   onPause: () => {},
   onEnded: () => {},
   onError: () => {},
+  onSourceReset: () => {},
 };
 
 /** Mesin pemutar Musik Desa: pustaka, lagu saat ini, transport, antrean, riwayat, dan volume. */
@@ -36,60 +43,54 @@ export function useAudioEngine() {
 
   const handlersRef = useRef<AudioHandlers>(NOOP_HANDLERS);
   const isSeekingRef = useRef(false);
+  // Lagu yang file audionya gagal dimuat (404/rusak) di pustaka saat ini: dilewati next/prev & lompat otomatis.
+  const brokenIdsRef = useRef(new Set<string>());
   const audioRef = useAudioElement(handlersRef, DEFAULT_VOLUME);
   const { volume, isMuted, setVolume, toggleMute } = useVolume(audioRef);
 
-  const queue = usePlayQueue(musikData, currentSong);
+  useEffect(() => {
+    brokenIdsRef.current = new Set();
+  }, [musikData]);
+  const isPlayable = useCallback((song: Musik) => hasAudio(song) && !brokenIdsRef.current.has(song.id), []);
+  const queue = usePlayQueue(musikData, currentSong, isPlayable);
   const { recentlyPlayed, markPending, commitPending } = useRecentlyPlayed(musikData);
+
+  const reportPlayFailure = useCallback((error: unknown) => {
+    console.error(`Musik Desa: audio gagal diputar (${errorName(error)}).`);
+    toast.error(MUSIC_TEXT.playFailed, { toastId: TOAST_ID.playFailed });
+  }, []);
 
   const playSong = useCallback(
     (song: Musik) => {
       const audio = audioRef.current;
       if (!audio) return;
-
-      const songIndex = musikData.findIndex((m) => m.id === song.id);
-      setCurrentSongIndex(songIndex);
-      setCurrentSong(song);
-      setCurrentTime(0);
-      setDuration(0);
-      markPending(null);
-
-      if (!song?.audioFile?.link) {
-        audio.pause();
-        audio.removeAttribute('src');
-        toast.info(MUSIC_TEXT.noAudio);
+      // Lagu tanpa audio: cukup diberi tahu. Lagu yang sedang berbunyi, bar, dan antrean tidak berubah.
+      if (!hasAudio(song)) {
+        toast.info(MUSIC_TEXT.noAudio, { toastId: TOAST_ID.noAudio });
         return;
       }
 
+      isSeekingRef.current = false;
+      setCurrentSongIndex(musikData.findIndex((m) => m.id === song.id));
+      setCurrentSong(song);
+      setCurrentTime(0);
+      setDuration(0);
       markPending(song.id);
       audio.src = song.audioFile.link;
       audio.load();
-      audio.play().catch((err) => {
-        console.error('Error playing audio:', err);
-        toast.error(MUSIC_TEXT.playFailed);
-      });
+      playAudio(audio, reportPlayFailure);
     },
-    [audioRef, musikData, markPending]
+    [audioRef, musikData, markPending, reportPlayFailure]
   );
 
   const togglePlayPause = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || !currentSong) return;
-
-    if (!currentSong.audioFile?.link) {
-      toast.info(MUSIC_TEXT.noAudio);
-      return;
-    }
-
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play().catch((err) => {
-        console.error('Error playing audio:', err);
-        toast.error(MUSIC_TEXT.playFailed);
-      });
-    }
-  }, [audioRef, isPlaying, currentSong]);
+    if (!audio || !hasAudio(currentSong)) return;
+    // File sebelumnya gagal dimuat → muat ulang (coba lagi), bukan play() pada sumber yang rusak.
+    if (audio.error) playSong(currentSong);
+    else if (audio.paused) playAudio(audio, reportPlayFailure);
+    else audio.pause();
+  }, [audioRef, currentSong, playSong, reportPlayFailure]);
 
   const { orderLength, currentOrderIndex, isPlayableAt, songAt } = queue;
 
@@ -131,6 +132,11 @@ export function useAudioEngine() {
     (time: number) => {
       const audio = audioRef.current;
       if (!audio) return;
+      // Tanpa sumber, 'seeked' tidak pernah datang: jangan biarkan progres membeku menunggu.
+      if (!audio.getAttribute('src')) {
+        isSeekingRef.current = false;
+        return;
+      }
       isSeekingRef.current = true;
       audio.currentTime = time;
       setCurrentTime(time);
@@ -152,22 +158,32 @@ export function useAudioEngine() {
         isSeekingRef.current = false;
         setCurrentTime(Math.floor(audio.currentTime));
       },
-      onPlay: () => {
-        setIsPlaying(true);
-        commitPending();
-      },
+      onPlay: () => setIsPlaying(true),
+      // 'playing' (bukan 'play'): file rusak memicu 'play' tapi tidak pernah berbunyi, jadi tidak masuk riwayat.
+      onPlaying: () => commitPending(),
       onPause: () => setIsPlaying(false),
       onEnded: (audio) => {
         if (isRepeat) {
           audio.currentTime = 0;
-          audio.play().catch((err) => console.error('Error repeating audio:', err));
+          playAudio(audio, reportPlayFailure);
         } else {
           playNext();
         }
       },
-      onError: () => {
+      onError: (audio) => {
+        // 'error' tanpa sumber (setelah sumber dilepas) bukan file rusak.
+        if (!currentSong || !audio.getAttribute('src')) return;
         setIsPlaying(false);
-        toast.error(MUSIC_TEXT.fileBroken);
+        console.error(`Musik Desa: file audio lagu ${currentSong.id} gagal dimuat (MediaError ${audio.error?.code ?? '?'}).`);
+        toast.error(MUSIC_TEXT.fileBroken, { toastId: TOAST_ID.fileBroken });
+        // Lompat ke lagu berikutnya yang bisa diputar. Lagu rusak dicatat dulu, jadi pencarian tidak pernah
+        // kembali ke sini; bila semua rusak hasilnya -1 dan pemutar berhenti (tanpa putaran tanpa akhir).
+        brokenIdsRef.current.add(currentSong.id);
+        const next = songAt(computeNextIndex(currentOrderIndex, orderLength, isPlayableAt));
+        if (next) playSong(next);
+      },
+      onSourceReset: () => {
+        isSeekingRef.current = false;
       },
     };
   });

@@ -1,5 +1,6 @@
 import { useMusic } from '@/app/context/MusicContext';
 import { formatTime } from '@/app/context/music/format';
+import { canSeek } from '@/app/context/music/playable';
 import {
   ActionIcon,
   Avatar,
@@ -48,6 +49,8 @@ export default function FixedPlayerBar() {
   } = useMusic();
 
   const [isMinimized, setIsMinimized] = useState(false);
+  // Predikat sama dengan PlayerProgress aplikasi musik: lagu tanpa audio / durasi belum diketahui tidak bisa digeser.
+  const seekable = canSeek(currentSong, duration);
 
   // Handle seek drag (visual only) / commit
   const handleSeekPreview = (value: number) => {
@@ -225,10 +228,11 @@ export default function FixedPlayerBar() {
             {/* Progress Bar - Desktop */}
             <Box w={200} display={{ base: 'none', md: 'block' }}>
               <Slider
-                value={currentTime}
-                max={duration || 100}
+                value={seekable ? Math.min(currentTime, duration) : 0}
+                max={seekable ? duration : 100}
                 onChange={handleSeekPreview}
                 onChangeEnd={handleSeekEnd}
+                disabled={!seekable}
                 size="sm"
                 color="blue"
                 label={(value) => formatTime(value)}
@@ -284,10 +288,11 @@ export default function FixedPlayerBar() {
         {/* Progress Bar - Mobile */}
         <Box mt="xs" display={{ base: 'block', md: 'none' }}>
           <Slider
-            value={currentTime}
-            max={duration || 100}
+            value={seekable ? Math.min(currentTime, duration) : 0}
+            max={seekable ? duration : 100}
             onChange={handleSeekPreview}
             onChangeEnd={handleSeekEnd}
+            disabled={!seekable}
             size="sm"
             color="blue"
             label={(value) => formatTime(value)}

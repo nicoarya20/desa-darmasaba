@@ -15,6 +15,7 @@ import { MusikUiProvider } from '@/app/(public)/(pages)/musik/musik-desa/_com/ap
 import { NowPlayingBar } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/NowPlayingBar';
 import { QueuePanel } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel';
 import { PLAYER_TEXT } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/player.text';
+import FixedPlayerBar from '@/app/(public)/_com/FixedPlayerBar';
 
 // test-only: lagu fiktif berbentuk respons /api/desa/musik/find-many.
 const file = (link: string) => ({ id: link, name: link, realName: link, path: link, mimeType: 'x', link });
@@ -255,5 +256,25 @@ describe('QueuePanel', () => {
   it('teks kosong Baru diputar tersedia tanpa em dash', () => {
     expect(PLAYER_TEXT.recentEmpty).toBe('Lagu yang Anda putar akan muncul di sini.');
     expect(Object.values(PLAYER_TEXT).join(' ')).not.toContain('—');
+  });
+});
+
+describe('FixedPlayerBar (pemutar situs di luar /musik)', () => {
+  // Urutan thumb di markup: posisi (desktop), volume, posisi (ponsel).
+  const thumbs = (html: string) => [...html.matchAll(/<div[^>]*role="slider"[^>]*>/g)].map((m) => m[0]);
+
+  it('lagu tanpa audio: kedua slider posisi nonaktif (seret tidak membekukan progres)', () => {
+    setMusic({ currentSong: B, duration: 0 });
+    const [desktop, volume, mobile] = thumbs(render(<FixedPlayerBar />));
+    expect(desktop).toContain('aria-disabled="true"');
+    expect(mobile).toContain('aria-disabled="true"');
+    expect(volume).not.toContain('aria-disabled="true"');
+  });
+
+  it('lagu dengan audio dan durasi diketahui: slider posisi aktif', () => {
+    setMusic({ currentSong: A, duration: 250, currentTime: 10 });
+    const [desktop, , mobile] = thumbs(render(<FixedPlayerBar />));
+    expect(desktop).not.toContain('aria-disabled="true"');
+    expect(mobile).not.toContain('aria-disabled="true"');
   });
 });

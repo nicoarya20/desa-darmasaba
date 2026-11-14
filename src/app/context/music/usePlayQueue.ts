@@ -4,10 +4,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { buildShuffledOrder, computeUpNext, reconcileOrder, resolveIds } from './musicQueue';
 import type { Musik } from './music.types';
 
-const hasAudio = (song: Musik | undefined): boolean => Boolean(song?.audioFile?.link);
-
-/** Urutan putar (pustaka atau acak) + daftar "Berikutnya" untuk lagu saat ini. */
-export function usePlayQueue(musikData: Musik[], currentSong: Musik | null) {
+/**
+ * Urutan putar (pustaka atau acak) + daftar "Berikutnya" untuk lagu saat ini. `isPlayable` menentukan
+ * lagu yang boleh dituju next/prev (punya audio dan filenya tidak tercatat rusak); harus stabil.
+ */
+export function usePlayQueue(musikData: Musik[], currentSong: Musik | null, isPlayable: (song: Musik) => boolean) {
   const [isShuffle, setIsShuffle] = useState(false);
   // Urutan acak tersimpan; null = acak mati (urutan pustaka).
   const [shuffledOrder, setShuffledOrder] = useState<string[] | null>(null);
@@ -22,8 +23,11 @@ export function usePlayQueue(musikData: Musik[], currentSong: Musik | null) {
   const currentOrderIndex = currentSong ? playOrder.indexOf(currentSong.id) : -1;
 
   const isPlayableAt = useCallback(
-    (index: number) => hasAudio(songById.get(playOrder[index])),
-    [songById, playOrder]
+    (index: number) => {
+      const song = songById.get(playOrder[index]);
+      return song !== undefined && isPlayable(song);
+    },
+    [songById, playOrder, isPlayable]
   );
   const songAt = useCallback((index: number) => songById.get(playOrder[index]), [songById, playOrder]);
 

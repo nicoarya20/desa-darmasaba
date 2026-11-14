@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type RefObject } from 'react';
+import { releaseSource } from './audioPlayback';
 
 /** Penangan event elemen audio. Dibaca lewat ref, jadi selalu versi terbaru tanpa memasang ulang listener. */
 export type AudioHandlers = {
@@ -8,9 +9,13 @@ export type AudioHandlers = {
   onTimeUpdate: (audio: HTMLAudioElement) => void;
   onSeeked: (audio: HTMLAudioElement) => void;
   onPlay: (audio: HTMLAudioElement) => void;
+  /** Audio benar-benar mulai berbunyi (bukan sekadar play() dipanggil). */
+  onPlaying: (audio: HTMLAudioElement) => void;
   onPause: (audio: HTMLAudioElement) => void;
   onEnded: (audio: HTMLAudioElement) => void;
   onError: (audio: HTMLAudioElement) => void;
+  /** Sumber diganti/dikosongkan ('loadstart' / 'emptied'): status seret slider lama tidak berlaku lagi. */
+  onSourceReset: (audio: HTMLAudioElement) => void;
 };
 
 const EVENTS: ReadonlyArray<readonly [string, keyof AudioHandlers]> = [
@@ -18,10 +23,14 @@ const EVENTS: ReadonlyArray<readonly [string, keyof AudioHandlers]> = [
   ['timeupdate', 'onTimeUpdate'],
   ['seeked', 'onSeeked'],
   ['play', 'onPlay'],
+  ['playing', 'onPlaying'],
   ['pause', 'onPause'],
   ['ended', 'onEnded'],
   ['error', 'onError'],
+  ['loadstart', 'onSourceReset'],
+  ['emptied', 'onSourceReset'],
 ];
+
 
 /**
  * Satu elemen `Audio` untuk seluruh situs (event native = sumber kebenaran status pemutar).
@@ -44,7 +53,7 @@ export function useAudioElement(handlers: RefObject<AudioHandlers>, initialVolum
 
     return () => {
       for (const [type, listener] of bound) audio.removeEventListener(type, listener);
-      audio.pause();
+      releaseSource(audio);
       audioRef.current = null;
     };
   }, [handlers, initialVolume]);
