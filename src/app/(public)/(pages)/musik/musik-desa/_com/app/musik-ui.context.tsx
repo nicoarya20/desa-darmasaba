@@ -36,10 +36,11 @@ function readStoredQueueOpen(): boolean | null {
 const isColumnViewport = () => window.matchMedia(QUEUE_COLUMN_QUERY).matches;
 
 /**
- * Status awal setelah mount. Di bawah 1280px antrean berupa Drawer yang menutupi konten, jadi selalu
- * mulai tertutup; preferensi tersimpan (bawaan terbuka) hanya berlaku untuk kolom kanan.
+ * Status antrean untuk lebar layar saat ini (setelah mount & tiap melintasi 1280px). Di bawah 1280px
+ * antrean berupa Drawer yang menutupi konten, jadi selalu tertutup; preferensi tersimpan (bawaan
+ * terbuka) hanya berlaku untuk kolom kanan.
  */
-export function initialQueueOpen(isColumn: boolean, stored: boolean | null): boolean {
+export function queueOpenForViewport(isColumn: boolean, stored: boolean | null): boolean {
   return isColumn && (stored ?? true);
 }
 
@@ -59,7 +60,14 @@ export function MusikUiProvider({ children }: { children: ReactNode }) {
   const [queueOpen, setQueueOpen] = useState(false);
 
   useEffect(() => {
-    setQueueOpen(initialQueueOpen(isColumnViewport(), readStoredQueueOpen()));
+    const columnQuery = window.matchMedia(QUEUE_COLUMN_QUERY);
+    setQueueOpen(queueOpenForViewport(columnQuery.matches, readStoredQueueOpen()));
+    // Melebar/menyempit melintasi 1280px: kolom terbuka tidak boleh berubah jadi Drawer yang menutupi
+    // halaman. Tidak menulis localStorage, jadi preferensi kolom desktop tetap.
+    const onChange = (event: MediaQueryListEvent) =>
+      setQueueOpen(queueOpenForViewport(event.matches, readStoredQueueOpen()));
+    columnQuery.addEventListener('change', onChange);
+    return () => columnQuery.removeEventListener('change', onChange);
   }, []);
 
   const toggleQueue = useCallback(() => {

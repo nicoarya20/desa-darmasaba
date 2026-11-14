@@ -7,7 +7,7 @@ import {
   musikSearchHref,
 } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.logic';
 import { MUSIK_NAV_ITEMS } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.meta';
-import { initialQueueOpen, parseQueueOpen } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
+import { queueOpenForViewport, parseQueueOpen } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
 
 describe('activeMusikNav', () => {
   it('akar aplikasi = Musik, dengan atau tanpa garis miring akhir', () => {
@@ -80,13 +80,13 @@ describe('status awal panel Antrean', () => {
   });
 
   it('≥1280px: bawaan terbuka, preferensi tersimpan dihormati', () => {
-    expect(initialQueueOpen(true, null)).toBe(true);
-    expect(initialQueueOpen(true, false)).toBe(false);
-    expect(initialQueueOpen(true, true)).toBe(true);
+    expect(queueOpenForViewport(true, null)).toBe(true);
+    expect(queueOpenForViewport(true, false)).toBe(false);
+    expect(queueOpenForViewport(true, true)).toBe(true);
   });
 
   it('<1280px (Drawer) selalu mulai tertutup walau preferensi terbuka', () => {
-    expect(initialQueueOpen(false, null)).toBe(false);
-    expect(initialQueueOpen(false, true)).toBe(false);
+    expect(queueOpenForViewport(false, null)).toBe(false);
+    expect(queueOpenForViewport(false, true)).toBe(false);
   });
 });
