@@ -705,7 +705,7 @@ Tata letak aplikasi gaya TIDAL, **bertema terang mengikuti situs** (user menolak
 - **Bar pemutar** (`player/NowPlayingBar`, `position: fixed`, z-index 50 di bawah navbar 100 & Drawer 200): latar sampul lagu di-blur 48px (opasitas .4) di bawah kaca `rgba(255,255,255,.82)` + `backdrop-filter` (standar saja). Kiri sampul 56 + judul/artis/genre·tahun (teks sekunder `#515154` agar ≥4.5:1 di atas sampul gelap); tengah acak · sebelumnya · putar/jeda · berikutnya · ulang + progres; kanan tombol Antrean + volume (≥1068px). **Tanpa** tombol Preview, suka, dan ⋯ (tidak ada akun). ≤734px: 72px, progres garis 2px di atas, putar/jeda + berikutnya + Antrean.
 - **Panel antrean** (`player/QueuePanel`, latar `--m-surface` radius 16): tab Antrean | Baru diputar + ×. Antrean = "Sedang diputar" + "Berikutnya" (urutan putar nyata, melingkar); Baru diputar = maks 20 lagu dari `localStorage['musik-desa:recent']`.
 - **Mesin** (`src/app/context/music/`): `playOrder` nyata (acak Fisher-Yates dengan lagu saat ini di depan), next/prev melewati lagu tanpa audio, `upNext` dan `recentlyPlayed` ditambahkan ke `useMusic()` (kontrak lama tetap untuk `FixedPlayerBar`). Memuat `limit=50` sekali (MITIGASI, `console.warn` bila terpotong).
-- **Shell situs**: di rute `/musik/**` `DarmasabaShell` tidak merender `FixedPlayerBar` (bar baru menggantikannya) dan menambah spasi setinggi bar + safe-area setelah footer. Di halaman lain pemutar global tidak berubah.
+- **Shell situs**: di rute `/musik/**` `DarmasabaShell` tidak merender footer situs maupun `FixedPlayerBar` (bar baru menggantikannya), jadi aplikasi musik tampil selayar penuh di bawah navbar (revisi user 2026-11-14). Di halaman lain footer & pemutar global tidak berubah.
 
 ### Peta Informasi (`/peta-informasi`)
 

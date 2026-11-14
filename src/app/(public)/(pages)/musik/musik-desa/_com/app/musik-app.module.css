@@ -228,12 +228,6 @@
   border: 0;
 }
 
-/* Spasi setinggi bar pemutar setelah footer situs (DarmasabaShell), supaya footer tidak tertutup.
-   Di luar `.app` (token tak terbaca) → nilai px disalin dari --m-bar-h. */
-.playerSpacer {
-  height: calc(88px + env(safe-area-inset-bottom, 0px));
-}
-
 @media (hover: hover) and (pointer: fine) {
   .navItem:hover:not([aria-current='page']) {
     background: var(--m-hover);
@@ -311,10 +305,6 @@
 
   .search {
     max-width: none;
-  }
-
-  .playerSpacer {
-    height: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 }
 

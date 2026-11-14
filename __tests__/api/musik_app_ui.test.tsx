@@ -103,18 +103,25 @@ describe('MusikTopbar', () => {
 });
 
 describe('DarmasabaShell', () => {
-  it('di rute musik FixedPlayerBar diganti spasi setelah footer', () => {
-    nav.pathname = '/musik/musik-desa/jelajahi';
+  it.each(['/musik', '/musik/musik-desa', '/musik/musik-desa/jelajahi'])('di %s tanpa footer situs & FixedPlayerBar', (path) => {
+    nav.pathname = path;
     const html = render(<DarmasabaShell>isi</DarmasabaShell>);
+    expect(html).toContain('navbar');
+    expect(text(html)).toContain('isi');
+    expect(html).not.toContain('data-testid="footer"');
     expect(html).not.toContain('fixed-player-bar');
-    expect(html).toMatch(/data-testid="footer"[^]*<div[^>]*class="[^"]*playerSpacer[^"]*"[^>]*aria-hidden="true"/);
   });
 
-  it('halaman lain tetap memakai FixedPlayerBar tanpa spasi tambahan', () => {
+  it('halaman lain tetap memakai footer dan FixedPlayerBar', () => {
     nav.pathname = '/pemerintahan/berita/semua';
     const html = render(<DarmasabaShell>isi</DarmasabaShell>);
+    expect(html).toContain('data-testid="footer"');
     expect(html).toContain('fixed-player-bar');
-    expect(html).not.toContain('playerSpacer');
+  });
+
+  it('rute yang hanya berawalan "musik" (/musikal) bukan aplikasi musik', () => {
+    nav.pathname = '/musikal';
+    expect(render(<DarmasabaShell>isi</DarmasabaShell>)).toContain('data-testid="footer"');
   });
 });
 
