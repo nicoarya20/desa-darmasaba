@@ -15,8 +15,11 @@
   --m-active: rgba(0, 0, 0, 0.06);
   --m-line: #d2d2d7;
   --m-ink: #1d1d1f;
-  --m-muted: #6e6e73;
-  --m-subtle: #86868b;
+  /* Teks sekunder, kontras WCAG AA (≥4,5:1) untuk teks 13–15px: muted #515154 7,9:1 di putih;
+     subtle #6e6e73 5,1:1 di putih / 4,7:1 di --m-surface, tapi 4,46:1 di --m-elev (jangan untuk teks
+     di atas --m-elev). #86868b lama hanya 3,6:1. Hierarki: ink > muted > subtle. */
+  --m-muted: #515154;
+  --m-subtle: #6e6e73;
   --m-accent: #0a4e78; /* colors['blue-button']; #5da9d8 lama gagal kontras di latar putih */
   --m-solid: #1d1d1f;
   --m-on-solid: #fff;
@@ -181,7 +184,7 @@
 }
 
 .searchInput::placeholder {
-  color: var(--m-subtle);
+  color: var(--m-muted); /* di atas --m-elev: --m-subtle hanya 4,46:1 */
 }
 
 .searchInput::-webkit-search-cancel-button {
