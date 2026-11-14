@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+import { SORT_BY_JENJANG } from "@/lib/jenjang-pendidikan-urutan";
 
 const siswaForm = z.object({
   nama: z.string().min(1, "Nama minimal 1 karakter"),
@@ -38,7 +39,7 @@ const siswa = proxy({
         }
         return toast.error("Gagal menambahkan data");
       } catch (error) {
-        console.log(error);
+        console.error("Gagal menambahkan siswa:", error);
         toast.error("Gagal menambahkan data");
       } finally {
         siswa.create.loading = false;
@@ -63,7 +64,8 @@ const siswa = proxy({
     loading: false,
     search: "",
     jenjangPendidikan: "",
-    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "") => {
+    /** `sortByJenjang` → baris urut PAUD, TK, SD, SMP, SMA, SMK (dipakai halaman publik; admin tetap urut nama). */
+    load: async (page = 1, limit = 10, search = "", jenjangPendidikan = "", sortByJenjang = false) => {
       siswa.findMany.loading = true;
       siswa.findMany.page = page;
       siswa.findMany.search = search;
@@ -72,6 +74,7 @@ const siswa = proxy({
         const query: any = { page, limit };
         if (search) query.search = search;
         if (jenjangPendidikan) query.jenjangPendidikanName = jenjangPendidikan;
+        if (sortByJenjang) query.sort = SORT_BY_JENJANG;
         const res = await ApiFetch.api.pendidikan.infosekolahpaud.siswa[
           "find-many"
         ].get({

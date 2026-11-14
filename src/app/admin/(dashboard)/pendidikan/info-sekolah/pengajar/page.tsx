@@ -43,7 +43,7 @@ function ListPengajar({ search }: { search: string }) {
   } = listState.findMany;
 
   useEffect(() => {
-    load(page, 10, debouncedSearch);
+    load(page, 10, debouncedSearch, '', true); // urut jenjang (TK, SD, SMP, …), sama dengan halaman publik
   }, [page, debouncedSearch]);
 
   const filteredData = data || [];

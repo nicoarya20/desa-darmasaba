@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.273] - 2026-11-14
+### Changed
+- **Info Sekolah: filter jenjang kini ada di dalam tabel.** Tombol jenjang (Semua/SMA/SMK/SMP/SD/TK/PAUD) di atas halaman dihapus. Di halaman Daftar Lembaga Pendidikan, Daftar Siswa, dan Daftar Pengajar kini ada pilihan **Jenjang** di sebelah kolom pencarian; memilihnya langsung menyaring tabel, bukan lagi memindahkan pengunjung ke halaman lain. Pilihan jenjang diurutkan dari usia termuda (TK, SD, SMP, SMA, lalu SMK) dan hanya menampilkan jenjang yang memang punya sekolah — jenjang tanpa lembaga seperti PAUD tidak ditawarkan. Jumlah hasil ditampilkan di atas tabel.
+- **Isi tabel Info Sekolah kini dikelompokkan per jenjang**: TK dulu, lalu SD, SMP, SMA, SMK; di dalam satu jenjang urut nama. Berlaku untuk Daftar Lembaga Pendidikan, Siswa, dan Pengajar, di situs publik maupun di admin (Pendidikan › Info Sekolah). Daftar Jenjang Pendidikan di admin juga kini urut PAUD, TK, SD, SMP, SMA, SMK.
+- **Admin: pilihan Lembaga di form tambah/edit Siswa dan Pengajar** kini dikelompokkan per jenjang (TK, SD, SMP, …) dan bisa dicari dengan mengetik.
+- Halaman ringkasan Info Sekolah kini selalu menampilkan total semua jenjang dan beralamat `/pendidikan/info-sekolah` (menu Pendidikan → Info Sekolah sudah diarahkan ke sana).
+- Alamat tabel menyimpan jenjang, kata kunci, dan halaman (mis. `/pendidikan/info-sekolah/lembaga?jenjang=sd`), jadi tautan yang dibagikan dan tombol kembali browser menampilkan hasil yang sama. Tautan lama (`/pendidikan/info-sekolah/semua/...`, `/pendidikan/info-sekolah/sd/lembaga`, dll.) otomatis dialihkan ke alamat baru.
+
+### Fixed
+- Pencarian daftar Jenjang Pendidikan lewat API selalu gagal ("Gagal mengambil data jenjang pendidikan"). Kini kata kunci dicocokkan ke nama jenjang maupun nama sekolah di jenjang itu (mis. "Darmasaba" → SD).
+- **Admin: form tambah/edit Siswa dan Pengajar hanya menampilkan 10 lembaga pertama**, sehingga siswa/pengajar tidak bisa dimasukkan ke lembaga lainnya. Kini semua lembaga bisa dipilih.
+- Mengetik di kolom pencarian atau mengganti jenjang saat berada di halaman 2 dan seterusnya kini kembali ke halaman 1, tidak lagi menampilkan tabel kosong.
+- Kolom pencarian tabel Info Sekolah tidak lagi kehilangan kursor setiap kali data dimuat.
+- Berpindah halaman tabel tidak lagi memuat data dua kali (sebelumnya sesaat menampilkan hasil tanpa filter pencarian).
+
 ## [0.1.272] - 2026-11-14
 ### Changed
 - **Halaman detail Lowongan Kerja dirombak** dengan gaya yang sama seperti daftar lowongan. Posisi, pemberi kerja, tipe pekerjaan, gaji per bulan, lokasi kerja (di dalam atau di luar desa), dan tanggal tayang tampil di bagian atas, diikuti Deskripsi pekerjaan, Kualifikasi, dan Tempat kerja dengan tautan ke Google Maps.
