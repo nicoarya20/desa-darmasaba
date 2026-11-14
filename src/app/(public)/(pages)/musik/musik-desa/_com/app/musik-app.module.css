@@ -1,21 +1,26 @@
 /*
- * Kerangka aplikasi Musik Desa gaya TIDAL: tema gelap HANYA di dalam aplikasi (navbar & footer situs
- * tetap terang). Semua warna lewat token di bawah; modul lain (library/, player/) membacanya dengan
- * cadangan, mis. `var(--m-ink, #fff)`. `.tokens` dipasang juga di Drawer antrean karena Drawer
- * dirender lewat portal di luar `.app`.
+ * Kerangka aplikasi Musik Desa gaya TIDAL (struktur), dengan tema TERANG mengikuti situs (revisi user
+ * 2026-11-14: "jangan di hitam"). Semua warna lewat token di bawah; modul lain (library/, player/)
+ * membacanya dengan cadangan, mis. `var(--m-ink, #1d1d1f)`. `.tokens` dipasang juga di Drawer antrean
+ * karena Drawer dirender lewat portal di luar `.app`.
+ * --m-solid/--m-on-solid = tombol/pil "terbalik" (latar gelap, teks putih); --m-track = rel slider.
  * Tulis `backdrop-filter` tanpa `-webkit-` manual (Lightning CSS, lihat navbar.module.css).
  */
 .app,
 .tokens {
-  --m-bg: #000;
-  --m-surface: #121214;
-  --m-elev: #1c1c1f;
-  --m-hover: rgba(255, 255, 255, 0.08);
-  --m-line: rgba(255, 255, 255, 0.1);
-  --m-ink: #fff;
-  --m-muted: rgba(255, 255, 255, 0.64);
-  --m-subtle: rgba(255, 255, 255, 0.42);
-  --m-accent: #5da9d8; /* colors['blue-button-4'] */
+  --m-bg: #fff;
+  --m-surface: #f5f5f7;
+  --m-elev: #f0f0f2;
+  --m-hover: rgba(0, 0, 0, 0.05);
+  --m-active: rgba(0, 0, 0, 0.06);
+  --m-line: #d2d2d7;
+  --m-ink: #1d1d1f;
+  --m-muted: #6e6e73;
+  --m-subtle: #86868b;
+  --m-accent: #0a4e78; /* colors['blue-button']; #5da9d8 lama gagal kontras di latar putih */
+  --m-solid: #1d1d1f;
+  --m-on-solid: #fff;
+  --m-track: rgba(0, 0, 0, 0.12);
   --m-bar-h: 88px; /* tinggi NowPlayingBar */
   --m-left-w: 264px;
   --m-right-w: 360px;
@@ -101,7 +106,7 @@
 }
 
 .navItem[aria-current='page'] {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--m-active);
   color: var(--m-ink);
 }
 
@@ -230,9 +235,13 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .navItem:hover:not([aria-current='page']),
-  .pill:hover:not([aria-current='page']) {
+  .navItem:hover:not([aria-current='page']) {
     background: var(--m-hover);
+    color: var(--m-ink);
+  }
+
+  /* Pil sudah berlatar --m-elev; di tema terang --m-hover justru lebih pucat → cukup tinta menguat. */
+  .pill:hover:not([aria-current='page']) {
     color: var(--m-ink);
   }
 }
@@ -282,8 +291,8 @@
   }
 
   .pill[aria-current='page'] {
-    background: var(--m-ink);
-    color: var(--m-bg);
+    background: var(--m-solid);
+    color: var(--m-on-solid);
   }
 }
 
