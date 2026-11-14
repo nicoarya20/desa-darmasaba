@@ -157,7 +157,7 @@ function Page() {
         <Box px={{ base: "md", md: 100 }}>
           <Paper p="xl" withBorder>
             <Title order={3} mb="md" c={colors["blue-button"]}>
-              Dinamika Penduduk
+              Dinamika Penduduk {state.summary.data.dinamika.tahun}
             </Title>
             <SimpleGrid cols={{ base: 2, md: 4 }} spacing="md">
               <Paper p="md" bg="#6EDF9C">

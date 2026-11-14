@@ -3,6 +3,7 @@ import DistribusiAgama from "./distribusi-agama";
 import DistribusiUmur from "./distribusi-umur";
 import DataBanjar from "./data-banjar";
 import MigrasiPenduduk from "./migrasi-penduduk";
+import DinamikaPenduduk from "./dinamika-penduduk";
 import DashboardKependudukan from "./dashboard";
 
 const Kependudukan = new Elysia({
@@ -14,5 +15,6 @@ const Kependudukan = new Elysia({
 .use(DistribusiUmur)
 .use(DataBanjar)
 .use(MigrasiPenduduk)
+.use(DinamikaPenduduk)
 
 export default Kependudukan;

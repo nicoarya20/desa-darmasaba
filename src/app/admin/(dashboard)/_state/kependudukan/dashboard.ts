@@ -9,12 +9,14 @@ interface DashboardSummary {
     totalKelahiran: number;
     totalKemiskinan: number;
   };
+  /** Dinamika tahun terbaru dari DinamikaPenduduk; null bila belum ada data. */
   dinamika: {
+    tahun: number;
     kelahiran: number;
     kematian: number;
     pindahMasuk: number;
     pindahKeluar: number;
-  };
+  } | null;
   agama: unknown[];
   umur: unknown[];
   banjar: unknown[];
