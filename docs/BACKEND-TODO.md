@@ -28,11 +28,12 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`).
   - Dampak: entri yang dinonaktifkan admin tetap bisa dibuka lewat URL detail (frontend publik kini menganggapnya "tidak ditemukan", tapi API tetap mengirim data).
   - Usul: `where: { id, isActive: true }` untuk endpoint publik.
+  - Lowongan Kerja, tambahan (terverifikasi 2026-11-14): `deletedAt` tidak bisa dipakai sebagai penanda hapus. Schema `LowonganPekerjaan.deletedAt DateTime @default(now())` (tidak nullable), jadi selalu terisi saat dibuat (stg: 7/7 lowongan `deletedAt` = `createdAt`), dan `del.ts` melakukan hard delete (`prisma.lowonganPekerjaan.delete`). Halaman detail publik baru (`_com/detail/lowongan-detail.adapter.logic.ts`, `isLowonganTampil`, MITIGASI SEMENTARA(lowongan-detail)) hanya menyaring `isActive` dan sengaja mengabaikan `deletedAt`. Usul: bila ingin soft delete, ubah jadi `deletedAt DateTime?` (migrasi set `NULL` untuk baris yang ada), `del.ts` mengisi `deletedAt`, lalu findMany/findUnique menyaring `deletedAt: null`.
 
 - [ ] **Lowongan Kerja: `deskripsi` & `kualifikasi` (HTML editor) disimpan tanpa sanitasi** (terverifikasi 2026-11-14)
-  - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/lowongan-kerja/create.ts` menyimpan `body.deskripsi`/`body.kualifikasi` apa adanya (`updt.ts` berpola sama, perlu dicek). Halaman publik detail `/ekonomi/lowongan-kerja-lokal/[id]` (masih gaya lama) merendernya lewat `dangerouslySetInnerHTML` tanpa `sanitizeRichText`.
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/lowongan-kerja/create.ts` menyimpan `body.deskripsi`/`body.kualifikasi` apa adanya (`updt.ts` berpola sama, perlu dicek). Halaman publik detail `/ekonomi/lowongan-kerja-lokal/[id]` kini menyaring di klien (`sanitizeRichText`, `toRichText` di `_com/detail/lowongan-detail.adapter.logic.ts`) sebelum render; lapis server (saat simpan) tetap belum ada.
   - Dampak: HTML/skrip yang tersimpan dijalankan di halaman publik (XSS tersimpan) bila akun admin disalahgunakan.
-  - Usul: simpan lewat `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`) seperti Laporan Publik. Sisi render publik dikerjakan frontend saat halaman detail dirombak (putaran berikutnya, menunggu keputusan user).
+  - Usul: simpan lewat `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`) seperti Laporan Publik. Sisi render publik sudah disanitasi di halaman detail baru (v0.1.272).
 
 - [ ] **`create()` state Laporan Publik tidak memberi sinyal gagal validasi** (terverifikasi)
   - Debug log `console.log(formData)` & `console.log(res)` sudah dihapus (v0.1.268).
