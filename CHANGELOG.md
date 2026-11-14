@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.271] - 2026-11-14
+### Changed
+- **Halaman Lowongan Kerja Lokal dirombak.** Panel **Filter** kini ada di kiri dan daftar lowongan di kanan. Lowongan bisa disaring menurut tipe pekerjaan, lokasi kerja (di dalam atau di luar desa), gaji minimal per bulan, dan waktu tayang, serta diurutkan dari yang terbaru, gaji tertinggi, atau gaji terendah. Filter yang sedang dipakai tampil di kotak "Pilihan Anda" dan bisa dilepas satu per satu atau sekaligus.
+- Tiap lowongan tampil sebagai kartu lebar berisi posisi, pemberi kerja, ringkasan pekerjaan, tipe, gaji per bulan, lokasi, dan tanggal tayang. Seluruh kartu bisa diklik untuk membuka detail.
+- Lokasi kerja ditentukan dari alamat lowongan: alamat yang menyebut "Darmasaba" dihitung di dalam desa. Admin sebaiknya menulis nama desa di kolom lokasi supaya lowongan masuk kelompok yang benar.
+- Di ponsel, filter dibuka lewat tombol **Filter** yang memunculkan panel dari bawah.
+- Pilihan filter dan kata kunci tersimpan di alamat halaman, jadi hasil saringan bisa dibagikan atau dibuka ulang.
+
+### Fixed
+- Tipe pekerjaan di kartu kini mengikuti data. Sebelumnya semua lowongan tertulis "Full Time", termasuk yang Freelance.
+- Gaji yang ditulis tanpa titik pemisah ribuan tetap tampil rapi (mis. Rp2.000.000). Gaji yang tidak bisa dibaca dengan pasti tampil sebagai "Gaji tidak dicantumkan".
+
 ## [0.1.270] - 2026-11-14
 ### Added
 - **Laporan Publik kini diverifikasi admin sebelum tampil.** Laporan yang dikirim warga lewat form di halaman Laporan Keamanan Lingkungan tidak lagi langsung muncul di situs: laporan masuk dengan status **Baru** dan baru tampil di daftar, halaman detail, dan pencarian setelah admin menyetujuinya. Pelapor mendapat pesan "Laporan terkirim. Akan tampil setelah diverifikasi admin desa."
