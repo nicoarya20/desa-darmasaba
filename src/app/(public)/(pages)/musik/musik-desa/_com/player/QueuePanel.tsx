@@ -54,7 +54,7 @@ export function QueuePanel({ onClose }: { onClose: () => void }) {
           {tabButton('recent', PLAYER_TEXT.tabRecent)}
         </div>
         <button type="button" className={s.close} onClick={onClose} aria-label={PLAYER_TEXT.closeQueue}>
-          <IconX size={20} aria-hidden="true" />
+          <IconX size={18} aria-hidden="true" />
         </button>
       </div>
 

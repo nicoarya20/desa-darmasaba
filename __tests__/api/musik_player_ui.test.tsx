@@ -211,6 +211,25 @@ describe('QueuePanel', () => {
     }
   });
 
+  it('ukuran panel ringkas untuk kolom 320px: tab/judul 15px, artis 13px, sampul 48px, baris 6px', async () => {
+    const { readFileSync } = await import('node:fs');
+    const css = readFileSync(
+      'src/app/(public)/(pages)/musik/musik-desa/_com/player/queue-panel.module.css',
+      'utf8'
+    );
+    // Gabungan semua blok yang selektornya diakhiri `sel {` (termasuk daftar `.a,\n.b {`).
+    const rule = (sel: string) =>
+      [...css.matchAll(new RegExp(`\\n\\${sel} \\{([^}]*)\\}`, 'g'))].map((m) => m[1]).join('\n');
+    expect(rule('.tab')).toMatch(/font-size: 15px;[\s\S]*font-weight: 600;/);
+    expect(rule('.heading')).toMatch(/font-size: 15px;[\s\S]*font-weight: 700;/);
+    expect(rule('.rowTitle')).toMatch(/font-size: 15px;[\s\S]*font-weight: 600;/);
+    expect(rule('.rowArtist')).toContain('font-size: 13px;');
+    expect(rule('.empty')).toContain('font-size: 14px;');
+    expect(rule('.cover')).toContain('width: 48px;');
+    expect(rule('.row')).toContain('padding: 6px 12px;');
+    expect(render(<QueuePanel onClose={noop} />)).toMatch(/<svg[^>]*width="18"[^>]*height="18"[^>]*tabler-icon-x/);
+  });
+
   it('teks kosong Baru diputar tersedia tanpa em dash', () => {
     expect(PLAYER_TEXT.recentEmpty).toBe('Lagu yang Anda putar akan muncul di sini.');
     expect(Object.values(PLAYER_TEXT).join(' ')).not.toContain('—');
