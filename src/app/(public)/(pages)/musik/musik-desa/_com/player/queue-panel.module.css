@@ -153,6 +153,7 @@
 /*
  * Lagu tanpa audio: hanya sampul yang diredupkan. Teks diredupkan lewat warna, bukan opacity
  * (opacity .5 membuat judul 3,2:1 dan keterangan 1,95:1); --m-muted/--m-subtle ≥ 4,5:1 di --m-surface.
+ * Saat hover latar jadi ±#e9e9eb dan --m-subtle turun ke 4,18:1, jadi keterangan pindah ke --m-muted.
  * Ditulis sebelum aturan data-current supaya lagu yang sedang diputar tetap beraksen.
  */
 .row[data-playable='false'] .cover {
@@ -165,6 +166,10 @@
 
 .row[data-playable='false'] .rowArtist {
   color: var(--m-subtle, #6e6e73);
+}
+
+.row[data-playable='false']:hover .rowArtist {
+  color: var(--m-muted, #515154);
 }
 
 .row[data-current='true'] .rowTitle {

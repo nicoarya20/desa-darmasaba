@@ -211,6 +211,8 @@ describe('QueuePanel', () => {
     expect(block(".row[data-playable='false'] .cover")).toContain('opacity: 0.5;');
     expect(block(".row[data-playable='false'] .rowTitle")).toContain('color: var(--m-muted, #515154);');
     expect(block(".row[data-playable='false'] .rowArtist")).toContain('color: var(--m-subtle, #6e6e73);');
+    // Latar hover (--m-hover di atas --m-surface ±#e9e9eb) membuat --m-subtle hanya 4,18:1.
+    expect(block(".row[data-playable='false']:hover .rowArtist")).toContain('color: var(--m-muted, #515154);');
     // Aksen lagu yang sedang diputar ditulis sesudahnya supaya menang walau lagunya tanpa audio.
     expect(css.indexOf(".row[data-current='true'] .rowTitle")).toBeGreaterThan(
       css.indexOf(".row[data-playable='false'] .rowTitle")
