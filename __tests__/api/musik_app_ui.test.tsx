@@ -107,7 +107,7 @@ describe('MusikTopbar', () => {
 });
 
 describe('DarmasabaShell', () => {
-  it.each(['/musik', '/musik/musik-desa', '/musik/musik-desa/jelajahi'])('di %s tanpa footer situs & FixedPlayerBar', (path) => {
+  it.each(['/musik/musik-desa', '/musik/musik-desa/jelajahi'])('di %s tanpa footer situs & FixedPlayerBar', (path) => {
     nav.pathname = path;
     const html = render(<DarmasabaShell>isi</DarmasabaShell>);
     expect(html).toContain('navbar');
@@ -123,9 +123,11 @@ describe('DarmasabaShell', () => {
     expect(html).toContain('fixed-player-bar');
   });
 
-  it('rute yang hanya berawalan "musik" (/musikal) bukan aplikasi musik', () => {
-    nav.pathname = '/musikal';
-    expect(render(<DarmasabaShell>isi</DarmasabaShell>)).toContain('data-testid="footer"');
+  it.each(['/musikal', '/musik', '/musik/xyz'])('%s bukan aplikasi musik: footer & FixedPlayerBar tetap ada', (path) => {
+    nav.pathname = path;
+    const html = render(<DarmasabaShell>isi</DarmasabaShell>);
+    expect(html).toContain('data-testid="footer"');
+    expect(html).toContain('fixed-player-bar');
   });
 });
 

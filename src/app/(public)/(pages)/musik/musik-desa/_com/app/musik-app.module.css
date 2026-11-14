@@ -31,7 +31,8 @@
   --m-left-w: 240px;
   --m-right-w: 320px;
   /* Tinggi navbar situs: --nav-h (44px) hanya terdefinisi di dalam navbar, jadi disalin di sini.
-     Navbar mobile (48px) tampil di bawah breakpoint Mantine md = 62em. */
+     Navbar mobile (48px) tampil di bawah breakpoint Mantine md = 62em. Angka yang sama dipakai
+     <Space> penyangga navbar di DarmasabaShell.tsx (2.75rem / 3rem): ubah bersamaan. */
   --m-nav: 44px;
   color: var(--m-ink);
 }
@@ -198,7 +199,7 @@
   }
 }
 
-/* ---------- Panel kanan (≥1280px) ---------- */
+/* ---------- Panel kanan (≥1280px = MUSIK_QUEUE_COLUMN_MIN_PX, musik-layout.ts) ---------- */
 .right {
   padding: 8px;
 }
@@ -247,6 +248,7 @@
   }
 }
 
+/* 1068 = MUSIK_COMPACT_MAX_PX (musik-layout.ts); ubah bersamaan dengan media query JS. */
 @media (max-width: 1068px) {
   .app,
   .app[data-queue='true'] {

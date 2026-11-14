@@ -1,7 +1,8 @@
 import { IconCompass, IconMusic, IconPlaylist, type Icon } from '@tabler/icons-react';
+import { MUSIK_BASE_PATH } from '@/app/(public)/_com/musik-route';
 
-/** Akar rute aplikasi Musik Desa (semua menu di bawah satu layout). */
-export const MUSIK_BASE_PATH = '/musik/musik-desa';
+/** Akar rute aplikasi (sumber tunggal di modul rute bersama, dipakai juga oleh shell situs). */
+export { MUSIK_BASE_PATH };
 export const MUSIK_JELAJAHI_PATH = `${MUSIK_BASE_PATH}/jelajahi`;
 export const MUSIK_PLAYLIST_PATH = `${MUSIK_BASE_PATH}/playlist`;
 

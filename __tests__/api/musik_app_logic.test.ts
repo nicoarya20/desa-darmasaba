@@ -1,11 +1,13 @@
 // @vitest-environment node
 // Kerangka aplikasi Musik Desa: menu aktif dari pathname, rute bar pemutar, URL cari Jelajahi, status awal antrean.
 import { describe, expect, it } from 'vitest';
+import { activeMusikNav, musikSearchHref } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.logic';
+import { readFileSync } from 'node:fs';
+import { isMusikAppPath } from '@/app/(public)/_com/musik-route';
 import {
-  activeMusikNav,
-  isMusikAppPath,
-  musikSearchHref,
-} from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.logic';
+  MUSIK_COMPACT_MAX_PX,
+  MUSIK_QUEUE_COLUMN_MIN_PX,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-layout';
 import { MUSIK_NAV_ITEMS } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.meta';
 import { queueOpenForViewport, parseQueueOpen } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
 
@@ -34,10 +36,16 @@ describe('activeMusikNav', () => {
 });
 
 describe('isMusikAppPath', () => {
-  it('/musik dan turunannya memakai bar pemutar aplikasi', () => {
-    expect(isMusikAppPath('/musik')).toBe(true);
+  it('hanya /musik/musik-desa dan turunannya memakai bar pemutar aplikasi', () => {
     expect(isMusikAppPath('/musik/musik-desa')).toBe(true);
+    expect(isMusikAppPath('/musik/musik-desa/')).toBe(true);
     expect(isMusikAppPath('/musik/musik-desa/jelajahi')).toBe(true);
+  });
+
+  it('/musik dan /musik/<lain> (404) tetap memakai shell situs, termasuk awalan mirip', () => {
+    expect(isMusikAppPath('/musik')).toBe(false);
+    expect(isMusikAppPath('/musik/xyz')).toBe(false);
+    expect(isMusikAppPath('/musik/musik-desa-lama')).toBe(false);
   });
 
   it('halaman lain tetap memakai FixedPlayerBar, termasuk awalan teks mirip', () => {
@@ -45,6 +53,19 @@ describe('isMusikAppPath', () => {
     expect(isMusikAppPath('/musikal')).toBe(false);
     expect(isMusikAppPath('/pendidikan/musik')).toBe(false);
     expect(isMusikAppPath(null)).toBe(false);
+  });
+});
+
+describe('breakpoint kerangka (musik-layout.ts ↔ musik-app.module.css)', () => {
+  // CSS modul tidak bisa mengimpor konstanta JS; test ini menjaga angka di @media tetap sama.
+  const css = readFileSync('src/app/(public)/(pages)/musik/musik-desa/_com/app/musik-app.module.css', 'utf8');
+
+  it('media query ringkas CSS = MUSIK_COMPACT_MAX_PX', () => {
+    expect(css).toContain(`@media (max-width: ${MUSIK_COMPACT_MAX_PX}px)`);
+  });
+
+  it('kolom antrean dimulai tepat setelah lebar ringkas', () => {
+    expect(MUSIK_QUEUE_COLUMN_MIN_PX).toBeGreaterThan(MUSIK_COMPACT_MAX_PX);
   });
 });
 

@@ -11,12 +11,6 @@ export function activeMusikNav(pathname: string | null): MusikNavKey | null {
   return match?.key ?? null;
 }
 
-/** Rute yang memakai bar pemutar aplikasi musik (bukan FixedPlayerBar situs): `/musik` dan turunannya. */
-export function isMusikAppPath(pathname: string | null): boolean {
-  if (!pathname) return false;
-  return pathname === '/musik' || pathname.startsWith('/musik/');
-}
-
 /**
  * URL Jelajahi untuk kata cari `q`. `current` = parameter Jelajahi saat ini (genre/artis dipertahankan);
  * dari halaman lain berikan null. Kata kosong/spasi saja → `q` dihapus.

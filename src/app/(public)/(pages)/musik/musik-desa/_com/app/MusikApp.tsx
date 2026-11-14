@@ -9,11 +9,9 @@ import { QueuePanel } from '../player/QueuePanel';
 import { MUSIK_APP_TEXT as T } from './musik-nav.meta';
 import { MusikNavPills, MusikSidebar } from './MusikSidebar';
 import { MusikTopbar } from './MusikTopbar';
-import { MusikUiProvider, QUEUE_COLUMN_QUERY, useMusikUi } from './musik-ui.context';
+import { MUSIK_COMPACT_QUERY, MUSIK_QUEUE_COLUMN_QUERY } from './musik-layout';
+import { MusikUiProvider, useMusikUi } from './musik-ui.context';
 import s from './musik-app.module.css';
-
-/** Di bawah ini antrean jadi lembar dari bawah; 1069–1279px jadi Drawer kanan. */
-const QUEUE_SHEET_QUERY = '(max-width: 1068px)';
 
 /** Aplikasi Musik Desa gaya TIDAL: sidebar kiri, konten tengah, panel Antrean kanan, bar pemutar bawah. */
 export function MusikApp({ children }: { children: ReactNode }) {
@@ -30,8 +28,9 @@ export function MusikAppFrame({ children }: { children: ReactNode }) {
   // Predikat sama dengan NowPlayingBar (`currentSong != null`): bar belum dirender → tanpa ruang bar.
   const barOn = useMusic().currentSong != null;
   // Nilai awal false (SSR & render pertama), dibaca ulang setelah mount bersama status antrean.
-  const isColumn = useMediaQuery(QUEUE_COLUMN_QUERY, false);
-  const isSheet = useMediaQuery(QUEUE_SHEET_QUERY, false);
+  const isColumn = useMediaQuery(MUSIK_QUEUE_COLUMN_QUERY, false);
+  // ≤1068px antrean jadi lembar dari bawah; 1069–1279px Drawer kanan.
+  const isSheet = useMediaQuery(MUSIK_COMPACT_QUERY, false);
   const inColumn = queueOpen && isColumn;
 
   return (

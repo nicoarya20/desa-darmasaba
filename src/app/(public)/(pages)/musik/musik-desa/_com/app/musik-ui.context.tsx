@@ -1,11 +1,10 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { MUSIK_QUEUE_COLUMN_QUERY } from './musik-layout';
 
 /** Kunci localStorage preferensi panel Antrean (terbuka/tertutup). */
 export const QUEUE_OPEN_STORAGE_KEY = 'musik-desa:queue-open';
-/** Media query tempat panel Antrean tampil sebagai kolom kanan (bukan Drawer). */
-export const QUEUE_COLUMN_QUERY = '(min-width: 1280px)';
 
 type MusikUiValue = {
   queueOpen: boolean;
@@ -33,7 +32,7 @@ function readStoredQueueOpen(): boolean | null {
   }
 }
 
-const isColumnViewport = () => window.matchMedia(QUEUE_COLUMN_QUERY).matches;
+const isColumnViewport = () => window.matchMedia(MUSIK_QUEUE_COLUMN_QUERY).matches;
 
 /**
  * Status antrean untuk lebar layar saat ini (setelah mount & tiap melintasi 1280px). Di bawah 1280px
@@ -60,7 +59,7 @@ export function MusikUiProvider({ children }: { children: ReactNode }) {
   const [queueOpen, setQueueOpen] = useState(false);
 
   useEffect(() => {
-    const columnQuery = window.matchMedia(QUEUE_COLUMN_QUERY);
+    const columnQuery = window.matchMedia(MUSIK_QUEUE_COLUMN_QUERY);
     setQueueOpen(queueOpenForViewport(columnQuery.matches, readStoredQueueOpen()));
     // Melebar/menyempit melintasi 1280px: kolom terbuka tidak boleh berubah jadi Drawer yang menutupi
     // halaman. Tidak menulis localStorage, jadi preferensi kolom desktop tetap.
