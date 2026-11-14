@@ -13,6 +13,12 @@ import {
   toTrack,
 } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
 import { MUSIK_TEXT as T } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.text';
+import {
+  jelajahiHref,
+  resolveJelajahi,
+  toJelajahiParams,
+  withKnownKeys,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-jelajahi.logic';
 import { EDGE_TOLERANCE, nextEdges } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/shelf-row.logic';
 
 describe('playIntent', () => {
@@ -63,6 +69,22 @@ describe('teks bebas admin', () => {
   it('inisial per code point: aksara di luar BMP tidak terbelah', () => {
     expect(artistInitials('𝐊adek 𝐖ira')).toBe('𝐊𝐖');
     expect(artistInitials('Kadek Wira & Darmasaba Band')).toBe('KW');
+  });
+});
+
+describe('toJelajahiParams (URL ditulis ulang dari filter yang berlaku)', () => {
+  const genres = [{ key: 'pop', label: 'Pop', jumlahLagu: 1 }];
+  const artists = [{ key: 'kadek', nama: 'Kadek', jumlahLagu: 1, coverUrl: null }];
+
+  it('kunci genre/artis tak dikenal hilang; q dan kunci dikenal tetap', () => {
+    const f = resolveJelajahi({ q: 'ombak', genre: 'rock', artis: 'kadek' }, genres, artists);
+    expect(toJelajahiParams(f)).toEqual({ q: 'ombak', genre: null, artis: 'kadek' });
+    expect(jelajahiHref(toJelajahiParams(f))).toBe('/musik/musik-desa/jelajahi?q=ombak&artis=kadek');
+  });
+
+  it('withKnownKeys: klik pil Pop saat URL ?genre=rock&artis=anonim&q=lagu → URL tanpa kunci sampah', () => {
+    const change = withKnownKeys((p) => ({ ...p, genre: 'pop' }), genres, artists);
+    expect(change({ q: 'lagu', genre: 'rock', artis: 'anonim' })).toEqual({ q: 'lagu', genre: 'pop', artis: null });
   });
 });
 

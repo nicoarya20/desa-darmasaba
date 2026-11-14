@@ -1,7 +1,7 @@
 'use client';
 
 import { IconMoodEmpty } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { JelajahiFilters } from './JelajahiFilters';
 import { JelajahiResultHead } from './JelajahiResultHead';
 import { MusikEmpty } from './MusikEmpty';
@@ -9,7 +9,13 @@ import { MusikHeading } from './MusikHeading';
 import { MusikLoadError } from './MusikLoadError';
 import { MusikSkeleton } from './MusikSkeleton';
 import { TrackTable } from './TrackTable';
-import { filterTracks, resolveJelajahi, visibleArtists, type JelajahiParams } from './musik-jelajahi.logic';
+import {
+  filterTracks,
+  resolveJelajahi,
+  visibleArtists,
+  withKnownKeys,
+  type JelajahiParams,
+} from './musik-jelajahi.logic';
 import { MUSIK_TEXT as T } from './musik-library.text';
 import { useJelajahiParams } from './use-jelajahi-params';
 import { useMusikLibrary, type MusikLibrary } from './use-musik-library';
@@ -29,6 +35,11 @@ export function MusikJelajahiView(props: Props) {
   const filter = useMemo(() => resolveJelajahi(params, genres, artists), [params, genres, artists]);
   const results = useMemo(() => filterTracks(tracks, filter), [tracks, filter]);
   const artistChoices = useMemo(() => visibleArtists(artists, tracks, filter), [artists, tracks, filter]);
+  // Setiap perubahan filter menulis ulang URL tanpa kunci genre/artis yang tidak dikenal pustaka.
+  const updateKnown = useCallback(
+    (change: (current: JelajahiParams) => JelajahiParams) => update(withKnownKeys(change, genres, artists)),
+    [update, genres, artists],
+  );
 
   return (
     <div>
@@ -39,9 +50,9 @@ export function MusikJelajahiView(props: Props) {
         <MusikLoadError onRetry={onRetry} />
       ) : (
         <>
-          <JelajahiFilters genres={genres} artists={artistChoices} filter={filter} update={update} />
+          <JelajahiFilters genres={genres} artists={artistChoices} filter={filter} update={updateKnown} />
           <section className={s.results}>
-            <JelajahiResultHead count={results.length} filter={filter} update={update} />
+            <JelajahiResultHead count={results.length} filter={filter} update={updateKnown} />
             {results.length ? (
               <TrackTable tracks={results} currentId={currentId} isPlaying={isPlaying} onPlay={onPlay} />
             ) : (
