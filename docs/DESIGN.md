@@ -665,7 +665,7 @@ Seragam dengan detail produk; **tanpa** panel Cara memesan, rel UMKM lain, Filte
 
 ### Lowongan Kerja Lokal (`/ekonomi/lowongan-kerja-lokal`)
 
-Susunan gaya daftar lowongan Welcome to the Jungle: kartu panel Filter di kiri, daftar kartu baris lebar di kanan. Folder `(pages)/ekonomi/lowongan-kerja-lokal/`: `page.tsx` tipis, sisanya di `_com/`. Halaman detail `[id]` masih gaya lama (belum dirombak).
+Susunan gaya daftar lowongan Welcome to the Jungle: kartu panel Filter di kiri, daftar kartu baris lebar di kanan. Folder `(pages)/ekonomi/lowongan-kerja-lokal/`: `page.tsx` tipis, sisanya di `_com/`. Halaman detail `[id]`: lihat subbagian di bawah.
 
 - **Data**: `GET /api/ekonomi/lowongankerja/find-many` **sekali** dengan limit 100 (`LOWONGAN_LIST_LIMIT`), lalu cari/saring/urut/hitung di klien. MITIGASI SEMENTARA karena API hanya punya `search` + paginasi (`docs/BACKEND-TODO.md` P2); `console.warn` bila total > 100. Sumber sendiri (`lowongan.source.ts` + `use-lowongan-data.ts`), bukan state admin. Adapter (`lowongan-adapter.logic.ts`): `gaji` teks bebas dibaca hanya bila memuat tepat satu angka (desimal di akhir dibuang; rentang, angka ganda, atau di bawah `GAJI_MIN_WAJAR` → `null` = "Gaji tidak dicantumkan"); tipe pekerjaan diberi kunci huruf kecil untuk saring/URL; `diDesa` = `lokasi` memuat kata "Darmasaba" (MITIGASI SEMENTARA lowongan-wilayah: belum ada kolom wilayah, alamat yang tidak menyebut Darmasaba terbaca luar desa); deskripsi HTML → teks polos.
 - **Kerangka**: latar putih, tepi `--edge-gutter`, isi dibatasi `max-width: 1280px` di tengah (baris kartu tidak melar di 1920). Kepala = `KabarListHeader` (kembali, `h1`, pengantar, kolom cari). Cari (`?q=`): semua kata harus muncul di posisi, pemberi kerja, lokasi, atau tipe. Badan grid `340px minmax(0, 1fr)` gap 40px.
@@ -677,6 +677,20 @@ Susunan gaya daftar lowongan Welcome to the Jungle: kartu panel Filter di kiri, 
 - **Keadaan**: memuat → kerangka berbentuk kartu (`aria-busy`); galat → panel "Lowongan belum bisa dimuat" + "Coba lagi"; data kosong → "Belum ada lowongan"; hasil saring kosong → "Tidak ada lowongan yang cocok" + "Hapus filter dan kata kunci" (`KatalogEmpty` dari katalog UMKM).
 - **≤1068px**: panel kiri diganti pil "Filter" (+ jumlah filter aktif) di samping Urutkan, chip filter aktif tampil di bawah baris alat; `Drawer` bawah radius atas 24px, maks 85dvh, isi panel yang sama, kaki menempel "Hapus semua" + pil brand "Tampilkan n lowongan". ≤734px: kartu padding 20px, judul 19px.
 - **Hutang eksplisit**: `use-lowongan-params.ts` dan gaya Select Urutkan berpola sama dengan versi katalog UMKM dan belum diekstrak ke modul bersama; ekstrak saat ada halaman ketiga yang memakainya.
+
+#### Detail lowongan (`/ekonomi/lowongan-kerja-lokal/[id]`)
+
+Gaya halaman lowongan Welcome to the Jungle, senada kartu daftar. `[id]/page.tsx` tipis → `_com/detail/LowonganDetail.tsx`. Data: `useLowonganDetail(id)` (`GET /api/ekonomi/lowongankerja/:id`, adapter `lowongan-detail.adapter.logic.ts`), bukan state admin; HTML deskripsi/kualifikasi disanitasi di adapter, teks polos dirender React per paragraf (tanpa innerHTML). Lowongan nonaktif/terhapus = tidak ditemukan. Test: `__tests__/api/lowongan_detail_ui.test.tsx`, `lowongan_detail_logic.test.ts`.
+
+- **Kerangka**: `.page` daftar (latar putih, `--edge-gutter`, token warna) → `BackButton` → satu kartu putih garis `--line` radius 18px, maks 1080px dengan isi ±860px (padding sisi `clamp(24px, 9vw, 110px)`). ≤1068px padding 40/48px; ≤734px tanpa bingkai kartu.
+- **Kepala** (`DetailHeader`): ubin inisial 64px (`initialsOf`) · `h1` posisi 32px/700 (tablet 28, mobile 24) · pemberi kerja 19px; aksi kontak kanan atas (≤734px di bawah judul, tombol rentang penuh). Pil gaya kartu daftar: tipe · gaji `Rp… / bulan` (tak terbaca → "Gaji tidak dicantumkan" redup) · "Di dalam desa"/"Di luar desa" (hanya bila ada alamat); kanan tanggal tayang absolut. Tanpa tagline dan tanpa kotak "Skills" WTTJ (tidak ada datanya).
+- **Section** (`DetailSection`): "Deskripsi pekerjaan" (ikon koper) dan "Kualifikasi" (ikon user-search), ubin ikon 44px `--tile` + ikon brand, `h2` 24px, dipisah garis `#e8e8ed`; isi 17px/1.6, bullet `ul` bulat 7px brand, nomor `ol` brand. RichText `null` → section tidak dirender.
+- **Tempat kerja** (`DetailTempatKerja`): pemberi kerja (tebal), alamat lengkap, "Buka di Google Maps" (tab baru, ikon external), nomor tampilan abu. Semua kosong → tidak dirender.
+- **Aksi kontak** (`KontakAksi`, pil 44px): nomor seluler → "WhatsApp" (isi brand, wa.me berpesan pembuka, tab baru) + "Telepon" (garis); nomor rumah/kantor → hanya "Telepon" (isi); tanpa nomor valid → teks "Kontak belum dicantumkan" tanpa penutup dan tanpa bilah. **Tanpa tombol Simpan.**
+- **Penutup**: panel `--tile` radius 16px di dasar kartu: "Tertarik dengan lowongan ini?" + ajakan sesuai jenis nomor + catatan bahwa lamaran diatur langsung dengan pemberi kerja + aksi kontak.
+- **Bilah melayang** (`KontakBar`): kapsul putih tembus 86% + `backdrop-filter` (tanpa `-webkit-` manual) di bawah tengah, posisi ringkas + aksi kontak. Tampil hanya bila aksi kepala sudah tergulir lewat (dikurangi navbar 68px) **dan** aksi penutup belum tercapai (`kontak-bar.logic.ts`, IntersectionObserver), jadi tidak menutupi footer di ujung halaman. Tersembunyi = `inert` + `aria-hidden`. ≤734px selebar layar dengan radius atas 20px + `safe-area-inset-bottom`, tombol rentang penuh, posisi disembunyikan. Reduced motion: hanya memudar.
+- **Keadaan** (`DetailStatus`): memuat → kerangka berbentuk kartu (`role=status`, `aria-busy`); tidak ditemukan → "Lowongan tidak ditemukan"; galat → "Coba lagi" (`role=alert`); keduanya + tautan "Lihat semua lowongan".
+- **CSS**: `lowongan-detail.module.css` (kerangka, kepala, penutup), `detail-section.module.css`, `kontak-aksi.module.css` (tombol + bilah), `detail-status.module.css`; pil & tanggal memakai kelas `lowongan-card.module.css`.
 
 ### Peta Informasi (`/peta-informasi`)
 
