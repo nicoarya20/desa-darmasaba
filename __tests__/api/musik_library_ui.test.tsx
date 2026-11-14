@@ -84,6 +84,14 @@ describe('MusikHomeView', () => {
     expect(text(html)).toContain('Kadek Wira 2 lagu');
   });
 
+  it('"Terbaru" = urutan API (terbaru dulu), "Semua lagu" = judul A–Z', () => {
+    const newest = [musik('z', { judul: 'Zapin' }), musik('m', { judul: 'Mekar' }), musik('a2', { judul: 'Angklung' })].map(toTrack);
+    const html = render(<MusikHomeView {...lib({ tracks: newest })} />);
+    const shelf = (title: string) => text(html.split(`>${title}</h2>`)[1]?.split('</ul>')[0] ?? '');
+    expect(shelf(T.shelfTerbaru)).toMatch(/Zapin.*Mekar.*Angklung/);
+    expect(shelf(T.shelfSemua)).toMatch(/Angklung.*Mekar.*Zapin/);
+  });
+
   it('rak tanpa isi tidak dirender (tanpa genre & artis)', () => {
     const plain = [musik('x', { genre: null, artis: '' })].map(toTrack);
     const html = render(<MusikHomeView {...lib({ tracks: plain, artists: [], genres: [] })} />);

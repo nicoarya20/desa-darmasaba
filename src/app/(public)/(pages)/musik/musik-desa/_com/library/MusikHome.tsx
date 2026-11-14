@@ -1,6 +1,7 @@
 'use client';
 
 import { IconMusic } from '@tabler/icons-react';
+import { useMemo } from 'react';
 import { ArtistTile } from './ArtistTile';
 import { GenreTile } from './GenreTile';
 import { MusikEmpty } from './MusikEmpty';
@@ -12,13 +13,14 @@ import { TrackCard } from './TrackCard';
 import { TrackRow } from './TrackRow';
 import { MUSIK_JELAJAHI_PATH } from '../app/musik-nav.meta';
 import { jelajahiHref } from './musik-jelajahi.logic';
+import { sortByTitle } from './musik-library.logic';
 import { MUSIK_TEXT as T } from './musik-library.text';
 import { useMusikLibrary, type MusikLibrary } from './use-musik-library';
 import c from './track-card.module.css';
 
 /** Jumlah kartu rak "Terbaru" (API sudah mengurutkan lagu terbaru dulu). */
 export const TERBARU_LIMIT = 12;
-/** Jumlah baris "Semua lagu" di beranda (3 kolom × 4); sisanya lewat "Lihat semua". */
+/** Jumlah baris "Semua lagu" di beranda (3 kolom × 4, urut judul A–Z); sisanya lewat "Lihat semua". */
 export const SEMUA_LIMIT = 12;
 
 type View = Pick<
@@ -31,6 +33,8 @@ type View = Pick<
  * muat + "Coba lagi" bila API gagal (`loadError`), selain itu panel "Belum ada lagu".
  */
 export function MusikHomeView({ tracks, artists, genres, isLoading, loadError, onRetry, currentId, isPlaying, onPlay }: View) {
+  // Sebelum return dini (aturan hooks). "Terbaru" = urutan API (terbaru dulu); "Semua lagu" = judul A–Z.
+  const semua = useMemo(() => sortByTitle(tracks).slice(0, SEMUA_LIMIT), [tracks]);
   const heading = <MusikHeading title={T.homeTitle} lead={T.homeLead} />;
   if (isLoading) {
     return (
@@ -65,7 +69,7 @@ export function MusikHomeView({ tracks, artists, genres, isLoading, loadError, o
         ))}
       </ShelfRow>
       <ShelfRow title={T.shelfSemua} href={MUSIK_JELAJAHI_PATH} layout="grid">
-        {tracks.slice(0, SEMUA_LIMIT).map((t) => (
+        {semua.map((t) => (
           <li key={t.id}>
             <TrackRow track={t} {...state(t.id)} />
           </li>

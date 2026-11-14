@@ -3,7 +3,8 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { playIntent } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
+import type { Musik } from '@/app/context/MusicContext';
+import { playIntent, sortByTitle, toTrack } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
 import { EDGE_TOLERANCE, nextEdges } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/shelf-row.logic';
 
 describe('playIntent', () => {
@@ -15,6 +16,22 @@ describe('playIntent', () => {
     expect(playIntent({ id: 'b', playable: true }, 'a')).toBe('play');
     expect(playIntent({ id: 'a', playable: false }, 'a')).toBe('play');
     expect(playIntent({ id: 'a', playable: true }, null)).toBe('play');
+  });
+});
+
+// test-only: lagu minimal; hanya judul (dan id) yang relevan untuk urutan.
+const track = (id: string, judul: string | null) =>
+  toTrack({ id, judul, artis: 'A', durasi: null, genre: null, tahunRilis: null, audioFile: null, coverImage: null } as unknown as Musik);
+
+describe('sortByTitle (rak "Semua lagu")', () => {
+  it('A–Z bahasa Indonesia tanpa beda huruf/aksen; masukan tidak diubah', () => {
+    const input = [track('1', 'tari Pendet'), track('2', 'Ombak'), track('3', 'Ágem'), track('4', 'baleganjur')];
+    expect(sortByTitle(input).map((t) => t.judul)).toEqual(['Ágem', 'baleganjur', 'Ombak', 'tari Pendet']);
+    expect(input.map((t) => t.id)).toEqual(['1', '2', '3', '4']);
+  });
+
+  it('judul sama (beda huruf) → urutan asli (terbaru dulu) dipertahankan', () => {
+    expect(sortByTitle([track('baru', 'Ombak'), track('lama', 'ombak')]).map((t) => t.id)).toEqual(['baru', 'lama']);
   });
 });
 

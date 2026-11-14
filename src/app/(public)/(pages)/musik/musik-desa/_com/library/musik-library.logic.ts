@@ -46,6 +46,14 @@ export function toTrack(m: Musik): Track {
   };
 }
 
+/** Pembanding judul bahasa Indonesia tanpa beda huruf/aksen ("apel" = "Apel"). */
+const titleCollator = new Intl.Collator('id', { sensitivity: 'base' });
+
+/** Salinan lagu urut judul A–Z (rak "Semua lagu"); judul sama → urutan asli dipertahankan (sort stabil). */
+export function sortByTitle(tracks: readonly Track[]): Track[] {
+  return [...tracks].sort((a, b) => titleCollator.compare(a.judul, b.judul));
+}
+
 /** Urutan dihitung terbanyak dulu, lalu nama A-Z (stabil antar render). */
 const byCountThenName = <T extends { jumlahLagu: number }>(name: (item: T) => string) => (a: T, b: T) =>
   b.jumlahLagu - a.jumlahLagu || name(a).localeCompare(name(b), 'id');
