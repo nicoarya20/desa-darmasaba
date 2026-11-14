@@ -56,7 +56,8 @@
 .right {
   position: sticky;
   top: var(--m-nav);
-  height: calc(100dvh - var(--m-nav) - var(--m-bar-h));
+  /* Bar pemutar = --m-bar-h + safe-area bawah (iPhone), lihat NowPlayingBar. */
+  height: calc(100dvh - var(--m-nav) - var(--m-bar-h) - env(safe-area-inset-bottom, 0px));
 }
 
 .sidebar {
@@ -190,17 +191,22 @@
   padding: 8px;
 }
 
-/* Drawer antrean (1068–1279px kanan, ≤1068px bawah) */
-.drawerContent {
+/* Drawer antrean (1069–1279px kanan, ≤1068px bawah). Diawali `.tokens` (root Drawer) supaya
+   menang atas kelas bawaan Mantine yang sama spesifisitasnya, apa pun urutan muat CSS. */
+.tokens .drawerContent {
   background: var(--m-surface);
   color: var(--m-ink);
 }
 
-.drawerSheet {
+.tokens .drawerSheet {
   border-radius: 20px 20px 0 0;
 }
 
-.drawerBody {
+.tokens .drawerSheet .drawerBody {
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+
+.tokens .drawerBody {
   height: 100%;
   padding: 8px;
 }
@@ -217,9 +223,10 @@
   border: 0;
 }
 
-/* Spasi setinggi bar pemutar setelah footer situs (DarmasabaShell), supaya footer tidak tertutup. */
+/* Spasi setinggi bar pemutar setelah footer situs (DarmasabaShell), supaya footer tidak tertutup.
+   Di luar `.app` (token tak terbaca) → nilai px disalin dari --m-bar-h. */
 .playerSpacer {
-  height: 88px;
+  height: calc(88px + env(safe-area-inset-bottom, 0px));
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -298,7 +305,7 @@
   }
 
   .playerSpacer {
-    height: 72px;
+    height: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 }
 
