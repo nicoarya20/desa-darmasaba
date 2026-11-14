@@ -38,6 +38,11 @@ export const JENNA_PAGES: Readonly<Record<string, JennaPageMeta>> = {
     subtitle: 'Layanan AI yang dipakai Jenna, beserta tes koneksinya.',
     skeletonHeights: [420],
   },
+  '/dev/jenna/suara': {
+    title: 'Jenna · Suara',
+    subtitle: 'Suara realtime Jenna untuk pengunjung website: provider, batas pemakaian, dan sakelar aktif.',
+    skeletonHeights: [140, 420, 260],
+  },
 };
 
 const FALLBACK: JennaPageMeta = {

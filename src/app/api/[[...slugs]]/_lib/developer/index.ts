@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 import { jennaConfigGet, jennaProviderKeyDelete, jennaProviderTest, jennaProviderUpdate, jennaSettingsUpdate } from "./jenna";
 import { jennaKnowledgeGet } from "./jenna-knowledge";
+import { jennaVoiceProviderKeyDelete, jennaVoiceProviderTest, jennaVoiceProviderUpdate } from "./jenna-voice";
 import {
   jennaConversationDelete,
   jennaConversationGet,
@@ -32,6 +33,12 @@ const Developer = new Elysia({ prefix: "/developer", tags: ["Developer"] })
       dailyTokensGlobal: t.Optional(t.Number()),
       retentionDays: t.Optional(t.Number()),
       chatProtocol: t.Optional(t.String({ maxLength: 20 })),
+      voiceEnabled: t.Optional(t.Boolean()),
+      voiceDailyMinutesUser: t.Optional(t.Number()),
+      voiceDailyMinutesGlobal: t.Optional(t.Number()),
+      voiceSessionMaxMinutes: t.Optional(t.Number()),
+      voiceIdleOffSeconds: t.Optional(t.Number()),
+      voiceName: t.Optional(t.String({ maxLength: 200 })),
     }),
   })
   .put("/jenna/providers/:slot", jennaProviderUpdate, {
@@ -47,6 +54,16 @@ const Developer = new Elysia({ prefix: "/developer", tags: ["Developer"] })
   })
   .post("/jenna/providers/:slot/test", jennaProviderTest, { params: slotParams })
   .delete("/jenna/providers/:slot/key", jennaProviderKeyDelete, { params: slotParams })
+  .put("/jenna/voice/provider", jennaVoiceProviderUpdate, {
+    body: t.Object({
+      baseUrl: t.String({ maxLength: 2000 }),
+      model: t.String({ maxLength: 500 }),
+      timeoutMs: t.Optional(t.Number()),
+      apiKey: t.Optional(t.String({ maxLength: 2000 })),
+    }),
+  })
+  .post("/jenna/voice/provider/test", jennaVoiceProviderTest)
+  .delete("/jenna/voice/provider/key", jennaVoiceProviderKeyDelete)
   .get("/jenna/knowledge", jennaKnowledgeGet)
   .get("/jenna/stats", jennaStatsGet)
   .get("/jenna/usage", jennaUsageGet)

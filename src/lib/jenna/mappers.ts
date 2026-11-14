@@ -3,9 +3,11 @@ import type { JennaProvider, JennaSettings } from "@prisma/client";
 import {
   JENNA_SLOT_PROTOCOL,
   JENNA_SLOTS,
+  JENNA_VOICE_SLOT,
   type JennaProviderDTO,
   type JennaSettingsDTO,
   type JennaSlot,
+  type JennaVoiceProviderDTO,
 } from "./types";
 import { isJennaChatProtocol } from "./validation";
 
@@ -22,6 +24,12 @@ export const DEFAULT_JENNA_SETTINGS: Omit<JennaSettingsDTO, "updatedAt"> = {
   dailyTokensGlobal: 0,
   retentionDays: 90,
   chatProtocol: "openai",
+  voiceEnabled: false,
+  voiceDailyMinutesUser: 5,
+  voiceDailyMinutesGlobal: 0,
+  voiceSessionMaxMinutes: 5,
+  voiceIdleOffSeconds: 60,
+  voiceName: "",
 };
 
 const iso = (d: Date | null | undefined) => (d ? d.toISOString() : null);
@@ -39,21 +47,24 @@ export function toSettingsDTO(row: JennaSettings | null): JennaSettingsDTO {
     dailyTokensGlobal: row.dailyTokensGlobal,
     retentionDays: row.retentionDays,
     chatProtocol: isJennaChatProtocol(row.chatProtocol) ? row.chatProtocol : DEFAULT_JENNA_SETTINGS.chatProtocol,
+    voiceEnabled: row.voiceEnabled,
+    voiceDailyMinutesUser: row.voiceDailyMinutesUser,
+    voiceDailyMinutesGlobal: row.voiceDailyMinutesGlobal,
+    voiceSessionMaxMinutes: row.voiceSessionMaxMinutes,
+    voiceIdleOffSeconds: row.voiceIdleOffSeconds,
+    voiceName: row.voiceName,
     updatedAt: iso(row.updatedAt),
   };
 }
 
-export function toProviderDTO(slot: JennaSlot, row: JennaProvider | null): JennaProviderDTO {
+/** Field yang sama untuk provider chat & suara. */
+function commonProviderFields(row: JennaProvider | null): Omit<JennaVoiceProviderDTO, "slot"> {
   const hasApiKey = Boolean(row?.apiKeyEnc);
   const baseUrl = row?.baseUrl ?? "";
   const model = row?.model ?? "";
   return {
-    slot,
-    protocol: JENNA_SLOT_PROTOCOL[slot],
     baseUrl,
     model,
-    temperature: row?.temperature ?? null,
-    maxTokens: row?.maxTokens ?? null,
     timeoutMs: row?.timeoutMs ?? 30000,
     hasApiKey,
     apiKeyHint: hasApiKey ? (row?.apiKeyHint ?? null) : null,
@@ -63,6 +74,20 @@ export function toProviderDTO(slot: JennaSlot, row: JennaProvider | null): Jenna
     lastTestMessage: row?.lastTestMessage ?? null,
     updatedAt: iso(row?.updatedAt),
   };
+}
+
+export function toProviderDTO(slot: JennaSlot, row: JennaProvider | null): JennaProviderDTO {
+  return {
+    slot,
+    protocol: JENNA_SLOT_PROTOCOL[slot],
+    ...commonProviderFields(row),
+    temperature: row?.temperature ?? null,
+    maxTokens: row?.maxTokens ?? null,
+  };
+}
+
+export function toVoiceProviderDTO(row: JennaProvider | null): JennaVoiceProviderDTO {
+  return { slot: JENNA_VOICE_SLOT, ...commonProviderFields(row) };
 }
 
 /** Semua slot dalam urutan JENNA_SLOTS; slot tanpa row tetap muncul (belum dikonfigurasi). */

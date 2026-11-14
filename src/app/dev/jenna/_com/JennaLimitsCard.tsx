@@ -1,5 +1,5 @@
 'use client';
-import { NumberInput, SimpleGrid } from '@mantine/core';
+import { NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { JENNA_SETTINGS_LIMITS, type JennaSettingsDTO } from '@/lib/jenna/types';
@@ -7,45 +7,53 @@ import jennaState from '../../_state/jenna-state';
 import { formatNumber } from '../../_com/format';
 import { SectionCard } from '../../_com/SectionCard';
 import {
-  LIMIT_FIELDS,
+  LIMITS_PRESETS,
   hasErrors,
   limitsEqual,
   limitsErrors,
   limitsFromSettings,
+  limitsPayload,
   type LimitsForm,
+  type LimitsPreset,
 } from '../jenna-form.logic';
 import { useReportDirty } from './useReportDirty';
 
-export function JennaLimitsCard({ settings }: { settings: JennaSettingsDTO }) {
-  const snap = useSnapshot(jennaState);
-  const baseline = limitsFromSettings(settings);
-  const [form, setForm] = useState<LimitsForm>(baseline);
+type Props = {
+  settings: JennaSettingsDTO;
+  /** Bawaan: Batas Pemakaian chat. */
+  preset?: LimitsPreset;
+};
 
-  const dirty = !limitsEqual(form, baseline);
-  const errors = limitsErrors(form);
-  useReportDirty('limits', dirty);
+export function JennaLimitsCard({ settings, preset = LIMITS_PRESETS.chat }: Props) {
+  const snap = useSnapshot(jennaState);
+  const baseline = limitsFromSettings(settings, preset);
+  const [form, setForm] = useState<LimitsForm>(baseline);
+  const { section } = preset;
+
+  const dirty = !limitsEqual(form, baseline, preset);
+  const errors = limitsErrors(form, preset);
+  useReportDirty(section, dirty);
 
   const save = async () => {
     if (hasErrors(errors)) return;
-    // Tidak ada galat → semua field sudah number.
-    const result = await jennaState.saveSettings('limits', form as Record<keyof LimitsForm, number>, 'Batas pemakaian disimpan.');
-    if (result) setForm(limitsFromSettings(result.settings));
+    const result = await jennaState.saveSettings(section, limitsPayload(form, preset), preset.successMessage);
+    if (result) setForm(limitsFromSettings(result.settings, preset));
   };
 
   return (
     <SectionCard
-      title="Batas Pemakaian"
-      description="Mencegah penyalahgunaan dan mengendalikan biaya provider."
+      title={preset.title}
+      description={preset.description}
       save={{
         dirty,
-        saving: snap.saving === 'limits',
-        blocked: hasErrors(errors) || (snap.saving !== null && snap.saving !== 'limits'),
+        saving: snap.saving === section,
+        blocked: hasErrors(errors) || (snap.saving !== null && snap.saving !== section),
         onSave: () => void save(),
         onReset: () => setForm(baseline),
       }}
     >
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md" verticalSpacing="md">
-        {LIMIT_FIELDS.map(({ key, label, hint, suffix }) => {
+        {preset.fields.map(({ key, label, hint, suffix }) => {
           const { min, max } = JENNA_SETTINGS_LIMITS[key];
           return (
             <NumberInput
@@ -61,7 +69,7 @@ export function JennaLimitsCard({ settings }: { settings: JennaSettingsDTO }) {
               thousandSeparator="."
               decimalSeparator=","
               suffix={suffix}
-              value={form[key]}
+              value={form[key] ?? ''}
               onChange={(value) =>
                 setForm((f) => ({ ...f, [key]: typeof value === 'number' ? value : '' }))
               }
@@ -69,6 +77,22 @@ export function JennaLimitsCard({ settings }: { settings: JennaSettingsDTO }) {
             />
           );
         })}
+        {preset.withVoiceName && (
+          <TextInput
+            label="Nama suara"
+            description="Kosongkan untuk memakai suara bawaan penyedia."
+            placeholder="alloy"
+            autoComplete="off"
+            spellCheck={false}
+            maxLength={JENNA_SETTINGS_LIMITS.voiceName.maxLength}
+            value={form.voiceName ?? ''}
+            onChange={(e) => {
+              const voiceName = e.currentTarget.value;
+              setForm((f) => ({ ...f, voiceName }));
+            }}
+            error={errors.voiceName}
+          />
+        )}
       </SimpleGrid>
     </SectionCard>
   );

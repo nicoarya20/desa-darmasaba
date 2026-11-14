@@ -1,11 +1,21 @@
 import {
   JENNA_PROVIDER_LIMITS,
   JENNA_SETTINGS_LIMITS,
+  JENNA_VOICE_SLOT,
   type JennaProviderDTO,
   type JennaProviderUpdateInput,
   type JennaSettingsDTO,
+  type JennaSettingsUpdateInput,
+  type JennaVoiceProviderDTO,
+  type JennaVoiceProviderUpdateInput,
 } from '@/lib/jenna/types';
-import { validateBaseUrl } from '@/lib/jenna/validation';
+import {
+  VOICE_MODEL_ERROR,
+  VOICE_MODEL_PATTERN,
+  VOICE_NAME_ERROR,
+  VOICE_NAME_PATTERN,
+  validateBaseUrl,
+} from '@/lib/jenna/validation';
 
 /** Nilai NumberInput Mantine: '' saat dikosongkan. */
 export type NumberField = number | '';
@@ -87,23 +97,94 @@ export const LIMIT_FIELDS = [
   },
 ] as const;
 
-export type LimitKey = (typeof LIMIT_FIELDS)[number]['key'];
-export type LimitsForm = Record<LimitKey, NumberField>;
+export const VOICE_LIMIT_FIELDS = [
+  {
+    key: 'voiceDailyMinutesUser',
+    label: 'Menit suara harian per pengunjung',
+    hint: 'Jatah menit percakapan suara tiap pengunjung per hari.',
+    suffix: ' menit',
+  },
+  {
+    key: 'voiceDailyMinutesGlobal',
+    label: 'Menit suara harian global',
+    hint: 'Total menit suara semua pengunjung per hari. 0 = suara tidak aktif.',
+    suffix: ' menit',
+  },
+  {
+    key: 'voiceSessionMaxMinutes',
+    label: 'Durasi maksimum sesi (menit)',
+    hint: 'Satu sesi suara ditutup otomatis setelah durasi ini.',
+    suffix: ' menit',
+  },
+  {
+    key: 'voiceIdleOffSeconds',
+    label: 'Tutup otomatis saat diam (detik)',
+    hint: 'Sesi suara ditutup bila pengunjung diam selama ini.',
+    suffix: ' detik',
+  },
+] as const;
 
-export function limitsFromSettings(s: JennaSettingsDTO): LimitsForm {
-  return Object.fromEntries(LIMIT_FIELDS.map(({ key }) => [key, s[key]])) as LimitsForm;
+export type LimitField = (typeof LIMIT_FIELDS)[number] | (typeof VOICE_LIMIT_FIELDS)[number];
+export type LimitKey = LimitField['key'];
+/** `voiceName` hanya ada pada preset suara. */
+export type LimitsForm = Partial<Record<LimitKey, NumberField>> & { voiceName?: string };
+export type LimitsErrors = Partial<Record<LimitKey | 'voiceName', string>>;
+
+/** Isi kartu batas pemakaian: chat (Batas Pemakaian) atau suara (Batas Suara). */
+export type LimitsPreset = {
+  section: 'limits' | 'voiceLimits';
+  title: string;
+  description: string;
+  successMessage: string;
+  fields: readonly LimitField[];
+  withVoiceName: boolean;
+};
+
+export const LIMITS_PRESETS = {
+  chat: {
+    section: 'limits',
+    title: 'Batas Pemakaian',
+    description: 'Mencegah penyalahgunaan dan mengendalikan biaya provider.',
+    successMessage: 'Batas pemakaian disimpan.',
+    fields: LIMIT_FIELDS,
+    withVoiceName: false,
+  },
+  voice: {
+    section: 'voiceLimits',
+    title: 'Batas Suara',
+    description: 'Mengendalikan pemakaian dan biaya suara realtime. Berlaku saat fitur suara tersedia.',
+    successMessage: 'Batas suara disimpan.',
+    fields: VOICE_LIMIT_FIELDS,
+    withVoiceName: true,
+  },
+} as const satisfies Record<string, LimitsPreset>;
+
+export function limitsFromSettings(s: JennaSettingsDTO, preset: LimitsPreset = LIMITS_PRESETS.chat): LimitsForm {
+  const form: LimitsForm = Object.fromEntries(preset.fields.map(({ key }) => [key, s[key]]));
+  if (preset.withVoiceName) form.voiceName = s.voiceName;
+  return form;
 }
 
-export function limitsErrors(form: LimitsForm): Partial<Record<LimitKey, string>> {
-  const errors: Partial<Record<LimitKey, string>> = {};
-  for (const { key } of LIMIT_FIELDS) {
-    const error = rangeError(form[key], JENNA_SETTINGS_LIMITS[key]);
+export function limitsErrors(form: LimitsForm, preset: LimitsPreset = LIMITS_PRESETS.chat): LimitsErrors {
+  const errors: LimitsErrors = {};
+  for (const { key } of preset.fields) {
+    const error = rangeError(form[key] ?? '', JENNA_SETTINGS_LIMITS[key]);
     if (error) errors[key] = error;
   }
+  const voiceName = form.voiceName?.trim() ?? '';
+  if (preset.withVoiceName && voiceName !== '' && !VOICE_NAME_PATTERN.test(voiceName)) errors.voiceName = VOICE_NAME_ERROR;
   return errors;
 }
 
-export const limitsEqual = (a: LimitsForm, b: LimitsForm) => LIMIT_FIELDS.every(({ key }) => a[key] === b[key]);
+export const limitsEqual = (a: LimitsForm, b: LimitsForm, preset: LimitsPreset = LIMITS_PRESETS.chat) =>
+  preset.fields.every(({ key }) => a[key] === b[key]) && (a.voiceName?.trim() ?? '') === (b.voiceName?.trim() ?? '');
+
+/** Hanya dipanggil saat tidak ada galat (semua angka terisi). */
+export function limitsPayload(form: LimitsForm, preset: LimitsPreset = LIMITS_PRESETS.chat): JennaSettingsUpdateInput {
+  const payload: JennaSettingsUpdateInput = Object.fromEntries(preset.fields.map(({ key }) => [key, form[key]]));
+  if (preset.withVoiceName) payload.voiceName = form.voiceName?.trim() ?? '';
+  return payload;
+}
 
 // ---------------------------------------------------------------------------
 // Provider
@@ -134,29 +215,71 @@ export const MODEL_PLACEHOLDER: Record<JennaProviderDTO['protocol'], string> = {
   anthropic: 'claude-haiku-4-5',
 };
 
-export function providerFormFrom(p: JennaProviderDTO): ProviderForm {
+export type AnyProviderDTO = JennaProviderDTO | JennaVoiceProviderDTO;
+
+export const isVoiceProvider = (p: Pick<AnyProviderDTO, 'slot'>): p is JennaVoiceProviderDTO =>
+  p.slot === JENNA_VOICE_SLOT;
+
+/** Teks form provider per slot. */
+export type ProviderCopy = {
+  baseUrlDescription: string;
+  baseUrlPlaceholder: string;
+  modelLabel: string;
+  modelDescription: string;
+  modelPlaceholder: string;
+};
+
+export function providerCopy(p: AnyProviderDTO): ProviderCopy {
+  if (isVoiceProvider(p)) {
+    return {
+      baseUrlDescription: 'Endpoint gateway suara realtime. Wajib https.',
+      baseUrlPlaceholder: 'https://live.example.com/v1',
+      modelLabel: 'Model suara',
+      modelDescription: 'ID model suara realtime persis seperti di dokumentasi gateway.',
+      modelPlaceholder: 'gpt-realtime',
+    };
+  }
+  return {
+    baseUrlDescription:
+      p.protocol === 'openai'
+        ? 'Endpoint OpenAI atau layanan yang kompatibel. Wajib https.'
+        : 'Endpoint Anthropic Messages API. Wajib https.',
+    baseUrlPlaceholder: BASE_URL_PLACEHOLDER[p.protocol],
+    modelLabel: 'Model',
+    modelDescription: 'ID model persis seperti di dokumentasi provider.',
+    modelPlaceholder: MODEL_PLACEHOLDER[p.protocol],
+  };
+}
+
+export function providerFormFrom(p: AnyProviderDTO): ProviderForm {
+  const voice = isVoiceProvider(p);
   return {
     baseUrl: p.baseUrl,
     model: p.model,
-    temperature: p.temperature ?? '',
-    maxTokens: p.maxTokens ?? '',
+    temperature: voice ? '' : (p.temperature ?? ''),
+    maxTokens: voice ? '' : (p.maxTokens ?? ''),
     timeoutSec: p.timeoutMs / 1000,
     apiKey: '',
   };
 }
 
-export function providerErrors(form: ProviderForm): Partial<Record<keyof ProviderForm, string>> {
+function modelError(model: string, voice: boolean): string | null {
+  if (model.length < JENNA_PROVIDER_LIMITS.model.minLength) return voice ? 'Model suara wajib diisi.' : 'Model wajib diisi.';
+  if (voice) return VOICE_MODEL_PATTERN.test(model) ? null : VOICE_MODEL_ERROR;
+  if (model.length > JENNA_PROVIDER_LIMITS.model.maxLength) return `Maksimal ${JENNA_PROVIDER_LIMITS.model.maxLength} karakter.`;
+  return null;
+}
+
+/** `voice`: aturan model suara; temperature & maxTokens tidak dipakai. */
+export function providerErrors(form: ProviderForm, voice = false): Partial<Record<keyof ProviderForm, string>> {
   const errors: Partial<Record<keyof ProviderForm, string>> = {};
   if (form.baseUrl.trim() === '') errors.baseUrl = 'Base URL wajib diisi.';
   else {
     const url = validateBaseUrl(form.baseUrl, process.env.NODE_ENV ?? 'production');
     if (!url.ok) errors.baseUrl = url.error;
   }
-  const model = form.model.trim();
-  if (model.length < JENNA_PROVIDER_LIMITS.model.minLength) errors.model = 'Model wajib diisi.';
-  else if (model.length > JENNA_PROVIDER_LIMITS.model.maxLength) {
-    errors.model = `Maksimal ${JENNA_PROVIDER_LIMITS.model.maxLength} karakter.`;
-  }
+  const model = modelError(form.model.trim(), voice);
+  if (model) errors.model = model;
   if (form.temperature !== '') {
     const error = rangeError(form.temperature, JENNA_PROVIDER_LIMITS.temperature, { allowDecimal: true });
     if (error) errors.temperature = error;
@@ -183,12 +306,18 @@ export const providerEqual = (a: ProviderForm, b: ProviderForm) =>
   a.apiKey.trim() === b.apiKey.trim();
 
 export function providerPayload(form: ProviderForm): JennaProviderUpdateInput {
+  return {
+    ...voiceProviderPayload(form),
+    temperature: form.temperature === '' ? null : form.temperature,
+    maxTokens: form.maxTokens === '' ? null : form.maxTokens,
+  };
+}
+
+export function voiceProviderPayload(form: ProviderForm): JennaVoiceProviderUpdateInput {
   const apiKey = form.apiKey.trim();
   return {
     baseUrl: form.baseUrl.trim(),
     model: form.model.trim(),
-    temperature: form.temperature === '' ? null : form.temperature,
-    maxTokens: form.maxTokens === '' ? null : form.maxTokens,
     timeoutMs: Math.round(Number(form.timeoutSec) * 1000),
     ...(apiKey ? { apiKey } : {}),
   };

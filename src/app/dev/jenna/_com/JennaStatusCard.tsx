@@ -100,6 +100,9 @@ export function JennaStatusCard() {
               : 'Kunci enkripsi server belum diatur, sehingga API key tidak dapat dipakai.'}
           </Text>
         )}
+        <Text size="sm" c={tokens.colors.text.secondary}>
+          Suara: {settings.voiceEnabled ? 'Aktif (belum tersedia di website)' : 'Nonaktif'}
+        </Text>
         {hiddenReason && (
           <Group gap={6} wrap="nowrap" align="flex-start">
             <IconEyeOff size={16} color="var(--mantine-color-orange-6)" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden />

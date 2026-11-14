@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.268] - 2026-11-14
+### Added
+- **Halaman Jenna › Suara di Developer Console** (`/dev/jenna/suara`), tahap pertama fitur suara Jenna:
+  - **Sakelar "Suara di website desa"** (default mati). Untuk saat ini sakelar hanya disimpan: tombol suara untuk pengunjung belum dibuat, jadi menyalakannya belum mengubah apa pun di website. Halaman memberi peringatan bila sakelar menyala tetapi provider suara belum siap, kuota menit global masih 0, atau chat Jenna sedang nonaktif.
+  - **Provider Suara**: alamat gateway suara realtime, model suara, dan API key (terenkripsi, hanya 4 karakter terakhir yang terlihat), lengkap dengan "Tes koneksi" dan "Hapus API key". API key ini terpisah dari provider chat dan tidak pernah dipakai untuk chat.
+  - **Batas Suara**: menit suara harian per pengunjung, menit suara harian untuk seluruh website (0 = suara tidak aktif), durasi maksimum satu sesi, tutup otomatis saat pengunjung diam, dan nama suara (kosong = suara bawaan penyedia).
+- Kartu status di Jenna › Umum menampilkan status suara.
+
+### Changed
+- Keterangan di kode untuk kuota token harian global dikoreksi: 0 berarti chat Jenna tidak aktif (perilaku tidak berubah).
+
+### Operator
+- Jalankan migrasi `20261114120000_jenna_voice_settings` (otomatis saat container start). Murni menambah 6 kolom ber-default di `JennaSettings`; suara tetap mati setelah migrasi.
+- Tidak ada env baru. Alasan & detail: adendum "setelan suara, tahap 1" di `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
 ## [0.1.267] - 2026-11-14
 ### Added
 - **Jenna, asisten AI di website publik.** Pengunjung bisa bertanya lewat tombol "Tanya Jenna" di pojok kanan bawah setiap halaman publik. Jawaban tampil bertahap seperti sedang diketik, lengkap dengan daftar tautan sumber ke halaman website desa. Tombol hanya muncul bila Jenna diaktifkan di `/dev/jenna` dan kuota token harian lebih dari 0.

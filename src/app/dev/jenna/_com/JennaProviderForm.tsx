@@ -14,7 +14,7 @@ import {
 import { IconKey, IconPlugConnected } from '@tabler/icons-react';
 import { useId, useState } from 'react';
 import { useSnapshot } from 'valtio';
-import { JENNA_PROVIDER_LIMITS, type JennaProviderDTO } from '@/lib/jenna/types';
+import { JENNA_PROVIDER_LIMITS } from '@/lib/jenna/types';
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
 import jennaState from '../../_state/jenna-state';
@@ -22,23 +22,26 @@ import { ConfirmModal } from '../../_com/ConfirmModal';
 import { formatDateTime } from '../../_com/format';
 import { SaveActions } from '../../_com/SectionCard';
 import {
-  BASE_URL_PLACEHOLDER,
-  MODEL_PLACEHOLDER,
   TIMEOUT_SEC_RANGE,
   hasErrors,
+  isVoiceProvider,
+  providerCopy,
   providerEqual,
   providerErrors,
   providerFormFrom,
   providerPayload,
+  voiceProviderPayload,
+  type AnyProviderDTO,
   type NumberField,
   type ProviderForm,
 } from '../jenna-form.logic';
 import { JennaProviderKeyDelete } from './JennaProviderKeyDelete';
-import { PROTOCOL_LABEL } from './protocol';
+import { providerName } from './protocol';
 import { useReportDirty } from './useReportDirty';
 
 type Props = {
-  provider: JennaProviderDTO;
+  /** Provider suara (slot "voice"): tanpa temperature & max tokens. */
+  provider: AnyProviderDTO;
   /** Slot ini dipakai chat publik saat ini (protokol aktif & Jenna aktif). */
   live: boolean;
   cryptoConfigured: boolean;
@@ -56,9 +59,11 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
   const [replacingKey, setReplacingKey] = useState(!provider.hasApiKey);
   const [confirmLive, setConfirmLive] = useState(false);
 
-  const { slot, protocol } = provider;
+  const { slot } = provider;
+  const voice = isVoiceProvider(provider);
+  const copy = providerCopy(provider);
   const dirty = !providerEqual(form, baseline);
-  const errors = providerErrors(form);
+  const errors = providerErrors(form, voice);
   const saving = snap.saving === slot;
   const testing = snap.testingSlot === slot;
   useReportDirty(slot, dirty);
@@ -72,9 +77,11 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
   };
 
   const save = async () => {
-    const result = await jennaState.saveProvider(slot, providerPayload(form));
+    const result = isVoiceProvider(provider)
+      ? await jennaState.saveVoiceProvider(voiceProviderPayload(form))
+      : await jennaState.saveProvider(provider.slot, providerPayload(form));
     setConfirmLive(false);
-    const saved = result?.providers.find((p) => p.slot === slot);
+    const saved = voice ? result?.voiceProvider : result?.providers.find((p) => p.slot === slot);
     if (saved) {
       setForm(providerFormFrom(saved));
       setReplacingKey(!saved.hasApiKey);
@@ -105,12 +112,8 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
       <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
         <TextInput
           label="Base URL"
-          description={
-            protocol === 'openai'
-              ? 'Endpoint OpenAI atau layanan yang kompatibel. Wajib https.'
-              : 'Endpoint Anthropic Messages API. Wajib https.'
-          }
-          placeholder={BASE_URL_PLACEHOLDER[protocol]}
+          description={copy.baseUrlDescription}
+          placeholder={copy.baseUrlPlaceholder}
           required
           type="url"
           inputMode="url"
@@ -122,9 +125,9 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
           error={dirty ? errors.baseUrl : undefined}
         />
         <TextInput
-          label="Model"
-          description="ID model persis seperti di dokumentasi provider."
-          placeholder={MODEL_PLACEHOLDER[protocol]}
+          label={copy.modelLabel}
+          description={copy.modelDescription}
+          placeholder={copy.modelPlaceholder}
           required
           autoComplete="off"
           spellCheck={false}
@@ -136,34 +139,38 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
       </SimpleGrid>
 
       <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
-        <NumberInput
-          label="Temperature"
-          description={`${JENNA_PROVIDER_LIMITS.temperature.min}–${JENNA_PROVIDER_LIMITS.temperature.max}. Kosongkan = default provider.`}
-          min={JENNA_PROVIDER_LIMITS.temperature.min}
-          max={JENNA_PROVIDER_LIMITS.temperature.max}
-          step={0.1}
-          decimalScale={2}
-          decimalSeparator=","
-          allowNegative={false}
-          clampBehavior="none"
-          value={form.temperature}
-          onChange={(v) => set('temperature', toNumberField(v))}
-          error={errors.temperature}
-        />
-        <NumberInput
-          label="Max tokens"
-          description="Batas panjang jawaban. Kosongkan = default provider."
-          min={JENNA_PROVIDER_LIMITS.maxTokens.min}
-          max={JENNA_PROVIDER_LIMITS.maxTokens.max}
-          allowDecimal={false}
-          allowNegative={false}
-          thousandSeparator="."
-          decimalSeparator=","
-          clampBehavior="none"
-          value={form.maxTokens}
-          onChange={(v) => set('maxTokens', toNumberField(v))}
-          error={errors.maxTokens}
-        />
+        {!voice && (
+          <>
+            <NumberInput
+              label="Temperature"
+              description={`${JENNA_PROVIDER_LIMITS.temperature.min}–${JENNA_PROVIDER_LIMITS.temperature.max}. Kosongkan = default provider.`}
+              min={JENNA_PROVIDER_LIMITS.temperature.min}
+              max={JENNA_PROVIDER_LIMITS.temperature.max}
+              step={0.1}
+              decimalScale={2}
+              decimalSeparator=","
+              allowNegative={false}
+              clampBehavior="none"
+              value={form.temperature}
+              onChange={(v) => set('temperature', toNumberField(v))}
+              error={errors.temperature}
+            />
+            <NumberInput
+              label="Max tokens"
+              description="Batas panjang jawaban. Kosongkan = default provider."
+              min={JENNA_PROVIDER_LIMITS.maxTokens.min}
+              max={JENNA_PROVIDER_LIMITS.maxTokens.max}
+              allowDecimal={false}
+              allowNegative={false}
+              thousandSeparator="."
+              decimalSeparator=","
+              clampBehavior="none"
+              value={form.maxTokens}
+              onChange={(v) => set('maxTokens', toNumberField(v))}
+              error={errors.maxTokens}
+            />
+          </>
+        )}
         <NumberInput
           label="Timeout"
           description={`${TIMEOUT_SEC_RANGE.min}–${TIMEOUT_SEC_RANGE.max} detik.`}
@@ -285,7 +292,9 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
             <Button
               variant="outline"
               leftSection={<IconPlugConnected size={16} />}
-              onClick={() => void jennaState.testProvider(slot)}
+              onClick={() =>
+                void (isVoiceProvider(provider) ? jennaState.testVoiceProvider() : jennaState.testProvider(provider.slot))
+              }
               loading={testing}
               disabled={testDisabledReason !== null || snap.saving !== null}
               aria-describedby={testDisabledReason ? testHintId : undefined}
@@ -304,7 +313,7 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
       <ConfirmModal
         opened={confirmLive}
         title="Simpan provider yang sedang dipakai?"
-        message={`Provider ${PROTOCOL_LABEL[protocol]} sedang melayani chat publik. Perubahan langsung berlaku dan hasil tes koneksi sebelumnya akan direset.`}
+        message={`Provider ${providerName(provider)} sedang melayani chat publik. Perubahan langsung berlaku dan hasil tes koneksi sebelumnya akan direset.`}
         confirmLabel="Simpan"
         loading={saving}
         onConfirm={() => void save()}

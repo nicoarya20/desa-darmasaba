@@ -1,9 +1,14 @@
-import { JENNA_SLOT_PROTOCOL, type JennaChatProtocol } from '@/lib/jenna/types';
+import { JENNA_SLOT_PROTOCOL, JENNA_VOICE_SLOT, type JennaChatProtocol, type JennaSlot, type JennaVoiceSlot } from '@/lib/jenna/types';
 
 export const PROTOCOL_LABEL: Record<JennaChatProtocol, string> = {
   openai: 'OpenAI-compatible',
   anthropic: 'Anthropic',
 };
+
+/** Nama provider di teks konfirmasi/peringatan halaman setelan. */
+export function providerName({ slot }: { slot: JennaSlot | JennaVoiceSlot }): string {
+  return slot === JENNA_VOICE_SLOT ? 'provider suara' : PROTOCOL_LABEL[JENNA_SLOT_PROTOCOL[slot]];
+}
 
 /** Slot tersimpan di telemetri (`chat_openai`, …) → label protokol; slot yang sudah tidak dikenal tampil apa adanya. */
 export function slotLabel(slot: string): string {
