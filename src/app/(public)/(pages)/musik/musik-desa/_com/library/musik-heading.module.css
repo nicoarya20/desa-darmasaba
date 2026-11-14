@@ -16,7 +16,7 @@
   max-width: 640px;
   font-size: 17px;
   line-height: 1.5;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
 }
 
 @media (max-width: 734px) {

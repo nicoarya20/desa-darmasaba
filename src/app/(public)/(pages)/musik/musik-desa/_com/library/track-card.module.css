@@ -77,7 +77,7 @@
 
 .artist {
   font-size: 15px;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
 }
 
 @media (hover: hover) and (pointer: fine) {

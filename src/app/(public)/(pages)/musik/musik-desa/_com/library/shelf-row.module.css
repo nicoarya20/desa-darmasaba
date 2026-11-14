@@ -29,7 +29,7 @@
   margin-right: 8px;
   font-size: 15px;
   font-weight: 600;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
   text-decoration: none;
 }
 
@@ -52,7 +52,7 @@
 }
 
 .arrow:disabled {
-  color: var(--m-subtle, #86868b);
+  color: var(--m-subtle, #6e6e73);
   opacity: 0.5;
   cursor: default;
 }

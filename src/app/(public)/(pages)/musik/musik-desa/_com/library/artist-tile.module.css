@@ -51,7 +51,7 @@
 .initials {
   font-size: calc(var(--avatar) * 0.3);
   font-weight: 700;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
 }
 
 .name {
@@ -70,7 +70,7 @@
 
 .count {
   font-size: 14px;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
 }
 
 .tile:focus-visible {

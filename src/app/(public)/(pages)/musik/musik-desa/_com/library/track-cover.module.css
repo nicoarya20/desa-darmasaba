@@ -15,7 +15,7 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
 }
 
 .img {
