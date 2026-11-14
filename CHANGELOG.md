@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.274] - 2026-11-14
+### Fixed
+- Build image Docker untuk STG/produksi tidak lagi gagal di tahap pengecekan TypeScript ("Could not parse output from TypeScript's --showConfig"). Pengecekan tipe kini berjalan di dalam proses build, sehingga tidak terpengaruh batas output Bun di image Docker. Tidak ada perubahan tampilan atau perilaku situs.
+
 ## [0.1.273] - 2026-11-14
 ### Changed
 - **Info Sekolah: filter jenjang kini ada di dalam tabel.** Tombol jenjang (Semua/SMA/SMK/SMP/SD/TK/PAUD) di atas halaman dihapus. Di halaman Daftar Lembaga Pendidikan, Daftar Siswa, dan Daftar Pengajar kini ada pilihan **Jenjang** di sebelah kolom pencarian; memilihnya langsung menyaring tabel, bukan lagi memindahkan pengunjung ke halaman lain. Pilihan jenjang diurutkan dari usia termuda (TK, SD, SMP, SMA, lalu SMK) dan hanya menampilkan jenjang yang memang punya sekolah — jenjang tanpa lembaga seperti PAUD tidak ditawarkan. Jumlah hasil ditampilkan di atas tabel.

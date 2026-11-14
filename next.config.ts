@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['@elysiajs/static', 'elysia'],
   // AGENTS.md di-track git; cegah next dev menyisipkan blok agent-rules otomatis.
   agentRules: false,
+  // Type check build pakai compiler API (in-process), bukan subprocess `tsc --showConfig`: di image Docker
+  // oven/bun (tanpa Node) Bun memotong stdout besar saat proses keluar (~128 KB, output kita ~247 KB), sehingga
+  // `next build` gagal "Could not parse output from TypeScript's --showConfig". Bawaan Next 16.4: true.
+  experimental: { useTypeScriptCli: false },
   // Next mencocokkan hostname saja (tanpa skema/port); localhost sudah diizinkan default.
   allowedDevOrigins: ["192.168.1.82"], // akses dev dari HP/device lain di LAN
   // Website publik pindah dari /darmasaba/* ke root (route group src/app/(public)). URL lama
