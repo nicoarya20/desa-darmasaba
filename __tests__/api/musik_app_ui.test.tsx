@@ -36,7 +36,7 @@ vi.mock('@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel', () => 
 }));
 
 import { DarmasabaShell } from '@/app/(public)/_com/DarmasabaShell';
-import { MusikApp, QueueDrawer } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikApp';
+import { MusikApp, QueueDrawer, queueDrawerTransition } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikApp';
 import { MusikNavPills, MusikSidebar } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikSidebar';
 import { MusikTopbar } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikTopbar';
 import { MUSIK_APP_TEXT as T } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.meta';
@@ -204,5 +204,10 @@ describe('QueueDrawer', () => {
 
   it('dialog membawa id panel (tujuan aria-controls tombol Antrean)', () => {
     expect(renderDrawer(false)).toMatch(/<section[^>]*id="antrean-panel"[^>]*role="dialog"|<section[^>]*role="dialog"[^>]*id="antrean-panel"/);
+  });
+
+  it('prefers-reduced-motion → transisi Drawer durasi 0; selain itu bawaan Mantine', () => {
+    expect(queueDrawerTransition(true)).toEqual({ duration: 0 });
+    expect(queueDrawerTransition(false)).toBeUndefined();
   });
 });

@@ -1,7 +1,7 @@
 'use client';
 
 import { Drawer } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import { useMediaQuery, useReducedMotion } from '@mantine/hooks';
 import { Suspense, type ReactNode } from 'react';
 import { useMusic } from '@/app/context/MusicContext';
 import { NowPlayingBar } from '../player/NowPlayingBar';
@@ -57,12 +57,18 @@ export function MusikAppFrame({ children }: { children: ReactNode }) {
 
 type QueueDrawerProps = { opened: boolean; sheet: boolean; onClose: () => void; panelId: string };
 
+/** Transisi Drawer: prefers-reduced-motion → tanpa animasi geser (durasi 0); selain itu bawaan Mantine. */
+export function queueDrawerTransition(reduceMotion: boolean): { duration: number } | undefined {
+  return reduceMotion ? { duration: 0 } : undefined;
+}
+
 /**
  * Antrean sebagai Drawer (<1280px): kanan, atau lembar bawah di ≤1068px. Kelas latar dipasang lewat
  * `classNames.content`, BUKAN `className` di Drawer.Content: Mantine meneruskan className itu juga ke
  * elemen `inner` (fixed selebar layar) sehingga latar menutupi overlay & seluruh halaman.
  */
 export function QueueDrawer({ opened, sheet, onClose, panelId }: QueueDrawerProps) {
+  const reduceMotion = useReducedMotion();
   return (
     <Drawer.Root
       opened={opened}
@@ -71,6 +77,7 @@ export function QueueDrawer({ opened, sheet, onClose, panelId }: QueueDrawerProp
       size={sheet ? '85dvh' : 'calc(var(--m-right-w) + 16px)'}
       className={s.tokens}
       classNames={{ content: sheet ? `${s.drawerContent} ${s.drawerSheet}` : s.drawerContent, body: s.drawerBody }}
+      transitionProps={queueDrawerTransition(reduceMotion)}
     >
       <Drawer.Overlay />
       <Drawer.Content id={panelId} aria-label={T.queueLabel}>
