@@ -7,6 +7,7 @@ import { activeMusikNav, keepsPendingSearch, musikSearchNavigation, reconcileSen
 import { MUSIK_APP_TEXT as T, MUSIK_SEARCH_DEBOUNCE_MS } from './musik-nav.meta';
 import { useMusikUi } from './musik-ui.context';
 import s from './musik-app.module.css';
+import sr from '../sr-only.module.css';
 
 /**
  * Kolom cari aplikasi musik. Mengetik (jeda 300ms) membuka Jelajahi dengan `?q=`: di Jelajahi URL diganti
@@ -81,7 +82,7 @@ export function MusikTopbar({ aside = null }: { aside?: ReactNode }) {
   return (
     <div className={s.topbar}>
       <form role="search" className={s.search} onSubmit={onSubmit}>
-        <label htmlFor="musik-search" className={s.sr}>
+        <label htmlFor="musik-search" className={sr.srOnly}>
           {T.searchLabel}
         </label>
         <IconSearch size={18} stroke={1.75} className={s.searchIcon} aria-hidden />
