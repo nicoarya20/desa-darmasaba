@@ -12,6 +12,12 @@ export const JENNA_PAGES: Readonly<Record<string, JennaPageMeta>> = {
     subtitle: 'Batas panjang pesan, kuota pemakaian, dan lama penyimpanan riwayat percakapan.',
     skeletonHeights: [260],
   },
+  '/dev/jenna/percakapan': {
+    title: 'Jenna · Percakapan',
+    subtitle:
+      'Percakapan pengunjung dengan Jenna (data pribadi sudah disamarkan), disimpan selama masa retensi di Batas Pemakaian.',
+    skeletonHeights: [120, 420],
+  },
   '/dev/jenna/provider': {
     title: 'Jenna · Provider',
     subtitle: 'Layanan AI yang dipakai Jenna, beserta tes koneksinya.',

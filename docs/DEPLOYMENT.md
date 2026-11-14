@@ -51,6 +51,22 @@ Provider AI Jenna (base URL, model, API key) diatur di Developer Console `/dev/j
 - Opsional: tanpa kunci (atau format salah) aplikasi tetap boot, halaman Jenna menampilkan peringatan dan **menolak** menyimpan API key (fail-closed, tidak pernah plaintext).
 - Mengganti/menghapus kunci membuat API key lama tidak bisa didekripsi — tes koneksi akan gagal dan API key harus diisi ulang di halaman Jenna.
 
+## Operator: Jenna publik (chat di website)
+
+Detail keputusan: `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
+- **Migrasi** `20261113170000_add_jenna_conversation` (tabel `JennaConversation`, `JennaMessage`) — jalan otomatis lewat entrypoint.
+- **Tidak ada env baru.** Hash sesi/IP memakai salt turunan `BETTER_AUTH_SECRET`; mengganti secret itu me-reset kuota harian efektif dan memutus percakapan lama dari sesinya.
+- **Cookie** `jenna_sid` (Path `/api/jenna`, 30 hari, HttpOnly, SameSite=Lax, Secure di production), dipasang oleh `/api/jenna/status` dan `/api/jenna/chat`.
+- **Retensi**: scheduler di `src/instrumentation.ts` hanya di production (tanpa saklar env), 10 menit setelah start lalu tiap 24 jam; menghapus percakapan lebih lama dari `retentionDays`.
+- **Satu instance**: limiter per menit dan "satu giliran per sesi" ada di memori proses (reset saat restart; >1 instance = batas berlaku per instance). Kuota harian dan budget token dihitung dari DB.
+- **SSE**: reverse proxy tidak boleh mem-buffer respons `/api/jenna/chat` (route sudah mengirim `X-Accel-Buffering: no`); cek streaming di stg.
+
+Setelah deploy, Jenna tetap tersembunyi sampai diatur developer (role 0):
+1. `/dev/jenna/provider`: isi provider + API key, tes koneksi (butuh `JENNA_CREDENTIALS_KEY`, lihat di atas).
+2. `/dev/jenna/batas`: `dailyTokensGlobal` > 0 (0 = Jenna tidak aktif untuk publik) dan retensi **30** hari (bawaan 90).
+3. `/dev/jenna`: aktifkan.
+
 ## Operator: backfill ukuran berkas (`FileStorage.size`)
 
 Migrasi `20261109150000_add_file_storage_size` menambah kolom `FileStorage.size` (byte, nullable). Upload baru langsung mengisinya; baris lama tetap `NULL` sampai backfill dijalankan **sekali** setelah migrasi, dari container/host yang punya `DATABASE_URL` + env MinIO yang sama dengan aplikasi:

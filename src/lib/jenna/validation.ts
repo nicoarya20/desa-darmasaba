@@ -9,6 +9,7 @@ import {
   type JennaSettingsUpdateInput,
   type JennaSlot,
 } from "./types";
+import { JENNA_CONVERSATION_PAGE } from "./admin-types";
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -169,4 +170,47 @@ export function validateProviderInput(
     ok: true,
     value: { baseUrl: baseUrl.value, model, temperature, maxTokens, timeoutMs, apiKey: apiKey || null },
   };
+}
+
+const CONVERSATION_ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
+const SESSION_PREFIX_PATTERN = /^[a-f0-9]{8}$/;
+const POSITIVE_INT_PATTERN = /^[1-9]\d{0,5}$/;
+
+export function isJennaConversationId(value: unknown): value is string {
+  return typeof value === "string" && CONVERSATION_ID_PATTERN.test(value);
+}
+
+export type ConversationListQuery = { page: number; limit: number; session: string | null };
+
+/** Query GET conversations (nilai string dari URL). Kosong/tidak dikirim = default. */
+export function parseConversationListQuery(query: Record<string, unknown> | undefined): ValidationResult<ConversationListQuery> {
+  const { page: rawPage, limit: rawLimit, session: rawSession } = query ?? {};
+  const isBlank = (v: unknown) => v === undefined || v === "";
+
+  let page = 1;
+  if (!isBlank(rawPage)) {
+    if (typeof rawPage !== "string" || !POSITIVE_INT_PATTERN.test(rawPage)) {
+      return { ok: false, error: "Parameter page harus bilangan bulat ≥ 1." };
+    }
+    page = Number(rawPage);
+  }
+
+  const { defaultLimit, maxLimit } = JENNA_CONVERSATION_PAGE;
+  let limit: number = defaultLimit;
+  if (!isBlank(rawLimit)) {
+    if (typeof rawLimit !== "string" || !POSITIVE_INT_PATTERN.test(rawLimit) || Number(rawLimit) > maxLimit) {
+      return { ok: false, error: `Parameter limit harus di antara 1 dan ${maxLimit}.` };
+    }
+    limit = Number(rawLimit);
+  }
+
+  let session: string | null = null;
+  if (!isBlank(rawSession)) {
+    if (typeof rawSession !== "string" || !SESSION_PREFIX_PATTERN.test(rawSession)) {
+      return { ok: false, error: "Parameter session harus 8 karakter heksadesimal (huruf kecil)." };
+    }
+    session = rawSession;
+  }
+
+  return { ok: true, value: { page, limit, session } };
 }

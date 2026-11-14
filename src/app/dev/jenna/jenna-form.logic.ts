@@ -64,25 +64,25 @@ export const LIMIT_FIELDS = [
   {
     key: 'rateLimitPerMinute',
     label: 'Batas pesan per menit',
-    hint: 'Per pengguna, untuk mencegah spam.',
+    hint: 'Dihitung per sesi pengunjung dan per IP; mana yang lebih dulu tercapai. Mencegah spam.',
     suffix: ' pesan',
   },
   {
     key: 'dailyMessagesUser',
-    label: 'Kuota pesan harian per pengguna',
-    hint: 'Direset setiap hari.',
+    label: 'Kuota pesan harian per pengunjung',
+    hint: 'Dihitung per sesi pengunjung dan per IP; mana yang lebih dulu tercapai. Direset pukul 00.00 WIB.',
     suffix: ' pesan',
   },
   {
     key: 'dailyTokensGlobal',
-    label: 'Kuota token harian (semua pengguna)',
-    hint: 'Batas total pemakaian token per hari. 0 = tanpa batas.',
+    label: 'Kuota token harian (semua pengunjung)',
+    hint: 'Batas total pemakaian token per hari, direset pukul 00.00 WIB. 0 = Jenna tidak aktif di website publik.',
     suffix: ' token',
   },
   {
     key: 'retentionDays',
     label: 'Retensi riwayat percakapan',
-    hint: 'Lama riwayat percakapan disimpan.',
+    hint: 'Percakapan yang lebih lama dari ini (sejak pesan terakhir) dihapus otomatis setiap hari (production).',
     suffix: ' hari',
   },
 ] as const;

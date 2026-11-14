@@ -39,6 +39,26 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: gateway WhatsApp desa bisa dipakai untuk spam ke nomor sembarang; baris `KodeOtp` sampah.
   - Usul: pasang `otpSendLimiter` atau matikan route OTP lama di `src/app/api/auth/` bila memang tak dipakai lagi dan alihkan `/registrasi` ke `/login` di `src/proxy.ts` seperti `/validasi`. User menyerahkan ke rekan (2026-11-13): frontend tidak mengubah `/registrasi` maupun `proxy.ts`.
 
+- [ ] **`/api/tts` tanpa auth & rate limit: biaya ElevenLabs bisa disalahgunakan** (terverifikasi 2026-11-13)
+  - Lokasi: `src/app/api/tts/route.ts:4-25` — `POST` publik (di luar Elysia dan matcher `src/proxy.ts`), teks ≤ 500 karakter langsung diteruskan ke ElevenLabs dengan `ELEVENLABS_API_KEY`. Tidak ada pemanggil di `src/` (mode baca suara memakai `window.speechSynthesis`).
+  - Dampak: siapa pun bisa menghabiskan kuota/biaya ElevenLabs desa.
+  - Usul: hapus route bila memang tak dipakai; bila dipakai, wajibkan sesi + `createLimiter` (`src/lib/rate-limit.ts`).
+
+- [ ] **`/api/subscribe` tanpa rate limit** (terverifikasi 2026-11-13)
+  - Lokasi: `src/app/api/subscribe/route.ts:4-40` — `POST` publik mengirim email lewat nodemailer Gmail (`EMAIL_USER`) ke alamat apa pun; dipanggil form footer (`src/app/(public)/_com/Footer.tsx:113`).
+  - Dampak: spam email atas nama desa, kuota/reputasi akun Gmail habis.
+  - Usul: rate limit per IP (`createLimiter`) + honeypot/Origin check seperti `src/app/api/jenna/_lib/http.ts`.
+
+- [ ] **CORS Elysia tanpa domain production** (terverifikasi 2026-11-13)
+  - Lokasi: `src/app/api/[[...slugs]]/route.ts:37-50` — `origin` hanya localhost:3000/3001 + 3 domain stg, `credentials: true`.
+  - Dampak: permintaan lintas-origin dari domain prod ditolak (same-origin tidak terdampak); daftar juga tidak didokumentasikan.
+  - Usul: tambah domain prod (dari env, bukan hardcode) atau hapus CORS bila API hanya dipakai same-origin.
+
+- [ ] **Tidak ada header Content-Security-Policy / security headers** (terverifikasi 2026-11-13)
+  - Lokasi: `next.config.ts:33-45` — `headers()` hanya `Cache-Control` untuk `/assets/:path*`.
+  - Dampak: tidak ada lapis kedua bila ada XSS (mis. butir Laporan Publik di atas; jawaban Jenna sudah dirender tanpa HTML mentah).
+  - Usul: CSP dasar (mulai `Content-Security-Policy-Report-Only`), plus `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors`.
+
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
@@ -98,6 +118,18 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 - [ ] **`deletedAt DateTime @default(now())` di banyak model** (118 kolom di schema)
   - Semua baris tercatat "terhapus" sejak dibuat; filter memakai `isActive`. Tidak berdampak ke tampilan, tapi menyesatkan. Usul: `DateTime?` tanpa default (migration hati-hati).
+
+## Jenna publik (tindak lanjut)
+
+Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
+- [ ] **Captcha (Turnstile) saat spam muncul**
+  - v1 sengaja tanpa captcha (Origin + honeypot + rate limit + kuota + budget). Pantau `/dev/jenna/percakapan`; bila spam lolos, tambah Turnstile di `src/app/api/jenna/chat/route.ts` (butuh env secret baru → diskusi dulu).
+
+- [ ] **Model reasoning OpenAI menolak `max_tokens`** (terverifikasi 2026-11-13)
+  - Lokasi: `src/lib/jenna/provider/openai-compatible.ts:54` mengirim `max_tokens`. Model o1/gpt-5 di API OpenAI mewajibkan `max_completion_tokens` dan menolak `max_tokens`.
+  - Dampak: memilih model itu di `/dev/jenna/provider` membuat setiap giliran gagal `provider_error`.
+  - Usul: kirim `max_completion_tokens` untuk model reasoning (deteksi nama model atau opsi di setelan provider), tetap `max_tokens` untuk server OpenAI-compatible lain.
 
 ## Isi data (urusan admin konten, bukan kode)
 

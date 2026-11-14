@@ -189,6 +189,10 @@ Gaya apple.com. File: `_com/NavbarMobile.tsx` + `_com/navbar-mobile.module.css` 
 - **Drill-down**: awalnya hanya menu utama (24px/600 + chevron). Tap menu → submenu masuk dari kanan dengan tombol "Kembali"; kembali → menu utama masuk dari kiri. Reveal bertahap 25ms per baris.
 - **Tutup**: burger, Escape, klik link, atau route berganti. Panel `inert` saat tertutup.
 
+### Elemen melayang kanan bawah
+
+Tombol scroll-to-top (`_com/scrollToTopButton.tsx`) di `bottom: 24px; right: 24px`. FAB Jenna 56px (`_com/jenna/jenna.module.css`) di atasnya pada `bottom: 92px`, naik ke `120px` di mobile (< 48em) selama pemutar musik punya lagu (`currentSong`), karena bar pemutar mobile lebih tinggi. FAB disembunyikan saat panel Jenna terbuka atau panel navbar mobile terbuka (`stateNav.mobileOpen`). Panel Jenna desktop 380px di `bottom: 24px` (88px bila ada lagu); mobile memakai Drawer layar penuh. Widget tidak dirender sama sekali bila `/api/jenna/status` mengembalikan `enabled: false`. Keputusan Jenna: `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
 ### Hero Beranda (Landing)
 
 Layar pertama beranda: menjawab "ini situs siapa" sebelum yang lain. Folder: `_com/main-page/landing-page/` — `index.tsx` (section), `HeroInfo.tsx` (status kantor + media sosial), `HeroProfile.tsx` (foto + kartu nama Perbekel), `HeroPrograms.tsx` (rel program inovasi) + `use-rail-scroll.ts` (hook geser) + `rail.logic.ts` (helper murni) + `programs.module.css`, `HeroRibbons.tsx` (pita latar) + `ribbons.logic.ts` (geometri), `use-landing-data.ts` (hook), `landing.logic.ts` (jam kerja, helper murni), `landing.text.ts`, `landing.module.css`. Test: `__tests__/api/landing_hero_ui.test.tsx`.

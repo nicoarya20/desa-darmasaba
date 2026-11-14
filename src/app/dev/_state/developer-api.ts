@@ -17,7 +17,7 @@ const STATUS_MESSAGES: Record<number, string> = {
 /** fetch JSON ke endpoint developer; kembalikan `data` atau lempar DeveloperApiError. */
 export async function developerRequest<T>(
   path: string,
-  init?: { method?: "GET" | "PUT" | "POST"; body?: unknown },
+  init?: { method?: "GET" | "PUT" | "POST" | "DELETE"; body?: unknown },
 ): Promise<T> {
   let res: Response;
   try {

@@ -1,6 +1,7 @@
 import {
   IconGauge,
   IconHourglass,
+  IconMessages,
   IconPlugConnected,
   IconRobot,
   IconSettings,
@@ -21,6 +22,7 @@ export const DEV_NAV: readonly DevNavEntry[] = [
     children: [
       { label: 'Umum', href: '/dev/jenna', icon: IconSettings, exact: true },
       { label: 'Batas Pemakaian', href: '/dev/jenna/batas', icon: IconHourglass },
+      { label: 'Percakapan', href: '/dev/jenna/percakapan', icon: IconMessages },
       { label: 'Provider', href: '/dev/jenna/provider', icon: IconPlugConnected },
     ],
   },
