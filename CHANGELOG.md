@@ -7,12 +7,14 @@
 - Halaman **Jelajahi** untuk mencari lagu menurut judul, artis, atau genre, dan menyaring menurut genre atau artis. Kolom cari ada di atas setiap halaman musik, dan pilihan saringan tersimpan di alamat halaman.
 - Halaman **Playlist** sudah tersedia. Playlist nantinya disusun oleh admin desa (pengunjung tidak membuat playlist sendiri); sampai fitur admin-nya siap, halaman ini menampilkan "Belum ada playlist".
 - **Panel Antrean** di kanan menampilkan lagu yang sedang diputar dan lagu berikutnya, serta tab **Baru diputar** berisi lagu yang terakhir Anda putar di perangkat ini. Panel bisa ditutup dan dibuka lagi dari tombol Antrean di bar pemutar; di layar kecil panel muncul dari samping atau dari bawah.
-- **Bar pemutar baru** di bawah halaman musik dengan latar sampul lagu yang diburamkan: acak, sebelumnya, putar/jeda, berikutnya, ulang, posisi lagu, dan volume. Di halaman musik bar ini menggantikan pemutar lama; di halaman lain pemutar tidak berubah.
+- **Bar pemutar baru** di bawah halaman musik dengan latar sampul lagu yang diburamkan: acak, sebelumnya, putar/jeda, berikutnya, ulang, posisi lagu, dan volume. Bar baru muncul setelah Anda memutar lagu, lalu tetap tampil walau lagu dijeda. Di halaman musik bar ini menggantikan pemutar lama; di halaman lain pemutar tidak berubah.
+- Halaman musik kini tampil selayar penuh tanpa footer situs, supaya terasa seperti aplikasi pemutar musik. Footer di halaman lain tidak berubah.
 
 ### Fixed
 - Mode acak kini benar-benar mengacak urutan lagu sekali, sehingga daftar "Berikutnya" sesuai dengan lagu yang akan diputar.
 - Tombol lagu berikutnya dan sebelumnya melewati lagu yang audionya belum tersedia, alih-alih berhenti di lagu tersebut.
 - Menggeser volume setelah suara dibisukan kini benar-benar membunyikan lagu kembali.
+- Teks abu-abu di halaman musik (durasi, nama artis, judul kolom tabel, lagu yang audionya belum tersedia) kini cukup gelap untuk mudah dibaca di latar terang.
 
 ## [0.1.272] - 2026-11-14
 ### Changed
