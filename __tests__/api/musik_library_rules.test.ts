@@ -144,6 +144,18 @@ describe('CSS pustaka: target sentuh ≤734px', () => {
     }
   });
 
+  it('chip kata kunci panjang: chip maks 100% lebar, label elipsis satu baris, ikon × tidak menyusut', () => {
+    const src = css('jelajahi.module.css');
+    expect(rule(src, '.chips')).toMatch(/max-width:\s*100%/);
+    const chipBodies = [...src.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter((m) => m[1].trim() === '.chip').map((m) => m[2]);
+    expect(chipBodies.join('')).toMatch(/max-width:\s*100%/);
+    const label = rule(src, '.chipLabel');
+    expect(label).toMatch(/text-overflow:\s*ellipsis/);
+    expect(label).toMatch(/white-space:\s*nowrap/);
+    expect(label).toMatch(/min-width:\s*0/);
+    expect(rule(src, '.chip > svg')).toMatch(/flex:\s*none/);
+  });
+
   it('pil genre 36px: ruang atas baris pil cukup untuk perluasan (44 − 36) / 2 tanpa terpotong overflow', () => {
     const src = css('jelajahi.module.css');
     const pill = px(rule(src, '.pill'), 'height');

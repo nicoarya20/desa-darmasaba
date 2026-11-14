@@ -78,6 +78,8 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .chip {
@@ -93,6 +95,23 @@
   font: inherit;
   font-size: 14px;
   cursor: pointer;
+}
+
+/* Kata kunci panjang tidak melebarkan halaman: chip maks selebar kolom, teks terpotong elipsis
+   (nama lengkap tetap di aria-label chip). */
+.chip {
+  max-width: 100%;
+}
+
+.chipLabel {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chip > svg {
+  flex: none;
 }
 
 .clear {

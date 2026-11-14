@@ -30,7 +30,7 @@ export function JelajahiResultHead({ count, filter, update }: Props) {
               aria-label={T.hapusChip(chip.label)}
               onClick={() => update(chip.clear)}
             >
-              {chip.label}
+              <span className={s.chipLabel}>{chip.label}</span>
               <IconX size={14} aria-hidden="true" />
             </button>
           ))}
