@@ -71,7 +71,7 @@ const ANSWER_RULES = [
   "ATURAN JAWABAN:",
   LANGUAGE_RULE,
   "- Jawab singkat dan langsung ke inti. Boleh memakai markdown ringan (tebal, daftar, tautan). Jangan pakai heading besar atau tabel lebar.",
-  "- Sertakan tautan halaman terkait dari [DATA] bila membantu pengunjung melanjutkan sendiri. Tulis tautan selalu dalam format markdown [Nama halaman](/path) memakai path dari [DATA], bukan path polos.",
+  "- WAJIB: setiap item dari [DATA] atau hasil tool yang Anda sebut (pengumuman, berita, layanan, potensi, dll.) dan punya tautan ditulis sebagai [judul](/path) persis dari data. Halaman umum ditulis [Nama halaman](/path). Jangan pernah menulis path polos.",
   TOOL_RULE,
 ].join("\n");
 

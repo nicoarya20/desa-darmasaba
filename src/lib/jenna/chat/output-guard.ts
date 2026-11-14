@@ -1,6 +1,7 @@
 // Penjaga jawaban akhir Jenna sebelum dikirim/disimpan: buang sisa pembungkus tool & HTML mentah, hanya
 // tautan allowlist yang tetap jadi tautan (path internal polos / kode inline berisi satu path ikut dijadikan
-// tautan berlabel judul dari data), dan PII disamarkan kecuali nilainya tercantum di data publik.
+// tautan berlabel judul dari data), dan PII disamarkan kecuali nilainya tercantum di data publik. Judul data
+// yang disebut tanpa tautan ikut masuk daftar sumber (teks jawaban tidak diubah).
 import type { JennaSource } from "../chat-types";
 import { clipText } from "../knowledge/html";
 import { isAllowedJennaHref } from "../knowledge/sitemap";
@@ -161,7 +162,48 @@ export function guardOutput(
   out = maskPii(out, keep)
     .replace(SLOT_REF, (_m, index: string) => kept[Number(index)] ?? "")
     .trim();
+  for (const href of mentionedTitleHrefs(out, titles, routes)) addSource(titles.get(href) ?? href, encodeURI(href));
   return { text: out, sources };
+}
+
+const MENTION_MIN_CHARS = 15;
+const TITLE_ELLIPSIS = /(?:…|\.{3})$/;
+const WORD_CHAR = /[\p{L}\p{N}]/u;
+
+function normalizeMention(text: string): string {
+  return text.toLowerCase().replace(/[*_`]/g, "").replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Href (kunci peta `titles`) yang judulnya disebut utuh di jawaban, urut kemunculan pertama. Judul pendek /
+ * satu kata diabaikan; sebutan yang berada di dalam sebutan judul lain yang lebih panjang tidak dihitung.
+ */
+function mentionedTitleHrefs(text: string, titles: ReadonlyMap<string, string>, routes: ReadonlySet<string>): string[] {
+  if (titles.size === 0) return [];
+  const haystack = normalizeMention(text);
+  const candidates: { href: string; needle: string; clipped: boolean }[] = [];
+  for (const [href, title] of titles) {
+    const clipped = TITLE_ELLIPSIS.test(title.trim());
+    const needle = normalizeMention(title.trim().replace(TITLE_ELLIPSIS, ""));
+    if (needle.length < MENTION_MIN_CHARS || !needle.includes(" ") || !haystack.includes(needle)) continue;
+    if (isAllowedJennaHref(href, routes)) candidates.push({ href, needle, clipped });
+  }
+  candidates.sort((a, b) => b.needle.length - a.needle.length);
+
+  const covered: [number, number][] = [];
+  const found: { href: string; at: number }[] = [];
+  for (const { href, needle, clipped } of candidates) {
+    const spans: [number, number][] = [];
+    for (let at = haystack.indexOf(needle); at !== -1; at = haystack.indexOf(needle, at + 1)) {
+      const end = at + needle.length;
+      if (WORD_CHAR.test(haystack[at - 1] ?? "") || (!clipped && WORD_CHAR.test(haystack[end] ?? ""))) continue;
+      if (!covered.some(([s, e]) => s <= at && end <= e)) spans.push([at, end]);
+    }
+    if (spans.length === 0) continue;
+    covered.push(...spans);
+    found.push({ href, at: spans[0][0] });
+  }
+  return found.sort((a, b) => a.at - b.at).map((f) => f.href);
 }
 
 /** Buffer tanpa batas kalimat/baris yang melewati ukuran ini tetap di-flush (dipotong di spasi aman). */

@@ -37,6 +37,14 @@ describe("buildSystemPrompt", () => {
     expect(buildSystemPrompt({ ...base, modality: "voice" })).not.toContain("[Nama halaman](/path)");
   });
 
+  it("mode teks mewajibkan tautan [judul](/path) untuk item data yang disebut; mode suara tidak", () => {
+    expect(buildSystemPrompt(base)).toContain("WAJIB: setiap item dari [DATA] atau hasil tool");
+    expect(buildSystemPrompt(base)).toContain("[judul](/path) persis dari data");
+    const voice = buildSystemPrompt({ ...base, modality: "voice" });
+    expect(voice).not.toContain("[judul](/path)");
+    expect(voice).toContain("Jangan pakai markdown, daftar, tabel, tautan, atau simbol.");
+  });
+
   it("guardrail paling awal, aturan jawaban setelah data", () => {
     const prompt = buildSystemPrompt(base);
     expect(prompt.startsWith("ATURAN TETAP")).toBe(true);

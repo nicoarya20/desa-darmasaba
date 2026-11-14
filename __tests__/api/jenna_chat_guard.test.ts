@@ -317,6 +317,111 @@ describe("judul tautan dari data", () => {
   });
 });
 
+describe("sumber dari judul data yang disebut tanpa tautan", () => {
+  const routes = new Set(["/", "/pemerintahan/pengumuman", "/profil"]);
+  const LELANG = "/pemerintahan/pengumuman/Pembangunan/lelang1";
+  const LELANG_2024 = "/pemerintahan/pengumuman/Pembangunan/lelang2";
+  const RAPAT = "/pemerintahan/pengumuman/Umum/rapat";
+  const LONG = "/pemerintahan/pengumuman/Umum/panjang";
+  const longTitle = `Sosialisasi Program Ketahanan Pangan ${"Masyarakat ".repeat(12)}`.trim();
+  const clippedTitle = `${longTitle.slice(0, 80)}…`;
+  const titles = new Map([
+    ["/pemerintahan/pengumuman", "Pengumuman"],
+    ["/profil", "Profil Desa"],
+    ["/pemerintahan/pengumuman/Umum/tunggal", "Pemberitahuanpenting"],
+    [LELANG, "Pengumuman Lelang Penataan Landscape Lapangan Desa"],
+    [LELANG_2024, "Pengumuman Lelang Penataan Landscape Lapangan Desa Darmasaba Tahun Anggaran 2024"],
+    [RAPAT, "Rapat Koordinasi Kader Posyandu"],
+    [LONG, clippedTitle],
+    ["/admin/rahasia/x", "Dokumen Internal Rapat Perangkat"],
+  ]);
+  const guard = (text: string, opts = {}) => guardOutput(text, routes, new Set(), { titles, ...opts });
+
+  it("judul tebal tanpa tautan → sumber berisi judul & href dari peta; teks tidak berubah", () => {
+    const text = "Berikut pengumuman terbaru:\n1. **Rapat Koordinasi Kader Posyandu** — 10 Nov\n2. **Pengumuman Lelang Penataan Landscape Lapangan Desa** — 9 Nov";
+    const out = guard(text);
+    expect(out.text).toBe(text);
+    expect(out.sources).toEqual([
+      { title: "Rapat Koordinasi Kader Posyandu", url: RAPAT },
+      { title: "Pengumuman Lelang Penataan Landscape Lapangan Desa", url: LELANG },
+    ]);
+  });
+
+  it("cocok tanpa peduli huruf besar, spasi ganda, dan penanda markdown di dalam judul", () => {
+    expect(guard("Ada *rapat   koordinasi* _kader_ `posyandu` besok.").sources).toEqual([
+      { title: "Rapat Koordinasi Kader Posyandu", url: RAPAT },
+    ]);
+  });
+
+  it("nama menu pendek / judul satu kata tidak memicu", () => {
+    expect(guard("Buka menu Pengumuman atau Profil Desa. Pemberitahuanpenting ada di sana.").sources).toEqual([]);
+  });
+
+  it("judul sebagai potongan kata tidak memicu", () => {
+    expect(guard("Xrapat koordinasi kader posyandu").sources).toEqual([]);
+    expect(guard("Rapat Koordinasi Kader Posyandunya").sources).toEqual([]);
+  });
+
+  it("judul terpotong (…) tetap cocok dengan judul lengkap di jawaban", () => {
+    expect(guard(`Info: ${longTitle}.`).sources).toEqual([{ title: clippedTitle, url: LONG }]);
+  });
+
+  it("judul bertumpuk → hanya yang terpanjang", () => {
+    const out = guard("Lihat **Pengumuman Lelang Penataan Landscape Lapangan Desa Darmasaba Tahun Anggaran 2024**.");
+    expect(out.sources.map((s) => s.url)).toEqual([LELANG_2024]);
+  });
+
+  it("judul pendek tetap ikut bila juga disebut di luar judul yang lebih panjang", () => {
+    const out = guard(
+      "1. Pengumuman Lelang Penataan Landscape Lapangan Desa Darmasaba Tahun Anggaran 2024\n2. Pengumuman Lelang Penataan Landscape Lapangan Desa",
+    );
+    expect(out.sources.map((s) => s.url)).toEqual([LELANG_2024, LELANG]);
+  });
+
+  it("tidak duplikat dengan tautan eksplisit; tautan eksplisit lebih dulu", () => {
+    const out = guard(`Rapat Koordinasi Kader Posyandu dan [Rapat Koordinasi Kader Posyandu](${RAPAT}) serta [Profil Desa](/profil).`);
+    expect(out.sources).toEqual([
+      { title: "Rapat Koordinasi Kader Posyandu", url: RAPAT },
+      { title: "Profil Desa", url: "/profil" },
+    ]);
+  });
+
+  it("href tak diizinkan tidak ikut", () => {
+    expect(guard("Ada Dokumen Internal Rapat Perangkat.").sources).toEqual([]);
+  });
+
+  it("href ber-spasi dari peta di-encode", () => {
+    const own = new Map([["/pemerintahan/pengumuman/Ekonomi & UMKM/a1", "Pelatihan Digital UMKM Desa"]]);
+    const out = guardOutput("Ikuti Pelatihan Digital UMKM Desa.", routes, new Set(), { titles: own });
+    expect(out.sources).toEqual([{ title: "Pelatihan Digital UMKM Desa", url: "/pemerintahan/pengumuman/Ekonomi%20&%20UMKM/a1" }]);
+  });
+
+  it("dibatasi MAX_SOURCES", () => {
+    const many = new Map(
+      Array.from({ length: MAX_SOURCES + 3 }, (_, i) => [`/pemerintahan/pengumuman/x/${i}`, `Pengumuman Kegiatan Nomor ${i} Desa`]),
+    );
+    const text = [...many.values()].join("\n");
+    const out = guardOutput(text, routes, new Set(), { titles: many });
+    expect(out.sources).toHaveLength(MAX_SOURCES);
+    expect(out.sources[0]).toEqual({ title: "Pengumuman Kegiatan Nomor 0 Desa", url: "/pemerintahan/pengumuman/x/0" });
+  });
+
+  it("giliran suara: sumber tetap terisi, teks tidak berubah", () => {
+    const text = "Ada rapat koordinasi kader posyandu minggu ini.";
+    const out = guard(text, { linkifyPaths: false });
+    expect(out.text).toBe(text);
+    expect(out.sources).toEqual([{ title: "Rapat Koordinasi Kader Posyandu", url: RAPAT }]);
+  });
+
+  it("delta guard: teks yang di-emit sama dengan teks akhir", () => {
+    const emitted: string[] = [];
+    const delta = createDeltaGuard({ routes, trustedPii: new Set(), emit: (t) => emitted.push(t), titles });
+    const text = "1. **Rapat Koordinasi Kader Posyandu**.\n2. Pengumuman Lelang Penataan Landscape Lapangan Desa.\n";
+    for (const part of [text.slice(0, 25), text.slice(25)]) delta.push(part);
+    expect(emitted.join("")).toBe(text);
+  });
+});
+
 describe("createDeltaGuard", () => {
   const routes = new Set(["/", "/profil"]);
   const run = (deltas: string[], trustedPii: ReadonlySet<string> = new Set(), linkifyPaths?: boolean) => {
