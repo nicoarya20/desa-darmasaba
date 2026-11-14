@@ -63,7 +63,7 @@ export function MusikTopbar() {
         <label htmlFor="musik-search" className={s.sr}>
           {T.searchLabel}
         </label>
-        <IconSearch size={20} stroke={1.8} className={s.searchIcon} aria-hidden />
+        <IconSearch size={18} stroke={1.75} className={s.searchIcon} aria-hidden />
         <input
           id="musik-search"
           type="search"
