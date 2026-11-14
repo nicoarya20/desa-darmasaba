@@ -227,6 +227,8 @@ export function useAudioEngine() {
     if (!audio) return;
     const normalizedVol = Math.max(0, Math.min(100, vol)) / 100;
     audio.volume = normalizedVol;
+    // toggleMute memasang audio.muted; tanpa ini menggeser volume setelah bisu tetap senyap walau UI "tidak bisu".
+    audio.muted = normalizedVol === 0;
     setVolumeState(Math.max(0, Math.min(100, vol)));
     setIsMuted(normalizedVol === 0);
   }, []);
