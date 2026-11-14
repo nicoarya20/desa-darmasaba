@@ -13,6 +13,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { sanitizeRichText } from '@/lib/rich-text';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import laporanPublikState from '../../../_state/keamanan/laporan-publik';
@@ -120,7 +121,7 @@ function DetailLaporanPublik() {
 
               <Box>
                 <Text fz="lg" fw="bold">Kronologi</Text>
-                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: data.kronologi || '' }} />
+                <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: sanitizeRichText(data.kronologi) }} />
               </Box>
 
               <Box>
@@ -131,7 +132,7 @@ function DetailLaporanPublik() {
                       <Text
                         fz="md"
                         c="dimmed"
-                        dangerouslySetInnerHTML={{ __html: item.deskripsi || '-' }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeRichText(item.deskripsi) || '-' }}
                         style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                       />
                     </Box>

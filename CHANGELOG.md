@@ -1,5 +1,89 @@
 # Changelog
 
+## [0.1.273] - 2026-11-14
+### Changed
+- **Info Sekolah: filter jenjang kini ada di dalam tabel.** Tombol jenjang (Semua/SMA/SMK/SMP/SD/TK/PAUD) di atas halaman dihapus. Di halaman Daftar Lembaga Pendidikan, Daftar Siswa, dan Daftar Pengajar kini ada pilihan **Jenjang** di sebelah kolom pencarian; memilihnya langsung menyaring tabel, bukan lagi memindahkan pengunjung ke halaman lain. Pilihan jenjang diurutkan dari usia termuda (TK, SD, SMP, SMA, lalu SMK) dan hanya menampilkan jenjang yang memang punya sekolah — jenjang tanpa lembaga seperti PAUD tidak ditawarkan. Jumlah hasil ditampilkan di atas tabel.
+- **Isi tabel Info Sekolah kini dikelompokkan per jenjang**: TK dulu, lalu SD, SMP, SMA, SMK; di dalam satu jenjang urut nama. Berlaku untuk Daftar Lembaga Pendidikan, Siswa, dan Pengajar, di situs publik maupun di admin (Pendidikan › Info Sekolah). Daftar Jenjang Pendidikan di admin juga kini urut PAUD, TK, SD, SMP, SMA, SMK.
+- **Admin: pilihan Lembaga di form tambah/edit Siswa dan Pengajar** kini dikelompokkan per jenjang (TK, SD, SMP, …) dan bisa dicari dengan mengetik.
+- Halaman ringkasan Info Sekolah kini selalu menampilkan total semua jenjang dan beralamat `/pendidikan/info-sekolah` (menu Pendidikan → Info Sekolah sudah diarahkan ke sana).
+- Alamat tabel menyimpan jenjang, kata kunci, dan halaman (mis. `/pendidikan/info-sekolah/lembaga?jenjang=sd`), jadi tautan yang dibagikan dan tombol kembali browser menampilkan hasil yang sama. Tautan lama (`/pendidikan/info-sekolah/semua/...`, `/pendidikan/info-sekolah/sd/lembaga`, dll.) otomatis dialihkan ke alamat baru.
+
+### Fixed
+- Pencarian daftar Jenjang Pendidikan lewat API selalu gagal ("Gagal mengambil data jenjang pendidikan"). Kini kata kunci dicocokkan ke nama jenjang maupun nama sekolah di jenjang itu (mis. "Darmasaba" → SD).
+- **Admin: form tambah/edit Siswa dan Pengajar hanya menampilkan 10 lembaga pertama**, sehingga siswa/pengajar tidak bisa dimasukkan ke lembaga lainnya. Kini semua lembaga bisa dipilih.
+- Mengetik di kolom pencarian atau mengganti jenjang saat berada di halaman 2 dan seterusnya kini kembali ke halaman 1, tidak lagi menampilkan tabel kosong.
+- Kolom pencarian tabel Info Sekolah tidak lagi kehilangan kursor setiap kali data dimuat.
+- Berpindah halaman tabel tidak lagi memuat data dua kali (sebelumnya sesaat menampilkan hasil tanpa filter pencarian).
+
+## [0.1.272] - 2026-11-14
+### Changed
+- **Halaman detail Lowongan Kerja dirombak** dengan gaya yang sama seperti daftar lowongan. Posisi, pemberi kerja, tipe pekerjaan, gaji per bulan, lokasi kerja (di dalam atau di luar desa), dan tanggal tayang tampil di bagian atas, diikuti Deskripsi pekerjaan, Kualifikasi, dan Tempat kerja dengan tautan ke Google Maps.
+- Pelamar bisa langsung menghubungi pemberi kerja lewat tombol **WhatsApp** atau **Telepon** di bagian atas dan bawah halaman. Saat halaman digulir, tombol yang sama tampil di bilah kecil di bawah layar. Nomor telepon rumah atau kantor hanya mendapat tombol Telepon; lowongan tanpa nomor menampilkan "Kontak belum dicantumkan".
+
+### Fixed
+- Gaji di halaman detail tidak lagi tertulis "RpNaN". Gaji yang tidak bisa dibaca dengan pasti tampil sebagai "Gaji tidak dicantumkan".
+- **Keamanan:** isi deskripsi dan kualifikasi lowongan kini dibersihkan sebelum ditampilkan, jadi kode berbahaya yang tersisip di teks lowongan tidak ikut berjalan.
+- Lowongan yang sudah dinonaktifkan atau dihapus admin tidak lagi bisa dibuka lewat alamatnya; halaman menampilkan "Lowongan tidak ditemukan".
+- Tombol WhatsApp hanya muncul untuk nomor seluler, sehingga tidak lagi membuka percakapan ke nomor yang salah.
+
+## [0.1.271] - 2026-11-14
+### Changed
+- **Halaman Lowongan Kerja Lokal dirombak.** Panel **Filter** kini ada di kiri dan daftar lowongan di kanan. Lowongan bisa disaring menurut tipe pekerjaan, lokasi kerja (di dalam atau di luar desa), gaji minimal per bulan, dan waktu tayang, serta diurutkan dari yang terbaru, gaji tertinggi, atau gaji terendah. Filter yang sedang dipakai tampil di kotak "Pilihan Anda" dan bisa dilepas satu per satu atau sekaligus.
+- Tiap lowongan tampil sebagai kartu lebar berisi posisi, pemberi kerja, ringkasan pekerjaan, tipe, gaji per bulan, lokasi, dan tanggal tayang. Seluruh kartu bisa diklik untuk membuka detail.
+- Lokasi kerja ditentukan dari alamat lowongan: alamat yang menyebut "Darmasaba" dihitung di dalam desa. Admin sebaiknya menulis nama desa di kolom lokasi supaya lowongan masuk kelompok yang benar.
+- Di ponsel, filter dibuka lewat tombol **Filter** yang memunculkan panel dari bawah.
+- Pilihan filter dan kata kunci tersimpan di alamat halaman, jadi hasil saringan bisa dibagikan atau dibuka ulang.
+
+### Fixed
+- Tipe pekerjaan di kartu kini mengikuti data. Sebelumnya semua lowongan tertulis "Full Time", termasuk yang Freelance.
+- Gaji yang ditulis tanpa titik pemisah ribuan tetap tampil rapi (mis. Rp2.000.000). Gaji yang tidak bisa dibaca dengan pasti tampil sebagai "Gaji tidak dicantumkan".
+
+## [0.1.270] - 2026-11-14
+### Added
+- **Laporan Publik kini diverifikasi admin sebelum tampil.** Laporan yang dikirim warga lewat form di halaman Laporan Keamanan Lingkungan tidak lagi langsung muncul di situs: laporan masuk dengan status **Baru** dan baru tampil di daftar, halaman detail, dan pencarian setelah admin menyetujuinya. Pelapor mendapat pesan "Laporan terkirim. Akan tampil setelah diverifikasi admin desa."
+- **Cara menyetujui (admin):** laporan yang menunggu tampil di menu Keamanan → Laporan Publik dengan status **Baru**. Buka Edit, ubah status menjadi Proses (atau Selesai/Gagal), lalu simpan. Mengembalikan status ke "Baru" menyembunyikan laporan itu lagi dari publik. Laporan yang dibuat admin dari halaman admin tetap langsung tampil.
+- **Batas kiriman:** satu alamat hanya bisa mengirim 5 laporan dalam 10 menit; lebih dari itu diminta menunggu. Ini mencegah form dibanjiri kiriman.
+
+### Changed
+- Laporan yang sudah ada sebelum versi ini tidak berubah dan tetap tampil.
+
+## [0.1.269] - 2026-11-13
+### Fixed
+- **Keamanan: isi Laporan Publik kini dibersihkan sejak disimpan.** Kronologi dari form publik serta kronologi dan penanganan yang diedit admin hanya disimpan dengan format teks dasar (paragraf, tebal, miring, garis bawah, daftar). Skrip dan kode berbahaya dibuang sebelum masuk database, jadi tetap aman walaupun kelak ada tampilan baru yang lupa menyaringnya. Laporan yang sudah ada tidak diubah. Tautan, judul, sorotan, dan perataan teks yang sebelumnya memang tidak ditampilkan kini juga tidak lagi tersimpan; teksnya tetap utuh.
+
+## [0.1.268] - 2026-11-13
+### Fixed
+- **Keamanan: halaman detail Laporan Publik di admin kini aman dibuka.** Sebelumnya, laporan yang dikirim warga lewat form publik bisa disisipi kode berbahaya yang ikut berjalan saat admin membuka detailnya. Isi kronologi dan penanganan sekarang dibersihkan dulu sebelum ditampilkan. Format teks dasar (paragraf, tebal, miring, garis bawah, daftar) tetap tampil, sedangkan skrip, tautan, gambar, dan atribut lain dibuang, sama seperti di halaman publik. Pengecekan laporan yang sudah tersimpan (lokal & stg) tidak menemukan kiriman berbahaya.
+- Form tambah laporan publik di admin tidak lagi mencetak isi laporan ke console browser.
+
+## [0.1.267] - 2026-11-13
+### Changed
+- **Halaman detail toko UMKM dirombak** agar seragam dengan katalog dan detail produk. Bagian atas menampilkan foto toko (atau inisial nama toko bila belum ada foto), kategori usaha, nama toko, pemilik, alamat, jumlah produk, deskripsi, dan tombol **Hubungi Penjual (WhatsApp)** dengan pesan pembuka tentang toko tersebut.
+- Produk toko tampil dengan kartu yang sama seperti di katalog dan bisa diurutkan (terbaru, harga terendah, harga tertinggi, nama). Status stok tidak lagi ditampilkan.
+- Tombol kembali kini membuka katalog langsung di tab Toko.
+
+### Fixed
+- Deskripsi toko tidak lagi menampilkan kode HTML mentah dari editor admin.
+- Toko yang sudah dihapus atau dinonaktifkan menampilkan "Toko tidak ditemukan", produk yang dinonaktifkan tidak ikut tampil, dan bila gagal memuat ada tombol "Coba lagi" (sebelumnya kerangka memuat tampil terus).
+
+## [0.1.266] - 2026-11-13
+### Changed
+- **Halaman detail produk UMKM dirombak.** Foto produk tampil di kiri dengan ukuran pas, dan di sampingnya ada nama toko, kategori, nama produk, harga per satuan, serta tombol besar **Hubungi Penjual (WhatsApp)** yang langsung membuka chat dengan pesan berisi nama produk. Kolom ini ikut menempel saat halaman di-scroll di komputer.
+- Panel baru **Cara memesan** menjelaskan alurnya: hubungi penjual lewat WhatsApp, sepakati jumlah dan cara terima (ambil sendiri atau diantar), lalu bayar langsung ke penjual. Panel **Penjual** menampilkan nama UMKM, pemilik, alamat, dan tautan ke semua produk toko tersebut.
+- Deskripsi produk tampil di bawah foto. Stok tidak lagi ditampilkan.
+- Bagian **Ulasan** baru (nilai rata-rata, jumlah ulasan, dan sebaran bintang 5 sampai 1). Untuk sementara masih kosong dan tombol "Tulis ulasan" belum aktif, sampai sistem ulasan tersedia.
+- Bagian **Produk serupa** di bawah ulasan: deretan produk dengan kategori sama atau dari toko yang sama, bisa digeser.
+- Produk yang sudah dihapus atau dinonaktifkan kini menampilkan "Produk tidak ditemukan", dan bila gagal memuat ada tombol "Coba lagi" (sebelumnya halaman terus menampilkan kerangka memuat).
+
+## [0.1.265] - 2026-11-13
+### Changed
+- **Halaman UMKM & Produk Desa dirombak menjadi katalog.** Produk kini tampil dalam grid kartu yang bersih: foto persegi, harga, nama produk, dan nama UMKM penjualnya. Produk unggulan diberi label "Unggulan" di pojok foto. Status stok tidak lagi ditampilkan, karena pemesanan dilakukan lewat WhatsApp penjual. Seluruh kartu bisa diklik untuk membuka detail produk.
+- Di sebelah kiri ada panel **Filter**: pilih satu atau beberapa kategori dan toko (lengkap dengan jumlah produknya), atur rentang harga, atau tampilkan hanya produk unggulan. Hasil bisa diurutkan dari yang terbaru, harga terendah, harga tertinggi, atau nama. Filter yang aktif tampil sebagai chip yang bisa dihapus satu per satu atau sekaligus.
+- Tab **Produk** dan **Toko** menggantikan tab "Katalog Produk" dan "Direktori Bisnis". Tab Toko menampilkan kartu UMKM dengan kategori usaha, pemilik, alamat, dan jumlah produknya, serta bisa difilter per kategori usaha.
+- Pencarian, tab, dan filter tersimpan di alamat halaman, sehingga hasilnya bisa dibagikan dan tombol Kembali di browser tetap bekerja.
+- Di ponsel, produk tampil 2 kolom dan filter dibuka lewat tombol "Filter" yang memunculkan panel dari bawah.
+- Kartu produk menyiapkan tempat untuk rating dengan keterangan "Belum ada ulasan", sampai sistem ulasan tersedia.
+
 ## [0.1.264] - 2026-11-13
 ### Added
 - **Section baru "Layanan Masyarakat" di beranda**, tepat di bawah Indeks Kepuasan Masyarakat. Empat layanan yang sebelumnya hanya ada di footer (Administrasi Kependudukan, Layanan Sosial, Pengaduan Masyarakat, Informasi Publik) kini tampil sebagai kartu dengan penjelasan singkat dan tombol aksi, jadi warga tidak perlu scroll sampai footer. Kartu Pengaduan Masyarakat membuka form pengaduan yang sama dengan footer.

@@ -28,6 +28,7 @@ const LaporanPublik = new Elysia({
         t.Literal("Selesai"),
         t.Literal("Proses"),
         t.Literal("Gagal"),
+        t.Literal("Baru"), // menunggu verifikasi (lihat moderasi.ts)
       ]),
       penanganan: t.String(), // 🛠️ ARRAY of strings
       kronologi: t.Optional(t.String()),

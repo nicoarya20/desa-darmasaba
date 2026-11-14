@@ -1,0 +1,50 @@
+/*
+ * Daftar produk di detail toko UMKM: kepala baris (judul, jumlah, Urutkan) + grid kartu katalog.
+ * Token warna diwarisi dari akar halaman detail toko. Breakpoint apple.com: ≤734px (mobile).
+ */
+.section {
+  margin-top: 48px;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 28px;
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.urut {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---------- Mobile: Urutkan turun ke baris bawah ---------- */
+@media (max-width: 734px) {
+  .urut {
+    width: 100%;
+  }
+}

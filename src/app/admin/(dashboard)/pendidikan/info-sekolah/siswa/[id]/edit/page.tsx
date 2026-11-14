@@ -20,6 +20,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { lembagaSelectData, loadLembagaOptions } from '../../../_lib/lembaga-options';
 
 interface FormSiswa {
   nama: string;
@@ -77,7 +78,7 @@ function EditSiswa() {
       }
     };
 
-    infoSekolahPaud.lembagaPendidikan.findMany.load();
+    void loadLembagaOptions();
     loadSiswa();
   }, [params?.id]);
 
@@ -150,12 +151,8 @@ function EditSiswa() {
           <Select
             label={<Text fz="sm" fw="bold">Lembaga Pendidikan</Text>}
             placeholder="Pilih lembaga pendidikan"
-            data={
-              lembagaState.findMany.data?.map((k) => ({
-                value: k.id,
-                label: k.nama,
-              })) ?? []
-            }
+            data={lembagaSelectData(lembagaState.findMany.data)}
+            searchable
             value={formData.lembagaId}
             onChange={(val) => handleChange('lembagaId', val ?? '')}
             required
