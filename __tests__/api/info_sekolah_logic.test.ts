@@ -46,10 +46,26 @@ describe('jenjangOptions', () => {
       { value: 'sd', label: 'SD' },
       { value: 'xyz', label: 'xyz' },
     ]);
+    expect(jenjangOptions(['SMA'], 'tk').map((o) => o.value)).toEqual(['tk', 'sma']);
   });
 
   it('jenjang aktif yang sudah ada tidak diduplikasi (beda kapitalisasi)', () => {
     expect(jenjangOptions(['SD', 'SMP'], 'Sd')).toHaveLength(2);
+  });
+
+  it('diurutkan PAUD, TK, SD, SMP, SMA, SMK — bukan urutan nama dari API', () => {
+    const fromApi = ['SMA', 'SMK', 'SMP', 'SD', 'TK', 'PAUD']; // urutan yang tampil sebelumnya
+    expect(jenjangOptions(fromApi, '').map((o) => o.label)).toEqual(['PAUD', 'TK', 'SD', 'SMP', 'SMA', 'SMK']);
+  });
+
+  it('tanpa SMK pun urutan tetap benar; jenjang di luar daftar baku di belakang, A–Z', () => {
+    expect(jenjangOptions(['SMA', 'Kursus', 'SD', 'Akademi', 'TK'], '').map((o) => o.label)).toEqual([
+      'TK',
+      'SD',
+      'SMA',
+      'Akademi',
+      'Kursus',
+    ]);
   });
 });
 
