@@ -4,8 +4,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 /** Kunci localStorage preferensi panel Antrean (terbuka/tertutup). */
 export const QUEUE_OPEN_STORAGE_KEY = 'musik-desa:queue-open';
-/** Lebar minimal (px) tempat panel Antrean terbuka bawaan sebagai kolom kanan. */
-export const QUEUE_OPEN_DEFAULT_MIN_WIDTH = 1280;
+/** Media query tempat panel Antrean tampil sebagai kolom kanan (bukan Drawer). */
+export const QUEUE_COLUMN_QUERY = '(min-width: 1280px)';
 
 type MusikUiValue = {
   queueOpen: boolean;
@@ -33,7 +33,19 @@ function readStoredQueueOpen(): boolean | null {
   }
 }
 
+const isColumnViewport = () => window.matchMedia(QUEUE_COLUMN_QUERY).matches;
+
+/**
+ * Status awal setelah mount. Di bawah 1280px antrean berupa Drawer yang menutupi konten, jadi selalu
+ * mulai tertutup; preferensi tersimpan (bawaan terbuka) hanya berlaku untuk kolom kanan.
+ */
+export function initialQueueOpen(isColumn: boolean, stored: boolean | null): boolean {
+  return isColumn && (stored ?? true);
+}
+
 function writeStoredQueueOpen(open: boolean) {
+  // Buka/tutup Drawer di layar sempit tidak boleh menimpa preferensi kolom desktop.
+  if (!isColumnViewport()) return;
   try {
     window.localStorage.setItem(QUEUE_OPEN_STORAGE_KEY, open ? '1' : '0');
   } catch (error) {
@@ -47,8 +59,7 @@ export function MusikUiProvider({ children }: { children: ReactNode }) {
   const [queueOpen, setQueueOpen] = useState(false);
 
   useEffect(() => {
-    const stored = readStoredQueueOpen();
-    setQueueOpen(stored ?? window.innerWidth >= QUEUE_OPEN_DEFAULT_MIN_WIDTH);
+    setQueueOpen(initialQueueOpen(isColumnViewport(), readStoredQueueOpen()));
   }, []);
 
   const toggleQueue = useCallback(() => {
