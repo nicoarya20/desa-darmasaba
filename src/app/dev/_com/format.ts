@@ -13,3 +13,12 @@ const numberFormat = new Intl.NumberFormat('id-ID');
 export function formatNumber(value: number): string {
   return numberFormat.format(value);
 }
+
+const secondsFormat = new Intl.NumberFormat('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+/** Milidetik → "1,8 dtk"; di bawah satu detik tetap milidetik ("850 ms"); "—" bila tidak tercatat. */
+export function formatLatency(ms: number | null): string {
+  if (ms === null) return '—';
+  if (ms < 1000) return `${formatNumber(Math.round(ms))} ms`;
+  return `${secondsFormat.format(ms / 1000)} dtk`;
+}

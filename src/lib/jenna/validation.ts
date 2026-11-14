@@ -8,7 +8,10 @@ import {
   type JennaProviderUpdateInput,
   type JennaSettingsUpdateInput,
   type JennaSlot,
+  type JennaVoiceProviderUpdateInput,
 } from "./types";
+import { JENNA_CONVERSATION_PAGE } from "./admin-types";
+import { JENNA_ERROR_LOG_DAYS, JENNA_ERROR_LOG_PAGE, type JennaErrorLogDays } from "./usage-types";
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -60,7 +63,16 @@ const INT_FIELDS = [
   ["dailyMessagesUser", "Kuota pesan harian per user"],
   ["dailyTokensGlobal", "Kuota token harian global"],
   ["retentionDays", "Retensi (hari)"],
+  ["voiceDailyMinutesUser", "Menit suara harian per pengunjung"],
+  ["voiceDailyMinutesGlobal", "Menit suara harian global"],
+  ["voiceSessionMaxMinutes", "Durasi maksimum sesi suara (menit)"],
+  ["voiceIdleOffSeconds", "Tutup otomatis saat diam (detik)"],
 ] as const;
+
+export const VOICE_NAME_PATTERN = /^[A-Za-z0-9._-]{1,60}$/;
+export const VOICE_MODEL_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
+export const VOICE_NAME_ERROR = `Nama suara hanya boleh huruf, angka, titik, garis bawah, atau tanda hubung (maks. ${JENNA_SETTINGS_LIMITS.voiceName.maxLength} karakter).`;
+export const VOICE_MODEL_ERROR = "Model suara tidak valid.";
 
 function checkInt(value: unknown, label: string, min: number, max: number): string | null {
   if (typeof value !== "number" || !Number.isInteger(value)) return `${label} harus bilangan bulat.`;
@@ -104,6 +116,17 @@ export function validateSettingsInput(input: JennaSettingsUpdateInput): Validati
       return { ok: false, error: `Protokol chat harus salah satu dari: ${JENNA_CHAT_PROTOCOLS.join(", ")}.` };
     }
     out.chatProtocol = input.chatProtocol;
+  }
+  if (input.voiceEnabled !== undefined) {
+    if (typeof input.voiceEnabled !== "boolean") return { ok: false, error: "Status suara harus boolean." };
+    out.voiceEnabled = input.voiceEnabled;
+  }
+  if (input.voiceName !== undefined) {
+    const voiceName = String(input.voiceName).trim();
+    if (voiceName !== "" && !VOICE_NAME_PATTERN.test(voiceName)) {
+      return { ok: false, error: VOICE_NAME_ERROR };
+    }
+    out.voiceName = voiceName;
   }
 
   if (Object.keys(out).length === 0) return { ok: false, error: "Tidak ada perubahan setelan yang dikirim." };
@@ -154,19 +177,129 @@ export function validateProviderInput(
     maxTokens = input.maxTokens;
   }
 
-  const timeoutMs = input.timeoutMs ?? 30000;
-  const tl = JENNA_PROVIDER_LIMITS.timeoutMs;
-  const timeoutError = checkInt(timeoutMs, "Timeout (ms)", tl.min, tl.max);
-  if (timeoutError) return { ok: false, error: timeoutError };
+  const timeoutMs = validateTimeoutMs(input.timeoutMs);
+  if (!timeoutMs.ok) return timeoutMs;
+  const apiKey = validateApiKey(input.apiKey);
+  if (!apiKey.ok) return apiKey;
 
-  const apiKey = (input.apiKey ?? "").trim();
+  return {
+    ok: true,
+    value: { baseUrl: baseUrl.value, model, temperature, maxTokens, timeoutMs: timeoutMs.value, apiKey: apiKey.value },
+  };
+}
+
+function validateTimeoutMs(raw: number | undefined): ValidationResult<number> {
+  const timeoutMs = raw ?? 30000;
+  const tl = JENNA_PROVIDER_LIMITS.timeoutMs;
+  const error = checkInt(timeoutMs, "Timeout (ms)", tl.min, tl.max);
+  return error ? { ok: false, error } : { ok: true, value: timeoutMs };
+}
+
+/** null = kosong/tidak dikirim (pertahankan kunci lama). */
+function validateApiKey(raw: string | undefined): ValidationResult<string | null> {
+  const apiKey = (raw ?? "").trim();
   if (apiKey.length > JENNA_PROVIDER_LIMITS.apiKey.maxLength) {
     return { ok: false, error: `API key maksimal ${JENNA_PROVIDER_LIMITS.apiKey.maxLength} karakter.` };
   }
   if (/\s/.test(apiKey)) return { ok: false, error: "API key tidak boleh memuat spasi." };
+  return { ok: true, value: apiKey || null };
+}
 
-  return {
-    ok: true,
-    value: { baseUrl: baseUrl.value, model, temperature, maxTokens, timeoutMs, apiKey: apiKey || null },
-  };
+export type VoiceProviderUpdateValue = Omit<ProviderUpdateValue, "temperature" | "maxTokens">;
+
+/** Validasi body PUT provider suara. Tidak ada temperature/maxTokens. */
+export function validateVoiceProviderInput(
+  input: JennaVoiceProviderUpdateInput,
+  nodeEnv: string,
+): ValidationResult<VoiceProviderUpdateValue> {
+  const baseUrl = validateBaseUrl(input.baseUrl ?? "", nodeEnv);
+  if (!baseUrl.ok) return baseUrl;
+
+  const model = (input.model ?? "").trim();
+  if (!VOICE_MODEL_PATTERN.test(model)) return { ok: false, error: VOICE_MODEL_ERROR };
+
+  const timeoutMs = validateTimeoutMs(input.timeoutMs);
+  if (!timeoutMs.ok) return timeoutMs;
+  const apiKey = validateApiKey(input.apiKey);
+  if (!apiKey.ok) return apiKey;
+
+  return { ok: true, value: { baseUrl: baseUrl.value, model, timeoutMs: timeoutMs.value, apiKey: apiKey.value } };
+}
+
+const CONVERSATION_ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
+const SESSION_PREFIX_PATTERN = /^[a-f0-9]{8}$/;
+const POSITIVE_INT_PATTERN = /^[1-9]\d{0,5}$/;
+
+const isBlank = (v: unknown) => v === undefined || v === "";
+
+export function isJennaConversationId(value: unknown): value is string {
+  return typeof value === "string" && CONVERSATION_ID_PATTERN.test(value);
+}
+
+export type ConversationListQuery = { page: number; limit: number; session: string | null };
+
+/** Query GET conversations (nilai string dari URL). Kosong/tidak dikirim = default. */
+export function parseConversationListQuery(query: Record<string, unknown> | undefined): ValidationResult<ConversationListQuery> {
+  const { page: rawPage, limit: rawLimit, session: rawSession } = query ?? {};
+
+  let page = 1;
+  if (!isBlank(rawPage)) {
+    if (typeof rawPage !== "string" || !POSITIVE_INT_PATTERN.test(rawPage)) {
+      return { ok: false, error: "Parameter page harus bilangan bulat ≥ 1." };
+    }
+    page = Number(rawPage);
+  }
+
+  const { defaultLimit, maxLimit } = JENNA_CONVERSATION_PAGE;
+  let limit: number = defaultLimit;
+  if (!isBlank(rawLimit)) {
+    if (typeof rawLimit !== "string" || !POSITIVE_INT_PATTERN.test(rawLimit) || Number(rawLimit) > maxLimit) {
+      return { ok: false, error: `Parameter limit harus di antara 1 dan ${maxLimit}.` };
+    }
+    limit = Number(rawLimit);
+  }
+
+  let session: string | null = null;
+  if (!isBlank(rawSession)) {
+    if (typeof rawSession !== "string" || !SESSION_PREFIX_PATTERN.test(rawSession)) {
+      return { ok: false, error: "Parameter session harus 8 karakter heksadesimal (huruf kecil)." };
+    }
+    session = rawSession;
+  }
+
+  return { ok: true, value: { page, limit, session } };
+}
+
+export type ErrorLogQuery = { days: JennaErrorLogDays; limit: number; cursor: string | null };
+
+/** Query GET errors (nilai string dari URL). Kosong/tidak dikirim = default. */
+export function parseErrorLogQuery(query: Record<string, unknown> | undefined): ValidationResult<ErrorLogQuery> {
+  const { days: rawDays, limit: rawLimit, cursor: rawCursor } = query ?? {};
+
+  let days: JennaErrorLogDays = 7;
+  if (!isBlank(rawDays)) {
+    const match = JENNA_ERROR_LOG_DAYS.find((d) => String(d) === rawDays);
+    if (match === undefined) {
+      return { ok: false, error: `Parameter days harus salah satu dari ${JENNA_ERROR_LOG_DAYS.join(", ")}.` };
+    }
+    days = match;
+  }
+
+  const { defaultLimit, maxLimit } = JENNA_ERROR_LOG_PAGE;
+  let limit: number = defaultLimit;
+  if (!isBlank(rawLimit)) {
+    if (typeof rawLimit !== "string" || !POSITIVE_INT_PATTERN.test(rawLimit) || Number(rawLimit) > maxLimit) {
+      return { ok: false, error: `Parameter limit harus di antara 1 dan ${maxLimit}.` };
+    }
+    limit = Number(rawLimit);
+  }
+
+  let cursor: string | null = null;
+  if (!isBlank(rawCursor)) {
+    // Id pesan memakai format yang sama dengan id percakapan (cuid).
+    if (!isJennaConversationId(rawCursor)) return { ok: false, error: "Parameter cursor tidak valid." };
+    cursor = rawCursor;
+  }
+
+  return { ok: true, value: { days, limit, cursor } };
 }

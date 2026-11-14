@@ -1,6 +1,6 @@
 'use client';
 import { Badge, Group, Stack, Switch, Text } from '@mantine/core';
-import { IconCircleCheck, IconAlertCircle } from '@tabler/icons-react';
+import { IconCircleCheck, IconAlertCircle, IconEyeOff } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { JENNA_PROTOCOL_SLOT } from '@/lib/jenna/types';
@@ -9,6 +9,8 @@ import { themeTokens } from '@/utils/themeTokens';
 import jennaState from '../../_state/jenna-state';
 import { ConfirmModal } from '../../_com/ConfirmModal';
 import { SectionCard } from '../../_com/SectionCard';
+import { publicWidgetHiddenReason } from '../jenna-status.logic';
+import { voiceSwitchWarnings } from '../suara/suara.logic';
 import { PROTOCOL_LABEL } from './protocol';
 
 type Pending = 'enable' | 'disable' | null;
@@ -23,11 +25,27 @@ export function JennaStatusCard() {
   const config = snap.config;
   if (!config) return null;
 
-  const { settings, cryptoConfigured } = config;
+  const { settings, cryptoConfigured, voiceProvider } = config;
   const activeSlot = JENNA_PROTOCOL_SLOT[settings.chatProtocol];
   const active = config.providers.find((p) => p.slot === activeSlot);
   const providerReady = Boolean(active?.ready) && cryptoConfigured;
   const saving = snap.saving === 'status';
+  const hiddenReason = publicWidgetHiddenReason({
+    enabled: settings.enabled,
+    providerReady,
+    dailyTokensGlobal: settings.dailyTokensGlobal,
+  });
+  const voiceWarnings = voiceSwitchWarnings({
+    voiceEnabled: settings.voiceEnabled,
+    voiceProviderReady: voiceProvider.ready && cryptoConfigured,
+    voiceDailyMinutesGlobal: settings.voiceDailyMinutesGlobal,
+    chatEnabled: settings.enabled,
+  });
+  const voiceLabel = !settings.voiceEnabled
+    ? 'Nonaktif'
+    : voiceWarnings.length === 0
+      ? 'Aktif (tombol mikrofon tampil di website)'
+      : 'Aktif, belum bisa dipakai — cek halaman Suara';
 
   const apply = async (enabled: boolean) => {
     const result = await jennaState.saveSettings(
@@ -93,6 +111,17 @@ export function JennaStatusCard() {
               ? 'Lengkapi Base URL, model, dan API key provider aktif di halaman Provider.'
               : 'Kunci enkripsi server belum diatur, sehingga API key tidak dapat dipakai.'}
           </Text>
+        )}
+        <Text size="sm" c={tokens.colors.text.secondary}>
+          Suara: {voiceLabel}
+        </Text>
+        {hiddenReason && (
+          <Group gap={6} wrap="nowrap" align="flex-start">
+            <IconEyeOff size={16} color="var(--mantine-color-orange-6)" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden />
+            <Text size="sm" c={tokens.colors.text.secondary}>
+              {hiddenReason}
+            </Text>
+          </Group>
         )}
       </Stack>
 

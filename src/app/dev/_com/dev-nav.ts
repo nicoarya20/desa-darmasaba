@@ -1,6 +1,11 @@
 import {
+  IconBook2,
+  IconBug,
+  IconChartBar,
   IconGauge,
   IconHourglass,
+  IconMessages,
+  IconMicrophone,
   IconPlugConnected,
   IconRobot,
   IconSettings,
@@ -21,7 +26,12 @@ export const DEV_NAV: readonly DevNavEntry[] = [
     children: [
       { label: 'Umum', href: '/dev/jenna', icon: IconSettings, exact: true },
       { label: 'Batas Pemakaian', href: '/dev/jenna/batas', icon: IconHourglass },
+      { label: 'Log Error', href: '/dev/jenna/log-error', icon: IconBug },
+      { label: 'Pengetahuan', href: '/dev/jenna/pengetahuan', icon: IconBook2 },
+      { label: 'Penggunaan', href: '/dev/jenna/penggunaan', icon: IconChartBar },
+      { label: 'Percakapan', href: '/dev/jenna/percakapan', icon: IconMessages },
       { label: 'Provider', href: '/dev/jenna/provider', icon: IconPlugConnected },
+      { label: 'Suara', href: '/dev/jenna/suara', icon: IconMicrophone },
     ],
   },
 ];

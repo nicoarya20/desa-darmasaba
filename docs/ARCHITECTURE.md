@@ -37,6 +37,32 @@ Halaman admin yang sengaja disembunyikan sementara (bukan dihapus) beserta cara 
 
 Admin also has non-domain sections not covered above: `auth` (login/registrasi/validasi admin pages) and `user&role` (user + role management, note the `&` in the folder name), and `pengaturan` (public menu visibility + admin Menu Access per user). Sampah is not a menu: each collection feature (DAK, APBDes, galeri BUMDes, Dokumen Perencanaan) has its own Sampah panel. Menu Access semantics (section vs submenu IDs, `basePath`, UI-only page guard) are documented under "Sidebar Admin" in `docs/DESIGN.md`.
 
+## Jenna (asisten AI publik)
+
+Widget chat di semua halaman publik, menjawab hanya dari data publik desa. Keputusan, gerbang anti-abuse, dan penanganan PII: `docs/decisions/2026-11-13-jenna-public-chat.md` (pengaturan: `docs/decisions/2026-11-13-developer-menu-jenna.md`).
+
+```
+JennaWidget (DarmasabaShell, lazy, Valtio)
+  → GET  /api/jenna/status   tampil/tidak
+  → POST /api/jenna/chat     Next Route Handler (di luar Elysia, tidak lewat src/proxy.ts)
+       origin → body ≤ 8 KB → honeypot → prepareChatTurn (gerbang) → loop provider + tool read-only
+       → output guard → persist (tersamar) → SSE
+```
+
+| Lokasi | Isi |
+|---|---|
+| `src/app/api/jenna/{status,chat}/route.ts`, `_lib/http.ts` | Route, cookie `jenna_sid`, cek Origin, body ber-batas |
+| `src/lib/jenna/chat/` | `chat.service.ts` (gerbang + giliran, DI), `deps.ts` (wiring produksi), `executor-loop.ts`, `output-guard.ts`, `conversation.repo.ts`, `chat.persist.ts`, `retention.ts` |
+| `src/lib/jenna/knowledge/` | Registry allowlist `sources.ts`, `snapshot.ts`, `sitemap.ts` (rute publik terlihat) |
+| `src/lib/jenna/tools/` | 4 tool read-only + `executor.ts` |
+| `src/lib/jenna/provider/` | Adapter OpenAI-compatible & Anthropic (+ stream), `active.ts` (provider aktif dari setelan) |
+| `src/lib/jenna/runtime/` | Deadline, SSE writer & parser |
+| `src/lib/jenna/{prompt,pii,limits,chat-types}.ts` | System prompt, masking PII, batas & hash identitas, kontrak wire SSE |
+| `src/app/(public)/_com/jenna/` | Widget (FAB, panel/drawer, renderer markdown in-house, state Valtio, klien SSE) |
+| `src/lib/rate-limit.ts` | Limiter sliding window in-memory (dipakai juga limiter OTP auth) |
+
+Developer Console (`/dev/jenna/*`, API `/api/developer/jenna/*`, role 0): pengaturan (Umum, Batas Pemakaian, Provider), Pengetahuan (snapshot + sumber + tool, read-only; `src/lib/jenna/knowledge/admin.ts`), Percakapan (daftar tersamar + statistik), Penggunaan dan Log Error (`src/lib/jenna/chat/usage-admin.repo.ts`, sanitasi teks error di `src/lib/jenna/error-detail.ts`).
+
 ## Key Files
 
 | File | Purpose |

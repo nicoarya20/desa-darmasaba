@@ -1,11 +1,21 @@
 // Akses DB setelan Jenna (server-only). Validasi input dilakukan di validation.ts sebelum masuk sini.
 import prisma from "@/lib/prisma";
 import { env } from "@/lib/env";
-import { runConnectionTest } from "./connection-test";
+import { runConnectionTest, type ConnectionTestResult, type JennaTestSlot } from "./connection-test";
 import { apiKeyHint, decryptSecret, encryptSecret, isCredentialsKeyValid } from "./crypto";
-import { JENNA_SETTINGS_ID, toProviderDTO, toProviderDTOs, toSettingsDTO } from "./mappers";
-import { JENNA_PROTOCOL_SLOT, type JennaConfigResponse, type JennaProviderTestResponse, type JennaSettingsUpdateInput, type JennaSlot } from "./types";
-import { validateBaseUrl, type ProviderUpdateValue } from "./validation";
+import { JENNA_SETTINGS_ID, toProviderDTO, toProviderDTOs, toSettingsDTO, toVoiceProviderDTO } from "./mappers";
+import { invalidateJennaRuntimeCache } from "./provider/active";
+import {
+  JENNA_PROTOCOL_SLOT,
+  JENNA_VOICE_SLOT,
+  type JennaConfigResponse,
+  type JennaProviderTestResponse,
+  type JennaSettingsUpdateInput,
+  type JennaSlot,
+  type JennaVoiceProviderTestResponse,
+} from "./types";
+import { validateBaseUrl, type ProviderUpdateValue, type VoiceProviderUpdateValue } from "./validation";
+import type { JennaProvider } from "@prisma/client";
 
 export const CRYPTO_NOT_CONFIGURED_MESSAGE =
   "JENNA_CREDENTIALS_KEY belum diset atau tidak valid di server, API key tidak bisa disimpan. Hubungi pengelola server.";
@@ -25,6 +35,7 @@ export async function getJennaConfig(): Promise<JennaConfigResponse> {
   return {
     settings: toSettingsDTO(settings),
     providers: toProviderDTOs(providers),
+    voiceProvider: toVoiceProviderDTO(providers.find((p) => p.slot === JENNA_VOICE_SLOT) ?? null),
     cryptoConfigured: isJennaCryptoConfigured(),
     updatedBy:
       settings?.updatedBy != null
@@ -44,14 +55,28 @@ export async function updateJennaSettings(userId: string, value: JennaSettingsUp
     create: { id: JENNA_SETTINGS_ID, ...value, updatedById: userId },
     update: { ...value, updatedById: userId },
   });
+  invalidateJennaRuntimeCache();
 }
 
 export type ProviderUpdateResult = { ok: true } | { ok: false; status: number; message: string };
 
 /** Simpan provider; apiKey null = pertahankan kunci lama. Hasil tes selalu di-reset karena konfigurasi berubah. */
-export async function updateJennaProvider(
+export function updateJennaProvider(
   userId: string,
   slot: JennaSlot,
+  value: ProviderUpdateValue,
+): Promise<ProviderUpdateResult> {
+  return saveProvider(userId, slot, value);
+}
+
+/** Provider suara tidak memakai temperature/maxTokens. */
+export function updateJennaVoiceProvider(userId: string, value: VoiceProviderUpdateValue): Promise<ProviderUpdateResult> {
+  return saveProvider(userId, JENNA_VOICE_SLOT, { ...value, temperature: null, maxTokens: null });
+}
+
+async function saveProvider(
+  userId: string,
+  slot: JennaTestSlot,
   value: ProviderUpdateValue,
 ): Promise<ProviderUpdateResult> {
   let keyFields: { apiKeyEnc: string; apiKeyHint: string | null } | Record<string, never> = {};
@@ -75,15 +100,45 @@ export async function updateJennaProvider(
     updatedById: userId,
   };
   await prisma.jennaProvider.upsert({ where: { slot }, create: { slot, ...data }, update: data });
+  invalidateJennaRuntimeCache();
   return { ok: true };
 }
 
+/** Hapus API key tersimpan + hasil tes; Base URL dan model tetap. Idempoten: slot tanpa row/key tetap sukses. */
+export function clearJennaProviderKey(userId: string, slot: JennaSlot): Promise<void> {
+  return clearProviderKey(userId, slot);
+}
+
+export function clearJennaVoiceProviderKey(userId: string): Promise<void> {
+  return clearProviderKey(userId, JENNA_VOICE_SLOT);
+}
+
+async function clearProviderKey(userId: string, slot: JennaTestSlot): Promise<void> {
+  await prisma.jennaProvider.updateMany({
+    where: { slot },
+    data: {
+      apiKeyEnc: null,
+      apiKeyHint: null,
+      lastTestAt: null,
+      lastTestOk: null,
+      lastTestMessage: null,
+      updatedById: userId,
+    },
+  });
+  invalidateJennaRuntimeCache();
+}
+
+const INCOMPLETE_MESSAGE: Record<"chat" | "voice", string> = {
+  chat: "Provider belum lengkap. Isi Base URL, model, dan API key terlebih dahulu.",
+  voice: "Provider suara belum lengkap. Isi Base URL, model, dan API key terlebih dahulu.",
+};
+
 async function resolveTestOutcome(
   row: { baseUrl: string; model: string; apiKeyEnc: string | null; timeoutMs: number },
-  slot: JennaSlot,
-): Promise<{ ok: boolean; message: string; latencyMs: number }> {
+  slot: JennaTestSlot,
+): Promise<ConnectionTestResult> {
   if (!row.baseUrl || !row.model || !row.apiKeyEnc) {
-    return { ok: false, message: "Provider belum lengkap. Isi Base URL, model, dan API key terlebih dahulu.", latencyMs: 0 };
+    return { ok: false, message: INCOMPLETE_MESSAGE[slot === JENNA_VOICE_SLOT ? "voice" : "chat"], latencyMs: 0 };
   }
   // Validasi ulang: aturan bisa lebih ketat dari saat disimpan (mis. http localhost lalu pindah ke production).
   const baseUrl = validateBaseUrl(row.baseUrl, env.NODE_ENV);
@@ -103,8 +158,10 @@ async function resolveTestOutcome(
   return runConnectionTest(slot, { baseUrl: baseUrl.value, model: row.model, apiKey, timeoutMs: row.timeoutMs });
 }
 
+type StoredTestResult = ConnectionTestResult & { testedAt: string; row: JennaProvider };
+
 /** Tes koneksi memakai konfigurasi & key TERSIMPAN; hasil disimpan ke row. null = slot belum pernah disimpan. */
-export async function testJennaProvider(slot: JennaSlot): Promise<JennaProviderTestResponse | null> {
+async function runStoredTest(slot: JennaTestSlot): Promise<StoredTestResult | null> {
   const row = await prisma.jennaProvider.findUnique({ where: { slot } });
   if (!row) return null;
 
@@ -114,7 +171,21 @@ export async function testJennaProvider(slot: JennaSlot): Promise<JennaProviderT
     where: { slot },
     data: { lastTestAt: testedAt, lastTestOk: outcome.ok, lastTestMessage: outcome.message },
   });
-  return { ...outcome, testedAt: testedAt.toISOString(), provider: toProviderDTO(slot, updated) };
+  return { ...outcome, testedAt: testedAt.toISOString(), row: updated };
+}
+
+export async function testJennaProvider(slot: JennaSlot): Promise<JennaProviderTestResponse | null> {
+  const result = await runStoredTest(slot);
+  if (!result) return null;
+  const { row, ...outcome } = result;
+  return { ...outcome, provider: toProviderDTO(slot, row) };
+}
+
+export async function testJennaVoiceProvider(): Promise<JennaVoiceProviderTestResponse | null> {
+  const result = await runStoredTest(JENNA_VOICE_SLOT);
+  if (!result) return null;
+  const { row, ...outcome } = result;
+  return { ...outcome, provider: toVoiceProviderDTO(row) };
 }
 
 /** Ringkasan kesiapan Jenna untuk halaman Ringkasan Sistem. */

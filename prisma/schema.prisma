@@ -2608,23 +2608,29 @@ model MenuVisibility {
 // Diatur di /dev/jenna (khusus role "0"). Singleton: id selalu "global".
 // Batas nilai divalidasi aplikasi (src/lib/jenna/types.ts JENNA_SETTINGS_LIMITS).
 model JennaSettings {
-  id                 String   @id @default("global")
-  enabled            Boolean  @default(false)
-  assistantName      String   @default("Jenna")
-  personaNote        String   @default("") @db.VarChar(1500)
-  maxInputChars      Int      @default(2000)
-  historyWindow      Int      @default(6)
-  rateLimitPerMinute Int      @default(10)
-  dailyMessagesUser  Int      @default(100)
-  dailyTokensGlobal  Int      @default(0) // 0 = tanpa batas
-  retentionDays      Int      @default(90)
-  chatProtocol       String   @default("openai") // "openai" | "anthropic"
-  updatedAt          DateTime @updatedAt
-  updatedById        String?
-  updatedBy          User?    @relation("JennaSettingsUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  id                      String   @id @default("global")
+  enabled                 Boolean  @default(false)
+  assistantName           String   @default("Jenna")
+  personaNote             String   @default("") @db.VarChar(1500)
+  maxInputChars           Int      @default(2000)
+  historyWindow           Int      @default(6)
+  rateLimitPerMinute      Int      @default(10)
+  dailyMessagesUser       Int      @default(100)
+  dailyTokensGlobal       Int      @default(0) // 0 = chat tidak aktif
+  retentionDays           Int      @default(90)
+  chatProtocol            String   @default("openai") // "openai" | "anthropic"
+  voiceEnabled            Boolean  @default(false)
+  voiceDailyMinutesUser   Int      @default(5)
+  voiceDailyMinutesGlobal Int      @default(0) // 0 = suara tidak aktif (bukan tanpa batas)
+  voiceSessionMaxMinutes  Int      @default(5)
+  voiceIdleOffSeconds     Int      @default(60)
+  voiceName               String   @default("") @db.VarChar(60)
+  updatedAt               DateTime @updatedAt
+  updatedById             String?
+  updatedBy               User?    @relation("JennaSettingsUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
-// Satu row per slot provider ("chat_openai" | "chat_anthropic"). apiKeyEnc = AES-256-GCM
+// Satu row per slot provider ("chat_openai" | "chat_anthropic" | "voice"). apiKeyEnc = AES-256-GCM
 // (src/lib/jenna/crypto.ts, format "v1:..."), tidak pernah dikirim ke klien.
 model JennaProvider {
   slot            String    @id
@@ -2641,6 +2647,71 @@ model JennaProvider {
   updatedAt       DateTime  @updatedAt
   updatedById     String?
   updatedBy       User?     @relation("JennaProviderUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+// Percakapan pengunjung anonim (tanpa relasi User). sessionHash/ipHash = hash, bukan nilai mentah.
+// Dihapus otomatis setelah JennaSettings.retentionDays.
+model JennaConversation {
+  id            String         @id @default(cuid())
+  sessionHash   String
+  ipHash        String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lastMessageAt DateTime       @default(now())
+  messages      JennaMessage[]
+
+  @@index([sessionHash])
+}
+
+// content sudah dimask (NIK/HP/email) oleh pemanggil sebelum disimpan.
+// sessionHash/ipHash didenormalisasi untuk hitung kuota harian tanpa join.
+model JennaMessage {
+  id             String            @id @default(cuid())
+  conversationId String
+  conversation   JennaConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String // "user" | "assistant"
+  content        String            @db.Text
+  status         String            @default("ok") // "ok" | "error"
+  errorCode      String?
+  inputTokens    Int               @default(0)
+  outputTokens   Int               @default(0)
+  toolsUsed      String[]
+  // Telemetri giliran (developer console): di baris asisten bila sukses, di baris user ber-status error bila gagal.
+  latencyMs      Int?
+  providerSlot   String?
+  model          String?
+  errorDetail    String?           @db.Text // penyebab asli giliran gagal, sudah disanitasi; tidak pernah ke pengunjung
+  modality       String            @default("text") // "text" | "voice"
+  sessionHash    String
+  ipHash         String
+  createdAt      DateTime          @default(now())
+
+  @@index([sessionHash, createdAt])
+  @@index([ipHash, createdAt])
+  @@index([createdAt])
+  @@index([conversationId, createdAt])
+}
+
+// Sesi suara pengunjung anonim (relay WebRTC ke gateway). Menit dihitung dari jam server, bukan laporan klien.
+// gatewaySessionId hanya untuk hangup server, tidak pernah dikirim ke klien. Dihapus bersama retensi percakapan.
+model JennaVoiceSession {
+  id               String    @id @default(cuid())
+  sessionHash      String
+  ipHash           String
+  status           String    @default("starting") // "starting" | "active" | "ended"
+  gatewaySessionId String?
+  startedAt        DateTime  @default(now())
+  lastHeartbeatAt  DateTime  @default(now())
+  maxSeconds       Int // snapshot voiceSessionMaxMinutes * 60 saat mulai
+  endedAt          DateTime?
+  endReason        String?
+  billedSeconds    Int       @default(0)
+  hangupStatus     Int? // status HTTP hangup gateway; -1 = jaringan/timeout gagal; null = belum/tidak dipanggil
+
+  @@index([sessionHash, startedAt])
+  @@index([ipHash, startedAt])
+  @@index([startedAt])
+  @@index([status])
 }
 
 // ===================================== BETTER AUTH ===================================== //

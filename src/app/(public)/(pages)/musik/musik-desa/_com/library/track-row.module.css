@@ -1,0 +1,93 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+/* Lagu tanpa audio: hanya sampul yang diredupkan; teks memakai warna token (tanpa opacity)
+   agar tetap ≥ 4.5:1, judul muted ≠ ink lagu yang bisa diputar. */
+.cover {
+  display: block;
+  flex: none;
+}
+
+.row[data-playable='false'] .cover {
+  opacity: 0.5;
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: 2px;
+}
+
+.text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--m-ink, #1d1d1f);
+}
+
+.row[data-playable='false'] .title {
+  color: var(--m-muted, #515154);
+}
+
+.row[data-active='true'] .title {
+  color: var(--m-accent, #0a4e78);
+}
+
+.titleText,
+.artist {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.artist {
+  font-size: 15px;
+  color: var(--m-muted, #515154);
+}
+
+.row[data-playable='false'] .artist {
+  color: var(--m-subtle, #6e6e73);
+}
+
+.meta {
+  flex: none;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--m-subtle, #6e6e73);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover {
+    background: var(--m-hover, rgba(0, 0, 0, 0.05));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}

@@ -1,0 +1,34 @@
+/*
+ * Kontrol "Urutkan" bersama (KatalogUrutSelect): katalog UMKM dan daftar produk di detail toko.
+ * Token `--ink`/`--muted`/`--line` dan `--brand` diwarisi dari akar halaman pemakai.
+ */
+.label {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.select {
+  width: 180px;
+}
+
+.select input {
+  height: 40px;
+  border-color: var(--line);
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.select input:focus {
+  border-color: var(--brand);
+}
+
+/* ---------- Mobile: kontrol rata kanan di barisnya ---------- */
+@media (max-width: 734px) {
+  .label {
+    margin-left: auto;
+  }
+
+  .select {
+    width: 160px;
+  }
+}

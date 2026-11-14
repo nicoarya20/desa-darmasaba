@@ -2,6 +2,7 @@
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { WHERE_LAPORAN_TAMPIL_PUBLIK, isModerasiView } from "./moderasi";
 
 async function laporanPublikFindMany(context: Context) {
   // Ambil parameter dari query
@@ -11,7 +12,9 @@ async function laporanPublikFindMany(context: Context) {
   const skip = (page - 1) * limit;
 
   // Buat where clause
-  const where: any = { isActive: true };
+  // Laporan yang menunggu verifikasi hanya ikut untuk tampilan moderasi admin (?moderasi=true).
+  const moderasi = await isModerasiView(context.query);
+  const where: any = { isActive: true, ...(moderasi ? {} : WHERE_LAPORAN_TAMPIL_PUBLIK) };
 
   // Tambahkan pencarian (jika ada)
   if (search) {

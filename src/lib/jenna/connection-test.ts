@@ -1,7 +1,6 @@
 // Tes koneksi provider Jenna dari server. Pesan hasil tidak pernah memuat API key atau body vendor.
-import type { JennaSlot } from "./types";
-
-export const ANTHROPIC_VERSION = "2023-06-01";
+import { ANTHROPIC_VERSION, anthropicMessagesUrl } from "./provider/common";
+import { JENNA_VOICE_SLOT, type JennaSlot, type JennaVoiceSlot } from "./types";
 
 export type ConnectionTestConfig = {
   baseUrl: string;
@@ -12,16 +11,15 @@ export type ConnectionTestConfig = {
 
 export type ConnectionTestResult = { ok: boolean; message: string; latencyMs: number };
 
+export type JennaTestSlot = JennaSlot | JennaVoiceSlot;
+
 export function buildConnectionTestRequest(
-  slot: JennaSlot,
+  slot: JennaTestSlot,
   cfg: Omit<ConnectionTestConfig, "timeoutMs">,
 ): { url: string; init: RequestInit } {
-  const base = cfg.baseUrl.replace(/\/+$/, "");
   if (slot === "chat_anthropic") {
-    // Terima base "https://api.anthropic.com" maupun ".../v1".
-    const url = /\/v1$/.test(base) ? `${base}/messages` : `${base}/v1/messages`;
     return {
-      url,
+      url: anthropicMessagesUrl(cfg.baseUrl),
       init: {
         method: "POST",
         headers: {
@@ -34,7 +32,7 @@ export function buildConnectionTestRequest(
     };
   }
   return {
-    url: `${base}/models`,
+    url: `${cfg.baseUrl.replace(/\/+$/, "")}/models`,
     init: { method: "GET", headers: { authorization: `Bearer ${cfg.apiKey}` } },
   };
 }
@@ -49,6 +47,15 @@ export function describeHttpStatus(status: number): { ok: boolean; message: stri
   if (status === 429 || status === 529) return { ok: false, message: `Provider sibuk atau kena rate limit (HTTP ${status}).` };
   if (status >= 500) return { ok: false, message: `Provider sedang bermasalah (HTTP ${status}).` };
   return { ok: false, message: `Permintaan ditolak provider (HTTP ${status}). Periksa model dan konfigurasi.` };
+}
+
+/** Gateway suara hanya dicek keterjangkauannya; selain 401/403, respons HTTP apa pun dianggap terjangkau. */
+export function describeVoiceHttpStatus(status: number): { ok: boolean; message: string } {
+  if (status === 401 || status === 403) return { ok: false, message: `Gateway menolak API key (HTTP ${status}).` };
+  return {
+    ok: true,
+    message: `Gateway terjangkau (HTTP ${status}). Negosiasi suara (SDP) baru teruji saat sesi suara pertama dipakai.`,
+  };
 }
 
 const NETWORK_CODE_MESSAGES: Record<string, string> = {
@@ -71,7 +78,7 @@ export function describeFetchError(err: unknown): string {
 }
 
 export async function runConnectionTest(
-  slot: JennaSlot,
+  slot: JennaTestSlot,
   cfg: ConnectionTestConfig,
   fetchImpl: typeof fetch = fetch,
 ): Promise<ConnectionTestResult> {
@@ -84,7 +91,8 @@ export async function runConnectionTest(
     // Body vendor sengaja dibuang (bisa memuat detail akun); cukup status. Gagal cancel
     // stream tidak memengaruhi hasil tes, jadi diabaikan.
     await res.body?.cancel().catch(() => undefined);
-    return { ...describeHttpStatus(res.status), latencyMs: Date.now() - started };
+    const outcome = slot === JENNA_VOICE_SLOT ? describeVoiceHttpStatus(res.status) : describeHttpStatus(res.status);
+    return { ...outcome, latencyMs: Date.now() - started };
   } catch (err) {
     return { ok: false, message: describeFetchError(err), latencyMs: Date.now() - started };
   } finally {

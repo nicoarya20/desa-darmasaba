@@ -1,0 +1,145 @@
+.shelf + .shelf {
+  margin-top: 48px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--m-ink, #1d1d1f);
+}
+
+.tools {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.more {
+  margin-right: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--m-muted, #515154);
+  text-decoration: none;
+}
+
+.more:hover,
+.more:focus-visible {
+  color: var(--m-ink, #1d1d1f);
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--m-elev, #f0f0f2);
+  color: var(--m-ink, #1d1d1f);
+  cursor: pointer;
+}
+
+.arrow[aria-disabled='true'] {
+  color: var(--m-subtle, #6e6e73);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.arrow:focus-visible,
+.more:focus-visible {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: 2px;
+}
+
+.scroll,
+.grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* position: relative → rak menjadi containing block anak absolute (sr-only, ::before), sehingga ikut terpotong
+   overflow rak. Tanpa ini anak absolute di kartu yang tergulir ke kanan melebarkan dokumen di HP (regresi 19788692). */
+.scroll {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  gap: 20px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* Ruang fokus & bayangan tombol putar supaya tidak terpotong overflow. */
+  padding: 6px 4px 8px;
+  margin: -6px -4px -8px;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll > li {
+  scroll-snap-align: start;
+}
+
+/* Kisi mengikuti lebar kolom konten (bukan viewport): sidebar kiri & panel antrean ikut memakan lebar. */
+.shelf[data-layout='grid'] {
+  container-type: inline-size;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px 16px;
+}
+
+@container (max-width: 959px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (max-width: 559px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 734px) {
+  .scroll {
+    gap: 14px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .arrow {
+    display: none;
+  }
+
+  /* "Lihat semua" (teks ±20px): area sentuh 44px lewat ::before, kepala rak tidak ikut meninggi. */
+  .more {
+    position: relative;
+    margin-right: 0;
+  }
+
+  .more::before {
+    content: '';
+    position: absolute;
+    inset: min(0px, calc((100% - 44px) / 2)) -8px;
+  }
+}

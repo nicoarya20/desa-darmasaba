@@ -106,26 +106,6 @@
   gap: 10px;
 }
 
-.urutLabel {
-  color: var(--muted);
-  font-size: 15px;
-}
-
-.urut {
-  width: 180px;
-}
-
-.urut input {
-  height: 40px;
-  border-color: var(--line);
-  color: var(--ink);
-  font-size: 15px;
-}
-
-.urut input:focus {
-  border-color: var(--brand);
-}
-
 .saringPill {
   display: none;
   align-items: center;
@@ -270,13 +250,5 @@
 
   .toolbarActions {
     width: 100%;
-  }
-
-  .urutLabel {
-    margin-left: auto;
-  }
-
-  .urut {
-    width: 160px;
   }
 }

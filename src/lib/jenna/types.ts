@@ -17,6 +17,10 @@ export const JENNA_PROTOCOL_SLOT: Record<JennaChatProtocol, JennaSlot> = {
   anthropic: "chat_anthropic",
 };
 
+/** Slot provider suara realtime; terpisah dari JENNA_SLOTS supaya runtime chat tidak pernah memakainya. */
+export const JENNA_VOICE_SLOT = "voice" as const;
+export type JennaVoiceSlot = typeof JENNA_VOICE_SLOT;
+
 /** Batas validasi (inklusif) — sama di server & form. */
 export const JENNA_SETTINGS_LIMITS = {
   assistantName: { minLength: 1, maxLength: 40 },
@@ -25,9 +29,15 @@ export const JENNA_SETTINGS_LIMITS = {
   historyWindow: { min: 0, max: 30 },
   rateLimitPerMinute: { min: 1, max: 120 },
   dailyMessagesUser: { min: 1, max: 10000 },
-  /** 0 = tanpa batas */
+  /** 0 = chat tidak aktif */
   dailyTokensGlobal: { min: 0, max: 100_000_000 },
   retentionDays: { min: 1, max: 3650 },
+  voiceDailyMinutesUser: { min: 1, max: 1440 },
+  /** 0 = suara tidak aktif */
+  voiceDailyMinutesGlobal: { min: 0, max: 100_000 },
+  voiceSessionMaxMinutes: { min: 1, max: 120 },
+  voiceIdleOffSeconds: { min: 10, max: 3600 },
+  voiceName: { maxLength: 60 },
 } as const;
 
 export const JENNA_PROVIDER_LIMITS = {
@@ -47,10 +57,19 @@ export interface JennaSettingsDTO {
   historyWindow: number;
   rateLimitPerMinute: number;
   dailyMessagesUser: number;
-  /** 0 = tanpa batas */
+  /** 0 = chat tidak aktif */
   dailyTokensGlobal: number;
   retentionDays: number;
   chatProtocol: JennaChatProtocol;
+  /** Sakelar suara untuk website; belum dipakai runtime publik. */
+  voiceEnabled: boolean;
+  voiceDailyMinutesUser: number;
+  /** 0 = suara tidak aktif */
+  voiceDailyMinutesGlobal: number;
+  voiceSessionMaxMinutes: number;
+  voiceIdleOffSeconds: number;
+  /** Kosong = suara bawaan penyedia. */
+  voiceName: string;
   /** ISO string; null bila belum pernah disimpan (nilai default). */
   updatedAt: string | null;
 }
@@ -74,6 +93,21 @@ export interface JennaProviderDTO {
   updatedAt: string | null;
 }
 
+/** Provider suara (gateway realtime). Arti field sama dengan JennaProviderDTO; API key tidak pernah dikirim. */
+export interface JennaVoiceProviderDTO {
+  slot: JennaVoiceSlot;
+  baseUrl: string;
+  model: string;
+  timeoutMs: number;
+  hasApiKey: boolean;
+  apiKeyHint: string | null;
+  ready: boolean;
+  lastTestAt: string | null;
+  lastTestOk: boolean | null;
+  lastTestMessage: string | null;
+  updatedAt: string | null;
+}
+
 export interface JennaUpdatedBy {
   id: string;
   name: string | null;
@@ -82,11 +116,13 @@ export interface JennaUpdatedBy {
   at: string;
 }
 
-/** data dari GET /api/developer/jenna, PUT .../settings, PUT .../providers/:slot */
+/** data dari GET /api/developer/jenna, PUT .../settings, PUT .../providers/:slot, PUT/DELETE .../voice/provider */
 export interface JennaConfigResponse {
   settings: JennaSettingsDTO;
   /** Selalu berisi semua slot (urutan JENNA_SLOTS), termasuk yang belum dikonfigurasi. */
   providers: JennaProviderDTO[];
+  /** Selalu ada; nilai kosong bila provider suara belum dikonfigurasi. */
+  voiceProvider: JennaVoiceProviderDTO;
   /** JENNA_CREDENTIALS_KEY valid; false = API key tidak bisa disimpan/dibaca. */
   cryptoConfigured: boolean;
   updatedBy: JennaUpdatedBy | null;
@@ -112,6 +148,23 @@ export interface JennaProviderTestResponse {
   latencyMs: number;
   testedAt: string;
   provider: JennaProviderDTO;
+}
+
+/** Body PUT /api/developer/jenna/voice/provider. apiKey kosong/tidak dikirim = pertahankan kunci lama. */
+export interface JennaVoiceProviderUpdateInput {
+  baseUrl: string;
+  model: string;
+  timeoutMs?: number;
+  apiKey?: string;
+}
+
+/** data dari POST /api/developer/jenna/voice/provider/test */
+export interface JennaVoiceProviderTestResponse {
+  ok: boolean;
+  message: string;
+  latencyMs: number;
+  testedAt: string;
+  provider: JennaVoiceProviderDTO;
 }
 
 export interface ServiceStatus {

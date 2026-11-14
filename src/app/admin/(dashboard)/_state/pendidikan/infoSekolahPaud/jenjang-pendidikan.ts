@@ -39,7 +39,7 @@ const jenjangPendidikan = proxy({
         }
         return toast.error("Gagal menambahkan data");
       } catch (error) {
-        console.log(error);
+        console.error("Gagal menambahkan jenjang pendidikan:", error);
         toast.error("Gagal menambahkan data");
       } finally {
         jenjangPendidikan.create.loading = false;
@@ -56,13 +56,15 @@ const jenjangPendidikan = proxy({
     total: 0,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {
+    /** `hasLembaga` → hanya jenjang yang punya lembaga aktif (filter publik); admin memuat semua. */
+    load: async (page = 1, limit = 10, search = "", hasLembaga = false) => {
       jenjangPendidikan.findMany.loading = true;
       jenjangPendidikan.findMany.page = page;
       jenjangPendidikan.findMany.search = search;
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
+        if (hasLembaga) query.hasLembaga = "true";
         const res =
           await ApiFetch.api.pendidikan.infosekolahpaud.jenjangpendidikan[
             "find-many"

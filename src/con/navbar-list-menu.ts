@@ -360,7 +360,7 @@ const navbarListMenu = [
             {
                 id: "9.1",
                 name: "Info Sekolah",
-                href: "/pendidikan/info-sekolah/semua"
+                href: "/pendidikan/info-sekolah"
             },
             {
                 id: "9.2",

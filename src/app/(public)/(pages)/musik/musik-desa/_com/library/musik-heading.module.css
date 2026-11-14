@@ -1,0 +1,30 @@
+.head {
+  margin-bottom: 32px;
+}
+
+.title {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--m-ink, #1d1d1f);
+}
+
+.lead {
+  margin: 8px 0 0;
+  max-width: 640px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--m-muted, #515154);
+}
+
+@media (max-width: 734px) {
+  .head {
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+}
