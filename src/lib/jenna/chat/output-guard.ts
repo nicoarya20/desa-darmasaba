@@ -170,17 +170,45 @@ const MENTION_MIN_CHARS = 15;
 const TITLE_ELLIPSIS = /(?:…|\.{3})$/;
 const WORD_CHAR = /[\p{L}\p{N}]/u;
 
+const EMPHASIS = /\*\*\S[^\n]*?\*\*|__\S[^\n]*?__|\*[^\s*][^\n*]*\*|_[^\s_][^\n_]*_/g;
+const ITEM_PREFIX = /^\s*(?:#{1,6}\s+|[-*+]\s+|\d+[.)]\s+)?(?:\*{1,3}|_{1,3})?$/;
+
 function normalizeMention(text: string): string {
   return text.toLowerCase().replace(/[*_`]/g, "").replace(/\s+/g, " ").trim();
+}
+
+/** Sama dengan `normalizeMention` (tanpa trim akhir), plus indeks teks asli untuk tiap karakter hasil. */
+function normalizeWithMap(text: string): { norm: string; map: number[] } {
+  let norm = "";
+  const map: number[] = [];
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === "*" || ch === "_" || ch === "`") continue;
+    const piece = /\s/.test(ch) ? (norm === "" || norm.endsWith(" ") ? "" : " ") : ch.toLowerCase();
+    norm += piece;
+    for (let k = 0; k < piece.length; k++) map.push(i);
+  }
+  return { norm, map };
+}
+
+/** Sebutan [start, end) di teks asli tampil sebagai item: di dalam penekanan, atau di awal baris/item daftar/heading. */
+function isDisplayed(text: string, start: number, end: number, emphasis: readonly [number, number][]): boolean {
+  if (emphasis.some(([s, e]) => s <= start && end <= e)) return true;
+  return ITEM_PREFIX.test(text.slice(text.lastIndexOf("\n", start - 1) + 1, start));
 }
 
 /**
  * Href (kunci peta `titles`) yang judulnya disebut utuh di jawaban, urut kemunculan pertama. Judul pendek /
  * satu kata diabaikan; sebutan yang berada di dalam sebutan judul lain yang lebih panjang tidak dihitung.
+ * Bila ada sebutan yang tampil sebagai item (`isDisplayed`), hanya itu yang dihitung; jawaban prosa memakai semua.
  */
 function mentionedTitleHrefs(text: string, titles: ReadonlyMap<string, string>, routes: ReadonlySet<string>): string[] {
   if (titles.size === 0) return [];
-  const haystack = normalizeMention(text);
+  const { norm: haystack, map } = normalizeWithMap(text);
+  const emphasis = [...text.matchAll(EMPHASIS)].map(({ 0: m, index }): [number, number] => {
+    const delim = m.startsWith("**") || m.startsWith("__") ? 2 : 1;
+    return [index + delim, index + m.length - delim];
+  });
   const candidates: { href: string; needle: string; clipped: boolean }[] = [];
   for (const [href, title] of titles) {
     const clipped = TITLE_ELLIPSIS.test(title.trim());
@@ -191,7 +219,7 @@ function mentionedTitleHrefs(text: string, titles: ReadonlyMap<string, string>, 
   candidates.sort((a, b) => b.needle.length - a.needle.length);
 
   const covered: [number, number][] = [];
-  const found: { href: string; at: number }[] = [];
+  const found: { href: string; at: number; shownAt: number }[] = [];
   for (const { href, needle, clipped } of candidates) {
     const spans: [number, number][] = [];
     for (let at = haystack.indexOf(needle); at !== -1; at = haystack.indexOf(needle, at + 1)) {
@@ -201,8 +229,11 @@ function mentionedTitleHrefs(text: string, titles: ReadonlyMap<string, string>, 
     }
     if (spans.length === 0) continue;
     covered.push(...spans);
-    found.push({ href, at: spans[0][0] });
+    const shown = spans.find(([s, e]) => isDisplayed(text, map[s], map[e - 1] + 1, emphasis));
+    found.push({ href, at: spans[0][0], shownAt: shown ? shown[0] : -1 });
   }
+  const shown = found.filter((f) => f.shownAt !== -1);
+  if (shown.length > 0) return shown.sort((a, b) => a.shownAt - b.shownAt).map((f) => f.href);
   return found.sort((a, b) => a.at - b.at).map((f) => f.href);
 }
 

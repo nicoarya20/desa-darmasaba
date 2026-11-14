@@ -422,6 +422,74 @@ describe("sumber dari judul data yang disebut tanpa tautan", () => {
   });
 });
 
+describe("sumber hanya untuk judul yang ditampilkan sebagai item", () => {
+  const routes = new Set(["/pemerintahan/pengumuman", "/pembangunan", "/potensi"]);
+  const P = (n: number) => `/pemerintahan/pengumuman/Umum/p${n}`;
+  const KEGIATAN = "/pembangunan/kegiatan/landscape";
+  const POTENSI = "/potensi/tps3r";
+  const titles = new Map([
+    [P(1), "Pengumuman Lelang Penataan Landscape"],
+    [P(2), "Jadwal Posyandu Balita November"],
+    [P(3), "Pemadaman Listrik Banjar Tengah"],
+    [P(4), "Sosialisasi Pemilahan Sampah Rumah Tangga"],
+    [KEGIATAN, "Penataan Landscape Lapangan Desa"],
+    [POTENSI, "TPS3R Pudak Mesari"],
+  ]);
+  const guard = (text: string) => guardOutput(text, routes, new Set(), { titles });
+  const urls = (text: string) => guard(text).sources.map((s) => s.url);
+
+  it("daftar bernomor judul tebal + deskripsi yang menyebut judul lain → hanya item daftar", () => {
+    const text = [
+      "Berikut 4 pengumuman terbaru:",
+      "1. **Pengumuman Lelang Penataan Landscape** (13 Nov)",
+      "   Desa mengadakan lelang penataan landscape lapangan desa untuk memperindah ruang publik.",
+      "2. **Jadwal Posyandu Balita November** (12 Nov)",
+      "   Posyandu dibuka di balai banjar.",
+      "3. **Pemadaman Listrik Banjar Tengah** (11 Nov)",
+      "4. **Sosialisasi Pemilahan Sampah Rumah Tangga** (10 Nov)",
+      "   Warga diajak memilah sampah sebelum diolah di TPS3R Pudak Mesari.",
+    ].join("\n");
+    const out = guard(text);
+    expect(out.text).toBe(text);
+    expect(out.sources.map((s) => s.url)).toEqual([P(1), P(2), P(3), P(4)]);
+  });
+
+  it("item daftar tanpa tebal di awal baris dihitung; sebutan di tengah kalimat diabaikan", () => {
+    expect(urls("- Jadwal Posyandu Balita November\n* Pemadaman Listrik Banjar Tengah, dekat TPS3R Pudak Mesari\n+ _Sosialisasi Pemilahan Sampah Rumah Tangga_")).toEqual([
+      P(2),
+      P(3),
+      P(4),
+    ]);
+    expect(urls("1) Jadwal Posyandu Balita November — lokasi dekat TPS3R Pudak Mesari.")).toEqual([P(2)]);
+  });
+
+  it("heading dihitung", () => {
+    expect(urls("## Pemadaman Listrik Banjar Tengah\nPemadaman berdampak ke TPS3R Pudak Mesari.")).toEqual([P(3)]);
+  });
+
+  it("penekanan berisi judul + tanggal di tengah kalimat dihitung", () => {
+    expect(urls("Yang terbaru adalah **Jadwal Posyandu Balita November (12 Nov)**, dekat TPS3R Pudak Mesari.")).toEqual([P(2)]);
+  });
+
+  it("jawaban prosa satu item (tanpa sebutan yang ditampilkan) → fallback tetap memberi sumber", () => {
+    expect(urls("Saat ini pengumuman lelang penataan landscape dibuka sampai 20 Nov.")).toEqual([P(1)]);
+    expect(urls("Sampah diolah di TPS3R Pudak Mesari dan landscape ditata lewat penataan landscape lapangan desa.")).toEqual([
+      POTENSI,
+      KEGIATAN,
+    ]);
+  });
+
+  it("campuran ditampilkan + sampingan → hanya yang ditampilkan; tautan eksplisit tetap sumber", () => {
+    const out = guard(
+      "Info [Potensi TPS3R](/potensi/tps3r) dan penataan landscape lapangan desa:\n- **Pemadaman Listrik Banjar Tengah**\nPengelolaan di TPS3R Pudak Mesari.",
+    );
+    expect(out.sources).toEqual([
+      { title: "Potensi TPS3R", url: POTENSI },
+      { title: "Pemadaman Listrik Banjar Tengah", url: P(3) },
+    ]);
+  });
+});
+
 describe("createDeltaGuard", () => {
   const routes = new Set(["/", "/profil"]);
   const run = (deltas: string[], trustedPii: ReadonlySet<string> = new Set(), linkifyPaths?: boolean) => {
