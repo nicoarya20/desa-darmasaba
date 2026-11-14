@@ -7,10 +7,20 @@ export type LetakAksi = 'above' | 'inside' | 'below';
  */
 export const NAVBAR_OFFSET_PX = 68;
 
-/** Letak elemen dari entri observer: terlihat → inside; tak terlihat → di atas atau di bawah area pandang. */
-export function letakDari(entry: { isIntersecting: boolean; boundingClientRect: { top: number } }): LetakAksi {
+/**
+ * Letak elemen dari entri observer: terlihat → inside; tak terlihat → di atas atau di bawah area pandang.
+ * Dibandingkan dengan tepi atas root (area pandang dikurangi navbar), bukan 0: elemen yang berhenti tepat di bawah
+ * navbar (top 2px, bottom < 68px) sudah tidak berpotongan tetapi top ≥ 0. Bila dinilai 'below', gulir lebih jauh
+ * tidak memicu callback lagi dan bilah terkunci tersembunyi. `rootBounds` null (iframe lintas origin) → offset navbar.
+ */
+export function letakDari(entry: {
+  isIntersecting: boolean;
+  boundingClientRect: { top: number };
+  rootBounds: { top: number } | null;
+}): LetakAksi {
   if (entry.isIntersecting) return 'inside';
-  return entry.boundingClientRect.top < 0 ? 'above' : 'below';
+  const rootTop = entry.rootBounds?.top ?? NAVBAR_OFFSET_PX;
+  return entry.boundingClientRect.top < rootTop ? 'above' : 'below';
 }
 
 /**

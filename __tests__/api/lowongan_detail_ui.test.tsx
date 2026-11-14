@@ -175,12 +175,23 @@ describe('LowonganDetailBody: kontak', () => {
 });
 
 describe('kontak-bar.logic', () => {
-  const entry = (isIntersecting: boolean, top: number) => ({ isIntersecting, boundingClientRect: { top } });
+  // test-only: root = area pandang dikurangi navbar 68px (rootMargin observer).
+  const entry = (isIntersecting: boolean, top: number, rootTop: number | null = 68) => ({
+    isIntersecting,
+    boundingClientRect: { top },
+    rootBounds: rootTop === null ? null : { top: rootTop },
+  });
 
   it('letakDari: terlihat → inside; tak terlihat di atas / di bawah', () => {
     expect(letakDari(entry(true, -10))).toBe('inside');
     expect(letakDari(entry(false, -200))).toBe('above');
     expect(letakDari(entry(false, 900))).toBe('below');
+  });
+
+  it('letakDari: berhenti di bawah navbar (top 2px, root mulai 68px) → above, bukan below', () => {
+    expect(letakDari(entry(false, 2))).toBe('above');
+    expect(letakDari(entry(false, 2, null))).toBe('above');
+    expect(letakDari(entry(false, 900, null))).toBe('below');
   });
 
   it('isBarVisible hanya bila kepala sudah lewat dan penutup belum tercapai', () => {
