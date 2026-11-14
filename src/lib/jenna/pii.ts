@@ -9,8 +9,8 @@ export const PII_MASKS: Record<PiiKind, string> = {
   email: "[email disamarkan]",
 };
 
-// 16 digit, boleh dipisah spasi/titik. Tidak diawali angka/titik/koma agar nominal "Rp 1.234…" tidak kena.
-const NIK = /(?<![\w.,])\d(?:[ .]?\d){15}(?!\d)/g;
+// 16 digit, boleh dipisah spasi/titik/tanda hubung & menempel huruf. Tidak diawali angka/titik/koma agar nominal "Rp 1.234…" tidak kena.
+const NIK = /(?<![\d.,])\d(?:[ .-]?\d){15}(?!\d)/g;
 // Awalan 0 / 62 / +62 diikuti kelompok ≥2 digit (menyaring jam "07.30" & tanggal "05-11-2026"); total 9–13 digit.
 const PHONE = /(?<![\w+.,/-])\(?(?:\+62[ .-]?|62|0)\(?\d{2,}\)?(?:[ .-]?\d+)*/g;
 const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;

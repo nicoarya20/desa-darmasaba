@@ -13,6 +13,14 @@ describe("maskPii", () => {
     ["NIK saya 3171012345678901 ya", "NIK saya [NIK disamarkan] ya"],
     ["KK 5103 0412 3456 0001.", "KK [NIK disamarkan]."],
     ["nik 5103.0412.3456.0001", "nik [NIK disamarkan]"],
+    ["NIK 5103-0123-4567-0001 ya", "NIK [NIK disamarkan] ya"],
+    ["campur 5103 0123-4567.0001", "campur [NIK disamarkan]"],
+    ["NIK: 5103-0123-4567-0001", "NIK: [NIK disamarkan]"],
+    ["nik5103012345670001", "nik[NIK disamarkan]"],
+    ["NIK5103-0123-4567-0001", "NIK[NIK disamarkan]"],
+    ["abc5103012345670001def", "abc[NIK disamarkan]def"],
+    ["no_5103012345670001", "no_[NIK disamarkan]"],
+    ["#5103012345670001", "#[NIK disamarkan]"],
   ])("menyamarkan NIK/KK: %s", (input, expected) => {
     expect(maskPii(input)).toBe(expected);
   });
@@ -38,8 +46,30 @@ describe("maskPii", () => {
     "Tahun 2026 ada 120 KK",
     "Nomor surat 0123",
     "Angka 123456789012345678",
+    "Biaya Rp 12.500.000,00 dan Rp1.234.567",
+    "Tanggal 14/11/2026 pukul 07.30",
+    "Angka 15 digit 510301234567000",
+    "Angka 17 digit 51030123456700012",
+    "kode x51030123456700012",
   ])("tidak menyentuh angka biasa: %s", (text) => {
     expect(maskPii(text)).toBe(text);
+  });
+
+  it.each(["0812-3456-7890", "+62 812-3456-7890", "6281234567890"])(
+    "nomor telepon bertanda hubung tetap jadi phone, bukan NIK: %s",
+    (phone) => {
+      expect(maskPii(`WA ${phone}`)).toBe(`WA ${PII_MASKS.phone}`);
+    },
+  );
+
+  it("NIK berspasi di data dan bertanda hubung di jawaban dianggap nilai yang sama", () => {
+    const trusted = collectPiiValues(["NIK contoh: 5103 0123 4567 0001"]);
+    expect(trusted.has("nik:5103012345670001")).toBe(true);
+    expect(collectPiiValues(["jawaban: NIK5103-0123-4567-0001"])).toEqual(new Set(["nik:5103012345670001"]));
+    const keep = (kind: string, value: string) => trusted.has(`${kind}:${value}`);
+    expect(maskPii("NIK 5103-0123-4567-0001, bukan 5103-0123-4567-0002", keep)).toBe(
+      `NIK 5103-0123-4567-0001, bukan ${PII_MASKS.nik}`,
+    );
   });
 
   it("keep() membiarkan nilai tepercaya", () => {
@@ -99,6 +129,13 @@ describe("guardOutput", () => {
     const trusted = collectPiiValues(["Kantor desa (0361) 123456"]);
     const out = guardOutput("Kantor: 0361 123456. Pak Kadus: 081234567890. NIK 3171012345678901.", routes, trusted);
     expect(out.text).toBe("Kantor: 0361 123456. Pak Kadus: [nomor disamarkan]. NIK [NIK disamarkan].");
+  });
+
+  it("href tautan markdown & path polos yang diizinkan tidak disamarkan walau berisi 16 digit setelah huruf", () => {
+    const out = guardOutput("Baca [Berita](/berita/cuid5103012345670001) atau /berita/x5103012345670001.", routes);
+    expect(out.text).toBe(
+      "Baca [Berita](/berita/cuid5103012345670001) atau [/berita/x5103012345670001](/berita/x5103012345670001).",
+    );
   });
 
   it("PII di label tautan ikut disamarkan", () => {
