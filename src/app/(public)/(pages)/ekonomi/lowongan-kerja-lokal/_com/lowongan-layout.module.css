@@ -28,14 +28,11 @@
   margin-top: 8px;
 }
 
+/* Hanya menempel; tinggi maksimum dan gulir ada di kartu panel (filter.module.css `.card`/`.cardBody`). */
 .aside {
   position: sticky;
   top: 68px;
   align-self: start;
-  max-height: calc(100dvh - 92px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
 }
 
 .main {

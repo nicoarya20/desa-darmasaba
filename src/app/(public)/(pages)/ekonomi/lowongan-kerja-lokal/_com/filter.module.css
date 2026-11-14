@@ -20,7 +20,15 @@
   color: var(--ink);
 }
 
+/*
+ * Kartu panel kiri (desktop): tinggi mengikuti isi, paling tinggi selayar dikurangi jarak menempel `.aside`
+ * (top 68px + 24px ruang bawah = 92px). Strip "Filter" diam; hanya `.cardBody` yang menggulir, jadi garis dan sudut
+ * kartu selalu utuh.
+ */
 .card {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 92px);
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 20px;
@@ -28,6 +36,7 @@
 }
 
 .cardHead {
+  flex: none;
   margin: 0;
   padding: 12px;
   border-bottom: 1px solid var(--line);
@@ -43,8 +52,13 @@
   gap: 16px;
 }
 
-.card .content {
+.cardBody {
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
 
 .aktif,

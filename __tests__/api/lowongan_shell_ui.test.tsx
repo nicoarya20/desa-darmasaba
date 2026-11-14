@@ -70,7 +70,8 @@ const body = (state: Parameters<typeof LowonganBody>[0]['state'], p = params()) 
 describe('FilterPanel', () => {
   it('kartu dengan strip h2 "Filter", kotak "Pilihan Anda" kosong, lalu "Atur filter" dengan 4 grup', () => {
     const html = panel();
-    expect(html).toContain(`<h2 class="${f.cardHead}">Filter</h2>`);
+    // Strip kepala di luar wadah gulir: hanya isi di bawahnya (.cardBody) yang menggulir.
+    expect(html).toContain(`<h2 class="${f.cardHead}">Filter</h2><div class="${f.cardBody}"><div class="${f.content}">`);
     expect(html).toContain(`<h3 class="${f.boxTitle}">Pilihan Anda</h3><p class="${f.aktifEmpty}">Belum ada filter dipilih.</p>`);
     expect(html).toContain(`<h3 class="${f.boxTitle}">Atur filter</h3>`);
     expect(html).not.toContain('Hapus semua');
@@ -148,7 +149,8 @@ describe('FilterPanel', () => {
     expect(heads(loading)).toEqual([]);
     const bare = panel(params(), data, true);
     expect(bare).not.toContain('<h2');
-    expect(bare).not.toContain(f.card);
+    expect(bare).not.toContain(`${f.card}"`);
+    expect(bare).not.toContain(f.cardBody);
     expect(heads(bare)).toHaveLength(4);
   });
 });

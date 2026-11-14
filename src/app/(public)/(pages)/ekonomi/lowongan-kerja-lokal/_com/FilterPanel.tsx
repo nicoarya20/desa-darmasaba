@@ -41,7 +41,7 @@ export function FilterPanel({ params, facets, chips, update, onClearAll, bare = 
   return (
     <div className={`${s.panel} ${s.card}`}>
       <h2 className={s.cardHead}>{T.filter}</h2>
-      {content}
+      <div className={s.cardBody}>{content}</div>
     </div>
   );
 }
