@@ -1,0 +1,156 @@
+/*
+ * Isi kotak "Atur filter" panel Filter lowongan: grup akordeon (ikon + label + chevron) dan pil pilihan
+ * (tombol `aria-pressed` selebar kotak, jumlah di kanan). Token warna (`--line`, `--brand-tint`, ...) diwarisi dari
+ * `.panel` (filter.module.css), yang selalu membungkus grup.
+ */
+/* ---------- Grup akordeon ---------- */
+.group + .group {
+  border-top: 1px solid var(--line);
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.groupHead > svg {
+  flex: none;
+}
+
+.groupLabel {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.groupBadge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chevron {
+  color: var(--muted);
+  transition: transform 200ms ease;
+}
+
+.groupHead[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.groupBody {
+  padding: 0 0 16px;
+}
+
+/* ---------- Pil pilihan ---------- */
+.pills {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.pill > svg {
+  flex: none;
+}
+
+.pill[aria-pressed="true"] {
+  border-color: var(--brand);
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.pillLabel {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pillCount {
+  color: var(--subtle);
+  font-size: 14px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.more {
+  margin-top: 10px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--brand);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.groupHead:focus-visible,
+.pill:focus-visible,
+.more:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.groupHead:focus-visible {
+  border-radius: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pill:not([aria-pressed="true"]):hover {
+    border-color: var(--subtle);
+  }
+
+  .more:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron,
+  .pill {
+    transition: none;
+  }
+}
