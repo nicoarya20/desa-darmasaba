@@ -18,6 +18,8 @@ interface MusicContextType {
   isRepeat: boolean;
   isShuffle: boolean;
   isLoading: boolean;
+  /** Muat pustaka terakhir gagal (HTTP/`success:false`/jaringan). Coba lagi lewat `loadMusikData()`. */
+  loadError: boolean;
   isPlayerOpen: boolean;
   /** Lagu setelah lagu saat ini sesuai urutan putar (acak/pustaka), melingkar; tanpa lagu → seluruh urutan. */
   upNext: Musik[];
@@ -36,6 +38,7 @@ interface MusicContextType {
   toggleRepeat: () => void;
   toggleShuffle: () => void;
   togglePlayer: () => void;
+  /** Muat (ulang) pustaka: isLoading true & loadError false selama memuat. */
   loadMusikData: () => Promise<void>;
 }
 

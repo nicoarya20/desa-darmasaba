@@ -14,23 +14,38 @@ function warnTruncated(total: unknown, loaded: number) {
   }
 }
 
-/** Pustaka lagu aktif dari GET /api/desa/musik/find-many, dimuat sekali saat mount. */
+/**
+ * Pustaka lagu aktif dari GET /api/desa/musik/find-many, dimuat sekali saat mount. `loadError` = muat terakhir
+ * gagal (HTTP bukan 2xx, `success:false`, atau jaringan/JSON); `loadMusikData()` dipakai juga sebagai "Coba lagi".
+ * Data lama dipertahankan saat muat ulang gagal.
+ */
 export function useMusicLibraryLoader() {
   const [musikData, setMusikData] = useState<Musik[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const loadMusikData = useCallback(async () => {
+    setIsLoading(true);
+    setLoadError(false);
+    const fail = (reason: string) => {
+      console.error(`Musik Desa: gagal memuat pustaka lagu (${reason}).`);
+      setLoadError(true);
+    };
     try {
-      setIsLoading(true);
       const res = await fetch(`/api/desa/musik/find-many?page=1&limit=${MUSIK_LOAD_LIMIT}`);
-      const data = await res.json();
-      if (data.success && data.data) {
-        warnTruncated(data.total, data.data.length);
-        const activeMusik = data.data.filter((m: Musik) => m.isActive);
-        setMusikData(activeMusik);
+      if (!res.ok) {
+        fail(`HTTP ${res.status}`);
+        return;
       }
+      const data = await res.json();
+      if (!data?.success || !Array.isArray(data.data)) {
+        fail(`HTTP ${res.status}, success:${String(data?.success)}`);
+        return;
+      }
+      warnTruncated(data.total, data.data.length);
+      setMusikData(data.data.filter((m: Musik) => m.isActive));
     } catch (error) {
-      console.error('Error fetching musik:', error);
+      fail(`jaringan/JSON: ${error instanceof Error ? error.name : typeof error}`);
     } finally {
       setIsLoading(false);
     }
@@ -40,5 +55,5 @@ export function useMusicLibraryLoader() {
     loadMusikData();
   }, [loadMusikData]);
 
-  return { musikData, isLoading, loadMusikData };
+  return { musikData, isLoading, loadError, loadMusikData };
 }

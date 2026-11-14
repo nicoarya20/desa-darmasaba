@@ -32,7 +32,7 @@ const NOOP_HANDLERS: AudioHandlers = {
 
 /** Mesin pemutar Musik Desa: pustaka, lagu saat ini, transport, antrean, riwayat, dan volume. */
 export function useAudioEngine() {
-  const { musikData, isLoading, loadMusikData } = useMusicLibraryLoader();
+  const { musikData, isLoading, loadError, loadMusikData } = useMusicLibraryLoader();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState<Musik | null>(null);
   const [currentSongIndex, setCurrentSongIndex] = useState(-1);
@@ -200,6 +200,7 @@ export function useAudioEngine() {
     isRepeat,
     isShuffle: queue.isShuffle,
     isLoading,
+    loadError,
     isPlayerOpen,
     upNext: queue.upNext,
     recentlyPlayed,
