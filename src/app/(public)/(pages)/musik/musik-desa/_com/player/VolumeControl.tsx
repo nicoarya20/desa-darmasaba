@@ -3,6 +3,7 @@
 import { Slider } from '@mantine/core';
 import { IconVolume, IconVolume3 } from '@tabler/icons-react';
 import { useMusic } from '@/app/context/MusicContext';
+import { volumeValueText } from '@/app/context/music/music.text';
 import { SLIDER_FILL, SLIDER_VARS } from './PlayerProgress';
 import { PLAYER_TEXT } from './player.text';
 import controls from './player-controls.module.css';
@@ -39,6 +40,7 @@ export function VolumeControl() {
         onChange={setVolume}
         label={null}
         thumbLabel={PLAYER_TEXT.volume}
+        thumbValueText={volumeValueText}
       />
     </div>
   );

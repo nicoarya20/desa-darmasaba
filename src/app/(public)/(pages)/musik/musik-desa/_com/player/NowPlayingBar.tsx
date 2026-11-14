@@ -1,7 +1,9 @@
 'use client';
 
+import { useMediaQuery } from '@mantine/hooks';
 import { IconDisc, IconPlaylist } from '@tabler/icons-react';
 import { useMusic } from '@/app/context/MusicContext';
+import { MUSIK_QUEUE_COLUMN_QUERY } from '../app/musik-layout';
 import { useMusikUi } from '../app/musik-ui.context';
 import { TrackCover } from '../library/TrackCover';
 import { NextButton, PlayPauseButton, PlayerControls } from './PlayerControls';
@@ -25,7 +27,9 @@ function songMeta(genre: string | null, tahun: number | null): string | null {
  */
 export function NowPlayingBar() {
   const { currentSong } = useMusic();
-  const { queueOpen, toggleQueue } = useMusikUi();
+  const { queueOpen, toggleQueue, queueToggleRef, queuePanelId } = useMusikUi();
+  // <1280px antrean dibuka sebagai Drawer (dialog); ≥1280px sebagai kolom di halaman (bukan popup).
+  const isColumn = useMediaQuery(MUSIK_QUEUE_COLUMN_QUERY, false);
   if (!currentSong) return null;
   const coverUrl = currentSong.coverImage?.link ?? null;
   const meta = songMeta(currentSong.genre, currentSong.tahunRilis);
@@ -74,11 +78,14 @@ export function NowPlayingBar() {
             <NextButton />
           </span>
           <button
+            ref={queueToggleRef}
             type="button"
             className={controls.btn}
             onClick={toggleQueue}
             aria-label={PLAYER_TEXT.queue}
-            aria-pressed={queueOpen}
+            aria-expanded={queueOpen}
+            aria-controls={queuePanelId}
+            aria-haspopup={isColumn ? undefined : 'dialog'}
             data-active={queueOpen}
           >
             <IconPlaylist size={22} aria-hidden="true" />

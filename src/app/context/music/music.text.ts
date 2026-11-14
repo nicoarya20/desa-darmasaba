@@ -9,6 +9,12 @@ export const MUSIC_TEXT = {
   fileBroken: 'Gagal memutar lagu, file audio bermasalah.',
 } as const;
 
+/** aria-valuetext slider posisi, mis. "0:08 dari 2:34" (pembaca layar tidak membaca angka detik mentah). */
+export const positionValueText = (current: string, total: string) => `${current} dari ${total}`;
+
+/** aria-valuetext slider volume, mis. "70%". */
+export const volumeValueText = (volume: number) => `${Math.round(volume)}%`;
+
 /** Label tombol Ulang per mode (dipakai bar /musik dan bar global; label sekaligus menyebut status). */
 export const REPEAT_LABEL = {
   off: 'Ulang: mati',

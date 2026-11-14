@@ -139,11 +139,29 @@ describe('NowPlayingBar', () => {
     expect(html).toContain(PLAYER_TEXT.noAudio);
   });
 
-  it('acak aktif ditandai aria-pressed; Antrean memakai aria-pressed (tertutup saat SSR)', () => {
+  it('acak aktif ditandai aria-pressed', () => {
     setMusic({ currentSong: A, isShuffle: true });
-    const html = render(<NowPlayingBar />);
-    expect(button(html, PLAYER_TEXT.shuffle)).toContain('aria-pressed="true"');
-    expect(button(html, PLAYER_TEXT.queue)).toContain('aria-pressed="false"');
+    expect(button(render(<NowPlayingBar />), PLAYER_TEXT.shuffle)).toContain('aria-pressed="true"');
+  });
+
+  it('Antrean: aria-expanded (tertutup saat SSR) + aria-controls panel; <1280px membuka dialog', () => {
+    setMusic({ currentSong: A });
+    const queue = button(render(<NowPlayingBar />), PLAYER_TEXT.queue);
+    expect(queue).toContain('aria-expanded="false"');
+    expect(queue).toMatch(/aria-controls="[^"]+"/);
+    // SSR = lebar belum diketahui → anggap Drawer (nilai awal useMediaQuery false), sama dengan MusikApp.
+    expect(queue).toContain('aria-haspopup="dialog"');
+    expect(queue).not.toContain('aria-pressed');
+  });
+
+  it('slider membacakan posisi "m:ss dari m:ss" dan volume dalam persen', () => {
+    setMusic({ currentSong: A, duration: 154, currentTime: 8, volume: 70 });
+    const sliders = [...render(<NowPlayingBar />).matchAll(/<div[^>]*role="slider"[^>]*>/g)].map((m) => m[0]);
+    expect(sliders).toHaveLength(2);
+    expect(sliders[0]).toContain(`aria-label="${PLAYER_TEXT.seek}"`);
+    expect(sliders[0]).toContain('aria-valuetext="0:08 dari 2:34"');
+    expect(sliders[1]).toContain(`aria-label="${PLAYER_TEXT.volume}"`);
+    expect(sliders[1]).toContain('aria-valuetext="70%"');
   });
 
   it.each([
@@ -204,6 +222,17 @@ describe('QueuePanel', () => {
     expect(html).toMatch(/role="tab"[^>]*aria-selected="true"[^>]*>Antrean</);
     expect(html).toMatch(/role="tab"[^>]*aria-selected="false"[^>]*>Baru diputar</);
     button(html, PLAYER_TEXT.closeQueue);
+  });
+
+  it('kedua tabpanel selalu ada: aria-controls tiap tab menunjuk panel nyata, panel nonaktif hidden', () => {
+    const html = render(<QueuePanel onClose={noop} />);
+    const panels = [...html.matchAll(/<div role="tabpanel"[^>]*>/g)].map((m) => m[0]);
+    expect(panels).toHaveLength(2);
+    const controls = [...html.matchAll(/role="tab"[^>]*aria-controls="([^"]+)"/g)].map((m) => m[1]);
+    expect(controls).toHaveLength(2);
+    controls.forEach((id, i) => expect(panels[i]).toContain(`id="${id}"`));
+    expect(panels[0]).not.toContain('hidden');
+    expect(panels[1]).toContain('hidden=""');
   });
 
   it('dengan lagu: Sedang diputar berisi lagu saat ini (beraksen), lalu Berikutnya sesuai upNext', () => {
@@ -300,5 +329,13 @@ describe('FixedPlayerBar (pemutar situs di luar /musik)', () => {
     const [desktop, , mobile] = thumbs(render(<FixedPlayerBar />));
     expect(desktop).not.toContain('aria-disabled="true"');
     expect(mobile).not.toContain('aria-disabled="true"');
+  });
+
+  it('slider membacakan posisi "m:ss dari m:ss" dan volume dalam persen', () => {
+    setMusic({ currentSong: A, duration: 154, currentTime: 8, volume: 70 });
+    const [desktop, volume, mobile] = thumbs(render(<FixedPlayerBar />));
+    expect(desktop).toContain('aria-valuetext="0:08 dari 2:34"');
+    expect(mobile).toContain('aria-valuetext="0:08 dari 2:34"');
+    expect(volume).toContain('aria-valuetext="70%"');
   });
 });

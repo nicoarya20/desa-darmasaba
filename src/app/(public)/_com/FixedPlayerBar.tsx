@@ -1,6 +1,6 @@
 import { useMusic, useMusicTime } from '@/app/context/MusicContext';
 import { formatTime } from '@/app/context/music/format';
-import { REPEAT_LABEL } from '@/app/context/music/music.text';
+import { positionValueText, REPEAT_LABEL, volumeValueText } from '@/app/context/music/music.text';
 import { canSeek } from '@/app/context/music/playable';
 import {
   ActionIcon,
@@ -51,6 +51,7 @@ export default function FixedPlayerBar() {
   const [isMinimized, setIsMinimized] = useState(false);
   // Predikat sama dengan PlayerProgress aplikasi musik: lagu tanpa audio / durasi belum diketahui tidak bisa digeser.
   const seekable = canSeek(currentSong, duration);
+  const positionText = (value: number) => positionValueText(formatTime(value), formatTime(duration));
 
   // Handle seek drag (visual only) / commit
   const handleSeekPreview = (value: number) => {
@@ -244,6 +245,7 @@ export default function FixedPlayerBar() {
                 size="sm"
                 color="blue"
                 label={(value) => formatTime(value)}
+                thumbValueText={positionText}
               />
             </Box>
           </Group>
@@ -277,6 +279,7 @@ export default function FixedPlayerBar() {
                   onChange={handleVolumeChange}
                   color="blue"
                   size="sm"
+                  thumbValueText={volumeValueText}
                 />
               </Box>
             </Group>
@@ -304,6 +307,7 @@ export default function FixedPlayerBar() {
             size="sm"
             color="blue"
             label={(value) => formatTime(value)}
+            thumbValueText={positionText}
           />
         </Box>
       </Paper>

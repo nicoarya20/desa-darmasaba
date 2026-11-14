@@ -4,6 +4,7 @@ import { Slider } from '@mantine/core';
 import type { CSSProperties } from 'react';
 import { useMusic, useMusicTime } from '@/app/context/MusicContext';
 import { formatTime } from '@/app/context/music/format';
+import { positionValueText } from '@/app/context/music/music.text';
 import { canSeek } from '@/app/context/music/playable';
 import { PLAYER_TEXT } from './player.text';
 import s from './player-progress.module.css';
@@ -39,6 +40,7 @@ export function PlayerProgress() {
         disabled={!enabled}
         label={null}
         thumbLabel={PLAYER_TEXT.seek}
+        thumbValueText={(value) => positionValueText(formatTime(value), formatTime(duration))}
       />
       <span className={s.time}>{formatTime(duration)}</span>
     </div>
