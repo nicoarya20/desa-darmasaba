@@ -355,6 +355,27 @@ describe("giliran sukses", () => {
     expect(deltas.join("")).toBe("Kantor (0361) 123456. Pak X [nomor disamarkan]. Kadus 081311112222.\n");
   });
 
+  it("judul tautan dari snapshot & hasil tool dipakai di jawaban, sumber, dan delta", async () => {
+    const tool = '[DATA cari_konten]\n[{"title":"Rapat Banjar","url":"/profil/rapat%20banjar","text":"isi"}]\n[/DATA]';
+    const answer = "Lihat /profil dan [/profil/rapat%20banjar](/profil/rapat%20banjar).\n";
+    const { deps } = makeDeps({
+      getSnapshot: vi.fn(async () => "- [Profil Desa](/profil)"),
+      execute: vi.fn(async (_p, opts: LoopOptions) => {
+        opts.onToolResult?.(tool);
+        opts.onDelta?.(answer);
+        return loopResult({ text: answer, toolResults: [tool] });
+      }),
+    });
+    const deltas: string[] = [];
+    const out = (await runChatTurn(ctx, input, { onDelta: (t) => deltas.push(t) }, deps)) as ChatSuccess;
+    expect(out.text).toBe("Lihat [Profil Desa](/profil) dan [Rapat Banjar](/profil/rapat%20banjar).");
+    expect(out.sources).toEqual([
+      { title: "Rapat Banjar", url: "/profil/rapat%20banjar" },
+      { title: "Profil Desa", url: "/profil" },
+    ]);
+    expect(deltas.join("").trim()).toBe(out.text);
+  });
+
   it("jawaban kosong setelah guard → pesan pengganti", async () => {
     const { deps } = makeDeps({ execute: vi.fn(async () => loopResult({ text: "<p></p>" })) });
     expect(((await runChatTurn(ctx, input, {}, deps)) as ChatSuccess).text).toBe(CHAT_MESSAGES.empty_answer);

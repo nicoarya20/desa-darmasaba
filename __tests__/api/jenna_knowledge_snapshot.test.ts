@@ -163,24 +163,32 @@ describe("renderKnowledgeSnapshot", () => {
     expect(b).toBeLessThan(c);
     expect(out).not.toContain("### Prestasi Desa");
     expect(out).toContain("Upacara / Melasti");
-    expect(out).toContain("- 2026-11-10 — Upacara / Melasti — /pemerintahan/berita/");
+    expect(out).toContain("- 2026-11-10 — [Upacara / Melasti](/pemerintahan/berita/");
     expect(out).toContain("Bawa KTP");
     expect(out).not.toContain("<p>");
   });
 
-  it("kolom Tautan hanya ada bila tautan baris beda dari halaman sumber", () => {
+  it("tautan baris menempel di sel pertama hanya bila beda dari halaman sumber", () => {
     const out = render();
     const layanan = out.slice(out.indexOf("### Layanan Surat Keterangan"));
-    expect(layanan.split("\n")[1]).toContain("| Tautan |");
-    expect(layanan).toContain("/pemerintahan/layanan/l1");
+    expect(layanan.split("\n")[1]).toBe("| Layanan | Estimasi | Biaya (Rp) | Keterangan |");
+    expect(layanan).toContain("| [Surat Domisili](/pemerintahan/layanan/l1) | 1 hari |");
     const sejarah = out.slice(out.indexOf("### Sejarah Desa"), out.indexOf("## Layanan"));
-    expect(sejarah).not.toContain("Tautan");
+    expect(sejarah).toContain("| Sejarah | Desa tua di Badung. |");
+    expect(sejarah).not.toContain("](");
+  });
+
+  it("kurung siku di judul tidak merusak tautan markdown", () => {
+    const out = render(undefined, [
+      { source: source("berita"), rows: [{ id: "b2", judul: "[Info] Rapat", tanggalTerbit: null, kategoriBerita: { name: "Umum" } }] },
+    ]);
+    expect(out).toContain("- [(Info) Rapat](/pemerintahan/berita/Umum/b2)");
   });
 
   it("tautan detail yang tak diizinkan diganti halaman menu sumber", () => {
     const noDetail = new Set([...ROUTES].filter((route) => route !== "/pemerintahan/berita"));
     const out = render(undefined, stub(), noDetail);
-    expect(out).toContain("- 2026-11-10 — Upacara / Melasti — /pemerintahan/berita/semua");
+    expect(out).toContain("- 2026-11-10 — [Upacara / Melasti](/pemerintahan/berita/semua)");
     expect(out).not.toMatch(/\/pemerintahan\/berita\/(?!semua)/);
   });
 

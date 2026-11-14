@@ -5,7 +5,15 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("next/cache", () => ({ revalidateTag: vi.fn(), unstable_cache: <T,>(fn: T) => fn }));
 vi.mock("@/lib/prisma", () => ({ default: {} }));
 
-import { createDeltaGuard, DELTA_FLUSH_CHARS, guardOutput, MAX_SOURCES } from "@/lib/jenna/chat/output-guard";
+import {
+  collectLinkTitles,
+  createDeltaGuard,
+  DELTA_FLUSH_CHARS,
+  guardOutput,
+  MAX_SOURCES,
+  normalizeHref,
+} from "@/lib/jenna/chat/output-guard";
+import { wrapToolResult } from "@/lib/jenna/tools/executor";
 import { collectPiiValues, maskPii, PII_MASKS } from "@/lib/jenna/pii";
 
 describe("maskPii", () => {
@@ -168,12 +176,26 @@ describe("guardOutput", () => {
   it.each([
     ["path di dalam URL", "Buka https://darmasaba.id/layanan sekarang"],
     ["tautan markdown yang sudah ada", "Lihat [Profil Desa](/profil) ya"],
-    ["kode inline", "Ketik `/profil` di alamat"],
+    ["kode inline berisi path + kata lain", "Ketik `/profil saja` di alamat"],
+    ["kode inline berisi path tak diizinkan", "Jangan `/api/jenna/chat` atau `/rahasia/x`"],
+    ["kode inline berisi perintah biasa", "Jalankan `bun run dev` lalu `cd /profil`"],
     ["tanggal & pecahan", "Tanggal 11/14, setengah 1/2, dan/atau Rp5.000/bulan"],
     ["path tidak diizinkan", "Jangan /api/jenna/chat atau /rahasia/x"],
     ["garis miring tunggal", "pilih A / B"],
   ])("tidak dijadikan tautan: %s", (_name, text) => {
     expect(guardOutput(text, new Set([...routes, "/layanan"])).text).toBe(text);
+  });
+
+  it("kode inline yang seluruh isinya satu path/URL diizinkan dijadikan tautan dan masuk sources", () => {
+    const out = guardOutput("Ketik `/profil` atau ` /berita/abc `, juga `https://darmasaba.id/layanan`.", routes);
+    expect(out.text).toBe(
+      "Ketik [/profil](/profil) atau [/berita/abc](/berita/abc), juga [https://darmasaba.id/layanan](https://darmasaba.id/layanan).",
+    );
+    expect(out.sources.map((s) => s.url)).toEqual(["/profil", "/berita/abc", "https://darmasaba.id/layanan"]);
+  });
+
+  it("linkifyPaths: false → kode inline berisi path tetap kode", () => {
+    expect(guardOutput("Ketik `/profil`.", routes, new Set(), { linkifyPaths: false })).toEqual({ text: "Ketik `/profil`.", sources: [] });
   });
 
   it("path di dalam URL terlarang ikut terbuang bersama URL-nya, tidak dijadikan tautan", () => {
@@ -199,6 +221,99 @@ describe("guardOutput", () => {
       "WA kantor 081234567890, juga 0812 3456 7890 atau 6281234567890; email desa.darmasaba@gmail.com. " +
         `Pak Kadus ${PII_MASKS.phone}, ${PII_MASKS.email}.`,
     );
+  });
+});
+
+describe("judul tautan dari data", () => {
+  const routes = new Set(["/", "/pemerintahan/pengumuman", "/profil"]);
+  const PATH = "/pemerintahan/pengumuman/Ekonomi%20%26%20UMKM/cmk6a1";
+  const snapshot = [
+    "- Pemerintahan › [Pengumuman](/pemerintahan/pengumuman)",
+    `- 2026-11-10 — [Pelatihan UMKM](${PATH})`,
+    "| [Profil Desa](/profil/) | isi |",
+  ].join("\n");
+  const tool = wrapToolResult(
+    "cari_konten",
+    "DATA",
+    JSON.stringify([{ title: "Digitalisasi [Desa]", url: "/pemerintahan/pengumuman/Digitalisasi%20Desa/cmk6a2", text: "isi" }]),
+  );
+  const titles = collectLinkTitles([snapshot, tool]);
+  const guard = (text: string, opts = {}) => guardOutput(text, routes, new Set(), { titles, ...opts });
+
+  it("normalizeHref: decode aman, tanpa query/hash/garis miring akhir", () => {
+    expect(normalizeHref("/a%20b/c/?x=1#y")).toBe("/a b/c");
+    expect(normalizeHref("/a%E0%A4%A")).toBe("/a%E0%A4%A");
+    expect(normalizeHref("/")).toBe("/");
+  });
+
+  it("collectLinkTitles: snapshot [judul](/path) dan item hasil tool, kunci ter-normalisasi", () => {
+    expect(titles.get("/pemerintahan/pengumuman/Ekonomi & UMKM/cmk6a1")).toBe("Pelatihan UMKM");
+    expect(titles.get("/pemerintahan/pengumuman/Digitalisasi Desa/cmk6a2")).toBe("Digitalisasi (Desa)");
+    expect(titles.get("/profil")).toBe("Profil Desa");
+    expect(titles.get("/pemerintahan/pengumuman")).toBe("Pengumuman");
+  });
+
+  it("path polos → label & sumber = judul dari data", () => {
+    const out = guard(`Lihat ${PATH}.`);
+    expect(out.text).toBe(`Lihat [Pelatihan UMKM](${PATH}).`);
+    expect(out.sources).toEqual([{ title: "Pelatihan UMKM", url: PATH }]);
+  });
+
+  it("[/path](/path), label ter-decode, dan label kosong → judul dari data", () => {
+    const decoded = "/pemerintahan/pengumuman/Ekonomi & UMKM/cmk6a1";
+    for (const label of [PATH, decoded, " "]) {
+      const out = guard(`Baca [${label}](${PATH})`);
+      expect(out.text).toBe(`Baca [Pelatihan UMKM](${PATH})`);
+      expect(out.sources).toEqual([{ title: "Pelatihan UMKM", url: PATH }]);
+    }
+  });
+
+  it("judul dari hasil tool dipakai; tanda kurung siku dinetralkan", () => {
+    const url = "/pemerintahan/pengumuman/Digitalisasi%20Desa/cmk6a2";
+    expect(guard(`Lihat ${url}`).text).toBe(`Lihat [Digitalisasi (Desa)](${url})`);
+  });
+
+  it("path tak dikenal → nama menu induk; tanpa menu → path ter-decode (tanpa %20/%26)", () => {
+    const unknown = "/pemerintahan/pengumuman/Ekonomi%20%26%20UMKM/zzz";
+    expect(guard(`Lihat ${unknown}`).sources).toEqual([{ title: "Pengumuman", url: unknown }]);
+    const out = guardOutput(`Lihat ${unknown}`, routes);
+    expect(out.text).toBe(`Lihat [/pemerintahan/pengumuman/Ekonomi & UMKM/zzz](${unknown})`);
+    expect(out.sources[0].title).not.toMatch(/%2|%26/);
+  });
+
+  it("label markdown bermakna tulisan model dipertahankan", () => {
+    const out = guard(`Info: [pelatihan bulan ini](${PATH})`);
+    expect(out.text).toBe(`Info: [pelatihan bulan ini](${PATH})`);
+    expect(out.sources).toEqual([{ title: "pelatihan bulan ini", url: PATH }]);
+  });
+
+  it("sumber tidak duplikat untuk href yang sama (encode/trailing slash berbeda)", () => {
+    const out = guard(`${PATH} lalu [Pelatihan](${PATH}) dan /pemerintahan/pengumuman/Ekonomi%20%26%20UMKM/cmk6a1/ serta /profil/ dan /profil`);
+    expect(out.sources).toEqual([
+      { title: "Pelatihan", url: PATH },
+      { title: "Profil Desa", url: "/profil/" },
+    ]);
+  });
+
+  it("kode inline berisi path ter-encode → tautan berjudul, tanpa duplikat sumber", () => {
+    const out = guard(`1. \`${PATH}\`\n2. ${PATH}`);
+    expect(out.text).toBe(`1. [Pelatihan UMKM](${PATH})\n2. [Pelatihan UMKM](${PATH})`);
+    expect(out.sources).toEqual([{ title: "Pelatihan UMKM", url: PATH }]);
+  });
+
+  it("giliran suara: path polos tetap teks, tautan markdown tetap memakai judul", () => {
+    const out = guard(`Lihat ${PATH} dan [${PATH}](${PATH})`, { linkifyPaths: false });
+    expect(out.text).toBe(`Lihat ${PATH} dan [Pelatihan UMKM](${PATH})`);
+  });
+
+  it("delta guard konsisten dengan hasil akhir, termasuk judul dari hasil tool yang datang di tengah giliran", () => {
+    const live = collectLinkTitles([snapshot]);
+    const emitted: string[] = [];
+    const delta = createDeltaGuard({ routes, trustedPii: new Set(), emit: (t) => emitted.push(t), titles: live });
+    const text = `Lihat \`${PATH}\`. Juga /pemerintahan/pengumuman/Digitalisasi%20Desa/cmk6a2.\n`;
+    collectLinkTitles([tool], live);
+    for (const part of [text.slice(0, 20), text.slice(20, 50), text.slice(50)]) delta.push(part);
+    expect(emitted.join("")).toBe(guard(text).text + "\n");
   });
 });
 
@@ -230,6 +345,10 @@ describe("createDeltaGuard", () => {
     expect(run(["Lihat /pro", "fil. Lalu /pro", "fil/a\n"]).join("")).toBe(
       "Lihat [/profil](/profil). Lalu [/profil/a](/profil/a)\n",
     );
+  });
+
+  it("kode inline berisi path yang terbelah antar delta tetap jadi satu tautan utuh", () => {
+    expect(run(["Ketik `/pro", "fil` lalu `/pro", "fil x`. "]).join("")).toBe("Ketik [/profil](/profil) lalu `/profil x`. ");
   });
 
   it("linkifyPaths: false → path polos tetap teks", () => {

@@ -56,19 +56,25 @@ function cell(value: string, max: number): string {
   return clipText(value.replace(/\|/g, "/").replace(/\s+/g, " ").trim(), max) || "-";
 }
 
+/** `[judul](/path)`: judul & tautan terikat di satu token, jadi model menyalin keduanya bersama. */
+function link(title: string, href: string): string {
+  return `[${title.replace(/\[/g, "(").replace(/\]/g, ")")}](${href})`;
+}
+
 function tableLines({ source, rows }: SnapshotSourceRows, routes: ReadonlySet<string>): string[] {
   const base = resolveSourceHref(source, undefined, routes);
   const hrefs = rows.map((row) => resolveSourceHref(source, row, routes));
   const withLink = hrefs.some((href) => href !== base);
-  const labels = source.fields.map(([label]) => label);
-  const header = withLink ? [...labels, "Tautan"] : labels;
+  const header = source.fields.map(([label]) => label);
   return [
     `### ${source.label} (halaman: ${base})`,
     `| ${header.join(" | ")} |`,
     `|${header.map(() => "---").join("|")}|`,
     ...rows.map((row, index) => {
       const cells = source.fields.map(([, value]) => cell(formatKnowledgeValue(value(row)), source.cellMax));
-      return `| ${(withLink ? [...cells, hrefs[index]] : cells).join(" | ")} |`;
+      // Tautan baris menempel di sel pertama (judul/nama); sel kosong memakai label sumber.
+      if (withLink) cells[0] = link(cells[0] === "-" ? source.label : cells[0], hrefs[index]);
+      return `| ${cells.join(" | ")} |`;
     }),
     "",
   ];
@@ -80,7 +86,7 @@ function listLines({ source, rows }: SnapshotSourceRows, routes: ReadonlySet<str
     ...rows.map((row) => {
       const date = source.dateField ? formatKnowledgeValue(row[source.dateField]) : "";
       const title = cell(source.title(row), 160);
-      return `- ${date ? `${date} — ` : ""}${title} — ${resolveSourceHref(source, row, routes)}`;
+      return `- ${date ? `${date} — ` : ""}${link(title, resolveSourceHref(source, row, routes))}`;
     }),
     "",
   ];

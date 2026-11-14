@@ -14,7 +14,7 @@ import type { Limiter } from "@/lib/rate-limit";
 import { recordFailedTurn, saveTurn } from "./chat.persist";
 import type { ChatRepo, HistoryMessage, Identity } from "./conversation.repo";
 import { TurnTimeoutError, type LoopOptions, type LoopResult } from "./executor-loop";
-import { createDeltaGuard, guardOutput } from "./output-guard";
+import { collectLinkTitles, createDeltaGuard, guardOutput } from "./output-guard";
 
 export const CHAT_MESSAGES = {
   disabled: "Jenna sedang tidak aktif. Untuk informasi, silakan hubungi kantor desa.",
@@ -133,6 +133,13 @@ function trustedPiiFor(snapshot: string, toolResults: readonly string[]): Set<st
   if (trustedCache?.snapshot !== snapshot) trustedCache = { snapshot, values: collectPiiValues([snapshot]) };
   if (toolResults.length === 0) return trustedCache.values;
   return new Set([...trustedCache.values, ...collectPiiValues(toolResults)]);
+}
+
+let titlesCache: { snapshot: string; titles: Map<string, string> } | undefined;
+/** Salinan baru tiap panggilan: boleh ditambah hasil tool tanpa mengubah cache snapshot. */
+function linkTitlesFor(snapshot: string, toolResults: readonly string[]): Map<string, string> {
+  if (titlesCache?.snapshot !== snapshot) titlesCache = { snapshot, titles: collectLinkTitles([snapshot]) };
+  return collectLinkTitles(toolResults, new Map(titlesCache.titles));
 }
 
 /** Riwayat dimulai dari pesan user (beberapa provider menolak asisten di posisi pertama). */
@@ -278,8 +285,9 @@ async function executeTurn(
     const onDelta = hooks.onDelta;
     // Giliran suara diucapkan: path polos jangan dijadikan sintaks tautan.
     const linkifyPaths = modality !== "voice";
+    const streamTitles = linkTitlesFor(snapshot, []);
     const deltaGuard = onDelta
-      ? createDeltaGuard({ routes, trustedPii: streamTrusted, emit: onDelta, linkifyPaths })
+      ? createDeltaGuard({ routes, trustedPii: streamTrusted, emit: onDelta, linkifyPaths, titles: streamTitles })
       : undefined;
 
     const turn = await deps.execute(provider, {
@@ -290,6 +298,7 @@ async function executeTurn(
       onDelta: deltaGuard && ((text) => deltaGuard.push(text)),
       onToolResult: (content) => {
         for (const value of collectPiiValues([content])) streamTrusted.add(value);
+        collectLinkTitles([content], streamTitles);
       },
       onToolCall: (name) => {
         if (!toolsSeen.includes(name) && deps.tools.some((t) => t.spec.name === name)) toolsSeen.push(name);
@@ -301,7 +310,10 @@ async function executeTurn(
       },
     });
 
-    const guarded = guardOutput(turn.text, routes, trustedPiiFor(snapshot, turn.toolResults), { linkifyPaths });
+    const guarded = guardOutput(turn.text, routes, trustedPiiFor(snapshot, turn.toolResults), {
+      linkifyPaths,
+      titles: linkTitlesFor(snapshot, turn.toolResults),
+    });
     const text = guarded.text || CHAT_MESSAGES.empty_answer;
     const savedAt = deps.now();
     await saveTurn(deps.repo, {

@@ -1,7 +1,8 @@
 // Penjaga jawaban akhir Jenna sebelum dikirim/disimpan: buang sisa pembungkus tool & HTML mentah, hanya
-// tautan allowlist yang tetap jadi tautan (path internal polos ikut dijadikan tautan), dan PII disamarkan
-// kecuali nilainya tercantum di data publik.
+// tautan allowlist yang tetap jadi tautan (path internal polos / kode inline berisi satu path ikut dijadikan
+// tautan berlabel judul dari data), dan PII disamarkan kecuali nilainya tercantum di data publik.
 import type { JennaSource } from "../chat-types";
+import { clipText } from "../knowledge/html";
 import { isAllowedJennaHref } from "../knowledge/sitemap";
 import { maskPii, type PiiKeep } from "../pii";
 import { sanitizeResponse } from "../tools/executor";
@@ -17,6 +18,8 @@ const BARE_URL = /https?:\/\/[^\s<>()[\]"'`]+/gi;
 const PLAIN_TOKEN =
   /`[^`\n]*`|https?:\/\/[^\s<>()[\]"'`]+|(?<![\w/.:@~%&=+)\]-])\/[A-Za-z0-9][\w.~%/-]*(?:[?#][\w.~%/=&-]*)?/gi;
 const TRAILING_PUNCT = /[.,;:!?]+$/;
+// Isi kode inline yang seluruhnya satu path/URL (bentuk sama dengan PLAIN_TOKEN) boleh dijadikan tautan.
+const LINKABLE_CODE = /^(?:https?:\/\/[^\s<>()[\]"'`]+|\/[A-Za-z0-9][\w.~%/-]*(?:[?#][\w.~%/=&-]*)?)$/i;
 // Penanda internal untuk tautan yang sudah lolos; dibuang dulu dari input agar tidak bisa dipalsukan.
 const SLOT = "\u0000";
 const SLOT_REF = /\u0000(\d+)\u0000/g;
@@ -29,6 +32,69 @@ export interface GuardResult {
 export interface GuardOptions {
   /** Path internal polos yang diizinkan dijadikan tautan markdown. Default true; false untuk giliran suara. */
   linkifyPaths?: boolean;
+  /** `normalizeHref(href)` → judul dari data giliran ini (lihat `collectLinkTitles`); dibaca saat dipakai. */
+  titles?: ReadonlyMap<string, string>;
+}
+
+const DATA_LINK = /\[([^\]\n]+)\]\(((?:\/|https?:\/\/)[^)\s]*)\)/g;
+// Item hasil tool di-serialisasi `JSON.stringify({title, url, text})` — urutan kunci tetap.
+const TOOL_ITEM = /"title":("(?:[^"\\]|\\.)*"),"url":("(?:[^"\\]|\\.)*")/g;
+const TITLE_MAX = 120;
+
+/** Kunci pencocokan href: `%xx` di-decode, tanpa query/hash, tanpa garis miring di akhir. */
+export function normalizeHref(href: string): string {
+  const path = href.trim().split(/[?#]/, 1)[0];
+  let decoded = path;
+  try {
+    decoded = decodeURIComponent(path);
+  } catch {
+    // `%` tak valid: biarkan apa adanya.
+  }
+  return decoded.length > 1 ? decoded.replace(/\/+$/, "") || "/" : decoded;
+}
+
+/** Judul aman dipakai sebagai label tautan markdown. */
+function linkLabel(text: string): string {
+  return clipText(text.replace(/\[/g, "(").replace(/\]/g, ")").replace(/\s+/g, " ").trim(), TITLE_MAX);
+}
+
+/**
+ * Peta href → judul dari teks data (snapshot: `[judul](/path)`; hasil tool: item `{title, url}`).
+ * Judul pertama yang ditemukan untuk satu href menang.
+ */
+export function collectLinkTitles(texts: readonly string[], into: Map<string, string> = new Map()): Map<string, string> {
+  const add = (title: string, href: string) => {
+    const key = normalizeHref(href);
+    const label = linkLabel(title);
+    if (label && normalizeHref(label) !== key && !into.has(key)) into.set(key, label);
+  };
+  for (const text of texts) {
+    for (const [, title, href] of text.matchAll(DATA_LINK)) add(title, href);
+    for (const [, title, url] of text.matchAll(TOOL_ITEM)) {
+      try {
+        add(JSON.parse(title) as string, JSON.parse(url) as string);
+      } catch {
+        // Item terpotong batas ukuran hasil tool: lewati.
+      }
+    }
+  }
+  return into;
+}
+
+/**
+ * Judul dari data (PII-nya sudah tepercaya, tidak disamarkan); bila tak ada, judul href terpanjang yang
+ * menjadi prefiks (mis. menu induk "Pengumuman"), lalu path ter-decode.
+ */
+function titleFor(url: string, titles: ReadonlyMap<string, string>): string {
+  const key = normalizeHref(url);
+  const exact = titles.get(key);
+  if (exact) return exact;
+  let best: [string, string] | undefined;
+  for (const entry of titles) {
+    const [href] = entry;
+    if (href !== "/" && key.startsWith(`${href}/`) && href.length > (best?.[0].length ?? 0)) best = entry;
+  }
+  return best?.[1] ?? linkLabel(key);
 }
 
 /**
@@ -39,12 +105,13 @@ export function guardOutput(
   text: string,
   routes: ReadonlySet<string>,
   trustedPii: ReadonlySet<string> = new Set(),
-  { linkifyPaths = true }: GuardOptions = {},
+  { linkifyPaths = true, titles = new Map() }: GuardOptions = {},
 ): GuardResult {
   const keep: PiiKeep = (kind, value) => trustedPii.has(`${kind}:${value}`);
   const sources: JennaSource[] = [];
   const addSource = (title: string, url: string) => {
-    if (sources.length < MAX_SOURCES && !sources.some((s) => s.url === url)) sources.push({ title, url });
+    const key = normalizeHref(url);
+    if (sources.length < MAX_SOURCES && !sources.some((s) => normalizeHref(s.url) === key)) sources.push({ title, url });
   };
 
   const bareUrls = (input: string) =>
@@ -52,7 +119,7 @@ export function guardOutput(
       const url = match.replace(TRAILING_PUNCT, "");
       const tail = match.slice(url.length);
       if (!isAllowedJennaHref(url, routes)) return tail;
-      addSource(url, url);
+      addSource(titleFor(url, titles), url);
       return url + tail;
     });
 
@@ -62,20 +129,33 @@ export function guardOutput(
     .replace(HTML_TAG, "");
 
   out = out.replace(MD_LINK, (_match, _bang: string, rawLabel: string, url: string) => {
-    const label = maskPii(bareUrls(rawLabel), keep).trim();
-    if (!url || !isAllowedJennaHref(url, routes)) return label;
-    addSource(label || url, url);
-    kept.push(`[${label || url}](${url})`);
+    const allowed = !!url && isAllowedJennaHref(url, routes);
+    // Label kosong / sama dengan url-nya diganti judul dari data (URL di label tidak dijadikan sumber).
+    const bare = !rawLabel.trim() || (allowed && normalizeHref(rawLabel) === normalizeHref(url));
+    const label = bare && allowed ? titleFor(url, titles) : maskPii(bareUrls(rawLabel), keep).trim();
+    if (!allowed) return label;
+    addSource(label, url);
+    kept.push(`[${label}](${url})`);
     return `${SLOT}${kept.length - 1}${SLOT}`;
   });
 
+  const linkTo = (href: string) => {
+    const label = titleFor(href, titles);
+    addSource(label, href);
+    kept.push(`[${label}](${href})`);
+    return `${SLOT}${kept.length - 1}${SLOT}`;
+  };
+
   out = out.replace(PLAIN_TOKEN, (match) => {
-    if (match.startsWith("`") || /^https?:/i.test(match)) return bareUrls(match);
+    if (match.startsWith("`")) {
+      const code = match.slice(1, -1).trim();
+      const linkable = linkifyPaths && LINKABLE_CODE.test(code) && isAllowedJennaHref(code, routes);
+      return linkable ? linkTo(code) : bareUrls(match);
+    }
+    if (/^https?:/i.test(match)) return bareUrls(match);
     const path = match.replace(TRAILING_PUNCT, "");
     if (!linkifyPaths || !isAllowedJennaHref(path, routes)) return match;
-    addSource(path, path);
-    kept.push(`[${path}](${path})`);
-    return `${SLOT}${kept.length - 1}${SLOT}${match.slice(path.length)}`;
+    return linkTo(path) + match.slice(path.length);
   });
 
   out = maskPii(out, keep)
@@ -118,7 +198,7 @@ export interface DeltaGuardOptions extends GuardOptions {
  * Delta stream dijaga per potongan (sampai batas baris/kalimat) dengan `guardOutput`, agar PII/tautan
  * terlarang tidak sempat tampil. Ekor tanpa batas sengaja tidak pernah di-flush: `done.text` menggantikannya.
  */
-export function createDeltaGuard({ routes, trustedPii, emit, linkifyPaths }: DeltaGuardOptions): { push(delta: string): void } {
+export function createDeltaGuard({ routes, trustedPii, emit, linkifyPaths, titles }: DeltaGuardOptions): { push(delta: string): void } {
   let buffer = "";
   const flush = (cut: number) => {
     const chunk = buffer.slice(0, cut);
@@ -126,7 +206,7 @@ export function createDeltaGuard({ routes, trustedPii, emit, linkifyPaths }: Del
     const lead = LEADING_WS.exec(chunk)?.[0] ?? "";
     const rest = chunk.slice(lead.length);
     const trail = TRAILING_WS.exec(rest)?.[0] ?? "";
-    const out = lead + guardOutput(rest.slice(0, rest.length - trail.length), routes, trustedPii, { linkifyPaths }).text + trail;
+    const out = lead + guardOutput(rest.slice(0, rest.length - trail.length), routes, trustedPii, { linkifyPaths, titles }).text + trail;
     if (out) emit(out);
   };
   return {

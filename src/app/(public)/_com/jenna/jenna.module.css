@@ -70,6 +70,10 @@
   background: #fff;
   border: 1px solid #cbcacd;
   color: #1a1b1e;
+  /* Tautan/sumber panjang tanpa spasi (path, URL) dibungkus agar panel tidak pernah geser horizontal. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .caret {
