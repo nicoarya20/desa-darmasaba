@@ -8,7 +8,7 @@ import jennaState from '../../_state/jenna-state';
 import { SectionCard } from '../../_com/SectionCard';
 import { voiceSwitchWarnings } from '../suara/suara.logic';
 
-/** Sakelar suara untuk website. Disimpan langsung; belum dipakai runtime publik. */
+/** Sakelar suara untuk website. Disimpan langsung; mengatur tampilnya tombol mikrofon di widget publik. */
 export function JennaVoiceSwitchCard() {
   const { isDark } = useDarkMode();
   const tokens = themeTokens(isDark);
@@ -51,7 +51,7 @@ export function JennaVoiceSwitchCard() {
         <Switch
           size="md"
           label="Suara di website desa"
-          description="Belum berpengaruh ke website: tombol suara untuk pengunjung belum dibuat. Setelan ini disimpan untuk dipakai saat fitur suara tersedia."
+          description="Menampilkan tombol mikrofon di widget Jenna untuk pengunjung yang browsernya mendukung. Perubahan langsung berlaku."
           checked={settings.voiceEnabled}
           disabled={snap.saving !== null}
           onChange={(e) => toggle(e.currentTarget.checked)}
