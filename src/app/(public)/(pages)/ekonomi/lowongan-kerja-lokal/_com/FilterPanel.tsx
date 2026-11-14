@@ -2,7 +2,7 @@
 import { FilterAktif } from './FilterAktif';
 import { FilterGroup, FilterPillList } from './FilterGroup';
 import { visibleFixed, type FilterChip, type LowonganFacets } from './lowongan-filter.logic';
-import { FILTER_SKELETON_ROWS, PEMBERI_FACET_VISIBLE } from './lowongan-filter.meta';
+import { FILTER_SKELETON_ROWS } from './lowongan-filter.meta';
 import { LOWONGAN_FILTER_TEXT as T } from './lowongan-filter.text';
 import { toggleKey, toggleSingle, type LowonganParams, type LowonganUpdate } from './lowongan-params.logic';
 import s from './filter.module.css';
@@ -50,6 +50,7 @@ type GroupsProps = { params: LowonganParams; facets: LowonganFacets; update: Low
 
 /** Empat grup filter; grup tanpa pilihan yang tampil tidak dirender. */
 function Groups({ params, facets, update }: GroupsProps) {
+  const lokasi = visibleFixed(facets.lokasi, params.lokasi);
   const gaji = visibleFixed(facets.gaji, params.gaji);
   const tayang = visibleFixed(facets.tayang, params.tayang);
   return (
@@ -63,22 +64,21 @@ function Groups({ params, facets, update }: GroupsProps) {
           />
         </FilterGroup>
       ) : null}
+      {lokasi.length > 0 ? (
+        <FilterGroup group="lokasi" activeCount={Number(params.lokasi !== null)} defaultOpen>
+          <FilterPillList
+            options={lokasi}
+            isSelected={(value) => params.lokasi === value}
+            onToggle={(value) => update((p) => ({ ...p, lokasi: toggleSingle(p.lokasi, value) }))}
+          />
+        </FilterGroup>
+      ) : null}
       {gaji.length > 0 ? (
         <FilterGroup group="gaji" activeCount={Number(params.gaji !== null)} defaultOpen>
           <FilterPillList
             options={gaji}
             isSelected={(value) => params.gaji === value}
             onToggle={(value) => update((p) => ({ ...p, gaji: toggleSingle(p.gaji, value) }))}
-          />
-        </FilterGroup>
-      ) : null}
-      {facets.pemberi.length > 0 ? (
-        <FilterGroup group="pemberi" activeCount={params.pemberi.length}>
-          <FilterPillList
-            options={facets.pemberi.map((o) => ({ value: o.key, label: o.label, count: o.count }))}
-            isSelected={(key) => params.pemberi.includes(key)}
-            onToggle={(key) => update((p) => ({ ...p, pemberi: toggleKey(p.pemberi, key) }))}
-            visibleCount={PEMBERI_FACET_VISIBLE}
           />
         </FilterGroup>
       ) : null}

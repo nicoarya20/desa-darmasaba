@@ -1,5 +1,6 @@
 // @vitest-environment node
-// Daftar lowongan publik: params URL (bolak-balik, nilai tak dikenal), facet, saring, urut, chip, tampilan gabungan.
+// Daftar lowongan publik: params URL (bolak-balik, nilai tak dikenal), facet (tipe, lokasi kerja, gaji, waktu tayang),
+// saring, urut, chip, tampilan gabungan.
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -15,6 +16,7 @@ import {
 } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan-filter.logic';
 import {
   GAJI_MIN_OPTIONS,
+  LOKASI_OPTIONS,
   LOWONGAN_LIST_LIMIT,
   LOWONGAN_URUT,
   TAYANG_HARI_OPTIONS,
@@ -42,24 +44,25 @@ const job = (id: string, over: Partial<Lowongan> = {}): Lowongan => ({
   id,
   posisi: `Posisi ${id}`,
   pemberiKerja: 'Warung Bu Made',
-  pemberiKey: 'warung bu made',
   tipe: 'Full Time',
   tipeKey: 'full time',
   lokasi: 'Jl. Raya Darmasaba',
+  diDesa: true,
   gaji: 2_500_000,
   ringkasan: '',
   tayangMs: NOW - DAY,
   ...over,
 });
 
-// test-only: 7 lowongan meniru data stg (Full Time ×5, Freelance, Menjaga Toko; gaji campur; tanggal lama dan baru).
+// test-only: 7 lowongan meniru data stg (Full Time ×5, Freelance, Menjaga Toko; gaji campur; tanggal lama dan baru);
+// 5 di dalam desa, 2 di luar (d beralamat di desa tetangga, f tanpa alamat).
 const data: Lowongan[] = [
   job('a', { posisi: 'Barista', gaji: 2_500_000, tayangMs: NOW - 1 * DAY }),
-  job('b', { posisi: 'Kasir', gaji: 2_000_000, tayangMs: NOW - 3 * DAY, pemberiKerja: 'Toko Sari', pemberiKey: 'toko sari' }),
-  job('c', { posisi: 'Admin', gaji: null, tayangMs: NOW - 10 * DAY, tipe: 'full time', pemberiKerja: 'CV. Maju, Jaya', pemberiKey: 'cv. maju, jaya' }),
-  job('d', { posisi: 'Desainer', gaji: 5_000_000, tayangMs: NOW - 40 * DAY, tipe: 'Freelance', tipeKey: 'freelance' }),
-  job('e', { posisi: 'Penjaga', gaji: 1_500_000, tayangMs: NOW - 120 * DAY, tipe: 'Menjaga Toko', tipeKey: 'menjaga toko', pemberiKerja: 'Toko Sari', pemberiKey: 'toko sari' }),
-  job('f', { posisi: 'Koki', gaji: 2_500_000, tayangMs: NOW - 2 * DAY, lokasi: null }),
+  job('b', { posisi: 'Kasir', gaji: 2_000_000, tayangMs: NOW - 3 * DAY, pemberiKerja: 'Toko Sari' }),
+  job('c', { posisi: 'Admin', gaji: null, tayangMs: NOW - 10 * DAY, tipe: 'full time', pemberiKerja: 'CV. Maju, Jaya' }),
+  job('d', { posisi: 'Desainer', gaji: 5_000_000, tayangMs: NOW - 40 * DAY, tipe: 'Freelance', tipeKey: 'freelance', lokasi: 'Jl. Raya Sibang Kaja', diDesa: false }),
+  job('e', { posisi: 'Penjaga', gaji: 1_500_000, tayangMs: NOW - 120 * DAY, tipe: 'Menjaga Toko', tipeKey: 'menjaga toko', pemberiKerja: 'Toko Sari' }),
+  job('f', { posisi: 'Koki', gaji: 2_500_000, tayangMs: NOW - 2 * DAY, lokasi: null, diDesa: false }),
   job('g', { posisi: 'Pramusaji', gaji: 2_000_000, tayangMs: 0, tipe: null, tipeKey: null }),
 ];
 const ids = (items: readonly Lowongan[]) => items.map((l) => l.id).join('');
@@ -74,16 +77,16 @@ describe('params URL', () => {
   });
 
   it('semua nilai ditulis berurutan dan terbaca kembali sama persis', () => {
-    const p = params({ q: 'kasir toko', tipe: ['full time', 'freelance'], pemberi: ['toko sari'], gaji: 2_000_000, tayang: 30, urut: 'gaji-desc' });
+    const p = params({ q: 'kasir toko', tipe: ['full time', 'freelance'], lokasi: 'desa', gaji: 2_000_000, tayang: 30, urut: 'gaji-desc' });
     const href = lowonganListHref(p);
-    expect(href).toBe(`${BASE}?q=kasir%20toko&tipe=full%20time,freelance&pemberi=toko%20sari&gaji=2000000&tayang=30&urut=gaji-desc`);
+    expect(href).toBe(`${BASE}?q=kasir%20toko&tipe=full%20time,freelance&lokasi=desa&gaji=2000000&tayang=30&urut=gaji-desc`);
     expect(read(href)).toEqual(p);
   });
 
   it('kunci yang memuat koma, persen, atau ampersand tetap satu kunci setelah bolak-balik', () => {
-    const p = params({ pemberi: ['cv. maju, jaya', 'diskon 50% & co', 'a%2Cb'] });
+    const p = params({ tipe: ['paruh waktu, sore', 'komisi 50% & bonus', 'a%2Cb'] });
     const href = lowonganListHref(p);
-    expect(href).toContain('pemberi=cv.%20maju%252C%20jaya,');
+    expect(href).toContain('tipe=paruh%20waktu%252C%20sore,');
     expect(read(href)).toEqual(p);
   });
 
@@ -91,18 +94,21 @@ describe('params URL', () => {
     const p = read(`${BASE}?gaji=1234567&tayang=14&urut=nama&tipe=full%20time,,full%20time,%20&q=%20%20barista%20`);
     expect(p).toEqual(params({ q: 'barista', tipe: ['full time'] }));
     expect(read(`${BASE}?gaji=2jt&tayang=-7`)).toEqual(emptyParams());
+    expect(read(`${BASE}?lokasi=kota&pemberi=toko%20sari`)).toEqual(emptyParams());
+    expect(read(`${BASE}?lokasi=luar`)).toEqual(params({ lokasi: 'luar' }));
+    expect(lowonganListHref(params({ lokasi: 'luar' }))).toBe(`${BASE}?lokasi=luar`);
     expect(read(`${BASE}?gaji=3000000&tayang=90&urut=gaji-asc`)).toEqual(params({ gaji: 3_000_000, tayang: 90, urut: 'gaji-asc' }));
   });
 
   it('hapus filter mempertahankan kata kunci dan urutan; hapus semua ikut membuang kata kunci', () => {
-    const p = params({ q: 'kasir', tipe: ['freelance'], gaji: 2_000_000, urut: 'gaji-asc' });
+    const p = params({ q: 'kasir', tipe: ['freelance'], lokasi: 'luar', gaji: 2_000_000, urut: 'gaji-asc' });
     expect(clearFilters(p)).toEqual(params({ q: 'kasir', urut: 'gaji-asc' }));
     expect(clearAll(p)).toEqual(params({ urut: 'gaji-asc' }));
   });
 
   it('hitung filter aktif, pilih/lepas kunci dan pilihan tunggal', () => {
     expect(countActiveFilters(emptyParams())).toBe(0);
-    expect(countActiveFilters(params({ q: 'x', tipe: ['a', 'b'], pemberi: ['c'], gaji: 2_000_000, tayang: 7 }))).toBe(5);
+    expect(countActiveFilters(params({ q: 'x', tipe: ['a', 'b'], lokasi: 'desa', gaji: 2_000_000, tayang: 7 }))).toBe(5);
     expect(toggleKey(['a'], 'b')).toEqual(['a', 'b']);
     expect(toggleKey(['a', 'b'], 'a')).toEqual(['b']);
     expect(toggleSingle(null, 7)).toBe(7);
@@ -132,12 +138,19 @@ describe('facet', () => {
     ]);
   });
 
-  it('pemberi kerja: urut nama, jumlah dari seluruh data', () => {
-    expect(facets.pemberi).toEqual([
-      { key: 'cv. maju, jaya', label: 'CV. Maju, Jaya', count: 1 },
-      { key: 'toko sari', label: 'Toko Sari', count: 2 },
-      { key: 'warung bu made', label: 'Warung Bu Made', count: 4 },
+  it('lokasi kerja: dua pilihan tetap (dalam desa, luar desa) dengan jumlah dari seluruh data', () => {
+    expect(facets.lokasi).toEqual([
+      { value: 'desa', label: 'Di dalam desa', count: 5 },
+      { value: 'luar', label: 'Di luar desa', count: 2 },
     ]);
+    expect(LOKASI_OPTIONS).toEqual(['desa', 'luar']);
+  });
+
+  it('lokasi kerja berjumlah 0 disembunyikan kecuali terpilih; satu pilihan tersisa tetap tampil; tanpa data → kosong', () => {
+    const semuaDesa = lowonganFacets([job('x'), job('y')], NOW).lokasi;
+    expect(visibleFixed(semuaDesa, null).map((o) => [o.value, o.count])).toEqual([['desa', 2]]);
+    expect(visibleFixed(semuaDesa, 'luar').map((o) => o.value)).toEqual(['desa', 'luar']);
+    expect(visibleFixed(lowonganFacets([], NOW).lokasi, null)).toEqual([]);
   });
 
   it('gaji: jumlah lowongan dengan gaji ≥ ambang (tanpa gaji tidak dihitung) + label juta', () => {
@@ -177,8 +190,8 @@ describe('facet', () => {
   });
 
   it('kunci URL yang tidak ada di data dibuang', () => {
-    const p = resolveParams(params({ tipe: ['freelance', 'magang'], pemberi: ['asing'], gaji: 2_000_000 }), facets);
-    expect(p).toEqual(params({ tipe: ['freelance'], pemberi: [], gaji: 2_000_000 }));
+    const p = resolveParams(params({ tipe: ['freelance', 'magang'], lokasi: 'luar', gaji: 2_000_000 }), facets);
+    expect(p).toEqual(params({ tipe: ['freelance'], lokasi: 'luar', gaji: 2_000_000 }));
   });
 });
 
@@ -189,18 +202,20 @@ describe('saring', () => {
     expect(pick({})).toBe('abcdefg');
   });
 
-  it('kata kunci: posisi, pemberi kerja, lokasi, tipe; tanpa beda huruf besar', () => {
+  it('kata kunci: posisi, pemberi kerja (bukan filter, tetap bisa dicari), lokasi, tipe; tanpa beda huruf besar', () => {
     expect(pick({ q: 'BARISTA' })).toBe('a');
     expect(pick({ q: 'toko sari' })).toBe('be');
-    expect(pick({ q: 'raya darmasaba' })).toBe('abcdeg');
+    expect(pick({ q: 'raya darmasaba' })).toBe('abceg');
+    expect(pick({ q: 'cv. maju' })).toBe('c');
     expect(pick({ q: 'freelance' })).toBe('d');
     expect(pick({ q: 'tidak ada' })).toBe('');
   });
 
-  it('tipe dan pemberi kerja banyak pilihan (ATAU di dalam grup)', () => {
+  it('tipe banyak pilihan (ATAU di dalam grup); lokasi kerja satu pilihan', () => {
     expect(pick({ tipe: ['freelance', 'menjaga toko'] })).toBe('de');
     expect(pick({ tipe: ['full time'] })).toBe('abcf');
-    expect(pick({ pemberi: ['toko sari', 'cv. maju, jaya'] })).toBe('bce');
+    expect(pick({ lokasi: 'desa' })).toBe('abceg');
+    expect(pick({ lokasi: 'luar' })).toBe('df');
   });
 
   it('gaji minimal membuang lowongan tanpa gaji; waktu tayang membuang tanggal tak terbaca', () => {
@@ -212,8 +227,9 @@ describe('saring', () => {
 
   it('gabungan filter (DAN antar grup)', () => {
     expect(pick({ tipe: ['full time'], gaji: 2_000_000, tayang: 7 })).toBe('abf');
-    expect(pick({ tipe: ['full time'], pemberi: ['toko sari'], gaji: 2_500_000 })).toBe('');
-    expect(pick({ q: 'toko', pemberi: ['toko sari'], gaji: 2_000_000 })).toBe('b');
+    expect(pick({ tipe: ['full time'], lokasi: 'luar' })).toBe('f');
+    expect(pick({ tipe: ['freelance'], lokasi: 'desa' })).toBe('');
+    expect(pick({ q: 'toko', lokasi: 'desa', gaji: 2_000_000 })).toBe('b');
   });
 });
 
@@ -241,29 +257,30 @@ describe('chip dan tampilan', () => {
   const facets = lowonganFacets(data, NOW);
 
   it('chip mengikuti urutan panel, berlabel dari data, dan tahu params setelah dihapus', () => {
-    const p = params({ q: 'x', tipe: ['freelance'], pemberi: ['toko sari'], gaji: 2_000_000, tayang: 30 });
+    const p = params({ q: 'x', tipe: ['freelance'], lokasi: 'luar', gaji: 2_000_000, tayang: 30 });
     const chips = activeChips(p, facets);
     expect(chips.map((c) => [c.group, c.label])).toEqual([
       ['tipe', 'Freelance'],
+      ['lokasi', 'Di luar desa'],
       ['gaji', 'Minimal Rp2 juta'],
-      ['pemberi', 'Toko Sari'],
       ['tayang', '30 hari terakhir'],
     ]);
     expect(chips[0].next).toEqual({ ...p, tipe: [] });
-    expect(chips[1].next).toEqual({ ...p, gaji: null });
-    expect(chips[2].next).toEqual({ ...p, pemberi: [] });
+    expect(chips[1].next).toEqual({ ...p, lokasi: null });
+    expect(chips[2].next).toEqual({ ...p, gaji: null });
     expect(chips[3].next).toEqual({ ...p, tayang: null });
     expect(new Set(chips.map((c) => c.key)).size).toBe(4);
+    expect(activeChips(params({ lokasi: 'desa' }), facets).map((c) => c.label)).toEqual(['Di dalam desa']);
     expect(activeChips(emptyParams('kata kunci'), facets)).toEqual([]);
   });
 
   it('tampilan: kunci tak dikenal dibuang sebelum menyaring, hasil terurut, jumlah dan chip sesuai', () => {
-    const view = buildLowonganView(data, params({ tipe: ['full time', 'magang'], urut: 'gaji-asc' }), NOW);
+    const view = buildLowonganView(data, params({ tipe: ['full time', 'magang'], lokasi: 'desa', urut: 'gaji-asc' }), NOW);
     expect(view.params.tipe).toEqual(['full time']);
-    expect(ids(view.items)).toBe('bafc');
+    expect(ids(view.items)).toBe('bac');
     expect(view.total).toBe(7);
-    expect(view.activeCount).toBe(1);
-    expect(view.chips.map((c) => c.label)).toEqual(['Full Time']);
+    expect(view.activeCount).toBe(2);
+    expect(view.chips.map((c) => c.label)).toEqual(['Full Time', 'Di dalam desa']);
   });
 
   it('tampilan data kosong: tanpa pilihan, tanpa hasil', () => {

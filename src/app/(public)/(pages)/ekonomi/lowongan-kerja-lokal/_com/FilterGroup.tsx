@@ -2,11 +2,11 @@
 import { Collapse } from '@mantine/core';
 import {
   IconBriefcase,
-  IconBuilding,
   IconCalendarEvent,
   IconCash,
   IconCheck,
   IconChevronDown,
+  IconMapPin,
   type Icon,
 } from '@tabler/icons-react';
 import { useId, useState, type ReactNode } from 'react';
@@ -17,8 +17,8 @@ import s from './filter-group.module.css';
 /** Ikon tiap grup filter; dipakai kepala grup dan chip filter aktif. */
 export const FILTER_GROUP_ICON: Record<FilterGroupKey, Icon> = {
   tipe: IconBriefcase,
+  lokasi: IconMapPin,
   gaji: IconCash,
-  pemberi: IconBuilding,
   tayang: IconCalendarEvent,
 };
 
@@ -67,38 +67,24 @@ type ListProps<V extends string | number> = {
   options: readonly PillOption<V>[];
   isSelected: (value: V) => boolean;
   onToggle: (value: V) => void;
-  /** Tampilkan sebanyak ini dulu, lalu tombol "Lihat semua (n)" (hanya bila ≥2 pilihan tersembunyi). */
-  visibleCount?: number;
 };
 
-/** Daftar pil pilihan (tombol `aria-pressed`, satu per baris); pilihan terpilih selalu tampil walau di luar batas. */
-export function FilterPillList<V extends string | number>({ options, isSelected, onToggle, visibleCount }: ListProps<V>) {
-  const [showAll, setShowAll] = useState(false);
-  // Menyembunyikan satu pilihan saja tidak sepadan dengan tombolnya: batasi hanya bila ≥2 tersembunyi.
-  const canCollapse = visibleCount !== undefined && options.length > visibleCount + 1;
-  const visible =
-    canCollapse && !showAll ? options.filter((option, i) => i < visibleCount || isSelected(option.value)) : options;
+/** Daftar pil pilihan (tombol `aria-pressed`, satu per baris). */
+export function FilterPillList<V extends string | number>({ options, isSelected, onToggle }: ListProps<V>) {
   return (
-    <>
-      <ul className={s.pills}>
-        {visible.map((option) => {
-          const pressed = isSelected(option.value);
-          return (
-            <li key={option.value}>
-              <button type="button" className={s.pill} aria-pressed={pressed} onClick={() => onToggle(option.value)}>
-                {pressed ? <IconCheck size={16} stroke={2} aria-hidden /> : null}
-                <span className={s.pillLabel}>{option.label}</span>
-                <span className={s.pillCount}>{option.count}</span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-      {canCollapse ? (
-        <button type="button" className={s.more} aria-expanded={showAll} onClick={() => setShowAll((v) => !v)}>
-          {showAll ? T.lebihSedikit : T.lihatSemua(options.length)}
-        </button>
-      ) : null}
-    </>
+    <ul className={s.pills}>
+      {options.map((option) => {
+        const pressed = isSelected(option.value);
+        return (
+          <li key={option.value}>
+            <button type="button" className={s.pill} aria-pressed={pressed} onClick={() => onToggle(option.value)}>
+              {pressed ? <IconCheck size={16} stroke={2} aria-hidden /> : null}
+              <span className={s.pillLabel}>{option.label}</span>
+              <span className={s.pillCount}>{option.count}</span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

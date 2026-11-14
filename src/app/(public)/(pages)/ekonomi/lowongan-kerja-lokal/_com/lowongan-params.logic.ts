@@ -1,23 +1,24 @@
 import {
   GAJI_MIN_OPTIONS,
+  LOKASI_OPTIONS,
   LOWONGAN_BASE_HREF,
   LOWONGAN_URUT,
   TAYANG_HARI_OPTIONS,
   type GajiMin,
+  type LokasiKerja,
   type LowonganUrut,
   type TayangHari,
 } from './lowongan-filter.meta';
 
 /**
- * Keadaan daftar lowongan yang disimpan di URL: `q`, `tipe`/`pemberi` (kunci dipisah koma), `gaji` (ambang minimal),
- * `tayang` (hari ke belakang), `urut`. Nilai bawaan tidak ditulis; nilai tak dikenal diabaikan.
+ * Keadaan daftar lowongan yang disimpan di URL: `q`, `tipe` (kunci dipisah koma), `lokasi` (`desa|luar`), `gaji` (ambang
+ * minimal), `tayang` (hari ke belakang), `urut`. Nilai bawaan tidak ditulis; nilai tak dikenal diabaikan.
  */
 export type LowonganParams = {
   q: string;
   /** `tipeKey` terpilih (banyak). */
   tipe: string[];
-  /** `pemberiKey` terpilih (banyak). */
-  pemberi: string[];
+  lokasi: LokasiKerja | null;
   gaji: GajiMin | null;
   tayang: TayangHari | null;
   urut: LowonganUrut;
@@ -32,11 +33,11 @@ const DEFAULT_URUT: LowonganUrut = LOWONGAN_URUT[0];
 
 /** Params kosong: urutan bawaan, tanpa filter; kata kunci boleh dibawa. */
 export function emptyParams(q = ''): LowonganParams {
-  return { q, tipe: [], pemberi: [], gaji: null, tayang: null, urut: DEFAULT_URUT };
+  return { q, tipe: [], lokasi: null, gaji: null, tayang: null, urut: DEFAULT_URUT };
 }
 
 /**
- * Kunci berasal dari teks bebas (nama usaha bisa memuat koma), sedangkan koma adalah pemisah daftar. Koma dan persen
+ * Kunci tipe berasal dari teks bebas (bisa memuat koma), sedangkan koma adalah pemisah daftar. Koma dan persen
  * di dalam kunci ditulis sebagai `%2C` / `%25` supaya tetap terbaca setelah peramban men-decode query.
  */
 const escapeKey = (key: string) => key.replace(/%/g, '%25').replace(/,/g, '%2C');
@@ -60,7 +61,7 @@ export function parseLowonganParams(search: Reader): LowonganParams {
   return {
     q: search.get('q')?.trim() ?? '',
     tipe: parseKeys(search.get('tipe')),
-    pemberi: parseKeys(search.get('pemberi')),
+    lokasi: LOKASI_OPTIONS.find((value) => value === search.get('lokasi')) ?? null,
     gaji: parseChoice(search.get('gaji'), GAJI_MIN_OPTIONS),
     tayang: parseChoice(search.get('tayang'), TAYANG_HARI_OPTIONS),
     urut: LOWONGAN_URUT.find((value) => value === search.get('urut')) ?? DEFAULT_URUT,
@@ -74,7 +75,7 @@ export function lowonganListHref(p: LowonganParams): string {
   const keys = (list: readonly string[]) => list.map((key) => encodeURIComponent(escapeKey(key))).join(',');
   if (p.q) add('q', encodeURIComponent(p.q));
   if (p.tipe.length) add('tipe', keys(p.tipe));
-  if (p.pemberi.length) add('pemberi', keys(p.pemberi));
+  if (p.lokasi !== null) add('lokasi', p.lokasi);
   if (p.gaji !== null) add('gaji', String(p.gaji));
   if (p.tayang !== null) add('tayang', String(p.tayang));
   if (p.urut !== DEFAULT_URUT) add('urut', p.urut);
@@ -91,12 +92,12 @@ export function clearAll(p: LowonganParams): LowonganParams {
   return { ...emptyParams(), urut: p.urut };
 }
 
-/** Banyak filter aktif (tiap tipe/pemberi dihitung satu; gaji dan waktu tayang masing-masing satu). */
+/** Banyak filter aktif (tiap tipe dihitung satu; lokasi, gaji, dan waktu tayang masing-masing satu). */
 export function countActiveFilters(p: LowonganParams): number {
-  return p.tipe.length + p.pemberi.length + Number(p.gaji !== null) + Number(p.tayang !== null);
+  return p.tipe.length + Number(p.lokasi !== null) + Number(p.gaji !== null) + Number(p.tayang !== null);
 }
 
-/** Pilih/lepas satu kunci pada filter banyak pilihan. */
+/** Pilih/lepas satu kunci pada filter banyak pilihan (tipe). */
 export function toggleKey(keys: readonly string[], key: string): string[] {
   return keys.includes(key) ? keys.filter((k) => k !== key) : [...keys, key];
 }

@@ -1,9 +1,11 @@
 import { matchesSearch } from '../../umkm/_com/katalog/katalog-filter.logic';
 import {
   GAJI_MIN_OPTIONS,
+  LOKASI_OPTIONS,
   LOWONGAN_URUT,
   TAYANG_HARI_OPTIONS,
   type GajiMin,
+  type LokasiKerja,
   type LowonganUrut,
   type TayangHari,
 } from './lowongan-filter.meta';
@@ -12,17 +14,17 @@ import type { LowonganParams } from './lowongan-params.logic';
 import type { Lowongan } from './lowongan.types';
 
 /** Grup panel Filter, dalam urutan tampil. */
-export type FilterGroupKey = 'tipe' | 'gaji' | 'pemberi' | 'tayang';
+export type FilterGroupKey = 'tipe' | 'lokasi' | 'gaji' | 'tayang';
 
-/** Satu pilihan dari data (tipe / pemberi kerja): kunci URL, tulisan pertama yang ditemui, jumlah lowongan. */
+/** Satu pilihan tipe dari data: kunci URL, tulisan pertama yang ditemui, jumlah lowongan. */
 export type FacetOption = { key: string; label: string; count: number };
 
-/** Satu pilihan daftar tetap (ambang gaji / hari tayang) beserta jumlah lowongan yang lolos. */
-export type FixedOption<V extends number> = { value: V; label: string; count: number };
+/** Satu pilihan daftar tetap (lokasi, ambang gaji, hari tayang) beserta jumlah lowongan yang lolos. */
+export type FixedOption<V extends string | number> = { value: V; label: string; count: number };
 
 export type LowonganFacets = {
   tipe: FacetOption[];
-  pemberi: FacetOption[];
+  lokasi: FixedOption<LokasiKerja>[];
   gaji: FixedOption<GajiMin>[];
   tayang: FixedOption<TayangHari>[];
 };
@@ -60,12 +62,16 @@ function facetOf(items: readonly Lowongan[], pick: (item: Lowongan) => { key: st
 
 /**
  * Pilihan dan jumlah panel Filter, dihitung dari seluruh lowongan yang dimuat (bukan hasil saring lain).
- * Tipe: jumlah terbanyak lalu nama. Pemberi kerja: nama.
+ * Tipe: jumlah terbanyak lalu nama. Lokasi, gaji, dan waktu tayang: daftar tetap.
  */
 export function lowonganFacets(items: readonly Lowongan[], nowMs: number): LowonganFacets {
   return {
     tipe: facetOf(items, (l) => ({ key: l.tipeKey, label: l.tipe })).sort((a, b) => b.count - a.count || byLabel(a, b)),
-    pemberi: facetOf(items, (l) => ({ key: l.pemberiKey, label: l.pemberiKerja })).sort(byLabel),
+    lokasi: LOKASI_OPTIONS.map((value) => ({
+      value,
+      label: T.lokasi[value],
+      count: items.filter((l) => l.diDesa === (value === 'desa')).length,
+    })),
     gaji: GAJI_MIN_OPTIONS.map((value) => ({
       value,
       label: gajiMinLabel(value),
@@ -80,15 +86,13 @@ export function lowonganFacets(items: readonly Lowongan[], nowMs: number): Lowon
 }
 
 /** Pilihan daftar tetap yang ditampilkan: jumlah 0 disembunyikan kecuali sedang terpilih. */
-export function visibleFixed<V extends number>(options: readonly FixedOption<V>[], selected: V | null): FixedOption<V>[] {
+export function visibleFixed<V extends string | number>(options: readonly FixedOption<V>[], selected: V | null): FixedOption<V>[] {
   return options.filter((option) => option.count > 0 || option.value === selected);
 }
 
-/** Buang kunci tipe/pemberi dari URL yang tidak ada di data (nilai tak dikenal diabaikan). */
+/** Buang kunci tipe dari URL yang tidak ada di data (nilai tak dikenal diabaikan). */
 export function resolveParams(p: LowonganParams, facets: LowonganFacets): LowonganParams {
-  const known = (keys: readonly string[], options: readonly FacetOption[]) =>
-    keys.filter((key) => options.some((option) => option.key === key));
-  return { ...p, tipe: known(p.tipe, facets.tipe), pemberi: known(p.pemberi, facets.pemberi) };
+  return { ...p, tipe: p.tipe.filter((key) => facets.tipe.some((option) => option.key === key)) };
 }
 
 /** Lowongan yang lolos kata kunci (posisi, pemberi kerja, lokasi, tipe) dan semua filter aktif. */
@@ -98,7 +102,7 @@ export function filterLowongan(items: readonly Lowongan[], p: LowonganParams, no
     (item) =>
       matchesSearch(p.q, [item.posisi, item.pemberiKerja, item.lokasi, item.tipe]) &&
       (p.tipe.length === 0 || (item.tipeKey !== null && p.tipe.includes(item.tipeKey))) &&
-      (p.pemberi.length === 0 || p.pemberi.includes(item.pemberiKey)) &&
+      (p.lokasi === null || item.diDesa === (p.lokasi === 'desa')) &&
       (p.gaji === null || (item.gaji !== null && item.gaji >= p.gaji)) &&
       (since === null || item.tayangMs >= since),
   );
@@ -124,22 +128,16 @@ export function urutOptions(): { value: LowonganUrut; label: string }[] {
 
 /** Chip filter aktif dalam urutan panel (kata kunci tidak dijadikan chip; ia tampil di kolom cari). */
 export function activeChips(p: LowonganParams, facets: LowonganFacets): FilterChip[] {
-  const labelOf = (options: readonly FacetOption[], key: string) => options.find((o) => o.key === key)?.label ?? key;
   const chips: FilterChip[] = p.tipe.map((key) => ({
     key: `tipe:${key}`,
     group: 'tipe',
-    label: labelOf(facets.tipe, key),
+    label: facets.tipe.find((o) => o.key === key)?.label ?? key,
     next: { ...p, tipe: p.tipe.filter((k) => k !== key) },
   }));
-  if (p.gaji !== null) chips.push({ key: 'gaji', group: 'gaji', label: gajiMinLabel(p.gaji), next: { ...p, gaji: null } });
-  for (const key of p.pemberi) {
-    chips.push({
-      key: `pemberi:${key}`,
-      group: 'pemberi',
-      label: labelOf(facets.pemberi, key),
-      next: { ...p, pemberi: p.pemberi.filter((k) => k !== key) },
-    });
+  if (p.lokasi !== null) {
+    chips.push({ key: 'lokasi', group: 'lokasi', label: T.lokasi[p.lokasi], next: { ...p, lokasi: null } });
   }
+  if (p.gaji !== null) chips.push({ key: 'gaji', group: 'gaji', label: gajiMinLabel(p.gaji), next: { ...p, gaji: null } });
   if (p.tayang !== null) {
     chips.push({ key: 'tayang', group: 'tayang', label: T.tayang[p.tayang], next: { ...p, tayang: null } });
   }

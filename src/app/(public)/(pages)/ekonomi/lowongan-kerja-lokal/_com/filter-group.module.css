@@ -115,21 +115,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-.more {
-  margin-top: 10px;
-  padding: 4px 0;
-  border: 0;
-  background: none;
-  color: var(--brand);
-  font: inherit;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
 .groupHead:focus-visible,
-.pill:focus-visible,
-.more:focus-visible {
+.pill:focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
@@ -141,10 +128,6 @@
 @media (hover: hover) and (pointer: fine) {
   .pill:not([aria-pressed="true"]):hover {
     border-color: var(--subtle);
-  }
-
-  .more:hover {
-    text-decoration: underline;
   }
 }
 

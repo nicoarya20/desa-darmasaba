@@ -1,4 +1,4 @@
-import type { LowonganUrut, TayangHari } from './lowongan-filter.meta';
+import type { LokasiKerja, LowonganUrut, TayangHari } from './lowongan-filter.meta';
 
 /** Teks UI kerangka halaman daftar lowongan: kepala, panel Filter, baris alat, keadaan kosong/galat. */
 export const LOWONGAN_FILTER_TEXT = {
@@ -16,19 +16,21 @@ export const LOWONGAN_FILTER_TEXT = {
   aturFilter: 'Atur filter',
   group: {
     tipe: 'Tipe pekerjaan',
+    lokasi: 'Lokasi kerja',
     gaji: 'Gaji per bulan',
-    pemberi: 'Pemberi kerja',
     tayang: 'Waktu tayang',
   },
   /** `juta` sudah berformat Indonesia, mis. "1,5". */
   gajiMin: (juta: string) => `Minimal Rp${juta} juta`,
+  lokasi: {
+    desa: 'Di dalam desa',
+    luar: 'Di luar desa',
+  } satisfies Record<LokasiKerja, string>,
   tayang: {
     7: '7 hari terakhir',
     30: '30 hari terakhir',
     90: '3 bulan terakhir',
   } satisfies Record<TayangHari, string>,
-  lihatSemua: (n: number) => `Lihat semua (${n})`,
-  lebihSedikit: 'Lebih sedikit',
   hapusChip: (label: string) => `Hapus filter ${label}`,
   hapusSemua: 'Hapus semua',
   urutkan: 'Urutkan',

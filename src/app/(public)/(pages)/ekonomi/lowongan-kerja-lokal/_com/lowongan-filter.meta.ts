@@ -6,7 +6,7 @@ import type { CSSProperties } from 'react';
 /**
  * Banyak lowongan yang dimuat sekaligus (satu permintaan find-many).
  * MITIGASI SEMENTARA(lowongan-filter): saring di klien sampai API mendukung — docs/BACKEND-TODO.md P2.
- * API hanya mencari kata kunci, tanpa saringan tipe, gaji, pemberi kerja, waktu tayang, urutan, maupun jumlah per
+ * API hanya mencari kata kunci, tanpa saringan tipe, lokasi, gaji, waktu tayang, urutan, maupun jumlah per
  * pilihan, jadi semua itu dihitung di klien dari daftar ini. Stg 2026-11-14: 7 lowongan. Entri ke-101 dst. tidak
  * tampil (ada console.warn). Hapus bila backend menambah saringan dan facet, lalu kembali ke paginasi server.
  */
@@ -26,8 +26,13 @@ export type TayangHari = (typeof TAYANG_HARI_OPTIONS)[number];
 export const LOWONGAN_URUT = ['terbaru', 'gaji-desc', 'gaji-asc'] as const;
 export type LowonganUrut = (typeof LOWONGAN_URUT)[number];
 
-/** Pemberi kerja yang tampil sebelum "Lihat semua" (tombol hanya bila ≥2 pilihan tersembunyi). */
-export const PEMBERI_FACET_VISIBLE = 6;
+/**
+ * Pilihan grup Lokasi kerja; juga satu-satunya nilai sah `?lokasi=`.
+ * MITIGASI SEMENTARA(lowongan-wilayah): "di dalam desa" ditebak dari kata Darmasaba di alamat (`Lowongan.diDesa`, dihitung
+ * adapter) karena belum ada kolom wilayah di data lowongan. Hapus bila backend menyediakan kolom wilayah.
+ */
+export const LOKASI_OPTIONS = ['desa', 'luar'] as const;
+export type LokasiKerja = (typeof LOKASI_OPTIONS)[number];
 
 /** Baris kerangka pil di panel Filter selama data belum siap. */
 export const FILTER_SKELETON_ROWS = 4;

@@ -44,15 +44,15 @@ afterAll(() => {
   vi.useRealTimers();
 });
 
-// test-only: 8 lowongan dari 8 pemberi kerja (lebih dari 6 → "Lihat semua"), 2 tipe, 1 tanpa gaji.
+// test-only: 8 lowongan, 2 tipe, 1 tanpa gaji; 6 di dalam desa dan 2 di luar (l3, l7).
 const data: Lowongan[] = Array.from({ length: 8 }, (_, i) => ({
   id: `l${i}`,
   posisi: `Posisi ${i}`,
   pemberiKerja: `Usaha ${i}`,
-  pemberiKey: `usaha ${i}`,
   tipe: i < 6 ? 'Full Time' : 'Freelance',
   tipeKey: i < 6 ? 'full time' : 'freelance',
-  lokasi: 'Darmasaba',
+  lokasi: i % 4 === 3 ? 'Sibang Kaja' : 'Darmasaba',
+  diDesa: i % 4 !== 3,
   gaji: i === 0 ? null : 1_500_000 + i * 250_000,
   ringkasan: '',
   tayangMs: NOW - (i + 1) * DAY,
@@ -76,20 +76,23 @@ describe('FilterPanel', () => {
     expect(html).not.toContain('Hapus semua');
     expect(heads(html)).toEqual([
       ['Tipe pekerjaan', 'true'],
+      ['Lokasi kerja', 'true'],
       ['Gaji per bulan', 'true'],
-      ['Pemberi kerja', 'false'],
       ['Waktu tayang', 'false'],
     ]);
+    expect(text(html)).not.toMatch(/Pemberi kerja|Lihat semua/);
   });
 
   it('pil pilihan = tombol aria-pressed dengan jumlah; tipe urut jumlah terbanyak; ambang gaji 0 disembunyikan', () => {
     const all = pills(panel());
-    expect(all.slice(0, 2)).toEqual([
+    expect(all.slice(0, 4)).toEqual([
       ['Full Time 6', 'false'],
       ['Freelance 2', 'false'],
+      ['Di dalam desa 6', 'false'],
+      ['Di luar desa 2', 'false'],
     ]);
     // Gaji tertinggi di data = Rp3,25 juta → "Minimal Rp4 juta" dan "Minimal Rp5 juta" tidak tampil.
-    expect(all.slice(2, 6)).toEqual([
+    expect(all.slice(4, 8)).toEqual([
       ['Minimal Rp1,5 juta 7', 'false'],
       ['Minimal Rp2 juta 6', 'false'],
       ['Minimal Rp2,5 juta 4', 'false'],
@@ -99,45 +102,43 @@ describe('FilterPanel', () => {
   });
 
   it('pilihan terpilih: aria-pressed true + ikon centang, angka di kepala grup, grup beraktif terbuka', () => {
-    const html = panel(params({ tipe: ['freelance'], pemberi: ['usaha 1'], gaji: 2_000_000, tayang: 7 }));
+    const html = panel(params({ tipe: ['freelance'], lokasi: 'luar', gaji: 2_000_000, tayang: 7 }));
     expect(heads(html)).toEqual([
       ['Tipe pekerjaan 1', 'true'],
+      ['Lokasi kerja 1', 'true'],
       ['Gaji per bulan 1', 'true'],
-      ['Pemberi kerja 1', 'true'],
       ['Waktu tayang 1', 'true'],
     ]);
     const pressed = pills(html).filter(([, on]) => on === 'true').map(([label]) => label);
-    expect(pressed).toEqual(['Freelance 2', 'Minimal Rp2 juta 6', 'Usaha 1 1', '7 hari terakhir 7']);
+    expect(pressed).toEqual(['Freelance 2', 'Di luar desa 2', 'Minimal Rp2 juta 6', '7 hari terakhir 7']);
     expect(html).toMatch(new RegExp(`aria-pressed="true"><svg[^>]*tabler-icon-check`));
     expect(html).toContain(`Tipe pekerjaan<span class="${g.groupBadge}">1</span>`);
   });
 
   it('kotak "Pilihan Anda" berisi chip per filter aktif (tombol hapus berlabel) + "Hapus semua"', () => {
-    const html = panel(params({ tipe: ['freelance'], gaji: 2_000_000 }));
+    const html = panel(params({ tipe: ['freelance'], lokasi: 'desa', gaji: 2_000_000 }));
     expect(html).not.toContain('Belum ada filter dipilih.');
-    expect(count(html, `class="${f.chip}"`)).toBe(2);
+    expect(count(html, `class="${f.chip}"`)).toBe(3);
     expect(html).toContain('aria-label="Hapus filter Freelance"');
+    expect(html).toContain('aria-label="Hapus filter Di dalam desa"');
+    expect(html).toMatch(new RegExp(`class="${f.chip}"><svg[^>]*tabler-icon-map-pin`));
     expect(html).toContain('aria-label="Hapus filter Minimal Rp2 juta"');
     expect(html).toMatch(new RegExp(`class="${f.clearAll}">Hapus semua</button>`));
   });
 
-  it('pemberi kerja > 6 → 6 pilihan + "Lihat semua (8)"; pilihan terpilih di luar batas tetap tampil', () => {
-    const html = text(panel(params({ pemberi: ['usaha 7'] })));
-    expect(html).toContain('Lihat semua (8)');
-    expect(html).toContain('Usaha 5 1');
-    expect(html).not.toContain('Usaha 6 1');
-    expect(html).toContain('Usaha 7 1');
+  it('lokasi kerja: pilihan berjumlah 0 disembunyikan (satu pilihan tersisa tetap tampil), kecuali sedang terpilih', () => {
+    const semuaDesa = data.filter((item) => item.diDesa);
+    const satu = pills(panel(params(), semuaDesa)).map(([label]) => label);
+    expect(satu).toContain('Di dalam desa 6');
+    expect(satu.join('|')).not.toContain('Di luar desa');
+    const terpilih = pills(panel(params({ lokasi: 'luar' }), semuaDesa));
+    expect(terpilih).toContainEqual(['Di luar desa 0', 'true']);
   });
 
-  it('7 pemberi kerja (hanya 1 yang akan tersembunyi) → semua tampil tanpa "Lihat semua"', () => {
-    const html = text(panel(params(), data.slice(0, 7)));
-    expect(html).not.toContain('Lihat semua');
-    expect(html).toContain('Usaha 6 1');
-  });
-
-  it('grup tanpa pilihan tidak dirender (semua tanpa gaji, tanpa tipe, tanggal tak terbaca)', () => {
+  it('grup tanpa pilihan tidak dirender (semua tanpa gaji, tanpa tipe, tanggal tak terbaca; tanpa data → tanpa grup)', () => {
     const polos = data.slice(0, 2).map((item) => ({ ...item, gaji: null, tipe: null, tipeKey: null, tayangMs: 0 }));
-    expect(heads(panel(params(), polos))).toEqual([['Pemberi kerja', 'false']]);
+    expect(heads(panel(params(), polos))).toEqual([['Lokasi kerja', 'true']]);
+    expect(heads(panel(params(), []))).toEqual([]);
   });
 
   it('facets null → kerangka 4 baris aria-busy; bare → tanpa kartu dan strip kepala', () => {
@@ -178,10 +179,10 @@ describe('LowonganToolbar', () => {
 
   it('baris chip (≤1068px) + "Hapus semua" hanya bila ada filter', () => {
     expect(toolbar()).not.toContain(l.toolbarChips);
-    const v = view(params({ pemberi: ['usaha 2'], tayang: 30 }));
+    const v = view(params({ lokasi: 'luar', tayang: 30 }));
     const html = toolbar({ chips: v.chips, activeCount: v.activeCount });
     expect(html).toContain(`class="${l.toolbarChips}"`);
-    expect(html).toContain('aria-label="Hapus filter Usaha 2"');
+    expect(html).toContain('aria-label="Hapus filter Di luar desa"');
     expect(html).toContain('aria-label="Hapus filter 30 hari terakhir"');
     expect(text(html)).toContain('Hapus semua');
   });
@@ -241,6 +242,14 @@ describe('LowonganBody', () => {
     expect(html.indexOf('/lowongan-kerja-lokal/l7"')).toBeLessThan(html.indexOf('/lowongan-kerja-lokal/l6"'));
     expect(html).toContain('aria-label="Hapus filter Freelance"');
     expect(html).not.toContain('Hapus filter magang');
+  });
+
+  it('lokasi kerja dari params menyaring daftar', () => {
+    const html = body(ready, params({ lokasi: 'luar' }));
+    expect(html).toContain(`<strong>2</strong> lowongan<span class="${l.countOf}"> dari 8</span>`);
+    expect(html).toContain('/lowongan-kerja-lokal/l3"');
+    expect(html).toContain('/lowongan-kerja-lokal/l7"');
+    expect(html).not.toContain('/lowongan-kerja-lokal/l0"');
   });
 
   it('waktu tayang memakai waktu saat dirender', () => {
