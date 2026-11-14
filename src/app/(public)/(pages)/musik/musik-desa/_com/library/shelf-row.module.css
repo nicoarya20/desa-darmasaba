@@ -128,7 +128,15 @@
     display: none;
   }
 
+  /* "Lihat semua" (teks ±20px): area sentuh 44px lewat ::before, kepala rak tidak ikut meninggi. */
   .more {
+    position: relative;
     margin-right: 0;
+  }
+
+  .more::before {
+    content: '';
+    position: absolute;
+    inset: min(0px, calc((100% - 44px) / 2)) -8px;
   }
 }

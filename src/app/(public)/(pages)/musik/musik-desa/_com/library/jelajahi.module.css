@@ -122,6 +122,33 @@
   .resultTitle {
     font-size: 20px;
   }
+
+  /* Target sentuh ≥44px tanpa membesarkan tampilan: ::before memanjang ke atas-bawah sampai 44px
+     (inset negatif = (tinggi − 44px) / 2). Pil 36px → 4px; baris pil diberi ruang 4px di atas supaya
+     area itu tidak terpotong overflow gulir. Chip/"Hapus filter" 32px → 6px; jarak baris chip 12px
+     supaya area dua baris tidak bertumpuk. */
+  .pills {
+    margin-top: -4px;
+    padding-top: 4px;
+  }
+
+  .chips {
+    row-gap: 12px;
+  }
+
+  .pill,
+  .chip,
+  .clear {
+    position: relative;
+  }
+
+  .pill::before,
+  .chip::before,
+  .clear::before {
+    content: '';
+    position: absolute;
+    inset: min(0px, calc((100% - 44px) / 2)) 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
