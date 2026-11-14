@@ -8,13 +8,20 @@ const prismaMock = vi.hoisted(() => ({
   penangananLaporanPublik: { deleteMany: vi.fn() },
 }));
 vi.mock('@/lib/prisma', () => ({ default: prismaMock }));
+// Sesi admin: status & batas kiriman (moderasi) diuji di laporan_publik_moderasi_api.test.ts.
+vi.mock('@/lib/api-auth', () => ({ optionalAuth: vi.fn(async () => ({ id: 'a1', roleId: '2', isActive: true })) }));
 
 import { sanitizeRichTextForStorage } from '@/lib/rich-text-server';
 import laporanPublikCreate from '@/app/api/[[...slugs]]/_lib/keamanan/laporan-publik/create';
 import laporanPublikUpdate from '@/app/api/[[...slugs]]/_lib/keamanan/laporan-publik/updt';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Context Elysia tiruan minimal
-const ctx = (body: unknown, id?: string): any => ({ body, params: id ? { id } : {}, set: { status: 200 } });
+const ctx = (body: unknown, id?: string): any => ({
+  body,
+  params: id ? { id } : {},
+  request: new Request('http://localhost/api'),
+  set: { status: 200, headers: {} },
+});
 
 // test-only: bentuk konten sama dengan data produksi (hanya <p>)
 const KONTEN_PROD = '<p>Tim mendatangi rumah pihak yang diduga melakukan pembuangan sampah liar.</p>';

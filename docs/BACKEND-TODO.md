@@ -14,10 +14,10 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Render (v0.1.268, `fix/laporan-publik-xss`): detail admin merender `kronologi` & `penanganan[].deskripsi` lewat `sanitizeRichText`. Test: `__tests__/api/laporan_publik_admin_xss.test.tsx`.
   - Simpan (v0.1.269, `fix/laporan-publik-sanitasi-server`): `create.ts` & `updt.ts` menyimpan lewat `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`, `sanitize-html` dengan allowlist `RICH_TEXT_TAGS` yang sama, tanpa atribut). Data lama tidak diubah (prod 2026-11-13: 2 laporan, hanya `<p>`). Test: `__tests__/api/laporan_publik_sanitasi_server.test.ts`.
 
-- [ ] **Laporan Publik bisa dikirim tanpa auth & tanpa moderasi** (terverifikasi)
-  - Lokasi: `POST /api/keamanan/laporanpublik/create` (laporan-publik/index.ts `.post("/create")`), schema `LaporanPublik.isActive @default(true)`.
-  - Dampak: kiriman publik langsung tampil di `/keamanan/laporan-publik` → spam/fitnah. Stg sudah berisi kiriman publik ("Sampah berserakan", 5 Nov 2026).
-  - Usul: kiriman publik masuk dengan status tertahan (mis. `isActive=false` atau status `Baru` yang tidak ditampilkan) sampai disetujui admin; tambah rate limit/captcha. Frontend publik saat ini menampilkan catatan privasi di form.
+- [x] **Laporan Publik bisa dikirim tanpa auth & tanpa moderasi** (terverifikasi) — selesai v0.1.270 (`feature/laporan-publik-moderasi`), keputusan di `docs/decisions/2026-11-14-laporan-publik-moderasi.md`:
+  - Kiriman non-admin ditahan sebagai status `Baru` (tanpa migration) dan tidak tampil di daftar, detail, maupun pencarian publik; admin melihatnya lewat `?moderasi=true` dan menyetujui dengan mengubah status di halaman edit.
+  - Batas kiriman non-admin 5 per 10 menit per alamat (429 + `Retry-After`).
+  - Sisa (di luar butir ini): user login role 5 masih bisa `PUT`/`DELETE` laporan karena guard global tidak cek role admin (T19 di `docs/penilaian-lomba-website-desa-2027.md`); tanpa captcha.
 
 - [ ] **API publik Balita & Ibu Hamil mengirim data pribadi**
   - Lokasi: `src/app/api/[[...slugs]]/_lib/kesehatan/balita/find-many.ts` (mencari & mengembalikan `nik`, `alamat`, dst.), begitu juga `ibu-hamil`.

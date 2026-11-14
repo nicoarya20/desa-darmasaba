@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.270] - 2026-11-14
+### Added
+- **Laporan Publik kini diverifikasi admin sebelum tampil.** Laporan yang dikirim warga lewat form di halaman Laporan Keamanan Lingkungan tidak lagi langsung muncul di situs: laporan masuk dengan status **Baru** dan baru tampil di daftar, halaman detail, dan pencarian setelah admin menyetujuinya. Pelapor mendapat pesan "Laporan terkirim. Akan tampil setelah diverifikasi admin desa."
+- **Cara menyetujui (admin):** laporan yang menunggu tampil di menu Keamanan → Laporan Publik dengan status **Baru**. Buka Edit, ubah status menjadi Proses (atau Selesai/Gagal), lalu simpan. Mengembalikan status ke "Baru" menyembunyikan laporan itu lagi dari publik. Laporan yang dibuat admin dari halaman admin tetap langsung tampil.
+- **Batas kiriman:** satu alamat hanya bisa mengirim 5 laporan dalam 10 menit; lebih dari itu diminta menunggu. Ini mencegah form dibanjiri kiriman.
+
+### Changed
+- Laporan yang sudah ada sebelum versi ini tidak berubah dan tetap tampil.
+
 ## [0.1.269] - 2026-11-13
 ### Fixed
 - **Keamanan: isi Laporan Publik kini dibersihkan sejak disimpan.** Kronologi dari form publik serta kronologi dan penanganan yang diedit admin hanya disimpan dengan format teks dasar (paragraf, tebal, miring, garis bawah, daftar). Skrip dan kode berbahaya dibuang sebelum masuk database, jadi tetap aman walaupun kelak ada tampilan baru yang lupa menyaringnya. Laporan yang sudah ada tidak diubah. Tautan, judul, sorotan, dan perataan teks yang sebelumnya memang tidak ditampilkan kini juga tidak lagi tersimpan; teksnya tetap utuh.

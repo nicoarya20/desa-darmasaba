@@ -3,6 +3,7 @@ import { Context } from "elysia";
 import prisma from "@/lib/prisma";
 import { BERITA_LIST_ORDER_BY } from "@/lib/berita-data";
 import { searchStrukturBumdes } from "./struktur-bumdes.search";
+import { WHERE_LAPORAN_TAMPIL_PUBLIK } from "../keamanan/laporan-publik/moderasi";
 
 export default async function searchFindMany(context: Context) {
   const { query, page = 1, limit = 10, type } = context.query as any;
@@ -837,6 +838,7 @@ export default async function searchFindMany(context: Context) {
   if (type === "laporanPublik") {
     const data = await prisma.laporanPublik.findMany({
       where: {
+        ...WHERE_LAPORAN_TAMPIL_PUBLIK,
         OR: [
           { judul: { contains: query, mode: "insensitive" } },
           { lokasi: { contains: query, mode: "insensitive" } },
@@ -2072,6 +2074,7 @@ export default async function searchFindMany(context: Context) {
     }),
     prisma.laporanPublik.findMany({
       where: {
+        ...WHERE_LAPORAN_TAMPIL_PUBLIK,
         OR: [
           { judul: { contains: query, mode: "insensitive" } },
           { lokasi: { contains: query, mode: "insensitive" } },
