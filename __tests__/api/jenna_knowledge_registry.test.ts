@@ -4,8 +4,11 @@ import { Prisma } from "@prisma/client";
 import { describe, expect, it } from "vitest";
 import {
   KNOWLEDGE_DOMAINS,
+  KNOWLEDGE_SOURCE_BY_KEY,
   KNOWLEDGE_SOURCES,
+  OFFICE_CONTACT_ICON_TYPES,
   SOCIAL_ICON_TYPES,
+  officeContactValue,
   type KnowledgeSelect,
 } from "@/lib/jenna/knowledge/sources";
 
@@ -63,14 +66,15 @@ function nestedWhereIssues(model: string, select: KnowledgeSelect, path: string)
 const PII_PATTERN = /nik|alamat|email|telepon|telp|noHp|nomorTelepon|tanggalLahir|catatan|penyakit|apiKey|password|token|ipAddress/i;
 
 // Pengecualian eksplisit — kontak ORGANISASI yang diizinkan keputusan user 2026-11-13
-// (KontakDarurat/KontakItem/PolsekTerdekat/Puskesmas boleh; email/WA kantor desa tidak).
+// (KontakDarurat/KontakItem/PolsekTerdekat/Puskesmas) dan 2026-11-14 (kontak resmi kantor desa).
 const PII_EXCEPTIONS = new Set([
   "KontakItem.nomorTelepon", // nomor darurat publik (polisi, damkar, dll.) di /keamanan/kontak-darurat
   "PolsekTerdekat.alamat", // alamat kantor polsek
   "PolsekTerdekat.nomorTelepon", // telepon kantor polsek
   "Puskesmas.alamat", // alamat puskesmas; sumber ikut visibilitas menu /kesehatan/puskesmas
   "KontakPuskesmas.email", // email resmi puskesmas; ikut visibilitas menu /kesehatan/puskesmas
-  // Catatan: KontakDarurat.whatsapp (nomor layanan darurat kesehatan) juga diizinkan — tidak cocok regex jadi tidak perlu dicantumkan.
+  // Catatan: KontakDarurat.whatsapp (nomor layanan darurat kesehatan) dan MediaSosial.iconUrl ikon whatsapp/telephone/gmail
+  // (kontak resmi kantor desa, keputusan user 2026-11-14) juga diizinkan — tidak cocok regex jadi tidak perlu dicantumkan.
 ]);
 
 const ALL_FIELDS = KNOWLEDGE_SOURCES.flatMap((source) => selectedFields(source.model, source.select));
@@ -139,10 +143,35 @@ describe("registry allowlist pengetahuan Jenna", () => {
     }
   });
 
-  it("media sosial tidak memuat tipe kontak (whatsapp/telepon/email)", () => {
+  it("media sosial tidak memuat tipe kontak (whatsapp/telepon/email) — itu milik sumber kontak_kantor", () => {
     expect(SOCIAL_ICON_TYPES).not.toContain("whatsapp");
     expect(SOCIAL_ICON_TYPES).not.toContain("telephone");
     expect(SOCIAL_ICON_TYPES).not.toContain("gmail");
+    expect(SOCIAL_ICON_TYPES.filter((icon) => (OFFICE_CONTACT_ICON_TYPES as readonly string[]).includes(icon))).toEqual([]);
+  });
+
+  it("kontak_kantor: MediaSosial aktif berikon kontak, tier B, tautan ke beranda", () => {
+    const source = KNOWLEDGE_SOURCE_BY_KEY.get("kontak_kantor")!;
+    expect(source).toMatchObject({ model: "MediaSosial", tier: "B", domain: "profil_desa", menuHref: "/" });
+    expect(source.where).toEqual({ isActive: true, deletedAt: null, icon: { in: ["whatsapp", "telephone", "gmail"] } });
+    expect(source.href({ id: "m1" })).toBe("/");
+    expect(source.toText({ id: "m1", name: "Kantor Desa", icon: "whatsapp", iconUrl: "0812-3456-7890" })).toBe(
+      "Nama: Kantor Desa\nJenis: WhatsApp\nKontak: 0812-3456-7890",
+    );
+  });
+
+  it.each([
+    ["telephone", "(0361) 123456", "(0361) 123456"],
+    ["telephone", "tel:+62361123456", "+62361123456"],
+    ["whatsapp", "+62 812 3456 7890", "+62 812 3456 7890"],
+    ["whatsapp", "https://wa.me/6281234567890", "+6281234567890"],
+    ["whatsapp", "WA 081234567890", "+6281234567890"],
+    ["gmail", "mailto:desa.darmasaba@gmail.com?subject=Halo", "desa.darmasaba@gmail.com"],
+    ["gmail", "desa.darmasaba@gmail.com", "desa.darmasaba@gmail.com"],
+    ["gmail", "https://mail.google.com/", ""],
+    ["whatsapp", "", ""],
+  ])("officeContactValue(%s, %s) → %s", (icon, iconUrl, expected) => {
+    expect(officeContactValue({ icon, iconUrl })).toBe(expected);
   });
 
   it("toText merender field berlabel, membuang HTML dan nilai kosong", () => {

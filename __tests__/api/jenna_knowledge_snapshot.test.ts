@@ -34,6 +34,8 @@ import {
   type SnapshotSourceRows,
 } from "@/lib/jenna/knowledge/snapshot";
 import { KNOWLEDGE_SOURCE_BY_KEY, type KnowledgeSource } from "@/lib/jenna/knowledge/sources";
+import { renderStaticGuide } from "@/lib/jenna/knowledge/static-guide";
+import { collectPiiValues } from "@/lib/jenna/pii";
 
 const source = (key: string): KnowledgeSource => KNOWLEDGE_SOURCE_BY_KEY.get(key)!;
 const ROUTES = new Set(buildPublicRoutes({}, ["https://www.instagram.com/desadarmasaba"]));
@@ -195,6 +197,50 @@ describe("renderKnowledgeSnapshot", () => {
 
   it("tidak dipotong bila muat", () => {
     expect(render()).not.toContain(SNAPSHOT_TRUNCATED_MARK);
+  });
+
+  it("peta situs ditulis sebagai tautan markdown [Nama](/path)", () => {
+    const out = render();
+    const entry = visibleSiteMap({})[0];
+    expect(out).toContain(`[${entry.name}](${entry.href})`);
+    expect(out).not.toContain(`${entry.name} — ${entry.href}`);
+  });
+
+  it("kontak resmi kantor tampil sebagai teks terbaca dan nilainya jadi PII tepercaya", () => {
+    const out = render(undefined, [
+      {
+        source: source("kontak_kantor"),
+        rows: [
+          { id: "k1", name: "Kantor Desa Darmasaba", icon: "whatsapp", iconUrl: "https://wa.me/6281234567890" },
+          { id: "k2", name: "Email Desa", icon: "gmail", iconUrl: "mailto:desa.darmasaba@gmail.com" },
+        ],
+      },
+    ]);
+    expect(out).toContain("### Kontak Resmi Kantor Desa (halaman: /)");
+    expect(out).toContain("| Kantor Desa Darmasaba | WhatsApp | +6281234567890 |");
+    expect(out).toContain("| Email Desa | Email | desa.darmasaba@gmail.com |");
+    expect(out).not.toMatch(/mailto:|wa\.me/);
+    const trusted = collectPiiValues([out]);
+    expect(trusted).toContain("phone:081234567890");
+    expect(trusted).toContain("email:desa.darmasaba@gmail.com");
+  });
+});
+
+describe("renderStaticGuide", () => {
+  it("tautan formulir/informasi dalam format markdown, halaman tersembunyi dibuang", () => {
+    const guide = renderStaticGuide(ROUTES);
+    expect(guide).toContain("[Layanan](/pemerintahan/layanan)");
+    expect(guide).toContain("[Pengaduan masyarakat](/inovasi/layanan-online-desa/pengaduan-masyarakat)");
+    expect(guide).not.toMatch(/ — \//);
+    const without = renderStaticGuide(new Set([...ROUTES].filter((r) => !r.startsWith("/keamanan"))));
+    expect(without).not.toContain("/keamanan/");
+  });
+
+  it("kontak kantor: boleh disebut dari tabel kontak resmi, kontak perorangan tetap dilarang", () => {
+    const guide = renderStaticGuide(ROUTES);
+    expect(guide).toContain('"Kontak Resmi Kantor Desa"');
+    expect(guide).toMatch(/Jangan menyebut kontak perorangan/);
+    expect(guide).not.toMatch(/Jangan menyebut nomor\/email kantor/);
   });
 });
 

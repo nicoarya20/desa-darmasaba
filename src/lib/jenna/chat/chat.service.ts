@@ -276,7 +276,11 @@ async function executeTurn(
     // Salinan per giliran: set cache snapshot tidak boleh ikut bertambah oleh hasil tool.
     const streamTrusted = new Set(trustedPiiFor(snapshot, []));
     const onDelta = hooks.onDelta;
-    const deltaGuard = onDelta ? createDeltaGuard({ routes, trustedPii: streamTrusted, emit: onDelta }) : undefined;
+    // Giliran suara diucapkan: path polos jangan dijadikan sintaks tautan.
+    const linkifyPaths = modality !== "voice";
+    const deltaGuard = onDelta
+      ? createDeltaGuard({ routes, trustedPii: streamTrusted, emit: onDelta, linkifyPaths })
+      : undefined;
 
     const turn = await deps.execute(provider, {
       messages: [{ role: "system", content: system }, ...history, { role: "user", content: userText }],
@@ -297,7 +301,7 @@ async function executeTurn(
       },
     });
 
-    const guarded = guardOutput(turn.text, routes, trustedPiiFor(snapshot, turn.toolResults));
+    const guarded = guardOutput(turn.text, routes, trustedPiiFor(snapshot, turn.toolResults), { linkifyPaths });
     const text = guarded.text || CHAT_MESSAGES.empty_answer;
     const savedAt = deps.now();
     await saveTurn(deps.repo, {

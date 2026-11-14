@@ -11,6 +11,8 @@
 ### Changed
 - `/api/jenna/status` menambah field `voiceEnabled`. Bila pengecekan suara gagal (mis. migrasi belum dijalankan), nilainya `false` dan chat teks tetap aktif.
 - Developer Console Jenna tidak lagi menyebut suara "belum tersedia di website". Kartu Status kini menampilkan "Aktif (tombol mikrofon tampil di website)", atau "Aktif, belum bisa dipakai — cek halaman Suara" bila provider suara belum siap, kuota menit global 0, atau chat nonaktif. Keterangan sakelar suara juga diperbarui.
+- **Jenna kini boleh menyebut kontak resmi kantor desa** (keputusan baru, menggantikan aturan 0.1.267). Sumbernya entri Media Sosial aktif berikon WhatsApp, Telepon, atau Gmail yang diisi admin, ditampilkan sama seperti yang dilihat pengunjung (nomor/email, bukan tautan `tel:`/`mailto:`). Bila belum ada, Jenna bilang kontaknya belum tercantum di website dan menyarankan datang pada jam layanan. Kontak perorangan (pegawai, perangkat desa, warga, pemilik UMKM, kader) tetap tidak pernah disebut, dan nomor/email lain di jawaban tetap disamarkan.
+- Tautan halaman di jawaban chat Jenna kini selalu bisa diklik. Sebelumnya jawaban kadang menulis path polos (mis. `/darmasaba/...`) sebagai teks biasa. Path internal yang diizinkan otomatis dijadikan tautan dan masuk daftar sumber; jawaban suara tidak berubah (tanpa tautan).
 
 ### Operator
 - Jalankan migrasi `20261114130000_jenna_voice_session` (otomatis saat container start): tabel baru `JennaVoiceSession` dan kolom `JennaMessage.modality` (default `'text'`). Suara tetap mati sampai sakelar dinyalakan di `/dev/jenna/suara`.

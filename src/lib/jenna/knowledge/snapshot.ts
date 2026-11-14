@@ -89,7 +89,7 @@ function listLines({ source, rows }: SnapshotSourceRows, routes: ReadonlySet<str
 function siteMapLines(siteMap: readonly SiteMapEntry[]): string[] {
   return [
     "## Peta Situs (halaman publik yang terlihat)",
-    ...siteMap.map((entry) => `- ${entry.group ? `${entry.group} › ` : ""}${entry.name} — ${entry.href}`),
+    ...siteMap.map((entry) => `- ${entry.group ? `${entry.group} › ` : ""}[${entry.name}](${entry.href})`),
     "",
   ];
 }

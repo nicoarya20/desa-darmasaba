@@ -28,6 +28,15 @@ describe("sanitizeInline / sanitizePageField", () => {
 });
 
 describe("buildSystemPrompt", () => {
+  it("kontak kantor resmi boleh bila tertulis di [DATA]; kontak perorangan dilarang; tautan teks berformat markdown", () => {
+    const prompt = buildSystemPrompt(base);
+    expect(prompt).toContain("Kontak resmi kantor desa, PPID, dan organisasi publik");
+    expect(prompt).toContain("Jangan pernah menyebut kontak perorangan");
+    expect(prompt).not.toContain("Jangan menyebut nomor telepon, WhatsApp, atau email kantor desa");
+    expect(prompt).toContain("[Nama halaman](/path)");
+    expect(buildSystemPrompt({ ...base, modality: "voice" })).not.toContain("[Nama halaman](/path)");
+  });
+
   it("guardrail paling awal, aturan jawaban setelah data", () => {
     const prompt = buildSystemPrompt(base);
     expect(prompt.startsWith("ATURAN TETAP")).toBe(true);

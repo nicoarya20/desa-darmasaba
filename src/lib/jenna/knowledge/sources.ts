@@ -5,6 +5,7 @@ import { BERITA_BASE_HREF, PENGUMUMAN_BASE_HREF } from "@/app/(public)/_com/main
 import { kegiatanDetailHref } from "@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic";
 import { LAYANAN_LIST_HREF, layananDetailHref } from "@/app/(public)/(pages)/pemerintahan/layanan/_com/layanan.meta";
 import { programHref } from "@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-folder";
+import { getSosmedHref } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
 import { jadwalToText } from "@/lib/jadwal-pelayanan";
 import { htmlToKnowledgeText } from "./html";
 
@@ -79,8 +80,28 @@ export interface KnowledgeSource {
   menuHref: string;
 }
 
-/** Tipe ikon MediaSosial yang berupa akun publik. whatsapp/telephone/gmail sengaja dikecualikan (kontak kantor tidak boleh disebut). */
+/** Tipe ikon MediaSosial yang berupa akun publik. Ikon kontak kantor ada di sumber `kontak_kantor`. */
 export const SOCIAL_ICON_TYPES = ["facebook", "instagram", "tiktok", "youtube", "x", "telegram", "custom"] as const;
+
+/** Ikon MediaSosial berisi kontak resmi kantor desa (nomor/email, bukan URL), diizinkan keputusan user 2026-11-14. */
+export const OFFICE_CONTACT_ICON_TYPES = ["whatsapp", "telephone", "gmail"] as const;
+
+const OFFICE_CONTACT_KIND: Record<string, string> = { whatsapp: "WhatsApp", telephone: "Telepon", gmail: "Email" };
+const PLAIN_PHONE = /^[\d\s()+.-]+$/;
+const EMAIL_IN_TEXT = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/;
+const WA_ME_PREFIX = "https://wa.me/";
+
+/**
+ * Kontak kantor sebagai teks terbaca, setara yang dibuka pengunjung lewat ikon beranda (`getSosmedHref`):
+ * nomor apa adanya bila polos, selain itu digit ternormalisasi `+62…`; email tanpa `mailto:`.
+ */
+export function officeContactValue(row: KnowledgeRow): string {
+  const raw = formatKnowledgeValue(row.iconUrl).replace(/^(?:tel|mailto):/i, "");
+  if (row.icon === "gmail") return EMAIL_IN_TEXT.exec(raw)?.[0] ?? "";
+  if (PLAIN_PHONE.test(raw)) return raw;
+  const href = getSosmedHref(String(row.icon), raw);
+  return href?.startsWith(WA_ME_PREFIX) ? `+${href.slice(WA_ME_PREFIX.length)}` : "";
+}
 
 const DATE_FMT = new Intl.DateTimeFormat("en-CA", { timeZone: DESA_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" });
 
@@ -248,6 +269,16 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSource[] = [
   }),
 
   // ── Tier B: layanan & kontak ──────────────────────────────────────────
+  defineSource({
+    // Kontak kantor yang tampil sebagai ikon di beranda (form admin Media Sosial).
+    key: "kontak_kantor", domain: "profil_desa", tier: "B", label: "Kontak Resmi Kantor Desa", model: "MediaSosial",
+    where: { ...ACTIVE_NOT_DELETED, icon: { in: [...OFFICE_CONTACT_ICON_TYPES] } },
+    select: { id: true, name: true, icon: true, iconUrl: true },
+    fields: [
+      ["Nama", get("name")], ["Jenis", (row) => OFFICE_CONTACT_KIND[String(row.icon)]], ["Kontak", officeContactValue],
+    ],
+    searchFields: ["name"], href: "/", menuHref: "/",
+  }),
   defineSource({
     key: "layanan_surat_keterangan", domain: "layanan", tier: "B", label: "Layanan Surat Keterangan", model: "PelayananSuratKeterangan",
     where: ACTIVE, select: { id: true, name: true, deskripsi: true, estimasiWaktu: true, biaya: true },

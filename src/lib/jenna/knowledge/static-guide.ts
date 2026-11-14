@@ -40,18 +40,18 @@ const INFO_PAGES: readonly { name: string; href: string }[] = [
 /** Panduan statis (Bahasa Indonesia, ≤ 6 KB). Tautan ke halaman yang sedang disembunyikan dibuang. */
 export function renderStaticGuide(routes: ReadonlySet<string>): string {
   const visible = <T extends { href: string }>(items: readonly T[]) => items.filter((item) => isAllowedJennaHref(item.href, routes));
-  const forms = visible(PUBLIC_FORMS).map((form) => `- ${form.name} — ${form.href} (${form.note})`);
-  const info = visible(INFO_PAGES).map((page) => `- ${page.name} — ${page.href}`);
+  const forms = visible(PUBLIC_FORMS).map((form) => `- [${form.name}](${form.href}) (${form.note})`);
+  const info = visible(INFO_PAGES).map((page) => `- [${page.name}](${page.href})`);
   return [
     "## Panduan Umum",
     "",
     "### Kantor Desa",
     `- Alamat umum: ${DESA_ALAMAT_UMUM}.`,
     ...officeHoursLines().map((line) => `- ${line}`),
-    "- Untuk alamat lengkap, nomor telepon, email, atau WhatsApp kantor: arahkan pengunjung ke halaman resmi di bawah atau datang langsung ke kantor desa pada jam layanan. Jangan menyebut nomor/email kantor.",
+    "- Bila ditanya kontak kantor: sebut kontak resmi dari tabel \"Kontak Resmi Kantor Desa\" bila ada, beserta jam layanan dan alamat umum di atas. Bila tidak tercantum, katakan kontaknya belum tercantum di website dan sarankan datang ke kantor desa pada jam layanan (sertakan tautan halaman terkait). Jangan menyebut kontak perorangan.",
     "",
     "### Cara Mengurus Surat",
-    `- Daftar layanan surat beserta persyaratan, estimasi waktu, dan biaya ada di ${LAYANAN_LIST_HREF}.`,
+    `- Daftar layanan surat beserta persyaratan, estimasi waktu, dan biaya ada di [Layanan](${LAYANAN_LIST_HREF}).`,
     "- Pengunjung mengajukan sendiri lewat formulir di website atau datang ke kantor desa; keputusan dan penerbitan surat oleh petugas kantor desa.",
     "",
     ...(forms.length ? ["### Formulir Publik di Website", ...forms, ""] : []),

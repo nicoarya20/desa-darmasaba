@@ -227,6 +227,26 @@ describe("modality suara", () => {
     expect(appended[0].rows.map((r) => r.modality)).toEqual(["voice", "voice"]);
   });
 
+  it("path polos dijadikan tautan di giliran teks, tidak di giliran suara (jawaban & delta)", async () => {
+    const execute = vi.fn(async (_p: AIProvider, opts: LoopOptions) => {
+      opts.onDelta?.("Lihat /profil. ");
+      return loopResult({ text: "Lihat /profil." });
+    });
+    const voice = makeDeps({ isVoiceSessionLive: vi.fn(async () => true), execute });
+    const voiceDelta = vi.fn();
+    const spoken = (await runChatTurn(ctx, voiceInput, { onDelta: voiceDelta }, voice.deps)) as ChatSuccess;
+    expect(spoken.text).toBe("Lihat /profil.");
+    expect(spoken.sources).toEqual([]);
+    expect(voiceDelta).toHaveBeenCalledWith("Lihat /profil. ");
+
+    const text = makeDeps({ execute });
+    const textDelta = vi.fn();
+    const written = (await runChatTurn(ctx, input, { onDelta: textDelta }, text.deps)) as ChatSuccess;
+    expect(written.text).toBe("Lihat [/profil](/profil).");
+    expect(written.sources).toEqual([{ title: "/profil", url: "/profil" }]);
+    expect(textDelta).toHaveBeenCalledWith("Lihat [/profil](/profil). ");
+  });
+
   it("teks (default) → modality text, giliran gagal juga menyimpan modality", async () => {
     const ok = makeDeps();
     expect((await runChatTurn(ctx, input, {}, ok.deps)).ok).toBe(true);

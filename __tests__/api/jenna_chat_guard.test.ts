@@ -117,13 +117,59 @@ describe("guardOutput", () => {
     const text = "- satu\n  - dua";
     expect(guardOutput(text, routes).text).toBe(text);
   });
+
+  it("path internal polos yang diizinkan dijadikan tautan markdown dan masuk sources", () => {
+    const out = guardOutput("Lihat /profil atau **/berita/abc**. Juga (/berita).", routes);
+    expect(out.text).toBe("Lihat [/profil](/profil) atau **[/berita/abc](/berita/abc)**. Juga ([/berita](/berita)).");
+    expect(out.sources).toEqual([
+      { title: "/profil", url: "/profil" },
+      { title: "/berita/abc", url: "/berita/abc" },
+      { title: "/berita", url: "/berita" },
+    ]);
+  });
+
+  it.each([
+    ["path di dalam URL", "Buka https://darmasaba.id/layanan sekarang"],
+    ["tautan markdown yang sudah ada", "Lihat [Profil Desa](/profil) ya"],
+    ["kode inline", "Ketik `/profil` di alamat"],
+    ["tanggal & pecahan", "Tanggal 11/14, setengah 1/2, dan/atau Rp5.000/bulan"],
+    ["path tidak diizinkan", "Jangan /api/jenna/chat atau /rahasia/x"],
+    ["garis miring tunggal", "pilih A / B"],
+  ])("tidak dijadikan tautan: %s", (_name, text) => {
+    expect(guardOutput(text, new Set([...routes, "/layanan"])).text).toBe(text);
+  });
+
+  it("path di dalam URL terlarang ikut terbuang bersama URL-nya, tidak dijadikan tautan", () => {
+    expect(guardOutput("Buka https://evil.example/profil sekarang", routes)).toEqual({ text: "Buka  sekarang", sources: [] });
+  });
+
+  it("linkifyPaths: false (giliran suara) membiarkan path polos sebagai teks", () => {
+    const out = guardOutput("Lihat /profil.", routes, new Set(), { linkifyPaths: false });
+    expect(out).toEqual({ text: "Lihat /profil.", sources: [] });
+  });
+
+  it("kontak kantor dari snapshot lolos dalam format lain; nomor/email lain tetap disamarkan", () => {
+    const trusted = collectPiiValues([
+      "| Kantor Desa Darmasaba | WhatsApp | +62 812-3456-7890 |\n| Kantor Desa | Email | Desa.Darmasaba@gmail.com |",
+    ]);
+    const out = guardOutput(
+      "WA kantor 081234567890, juga 0812 3456 7890 atau 6281234567890; email desa.darmasaba@gmail.com. " +
+        "Pak Kadus 081299998888, bu.kader@gmail.com.",
+      routes,
+      trusted,
+    );
+    expect(out.text).toBe(
+      "WA kantor 081234567890, juga 0812 3456 7890 atau 6281234567890; email desa.darmasaba@gmail.com. " +
+        `Pak Kadus ${PII_MASKS.phone}, ${PII_MASKS.email}.`,
+    );
+  });
 });
 
 describe("createDeltaGuard", () => {
   const routes = new Set(["/", "/profil"]);
-  const run = (deltas: string[], trustedPii: ReadonlySet<string> = new Set()) => {
+  const run = (deltas: string[], trustedPii: ReadonlySet<string> = new Set(), linkifyPaths?: boolean) => {
     const emitted: string[] = [];
-    const guard = createDeltaGuard({ routes, trustedPii, emit: (t) => emitted.push(t) });
+    const guard = createDeltaGuard({ routes, trustedPii, emit: (t) => emitted.push(t), linkifyPaths });
     for (const d of deltas) guard.push(d);
     return emitted;
   };
@@ -141,6 +187,16 @@ describe("createDeltaGuard", () => {
 
   it("tautan internal yang diizinkan tetap utuh", () => {
     expect(run(["Lihat [Profil", " Desa](/pro", "fil).\n"]).join("")).toBe("Lihat [Profil Desa](/profil).\n");
+  });
+
+  it("path polos yang terbelah antar delta tetap jadi satu tautan utuh", () => {
+    expect(run(["Lihat /pro", "fil. Lalu /pro", "fil/a\n"]).join("")).toBe(
+      "Lihat [/profil](/profil). Lalu [/profil/a](/profil/a)\n",
+    );
+  });
+
+  it("linkifyPaths: false → path polos tetap teks", () => {
+    expect(run(["Lihat /pro", "fil. "], new Set(), false).join("")).toBe("Lihat /profil. ");
   });
 
   it("nomor kontak tepercaya (ada di snapshot) tetap utuh", () => {
