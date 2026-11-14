@@ -21,7 +21,6 @@ export const MUSIK_NAV_ITEMS: readonly MusikNavItem[] = [
 
 /** Teks UI kerangka aplikasi (sidebar, topbar, panel antrean). */
 export const MUSIK_APP_TEXT = {
-  brand: 'Musik Desa',
   navLabel: 'Menu Musik Desa',
   playlistHeading: 'Playlist',
   // TODO(musik-playlist): ganti dengan daftar playlist admin setelah model & endpoint ada — docs/BACKEND-TODO.md

@@ -1,21 +1,16 @@
 'use client';
 
-import { IconMusic } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { usePathname } from 'next/navigation';
 import { activeMusikNav } from './musik-nav.logic';
 import { MUSIK_APP_TEXT as T, MUSIK_NAV_ITEMS } from './musik-nav.meta';
 import s from './musik-app.module.css';
 
-/** Sidebar kiri desktop (>1068px): merek, menu Musik/Jelajahi/Playlist, dan slot daftar playlist admin. */
+/** Sidebar kiri desktop (>1068px): menu Musik/Jelajahi/Playlist dan slot daftar playlist admin. */
 export function MusikSidebar() {
   const active = activeMusikNav(usePathname());
   return (
     <aside className={s.sidebar}>
-      <p className={s.brand}>
-        <IconMusic size={22} stroke={1.8} aria-hidden />
-        {T.brand}
-      </p>
       <nav aria-label={T.navLabel}>
         <ul className={s.navList}>
           {MUSIK_NAV_ITEMS.map(({ key, label, href, icon: Icon }) => (

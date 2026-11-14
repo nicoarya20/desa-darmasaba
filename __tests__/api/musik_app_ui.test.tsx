@@ -53,10 +53,10 @@ beforeEach(() => {
 });
 
 describe('MusikSidebar', () => {
-  it('merek, tiga menu bertaut, dan hanya menu aktif yang aria-current', () => {
+  it('tanpa baris merek; tiga menu bertaut, dan hanya menu aktif yang aria-current', () => {
     nav.pathname = '/musik/musik-desa/jelajahi';
     const html = render(<MusikSidebar />);
-    expect(text(html)).toContain(T.brand);
+    expect(text(html)).not.toContain('Musik Desa');
     expect(html).toContain('href="/musik/musik-desa"');
     expect(html).toContain('href="/musik/musik-desa/jelajahi"');
     expect(html).toContain('href="/musik/musik-desa/playlist"');
