@@ -12,7 +12,7 @@ export type Lowongan = {
   tipeKey: string | null;
   /** Alamat teks bebas; kosong → null. */
   lokasi: string | null;
-  /** Rupiah per bulan dari digit `gaji` ("2.500.000" → 2500000, "2000000" → 2000000); tanpa digit atau di bawah GAJI_MIN_WAJAR → null. */
+  /** Rupiah per bulan dari teks `gaji` ("2.500.000" → 2500000, "2000000" → 2000000); tanpa angka, lebih dari satu angka (rentang), atau di bawah GAJI_MIN_WAJAR → null. */
   gaji: number | null;
   /** `deskripsi` sebagai teks polos satu baris (htmlToText); boleh ''. */
   ringkasan: string;

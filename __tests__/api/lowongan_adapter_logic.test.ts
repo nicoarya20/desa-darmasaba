@@ -52,15 +52,35 @@ describe('parseGaji', () => {
     expect(parseGaji('Nego')).toBeNull();
   });
 
-  it('di bawah GAJI_MIN_WAJAR → null, supaya "1,5jt" tidak tampil sebagai Rp15', () => {
+  it('singkatan dan nominal di bawah GAJI_MIN_WAJAR → null, supaya "1,5jt" tidak tampil sebagai Rp15', () => {
     expect(parseGaji('1,5jt')).toBeNull();
     expect(parseGaji('3 juta')).toBeNull();
+    expect(parseGaji('2.500')).toBeNull();
     expect(parseGaji(String(GAJI_MIN_WAJAR - 1))).toBeNull();
     expect(parseGaji(String(GAJI_MIN_WAJAR))).toBe(GAJI_MIN_WAJAR);
   });
 
-  it('lebih dari 12 digit (rentang dua nominal) → null', () => {
+  it('awalan Rp dan akhiran ",-" tidak mengubah nominal', () => {
+    expect(parseGaji('Rp 2.500.000')).toBe(2500000);
+    expect(parseGaji('Rp2.500.000,-')).toBe(2500000);
+    expect(parseGaji('  2.500.000 / bulan ')).toBe(2500000);
+    expect(parseGaji('2,500,000')).toBe(2500000);
+  });
+
+  it('desimal di akhir dibuang, bukan ikut jadi digit', () => {
+    expect(parseGaji('2.500.000,00')).toBe(2500000);
+    expect(parseGaji('2.500.000,5')).toBe(2500000);
+    expect(parseGaji('Rp 2000000,00 ')).toBe(2000000);
+  });
+
+  it('lebih dari satu angka (rentang) → null, bukan digabung jadi satu nominal', () => {
+    expect(parseGaji('500.000-900.000')).toBeNull();
     expect(parseGaji('2.000.000 - 3.000.000')).toBeNull();
+    expect(parseGaji('2 s/d 3 juta')).toBeNull();
+    expect(parseGaji('2.500.000 (UMK 2026)')).toBeNull();
+  });
+
+  it('lebih dari 12 digit → null', () => {
     expect(parseGaji('999999999999')).toBe(999999999999);
     expect(parseGaji('1000000000000')).toBeNull();
   });
@@ -119,6 +139,8 @@ describe('toLowongan', () => {
     expect(toLowongan(api({ gaji: '2000000' })).gaji).toBe(2000000);
     expect(toLowongan(api({ gaji: '1,5jt' })).gaji).toBeNull();
     expect(toLowongan(api({ gaji: '' })).gaji).toBeNull();
+    expect(toLowongan(api({ gaji: '2.500.000,00' })).gaji).toBe(2500000);
+    expect(toLowongan(api({ gaji: '500.000-900.000' })).gaji).toBeNull();
   });
 
   it('deskripsi HTML editor → teks polos satu baris', () => {

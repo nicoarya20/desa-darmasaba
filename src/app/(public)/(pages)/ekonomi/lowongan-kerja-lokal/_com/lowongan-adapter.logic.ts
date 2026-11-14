@@ -21,12 +21,18 @@ export type LowonganApiItem = {
 
 /**
  * Gaji bulanan terkecil (rupiah) yang masih dianggap terbaca. Di bawah ini isian dianggap bukan nominal penuh,
- * mis. "1,5jt" (digit 15) atau "3 juta" (digit 3), supaya tidak tampil sebagai "Rp15".
+ * mis. "3 juta" (angka 3) atau "2.500" (ribuan), supaya tidak tampil sebagai "Rp3".
  */
 export const GAJI_MIN_WAJAR = 100_000;
 
-/** Digit terbanyak yang masih dibaca sebagai satu nominal; lebih dari ini biasanya rentang ("2.000.000 - 3.000.000"). */
+/** Digit terbanyak yang masih dibaca sebagai nominal gaji; lebih panjang dari ini dianggap salah ketik. */
 const GAJI_MAX_DIGITS = 12;
+
+/** Desimal rupiah di akhir teks (`,dd` atau `,d`), mis. ",00" pada "2.500.000,00". */
+const GAJI_DESIMAL_AKHIR = /,\d{1,2}\s*$/;
+
+/** Satu angka: kelompok ribuan bertitik/berkoma ("2.500.000") atau deret digit polos ("2000000"). */
+const GAJI_ANGKA = /\d{1,3}(?:[.,]\d{3})+|\d+/g;
 
 /** Rapikan teks bebas: buang spasi tepi, spasi beruntun jadi satu. */
 function tidy(value: string): string {
@@ -38,10 +44,18 @@ export function toKey(value: string): string {
   return tidy(value).toLocaleLowerCase('id');
 }
 
-/** Rupiah per bulan dari teks `gaji`: hanya digit yang dibaca; tanpa digit, terlalu panjang, atau di bawah GAJI_MIN_WAJAR → null. */
+/**
+ * Rupiah per bulan dari teks bebas `gaji`. Lebih baik "tidak dicantumkan" daripada nominal yang salah baca:
+ * 1. desimal di akhir dibuang dulu ("2.500.000,00" → 2500000, bukan 250000000);
+ * 2. teks harus memuat tepat satu angka; tanpa angka atau lebih dari satu (rentang "500.000-900.000",
+ *    "2 s/d 3 juta", pecahan "1,5jt") → null;
+ * 3. lebih dari GAJI_MAX_DIGITS digit atau di bawah GAJI_MIN_WAJAR → null.
+ */
 export function parseGaji(gaji: string): number | null {
-  const digits = gaji.replace(/\D/g, '');
-  if (digits === '' || digits.length > GAJI_MAX_DIGITS) return null;
+  const angka = gaji.replace(GAJI_DESIMAL_AKHIR, '').match(GAJI_ANGKA) ?? [];
+  if (angka.length !== 1) return null;
+  const digits = angka[0].replace(/\D/g, '');
+  if (digits.length > GAJI_MAX_DIGITS) return null;
   const value = Number(digits);
   return value >= GAJI_MIN_WAJAR ? value : null;
 }
