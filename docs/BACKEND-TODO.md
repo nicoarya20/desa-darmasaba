@@ -139,6 +139,14 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Tidak ada logo/foto pemberi kerja: kartu publik memakai inisial nama. Usul: `imageId` opsional.
   - `tanggalPosting` tidak pernah diisi form (selalu sama dengan `createdAt`); frontend memakai `createdAt`. Usul: hapus salah satu atau jadikan isian admin.
 
+- [ ] **Musik Desa: tidak ada model playlist, artis, maupun album** (terverifikasi di schema, 2026-11-14)
+  - Lokasi: `model MusikDesa` (`prisma/schema.prisma`) hanya punya `artis String` dan `genre String?` teks bebas; tidak ada tabel playlist/artis/album. Endpoint publik hanya `GET /api/desa/musik/find-many` (+ findUnique).
+  - Frontend: halaman publik `/musik/musik-desa` (v0.1.273, gaya TIDAL) sudah punya menu dan halaman **Playlist** yang sengaja kosong ("Belum ada playlist", `TODO(musik-playlist)`). Playlist **dikurasi admin**; pengunjung tidak bisa membuat playlist (keputusan user 2026-11-14).
+  - Usul playlist: `PlaylistMusik { id, judul, deskripsi?, coverImageId?, isActive, urutan, createdAt }` + `PlaylistMusikItem { playlistId, musikId, urutan }` (unik per pasangan), CRUD + susun urutan lagu di admin `/admin/musik`, endpoint publik find-many playlist (judul, sampul, jumlah lagu) dan findUnique (lagu berurutan, include audio & sampul).
+  - Artis: frontend menurunkan daftar artis dari teks `artis` (huruf kecil, spasi dirapikan); kolaborasi "Kadek Wira & Darmasaba Band" terhitung satu artis, salah ketik membuat artis ganda. Genre sama: stg berisi "Pop" dan "pop". Usul: model `ArtisMusik { id, nama, fotoId?, bio? }` + relasi banyak-ke-banyak ke lagu, dan genre sebagai pilihan tetap (`Select`) di form admin.
+  - `durasi String` ("MM:SS" diketik admin) bisa berbeda dari durasi file sebenarnya. Usul: hitung dari file saat unggah.
+  - Mesin pemutar memuat `limit=50` sekali (tanpa paginasi); bila lagu > 50, sisanya tidak tampil (frontend memberi `console.warn`). Usul: endpoint ringkas tanpa batas kecil untuk daftar putar, atau paginasi kursor.
+
 - [ ] **`deletedAt DateTime @default(now())` di banyak model** (118 kolom di schema)
   - Semua baris tercatat "terhapus" sejak dibuat; filter memakai `isActive`. Tidak berdampak ke tampilan, tapi menyesatkan. Usul: `DateTime?` tanpa default (migration hati-hati).
 
