@@ -55,8 +55,9 @@ describe('muat pustaka', () => {
     const { fetchMock } = await start([{ status: 503 }]);
     expect(music.loadError).toBe(true);
 
-    let resolve: (value: unknown) => void = () => {};
-    fetchMock.mockImplementationOnce(() => new Promise((r) => (resolve = r)));
+    type Reply = { ok: boolean; status: number; json: () => Promise<unknown> };
+    let resolve: (value: Reply) => void = () => {};
+    fetchMock.mockImplementationOnce(() => new Promise<Reply>((r) => (resolve = r)));
     await run(() => {
       void music.loadMusikData();
     });
