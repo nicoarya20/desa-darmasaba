@@ -16,6 +16,7 @@ export const MUSIK_TEXT = {
   gagalBody: 'Daftar lagu tidak bisa diambil. Periksa koneksi internet, lalu coba lagi.',
   cobaLagi: 'Coba lagi',
   audioBelum: 'Audio belum tersedia',
+  tanpaJudul: 'Tanpa judul',
   putar: 'Putar',
   jeda: 'Jeda',
   sedangDiputar: 'Sedang diputar',

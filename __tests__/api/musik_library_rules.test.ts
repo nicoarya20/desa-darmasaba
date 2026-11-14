@@ -4,7 +4,15 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Musik } from '@/app/context/MusicContext';
-import { playIntent, sortByTitle, toTrack } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
+import {
+  artistInitials,
+  deriveArtists,
+  normalizeKey,
+  playIntent,
+  sortByTitle,
+  toTrack,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
+import { MUSIK_TEXT as T } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.text';
 import { EDGE_TOLERANCE, nextEdges } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/shelf-row.logic';
 
 describe('playIntent', () => {
@@ -32,6 +40,29 @@ describe('sortByTitle (rak "Semua lagu")', () => {
 
   it('judul sama (beda huruf) → urutan asli (terbaru dulu) dipertahankan', () => {
     expect(sortByTitle([track('baru', 'Ombak'), track('lama', 'ombak')]).map((t) => t.id)).toEqual(['baru', 'lama']);
+  });
+});
+
+describe('teks bebas admin', () => {
+  it('lebar-nol (U+200B–U+200D, U+FEFF) dibuang dari kunci & teks tampil', () => {
+    expect(normalizeKey('\u200BPop\u200C \u200D Bali\uFEFF')).toBe('pop bali');
+    const t = track('z', '\uFEFFOmbak\u200B');
+    expect(t.judul).toBe('Ombak');
+    // Artis "Kadek" dan "Kadek\u200B" satu artis.
+    const plain = toTrack({ ...t.source, id: 'p', artis: 'Kadek' });
+    const zw = toTrack({ ...t.source, id: 'q', artis: 'Kadek\u200B' });
+    expect(deriveArtists([plain, zw]).map((x) => [x.key, x.nama, x.jumlahLagu])).toEqual([['kadek', 'Kadek', 2]]);
+  });
+
+  it('judul kosong / spasi / lebar-nol saja → "Tanpa judul"', () => {
+    expect(track('1', '').judul).toBe(T.tanpaJudul);
+    expect(track('2', null).judul).toBe(T.tanpaJudul);
+    expect(track('3', ' \u200B ').judul).toBe(T.tanpaJudul);
+  });
+
+  it('inisial per code point: aksara di luar BMP tidak terbelah', () => {
+    expect(artistInitials('𝐊adek 𝐖ira')).toBe('𝐊𝐖');
+    expect(artistInitials('Kadek Wira & Darmasaba Band')).toBe('KW');
   });
 });
 

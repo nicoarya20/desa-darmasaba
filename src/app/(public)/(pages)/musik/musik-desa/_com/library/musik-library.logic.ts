@@ -1,14 +1,18 @@
 import type { Musik } from '@/app/context/MusicContext';
 import { formatTime } from '@/app/context/music/format';
+import { MUSIK_TEXT as T } from './musik-library.text';
 import type { Artist, Genre, Track } from './musik.types';
 
-/** Kunci teks bebas: spasi dirapikan, huruf kecil. Teks kosong → ''. */
-export function normalizeKey(raw: string): string {
-  return raw.trim().replace(/\s+/g, ' ').toLowerCase();
-}
+/** Karakter lebar-nol (ZWSP, ZWNJ, ZWJ, BOM) yang terbawa dari salin-tempel admin; tak terlihat tapi memecah kunci. */
+const ZERO_WIDTH = /[\u200B-\u200D\uFEFF]/g;
 
-/** Teks dirapikan spasinya (tanpa ubah huruf). */
-const tidy = (raw: string) => raw.trim().replace(/\s+/g, ' ');
+/** Teks dirapikan: lebar-nol dibuang, spasi dirapikan (tanpa ubah huruf). */
+const tidy = (raw: string) => raw.replace(ZERO_WIDTH, '').trim().replace(/\s+/g, ' ');
+
+/** Kunci teks bebas: dirapikan seperti `tidy`, huruf kecil. Teks kosong → ''. */
+export function normalizeKey(raw: string): string {
+  return tidy(raw).toLowerCase();
+}
 
 /** Huruf pertama kapital, sisanya apa adanya ("pop bali" → "Pop bali"). */
 const capitalizeFirst = (raw: string) => raw.charAt(0).toUpperCase() + raw.slice(1);
@@ -33,7 +37,7 @@ export function toTrack(m: Musik): Track {
   const genre = m.genre ? tidy(m.genre) : '';
   return {
     id: m.id,
-    judul: tidy(m.judul ?? ''),
+    judul: tidy(m.judul ?? '') || T.tanpaJudul,
     artis,
     artisKey: normalizeKey(artis),
     genre: genre || null,
@@ -104,7 +108,8 @@ export function withGenreLabels(tracks: readonly Track[], genres: readonly Genre
 /** Inisial artis untuk ubin tanpa sampul ("Kadek Wira & Darmasaba Band" → "KW"). */
 export function artistInitials(nama: string): string {
   const words = nama.split(/\s+/).filter((w) => /^[\p{L}\p{N}]/u.test(w));
-  return words.slice(0, 2).map((w) => w.charAt(0).toUpperCase()).join('') || '?';
+  // [...w][0] = huruf pertama per code point (bukan code unit), supaya aksara di luar BMP tidak terbelah.
+  return words.slice(0, 2).map((w) => [...w][0].toUpperCase()).join('') || '?';
 }
 
 /**
