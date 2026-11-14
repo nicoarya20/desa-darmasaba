@@ -8,3 +8,10 @@ export const MUSIC_TEXT = {
   playFailed: 'Gagal memutar lagu, coba lagi.',
   fileBroken: 'Gagal memutar lagu, file audio bermasalah.',
 } as const;
+
+/** Label tombol Ulang per mode (dipakai bar /musik dan bar global; label sekaligus menyebut status). */
+export const REPEAT_LABEL = {
+  off: 'Ulang: mati',
+  all: 'Ulang: semua lagu',
+  one: 'Ulang: satu lagu',
+} as const;

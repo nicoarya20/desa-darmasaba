@@ -40,13 +40,14 @@ export function reconcileOrder(order: readonly string[], libraryIds: readonly st
 }
 
 /**
- * Lagu berikutnya setelah lagu saat ini: dari posisinya sampai ujung urutan, lalu sambung dari awal
- * sampai sebelum lagu saat ini. Tanpa lagu saat ini (atau tidak ada di urutan) → seluruh urutan.
+ * Lagu berikutnya setelah lagu saat ini: dari posisinya sampai ujung urutan, lalu (bila `wrap`, bawaan)
+ * sambung dari awal sampai sebelum lagu saat ini. Tanpa `wrap` (mode ulang mati) berhenti di ujung.
+ * Tanpa lagu saat ini (atau tidak ada di urutan) → seluruh urutan.
  */
-export function computeUpNext(order: readonly string[], currentId: string | null): string[] {
+export function computeUpNext(order: readonly string[], currentId: string | null, wrap = true): string[] {
   const pos = currentId === null ? -1 : order.indexOf(currentId);
   if (pos < 0) return [...order];
-  return [...order.slice(pos + 1), ...order.slice(0, pos)];
+  return wrap ? [...order.slice(pos + 1), ...order.slice(0, pos)] : order.slice(pos + 1);
 }
 
 /** Ubah daftar id menjadi lagu dari pustaka (urutan id dipertahankan); id yang sudah tidak ada dibuang. */

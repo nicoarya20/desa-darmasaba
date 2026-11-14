@@ -6,7 +6,6 @@ export const PLAYER_TEXT = {
   prev: 'Lagu sebelumnya',
   next: 'Lagu berikutnya',
   shuffle: 'Acak',
-  repeat: 'Ulang',
   queue: 'Antrean',
   mute: 'Bisukan',
   unmute: 'Bunyikan',

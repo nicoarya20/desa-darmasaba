@@ -16,6 +16,7 @@ import { MusikUiProvider } from '@/app/(public)/(pages)/musik/musik-desa/_com/ap
 import { NowPlayingBar } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/NowPlayingBar';
 import { QueuePanel } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel';
 import { PLAYER_TEXT } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/player.text';
+import { REPEAT_LABEL } from '@/app/context/music/music.text';
 import FixedPlayerBar from '@/app/(public)/_com/FixedPlayerBar';
 
 // test-only: lagu fiktif berbentuk respons /api/desa/musik/find-many.
@@ -48,7 +49,8 @@ function setMusic(overrides: Record<string, unknown> = {}) {
     duration: 0,
     volume: 70,
     isMuted: false,
-    isRepeat: false,
+    repeatMode: 'off',
+    hasNext: true,
     isShuffle: false,
     upNext: [A, B, C],
     recentlyPlayed: [],
@@ -60,7 +62,7 @@ function setMusic(overrides: Record<string, unknown> = {}) {
     seekPreview: noop,
     setVolume: noop,
     toggleMute: noop,
-    toggleRepeat: noop,
+    cycleRepeat: noop,
     toggleShuffle: noop,
     ...overrides,
   };
@@ -105,7 +107,7 @@ describe('NowPlayingBar', () => {
         PLAYER_TEXT.prev,
         PLAYER_TEXT.next,
         PLAYER_TEXT.shuffle,
-        PLAYER_TEXT.repeat,
+        REPEAT_LABEL.off,
         PLAYER_TEXT.queue,
         PLAYER_TEXT.mute,
       ].sort()
@@ -137,12 +139,33 @@ describe('NowPlayingBar', () => {
     expect(html).toContain(PLAYER_TEXT.noAudio);
   });
 
-  it('acak/ulang aktif ditandai aria-pressed; Antrean memakai aria-pressed (tertutup saat SSR)', () => {
-    setMusic({ currentSong: A, isShuffle: true, isRepeat: false });
+  it('acak aktif ditandai aria-pressed; Antrean memakai aria-pressed (tertutup saat SSR)', () => {
+    setMusic({ currentSong: A, isShuffle: true });
     const html = render(<NowPlayingBar />);
     expect(button(html, PLAYER_TEXT.shuffle)).toContain('aria-pressed="true"');
-    expect(button(html, PLAYER_TEXT.repeat)).toContain('aria-pressed="false"');
     expect(button(html, PLAYER_TEXT.queue)).toContain('aria-pressed="false"');
+  });
+
+  it.each([
+    ['off', 'false', 'tabler-icon-repeat '],
+    ['all', 'true', 'tabler-icon-repeat '],
+    ['one', 'true', 'tabler-icon-repeat-once'],
+  ] as const)('ulang %s: label menyebut mode, ikon & penanda aktif berbeda', (mode, active, icon) => {
+    setMusic({ currentSong: A, repeatMode: mode });
+    const html = render(<NowPlayingBar />);
+    const repeat = html.match(new RegExp(`<button[^>]*aria-label="${REPEAT_LABEL[mode]}"[^>]*>[\\s\\S]*?</button>`));
+    expect(repeat, `tombol ${REPEAT_LABEL[mode]}`).not.toBeNull();
+    expect(repeat![0]).toContain(`data-active="${active}"`);
+    expect(repeat![0]).not.toContain('aria-pressed');
+    expect(repeat![0]).toContain(icon);
+  });
+
+  it('tidak ada lagu berikutnya (ulang mati di ujung urutan) → Berikutnya nonaktif', () => {
+    setMusic({ currentSong: A, hasNext: false });
+    const html = render(<NowPlayingBar />);
+    for (const match of html.matchAll(new RegExp(`<button[^>]*aria-label="${PLAYER_TEXT.next}"[^>]*>`, 'g'))) {
+      expect(match[0]).toContain('disabled');
+    }
   });
 
   it('bisu → tombol berlabel Bunyikan', () => {

@@ -90,6 +90,12 @@ describe('computeUpNext', () => {
     expect(computeUpNext(shuffled, 'b')).toEqual(['a', 'e', 'c', 'd']);
     expect(computeUpNext(LIB, 'b')).toEqual(['c', 'd', 'e', 'a']);
   });
+
+  it('ulang mati (wrap false): berhenti di ujung urutan, tanpa sambung dari awal', () => {
+    expect(computeUpNext(LIB, 'c', false)).toEqual(['d', 'e']);
+    expect(computeUpNext(LIB, 'e', false)).toEqual([]);
+    expect(computeUpNext(LIB, null, false)).toEqual(LIB);
+  });
 });
 
 describe('resolveIds', () => {

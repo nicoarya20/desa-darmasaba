@@ -1,5 +1,6 @@
 import { useMusic, useMusicTime } from '@/app/context/MusicContext';
 import { formatTime } from '@/app/context/music/format';
+import { REPEAT_LABEL } from '@/app/context/music/music.text';
 import { canSeek } from '@/app/context/music/playable';
 import {
   ActionIcon,
@@ -21,6 +22,7 @@ import {
   IconPlayerSkipForwardFilled,
   IconRepeat,
   IconRepeatOff,
+  IconRepeatOnce,
   IconVolume,
   IconVolumeOff,
   IconX,
@@ -33,14 +35,15 @@ export default function FixedPlayerBar() {
     currentSong,
     volume,
     isMuted,
-    isRepeat,
+    repeatMode,
+    hasNext,
     isShuffle,
     togglePlayPause,
     playNext,
     playPrev,
     setVolume,
     toggleMute,
-    toggleRepeat,
+    cycleRepeat,
     toggleShuffle,
   } = useMusic();
   const { currentTime, duration, seek, seekPreview } = useMusicTime();
@@ -206,6 +209,7 @@ export default function FixedPlayerBar() {
                 color="gray"
                 size="lg"
                 onClick={playNext}
+                disabled={!hasNext}
                 title="Next"
               >
                 <IconPlayerSkipForwardFilled size={20} />
@@ -213,12 +217,19 @@ export default function FixedPlayerBar() {
 
               <ActionIcon
                 variant="subtle"
-                color={isRepeat ? 'blue' : 'gray'}
+                color={repeatMode === 'off' ? 'gray' : 'blue'}
                 size="lg"
-                onClick={toggleRepeat}
-                title={isRepeat ? 'Repeat On' : 'Repeat Off'}
+                onClick={cycleRepeat}
+                title={REPEAT_LABEL[repeatMode]}
+                aria-label={REPEAT_LABEL[repeatMode]}
               >
-                {isRepeat ? <IconRepeat size={18} /> : <IconRepeatOff size={18} />}
+                {repeatMode === 'one' ? (
+                  <IconRepeatOnce size={18} />
+                ) : repeatMode === 'all' ? (
+                  <IconRepeat size={18} />
+                ) : (
+                  <IconRepeatOff size={18} />
+                )}
               </ActionIcon>
             </Group>
 

@@ -2,9 +2,10 @@
 
 import { createContext, useContext, useSyncExternalStore, ReactNode } from 'react';
 import { ZERO_TIME, type MusicTime, type MusicTimeStore } from './music/musicTime';
+import type { RepeatMode } from './music/repeatMode';
 import { useAudioEngine, type Musik } from './music/useAudioEngine';
 
-export type { Musik };
+export type { Musik, RepeatMode };
 
 interface MusicContextType {
   // State
@@ -13,12 +14,15 @@ interface MusicContextType {
   musikData: Musik[];
   volume: number;
   isMuted: boolean;
-  isRepeat: boolean;
+  /** Mati → berhenti setelah lagu terakhir; semua → melingkar; satu → ulangi lagu saat ini. */
+  repeatMode: RepeatMode;
+  /** Ada lagu berikutnya yang bisa diputar (ulang mati di ujung urutan → false). */
+  hasNext: boolean;
   isShuffle: boolean;
   isLoading: boolean;
   /** Muat pustaka terakhir gagal (HTTP/`success:false`/jaringan). Coba lagi lewat `loadMusikData()`. */
   loadError: boolean;
-  /** Lagu setelah lagu saat ini sesuai urutan putar (acak/pustaka), melingkar; tanpa lagu → seluruh urutan. */
+  /** Lagu setelah lagu saat ini sesuai urutan putar (acak/pustaka), melingkar kecuali ulang mati; tanpa lagu → seluruh urutan. */
   upNext: Musik[];
   /** Riwayat "Baru diputar": terbaru dulu, unik, maks 20 (localStorage). */
   recentlyPlayed: Musik[];
@@ -30,7 +34,8 @@ interface MusicContextType {
   playPrev: () => void;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
-  toggleRepeat: () => void;
+  /** Siklus mode ulang: mati → semua → satu → mati. */
+  cycleRepeat: () => void;
   toggleShuffle: () => void;
   /** Muat (ulang) pustaka: isLoading true & loadError false selama memuat. */
   loadMusikData: () => Promise<void>;

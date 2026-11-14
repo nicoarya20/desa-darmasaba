@@ -7,6 +7,7 @@ import { MUSIC_TEXT } from './music.text';
 import { computeNextIndex, computePrevAction } from './musicNavigation';
 import type { Musik } from './music.types';
 import { hasAudio } from './playable';
+import { nextRepeatMode, wrapsAround, type RepeatMode } from './repeatMode';
 import { useAudioElement, type AudioHandlers } from './useAudioElement';
 import { useMusicLibraryLoader } from './useMusicLibraryLoader';
 import { usePlaybackTime } from './usePlaybackTime';
@@ -39,7 +40,8 @@ export function useAudioEngine() {
   const { musikData, isLoading, loadError, loadMusikData } = useMusicLibraryLoader();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState<Musik | null>(null);
-  const [isRepeat, setIsRepeat] = useState(false);
+  const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
+  const wrap = wrapsAround(repeatMode);
 
   const handlersRef = useRef<AudioHandlers>(NOOP_HANDLERS);
   // Lagu yang file audionya gagal dimuat (404/rusak) di pustaka saat ini: dilewati next/prev & lompat otomatis.
@@ -52,7 +54,7 @@ export function useAudioEngine() {
     brokenIdsRef.current = new Set();
   }, [musikData]);
   const isPlayable = useCallback((song: Musik) => hasAudio(song) && !brokenIdsRef.current.has(song.id), []);
-  const queue = usePlayQueue(musikData, currentSong, isPlayable);
+  const queue = usePlayQueue(musikData, currentSong, isPlayable, wrap);
   const { recentlyPlayed, markPending, commitPending } = useRecentlyPlayed(musikData);
 
   const reportPlayFailure = useCallback((error: unknown) => {
@@ -91,19 +93,23 @@ export function useAudioEngine() {
 
   const { orderLength, currentOrderIndex, isPlayableAt, songAt } = queue;
 
-  // Mengikuti urutan putar (acak/pustaka) dan melewati lagu tanpa audio.
+  // Lagu berikutnya yang bisa diputar di urutan putar (acak/pustaka); mode ulang mati berhenti di ujung.
+  const findNext = useCallback(
+    () => songAt(computeNextIndex(currentOrderIndex, orderLength, isPlayableAt, wrap)),
+    [currentOrderIndex, orderLength, isPlayableAt, songAt, wrap]
+  );
+  const hasNext = findNext() !== undefined;
+
   const playNext = useCallback(() => {
-    const nextSong = songAt(computeNextIndex(currentOrderIndex, orderLength, isPlayableAt));
-    if (nextSong) {
-      playSong(nextSong);
-    } else if (orderLength > 0) {
-      toast.info(MUSIC_TEXT.noPlayable);
-    }
-  }, [currentOrderIndex, orderLength, isPlayableAt, songAt, playSong]);
+    const nextSong = findNext();
+    if (nextSong) playSong(nextSong);
+    // Ujung urutan saat ulang mati bukan "tidak ada audio": tombol Berikutnya memang nonaktif.
+    else if (wrap && orderLength > 0) toast.info(MUSIC_TEXT.noPlayable);
+  }, [findNext, playSong, wrap, orderLength]);
 
   const playPrev = useCallback(() => {
     const position = audioRef.current?.currentTime ?? 0;
-    const action = computePrevAction(currentOrderIndex, orderLength, position, isPlayableAt);
+    const action = computePrevAction(currentOrderIndex, orderLength, position, isPlayableAt, wrap);
     if (action.type === 'restart') {
       restart();
       return;
@@ -114,9 +120,9 @@ export function useAudioEngine() {
     } else if (orderLength > 0) {
       toast.info(MUSIC_TEXT.noPlayable);
     }
-  }, [audioRef, currentOrderIndex, orderLength, isPlayableAt, songAt, playSong, restart]);
+  }, [audioRef, currentOrderIndex, orderLength, isPlayableAt, songAt, playSong, restart, wrap]);
 
-  const toggleRepeat = useCallback(() => setIsRepeat((prev) => !prev), []);
+  const cycleRepeat = useCallback(() => setRepeatMode(nextRepeatMode), []);
 
   // Penangan event audio selalu versi terbaru (useAudioElement membacanya lewat ref).
   useEffect(() => {
@@ -127,12 +133,14 @@ export function useAudioEngine() {
       onPlaying: () => commitPending(),
       onPause: () => setIsPlaying(false),
       onEnded: (audio) => {
-        if (isRepeat) {
+        if (repeatMode === 'one') {
           audio.currentTime = 0;
           playAudio(audio, reportPlayFailure);
-        } else {
-          playNext();
+          return;
         }
+        const nextSong = findNext();
+        if (nextSong) playSong(nextSong);
+        else setIsPlaying(false); // ulang mati: berhenti setelah lagu terakhir urutan putar
       },
       onError: (audio) => {
         // 'error' tanpa sumber (setelah sumber dilepas) bukan file rusak.
@@ -141,10 +149,10 @@ export function useAudioEngine() {
         console.error(`Musik Desa: file audio lagu ${currentSong.id} gagal dimuat (MediaError ${audio.error?.code ?? '?'}).`);
         toast.error(MUSIC_TEXT.fileBroken, { toastId: TOAST_ID.fileBroken });
         // Lompat ke lagu berikutnya yang bisa diputar. Lagu rusak dicatat dulu, jadi pencarian tidak pernah
-        // kembali ke sini; bila semua rusak hasilnya -1 dan pemutar berhenti (tanpa putaran tanpa akhir).
+        // kembali ke sini; bila semua rusak (atau ujung urutan saat ulang mati) pemutar berhenti.
         brokenIdsRef.current.add(currentSong.id);
-        const next = songAt(computeNextIndex(currentOrderIndex, orderLength, isPlayableAt));
-        if (next) playSong(next);
+        const nextSong = findNext();
+        if (nextSong) playSong(nextSong);
       },
     };
   });
@@ -158,7 +166,8 @@ export function useAudioEngine() {
       musikData,
       volume,
       isMuted,
-      isRepeat,
+      repeatMode,
+      hasNext,
       isShuffle,
       isLoading,
       loadError,
@@ -170,7 +179,7 @@ export function useAudioEngine() {
       playPrev,
       setVolume,
       toggleMute,
-      toggleRepeat,
+      cycleRepeat,
       toggleShuffle,
       loadMusikData,
     }),
@@ -180,7 +189,8 @@ export function useAudioEngine() {
       musikData,
       volume,
       isMuted,
-      isRepeat,
+      repeatMode,
+      hasNext,
       isShuffle,
       isLoading,
       loadError,
@@ -192,7 +202,7 @@ export function useAudioEngine() {
       playPrev,
       setVolume,
       toggleMute,
-      toggleRepeat,
+      cycleRepeat,
       toggleShuffle,
       loadMusikData,
     ]
