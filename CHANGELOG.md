@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.271] - 2026-11-14
+## [0.1.273] - 2026-11-14
 ### Changed
 - **Info Sekolah: filter jenjang kini ada di dalam tabel.** Tombol jenjang (Semua/SMA/SMK/SMP/SD/TK/PAUD) di atas halaman dihapus. Di halaman Daftar Lembaga Pendidikan, Daftar Siswa, dan Daftar Pengajar kini ada pilihan **Jenjang** di sebelah kolom pencarian; memilihnya langsung menyaring tabel, bukan lagi memindahkan pengunjung ke halaman lain. Pilihan jenjang diurutkan dari usia termuda (TK, SD, SMP, SMA, lalu SMK) dan hanya menampilkan jenjang yang memang punya sekolah — jenjang tanpa lembaga seperti PAUD tidak ditawarkan. Jumlah hasil ditampilkan di atas tabel.
 - **Isi tabel Info Sekolah kini dikelompokkan per jenjang**: TK dulu, lalu SD, SMP, SMA, SMK; di dalam satu jenjang urut nama. Berlaku untuk Daftar Lembaga Pendidikan, Siswa, dan Pengajar, di situs publik maupun di admin (Pendidikan › Info Sekolah). Daftar Jenjang Pendidikan di admin juga kini urut PAUD, TK, SD, SMP, SMA, SMK.
@@ -14,6 +14,29 @@
 - Mengetik di kolom pencarian atau mengganti jenjang saat berada di halaman 2 dan seterusnya kini kembali ke halaman 1, tidak lagi menampilkan tabel kosong.
 - Kolom pencarian tabel Info Sekolah tidak lagi kehilangan kursor setiap kali data dimuat.
 - Berpindah halaman tabel tidak lagi memuat data dua kali (sebelumnya sesaat menampilkan hasil tanpa filter pencarian).
+
+## [0.1.272] - 2026-11-14
+### Changed
+- **Halaman detail Lowongan Kerja dirombak** dengan gaya yang sama seperti daftar lowongan. Posisi, pemberi kerja, tipe pekerjaan, gaji per bulan, lokasi kerja (di dalam atau di luar desa), dan tanggal tayang tampil di bagian atas, diikuti Deskripsi pekerjaan, Kualifikasi, dan Tempat kerja dengan tautan ke Google Maps.
+- Pelamar bisa langsung menghubungi pemberi kerja lewat tombol **WhatsApp** atau **Telepon** di bagian atas dan bawah halaman. Saat halaman digulir, tombol yang sama tampil di bilah kecil di bawah layar. Nomor telepon rumah atau kantor hanya mendapat tombol Telepon; lowongan tanpa nomor menampilkan "Kontak belum dicantumkan".
+
+### Fixed
+- Gaji di halaman detail tidak lagi tertulis "RpNaN". Gaji yang tidak bisa dibaca dengan pasti tampil sebagai "Gaji tidak dicantumkan".
+- **Keamanan:** isi deskripsi dan kualifikasi lowongan kini dibersihkan sebelum ditampilkan, jadi kode berbahaya yang tersisip di teks lowongan tidak ikut berjalan.
+- Lowongan yang sudah dinonaktifkan atau dihapus admin tidak lagi bisa dibuka lewat alamatnya; halaman menampilkan "Lowongan tidak ditemukan".
+- Tombol WhatsApp hanya muncul untuk nomor seluler, sehingga tidak lagi membuka percakapan ke nomor yang salah.
+
+## [0.1.271] - 2026-11-14
+### Changed
+- **Halaman Lowongan Kerja Lokal dirombak.** Panel **Filter** kini ada di kiri dan daftar lowongan di kanan. Lowongan bisa disaring menurut tipe pekerjaan, lokasi kerja (di dalam atau di luar desa), gaji minimal per bulan, dan waktu tayang, serta diurutkan dari yang terbaru, gaji tertinggi, atau gaji terendah. Filter yang sedang dipakai tampil di kotak "Pilihan Anda" dan bisa dilepas satu per satu atau sekaligus.
+- Tiap lowongan tampil sebagai kartu lebar berisi posisi, pemberi kerja, ringkasan pekerjaan, tipe, gaji per bulan, lokasi, dan tanggal tayang. Seluruh kartu bisa diklik untuk membuka detail.
+- Lokasi kerja ditentukan dari alamat lowongan: alamat yang menyebut "Darmasaba" dihitung di dalam desa. Admin sebaiknya menulis nama desa di kolom lokasi supaya lowongan masuk kelompok yang benar.
+- Di ponsel, filter dibuka lewat tombol **Filter** yang memunculkan panel dari bawah.
+- Pilihan filter dan kata kunci tersimpan di alamat halaman, jadi hasil saringan bisa dibagikan atau dibuka ulang.
+
+### Fixed
+- Tipe pekerjaan di kartu kini mengikuti data. Sebelumnya semua lowongan tertulis "Full Time", termasuk yang Freelance.
+- Gaji yang ditulis tanpa titik pemisah ribuan tetap tampil rapi (mis. Rp2.000.000). Gaji yang tidak bisa dibaca dengan pasti tampil sebagai "Gaji tidak dicantumkan".
 
 ## [0.1.270] - 2026-11-14
 ### Added
