@@ -8,13 +8,19 @@
   - **Perlindungan dari spam dan penyalahgunaan**: hanya menerima permintaan dari website desa sendiri, satu pesan berjalan per pengunjung, batas pesan per menit, kuota pesan harian per sesi pengunjung dan per IP, serta batas token harian untuk seluruh website. Bila batas token habis, Jenna berhenti menjawab sampai besok.
   - **Data pribadi**: NIK/nomor KK, nomor telepon, dan email yang diketik pengunjung disamarkan sebelum dikirim ke penyedia AI dan sebelum disimpan. Jawaban Jenna disaring: hanya tautan resmi website desa dan kontak publik yang lolos.
   - **Riwayat percakapan** disimpan dalam bentuk tersamar; sesi dan IP pengunjung hanya disimpan sebagai hash. Percakapan yang lebih lama dari masa simpan dihapus otomatis setiap hari.
-- **Halaman Jenna › Percakapan di Developer Console** (`/dev/jenna/percakapan`): pemakaian hari ini (pesan, token dibanding kuota, error), daftar percakapan tersamar, filter percakapan dari pengunjung yang sama, isi percakapan, dan tombol hapus (mis. bila warga meminta datanya dihapus).
+- **Halaman Jenna › Percakapan di Developer Console** (`/dev/jenna/percakapan`): pemakaian hari ini (pesan, token dibanding kuota, error), daftar percakapan tersamar, filter percakapan dari pengunjung yang sama, isi percakapan, dan tombol hapus (mis. bila warga meminta datanya dihapus). Tiap pesan menampilkan model yang dipakai dan lama respons; giliran yang gagal menampilkan teks error dari penyedia AI.
+- **Halaman Jenna › Pengetahuan** (`/dev/jenna/pengetahuan`, hanya baca): ukuran pengetahuan yang dikirim ke AI dibanding batasnya, peringatan bila terpotong, tombol untuk melihat isi persisnya, daftar sumber data (jumlah baris, mana yang disembunyikan lewat visibilitas menu), dan daftar tool yang dimiliki Jenna.
+- **Halaman Jenna › Penggunaan** (`/dev/jenna/penggunaan`): pertanyaan, token, rata-rata lama respons, dan giliran gagal untuk 24 jam dan 7 hari terakhir; pemakaian per provider dan model; tool yang paling sering dipakai.
+- **Halaman Jenna › Log Error** (`/dev/jenna/log-error`): daftar giliran yang gagal dalam 24 jam, 7 hari, atau 30 hari terakhir beserta sebab, provider, dan teks error asli dari penyedia AI, dengan tautan ke percakapannya. Giliran yang dibatalkan pengunjung tidak masuk daftar ini. Teks error hanya terlihat oleh DEVELOPER; kunci API dan data pribadi di dalamnya disamarkan sebelum disimpan, dan pengunjung tetap hanya melihat pesan umum.
+- **Jenna › Provider**: tombol "Hapus API key" untuk mencabut kunci yang tersimpan (alamat server dan model tetap). Bila provider itu sedang dipakai, Jenna berhenti menjawab di website sampai kunci baru disimpan.
+- **Jenna › Umum**: tombol "Pakai Contoh Persona" untuk mengisi catatan persona dengan contoh siap pakai (baru tersimpan setelah menekan Simpan).
 
 ### Changed
 - Keterangan di Jenna › Batas Pemakaian diperjelas: batas pesan dihitung per sesi pengunjung dan per IP, dan kuota token harian 0 berarti Jenna **tidak aktif** di website publik (sebelumnya tertulis "tanpa batas"). Kartu status kini menyebut alasan bila tombol Jenna belum tampil di website.
 
 ### Operator
 - Jalankan migrasi `20261113170000_add_jenna_conversation` (otomatis saat container start). Murni menambah 2 tabel (`JennaConversation`, `JennaMessage`); data lain tidak diubah.
+- Jalankan juga migrasi `20261114100000_jenna_message_telemetry` (otomatis saat container start). Murni menambah 4 kolom opsional di `JennaMessage`. Percakapan yang tersimpan sebelum migrasi ini tidak punya data model, lama respons, atau teks error.
 - Tidak ada env baru. Setelah deploy, buka `/dev/jenna`: pastikan Provider lolos tes koneksi, isi kuota token harian lebih dari 0 dan masa simpan percakapan 30 hari di Batas Pemakaian, lalu aktifkan Jenna di Umum.
 - Mengganti `BETTER_AUTH_SECRET` membuat hash sesi/IP lama tidak cocok lagi, sehingga hitungan kuota harian pengunjung mulai dari nol.
 - Batas pesan per menit disimpan di memori server, jadi berlaku per container (deploy saat ini 1 container).

@@ -1,16 +1,20 @@
 // Adapter endpoint `/v1/messages` bergaya Anthropic (fetch saja, tanpa SDK).
+import { describeError } from "../error-detail";
 import { createDeadline } from "../runtime/deadline";
 import { AnthropicStreamFormatError, type AnthropicUsage, inputTokensOf, readAnthropicStream } from "./anthropic-stream";
 import {
   ANTHROPIC_VERSION,
   anthropicMessagesUrl,
   badResponse,
+  clipJson,
   DEFAULT_MAX_TOKENS,
   errorForStatus,
   type FetchLike,
   isEventStream,
   parseArguments,
   type ProviderConfig,
+  readErrorBody,
+  sealErrorDetail,
   unavailable,
 } from "./common";
 import {
@@ -117,9 +121,8 @@ export class AnthropicProvider implements AIProvider {
       }
 
       if (!res.ok) {
-        // Body vendor dibuang (bisa memuat detail akun); cukup status.
-        await res.body?.cancel().catch(() => undefined);
-        throw errorForStatus(res.status);
+        // Body vendor hanya masuk `detail` (developer console), tidak pernah ke `message` publik.
+        throw errorForStatus(res.status, await readErrorBody(res));
       }
       if (opts.onDelta && isEventStream(res)) return await readStream(res, opts.onDelta);
 
@@ -128,11 +131,13 @@ export class AnthropicProvider implements AIProvider {
         json = (await res.json()) as AnthropicResponse;
       } catch (err) {
         if (deadline.signal.aborted) throw unavailable(err);
-        throw badResponse(res.status);
+        throw badResponse(res.status, describeError(err));
       }
       const result = parseResponse(json);
       if (opts.onDelta && result.type === "text" && result.text) opts.onDelta(result.text);
       return result;
+    } catch (err) {
+      throw sealErrorDetail(err, this.config.apiKey);
     } finally {
       deadline.dispose();
     }
@@ -140,18 +145,18 @@ export class AnthropicProvider implements AIProvider {
 }
 
 async function readStream(res: Response, onDelta: (text: string) => void): Promise<ChatResult> {
-  if (!res.body) throw badResponse(res.status);
+  if (!res.body) throw badResponse(res.status, "Stream tanpa body");
   try {
     return await readAnthropicStream(res.body, onDelta);
   } catch (err) {
     if (err instanceof AiProviderError) throw err;
-    if (err instanceof AnthropicStreamFormatError) throw badResponse(res.status);
+    if (err instanceof AnthropicStreamFormatError) throw badResponse(res.status, err.message);
     throw unavailable(err);
   }
 }
 
 function parseResponse(json: AnthropicResponse): ChatResult {
-  if (!Array.isArray(json.content)) throw badResponse();
+  if (!Array.isArray(json.content)) throw badResponse(undefined, `Respons tanpa content[]: ${clipJson(json)}`);
   const usage = json.usage
     ? { inputTokens: inputTokensOf(json.usage), outputTokens: json.usage.output_tokens ?? 0 }
     : undefined;

@@ -2,6 +2,7 @@
 // dibuka sehingga penolakan bisa dijawab JSON + status HTTP; `run` menjalankan LLM, guard, dan persist.
 // Semua IO lewat `deps` agar bisa dites tanpa DB/jaringan (wiring produksi: chat/deps.ts).
 import type { JennaErrorCode, JennaPageContext, JennaSource } from "../chat-types";
+import { describeTurnError } from "../error-detail";
 import { isAllowedJennaHref } from "../knowledge/sitemap";
 import { checkInput, secondsUntilJakartaMidnight, startOfJakartaDay } from "../limits";
 import { collectPiiValues, maskPii } from "../pii";
@@ -195,13 +196,13 @@ export async function prepareChatTurn(ctx: ChatCtx, input: ChatInput, deps: Chat
       return fail(503, "budget_exhausted", CHAT_MESSAGES.budget_exhausted);
     }
 
-    const provider = active.provider;
+    const { provider, slot, model } = active;
     const userText = maskPii(checked.text);
     handedOff = true;
     return {
       ok: true,
       run: (hooks = {}) =>
-        executeTurn(ctx, input, { provider, settings, userText }, hooks, deps).finally(() =>
+        executeTurn(ctx, input, { provider, slot, model, settings, userText }, hooks, deps).finally(() =>
           deps.concurrency.release(ctx.sessionHash),
         ),
     };
@@ -212,6 +213,9 @@ export async function prepareChatTurn(ctx: ChatCtx, input: ChatInput, deps: Chat
 
 type Ready = {
   provider: AIProvider;
+  /** Slot & model provider aktif — telemetri giliran. */
+  slot: string;
+  model: string;
   settings: ActiveJennaProvider["settings"];
   userText: string;
 };
@@ -219,10 +223,12 @@ type Ready = {
 async function executeTurn(
   ctx: ChatCtx,
   input: ChatInput,
-  { provider, settings, userText }: Ready,
+  { provider, slot, model, settings, userText }: Ready,
   hooks: ChatHooks,
   deps: ChatDeps,
 ): Promise<ChatOutcome> {
+  const startedAt = deps.now().getTime();
+  const telemetryAt = (savedAt: Date) => ({ latencyMs: savedAt.getTime() - startedAt, providerSlot: slot, model });
   const who: Identity = { sessionHash: ctx.sessionHash, ipHash: ctx.ipHash };
   const partial: TokenUsage = { inputTokens: 0, outputTokens: 0 };
   const toolsSeen: string[] = [];
@@ -279,6 +285,7 @@ async function executeTurn(
 
     const guarded = guardOutput(turn.text, routes, trustedPiiFor(snapshot, turn.toolResults));
     const text = guarded.text || CHAT_MESSAGES.empty_answer;
+    const savedAt = deps.now();
     await saveTurn(deps.repo, {
       conversationId,
       who,
@@ -286,7 +293,8 @@ async function executeTurn(
       assistantText: text,
       toolsUsed: turn.toolsUsed,
       usage: turn.usage,
-      now: deps.now(),
+      telemetry: telemetryAt(savedAt),
+      now: savedAt,
     });
     return { ok: true, conversationId, text, sources: guarded.sources, usage: turn.usage, toolsUsed: turn.toolsUsed };
   } catch (err) {
@@ -302,14 +310,18 @@ async function executeTurn(
     }
     if (conversationId) {
       try {
+        const savedAt = deps.now();
         await recordFailedTurn(deps.repo, {
           conversationId,
           who,
           userText,
           errorCode,
+          // Hanya ke DB untuk developer console; `outcome` (publik) tidak pernah memuatnya.
+          errorDetail: errorCode === "client_closed" ? null : describeTurnError(err),
           usage: partial,
           toolsUsed: toolsSeen,
-          now: deps.now(),
+          telemetry: telemetryAt(savedAt),
+          now: savedAt,
         });
       } catch (persistErr) {
         console.error("[jenna] gagal menyimpan giliran error", { requestId: ctx.requestId, err: persistErr });

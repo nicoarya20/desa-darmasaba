@@ -266,12 +266,15 @@ describe('GET /jenna/conversations/:id', () => {
   it('pesan urut createdAt naik, field lengkap, hash dipotong', async () => {
     asUser('0');
     const at = (ms: number) => new Date(Date.UTC(2026, 10, 13, 2, 0) + ms);
+    const noTelemetry = { latencyMs: null, providerSlot: null, model: null, errorDetail: null };
+    const answered = { latencyMs: 1500, providerSlot: 'chat_openai', model: 'gpt-x', errorDetail: null };
+    const failed = { latencyMs: 30000, providerSlot: 'chat_openai', model: 'gpt-x', errorDetail: 'TurnTimeoutError: habis waktu' };
     prismaMock.jennaConversation.findUnique.mockResolvedValue({
       ...convRow('c1', 0),
       messages: [
-        { role: 'user', content: 'Halo <b>Jenna</b>', status: 'ok', errorCode: null, inputTokens: 0, outputTokens: 0, toolsUsed: [], createdAt: at(0) },
-        { role: 'assistant', content: 'Halo!', status: 'ok', errorCode: null, inputTokens: 900, outputTokens: 40, toolsUsed: ['cariKonten'], createdAt: at(1) },
-        { role: 'user', content: 'Lagi', status: 'error', errorCode: 'timeout', inputTokens: 10, outputTokens: 0, toolsUsed: [], createdAt: at(2) },
+        { role: 'user', content: 'Halo <b>Jenna</b>', status: 'ok', errorCode: null, inputTokens: 0, outputTokens: 0, toolsUsed: [], ...noTelemetry, createdAt: at(0) },
+        { role: 'assistant', content: 'Halo!', status: 'ok', errorCode: null, inputTokens: 900, outputTokens: 40, toolsUsed: ['cariKonten'], ...answered, createdAt: at(1) },
+        { role: 'user', content: 'Lagi', status: 'error', errorCode: 'timeout', inputTokens: 10, outputTokens: 0, toolsUsed: [], ...failed, createdAt: at(2) },
       ],
     });
     const { context, set } = ctx({ params: { id: 'c1' } });
@@ -288,9 +291,9 @@ describe('GET /jenna/conversations/:id', () => {
     if (!res.success) throw new Error('unreachable');
     expect(res.data).toMatchObject({ id: 'c1', session: 'abcdef01', ip: '98765432' });
     expect(res.data.messages).toEqual([
-      { role: 'user', content: 'Halo <b>Jenna</b>', status: 'ok', errorCode: null, inputTokens: 0, outputTokens: 0, toolsUsed: [], createdAt: '2026-11-13T02:00:00.000Z' },
-      { role: 'assistant', content: 'Halo!', status: 'ok', errorCode: null, inputTokens: 900, outputTokens: 40, toolsUsed: ['cariKonten'], createdAt: '2026-11-13T02:00:00.001Z' },
-      { role: 'user', content: 'Lagi', status: 'error', errorCode: 'timeout', inputTokens: 10, outputTokens: 0, toolsUsed: [], createdAt: '2026-11-13T02:00:00.002Z' },
+      { role: 'user', content: 'Halo <b>Jenna</b>', status: 'ok', errorCode: null, inputTokens: 0, outputTokens: 0, toolsUsed: [], ...noTelemetry, createdAt: '2026-11-13T02:00:00.000Z' },
+      { role: 'assistant', content: 'Halo!', status: 'ok', errorCode: null, inputTokens: 900, outputTokens: 40, toolsUsed: ['cariKonten'], ...answered, createdAt: '2026-11-13T02:00:00.001Z' },
+      { role: 'user', content: 'Lagi', status: 'error', errorCode: 'timeout', inputTokens: 10, outputTokens: 0, toolsUsed: [], ...failed, createdAt: '2026-11-13T02:00:00.002Z' },
     ]);
     const json = JSON.stringify(res);
     expect(json).not.toContain(SESSION_HASH);

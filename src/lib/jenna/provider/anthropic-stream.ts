@@ -1,7 +1,7 @@
 // Akumulasi stream `/v1/messages` (`stream: true`): `text_delta` diteruskan ke `onDelta`,
 // `input_json_delta` digabung per indeks blok `tool_use`, usage dari message_start/message_delta.
 import { readSseStream } from "../runtime/sse-parser";
-import { normalizeArguments, PROVIDER_ERROR_MESSAGES } from "./common";
+import { BAD_CHUNK_MAX_CHARS, clipJson, normalizeArguments, PROVIDER_ERROR_MESSAGES } from "./common";
 import { AiProviderError, type ChatResult, type TokenUsage, type ToolCall } from "./types";
 
 export interface AnthropicUsage {
@@ -18,7 +18,7 @@ export interface AnthropicStreamEvent {
   content_block?: { type?: string; id?: string; name?: string };
   delta?: { type?: string; text?: string; partial_json?: string };
   usage?: AnthropicUsage;
-  error?: { type?: string };
+  error?: { type?: string; message?: string };
 }
 
 /** Stream berakhir tanpa event terbaca atau chunk bukan JSON. */
@@ -77,10 +77,11 @@ export function createAnthropicAccumulator(onDelta: (text: string) => void) {
           break;
         case "error": {
           const kind = ev.error?.type;
+          const options = { detail: `Event error di stream: ${clipJson(ev.error ?? null)}` };
           streamError =
             kind === "overloaded_error" || kind === "rate_limit_error"
-              ? new AiProviderError("busy", PROVIDER_ERROR_MESSAGES.busy)
-              : new AiProviderError("unavailable", PROVIDER_ERROR_MESSAGES.unavailable);
+              ? new AiProviderError("busy", PROVIDER_ERROR_MESSAGES.busy, undefined, options)
+              : new AiProviderError("unavailable", PROVIDER_ERROR_MESSAGES.unavailable, undefined, options);
           break;
         }
         default:
@@ -109,16 +110,18 @@ export async function readAnthropicStream(
   onDelta: (text: string) => void,
 ): Promise<ChatResult> {
   const acc = createAnthropicAccumulator(onDelta);
-  let badChunk = false;
+  let badChunk: string | undefined;
   await readSseStream(body, ({ data }) => {
-    if (badChunk) return;
+    if (badChunk !== undefined) return;
     try {
       acc.push(JSON.parse(data) as AnthropicStreamEvent);
     } catch {
       // Satu chunk rusak membuat hasil tak bisa dipercaya: gagal di akhir sebagai bad_response.
-      badChunk = true;
+      badChunk = data;
     }
   });
-  if (badChunk) throw new AnthropicStreamFormatError("Invalid JSON chunk in stream");
+  if (badChunk !== undefined) {
+    throw new AnthropicStreamFormatError(`Invalid JSON chunk in stream: ${badChunk.slice(0, BAD_CHUNK_MAX_CHARS)}`);
+  }
   return acc.result();
 }

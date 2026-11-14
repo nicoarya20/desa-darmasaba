@@ -54,6 +54,11 @@ const jennaState = proxy({
     return save(slot, `${BASE}/providers/${slot}`, input, "Provider disimpan.", "Gagal menyimpan provider.");
   },
 
+  /** Hapus API key tersimpan slot ini; Base URL dan model tetap. */
+  async clearProviderKey(slot: JennaSlot): Promise<JennaConfigResponse | null> {
+    return save(slot, `${BASE}/providers/${slot}/key`, undefined, "API key dihapus.", "Gagal menghapus API key.", "DELETE");
+  },
+
   async testProvider(slot: JennaSlot): Promise<JennaProviderTestResponse | null> {
     jennaState.testingSlot = slot;
     try {
@@ -88,10 +93,11 @@ async function save(
   body: unknown,
   successMessage: string,
   failMessage: string,
+  method: "PUT" | "DELETE" = "PUT",
 ): Promise<JennaConfigResponse | null> {
   jennaState.saving = section;
   try {
-    const config = await developerRequest<JennaConfigResponse>(path, { method: "PUT", body });
+    const config = await developerRequest<JennaConfigResponse>(path, { method, body });
     jennaState.config = config;
     toast.success(successMessage);
     return config;

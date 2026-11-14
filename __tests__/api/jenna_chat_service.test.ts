@@ -258,6 +258,9 @@ describe("giliran sukses", () => {
       inputTokens: 300,
       outputTokens: 40,
       toolsUsed: ["cari_konten"],
+      latencyMs: 0,
+      providerSlot: "chat_openai",
+      model: "m",
     });
   });
 
@@ -312,9 +315,13 @@ describe("giliran gagal", () => {
             content: "Halo Jenna",
             status: "error",
             errorCode: "provider_unavailable",
+            errorDetail: "HTTP 502",
             inputTokens: 110,
             outputTokens: 5,
             toolsUsed: [],
+            latencyMs: 0,
+            providerSlot: "chat_openai",
+            model: "m",
           },
         ],
       },
@@ -347,6 +354,79 @@ describe("giliran gagal", () => {
     expect(appended).toHaveLength(0);
     deps.getRoutes = vi.fn(async () => new Set(["/"]));
     expect((await runChatTurn(ctx, input, {}, deps)).ok).toBe(true);
+  });
+});
+
+describe("telemetri giliran", () => {
+  // Jam hanya maju saat provider "bekerja", sehingga latencyMs = lama giliran sampai disimpan.
+  function timedDeps(run: () => LoopResult) {
+    let t = NOW.getTime();
+    return makeDeps({
+      now: () => new Date(t),
+      resolveProvider: vi.fn(async () => ({ provider, settings: settings(), slot: "chat_anthropic" as const, model: "claude-x" })),
+      execute: vi.fn(async () => {
+        t += 1234;
+        return run();
+      }),
+    });
+  }
+  const TELEMETRY = { latencyMs: 1234, providerSlot: "chat_anthropic", model: "claude-x" };
+
+  it("sukses → baris asisten menyimpan latencyMs, providerSlot, model; baris user tidak", async () => {
+    const { deps, appended } = timedDeps(() => loopResult());
+    expect((await runChatTurn(ctx, input, {}, deps)).ok).toBe(true);
+    const [userRow, assistantRow] = appended[0].rows;
+    expect(assistantRow).toMatchObject({ role: "assistant", status: "ok", ...TELEMETRY });
+    expect(assistantRow.errorDetail).toBeUndefined();
+    expect(userRow).toEqual({ role: "user", content: "Halo Jenna", status: "ok" });
+  });
+
+  it("gagal provider → baris user error menyimpan telemetri + status & detail vendor; ChatFailure tetap bersih", async () => {
+    const detail = '{"error":{"message":"Incorrect API key provided"}}';
+    const { deps, appended } = timedDeps(() => {
+      throw new AiProviderError("config", "pesan publik", 401, { detail });
+    });
+    const out = await expectFailure(deps);
+    expect(appended[0].rows).toEqual([
+      expect.objectContaining({
+        role: "user",
+        status: "error",
+        errorCode: "provider_config",
+        errorDetail: `HTTP 401: ${detail}`,
+        ...TELEMETRY,
+      }),
+    ]);
+    expect(out).toEqual({ ok: false, status: 503, code: "provider_error", message: CHAT_MESSAGES.provider_unavailable });
+    expect(JSON.stringify(out)).not.toContain("Incorrect API key");
+  });
+
+  it("error internal → `Nama: pesan` disanitasi (kredensial, PII, batas 2000) dan tidak bocor ke ChatFailure", async () => {
+    const { deps, appended } = timedDeps(() => {
+      throw new TypeError(`gagal\n  Bearer abc.DEF-123 sk-live_9999 hubungi 081234567890 ${"x".repeat(3000)}`);
+    });
+    const out = await expectFailure(deps);
+    const saved = appended[0].rows[0].errorDetail ?? "";
+    expect(saved.startsWith("TypeError: gagal Bearer [kunci disamarkan] [kunci disamarkan] hubungi [nomor disamarkan] xxx")).toBe(true);
+    expect(saved).toHaveLength(2000);
+    expect(appended[0].rows[0]).toMatchObject({ errorCode: "internal", ...TELEMETRY });
+    expect(out).toEqual({ ok: false, status: 500, code: "provider_error", message: CHAT_MESSAGES.internal });
+  });
+
+  it("timeout → `TurnTimeoutError: …`; client_closed → tanpa errorDetail tetapi telemetri tetap ada", async () => {
+    const timeout = timedDeps(() => {
+      throw new TurnTimeoutError();
+    });
+    await expectFailure(timeout.deps);
+    expect(timeout.appended[0].rows[0]).toMatchObject({ errorCode: "timeout", ...TELEMETRY });
+    expect(timeout.appended[0].rows[0].errorDetail).toMatch(/^TurnTimeoutError: \S/);
+
+    const ctrl = new AbortController();
+    const closed = timedDeps(() => {
+      ctrl.abort();
+      throw new Error("aborted sk-RAHASIA-1");
+    });
+    await runChatTurn(ctx, input, { signal: ctrl.signal }, closed.deps);
+    expect(closed.appended[0].rows[0]).toMatchObject({ errorCode: "client_closed", errorDetail: null, ...TELEMETRY });
   });
 });
 

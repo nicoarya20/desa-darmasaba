@@ -23,7 +23,7 @@ const NOT_FOUND = "Percakapan tidak ditemukan.";
 const INVALID_ID = "ID percakapan tidak valid.";
 
 // Isi percakapan warga: jangan pernah di-cache browser/proxy.
-function noStore(context: Pick<Context, "set">) {
+export function noStore(context: Pick<Context, "set">) {
   context.set.headers["cache-control"] = "no-store";
 }
 

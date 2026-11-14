@@ -10,8 +10,9 @@ import jennaConversationsState from '../../_state/jenna-conversations-state';
 import jennaState from '../../_state/jenna-state';
 import { ConfirmModal } from '../../_com/ConfirmModal';
 import { ErrorState } from '../../_com/ErrorState';
-import { formatDateTime, formatNumber } from '../../_com/format';
+import { formatDateTime, formatLatency, formatNumber } from '../../_com/format';
 import { errorCodeLabel } from '../percakapan/percakapan.logic';
+import { JennaErrorDetailText } from './JennaErrorDetailText';
 
 type Tokens = ReturnType<typeof themeTokens>;
 
@@ -26,6 +27,7 @@ function MessageBubble({
 }) {
   const isUser = message.role === 'user';
   const usage = message.inputTokens + message.outputTokens;
+  const hasMeta = usage > 0 || message.toolsUsed.length > 0 || message.model !== null || message.latencyMs !== null;
 
   return (
     <Stack gap={4} align={isUser ? 'flex-end' : 'flex-start'}>
@@ -57,11 +59,26 @@ function MessageBubble({
           {message.content}
         </Text>
       </Box>
-      {(usage > 0 || message.toolsUsed.length > 0) && (
+      {message.status === 'error' && message.errorDetail && (
+        <Box maw="85%" w="100%">
+          <JennaErrorDetailText detail={message.errorDetail} collapsible />
+        </Box>
+      )}
+      {hasMeta && (
         <Group gap={6} wrap="wrap" justify={isUser ? 'flex-end' : 'flex-start'}>
           {usage > 0 && (
             <Text size="xs" c={tokens.colors.text.muted}>
               {formatNumber(message.inputTokens)} masuk · {formatNumber(message.outputTokens)} keluar token
+            </Text>
+          )}
+          {message.model !== null && (
+            <Text size="xs" c={tokens.colors.text.muted} ff="monospace" title="Model" style={{ wordBreak: 'break-all' }}>
+              {message.model}
+            </Text>
+          )}
+          {message.latencyMs !== null && (
+            <Text size="xs" c={tokens.colors.text.muted} title="Waktu respons">
+              {formatLatency(message.latencyMs)}
             </Text>
           )}
           {message.toolsUsed.map((tool) => (
@@ -75,21 +92,31 @@ function MessageBubble({
   );
 }
 
-function MetaRow({ label, value, tokens, mono }: { label: string; value: string; tokens: Tokens; mono?: boolean }) {
+export function MetaRow({ label, value, tokens, mono }: { label: string; value: string; tokens: Tokens; mono?: boolean }) {
   return (
     <Group gap="xs" wrap="nowrap" align="baseline">
       <Text size="xs" c={tokens.colors.text.muted} w={120} style={{ flexShrink: 0 }}>
         {label}
       </Text>
-      <Text size="sm" c={tokens.colors.text.primary} ff={mono ? 'monospace' : undefined}>
+      <Text
+        size="sm"
+        c={tokens.colors.text.primary}
+        ff={mono ? 'monospace' : undefined}
+        style={{ minWidth: 0, wordBreak: 'break-word' }}
+      >
         {value}
       </Text>
     </Group>
   );
 }
 
+type Props = {
+  /** Dipanggil setelah percakapan berhasil dihapus (drawer sudah tertutup). */
+  onDeleted?: () => void;
+};
+
 /** Detail satu percakapan (kanan) + hapus permanen. */
-export function JennaConversationDrawer() {
+export function JennaConversationDrawer({ onDeleted }: Props) {
   const snap = useSnapshot(jennaConversationsState);
   const jennaSnap = useSnapshot(jennaState);
   const { isDark } = useDarkMode();
@@ -110,7 +137,9 @@ export function JennaConversationDrawer() {
   const confirmDelete = async () => {
     if (!snap.detailId) return;
     const ok = await jennaConversationsState.deleteConversation(snap.detailId);
-    if (ok) setConfirming(false);
+    if (!ok) return;
+    setConfirming(false);
+    onDeleted?.();
   };
 
   let body: React.ReactNode;

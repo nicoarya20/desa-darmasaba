@@ -33,6 +33,7 @@ import {
   type NumberField,
   type ProviderForm,
 } from '../jenna-form.logic';
+import { JennaProviderKeyDelete } from './JennaProviderKeyDelete';
 import { PROTOCOL_LABEL } from './protocol';
 import { useReportDirty } from './useReportDirty';
 
@@ -231,6 +232,15 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
               <Button variant="light" leftSection={<IconKey size={16} />} onClick={() => setReplacingKey(true)}>
                 Ganti kunci
               </Button>
+              <JennaProviderKeyDelete
+                provider={provider}
+                live={live}
+                disabled={snap.saving !== null || testing}
+                onCleared={() => {
+                  set('apiKey', '');
+                  setReplacingKey(true);
+                }}
+              />
             </Group>
           )}
         </SimpleGrid>

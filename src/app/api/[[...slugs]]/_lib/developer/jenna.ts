@@ -1,5 +1,6 @@
 import type { Context } from "elysia";
 import {
+  clearJennaProviderKey,
   getJennaConfig,
   testJennaProvider,
   updateJennaProvider,
@@ -56,6 +57,20 @@ export async function jennaProviderUpdate(context: Context): Promise<ApiResult<J
     context.set.status = saved.status;
     return { success: false, message: saved.message };
   }
+  return { success: true, data: await getJennaConfig() };
+}
+
+export async function jennaProviderKeyDelete(context: Context): Promise<ApiResult<JennaConfigResponse>> {
+  const guard = await requireDeveloper(context);
+  if (!guard.ok) return guard.body;
+
+  const { slot } = context.params as { slot: string };
+  if (!isJennaSlot(slot)) {
+    context.set.status = 404;
+    return { success: false, message: UNKNOWN_SLOT(slot) };
+  }
+  await clearJennaProviderKey(guard.user.id, slot);
+  console.info(`[jenna] API key provider ${slot} dihapus oleh developer ${guard.user.id}`);
   return { success: true, data: await getJennaConfig() };
 }
 

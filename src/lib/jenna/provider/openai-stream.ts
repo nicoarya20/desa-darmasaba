@@ -1,7 +1,7 @@
 // Akumulasi stream `/chat/completions` (`stream: true`): `delta.content` diteruskan ke `onDelta`,
 // potongan `delta.tool_calls` digabung per `index`, usage dari chunk terakhir (`include_usage`).
 import { readSseStream } from "../runtime/sse-parser";
-import { normalizeArguments } from "./common";
+import { BAD_CHUNK_MAX_CHARS, normalizeArguments } from "./common";
 import type { ChatResult, TokenUsage, ToolCall } from "./types";
 
 interface StreamToolCallDelta {
@@ -68,16 +68,16 @@ export async function readOpenAIStream(
   onDelta: (text: string) => void,
 ): Promise<ChatResult> {
   const acc = createStreamAccumulator(onDelta);
-  let badChunk = false;
+  let badChunk: string | undefined;
   await readSseStream(body, ({ data }) => {
-    if (data === "[DONE]" || badChunk) return;
+    if (data === "[DONE]" || badChunk !== undefined) return;
     try {
       acc.push(JSON.parse(data) as OpenAIStreamChunk);
     } catch {
       // Satu chunk rusak membuat hasil tak bisa dipercaya: gagal di akhir sebagai bad_response.
-      badChunk = true;
+      badChunk = data;
     }
   });
-  if (badChunk) throw new StreamFormatError("Invalid JSON chunk in stream");
+  if (badChunk !== undefined) throw new StreamFormatError(`Invalid JSON chunk in stream: ${badChunk.slice(0, BAD_CHUNK_MAX_CHARS)}`);
   return acc.result();
 }

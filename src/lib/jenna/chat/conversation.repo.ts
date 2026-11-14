@@ -16,6 +16,12 @@ export interface MessageRow {
   inputTokens?: number;
   outputTokens?: number;
   toolsUsed?: string[];
+  /** Telemetri giliran: di baris asisten bila sukses, di baris user ber-status error bila gagal. */
+  latencyMs?: number | null;
+  providerSlot?: string | null;
+  model?: string | null;
+  /** Hanya giliran gagal; sudah disanitasi (error-detail.ts). */
+  errorDetail?: string | null;
 }
 
 export interface Identity {
@@ -73,6 +79,10 @@ export const prismaChatRepo: ChatRepo = {
           inputTokens: row.inputTokens ?? 0,
           outputTokens: row.outputTokens ?? 0,
           toolsUsed: row.toolsUsed ?? [],
+          latencyMs: row.latencyMs ?? null,
+          providerSlot: row.providerSlot ?? null,
+          model: row.model ?? null,
+          errorDetail: row.errorDetail ?? null,
           sessionHash: who.sessionHash,
           ipHash: who.ipHash,
           createdAt: new Date(now.getTime() + index),

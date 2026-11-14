@@ -126,10 +126,10 @@ export function renderKnowledgeSnapshot(input: RenderSnapshotInput): string {
   return `${kept.join("\n").trimEnd()}\n${SNAPSHOT_TRUNCATED_MARK}`.slice(0, maxChars);
 }
 
-/** Bangun snapshot dari DB: sumber yang menunya tersembunyi dibuang seluruhnya. */
-export async function buildKnowledgeSnapshot(
-  opts: { overrides?: MenuVisibilityOverrides; now?: Date } = {},
-): Promise<string> {
+export type SnapshotBuildOptions = { overrides?: MenuVisibilityOverrides; now?: Date };
+
+/** Muat bahan snapshot dari DB: sumber yang menunya tersembunyi dibuang seluruhnya (tidak di-query). */
+export async function loadKnowledgeSnapshotInput(opts: SnapshotBuildOptions = {}): Promise<RenderSnapshotInput> {
   const overrides = opts.overrides ?? (await getMenuVisibilityOverrides());
   const internalRoutes = new Set(buildPublicRoutes(overrides, []));
   const visible = KNOWLEDGE_SOURCES.filter((source) => isSourceVisible(source, internalRoutes));
@@ -138,13 +138,18 @@ export async function buildKnowledgeSnapshot(
     .filter(({ source }) => source.key === "media_sosial")
     .flatMap(({ rows }) => rows.map((row) => String(row.iconUrl)));
   const routes = new Set(buildPublicRoutes(overrides, socialUrls));
-  return renderKnowledgeSnapshot({
+  return {
     sources,
     siteMap: visibleSiteMap(overrides),
     guide: renderStaticGuide(routes),
     routes,
     generatedAt: opts.now ?? new Date(),
-  });
+  };
+}
+
+/** Bangun snapshot dari DB: sumber yang menunya tersembunyi dibuang seluruhnya. */
+export async function buildKnowledgeSnapshot(opts: SnapshotBuildOptions = {}): Promise<string> {
+  return renderKnowledgeSnapshot(await loadKnowledgeSnapshotInput(opts));
 }
 
 export const getKnowledgeSnapshot = unstable_cache(() => buildKnowledgeSnapshot(), ["jenna-knowledge-snapshot"], {

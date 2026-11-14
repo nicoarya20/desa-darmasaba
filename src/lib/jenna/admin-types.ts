@@ -61,6 +61,12 @@ export interface JennaConversationMessageDTO {
   inputTokens: number;
   outputTokens: number;
   toolsUsed: string[];
+  /** Telemetri giliran (null untuk baris lama / baris user giliran sukses). */
+  latencyMs: number | null;
+  providerSlot: string | null;
+  model: string | null;
+  /** Penyebab asli giliran gagal, sudah disanitasi. */
+  errorDetail: string | null;
   createdAt: string;
 }
 

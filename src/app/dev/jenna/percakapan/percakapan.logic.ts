@@ -44,10 +44,28 @@ const ERROR_LABELS: Record<string, string> = {
   internal: 'Galat internal',
 };
 
+const PROVIDER_ERROR_LABELS: Record<string, string> = {
+  config: 'Provider menolak permintaan',
+  busy: 'Provider sedang sibuk',
+  unavailable: 'Provider tidak bisa dihubungi',
+  bad_response: 'Jawaban provider tidak terbaca',
+};
+
 /** errorCode persist (`timeout`, `client_closed`, `internal`, `provider_<jenis>`) → label singkat. */
 export function errorCodeLabel(code: string | null): string {
   if (!code) return 'Gagal';
   if (ERROR_LABELS[code]) return ERROR_LABELS[code];
-  if (code.startsWith('provider_')) return `Galat provider (${code.slice('provider_'.length)})`;
+  if (code.startsWith('provider_')) {
+    const kind = code.slice('provider_'.length);
+    return Object.hasOwn(PROVIDER_ERROR_LABELS, kind) ? PROVIDER_ERROR_LABELS[kind] : `Galat provider (${kind})`;
+  }
   return code;
+}
+
+export const ERROR_DETAIL_CLIP_CHARS = 200;
+
+/** Potong rincian galat untuk tampilan ringkas di bawah bubble; `clipped` = ada sisa yang bisa dibuka. */
+export function clipErrorDetail(detail: string, max = ERROR_DETAIL_CLIP_CHARS): { text: string; clipped: boolean } {
+  if (detail.length <= max) return { text: detail, clipped: false };
+  return { text: `${detail.slice(0, max)}…`, clipped: true };
 }

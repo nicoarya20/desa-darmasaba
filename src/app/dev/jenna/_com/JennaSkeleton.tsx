@@ -2,9 +2,11 @@
 import { Skeleton, Stack } from '@mantine/core';
 import { UnifiedCard } from '@/components/admin/UnifiedSurface';
 
-export function JennaSkeleton({ heights }: { heights: readonly number[] }) {
+type Props = { heights: readonly number[]; label?: string };
+
+export function JennaSkeleton({ heights, label = 'Memuat pengaturan Jenna' }: Props) {
   return (
-    <Stack gap="lg" aria-busy="true" aria-label="Memuat pengaturan Jenna">
+    <Stack gap="lg" aria-busy="true" aria-label={label}>
       {heights.map((height, i) => (
         <UnifiedCard key={i} padding="lg">
           <Stack gap="sm">

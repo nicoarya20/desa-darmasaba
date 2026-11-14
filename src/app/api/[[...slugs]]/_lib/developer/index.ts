@@ -1,11 +1,13 @@
 import { Elysia, t } from "elysia";
-import { jennaConfigGet, jennaProviderTest, jennaProviderUpdate, jennaSettingsUpdate } from "./jenna";
+import { jennaConfigGet, jennaProviderKeyDelete, jennaProviderTest, jennaProviderUpdate, jennaSettingsUpdate } from "./jenna";
+import { jennaKnowledgeGet } from "./jenna-knowledge";
 import {
   jennaConversationDelete,
   jennaConversationGet,
   jennaConversationsList,
   jennaStatsGet,
 } from "./jenna-conversations";
+import { jennaErrorsList, jennaUsageGet } from "./jenna-usage";
 import { systemOverviewGet } from "./system";
 
 // Khusus role "0": setiap handler memanggil requireDeveloper (401/403). Guard global route.ts juga
@@ -44,7 +46,11 @@ const Developer = new Elysia({ prefix: "/developer", tags: ["Developer"] })
     }),
   })
   .post("/jenna/providers/:slot/test", jennaProviderTest, { params: slotParams })
+  .delete("/jenna/providers/:slot/key", jennaProviderKeyDelete, { params: slotParams })
+  .get("/jenna/knowledge", jennaKnowledgeGet)
   .get("/jenna/stats", jennaStatsGet)
+  .get("/jenna/usage", jennaUsageGet)
+  .get("/jenna/errors", jennaErrorsList)
   .get("/jenna/conversations", jennaConversationsList)
   .get("/jenna/conversations/:id", jennaConversationGet, { params: conversationParams })
   .delete("/jenna/conversations/:id", jennaConversationDelete, { params: conversationParams });

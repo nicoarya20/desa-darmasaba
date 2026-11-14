@@ -52,13 +52,17 @@ export type AiProviderErrorKind = "config" | "busy" | "unavailable" | "bad_respo
 
 /** Pesan aman tampil ke publik; body/header vendor tidak pernah masuk `message`. `cause` hanya untuk log. */
 export class AiProviderError extends Error {
+  /** Penyebab asli untuk developer (body/teks vendor); disanitasi adapter sebelum keluar. Tidak pernah ke pengunjung. */
+  detail?: string;
+
   constructor(
     readonly kind: AiProviderErrorKind,
     message: string,
     readonly status?: number,
-    options?: { cause?: unknown },
+    options?: { cause?: unknown; detail?: string },
   ) {
     super(message, options);
     this.name = "AiProviderError";
+    if (options?.detail) this.detail = options.detail;
   }
 }

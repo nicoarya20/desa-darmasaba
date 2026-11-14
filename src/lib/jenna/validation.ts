@@ -10,6 +10,7 @@ import {
   type JennaSlot,
 } from "./types";
 import { JENNA_CONVERSATION_PAGE } from "./admin-types";
+import { JENNA_ERROR_LOG_DAYS, JENNA_ERROR_LOG_PAGE, type JennaErrorLogDays } from "./usage-types";
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -176,6 +177,8 @@ const CONVERSATION_ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
 const SESSION_PREFIX_PATTERN = /^[a-f0-9]{8}$/;
 const POSITIVE_INT_PATTERN = /^[1-9]\d{0,5}$/;
 
+const isBlank = (v: unknown) => v === undefined || v === "";
+
 export function isJennaConversationId(value: unknown): value is string {
   return typeof value === "string" && CONVERSATION_ID_PATTERN.test(value);
 }
@@ -185,7 +188,6 @@ export type ConversationListQuery = { page: number; limit: number; session: stri
 /** Query GET conversations (nilai string dari URL). Kosong/tidak dikirim = default. */
 export function parseConversationListQuery(query: Record<string, unknown> | undefined): ValidationResult<ConversationListQuery> {
   const { page: rawPage, limit: rawLimit, session: rawSession } = query ?? {};
-  const isBlank = (v: unknown) => v === undefined || v === "";
 
   let page = 1;
   if (!isBlank(rawPage)) {
@@ -213,4 +215,38 @@ export function parseConversationListQuery(query: Record<string, unknown> | unde
   }
 
   return { ok: true, value: { page, limit, session } };
+}
+
+export type ErrorLogQuery = { days: JennaErrorLogDays; limit: number; cursor: string | null };
+
+/** Query GET errors (nilai string dari URL). Kosong/tidak dikirim = default. */
+export function parseErrorLogQuery(query: Record<string, unknown> | undefined): ValidationResult<ErrorLogQuery> {
+  const { days: rawDays, limit: rawLimit, cursor: rawCursor } = query ?? {};
+
+  let days: JennaErrorLogDays = 7;
+  if (!isBlank(rawDays)) {
+    const match = JENNA_ERROR_LOG_DAYS.find((d) => String(d) === rawDays);
+    if (match === undefined) {
+      return { ok: false, error: `Parameter days harus salah satu dari ${JENNA_ERROR_LOG_DAYS.join(", ")}.` };
+    }
+    days = match;
+  }
+
+  const { defaultLimit, maxLimit } = JENNA_ERROR_LOG_PAGE;
+  let limit: number = defaultLimit;
+  if (!isBlank(rawLimit)) {
+    if (typeof rawLimit !== "string" || !POSITIVE_INT_PATTERN.test(rawLimit) || Number(rawLimit) > maxLimit) {
+      return { ok: false, error: `Parameter limit harus di antara 1 dan ${maxLimit}.` };
+    }
+    limit = Number(rawLimit);
+  }
+
+  let cursor: string | null = null;
+  if (!isBlank(rawCursor)) {
+    // Id pesan memakai format yang sama dengan id percakapan (cuid).
+    if (!isJennaConversationId(rawCursor)) return { ok: false, error: "Parameter cursor tidak valid." };
+    cursor = rawCursor;
+  }
+
+  return { ok: true, value: { days, limit, cursor } };
 }

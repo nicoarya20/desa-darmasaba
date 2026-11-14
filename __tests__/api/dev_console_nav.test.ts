@@ -23,11 +23,14 @@ const activeHrefs = (pathname: string) =>
     .map((item) => item.href);
 
 describe('DEV_NAV', () => {
-  it('Ringkasan Sistem lalu grup Jenna berisi Umum, Batas Pemakaian, Percakapan, Provider', () => {
+  it('Ringkasan Sistem lalu grup Jenna berisi Umum, Batas Pemakaian, Log Error, Pengetahuan, Penggunaan, Percakapan, Provider', () => {
     expect(DEV_NAV.map((e) => e.label)).toEqual(['Ringkasan Sistem', 'Jenna']);
     expect(jenna.children.map((c) => [c.label, c.href])).toEqual([
       ['Umum', '/dev/jenna'],
       ['Batas Pemakaian', '/dev/jenna/batas'],
+      ['Log Error', '/dev/jenna/log-error'],
+      ['Pengetahuan', '/dev/jenna/pengetahuan'],
+      ['Penggunaan', '/dev/jenna/penggunaan'],
       ['Percakapan', '/dev/jenna/percakapan'],
       ['Provider', '/dev/jenna/provider'],
     ]);
@@ -59,6 +62,9 @@ describe('isDevNavActive', () => {
     expect(activeHrefs('/dev/jenna/batas')).toEqual(['/dev/jenna/batas']);
     expect(activeHrefs('/dev/jenna/provider')).toEqual(['/dev/jenna/provider']);
     expect(activeHrefs('/dev/jenna/percakapan')).toEqual(['/dev/jenna/percakapan']);
+    expect(activeHrefs('/dev/jenna/pengetahuan')).toEqual(['/dev/jenna/pengetahuan']);
+    expect(activeHrefs('/dev/jenna/penggunaan')).toEqual(['/dev/jenna/penggunaan']);
+    expect(activeHrefs('/dev/jenna/log-error')).toEqual(['/dev/jenna/log-error']);
     expect(activeHrefs('/dev/ringkasan')).toEqual(['/dev/ringkasan']);
   });
 

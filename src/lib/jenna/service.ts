@@ -81,6 +81,22 @@ export async function updateJennaProvider(
   return { ok: true };
 }
 
+/** Hapus API key tersimpan + hasil tes; Base URL dan model tetap. Idempoten: slot tanpa row/key tetap sukses. */
+export async function clearJennaProviderKey(userId: string, slot: JennaSlot): Promise<void> {
+  await prisma.jennaProvider.updateMany({
+    where: { slot },
+    data: {
+      apiKeyEnc: null,
+      apiKeyHint: null,
+      lastTestAt: null,
+      lastTestOk: null,
+      lastTestMessage: null,
+      updatedById: userId,
+    },
+  });
+  invalidateJennaRuntimeCache();
+}
+
 async function resolveTestOutcome(
   row: { baseUrl: string; model: string; apiKeyEnc: string | null; timeoutMs: number },
   slot: JennaSlot,

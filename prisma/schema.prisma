@@ -2670,6 +2670,11 @@ model JennaMessage {
   inputTokens    Int               @default(0)
   outputTokens   Int               @default(0)
   toolsUsed      String[]
+  // Telemetri giliran (developer console): di baris asisten bila sukses, di baris user ber-status error bila gagal.
+  latencyMs      Int?
+  providerSlot   String?
+  model          String?
+  errorDetail    String?           @db.Text // penyebab asli giliran gagal, sudah disanitasi; tidak pernah ke pengunjung
   sessionHash    String
   ipHash         String
   createdAt      DateTime          @default(now())

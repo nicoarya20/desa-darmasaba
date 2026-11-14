@@ -61,7 +61,7 @@ JennaWidget (DarmasabaShell, lazy, Valtio)
 | `src/app/(public)/_com/jenna/` | Widget (FAB, panel/drawer, renderer markdown in-house, state Valtio, klien SSE) |
 | `src/lib/rate-limit.ts` | Limiter sliding window in-memory (dipakai juga limiter OTP auth) |
 
-Developer Console: pengaturan di `/dev/jenna/*`; daftar percakapan tersamar + statistik di `/dev/jenna/percakapan` (tugas terpisah).
+Developer Console (`/dev/jenna/*`, API `/api/developer/jenna/*`, role 0): pengaturan (Umum, Batas Pemakaian, Provider), Pengetahuan (snapshot + sumber + tool, read-only; `src/lib/jenna/knowledge/admin.ts`), Percakapan (daftar tersamar + statistik), Penggunaan dan Log Error (`src/lib/jenna/chat/usage-admin.repo.ts`, sanitasi teks error di `src/lib/jenna/error-detail.ts`).
 
 ## Key Files
 

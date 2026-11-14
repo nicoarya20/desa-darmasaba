@@ -52,3 +52,12 @@ Limiter per menit dan gerbang konkurensi ada di memori proses (`src/lib/rate-lim
 - Adapter OpenAI-compatible mengirim `max_tokens`; model reasoning OpenAI (o1/gpt-5) menolaknya dan butuh `max_completion_tokens` (`docs/BACKEND-TODO.md`).
 - Verifikasi SSE di stg (buffering reverse proxy) dan E2E widget desktop + mobile.
 - Voice di luar scope tahap ini.
+
+## Adendum 2026-11-14: telemetri & paritas Developer Console
+Migrasi `20261114100000_jenna_message_telemetry` (additive, nullable): `JennaMessage.latencyMs`, `providerSlot`, `model`, `errorDetail`. Tujuan: menyamai tab Pengetahuan, Penggunaan, dan Log Error di vanguard-js (kecuali voice).
+- **Telemetri per giliran.** Giliran sukses: di baris asisten. Giliran gagal: di baris user ber-`status = 'error'`. `latencyMs` dihitung dari awal `executeTurn` sampai giliran disimpan. Baris sebelum migrasi tidak punya telemetri (tampil "—").
+- **Teks error provider kini disimpan** (sebelumnya body vendor dibuang). Adapter mengisi `AiProviderError.detail` (status HTTP + body ≤ ±4 KB, atau potongan chunk stream yang rusak) dan menyegelnya dengan API key slot sebelum keluar adapter. `sanitizeErrorDetail` (`src/lib/jenna/error-detail.ts`) menyamarkan kredensial (`Bearer`/`Basic`, field key, `sk-…`, API key literal), menjalankan `maskPii`, dan memotong 2000 karakter. `errorDetail` hanya dibaca role 0, tidak pernah masuk `message` publik, SSE, atau `ChatFailure`; ikut terhapus oleh purge retensi. `client_closed` tidak menyimpan detail.
+- **Hitungan.** "Gagal" = `status = 'error'` selain `client_closed`; "dibatalkan" = `client_closed`. Jendela 24 jam dan 7 hari bersifat bergulir (bukan per tanggal WIB seperti kuota).
+- **API developer baru** (role 0, `cache-control: no-store`): `GET /api/developer/jenna/usage`, `GET /api/developer/jenna/errors?days=1|7|30&limit&cursor` (keyset, cursor = id pesan), `GET /api/developer/jenna/knowledge` (snapshot segar tanpa cache dari pemuat yang sama dengan chat publik, read-only), `DELETE /api/developer/jenna/providers/:slot/key`. `JennaConversationMessageDTO` bertambah 4 field (additive). Kontrak `/api/jenna/status` dan `/api/jenna/chat` tidak berubah.
+- **Halaman**: `/dev/jenna/pengetahuan`, `/dev/jenna/penggunaan`, `/dev/jenna/log-error`; "Hapus API key" di Provider; "Pakai Contoh Persona" di Umum.
+- **Belum dikerjakan**: voice (butuh keputusan: slot provider suara, persetujuan mikrofon dan kuota menit untuk pengunjung anonim), jejak audit perubahan setelan, tombol "segarkan pengetahuan sekarang".

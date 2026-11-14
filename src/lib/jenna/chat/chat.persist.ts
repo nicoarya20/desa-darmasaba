@@ -3,6 +3,14 @@
 import type { TokenUsage } from "../provider/types";
 import type { ChatRepo, Identity } from "./conversation.repo";
 
+/** Telemetri satu giliran untuk developer console (tab Penggunaan & Log Error). */
+export interface TurnTelemetry {
+  /** Dari awal `executeTurn` sampai giliran disimpan. */
+  latencyMs: number;
+  providerSlot: string;
+  model: string;
+}
+
 export interface TurnToSave {
   conversationId: string;
   who: Identity;
@@ -10,6 +18,7 @@ export interface TurnToSave {
   assistantText: string;
   toolsUsed: string[];
   usage: TokenUsage;
+  telemetry: TurnTelemetry;
   now: Date;
 }
 
@@ -26,6 +35,7 @@ export function saveTurn(repo: ChatRepo, turn: TurnToSave): Promise<void> {
         inputTokens: turn.usage.inputTokens,
         outputTokens: turn.usage.outputTokens,
         toolsUsed: turn.toolsUsed,
+        ...turn.telemetry,
       },
     ],
     turn.now,
@@ -38,9 +48,12 @@ export interface FailedTurn {
   userText: string;
   /** Kode internal ringkas (tanpa detail provider). */
   errorCode: string;
+  /** Penyebab asli yang sudah disanitasi; null untuk `client_closed`. Hanya untuk developer console. */
+  errorDetail: string | null;
   /** Token yang sudah terpakai sebelum gagal — tetap dihitung ke budget global. */
   usage: TokenUsage;
   toolsUsed: string[];
+  telemetry: TurnTelemetry;
   now: Date;
 }
 
@@ -54,9 +67,11 @@ export function recordFailedTurn(repo: ChatRepo, turn: FailedTurn): Promise<void
         content: turn.userText,
         status: "error",
         errorCode: turn.errorCode,
+        errorDetail: turn.errorDetail,
         inputTokens: turn.usage.inputTokens,
         outputTokens: turn.usage.outputTokens,
         toolsUsed: turn.toolsUsed,
+        ...turn.telemetry,
       },
     ],
     turn.now,

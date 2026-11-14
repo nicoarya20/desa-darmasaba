@@ -1,13 +1,17 @@
 // Adapter endpoint `/chat/completions` bergaya OpenAI (fetch saja, tanpa SDK).
+import { describeError } from "../error-detail";
 import { createDeadline } from "../runtime/deadline";
 import {
   badResponse,
+  clipJson,
   DEFAULT_MAX_TOKENS,
   errorForStatus,
   type FetchLike,
   isEventStream,
   normalizeArguments,
   type ProviderConfig,
+  readErrorBody,
+  sealErrorDetail,
   unavailable,
 } from "./common";
 import { readOpenAIStream, StreamFormatError } from "./openai-stream";
@@ -82,9 +86,8 @@ export class OpenAICompatibleProvider implements AIProvider {
       }
 
       if (!res.ok) {
-        // Body vendor dibuang (bisa memuat detail akun); cukup status.
-        await res.body?.cancel().catch(() => undefined);
-        throw errorForStatus(res.status);
+        // Body vendor hanya masuk `detail` (developer console), tidak pernah ke `message` publik.
+        throw errorForStatus(res.status, await readErrorBody(res));
       }
       if (opts.onDelta && isEventStream(res)) return await readStream(res, opts.onDelta);
 
@@ -93,12 +96,14 @@ export class OpenAICompatibleProvider implements AIProvider {
         json = (await res.json()) as OpenAIResponse;
       } catch (err) {
         if (deadline.signal.aborted) throw unavailable(err);
-        throw badResponse(res.status);
+        throw badResponse(res.status, describeError(err));
       }
       const result = parseResponse(json);
       // Proxy yang mengabaikan `stream: true`: jawaban dikirim sebagai satu delta.
       if (opts.onDelta && result.type === "text" && result.text) opts.onDelta(result.text);
       return result;
+    } catch (err) {
+      throw sealErrorDetail(err, this.config.apiKey);
     } finally {
       deadline.dispose();
     }
@@ -106,11 +111,11 @@ export class OpenAICompatibleProvider implements AIProvider {
 }
 
 async function readStream(res: Response, onDelta: (text: string) => void): Promise<ChatResult> {
-  if (!res.body) throw badResponse(res.status);
+  if (!res.body) throw badResponse(res.status, "Stream tanpa body");
   try {
     return await readOpenAIStream(res.body, onDelta);
   } catch (err) {
-    if (err instanceof StreamFormatError) throw badResponse(res.status);
+    if (err instanceof StreamFormatError) throw badResponse(res.status, err.message);
     // Stream putus di tengah (jaringan, timeout, atau giliran dibatalkan).
     throw unavailable(err);
   }
@@ -118,7 +123,7 @@ async function readStream(res: Response, onDelta: (text: string) => void): Promi
 
 function parseResponse(json: OpenAIResponse): ChatResult {
   const message = json.choices?.[0]?.message;
-  if (!message) throw badResponse();
+  if (!message) throw badResponse(undefined, `Respons tanpa choices[0].message: ${clipJson(json)}`);
   const usage = json.usage
     ? { inputTokens: json.usage.prompt_tokens ?? 0, outputTokens: json.usage.completion_tokens ?? 0 }
     : undefined;

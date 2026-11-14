@@ -1,11 +1,13 @@
 'use client';
-import { SimpleGrid, Stack, Text, TextInput, Textarea } from '@mantine/core';
+import { Button, Group, SimpleGrid, Stack, Text, TextInput, Textarea } from '@mantine/core';
+import { IconSparkles } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { JENNA_SETTINGS_LIMITS, type JennaSettingsDTO } from '@/lib/jenna/types';
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
 import jennaState from '../../_state/jenna-state';
+import { ConfirmModal } from '../../_com/ConfirmModal';
 import { SectionCard } from '../../_com/SectionCard';
 import {
   hasErrors,
@@ -14,6 +16,7 @@ import {
   identityFromSettings,
   type IdentityForm,
 } from '../jenna-form.logic';
+import { JENNA_PERSONA_PRESET, shouldConfirmPersonaPreset } from '../persona-preset';
 import { useReportDirty } from './useReportDirty';
 
 const PERSONA_MAX = JENNA_SETTINGS_LIMITS.personaNote.maxLength;
@@ -24,6 +27,7 @@ export function JennaIdentityCard({ settings }: { settings: JennaSettingsDTO }) 
   const snap = useSnapshot(jennaState);
   const baseline = identityFromSettings(settings);
   const [form, setForm] = useState<IdentityForm>(baseline);
+  const [confirmPreset, setConfirmPreset] = useState(false);
 
   const dirty = !identityEqual(form, baseline);
   const errors = identityErrors(form);
@@ -36,6 +40,12 @@ export function JennaIdentityCard({ settings }: { settings: JennaSettingsDTO }) 
       'Identitas & persona disimpan.',
     );
     if (result) setForm(identityFromSettings(result.settings));
+  };
+
+  // Hanya mengisi draf; tersimpan setelah tombol Simpan ditekan.
+  const applyPreset = () => {
+    setForm((f) => ({ ...f, personaNote: JENNA_PERSONA_PRESET }));
+    setConfirmPreset(false);
   };
 
   const personaLength = form.personaNote.length;
@@ -76,17 +86,36 @@ export function JennaIdentityCard({ settings }: { settings: JennaSettingsDTO }) 
             error={errors.personaNote}
             aria-describedby="persona-counter"
           />
-          <Text
-            id="persona-counter"
-            size="xs"
-            ta="right"
-            c={personaLength > PERSONA_MAX ? tokens.colors.error : tokens.colors.text.muted}
-            aria-live="polite"
-          >
-            {personaLength}/{PERSONA_MAX} karakter
-          </Text>
+          <Group justify="space-between" align="center" gap="sm" wrap="wrap">
+            <Button
+              variant="light"
+              size="xs"
+              leftSection={<IconSparkles size={14} />}
+              onClick={() => (shouldConfirmPersonaPreset(form.personaNote) ? setConfirmPreset(true) : applyPreset())}
+              disabled={snap.saving === 'identity'}
+            >
+              Pakai Contoh Persona
+            </Button>
+            <Text
+              id="persona-counter"
+              size="xs"
+              ta="right"
+              c={personaLength > PERSONA_MAX ? tokens.colors.error : tokens.colors.text.muted}
+              aria-live="polite"
+            >
+              {personaLength}/{PERSONA_MAX} karakter
+            </Text>
+          </Group>
         </Stack>
       </Stack>
+      <ConfirmModal
+        opened={confirmPreset}
+        title="Ganti catatan persona?"
+        message="Isi catatan persona saat ini akan diganti dengan contoh. Perubahan baru tersimpan setelah Anda menekan Simpan."
+        confirmLabel="Ganti dengan contoh"
+        onConfirm={applyPreset}
+        onClose={() => setConfirmPreset(false)}
+      />
     </SectionCard>
   );
 }
