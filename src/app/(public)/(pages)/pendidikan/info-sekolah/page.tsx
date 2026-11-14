@@ -66,8 +66,7 @@ export default function SekolahPage() {
           <Text ta="center" fw={800} fz={28}>Cari Informasi Sekolah</Text>
           <Text ta="center" fz="md" c="black">
             Temukan data lengkap mengenai lembaga pendidikan, jumlah siswa terdaftar, dan tenaga pengajar
-            di semua jenjang pendidikan. Buka salah satu kartu di bawah, lalu saring berdasarkan jenjang
-            (TK, SD, SMP, SMA, dan lainnya) langsung di tabelnya.
+            di semua jenjang pendidikan.
           </Text>
         </Stack>
       </Paper>
