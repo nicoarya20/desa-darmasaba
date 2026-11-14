@@ -7,7 +7,7 @@ type LaporanPublikUpdateInput = {
   judul?: string;
   lokasi?: string;
   tanggalWaktu?: string;
-  status?: "Selesai" | "Proses" | "Gagal";
+  status?: "Selesai" | "Proses" | "Gagal" | "Baru";
   kronologi?: string;
   penanganan?: string;
 };

@@ -3,7 +3,7 @@
 
 type WindowStore = Map<string, number[]>
 
-function createLimiter(maxRequests: number, windowMs: number) {
+export function createLimiter(maxRequests: number, windowMs: number) {
   const store: WindowStore = new Map()
 
   // Periodic cleanup to prevent unbounded memory growth
