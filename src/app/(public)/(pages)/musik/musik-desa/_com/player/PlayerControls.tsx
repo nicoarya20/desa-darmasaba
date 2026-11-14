@@ -7,8 +7,10 @@ import {
   IconPlayerSkipBackFilled,
   IconPlayerSkipForwardFilled,
   IconRepeat,
+  IconRepeatOnce,
 } from '@tabler/icons-react';
 import { useMusic } from '@/app/context/MusicContext';
+import { REPEAT_LABEL } from '@/app/context/music/music.text';
 import { PLAYER_TEXT } from './player.text';
 import s from './player-controls.module.css';
 
@@ -38,12 +40,18 @@ export function PlayPauseButton({ size = 36 }: { size?: number }) {
   );
 }
 
-/** Tombol lagu berikutnya (dipakai juga di bar versi ponsel). */
+/** Tombol lagu berikutnya (dipakai juga di bar versi ponsel); nonaktif di ujung urutan saat ulang mati. */
 export function NextButton() {
-  const { playNext } = useMusic();
+  const { playNext, hasNext } = useMusic();
   const { hasSong } = useTransportState();
   return (
-    <button type="button" className={s.btn} onClick={playNext} disabled={!hasSong} aria-label={PLAYER_TEXT.next}>
+    <button
+      type="button"
+      className={s.btn}
+      onClick={playNext}
+      disabled={!hasSong || !hasNext}
+      aria-label={PLAYER_TEXT.next}
+    >
       <IconPlayerSkipForwardFilled size={22} aria-hidden="true" />
     </button>
   );
@@ -51,7 +59,8 @@ export function NextButton() {
 
 /** Baris kontrol lengkap: acak · sebelumnya · putar/jeda · berikutnya · ulang. */
 export function PlayerControls() {
-  const { playPrev, isShuffle, isRepeat, toggleShuffle, toggleRepeat, musikData } = useMusic();
+  const { playPrev, isShuffle, repeatMode, toggleShuffle, cycleRepeat, musikData } = useMusic();
+  const RepeatIcon = repeatMode === 'one' ? IconRepeatOnce : IconRepeat;
   const { hasSong } = useTransportState();
   const hasLibrary = musikData.length > 0;
 
@@ -76,13 +85,13 @@ export function PlayerControls() {
       <button
         type="button"
         className={s.btn}
-        onClick={toggleRepeat}
+        onClick={cycleRepeat}
         disabled={!hasLibrary}
-        aria-label={PLAYER_TEXT.repeat}
-        aria-pressed={isRepeat}
-        data-active={isRepeat}
+        // Tiga status: label menyebut mode aktif (aria-pressed hanya cocok untuk dua status).
+        aria-label={REPEAT_LABEL[repeatMode]}
+        data-active={repeatMode !== 'off'}
       >
-        <IconRepeat size={20} aria-hidden="true" />
+        <RepeatIcon size={20} aria-hidden="true" />
       </button>
     </div>
   );

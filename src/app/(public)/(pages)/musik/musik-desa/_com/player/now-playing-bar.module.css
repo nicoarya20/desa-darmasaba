@@ -73,6 +73,24 @@
   flex: none;
 }
 
+/* Ponsel: area info lagu sebagai tombol pembuka pemutar layar penuh (reset gaya tombol bawaan). */
+.leftButton {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.leftButton:focus-visible {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: 2px;
+}
+
 .text {
   min-width: 0;
 }
@@ -139,8 +157,9 @@
   display: none;
 }
 
+/* 735–1068px: slider volume disembunyikan, tombol bisu tetap ada (masih satu-satunya kendali suara di layar). */
 @media (max-width: 1068px) {
-  .volume {
+  .volume .volumeSlider {
     display: none;
   }
 }
@@ -156,8 +175,10 @@
     padding: 0 8px 0 12px;
   }
 
+  /* Ponsel: kontrol volume seluruhnya disembunyikan (tombol volume perangkat), ruang untuk putar & berikutnya. */
   .center,
-  .meta {
+  .meta,
+  .volume {
     display: none;
   }
 

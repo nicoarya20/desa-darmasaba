@@ -1,6 +1,7 @@
 import { IconMusic } from '@tabler/icons-react';
 import type { CSSProperties } from 'react';
 import { COVER_GRADIENTS, pickFromPalette } from './musik-palette';
+import sr from '../sr-only.module.css';
 import s from './track-cover.module.css';
 
 type Props = {
@@ -31,7 +32,7 @@ export function TrackCover({ src, alt, size = 'fill', radius = 4, seed }: Props)
         // eslint-disable-next-line @next/next/no-img-element -- sampul dari MinIO via /api, ukuran kecil & lazy
         <img src={src} alt={alt} loading="lazy" decoding="async" className={s.img} />
       ) : (
-        <span className={s.srOnly}>{alt}</span>
+        <span className={sr.srOnly}>{alt}</span>
       )}
     </span>
   );

@@ -34,6 +34,23 @@ export function resolveJelajahi(p: JelajahiParams, genres: readonly Genre[], art
   };
 }
 
+/** Params URL dari filter yang sudah di-resolve: kunci genre/artis yang tidak dikenal pustaka hilang dari URL. */
+export function toJelajahiParams(f: JelajahiFilter): JelajahiParams {
+  return { q: f.q, genre: f.genre?.key ?? null, artis: f.artis?.key ?? null };
+}
+
+/**
+ * Bungkus perubahan params supaya dijalankan atas params yang sudah di-resolve: URL hasilnya ditulis ulang
+ * tanpa kunci genre/artis sampah (`?genre=rock` yang tidak ada di pustaka), alih-alih membawanya terus.
+ */
+export function withKnownKeys(
+  change: (current: JelajahiParams) => JelajahiParams,
+  genres: readonly Genre[],
+  artists: readonly Artist[],
+): (current: JelajahiParams) => JelajahiParams {
+  return (current) => change(toJelajahiParams(resolveJelajahi(current, genres, artists)));
+}
+
 /** Kata kunci dipecah per kata (huruf kecil); semua kata harus muncul di judul/artis/genre. */
 function matchesQuery(t: Track, words: readonly string[]): boolean {
   if (!words.length) return true;

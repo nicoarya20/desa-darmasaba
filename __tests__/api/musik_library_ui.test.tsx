@@ -10,9 +10,16 @@ vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
 }));
 
-import { MusikHomeView } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikHome';
+import {
+  ARTIS_LIMIT,
+  GENRE_LIMIT,
+  MusikHomeView,
+  SEMUA_LIMIT,
+  TERBARU_LIMIT,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikHome';
 import { MusikJelajahiView } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikJelajahi';
 import { MusikPlaylist } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikPlaylist';
+import { MusikLoadError } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikLoadError';
 import { deriveArtists, deriveGenres, toTrack, withGenreLabels } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
 import { parseJelajahiParams } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-jelajahi.logic';
 import { MUSIK_TEXT as T } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.text';
@@ -51,6 +58,8 @@ const lib = (over = {}) => ({
   artists: deriveArtists(tracks),
   genres: deriveGenres(tracks),
   isLoading: false,
+  loadError: false,
+  onRetry: noop,
   currentId: null as string | null,
   isPlaying: false,
   onPlay: noop,
@@ -67,12 +76,40 @@ describe('MusikHomeView', () => {
     expect(count(html, `aria-label="${T.geserKanan}"`)).toBe(3);
   });
 
+  it('panah rak di ujung: aria-disabled (fokus tetap), bukan atribut disabled', () => {
+    const html = render(<MusikHomeView {...lib()} />);
+    expect(html).not.toMatch(/<button[^>]*\sdisabled/);
+    expect(count(html, 'aria-disabled="true"')).toBe(6); // 3 rak gulir × ‹ ›, awal render = kedua ujung
+  });
+
   it('ubin artis & genre menaut ke Jelajahi tersaring; "Pop" dan "pop" satu ubin', () => {
     const html = render(<MusikHomeView {...lib()} />);
     expect(html).toContain('href="/musik/musik-desa/jelajahi?artis=kadek+wira"');
     expect(html).toContain('href="/musik/musik-desa/jelajahi?genre=pop"');
     expect(count(html, '?genre=')).toBe(2);
     expect(text(html)).toContain('Kadek Wira 2 lagu');
+  });
+
+  it('"Terbaru" = urutan API (terbaru dulu), "Semua lagu" = judul A–Z', () => {
+    const newest = [musik('z', { judul: 'Zapin' }), musik('m', { judul: 'Mekar' }), musik('a2', { judul: 'Angklung' })].map(toTrack);
+    const html = render(<MusikHomeView {...lib({ tracks: newest })} />);
+    const shelf = (title: string) => text(html.split(`>${title}</h2>`)[1]?.split('</ul>')[0] ?? '');
+    expect(shelf(T.shelfTerbaru)).toMatch(/Zapin.*Mekar.*Angklung/);
+    expect(shelf(T.shelfSemua)).toMatch(/Angklung.*Mekar.*Zapin/);
+  });
+
+  it('setiap rak beranda maks 12 item (Terbaru, Semua lagu, Artis, Genre)', () => {
+    const many = Array.from({ length: 15 }, (_, i) => musik(`m${i}`, { artis: `Artis ${i}`, genre: `Genre ${i}` })).map(toTrack);
+    const html = render(<MusikHomeView {...lib({ tracks: many, artists: deriveArtists(many), genres: deriveGenres(many) })} />);
+    const items = (title: string) => count(html.split(`>${title}</h2>`)[1]?.split('</ul>')[0] ?? '', '<li');
+    expect([TERBARU_LIMIT, SEMUA_LIMIT, ARTIS_LIMIT, GENRE_LIMIT]).toEqual([12, 12, 12, 12]);
+    expect([T.shelfTerbaru, T.shelfSemua, T.shelfArtis, T.shelfGenre].map(items)).toEqual([12, 12, 12, 12]);
+  });
+
+  it('ubin artis bersampul tetap memuat inisial di bawah gambar (cadangan bila sampul gagal dimuat)', () => {
+    const html = render(<MusikHomeView {...lib()} />);
+    const tile = html.split('href="/musik/musik-desa/jelajahi?artis=kadek+wira"')[1]?.split('</a>')[0] ?? '';
+    expect(tile).toMatch(/<span class="[^"]*">KW<\/span><img /);
   });
 
   it('rak tanpa isi tidak dirender (tanpa genre & artis)', () => {
@@ -86,8 +123,10 @@ describe('MusikHomeView', () => {
     expect(count(html, `class="${row.row}" data-active="true"`)).toBe(1);
     expect(html).toContain('aria-current="true"');
     expect(html).toContain('data-playing="true"');
-    expect(html).toContain('aria-label="Jeda Lagu a, Kadek Wira"');
-    expect(html).toContain('aria-label="Putar Lagu b, Sekaa Gong"');
+    // Nama tombol = kata kerja (sr-only) + isi yang terlihat; tanpa aria-label yang menelan isi.
+    expect(text(html)).toContain(`${T.jeda} Lagu a Kadek Wira 4:05`);
+    expect(text(html)).toContain(`${T.putar} Lagu b Sekaa Gong 4:05`);
+    expect(html).not.toMatch(/<button[^>]*aria-label="(Putar|Jeda) /);
   });
 
   it('lagu tanpa audio redup + "Audio belum tersedia" menggantikan durasi', () => {
@@ -96,7 +135,7 @@ describe('MusikHomeView', () => {
     // Hanya sampul dibungkus .cover (diredupkan CSS); teks tanpa gaya inline/opacity.
     expect(count(html, `<span class="${row.cover}">`)).toBe(3);
     expect(html).not.toContain('opacity');
-    expect(html).toContain(`aria-label="Putar Lagu c, Kadek Wira (${T.audioBelum})"`);
+    expect(text(html)).toContain(`${T.putar} Lagu c Kadek Wira ${T.audioBelum}`);
     expect(text(html)).toContain('4:05');
   });
 
@@ -106,6 +145,19 @@ describe('MusikHomeView', () => {
     expect(h2s(loading)).toEqual([]);
     const empty = render(<MusikHomeView {...lib({ tracks: [], artists: [], genres: [] })} />);
     expect(h2s(empty)).toEqual([T.kosongTitle]);
+  });
+
+  it('API gagal (loadError) → panel "Gagal memuat lagu" + "Coba lagi", bukan "Belum ada lagu"', () => {
+    const html = render(<MusikHomeView {...lib({ tracks: [], artists: [], genres: [], loadError: true })} />);
+    expect(h2s(html)).toEqual([T.gagalTitle]);
+    expect(html).toMatch(new RegExp(`<button type="button"[^>]*>${T.cobaLagi}</button>`));
+    expect(text(html)).not.toContain(T.kosongBody);
+  });
+
+  it('loadError tapi lagu sudah ada (muat ulang gagal) → rak tetap tampil', () => {
+    const html = render(<MusikHomeView {...lib({ loadError: true })} />);
+    expect(h2s(html)).toEqual([T.shelfTerbaru, T.shelfSemua, T.shelfArtis, T.shelfGenre]);
+    expect(html).not.toContain(T.gagalTitle);
   });
 
   it('teks UI tanpa em dash', () => {
@@ -148,8 +200,16 @@ describe('MusikJelajahiView', () => {
 
   it('?genre=jazz → baris artis hanya artis yang punya lagu jazz; artis terpilih tetap tampil', () => {
     const artistRow = (html: string) => text(html.match(/<ul[^>]*aria-label="Artis"[^>]*>([\s\S]*?)<\/ul>/)?.[1] ?? '');
-    expect(artistRow(view('genre=jazz'))).toBe('Kadek Wira');
-    expect(artistRow(view('genre=jazz&artis=sekaa%20gong'))).toBe('Kadek Wira Sekaa Gong');
+    // Inisial (KW/SG) ikut di teks karena kini selalu dirender di bawah sampul (avatar aria-hidden).
+    expect(artistRow(view('genre=jazz'))).toBe('KW Kadek Wira');
+    expect(artistRow(view('genre=jazz&artis=sekaa%20gong'))).toBe('KW Kadek Wira SG Sekaa Gong');
+  });
+
+  it('API gagal → panel gagal muat tanpa filter & tabel', () => {
+    const html = view('', { tracks: [], artists: [], genres: [], loadError: true });
+    expect(h2s(html)).toEqual([T.gagalTitle]);
+    expect(html).toContain(T.cobaLagi);
+    expect(html).not.toContain(T.kosongTitle);
   });
 
   it('tidak cocok → "Tidak ada lagu yang cocok"', () => {
@@ -158,9 +218,43 @@ describe('MusikJelajahiView', () => {
 
   it('tabel: nomor urut, genre, tahun; baris diputar diganti equalizer', () => {
     const html = view('', { currentId: 'b', isPlaying: false });
-    expect(text(html)).toContain('1 Lagu a Kadek Wira Pop 2025 4:05');
+    expect(text(html)).toContain(`1 ${T.putar} Lagu a Kadek Wira Pop 2025 4:05`);
     expect(html).toContain('data-playing="false"');
-    expect(text(html)).not.toContain(' 2 Lagu b');
+    expect(text(html)).toContain(`${T.sedangDiputar} ${T.putar} Lagu b`);
+    expect(text(html)).not.toContain(` 2 ${T.putar} Lagu b`);
+  });
+});
+
+describe('TrackTable (Jelajahi): tabel semantik', () => {
+  const html = render(
+    <MusikJelajahiView {...lib({ currentId: 'a', isPlaying: true })} params={parseJelajahiParams(new URLSearchParams())} update={noop} />,
+  );
+
+  it('role table → row → columnheader/cell; header tidak aria-hidden; # punya nama "Nomor"', () => {
+    expect(html).toContain(`role="table" aria-label="${T.tabelLabel}"`);
+    expect(count(html, 'role="columnheader"')).toBe(5);
+    expect(count(html, 'role="row"')).toBe(1 + tracks.length);
+    expect(count(html, 'role="cell"')).toBe(5 * tracks.length);
+    expect(html).not.toMatch(/role="row"[^>]*aria-hidden/);
+    expect(text(html)).toContain(`${T.kolomNo} ${T.kolomNoLabel} ${T.kolomJudul}`);
+  });
+
+  it('tombol di sel judul: kata kerja + judul + artis, durasi/keterangan lewat aria-describedby', () => {
+    const buttons = [...html.matchAll(/<button[^>]*aria-describedby="([^"]+)"[^>]*>([\s\S]*?)<\/button>/g)];
+    expect(buttons.map((m) => text(m[2]))).toEqual([`${T.jeda} Lagu a Kadek Wira`, `${T.putar} Lagu b Sekaa Gong`, `${T.putar} Lagu c Kadek Wira`]);
+    const described = (i: number) => text(html.match(new RegExp(`id="${buttons[i][1]}"[^>]*>([^<]*)<`))?.[1] ?? '');
+    expect(described(0)).toBe('4:05');
+    expect(described(2)).toBe(T.audioBelum);
+  });
+});
+
+describe('MusikLoadError', () => {
+  it('tombol "Coba lagi" memanggil onRetry', () => {
+    const onRetry = vi.fn();
+    // MusikLoadError → <MusikEmpty action={<button onClick>}>: klik disimulasikan lewat prop elemen.
+    const panel = MusikLoadError({ onRetry }) as ReactElement<{ action: ReactElement<{ onClick: () => void }> }>;
+    panel.props.action.props.onClick();
+    expect(onRetry).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -3,11 +3,23 @@
 import { describe, expect, it } from 'vitest';
 import {
   activeMusikNav,
-  isMusikAppPath,
+  keepsPendingSearch,
   musikSearchHref,
+  musikSearchNavigation,
+  reconcileSentQ,
 } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.logic';
+import { readFileSync } from 'node:fs';
+import { isMusikAppPath } from '@/app/(public)/_com/musik-route';
+import {
+  MUSIK_COMPACT_MAX_PX,
+  MUSIK_QUEUE_COLUMN_MIN_PX,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-layout';
 import { MUSIK_NAV_ITEMS } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.meta';
-import { queueOpenForViewport, parseQueueOpen } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
+import {
+  parseQueueOpen,
+  queueFocusTarget,
+  queueOpenForViewport,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
 
 describe('activeMusikNav', () => {
   it('akar aplikasi = Musik, dengan atau tanpa garis miring akhir', () => {
@@ -34,10 +46,16 @@ describe('activeMusikNav', () => {
 });
 
 describe('isMusikAppPath', () => {
-  it('/musik dan turunannya memakai bar pemutar aplikasi', () => {
-    expect(isMusikAppPath('/musik')).toBe(true);
+  it('hanya /musik/musik-desa dan turunannya memakai bar pemutar aplikasi', () => {
     expect(isMusikAppPath('/musik/musik-desa')).toBe(true);
+    expect(isMusikAppPath('/musik/musik-desa/')).toBe(true);
     expect(isMusikAppPath('/musik/musik-desa/jelajahi')).toBe(true);
+  });
+
+  it('/musik dan /musik/<lain> (404) tetap memakai shell situs, termasuk awalan mirip', () => {
+    expect(isMusikAppPath('/musik')).toBe(false);
+    expect(isMusikAppPath('/musik/xyz')).toBe(false);
+    expect(isMusikAppPath('/musik/musik-desa-lama')).toBe(false);
   });
 
   it('halaman lain tetap memakai FixedPlayerBar, termasuk awalan teks mirip', () => {
@@ -45,6 +63,19 @@ describe('isMusikAppPath', () => {
     expect(isMusikAppPath('/musikal')).toBe(false);
     expect(isMusikAppPath('/pendidikan/musik')).toBe(false);
     expect(isMusikAppPath(null)).toBe(false);
+  });
+});
+
+describe('breakpoint kerangka (musik-layout.ts ↔ musik-app.module.css)', () => {
+  // CSS modul tidak bisa mengimpor konstanta JS; test ini menjaga angka di @media tetap sama.
+  const css = readFileSync('src/app/(public)/(pages)/musik/musik-desa/_com/app/musik-app.module.css', 'utf8');
+
+  it('media query ringkas CSS = MUSIK_COMPACT_MAX_PX', () => {
+    expect(css).toContain(`@media (max-width: ${MUSIK_COMPACT_MAX_PX}px)`);
+  });
+
+  it('kolom antrean dimulai tepat setelah lebar ringkas', () => {
+    expect(MUSIK_QUEUE_COLUMN_MIN_PX).toBeGreaterThan(MUSIK_COMPACT_MAX_PX);
   });
 });
 
@@ -71,6 +102,57 @@ describe('musikSearchHref', () => {
   });
 });
 
+describe('musikSearchNavigation (lokasi hidup saat timer berbunyi)', () => {
+  it('di Jelajahi: replace dan genre/artis dari search hidup dipertahankan', () => {
+    // genre=jazz dipilih selama jeda ketik: ada di window.location.search, belum di searchParams render lama.
+    expect(musikSearchNavigation('gong', '/musik/musik-desa/jelajahi', '?genre=jazz&artis=kadek')).toEqual({
+      href: '/musik/musik-desa/jelajahi?genre=jazz&artis=kadek&q=gong',
+      mode: 'replace',
+    });
+  });
+
+  it('dari menu lain: push hanya dengan q; parameter halaman itu tidak terbawa', () => {
+    expect(musikSearchNavigation(' gong ', '/musik/musik-desa', '?x=1')).toEqual({
+      href: '/musik/musik-desa/jelajahi?q=gong',
+      mode: 'push',
+    });
+  });
+
+  it('dari menu lain dengan kata kosong tidak menavigasi; di Jelajahi kata kosong menghapus q', () => {
+    expect(musikSearchNavigation('  ', '/musik/musik-desa/playlist', '')).toBeNull();
+    expect(musikSearchNavigation('', '/musik/musik-desa/jelajahi', '?q=lama&genre=pop')).toEqual({
+      href: '/musik/musik-desa/jelajahi?genre=pop',
+      mode: 'replace',
+    });
+  });
+});
+
+describe('reconcileSentQ (gema kiriman sendiri vs perubahan dari luar)', () => {
+  it('URL menyusul kiriman lama saat pengunjung terus mengetik → ketikan tidak ditimpa', () => {
+    // Terkirim "gam" lalu "gamelan"; URL baru sampai di "gam".
+    expect(reconcileSentQ(['gam', 'gamelan'], 'gam')).toEqual({ sent: ['gamelan'], adopt: false });
+    expect(reconcileSentQ(['gamelan'], 'gamelan')).toEqual({ sent: [], adopt: false });
+  });
+
+  it('kiriman antara yang terlewat ikut dibuang', () => {
+    expect(reconcileSentQ(['g', 'ga', 'gam'], 'ga')).toEqual({ sent: ['gam'], adopt: false });
+  });
+
+  it('perubahan dari luar (mundur, Hapus filter) diadopsi dan antrean kiriman dikosongkan', () => {
+    expect(reconcileSentQ(['gamelan'], '')).toEqual({ sent: [], adopt: true });
+    expect(reconcileSentQ([], 'lama')).toEqual({ sent: [], adopt: true });
+  });
+});
+
+describe('keepsPendingSearch (batal jeda saat pindah menu)', () => {
+  it('hanya Jelajahi yang mempertahankan ketikan yang menunggu', () => {
+    expect(keepsPendingSearch('/musik/musik-desa/jelajahi')).toBe(true);
+    expect(keepsPendingSearch('/musik/musik-desa/playlist')).toBe(false);
+    expect(keepsPendingSearch('/musik/musik-desa')).toBe(false);
+    expect(keepsPendingSearch(null)).toBe(false);
+  });
+});
+
 describe('status awal panel Antrean', () => {
   it('nilai tersimpan "1"/"0" terbaca, lainnya (kosong/rusak) → null', () => {
     expect(parseQueueOpen('1')).toBe(true);
@@ -88,5 +170,13 @@ describe('status awal panel Antrean', () => {
   it('<1280px (Drawer) selalu mulai tertutup walau preferensi terbuka', () => {
     expect(queueOpenForViewport(false, null)).toBe(false);
     expect(queueOpenForViewport(false, true)).toBe(false);
+  });
+});
+
+describe('fokus setelah antrean ditutup', () => {
+  it('tombol Antrean di bar diutamakan; tanpa bar → tombol cadangan topbar', () => {
+    expect(queueFocusTarget('bar', 'topbar')).toBe('bar');
+    expect(queueFocusTarget(null, 'topbar')).toBe('topbar');
+    expect(queueFocusTarget(null, null)).toBeNull();
   });
 });

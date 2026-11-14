@@ -1,5 +1,7 @@
-import { useMusic } from '@/app/context/MusicContext';
+import { useMusic, useMusicTime } from '@/app/context/MusicContext';
 import { formatTime } from '@/app/context/music/format';
+import { positionValueText, REPEAT_LABEL, volumeValueText } from '@/app/context/music/music.text';
+import { canSeek } from '@/app/context/music/playable';
 import {
   ActionIcon,
   Avatar,
@@ -20,6 +22,7 @@ import {
   IconPlayerSkipForwardFilled,
   IconRepeat,
   IconRepeatOff,
+  IconRepeatOnce,
   IconVolume,
   IconVolumeOff,
   IconX,
@@ -30,24 +33,25 @@ export default function FixedPlayerBar() {
   const {
     isPlaying,
     currentSong,
-    currentTime,
-    duration,
     volume,
     isMuted,
-    isRepeat,
+    repeatMode,
+    hasNext,
     isShuffle,
     togglePlayPause,
     playNext,
     playPrev,
-    seek,
-    seekPreview,
     setVolume,
     toggleMute,
-    toggleRepeat,
+    cycleRepeat,
     toggleShuffle,
   } = useMusic();
+  const { currentTime, duration, seek, seekPreview } = useMusicTime();
 
   const [isMinimized, setIsMinimized] = useState(false);
+  // Predikat sama dengan PlayerProgress aplikasi musik: lagu tanpa audio / durasi belum diketahui tidak bisa digeser.
+  const seekable = canSeek(currentSong, duration);
+  const positionText = (value: number) => positionValueText(formatTime(value), formatTime(duration));
 
   // Handle seek drag (visual only) / commit
   const handleSeekPreview = (value: number) => {
@@ -206,6 +210,7 @@ export default function FixedPlayerBar() {
                 color="gray"
                 size="lg"
                 onClick={playNext}
+                disabled={!hasNext}
                 title="Next"
               >
                 <IconPlayerSkipForwardFilled size={20} />
@@ -213,25 +218,34 @@ export default function FixedPlayerBar() {
 
               <ActionIcon
                 variant="subtle"
-                color={isRepeat ? 'blue' : 'gray'}
+                color={repeatMode === 'off' ? 'gray' : 'blue'}
                 size="lg"
-                onClick={toggleRepeat}
-                title={isRepeat ? 'Repeat On' : 'Repeat Off'}
+                onClick={cycleRepeat}
+                title={REPEAT_LABEL[repeatMode]}
+                aria-label={REPEAT_LABEL[repeatMode]}
               >
-                {isRepeat ? <IconRepeat size={18} /> : <IconRepeatOff size={18} />}
+                {repeatMode === 'one' ? (
+                  <IconRepeatOnce size={18} />
+                ) : repeatMode === 'all' ? (
+                  <IconRepeat size={18} />
+                ) : (
+                  <IconRepeatOff size={18} />
+                )}
               </ActionIcon>
             </Group>
 
             {/* Progress Bar - Desktop */}
             <Box w={200} display={{ base: 'none', md: 'block' }}>
               <Slider
-                value={currentTime}
-                max={duration || 100}
+                value={seekable ? Math.min(currentTime, duration) : 0}
+                max={seekable ? duration : 100}
                 onChange={handleSeekPreview}
                 onChangeEnd={handleSeekEnd}
+                disabled={!seekable}
                 size="sm"
                 color="blue"
                 label={(value) => formatTime(value)}
+                thumbValueText={positionText}
               />
             </Box>
           </Group>
@@ -265,6 +279,7 @@ export default function FixedPlayerBar() {
                   onChange={handleVolumeChange}
                   color="blue"
                   size="sm"
+                  thumbValueText={volumeValueText}
                 />
               </Box>
             </Group>
@@ -284,13 +299,15 @@ export default function FixedPlayerBar() {
         {/* Progress Bar - Mobile */}
         <Box mt="xs" display={{ base: 'block', md: 'none' }}>
           <Slider
-            value={currentTime}
-            max={duration || 100}
+            value={seekable ? Math.min(currentTime, duration) : 0}
+            max={seekable ? duration : 100}
             onChange={handleSeekPreview}
             onChangeEnd={handleSeekEnd}
+            disabled={!seekable}
             size="sm"
             color="blue"
             label={(value) => formatTime(value)}
+            thumbValueText={positionText}
           />
         </Box>
       </Paper>
