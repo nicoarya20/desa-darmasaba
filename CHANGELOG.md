@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.272] - 2026-11-14
+### Changed
+- **Halaman detail Lowongan Kerja dirombak** dengan gaya yang sama seperti daftar lowongan. Posisi, pemberi kerja, tipe pekerjaan, gaji per bulan, lokasi kerja (di dalam atau di luar desa), dan tanggal tayang tampil di bagian atas, diikuti Deskripsi pekerjaan, Kualifikasi, dan Tempat kerja dengan tautan ke Google Maps.
+- Pelamar bisa langsung menghubungi pemberi kerja lewat tombol **WhatsApp** atau **Telepon** di bagian atas dan bawah halaman. Saat halaman digulir, tombol yang sama tampil di bilah kecil di bawah layar. Nomor telepon rumah atau kantor hanya mendapat tombol Telepon; lowongan tanpa nomor menampilkan "Kontak belum dicantumkan".
+
+### Fixed
+- Gaji di halaman detail tidak lagi tertulis "RpNaN". Gaji yang tidak bisa dibaca dengan pasti tampil sebagai "Gaji tidak dicantumkan".
+- **Keamanan:** isi deskripsi dan kualifikasi lowongan kini dibersihkan sebelum ditampilkan, jadi kode berbahaya yang tersisip di teks lowongan tidak ikut berjalan.
+- Lowongan yang sudah dinonaktifkan atau dihapus admin tidak lagi bisa dibuka lewat alamatnya; halaman menampilkan "Lowongan tidak ditemukan".
+- Tombol WhatsApp hanya muncul untuk nomor seluler, sehingga tidak lagi membuka percakapan ke nomor yang salah.
+
 ## [0.1.271] - 2026-11-14
 ### Changed
 - **Halaman Lowongan Kerja Lokal dirombak.** Panel **Filter** kini ada di kiri dan daftar lowongan di kanan. Lowongan bisa disaring menurut tipe pekerjaan, lokasi kerja (di dalam atau di luar desa), gaji minimal per bulan, dan waktu tayang, serta diurutkan dari yang terbaru, gaji tertinggi, atau gaji terendah. Filter yang sedang dipakai tampil di kotak "Pilihan Anda" dan bisa dilepas satu per satu atau sekaligus.
