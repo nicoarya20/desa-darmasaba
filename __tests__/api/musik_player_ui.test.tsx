@@ -80,14 +80,16 @@ const button = (html: string, label: string) => {
 beforeEach(() => setMusic());
 
 describe('NowPlayingBar', () => {
-  it('tanpa lagu: teks ajakan, tombol transport nonaktif, tanpa latar sampul', () => {
+  it('tanpa lagu: bar tidak dirender sama sekali (muncul setelah lagu pertama dipilih)', () => {
+    expect(render(<NowPlayingBar />)).toBe('');
+  });
+
+  it('lagu dijeda tetap menampilkan bar dengan tombol Putar aktif', () => {
+    setMusic({ currentSong: A, isPlaying: false });
     const html = render(<NowPlayingBar />);
     expect(html).toContain(`aria-label="${PLAYER_TEXT.barLabel}"`);
-    expect(html).toContain(PLAYER_TEXT.idle);
-    for (const label of [PLAYER_TEXT.play, PLAYER_TEXT.prev, PLAYER_TEXT.next]) {
-      expect(button(html, label)).toContain('disabled');
-    }
-    expect(html).not.toMatch(/<img[^>]*alt=""[^>]*aria-hidden/);
+    expect(html).toContain('Tabuh Telu');
+    expect(button(html, PLAYER_TEXT.play)).not.toContain('disabled');
   });
 
   it('memakai aria-label Indonesia dan tidak punya tombol Preview, suka, atau lainnya', () => {

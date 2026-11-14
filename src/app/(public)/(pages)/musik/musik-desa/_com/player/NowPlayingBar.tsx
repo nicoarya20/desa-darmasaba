@@ -20,12 +20,15 @@ function songMeta(genre: string | null, tahun: number | null): string | null {
 /**
  * Bar pemutar bawah gaya TIDAL (fixed): latar sampul blur + kaca, info lagu kiri, transport + progres
  * tengah, Antrean + volume kanan. Tanpa tombol Preview/suka/lainnya. Dirender sekali oleh MusikApp.
+ * Seperti TIDAL, bar baru muncul setelah lagu pertama dipilih dan tetap tampil walau dijeda; ruang
+ * layout di MusikApp memakai predikat yang sama (`currentSong != null`).
  */
 export function NowPlayingBar() {
   const { currentSong } = useMusic();
   const { queueOpen, toggleQueue } = useMusikUi();
-  const coverUrl = currentSong?.coverImage?.link ?? null;
-  const meta = currentSong ? songMeta(currentSong.genre, currentSong.tahunRilis) : null;
+  if (!currentSong) return null;
+  const coverUrl = currentSong.coverImage?.link ?? null;
+  const meta = songMeta(currentSong.genre, currentSong.tahunRilis);
 
   return (
     <section className={s.bar} aria-label={PLAYER_TEXT.barLabel}>
@@ -41,29 +44,23 @@ export function NowPlayingBar() {
 
       <div className={s.inner}>
         <div className={s.left}>
-          {currentSong ? (
-            <>
-              <span className={s.cover}>
-                <TrackCover src={coverUrl} alt={`Sampul ${currentSong.judul}`} seed={currentSong.id} />
-              </span>
-              <div className={s.text}>
-                <p className={s.title}>{currentSong.judul}</p>
-                <p className={s.artist}>{currentSong.artis}</p>
-                {!currentSong.audioFile?.link ? (
-                  <p className={s.meta}>{PLAYER_TEXT.noAudio}</p>
-                ) : (
-                  meta && (
-                    <p className={s.meta}>
-                      <IconDisc size={13} aria-hidden="true" />
-                      <span>{meta}</span>
-                    </p>
-                  )
-                )}
-              </div>
-            </>
-          ) : (
-            <p className={s.idle}>{PLAYER_TEXT.idle}</p>
-          )}
+          <span className={s.cover}>
+            <TrackCover src={coverUrl} alt={`Sampul ${currentSong.judul}`} seed={currentSong.id} />
+          </span>
+          <div className={s.text}>
+            <p className={s.title}>{currentSong.judul}</p>
+            <p className={s.artist}>{currentSong.artis}</p>
+            {!currentSong.audioFile?.link ? (
+              <p className={s.meta}>{PLAYER_TEXT.noAudio}</p>
+            ) : (
+              meta && (
+                <p className={s.meta}>
+                  <IconDisc size={13} aria-hidden="true" />
+                  <span>{meta}</span>
+                </p>
+              )
+            )}
+          </div>
         </div>
 
         <div className={s.center}>

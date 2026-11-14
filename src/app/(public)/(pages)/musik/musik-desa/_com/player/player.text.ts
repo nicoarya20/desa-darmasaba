@@ -1,7 +1,6 @@
 /** Teks UI bar pemutar & panel Antrean Musik Desa (tanpa em dash). */
 export const PLAYER_TEXT = {
   barLabel: 'Pemutar musik',
-  idle: 'Pilih lagu untuk diputar',
   play: 'Putar',
   pause: 'Jeda',
   prev: 'Lagu sebelumnya',
