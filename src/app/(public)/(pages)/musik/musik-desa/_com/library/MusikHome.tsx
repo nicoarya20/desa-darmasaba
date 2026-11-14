@@ -5,6 +5,7 @@ import { ArtistTile } from './ArtistTile';
 import { GenreTile } from './GenreTile';
 import { MusikEmpty } from './MusikEmpty';
 import { MusikHeading } from './MusikHeading';
+import { MusikLoadError } from './MusikLoadError';
 import { MusikSkeleton } from './MusikSkeleton';
 import { ShelfRow } from './ShelfRow';
 import { TrackCard } from './TrackCard';
@@ -20,10 +21,16 @@ export const TERBARU_LIMIT = 12;
 /** Jumlah baris "Semua lagu" di beranda (3 kolom × 4); sisanya lewat "Lihat semua". */
 export const SEMUA_LIMIT = 12;
 
-type View = Pick<MusikLibrary, 'tracks' | 'artists' | 'genres' | 'isLoading' | 'currentId' | 'isPlaying' | 'onPlay'>;
+type View = Pick<
+  MusikLibrary,
+  'tracks' | 'artists' | 'genres' | 'isLoading' | 'loadError' | 'onRetry' | 'currentId' | 'isPlaying' | 'onPlay'
+>;
 
-/** Beranda Musik: rak Terbaru, Semua lagu, Artis desa, Genre. Rak tanpa isi tidak dirender. */
-export function MusikHomeView({ tracks, artists, genres, isLoading, currentId, isPlaying, onPlay }: View) {
+/**
+ * Beranda Musik: rak Terbaru, Semua lagu, Artis desa, Genre. Rak tanpa isi tidak dirender. Tanpa lagu: panel gagal
+ * muat + "Coba lagi" bila API gagal (`loadError`), selain itu panel "Belum ada lagu".
+ */
+export function MusikHomeView({ tracks, artists, genres, isLoading, loadError, onRetry, currentId, isPlaying, onPlay }: View) {
   const heading = <MusikHeading title={T.homeTitle} lead={T.homeLead} />;
   if (isLoading) {
     return (
@@ -37,7 +44,11 @@ export function MusikHomeView({ tracks, artists, genres, isLoading, currentId, i
     return (
       <div>
         {heading}
-        <MusikEmpty icon={<IconMusic size={40} stroke={1.5} />} title={T.kosongTitle} body={T.kosongBody} />
+        {loadError ? (
+          <MusikLoadError onRetry={onRetry} />
+        ) : (
+          <MusikEmpty icon={<IconMusic size={40} stroke={1.5} />} title={T.kosongTitle} body={T.kosongBody} />
+        )}
       </div>
     );
   }

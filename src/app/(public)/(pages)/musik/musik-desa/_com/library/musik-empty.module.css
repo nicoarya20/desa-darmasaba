@@ -29,3 +29,25 @@
   line-height: 1.5;
   color: var(--m-muted, #515154);
 }
+
+.action {
+  margin-top: 12px;
+}
+
+.retry {
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--m-solid, #1d1d1f);
+  color: var(--m-on-solid, #fff);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retry:focus-visible {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: 2px;
+}

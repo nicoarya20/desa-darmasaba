@@ -1,0 +1,56 @@
+// @vitest-environment node
+// useMusikLibrary: jembatan useMusic() → pustaka (loadError aman dibaca, onRetry → loadMusikData).
+// jsdom rusak di repo ini → hook dirender lewat renderToStaticMarkup dengan komponen penangkap.
+import { renderToStaticMarkup } from 'react-dom/server';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Musik } from '@/app/context/MusicContext';
+
+const music = vi.hoisted(() => ({ value: {} as Record<string, unknown> }));
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => music.value }));
+
+import {
+  useMusikLibrary,
+  type MusikLibrary,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/library/use-musik-library';
+
+// test-only
+const song = (id: string, link: string | null = `/a/${id}.mp3`): Musik =>
+  ({ id, judul: `Lagu ${id}`, artis: 'Kadek', durasi: '3:00', genre: null, tahunRilis: null, audioFile: link ? { link } : null, coverImage: null }) as unknown as Musik;
+
+let captured: MusikLibrary | null = null;
+function Probe() {
+  captured = useMusikLibrary();
+  return null;
+}
+const run = (over: Record<string, unknown> = {}) => {
+  music.value = {
+    musikData: [song('a'), song('b', null)],
+    isLoading: false,
+    currentSong: null,
+    isPlaying: false,
+    playSong: vi.fn(),
+    togglePlayPause: vi.fn(),
+    loadMusikData: vi.fn(() => Promise.resolve()),
+    ...over,
+  };
+  renderToStaticMarkup(<Probe />);
+  if (!captured) throw new Error('useMusikLibrary tidak terpanggil');
+  return captured;
+};
+
+beforeEach(() => {
+  captured = null;
+});
+
+describe('useMusikLibrary: gagal muat', () => {
+  it('loadError dari mesin diteruskan; field belum ada → false', () => {
+    expect(run({ loadError: true }).loadError).toBe(true);
+    expect(run().loadError).toBe(false);
+  });
+
+  it('onRetry memanggil loadMusikData sekali', () => {
+    const lib = run({ loadError: true });
+    lib.onRetry();
+    expect(music.value.loadMusikData).toHaveBeenCalledTimes(1);
+  });
+});

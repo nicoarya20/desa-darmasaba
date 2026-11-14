@@ -13,6 +13,7 @@ vi.mock('next-view-transitions', () => ({
 import { MusikHomeView } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikHome';
 import { MusikJelajahiView } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikJelajahi';
 import { MusikPlaylist } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikPlaylist';
+import { MusikLoadError } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikLoadError';
 import { deriveArtists, deriveGenres, toTrack, withGenreLabels } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
 import { parseJelajahiParams } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-jelajahi.logic';
 import { MUSIK_TEXT as T } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.text';
@@ -51,6 +52,8 @@ const lib = (over = {}) => ({
   artists: deriveArtists(tracks),
   genres: deriveGenres(tracks),
   isLoading: false,
+  loadError: false,
+  onRetry: noop,
   currentId: null as string | null,
   isPlaying: false,
   onPlay: noop,
@@ -108,6 +111,19 @@ describe('MusikHomeView', () => {
     expect(h2s(empty)).toEqual([T.kosongTitle]);
   });
 
+  it('API gagal (loadError) → panel "Gagal memuat lagu" + "Coba lagi", bukan "Belum ada lagu"', () => {
+    const html = render(<MusikHomeView {...lib({ tracks: [], artists: [], genres: [], loadError: true })} />);
+    expect(h2s(html)).toEqual([T.gagalTitle]);
+    expect(html).toMatch(new RegExp(`<button type="button"[^>]*>${T.cobaLagi}</button>`));
+    expect(text(html)).not.toContain(T.kosongBody);
+  });
+
+  it('loadError tapi lagu sudah ada (muat ulang gagal) → rak tetap tampil', () => {
+    const html = render(<MusikHomeView {...lib({ loadError: true })} />);
+    expect(h2s(html)).toEqual([T.shelfTerbaru, T.shelfSemua, T.shelfArtis, T.shelfGenre]);
+    expect(html).not.toContain(T.gagalTitle);
+  });
+
   it('teks UI tanpa em dash', () => {
     expect(text(render(<MusikHomeView {...lib()} />))).not.toContain('—');
   });
@@ -152,6 +168,13 @@ describe('MusikJelajahiView', () => {
     expect(artistRow(view('genre=jazz&artis=sekaa%20gong'))).toBe('Kadek Wira Sekaa Gong');
   });
 
+  it('API gagal → panel gagal muat tanpa filter & tabel', () => {
+    const html = view('', { tracks: [], artists: [], genres: [], loadError: true });
+    expect(h2s(html)).toEqual([T.gagalTitle]);
+    expect(html).toContain(T.cobaLagi);
+    expect(html).not.toContain(T.kosongTitle);
+  });
+
   it('tidak cocok → "Tidak ada lagu yang cocok"', () => {
     expect(h2s(view('q=zzz'))).toEqual([T.jumlahLagu(0), T.hasilKosongTitle]);
   });
@@ -161,6 +184,16 @@ describe('MusikJelajahiView', () => {
     expect(text(html)).toContain('1 Lagu a Kadek Wira Pop 2025 4:05');
     expect(html).toContain('data-playing="false"');
     expect(text(html)).not.toContain(' 2 Lagu b');
+  });
+});
+
+describe('MusikLoadError', () => {
+  it('tombol "Coba lagi" memanggil onRetry', () => {
+    const onRetry = vi.fn();
+    // MusikLoadError → <MusikEmpty action={<button onClick>}>: klik disimulasikan lewat prop elemen.
+    const panel = MusikLoadError({ onRetry }) as ReactElement<{ action: ReactElement<{ onClick: () => void }> }>;
+    panel.props.action.props.onClick();
+    expect(onRetry).toHaveBeenCalledTimes(1);
   });
 });
 

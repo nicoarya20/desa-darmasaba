@@ -6,6 +6,7 @@ import { JelajahiFilters } from './JelajahiFilters';
 import { JelajahiResultHead } from './JelajahiResultHead';
 import { MusikEmpty } from './MusikEmpty';
 import { MusikHeading } from './MusikHeading';
+import { MusikLoadError } from './MusikLoadError';
 import { MusikSkeleton } from './MusikSkeleton';
 import { TrackTable } from './TrackTable';
 import { filterTracks, resolveJelajahi, visibleArtists, type JelajahiParams } from './musik-jelajahi.logic';
@@ -14,13 +15,17 @@ import { useJelajahiParams } from './use-jelajahi-params';
 import { useMusikLibrary, type MusikLibrary } from './use-musik-library';
 import s from './jelajahi.module.css';
 
-type Props = Pick<MusikLibrary, 'tracks' | 'artists' | 'genres' | 'isLoading' | 'currentId' | 'isPlaying' | 'onPlay'> & {
+type Props = Pick<
+  MusikLibrary,
+  'tracks' | 'artists' | 'genres' | 'isLoading' | 'loadError' | 'onRetry' | 'currentId' | 'isPlaying' | 'onPlay'
+> & {
   params: JelajahiParams;
   update: (change: (current: JelajahiParams) => JelajahiParams) => void;
 };
 
 /** Jelajahi: saring pustaka lewat `?q` `?genre` `?artis`; kunci yang tidak dikenal diabaikan. */
-export function MusikJelajahiView({ tracks, artists, genres, isLoading, currentId, isPlaying, onPlay, params, update }: Props) {
+export function MusikJelajahiView(props: Props) {
+  const { tracks, artists, genres, isLoading, loadError, onRetry, currentId, isPlaying, onPlay, params, update } = props;
   const filter = useMemo(() => resolveJelajahi(params, genres, artists), [params, genres, artists]);
   const results = useMemo(() => filterTracks(tracks, filter), [tracks, filter]);
   const artistChoices = useMemo(() => visibleArtists(artists, tracks, filter), [artists, tracks, filter]);
@@ -30,6 +35,8 @@ export function MusikJelajahiView({ tracks, artists, genres, isLoading, currentI
       <MusikHeading title={T.jelajahiTitle} />
       {isLoading ? (
         <MusikSkeleton variant="list" />
+      ) : loadError && !tracks.length ? (
+        <MusikLoadError onRetry={onRetry} />
       ) : (
         <>
           <JelajahiFilters genres={genres} artists={artistChoices} filter={filter} update={update} />

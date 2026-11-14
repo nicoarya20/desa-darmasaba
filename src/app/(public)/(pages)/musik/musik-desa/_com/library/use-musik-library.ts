@@ -5,10 +5,15 @@ import type { Track } from './musik.types';
 
 /**
  * Pustaka siap tampil dari `useMusic()` (mesin sudah memuat saat mount, jadi tidak fetch ulang di sini).
- * `isActive(track)` = lagu itu yang sedang dipilih; `onPlay` = jeda/lanjut bila sama, putar bila beda.
+ * `currentId` = lagu yang sedang dipilih; `onPlay` = jeda/lanjut bila sama, putar bila beda; `onRetry` = muat ulang
+ * setelah gagal (`loadError`).
  */
 export function useMusikLibrary() {
-  const { musikData, isLoading, currentSong, isPlaying, playSong, togglePlayPause } = useMusic();
+  const music = useMusic();
+  const { musikData, isLoading, currentSong, isPlaying, playSong, togglePlayPause, loadMusikData } = music;
+  // TODO(musik-load-error): baca langsung `music.loadError` setelah commit Sesi C menambah field itu ke
+  // MusicContextType (audit 2026-11-14, MIND/PLAN/musik-desa-audit.md butir 2); sampai itu, field opsional.
+  const loadError = (music as { loadError?: boolean }).loadError === true;
   const raw = useMemo(() => musikData.map(toTrack), [musikData]);
   const genres = useMemo(() => deriveGenres(raw), [raw]);
   const tracks = useMemo(() => withGenreLabels(raw, genres), [raw, genres]);
@@ -21,7 +26,12 @@ export function useMusikLibrary() {
     else playSong(track.source);
   };
 
-  return { tracks, artists, genres, isLoading, currentId, isPlaying, onPlay };
+  // Kegagalan dicatat & ditandai `loadError` oleh mesin; promise dibiarkan mengalir (tanpa catch bisu).
+  const onRetry = (): void => {
+    void loadMusikData();
+  };
+
+  return { tracks, artists, genres, isLoading, loadError, onRetry, currentId, isPlaying, onPlay };
 }
 
 /** Bentuk nilai kembali hook, dipakai komponen yang menerima pustaka lewat prop (memudahkan test). */
