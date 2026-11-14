@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.273] - 2026-11-14
+### Changed
+- **Halaman Musik Desa dirombak** menjadi pemutar musik bergaya aplikasi streaming, tetap bertema terang seperti bagian situs lainnya. Sidebar kiri berisi menu **Musik**, **Jelajahi**, dan **Playlist**; di ponsel menu ini menjadi tombol pil di atas halaman.
+- Halaman **Musik** menampilkan lagu terbaru, semua lagu, artis desa, dan genre. Lagu bisa langsung diputar dari kartu atau daftar; lagu yang sedang diputar ditandai warna dan ikon equalizer. Mengklik lagu yang sedang diputar menjeda atau melanjutkannya.
+- Halaman **Jelajahi** untuk mencari lagu menurut judul, artis, atau genre, dan menyaring menurut genre atau artis. Kolom cari ada di atas setiap halaman musik, dan pilihan saringan tersimpan di alamat halaman.
+- Halaman **Playlist** sudah tersedia. Playlist nantinya disusun oleh admin desa (pengunjung tidak membuat playlist sendiri); sampai fitur admin-nya siap, halaman ini menampilkan "Belum ada playlist".
+- **Panel Antrean** di kanan menampilkan lagu yang sedang diputar dan lagu berikutnya, serta tab **Baru diputar** berisi lagu yang terakhir Anda putar di perangkat ini. Panel bisa ditutup dan dibuka lagi dari tombol Antrean di bar pemutar; di layar kecil panel muncul dari samping atau dari bawah.
+- **Bar pemutar baru** di bawah halaman musik dengan latar sampul lagu yang diburamkan: acak, sebelumnya, putar/jeda, berikutnya, ulang, posisi lagu, dan volume. Di halaman musik bar ini menggantikan pemutar lama; di halaman lain pemutar tidak berubah.
+
+### Fixed
+- Mode acak kini benar-benar mengacak urutan lagu sekali, sehingga daftar "Berikutnya" sesuai dengan lagu yang akan diputar.
+- Tombol lagu berikutnya dan sebelumnya melewati lagu yang audionya belum tersedia, alih-alih berhenti di lagu tersebut.
+- Menggeser volume setelah suara dibisukan kini benar-benar membunyikan lagu kembali.
+
 ## [0.1.272] - 2026-11-14
 ### Changed
 - **Halaman detail Lowongan Kerja dirombak** dengan gaya yang sama seperti daftar lowongan. Posisi, pemberi kerja, tipe pekerjaan, gaji per bulan, lokasi kerja (di dalam atau di luar desa), dan tanggal tayang tampil di bagian atas, diikuti Deskripsi pekerjaan, Kualifikasi, dan Tempat kerja dengan tautan ke Google Maps.
