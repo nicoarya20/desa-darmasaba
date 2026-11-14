@@ -35,11 +35,9 @@ export function useAudioEngine() {
   const { musikData, isLoading, loadError, loadMusikData } = useMusicLibraryLoader();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState<Musik | null>(null);
-  const [currentSongIndex, setCurrentSongIndex] = useState(-1);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isRepeat, setIsRepeat] = useState(false);
-  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
   const handlersRef = useRef<AudioHandlers>(NOOP_HANDLERS);
   const isSeekingRef = useRef(false);
@@ -71,7 +69,6 @@ export function useAudioEngine() {
       }
 
       isSeekingRef.current = false;
-      setCurrentSongIndex(musikData.findIndex((m) => m.id === song.id));
       setCurrentSong(song);
       setCurrentTime(0);
       setDuration(0);
@@ -80,7 +77,7 @@ export function useAudioEngine() {
       audio.load();
       playAudio(audio, reportPlayFailure);
     },
-    [audioRef, musikData, markPending, reportPlayFailure]
+    [audioRef, markPending, reportPlayFailure]
   );
 
   const togglePlayPause = useCallback(() => {
@@ -145,7 +142,6 @@ export function useAudioEngine() {
   );
 
   const toggleRepeat = useCallback(() => setIsRepeat((prev) => !prev), []);
-  const togglePlayer = useCallback(() => setIsPlayerOpen((prev) => !prev), []);
 
   // Penangan event audio selalu versi terbaru (useAudioElement membacanya lewat ref).
   useEffect(() => {
@@ -191,7 +187,6 @@ export function useAudioEngine() {
   return {
     isPlaying,
     currentSong,
-    currentSongIndex,
     musikData,
     currentTime,
     duration,
@@ -201,7 +196,6 @@ export function useAudioEngine() {
     isShuffle: queue.isShuffle,
     isLoading,
     loadError,
-    isPlayerOpen,
     upNext: queue.upNext,
     recentlyPlayed,
     playSong,
@@ -214,7 +208,6 @@ export function useAudioEngine() {
     toggleMute,
     toggleRepeat,
     toggleShuffle: queue.toggleShuffle,
-    togglePlayer,
     loadMusikData,
   };
 }

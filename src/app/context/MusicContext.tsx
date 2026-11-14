@@ -9,7 +9,6 @@ interface MusicContextType {
   // State
   isPlaying: boolean;
   currentSong: Musik | null;
-  currentSongIndex: number;
   musikData: Musik[];
   currentTime: number;
   duration: number;
@@ -20,7 +19,6 @@ interface MusicContextType {
   isLoading: boolean;
   /** Muat pustaka terakhir gagal (HTTP/`success:false`/jaringan). Coba lagi lewat `loadMusikData()`. */
   loadError: boolean;
-  isPlayerOpen: boolean;
   /** Lagu setelah lagu saat ini sesuai urutan putar (acak/pustaka), melingkar; tanpa lagu → seluruh urutan. */
   upNext: Musik[];
   /** Riwayat "Baru diputar": terbaru dulu, unik, maks 20 (localStorage). */
@@ -37,7 +35,6 @@ interface MusicContextType {
   toggleMute: () => void;
   toggleRepeat: () => void;
   toggleShuffle: () => void;
-  togglePlayer: () => void;
   /** Muat (ulang) pustaka: isLoading true & loadError false selama memuat. */
   loadMusikData: () => Promise<void>;
 }
