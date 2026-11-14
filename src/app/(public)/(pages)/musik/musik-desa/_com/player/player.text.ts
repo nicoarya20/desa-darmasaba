@@ -15,6 +15,8 @@ export const PLAYER_TEXT = {
   tabQueue: 'Antrean',
   tabRecent: 'Baru diputar',
   closeQueue: 'Tutup antrean',
+  openPlayer: 'Buka pemutar',
+  closePlayer: 'Tutup pemutar',
   nowPlaying: 'Sedang diputar',
   upNext: 'Berikutnya',
   nothingPlaying: 'Belum ada lagu diputar',
