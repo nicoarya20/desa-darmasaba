@@ -56,7 +56,7 @@ function ListLembaga({ search }: { search: string }) {
   } = stateList.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, debouncedSearch);
+    load(page, 10, debouncedSearch, '', true); // urut jenjang (TK, SD, SMP, …), sama dengan halaman publik
   }, [page, debouncedSearch]);
 
   const filteredData = data || [];

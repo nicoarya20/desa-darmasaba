@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.273] - 2026-11-14
+## [0.1.275] - 2026-11-14
 ### Changed
 - **Halaman Musik Desa dirombak** menjadi pemutar musik bergaya aplikasi streaming, tetap bertema terang seperti bagian situs lainnya. Sidebar kiri berisi menu **Musik**, **Jelajahi**, dan **Playlist**; di ponsel menu ini menjadi tombol pil di atas halaman.
 - Halaman **Musik** menampilkan lagu terbaru, semua lagu, artis desa, dan genre. Lagu bisa langsung diputar dari kartu atau daftar; lagu yang sedang diputar ditandai warna dan ikon equalizer. Mengklik lagu yang sedang diputar menjeda atau melanjutkannya.
@@ -15,6 +15,25 @@
 - Tombol lagu berikutnya dan sebelumnya melewati lagu yang audionya belum tersedia, alih-alih berhenti di lagu tersebut.
 - Menggeser volume setelah suara dibisukan kini benar-benar membunyikan lagu kembali.
 - Teks abu-abu di halaman musik (durasi, nama artis, judul kolom tabel, lagu yang audionya belum tersedia) kini cukup gelap untuk mudah dibaca di latar terang.
+
+## [0.1.274] - 2026-11-14
+### Fixed
+- Build image Docker untuk STG/produksi tidak lagi gagal di tahap pengecekan TypeScript ("Could not parse output from TypeScript's --showConfig"). Pengecekan tipe kini berjalan di dalam proses build, sehingga tidak terpengaruh batas output Bun di image Docker. Tidak ada perubahan tampilan atau perilaku situs.
+
+## [0.1.273] - 2026-11-14
+### Changed
+- **Info Sekolah: filter jenjang kini ada di dalam tabel.** Tombol jenjang (Semua/SMA/SMK/SMP/SD/TK/PAUD) di atas halaman dihapus. Di halaman Daftar Lembaga Pendidikan, Daftar Siswa, dan Daftar Pengajar kini ada pilihan **Jenjang** di sebelah kolom pencarian; memilihnya langsung menyaring tabel, bukan lagi memindahkan pengunjung ke halaman lain. Pilihan jenjang diurutkan dari usia termuda (TK, SD, SMP, SMA, lalu SMK) dan hanya menampilkan jenjang yang memang punya sekolah — jenjang tanpa lembaga seperti PAUD tidak ditawarkan. Jumlah hasil ditampilkan di atas tabel.
+- **Isi tabel Info Sekolah kini dikelompokkan per jenjang**: TK dulu, lalu SD, SMP, SMA, SMK; di dalam satu jenjang urut nama. Berlaku untuk Daftar Lembaga Pendidikan, Siswa, dan Pengajar, di situs publik maupun di admin (Pendidikan › Info Sekolah). Daftar Jenjang Pendidikan di admin juga kini urut PAUD, TK, SD, SMP, SMA, SMK.
+- **Admin: pilihan Lembaga di form tambah/edit Siswa dan Pengajar** kini dikelompokkan per jenjang (TK, SD, SMP, …) dan bisa dicari dengan mengetik.
+- Halaman ringkasan Info Sekolah kini selalu menampilkan total semua jenjang dan beralamat `/pendidikan/info-sekolah` (menu Pendidikan → Info Sekolah sudah diarahkan ke sana).
+- Alamat tabel menyimpan jenjang, kata kunci, dan halaman (mis. `/pendidikan/info-sekolah/lembaga?jenjang=sd`), jadi tautan yang dibagikan dan tombol kembali browser menampilkan hasil yang sama. Tautan lama (`/pendidikan/info-sekolah/semua/...`, `/pendidikan/info-sekolah/sd/lembaga`, dll.) otomatis dialihkan ke alamat baru.
+
+### Fixed
+- Pencarian daftar Jenjang Pendidikan lewat API selalu gagal ("Gagal mengambil data jenjang pendidikan"). Kini kata kunci dicocokkan ke nama jenjang maupun nama sekolah di jenjang itu (mis. "Darmasaba" → SD).
+- **Admin: form tambah/edit Siswa dan Pengajar hanya menampilkan 10 lembaga pertama**, sehingga siswa/pengajar tidak bisa dimasukkan ke lembaga lainnya. Kini semua lembaga bisa dipilih.
+- Mengetik di kolom pencarian atau mengganti jenjang saat berada di halaman 2 dan seterusnya kini kembali ke halaman 1, tidak lagi menampilkan tabel kosong.
+- Kolom pencarian tabel Info Sekolah tidak lagi kehilangan kursor setiap kali data dimuat.
+- Berpindah halaman tabel tidak lagi memuat data dua kali (sebelumnya sesaat menampilkan hasil tanpa filter pencarian).
 
 ## [0.1.272] - 2026-11-14
 ### Changed
