@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.276] - 2026-11-14
+### Changed
+- **Halaman Musik Desa:** rak **Semua lagu** di halaman Musik kini diurutkan menurut judul A–Z, sehingga isinya tidak lagi sama persis dengan rak **Terbaru**.
+- Tombol **Ulang** kini punya tiga mode: mati (berhenti setelah lagu terakhir), ulang semua lagu, dan ulang satu lagu.
+- Di ponsel, ketuk judul lagu di bar pemutar untuk membuka **pemutar lengkap** berisi sampul besar, posisi lagu, acak, sebelumnya, putar/jeda, berikutnya, ulang, dan tombol Antrean.
+- Di layar menengah (tablet atau jendela browser yang sempit), tombol bisu tetap tampil di bar pemutar.
+- Selama belum ada lagu diputar, tombol **Buka antrean** tersedia di sebelah kolom cari, jadi panel antrean yang sudah ditutup bisa dibuka lagi.
+- Setiap menu musik kini punya judul tab sendiri: "Musik Desa", "Jelajahi · Musik Desa", dan "Playlist · Musik Desa".
+
+### Fixed
+- Mengklik lagu yang audionya belum tersedia tidak lagi menghentikan lagu yang sedang diputar; cukup muncul pemberitahuan.
+- Bila daftar lagu gagal dimuat, halaman kini menampilkan "Gagal memuat lagu" dengan tombol **Coba lagi**, bukan "Belum ada lagu".
+- Menekan lagu berikutnya berulang kali dengan cepat tidak lagi memunculkan pesan "Gagal memutar lagu" palsu. File audio yang rusak hanya memunculkan satu pesan, tidak masuk "Baru diputar", dan pemutar lanjut ke lagu berikutnya.
+- Penanda waktu lagu tidak lagi macet di 0:00 setelah posisi lagu digeser.
+- Kolom cari tidak lagi kehilangan huruf yang diketik saat koneksi lambat, tidak lagi menarik pengunjung kembali ke Jelajahi setelah pindah menu, dan tidak lagi menghapus pilihan genre atau artis.
+- Menekan "Bunyikan" setelah volume digeser ke nol kini mengembalikan volume terakhir.
+- "Baru diputar" tidak lagi saling menimpa bila halaman musik dibuka di beberapa tab.
+- Halaman 404 di bawah alamat /musik kini tetap menampilkan footer dan pemutar.
+- Halaman musik terasa lebih ringan saat lagu diputar, karena tidak lagi digambar ulang setiap detik.
+- **Aksesibilitas:** pembaca layar kini membacakan durasi dan keterangan audio pada setiap lagu, posisi lagu ("0:08 dari 2:34") dan volume ("70%"), serta tabel Jelajahi sebagai tabel. Setelah panel antrean ditutup, fokus kembali ke tombol Antrean. Animasi panel mengikuti pengaturan kurangi gerakan. Di ponsel, tombol filter dan tautan "Lihat semua" lebih mudah diketuk.
+
 ## [0.1.275] - 2026-11-14
 ### Changed
 - **Halaman Musik Desa dirombak** menjadi pemutar musik bergaya aplikasi streaming, tetap bertema terang seperti bagian situs lainnya. Sidebar kiri berisi menu **Musik**, **Jelajahi**, dan **Playlist**; di ponsel menu ini menjadi tombol pil di atas halaman.
