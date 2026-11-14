@@ -42,7 +42,7 @@ const lembagaPendidikan = proxy({
         }
         return toast.error("Gagal menambahkan data");
       } catch (error) {
-        console.log(error);
+        console.error("Gagal menambahkan lembaga pendidikan:", error);
         toast.error("Gagal menambahkan data");
       } finally {
         lembagaPendidikan.create.loading = false;

@@ -39,7 +39,7 @@ const pengajar = proxy({
         }
         return toast.error("Gagal menambahkan data");
       } catch (error) {
-        console.log(error);
+        console.error("Gagal menambahkan pengajar:", error);
         toast.error("Gagal menambahkan data");
       } finally {
         pengajar.create.loading = false;

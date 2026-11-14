@@ -39,7 +39,7 @@ const jenjangPendidikan = proxy({
         }
         return toast.error("Gagal menambahkan data");
       } catch (error) {
-        console.log(error);
+        console.error("Gagal menambahkan jenjang pendidikan:", error);
         toast.error("Gagal menambahkan data");
       } finally {
         jenjangPendidikan.create.loading = false;
