@@ -10,7 +10,13 @@ vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
 }));
 
-import { MusikHomeView } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikHome';
+import {
+  ARTIS_LIMIT,
+  GENRE_LIMIT,
+  MusikHomeView,
+  SEMUA_LIMIT,
+  TERBARU_LIMIT,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikHome';
 import { MusikJelajahiView } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikJelajahi';
 import { MusikPlaylist } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikPlaylist';
 import { MusikLoadError } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikLoadError';
@@ -90,6 +96,14 @@ describe('MusikHomeView', () => {
     const shelf = (title: string) => text(html.split(`>${title}</h2>`)[1]?.split('</ul>')[0] ?? '');
     expect(shelf(T.shelfTerbaru)).toMatch(/Zapin.*Mekar.*Angklung/);
     expect(shelf(T.shelfSemua)).toMatch(/Angklung.*Mekar.*Zapin/);
+  });
+
+  it('setiap rak beranda maks 12 item (Terbaru, Semua lagu, Artis, Genre)', () => {
+    const many = Array.from({ length: 15 }, (_, i) => musik(`m${i}`, { artis: `Artis ${i}`, genre: `Genre ${i}` })).map(toTrack);
+    const html = render(<MusikHomeView {...lib({ tracks: many, artists: deriveArtists(many), genres: deriveGenres(many) })} />);
+    const items = (title: string) => count(html.split(`>${title}</h2>`)[1]?.split('</ul>')[0] ?? '', '<li');
+    expect([TERBARU_LIMIT, SEMUA_LIMIT, ARTIS_LIMIT, GENRE_LIMIT]).toEqual([12, 12, 12, 12]);
+    expect([T.shelfTerbaru, T.shelfSemua, T.shelfArtis, T.shelfGenre].map(items)).toEqual([12, 12, 12, 12]);
   });
 
   it('rak tanpa isi tidak dirender (tanpa genre & artis)', () => {

@@ -22,6 +22,9 @@ import c from './track-card.module.css';
 export const TERBARU_LIMIT = 12;
 /** Jumlah baris "Semua lagu" di beranda (3 kolom × 4, urut judul A–Z); sisanya lewat "Lihat semua". */
 export const SEMUA_LIMIT = 12;
+/** Jumlah ubin rak "Artis desa" dan "Genre" (DESIGN.md: maks 12 item per rak beranda); sisanya di Jelajahi. */
+export const ARTIS_LIMIT = 12;
+export const GENRE_LIMIT = 12;
 
 type View = Pick<
   MusikLibrary,
@@ -77,7 +80,7 @@ export function MusikHomeView({ tracks, artists, genres, isLoading, loadError, o
       </ShelfRow>
       {artists.length ? (
         <ShelfRow title={T.shelfArtis} href={MUSIK_JELAJAHI_PATH} layout="scroll">
-          {artists.map((a) => (
+          {artists.slice(0, ARTIS_LIMIT).map((a) => (
             <li key={a.key}>
               <ArtistTile artist={a} href={jelajahiHref({ artis: a.key })} />
             </li>
@@ -86,7 +89,7 @@ export function MusikHomeView({ tracks, artists, genres, isLoading, loadError, o
       ) : null}
       {genres.length ? (
         <ShelfRow title={T.shelfGenre} href={MUSIK_JELAJAHI_PATH} layout="scroll">
-          {genres.map((g) => (
+          {genres.slice(0, GENRE_LIMIT).map((g) => (
             <li key={g.key}>
               <GenreTile genre={g} />
             </li>
