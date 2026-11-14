@@ -43,9 +43,9 @@ beforeEach(() => {
 });
 
 describe('useMusikLibrary: gagal muat', () => {
-  it('loadError dari mesin diteruskan; field belum ada → false', () => {
+  it('loadError dari mesin diteruskan apa adanya', () => {
     expect(run({ loadError: true }).loadError).toBe(true);
-    expect(run().loadError).toBe(false);
+    expect(run({ loadError: false }).loadError).toBe(false);
   });
 
   it('onRetry memanggil loadMusikData sekali', () => {

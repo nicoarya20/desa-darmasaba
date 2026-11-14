@@ -9,11 +9,7 @@ import type { Track } from './musik.types';
  * setelah gagal (`loadError`).
  */
 export function useMusikLibrary() {
-  const music = useMusic();
-  const { musikData, isLoading, currentSong, isPlaying, playSong, togglePlayPause, loadMusikData } = music;
-  // TODO(musik-load-error): baca langsung `music.loadError` setelah commit Sesi C menambah field itu ke
-  // MusicContextType (audit 2026-11-14, MIND/PLAN/musik-desa-audit.md butir 2); sampai itu, field opsional.
-  const loadError = (music as { loadError?: boolean }).loadError === true;
+  const { musikData, isLoading, loadError, currentSong, isPlaying, playSong, togglePlayPause, loadMusikData } = useMusic();
   const raw = useMemo(() => musikData.map(toTrack), [musikData]);
   const genres = useMemo(() => deriveGenres(raw), [raw]);
   const tracks = useMemo(() => withGenreLabels(raw, genres), [raw, genres]);
@@ -25,7 +21,7 @@ export function useMusikLibrary() {
     else playSong(track.source);
   };
 
-  // Kegagalan dicatat & ditandai `loadError` oleh mesin; promise dibiarkan mengalir (tanpa catch bisu).
+  // Mesin mencatat kegagalan (console.error) & menandai `loadError` sendiri; promise-nya tidak pernah menolak.
   const onRetry = (): void => {
     void loadMusikData();
   };
