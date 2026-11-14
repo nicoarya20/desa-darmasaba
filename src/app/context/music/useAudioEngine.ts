@@ -3,29 +3,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { computeNextIndex, computePrevAction } from './musicNavigation';
+import type { Musik } from './music.types';
+import { usePlayQueue } from './usePlayQueue';
+import { useRecentlyPlayed } from './useRecentlyPlayed';
+
+export type { Musik };
 
 const DEFAULT_VOLUME = 70;
+/** Batas muat pustaka sekali jalan (endpoint dipaginasi, klien memuat satu halaman). */
+const MUSIK_LOAD_LIMIT = 50;
+const NO_PLAYABLE_MESSAGE = 'Belum ada lagu dengan audio yang bisa diputar.';
 
-interface MusicFile {
-  id: string;
-  name: string;
-  realName: string;
-  path: string;
-  mimeType: string;
-  link: string;
-}
-
-export interface Musik {
-  id: string;
-  judul: string;
-  artis: string;
-  deskripsi: string | null;
-  durasi: string;
-  genre: string | null;
-  tahunRilis: number | null;
-  audioFile: MusicFile | null;
-  coverImage: MusicFile | null;
-  isActive: boolean;
+/** MITIGASI: pustaka hanya memuat MUSIK_LOAD_LIMIT lagu pertama; beri tahu bila server punya lebih. */
+function warnTruncated(total: unknown, loaded: number) {
+  const count = Number(total);
+  if (Number.isFinite(count) && count > loaded) {
+    console.warn(`Musik Desa: ${count} lagu di server, hanya ${loaded} pertama yang dimuat (batas ${MUSIK_LOAD_LIMIT}).`);
+  }
 }
 
 export function useAudioEngine() {
@@ -38,7 +32,6 @@ export function useAudioEngine() {
   const [volume, setVolumeState] = useState(DEFAULT_VOLUME);
   const [isMuted, setIsMuted] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
-  const [isShuffle, setIsShuffle] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
@@ -47,6 +40,9 @@ export function useAudioEngine() {
   const isRepeatRef = useRef(false);
   const playNextRef = useRef<() => void>(() => {});
 
+  const queue = usePlayQueue(musikData, currentSong);
+  const { recentlyPlayed, markPending, commitPending } = useRecentlyPlayed(musikData);
+
   useEffect(() => {
     isRepeatRef.current = isRepeat;
   }, [isRepeat]);
@@ -54,9 +50,10 @@ export function useAudioEngine() {
   const loadMusikData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/desa/musik/find-many?page=1&limit=50');
+      const res = await fetch(`/api/desa/musik/find-many?page=1&limit=${MUSIK_LOAD_LIMIT}`);
       const data = await res.json();
       if (data.success && data.data) {
+        warnTruncated(data.total, data.data.length);
         const activeMusik = data.data.filter((m: Musik) => m.isActive);
         setMusikData(activeMusik);
       }
@@ -86,7 +83,10 @@ export function useAudioEngine() {
       isSeekingRef.current = false;
       setCurrentTime(Math.floor(audio.currentTime));
     };
-    const handlePlay = () => setIsPlaying(true);
+    const handlePlay = () => {
+      setIsPlaying(true);
+      commitPending();
+    };
     const handlePause = () => setIsPlaying(false);
     const handleEnded = () => {
       // Ref supaya selalu memanggil playNext versi terbaru, bukan closure dari mount pertama
@@ -123,7 +123,7 @@ export function useAudioEngine() {
       audio.pause();
       audioRef.current = null;
     };
-  }, [loadMusikData]);
+  }, [loadMusikData, commitPending]);
 
   const playSong = useCallback(
     (song: Musik) => {
@@ -135,6 +135,7 @@ export function useAudioEngine() {
       setCurrentSong(song);
       setCurrentTime(0);
       setDuration(0);
+      markPending(null);
 
       if (!song?.audioFile?.link) {
         audio.pause();
@@ -143,6 +144,7 @@ export function useAudioEngine() {
         return;
       }
 
+      markPending(song.id);
       audio.src = song.audioFile.link;
       audio.load();
       audio.play().catch((err) => {
@@ -150,7 +152,7 @@ export function useAudioEngine() {
         toast.error('Gagal memutar lagu, coba lagi.');
       });
     },
-    [musikData]
+    [musikData, markPending]
   );
 
   const togglePlayPause = useCallback(() => {
@@ -172,20 +174,24 @@ export function useAudioEngine() {
     }
   }, [isPlaying, currentSong]);
 
+  const { orderLength, currentOrderIndex, isPlayableAt, songAt } = queue;
+
+  // Mengikuti urutan putar (acak/pustaka) dan melewati lagu tanpa audio.
   const playNext = useCallback(() => {
-    const nextIndex = computeNextIndex(currentSongIndex, musikData.length, isShuffle);
-    const nextSong = musikData[nextIndex];
+    const nextSong = songAt(computeNextIndex(currentOrderIndex, orderLength, isPlayableAt));
     if (nextSong) {
       playSong(nextSong);
+    } else if (orderLength > 0) {
+      toast.info(NO_PLAYABLE_MESSAGE);
     }
-  }, [musikData, isShuffle, currentSongIndex, playSong]);
+  }, [currentOrderIndex, orderLength, isPlayableAt, songAt, playSong]);
 
   useEffect(() => {
     playNextRef.current = playNext;
   }, [playNext]);
 
   const playPrev = useCallback(() => {
-    const action = computePrevAction(currentSongIndex, musikData.length, currentTime);
+    const action = computePrevAction(currentOrderIndex, orderLength, currentTime, isPlayableAt);
     if (action.type === 'restart') {
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
@@ -193,11 +199,13 @@ export function useAudioEngine() {
       }
       return;
     }
-    const prevSong = musikData[action.index];
+    const prevSong = songAt(action.index);
     if (prevSong) {
       playSong(prevSong);
+    } else if (orderLength > 0) {
+      toast.info(NO_PLAYABLE_MESSAGE);
     }
-  }, [musikData, currentSongIndex, currentTime, playSong]);
+  }, [currentOrderIndex, orderLength, currentTime, isPlayableAt, songAt, playSong]);
 
   // Visual-only update while dragging the seek slider (tidak menyentuh audio element)
   const seekPreview = useCallback((time: number) => {
@@ -219,6 +227,8 @@ export function useAudioEngine() {
     if (!audio) return;
     const normalizedVol = Math.max(0, Math.min(100, vol)) / 100;
     audio.volume = normalizedVol;
+    // toggleMute memasang audio.muted; tanpa ini menggeser volume setelah bisu tetap senyap walau UI "tidak bisu".
+    audio.muted = normalizedVol === 0;
     setVolumeState(Math.max(0, Math.min(100, vol)));
     setIsMuted(normalizedVol === 0);
   }, []);
@@ -237,7 +247,6 @@ export function useAudioEngine() {
   }, [isMuted, volume]);
 
   const toggleRepeat = useCallback(() => setIsRepeat((prev) => !prev), []);
-  const toggleShuffle = useCallback(() => setIsShuffle((prev) => !prev), []);
   const togglePlayer = useCallback(() => setIsPlayerOpen((prev) => !prev), []);
 
   return {
@@ -250,9 +259,11 @@ export function useAudioEngine() {
     volume,
     isMuted,
     isRepeat,
-    isShuffle,
+    isShuffle: queue.isShuffle,
     isLoading,
     isPlayerOpen,
+    upNext: queue.upNext,
+    recentlyPlayed,
     playSong,
     togglePlayPause,
     playNext,
@@ -262,7 +273,7 @@ export function useAudioEngine() {
     setVolume,
     toggleMute,
     toggleRepeat,
-    toggleShuffle,
+    toggleShuffle: queue.toggleShuffle,
     togglePlayer,
     loadMusikData,
   };

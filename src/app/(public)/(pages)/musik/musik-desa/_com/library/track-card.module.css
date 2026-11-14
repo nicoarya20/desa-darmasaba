@@ -1,0 +1,120 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.media {
+  position: relative;
+  display: block;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: filter 200ms ease;
+}
+
+.card[data-playable='false'] .media {
+  opacity: 0.5;
+}
+
+.play {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--m-solid, #1d1d1f);
+  color: var(--m-on-solid, #fff);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+/* Lagu yang sedang dipilih: tombol tetap tampil supaya terlihat bisa dijeda. */
+.card[data-active='true'] .play,
+.card:focus-visible .play {
+  opacity: 1;
+  transform: none;
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.title,
+.artist {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--m-ink, #1d1d1f);
+}
+
+.card[data-active='true'] .title {
+  color: var(--m-accent, #0a4e78);
+}
+
+.artist {
+  font-size: 15px;
+  color: var(--m-muted, #515154);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .media {
+    filter: brightness(1.12);
+  }
+
+  .card:hover .play {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .play {
+    transition: none;
+  }
+
+  .play {
+    transform: none;
+  }
+}
+
+/* Lebar butir rak (li) pembungkus kartu. */
+.item {
+  width: 200px;
+}
+
+@media (min-width: 1600px) {
+  .item {
+    width: 220px;
+  }
+}
+
+@media (max-width: 734px) {
+  .item {
+    width: 148px;
+  }
+}

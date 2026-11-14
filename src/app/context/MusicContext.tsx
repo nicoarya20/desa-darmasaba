@@ -19,6 +19,10 @@ interface MusicContextType {
   isShuffle: boolean;
   isLoading: boolean;
   isPlayerOpen: boolean;
+  /** Lagu setelah lagu saat ini sesuai urutan putar (acak/pustaka), melingkar; tanpa lagu → seluruh urutan. */
+  upNext: Musik[];
+  /** Riwayat "Baru diputar": terbaru dulu, unik, maks 20 (localStorage). */
+  recentlyPlayed: Musik[];
 
   // Actions
   playSong: (song: Musik) => void;
