@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-export type Status = "Selesai" | "Proses" | "Gagal";
+// "Baru" = kiriman warga yang menunggu verifikasi admin (belum tampil di publik).
+export type Status = "Selesai" | "Proses" | "Gagal" | "Baru";
 
 const templateForm = z.object({
   judul: z.string().min(3, "Judul minimal 3 karakter"),
@@ -46,6 +47,8 @@ const editForm: FormEditData = {
   penanganan: "",
 };
 
+/** Toast setelah kiriman warga diterima tapi ditahan sampai diverifikasi admin. */
+export const PESAN_MENUNGGU_VERIFIKASI = "Laporan terkirim. Akan tampil setelah diverifikasi admin desa.";
 
 const laporanPublikState = proxy({
   create: {
@@ -81,12 +84,13 @@ const laporanPublikState = proxy({
         
         if (res.error) {
           console.error("API Error:", res.error);
-          throw new Error("Failed to create laporan publik");
+          // Pakai pesan server bila ada (mis. 429 batas kiriman) supaya pelapor tahu harus menunggu.
+          throw new Error((res.error.value as { message?: string } | null)?.message || "Failed to create laporan publik");
         }
         
         if (res.status === 200) {
           laporanPublikState.findMany.load();
-          return toast.success("Sukses menambahkan");
+          return toast.success(res.data?.data?.status === "Baru" ? PESAN_MENUNGGU_VERIFIKASI : "Sukses menambahkan");
         }
         
         return toast.error("failed create");
@@ -118,7 +122,8 @@ const laporanPublikState = proxy({
         laporanPublikState.findMany.search = search;
     
         try {
-          const query: any = { page, limit };
+          // moderasi: admin ikut melihat laporan yang menunggu verifikasi (diabaikan server bila bukan admin).
+          const query: any = { page, limit, moderasi: "true" };
           if (search) query.search = search;
       
           const res = await ApiFetch.api.keamanan.laporanpublik["find-many"].get({ query });
@@ -145,7 +150,7 @@ const laporanPublikState = proxy({
     }> | null,
     async load(id: string) {
       try {
-        const res = await fetch(`/api/keamanan/laporanpublik/${id}`);
+        const res = await fetch(`/api/keamanan/laporanpublik/${id}?moderasi=true`);
         if (res.ok) {
           const data = await res.json();
           laporanPublikState.findUnique.data = data.data ?? null;
@@ -202,7 +207,7 @@ const laporanPublikState = proxy({
       }
 
       try {
-        const response = await fetch(`/api/keamanan/laporanpublik/${id}`, {
+        const response = await fetch(`/api/keamanan/laporanpublik/${id}?moderasi=true`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
