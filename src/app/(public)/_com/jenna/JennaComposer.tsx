@@ -1,6 +1,6 @@
 import colors from "@/con/colors";
 import { ActionIcon, Box, Button, Group, Text, Textarea } from "@mantine/core";
-import { IconPlayerStopFilled, IconSend } from "@tabler/icons-react";
+import { IconMicrophone, IconPlayerStopFilled, IconSend } from "@tabler/icons-react";
 import { useState } from "react";
 import classes from "./jenna.module.css";
 
@@ -12,9 +12,12 @@ interface Props {
   onWebsiteChange: (value: string) => void;
   onSend: (text: string) => void;
   onStop: () => void;
+  /** Label tombol mikrofon; tombol hanya tampil bila `onVoice` ada. */
+  voiceLabel?: string;
+  onVoice?: () => void;
 }
 
-export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onSend, onStop }: Props) {
+export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onSend, onStop, voiceLabel, onVoice }: Props) {
   const [draft, setDraft] = useState("");
   const empty = draft.trim() === "";
 
@@ -81,17 +84,33 @@ export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onS
             Berhenti
           </Button>
         ) : (
-          <ActionIcon
-            type="submit"
-            size={36}
-            radius="xl"
-            variant="filled"
-            color={colors["blue-button"]}
-            aria-label="Kirim pertanyaan"
-            disabled={empty}
-          >
-            <IconSend size={18} />
-          </ActionIcon>
+          <Group gap={6} wrap="nowrap">
+            {onVoice && (
+              <ActionIcon
+                type="button"
+                size={36}
+                radius="xl"
+                variant="light"
+                color={colors["blue-button"]}
+                aria-label={voiceLabel}
+                title={voiceLabel}
+                onClick={onVoice}
+              >
+                <IconMicrophone size={18} />
+              </ActionIcon>
+            )}
+            <ActionIcon
+              type="submit"
+              size={36}
+              radius="xl"
+              variant="filled"
+              color={colors["blue-button"]}
+              aria-label="Kirim pertanyaan"
+              disabled={empty}
+            >
+              <IconSend size={18} />
+            </ActionIcon>
+          </Group>
         )}
       </Group>
       <Text fz="xs" c={draft.length >= maxChars ? "red.8" : "gray.7"} ta="right" mt={4}>

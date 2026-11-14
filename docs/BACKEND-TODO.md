@@ -131,6 +131,13 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
   - Dampak: memilih model itu di `/dev/jenna/provider` membuat setiap giliran gagal `provider_error`.
   - Usul: kirim `max_completion_tokens` untuk model reasoning (deteksi nama model atau opsi di setelan provider), tetap `max_tokens` untuk server OpenAI-compatible lain.
 
+- [ ] **Verifikasi endpoint hangup sesi suara di stg**
+  - Lokasi: `src/lib/jenna/voice/voice.relay.ts` (`hangupLiveSession`) memanggil `POST {baseUrl}/live/sessions/{id}/hangup`; endpoint belum terkonfirmasi dari dokumentasi resmi gateway.
+  - Cek: setelah beberapa sesi suara di stg, lihat kolom `JennaVoiceSession.hangupStatus` dan log `[jenna-voice] hangup`. 2xx = benar; 404/405 = endpoint salah → sesi gateway hanya berakhir oleh timeout gateway (biaya gateway bisa berjalan lebih lama dari menit yang ditagih ke pengunjung).
+
+- [ ] **Limiter start sesi suara in-memory**
+  - Lokasi: `src/lib/jenna/voice/voice.deps.ts` (3 start/menit/IP di `globalThis`). Aman untuk 1 instance; bila stack di-scale ke beberapa replika, batas jadi per replika. Kuota menit (DB) tetap berlaku global.
+
 ## Isi data (urusan admin konten, bukan kode)
 
 - UMKM: ada 2 kategori produk/usaha bernama sama "Makanan" (`KategoriProdukUmkm` id `4b95bge6-012e-5ged-9552-4d8g65d44959` dan `cmoi3j4iy0000mk1daifarcnt`, stg 2026-11-13). Halaman `/ekonomi/umkm` sementara menggabungkannya berdasarkan nama (MITIGASI SEMENTARA umkm-kategori-ganda). Usul: gabungkan jadi satu kategori di admin dan pindahkan produk/UMKM-nya, lalu hapus mitigasi itu.

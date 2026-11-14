@@ -56,6 +56,12 @@
   overflow-wrap: anywhere;
 }
 
+.voiceMark {
+  margin-right: 4px;
+  vertical-align: -2px;
+  opacity: 0.85;
+}
+
 .bubbleAssistant {
   align-self: flex-start;
   max-width: 92%;

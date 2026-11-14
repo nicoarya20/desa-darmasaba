@@ -284,6 +284,21 @@ describe("GET /api/jenna/status", () => {
     expect(mocks.voice).not.toHaveBeenCalled();
   });
 
+  it("galat runtime suara → voiceEnabled false, chat teks tetap aktif, galat dicatat", async () => {
+    mocks.resolve.mockResolvedValue({ provider: {}, settings: s({ assistantName: "Jenna", maxInputChars: 500 }) });
+    const boom = new Error("relation JennaVoiceSession does not exist");
+    mocks.voice.mockRejectedValue(boom);
+    const res = await GET(statusRequest(`jenna_sid=${SID}`));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ enabled: true, assistantName: "Jenna", maxInputChars: 500, voiceEnabled: false });
+    expect(console.error).toHaveBeenCalledWith("[jenna-voice] status suara gagal", { err: boom });
+  });
+
+  it("galat resolveActiveProvider tetap dilempar", async () => {
+    mocks.resolve.mockRejectedValue(new Error("db down"));
+    await expect(GET(statusRequest(`jenna_sid=${SID}`))).rejects.toThrow("db down");
+  });
+
   it.each([
     ["nonaktif", { provider: {}, settings: s({ enabled: false }) }],
     ["provider belum siap", { notReady: "not_configured", settings: s() }],

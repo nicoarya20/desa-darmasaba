@@ -1,6 +1,6 @@
 import colors from "@/con/colors";
 import { Box, Button, Group, Loader, ScrollArea, Stack, Text } from "@mantine/core";
-import { IconRefresh } from "@tabler/icons-react";
+import { IconMicrophone, IconRefresh } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import type { Snapshot } from "valtio";
 import classes from "./jenna.module.css";
@@ -158,6 +158,9 @@ export function JennaMessages({ messages, assistantName, sending, statusText, on
             {messages.map((m, i) =>
               m.role === "user" ? (
                 <Text key={m.id} fz="sm" className={classes.bubbleUser}>
+                  {m.modality === "voice" && (
+                    <IconMicrophone size={14} className={classes.voiceMark} aria-label="Diucapkan" role="img" />
+                  )}
                   {m.text}
                 </Text>
               ) : m.status === "error" && m.errorCode !== ABORTED_CODE ? (

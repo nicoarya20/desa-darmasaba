@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.269] - 2026-11-14
+### Added
+- **Bicara dengan Jenna lewat suara di website desa** (tahap 2 fitur suara). Bila sakelar "Suara di website desa" menyala, provider suara siap, dan kuota menit global hari ini masih ada, widget Jenna menampilkan tombol mikrofon di samping tombol kirim, termasuk di HP. Browser tanpa dukungan mikrofon/WebRTC tidak menampilkan tombol; chat teks tetap jalan.
+  - Sebelum pertama kali dipakai, pengunjung melihat kartu persetujuan: suara diproses layanan AI pihak ketiga, transkrip disimpan tersamar seperti chat, dan ada kuota menit harian. Pilihan diingat di browser itu.
+  - Selama sesi: status (menyambungkan, siap bicara, mendengarkan, Jenna berbicara), level mikrofon, sisa waktu sesi, sisa menit hari ini, dan tombol Akhiri. Pertanyaan suara dan jawabannya juga tampil di daftar pesan (ditandai ikon mikrofon), dan jawabannya dibacakan per kalimat.
+  - Jawaban suara memakai pengetahuan, perlindungan data pribadi, dan kuota token yang sama dengan chat teks, dengan gaya jawaban pendek tanpa tautan atau daftar.
+  - **Perlindungan dari penyalahgunaan**: harus ada persetujuan mikrofon, maksimal 3 kali mulai per menit per IP, satu sesi suara aktif per pengunjung, kuota menit harian per pengunjung, per IP, dan seluruh website (menit sesi yang sedang berjalan ikut dihitung), durasi maksimum per sesi, serta tutup otomatis saat pengunjung diam, menutup panel, berpindah tab lebih dari 30 detik, atau menutup halaman. Sesi yang ditinggal tanpa kabar ditutup server dalam ±1 menit dan hanya ditagih sampai kabar terakhir.
+
+### Changed
+- `/api/jenna/status` menambah field `voiceEnabled`. Bila pengecekan suara gagal (mis. migrasi belum dijalankan), nilainya `false` dan chat teks tetap aktif.
+
+### Operator
+- Jalankan migrasi `20261114130000_jenna_voice_session` (otomatis saat container start): tabel baru `JennaVoiceSession` dan kolom `JennaMessage.modality` (default `'text'`). Suara tetap mati sampai sakelar dinyalakan di `/dev/jenna/suara`.
+- Tidak ada env baru. Penutupan sesi di gateway memakai `POST {baseUrl}/live/sessions/{id}/hangup` yang **belum terverifikasi**: setelah uji di stg, cek kolom `JennaVoiceSession.hangupStatus` / log `[jenna-voice] hangup` (lihat `docs/BACKEND-TODO.md`). Detail: adendum "(3) runtime suara publik" di `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
 ## [0.1.268] - 2026-11-14
 ### Added
 - **Halaman Jenna › Suara di Developer Console** (`/dev/jenna/suara`), tahap pertama fitur suara Jenna:
