@@ -106,6 +106,12 @@ describe('MusikHomeView', () => {
     expect([T.shelfTerbaru, T.shelfSemua, T.shelfArtis, T.shelfGenre].map(items)).toEqual([12, 12, 12, 12]);
   });
 
+  it('ubin artis bersampul tetap memuat inisial di bawah gambar (cadangan bila sampul gagal dimuat)', () => {
+    const html = render(<MusikHomeView {...lib()} />);
+    const tile = html.split('href="/musik/musik-desa/jelajahi?artis=kadek+wira"')[1]?.split('</a>')[0] ?? '';
+    expect(tile).toMatch(/<span class="[^"]*">KW<\/span><img /);
+  });
+
   it('rak tanpa isi tidak dirender (tanpa genre & artis)', () => {
     const plain = [musik('x', { genre: null, artis: '' })].map(toTrack);
     const html = render(<MusikHomeView {...lib({ tracks: plain, artists: [], genres: [] })} />);
@@ -194,8 +200,9 @@ describe('MusikJelajahiView', () => {
 
   it('?genre=jazz → baris artis hanya artis yang punya lagu jazz; artis terpilih tetap tampil', () => {
     const artistRow = (html: string) => text(html.match(/<ul[^>]*aria-label="Artis"[^>]*>([\s\S]*?)<\/ul>/)?.[1] ?? '');
-    expect(artistRow(view('genre=jazz'))).toBe('Kadek Wira');
-    expect(artistRow(view('genre=jazz&artis=sekaa%20gong'))).toBe('Kadek Wira Sekaa Gong');
+    // Inisial (KW/SG) ikut di teks karena kini selalu dirender di bawah sampul (avatar aria-hidden).
+    expect(artistRow(view('genre=jazz'))).toBe('KW Kadek Wira');
+    expect(artistRow(view('genre=jazz&artis=sekaa%20gong'))).toBe('KW Kadek Wira SG Sekaa Gong');
   });
 
   it('API gagal → panel gagal muat tanpa filter & tabel', () => {
