@@ -1,98 +1,98 @@
 [
   {
     "id": "cmk-banjar-001",
-    "nama": "Banjar Adat Kauh",
-    "penduduk": 450,
-    "kk": 120,
-    "miskin": 25,
+    "nama": "Banjar Dinas Taman",
+    "penduduk": 1083,
+    "kk": 225,
+    "miskin": 0,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-002",
-    "nama": "Banjar Adat Kangin",
-    "penduduk": 520,
-    "kk": 145,
-    "miskin": 30,
+    "nama": "Banjar Dinas Darmasaba",
+    "penduduk": 541,
+    "kk": 130,
+    "miskin": 0,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-003",
-    "nama": "Banjar Adat Tengah",
-    "penduduk": 380,
-    "kk": 105,
-    "miskin": 20,
+    "nama": "Banjar Dinas Tengah",
+    "penduduk": 849,
+    "kk": 190,
+    "miskin": 1,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-004",
     "nama": "Banjar Dinas Cabe",
-    "penduduk": 290,
-    "kk": 85,
-    "miskin": 15,
+    "penduduk": 947,
+    "kk": 223,
+    "miskin": 4,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-005",
     "nama": "Banjar Dinas Menesa",
-    "penduduk": 310,
-    "kk": 90,
-    "miskin": 18,
+    "penduduk": 404,
+    "kk": 102,
+    "miskin": 7,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-006",
     "nama": "Banjar Dinas Penenjoan",
-    "penduduk": 275,
-    "kk": 78,
-    "miskin": 12,
+    "penduduk": 860,
+    "kk": 231,
+    "miskin": 2,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-007",
     "nama": "Banjar Dinas Telanga",
-    "penduduk": 340,
-    "kk": 95,
-    "miskin": 22,
+    "penduduk": 878,
+    "kk": 196,
+    "miskin": 3,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-008",
     "nama": "Banjar Dinas Baler Pasar",
-    "penduduk": 405,
-    "kk": 115,
-    "miskin": 28,
+    "penduduk": 1106,
+    "kk": 232,
+    "miskin": 3,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-009",
     "nama": "Banjar Dinas Bucu",
-    "penduduk": 260,
-    "kk": 75,
-    "miskin": 14,
+    "penduduk": 540,
+    "kk": 104,
+    "miskin": 2,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-010",
     "nama": "Banjar Dinas Gulingan",
-    "penduduk": 295,
-    "kk": 82,
-    "miskin": 16,
+    "penduduk": 976,
+    "kk": 206,
+    "miskin": 0,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-011",
     "nama": "Banjar Dinas Bersih",
-    "penduduk": 320,
-    "kk": 88,
-    "miskin": 19,
+    "penduduk": 1076,
+    "kk": 226,
+    "miskin": 2,
     "tahun": 2026
   },
   {
     "id": "cmk-banjar-012",
     "nama": "Banjar Dinas Umahanyar",
-    "penduduk": 355,
-    "kk": 98,
-    "miskin": 21,
+    "penduduk": 1002,
+    "kk": 243,
+    "miskin": 2,
     "tahun": 2026
   }
 ]
