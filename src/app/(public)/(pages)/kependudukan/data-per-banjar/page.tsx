@@ -1,5 +1,6 @@
 'use client'
 import colors from '@/con/colors';
+import { MISKIN_KETERANGAN, MISKIN_LABEL } from '@/lib/data-banjar';
 import { Stack, Box, Paper, Text, Title, Skeleton, Table, Center } from '@mantine/core';
 import { IconDatabaseOff } from '@tabler/icons-react';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
@@ -132,7 +133,7 @@ function Page() {
                   <Table.Th>Banjar</Table.Th>
                   <Table.Th>Penduduk</Table.Th>
                   <Table.Th>Kepala Keluarga</Table.Th>
-                  <Table.Th>Penduduk Miskin</Table.Th>
+                  <Table.Th>{MISKIN_LABEL}</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -146,6 +147,9 @@ function Page() {
               </Table.Tbody>
             </Table>
           </Table.ScrollContainer>
+          <Text fz="xs" c="dimmed" mt="sm">
+            {MISKIN_LABEL}: {MISKIN_KETERANGAN}.
+          </Text>
         </Paper>
       </Box>
     </Stack>

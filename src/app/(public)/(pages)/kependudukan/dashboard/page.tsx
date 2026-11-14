@@ -1,5 +1,6 @@
 'use client'
 import colors from '@/con/colors';
+import { MISKIN_LABEL } from '@/lib/data-banjar';
 import { Stack, Box, Paper, Text, Title, SimpleGrid, Skeleton, Group, Badge, Center } from '@mantine/core';
 import { IconUsers, IconHome, IconBasket, IconCoin, IconDatabaseOff } from '@tabler/icons-react';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
@@ -91,7 +92,7 @@ function Page() {
       color: '#FF9F43',
     },
     {
-      title: 'Penduduk Miskin',
+      title: MISKIN_LABEL,
       value: summary.totalKemiskinan,
       icon: IconCoin,
       color: '#EE5050',

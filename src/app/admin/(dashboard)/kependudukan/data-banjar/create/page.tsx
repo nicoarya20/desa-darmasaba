@@ -1,6 +1,7 @@
 'use client';
 
 import colors from '@/con/colors';
+import { MISKIN_KETERANGAN, MISKIN_LABEL } from '@/lib/data-banjar';
 import {
   Box,
   Button,
@@ -124,8 +125,9 @@ function CreateDataBanjar() {
           />
 
           <NumberInput
-            label="Jumlah Penduduk Miskin"
-            placeholder="Masukkan jumlah penduduk miskin"
+            label={`Jumlah ${MISKIN_LABEL}`}
+            description={MISKIN_KETERANGAN}
+            placeholder="Masukkan jumlah KK penerima"
             value={stateDataBanjar.create.form.miskin}
             onChange={(val) => {
               stateDataBanjar.create.form.miskin = Number(val || 0);
