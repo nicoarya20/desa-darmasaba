@@ -9,6 +9,7 @@
 - Alamat tabel menyimpan jenjang, kata kunci, dan halaman (mis. `/pendidikan/info-sekolah/lembaga?jenjang=sd`), jadi tautan yang dibagikan dan tombol kembali browser menampilkan hasil yang sama. Tautan lama (`/pendidikan/info-sekolah/semua/...`, `/pendidikan/info-sekolah/sd/lembaga`, dll.) otomatis dialihkan ke alamat baru.
 
 ### Fixed
+- Pencarian daftar Jenjang Pendidikan lewat API selalu gagal ("Gagal mengambil data jenjang pendidikan"). Kini kata kunci dicocokkan ke nama jenjang maupun nama sekolah di jenjang itu (mis. "Darmasaba" → SD).
 - **Admin: form tambah/edit Siswa dan Pengajar hanya menampilkan 10 lembaga pertama**, sehingga siswa/pengajar tidak bisa dimasukkan ke lembaga lainnya. Kini semua lembaga bisa dipilih.
 - Mengetik di kolom pencarian atau mengganti jenjang saat berada di halaman 2 dan seterusnya kini kembali ke halaman 1, tidak lagi menampilkan tabel kosong.
 - Kolom pencarian tabel Info Sekolah tidak lagi kehilangan kursor setiap kali data dimuat.
