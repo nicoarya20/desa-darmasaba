@@ -95,8 +95,10 @@ describe('MusikHomeView', () => {
     expect(count(html, `class="${row.row}" data-active="true"`)).toBe(1);
     expect(html).toContain('aria-current="true"');
     expect(html).toContain('data-playing="true"');
-    expect(html).toContain('aria-label="Jeda Lagu a, Kadek Wira"');
-    expect(html).toContain('aria-label="Putar Lagu b, Sekaa Gong"');
+    // Nama tombol = kata kerja (sr-only) + isi yang terlihat; tanpa aria-label yang menelan isi.
+    expect(text(html)).toContain(`${T.jeda} Lagu a Kadek Wira 4:05`);
+    expect(text(html)).toContain(`${T.putar} Lagu b Sekaa Gong 4:05`);
+    expect(html).not.toMatch(/<button[^>]*aria-label="(Putar|Jeda) /);
   });
 
   it('lagu tanpa audio redup + "Audio belum tersedia" menggantikan durasi', () => {
@@ -105,7 +107,7 @@ describe('MusikHomeView', () => {
     // Hanya sampul dibungkus .cover (diredupkan CSS); teks tanpa gaya inline/opacity.
     expect(count(html, `<span class="${row.cover}">`)).toBe(3);
     expect(html).not.toContain('opacity');
-    expect(html).toContain(`aria-label="Putar Lagu c, Kadek Wira (${T.audioBelum})"`);
+    expect(text(html)).toContain(`${T.putar} Lagu c Kadek Wira ${T.audioBelum}`);
     expect(text(html)).toContain('4:05');
   });
 
@@ -187,9 +189,33 @@ describe('MusikJelajahiView', () => {
 
   it('tabel: nomor urut, genre, tahun; baris diputar diganti equalizer', () => {
     const html = view('', { currentId: 'b', isPlaying: false });
-    expect(text(html)).toContain('1 Lagu a Kadek Wira Pop 2025 4:05');
+    expect(text(html)).toContain(`1 ${T.putar} Lagu a Kadek Wira Pop 2025 4:05`);
     expect(html).toContain('data-playing="false"');
-    expect(text(html)).not.toContain(' 2 Lagu b');
+    expect(text(html)).toContain(`${T.sedangDiputar} ${T.putar} Lagu b`);
+    expect(text(html)).not.toContain(` 2 ${T.putar} Lagu b`);
+  });
+});
+
+describe('TrackTable (Jelajahi): tabel semantik', () => {
+  const html = render(
+    <MusikJelajahiView {...lib({ currentId: 'a', isPlaying: true })} params={parseJelajahiParams(new URLSearchParams())} update={noop} />,
+  );
+
+  it('role table → row → columnheader/cell; header tidak aria-hidden; # punya nama "Nomor"', () => {
+    expect(html).toContain(`role="table" aria-label="${T.tabelLabel}"`);
+    expect(count(html, 'role="columnheader"')).toBe(5);
+    expect(count(html, 'role="row"')).toBe(1 + tracks.length);
+    expect(count(html, 'role="cell"')).toBe(5 * tracks.length);
+    expect(html).not.toMatch(/role="row"[^>]*aria-hidden/);
+    expect(text(html)).toContain(`${T.kolomNo} ${T.kolomNoLabel} ${T.kolomJudul}`);
+  });
+
+  it('tombol di sel judul: kata kerja + judul + artis, durasi/keterangan lewat aria-describedby', () => {
+    const buttons = [...html.matchAll(/<button[^>]*aria-describedby="([^"]+)"[^>]*>([\s\S]*?)<\/button>/g)];
+    expect(buttons.map((m) => text(m[2]))).toEqual([`${T.jeda} Lagu a Kadek Wira`, `${T.putar} Lagu b Sekaa Gong`, `${T.putar} Lagu c Kadek Wira`]);
+    const described = (i: number) => text(html.match(new RegExp(`id="${buttons[i][1]}"[^>]*>([^<]*)<`))?.[1] ?? '');
+    expect(described(0)).toBe('4:05');
+    expect(described(2)).toBe(T.audioBelum);
   });
 });
 
