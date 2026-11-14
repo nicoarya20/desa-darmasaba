@@ -52,5 +52,17 @@ export function filterTracks(tracks: readonly Track[], f: JelajahiFilter): Track
   );
 }
 
+/**
+ * Artis yang layak dipilih di baris artis: saat genre aktif hanya artis yang punya lagu di genre itu, supaya
+ * memilih artis tidak berujung 0 lagu. Artis terpilih tetap tampil walau tidak cocok, supaya bisa dilepas.
+ * Urutan `artists` dipertahankan.
+ */
+export function visibleArtists(artists: readonly Artist[], tracks: readonly Track[], f: JelajahiFilter): Artist[] {
+  if (!f.genre) return [...artists];
+  const genreKey = f.genre.key;
+  const inGenre = new Set(tracks.filter((t) => t.genreKey === genreKey).map((t) => t.artisKey));
+  return artists.filter((a) => inGenre.has(a.key) || a.key === f.artis?.key);
+}
+
 /** Ada filter aktif (yang dikenali) selain kosong. */
 export const hasActiveFilter = (f: JelajahiFilter) => Boolean(f.q || f.genre || f.artis);

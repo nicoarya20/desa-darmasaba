@@ -9,6 +9,7 @@ import {
   formatDurasi,
   normalizeKey,
   toTrack,
+  withGenreLabels,
 } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
 import {
   filterTracks,
@@ -16,6 +17,7 @@ import {
   jelajahiHref,
   parseJelajahiParams,
   resolveJelajahi,
+  visibleArtists,
 } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-jelajahi.logic';
 import { COVER_GRADIENTS, COVER_TONES, GENRE_COLORS, hashSeed, pickFromPalette } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-palette';
 
@@ -104,6 +106,21 @@ describe('deriveGenres', () => {
   });
 });
 
+describe('withGenreLabels', () => {
+  it('teks genre tiap lagu diganti label turunan ("pop" → "Pop"); tanpa genre dibiarkan', () => {
+    const raw = [
+      musik({ id: 'a', genre: 'Pop' }),
+      musik({ id: 'b', genre: 'pop' }),
+      musik({ id: 'c', genre: 'POP ' }),
+      musik({ id: 'd', genre: null }),
+    ].map(toTrack);
+    const tracks = withGenreLabels(raw, deriveGenres(raw));
+    expect(tracks.map((t) => t.genre)).toEqual(['Pop', 'Pop', 'Pop', null]);
+    expect(tracks.map((t) => t.genreKey)).toEqual(['pop', 'pop', 'pop', null]);
+    expect(tracks[0]).toBe(raw[0]); // sudah sama → objek tidak disalin
+  });
+});
+
 describe('deriveArtists', () => {
   it('kolaborasi satu artis apa adanya; nama beda huruf digabung; sampul = lagu terbaru bersampul', () => {
     const tracks = [
@@ -182,6 +199,37 @@ describe('Jelajahi: saring', () => {
     expect(f).toEqual({ q: '', genre: null, artis: null });
     expect(hasActiveFilter(f)).toBe(false);
     expect(ids('genre=rock&artis=anonim')).toEqual(['a', 'b', 'c']);
+  });
+});
+
+describe('Jelajahi: artis yang bisa dipilih', () => {
+  const tracks = [
+    musik({ id: 'a', artis: 'Sekaa Gong', genre: 'Gamelan' }),
+    musik({ id: 'b', artis: 'Kadek Wira', genre: 'Pop' }),
+    musik({ id: 'c', artis: 'Ayu', genre: 'pop' }),
+    musik({ id: 'd', artis: 'Kadek Wira', genre: 'Jazz' }),
+  ].map(toTrack);
+  const genres = deriveGenres(tracks);
+  const artists = deriveArtists(tracks);
+  const keys = (q: string) =>
+    visibleArtists(artists, tracks, resolveJelajahi(parseJelajahiParams(search(q)), genres, artists)).map((a) => a.key);
+
+  it('tanpa genre → semua artis, urutan asli', () => {
+    expect(keys('')).toEqual(artists.map((a) => a.key));
+    expect(keys('q=tari')).toEqual(artists.map((a) => a.key));
+  });
+
+  it('genre aktif (tanpa beda huruf) → hanya artis yang punya lagu di genre itu', () => {
+    expect(keys('genre=POP')).toEqual(['kadek wira', 'ayu']);
+    expect(keys('genre=gamelan')).toEqual(['sekaa gong']);
+  });
+
+  it('artis terpilih tetap tampil walau tidak punya lagu di genre itu', () => {
+    expect(keys('genre=gamelan&artis=ayu')).toEqual(['ayu', 'sekaa gong']);
+  });
+
+  it('genre tak dikenal diabaikan → semua artis', () => {
+    expect(keys('genre=rock')).toHaveLength(3);
   });
 });
 

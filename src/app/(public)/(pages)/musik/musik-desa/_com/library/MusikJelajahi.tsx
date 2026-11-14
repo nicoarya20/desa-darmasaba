@@ -8,7 +8,7 @@ import { MusikEmpty } from './MusikEmpty';
 import { MusikHeading } from './MusikHeading';
 import { MusikSkeleton } from './MusikSkeleton';
 import { TrackTable } from './TrackTable';
-import { filterTracks, resolveJelajahi, type JelajahiParams } from './musik-jelajahi.logic';
+import { filterTracks, resolveJelajahi, visibleArtists, type JelajahiParams } from './musik-jelajahi.logic';
 import { MUSIK_TEXT as T } from './musik-library.text';
 import { useJelajahiParams } from './use-jelajahi-params';
 import { useMusikLibrary, type MusikLibrary } from './use-musik-library';
@@ -23,6 +23,7 @@ type Props = Pick<MusikLibrary, 'tracks' | 'artists' | 'genres' | 'isLoading' | 
 export function MusikJelajahiView({ tracks, artists, genres, isLoading, currentId, isPlaying, onPlay, params, update }: Props) {
   const filter = useMemo(() => resolveJelajahi(params, genres, artists), [params, genres, artists]);
   const results = useMemo(() => filterTracks(tracks, filter), [tracks, filter]);
+  const artistChoices = useMemo(() => visibleArtists(artists, tracks, filter), [artists, tracks, filter]);
 
   return (
     <div>
@@ -31,7 +32,7 @@ export function MusikJelajahiView({ tracks, artists, genres, isLoading, currentI
         <MusikSkeleton variant="list" />
       ) : (
         <>
-          <JelajahiFilters genres={genres} artists={artists} filter={filter} update={update} />
+          <JelajahiFilters genres={genres} artists={artistChoices} filter={filter} update={update} />
           <section className={s.results}>
             <JelajahiResultHead count={results.length} filter={filter} update={update} />
             {results.length ? (

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useMusic } from '@/app/context/MusicContext';
-import { deriveArtists, deriveGenres, toTrack } from './musik-library.logic';
+import { deriveArtists, deriveGenres, toTrack, withGenreLabels } from './musik-library.logic';
 import type { Track } from './musik.types';
 
 /**
@@ -9,9 +9,10 @@ import type { Track } from './musik.types';
  */
 export function useMusikLibrary() {
   const { musikData, isLoading, currentSong, isPlaying, playSong, togglePlayPause } = useMusic();
-  const tracks = useMemo(() => musikData.map(toTrack), [musikData]);
+  const raw = useMemo(() => musikData.map(toTrack), [musikData]);
+  const genres = useMemo(() => deriveGenres(raw), [raw]);
+  const tracks = useMemo(() => withGenreLabels(raw, genres), [raw, genres]);
   const artists = useMemo(() => deriveArtists(tracks), [tracks]);
-  const genres = useMemo(() => deriveGenres(tracks), [tracks]);
   const currentId = currentSong?.id ?? null;
 
   const onPlay = (track: Track) => {

@@ -13,7 +13,7 @@ vi.mock('next-view-transitions', () => ({
 import { MusikHomeView } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikHome';
 import { MusikJelajahiView } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikJelajahi';
 import { MusikPlaylist } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/MusikPlaylist';
-import { deriveArtists, deriveGenres, toTrack } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
+import { deriveArtists, deriveGenres, toTrack, withGenreLabels } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.logic';
 import { parseJelajahiParams } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-jelajahi.logic';
 import { MUSIK_TEXT as T } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-library.text';
 import row from '@/app/(public)/(pages)/musik/musik-desa/_com/library/track-row.module.css';
@@ -39,11 +39,13 @@ const musik = (id: string, over: Partial<Musik> = {}): Musik => ({
   isActive: true,
   ...over,
 });
-const tracks = [
+const raw = [
   musik('a'),
   musik('b', { genre: 'pop', artis: 'Sekaa Gong' }),
   musik('c', { audioFile: null, coverImage: null, genre: 'Jazz' }),
 ].map(toTrack);
+// Sama seperti useMusikLibrary: genre tiap lagu disamakan dengan label turunannya.
+const tracks = withGenreLabels(raw, deriveGenres(raw));
 const lib = (over = {}) => ({
   tracks,
   artists: deriveArtists(tracks),
@@ -133,6 +135,18 @@ describe('MusikJelajahiView', () => {
     const unknown = view('genre=rock&artis=anonim');
     expect(h2s(unknown)).toEqual([T.jumlahLagu(3)]);
     expect(unknown).not.toContain(T.hapusFilter);
+  });
+
+  it('?genre=pop → kolom genre tabel memakai label "Pop" (bukan teks mentah "pop")', () => {
+    const html = view('genre=pop');
+    expect(text(html)).toContain('Lagu b Sekaa Gong Pop 2025 4:05');
+    expect(html).not.toContain('>pop<');
+  });
+
+  it('?genre=jazz → baris artis hanya artis yang punya lagu jazz; artis terpilih tetap tampil', () => {
+    const artistRow = (html: string) => text(html.match(/<ul[^>]*aria-label="Artis"[^>]*>([\s\S]*?)<\/ul>/)?.[1] ?? '');
+    expect(artistRow(view('genre=jazz'))).toBe('Kadek Wira');
+    expect(artistRow(view('genre=jazz&artis=sekaa%20gong'))).toBe('Kadek Wira Sekaa Gong');
   });
 
   it('tidak cocok → "Tidak ada lagu yang cocok"', () => {

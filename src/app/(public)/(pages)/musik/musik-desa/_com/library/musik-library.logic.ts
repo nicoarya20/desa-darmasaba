@@ -81,6 +81,18 @@ export function deriveGenres(tracks: readonly Track[]): Genre[] {
   return [...map.values()].sort(byCountThenName((g) => g.label));
 }
 
+/**
+ * Samakan teks genre tiap lagu dengan label genre turunannya ("pop" → "Pop"), supaya tabel, pil, dan ubin
+ * menulis genre yang sama. Lagu tanpa genre atau kunci yang tidak ada di `genres` dibiarkan.
+ */
+export function withGenreLabels(tracks: readonly Track[], genres: readonly Genre[]): Track[] {
+  const labels = new Map(genres.map((g) => [g.key, g.label]));
+  return tracks.map((t) => {
+    const label = t.genreKey ? labels.get(t.genreKey) : undefined;
+    return label && label !== t.genre ? { ...t, genre: label } : t;
+  });
+}
+
 /** Inisial artis untuk ubin tanpa sampul ("Kadek Wira & Darmasaba Band" → "KW"). */
 export function artistInitials(nama: string): string {
   const words = nama.split(/\s+/).filter((w) => /^[\p{L}\p{N}]/u.test(w));
