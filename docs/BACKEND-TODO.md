@@ -144,8 +144,14 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Frontend: halaman publik `/musik/musik-desa` (v0.1.273, gaya TIDAL) sudah punya menu dan halaman **Playlist** yang sengaja kosong ("Belum ada playlist", `TODO(musik-playlist)`). Playlist **dikurasi admin**; pengunjung tidak bisa membuat playlist (keputusan user 2026-11-14).
   - Usul playlist: `PlaylistMusik { id, judul, deskripsi?, coverImageId?, isActive, urutan, createdAt }` + `PlaylistMusikItem { playlistId, musikId, urutan }` (unik per pasangan), CRUD + susun urutan lagu di admin `/admin/musik`, endpoint publik find-many playlist (judul, sampul, jumlah lagu) dan findUnique (lagu berurutan, include audio & sampul).
   - Artis: frontend menurunkan daftar artis dari teks `artis` (huruf kecil, spasi dirapikan); kolaborasi "Kadek Wira & Darmasaba Band" terhitung satu artis, salah ketik membuat artis ganda. Genre sama: stg berisi "Pop" dan "pop". Usul: model `ArtisMusik { id, nama, fotoId?, bio? }` + relasi banyak-ke-banyak ke lagu, dan genre sebagai pilihan tetap (`Select`) di form admin.
-  - `durasi String` ("MM:SS" diketik admin) bisa berbeda dari durasi file sebenarnya. Usul: hitung dari file saat unggah.
+  - `durasi String` ("MM:SS"): form admin create/edit sudah menghitungnya dari file (`getAudioDuration`), tapi kolomnya tetap bisa diketik ulang, gagal baca file diam-diam jadi `"0:00"`, dan data seeder memakai format lain (stg: `"5:24"` dari admin vs `"05:18"` dari seeder). Usul: simpan detik (`Int`) dari file di server, jangan dari input teks.
   - Mesin pemutar memuat `limit=50` sekali (tanpa paginasi); bila lagu > 50, sisanya tidak tampil (frontend memberi `console.warn`). Usul: endpoint ringkas tanpa batas kecil untuk daftar putar, atau paginasi kursor.
+
+- [ ] **Musik Desa: seeder membuat lagu tanpa audio secara diam-diam** (terverifikasi, 2026-11-14)
+  - Lokasi: `prisma/_seeder_list/desa/musik-desa/seed_musik_desa.ts` — bila `audioFileName`/`coverImageName` tidak ditemukan di `FileStorage`, id dibiarkan `null` tanpa peringatan dan lagu tetap dibuat aktif.
+  - Dampak: di stg 3 dari 7 lagu (Tri Hita Karana, Mekar di Badung, Darmasaba Swara) tanpa audio; halaman publik menampilkannya redup + "Audio belum tersedia" dan pemutar melewatinya. Padahal API `create`/`updt` mewajibkan `audioFileId: t.String()` dan form admin mewajibkan file audio, jadi kondisi ini hanya lahir dari seeder.
+  - Usul: seeder gagal/`warn` keras bila file tidak ada (atau lewati lagunya); unggah audio ketiga lagu itu lewat admin. Bila lagu tanpa audio memang tidak boleh ada, jadikan `audioFileId` wajib di schema setelah data dibereskan.
+  - Kecil: `src/app/admin/(dashboard)/musik/create/page.tsx` masih berisi 5 `console.log`/`console.error` debug unggahan (Rule 12: hapus sebelum rilis).
 
 - [ ] **`deletedAt DateTime @default(now())` di banyak model** (118 kolom di schema)
   - Semua baris tercatat "terhapus" sejak dibuat; filter memakai `isActive`. Tidak berdampak ke tampilan, tapi menyesatkan. Usul: `DateTime?` tanpa default (migration hati-hati).
@@ -158,4 +164,5 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - Kontak Darurat Keamanan (stg): kategori uji "Chtvfyy"; item yatim "Test 0852…"; nomor Polsek Darmasaba 0361123456 / Polres 0361123999 tampak nomor contoh; BPBD & Damkar memakai nomor sama 0361900113.
 - Tips Keamanan (stg): dua foto berupa gambar bertuliskan "No image"; entri "Keamanan Lingkungan Tanggungjawab Bersama" isinya berita, bukan tips.
 - CCTV: status Online/Offline & `lastActive` diisi manual (data Feb 2026); "RS Kapal" di luar Desa Darmasaba; kode "CCTV - 09" beda format.
+- Musik Desa (stg 2026-11-14): lagu uji "Lagu Tes" oleh artis "Tes" (tanpa tahun) tampil di publik; sampul 3 lagu seeder berupa gambar bertuliskan "No image"; genre "Pop" vs "pop" (frontend sudah menyatukannya saat tampil); 3 lagu belum punya file audio (lihat P3).
 - Lowongan Kerja (stg 2026-11-14): 5 dari 7 lowongan tertanggal April 2026 (data awal/seed, nomor kontak sama 089647037426) dan mungkin sudah tidak berlaku; tipe pekerjaan "Menjaga Toko" pada lowongan Toko Bangunan KBSM seharusnya tipe kerja (mis. Full Time).
