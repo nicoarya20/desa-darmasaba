@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useMusic } from '@/app/context/MusicContext';
-import { deriveArtists, deriveGenres, toTrack, withGenreLabels } from './musik-library.logic';
+import { deriveArtists, deriveGenres, playIntent, toTrack, withGenreLabels } from './musik-library.logic';
 import type { Track } from './musik.types';
 
 /**
@@ -21,8 +21,7 @@ export function useMusikLibrary() {
   const currentId = currentSong?.id ?? null;
 
   const onPlay = (track: Track) => {
-    // Lagu yang sama & bisa diputar → jeda/lanjut (seperti TIDAL), bukan mengulang dari 0:00.
-    if (track.id === currentId && track.playable) togglePlayPause();
+    if (playIntent(track, currentId) === 'toggle') togglePlayPause();
     else playSong(track.source);
   };
 

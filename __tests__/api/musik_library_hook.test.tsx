@@ -54,3 +54,20 @@ describe('useMusikLibrary: gagal muat', () => {
     expect(music.value.loadMusikData).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('useMusikLibrary: klik lagu', () => {
+  it('lagu tanpa audio → playSong (mesin yang menolak & memberi toast), tidak pernah toggle', () => {
+    const lib = run({ currentSong: song('b', null) });
+    const silent = lib.tracks.find((t) => t.id === 'b')!;
+    lib.onPlay(silent);
+    expect(music.value.playSong).toHaveBeenCalledWith(silent.source);
+    expect(music.value.togglePlayPause).not.toHaveBeenCalled();
+  });
+
+  it('lagu yang sedang dipilih & bisa diputar → toggle; lagu lain → playSong', () => {
+    const lib = run({ currentSong: song('a') });
+    lib.onPlay(lib.tracks.find((t) => t.id === 'a')!);
+    expect(music.value.togglePlayPause).toHaveBeenCalledTimes(1);
+    expect(music.value.playSong).not.toHaveBeenCalled();
+  });
+});

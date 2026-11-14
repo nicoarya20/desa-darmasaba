@@ -98,3 +98,12 @@ export function artistInitials(nama: string): string {
   const words = nama.split(/\s+/).filter((w) => /^[\p{L}\p{N}]/u.test(w));
   return words.slice(0, 2).map((w) => w.charAt(0).toUpperCase()).join('') || '?';
 }
+
+/**
+ * Arti klik pada lagu di pustaka. Lagu yang sedang dipilih & bisa diputar → 'toggle' (jeda/lanjut, bukan ulang dari
+ * 0:00). Selain itu → 'play': diserahkan ke mesin (`playSong`), termasuk lagu tanpa audio. Mesin yang menolaknya dan
+ * memberi tahu pengunjung (toast milik mesin); pustaka tidak menganggap lagu itu menjadi lagu saat ini.
+ */
+export function playIntent(track: Pick<Track, 'id' | 'playable'>, currentId: string | null): 'toggle' | 'play' {
+  return track.id === currentId && track.playable ? 'toggle' : 'play';
+}
