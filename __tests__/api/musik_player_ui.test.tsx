@@ -1,0 +1,200 @@
+// @vitest-environment node
+// Bar pemutar bawah & panel Antrean Musik Desa. jsdom rusak di repo ini, jadi markup diuji lewat
+// renderToStaticMarkup; useMusic diganti state tiruan supaya keadaan pemutar bisa diatur per test.
+// Interaksi (klik tab, seret slider) tidak bisa dites di sini: verifikasi manual di port 3000.
+import { renderToStaticMarkup } from 'react-dom/server';
+import { MantineProvider } from '@mantine/core';
+import type { ReactElement } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Musik } from '@/app/context/MusicContext';
+
+const music = vi.hoisted(() => ({ state: {} as Record<string, unknown> }));
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => music.state }));
+
+import { MusikUiProvider } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
+import { NowPlayingBar } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/NowPlayingBar';
+import { QueuePanel } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel';
+import { PLAYER_TEXT } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/player.text';
+
+// test-only: lagu fiktif berbentuk respons /api/desa/musik/find-many.
+const file = (link: string) => ({ id: link, name: link, realName: link, path: link, mimeType: 'x', link });
+const song = (id: string, judul: string, extra: Partial<Musik> = {}): Musik => ({
+  id,
+  judul,
+  artis: `Artis ${id}`,
+  deskripsi: null,
+  durasi: '04:10',
+  genre: 'Gamelan Tradisional',
+  tahunRilis: 2024,
+  audioFile: file(`https://example.test/${id}.mp3`),
+  coverImage: file(`https://example.test/${id}.jpg`),
+  isActive: true,
+  ...extra,
+});
+
+const A = song('a', 'Tabuh Telu');
+const B = song('b', 'Gending Sore', { audioFile: null });
+const C = song('c', 'Pop Darmasaba', { genre: null, tahunRilis: null });
+
+const noop = () => {};
+function setMusic(overrides: Record<string, unknown> = {}) {
+  music.state = {
+    isPlaying: false,
+    currentSong: null,
+    musikData: [A, B, C],
+    currentTime: 0,
+    duration: 0,
+    volume: 70,
+    isMuted: false,
+    isRepeat: false,
+    isShuffle: false,
+    upNext: [A, B, C],
+    recentlyPlayed: [],
+    playSong: noop,
+    togglePlayPause: noop,
+    playNext: noop,
+    playPrev: noop,
+    seek: noop,
+    seekPreview: noop,
+    setVolume: noop,
+    toggleMute: noop,
+    toggleRepeat: noop,
+    toggleShuffle: noop,
+    ...overrides,
+  };
+}
+
+const render = (node: ReactElement) =>
+  renderToStaticMarkup(
+    <MantineProvider>
+      <MusikUiProvider>{node}</MusikUiProvider>
+    </MantineProvider>
+  ).replace(/<style[\s\S]*?<\/style>/g, '');
+
+const button = (html: string, label: string) => {
+  const match = html.match(new RegExp(`<button[^>]*aria-label="${label}"[^>]*>`));
+  expect(match, `tombol "${label}"`).not.toBeNull();
+  return match![0];
+};
+
+beforeEach(() => setMusic());
+
+describe('NowPlayingBar', () => {
+  it('tanpa lagu: teks ajakan, tombol transport nonaktif, tanpa latar sampul', () => {
+    const html = render(<NowPlayingBar />);
+    expect(html).toContain(`aria-label="${PLAYER_TEXT.barLabel}"`);
+    expect(html).toContain(PLAYER_TEXT.idle);
+    for (const label of [PLAYER_TEXT.play, PLAYER_TEXT.prev, PLAYER_TEXT.next]) {
+      expect(button(html, label)).toContain('disabled');
+    }
+    expect(html).not.toMatch(/<img[^>]*alt=""[^>]*aria-hidden/);
+  });
+
+  it('memakai aria-label Indonesia dan tidak punya tombol Preview, suka, atau lainnya', () => {
+    setMusic({ currentSong: A, isPlaying: true, duration: 250, currentTime: 65 });
+    const html = render(<NowPlayingBar />);
+    const labels = new Set([...html.matchAll(/<button[^>]*aria-label="([^"]+)"/g)].map((m) => m[1]));
+    // Jeda & Lagu berikutnya muncul dua kali (versi ponsel disembunyikan CSS), jadi dibandingkan sebagai himpunan.
+    expect([...labels].sort()).toEqual(
+      [
+        PLAYER_TEXT.pause,
+        PLAYER_TEXT.prev,
+        PLAYER_TEXT.next,
+        PLAYER_TEXT.shuffle,
+        PLAYER_TEXT.repeat,
+        PLAYER_TEXT.queue,
+        PLAYER_TEXT.mute,
+      ].sort()
+    );
+    expect(html).not.toMatch(/>\s*Preview\s*</i);
+    expect(html).not.toContain('—');
+  });
+
+  it('lagu diputar: judul, artis, genre · tahun, waktu, dan latar sampul blur', () => {
+    setMusic({ currentSong: A, isPlaying: true, duration: 250, currentTime: 65 });
+    const html = render(<NowPlayingBar />);
+    expect(html).toContain('Tabuh Telu');
+    expect(html).toContain('Artis a');
+    expect(html).toContain('Gamelan Tradisional · 2024');
+    expect(html).toContain('1:05');
+    expect(html).toContain('4:10');
+    expect(html).toMatch(/<img[^>]*src="https:\/\/example.test\/a.jpg"[^>]*alt=""[^>]*aria-hidden="true"/);
+    expect(button(html, PLAYER_TEXT.pause)).not.toContain('disabled');
+  });
+
+  it('lagu tanpa audio: putar nonaktif, next tetap aktif, keterangan audio belum tersedia', () => {
+    setMusic({ currentSong: B });
+    const html = render(<NowPlayingBar />);
+    expect(button(html, PLAYER_TEXT.play)).toContain('disabled');
+    expect(button(html, PLAYER_TEXT.next)).not.toContain('disabled');
+    expect(html).toContain(PLAYER_TEXT.noAudio);
+  });
+
+  it('acak/ulang aktif ditandai aria-pressed; Antrean memakai aria-pressed (tertutup saat SSR)', () => {
+    setMusic({ currentSong: A, isShuffle: true, isRepeat: false });
+    const html = render(<NowPlayingBar />);
+    expect(button(html, PLAYER_TEXT.shuffle)).toContain('aria-pressed="true"');
+    expect(button(html, PLAYER_TEXT.repeat)).toContain('aria-pressed="false"');
+    expect(button(html, PLAYER_TEXT.queue)).toContain('aria-pressed="false"');
+  });
+
+  it('bisu → tombol berlabel Bunyikan', () => {
+    setMusic({ currentSong: A, isMuted: true });
+    button(render(<NowPlayingBar />), PLAYER_TEXT.unmute);
+  });
+
+  it('CSS bar hanya memakai backdrop-filter standar (tanpa -webkit- manual)', async () => {
+    const { readFileSync } = await import('node:fs');
+    const css = readFileSync(
+      'src/app/(public)/(pages)/musik/musik-desa/_com/player/now-playing-bar.module.css',
+      'utf8'
+    );
+    expect(css).toMatch(/^\s*backdrop-filter:\s*blur\(24px\)/m);
+    expect(css).not.toMatch(/-webkit-backdrop-filter\s*:/);
+  });
+});
+
+describe('QueuePanel', () => {
+  it('tab Antrean | Baru diputar dalam tablist, Antrean terpilih, tombol tutup', () => {
+    const html = render(<QueuePanel onClose={noop} />);
+    expect(html).toContain('role="tablist"');
+    expect(html).toMatch(/role="tab"[^>]*aria-selected="true"[^>]*>Antrean</);
+    expect(html).toMatch(/role="tab"[^>]*aria-selected="false"[^>]*>Baru diputar</);
+    button(html, PLAYER_TEXT.closeQueue);
+  });
+
+  it('dengan lagu: Sedang diputar berisi lagu saat ini (beraksen), lalu Berikutnya sesuai upNext', () => {
+    setMusic({ currentSong: A, upNext: [B, C] });
+    const html = render(<QueuePanel onClose={noop} />);
+    const now = html.indexOf(`>${PLAYER_TEXT.nowPlaying}<`);
+    const next = html.indexOf(`>${PLAYER_TEXT.upNext}<`);
+    expect(now).toBeGreaterThan(-1);
+    expect(next).toBeGreaterThan(now);
+    const nowSection = html.slice(now, next);
+    expect(nowSection).toContain('Tabuh Telu');
+    expect(nowSection).toContain('aria-current="true"');
+    const after = html.slice(next);
+    expect(after.indexOf('Gending Sore')).toBeLessThan(after.indexOf('Pop Darmasaba'));
+    expect(after).not.toContain('Tabuh Telu');
+  });
+
+  it('lagu tanpa audio di antrean ditandai redup + keterangan', () => {
+    setMusic({ currentSong: A, upNext: [B] });
+    const html = render(<QueuePanel onClose={noop} />);
+    expect(html).toMatch(/data-playable="false"[\s\S]*Gending Sore[\s\S]*Audio belum tersedia/);
+  });
+
+  it('tanpa lagu: "Belum ada lagu diputar" lalu Berikutnya = seluruh urutan', () => {
+    const html = render(<QueuePanel onClose={noop} />);
+    expect(html).toContain(PLAYER_TEXT.nothingPlaying);
+    const after = html.slice(html.indexOf(`>${PLAYER_TEXT.upNext}<`));
+    for (const title of ['Tabuh Telu', 'Gending Sore', 'Pop Darmasaba']) {
+      expect(after).toContain(title);
+    }
+  });
+
+  it('teks kosong Baru diputar tersedia tanpa em dash', () => {
+    expect(PLAYER_TEXT.recentEmpty).toBe('Lagu yang Anda putar akan muncul di sini.');
+    expect(Object.values(PLAYER_TEXT).join(' ')).not.toContain('—');
+  });
+});

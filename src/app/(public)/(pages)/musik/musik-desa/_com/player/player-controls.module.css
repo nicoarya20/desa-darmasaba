@@ -1,0 +1,74 @@
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--m-muted, rgba(255, 255, 255, 0.64));
+  cursor: pointer;
+  transition: color 150ms ease, transform 150ms ease;
+}
+
+.btn:hover:not(:disabled) {
+  color: var(--m-ink, #fff);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--m-accent, #5da9d8);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.main {
+  width: 48px;
+  height: 48px;
+  color: var(--m-ink, #fff);
+}
+
+/* Acak/ulang aktif: warna aksen + titik 4px di bawah ikon. */
+.btn[data-active='true'] {
+  color: var(--m-accent, #5da9d8);
+}
+
+.btn[data-active='true']::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: none;
+  }
+}
