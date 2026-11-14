@@ -31,7 +31,7 @@
   background: transparent;
   font-size: 15px;
   font-weight: 600;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
   cursor: pointer;
 }
 
@@ -71,7 +71,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
   cursor: pointer;
 }
 
@@ -105,7 +105,7 @@
   margin: 4px 12px 8px;
   font-size: 14px;
   line-height: 1.45;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
 }
 
 .row {
@@ -124,10 +124,6 @@
 
 .row:hover {
   background: var(--m-hover, rgba(0, 0, 0, 0.05));
-}
-
-.row[data-playable='false'] {
-  opacity: 0.5;
 }
 
 .cover {
@@ -154,6 +150,23 @@
   line-height: 1.35;
 }
 
+/*
+ * Lagu tanpa audio: hanya sampul yang diredupkan. Teks diredupkan lewat warna, bukan opacity
+ * (opacity .5 membuat judul 3,2:1 dan keterangan 1,95:1); --m-muted/--m-subtle ≥ 4,5:1 di --m-surface.
+ * Ditulis sebelum aturan data-current supaya lagu yang sedang diputar tetap beraksen.
+ */
+.row[data-playable='false'] .cover {
+  opacity: 0.5;
+}
+
+.row[data-playable='false'] .rowTitle {
+  color: var(--m-muted, #515154);
+}
+
+.row[data-playable='false'] .rowArtist {
+  color: var(--m-subtle, #6e6e73);
+}
+
 .row[data-current='true'] .rowTitle {
   color: var(--m-accent, #0a4e78);
 }
@@ -161,5 +174,5 @@
 .rowArtist {
   font-size: 13px;
   line-height: 1.4;
-  color: var(--m-muted, #6e6e73);
+  color: var(--m-muted, #515154);
 }

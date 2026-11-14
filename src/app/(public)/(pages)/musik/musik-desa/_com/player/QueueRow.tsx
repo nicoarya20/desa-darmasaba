@@ -12,7 +12,7 @@ type Props = {
   onPlay: (song: Musik) => void;
 };
 
-/** Satu baris lagu di panel Antrean / Baru diputar; klik = putar. Tanpa audio → redup + keterangan. */
+/** Satu baris lagu di panel Antrean / Baru diputar; klik = putar. Tanpa audio → sampul redup, teks warna sekunder + keterangan. */
 export function QueueRow({ song, current = false, onPlay }: Props) {
   const playable = Boolean(song.audioFile?.link);
   return (

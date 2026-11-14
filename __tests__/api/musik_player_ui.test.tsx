@@ -202,6 +202,26 @@ describe('QueuePanel', () => {
     expect(html).toMatch(/data-playable="false"[\s\S]*Gending Sore[\s\S]*Audio belum tersedia/);
   });
 
+  it('kontras: lagu tanpa audio meredupkan sampul saja, teks lewat token warna (bukan opacity)', async () => {
+    const { readFileSync } = await import('node:fs');
+    const dir = 'src/app/(public)/(pages)/musik/musik-desa/_com/player';
+    const css = readFileSync(`${dir}/queue-panel.module.css`, 'utf8');
+    const block = (sel: string) => css.match(new RegExp(`\\n${sel.replace(/[.[\]']/g, '\\$&')} \\{([^}]*)\\}`))?.[1];
+    expect(block(".row[data-playable='false']")).toBeUndefined();
+    expect(block(".row[data-playable='false'] .cover")).toContain('opacity: 0.5;');
+    expect(block(".row[data-playable='false'] .rowTitle")).toContain('color: var(--m-muted, #515154);');
+    expect(block(".row[data-playable='false'] .rowArtist")).toContain('color: var(--m-subtle, #6e6e73);');
+    // Aksen lagu yang sedang diputar ditulis sesudahnya supaya menang walau lagunya tanpa audio.
+    expect(css.indexOf(".row[data-current='true'] .rowTitle")).toBeGreaterThan(
+      css.indexOf(".row[data-playable='false'] .rowTitle")
+    );
+    const sources = ['queue-panel', 'now-playing-bar', 'player-progress']
+      .map((f) => readFileSync(`${dir}/${f}.module.css`, 'utf8'))
+      .join('\n');
+    // Nilai cadangan mengikuti token baru (≥ 4,5:1); --bar-muted lokal sudah disatukan ke --m-muted.
+    expect(sources).not.toMatch(/--m-muted, #6e6e73|--m-subtle, #86868b|--bar-muted/);
+  });
+
   it('tanpa lagu: "Belum ada lagu diputar" lalu Berikutnya = seluruh urutan', () => {
     const html = render(<QueuePanel onClose={noop} />);
     expect(html).toContain(PLAYER_TEXT.nothingPlaying);
