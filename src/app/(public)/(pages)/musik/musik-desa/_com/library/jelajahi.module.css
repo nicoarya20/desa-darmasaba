@@ -18,8 +18,8 @@
   padding: 0 16px;
   border: 0;
   border-radius: 999px;
-  background: var(--m-elev, #1c1c1f);
-  color: var(--m-ink, #fff);
+  background: var(--m-elev, #f0f0f2);
+  color: var(--m-ink, #1d1d1f);
   font: inherit;
   font-size: 15px;
   font-weight: 600;
@@ -28,14 +28,14 @@
 }
 
 .pill[aria-pressed='true'] {
-  background: #fff;
-  color: #000;
+  background: var(--m-solid, #1d1d1f);
+  color: var(--m-on-solid, #fff);
 }
 
 .pill:focus-visible,
 .chip:focus-visible,
 .clear:focus-visible {
-  outline: 2px solid var(--m-accent, #5da9d8);
+  outline: 2px solid var(--m-accent, #0a4e78);
   outline-offset: 2px;
 }
 
@@ -70,7 +70,7 @@
   margin: 0;
   font-size: 24px;
   font-weight: 700;
-  color: var(--m-ink, #fff);
+  color: var(--m-ink, #1d1d1f);
 }
 
 .chips {
@@ -86,10 +86,10 @@
   gap: 6px;
   height: 32px;
   padding: 0 12px;
-  border: 1px solid var(--m-line, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--m-line, #d2d2d7);
   border-radius: 999px;
-  background: var(--m-elev, #1c1c1f);
-  color: var(--m-ink, #fff);
+  background: var(--m-elev, #f0f0f2);
+  color: var(--m-ink, #1d1d1f);
   font: inherit;
   font-size: 14px;
   cursor: pointer;
@@ -100,7 +100,7 @@
   padding: 0 8px;
   border: 0;
   background: none;
-  color: var(--m-muted, rgba(255, 255, 255, 0.64));
+  color: var(--m-muted, #6e6e73);
   font: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -110,11 +110,11 @@
 @media (hover: hover) and (pointer: fine) {
   .pill:not([aria-pressed='true']):hover,
   .chip:hover {
-    background: var(--m-hover, rgba(255, 255, 255, 0.08));
+    background: var(--m-hover, rgba(0, 0, 0, 0.05));
   }
 
   .clear:hover {
-    color: var(--m-ink, #fff);
+    color: var(--m-ink, #1d1d1f);
   }
 }
 

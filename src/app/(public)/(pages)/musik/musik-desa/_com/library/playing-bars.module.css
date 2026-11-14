@@ -11,7 +11,7 @@
   flex: 1;
   height: 100%;
   border-radius: 1px;
-  background: var(--m-accent, #5da9d8);
+  background: var(--m-accent, #0a4e78);
   transform-origin: bottom;
   transform: scaleY(0.4);
 }

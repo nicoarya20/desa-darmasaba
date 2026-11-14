@@ -17,7 +17,7 @@ import {
   parseJelajahiParams,
   resolveJelajahi,
 } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-jelajahi.logic';
-import { GENRE_COLORS, hashSeed, pickFromPalette } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-palette';
+import { COVER_GRADIENTS, COVER_TONES, GENRE_COLORS, hashSeed, pickFromPalette } from '@/app/(public)/(pages)/musik/musik-desa/_com/library/musik-palette';
 
 // test-only: bentuk Musik dari API.
 const file = (link: string) => ({ id: link, name: link, realName: link, path: link, mimeType: 'x', link });
@@ -192,8 +192,18 @@ describe('palet', () => {
     return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
   };
 
+  const contrast = (a: string, b: string) => {
+    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+    return (hi + 0.05) / (lo + 0.05);
+  };
+
   it('setiap warna ubin genre kontras ≥ 4.5 dengan teks putih', () => {
-    for (const color of GENRE_COLORS) expect(1.05 / (luminance(color) + 0.05)).toBeGreaterThanOrEqual(4.5);
+    for (const color of GENRE_COLORS) expect(contrast(color, '#ffffff')).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('sampul cadangan terang: ikon/inisial --m-muted (#6e6e73) kontras ≥ 3 di kedua ujung gradasi', () => {
+    for (const tone of COVER_TONES.flat()) expect(contrast(tone, '#6e6e73')).toBeGreaterThanOrEqual(3);
+    expect(COVER_GRADIENTS[0]).toBe('linear-gradient(135deg, #e5f2fa 0%, #b8daef 100%)');
   });
 
   it('pilihan deterministik per seed', () => {

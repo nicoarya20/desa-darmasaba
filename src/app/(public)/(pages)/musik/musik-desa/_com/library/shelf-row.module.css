@@ -15,7 +15,7 @@
   font-size: 24px;
   line-height: 1.2;
   font-weight: 700;
-  color: var(--m-ink, #fff);
+  color: var(--m-ink, #1d1d1f);
 }
 
 .tools {
@@ -29,13 +29,13 @@
   margin-right: 8px;
   font-size: 15px;
   font-weight: 600;
-  color: var(--m-muted, rgba(255, 255, 255, 0.64));
+  color: var(--m-muted, #6e6e73);
   text-decoration: none;
 }
 
 .more:hover,
 .more:focus-visible {
-  color: var(--m-ink, #fff);
+  color: var(--m-ink, #1d1d1f);
 }
 
 .arrow {
@@ -46,20 +46,20 @@
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--m-elev, #1c1c1f);
-  color: var(--m-ink, #fff);
+  background: var(--m-elev, #f0f0f2);
+  color: var(--m-ink, #1d1d1f);
   cursor: pointer;
 }
 
 .arrow:disabled {
-  color: var(--m-subtle, rgba(255, 255, 255, 0.42));
+  color: var(--m-subtle, #86868b);
   opacity: 0.5;
   cursor: default;
 }
 
 .arrow:focus-visible,
 .more:focus-visible {
-  outline: 2px solid var(--m-accent, #5da9d8);
+  outline: 2px solid var(--m-accent, #0a4e78);
   outline-offset: 2px;
 }
 

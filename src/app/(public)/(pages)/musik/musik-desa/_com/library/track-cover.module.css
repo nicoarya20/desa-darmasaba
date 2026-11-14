@@ -15,7 +15,7 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  color: var(--m-subtle, rgba(255, 255, 255, 0.42));
+  color: var(--m-muted, #6e6e73);
 }
 
 .img {

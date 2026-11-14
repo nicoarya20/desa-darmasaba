@@ -8,18 +8,24 @@ export function hashSeed(seed: string): number {
   return h >>> 0;
 }
 
-/** Gradasi gelap sampul cadangan (lagu tanpa sampul). */
-export const COVER_GRADIENTS = [
-  'linear-gradient(135deg, #1f2a44 0%, #0d1220 100%)',
-  'linear-gradient(135deg, #3a1f3d 0%, #140b16 100%)',
-  'linear-gradient(135deg, #1d3a34 0%, #0a1714 100%)',
-  'linear-gradient(135deg, #3d2a17 0%, #160f08 100%)',
-  'linear-gradient(135deg, #2a2340 0%, #0f0c18 100%)',
-  'linear-gradient(135deg, #3b1d22 0%, #15090b 100%)',
+/**
+ * Nada gradasi terang sampul cadangan (lagu/artis tanpa sampul): biru brand + pastel netral.
+ * Nada tergelap tiap pasangan cukup terang sehingga ikon/inisial `--m-muted` (#6e6e73) kontras ≥ 3:1 (dicek di test).
+ */
+export const COVER_TONES = [
+  ['#e5f2fa', '#b8daef'],
+  ['#f2eee8', '#ded5c8'],
+  ['#eaf1ec', '#c9ddd0'],
+  ['#f1ecf4', '#dacde3'],
+  ['#f6ecea', '#e6cfca'],
+  ['#eef0f3', '#d3d8df'],
 ] as const;
 
+/** Gradasi CSS dari `COVER_TONES`, urutan sama. */
+export const COVER_GRADIENTS = COVER_TONES.map(([from, to]) => `linear-gradient(135deg, ${from} 0%, ${to} 100%)`);
+
 /**
- * Latar ubin genre. Semua cukup gelap sehingga teks putih tebal
+ * Latar ubin genre (warna sedang di tema terang). Semua cukup gelap sehingga teks putih tebal
  * kontras ≥ 4.5:1 (dicek di test lewat luminans relatif).
  */
 export const GENRE_COLORS = [

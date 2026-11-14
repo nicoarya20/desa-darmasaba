@@ -13,10 +13,10 @@
 
 .head {
   height: 36px;
-  border-bottom: 1px solid var(--m-line, rgba(255, 255, 255, 0.1));
+  border-bottom: 1px solid var(--m-line, #d2d2d7);
   margin-bottom: 8px;
   font-size: 13px;
-  color: var(--m-subtle, rgba(255, 255, 255, 0.42));
+  color: var(--m-subtle, #86868b);
 }
 
 .list {
@@ -43,7 +43,7 @@
 }
 
 .row:focus-visible {
-  outline: 2px solid var(--m-accent, #5da9d8);
+  outline: 2px solid var(--m-accent, #0a4e78);
   outline-offset: -2px;
 }
 
@@ -52,7 +52,7 @@
   justify-content: center;
   font-size: 15px;
   font-variant-numeric: tabular-nums;
-  color: var(--m-subtle, rgba(255, 255, 255, 0.42));
+  color: var(--m-subtle, #86868b);
 }
 
 .main {
@@ -79,22 +79,22 @@
 .title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--m-ink, #fff);
+  color: var(--m-ink, #1d1d1f);
 }
 
 .row[data-active='true'] .title {
-  color: var(--m-accent, #5da9d8);
+  color: var(--m-accent, #0a4e78);
 }
 
 .sub {
   font-size: 14px;
-  color: var(--m-muted, rgba(255, 255, 255, 0.64));
+  color: var(--m-muted, #6e6e73);
 }
 
 .end {
   font-size: 14px;
   text-align: right;
-  color: var(--m-subtle, rgba(255, 255, 255, 0.42));
+  color: var(--m-subtle, #86868b);
 }
 
 .tabular {
@@ -103,7 +103,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .row:hover {
-    background: var(--m-hover, rgba(255, 255, 255, 0.08));
+    background: var(--m-hover, rgba(0, 0, 0, 0.05));
   }
 }
 

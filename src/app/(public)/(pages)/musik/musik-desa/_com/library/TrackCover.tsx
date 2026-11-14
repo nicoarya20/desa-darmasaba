@@ -14,7 +14,7 @@ type Props = {
   seed: string;
 };
 
-/** Sampul lagu persegi: gambar lazy di atas gradasi gelap + ikon musik sebagai cadangan. */
+/** Sampul lagu persegi: gambar lazy di atas gradasi terang lembut + ikon musik sebagai cadangan. */
 export function TrackCover({ src, alt, size = 'fill', radius = 4, seed }: Props) {
   const style: CSSProperties = {
     borderRadius: radius,
