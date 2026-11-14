@@ -1,7 +1,7 @@
 // Satu giliran chat publik Jenna. `prepareChatTurn` menjalankan gerbang (murah → mahal) sebelum stream
 // dibuka sehingga penolakan bisa dijawab JSON + status HTTP; `run` menjalankan LLM, guard, dan persist.
 // Semua IO lewat `deps` agar bisa dites tanpa DB/jaringan (wiring produksi: chat/deps.ts).
-import type { JennaErrorCode, JennaPageContext, JennaSource } from "../chat-types";
+import type { JennaErrorCode, JennaModality, JennaPageContext, JennaSource } from "../chat-types";
 import { describeTurnError } from "../error-detail";
 import { isAllowedJennaHref } from "../knowledge/sitemap";
 import { checkInput, secondsUntilJakartaMidnight, startOfJakartaDay } from "../limits";
@@ -28,6 +28,7 @@ export const CHAT_MESSAGES = {
   provider_unavailable: "Layanan AI sedang tidak tersedia. Silakan coba lagi nanti.",
   internal: "Terjadi kesalahan, silakan coba lagi.",
   empty_answer: "Maaf, saya belum bisa menjawab pertanyaan itu. Silakan hubungi kantor desa untuk informasi lebih lanjut.",
+  voice_session_ended: "Sesi suara sudah berakhir. Mulai sesi suara baru untuk melanjutkan.",
 } as const;
 
 export const BUSY_RETRY_AFTER_SEC = 5;
@@ -51,6 +52,9 @@ export interface ChatInput {
   message: string;
   conversationId?: string;
   pageContext?: JennaPageContext;
+  /** Default "text". */
+  modality?: JennaModality;
+  voiceSessionId?: string;
 }
 
 export interface ChatHooks {
@@ -113,6 +117,8 @@ export interface ChatDeps {
   getRoutes: () => Promise<Set<string>>;
   tools: readonly JennaTool[];
   execute: (provider: AIProvider, opts: LoopOptions) => Promise<LoopResult>;
+  /** Sesi suara `id` milik `sessionHash` masih hidup (voice.lifecycle.ts). */
+  isVoiceSessionLive: (sessionHash: string, id: string) => Promise<boolean>;
   now: () => Date;
 }
 
@@ -156,6 +162,12 @@ export async function prepareChatTurn(ctx: ChatCtx, input: ChatInput, deps: Chat
   const { settings } = active;
   if (!settings.enabled) return fail(409, "disabled", CHAT_MESSAGES.disabled);
   if ("notReady" in active || settings.dailyTokensGlobal <= 0) return fail(409, "not_ready", CHAT_MESSAGES.not_ready);
+
+  // 1b. Giliran suara hanya selama sesi suara milik sesi ini masih hidup.
+  if (input.modality === "voice") {
+    const live = input.voiceSessionId ? await deps.isVoiceSessionLive(ctx.sessionHash, input.voiceSessionId) : false;
+    if (!live) return fail(409, "voice_session_ended", CHAT_MESSAGES.voice_session_ended);
+  }
 
   // 2. Validasi input.
   const checked = checkInput(input.message, settings.maxInputChars);
@@ -232,6 +244,7 @@ async function executeTurn(
   const who: Identity = { sessionHash: ctx.sessionHash, ipHash: ctx.ipHash };
   const partial: TokenUsage = { inputTokens: 0, outputTokens: 0 };
   const toolsSeen: string[] = [];
+  const modality: JennaModality = input.modality ?? "text";
   let conversationId: string | undefined;
 
   try {
@@ -257,6 +270,7 @@ async function executeTurn(
       snapshot,
       toolNames: deps.tools.map((t) => t.spec.name),
       pageContext,
+      modality,
     });
 
     // Salinan per giliran: set cache snapshot tidak boleh ikut bertambah oleh hasil tool.
@@ -294,6 +308,7 @@ async function executeTurn(
       toolsUsed: turn.toolsUsed,
       usage: turn.usage,
       telemetry: telemetryAt(savedAt),
+      modality,
       now: savedAt,
     });
     return { ok: true, conversationId, text, sources: guarded.sources, usage: turn.usage, toolsUsed: turn.toolsUsed };
@@ -321,6 +336,7 @@ async function executeTurn(
           usage: partial,
           toolsUsed: toolsSeen,
           telemetry: telemetryAt(savedAt),
+          modality,
           now: savedAt,
         });
       } catch (persistErr) {

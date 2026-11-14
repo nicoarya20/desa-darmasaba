@@ -2681,6 +2681,7 @@ model JennaMessage {
   providerSlot   String?
   model          String?
   errorDetail    String?           @db.Text // penyebab asli giliran gagal, sudah disanitasi; tidak pernah ke pengunjung
+  modality       String            @default("text") // "text" | "voice"
   sessionHash    String
   ipHash         String
   createdAt      DateTime          @default(now())
@@ -2689,6 +2690,28 @@ model JennaMessage {
   @@index([ipHash, createdAt])
   @@index([createdAt])
   @@index([conversationId, createdAt])
+}
+
+// Sesi suara pengunjung anonim (relay WebRTC ke gateway). Menit dihitung dari jam server, bukan laporan klien.
+// gatewaySessionId hanya untuk hangup server, tidak pernah dikirim ke klien. Dihapus bersama retensi percakapan.
+model JennaVoiceSession {
+  id               String    @id @default(cuid())
+  sessionHash      String
+  ipHash           String
+  status           String    @default("starting") // "starting" | "active" | "ended"
+  gatewaySessionId String?
+  startedAt        DateTime  @default(now())
+  lastHeartbeatAt  DateTime  @default(now())
+  maxSeconds       Int // snapshot voiceSessionMaxMinutes * 60 saat mulai
+  endedAt          DateTime?
+  endReason        String?
+  billedSeconds    Int       @default(0)
+  hangupStatus     Int? // status HTTP hangup gateway; -1 = jaringan/timeout gagal; null = belum/tidak dipanggil
+
+  @@index([sessionHash, startedAt])
+  @@index([ipHash, startedAt])
+  @@index([startedAt])
+  @@index([status])
 }
 
 // ===================================== BETTER AUTH ===================================== //

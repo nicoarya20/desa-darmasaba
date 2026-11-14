@@ -11,6 +11,8 @@ export interface JennaStatus {
   enabled: boolean;
   assistantName: string;
   maxInputChars: number;
+  /** Mode suara bisa dipakai sekarang (chat siap, suara aktif, provider suara siap, kuota global tersisa). */
+  voiceEnabled: boolean;
 }
 
 export interface JennaPageContext {
@@ -18,11 +20,16 @@ export interface JennaPageContext {
   title: string;
 }
 
+export type JennaModality = "text" | "voice";
+
 /** Body POST /api/jenna/chat. Key lain ditolak (422). */
 export interface JennaChatRequest {
   message: string;
   conversationId?: string;
   pageContext?: JennaPageContext;
+  /** Default "text". "voice" wajib disertai `voiceSessionId` sesi suara yang masih hidup. */
+  modality?: JennaModality;
+  voiceSessionId?: string;
   /** Honeypot: selalu kosong untuk manusia. */
   website?: string;
 }
@@ -38,6 +45,7 @@ export const JENNA_ERROR_CODES = [
   "budget_exhausted",
   "provider_error",
   "timeout",
+  "voice_session_ended",
 ] as const;
 export type JennaErrorCode = (typeof JENNA_ERROR_CODES)[number];
 

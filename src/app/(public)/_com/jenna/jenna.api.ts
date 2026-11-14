@@ -62,6 +62,7 @@ export async function fetchJennaStatus(signal?: AbortSignal): Promise<JennaStatu
     enabled: b.enabled === true && assistantName !== "" && maxInputChars > 0,
     assistantName,
     maxInputChars,
+    voiceEnabled: b.voiceEnabled === true,
   };
 }
 

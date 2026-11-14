@@ -1,5 +1,6 @@
 // Akses DB percakapan Jenna publik. Semua baca/tulis percakapan dibatasi `sessionHash` pemiliknya.
 import prisma from "@/lib/prisma";
+import type { JennaModality } from "../chat-types";
 
 export type JennaMessageStatus = "ok" | "error";
 
@@ -22,6 +23,8 @@ export interface MessageRow {
   model?: string | null;
   /** Hanya giliran gagal; sudah disanitasi (error-detail.ts). */
   errorDetail?: string | null;
+  /** Default "text". */
+  modality?: JennaModality;
 }
 
 export interface Identity {
@@ -83,6 +86,7 @@ export const prismaChatRepo: ChatRepo = {
           providerSlot: row.providerSlot ?? null,
           model: row.model ?? null,
           errorDetail: row.errorDetail ?? null,
+          modality: row.modality ?? "text",
           sessionHash: who.sessionHash,
           ipHash: who.ipHash,
           createdAt: new Date(now.getTime() + index),

@@ -97,6 +97,7 @@ function makeDeps(over: Partial<ChatDeps> = {}, s: JennaSettingsDTO = settings()
     getRoutes: vi.fn(async () => new Set(["/", "/profil"])),
     tools: [],
     execute,
+    isVoiceSessionLive: vi.fn(async () => false),
     now: () => NOW,
     ...over,
   };
@@ -106,7 +107,7 @@ function makeDeps(over: Partial<ChatDeps> = {}, s: JennaSettingsDTO = settings()
 const ctx = { requestId: "req-1", sessionHash: "sess-1", ipHash: "ip-1" };
 const input = { message: "Halo Jenna" };
 
-async function expectFailure(deps: ChatDeps, msg = input): Promise<ChatFailure> {
+async function expectFailure(deps: ChatDeps, msg: Parameters<typeof runChatTurn>[1] = input): Promise<ChatFailure> {
   const out = await runChatTurn(ctx, msg, {}, deps);
   expect(out.ok).toBe(false);
   return out as ChatFailure;
@@ -198,6 +199,51 @@ describe("gerbang runChatTurn", () => {
   });
 });
 
+describe("modality suara", () => {
+  const voiceInput = { ...input, modality: "voice" as const, voiceSessionId: "voicesession0000000001" };
+
+  it("voice tanpa voiceSessionId → 409 voice_session_ended (setelah gerbang 1, sebelum validasi input)", async () => {
+    const { deps, execute } = makeDeps();
+    const out = await expectFailure(deps, { message: "", modality: "voice" });
+    expect(out).toMatchObject({ status: 409, code: "voice_session_ended", message: CHAT_MESSAGES.voice_session_ended });
+    expect(deps.isVoiceSessionLive).not.toHaveBeenCalled();
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("voice dengan sesi suara yang tidak hidup → 409; chat nonaktif tetap 409 disabled lebih dulu", async () => {
+    const { deps } = makeDeps();
+    expect(await expectFailure(deps, voiceInput)).toMatchObject({ status: 409, code: "voice_session_ended" });
+    expect(deps.isVoiceSessionLive).toHaveBeenCalledWith("sess-1", "voicesession0000000001");
+
+    const off = makeDeps({}, settings({ enabled: false }));
+    expect(await expectFailure(off.deps, voiceInput)).toMatchObject({ status: 409, code: "disabled" });
+    expect(off.deps.isVoiceSessionLive).not.toHaveBeenCalled();
+  });
+
+  it("voice dengan sesi hidup → prompt aturan suara, modality tersimpan di baris user & asisten", async () => {
+    const { deps, appended, execute } = makeDeps({ isVoiceSessionLive: vi.fn(async () => true) });
+    expect((await runChatTurn(ctx, voiceInput, {}, deps)).ok).toBe(true);
+    expect(execute.mock.calls[0][1].messages[0].content).toContain("ATURAN JAWABAN (SUARA");
+    expect(appended[0].rows.map((r) => r.modality)).toEqual(["voice", "voice"]);
+  });
+
+  it("teks (default) → modality text, giliran gagal juga menyimpan modality", async () => {
+    const ok = makeDeps();
+    expect((await runChatTurn(ctx, input, {}, ok.deps)).ok).toBe(true);
+    expect(ok.execute.mock.calls[0][1].messages[0].content).not.toContain("(SUARA");
+    expect(ok.appended[0].rows.map((r) => r.modality)).toEqual(["text", "text"]);
+
+    const failed = makeDeps({
+      isVoiceSessionLive: vi.fn(async () => true),
+      execute: vi.fn(async () => {
+        throw new AiProviderError("unavailable", "down");
+      }),
+    });
+    expect((await runChatTurn(ctx, voiceInput, {}, failed.deps)).ok).toBe(false);
+    expect(failed.appended[0].rows).toEqual([expect.objectContaining({ status: "error", modality: "voice" })]);
+  });
+});
+
 describe("giliran sukses", () => {
   it("percakapan bukan milik sesi → percakapan baru tanpa history", async () => {
     const { deps, repo, execute } = makeDeps();
@@ -261,6 +307,7 @@ describe("giliran sukses", () => {
       latencyMs: 0,
       providerSlot: "chat_openai",
       model: "m",
+      modality: "text",
     });
   });
 
@@ -322,6 +369,7 @@ describe("giliran gagal", () => {
             latencyMs: 0,
             providerSlot: "chat_openai",
             model: "m",
+            modality: "text",
           },
         ],
       },
@@ -378,7 +426,7 @@ describe("telemetri giliran", () => {
     const [userRow, assistantRow] = appended[0].rows;
     expect(assistantRow).toMatchObject({ role: "assistant", status: "ok", ...TELEMETRY });
     expect(assistantRow.errorDetail).toBeUndefined();
-    expect(userRow).toEqual({ role: "user", content: "Halo Jenna", status: "ok" });
+    expect(userRow).toEqual({ role: "user", content: "Halo Jenna", status: "ok", modality: "text" });
   });
 
   it("gagal provider → baris user error menyimpan telemetri + status & detail vendor; ChatFailure tetap bersih", async () => {
@@ -431,17 +479,29 @@ describe("telemetri giliran", () => {
 });
 
 describe("retensi", () => {
-  it("menghapus percakapan lebih lama dari retentionDays", async () => {
+  it("menghapus percakapan dan sesi suara lebih lama dari retentionDays", async () => {
     const deleteBefore = vi.fn(async () => 3);
-    const n = await purgeExpiredJennaConversations({ loadRetentionDays: async () => 30, deleteBefore, now: () => NOW });
+    const deleteVoiceSessionsBefore = vi.fn(async () => 2);
+    const n = await purgeExpiredJennaConversations({
+      loadRetentionDays: async () => 30,
+      deleteBefore,
+      deleteVoiceSessionsBefore,
+      now: () => NOW,
+    });
     expect(n).toBe(3);
-    expect(deleteBefore).toHaveBeenCalledWith(new Date(NOW.getTime() - 30 * 86_400_000));
+    const cutoff = new Date(NOW.getTime() - 30 * 86_400_000);
+    expect(deleteBefore).toHaveBeenCalledWith(cutoff);
+    expect(deleteVoiceSessionsBefore).toHaveBeenCalledWith(cutoff);
   });
 
   it("retentionDays tidak valid → tidak menghapus apa pun", async () => {
     const deleteBefore = vi.fn(async () => 0);
-    expect(await purgeExpiredJennaConversations({ loadRetentionDays: async () => 0, deleteBefore })).toBe(0);
+    const deleteVoiceSessionsBefore = vi.fn(async () => 0);
+    expect(
+      await purgeExpiredJennaConversations({ loadRetentionDays: async () => 0, deleteBefore, deleteVoiceSessionsBefore }),
+    ).toBe(0);
     expect(deleteBefore).not.toHaveBeenCalled();
+    expect(deleteVoiceSessionsBefore).not.toHaveBeenCalled();
   });
 
   it("scheduler hanya production, bukan saat build, dan sekali per proses", () => {

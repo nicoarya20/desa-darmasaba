@@ -2,6 +2,8 @@
 // GUARDRAIL (kode, tak bisa diubah admin) > identitas > catatan persona admin > konteks halaman >
 // tool > pengetahuan [DATA] > aturan jawaban > fakta halaman (diulang di akhir).
 
+import type { JennaModality } from "./chat-types";
+
 export const MAX_PERSONA_CHARS = 1500;
 const MAX_NAME_CHARS = 40;
 const MAX_PAGE_FIELD_CHARS = 120;
@@ -18,6 +20,8 @@ export interface PromptInput {
   snapshot: string;
   toolNames: readonly string[];
   pageContext?: PageContext;
+  /** Default "text"; "voice" = jawaban akan diucapkan oleh gateway suara. */
+  modality?: JennaModality;
 }
 
 /** Buang karakter kontrol/format, ratakan spasi, potong. Aman disisipkan satu baris ke prompt. */
@@ -59,12 +63,25 @@ function identity(name: string): string {
   ].join(" ");
 }
 
+const LANGUAGE_RULE =
+  '- Gunakan Bahasa Indonesia yang sopan dan formal, sapa pengunjung dengan "Anda". Bila pengunjung jelas menulis dalam bahasa lain, jawab dalam bahasa tersebut.';
+const TOOL_RULE = "- Jika perlu data yang tidak ada di [DATA] dan ada tool yang cocok, panggil tool; jangan menebak.";
+
 const ANSWER_RULES = [
   "ATURAN JAWABAN:",
-  '- Gunakan Bahasa Indonesia yang sopan dan formal, sapa pengunjung dengan "Anda". Bila pengunjung jelas menulis dalam bahasa lain, jawab dalam bahasa tersebut.',
+  LANGUAGE_RULE,
   "- Jawab singkat dan langsung ke inti. Boleh memakai markdown ringan (tebal, daftar, tautan). Jangan pakai heading besar atau tabel lebar.",
   "- Sertakan tautan halaman terkait dari [DATA] bila membantu pengunjung melanjutkan sendiri.",
-  "- Jika perlu data yang tidak ada di [DATA] dan ada tool yang cocok, panggil tool; jangan menebak.",
+  TOOL_RULE,
+].join("\n");
+
+const VOICE_ANSWER_RULES = [
+  "ATURAN JAWABAN (SUARA — jawaban akan diucapkan):",
+  LANGUAGE_RULE,
+  "- Jawab 2 sampai 4 kalimat pendek yang enak diucapkan.",
+  "- Jangan pakai markdown, daftar, tabel, tautan, atau simbol. Sebut nama halaman bila perlu, bukan alamat tautannya.",
+  "- Ucapkan angka, tanggal, dan biaya dengan wajar seperti dalam percakapan.",
+  TOOL_RULE,
 ].join("\n");
 
 export function buildSystemPrompt(input: PromptInput): string {
@@ -89,7 +106,7 @@ export function buildSystemPrompt(input: PromptInput): string {
       : "Tidak ada tool yang tersedia saat ini; jawab hanya dari blok [DATA].",
   );
   parts.push(`[DATA pengetahuan]\n${neutralizeMarkers(input.snapshot)}\n[/DATA]`);
-  parts.push(ANSWER_RULES);
+  parts.push(input.modality === "voice" ? VOICE_ANSWER_RULES : ANSWER_RULES);
   // Diulang di akhir: di tengah dokumen panjang, model kecil sering melewatkan konteks ini.
   if (pageFact) parts.push(`FAKTA SAAT INI: ${pageFact}.`);
   return parts.join("\n\n");

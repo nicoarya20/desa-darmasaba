@@ -7,6 +7,7 @@ import { CHAT_MESSAGES, prepareChatTurn } from "@/lib/jenna/chat/chat.service";
 import { defaultChatDeps } from "@/lib/jenna/chat/deps";
 import { getClientIp, hashJennaIdentifier } from "@/lib/jenna/limits";
 import { createSseResponse } from "@/lib/jenna/runtime/sse";
+import { VOICE_SESSION_ID_PATTERN } from "@/lib/jenna/voice/voice-types";
 import {
   failureResponse,
   isAllowedOrigin,
@@ -32,6 +33,8 @@ const bodySchema = z
       .regex(/^[A-Za-z0-9_-]{1,64}$/)
       .optional(),
     pageContext: z.object({ route: z.string().max(300), title: z.string().max(300) }).strict().optional(),
+    modality: z.enum(["text", "voice"]).optional(),
+    voiceSessionId: z.string().regex(VOICE_SESSION_ID_PATTERN).optional(),
     website: z.string().max(200).optional(),
   })
   .strict();
@@ -84,7 +87,13 @@ export async function POST(request: Request): Promise<Response> {
   try {
     prepared = await prepareChatTurn(
       ctx,
-      { message: body.message, conversationId: body.conversationId, pageContext: body.pageContext },
+      {
+        message: body.message,
+        conversationId: body.conversationId,
+        pageContext: body.pageContext,
+        modality: body.modality,
+        voiceSessionId: body.voiceSessionId,
+      },
       deps,
     );
   } catch (err) {

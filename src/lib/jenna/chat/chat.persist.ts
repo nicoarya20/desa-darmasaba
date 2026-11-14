@@ -1,5 +1,6 @@
 // Penyimpanan giliran chat: teks user SUDAH dimask, teks asisten SUDAH lewat output guard (pemanggil).
 // Giliran gagal hanya menyimpan pesan user berstatus error (tetap dihitung kuota, tidak masuk history).
+import type { JennaModality } from "../chat-types";
 import type { TokenUsage } from "../provider/types";
 import type { ChatRepo, Identity } from "./conversation.repo";
 
@@ -19,6 +20,7 @@ export interface TurnToSave {
   toolsUsed: string[];
   usage: TokenUsage;
   telemetry: TurnTelemetry;
+  modality: JennaModality;
   now: Date;
 }
 
@@ -27,11 +29,12 @@ export function saveTurn(repo: ChatRepo, turn: TurnToSave): Promise<void> {
     turn.conversationId,
     turn.who,
     [
-      { role: "user", content: turn.userText, status: "ok" },
+      { role: "user", content: turn.userText, status: "ok", modality: turn.modality },
       {
         role: "assistant",
         content: turn.assistantText,
         status: "ok",
+        modality: turn.modality,
         inputTokens: turn.usage.inputTokens,
         outputTokens: turn.usage.outputTokens,
         toolsUsed: turn.toolsUsed,
@@ -54,6 +57,7 @@ export interface FailedTurn {
   usage: TokenUsage;
   toolsUsed: string[];
   telemetry: TurnTelemetry;
+  modality: JennaModality;
   now: Date;
 }
 
@@ -66,6 +70,7 @@ export function recordFailedTurn(repo: ChatRepo, turn: FailedTurn): Promise<void
         role: "user",
         content: turn.userText,
         status: "error",
+        modality: turn.modality,
         errorCode: turn.errorCode,
         errorDetail: turn.errorDetail,
         inputTokens: turn.usage.inputTokens,

@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   prepare: vi.fn(),
   resolve: vi.fn(),
+  voice: vi.fn(),
 }));
 
 vi.mock("@/lib/env", () => ({ env: { BETTER_AUTH_SECRET: "test-secret" } }));
@@ -13,7 +14,13 @@ vi.mock("@/lib/jenna/chat/chat.service", () => ({
   prepareChatTurn: mocks.prepare,
 }));
 vi.mock("@/lib/jenna/chat/deps", () => ({ defaultChatDeps: () => ({}) }));
-vi.mock("@/lib/jenna/provider/active", () => ({ resolveActiveProvider: mocks.resolve }));
+vi.mock("@/lib/prisma", () => ({ default: {} }));
+vi.mock("@/lib/jenna/provider/active", async (importActual) => ({
+  ...(await importActual<typeof import("@/lib/jenna/provider/active")>()),
+  resolveActiveProvider: mocks.resolve,
+}));
+vi.mock("@/lib/jenna/voice/voice.deps", () => ({ defaultVoiceDeps: () => ({}) }));
+vi.mock("@/lib/jenna/voice/voice.lifecycle", () => ({ isPublicVoiceEnabled: mocks.voice }));
 
 import { POST } from "@/app/api/jenna/chat/route";
 import { GET } from "@/app/api/jenna/status/route";
@@ -60,6 +67,8 @@ const okTurn = (run: (hooks: ChatHooks) => Promise<unknown>) => mocks.prepare.mo
 beforeEach(() => {
   mocks.prepare.mockReset();
   mocks.resolve.mockReset();
+  mocks.voice.mockReset();
+  mocks.voice.mockResolvedValue(true);
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -120,6 +129,8 @@ describe("POST /api/jenna/chat — sebelum stream", () => {
     ["message bukan string", { message: 1 }],
     ["conversationId aneh", { message: "hai", conversationId: "../x" }],
     ["array", [1]],
+    ["modality asing", { message: "hai", modality: "video" }],
+    ["voiceSessionId aneh", { message: "hai", modality: "voice", voiceSessionId: "../x" }],
   ])("%s → 422 invalid_input", async (_label, body) => {
     const res = await POST(chatRequest(body));
     expect(res.status).toBe(422);
@@ -193,6 +204,15 @@ describe("POST /api/jenna/chat — honeypot & cookie", () => {
   });
 });
 
+describe("POST /api/jenna/chat — modality suara", () => {
+  it("modality & voiceSessionId diteruskan ke service", async () => {
+    okTurn(async () => ({ ok: true, conversationId: "c", text: "t", sources: [] }));
+    const body = { message: "hai", modality: "voice", voiceSessionId: "voicesession0000000001" };
+    await POST(chatRequest(body));
+    expect(mocks.prepare.mock.calls[0][1]).toEqual(body);
+  });
+});
+
 describe("POST /api/jenna/chat — SSE", () => {
   it("meta → status → delta → done", async () => {
     okTurn(async (hooks) => {
@@ -249,7 +269,19 @@ describe("GET /api/jenna/status", () => {
     const res = await GET(statusRequest());
     expect(res.headers.get("cache-control")).toBe("no-store");
     expect(res.headers.get("set-cookie")).toMatch(/^jenna_sid=/);
-    expect(await res.json()).toEqual({ enabled: true, assistantName: "Jenna", maxInputChars: 500 });
+    expect(await res.json()).toEqual({ enabled: true, assistantName: "Jenna", maxInputChars: 500, voiceEnabled: true });
+  });
+
+  it("voiceEnabled false bila runtime suara menolak; tidak dicek bila chat nonaktif", async () => {
+    mocks.resolve.mockResolvedValue({ provider: {}, settings: s() });
+    mocks.voice.mockResolvedValue(false);
+    const body = await (await GET(statusRequest(`jenna_sid=${SID}`))).json();
+    expect(body).toMatchObject({ enabled: true, voiceEnabled: false });
+
+    mocks.voice.mockClear();
+    mocks.resolve.mockResolvedValue({ provider: {}, settings: s({ enabled: false }) });
+    expect(await (await GET(statusRequest(`jenna_sid=${SID}`))).json()).toMatchObject({ enabled: false, voiceEnabled: false });
+    expect(mocks.voice).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -260,7 +292,8 @@ describe("GET /api/jenna/status", () => {
     mocks.resolve.mockResolvedValue(active);
     const body = await (await GET(statusRequest(`jenna_sid=${SID}`))).json();
     expect(body.enabled).toBe(false);
-    expect(Object.keys(body).sort()).toEqual(["assistantName", "enabled", "maxInputChars"]);
+    expect(body.voiceEnabled).toBe(false);
+    expect(Object.keys(body).sort()).toEqual(["assistantName", "enabled", "maxInputChars", "voiceEnabled"]);
   });
 
   it("cookie valid tidak di-set ulang", async () => {

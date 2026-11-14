@@ -2,6 +2,7 @@
 import { randomBytes } from "node:crypto";
 import { publicOriginFromHeaders } from "@/lib/auth-policy";
 import type { JennaErrorCode, JennaFailureBody } from "@/lib/jenna/chat-types";
+import type { VoiceErrorCode, VoiceFailureBody } from "@/lib/jenna/voice/voice-types";
 
 export const JENNA_SID_COOKIE = "jenna_sid";
 export const JENNA_SID_MAX_AGE_SEC = 30 * 24 * 60 * 60;
@@ -65,13 +66,29 @@ export async function readTextCapped(request: Request, maxBytes: number): Promis
   return text + decoder.decode();
 }
 
-export function failureResponse(
+type FailureOptions = { retryAfterSec?: number; setCookie?: string };
+
+export function failureResponse(status: number, code: JennaErrorCode, message: string, opts: FailureOptions = {}): Response {
+  return jsonFailure(status, { success: false, code, message }, opts);
+}
+
+/** Sama dengan `failureResponse`, untuk route /api/jenna/voice/* (kode VoiceErrorCode). */
+export function voiceFailureResponse(
   status: number,
-  code: JennaErrorCode,
+  code: VoiceErrorCode,
   message: string,
-  opts: { retryAfterSec?: number; setCookie?: string } = {},
+  opts: FailureOptions = {},
 ): Response {
-  const body: JennaFailureBody = { success: false, code, message };
+  return jsonFailure(status, { success: false, code, message }, opts);
+}
+
+export function jsonResponse(body: unknown, opts: { setCookie?: string } = {}): Response {
+  const headers = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+  if (opts.setCookie) headers.append("set-cookie", opts.setCookie);
+  return new Response(JSON.stringify(body), { status: 200, headers });
+}
+
+function jsonFailure(status: number, body: JennaFailureBody | VoiceFailureBody, opts: FailureOptions): Response {
   const headers = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
   if (opts.retryAfterSec !== undefined) {
     body.retryAfterSec = opts.retryAfterSec;
