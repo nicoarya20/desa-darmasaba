@@ -2,8 +2,9 @@
 
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
-import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Children, useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { MUSIK_TEXT as T } from './musik-library.text';
+import { nextEdges } from './shelf-row.logic';
 import s from './shelf-row.module.css';
 
 type Props = {
@@ -16,8 +17,6 @@ type Props = {
   children: ReactNode;
 };
 
-/** Selisih px yang dianggap sudah di ujung (pembulatan subpiksel di layar 2x). */
-const EDGE_TOLERANCE = 2;
 /** Satu klik panah menggeser 90% lebar rak supaya kartu terakhir tetap terlihat sebagai jangkar. */
 const PAGE_RATIO = 0.9;
 
@@ -30,11 +29,13 @@ export function ShelfRow({ title, href, layout, children }: Props) {
   const measure = useCallback(() => {
     const el = listRef.current;
     if (!el) return;
-    setEdges({
-      start: el.scrollLeft <= EDGE_TOLERANCE,
-      end: el.scrollLeft + el.clientWidth >= el.scrollWidth - EDGE_TOLERANCE,
-    });
+    const metrics = { scrollLeft: el.scrollLeft, clientWidth: el.clientWidth, scrollWidth: el.scrollWidth };
+    setEdges((prev) => nextEdges(prev, metrics));
   }, []);
+
+  // Isi rak berubah (jumlah item) → ukur ulang. Bukan `children` di deps: elemennya baru di setiap render induk,
+  // sehingga listener & ResizeObserver dipasang ulang terus.
+  const itemCount = Children.count(children);
 
   useEffect(() => {
     const el = listRef.current;
@@ -47,7 +48,7 @@ export function ShelfRow({ title, href, layout, children }: Props) {
       el.removeEventListener('scroll', measure);
       observer.disconnect();
     };
-  }, [layout, measure, children]);
+  }, [layout, measure, itemCount]);
 
   const page = (direction: -1 | 1) => {
     const el = listRef.current;
