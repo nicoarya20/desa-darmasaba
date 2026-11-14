@@ -1,5 +1,7 @@
 // @vitest-environment node
 // Pustaka Musik Desa: adapter Musik → Track, turunan artis & genre, saring Jelajahi dari URL.
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Musik } from '@/app/context/MusicContext';
 import {
@@ -233,24 +235,24 @@ describe('Jelajahi: artis yang bisa dipilih', () => {
   });
 });
 
+const luminance = (hex: string) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+};
+
+const contrast = (a: string, b: string) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+
 describe('palet', () => {
-  const luminance = (hex: string) => {
-    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-    const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-  };
-
-  const contrast = (a: string, b: string) => {
-    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-    return (hi + 0.05) / (lo + 0.05);
-  };
-
   it('setiap warna ubin genre kontras ≥ 4.5 dengan teks putih', () => {
     for (const color of GENRE_COLORS) expect(contrast(color, '#ffffff')).toBeGreaterThanOrEqual(4.5);
   });
 
-  it('sampul cadangan terang: ikon/inisial --m-muted (#6e6e73) kontras ≥ 3 di kedua ujung gradasi', () => {
-    for (const tone of COVER_TONES.flat()) expect(contrast(tone, '#6e6e73')).toBeGreaterThanOrEqual(3);
+  it('sampul cadangan terang: ikon/inisial --m-muted (#515154) kontras ≥ 3 di kedua ujung gradasi', () => {
+    for (const tone of COVER_TONES.flat()) expect(contrast(tone, '#515154')).toBeGreaterThanOrEqual(3);
     expect(COVER_GRADIENTS[0]).toBe('linear-gradient(135deg, #e5f2fa 0%, #b8daef 100%)');
   });
 
@@ -258,5 +260,47 @@ describe('palet', () => {
     expect(hashSeed('pop')).toBe(hashSeed('pop'));
     expect(pickFromPalette(GENRE_COLORS, 'pop')).toBe(pickFromPalette(GENRE_COLORS, 'pop'));
     expect(normalizeKey('  Pop   Bali ')).toBe('pop bali');
+  });
+});
+
+// Penjaga kontras CSS pustaka (audit WCAG putaran 2): dibaca dari berkas sumber, bukan dari browser.
+describe('CSS pustaka: kontras teks', () => {
+  const dir = path.join(process.cwd(), 'src/app/(public)/(pages)/musik/musik-desa/_com/library');
+  const cssFiles = readdirSync(dir).filter((f) => f.endsWith('.module.css'));
+  const css = (f: string) => readFileSync(path.join(dir, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  /** Aturan paling dalam: [selektor, isi]; @media luar ikut terlewati karena kurung kurawalnya. */
+  const rules = (src: string) =>
+    [...src.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => [m[1].trim(), m[2]] as const);
+
+  it('lagu tanpa audio: opacity hanya di sampul (.cover/.media), tidak pada baris atau teks', () => {
+    const files = ['track-row.module.css', 'track-table.module.css', 'track-card.module.css'];
+    const dimmed = files.flatMap((f) =>
+      rules(css(f))
+        .filter(([sel, body]) => sel.includes("[data-playable='false']") && /(^|[;\s])opacity\s*:/.test(body))
+        .map(([sel]) => sel),
+    );
+    expect(dimmed).toEqual([
+      ".row[data-playable='false'] .cover",
+      ".row[data-playable='false'] .cover",
+      ".card[data-playable='false'] .media",
+    ]);
+  });
+
+  it('lagu tanpa audio: judul muted, teks sekunder subtle (warna token, bukan opacity)', () => {
+    for (const f of ['track-row.module.css', 'track-table.module.css']) {
+      const map = new Map(rules(css(f)));
+      expect(map.get(".row[data-playable='false'] .title")).toContain('var(--m-muted');
+    }
+    expect(new Map(rules(css('track-row.module.css'))).get(".row[data-playable='false'] .artist")).toContain('var(--m-subtle');
+    expect(new Map(rules(css('track-table.module.css'))).get(".row[data-playable='false'] .sub")).toContain('var(--m-subtle');
+  });
+
+  it('nilai cadangan --m-muted/--m-subtle ≥ 4.5:1 di putih dan #f5f5f7', () => {
+    const fallbacks = cssFiles.flatMap((f) => [...css(f).matchAll(/var\(--m-(?:muted|subtle),\s*(#[0-9a-f]{6})\)/gi)].map((m) => m[1]));
+    expect(fallbacks.length).toBeGreaterThan(0);
+    for (const hex of new Set(fallbacks)) {
+      expect(contrast(hex, '#ffffff')).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(hex, '#f5f5f7')).toBeGreaterThanOrEqual(4.5);
+    }
   });
 });

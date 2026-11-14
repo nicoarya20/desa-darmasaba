@@ -40,7 +40,9 @@ export function TrackTable({ tracks, currentId, isPlaying, onPlay }: Props) {
               >
                 <span className={s.num}>{active ? <PlayingBars playing={playing && t.playable} /> : i + 1}</span>
                 <span className={s.main}>
-                  <TrackCover src={t.coverUrl} alt="" size={48} seed={t.id} />
+                  <span className={s.cover}>
+                    <TrackCover src={t.coverUrl} alt="" size={48} seed={t.id} />
+                  </span>
                   <span className={s.text}>
                     <span className={s.title}>{t.judul}</span>
                     <span className={s.sub}>{t.artis}</span>

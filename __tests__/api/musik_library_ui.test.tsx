@@ -93,6 +93,9 @@ describe('MusikHomeView', () => {
   it('lagu tanpa audio redup + "Audio belum tersedia" menggantikan durasi', () => {
     const html = render(<MusikHomeView {...lib()} />);
     expect(count(html, 'data-playable="false"')).toBe(2); // kartu + baris lagu c
+    // Hanya sampul dibungkus .cover (diredupkan CSS); teks tanpa gaya inline/opacity.
+    expect(count(html, `<span class="${row.cover}">`)).toBe(3);
+    expect(html).not.toContain('opacity');
     expect(html).toContain(`aria-label="Putar Lagu c, Kadek Wira (${T.audioBelum})"`);
     expect(text(html)).toContain('4:05');
   });

@@ -19,7 +19,9 @@ export function TrackRow({ track, active, playing, onPlay }: Props) {
       aria-current={active ? 'true' : undefined}
       onClick={() => onPlay(track)}
     >
-      <TrackCover src={track.coverUrl} alt="" size={64} seed={track.id} />
+      <span className={s.cover}>
+        <TrackCover src={track.coverUrl} alt="" size={64} seed={track.id} />
+      </span>
       <span className={s.text}>
         <span className={s.title}>
           {active ? <PlayingBars playing={playing && track.playable} /> : null}
