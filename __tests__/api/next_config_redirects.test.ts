@@ -19,6 +19,9 @@ describe('next.config redirects — daftar lengkap', () => {
       ['/desa/:path*', '/pemerintahan/:path*'],
       ['/penghargaan', '/prestasi-desa'],
       ['/penghargaan/:id', '/prestasi-desa/:id'],
+      // Info Sekolah: tabel per jenjang → filter ?jenjang= (detail: info_sekolah_redirects.test.ts).
+      ['/pendidikan/info-sekolah/semua/:tabel(lembaga|siswa|pengajar)', '/pendidikan/info-sekolah/:tabel'],
+      ['/pendidikan/info-sekolah/:jenjang/:tabel(lembaga|siswa|pengajar)', '/pendidikan/info-sekolah/:tabel?jenjang=:jenjang'],
       ['/admin/desa', '/admin/pemerintahan'],
       ['/admin/desa/:path*', '/admin/pemerintahan/:path*'],
       ['/admin/pemerintahan/penghargaan', '/admin/landing-page/prestasi-desa/list-prestasi-desa'],

@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
       { source: '/desa/:path*', destination: '/pemerintahan/:path*', permanent: true },
       { source: '/penghargaan', destination: '/prestasi-desa', permanent: true },
       { source: '/penghargaan/:id', destination: '/prestasi-desa/:id', permanent: true },
+      // Info Sekolah: ringkasan per jenjang dihapus, jenjang jadi filter di tabel (?jenjang=). `semua` lebih dulu
+      // supaya tidak jadi ?jenjang=semua. Ringkasan satu segmen (/info-sekolah/{jenjang}) ditangani page [jenjangPendidikan].
+      { source: '/pendidikan/info-sekolah/semua/:tabel(lembaga|siswa|pengajar)', destination: '/pendidikan/info-sekolah/:tabel', permanent: true },
+      { source: '/pendidikan/info-sekolah/:jenjang/:tabel(lembaga|siswa|pengajar)', destination: '/pendidikan/info-sekolah/:tabel?jenjang=:jenjang', permanent: true },
       { source: '/admin/desa', destination: '/admin/pemerintahan', permanent: true },
       { source: '/admin/desa/:path*', destination: '/admin/pemerintahan/:path*', permanent: true },
       { source: '/admin/pemerintahan/penghargaan', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
