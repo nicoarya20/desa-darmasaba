@@ -1,0 +1,106 @@
+'use client';
+
+import { IconMusic } from '@tabler/icons-react';
+import { useMemo } from 'react';
+import { ArtistTile } from './ArtistTile';
+import { GenreTile } from './GenreTile';
+import { MusikEmpty } from './MusikEmpty';
+import { MusikHeading } from './MusikHeading';
+import { MusikLoadError } from './MusikLoadError';
+import { MusikSkeleton } from './MusikSkeleton';
+import { ShelfRow } from './ShelfRow';
+import { TrackCard } from './TrackCard';
+import { TrackRow } from './TrackRow';
+import { MUSIK_JELAJAHI_PATH } from '../app/musik-nav.meta';
+import { jelajahiHref } from './musik-jelajahi.logic';
+import { sortByTitle } from './musik-library.logic';
+import { MUSIK_TEXT as T } from './musik-library.text';
+import { useMusikLibrary, type MusikLibrary } from './use-musik-library';
+import c from './track-card.module.css';
+
+/** Jumlah kartu rak "Terbaru" (API sudah mengurutkan lagu terbaru dulu). */
+export const TERBARU_LIMIT = 12;
+/** Jumlah baris "Semua lagu" di beranda (3 kolom × 4, urut judul A–Z); sisanya lewat "Lihat semua". */
+export const SEMUA_LIMIT = 12;
+/** Jumlah ubin rak "Artis desa" dan "Genre" (DESIGN.md: maks 12 item per rak beranda); sisanya di Jelajahi. */
+export const ARTIS_LIMIT = 12;
+export const GENRE_LIMIT = 12;
+
+type View = Pick<
+  MusikLibrary,
+  'tracks' | 'artists' | 'genres' | 'isLoading' | 'loadError' | 'onRetry' | 'currentId' | 'isPlaying' | 'onPlay'
+>;
+
+/**
+ * Beranda Musik: rak Terbaru, Semua lagu, Artis desa, Genre. Rak tanpa isi tidak dirender. Tanpa lagu: panel gagal
+ * muat + "Coba lagi" bila API gagal (`loadError`), selain itu panel "Belum ada lagu".
+ */
+export function MusikHomeView({ tracks, artists, genres, isLoading, loadError, onRetry, currentId, isPlaying, onPlay }: View) {
+  // Sebelum return dini (aturan hooks). "Terbaru" = urutan API (terbaru dulu); "Semua lagu" = judul A–Z.
+  const semua = useMemo(() => sortByTitle(tracks).slice(0, SEMUA_LIMIT), [tracks]);
+  const heading = <MusikHeading title={T.homeTitle} lead={T.homeLead} />;
+  if (isLoading) {
+    return (
+      <div>
+        {heading}
+        <MusikSkeleton />
+      </div>
+    );
+  }
+  if (!tracks.length) {
+    return (
+      <div>
+        {heading}
+        {loadError ? (
+          <MusikLoadError onRetry={onRetry} />
+        ) : (
+          <MusikEmpty icon={<IconMusic size={40} stroke={1.5} />} title={T.kosongTitle} body={T.kosongBody} />
+        )}
+      </div>
+    );
+  }
+
+  const state = (id: string) => ({ active: id === currentId, playing: id === currentId && isPlaying, onPlay });
+  return (
+    <div>
+      {heading}
+      <ShelfRow title={T.shelfTerbaru} href={MUSIK_JELAJAHI_PATH} layout="scroll">
+        {tracks.slice(0, TERBARU_LIMIT).map((t) => (
+          <li key={t.id} className={c.item}>
+            <TrackCard track={t} {...state(t.id)} />
+          </li>
+        ))}
+      </ShelfRow>
+      <ShelfRow title={T.shelfSemua} href={MUSIK_JELAJAHI_PATH} layout="grid">
+        {semua.map((t) => (
+          <li key={t.id}>
+            <TrackRow track={t} {...state(t.id)} />
+          </li>
+        ))}
+      </ShelfRow>
+      {artists.length ? (
+        <ShelfRow title={T.shelfArtis} href={MUSIK_JELAJAHI_PATH} layout="scroll">
+          {artists.slice(0, ARTIS_LIMIT).map((a) => (
+            <li key={a.key}>
+              <ArtistTile artist={a} href={jelajahiHref({ artis: a.key })} />
+            </li>
+          ))}
+        </ShelfRow>
+      ) : null}
+      {genres.length ? (
+        <ShelfRow title={T.shelfGenre} href={MUSIK_JELAJAHI_PATH} layout="scroll">
+          {genres.slice(0, GENRE_LIMIT).map((g) => (
+            <li key={g.key}>
+              <GenreTile genre={g} />
+            </li>
+          ))}
+        </ShelfRow>
+      ) : null}
+    </div>
+  );
+}
+
+/** Beranda Musik Desa; data dari `useMusic()` (dirender `page.tsx` milik kerangka app). */
+export function MusikHome() {
+  return <MusikHomeView {...useMusikLibrary()} />;
+}

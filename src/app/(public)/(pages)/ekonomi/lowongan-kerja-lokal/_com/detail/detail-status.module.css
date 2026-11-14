@@ -1,0 +1,107 @@
+/*
+ * Keadaan halaman detail lowongan selain siap: kerangka kartu memuat (dipasang bersama `.card`
+ * lowongan-detail.module.css), tidak ditemukan / galat + tautan "Lihat semua lowongan". Token dari `.page`
+ * lowongan-layout.module.css. Breakpoint apple.com: ≤734px (mobile).
+ */
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.statusLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--brand);
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.statusLink:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.skeletonHead {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.skeletonLines {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bone {
+  display: block;
+  border-radius: 6px;
+  background: var(--tile);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.boneLogo {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+}
+
+.boneTitle {
+  width: min(420px, 80%);
+  height: 30px;
+}
+
+.boneText {
+  width: min(220px, 50%);
+  height: 18px;
+}
+
+.bonePills {
+  width: min(480px, 90%);
+  height: 30px;
+}
+
+.boneBlock {
+  height: 220px;
+  border-radius: 12px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .statusLink:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bone {
+    animation: none;
+  }
+}
+
+@media (max-width: 734px) {
+  .boneLogo {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+  }
+}

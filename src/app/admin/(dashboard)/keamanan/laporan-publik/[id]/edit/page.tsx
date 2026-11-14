@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
-import laporanPublikState from '@/app/admin/(dashboard)/_state/keamanan/laporan-publik';
+import laporanPublikState, { type Status } from '@/app/admin/(dashboard)/_state/keamanan/laporan-publik';
 import colors from '@/con/colors';
 import {
   Box,
@@ -21,8 +21,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-
-export type Status = "Selesai" | "Proses" | "Gagal";
 
 function EditLaporanPublik() {
   const stateLaporan = useProxy(laporanPublikState);
@@ -206,6 +204,7 @@ function EditLaporanPublik() {
               { value: "Selesai", label: "Selesai" },
               { value: "Proses", label: "Proses" },
               { value: "Gagal", label: "Gagal" },
+              { value: "Baru", label: "Baru (menunggu verifikasi, belum tampil di publik)" },
             ]}
             required
           />

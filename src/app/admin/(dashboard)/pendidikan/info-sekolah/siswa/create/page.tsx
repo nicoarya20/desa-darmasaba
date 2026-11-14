@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { lembagaSelectData, loadLembagaOptions } from '../../_lib/lembaga-options';
 
 function CreateSiswa() {
   const router = useRouter();
@@ -38,7 +39,7 @@ function CreateSiswa() {
 
   useEffect(() => {
     stateCreate.findMany.load();
-    infoSekolahPaud.lembagaPendidikan.findMany.load();
+    void loadLembagaOptions();
   }, []);
 
   const resetForm = () => {
@@ -101,12 +102,8 @@ function CreateSiswa() {
             }}
             label={<Text fw="bold" fz="sm">Lembaga</Text>}
             placeholder="Pilih lembaga"
-            data={
-              lembagaState.findMany.data?.map((v) => ({
-                value: v.id,
-                label: v.nama,
-              })) || []
-            }
+            data={lembagaSelectData(lembagaState.findMany.data)}
+            searchable
             required
           />
 

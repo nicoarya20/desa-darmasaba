@@ -18,9 +18,13 @@ export const resolveRedirect = (redirects: Redirect[], pathname: string): string
     const params = getPathMatch(r.source, { removeUnnamedParams: true, strict: true })(pathname);
     if (params === false) continue;
     const rest = Array.isArray(params.path) ? params.path.join('/') : '';
-    const destination = r.destination
+    let destination = r.destination
       .replace('/:path*', rest ? `/${rest}` : '')
       .replace(':id', typeof params.id === 'string' ? params.id : ':id');
+    // Parameter bernama lain (mis. `:tabel`, `:jenjang`), termasuk di query destination.
+    for (const [name, value] of Object.entries(params)) {
+      if (name !== 'path' && name !== 'id' && typeof value === 'string') destination = destination.replaceAll(`:${name}`, value);
+    }
     return destination || '/';
   }
   return null;

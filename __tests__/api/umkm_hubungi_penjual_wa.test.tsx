@@ -3,25 +3,24 @@
 // tombol "Pesan Sekarang" diganti "Hubungi Penjual (WhatsApp)" — saklar UMKM_PESANAN_TERCATAT
 // (src/lib/umkm-pesanan.ts), docs/debt/2026-11-12-umkm-tab-disembunyikan.md
 import { MantineProvider } from '@mantine/core';
+import type { AnchorHTMLAttributes } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const h = vi.hoisted(() => ({
-  findUnique: {
-    loading: false,
-    load: () => undefined,
-    data: null as Record<string, unknown> | null,
-  },
+  detail: { state: { status: 'loading' } as { status: string; data?: unknown } },
   pesananModalRendered: { count: 0 },
 }));
 
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ back: vi.fn() }),
+  useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
   useParams: () => ({ id: 'prd-1' }),
 }));
-vi.mock('valtio/utils', () => ({ useProxy: <T,>(p: T) => p }));
-vi.mock('@/app/admin/(dashboard)/_state/ekonomi/umkm/umkm', () => ({
-  default: { produk: { findUnique: h.findUnique } },
+vi.mock('next-view-transitions', () => ({
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+}));
+vi.mock('@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/use-detail-produk', () => ({
+  useDetailProduk: () => ({ state: h.detail.state, reload: () => undefined }),
 }));
 vi.mock('@/app/(public)/(pages)/ekonomi/umkm/_com/PesananModal', () => ({
   PesananModal: () => {
@@ -46,17 +45,24 @@ const render = () =>
     </MantineProvider>,
   ).replace(/<style[\s\S]*?<\/style>/g, '');
 
+// test-only: bentuk hasil adapter detail-produk (DetailProduk).
 const produk = (kontak: string | null) => ({
   id: 'prd-1',
   nama: 'Keripik Pisang',
   harga: 15000,
   stok: 0,
   satuan: 'bungkus',
-  deskripsi: '<p>Renyah</p>',
-  image: null,
+  isUnggulan: false,
+  deskripsiHtml: '<p>Renyah</p>',
+  fotos: [],
+  kategori: null,
+  alamat: null,
   linkTokoOnline: [{ id: 'l1', platform: 'SHOPEE', url: 'https://shopee.co.id/keripik' }],
-  umkm: { nama: 'Warung Bu Made', kontak },
+  penjual: { id: 'u1', nama: 'Warung Bu Made', pemilik: null, alamat: null, kontak },
 });
+const siap = (kontak: string | null) => {
+  h.detail.state = { status: 'ready', data: produk(kontak) };
+};
 
 const decodeHref = (html: string) => {
   const m = html.match(/href="(https:\/\/wa\.me\/[^"]+)"/);
@@ -80,7 +86,7 @@ describe('SSR halaman produk UMKM saat pesanan website nonaktif', () => {
   });
 
   it('merender tautan WhatsApp penjual (nomor ternormalisasi + nama produk), tanpa "Pesan Sekarang"', () => {
-    h.findUnique.data = produk('0812-3456-7890');
+    siap('0812-3456-7890');
 
     const html = render();
     const href = decodeHref(html);
@@ -101,7 +107,7 @@ describe('SSR halaman produk UMKM saat pesanan website nonaktif', () => {
   });
 
   it('modal pesanan tidak dirender; tombol toko online tetap ada', () => {
-    h.findUnique.data = produk('081234567890');
+    siap('081234567890');
 
     const html = render();
 
@@ -111,7 +117,7 @@ describe('SSR halaman produk UMKM saat pesanan website nonaktif', () => {
   });
 
   it.each([null, '', '0361 123456'])('nomor penjual %j → tombol disabled + penjelasan', (kontak) => {
-    h.findUnique.data = produk(kontak);
+    siap(kontak);
 
     const html = render();
 

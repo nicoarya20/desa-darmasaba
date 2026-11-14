@@ -19,7 +19,7 @@ export const LAPORAN_TEXT = {
 /** Teks formulir Tambah Laporan. */
 export const LAPORAN_FORM_TEXT = {
   title: "Tambah Laporan Publik",
-  note: "Laporan yang dikirim tampil untuk umum di halaman ini. Jangan cantumkan data pribadi seperti NIK atau nomor telepon.",
+  note: "Laporan tampil untuk umum di halaman ini setelah diverifikasi admin desa. Jangan cantumkan data pribadi seperti NIK atau nomor telepon.",
   judul: "Judul laporan",
   judulPlaceholder: "Contoh: Lampu jalan padam di Banjar Teba",
   lokasi: "Lokasi kejadian",

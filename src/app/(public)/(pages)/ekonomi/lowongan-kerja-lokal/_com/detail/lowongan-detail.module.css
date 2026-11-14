@@ -1,0 +1,197 @@
+/*
+ * Kerangka halaman detail lowongan (`/ekonomi/lowongan-kerja-lokal/[id]`) gaya Welcome to the Jungle: tombol kembali,
+ * satu kartu putih bergaris (kepala, isi, penutup), keadaan memuat/kosong. Latar, gutter, dan token warna (--ink,
+ * --muted, --subtle, --tile, --line) dari `.page` lowongan-layout.module.css; `--brand` inline (LOWONGAN_BRAND_VARS).
+ * Isi section: detail-section.module.css. Memuat/kosong: detail-status.module.css. Tombol & bilah kontak: kontak-aksi.module.css.
+ * Breakpoint apple.com: ≤1068px (tablet), ≤734px (mobile: tanpa bingkai kartu).
+ */
+.inner {
+  max-width: 1080px;
+  margin-inline: auto;
+}
+
+.back {
+  margin-bottom: 20px;
+}
+
+/* Kartu 1080px dengan isi ±860px (padding sisi 110px), seperti kartu WTTJ. */
+.card {
+  padding: 56px clamp(24px, 9vw, 110px) 64px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+/* ---------- Kepala ---------- */
+.head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'logo text aksi'
+    'meta meta meta';
+  align-items: start;
+  gap: 0 20px;
+}
+
+.logo {
+  display: flex;
+  grid-area: logo;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: var(--tile);
+  color: var(--brand);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.logoIcon {
+  color: var(--subtle);
+}
+
+.headText {
+  grid-area: text;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.employer {
+  margin: 6px 0 0;
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.headAksi {
+  grid-area: aksi;
+  padding-top: 4px;
+}
+
+/* Pil (gaya dari lowongan-card.module.css) kiri, tanggal tayang kanan. */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  grid-area: meta;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: 28px;
+}
+
+/* Menimpa margin atas `.pills` kartu daftar (urutan muat CSS module tidak dijamin, jadi pakai selektor lebih spesifik). */
+.meta .pills {
+  margin: 0;
+}
+
+/* ---------- Penutup ---------- */
+.penutup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 32px;
+  margin-top: 48px;
+  padding: 28px 32px;
+  border-radius: 16px;
+  background: var(--tile);
+}
+
+.penutupText {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.penutupTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.penutupAjak {
+  margin: 6px 0 0;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.penutupCatatan {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .card {
+    padding: 40px 48px 48px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+}
+
+/* ---------- Mobile: tanpa bingkai kartu, aksi di bawah judul ---------- */
+@media (max-width: 734px) {
+  .card {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .head {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'logo text'
+      'aksi aksi'
+      'meta meta';
+    gap: 0 16px;
+  }
+
+  .logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    font-size: 19px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .employer {
+    font-size: 17px;
+  }
+
+  .headAksi {
+    margin-top: 20px;
+    padding-top: 0;
+  }
+
+  .meta {
+    margin-top: 20px;
+  }
+
+  .penutup {
+    margin-top: 40px;
+    padding: 24px 20px;
+  }
+}

@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
+import { SORT_BY_JENJANG } from "@/lib/jenjang-pendidikan-urutan";
+import { jenjangSegmentFilters, paginateSegments } from "../jenjang-sort";
 
 async function lembagaPendidikanFindMany(context: Context) {
   try {
@@ -10,6 +13,8 @@ async function lembagaPendidikanFindMany(context: Context) {
     const search = (context.query.search as string) || "";
     const skip = (page - 1) * limit;
     const jenjangPendidikanName = (context.query.jenjangPendidikanId as string) || "";
+    // Filter satu jenjang sudah membuat semua baris sejenjang; urutan jenjang hanya berarti tanpa filter.
+    const sortByJenjang = context.query.sort === SORT_BY_JENJANG && !jenjangPendidikanName;
     // Buat where clause
     const where: any = { isActive: true };
 
@@ -51,20 +56,32 @@ async function lembagaPendidikanFindMany(context: Context) {
       ];
     }
 
-    const [data, total] = await Promise.all([
+    const findPage = (pageWhere: Prisma.LembagaWhereInput, pageSkip: number, take: number) =>
       prisma.lembaga.findMany({
-        where,
+        where: pageWhere,
         include: {
           jenjangPendidikan: true,
         },
-        skip,
-        take: limit,
+        skip: pageSkip,
+        take,
         orderBy: { nama: 'asc' },
-      }),
-      prisma.lembaga.count({
-        where,
-      })
-    ]);
+      });
+
+    const { data, total } = sortByJenjang
+      ? await paginateSegments(
+          (await jenjangSegmentFilters()).map((segment) => {
+            const segmentWhere = { AND: [where, segment] };
+            return {
+              count: () => prisma.lembaga.count({ where: segmentWhere }),
+              fetch: (segmentSkip: number, take: number) => findPage(segmentWhere, segmentSkip, take),
+            };
+          }),
+          skip,
+          limit,
+        )
+      : await Promise.all([findPage(where, skip, limit), prisma.lembaga.count({ where })]).then(
+          ([rows, count]) => ({ data: rows, total: count }),
+        );
 
     return {
       success: true,

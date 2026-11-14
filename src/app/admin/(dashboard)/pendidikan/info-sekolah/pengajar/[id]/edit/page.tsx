@@ -19,6 +19,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { lembagaSelectData, loadLembagaOptions } from '../../../_lib/lembaga-options';
 
 interface FormPengajar {
   nama: string;
@@ -57,7 +58,7 @@ function EditPengajar() {
       if (!id) return;
 
       try {
-        infoSekolahPaud.lembagaPendidikan.findMany.load();
+        void loadLembagaOptions();
         const data = await pengajarState.edit.load(id);
         if (data) {
           setFormData({
@@ -143,10 +144,8 @@ function EditPengajar() {
           <Select
             label="Lembaga Pendidikan"
             placeholder="Pilih lembaga"
-            data={lembagaState.findMany.data?.map(k => ({
-              value: k.id,
-              label: k.nama
-            })) ?? []}
+            data={lembagaSelectData(lembagaState.findMany.data)}
+            searchable
             value={formData.lembagaId}
             onChange={(val) => handleChange('lembagaId', val ?? '')}
             required
