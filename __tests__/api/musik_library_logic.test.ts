@@ -295,6 +295,17 @@ describe('CSS pustaka: kontras teks', () => {
     expect(new Map(rules(css('track-table.module.css'))).get(".row[data-playable='false'] .sub")).toContain('var(--m-subtle');
   });
 
+  it('tabel: keterangan durasi satu baris; kolom durasi cukup untuk "Audio belum tersedia"', () => {
+    const map = new Map(rules(css('track-table.module.css')));
+    expect(map.get('.end')).toMatch(/white-space:\s*nowrap/);
+    // test-only: lebar "Audio belum tersedia" 14px, terlebar di fon cadangan umum (Verdana ±151px).
+    const cols = [...css('track-table.module.css').matchAll(/--cols:\s*([^;]+);/g)].map((m) => m[1].trim().split(/\s+(?![^(]*\))/));
+    expect(cols).toHaveLength(2);
+    const [desktop, mobile] = cols;
+    expect(Number.parseInt(desktop.at(-1) ?? '', 10)).toBeGreaterThanOrEqual(151);
+    expect(mobile.at(-1)).toBe('auto'); // ≤734px kolom mengikuti isi, judul yang mengalah
+  });
+
   it('nilai cadangan --m-muted/--m-subtle ≥ 4.5:1 di putih dan #f5f5f7', () => {
     const fallbacks = cssFiles.flatMap((f) => [...css(f).matchAll(/var\(--m-(?:muted|subtle),\s*(#[0-9a-f]{6})\)/gi)].map((m) => m[1]));
     expect(fallbacks.length).toBeGreaterThan(0);

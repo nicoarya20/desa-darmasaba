@@ -1,5 +1,6 @@
+/* Kolom durasi 152px: muat "Audio belum tersedia" 14px satu baris (SF ±131px, Arial ±134px, Verdana ±151px). */
 .table {
-  --cols: 40px minmax(0, 2.4fr) minmax(0, 1fr) 72px 120px;
+  --cols: 40px minmax(0, 2.4fr) minmax(0, 1fr) 72px 152px;
 }
 
 .head,
@@ -108,6 +109,7 @@
 
 .end {
   font-size: 14px;
+  white-space: nowrap;
   text-align: right;
   color: var(--m-subtle, #6e6e73);
 }
