@@ -1,7 +1,13 @@
 // @vitest-environment node
 // Kerangka aplikasi Musik Desa: menu aktif dari pathname, rute bar pemutar, URL cari Jelajahi, status awal antrean.
 import { describe, expect, it } from 'vitest';
-import { activeMusikNav, musikSearchHref } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.logic';
+import {
+  activeMusikNav,
+  keepsPendingSearch,
+  musikSearchHref,
+  musikSearchNavigation,
+  reconcileSentQ,
+} from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.logic';
 import { readFileSync } from 'node:fs';
 import { isMusikAppPath } from '@/app/(public)/_com/musik-route';
 import {
@@ -89,6 +95,57 @@ describe('musikSearchHref', () => {
     const current = new URLSearchParams('q=lama');
     musikSearchHref('baru', current);
     expect(current.get('q')).toBe('lama');
+  });
+});
+
+describe('musikSearchNavigation (lokasi hidup saat timer berbunyi)', () => {
+  it('di Jelajahi: replace dan genre/artis dari search hidup dipertahankan', () => {
+    // genre=jazz dipilih selama jeda ketik: ada di window.location.search, belum di searchParams render lama.
+    expect(musikSearchNavigation('gong', '/musik/musik-desa/jelajahi', '?genre=jazz&artis=kadek')).toEqual({
+      href: '/musik/musik-desa/jelajahi?genre=jazz&artis=kadek&q=gong',
+      mode: 'replace',
+    });
+  });
+
+  it('dari menu lain: push hanya dengan q; parameter halaman itu tidak terbawa', () => {
+    expect(musikSearchNavigation(' gong ', '/musik/musik-desa', '?x=1')).toEqual({
+      href: '/musik/musik-desa/jelajahi?q=gong',
+      mode: 'push',
+    });
+  });
+
+  it('dari menu lain dengan kata kosong tidak menavigasi; di Jelajahi kata kosong menghapus q', () => {
+    expect(musikSearchNavigation('  ', '/musik/musik-desa/playlist', '')).toBeNull();
+    expect(musikSearchNavigation('', '/musik/musik-desa/jelajahi', '?q=lama&genre=pop')).toEqual({
+      href: '/musik/musik-desa/jelajahi?genre=pop',
+      mode: 'replace',
+    });
+  });
+});
+
+describe('reconcileSentQ (gema kiriman sendiri vs perubahan dari luar)', () => {
+  it('URL menyusul kiriman lama saat pengunjung terus mengetik → ketikan tidak ditimpa', () => {
+    // Terkirim "gam" lalu "gamelan"; URL baru sampai di "gam".
+    expect(reconcileSentQ(['gam', 'gamelan'], 'gam')).toEqual({ sent: ['gamelan'], adopt: false });
+    expect(reconcileSentQ(['gamelan'], 'gamelan')).toEqual({ sent: [], adopt: false });
+  });
+
+  it('kiriman antara yang terlewat ikut dibuang', () => {
+    expect(reconcileSentQ(['g', 'ga', 'gam'], 'ga')).toEqual({ sent: ['gam'], adopt: false });
+  });
+
+  it('perubahan dari luar (mundur, Hapus filter) diadopsi dan antrean kiriman dikosongkan', () => {
+    expect(reconcileSentQ(['gamelan'], '')).toEqual({ sent: [], adopt: true });
+    expect(reconcileSentQ([], 'lama')).toEqual({ sent: [], adopt: true });
+  });
+});
+
+describe('keepsPendingSearch (batal jeda saat pindah menu)', () => {
+  it('hanya Jelajahi yang mempertahankan ketikan yang menunggu', () => {
+    expect(keepsPendingSearch('/musik/musik-desa/jelajahi')).toBe(true);
+    expect(keepsPendingSearch('/musik/musik-desa/playlist')).toBe(false);
+    expect(keepsPendingSearch('/musik/musik-desa')).toBe(false);
+    expect(keepsPendingSearch(null)).toBe(false);
   });
 });
 
