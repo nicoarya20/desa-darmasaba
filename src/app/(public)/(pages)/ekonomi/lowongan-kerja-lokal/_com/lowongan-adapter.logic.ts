@@ -34,6 +34,13 @@ const GAJI_DESIMAL_AKHIR = /,\d{1,2}\s*$/;
 /** Satu angka: kelompok ribuan bertitik/berkoma ("2.500.000") atau deret digit polos ("2000000"). */
 const GAJI_ANGKA = /\d{1,3}(?:[.,]\d{3})+|\d+/g;
 
+/**
+ * Kata pada alamat `lokasi` yang menandai lowongan di dalam desa.
+ * MITIGASI SEMENTARA(lowongan-wilayah): belum ada kolom wilayah; tebakan dari teks alamat, lihat docs/BACKEND-TODO.md P3.
+ * Keterbatasan diketahui: alamat tanpa kata ini ("Jl. Antasura No.22") terbaca luar desa; jangan ditambal dengan daftar jalan.
+ */
+export const DESA_KATA_KUNCI = 'darmasaba';
+
 /** Rapikan teks bebas: buang spasi tepi, spasi beruntun jadi satu. */
 function tidy(value: string): string {
   return value.trim().replace(/\s+/g, ' ');
@@ -79,10 +86,10 @@ export function toLowongan(item: LowonganApiItem): Lowongan {
     id: item.id,
     posisi: item.posisi.trim(),
     pemberiKerja: item.namaPerusahaan.trim(),
-    pemberiKey: toKey(item.namaPerusahaan),
     tipe: tipe === '' ? null : tipe,
     tipeKey: tipe === '' ? null : toKey(tipe),
     lokasi: lokasi === '' ? null : lokasi,
+    diDesa: lokasi.toLocaleLowerCase('id').includes(DESA_KATA_KUNCI),
     gaji: parseGaji(item.gaji),
     ringkasan: htmlToText(item.deskripsi),
     tayangMs: tayangMsOf(item),
