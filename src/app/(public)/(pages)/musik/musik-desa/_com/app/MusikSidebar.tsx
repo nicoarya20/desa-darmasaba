@@ -16,7 +16,7 @@ export function MusikSidebar() {
           {MUSIK_NAV_ITEMS.map(({ key, label, href, icon: Icon }) => (
             <li key={key}>
               <Link href={href} className={s.navItem} aria-current={key === active ? 'page' : undefined}>
-                <Icon size={22} stroke={1.8} aria-hidden />
+                <Icon size={20} stroke={1.75} aria-hidden />
                 {label}
               </Link>
             </li>
@@ -40,7 +40,7 @@ export function MusikNavPills() {
     <nav className={s.pills} aria-label={T.navLabel}>
       {MUSIK_NAV_ITEMS.map(({ key, label, href, icon: Icon }) => (
         <Link key={key} href={href} className={s.pill} aria-current={key === current ? 'page' : undefined}>
-          <Icon size={18} stroke={1.8} aria-hidden />
+          <Icon size={18} stroke={1.75} aria-hidden />
           {label}
         </Link>
       ))}

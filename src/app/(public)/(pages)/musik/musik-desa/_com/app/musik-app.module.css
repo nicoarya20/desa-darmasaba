@@ -25,8 +25,8 @@
   /* Ruang yang dipakai bar di bawah layar: 0 sampai lagu pertama dipilih (NowPlayingBar belum
      dirender), lalu tinggi bar + safe-area bawah (iPhone). Diatur lewat data-bar di .app. */
   --m-bar-space: 0px;
-  --m-left-w: 264px;
-  --m-right-w: 360px;
+  --m-left-w: 240px;
+  --m-right-w: 320px;
   /* Tinggi navbar situs: --nav-h (44px) hanya terdefinisi di dalam navbar, jadi disalin di sini.
      Navbar mobile (48px) tampil di bawah breakpoint Mantine md = 62em. */
   --m-nav: 44px;
@@ -74,7 +74,7 @@
 }
 
 .sidebar {
-  padding: 20px 16px;
+  padding: 16px 12px;
   border-right: 1px solid var(--m-line);
   overflow-y: auto;
 }
@@ -91,12 +91,12 @@
 .navItem {
   display: flex;
   align-items: center;
-  gap: 14px;
-  height: 48px;
-  padding: 0 14px;
-  border-radius: 12px;
-  font-size: 17px;
-  font-weight: 600;
+  gap: 12px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
   color: var(--m-muted);
   text-decoration: none;
   transition: background-color 150ms ease, color 150ms ease;
@@ -105,6 +105,7 @@
 .navItem[aria-current='page'] {
   background: var(--m-active);
   color: var(--m-ink);
+  font-weight: 600;
 }
 
 .navItem:focus-visible,
@@ -115,20 +116,20 @@
 }
 
 .playlistSlot {
-  margin-top: 28px;
-  padding: 0 14px;
+  margin-top: 24px;
+  padding: 0 12px;
 }
 
 .playlistHeading {
   margin: 0 0 8px;
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--m-subtle);
 }
 
 .playlistEmpty {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.45;
   color: var(--m-subtle);
 }
@@ -276,7 +277,7 @@
     white-space: nowrap;
     background: var(--m-elev);
     color: var(--m-muted);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: none;
   }
