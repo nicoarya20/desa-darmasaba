@@ -25,9 +25,14 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Usul: wajibkan auth admin untuk find-many/find-unique balita & ibu hamil.
 
 - [ ] **Detail mengabaikan `isActive`**
-  - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi).
+  - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`).
   - Dampak: entri yang dinonaktifkan admin tetap bisa dibuka lewat URL detail (frontend publik kini menganggapnya "tidak ditemukan", tapi API tetap mengirim data).
   - Usul: `where: { id, isActive: true }` untuk endpoint publik.
+
+- [ ] **Lowongan Kerja: `deskripsi` & `kualifikasi` (HTML editor) disimpan tanpa sanitasi** (terverifikasi 2026-11-14)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/lowongan-kerja/create.ts` menyimpan `body.deskripsi`/`body.kualifikasi` apa adanya (`updt.ts` berpola sama, perlu dicek). Halaman publik detail `/ekonomi/lowongan-kerja-lokal/[id]` (masih gaya lama) merendernya lewat `dangerouslySetInnerHTML` tanpa `sanitizeRichText`.
+  - Dampak: HTML/skrip yang tersimpan dijalankan di halaman publik (XSS tersimpan) bila akun admin disalahgunakan.
+  - Usul: simpan lewat `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`) seperti Laporan Publik. Sisi render publik dikerjakan frontend saat halaman detail dirombak (putaran berikutnya, menunggu keputusan user).
 
 - [ ] **`create()` state Laporan Publik tidak memberi sinyal gagal validasi** (terverifikasi)
   - Debug log `console.log(formData)` & `console.log(res)` sudah dihapus (v0.1.268).
@@ -85,6 +90,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - [ ] **Penamaan endpoint tidak konsisten**
   - Kategori kontak darurat keamanan memakai `GET /api/keamanan/kontakdaruratkeamanan/findMany` (camelCase), domain lain `find-many`.
 
+- [ ] **Daftar Lowongan Kerja: saring, urut, dan jumlah per pilihan dihitung di klien** (terverifikasi 2026-11-14)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/lowongan-kerja/findMany.ts` hanya punya `search` + paginasi, urut `createdAt desc`.
+  - Frontend: halaman `/ekonomi/lowongan-kerja-lokal` (panel Filter kiri) memuat sekali `limit=100` lalu menyaring tipe pekerjaan, gaji minimal, pemberi kerja, waktu tayang, dan mengurutkan di klien (`MITIGASI SEMENTARA(lowongan-filter)`, entri ke-101 dst. tidak tampil). Stg 2026-11-14: 7 lowongan.
+  - Usul: parameter `tipe`, `gajiMin`, `pemberi`, `sejak`, `urut` + jumlah per pilihan (facet) di find-many, lalu frontend kembali ke paginasi server. Butuh `gaji` berupa angka (lihat P3).
+
 ## P3. Schema & form admin
 
 - [ ] **Rating produk UMKM tidak punya sumber data** (terverifikasi, 2026-11-13)
@@ -119,6 +129,15 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - [ ] **Enum `StatusLaporan` punya `Baru`, tapi default `Proses` dan form admin hanya Selesai/Proses/Gagal**
   - Relevan dengan moderasi di P1: `Baru` bisa jadi status "menunggu persetujuan".
 
+- [ ] **Lowongan Kerja: `gaji` dan `tipePekerjaan` teks bebas; tidak ada batas lamaran, wilayah, maupun logo** (terverifikasi di schema & form admin, 2026-11-14)
+  - Lokasi: `model LowonganPekerjaan` (`prisma/schema.prisma`), form `src/app/admin/(dashboard)/ekonomi/lowongan-kerja-lokal/create/page.tsx` (semua `TextInput`).
+  - `gaji String`: stg berisi `"2.500.000"` dan `"2000000"`. Frontend publik membaca digitnya saja; nilai tanpa digit tampil "Gaji tidak dicantumkan". Usul: `Int` (rupiah per bulan) + isian angka; pertimbangkan `gajiMaks` opsional untuk rentang.
+  - `tipePekerjaan String`: stg berisi "Full Time", "Freelance", dan "Menjaga Toko" (itu deskripsi kerja, bukan tipe). Pilihan filter publik diturunkan dari nilai ini, jadi salah isi langsung jadi pilihan filter. Usul: `Select` berisi pilihan tetap (Penuh waktu, Paruh waktu, Lepas, Harian, Magang) atau enum.
+  - Tidak ada tanggal batas lamaran: lowongan lama (stg: April 2026) tetap tampil sampai admin menonaktifkan manual. Usul: `batasLamaran DateTime?` + sembunyikan otomatis setelah lewat.
+  - Tidak ada wilayah/banjar: `lokasi` alamat teks bebas, jadi filter Lokasi tidak bisa dibuat. Usul: `Select` banjar/wilayah (atau "Luar desa") di samping alamat.
+  - Tidak ada logo/foto pemberi kerja: kartu publik memakai inisial nama. Usul: `imageId` opsional.
+  - `tanggalPosting` tidak pernah diisi form (selalu sama dengan `createdAt`); frontend memakai `createdAt`. Usul: hapus salah satu atau jadikan isian admin.
+
 - [ ] **`deletedAt DateTime @default(now())` di banyak model** (118 kolom di schema)
   - Semua baris tercatat "terhapus" sejak dibuat; filter memakai `isActive`. Tidak berdampak ke tampilan, tapi menyesatkan. Usul: `DateTime?` tanpa default (migration hati-hati).
 
@@ -130,3 +149,4 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - Kontak Darurat Keamanan (stg): kategori uji "Chtvfyy"; item yatim "Test 0852…"; nomor Polsek Darmasaba 0361123456 / Polres 0361123999 tampak nomor contoh; BPBD & Damkar memakai nomor sama 0361900113.
 - Tips Keamanan (stg): dua foto berupa gambar bertuliskan "No image"; entri "Keamanan Lingkungan Tanggungjawab Bersama" isinya berita, bukan tips.
 - CCTV: status Online/Offline & `lastActive` diisi manual (data Feb 2026); "RS Kapal" di luar Desa Darmasaba; kode "CCTV - 09" beda format.
+- Lowongan Kerja (stg 2026-11-14): 5 dari 7 lowongan tertanggal April 2026 (data awal/seed, nomor kontak sama 089647037426) dan mungkin sudah tidak berlaku; tipe pekerjaan "Menjaga Toko" pada lowongan Toko Bangunan KBSM seharusnya tipe kerja (mis. Full Time).
