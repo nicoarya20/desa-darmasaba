@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, useSyncExternalStore, ReactNode } from 'react';
+import { ZERO_TIME, type MusicTime, type MusicTimeStore } from './music/musicTime';
 import { useAudioEngine, type Musik } from './music/useAudioEngine';
 
 export type { Musik };
@@ -10,8 +11,6 @@ interface MusicContextType {
   isPlaying: boolean;
   currentSong: Musik | null;
   musikData: Musik[];
-  currentTime: number;
-  duration: number;
   volume: number;
   isMuted: boolean;
   isRepeat: boolean;
@@ -29,8 +28,6 @@ interface MusicContextType {
   togglePlayPause: () => void;
   playNext: () => void;
   playPrev: () => void;
-  seek: (time: number) => void;
-  seekPreview: (time: number) => void;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
   toggleRepeat: () => void;
@@ -39,13 +36,24 @@ interface MusicContextType {
   loadMusikData: () => Promise<void>;
 }
 
+interface MusicTimeContextType {
+  store: MusicTimeStore;
+  /** Pindah posisi audio (lepas slider). */
+  seek: (time: number) => void;
+  /** Pratinjau posisi saat slider diseret; tidak menyentuh audio. */
+  seekPreview: (time: number) => void;
+}
+
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
+const MusicTimeContext = createContext<MusicTimeContextType | undefined>(undefined);
 
 export function MusicProvider({ children }: { children: ReactNode }) {
-  const engine = useAudioEngine();
+  const { music, time } = useAudioEngine();
 
   return (
-    <MusicContext.Provider value={engine}>{children}</MusicContext.Provider>
+    <MusicContext.Provider value={music}>
+      <MusicTimeContext.Provider value={time}>{children}</MusicTimeContext.Provider>
+    </MusicContext.Provider>
   );
 }
 
@@ -55,4 +63,20 @@ export function useMusic() {
     throw new Error('useMusic must be used within a MusicProvider');
   }
   return context;
+}
+
+const serverTime = () => ZERO_TIME;
+
+/**
+ * Posisi & durasi lagu saat ini + seek. Dipisah dari useMusic(): hanya komponen yang memanggil hook ini
+ * yang render ulang pada 'timeupdate'.
+ */
+export function useMusicTime(): MusicTime & Pick<MusicTimeContextType, 'seek' | 'seekPreview'> {
+  const context = useContext(MusicTimeContext);
+  if (context === undefined) {
+    throw new Error('useMusicTime must be used within a MusicProvider');
+  }
+  const { store, seek, seekPreview } = context;
+  const { currentTime, duration } = useSyncExternalStore(store.subscribe, store.getSnapshot, serverTime);
+  return { currentTime, duration, seek, seekPreview };
 }

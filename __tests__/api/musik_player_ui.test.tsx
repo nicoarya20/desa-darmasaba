@@ -9,7 +9,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Musik } from '@/app/context/MusicContext';
 
 const music = vi.hoisted(() => ({ state: {} as Record<string, unknown> }));
-vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => music.state }));
+// Satu state tiruan melayani kedua hook (waktu ikut di dalamnya: currentTime, duration, seek, seekPreview).
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => music.state, useMusicTime: () => music.state }));
 
 import { MusikUiProvider } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
 import { NowPlayingBar } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/NowPlayingBar';

@@ -2,7 +2,7 @@
 // Mesin pemutar Musik Desa saat berjalan: lagu tanpa audio, penolakan play(), file rusak, seret slider,
 // dan pelepasan sumber. MusicProvider asli dipasang lewat harness (elemen audio & fetch tiruan).
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MusicProvider, useMusic, type Musik } from '@/app/context/MusicContext';
+import { MusicProvider, useMusic, useMusicTime, type Musik } from '@/app/context/MusicContext';
 import { RECENT_STORAGE_KEY } from '@/app/context/music/recentlyPlayed';
 import { MUSIC_TEXT } from '@/app/context/music/music.text';
 import {
@@ -22,8 +22,10 @@ vi.mock('react-toastify', () => ({ toast }));
 
 type Music = ReturnType<typeof useMusic>;
 let music: Music;
+let time: ReturnType<typeof useMusicTime>;
 function Probe() {
   music = useMusic();
+  time = useMusicTime();
   return null;
 }
 
@@ -141,22 +143,22 @@ describe('seret slider', () => {
     await start();
     const audio = lastAudio();
     await run(() => music.playSong(A));
-    await run(() => music.seekPreview(30));
+    await run(() => time.seekPreview(30));
     await run(() => music.playSong(C));
     audio.currentTime = 5;
     await fire(audio, 'timeupdate');
-    expect(music.currentTime).toBe(5);
+    expect(time.currentTime).toBe(5);
   });
 
   it("'emptied' / 'loadstart' membatalkan status seret", async () => {
     await start();
     const audio = lastAudio();
     await run(() => music.playSong(A));
-    await run(() => music.seekPreview(30));
+    await run(() => time.seekPreview(30));
     await fire(audio, 'emptied');
     audio.currentTime = 7;
     await fire(audio, 'timeupdate');
-    expect(music.currentTime).toBe(7);
+    expect(time.currentTime).toBe(7);
   });
 });
 

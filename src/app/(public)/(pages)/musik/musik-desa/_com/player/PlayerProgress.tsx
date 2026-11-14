@@ -2,8 +2,9 @@
 
 import { Slider } from '@mantine/core';
 import type { CSSProperties } from 'react';
-import { useMusic } from '@/app/context/MusicContext';
+import { useMusic, useMusicTime } from '@/app/context/MusicContext';
 import { formatTime } from '@/app/context/music/format';
+import { canSeek } from '@/app/context/music/playable';
 import { PLAYER_TEXT } from './player.text';
 import s from './player-progress.module.css';
 
@@ -14,8 +15,9 @@ export const SLIDER_FILL = 'var(--m-ink, #1d1d1f)';
 
 /** Waktu berjalan · slider posisi · durasi. Seret = pratinjau, lepas = pindah posisi audio. */
 export function PlayerProgress() {
-  const { currentSong, currentTime, duration, seek, seekPreview } = useMusic();
-  const enabled = Boolean(currentSong?.audioFile?.link) && duration > 0;
+  const { currentSong } = useMusic();
+  const { currentTime, duration, seek, seekPreview } = useMusicTime();
+  const enabled = canSeek(currentSong, duration);
 
   return (
     <div className={s.progress}>
@@ -45,7 +47,7 @@ export function PlayerProgress() {
 
 /** Versi ponsel: garis progres 2px di tepi atas bar, hanya penanda (tanpa thumb). */
 export function PlayerProgressLine() {
-  const { currentTime, duration } = useMusic();
+  const { currentTime, duration } = useMusicTime();
   const pct = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
   return (
     <span className={s.line} aria-hidden="true">

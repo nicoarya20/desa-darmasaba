@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { errorName, playAudio } from './audioPlayback';
 import { MUSIC_TEXT } from './music.text';
@@ -9,6 +9,7 @@ import type { Musik } from './music.types';
 import { hasAudio } from './playable';
 import { useAudioElement, type AudioHandlers } from './useAudioElement';
 import { useMusicLibraryLoader } from './useMusicLibraryLoader';
+import { usePlaybackTime } from './usePlaybackTime';
 import { usePlayQueue } from './usePlayQueue';
 import { useRecentlyPlayed } from './useRecentlyPlayed';
 import { DEFAULT_VOLUME, useVolume } from './useVolume';
@@ -30,21 +31,22 @@ const NOOP_HANDLERS: AudioHandlers = {
   onSourceReset: () => {},
 };
 
-/** Mesin pemutar Musik Desa: pustaka, lagu saat ini, transport, antrean, riwayat, dan volume. */
+/**
+ * Mesin pemutar Musik Desa: pustaka, lagu saat ini, transport, antrean, riwayat, dan volume (`music`),
+ * plus waktu pemutaran terpisah (`time`) supaya 'timeupdate' tidak me-render semua konsumen useMusic().
+ */
 export function useAudioEngine() {
   const { musikData, isLoading, loadError, loadMusikData } = useMusicLibraryLoader();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState<Musik | null>(null);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
   const [isRepeat, setIsRepeat] = useState(false);
 
   const handlersRef = useRef<AudioHandlers>(NOOP_HANDLERS);
-  const isSeekingRef = useRef(false);
   // Lagu yang file audionya gagal dimuat (404/rusak) di pustaka saat ini: dilewati next/prev & lompat otomatis.
   const brokenIdsRef = useRef(new Set<string>());
   const audioRef = useAudioElement(handlersRef, DEFAULT_VOLUME);
   const { volume, isMuted, setVolume, toggleMute } = useVolume(audioRef);
+  const { time, timeHandlers, resetTime, restart } = usePlaybackTime(audioRef);
 
   useEffect(() => {
     brokenIdsRef.current = new Set();
@@ -68,16 +70,14 @@ export function useAudioEngine() {
         return;
       }
 
-      isSeekingRef.current = false;
+      resetTime();
       setCurrentSong(song);
-      setCurrentTime(0);
-      setDuration(0);
       markPending(song.id);
       audio.src = song.audioFile.link;
       audio.load();
       playAudio(audio, reportPlayFailure);
     },
-    [audioRef, markPending, reportPlayFailure]
+    [audioRef, markPending, reportPlayFailure, resetTime]
   );
 
   const togglePlayPause = useCallback(() => {
@@ -102,12 +102,10 @@ export function useAudioEngine() {
   }, [currentOrderIndex, orderLength, isPlayableAt, songAt, playSong]);
 
   const playPrev = useCallback(() => {
-    const action = computePrevAction(currentOrderIndex, orderLength, currentTime, isPlayableAt);
+    const position = audioRef.current?.currentTime ?? 0;
+    const action = computePrevAction(currentOrderIndex, orderLength, position, isPlayableAt);
     if (action.type === 'restart') {
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        setCurrentTime(0);
-      }
+      restart();
       return;
     }
     const prevSong = songAt(action.index);
@@ -116,44 +114,14 @@ export function useAudioEngine() {
     } else if (orderLength > 0) {
       toast.info(MUSIC_TEXT.noPlayable);
     }
-  }, [audioRef, currentOrderIndex, orderLength, currentTime, isPlayableAt, songAt, playSong]);
-
-  // Visual-only update while dragging the seek slider (tidak menyentuh audio element)
-  const seekPreview = useCallback((time: number) => {
-    isSeekingRef.current = true;
-    setCurrentTime(time);
-  }, []);
-
-  // Commit posisi ke audio element; isSeekingRef di-reset oleh event native 'seeked'
-  const seek = useCallback(
-    (time: number) => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      // Tanpa sumber, 'seeked' tidak pernah datang: jangan biarkan progres membeku menunggu.
-      if (!audio.getAttribute('src')) {
-        isSeekingRef.current = false;
-        return;
-      }
-      isSeekingRef.current = true;
-      audio.currentTime = time;
-      setCurrentTime(time);
-    },
-    [audioRef]
-  );
+  }, [audioRef, currentOrderIndex, orderLength, isPlayableAt, songAt, playSong, restart]);
 
   const toggleRepeat = useCallback(() => setIsRepeat((prev) => !prev), []);
 
   // Penangan event audio selalu versi terbaru (useAudioElement membacanya lewat ref).
   useEffect(() => {
     handlersRef.current = {
-      onLoadedMetadata: (audio) => setDuration(Number.isFinite(audio.duration) ? Math.floor(audio.duration) : 0),
-      onTimeUpdate: (audio) => {
-        if (!isSeekingRef.current) setCurrentTime(Math.floor(audio.currentTime));
-      },
-      onSeeked: (audio) => {
-        isSeekingRef.current = false;
-        setCurrentTime(Math.floor(audio.currentTime));
-      },
+      ...timeHandlers,
       onPlay: () => setIsPlaying(true),
       // 'playing' (bukan 'play'): file rusak memicu 'play' tapi tidak pernah berbunyi, jadi tidak masuk riwayat.
       onPlaying: () => commitPending(),
@@ -178,36 +146,57 @@ export function useAudioEngine() {
         const next = songAt(computeNextIndex(currentOrderIndex, orderLength, isPlayableAt));
         if (next) playSong(next);
       },
-      onSourceReset: () => {
-        isSeekingRef.current = false;
-      },
     };
   });
 
-  return {
-    isPlaying,
-    currentSong,
-    musikData,
-    currentTime,
-    duration,
-    volume,
-    isMuted,
-    isRepeat,
-    isShuffle: queue.isShuffle,
-    isLoading,
-    loadError,
-    upNext: queue.upNext,
-    recentlyPlayed,
-    playSong,
-    togglePlayPause,
-    playNext,
-    playPrev,
-    seek,
-    seekPreview,
-    setVolume,
-    toggleMute,
-    toggleRepeat,
-    toggleShuffle: queue.toggleShuffle,
-    loadMusikData,
-  };
+  const { isShuffle, upNext, toggleShuffle } = queue;
+  // Nilai context stabil: konsumen useMusic() hanya render ulang bila salah satu nilai ini berubah.
+  const music = useMemo(
+    () => ({
+      isPlaying,
+      currentSong,
+      musikData,
+      volume,
+      isMuted,
+      isRepeat,
+      isShuffle,
+      isLoading,
+      loadError,
+      upNext,
+      recentlyPlayed,
+      playSong,
+      togglePlayPause,
+      playNext,
+      playPrev,
+      setVolume,
+      toggleMute,
+      toggleRepeat,
+      toggleShuffle,
+      loadMusikData,
+    }),
+    [
+      isPlaying,
+      currentSong,
+      musikData,
+      volume,
+      isMuted,
+      isRepeat,
+      isShuffle,
+      isLoading,
+      loadError,
+      upNext,
+      recentlyPlayed,
+      playSong,
+      togglePlayPause,
+      playNext,
+      playPrev,
+      setVolume,
+      toggleMute,
+      toggleRepeat,
+      toggleShuffle,
+      loadMusikData,
+    ]
+  );
+
+  return { music, time };
 }

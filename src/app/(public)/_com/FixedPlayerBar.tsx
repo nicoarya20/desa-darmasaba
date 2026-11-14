@@ -1,4 +1,4 @@
-import { useMusic } from '@/app/context/MusicContext';
+import { useMusic, useMusicTime } from '@/app/context/MusicContext';
 import { formatTime } from '@/app/context/music/format';
 import { canSeek } from '@/app/context/music/playable';
 import {
@@ -31,8 +31,6 @@ export default function FixedPlayerBar() {
   const {
     isPlaying,
     currentSong,
-    currentTime,
-    duration,
     volume,
     isMuted,
     isRepeat,
@@ -40,13 +38,12 @@ export default function FixedPlayerBar() {
     togglePlayPause,
     playNext,
     playPrev,
-    seek,
-    seekPreview,
     setVolume,
     toggleMute,
     toggleRepeat,
     toggleShuffle,
   } = useMusic();
+  const { currentTime, duration, seek, seekPreview } = useMusicTime();
 
   const [isMinimized, setIsMinimized] = useState(false);
   // Predikat sama dengan PlayerProgress aplikasi musik: lagu tanpa audio / durasi belum diketahui tidak bisa digeser.
