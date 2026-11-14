@@ -6,11 +6,15 @@ import { activeMusikNav } from './musik-nav.logic';
 import { MUSIK_APP_TEXT as T, MUSIK_NAV_ITEMS } from './musik-nav.meta';
 import s from './musik-app.module.css';
 
-/** Sidebar kiri desktop (>1068px): menu Musik/Jelajahi/Playlist dan slot daftar playlist admin. */
+/**
+ * Sidebar kiri desktop (>1068px): menu Musik/Jelajahi/Playlist dan slot daftar playlist admin.
+ * Wadahnya `div`, bukan `aside`: landmark cukup `nav` berlabel di dalamnya. Subjudul "Playlist" berupa teks
+ * biasa supaya tidak ada h2 sebelum h1 halaman (sidebar mendahului `main` di DOM).
+ */
 export function MusikSidebar() {
   const active = activeMusikNav(usePathname());
   return (
-    <aside className={s.sidebar}>
+    <div className={s.sidebar}>
       <nav aria-label={T.navLabel}>
         <ul className={s.navList}>
           {MUSIK_NAV_ITEMS.map(({ key, label, href, icon: Icon }) => (
@@ -23,13 +27,11 @@ export function MusikSidebar() {
           ))}
         </ul>
       </nav>
-      <section className={s.playlistSlot} aria-labelledby="musik-playlist-heading">
-        <h2 id="musik-playlist-heading" className={s.playlistHeading}>
-          {T.playlistHeading}
-        </h2>
+      <div className={s.playlistSlot}>
+        <p className={s.playlistHeading}>{T.playlistHeading}</p>
         <p className={s.playlistEmpty}>{T.playlistEmpty}</p>
-      </section>
-    </aside>
+      </div>
+    </div>
   );
 }
 

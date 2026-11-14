@@ -70,6 +70,12 @@ describe('MusikSidebar', () => {
     expect(out).not.toMatch(/buat playlist/i);
   });
 
+  it('tanpa landmark aside & tanpa heading (h1 halaman jadi heading pertama); nav tetap berlabel', () => {
+    const html = render(<MusikSidebar />);
+    expect(html).not.toMatch(/<aside|<section|<h[1-6]/);
+    expect(html).toContain(`<nav aria-label="${T.navLabel}"`);
+  });
+
   it('di luar menu aplikasi tidak ada menu aktif', () => {
     nav.pathname = '/musik/musik-desa/lain';
     expect(currentLinks(render(<MusikSidebar />))).toEqual([]);
@@ -138,7 +144,7 @@ describe('MusikApp', () => {
         <h1>Musik Desa</h1>
       </MusikApp>,
     );
-    expect(html).toMatch(/<aside[^>]*class="[^"]*sidebar/);
+    expect(html).toMatch(/<div[^>]*class="[^"]*sidebar/);
     expect(html).toMatch(/<nav[^>]*class="[^"]*pills/);
     expect(html).toContain('role="search"');
     expect(html).toMatch(/<main[^>]*><h1>Musik Desa<\/h1><\/main>/);
