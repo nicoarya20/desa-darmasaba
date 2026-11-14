@@ -1,0 +1,52 @@
+.bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.bars span {
+  flex: 1;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--m-accent, #5da9d8);
+  transform-origin: bottom;
+  transform: scaleY(0.4);
+}
+
+.bars span:nth-child(2) {
+  transform: scaleY(0.8);
+}
+
+.bars span:nth-child(3) {
+  transform: scaleY(0.55);
+}
+
+.bars[data-playing='true'] span {
+  animation: bounce 900ms ease-in-out infinite alternate;
+}
+
+.bars[data-playing='true'] span:nth-child(2) {
+  animation-delay: -300ms;
+}
+
+.bars[data-playing='true'] span:nth-child(3) {
+  animation-delay: -600ms;
+}
+
+@keyframes bounce {
+  from {
+    transform: scaleY(0.25);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bars[data-playing='true'] span {
+    animation: none;
+  }
+}

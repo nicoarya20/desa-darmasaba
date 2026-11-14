@@ -1,0 +1,88 @@
+'use client';
+
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { Link } from 'next-view-transitions';
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { MUSIK_TEXT as T } from './musik-library.text';
+import s from './shelf-row.module.css';
+
+type Props = {
+  title: string;
+  /** Tujuan "Lihat semua"; tanpa href → tautan tidak dirender. */
+  href?: string;
+  /** 'scroll' = rak gulir horizontal + panah; 'grid' = kisi baris lagu. */
+  layout: 'scroll' | 'grid';
+  /** Isi rak berupa elemen `<li>`. */
+  children: ReactNode;
+};
+
+/** Selisih px yang dianggap sudah di ujung (pembulatan subpiksel di layar 2x). */
+const EDGE_TOLERANCE = 2;
+/** Satu klik panah menggeser 90% lebar rak supaya kartu terakhir tetap terlihat sebagai jangkar. */
+const PAGE_RATIO = 0.9;
+
+/** Rak berjudul (h2) dengan "Lihat semua"; rak horizontal punya panah ‹ › yang nonaktif di ujung. */
+export function ShelfRow({ title, href, layout, children }: Props) {
+  const headingId = useId();
+  const listRef = useRef<HTMLUListElement>(null);
+  const [edges, setEdges] = useState({ start: true, end: true });
+
+  const measure = useCallback(() => {
+    const el = listRef.current;
+    if (!el) return;
+    setEdges({
+      start: el.scrollLeft <= EDGE_TOLERANCE,
+      end: el.scrollLeft + el.clientWidth >= el.scrollWidth - EDGE_TOLERANCE,
+    });
+  }, []);
+
+  useEffect(() => {
+    const el = listRef.current;
+    if (layout !== 'scroll' || !el) return;
+    measure();
+    el.addEventListener('scroll', measure, { passive: true });
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => {
+      el.removeEventListener('scroll', measure);
+      observer.disconnect();
+    };
+  }, [layout, measure, children]);
+
+  const page = (direction: -1 | 1) => {
+    const el = listRef.current;
+    if (!el) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollBy({ left: direction * el.clientWidth * PAGE_RATIO, behavior: reduce ? 'auto' : 'smooth' });
+  };
+
+  return (
+    <section className={s.shelf} data-layout={layout} aria-labelledby={headingId}>
+      <div className={s.head}>
+        <h2 id={headingId} className={s.title}>
+          {title}
+        </h2>
+        <div className={s.tools}>
+          {href ? (
+            <Link href={href} className={s.more}>
+              {T.lihatSemua}
+            </Link>
+          ) : null}
+          {layout === 'scroll' ? (
+            <>
+              <button type="button" className={s.arrow} aria-label={T.geserKiri} disabled={edges.start} onClick={() => page(-1)}>
+                <IconChevronLeft size={18} aria-hidden="true" />
+              </button>
+              <button type="button" className={s.arrow} aria-label={T.geserKanan} disabled={edges.end} onClick={() => page(1)}>
+                <IconChevronRight size={18} aria-hidden="true" />
+              </button>
+            </>
+          ) : null}
+        </div>
+      </div>
+      <ul ref={listRef} className={layout === 'scroll' ? s.scroll : s.grid}>
+        {children}
+      </ul>
+    </section>
+  );
+}
