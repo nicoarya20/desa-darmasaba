@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Kerangka aplikasi Musik Desa: sidebar kiri, pil tab, kolom cari, dan pertukaran bar pemutar di shell situs.
 // jsdom rusak di repo ini → markup diuji via renderToStaticMarkup (efek & media query tidak jalan di server).
-import { MantineProvider } from '@mantine/core';
+import { createTheme, MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -33,7 +33,7 @@ vi.mock('@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel', () => 
 }));
 
 import { DarmasabaShell } from '@/app/(public)/_com/DarmasabaShell';
-import { MusikApp } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikApp';
+import { MusikApp, QueueDrawer } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikApp';
 import { MusikNavPills, MusikSidebar } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikSidebar';
 import { MusikTopbar } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikTopbar';
 import { MUSIK_APP_TEXT as T } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.meta';
@@ -136,5 +136,35 @@ describe('MusikApp', () => {
     const html = render(<MusikApp>isi</MusikApp>);
     expect(html).toContain('data-queue="false"');
     expect(html).not.toContain('queue-panel');
+  });
+});
+
+describe('QueueDrawer', () => {
+  // Portal Mantine baru terpasang setelah mount → di server Drawer dirender di tempat.
+  const theme = createTheme({ components: { DrawerRoot: { defaultProps: { withinPortal: false } } } });
+  const renderDrawer = (sheet: boolean) =>
+    renderToStaticMarkup(
+      <MantineProvider theme={theme}>
+        <QueueDrawer opened sheet={sheet} onClose={() => {}} />
+      </MantineProvider>,
+    ).replace(/<style[\s\S]*?<\/style>/g, '');
+  const classOf = (html: string, marker: string) => html.match(new RegExp(`class="([^"]*${marker}[^"]*)"`))?.[1] ?? '';
+
+  it.each([false, true])('latar hanya di elemen content, bukan inner selebar layar (sheet=%s)', (sheet) => {
+    const html = renderDrawer(sheet);
+    expect(html).toContain('queue-panel');
+    expect(classOf(html, 'mantine-Drawer-content')).toMatch(/drawerContent/);
+    expect(classOf(html, 'mantine-Drawer-inner')).toContain('mantine-Drawer-inner');
+    expect(classOf(html, 'mantine-Drawer-inner')).not.toMatch(/drawerContent|drawerSheet/);
+    expect(classOf(html, 'mantine-Drawer-body')).toMatch(/drawerBody/);
+  });
+
+  it('lembar bawah diberi kelas sudut bulat, Drawer kanan tidak', () => {
+    expect(classOf(renderDrawer(true), 'mantine-Drawer-content')).toMatch(/drawerSheet/);
+    expect(classOf(renderDrawer(false), 'mantine-Drawer-content')).not.toMatch(/drawerSheet/);
+  });
+
+  it('dialog berlabel Antrean', () => {
+    expect(renderDrawer(false)).toMatch(/role="dialog"[^>]*aria-label="Antrean"|aria-label="Antrean"[^>]*role="dialog"/);
   });
 });

@@ -46,24 +46,35 @@ export function MusikAppFrame({ children }: { children: ReactNode }) {
           <QueuePanel onClose={closeQueue} />
         </aside>
       )}
-      <Drawer.Root
-        opened={queueOpen && !isColumn}
-        onClose={closeQueue}
-        position={isSheet ? 'bottom' : 'right'}
-        size={isSheet ? '85dvh' : 'calc(var(--m-right-w) + 16px)'}
-        className={s.tokens}
-      >
-        <Drawer.Overlay />
-        <Drawer.Content
-          className={isSheet ? `${s.drawerContent} ${s.drawerSheet}` : s.drawerContent}
-          aria-label={T.queueLabel}
-        >
-          <Drawer.Body className={s.drawerBody}>
-            <QueuePanel onClose={closeQueue} />
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Root>
+      <QueueDrawer opened={queueOpen && !isColumn} sheet={isSheet} onClose={closeQueue} />
       <NowPlayingBar />
     </div>
+  );
+}
+
+type QueueDrawerProps = { opened: boolean; sheet: boolean; onClose: () => void };
+
+/**
+ * Antrean sebagai Drawer (<1280px): kanan, atau lembar bawah di ≤1068px. Kelas latar dipasang lewat
+ * `classNames.content`, BUKAN `className` di Drawer.Content: Mantine meneruskan className itu juga ke
+ * elemen `inner` (fixed selebar layar) sehingga latar menutupi overlay & seluruh halaman.
+ */
+export function QueueDrawer({ opened, sheet, onClose }: QueueDrawerProps) {
+  return (
+    <Drawer.Root
+      opened={opened}
+      onClose={onClose}
+      position={sheet ? 'bottom' : 'right'}
+      size={sheet ? '85dvh' : 'calc(var(--m-right-w) + 16px)'}
+      className={s.tokens}
+      classNames={{ content: sheet ? `${s.drawerContent} ${s.drawerSheet}` : s.drawerContent, body: s.drawerBody }}
+    >
+      <Drawer.Overlay />
+      <Drawer.Content aria-label={T.queueLabel}>
+        <Drawer.Body>
+          <QueuePanel onClose={onClose} />
+        </Drawer.Body>
+      </Drawer.Content>
+    </Drawer.Root>
   );
 }
