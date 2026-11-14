@@ -9,6 +9,7 @@ vi.mock('@/lib/api-fetch', () => ({
 }));
 
 import {
+  DESA_KATA_KUNCI,
   GAJI_MIN_WAJAR,
   parseGaji,
   tayangMsOf,
@@ -100,10 +101,10 @@ describe('toLowongan', () => {
       id: 'l1',
       posisi: 'Barista',
       pemberiKerja: 'Warung Sari',
-      pemberiKey: 'warung sari',
       tipe: 'Full Time',
       tipeKey: 'full time',
       lokasi: 'Jl. Raya Darmasaba No. 1',
+      diDesa: true,
       gaji: 2500000,
       ringkasan: 'Meracik kopi untuk pelanggan.',
       tayangMs: Date.parse('2026-11-03T02:00:00.000Z'),
@@ -128,11 +129,25 @@ describe('toLowongan', () => {
     expect(out.lokasi).toBeNull();
   });
 
-  it('pemberi kerja di-trim; kunci sama untuk beda huruf besar dan spasi', () => {
-    const a = toLowongan(api({ namaPerusahaan: '  Warung  SARI ' }));
-    expect(a.pemberiKerja).toBe('Warung  SARI');
-    expect(a.pemberiKey).toBe('warung sari');
-    expect(a.pemberiKey).toBe(toLowongan(api()).pemberiKey);
+  it('pemberi kerja hanya di-trim; tidak ada kunci pemberi lagi', () => {
+    const out = toLowongan(api({ namaPerusahaan: '  Warung  SARI ' }));
+    expect(out.pemberiKerja).toBe('Warung  SARI');
+    expect(out).not.toHaveProperty('pemberiKey');
+  });
+
+  it('diDesa: lokasi memuat kata Darmasaba, tanpa beda huruf besar dan di posisi mana pun', () => {
+    expect(DESA_KATA_KUNCI).toBe('darmasaba');
+    expect(toLowongan(api({ lokasi: 'Jl. Raya Darmasaba No. 1' })).diDesa).toBe(true);
+    expect(toLowongan(api({ lokasi: 'JL. RAYA DARMASABA' })).diDesa).toBe(true);
+    expect(toLowongan(api({ lokasi: 'darmasaba, Abiansemal, Badung' })).diDesa).toBe(true);
+    expect(toLowongan(api({ lokasi: '  Br. Dinas Tengah, Desa Darmasaba ' })).diDesa).toBe(true);
+  });
+
+  it('diDesa: alamat tanpa kata Darmasaba atau kosong → false (keterbatasan tebakan dari teks alamat)', () => {
+    expect(toLowongan(api({ lokasi: 'Jl. Sunset Road, Kuta' })).diDesa).toBe(false);
+    expect(toLowongan(api({ lokasi: 'Toko Bangunan KBSM Jl. Antasura No.22' })).diDesa).toBe(false);
+    expect(toLowongan(api({ lokasi: '' })).diDesa).toBe(false);
+    expect(toLowongan(api({ lokasi: '   ' })).diDesa).toBe(false);
   });
 
   it('gaji teks bebas → angka atau null', () => {
@@ -158,7 +173,7 @@ describe('toLowongan', () => {
     const raw = { ...api(), notelp: '081234567890', kualifikasi: '<p>SMA</p>', isActive: true };
     const out = toLowongan(raw);
     expect(Object.keys(out).sort()).toEqual(
-      ['gaji', 'id', 'lokasi', 'pemberiKerja', 'pemberiKey', 'posisi', 'ringkasan', 'tayangMs', 'tipe', 'tipeKey'].sort(),
+      ['diDesa', 'gaji', 'id', 'lokasi', 'pemberiKerja', 'posisi', 'ringkasan', 'tayangMs', 'tipe', 'tipeKey'].sort(),
     );
     expect(JSON.stringify(out)).not.toContain('081234567890');
   });
@@ -213,7 +228,7 @@ describe('lowongan.source', () => {
     expect(lowonganGet).toHaveBeenCalledTimes(1);
     expect(lowonganGet).toHaveBeenCalledWith({ query: { page: 1, limit: LOWONGAN_LIST_LIMIT } });
     expect(out.map((l) => l.id)).toEqual(['l1', 'l2']);
-    expect(out[0]).toMatchObject({ pemberiKey: 'warung sari', gaji: 2500000 });
+    expect(out[0]).toMatchObject({ pemberiKerja: 'Warung Sari', diDesa: true, gaji: 2500000 });
     expect(out[1].gaji).toBeNull();
   });
 

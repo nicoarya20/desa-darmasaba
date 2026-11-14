@@ -25,10 +25,10 @@ const lowongan = (over: Partial<Lowongan> = {}): Lowongan => ({
   id: 'l1',
   posisi: 'Barista',
   pemberiKerja: 'Warung Sari',
-  pemberiKey: 'warung sari',
   tipe: 'Full Time',
   tipeKey: 'full time',
   lokasi: 'Jl. Raya Darmasaba No. 1',
+  diDesa: true,
   gaji: 2500000,
   ringkasan: 'Meracik kopi untuk pelanggan.',
   tayangMs: Date.parse('2026-11-03T02:00:00.000Z'),
@@ -108,11 +108,11 @@ describe('LowonganCard', () => {
   });
 
   it('pemberi kerja tanpa huruf → ikon gedung di ubin; kosong → baris pemberi kerja tidak dirender', () => {
-    const angka = render(<LowonganCard lowongan={lowongan({ pemberiKerja: '123', pemberiKey: '123' })} />);
+    const angka = render(<LowonganCard lowongan={lowongan({ pemberiKerja: '123' })} />);
     expect(angka).toMatch(new RegExp(`<div class="${c.logo}" aria-hidden="true"><svg`));
     expect(angka).toContain(`class="${c.employer}"`);
 
-    const kosong = render(<LowonganCard lowongan={lowongan({ pemberiKerja: '', pemberiKey: '' })} />);
+    const kosong = render(<LowonganCard lowongan={lowongan({ pemberiKerja: '' })} />);
     expect(kosong).toMatch(new RegExp(`<div class="${c.logo}" aria-hidden="true"><svg`));
     expect(kosong).not.toContain(`class="${c.employer}"`);
   });
