@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.267] - 2026-11-14
+### Added
+- **Jenna, asisten AI di website publik.** Pengunjung bisa bertanya lewat tombol "Tanya Jenna" di pojok kanan bawah setiap halaman publik. Jawaban tampil bertahap seperti sedang diketik, lengkap dengan daftar tautan sumber ke halaman website desa. Tombol hanya muncul bila Jenna diaktifkan di `/dev/jenna` dan kuota token harian lebih dari 0.
+  - **Sumber pengetahuan**: hanya data publik website desa yang masuk daftar izin (profil, layanan, berita, pengumuman, agenda, APBDes, potensi, kontak darurat, dan sejenisnya), mengikuti menu yang sedang ditampilkan. Data pribadi warga (siswa, pengajar, pengajuan, pengaduan, data kesehatan perorangan) tidak pernah dibaca Jenna.
+  - **Kontak**: Jenna tidak menyebut email atau WhatsApp kantor desa; ia memberi jam layanan, alamat umum, dan tautan ke halaman kontak/PPID. Kontak organisasi publik (kontak darurat, polsek, puskesmas) tetap boleh disebut.
+  - **Perlindungan dari spam dan penyalahgunaan**: hanya menerima permintaan dari website desa sendiri, satu pesan berjalan per pengunjung, batas pesan per menit, kuota pesan harian per sesi pengunjung dan per IP, serta batas token harian untuk seluruh website. Bila batas token habis, Jenna berhenti menjawab sampai besok.
+  - **Data pribadi**: NIK/nomor KK, nomor telepon, dan email yang diketik pengunjung disamarkan sebelum dikirim ke penyedia AI dan sebelum disimpan. Jawaban Jenna disaring: hanya tautan resmi website desa dan kontak publik yang lolos.
+  - **Riwayat percakapan** disimpan dalam bentuk tersamar; sesi dan IP pengunjung hanya disimpan sebagai hash. Percakapan yang lebih lama dari masa simpan dihapus otomatis setiap hari.
+- **Halaman Jenna › Percakapan di Developer Console** (`/dev/jenna/percakapan`): pemakaian hari ini (pesan, token dibanding kuota, error), daftar percakapan tersamar, filter percakapan dari pengunjung yang sama, isi percakapan, dan tombol hapus (mis. bila warga meminta datanya dihapus).
+
+### Changed
+- Keterangan di Jenna › Batas Pemakaian diperjelas: batas pesan dihitung per sesi pengunjung dan per IP, dan kuota token harian 0 berarti Jenna **tidak aktif** di website publik (sebelumnya tertulis "tanpa batas"). Kartu status kini menyebut alasan bila tombol Jenna belum tampil di website.
+
+### Operator
+- Jalankan migrasi `20261113170000_add_jenna_conversation` (otomatis saat container start). Murni menambah 2 tabel (`JennaConversation`, `JennaMessage`); data lain tidak diubah.
+- Tidak ada env baru. Setelah deploy, buka `/dev/jenna`: pastikan Provider lolos tes koneksi, isi kuota token harian lebih dari 0 dan masa simpan percakapan 30 hari di Batas Pemakaian, lalu aktifkan Jenna di Umum.
+- Mengganti `BETTER_AUTH_SECRET` membuat hash sesi/IP lama tidak cocok lagi, sehingga hitungan kuota harian pengunjung mulai dari nol.
+- Batas pesan per menit disimpan di memori server, jadi berlaku per container (deploy saat ini 1 container).
+- Temuan keamanan di luar Jenna (`/api/tts`, `/api/subscribe`, CORS, security headers) dicatat di `docs/BACKEND-TODO.md` dan belum dikerjakan di rilis ini.
+- Alasan & detail: `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
 ## [0.1.266] - 2026-11-13
 ### Added
 - **Env baru `DEVELOPER_EMAIL`** (opsional, dipisah koma). Email yang terdaftar otomatis menjadi DEVELOPER (roleId "0") saat login pertama, atau dinaikkan ke DEVELOPER saat login berikutnya bila akunnya sudah ada. Bila email ada di `DEVELOPER_EMAIL` dan `SUPER_ADMIN_EMAIL`, DEVELOPER yang dipakai.
