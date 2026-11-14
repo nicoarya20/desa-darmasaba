@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Aturan pustaka Musik Desa (audit 2026-11-14): arti klik lagu, urutan rak, kunci URL, teks tepi.
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Musik } from '@/app/context/MusicContext';
@@ -163,5 +163,25 @@ describe('CSS pustaka: target sentuh ≤734px', () => {
     const bottom = Number(rule(src, '.pills').match(/padding:\s*0 \d+px (\d+)px/)?.[1]);
     expect(pad).toBeGreaterThanOrEqual((44 - pill) / 2);
     expect(bottom).toBeGreaterThanOrEqual((44 - pill) / 2);
+  });
+});
+
+// Regresi 19788692: sr-only (absolute) di kartu rak lolos dari overflow rak → dokumen HP 988px, bisa digeser.
+describe('CSS pustaka: rak gulir memotong anak absolute', () => {
+  const dir = path.join(process.cwd(), 'src/app/(public)/(pages)/musik/musik-desa/_com/library');
+  const css = (f: string) => readFileSync(path.join(dir, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const rules = (src: string) => [...src.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => [m[1].trim(), m[2]] as const);
+
+  it('setiap aturan ber-overflow-x auto/scroll juga position: relative (containing block anak absolute)', () => {
+    const scrollers = readdirSync(dir)
+      .filter((f) => f.endsWith('.module.css'))
+      .flatMap((f) => rules(css(f)).filter(([, body]) => /overflow-x:\s*(auto|scroll)/.test(body)).map(([sel, body]) => ({ f, sel, body })));
+    expect(scrollers.map((x) => x.sel).sort()).toEqual(['.artists', '.pills', '.scroll']);
+    for (const { f, sel, body } of scrollers) expect(`${f} ${sel}: ${/position:\s*relative/.test(body)}`).toBe(`${f} ${sel}: true`);
+  });
+
+  it('kartu lagu (berisi sr-only) position: relative', () => {
+    const card = rules(css('track-card.module.css')).find(([sel]) => sel === '.card')?.[1] ?? '';
+    expect(card).toMatch(/position:\s*relative/);
   });
 });

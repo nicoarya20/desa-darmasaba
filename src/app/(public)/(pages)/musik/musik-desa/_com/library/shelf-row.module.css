@@ -70,7 +70,10 @@
   list-style: none;
 }
 
+/* position: relative → rak menjadi containing block anak absolute (sr-only, ::before), sehingga ikut terpotong
+   overflow rak. Tanpa ini anak absolute di kartu yang tergulir ke kanan melebarkan dokumen di HP (regresi 19788692). */
 .scroll {
+  position: relative;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;

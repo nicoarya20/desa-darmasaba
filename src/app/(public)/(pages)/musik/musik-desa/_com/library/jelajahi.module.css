@@ -1,4 +1,7 @@
+/* Baris gulir (.pills, .artists) diberi position: relative supaya anak absolute ikut terpotong overflow-nya
+   (lihat .scroll di shelf-row.module.css). */
 .pills {
+  position: relative;
   display: flex;
   gap: 8px;
   margin: 0 -16px 24px;
@@ -40,6 +43,7 @@
 }
 
 .artists {
+  position: relative;
   display: flex;
   gap: 20px;
   margin: 0 -16px 40px;
