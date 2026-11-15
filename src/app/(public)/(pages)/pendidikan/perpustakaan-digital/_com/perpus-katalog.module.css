@@ -1,0 +1,130 @@
+/*
+ * Kerangka katalog Perpustakaan Digital: latar putih, tepi --edge-gutter, isi maks 1280px; kepala dari
+ * kabar-list.module.css (KabarListHeader), baris alat (jumlah + Urutkan), grid kartu buku 2:3, kerangka memuat.
+ * Breakpoint apple.com: ≤734px (mobile).
+ */
+.page {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --subtle: #86868b;
+  --tile: #f5f5f7;
+  --line: #d2d2d7;
+  /* Wajib untuk KabarListHeader: rel pil di mobile melebar ke tepi layar memakai --gutter leluhur. */
+  --gutter: var(--edge-gutter);
+  background: #fff;
+  color: var(--ink);
+  padding: 40px var(--gutter) 96px;
+}
+
+.inner {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+/* ---------- Baris alat ---------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 28px;
+}
+
+.count {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+.countOf {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.urut {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---------- Grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 40px 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  min-width: 0;
+}
+
+.item > * {
+  flex: 1;
+}
+
+/* ---------- Kerangka ---------- */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeletonCover,
+.skeletonLine {
+  background: var(--tile);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonCover {
+  aspect-ratio: 2 / 3;
+  margin-bottom: 4px;
+  border-radius: 6px;
+}
+
+.skeletonLine {
+  height: 14px;
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonCover,
+  .skeletonLine {
+    animation: none;
+  }
+}
+
+@media (max-width: 734px) {
+  .page {
+    padding-top: 24px;
+  }
+
+  .toolbar {
+    margin-bottom: 20px;
+  }
+
+  .count {
+    font-size: 19px;
+  }
+
+  .urut {
+    margin-left: auto;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 16px;
+  }
+}

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.279] - 2026-11-15
+### Changed
+- **Ketujuh halaman menu Pendidikan dirombak** dengan latar putih dan gaya yang sama seperti halaman publik lain yang sudah diperbarui. Judul tiap halaman kini sama dengan nama menunya.
+- **Program Pendidikan Anak, Bimbingan Belajar Desa, dan Pendidikan Non Formal** tampil sebagai bagian berjudul yang mudah dibaca, tanpa kartu dan tooltip. Butir "Istilah: keterangan" tampil dengan istilah tebal. Bimbingan Belajar menampilkan lokasi dan jadwal di panel ringkas di bagian atas. Pendidikan Non Formal menampilkan jenis program sebagai daftar bernomor, dengan urutan Tujuan Program, Jenis Program, lalu Tempat Kegiatan. Bila sebagian isi gagal dimuat, bagian lain tetap tampil, dan halaman tidak lagi memuat tanpa akhir.
+- **Info Sekolah** kini satu halaman: angka lembaga, siswa, dan pengajar, sebaran lembaga per jenjang, serta daftar sekolah yang dikelompokkan per jenjang (PAUD, TK, SD, SMP, SMA, SMK, lalu jenjang lain). Daftar pengajar tampil per baris dengan kolom cari dan pilihan jenjang. Bila data gagal dimuat, halaman menampilkan pesan dan tombol "Coba lagi", bukan angka nol.
+- **Beasiswa Desa** kini satu halaman berisi jumlah pendaftar, dana tersalurkan, tahun ajaran, keunggulan program, syarat, dan alur seleksi. Formulir pendaftaran dicek sebelum dikirim (NIK 16 digit, nomor HP, tanggal lahir), dan galat dari server tampil di dalam formulir tanpa menghapus isian. Halaman "Pelajari Lebih Lanjut" digabung ke halaman ini; alamat lamanya diarahkan ke bagian Syarat.
+- **Perpustakaan Digital** kini katalog bersampul dengan pilihan kategori, kolom cari, dan urutan. Tiap buku punya halaman detail berisi deskripsi, langkah "Cara meminjam", dan buku lain di kategori yang sama. Formulir pinjam memuat catatan privasi, tanggal ambil hari ini sampai 14 hari ke depan, batas kembali 4 hari, dan layar konfirmasi setelah terkirim. Alamat kategori dan buku yang lama tetap bisa dibuka.
+- **Data Pendidikan** menampilkan penduduk menurut pendidikan terakhir sebagai daftar batang yang langsung bisa dibaca: jumlah orang dan persentase per jenjang, total tercatat, dan tanggal data terakhir diperbarui. Jumlah yang belum diisi berupa angka ditandai "Belum diisi" dan tidak ikut dihitung.
+
+### Removed
+- Daftar nama siswa tidak lagi ditampilkan di Info Sekolah untuk melindungi data anak; hanya jumlahnya yang tampil. Alamat `/pendidikan/info-sekolah/siswa` dan `/lembaga` diarahkan ke halaman Info Sekolah.
+- Beasiswa Desa: testimoni, angka "90%", dan linimasa bertanggal tetap (2025) dihapus karena bukan data dari pemerintah desa.
+
+### Fixed
+- **Keamanan:** isi teks dari CMS di halaman Pendidikan dibersihkan sebelum ditampilkan. Catatan di formulir pinjam buku dikirim sebagai teks biasa, jadi kode yang diketik di catatan tidak ikut berjalan.
+- Keunggulan Beasiswa Desa tampil semua. Sebelumnya paginasinya rusak sehingga sebagian tidak terlihat.
+
 ## [0.1.277] - 2026-11-14
 ### Added
 - **Jenna, asisten AI di website publik.** Pengunjung bisa bertanya lewat tombol "Tanya Jenna" di pojok kanan bawah setiap halaman publik (termasuk aplikasi Musik Desa). Jawaban tampil bertahap seperti sedang diketik, lengkap dengan daftar tautan sumber ke halaman website desa. Tombol hanya muncul bila Jenna diaktifkan di `/dev/jenna` dan kuota token harian lebih dari 0.

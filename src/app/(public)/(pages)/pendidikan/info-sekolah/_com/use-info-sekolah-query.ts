@@ -1,12 +1,12 @@
 'use client';
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
 import { parsePage } from "@/app/(public)/_com/kabar-list/kabar-list.logic";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { buildListHref, type InfoSekolahQuery } from "./info-sekolah.logic";
 
 /**
- * Jenjang, kata kunci, dan halaman tabel Info Sekolah sebagai satu-satunya sumber kebenaran di URL
- * (`?jenjang=&search=&page=`). Mengubah jenjang/kata kunci selalu kembali ke halaman 1.
+ * Jenjang, kata kunci, dan halaman daftar pengajar sebagai satu-satunya sumber kebenaran di URL
+ * (`?jenjang=&search=&page=`). Kata kunci baru → halaman 1 (`replace`); pindah halaman → `push` (bisa kembali).
+ * Jenjang diganti lewat tautan pil (`jenjangTabs`).
  */
 export function useInfoSekolahQuery() {
   const router = useRouter();
@@ -20,15 +20,9 @@ export function useInfoSekolahQuery() {
   };
   const { jenjang, search } = query;
 
-  const replace = useCallback(
-    (next: Partial<InfoSekolahQuery>) => router.replace(buildListHref(pathname, { jenjang, search, ...next }), { scroll: false }),
-    [router, pathname, jenjang, search],
-  );
-
   return {
     query,
-    setJenjang: (next: string) => replace({ jenjang: next, page: 1 }),
-    setSearch: (next: string) => replace({ search: next, page: 1 }),
-    setPage: (next: number) => replace({ page: next }),
+    setSearch: (next: string) => router.replace(buildListHref(pathname, { jenjang, search: next }), { scroll: false }),
+    setPage: (next: number) => router.push(buildListHref(pathname, { jenjang, search, page: next })),
   };
 }

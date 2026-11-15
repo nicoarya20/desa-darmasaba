@@ -1,0 +1,391 @@
+/*
+ * Halaman Beasiswa Desa — kerangka gaya Layanan (latar putih, tepi --edge-gutter, judul brand rata kiri),
+ * ubin #f5f5f7 radius 18px tanpa border/bayangan (kartu APBDes, langkah OSS).
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
+ */
+.page {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --subtle: #86868b;
+  --tile: #f5f5f7;
+  --radius: 18px;
+  --gutter: var(--edge-gutter);
+  padding: 40px var(--gutter) 120px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 96px;
+}
+
+/* ---------- Kepala ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 64px;
+}
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.title {
+  margin: 8px 0 0;
+  color: var(--brand);
+  font-size: 48px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.lead {
+  max-width: 560px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.pill,
+.pillSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 980px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.pill {
+  background: var(--brand);
+  color: #fff;
+}
+
+.pillSecondary {
+  background: var(--tile);
+  color: var(--brand);
+}
+
+.pill:focus-visible,
+.pillSecondary:focus-visible,
+.retry:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pill:hover {
+    background: var(--brand-hover);
+  }
+
+  .pillSecondary:hover {
+    background: #e8e8ed;
+  }
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 599 / 413;
+  border-radius: var(--radius);
+  background: #e8e8ed;
+  object-fit: cover;
+}
+
+/* ---------- Bagian ---------- */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  scroll-margin-top: 72px;
+}
+
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 32px;
+  line-height: 1.125;
+  font-weight: 700;
+  letter-spacing: 0.004em;
+}
+
+.sectionLead {
+  max-width: 680px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+.subTitle {
+  margin: 24px 0 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+}
+
+/* ---------- Ubin (angka, keunggulan, syarat, alur) ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gridSteps {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  margin: 0;
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.tileIcon {
+  color: var(--brand);
+  margin-bottom: 4px;
+}
+
+.tileLabel {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.tileValue {
+  margin: 0;
+  color: var(--brand);
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tileValueMuted {
+  color: var(--subtle);
+  font-size: 24px;
+}
+
+.tileNote,
+.tileText {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.47;
+}
+
+.tileText {
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.tileTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.24;
+  font-weight: 600;
+}
+
+.stepNumber {
+  color: var(--brand);
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  margin: 0;
+  color: var(--subtle);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---------- Memuat / kosong / galat ---------- */
+.skeleton {
+  min-height: 160px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.message {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin: 0;
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.messageText {
+  margin: 0;
+}
+
+.retry {
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--brand);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ---------- Penutup ---------- */
+.closing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 40px;
+  padding: 40px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.closingTitle {
+  margin: 0 0 6px;
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 700;
+}
+
+.closingText {
+  max-width: 560px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+@media (max-width: 1068px) {
+  .hero {
+    gap: 40px;
+  }
+
+  .grid,
+  .gridSteps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 734px) {
+  .page {
+    padding: 24px var(--gutter) 88px;
+  }
+
+  .inner {
+    gap: 72px;
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .title {
+    font-size: 32px;
+    line-height: 1.125;
+  }
+
+  .lead {
+    font-size: 17px;
+  }
+
+  .actions,
+  .actions > * {
+    width: 100%;
+  }
+
+  .sectionTitle {
+    font-size: 24px;
+    line-height: 1.17;
+  }
+
+  .subTitle {
+    font-size: 21px;
+  }
+
+  .grid,
+  .gridSteps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .tile {
+    padding: 24px;
+  }
+
+  .tileValue {
+    font-size: 32px;
+  }
+
+  .closing {
+    padding: 28px 24px;
+  }
+
+  .closing > button {
+    width: 100%;
+  }
+}

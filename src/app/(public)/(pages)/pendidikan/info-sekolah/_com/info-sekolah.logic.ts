@@ -1,13 +1,11 @@
-/** Helper murni halaman publik Info Sekolah: URL daftar, opsi filter jenjang, dan pesan kosong. */
+/** Helper murni halaman publik Info Sekolah: URL daftar pengajar, pil jenjang, pesan kosong, ringkasan per jenjang. */
 import { compareJenjang } from "@/lib/jenjang-pendidikan-urutan";
 
 export const INFO_SEKOLAH_PATH = "/pendidikan/info-sekolah";
+export const PENGAJAR_PATH = `${INFO_SEKOLAH_PATH}/pengajar`;
 
-/** Ukuran satu halaman tabel Lembaga/Siswa/Pengajar. */
-export const INFO_SEKOLAH_PAGE_SIZE = 10;
-
-/** Jeda ketik sebelum kata kunci dikirim ke URL (ms). */
-export const INFO_SEKOLAH_SEARCH_DEBOUNCE_MS = 500;
+/** `id` panel "Sekolah per jenjang"; tujuan `/lembaga` lama (`#lembaga`). */
+export const LEMBAGA_ANCHOR = "lembaga";
 
 export type InfoSekolahQuery = { jenjang: string; search: string; page: number };
 
@@ -23,24 +21,113 @@ export function buildListHref(path: string, query: Partial<InfoSekolahQuery> = {
   return qs ? `${path}?${qs}` : path;
 }
 
-export type JenjangOption = { value: string; label: string };
+/** Satu pil jenjang di kepala daftar (bentuk `KabarListTab`). */
+export type JenjangTab = { key: string; label: string; href: string; active: boolean };
 
 /**
- * Opsi `Select` jenjang dari nama jenjang di DB (value = huruf kecil, sama dengan URL), diurutkan menurut `JENJANG_ORDER` (`@/lib/jenjang-pendidikan-urutan`).
- * Jenjang aktif yang belum/tidak ada di daftar tetap dimunculkan agar `Select` tidak kosong saat memuat.
+ * Pil "Semua" + satu pil per jenjang (key huruf kecil = nilai URL), urut `JENJANG_ORDER` lalu A–Z.
+ * Jenjang aktif yang belum/tidak ada di daftar tetap dimunculkan agar pilihan di URL selalu terlihat.
+ * Tautan pil mempertahankan kata kunci dan kembali ke halaman 1.
  */
-export function jenjangOptions(names: readonly string[], current: string): JenjangOption[] {
-  const options = names.map((nama) => ({ value: nama.trim().toLowerCase(), label: nama }));
-  const active = current.trim().toLowerCase();
-  if (active && !options.some((o) => o.value === active)) options.push({ value: active, label: current });
-  return options.sort((a, b) => compareJenjang(a.value, b.value));
+export function jenjangTabs(names: readonly string[], query: Pick<InfoSekolahQuery, "jenjang" | "search">, path: string): JenjangTab[] {
+  const active = query.jenjang.trim().toLowerCase();
+  const options = new Map<string, string>();
+  for (const nama of names) {
+    const key = nama.trim().toLowerCase();
+    if (key && !options.has(key)) options.set(key, nama.trim());
+  }
+  if (active && !options.has(active)) options.set(active, query.jenjang.trim().toUpperCase());
+  const sorted = [...options.entries()].sort(([a], [b]) => compareJenjang(a, b));
+  return [
+    { key: "", label: "Semua", href: buildListHref(path, { search: query.search }), active: !active },
+    ...sorted.map(([key, label]) => ({
+      key,
+      label,
+      href: buildListHref(path, { jenjang: key, search: query.search }),
+      active: key === active,
+    })),
+  ];
 }
 
-/** Pesan saat tabel kosong: beda antara memang belum ada data dan hasil filter/pencarian yang nihil. */
+/** Pesan saat daftar kosong: beda antara memang belum ada data dan hasil filter/pencarian yang nihil. */
 export function emptyMessage(noun: string, query: Pick<InfoSekolahQuery, "jenjang" | "search">): string {
   const search = query.search.trim();
   if (search && query.jenjang) return `Tidak ada ${noun} “${search}” di jenjang ${query.jenjang.toUpperCase()}.`;
   if (search) return `Tidak ada ${noun} yang cocok dengan “${search}”.`;
   if (query.jenjang) return `Belum ada data ${noun} di jenjang ${query.jenjang.toUpperCase()}.`;
   return `Belum ada data ${noun}.`;
+}
+
+/** Respons `GET /pendidikan/ringkasan/stats` (angka gabungan, tanpa nama). */
+export type StatsPendidikan = {
+  perJenjang: { nama: string; jumlahSiswa: number; jumlahPengajar: number }[];
+  jumlahLembaga: number;
+  jumlahPengajar: number;
+};
+
+/** Kolom lembaga yang dipakai halaman publik. */
+export type LembagaItem = { id: string; nama: string; jenjangPendidikan: { nama: string } | null };
+
+export type JenjangGroup = {
+  /** Nama jenjang huruf kecil (kunci warna & URL). */
+  key: string;
+  nama: string;
+  lembaga: { id: string; nama: string }[];
+  /** `null` = jenjang tidak ada di statistik (mis. jenjang nonaktif); angka tidak dikarang. */
+  jumlahSiswa: number | null;
+  jumlahPengajar: number | null;
+  /** Porsi lembaga jenjang ini dari semua lembaga (%), untuk batang sebaran. */
+  width: number;
+};
+
+export type InfoSekolahRingkasan = {
+  totalLembaga: number;
+  totalSiswa: number;
+  totalPengajar: number;
+  groups: JenjangGroup[];
+};
+
+/** Jenjang lembaga yang data jenjangnya hilang (relasi wajib, jadi seharusnya tidak terjadi). */
+const JENJANG_TANPA_NAMA = "Jenjang lain";
+
+/**
+ * Susun ringkasan halaman: lembaga dikelompokkan per jenjang (urut baku), tiap kelompok diberi jumlah siswa &
+ * pengajar dari statistik. Total siswa/pengajar = jumlah per jenjang, supaya ubin dan rincian selalu cocok.
+ * Jenjang tanpa lembaga tidak dibuat kelompok (angkanya pasti 0, karena statistik dihitung dari lembaga).
+ */
+export function buildRingkasan(stats: StatsPendidikan, lembaga: readonly LembagaItem[], totalLembaga = lembaga.length): InfoSekolahRingkasan {
+  const perJenjang = new Map(stats.perJenjang.map((j) => [j.nama.trim().toLowerCase(), j]));
+  const groups = new Map<string, JenjangGroup>();
+  for (const item of lembaga) {
+    const nama = item.jenjangPendidikan?.nama.trim() || JENJANG_TANPA_NAMA;
+    const key = nama.toLowerCase();
+    let group = groups.get(key);
+    if (!group) {
+      const stat = perJenjang.get(key);
+      group = { key, nama, lembaga: [], jumlahSiswa: stat?.jumlahSiswa ?? null, jumlahPengajar: stat?.jumlahPengajar ?? null, width: 0 };
+      groups.set(key, group);
+    }
+    group.lembaga.push({ id: item.id, nama: item.nama });
+  }
+  const shown = lembaga.length || 1;
+  const sorted = [...groups.values()].sort((a, b) => compareJenjang(a.nama, b.nama));
+  for (const group of sorted) {
+    group.lembaga.sort((a, b) => a.nama.localeCompare(b.nama, "id", { numeric: true, sensitivity: "base" }));
+    group.width = (group.lembaga.length / shown) * 100;
+  }
+  return {
+    totalLembaga,
+    totalSiswa: sum(stats.perJenjang.map((j) => j.jumlahSiswa)),
+    totalPengajar: sum(stats.perJenjang.map((j) => j.jumlahPengajar)),
+    groups: sorted,
+  };
+}
+
+function sum(values: readonly number[]): number {
+  return values.reduce((acc, n) => acc + (Number.isFinite(n) ? n : 0), 0);
+}
+
+/** Angka format Indonesia (`1.234`). */
+export function formatJumlah(n: number): string {
+  return n.toLocaleString("id-ID");
 }

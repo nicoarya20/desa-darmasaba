@@ -1,0 +1,91 @@
+/* Daftar Jenis Program (Pendidikan Non Formal): nomor brand di kolom kiri, nama program tebal, keterangan abu di
+   bawahnya (pola daftar Dasar Hukum PPID). Warna, garis, dan panjang baris dari variabel kerangka program-info. */
+.pengantar {
+  max-width: var(--pi-read);
+  margin: 0 0 20px;
+  color: var(--pi-muted);
+  font-size: 17px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: jenis-program;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  padding: 14px 0;
+  border-top: 1px solid var(--pi-rule);
+  counter-increment: jenis-program;
+}
+
+.item:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.item:last-child {
+  padding-bottom: 0;
+}
+
+/* Nomor dari urutan `<ol>`, bukan teks ketikan admin — urutan tetap benar bila butir dipindah. */
+.item::before {
+  content: counter(jenis-program);
+  color: var(--brand);
+  font-size: 15px;
+  line-height: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Garis antarbaris tetap selebar kolom isi; teks dibatasi panjang baris baca. */
+.text {
+  max-width: var(--pi-read);
+  overflow-wrap: anywhere;
+}
+
+.nama {
+  display: block;
+  color: var(--pi-ink);
+  font-size: var(--pi-text);
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.keterangan {
+  display: block;
+  margin-top: 4px;
+  color: var(--pi-muted);
+  font-size: 17px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+@media (max-width: 734px) {
+  .pengantar {
+    font-size: 16px;
+  }
+
+  .item {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  .item::before {
+    line-height: 24px;
+  }
+
+  .nama {
+    line-height: 24px;
+  }
+
+  .keterangan {
+    font-size: 16px;
+  }
+}
