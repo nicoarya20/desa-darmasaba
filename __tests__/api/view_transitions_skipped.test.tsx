@@ -1,7 +1,8 @@
 // @vitest-environment node
 // next-view-transitions di-patch (patches/next-view-transitions@0.3.5.patch): `ready` milik
-// transisi yang dibatalkan transisi baru (AbortError "Transition was skipped") tidak boleh
-// jadi unhandledrejection; error lain tetap harus terlihat.
+// transisi yang di-skip browser — dibatalkan transisi baru (AbortError "Transition was skipped")
+// atau DOM update melewati batas waktu (TimeoutError) — tidak boleh jadi unhandledrejection;
+// error lain tetap harus terlihat.
 // Catatan: jsdom gagal start di repo ini, jadi router diambil lewat renderToStaticMarkup dan
 // `document.startViewTransition` di-stub. Jalur popstate (useEffect) tak bisa dirender di sini.
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -100,14 +101,29 @@ describe('next-view-transitions: transisi yang dilewati', () => {
     expect(unhandled).toEqual([]);
   });
 
-  it('error selain AbortError tetap dilaporkan sebagai unhandled rejection', async () => {
-    const timeout = domException('TimeoutError', 'Transition was aborted because of timeout in DOM update');
-    stubStartViewTransition(timeout);
+  it('transisi yang melewati batas waktu DOM update (TimeoutError) tidak menghasilkan unhandled rejection', async () => {
+    // Chrome membatasi DOM update ~4 detik; callback library menunggu route baru commit
+    // (kompilasi route pertama di dev / jaringan lambat). Navigasi tetap selesai tanpa animasi.
+    const startViewTransition = stubStartViewTransition(
+      domException('TimeoutError', 'Transition was aborted because of timeout in DOM update. DOM update timed out'),
+    );
+    const router = captureRouter();
+
+    router.push('/pendidikan/info-sekolah');
+    await flushRejections();
+
+    expect(startViewTransition).toHaveBeenCalledTimes(1);
+    expect(unhandled).toEqual([]);
+  });
+
+  it('error selain AbortError/TimeoutError tetap dilaporkan sebagai unhandled rejection', async () => {
+    const invalidState = domException('InvalidStateError', 'Transition was aborted because of invalid state');
+    stubStartViewTransition(invalidState);
     const router = captureRouter();
 
     router.replace('/berita');
     await flushRejections();
 
-    expect(unhandled).toEqual([timeout]);
+    expect(unhandled).toEqual([invalidState]);
   });
 });

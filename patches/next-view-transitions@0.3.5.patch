@@ -1,22 +1,30 @@
 diff --git a/dist/index.js b/dist/index.js
-index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..2e9c4fef0a7c4507a3b991c647af4cafffcf4b78 100644
+index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..27e7cf7aa230754d22d076ba40ea5c4cac1e3a17 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -4,6 +4,23 @@ import NextLink from 'next/link';
+@@ -4,6 +4,31 @@ import NextLink from 'next/link';
  import { usePathname, useRouter } from 'next/navigation';
  import { useSyncExternalStore, useRef, useState, useEffect, use, createContext, useCallback, startTransition, useMemo } from 'react';
  
-+// PATCH(desa-darmasaba): startViewTransition() saat masih ada transisi aktif
-+// membatalkan transisi lama dan menolak promise `ready`-nya dengan AbortError
-+// (spec CSS View Transitions 1, "skip the view transition"; `ready` TIDAK
-+// otomatis marked-as-handled). Library ini tak pernah menangani `ready`, jadi
-+// klik/back cepat saat route masih dimuat memicu unhandledrejection
-+// "Transition was skipped". AbortError = wajar (navigasi digantikan navigasi
-+// baru, callback lama tetap jalan); error lain dilempar ulang agar tetap terlihat.
++// PATCH(desa-darmasaba): browser bisa melewati (skip) transisi dan menolak
++// promise `ready`-nya; spec CSS View Transitions 1 TIDAK menandai `ready`
++// marked-as-handled, dan library ini tak pernah menangani `ready`, jadi skip
++// berubah jadi unhandledrejection. Dua skip yang wajar (navigasi tetap selesai,
++// hanya animasinya hilang):
++// - AbortError "Transition was skipped": startViewTransition() baru membatalkan
++//   transisi aktif (klik/back cepat saat route masih dimuat).
++// - TimeoutError "timeout in DOM update": callback menunggu route baru commit,
++//   dan Chrome membatasi DOM update ~4 detik (kompilasi route pertama di dev,
++//   atau jaringan/server lambat di prod).
++// Error lain dilempar ulang agar tetap terlihat.
 +// Hapus patch ini bila upstream menangani `ready` sendiri.
++const EXPECTED_SKIP_ERRORS = [
++    'AbortError',
++    'TimeoutError'
++];
 +function handleSkippedTransition(transition) {
 +    transition.ready.catch((error)=>{
-+        if (error && error.name === 'AbortError') {
++        if (error && EXPECTED_SKIP_ERRORS.includes(error.name)) {
 +            return;
 +        }
 +        throw error;
@@ -26,7 +34,7 @@ index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..2e9c4fef0a7c4507a3b991c647af4caf
  function useHash() {
      return useSyncExternalStore(subscribeHash, getHashSnapshot, getServerHashSnapshot);
  }
-@@ -37,10 +54,11 @@ function useBrowserNativeTransitions() {
+@@ -37,10 +62,11 @@ function useBrowserNativeTransitions() {
              });
              const pendingStartViewTransition = new Promise((resolve)=>{
                  // @ts-ignore
@@ -39,7 +47,7 @@ index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..2e9c4fef0a7c4507a3b991c647af4caf
              });
              setCurrentViewTransition([
                  pendingStartViewTransition,
-@@ -142,8 +160,11 @@ function useTransitionRouter() {
+@@ -142,8 +168,11 @@ function useTransitionRouter() {
                          finishViewTransition(()=>resolve);
                      });
                  }));
