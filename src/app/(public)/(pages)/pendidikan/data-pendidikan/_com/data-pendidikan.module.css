@@ -1,11 +1,33 @@
 /*
- * Halaman Data Pendidikan: gaya halaman APBDes/Monev (apbdes.module.css: .section, .panel, …).
- * File ini menambah tanggal pembaruan, panel daftar batang, dan ubin kosong/galat; variabel warna
- * (--ink, --muted, --subtle, --tile, --line, --radius, --brand) diwarisi dari .section APBDes.
+ * Halaman Data Pendidikan: kerangka bersama Pendidikan (page-frame: tepi, lebar 1200, jarak nav/footer), kepala
+ * PpidHeader rata kiri, panel gaya APBDes/Monev (apbdes.module.css: .panel). File ini menambah tanggal pembaruan,
+ * panel daftar batang, dan ubin kosong/galat; --brand dari DATA_PENDIDIKAN_BRAND_VARS.
  * Breakpoint apple.com: ≤1068px dan ≤734px.
  */
-/* Pengantar dua baris seimbang (tanpa satu kata yatim di baris kedua). */
-.lead {
+
+/* Variabel warna yang dibaca .panel APBDes. Kenapa di sini: .section APBDes tidak dipakai lagi karena membawa
+   lebar 1100, tepi 16px, dan kepala rata tengah (beda dari halaman Pendidikan lain). */
+.page {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --subtle: #86868b;
+  --tile: #f5f5f7;
+  --line: rgba(0, 0, 0, 0.08);
+  --radius: 18px;
+  color: var(--ink);
+}
+
+/* Tombol kembali (28px) + 28 = ±56px ke atas judul, sama dengan halaman program Pendidikan.
+   flex: tanpa itu kotak baris teks membuat pembungkus 33px, bukan setinggi tombol. */
+.back {
+  display: flex;
+  margin-bottom: 28px;
+}
+
+/* Kepala → panel 40px (ponsel 28), sama dengan Info Sekolah. text-wrap diwariskan ke pengantar PpidHeader:
+   dua baris seimbang, tanpa "ditamatkan." sendirian di baris kedua. */
+.pageHead {
+  margin-bottom: 40px;
   text-wrap: balance;
 }
 
@@ -236,6 +258,10 @@
 
 /* ---------- Mobile: nama + angka satu baris, batang selebar penuh di bawahnya ---------- */
 @media (max-width: 734px) {
+  .pageHead {
+    margin-bottom: 28px;
+  }
+
   .head {
     flex-direction: column;
     align-items: flex-start;

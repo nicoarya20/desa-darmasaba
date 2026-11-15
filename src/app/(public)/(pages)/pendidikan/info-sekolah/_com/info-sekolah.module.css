@@ -1,9 +1,34 @@
 /*
- * Info Sekolah — gaya halaman APBDes/Monev (apbdes.module.css: .section, .card, .panel, …).
- * File ini hanya menambah bagian khusus Info Sekolah; variabel warna (--ink, --muted, --subtle, --tile, --line,
- * --radius, --brand, --brand-tint) diwarisi dari .section APBDes + INFO_SEKOLAH_BRAND_VARS; --accent per jenjang
- * diset inline (jenjangAccent). Breakpoint apple.com: ≤1068px dan ≤734px.
+ * Info Sekolah — kerangka bersama Pendidikan (page-frame: tepi, lebar 1200, jarak nav/footer) + ubin & panel gaya
+ * APBDes/Monev (apbdes.module.css: .card, .panel, …). Kepala = PpidHeader (rata kiri) seperti halaman Pendidikan lain.
+ * --brand/--brand-tint dari INFO_SEKOLAH_BRAND_VARS; --accent per jenjang diset inline (jenjangAccent).
+ * Breakpoint apple.com: ≤1068px dan ≤734px.
  */
+
+/* Variabel warna yang dibaca .card/.panel APBDes. Kenapa di sini: .section APBDes tidak dipakai lagi karena
+   membawa lebar 1100, tepi 16px, dan kepala rata tengah (beda dari halaman Pendidikan lain). Dipakai juga /pengajar. */
+.page {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --subtle: #86868b;
+  --tile: #f5f5f7;
+  --line: rgba(0, 0, 0, 0.08);
+  --radius: 18px;
+  color: var(--ink);
+}
+
+/* Tombol kembali (28px) + 28 = ±56px ke atas judul, sama dengan halaman program Pendidikan.
+   flex: tanpa itu kotak baris teks membuat pembungkus 33px, bukan setinggi tombol. */
+.back {
+  display: flex;
+  margin-bottom: 28px;
+}
+
+/* Kepala → isi 40px (ponsel 28), sama dengan KabarListHeader di /pengajar. */
+.pageHead {
+  margin-bottom: 40px;
+}
+
 .body {
   display: flex;
   flex-direction: column;
@@ -296,6 +321,10 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
+  .pageHead {
+    margin-bottom: 28px;
+  }
+
   .body,
   .summary {
     gap: 12px;

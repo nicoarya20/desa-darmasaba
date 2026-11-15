@@ -4,6 +4,7 @@ import { Skeleton } from '@mantine/core';
 import type { CSSProperties, ReactNode } from 'react';
 import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 import { PpidHeader } from '../../../ppid/_com/PpidHeader';
+import frame from '../page-frame/page-frame.module.css';
 import { programInfoOverall } from './program-info.logic';
 import s from './program-info.module.css';
 import { PROGRAM_INFO_TEXT as T } from './program-info.text';
@@ -26,15 +27,21 @@ type Props = {
 };
 
 /**
- * Halaman program berisi CMS (Pendidikan): latar putih, tombol kembali, kepala PPID (judul + pengantar),
- * lalu bagian berlabel bergaris (judul kiri | isi kanan) tanpa kartu.
+ * Halaman program berisi CMS (Pendidikan) dalam kerangka bersama page-frame: tombol kembali, kepala PPID
+ * (judul + pengantar), lalu bagian berlabel bergaris (judul kiri | isi kanan) tanpa kartu.
  */
 export function ProgramInfoPage({ title, lead, sections, before }: Props) {
   return (
-    <div className={s.page} style={BRAND_VARS}>
-      <BackButton />
-      <PpidHeader title={title} lead={lead} />
-      {sections === null ? <ProgramInfoSkeleton label={T.loading(title)} /> : <Body title={title} sections={sections} before={before} />}
+    <div className={`${frame.frame} ${s.page}`} style={BRAND_VARS}>
+      <div className={`${frame.inner} ${s.layout}`}>
+        <BackButton />
+        <PpidHeader title={title} lead={lead} />
+        {sections === null ? (
+          <ProgramInfoSkeleton label={T.loading(title)} />
+        ) : (
+          <Body title={title} sections={sections} before={before} />
+        )}
+      </div>
     </div>
   );
 }

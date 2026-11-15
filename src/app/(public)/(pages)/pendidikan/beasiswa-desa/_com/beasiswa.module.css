@@ -1,6 +1,7 @@
 /*
- * Halaman Beasiswa Desa — kerangka gaya Layanan (latar putih, tepi --edge-gutter, judul brand rata kiri),
- * ubin #f5f5f7 radius 18px tanpa border/bayangan (kartu APBDes, langkah OSS).
+ * Halaman Beasiswa Desa — kerangka (latar putih, tepi, lebar 1200, jarak atas/bawah) dari
+ * pendidikan/_com/page-frame; di sini hanya warna, jarak antarbagian (--section-gap) dan isi.
+ * Ubin #f5f5f7 radius 18px tanpa border/bayangan (kartu APBDes, langkah OSS).
  * Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
  */
 .page {
@@ -9,26 +10,21 @@
   --subtle: #86868b;
   --tile: #f5f5f7;
   --radius: 18px;
-  --gutter: var(--edge-gutter);
-  padding: 40px var(--gutter) 120px;
-  background: #fff;
   color: var(--ink);
 }
 
 .inner {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 96px;
+  gap: var(--section-gap);
 }
 
 /* ---------- Kepala ---------- */
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
+  /* Rata atas: tombol kembali sejajar foto, 40px di bawah nav seperti halaman Pendidikan lain. */
+  align-items: start;
   gap: 64px;
 }
 
@@ -147,14 +143,6 @@
   color: var(--muted);
   font-size: 17px;
   line-height: 1.47;
-}
-
-.subTitle {
-  margin: 24px 0 0;
-  color: var(--ink);
-  font-size: 24px;
-  line-height: 1.17;
-  font-weight: 700;
 }
 
 /* ---------- Ubin (angka, keunggulan, syarat, alur) ---------- */
@@ -332,14 +320,6 @@
 }
 
 @media (max-width: 734px) {
-  .page {
-    padding: 24px var(--gutter) 88px;
-  }
-
-  .inner {
-    gap: 72px;
-  }
-
   .hero {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -361,10 +341,6 @@
   .sectionTitle {
     font-size: 24px;
     line-height: 1.17;
-  }
-
-  .subTitle {
-    font-size: 21px;
   }
 
   .grid,

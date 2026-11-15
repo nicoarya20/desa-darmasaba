@@ -1,24 +1,16 @@
 /*
- * Kerangka katalog Perpustakaan Digital: latar putih, tepi --edge-gutter, isi maks 1280px; kepala dari
- * kabar-list.module.css (KabarListHeader), baris alat (jumlah + Urutkan), grid kartu buku 2:3, kerangka memuat.
- * Breakpoint apple.com: ≤734px (mobile).
+ * Katalog Perpustakaan Digital: token warna halaman, baris alat (jumlah + Urutkan), grid kartu buku 2:3, kerangka
+ * memuat. Kerangka (latar putih, tepi, lebar isi 1200, jarak atas/bawah, --gutter untuk rel pil KabarListHeader)
+ * dari pendidikan/_com/page-frame; kepala dari kabar-list.module.css. Breakpoint apple.com: ≤734px (mobile).
  */
+/* Token warna akar halaman Perpustakaan (katalog & detail buku), dibaca kabar-list, kartu buku, dan detail. */
 .page {
   --ink: #1d1d1f;
   --muted: #6e6e73;
   --subtle: #86868b;
   --tile: #f5f5f7;
   --line: #d2d2d7;
-  /* Wajib untuk KabarListHeader: rel pil di mobile melebar ke tepi layar memakai --gutter leluhur. */
-  --gutter: var(--edge-gutter);
-  background: #fff;
   color: var(--ink);
-  padding: 40px var(--gutter) 96px;
-}
-
-.inner {
-  max-width: 1280px;
-  margin-inline: auto;
 }
 
 /* ---------- Baris alat ---------- */
@@ -107,10 +99,6 @@
 }
 
 @media (max-width: 734px) {
-  .page {
-    padding-top: 24px;
-  }
-
   .toolbar {
     margin-bottom: 20px;
   }

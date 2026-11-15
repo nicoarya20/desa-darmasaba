@@ -3,6 +3,7 @@ import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader'
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
+import frame from '../../_com/page-frame/page-frame.module.css';
 import s from './perpus-katalog.module.css';
 import { PerpusDaftar } from './PerpusDaftar';
 import { usePerpusData } from './PerpusDataProvider';
@@ -28,8 +29,8 @@ export function PerpusKatalog({ slugParam }: { slugParam: string }) {
   );
 
   return (
-    <div className={s.page} style={PERPUS_BRAND_VARS}>
-      <div className={s.inner}>
+    <div className={`${frame.frame} ${s.page}`} style={PERPUS_BRAND_VARS}>
+      <div className={frame.inner}>
         <KabarListHeader
           title={T.title}
           lead={T.lead}

@@ -1,6 +1,7 @@
 /*
- * Detail buku: grid sampul (maks 320px) | info, gaya detail produk UMKM. Kerangka halaman (.page/.inner/.back)
- * dari detail-umkm.module.css; token warna & --brand dari akar halaman. Breakpoint apple.com: ≤1068px, ≤734px.
+ * Detail buku: grid sampul (maks 320px) | info, gaya detail produk UMKM. Kerangka dari pendidikan/_com/page-frame,
+ * tautan kembali (.back) dari detail-umkm.module.css; token warna (.page katalog) & --brand dari akar halaman.
+ * Breakpoint apple.com: ≤1068px, ≤734px.
  */
 .grid {
   display: grid;
