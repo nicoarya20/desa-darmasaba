@@ -1,0 +1,25 @@
+/*
+ * Kerangka bersama semua halaman menu Pendidikan: latar putih, tepi kiri-kanan --edge-gutter,
+ * tombol kembali 40px (ponsel 24px) di bawah nav, isi terakhir → footer = --section-gap.
+ * Kenapa: tiap halaman dulu memakai lebar isi (1100/1200/1280/penuh) & padding sendiri,
+ * sehingga tepi kiri dan jarak atas-bawah berbeda antarhalaman. Lebar 1200 = --ppid-measure.
+ * Pemakai: <div className={frame.frame}><div className={frame.inner}>…</div></div>; tata letak
+ * isi (gap flex, grid) tetap di kelas lokal halaman. Breakpoint mengikuti apple.com: ≤734px.
+ */
+.frame {
+  --gutter: var(--edge-gutter);
+  background: #fff;
+  padding: 40px var(--gutter) var(--section-gap);
+}
+
+.inner {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+@media (max-width: 734px) {
+  .frame {
+    padding-top: 24px;
+  }
+}
