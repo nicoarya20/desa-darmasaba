@@ -1,8 +1,9 @@
 'use client';
 import BackButton from "@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto";
 import { useLazyLoad, type LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
-import apb from "@/app/(public)/_com/main-page/apbdes/apbdes.module.css";
 import { useEffect } from "react";
+import frame from "../../_com/page-frame/page-frame.module.css";
+import { PpidHeader } from "../../../ppid/_com/PpidHeader";
 import { InfoSekolahSummary } from "./InfoSekolahSummary";
 import { InfoSekolahEmpty, InfoSekolahNotice, InfoSekolahSkeleton } from "./InfoSekolahStates";
 import { LEMBAGA_ANCHOR, type InfoSekolahRingkasan } from "./info-sekolah.logic";
@@ -12,25 +13,20 @@ import { loadInfoSekolah } from "./info-sekolah.source";
 import { INFO_SEKOLAH_TEXT as T } from "./info-sekolah.text";
 import { JenjangDirectory } from "./JenjangDirectory";
 
-const TITLE_ID = "info-sekolah-title";
-
-/** Halaman publik Info Sekolah: ringkasan 3 ubin (gaya APBDes/Monev) + direktori sekolah per jenjang. */
+/** Halaman publik Info Sekolah: kerangka Pendidikan, ringkasan 3 ubin (gaya APBDes/Monev) + direktori per jenjang. */
 export function InfoSekolahPage() {
   const { state, retry } = useLazyLoad(loadInfoSekolah, true, "info sekolah");
   useScrollToAnchorWhenReady(state.status === "ready");
 
   return (
-    <section className={`${apb.section} ${apb.page}`} style={INFO_SEKOLAH_BRAND_VARS} aria-labelledby={TITLE_ID}>
-      <div className={apb.inner}>
-        <div className={apb.back}>
+    <section className={`${frame.frame} ${s.page}`} style={INFO_SEKOLAH_BRAND_VARS} aria-label={T.pageTitle}>
+      <div className={frame.inner}>
+        <div className={s.back}>
           <BackButton />
         </div>
-        <header className={apb.header}>
-          <h1 id={TITLE_ID} className={apb.title}>
-            {T.pageTitle}
-          </h1>
-          <p className={apb.lead}>{T.pageLead}</p>
-        </header>
+        <div className={s.pageHead}>
+          <PpidHeader title={T.pageTitle} lead={T.pageLead} />
+        </div>
         <InfoSekolahBody state={state} onRetry={retry} />
       </div>
     </section>

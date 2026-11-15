@@ -1,12 +1,8 @@
 /*
  * Daftar pengajar Info Sekolah — kepala KabarListHeader + baris di panel #f5f5f7 (pola baris Monev/Posyandu).
- * Variabel warna diwarisi dari .section APBDes + INFO_SEKOLAH_BRAND_VARS. Breakpoint apple.com: ≤734px.
+ * Variabel warna diwarisi dari .page (info-sekolah.module.css) + INFO_SEKOLAH_BRAND_VARS; --gutter rel pil ponsel
+ * dari page-frame. Breakpoint apple.com: ≤734px.
  */
-
-/* KabarListHeader memakai --gutter untuk baris pil geser di ponsel; samakan dengan tepi .section APBDes. */
-.listPage {
-  --gutter: 16px;
-}
 
 .count {
   margin: 0 0 12px;
