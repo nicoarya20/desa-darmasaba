@@ -1,8 +1,8 @@
-/* Panel info praktis (Lokasi dan Jadwal) di slot `before` modul program-info; token warna dari kerangka. */
+/* Panel info praktis (Lokasi dan Jadwal) di slot `before` modul program-info: selebar isi kerangka (.inner 1200);
+   token warna dari program-info. */
 .info {
   box-sizing: border-box;
   width: 100%;
-  max-width: var(--pi-measure);
   background: var(--pi-tile);
   border-radius: 18px;
   padding: 32px 40px 36px;
