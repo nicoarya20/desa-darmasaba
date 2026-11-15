@@ -69,6 +69,17 @@ describe('BeasiswaPageBody', () => {
     expect(count(html, `aria-haspopup="dialog"`)).toBe(2);
   });
 
+  it('Alur seleksi = bagian sendiri (h2) setelah #syarat, catatan jadwal ikut di Alur', () => {
+    const html = body();
+    const syaratStart = html.indexOf('id="syarat"');
+    const syaratEnd = html.indexOf('</section>', syaratStart);
+    const alurTitle = html.search(new RegExp(`<h2[^>]*>${T.alurTitle}</h2>`));
+    expect(alurTitle).toBeGreaterThan(syaratEnd);
+    expect(html.slice(syaratStart, syaratEnd)).not.toContain(T.alurTitle);
+    expect(html.indexOf(T.jadwalNote)).toBeGreaterThan(alurTitle);
+    expect(count(html, '<h4')).toBe(0);
+  });
+
   it('memuat → kerangka aria-busy; galat → pesan + Coba lagi; kosong → pesan', () => {
     const loading = body({ keunggulan: { status: 'loading' }, ringkasan: { status: 'loading' } });
     expect(count(loading, 'aria-busy="true"')).toBe(2);
