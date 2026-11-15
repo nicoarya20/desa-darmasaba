@@ -1,304 +1,63 @@
 'use client';
+import { Modal } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import { BukuSampul } from '../_com/BukuSampul';
+import { PINJAM_TEXT as T } from './peminjaman.text';
+import s from './pinjam.module.css';
+import { PinjamForm } from './PinjamForm';
+import { PinjamSukses } from './PinjamSukses';
+import { usePeminjaman } from './use-peminjaman';
 
-import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
-import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
-import colors from '@/con/colors';
-import {
-  Badge,
-  Box,
-  Button,
-  Divider,
-  Group,
-  Image,
-  Modal,
-  Stack,
-  Text,
-  TextInput,
-} from '@mantine/core';
-import { DateInput } from '@mantine/dates';
-import { IconArrowRight, IconBook2, IconPhone, IconUser } from '@tabler/icons-react';
-import { useEffect } from 'react';
-import { toast } from 'react-toastify';
-import { useProxy } from 'valtio/utils';
-import {
-  isValidPhoneDigits,
-  MAX_DIGITS,
-  MIN_DIGITS,
-  toPhoneDigits,
-  toStoredPhone,
-} from './notelp';
-import {
-  ALAMAT_MAX,
-  ALAMAT_MIN,
-  CATATAN_MAX,
-  isPeminjamanFormValid,
-  richTextLength,
-} from './peminjamanForm';
+/** Buku yang dipinjam (ringkas, untuk kepala modal & payload). */
+export type BukuPinjam = { id: string; judul: string; sampul: string | null; kategoriNama: string | null };
 
 export interface ModalPeminjamanProps {
   opened: boolean;
   onClose: () => void;
-  buku: {
-    id: string;
-    judul: string;
-    deskripsi?: string;
-    image?: { link?: string };
-    kategori?: { name?: string };
-  } | null;
+  buku: BukuPinjam | null;
 }
 
-export default function ModalPeminjaman({
-  opened,
-  onClose,
-  buku,
-}: ModalPeminjamanProps) {
-  // sync: true -> update proxy sinkron, caret tidak loncat ke akhir saat menghapus
-  // di tengah teks (mis. field Alamat) khususnya di Safari.
-  const snap = useProxy(perpustakaanDigitalState.peminjamanBuku, { sync: true });
-
-  const BATAS_HARI_PINJAM = 4;
-
-  // Digit nomor telepon (tanpa prefix +62) untuk input & validasi
-  const phoneDigits = toPhoneDigits(snap.create.form.noTelp);
-
-  const isFormValid = () => isPeminjamanFormValid(snap.create.form);
-
-  // Reset form setiap modal dibuka
-  useEffect(() => {
-    if (opened && buku) {
-      perpustakaanDigitalState.peminjamanBuku.create.form = {
-        bukuId: buku.id,
-        nama: '',
-        noTelp: '',
-        alamat: '',
-        tanggalPinjam: '',
-        batasKembali: '',
-        tanggalKembali: '',
-        catatan: '',
-      };
-    }
-  }, [opened, buku]);
-
-  const handleSubmit = async () => {
-    if (!buku) return toast.error('Data buku tidak ditemukan');
-    const success = await perpustakaanDigitalState.peminjamanBuku.create.create();
-    if (success) onClose();
-  };
-
+/**
+ * Modal "Pinjam buku": kepala buku (sampul kecil, kategori, judul), formulir, lalu layar terima kasih setelah
+ * terkirim. Layar ≤734px → layar penuh. Isi dipasang ulang tiap dibuka (Mantine membongkar isi modal tertutup),
+ * jadi isian dan status selalu mulai dari kosong.
+ */
+export default function ModalPeminjaman({ opened, onClose, buku }: ModalPeminjamanProps) {
+  const mobile = useMediaQuery('(max-width: 734px)');
   return (
     <Modal
-      opened={opened}
+      opened={opened && buku !== null}
       onClose={onClose}
-      centered
+      title={T.title}
       size="lg"
-      radius="xl"
-      title={<Text fw={700}>Formulir Peminjaman Buku</Text>}
+      radius={mobile ? 0 : 18}
+      padding="xl"
+      fullScreen={mobile}
+      classNames={{ title: s.modalTitle, header: s.modalHeader }}
     >
-      {buku ? (
-        <Stack>
-          {/* --- Info Buku --- */}
-          <Group align="flex-start">
-            <Image
-              src={buku.image?.link || '/placeholder-book.jpg'}
-              alt={buku.judul}
-              w={100}
-              radius="md"
-            />
-            <Stack gap={4}>
-              <Group>
-                <IconBook2 size={18} color={colors['blue-button']} />
-                <Text fw={700}>{buku.judul}</Text>
-              </Group>
-
-              {buku.kategori?.name && (
-                <Badge color="cyan" variant="light">
-                  {buku.kategori.name}
-                </Badge>
-              )}
-
-              <Text
-                fz="sm"
-                c="dimmed"
-                lineClamp={3}
-                dangerouslySetInnerHTML={{
-                  __html: buku.deskripsi || 'Tidak ada deskripsi',
-                }}
-              />
-            </Stack>
-          </Group>
-
-          <Divider my="sm" />
-
-          {/* --- Form Input --- */}
-          <TextInput
-            label="Nama Peminjam"
-            placeholder="Masukkan nama lengkap"
-            leftSection={<IconUser size={16} />}
-            value={snap.create.form.nama}
-            onChange={(e) =>
-              (perpustakaanDigitalState.peminjamanBuku.create.form.nama =
-                e.currentTarget.value)
-            }
-            required
-          />
-
-          <TextInput
-            label="No Telp"
-            placeholder="8123456789"
-            type="tel"
-            inputMode="numeric"
-            maxLength={MAX_DIGITS}
-            leftSection={
-              <Group gap={4} wrap="nowrap" pl={4}>
-                <IconPhone size={16} />
-                <Text fz="sm" fw={600} c="dimmed">
-                  +62
-                </Text>
-              </Group>
-            }
-            leftSectionWidth={64}
-            value={phoneDigits}
-            onChange={(e) =>
-              (perpustakaanDigitalState.peminjamanBuku.create.form.noTelp =
-                toStoredPhone(e.currentTarget.value))
-            }
-            error={
-              phoneDigits.length > 0 && !isValidPhoneDigits(phoneDigits)
-                ? `Nomor harus ${MIN_DIGITS + 1}–${MAX_DIGITS + 1} digit (termasuk 0 depan)`
-                : null
-            }
-            description="Tanpa angka 0 di depan — sudah diwakili +62"
-            required
-          />
-
-          <TextInput
-            label="Alamat"
-            placeholder="Masukkan alamat lengkap"
-            leftSection={<IconUser size={16} />}
-            maxLength={ALAMAT_MAX}
-            value={snap.create.form.alamat}
-            onChange={(e) =>
-              (perpustakaanDigitalState.peminjamanBuku.create.form.alamat =
-                e.currentTarget.value.slice(0, ALAMAT_MAX))
-            }
-            error={
-              snap.create.form.alamat.trim().length > 0 &&
-              snap.create.form.alamat.trim().length < ALAMAT_MIN
-                ? `Alamat minimal ${ALAMAT_MIN} karakter`
-                : null
-            }
-            description={`${snap.create.form.alamat.trim().length}/${ALAMAT_MAX} karakter (min ${ALAMAT_MIN})`}
-            required
-          />
-
-          {/* === OTOMATIS SET BATAS DAN TANGGAL KEMBALI === */}
-          <DateInput
-            label="Tanggal Pinjam"
-            placeholder="Pilih tanggal pinjam"
-            value={
-              snap.create.form.tanggalPinjam
-                ? new Date(snap.create.form.tanggalPinjam)
-                : null
-            }
-            onChange={(date) => {
-              if (date) {
-                const tanggalPinjam = new Date(date);
-
-                // simpan tanggal pinjam
-                perpustakaanDigitalState.peminjamanBuku.create.form.tanggalPinjam =
-                  tanggalPinjam.toISOString();
-
-                // hitung batas +4 hari
-                const batasKembali = new Date(tanggalPinjam);
-                batasKembali.setDate(batasKembali.getDate() + BATAS_HARI_PINJAM);
-
-                // set batas & tanggal kembali otomatis
-                perpustakaanDigitalState.peminjamanBuku.create.form.batasKembali =
-                  batasKembali.toISOString();
-                perpustakaanDigitalState.peminjamanBuku.create.form.tanggalKembali =
-                  batasKembali.toISOString();
-
-                toast.info(
-                  `Batas pengembalian otomatis diset ke ${batasKembali.toLocaleDateString('id-ID')} (+${BATAS_HARI_PINJAM} hari).`
-                );
-              } else {
-                perpustakaanDigitalState.peminjamanBuku.create.form.tanggalPinjam = '';
-                perpustakaanDigitalState.peminjamanBuku.create.form.batasKembali = '';
-                perpustakaanDigitalState.peminjamanBuku.create.form.tanggalKembali = '';
-              }
-            }}
-            required
-          />
-
-          <Box>
-            <Text fw={500}>
-              Catatan{' '}
-              <Text span c="dimmed" fz="sm">
-                (Opsional)
-              </Text>
-            </Text>
-            <CreateEditor
-              value={snap.create.form.catatan}
-              onChange={(val) =>
-                (perpustakaanDigitalState.peminjamanBuku.create.form.catatan =
-                  val)
-              }
-            />
-            <Text
-              fz="xs"
-              mt={4}
-              c={richTextLength(snap.create.form.catatan) > CATATAN_MAX ? 'red' : 'dimmed'}
-            >
-              {richTextLength(snap.create.form.catatan)}/{CATATAN_MAX} karakter
-            </Text>
-          </Box>
-
-          <DateInput
-            label="Batas Pengembalian"
-            placeholder="Otomatis diatur +4 hari dari tanggal pinjam"
-            value={
-              snap.create.form.batasKembali
-                ? new Date(snap.create.form.batasKembali)
-                : null
-            }
-            disabled
-            readOnly
-          />
-
-          <DateInput
-            label="Tanggal Kembali"
-            placeholder="Otomatis sama dengan batas pengembalian"
-            value={
-              snap.create.form.tanggalKembali
-                ? new Date(snap.create.form.tanggalKembali)
-                : null
-            }
-            disabled
-            readOnly
-          />
-
-          <Button
-            onClick={handleSubmit}
-            loading={snap.create.loading}
-            disabled={!isFormValid() || snap.create.loading}
-            rightSection={<IconArrowRight size={16} />}
-            radius="xl"
-            style={{
-              background: !isFormValid() || snap.create.loading
-                ? `linear-gradient(135deg, #cccccc, #eeeeee)`
-                : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
-              color: '#fff',
-              boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
-            }}
-          >
-            Pinjam Buku
-          </Button>
-        </Stack>
-      ) : (
-        <Text c="dimmed" ta="center">
-          Tidak ada data buku yang dipilih
-        </Text>
-      )}
+      {buku && <PinjamBody buku={buku} onClose={onClose} />}
     </Modal>
+  );
+}
+
+function PinjamBody({ buku, onClose }: { buku: BukuPinjam; onClose: () => void }) {
+  const form = usePeminjaman(buku.id);
+  return (
+    <div className={s.body}>
+      <div className={s.buku}>
+        <div className={s.bukuCover}>
+          <BukuSampul src={buku.sampul} alt="" iconSize={24} />
+        </div>
+        <div className={s.bukuText}>
+          {buku.kategoriNama && <p className={s.bukuKategori}>{buku.kategoriNama}</p>}
+          <p className={s.bukuJudul}>{buku.judul}</p>
+        </div>
+      </div>
+      {form.status === 'sent' ? (
+        <PinjamSukses tanggalAmbil={form.values.tanggalAmbil} telp={form.values.telp} onClose={onClose} />
+      ) : (
+        <PinjamForm form={form} onCancel={onClose} />
+      )}
+    </div>
   );
 }

@@ -1,0 +1,218 @@
+/*
+ * Detail buku: grid sampul (maks 320px) | info, gaya detail produk UMKM. Kerangka halaman (.page/.inner/.back)
+ * dari detail-umkm.module.css; token warna & --brand dari akar halaman. Breakpoint apple.com: ≤1068px, ≤734px.
+ */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+  margin-top: 28px;
+}
+
+.cover {
+  position: sticky;
+  top: 92px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 600px;
+}
+
+.kategori {
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.kategori:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.title {
+  margin: 10px 0 0;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+}
+
+.deskripsi {
+  margin-top: 20px;
+}
+
+.prose {
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose > :last-child {
+  margin-bottom: 0;
+}
+
+.muted {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 240px;
+  min-height: 48px;
+  margin-top: 32px;
+  padding: 12px 28px;
+  border: 0;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.panel {
+  align-self: stretch;
+  margin-top: 32px;
+  padding: 24px;
+  border-radius: 18px;
+  background: var(--tile);
+}
+
+.panelTitle {
+  margin: 0 0 12px;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Status ---------- */
+.status {
+  margin-top: 28px;
+}
+
+.skeletonCover,
+.skeletonLine {
+  background: var(--tile);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonCover {
+  aspect-ratio: 2 / 3;
+  border-radius: 6px;
+}
+
+.skeletonLines {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skeletonLine {
+  height: 18px;
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kategori:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .cta:hover {
+    opacity: 0.88;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonCover,
+  .skeletonLine {
+    animation: none;
+  }
+
+  .cta {
+    transition: none;
+  }
+}
+
+@media (max-width: 1068px) {
+  .grid {
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: 40px;
+  }
+
+  .title {
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 734px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    margin-top: 20px;
+  }
+
+  .cover {
+    position: static;
+    width: min(60%, 220px);
+    margin-inline: auto;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .cta {
+    align-self: stretch;
+  }
+}
