@@ -1,0 +1,105 @@
+/* Panel info praktis (Lokasi dan Jadwal) di slot `before` modul program-info; token warna dari kerangka. */
+.info {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--pi-measure);
+  background: var(--pi-tile);
+  border-radius: 18px;
+  padding: 32px 40px 36px;
+}
+
+.infoTitle {
+  margin: 0 0 24px;
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.infoList {
+  margin: 0;
+  display: grid;
+  /* Satu baris, kolom sama lebar (isian saat ini 3 butir); ≤734px bertumpuk. */
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+}
+
+.infoItem {
+  min-width: 0;
+  padding: 0 28px;
+  border-left: 1px solid var(--pi-rule);
+}
+
+.infoItem:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.infoLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--pi-muted);
+}
+
+.infoIcon {
+  flex: none;
+  color: var(--brand);
+}
+
+.infoValue {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.45;
+  font-weight: 600;
+  color: var(--pi-ink);
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 1068px) {
+  .info {
+    padding: 28px 28px 32px;
+  }
+
+  .infoItem {
+    padding: 0 20px;
+  }
+
+  .infoValue {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 734px) {
+  .info {
+    padding: 24px 20px 8px;
+  }
+
+  .infoTitle {
+    font-size: 21px;
+    margin-bottom: 8px;
+  }
+
+  .infoList {
+    grid-auto-flow: row;
+  }
+
+  .infoItem,
+  .infoItem:first-child {
+    padding: 16px 0;
+    border-left: 0;
+    border-top: 1px solid var(--pi-rule);
+  }
+
+  .infoItem:first-child {
+    border-top: 0;
+  }
+
+  .infoValue {
+    font-size: 17px;
+  }
+}
