@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.280] - 2026-11-15
+### Changed
+- **Ketujuh halaman menu Pendidikan kini memakai margin yang sama.** Lebar isi, jarak tepi kiri-kanan, jarak dari menu atas ke tombol kembali, dan jarak isi terakhir ke footer sekarang sama di setiap halaman, di layar lebar maupun ponsel. Sebelumnya tiap halaman punya lebar dan jarak sendiri, sehingga tepinya bergeser saat berpindah halaman.
+- Judul **Info Sekolah** dan **Data Pendidikan** kini rata kiri seperti halaman Pendidikan lain. Program Pendidikan Anak, Bimbingan Belajar Desa, dan Pendidikan Non Formal tidak lagi menempel ke tepi kiri di layar lebar.
+
+### Fixed
+- **Beasiswa Desa:** jarak antarbagian kini sama dari atas sampai bawah. Teks pembuka sejajar dengan bagian atas foto, dan "Alur seleksi" menjadi bagian sendiri, bukan sub-bagian berjarak setengah dari "Syarat pendaftaran".
+
 ## [0.1.279] - 2026-11-15
 ### Changed
 - **Ketujuh halaman menu Pendidikan dirombak** dengan latar putih dan gaya yang sama seperti halaman publik lain yang sudah diperbarui. Judul tiap halaman kini sama dengan nama menunya.
