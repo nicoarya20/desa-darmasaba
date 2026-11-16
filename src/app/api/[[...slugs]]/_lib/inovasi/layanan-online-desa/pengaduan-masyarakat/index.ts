@@ -6,6 +6,7 @@ import pengaduanMasyarakatFindMany from "./findMany";
 import pengaduanMasyarakatFindUnique from "./findUnique";
 import pengaduanMasyarakatUpload from "./upload";
 import JenisPengaduan from "./jenis-pengaduan";
+import { guardDataPribadi } from "../../../_data-pribadi/guard";
 
 const PengaduanMasyarakat = new Elysia({
     prefix: "/pengaduanmasyarakat",
@@ -30,8 +31,8 @@ const PengaduanMasyarakat = new Elysia({
         file: t.File(),
     }),
 })
-.get("/find-many", pengaduanMasyarakatFindMany)
-.get("/:id", pengaduanMasyarakatFindUnique)
+.get("/find-many", pengaduanMasyarakatFindMany, { beforeHandle: guardDataPribadi })
+.get("/:id", pengaduanMasyarakatFindUnique, { beforeHandle: guardDataPribadi })
 .delete("/del/:id", pengaduanMasyarakatDelete)
 .use(JenisPengaduan)
 export default PengaduanMasyarakat;

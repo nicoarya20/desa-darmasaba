@@ -4,6 +4,7 @@ import ibuHamilDelete from "./del";
 import ibuHamilFindById from "./find-by-id";
 import ibuHamilFindMany from "./find-many";
 import ibuHamilUpdate from "./updt";
+import { guardDataPribadi } from "../../_data-pribadi/guard";
 
 const IbuHamil = new Elysia({ prefix: "/ibuhamil", tags: ["Kesehatan/IbuHamil"] })
   .post("/create", ibuHamilCreate, {
@@ -25,9 +26,9 @@ const IbuHamil = new Elysia({ prefix: "/ibuhamil", tags: ["Kesehatan/IbuHamil"] 
       ]),
     }),
   })
-  .get("/find-many", ibuHamilFindMany)
+  .get("/find-many", ibuHamilFindMany, { beforeHandle: guardDataPribadi })
   .delete("/del/:id", ibuHamilDelete)
-  .get("/:id", ibuHamilFindById)
+  .get("/:id", ibuHamilFindById, { beforeHandle: guardDataPribadi })
   .put(
     "/:id",
     ibuHamilUpdate,
