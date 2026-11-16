@@ -1,69 +1,26 @@
 import prisma from "@/lib/prisma";
+import { pustuBodySchema } from "@/lib/pustu/pustu.validation";
 import { Context } from "elysia";
+import { validationFailure, writeFailure } from "../../_struktur-organisasi/http";
+import { PUSTU_RINGKAS_SELECT, dataJam, dataKontak, dataPustu, keRingkas } from "./pustu.data";
 
-type JamOperasionalInput = {
-  workDays: string;
-  weekDays: string;
-  holiday: string;
-};
+/** POST (admin): tambah PUSTU beserta jam operasional & kontak (satu operasi nested, atomik). */
+export default async function puskesmasCreate(context: Context) {
+  const parsed = pustuBodySchema.safeParse(context.body);
+  if (!parsed.success) return validationFailure(context, parsed.error);
+  const body = parsed.data;
 
-type KontakPuskesmasInput = {
-  kontakPuskesmas: string;
-  email: string;
-  facebook: string;
-  kontakUGD: string;
-};
-
-type CreatePuskesmasInput = {
-  name: string;
-  alamat: string;
-  imageId: string;
-  jam: JamOperasionalInput;
-  kontak: KontakPuskesmasInput;
-};
-
-const puskesmasCreate = async (context: Context) => {
-  const { name, alamat, imageId, jam, kontak } = await context.body as CreatePuskesmasInput;
-
-  // 1. Buat jam operasional
-  const createdJam = await prisma.jamOperasional.create({
-    data: {
-      workDays: jam.workDays,
-      weekDays: jam.weekDays,
-      holiday: jam.holiday
-    }
-  });
-
-  // 2. Buat kontak puskesmas
-  const createdKontak = await prisma.kontakPuskesmas.create({
-    data: {
-      kontakPuskesmas: kontak.kontakPuskesmas,
-      email: kontak.email,
-      facebook: kontak.facebook,
-      kontakUGD: kontak.kontakUGD
-    }
-  });
-
-  // 3. Buat puskesmas
-  const createdPuskesmas = await prisma.puskesmas.create({
-    data: {
-      name,
-      alamat,
-      imageId,
-      jamId: createdJam.id,
-      kontakId: createdKontak.id
-    },
-    include: {
-      image: true,
-      jam: true,
-      kontak: true
-    }
-  });
-
-  return {
-    success: true,
-    data: createdPuskesmas
-  };
-};
-
-export default puskesmasCreate;
+  try {
+    const created = await prisma.puskesmas.create({
+      data: {
+        ...dataPustu(body),
+        jam: { create: dataJam(body) },
+        kontak: { create: dataKontak(body) },
+      },
+      select: PUSTU_RINGKAS_SELECT,
+    });
+    return { success: true, message: "PUSTU berhasil ditambahkan", data: keRingkas(created) };
+  } catch (error) {
+    return writeFailure(error, context);
+  }
+}

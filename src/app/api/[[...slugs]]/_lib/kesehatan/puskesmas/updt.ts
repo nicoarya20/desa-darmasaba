@@ -1,130 +1,47 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { toForeignKeyResponse } from "@/lib/prisma-error";
+import { pustuBodySchema } from "@/lib/pustu/pustu.validation";
 import { Context } from "elysia";
-import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import { fail, validationFailure } from "../../_struktur-organisasi/http";
+import removeReleasedFiles from "../../fileStorage/_lib/removeReleasedFiles";
+import { PUSTU_FILE_OWNER, PUSTU_RINGKAS_SELECT, dataJam, dataKontak, dataPustu, keRingkas } from "./pustu.data";
 
-type FormUpdate = Prisma.PuskesmasGetPayload<{
-  select: {
-    id: true;
-    name: true;
-    alamat: true;
-    jam: true;
-    imageId: true;
-    kontak: true;
-  };
-}>;
-
+/**
+ * PUT (admin): ubah PUSTU. Field opsional yang tidak dikirim dibiarkan; jam & kontak diubah lewat relasinya.
+ * Foto lokasi / bagan lama yang diganti atau dikosongkan dihapus permanen setelah update sukses.
+ */
 export default async function puskesmasUpdate(context: Context) {
+  const id = (context.params as { id?: string })?.id;
+  if (!id) return fail(context, 400, "ID PUSTU wajib diisi");
+
+  const parsed = pustuBodySchema.safeParse(context.body);
+  if (!parsed.success) return validationFailure(context, parsed.error);
+  const body = parsed.data;
+
+  const lama = await prisma.puskesmas.findUnique({ where: { id }, select: { imageId: true, fotoBaganStrukturId: true } });
+  if (!lama) return fail(context, 404, "PUSTU tidak ditemukan");
+
   try {
-    const id = context.params?.id as string;
-    const body = (await context.body) as Omit<FormUpdate, "id">;
-
-    const { name, alamat, jam, imageId, kontak } = body;
-
-    if (!id) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: "ID tidak boleh kosong",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    const existing = await prisma.puskesmas.findUnique({
-      where: { id },
-      include: {
-        image: true,
-        kontak: true,
-        jam: true,
-      },
-    });
-
-    if (!existing) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: "Puskesmas tidak ditemukan",
-        }),
-        {
-          status: 404,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    await prisma.jamOperasional.update({
-      where: { id: existing.jamId },
-      data: {
-        workDays: jam.workDays,
-        weekDays: jam.weekDays,
-        holiday: jam.holiday,
-      },
-    });
-
-    await prisma.kontakPuskesmas.update({
-      where: { id: existing.kontakId },
-      data: {
-        kontakPuskesmas: kontak.kontakPuskesmas,
-        email: kontak.email,
-        facebook: kontak.facebook,
-        kontakUGD: kontak.kontakUGD,
-      },
-    });
-
     const updated = await prisma.puskesmas.update({
       where: { id },
       data: {
-        name,
-        alamat,
-        jamId: jam.id,
-        imageId,
-        kontakId: kontak.id,
+        ...dataPustu(body),
+        ...(body.jadwal !== undefined && { jam: { update: dataJam(body) } }),
+        ...(body.kontak !== undefined && { kontak: { update: dataKontak(body) } }),
       },
+      select: { ...PUSTU_RINGKAS_SELECT, fotoBaganStrukturId: true },
     });
-
-    if (existing.imageId && existing.imageId !== imageId) {
-      const oldImage = existing.image;
-      if (oldImage) {
-        await removeStoredFile(oldImage, "Puskesmas");
-      }
-    }
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: "Success update puskesmas",
-        data: updated,
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+    await removeReleasedFiles(
+      PUSTU_FILE_OWNER,
+      [lama.imageId, lama.fotoBaganStrukturId],
+      [updated.imageId, updated.fotoBaganStrukturId],
     );
+    const { fotoBaganStrukturId, ...ringkas } = updated;
+    return { success: true, message: "PUSTU berhasil diperbarui", data: { ...keRingkas(ringkas), fotoBaganStrukturId } };
   } catch (error) {
-    console.error("Update error:", error);
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message:
-          "Gagal update puskesmas: " +
-          (error instanceof Error ? error.message : "Unknown error"),
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const foreignKey = toForeignKeyResponse(error);
+    if (foreignKey) return fail(context, 400, foreignKey.message);
+    console.error(`[pustu] Gagal update PUSTU ${id}:`, error);
+    return fail(context, 500, "Gagal memperbarui PUSTU");
   }
 }
