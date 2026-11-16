@@ -88,6 +88,11 @@
   padding: 8px 8px 20px;
 }
 
+/* Panel tab nonaktif: atribut `hidden` harus menang atas aturan tampilan modul/reset lain. */
+.body[hidden] {
+  display: none;
+}
+
 .heading {
   margin: 16px 12px 8px;
   font-size: 15px;

@@ -1,13 +1,12 @@
-// src/app/(public)/(pages)/pemerintahan/berita/[kategori]/page.tsx
-import { Suspense } from "react";
-import Content from "../[kategoriBuku]/content";
+import { Suspense } from 'react';
+import { PerpusKatalog } from '../_com/PerpusKatalog';
+import { SEMUA_SLUG } from '../_com/perpus-katalog.logic';
 
-
-export default async function Page() {
-
+/** `/pendidikan/perpustakaan-digital/semua`: katalog semua kategori. */
+export default function Page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Content kategoriBuku="semua" />
+    <Suspense>
+      <PerpusKatalog slugParam={SEMUA_SLUG} />
     </Suspense>
   );
 }

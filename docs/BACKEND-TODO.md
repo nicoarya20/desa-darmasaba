@@ -44,6 +44,48 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: gateway WhatsApp desa bisa dipakai untuk spam ke nomor sembarang; baris `KodeOtp` sampah.
   - Usul: pasang `otpSendLimiter` atau matikan route OTP lama di `src/app/api/auth/` bila memang tak dipakai lagi dan alihkan `/registrasi` ke `/login` di `src/proxy.ts` seperti `/validasi`. User menyerahkan ke rekan (2026-11-13): frontend tidak mengubah `/registrasi` maupun `proxy.ts`.
 
+- [ ] **`/api/tts` tanpa auth & rate limit: biaya ElevenLabs bisa disalahgunakan** (terverifikasi 2026-11-13)
+  - Lokasi: `src/app/api/tts/route.ts:4-25` — `POST` publik (di luar Elysia dan matcher `src/proxy.ts`), teks ≤ 500 karakter langsung diteruskan ke ElevenLabs dengan `ELEVENLABS_API_KEY`. Tidak ada pemanggil di `src/` (mode baca suara memakai `window.speechSynthesis`).
+  - Dampak: siapa pun bisa menghabiskan kuota/biaya ElevenLabs desa.
+  - Usul: hapus route bila memang tak dipakai; bila dipakai, wajibkan sesi + `createLimiter` (`src/lib/rate-limit.ts`).
+
+- [ ] **`/api/subscribe` tanpa rate limit** (terverifikasi 2026-11-13)
+  - Lokasi: `src/app/api/subscribe/route.ts:4-40` — `POST` publik mengirim email lewat nodemailer Gmail (`EMAIL_USER`) ke alamat apa pun; dipanggil form footer (`src/app/(public)/_com/Footer.tsx:113`).
+  - Dampak: spam email atas nama desa, kuota/reputasi akun Gmail habis.
+  - Usul: rate limit per IP (`createLimiter`) + honeypot/Origin check seperti `src/app/api/jenna/_lib/http.ts`.
+
+- [ ] **CORS Elysia tanpa domain production** (terverifikasi 2026-11-13)
+  - Lokasi: `src/app/api/[[...slugs]]/route.ts:37-50` — `origin` hanya localhost:3000/3001 + 3 domain stg, `credentials: true`.
+  - Dampak: permintaan lintas-origin dari domain prod ditolak (same-origin tidak terdampak); daftar juga tidak didokumentasikan.
+  - Usul: tambah domain prod (dari env, bukan hardcode) atau hapus CORS bila API hanya dipakai same-origin.
+
+- [ ] **Tidak ada header Content-Security-Policy / security headers** (terverifikasi 2026-11-13)
+  - Lokasi: `next.config.ts:33-45` — `headers()` hanya `Cache-Control` untuk `/assets/:path*`.
+  - Dampak: tidak ada lapis kedua bila ada XSS (mis. butir Laporan Publik di atas; jawaban Jenna sudah dirender tanpa HTML mentah).
+  - Usul: CSP dasar (mulai `Content-Security-Policy-Report-Only`), plus `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors`.
+
+- [ ] **Pendidikan: daftar pendaftar beasiswa & peminjam buku terbuka tanpa login** (terverifikasi 2026-11-15, rombak menu Pendidikan)
+  - Lokasi: `GET /api/pendidikan/beasiswa/beasiswapendaftar/findMany` & `/:id`, `GET /api/pendidikan/perpustakaandigital/peminjamanbuku/findMany` & `/:id`. `ADMIN_ONLY_GET_PATHS` di `src/app/api/[[...slugs]]/route.ts:100` hanya berisi user/role/fileStorage/imgs/developer, jadi semua GET pendidikan publik.
+  - Dampak: stg (dicek sesi bf tanpa login, hanya nama field & total): 45 pendaftar beasiswa dengan NIK, no HP, alamat KTP/domisili, tanggal lahir, penghasilan, nama orang tua. Peminjam buku: nama, telepon, alamat, bisa dicari. Bila prod memakai kode yang sama, prod ikut terbuka.
+  - Tambahan: `create()` di `_state/pendidikan/beasiswa-desa.ts` dan `_state/.../peminjaman-buku.ts` memanggil `findMany.load()` setelah sukses, jadi browser warga anonim ikut mengambil daftar itu. Halaman publik baru tidak memakai `create()` state lagi.
+  - Usul: wajibkan auth admin untuk GET kedua resource; hapus `findMany.load()` setelah create di state.
+
+- [ ] **Pendidikan: XSS tersimpan lewat catatan peminjaman buku** (terverifikasi 2026-11-15)
+  - Lokasi: `POST /api/pendidikan/perpustakaandigital/peminjamanbuku/create` (publik, `PUBLIC_POST_PATHS` di `src/lib/auth-policy.ts:158`) menyimpan `catatan` apa adanya tanpa validasi; admin `src/app/admin/(dashboard)/pendidikan/perpustakaan-digital/peminjam/[id]/page.tsx:186` merendernya lewat `dangerouslySetInnerHTML`.
+  - Dampak: penyerang anonim cukup POST langsung untuk menjalankan skrip di sesi admin. Mengganti editor di form publik tidak menutup celah.
+  - Usul: simpan teks polos / `sanitizeRichTextForStorage`, render teks polos di admin; validasi server (panjang, telepon, bukuId aktif, tanggal) + batas kiriman seperti Laporan Publik.
+
+- [ ] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64)
+  - Lokasi: `GET /api/pendidikan/infosekolahpaud/siswa/find-many` tanpa auth, mengirim nama siswa + sekolahnya.
+  - Usul: auth admin, publik hanya agregat (`/api/pendidikan/ringkasan/stats`), pola Balita/Ibu Hamil.
+  - Pencarian global ikut membuka nama siswa (terverifikasi 2026-11-15): `src/app/api/[[...slugs]]/_lib/search/findMany.ts` tipe `siswa` (baris ±1287 & ±2346, `...siswa.map(... type: "siswa")`), ditaut `src/app/(public)/_com/searchUrl.tsx:88` ke `/siswa` (kini 308 ke halaman utama, tapi nama sudah tampil di hasil cari). Halaman publik Info Sekolah sejak rombak Pendidikan tidak lagi menampilkan nama siswa. Usul: buang tipe `siswa` dari pencarian publik.
+  - Kecil: total siswa/pengajar publik = jumlah `perJenjang`, bukan `stats.jumlahPengajar` (beda bila ada lembaga nonaktif).
+
+- [ ] **Pendidikan: form daftar beasiswa kemungkinan 401 untuk warga anonim** (terverifikasi statis 2026-11-15, belum diuji POST)
+  - Lokasi: `/api/pendidikan/beasiswa/beasiswapendaftar/create` tidak ada di `PUBLIC_POST_PATHS` (`src/lib/auth-policy.ts`), guard `route.ts:113-122` → 401.
+  - Tambahan: `nik @unique` padahal berisi NIK orang tua (kakak-adik tidak bisa mendaftar, 409); validasi server hanya tipe.
+  - Usul: whitelist + rate limit + validasi server (NIK 16 digit, dst.), meniru Laporan Publik; tinjau `@unique` nik.
+
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
@@ -95,6 +137,13 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/lowongan-kerja/findMany.ts` hanya punya `search` + paginasi, urut `createdAt desc`.
   - Frontend: halaman `/ekonomi/lowongan-kerja-lokal` (panel Filter kiri) memuat sekali `limit=100` lalu menyaring tipe pekerjaan, gaji minimal, pemberi kerja, waktu tayang, dan mengurutkan di klien (`MITIGASI SEMENTARA(lowongan-filter)`, entri ke-101 dst. tidak tampil). Stg 2026-11-14: 7 lowongan.
   - Usul: parameter `tipe`, `gajiMin`, `pemberi`, `sejak`, `urut` + jumlah per pilihan (facet) di find-many, lalu frontend kembali ke paginasi server. Butuh `gaji` berupa angka (lihat P3).
+
+- [ ] **Pendidikan (2026-11-15, dilaporkan sesi rombak)**
+  - `find-by-id` 8 handler (program-pendidikan-anak ×2, bimbingan-belajar-desa ×3, pendidikan-non-formal ×3) membaca `context.params.slugs[0]` padahal state mengirim `?id=edit` → selalu `findFirst()` tanpa where/orderBy/isActive (uji sesi 33: `?id=tidak-ada` tetap mengembalikan baris). Usul: baca `context.query.id`. `updt.ts` yang sama menyimpan `deskripsi` HTML tanpa sanitasi.
+  - `dataperpustakaan/:id` tanpa filter `isActive`, tidak ditemukan = 200 + `success:false`; `kategoribuku/findManyAll` tanpa filter `isActive` bawaan; filter kategori memakai nama, search findMany hanya judul.
+  - Info Sekolah: filter `jenjangPendidikanId` berisi NAMA (siswa memakai `jenjangPendidikanName`); lembaga tanpa `_count` siswa/pengajar; `ringkasan/stats.perJenjang` tidak terurut & memuat jenjang kosong; siswa/pengajar find-many dan `stats.jumlahPengajar` tidak menyaring `lembaga.isActive`.
+  - Beasiswa: `ringkasan/stats.jumlahPenerima` = jumlah semua pendaftar (belum ada status seleksi); `BeasiswaConfig` tanpa periode/jadwal pendaftaran (frontend terpaksa tanpa tanggal).
+  - Data Pendidikan: `findMany` count `total` mengabaikan filter search.
 
 ## P3. Schema & form admin
 
@@ -156,6 +205,27 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - [ ] **`deletedAt DateTime @default(now())` di banyak model** (118 kolom di schema)
   - Semua baris tercatat "terhapus" sejak dibuat; filter memakai `isActive`. Tidak berdampak ke tampilan, tapi menyesatkan. Usul: `DateTime?` tanpa default (migration hati-hati).
 
+- [ ] **Pendidikan (2026-11-15)**: `DataPendidikan.jumlah` String (usul Int + NumberInput, + kolom tahun/keterangan); `Lembaga` hanya nama + jenjang (tanpa alamat/NPSN/status/kontak); buku perpustakaan tanpa penulis/tahun/ketersediaan; Bimbingan Belajar tanpa field terstruktur tempat/jadwal/kontak/cara daftar; editor admin program (Link/Highlight/TextAlign/heading) melebihi allowlist sanitasi publik.
+
+## Jenna publik (tindak lanjut)
+
+Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
+- [ ] **Captcha (Turnstile) saat spam muncul**
+  - v1 sengaja tanpa captcha (Origin + honeypot + rate limit + kuota + budget). Pantau `/dev/jenna/percakapan`; bila spam lolos, tambah Turnstile di `src/app/api/jenna/chat/route.ts` (butuh env secret baru → diskusi dulu).
+
+- [ ] **Model reasoning OpenAI menolak `max_tokens`** (terverifikasi 2026-11-13)
+  - Lokasi: `src/lib/jenna/provider/openai-compatible.ts:54` mengirim `max_tokens`. Model o1/gpt-5 di API OpenAI mewajibkan `max_completion_tokens` dan menolak `max_tokens`.
+  - Dampak: memilih model itu di `/dev/jenna/provider` membuat setiap giliran gagal `provider_error`.
+  - Usul: kirim `max_completion_tokens` untuk model reasoning (deteksi nama model atau opsi di setelan provider), tetap `max_tokens` untuk server OpenAI-compatible lain.
+
+- [ ] **Verifikasi endpoint hangup sesi suara di stg**
+  - Lokasi: `src/lib/jenna/voice/voice.relay.ts` (`hangupLiveSession`) memanggil `POST {baseUrl}/live/sessions/{id}/hangup`; endpoint belum terkonfirmasi dari dokumentasi resmi gateway.
+  - Cek: setelah beberapa sesi suara di stg, lihat kolom `JennaVoiceSession.hangupStatus` dan log `[jenna-voice] hangup`. 2xx = benar; 404/405 = endpoint salah → sesi gateway hanya berakhir oleh timeout gateway (biaya gateway bisa berjalan lebih lama dari menit yang ditagih ke pengunjung).
+
+- [ ] **Limiter start sesi suara in-memory**
+  - Lokasi: `src/lib/jenna/voice/voice.deps.ts` (3 start/menit/IP di `globalThis`). Aman untuk 1 instance; bila stack di-scale ke beberapa replika, batas jadi per replika. Kuota menit (DB) tetap berlaku global.
+
 ## Isi data (urusan admin konten, bukan kode)
 
 - UMKM: ada 2 kategori produk/usaha bernama sama "Makanan" (`KategoriProdukUmkm` id `4b95bge6-012e-5ged-9552-4d8g65d44959` dan `cmoi3j4iy0000mk1daifarcnt`, stg 2026-11-13). Halaman `/ekonomi/umkm` sementara menggabungkannya berdasarkan nama (MITIGASI SEMENTARA umkm-kategori-ganda). Usul: gabungkan jadi satu kategori di admin dan pindahkan produk/UMKM-nya, lalu hapus mitigasi itu.
@@ -166,3 +236,4 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - CCTV: status Online/Offline & `lastActive` diisi manual (data Feb 2026); "RS Kapal" di luar Desa Darmasaba; kode "CCTV - 09" beda format.
 - Musik Desa (stg 2026-11-14): lagu uji "Lagu Tes" oleh artis "Tes" (tanpa tahun) tampil di publik; sampul 3 lagu seeder berupa gambar bertuliskan "No image"; genre "Pop" vs "pop" (frontend sudah menyatukannya saat tampil); 3 lagu belum punya file audio (lihat P3).
 - Lowongan Kerja (stg 2026-11-14): 5 dari 7 lowongan tertanggal April 2026 (data awal/seed, nomor kontak sama 089647037426) dan mungkin sudah tidak berlaku; tipe pekerjaan "Menjaga Toko" pada lowongan Toko Bangunan KBSM seharusnya tipe kerja (mis. Full Time).
+- Pendidikan (2026-11-15): Non Formal bagian ke-3 berjudul "Tempat Kegiatan" (seharusnya "Jenis Program yang Diselenggarakan"; seed `jenis-program-yang-diselenggarakan.json` + stg); `pengajar.json` = salinan `siswa.json` (dummy); Data Pendidikan stg "SD" ganda (874 & 90); judul buku ganda "Seni Berpikir Kritis"; seeder non formal mencetak log "fasilitas bimbingan belajar desa seeded".

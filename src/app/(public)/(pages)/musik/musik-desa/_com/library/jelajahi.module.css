@@ -1,4 +1,7 @@
+/* Baris gulir (.pills, .artists) diberi position: relative supaya anak absolute ikut terpotong overflow-nya
+   (lihat .scroll di shelf-row.module.css). */
 .pills {
+  position: relative;
   display: flex;
   gap: 8px;
   margin: 0 -16px 24px;
@@ -40,6 +43,7 @@
 }
 
 .artists {
+  position: relative;
   display: flex;
   gap: 20px;
   margin: 0 -16px 40px;
@@ -78,6 +82,8 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .chip {
@@ -93,6 +99,23 @@
   font: inherit;
   font-size: 14px;
   cursor: pointer;
+}
+
+/* Kata kunci panjang tidak melebarkan halaman: chip maks selebar kolom, teks terpotong elipsis
+   (nama lengkap tetap di aria-label chip). */
+.chip {
+  max-width: 100%;
+}
+
+.chipLabel {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chip > svg {
+  flex: none;
 }
 
 .clear {
@@ -121,6 +144,33 @@
 @media (max-width: 734px) {
   .resultTitle {
     font-size: 20px;
+  }
+
+  /* Target sentuh ≥44px tanpa membesarkan tampilan: ::before memanjang ke atas-bawah sampai 44px
+     (inset negatif = (tinggi − 44px) / 2). Pil 36px → 4px; baris pil diberi ruang 4px di atas supaya
+     area itu tidak terpotong overflow gulir. Chip/"Hapus filter" 32px → 6px; jarak baris chip 12px
+     supaya area dua baris tidak bertumpuk. */
+  .pills {
+    margin-top: -4px;
+    padding-top: 4px;
+  }
+
+  .chips {
+    row-gap: 12px;
+  }
+
+  .pill,
+  .chip,
+  .clear {
+    position: relative;
+  }
+
+  .pill::before,
+  .chip::before,
+  .clear::before {
+    content: '';
+    position: absolute;
+    inset: min(0px, calc((100% - 44px) / 2)) 0;
   }
 }
 

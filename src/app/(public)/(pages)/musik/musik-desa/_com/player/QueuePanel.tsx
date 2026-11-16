@@ -58,29 +58,29 @@ export function QueuePanel({ onClose }: { onClose: () => void }) {
         </button>
       </div>
 
-      <div role="tabpanel" id={panelId(tab)} aria-labelledby={tabId(tab)} className={s.body}>
-        {tab === 'queue' ? (
-          <>
-            <h2 className={s.heading}>{PLAYER_TEXT.nowPlaying}</h2>
-            {currentSong ? (
-              <ul className={s.list}>
-                <QueueRow song={currentSong} current onPlay={playSong} />
-              </ul>
-            ) : (
-              <p className={s.empty}>{PLAYER_TEXT.nothingPlaying}</p>
-            )}
-            <h2 className={s.heading}>{PLAYER_TEXT.upNext}</h2>
-            {upNext.length > 0 ? (
-              <ul className={s.list}>
-                {upNext.map((song) => (
-                  <QueueRow key={song.id} song={song} onPlay={playSong} />
-                ))}
-              </ul>
-            ) : (
-              <p className={s.empty}>{PLAYER_TEXT.upNextEmpty}</p>
-            )}
-          </>
-        ) : recentlyPlayed.length > 0 ? (
+      {/* Kedua panel selalu ada (yang nonaktif `hidden`): aria-controls tab nonaktif tetap menunjuk elemen nyata. */}
+      <div role="tabpanel" id={panelId('queue')} aria-labelledby={tabId('queue')} className={s.body} hidden={tab !== 'queue'}>
+        <h2 className={s.heading}>{PLAYER_TEXT.nowPlaying}</h2>
+        {currentSong ? (
+          <ul className={s.list}>
+            <QueueRow song={currentSong} current onPlay={playSong} />
+          </ul>
+        ) : (
+          <p className={s.empty}>{PLAYER_TEXT.nothingPlaying}</p>
+        )}
+        <h2 className={s.heading}>{PLAYER_TEXT.upNext}</h2>
+        {upNext.length > 0 ? (
+          <ul className={s.list}>
+            {upNext.map((song) => (
+              <QueueRow key={song.id} song={song} onPlay={playSong} />
+            ))}
+          </ul>
+        ) : (
+          <p className={s.empty}>{PLAYER_TEXT.upNextEmpty}</p>
+        )}
+      </div>
+      <div role="tabpanel" id={panelId('recent')} aria-labelledby={tabId('recent')} className={s.body} hidden={tab !== 'recent'}>
+        {recentlyPlayed.length > 0 ? (
           <ul className={s.list}>
             {recentlyPlayed.map((song) => (
               <QueueRow key={song.id} song={song} current={song.id === currentSong?.id} onPlay={playSong} />

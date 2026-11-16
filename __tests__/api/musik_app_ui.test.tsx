@@ -36,7 +36,7 @@ vi.mock('@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel', () => 
 }));
 
 import { DarmasabaShell } from '@/app/(public)/_com/DarmasabaShell';
-import { MusikApp, QueueDrawer } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikApp';
+import { MusikApp, QueueDrawer, queueDrawerTransition } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikApp';
 import { MusikNavPills, MusikSidebar } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikSidebar';
 import { MusikTopbar } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/MusikTopbar';
 import { MUSIK_APP_TEXT as T } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.meta';
@@ -68,6 +68,12 @@ describe('MusikSidebar', () => {
     expect(out).toContain(T.playlistHeading);
     expect(out).toContain(T.playlistEmpty);
     expect(out).not.toMatch(/buat playlist/i);
+  });
+
+  it('tanpa landmark aside & tanpa heading (h1 halaman jadi heading pertama); nav tetap berlabel', () => {
+    const html = render(<MusikSidebar />);
+    expect(html).not.toMatch(/<aside|<section|<h[1-6]/);
+    expect(html).toContain(`<nav aria-label="${T.navLabel}"`);
   });
 
   it('di luar menu aplikasi tidak ada menu aktif', () => {
@@ -107,7 +113,7 @@ describe('MusikTopbar', () => {
 });
 
 describe('DarmasabaShell', () => {
-  it.each(['/musik', '/musik/musik-desa', '/musik/musik-desa/jelajahi'])('di %s tanpa footer situs & FixedPlayerBar', (path) => {
+  it.each(['/musik/musik-desa', '/musik/musik-desa/jelajahi'])('di %s tanpa footer situs & FixedPlayerBar', (path) => {
     nav.pathname = path;
     const html = render(<DarmasabaShell>isi</DarmasabaShell>);
     expect(html).toContain('navbar');
@@ -123,9 +129,11 @@ describe('DarmasabaShell', () => {
     expect(html).toContain('fixed-player-bar');
   });
 
-  it('rute yang hanya berawalan "musik" (/musikal) bukan aplikasi musik', () => {
-    nav.pathname = '/musikal';
-    expect(render(<DarmasabaShell>isi</DarmasabaShell>)).toContain('data-testid="footer"');
+  it.each(['/musikal', '/musik', '/musik/xyz'])('%s bukan aplikasi musik: footer & FixedPlayerBar tetap ada', (path) => {
+    nav.pathname = path;
+    const html = render(<DarmasabaShell>isi</DarmasabaShell>);
+    expect(html).toContain('data-testid="footer"');
+    expect(html).toContain('fixed-player-bar');
   });
 });
 
@@ -136,7 +144,7 @@ describe('MusikApp', () => {
         <h1>Musik Desa</h1>
       </MusikApp>,
     );
-    expect(html).toMatch(/<aside[^>]*class="[^"]*sidebar/);
+    expect(html).toMatch(/<div[^>]*class="[^"]*sidebar/);
     expect(html).toMatch(/<nav[^>]*class="[^"]*pills/);
     expect(html).toContain('role="search"');
     expect(html).toMatch(/<main[^>]*><h1>Musik Desa<\/h1><\/main>/);
@@ -147,6 +155,21 @@ describe('MusikApp', () => {
     expect(render(<MusikApp>isi</MusikApp>)).toContain('data-bar="off"');
     music.currentSong = { id: 'lagu-1' };
     expect(render(<MusikApp>isi</MusikApp>)).toContain('data-bar="on"');
+  });
+
+  it('tanpa bar pemutar: tombol Antrean cadangan di topbar (aria-expanded false, aria-controls ke panel)', () => {
+    const html = render(<MusikApp>isi</MusikApp>);
+    const button = html.match(new RegExp(`<button[^>]*aria-label="${T.queueOpen}"[^>]*>`))?.[0] ?? '';
+    expect(button).toContain('aria-expanded="false"');
+    const controls = button.match(/aria-controls="([^"]+)"/)?.[1];
+    expect(controls).toBeTruthy();
+    // Tombol berada di topbar, setelah form cari.
+    expect(html.indexOf('role="search"')).toBeLessThan(html.indexOf(`aria-label="${T.queueOpen}"`));
+  });
+
+  it('bar pemutar ada → tombol cadangan topbar tidak dirender (tombol Antrean di bar dipakai)', () => {
+    music.currentSong = { id: 'lagu-1' };
+    expect(render(<MusikApp>isi</MusikApp>)).not.toContain(`aria-label="${T.queueOpen}"`);
   });
 
   it('render server: antrean tertutup (kolom kanan & Drawer belum ada) sampai status dibaca setelah mount', () => {
@@ -162,7 +185,7 @@ describe('QueueDrawer', () => {
   const renderDrawer = (sheet: boolean) =>
     renderToStaticMarkup(
       <MantineProvider theme={theme}>
-        <QueueDrawer opened sheet={sheet} onClose={() => {}} />
+        <QueueDrawer opened sheet={sheet} onClose={() => {}} panelId="antrean-panel" />
       </MantineProvider>,
     ).replace(/<style[\s\S]*?<\/style>/g, '');
   const classOf = (html: string, marker: string) => html.match(new RegExp(`class="([^"]*${marker}[^"]*)"`))?.[1] ?? '';
@@ -183,5 +206,14 @@ describe('QueueDrawer', () => {
 
   it('dialog berlabel Antrean', () => {
     expect(renderDrawer(false)).toMatch(/role="dialog"[^>]*aria-label="Antrean"|aria-label="Antrean"[^>]*role="dialog"/);
+  });
+
+  it('dialog membawa id panel (tujuan aria-controls tombol Antrean)', () => {
+    expect(renderDrawer(false)).toMatch(/<section[^>]*id="antrean-panel"[^>]*role="dialog"|<section[^>]*role="dialog"[^>]*id="antrean-panel"/);
+  });
+
+  it('prefers-reduced-motion → transisi Drawer durasi 0; selain itu bawaan Mantine', () => {
+    expect(queueDrawerTransition(true)).toEqual({ duration: 0 });
+    expect(queueDrawerTransition(false)).toBeUndefined();
   });
 });

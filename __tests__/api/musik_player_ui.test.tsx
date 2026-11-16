@@ -9,12 +9,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Musik } from '@/app/context/MusicContext';
 
 const music = vi.hoisted(() => ({ state: {} as Record<string, unknown> }));
-vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => music.state }));
+// Satu state tiruan melayani kedua hook (waktu ikut di dalamnya: currentTime, duration, seek, seekPreview).
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => music.state, useMusicTime: () => music.state }));
 
 import { MusikUiProvider } from '@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-ui.context';
 import { NowPlayingBar } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/NowPlayingBar';
 import { QueuePanel } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel';
 import { PLAYER_TEXT } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/player.text';
+import { REPEAT_LABEL } from '@/app/context/music/music.text';
+import FixedPlayerBar from '@/app/(public)/_com/FixedPlayerBar';
 
 // test-only: lagu fiktif berbentuk respons /api/desa/musik/find-many.
 const file = (link: string) => ({ id: link, name: link, realName: link, path: link, mimeType: 'x', link });
@@ -46,7 +49,8 @@ function setMusic(overrides: Record<string, unknown> = {}) {
     duration: 0,
     volume: 70,
     isMuted: false,
-    isRepeat: false,
+    repeatMode: 'off',
+    hasNext: true,
     isShuffle: false,
     upNext: [A, B, C],
     recentlyPlayed: [],
@@ -58,7 +62,7 @@ function setMusic(overrides: Record<string, unknown> = {}) {
     seekPreview: noop,
     setVolume: noop,
     toggleMute: noop,
-    toggleRepeat: noop,
+    cycleRepeat: noop,
     toggleShuffle: noop,
     ...overrides,
   };
@@ -103,7 +107,7 @@ describe('NowPlayingBar', () => {
         PLAYER_TEXT.prev,
         PLAYER_TEXT.next,
         PLAYER_TEXT.shuffle,
-        PLAYER_TEXT.repeat,
+        REPEAT_LABEL.off,
         PLAYER_TEXT.queue,
         PLAYER_TEXT.mute,
       ].sort()
@@ -135,12 +139,51 @@ describe('NowPlayingBar', () => {
     expect(html).toContain(PLAYER_TEXT.noAudio);
   });
 
-  it('acak/ulang aktif ditandai aria-pressed; Antrean memakai aria-pressed (tertutup saat SSR)', () => {
-    setMusic({ currentSong: A, isShuffle: true, isRepeat: false });
+  it('acak aktif ditandai aria-pressed', () => {
+    setMusic({ currentSong: A, isShuffle: true });
+    expect(button(render(<NowPlayingBar />), PLAYER_TEXT.shuffle)).toContain('aria-pressed="true"');
+  });
+
+  it('Antrean: aria-expanded (tertutup saat SSR) + aria-controls panel; <1280px membuka dialog', () => {
+    setMusic({ currentSong: A });
+    const queue = button(render(<NowPlayingBar />), PLAYER_TEXT.queue);
+    expect(queue).toContain('aria-expanded="false"');
+    expect(queue).toMatch(/aria-controls="[^"]+"/);
+    // SSR = lebar belum diketahui → anggap Drawer (nilai awal useMediaQuery false), sama dengan MusikApp.
+    expect(queue).toContain('aria-haspopup="dialog"');
+    expect(queue).not.toContain('aria-pressed');
+  });
+
+  it('slider membacakan posisi "m:ss dari m:ss" dan volume dalam persen', () => {
+    setMusic({ currentSong: A, duration: 154, currentTime: 8, volume: 70 });
+    const sliders = [...render(<NowPlayingBar />).matchAll(/<div[^>]*role="slider"[^>]*>/g)].map((m) => m[0]);
+    expect(sliders).toHaveLength(2);
+    expect(sliders[0]).toContain(`aria-label="${PLAYER_TEXT.seek}"`);
+    expect(sliders[0]).toContain('aria-valuetext="0:08 dari 2:34"');
+    expect(sliders[1]).toContain(`aria-label="${PLAYER_TEXT.volume}"`);
+    expect(sliders[1]).toContain('aria-valuetext="70%"');
+  });
+
+  it.each([
+    ['off', 'false', 'tabler-icon-repeat '],
+    ['all', 'true', 'tabler-icon-repeat '],
+    ['one', 'true', 'tabler-icon-repeat-once'],
+  ] as const)('ulang %s: label menyebut mode, ikon & penanda aktif berbeda', (mode, active, icon) => {
+    setMusic({ currentSong: A, repeatMode: mode });
     const html = render(<NowPlayingBar />);
-    expect(button(html, PLAYER_TEXT.shuffle)).toContain('aria-pressed="true"');
-    expect(button(html, PLAYER_TEXT.repeat)).toContain('aria-pressed="false"');
-    expect(button(html, PLAYER_TEXT.queue)).toContain('aria-pressed="false"');
+    const repeat = html.match(new RegExp(`<button[^>]*aria-label="${REPEAT_LABEL[mode]}"[^>]*>[\\s\\S]*?</button>`));
+    expect(repeat, `tombol ${REPEAT_LABEL[mode]}`).not.toBeNull();
+    expect(repeat![0]).toContain(`data-active="${active}"`);
+    expect(repeat![0]).not.toContain('aria-pressed');
+    expect(repeat![0]).toContain(icon);
+  });
+
+  it('tidak ada lagu berikutnya (ulang mati di ujung urutan) → Berikutnya nonaktif', () => {
+    setMusic({ currentSong: A, hasNext: false });
+    const html = render(<NowPlayingBar />);
+    for (const match of html.matchAll(new RegExp(`<button[^>]*aria-label="${PLAYER_TEXT.next}"[^>]*>`, 'g'))) {
+      expect(match[0]).toContain('disabled');
+    }
   });
 
   it('bisu → tombol berlabel Bunyikan', () => {
@@ -156,6 +199,24 @@ describe('NowPlayingBar', () => {
     );
     expect(css).toMatch(/^\s*backdrop-filter:\s*blur\(24px\)/m);
     expect(css).not.toMatch(/-webkit-backdrop-filter\s*:/);
+  });
+
+  it('735–1068px: hanya slider volume yang disembunyikan, tombol bisu tetap; ≤734px seluruh volume', async () => {
+    const { readFileSync } = await import('node:fs');
+    const css = readFileSync(
+      'src/app/(public)/(pages)/musik/musik-desa/_com/player/now-playing-bar.module.css',
+      'utf8'
+    );
+    const media = (query: string) => {
+      const start = css.indexOf(`@media (${query}) {`);
+      expect(start, query).toBeGreaterThan(-1);
+      // Blok @media berakhir di "}" pertama yang berada di awal baris.
+      return css.slice(start, css.indexOf('\n}', start));
+    };
+    const tablet = media('max-width: 1068px');
+    expect(tablet).toMatch(/\.volume \.volumeSlider\s*\{\s*display: none;/);
+    expect(tablet).not.toMatch(/(^|\s)\.volume\s*\{/m);
+    expect(media('max-width: 734px')).toMatch(/\.volume\s*\{\s*display: none;/);
   });
 
   it('tema terang: kaca putih di bar, tanpa cadangan warna gelap di modul pemutar', async () => {
@@ -179,6 +240,17 @@ describe('QueuePanel', () => {
     expect(html).toMatch(/role="tab"[^>]*aria-selected="true"[^>]*>Antrean</);
     expect(html).toMatch(/role="tab"[^>]*aria-selected="false"[^>]*>Baru diputar</);
     button(html, PLAYER_TEXT.closeQueue);
+  });
+
+  it('kedua tabpanel selalu ada: aria-controls tiap tab menunjuk panel nyata, panel nonaktif hidden', () => {
+    const html = render(<QueuePanel onClose={noop} />);
+    const panels = [...html.matchAll(/<div role="tabpanel"[^>]*>/g)].map((m) => m[0]);
+    expect(panels).toHaveLength(2);
+    const controls = [...html.matchAll(/role="tab"[^>]*aria-controls="([^"]+)"/g)].map((m) => m[1]);
+    expect(controls).toHaveLength(2);
+    controls.forEach((id, i) => expect(panels[i]).toContain(`id="${id}"`));
+    expect(panels[0]).not.toContain('hidden');
+    expect(panels[1]).toContain('hidden=""');
   });
 
   it('dengan lagu: Sedang diputar berisi lagu saat ini (beraksen), lalu Berikutnya sesuai upNext', () => {
@@ -255,5 +327,33 @@ describe('QueuePanel', () => {
   it('teks kosong Baru diputar tersedia tanpa em dash', () => {
     expect(PLAYER_TEXT.recentEmpty).toBe('Lagu yang Anda putar akan muncul di sini.');
     expect(Object.values(PLAYER_TEXT).join(' ')).not.toContain('—');
+  });
+});
+
+describe('FixedPlayerBar (pemutar situs di luar /musik)', () => {
+  // Urutan thumb di markup: posisi (desktop), volume, posisi (ponsel).
+  const thumbs = (html: string) => [...html.matchAll(/<div[^>]*role="slider"[^>]*>/g)].map((m) => m[0]);
+
+  it('lagu tanpa audio: kedua slider posisi nonaktif (seret tidak membekukan progres)', () => {
+    setMusic({ currentSong: B, duration: 0 });
+    const [desktop, volume, mobile] = thumbs(render(<FixedPlayerBar />));
+    expect(desktop).toContain('aria-disabled="true"');
+    expect(mobile).toContain('aria-disabled="true"');
+    expect(volume).not.toContain('aria-disabled="true"');
+  });
+
+  it('lagu dengan audio dan durasi diketahui: slider posisi aktif', () => {
+    setMusic({ currentSong: A, duration: 250, currentTime: 10 });
+    const [desktop, , mobile] = thumbs(render(<FixedPlayerBar />));
+    expect(desktop).not.toContain('aria-disabled="true"');
+    expect(mobile).not.toContain('aria-disabled="true"');
+  });
+
+  it('slider membacakan posisi "m:ss dari m:ss" dan volume dalam persen', () => {
+    setMusic({ currentSong: A, duration: 154, currentTime: 8, volume: 70 });
+    const [desktop, volume, mobile] = thumbs(render(<FixedPlayerBar />));
+    expect(desktop).toContain('aria-valuetext="0:08 dari 2:34"');
+    expect(mobile).toContain('aria-valuetext="0:08 dari 2:34"');
+    expect(volume).toContain('aria-valuetext="70%"');
   });
 });

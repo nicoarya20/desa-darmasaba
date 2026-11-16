@@ -1,4 +1,5 @@
 import { MUSIK_TEXT as T } from './musik-library.text';
+import sr from '../sr-only.module.css';
 import s from './musik-skeleton.module.css';
 
 const CARDS = 6;
@@ -8,7 +9,7 @@ const ROWS = 6;
 export function MusikSkeleton({ variant = 'home' }: { variant?: 'home' | 'list' }) {
   return (
     <div className={s.wrap} aria-busy="true" aria-live="polite">
-      <span className={s.srOnly}>{T.memuat}</span>
+      <span className={sr.srOnly}>{T.memuat}</span>
       {variant === 'home' ? (
         <>
           <span className={s.heading} />

@@ -188,3 +188,12 @@ export const pengaturanMenu: NavItem = {
     { id: "pengaturan.menu-access", name: "Menu Access", path: "/admin/pengaturan/menu-access", basePath: "/admin/pengaturan/menu-access" },
   ],
 }
+
+// Hanya role "0" (ditambahkan getNavbar). Sengaja TIDAK masuk navBar/devBar/role* supaya
+// tidak bisa diberikan ke role lain lewat halaman Menu Access.
+// Satu item tanpa children: membuka Developer Console (/dev, layout sendiri).
+export const developerMenu: NavItem = {
+  id: "Developer",
+  name: "Developer",
+  path: "/dev",
+}

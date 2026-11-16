@@ -1,14 +1,12 @@
-// src/app/(public)/(pages)/pemerintahan/berita/[kategori]/page.tsx
-import { Suspense } from "react";
-import Content from "./content";
+import { Suspense } from 'react';
+import { PerpusKatalog } from '../_com/PerpusKatalog';
 
-
+/** `/pendidikan/perpustakaan-digital/{kategori}`: katalog satu kategori (slug = nama huruf kecil, spasi → "-"). */
 export default async function Page({ params }: { params: Promise<{ kategoriBuku: string }> }) {
   const { kategoriBuku } = await params;
-
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Content kategoriBuku={kategoriBuku} />
+    <Suspense>
+      <PerpusKatalog slugParam={kategoriBuku} />
     </Suspense>
   );
 }

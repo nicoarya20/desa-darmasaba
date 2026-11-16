@@ -2,17 +2,20 @@
 
 import colors from "@/con/colors";
 import { Box, Space, Stack } from "@mantine/core";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 
 import { Navbar } from "@/app/(public)/_com/Navbar";
 import Footer from "./Footer";
 import FixedPlayerBar from "./FixedPlayerBar";
 import { ImageErrorRetry } from "./ImageErrorRetryMount";
-import { isMusikAppPath } from "@/app/(public)/(pages)/musik/musik-desa/_com/app/musik-nav.logic";
+import { isMusikAppPath } from "./musik-route";
 
-/** Kerangka halaman publik (route group (public)): navbar, konten, footer, dan pemutar musik. */
+const JennaWidget = dynamic(() => import("./jenna/JennaWidget"), { ssr: false });
+
+/** Kerangka halaman publik (route group (public)): navbar, konten, footer, pemutar musik, dan asisten Jenna. */
 export function DarmasabaShell({ children }: { children: React.ReactNode }) {
-    // Aplikasi Musik Desa (/musik/**) tampil seperti aplikasi: tanpa footer situs, dan bar pemutarnya
+    // Aplikasi Musik Desa (/musik/musik-desa/**) tampil seperti aplikasi: tanpa footer situs, dan bar pemutarnya
     // sendiri (NowPlayingBar) menggantikan FixedPlayerBar. Ruang bar diurus MusikApp (--m-bar-space).
     const isMusikApp = isMusikAppPath(usePathname());
     return (
@@ -30,6 +33,7 @@ export function DarmasabaShell({ children }: { children: React.ReactNode }) {
                         <FixedPlayerBar />
                     </>
                 )}
+                <JennaWidget />
             </Stack>
     )
 }

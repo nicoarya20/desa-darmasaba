@@ -1,22 +1,25 @@
 // src/app/admin/(dashboard)/user&role/_com/dynamicNavbar.ts
 import { devBar, navBar, pengaturanMenu, role1, role2, role3, userRoleMenu } from '@/app/admin/_com/list_PageAdmin';
+import { developerMenu } from '@/app/admin/_com/nav';
 import { filterNavByMenuIds, withoutRestrictedSections } from '@/app/admin/_com/nav/menu-access.logic';
-import { canManageMenuAccess, canManageMenuVisibility } from '@/lib/auth-policy';
+import { canManageMenuAccess, canManageMenuVisibility, isDeveloperRole } from '@/lib/auth-policy';
 
 type NavbarInput = { roleId: number; menuIds?: string[] | null };
 
 /**
  * Sidebar admin untuk user: section/submenu sesuai Menu Access/role, plus User & Role
- * dan Pengaturan yang khusus role 0/1 — apa pun isi Menu Access-nya.
+ * dan Pengaturan yang khusus role 0/1, dan Developer khusus role 0 — apa pun isi Menu Access-nya.
  */
 export function getNavbar(input: NavbarInput) {
   // User & Role / Pengaturan dibuang dulu (walau tersimpan di DB untuk role 2–4),
   // lalu ditambahkan kembali di akhir hanya untuk role yang berhak — urutan tetap.
+  // Developer tidak ada di navBar, jadi tidak bisa diberikan lewat Menu Access.
   const sections = withoutRestrictedSections(sectionsFor(input));
   return [
     ...sections,
     ...(canManageMenuAccess(input.roleId) ? [userRoleMenu] : []),
     ...(canManageMenuVisibility(input.roleId) ? [pengaturanMenu] : []),
+    ...(isDeveloperRole(input.roleId) ? [developerMenu] : []),
   ];
 }
 

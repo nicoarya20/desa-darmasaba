@@ -51,7 +51,7 @@
   cursor: pointer;
 }
 
-.arrow:disabled {
+.arrow[aria-disabled='true'] {
   color: var(--m-subtle, #6e6e73);
   opacity: 0.5;
   cursor: default;
@@ -70,7 +70,10 @@
   list-style: none;
 }
 
+/* position: relative → rak menjadi containing block anak absolute (sr-only, ::before), sehingga ikut terpotong
+   overflow rak. Tanpa ini anak absolute di kartu yang tergulir ke kanan melebarkan dokumen di HP (regresi 19788692). */
 .scroll {
+  position: relative;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
@@ -128,7 +131,15 @@
     display: none;
   }
 
+  /* "Lihat semua" (teks ±20px): area sentuh 44px lewat ::before, kepala rak tidak ikut meninggi. */
   .more {
+    position: relative;
     margin-right: 0;
+  }
+
+  .more::before {
+    content: '';
+    position: absolute;
+    inset: min(0px, calc((100% - 44px) / 2)) -8px;
   }
 }

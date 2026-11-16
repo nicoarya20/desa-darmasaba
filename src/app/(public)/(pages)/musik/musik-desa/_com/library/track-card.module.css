@@ -1,4 +1,6 @@
+/* position: relative → teks sr-only (absolute) di dalam kartu berjangkar ke kartu, bukan ke leluhur di luar rak gulir. */
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
