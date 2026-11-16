@@ -102,7 +102,10 @@ describe('Integrasi beranda & footer', () => {
     const css = SRC('app/(public)/_com/main-page/layanan-masyarakat/layanan-masyarakat.module.css');
     const section = css.match(/\.section \{[^}]*\}/)?.[0] ?? '';
     expect(section).not.toMatch(/background/);
-    expect(section).toContain('padding: calc(var(--block-gap) - var(--section-pad-y)) 16px var(--section-pad-y);');
+    // Titik slide → kartu = setengah --block-gap (lebih rapat dari kartu → batas pita = --section-pad-y).
+    expect(section).toContain('--gallery-dots-tail: 15px;');
+    expect(section).toContain('margin-top: calc(var(--block-gap) / 2 - var(--section-pad-y) - var(--gallery-dots-tail));');
+    expect(section).toContain('padding: 0 16px var(--section-pad-y);');
     expect(css).not.toMatch(/\.(header|title|lead)\s*\{/);
   });
 

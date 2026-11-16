@@ -1,15 +1,22 @@
 /*
  * Kartu Layanan Masyarakat beranda — tanpa judul, duduk di pita galeri Layanan & Potensi tepat di
  * atasnya. Latar transparan (latar beranda = latar galeri) supaya tidak ada garis/beda warna.
- * Jarak titik slide → kartu = --block-gap: galeri sudah memberi padding-bottom --section-pad-y,
- * jadi section ini hanya menambah selisihnya. Kartu putih radius 18px tanpa border, isi 1100px.
+ * Jarak titik slide → kartu = setengah --block-gap (32/24px), sengaja lebih rapat daripada
+ * kartu → batas pita (--section-pad-y, 50/36px) supaya kartu terbaca milik galeri, bukan melayang.
+ * Galeri sudah memberi padding-bottom --section-pad-y + sisa baris kendali di bawah titik, jadi
+ * section ini ditarik ke atas dengan margin negatif (padding-top 0; isi tidak menimpa tombol jeda).
+ * Kartu putih radius 18px tanpa border, isi 1100px.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet 2×2) dan ≤734px (ponsel: daftar baris gaya iOS).
  */
 .section {
   --ink: #1d1d1f;
   --muted: #6e6e73;
   --radius: 18px;
-  padding: calc(var(--block-gap) - var(--section-pad-y)) 16px var(--section-pad-y);
+  /* Sisa baris kendali galeri di bawah titik slide: (.controls min-height 36px − .dotBar 6px) / 2,
+     karena titik di tengah vertikal baris. Ikut berubah bila ukuran itu di gallery.module.css berubah. */
+  --gallery-dots-tail: 15px;
+  margin-top: calc(var(--block-gap) / 2 - var(--section-pad-y) - var(--gallery-dots-tail));
+  padding: 0 16px var(--section-pad-y);
   color: var(--ink);
 }
 
