@@ -2,7 +2,7 @@
 import {
   Accordion,
   Alert,
-  Badge,
+  Autocomplete,
   Button,
   Group,
   NumberInput,
@@ -27,19 +27,25 @@ import { formatDateTime } from '../../_com/format';
 import { SaveActions } from '../../_com/SectionCard';
 import {
   TIMEOUT_SEC_RANGE,
+  hasAdvancedError,
+  hasCustomAdvanced,
   hasErrors,
   isVoiceProvider,
+  modelSuggestions,
   providerCopy,
   providerEqual,
   providerErrors,
   providerFormFrom,
   providerPayload,
+  providerStatus,
+  saveRunsTest,
   voiceProviderPayload,
   type AnyProviderDTO,
   type NumberField,
   type ProviderForm,
 } from '../jenna-form.logic';
 import { JennaProviderKeyDelete } from './JennaProviderKeyDelete';
+import { JennaProviderStatus } from './JennaProviderStatus';
 import { providerName } from './protocol';
 import { useReportDirty } from './useReportDirty';
 
@@ -70,6 +76,7 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
   const [form, setForm] = useState<ProviderForm>(baseline);
   const [replacingKey, setReplacingKey] = useState(!provider.hasApiKey);
   const [confirmLive, setConfirmLive] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(() => hasCustomAdvanced(baseline));
 
   const { slot } = provider;
   const voice = isVoiceProvider(provider);
@@ -80,6 +87,9 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
   const testing = snap.testingSlot === slot;
   const openai = !isVoiceProvider(provider) && provider.protocol === 'openai';
   const reasoningSent = openai && resolveReasoningEffort(form.model, form.reasoningEffort) !== null;
+  const suggestions = modelSuggestions(provider);
+  const runsTest = saveRunsTest(form, provider, cryptoConfigured);
+  const saveLabel = runsTest ? 'Simpan & tes' : 'Simpan';
   useReportDirty(slot, dirty);
 
   const set = <K extends keyof ProviderForm>(key: K, value: ProviderForm[K]) =>
@@ -90,16 +100,19 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
     setReplacingKey(!provider.hasApiKey);
   };
 
+  const runTest = () =>
+    void (isVoiceProvider(provider) ? jennaState.testVoiceProvider() : jennaState.testProvider(provider.slot));
+
   const save = async () => {
     const result = isVoiceProvider(provider)
       ? await jennaState.saveVoiceProvider(voiceProviderPayload(form))
       : await jennaState.saveProvider(provider.slot, providerPayload(form));
     setConfirmLive(false);
     const saved = voice ? result?.voiceProvider : result?.providers.find((p) => p.slot === slot);
-    if (saved) {
-      setForm(providerFormFrom(saved));
-      setReplacingKey(!saved.hasApiKey);
-    }
+    if (!saved) return;
+    setForm(providerFormFrom(saved));
+    setReplacingKey(!saved.hasApiKey);
+    if (saved.ready && cryptoConfigured) runTest();
   };
 
   const testDisabledReason = !cryptoConfigured
@@ -110,136 +123,24 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
         ? 'Lengkapi Base URL, model, dan API key lalu simpan.'
         : null;
 
+  const modelHint = (value: string) => suggestions.find((s) => s.value === value)?.hint;
+  const modelProps = {
+    label: copy.modelLabel,
+    description: copy.modelDescription,
+    placeholder: copy.modelPlaceholder,
+    required: true,
+    autoComplete: 'off',
+    spellCheck: false,
+    maxLength: JENNA_PROVIDER_LIMITS.model.maxLength,
+    error: dirty ? errors.model : undefined,
+  };
+
   return (
     <Stack gap="md" pt="md">
-      <Group gap="xs" wrap="wrap">
-        <Badge color={provider.ready ? 'green' : 'orange'} variant="light">
-          {provider.ready ? 'Konfigurasi lengkap' : 'Belum lengkap'}
-        </Badge>
-        {provider.updatedAt && (
-          <Text size="xs" c={tokens.colors.text.muted}>
-            Disimpan {formatDateTime(provider.updatedAt)}
-          </Text>
-        )}
-      </Group>
-
-      <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
-        <TextInput
-          label="Base URL"
-          description={copy.baseUrlDescription}
-          placeholder={copy.baseUrlPlaceholder}
-          required
-          type="url"
-          inputMode="url"
-          autoComplete="off"
-          spellCheck={false}
-          maxLength={JENNA_PROVIDER_LIMITS.baseUrl.maxLength}
-          value={form.baseUrl}
-          onChange={(e) => set('baseUrl', e.currentTarget.value)}
-          error={dirty ? errors.baseUrl : undefined}
-        />
-        <Stack gap={4}>
-          <TextInput
-            label={copy.modelLabel}
-            description={copy.modelDescription}
-            placeholder={copy.modelPlaceholder}
-            required
-            autoComplete="off"
-            spellCheck={false}
-            maxLength={JENNA_PROVIDER_LIMITS.model.maxLength}
-            value={form.model}
-            onChange={(e) => set('model', e.currentTarget.value)}
-            error={dirty ? errors.model : undefined}
-          />
-          {openai && (
-            <Text size="xs" c={tokens.colors.text.muted}>
-              {describeReasoning(form.model, form.reasoningEffort)}
-            </Text>
-          )}
-        </Stack>
-      </SimpleGrid>
-
-      <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
-        {!voice && (
-          <>
-            <NumberInput
-              label="Temperature"
-              description={
-                reasoningSent
-                  ? 'Diabaikan untuk model reasoning (nilai tetap disimpan).'
-                  : `${JENNA_PROVIDER_LIMITS.temperature.min}–${JENNA_PROVIDER_LIMITS.temperature.max}. Kosongkan = default provider.`
-              }
-              min={JENNA_PROVIDER_LIMITS.temperature.min}
-              max={JENNA_PROVIDER_LIMITS.temperature.max}
-              step={0.1}
-              decimalScale={2}
-              decimalSeparator=","
-              allowNegative={false}
-              clampBehavior="none"
-              value={form.temperature}
-              onChange={(v) => set('temperature', toNumberField(v))}
-              error={errors.temperature}
-            />
-            <NumberInput
-              label="Max tokens"
-              description="Batas panjang jawaban. Kosongkan = default provider."
-              min={JENNA_PROVIDER_LIMITS.maxTokens.min}
-              max={JENNA_PROVIDER_LIMITS.maxTokens.max}
-              allowDecimal={false}
-              allowNegative={false}
-              thousandSeparator="."
-              decimalSeparator=","
-              clampBehavior="none"
-              value={form.maxTokens}
-              onChange={(v) => set('maxTokens', toNumberField(v))}
-              error={errors.maxTokens}
-            />
-          </>
-        )}
-        <NumberInput
-          label="Timeout"
-          description={`${TIMEOUT_SEC_RANGE.min}–${TIMEOUT_SEC_RANGE.max} detik.`}
-          required
-          min={TIMEOUT_SEC_RANGE.min}
-          max={TIMEOUT_SEC_RANGE.max}
-          decimalScale={1}
-          decimalSeparator=","
-          allowNegative={false}
-          clampBehavior="none"
-          suffix=" detik"
-          value={form.timeoutSec}
-          onChange={(v) => set('timeoutSec', toNumberField(v))}
-          error={errors.timeoutSec}
-        />
-      </SimpleGrid>
-
-      {openai && (
-        <Accordion
-          variant="contained"
-          chevronSize={14}
-          defaultValue={baseline.reasoningEffort !== '' ? ADVANCED_PANEL : null}
-        >
-          <Accordion.Item value={ADVANCED_PANEL}>
-            <Accordion.Control>
-              <Text fw={500} fz="sm">
-                Pengaturan lanjutan
-              </Text>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
-                <Select
-                  label="Reasoning effort"
-                  description="Otomatis menyesuaikan nama model. Pilih manual hanya bila provider menolak setelan otomatis (cek dengan Tes koneksi). Bila dikirim, batas token memakai max_completion_tokens dan temperature tidak dikirim."
-                  data={REASONING_EFFORT_OPTIONS}
-                  allowDeselect={false}
-                  value={form.reasoningEffort || REASONING_EFFORT_AUTO}
-                  onChange={(v) => set('reasoningEffort', isJennaReasoningEffort(v) ? v : '')}
-                />
-              </SimpleGrid>
-            </Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
-      )}
+      <JennaProviderStatus
+        status={providerStatus(provider, testing)}
+        note={provider.updatedAt ? `Disimpan ${formatDateTime(provider.updatedAt)}` : undefined}
+      />
 
       {!cryptoConfigured ? (
         <Alert color="orange" variant="light" icon={<IconKey size={16} />} title="API key tidak dapat disimpan">
@@ -306,30 +207,132 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
         </SimpleGrid>
       )}
 
-      <Stack gap={4}>
-        <Text size="sm" fw={500} c={tokens.colors.text.primary}>
-          Tes koneksi terakhir
-        </Text>
-        {provider.lastTestAt ? (
-          <Group gap="xs" wrap="wrap" aria-live="polite">
-            <Badge color={provider.lastTestOk ? 'green' : 'red'} variant="light">
-              {provider.lastTestOk ? 'Berhasil' : 'Gagal'}
-            </Badge>
+      <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+        <Stack gap={4}>
+          {suggestions.length > 0 ? (
+            <Autocomplete
+              {...modelProps}
+              data={suggestions.map((s) => s.value)}
+              renderOption={({ option }) => {
+                const hint = modelHint(option.value);
+                return (
+                  <Group gap="xs" wrap="nowrap" justify="space-between" w="100%">
+                    <Text size="sm">{option.value}</Text>
+                    {hint && (
+                      <Text size="xs" c={tokens.colors.text.muted}>
+                        {hint}
+                      </Text>
+                    )}
+                  </Group>
+                );
+              }}
+              value={form.model}
+              onChange={(value) => set('model', value)}
+            />
+          ) : (
+            <TextInput {...modelProps} value={form.model} onChange={(e) => set('model', e.currentTarget.value)} />
+          )}
+          {openai && (
             <Text size="xs" c={tokens.colors.text.muted}>
-              {formatDateTime(provider.lastTestAt)}
+              {describeReasoning(form.model, form.reasoningEffort)}
             </Text>
-            {provider.lastTestMessage && (
-              <Text size="xs" c={tokens.colors.text.secondary} style={{ flexBasis: '100%' }}>
-                {provider.lastTestMessage}
-              </Text>
-            )}
-          </Group>
-        ) : (
-          <Text size="xs" c={tokens.colors.text.muted}>
-            Belum pernah dites.
-          </Text>
-        )}
-      </Stack>
+          )}
+        </Stack>
+        <TextInput
+          label="Base URL"
+          description={copy.baseUrlDescription}
+          placeholder={copy.baseUrlPlaceholder}
+          required
+          type="url"
+          inputMode="url"
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={JENNA_PROVIDER_LIMITS.baseUrl.maxLength}
+          value={form.baseUrl}
+          onChange={(e) => set('baseUrl', e.currentTarget.value)}
+          error={dirty ? errors.baseUrl : undefined}
+        />
+      </SimpleGrid>
+
+      <Accordion
+        variant="contained"
+        chevronSize={14}
+        value={advancedOpen || hasAdvancedError(errors) ? ADVANCED_PANEL : null}
+        onChange={(value) => setAdvancedOpen(value === ADVANCED_PANEL)}
+      >
+        <Accordion.Item value={ADVANCED_PANEL}>
+          <Accordion.Control>
+            <Text fw={500} fz="sm">
+              Pengaturan lanjutan
+            </Text>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+              {!voice && (
+                <>
+                  <NumberInput
+                    label="Temperature"
+                    description={
+                      reasoningSent
+                        ? 'Diabaikan untuk model reasoning (nilai tetap disimpan).'
+                        : `${JENNA_PROVIDER_LIMITS.temperature.min}–${JENNA_PROVIDER_LIMITS.temperature.max}. Kosongkan = default provider.`
+                    }
+                    min={JENNA_PROVIDER_LIMITS.temperature.min}
+                    max={JENNA_PROVIDER_LIMITS.temperature.max}
+                    step={0.1}
+                    decimalScale={2}
+                    decimalSeparator=","
+                    allowNegative={false}
+                    clampBehavior="none"
+                    value={form.temperature}
+                    onChange={(v) => set('temperature', toNumberField(v))}
+                    error={errors.temperature}
+                  />
+                  <NumberInput
+                    label="Max tokens"
+                    description="Batas panjang jawaban. Kosongkan = default provider."
+                    min={JENNA_PROVIDER_LIMITS.maxTokens.min}
+                    max={JENNA_PROVIDER_LIMITS.maxTokens.max}
+                    allowDecimal={false}
+                    allowNegative={false}
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    clampBehavior="none"
+                    value={form.maxTokens}
+                    onChange={(v) => set('maxTokens', toNumberField(v))}
+                    error={errors.maxTokens}
+                  />
+                </>
+              )}
+              <NumberInput
+                label="Timeout"
+                description={`${TIMEOUT_SEC_RANGE.min}–${TIMEOUT_SEC_RANGE.max} detik.`}
+                required
+                min={TIMEOUT_SEC_RANGE.min}
+                max={TIMEOUT_SEC_RANGE.max}
+                decimalScale={1}
+                decimalSeparator=","
+                allowNegative={false}
+                clampBehavior="none"
+                suffix=" detik"
+                value={form.timeoutSec}
+                onChange={(v) => set('timeoutSec', toNumberField(v))}
+                error={errors.timeoutSec}
+              />
+              {openai && (
+                <Select
+                  label="Reasoning effort"
+                  description="Otomatis menyesuaikan nama model. Pilih manual hanya bila provider menolak setelan otomatis (cek dengan Tes koneksi). Bila dikirim, batas token memakai max_completion_tokens dan temperature tidak dikirim."
+                  data={REASONING_EFFORT_OPTIONS}
+                  allowDeselect={false}
+                  value={form.reasoningEffort || REASONING_EFFORT_AUTO}
+                  onChange={(v) => set('reasoningEffort', isJennaReasoningEffort(v) ? v : '')}
+                />
+              )}
+            </SimpleGrid>
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
 
       <SaveActions
         save={{
@@ -338,21 +341,19 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
           blocked: hasErrors(errors) || (snap.saving !== null && !saving) || testing,
           onSave: () => (live ? setConfirmLive(true) : void save()),
           onReset: reset,
-          saveLabel: 'Simpan provider',
+          saveLabel,
         }}
         extra={
           <Group gap="xs" wrap="wrap">
             <Button
               variant="outline"
               leftSection={<IconPlugConnected size={16} />}
-              onClick={() =>
-                void (isVoiceProvider(provider) ? jennaState.testVoiceProvider() : jennaState.testProvider(provider.slot))
-              }
+              onClick={runTest}
               loading={testing}
               disabled={testDisabledReason !== null || snap.saving !== null}
               aria-describedby={testDisabledReason ? testHintId : undefined}
             >
-              Tes koneksi
+              {provider.lastTestAt ? 'Tes ulang' : 'Tes koneksi'}
             </Button>
             {testDisabledReason && (
               <Text id={testHintId} size="xs" c={tokens.colors.text.muted}>
@@ -366,8 +367,12 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
       <ConfirmModal
         opened={confirmLive}
         title="Simpan provider yang sedang dipakai?"
-        message={`Provider ${providerName(provider)} sedang melayani chat publik. Perubahan langsung berlaku dan hasil tes koneksi sebelumnya akan direset.`}
-        confirmLabel="Simpan"
+        message={`Provider ${providerName(provider)} sedang melayani chat publik. Perubahan langsung berlaku ${
+          runsTest
+            ? 'dan hasil tes sebelumnya direset lalu tes dijalankan ulang.'
+            : 'dan hasil tes koneksi sebelumnya akan direset.'
+        }`}
+        confirmLabel={saveLabel}
         loading={saving}
         onConfirm={() => void save()}
         onClose={() => setConfirmLive(false)}

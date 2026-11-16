@@ -56,12 +56,12 @@ describe('resolveReasoningEffort — off & manual', () => {
 describe('describeReasoning', () => {
   it('keterangan Otomatis, manual, off, dan model kosong', () => {
     expect(describeReasoning('gpt-6-luna', null)).toBe(
-      'Otomatis: model reasoning terdeteksi — dikirim reasoning effort `none`, temperature diabaikan.',
+      'Otomatis: model reasoning terdeteksi — dikirim reasoning effort "none", temperature diabaikan.',
     );
-    expect(describeReasoning('o4-mini', '')).toContain('`low`');
+    expect(describeReasoning('o4-mini', '')).toContain('"low"');
     expect(describeReasoning('gpt-4o-mini', null)).toBe('Otomatis: model biasa — reasoning effort tidak dikirim.');
     expect(describeReasoning('gpt-6-luna', 'off')).toContain('tidak dikirim');
-    expect(describeReasoning('gpt-4o-mini', 'medium')).toBe('Manual: dikirim reasoning effort `medium`, temperature diabaikan.');
+    expect(describeReasoning('gpt-4o-mini', 'medium')).toBe('Manual: dikirim reasoning effort "medium", temperature diabaikan.');
     expect(describeReasoning('  ', null)).toBe('Otomatis: isi model untuk melihat setelan yang dipakai.');
   });
 });

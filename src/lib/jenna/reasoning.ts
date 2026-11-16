@@ -34,9 +34,9 @@ export function resolveReasoningEffort(
 /** Keterangan singkat untuk form: apa yang dikirim untuk model & setelan ini. */
 export function describeReasoning(model: string, setting: string | null | undefined): string {
   if (setting === "off") return "Reasoning effort tidak dikirim (Jangan kirim); batas token dikirim sebagai max_tokens.";
-  if (isEffortValue(setting)) return `Manual: dikirim reasoning effort \`${setting}\`, temperature diabaikan.`;
+  if (isEffortValue(setting)) return `Manual: dikirim reasoning effort "${setting}", temperature diabaikan.`;
   if (model.trim() === "") return "Otomatis: isi model untuk melihat setelan yang dipakai.";
   const effective = autoReasoningEffort(model);
   if (effective === null) return "Otomatis: model biasa — reasoning effort tidak dikirim.";
-  return `Otomatis: model reasoning terdeteksi — dikirim reasoning effort \`${effective}\`, temperature diabaikan.`;
+  return `Otomatis: model reasoning terdeteksi — dikirim reasoning effort "${effective}", temperature diabaikan.`;
 }
