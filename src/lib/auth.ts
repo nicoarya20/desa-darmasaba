@@ -4,6 +4,7 @@ import { APIError, createAuthMiddleware } from "better-auth/api";
 import prisma from "./prisma";
 import { env } from "./env";
 import { ROLE_USER, resolveRoleForNewUser, shouldPromoteRole } from "./auth-policy";
+import { recordLogin } from "./login-log";
 
 const roleEmailLists = {
   developerEmails: env.DEVELOPER_EMAILS,
@@ -121,12 +122,19 @@ export const auth = betterAuth({
         select: { isActive: true, email: true, roleId: true },
       });
 
+      const loginMeta = {
+        userId: newSession.user.id,
+        ipAddress: newSession.session.ipAddress,
+        userAgent: newSession.session.userAgent,
+      };
+
       // Tolak login user non-aktif (dinonaktifkan admin) — hapus session Better Auth
       // yang barusan dibuat supaya tak ada sesi valid tersisa.
       if (user && user.isActive === false) {
+        await recordLogin({ ...loginMeta, email: user.email, roleId: user.roleId, result: "blocked_inactive" });
         await prisma.session
           .delete({ where: { id: newSession.session.id } })
-          .catch(() => {});
+          .catch((err) => console.warn("[auth] gagal menghapus sesi akun nonaktif", err));
         throw new APIError("FORBIDDEN", {
           message: "Akun Anda nonaktif. Hubungi administrator.",
         });
@@ -135,6 +143,7 @@ export const auth = betterAuth({
       // Promote existing user ∈ DEVELOPER_EMAILS / SUPER_ADMIN_EMAILS (env ditambah
       // setelah user ada). Hanya menaikkan role, tidak pernah menurunkan.
       const targetRoleId = resolveRoleForNewUser(user?.email, roleEmailLists);
+      let finalRoleId = user?.roleId;
       if (
         user &&
         targetRoleId !== ROLE_USER &&
@@ -144,6 +153,11 @@ export const auth = betterAuth({
           where: { id: newSession.user.id },
           data: { roleId: targetRoleId },
         });
+        finalRoleId = targetRoleId;
+      }
+
+      if (user) {
+        await recordLogin({ ...loginMeta, email: user.email, roleId: finalRoleId, result: "success" });
       }
     }),
   },
