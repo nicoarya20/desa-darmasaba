@@ -282,4 +282,61 @@ describe("create publik tidak menggemakan data pribadi", () => {
     expect(text).not.toContain("Jalan Rekaan");
     expect(prismaMock.peminjamanBuku.create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
   });
+
+  // test-only: isian rekaan per form publik; `rahasia` = nilai yang tidak boleh muncul di respons.
+  const FORM_PUBLIK = [
+    {
+      url: "/api/ppid/permohonaninformasipublik/create",
+      model: "permohonanInformasiPublik",
+      message: "Permohonan Informasi Publik Berhasil Dibuat",
+      body: {
+        name: "Pemohon Rekaan",
+        nik: NIK,
+        notelp: HP,
+        alamat: "Jalan Rekaan 4",
+        email: "pemohon@example.test",
+        jenisInformasiDimintaId: null,
+        caraMemperolehInformasiId: null,
+        caraMemperolehSalinanInformasiId: null,
+      },
+      rahasia: [NIK, HP, "Jalan Rekaan", "pemohon@example.test"],
+    },
+    {
+      url: "/api/ppid/permohonankeberataninformasipublik/create",
+      model: "formulirPermohonanKeberatan",
+      message: "Permohonan Keberatan Informasi Publik Berhasil Dibuat",
+      body: { name: "Pemohon Rekaan", email: "keberatan@example.test", notelp: HP, alasan: "Alasan rekaan" },
+      rahasia: [HP, "keberatan@example.test", "Pemohon Rekaan"],
+    },
+    {
+      url: "/api/landingpage/responden/create",
+      model: "responden",
+      message: "Berhasil membuat responden",
+      body: { name: "Responden Rekaan", tanggal: "2026-11-17", jenisKelaminId: "jk-1", ratingId: "r-1", kelompokUmurId: "u-1" },
+      rahasia: ["Responden Rekaan"],
+    },
+    {
+      url: "/api/inovasi/ajukanideinovatif/create",
+      model: "ajukanIdeInovatif",
+      message: "Sukses menambahkan ajukan ide inovatif",
+      body: { name: "Pengaju Rekaan", deskripsi: "<p>Rekaan</p>", alamat: "Jalan Rekaan 5", namaIde: "Ide", masalah: "M", benefit: "B" },
+      rahasia: ["Pengaju Rekaan", "Jalan Rekaan"],
+    },
+    {
+      url: "/api/kesehatan/pendaftaran-jadwal-kegiatan/create",
+      model: "pendaftaranJadwalKegiatan",
+      message: "Sukses menambahkan pendaftaran jadwal kegiatan",
+      body: { name: "Anak Rekaan", tanggal: "2026-11-17", namaOrangtua: "Ortu Rekaan", nomor: HP, alamat: "Jalan Rekaan 6", catatan: "-" },
+      rahasia: ["Anak Rekaan", "Ortu Rekaan", HP, "Jalan Rekaan"],
+    },
+  ];
+
+  it.each(FORM_PUBLIK)("POST $url → hanya id", async ({ url, model, message, body, rahasia }) => {
+    const res = await postJson(url, body);
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(JSON.parse(text)).toEqual({ success: true, message, data: { id: "baru-1" } });
+    for (const nilai of rahasia) expect(text).not.toContain(nilai);
+    expect(prismaMock[model].create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
+  });
 });

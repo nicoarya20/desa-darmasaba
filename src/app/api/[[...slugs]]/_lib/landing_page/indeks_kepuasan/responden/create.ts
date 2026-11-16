@@ -26,11 +26,13 @@ export default async function respondenCreate(context: Context) {
                 ratingId: body.ratingId,
                 kelompokUmurId: body.kelompokUmurId,
             },
+            select: { id: true },
         });
+        // Hanya id: endpoint form publik, jangan gemakan nama responden ke respons.
         return {
             success: true,
             message: "Berhasil membuat responden",
-            data: result,
+            data: { id: result.id },
         };
     } catch (error) {
         // Nama unik (@unique) → 409 "Nama sudah dipakai"; error lain di-throw

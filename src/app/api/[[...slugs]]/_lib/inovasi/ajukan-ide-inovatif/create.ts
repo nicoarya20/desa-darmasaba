@@ -15,7 +15,7 @@ type FormCreateAjukanIdeInovatif = Prisma.AjukanIdeInovatifGetPayload<{
 export default async function ajukanIdeInovatifCreate(context: Context){
     const body = context.body as FormCreateAjukanIdeInovatif;
 
-    await prisma.ajukanIdeInovatif.create({
+    const result = await prisma.ajukanIdeInovatif.create({
         data: {
             name: body.name,
             deskripsi: body.deskripsi,
@@ -23,14 +23,14 @@ export default async function ajukanIdeInovatifCreate(context: Context){
             namaIde: body.namaIde,
             masalah: body.masalah,
             benefit: body.benefit,
-        }
+        },
+        select: { id: true },
     })
 
+    // Hanya id: endpoint form publik, jangan gemakan nama/alamat pengaju ke respons.
     return {
         success: true,
         message: "Sukses menambahkan ajukan ide inovatif",
-        data: {
-            ...body,
-        }
+        data: { id: result.id },
     }
 }
