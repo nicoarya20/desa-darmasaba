@@ -16,7 +16,7 @@ import { AiProviderError, type AIProvider, type ChatMessage } from '@/lib/jenna/
 
 // Sengaja tidak berbentuk `sk-…`: yang diuji penyamaran literal kunci terpasang.
 const API_KEY = 'kunci-RAHASIA-777';
-const CFG = { baseUrl: 'https://llm.example/v1', apiKey: API_KEY, model: 'm', temperature: null, maxTokens: null, timeoutMs: 5000 };
+const CFG = { baseUrl: 'https://llm.example/v1', apiKey: API_KEY, model: 'm', temperature: null, maxTokens: null, reasoningEffort: null, timeoutMs: 5000 };
 const USER: ChatMessage[] = [{ role: 'user', content: 'u' }];
 
 const respond = (res: () => Response) => async () => res();

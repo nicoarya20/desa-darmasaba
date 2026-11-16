@@ -30,6 +30,7 @@ const row = (over: Record<string, unknown> = {}) => ({
   apiKeyEnc: encryptSecret('sk-test', KEY),
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 5000,
   ...over,
 });
@@ -47,6 +48,13 @@ describe('resolveActiveProvider', () => {
     expect(mocks.provider).toHaveBeenCalledWith({ where: { slot: 'chat_openai' } });
     expect(res).toMatchObject({ slot: 'chat_openai', model: 'gpt-test' });
     expect('provider' in res && res.provider).toBeInstanceOf(OpenAICompatibleProvider);
+  });
+
+  it('reasoningEffort row diteruskan ke config adapter', async () => {
+    mocks.provider.mockResolvedValue(row({ reasoningEffort: 'none' }));
+    const res = await resolveActiveProvider(0);
+    const config = 'provider' in res ? (res.provider as unknown as { config: { reasoningEffort: unknown } }).config : null;
+    expect(config?.reasoningEffort).toBe('none');
   });
 
   it('protokol anthropic memakai slot chat_anthropic', async () => {

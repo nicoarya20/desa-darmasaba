@@ -127,8 +127,27 @@ describe('validateProviderInput', () => {
   it('default timeout 30000, apiKey kosong = pertahankan (null)', () => {
     expect(validateProviderInput({ ...base, apiKey: '  ' }, 'production')).toEqual({
       ok: true,
-      value: { ...base, temperature: null, maxTokens: null, timeoutMs: 30000, apiKey: null },
+      value: { ...base, temperature: null, maxTokens: null, reasoningEffort: null, timeoutMs: 30000, apiKey: null },
     });
+  });
+
+  it('reasoningEffort: nilai valid dipertahankan, kosong/null → null, nilai asing ditolak', () => {
+    for (const effort of ['off', 'none', 'low', 'medium', 'high'] as const) {
+      expect(validateProviderInput({ ...base, reasoningEffort: effort }, 'production')).toMatchObject({
+        ok: true,
+        value: { reasoningEffort: effort },
+      });
+    }
+    for (const empty of ['', null, undefined] as const) {
+      expect(validateProviderInput({ ...base, reasoningEffort: empty }, 'production')).toMatchObject({
+        ok: true,
+        value: { reasoningEffort: null },
+      });
+    }
+    for (const bad of ['minimal', 'HIGH', ' none', 'auto', 'OFF']) {
+      const r = validateProviderInput({ ...base, reasoningEffort: bad as never }, 'production');
+      expect(r).toEqual({ ok: false, error: 'Reasoning effort harus kosong atau salah satu dari: off, none, low, medium, high.' });
+    }
   });
 
   it('nilai di luar batas ditolak', () => {
@@ -154,6 +173,7 @@ const providerRow = (over: Partial<JennaProvider> = {}): JennaProvider => ({
   model: 'gpt-4o-mini',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 30000,
   lastTestAt: null,
   lastTestOk: null,
@@ -179,6 +199,15 @@ describe('mappers (API key tidak bocor)', () => {
     expect(dto).toMatchObject({ hasApiKey: false, apiKeyHint: null, ready: false });
   });
 
+  it('reasoningEffort: openai diteruskan; nilai asing, slot anthropic, dan tanpa row → null', () => {
+    expect(toProviderDTO('chat_openai', providerRow()).reasoningEffort).toBeNull();
+    expect(toProviderDTO('chat_openai', providerRow({ reasoningEffort: 'none' })).reasoningEffort).toBe('none');
+    expect(toProviderDTO('chat_openai', providerRow({ reasoningEffort: 'off' })).reasoningEffort).toBe('off');
+    expect(toProviderDTO('chat_openai', providerRow({ reasoningEffort: 'turbo' })).reasoningEffort).toBeNull();
+    expect(toProviderDTO('chat_anthropic', providerRow({ slot: 'chat_anthropic', reasoningEffort: 'low' })).reasoningEffort).toBeNull();
+    expect(toProviderDTO('chat_openai', null).reasoningEffort).toBeNull();
+  });
+
   it('semua slot selalu ada; slot kosong pakai default', () => {
     const dtos = toProviderDTOs([providerRow()]);
     expect(dtos.map((d) => d.slot)).toEqual(['chat_openai', 'chat_anthropic']);
@@ -196,13 +225,45 @@ describe('mappers (API key tidak bocor)', () => {
 });
 
 describe('connection test', () => {
-  const cfg = { baseUrl: 'https://api.openai.com/v1/', model: 'gpt-4o-mini', apiKey: SECRET };
+  const cfg = {
+    baseUrl: 'https://api.openai.com/v1/',
+    model: 'gpt-4o-mini',
+    apiKey: SECRET,
+    temperature: 0.4,
+    reasoningEffort: null,
+  };
+  const PING_TOOL = {
+    type: 'function',
+    function: { name: 'ping', description: 'Tes koneksi.', parameters: { type: 'object', properties: {} } },
+  };
 
-  it('OpenAI-compatible: GET {base}/models + Bearer', () => {
+  it('OpenAI-compatible: POST {base}/chat/completions non-stream + Bearer, ping + tool dummy, batas 16 token', () => {
     const { url, init } = buildConnectionTestRequest('chat_openai', cfg);
-    expect(url).toBe('https://api.openai.com/v1/models');
-    expect(init.method).toBe('GET');
+    expect(url).toBe('https://api.openai.com/v1/chat/completions');
+    expect(init.method).toBe('POST');
     expect((init.headers as Record<string, string>).authorization).toBe(`Bearer ${SECRET}`);
+    expect(JSON.parse(init.body as string)).toEqual({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: 'ping' }],
+      max_tokens: 16,
+      temperature: 0.4,
+      tools: [PING_TOOL],
+      tool_choice: 'auto',
+    });
+  });
+
+  it('OpenAI-compatible: aturan parameter sama dengan chat (Otomatis gpt-6-luna, off, manual)', () => {
+    const body = (over: { model?: string; reasoningEffort?: string | null }) =>
+      JSON.parse(buildConnectionTestRequest('chat_openai', { ...cfg, ...over }).init.body as string);
+    const auto = body({ model: 'gpt-6-luna' });
+    expect(auto).toMatchObject({ reasoning_effort: 'none', max_completion_tokens: 16, tools: [PING_TOOL] });
+    expect(auto).not.toHaveProperty('max_tokens');
+    expect(auto).not.toHaveProperty('temperature');
+    const off = body({ model: 'gpt-6-luna', reasoningEffort: 'off' });
+    expect(off).toMatchObject({ max_tokens: 16, temperature: 0.4 });
+    expect(off).not.toHaveProperty('reasoning_effort');
+    expect(body({ reasoningEffort: 'medium' })).toMatchObject({ reasoning_effort: 'medium', max_completion_tokens: 16 });
+    expect(body({})).not.toHaveProperty('stream');
   });
 
   it('Anthropic: POST /v1/messages, max_tokens 1, anthropic-version; base dengan/tanpa /v1', () => {
@@ -254,6 +315,45 @@ describe('connection test', () => {
     const res = await runConnectionTest('chat_openai', { ...cfg, timeoutMs: 20 }, hang as unknown as typeof fetch);
     expect(res).toMatchObject({ ok: false });
     expect(res.message).toContain('timeout');
+  });
+
+  const run400 = (body: string, slot: 'chat_openai' | 'chat_anthropic' = 'chat_openai') =>
+    runConnectionTest(slot, { ...cfg, timeoutMs: 5000 }, (async () => new Response(body, { status: 400 })) as unknown as typeof fetch);
+  const vendor400 = (error: Record<string, unknown>) =>
+    JSON.stringify({ error: { message: `Unsupported parameter, key ${SECRET} RAHASIA`, type: 'invalid_request_error', ...error } });
+
+  it('HTTP 400 OpenAI: hanya error.param & error.code yang tampil; error.message dan API key tidak pernah', async () => {
+    const res = await run400(vendor400({ param: 'max_tokens', code: 'unsupported_parameter' }));
+    expect(res).toMatchObject({
+      ok: false,
+      message:
+        'Permintaan ditolak provider (HTTP 400): parameter `max_tokens` ditolak (unsupported_parameter). Ubah Reasoning effort atau Temperature.',
+    });
+    expect(res.message).not.toContain('RAHASIA');
+    expect(res.message).not.toContain(SECRET);
+
+    expect((await run400(vendor400({ param: null, code: 'unsupported_value' }))).message).toBe(
+      'Permintaan ditolak provider (HTTP 400): kode galat unsupported_value. Ubah Reasoning effort atau Temperature.',
+    );
+  });
+
+  it('HTTP 400 OpenAI: param/code yang tidak lolos pola diabaikan → pesan status biasa', async () => {
+    const generic = describeHttpStatus(400).message;
+    const cases = [
+      vendor400({ param: 'max tokens', code: 'bad code!' }),
+      vendor400({ param: 'x'.repeat(65), code: 42 }),
+      vendor400({ param: SECRET, code: `k-${SECRET}` }),
+      vendor400({}),
+      'bukan json RAHASIA',
+      JSON.stringify({ error: 'RAHASIA' }),
+      'null',
+    ];
+    for (const body of cases) {
+      const res = await run400(body);
+      expect(res).toMatchObject({ ok: false, message: generic });
+    }
+    // Slot Anthropic tidak membaca body 400.
+    expect((await run400(vendor400({ param: 'max_tokens', code: 'x' }), 'chat_anthropic')).message).toBe(generic);
   });
 });
 

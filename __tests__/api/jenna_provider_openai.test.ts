@@ -14,6 +14,7 @@ const CFG = {
   model: 'gpt-test',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 5000,
 };
 
@@ -60,6 +61,8 @@ describe('OpenAICompatibleProvider — permintaan', () => {
     expect(c.body.model).toBe('gpt-test');
     expect(c.body.max_tokens).toBe(DEFAULT_MAX_TOKENS);
     expect(DEFAULT_MAX_TOKENS).toBe(1024);
+    expect(c.body).not.toHaveProperty('max_completion_tokens');
+    expect(c.body).not.toHaveProperty('reasoning_effort');
     expect(c.body.temperature).toBeUndefined();
     expect(c.body.stream).toBeUndefined();
     expect(c.body.messages[0]).toEqual({ role: 'system', content: 'S' });
@@ -82,6 +85,44 @@ describe('OpenAICompatibleProvider — permintaan', () => {
     expect(b.max_tokens).toBe(500);
     expect(b.tools[0]).toEqual({ type: 'function', function: { name: 'cari', description: 'Cari', parameters } });
     expect(b.tool_choice).toBe('auto');
+  });
+
+  it('reasoning efektif → reasoning_effort + max_completion_tokens, tanpa max_tokens & temperature (non-stream & stream)', async () => {
+    const cases = [
+      { cfg: { model: 'gpt-6-luna', reasoningEffort: null, maxTokens: 500, temperature: 0.7 }, effort: 'none', limit: 500, stream: false },
+      { cfg: { model: 'gpt-6-luna', reasoningEffort: null, maxTokens: null, temperature: 0.7 }, effort: 'none', limit: DEFAULT_MAX_TOKENS, stream: true },
+      { cfg: { model: 'o4-mini', reasoningEffort: null, maxTokens: 300, temperature: null }, effort: 'low', limit: 300, stream: false },
+      { cfg: { model: 'gpt-test', reasoningEffort: 'high', maxTokens: null, temperature: 0 }, effort: 'high', limit: DEFAULT_MAX_TOKENS, stream: false },
+      { cfg: { model: 'gpt-4o-mini', reasoningEffort: 'low', maxTokens: 700, temperature: 0.2 }, effort: 'low', limit: 700, stream: true },
+    ];
+    for (const { cfg, effort, limit, stream } of cases) {
+      const f = fakeFetch(() => (stream ? sse([textChunk('x')]) : json({ choices: [{ message: { content: 'x' } }] })));
+      await new OpenAICompatibleProvider({ ...CFG, ...cfg }, f.impl).chat(user(), stream ? { onDelta: () => {} } : {});
+      const b = f.calls[0].body;
+      expect(b.reasoning_effort).toBe(effort);
+      expect(b.max_completion_tokens).toBe(limit);
+      expect(b).not.toHaveProperty('max_tokens');
+      expect(b).not.toHaveProperty('temperature');
+      expect(b.stream).toBe(stream ? true : undefined);
+    }
+  });
+
+  it('reasoning tidak efektif (model biasa Otomatis, atau "off") → max_tokens + temperature seperti dulu', async () => {
+    const cases = [
+      { cfg: { model: 'gpt-4o-mini', reasoningEffort: null, temperature: 0.3 }, stream: false },
+      { cfg: { model: 'gpt-4o-mini', reasoningEffort: null, temperature: 0.3 }, stream: true },
+      { cfg: { model: 'gpt-6-luna', reasoningEffort: 'off', temperature: 0.3 }, stream: false },
+      { cfg: { model: 'gpt-6-luna', reasoningEffort: 'off', temperature: 0.3 }, stream: true },
+    ];
+    for (const { cfg, stream } of cases) {
+      const f = fakeFetch(() => (stream ? sse([textChunk('x')]) : json({ choices: [{ message: { content: 'x' } }] })));
+      await new OpenAICompatibleProvider({ ...CFG, ...cfg, maxTokens: 400 }, f.impl).chat(user(), stream ? { onDelta: () => {} } : {});
+      const b = f.calls[0].body;
+      expect(b.max_tokens).toBe(400);
+      expect(b.temperature).toBe(0.3);
+      expect(b).not.toHaveProperty('reasoning_effort');
+      expect(b).not.toHaveProperty('max_completion_tokens');
+    }
   });
 
   it('assistant tool_calls membawa arguments mentah; hasil tool menjadi role tool', async () => {
@@ -156,6 +197,9 @@ describe('OpenAICompatibleProvider — stream', () => {
     const res = await new OpenAICompatibleProvider(CFG, f.impl).chat(user(), { onDelta: (t) => deltas.push(t) });
     expect(f.calls[0].body.stream).toBe(true);
     expect(f.calls[0].body.stream_options).toEqual({ include_usage: true });
+    expect(f.calls[0].body.max_tokens).toBe(DEFAULT_MAX_TOKENS);
+    expect(f.calls[0].body).not.toHaveProperty('max_completion_tokens');
+    expect(f.calls[0].body).not.toHaveProperty('reasoning_effort');
     expect(deltas).toEqual(['Ha', 'lo']);
     expect(res).toEqual({
       type: 'tool_calls',

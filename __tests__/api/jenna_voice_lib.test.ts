@@ -23,6 +23,7 @@ const voiceRow = (over: Partial<JennaProvider> = {}): JennaProvider => ({
   model: 'gpt-realtime',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 30000,
   lastTestAt: null,
   lastTestOk: null,
@@ -190,7 +191,13 @@ describe('mappers suara', () => {
 });
 
 describe('tes koneksi gateway suara', () => {
-  const cfg = { baseUrl: 'https://live.example.com/v1/', model: 'gpt-realtime', apiKey: SECRET };
+  const cfg = {
+    baseUrl: 'https://live.example.com/v1/',
+    model: 'gpt-realtime',
+    apiKey: SECRET,
+    temperature: null,
+    reasoningEffort: null,
+  };
 
   it('GET {base}/models + Bearer, tanpa body', () => {
     const { url, init } = buildConnectionTestRequest('voice', cfg);

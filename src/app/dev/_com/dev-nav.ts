@@ -25,13 +25,13 @@ export const DEV_NAV: readonly DevNavEntry[] = [
     icon: IconRobot,
     children: [
       { label: 'Umum', href: '/dev/jenna', icon: IconSettings, exact: true },
-      { label: 'Batas Pemakaian', href: '/dev/jenna/batas', icon: IconHourglass },
-      { label: 'Log Error', href: '/dev/jenna/log-error', icon: IconBug },
-      { label: 'Pengetahuan', href: '/dev/jenna/pengetahuan', icon: IconBook2 },
-      { label: 'Penggunaan', href: '/dev/jenna/penggunaan', icon: IconChartBar },
-      { label: 'Percakapan', href: '/dev/jenna/percakapan', icon: IconMessages },
       { label: 'Provider', href: '/dev/jenna/provider', icon: IconPlugConnected },
+      { label: 'Pengetahuan', href: '/dev/jenna/pengetahuan', icon: IconBook2 },
       { label: 'Suara', href: '/dev/jenna/suara', icon: IconMicrophone },
+      { label: 'Batas Pemakaian', href: '/dev/jenna/batas', icon: IconHourglass },
+      { label: 'Percakapan', href: '/dev/jenna/percakapan', icon: IconMessages },
+      { label: 'Penggunaan', href: '/dev/jenna/penggunaan', icon: IconChartBar },
+      { label: 'Log Error', href: '/dev/jenna/log-error', icon: IconBug },
     ],
   },
 ];

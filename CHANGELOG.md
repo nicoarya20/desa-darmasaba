@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.285] - 2026-11-16
+### Added
+- **Jenna › Provider (OpenAI-compatible) bisa memakai model reasoning seperti `gpt-6-luna` tanpa setelan tambahan.** Sebelumnya setiap pertanyaan gagal dengan error `Unsupported parameter: 'max_tokens'`. Sekarang "Reasoning effort" default-nya **Otomatis**, ditentukan dari nama model: `gpt-6*` dan `gpt-5.x` dikirim `none` (nilai yang dibutuhkan agar tools jalan), `gpt-5` generasi awal dan seri `o` dikirim `low`, sedangkan model lain (mis. `gpt-4o-mini`) tidak dikirim apa-apa seperti sebelumnya. Bila reasoning effort dikirim, batas token memakai `max_completion_tokens` dan temperature tidak dikirim. Di bawah kolom Model tampil keterangan apa yang akan dikirim; pilihan manual (Jangan kirim / none / low / medium / high) ada di "Pengaturan lanjutan" untuk kasus khusus.
+
+### Changed
+- **"Tes koneksi" provider OpenAI-compatible kini menguji percakapan sungguhan**, bukan hanya API key. Tes mengirim satu pesan kecil yang memakai tools dengan setelan tersimpan (model, reasoning effort, temperature), sama seperti chat Jenna, jadi model atau setelan yang tidak cocok ketahuan sebelum dipakai warga. Bila ditolak (HTTP 400), pesan hasil menyebut parameter dan kode galat dari provider (mis. `max_tokens`, `unsupported_parameter`); isi pesan vendor dan API key tetap tidak ditampilkan. Setiap klik memakai sedikit token. Provider Anthropic dan suara tidak berubah.
+- **Halaman `/dev/jenna` › Provider dirombak agar lebih mudah dipakai.** Pilihan provider kini berupa dua kartu (OpenAI-compatible dan Anthropic) yang menampilkan model, status, badge "Aktif", dan tanda "Draf belum disimpan"; klik kartu untuk mengatur, tombol "Jadikan aktif" untuk mengganti provider yang dipakai chat publik (sebelumnya pilihan yang sama muncul dua kali). Isian diurutkan sesuai urutan kerja: API key, Model (dengan saran nama model), Base URL (langsung terisi URL resmi bila kosong), lalu Temperature, Max tokens, Timeout, dan Reasoning effort dilipat di "Pengaturan lanjutan" (terbuka sendiri bila ada nilai khusus atau isian yang salah). Status digabung jadi satu baris di atas form (Belum lengkap / Belum dites / Siap dipakai / Tes gagal). Tombol simpan menjadi **"Simpan & tes"**: setelah tersimpan, tes koneksi langsung berjalan; "Tes ulang" tetap ada. Form provider suara ikut urutan yang sama.
+- **Submenu Jenna di Developer Console diurutkan sesuai alur kerja** (sebelumnya alfabetis): pengaturan dulu (Umum, Provider, Pengetahuan, Suara), lalu Batas Pemakaian, lalu pemantauan (Percakapan, Penggunaan, Log Error).
+
+### Operator
+- Jalankan migrasi `20261116143000_jenna_provider_reasoning_effort` (otomatis saat container start). Murni menambah kolom nullable `JennaProvider.reasoningEffort`; data lain tidak diubah. Tidak ada env baru. Setelan provider yang sudah ada otomatis berada di mode Otomatis.
+- Untuk ganti model: di `/dev/jenna` › Provider isi nama model lalu klik "Simpan & tes". Bila tes gagal karena parameter, buka "Pengaturan lanjutan" dan pilih Reasoning effort secara manual.
+
 ## [0.1.284] - 2026-11-16
 ### Changed
 - **Jarak dan tepi halaman Inovasi diseragamkan.** Jarak antar-bagian di Desa Digital dan Kolaborasi Inovasi kini sama (64px, ponsel 48px), dan judul "Mitra Kolaborasi" seukuran judul bagian lain.

@@ -9,7 +9,7 @@ import {
   type JennaSlot,
   type JennaVoiceProviderDTO,
 } from "./types";
-import { isJennaChatProtocol } from "./validation";
+import { isJennaChatProtocol, isJennaReasoningEffort } from "./validation";
 
 export const JENNA_SETTINGS_ID = "global";
 
@@ -83,6 +83,8 @@ export function toProviderDTO(slot: JennaSlot, row: JennaProvider | null): Jenna
     ...commonProviderFields(row),
     temperature: row?.temperature ?? null,
     maxTokens: row?.maxTokens ?? null,
+    reasoningEffort:
+      JENNA_SLOT_PROTOCOL[slot] === "openai" && isJennaReasoningEffort(row?.reasoningEffort) ? row.reasoningEffort : null,
   };
 }
 
