@@ -3,12 +3,28 @@
     "id": "cmkao2zwx0008vntzmvqdsdzo",
     "workDays": "09:00",
     "weekDays": "17:00",
-    "holiday": "08:00 - 16:00"
+    "holiday": "08:00 - 16:00",
+    "jadwal": [
+      {
+        "hari": "Senin – Jumat",
+        "jam": "09:00 – 17:00"
+      },
+      {
+        "hari": "Sabtu – Minggu / Hari Libur",
+        "jam": "08:00 - 16:00"
+      }
+    ]
   },
   {
     "id": "cmkao2zwx0008vntzmvqdseal",
     "workDays": "08:00",
     "weekDays": "12:00",
-    "holiday": "–"
+    "holiday": "–",
+    "jadwal": [
+      {
+        "hari": "Senin – Jumat",
+        "jam": "08:00 – 12:00"
+      }
+    ]
   }
 ]

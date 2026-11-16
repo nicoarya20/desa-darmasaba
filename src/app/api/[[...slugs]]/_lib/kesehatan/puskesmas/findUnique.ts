@@ -1,51 +1,19 @@
 import prisma from "@/lib/prisma";
+import { Context } from "elysia";
+import { fail } from "../../_struktur-organisasi/http";
+import { PUSTU_DETAIL_SELECT, keDetail } from "./pustu.data";
 
-export default async function findUniquePuskesmas(request: Request) {
-    const url = new URL(request.url);
-    const pathSegments = url.pathname.split('/');
-    const id = pathSegments[pathSegments.length - 1];
+/** GET (publik): detail PUSTU beserta jam, kontak, layanan, tarif, bagan, pengurus, dan galeri. */
+export default async function findUniquePuskesmas(context: Context) {
+  const id = (context.params as { id?: string })?.id;
+  if (!id) return fail(context, 400, "ID tidak boleh kosong");
 
-    if (!id) {
-        return Response.json({
-            success: false,
-            message: "ID tidak boleh kosong",
-        }, { status: 400 })
-    }
-
-    try {
-        if (typeof id !== 'string') {
-            return Response.json({
-                success: false,
-                message: "ID tidak valid",
-            }, { status: 400 })
-        }
-
-        const data = await prisma.puskesmas.findUnique({
-            where: {id},
-            include: {
-                image: true,
-                jam: true,
-                kontak: true,
-            }
-        })
-
-        if (!data) {
-            return Response.json({
-                success: false,
-                message: "Data tidak ditemukan",
-            }, { status: 404 })
-        }
-
-        return Response.json({
-            success: true,
-            message: "Success fetch puskesmas by ID",
-            data,
-        }, { status: 200 })
-    } catch (error) {
-        console.error("Find by ID error:", error);
-        return Response.json({
-            success: false,
-            message: "Gagal mengambil puskesmas: " + (error instanceof Error ? error.message : 'Unknown error'),
-        }, { status: 500 })
-    }
+  try {
+    const data = await prisma.puskesmas.findUnique({ where: { id }, select: PUSTU_DETAIL_SELECT });
+    if (!data) return fail(context, 404, "Data tidak ditemukan");
+    return { success: true, message: "Berhasil mengambil detail PUSTU", data: keDetail(data) };
+  } catch (error) {
+    console.error(`[pustu] Gagal mengambil detail ${id}:`, error);
+    return fail(context, 500, "Gagal mengambil detail PUSTU");
+  }
 }

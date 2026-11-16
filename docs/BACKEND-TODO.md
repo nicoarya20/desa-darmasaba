@@ -25,7 +25,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Usul: wajibkan auth admin untuk find-many/find-unique balita & ibu hamil.
 
 - [ ] **Detail mengabaikan `isActive`**
-  - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`).
+  - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`), `kesehatan/puskesmas/findUnique.ts` (PUSTU, terverifikasi 2026-11-16: `where: { id }`; dipakai juga form edit admin, jadi perlu parameter khusus admin bila disaring).
   - Dampak: entri yang dinonaktifkan admin tetap bisa dibuka lewat URL detail (frontend publik kini menganggapnya "tidak ditemukan", tapi API tetap mengirim data).
   - Usul: `where: { id, isActive: true }` untuk endpoint publik.
   - Lowongan Kerja, tambahan (terverifikasi 2026-11-14): `deletedAt` tidak bisa dipakai sebagai penanda hapus. Schema `LowonganPekerjaan.deletedAt DateTime @default(now())` (tidak nullable), jadi selalu terisi saat dibuat (stg: 7/7 lowongan `deletedAt` = `createdAt`), dan `del.ts` melakukan hard delete (`prisma.lowonganPekerjaan.delete`). Halaman detail publik baru (`_com/detail/lowongan-detail.adapter.logic.ts`, `isLowonganTampil`, MITIGASI SEMENTARA(lowongan-detail)) hanya menyaring `isActive` dan sengaja mengabaikan `deletedAt`. Usul: bila ingin soft delete, ubah jadi `deletedAt DateTime?` (migrasi set `NULL` untuk baris yang ada), `del.ts` mengisi `deletedAt`, lalu findMany/findUnique menyaring `deletedAt: null`.

@@ -39,12 +39,14 @@ export async function seedPuskesmas() {
         workDays: k.workDays,
         weekDays: k.weekDays,
         holiday: k.holiday,
+        jadwal: k.jadwal,
       },
       create: {
         id: k.id,
         workDays: k.workDays,
         weekDays: k.weekDays,
         holiday: k.holiday,
+        jadwal: k.jadwal,
       },
     });
   }

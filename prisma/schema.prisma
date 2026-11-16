@@ -126,6 +126,10 @@ model FileStorage {
   PengurusBankSampah     PengurusBankSampah[]
   FotoKegiatanBankSampah FotoKegiatanBankSampah[]
 
+  PustuFotoBagan    Puskesmas[]         @relation("PustuFotoBagan")
+  PengurusPustu     PengurusPustu[]
+  FotoKegiatanPustu FotoKegiatanPustu[]
+
   PerangkatDesa PerangkatDesa[]
 }
 
@@ -1353,13 +1357,62 @@ model Puskesmas {
   updatedAt DateTime        @updatedAt
   deletedAt DateTime        @default(now())
   isActive  Boolean         @default(true)
+
+  // Konten PUSTU (Puskesmas Pembantu) di halaman publik. Semua opsional agar baris lama tetap valid.
+  // Daftar { platform, url }; divalidasi skema bersama src/lib/konten-bersama/media-sosial.validation.ts.
+  mediaSosial         Json?
+  // Daftar { judul, deskripsi }; divalidasi src/lib/pustu/pustu.validation.ts (dibaca utuh bersama barisnya).
+  layananUnggulan     Json?
+  linkPetunjukArah    String?
+  // Teks kaya editor admin, disanitasi saat simpan (src/lib/rich-text-server.ts).
+  prosedurPendaftaran String?             @db.Text
+  tarifBpjs           String?             @db.Text
+  tarifUmum           String?             @db.Text
+  fotoBaganStruktur   FileStorage?        @relation("PustuFotoBagan", fields: [fotoBaganStrukturId], references: [id], onDelete: SetNull)
+  fotoBaganStrukturId String?
+  pengurus            PengurusPustu[]
+  fotoKegiatan        FotoKegiatanPustu[]
+}
+
+// Pengurus PUSTU (struktur organisasi sederhana: nama + jabatan, tanpa NIP); hapus = hapus baris + foto.
+model PengurusPustu {
+  id        String       @id @default(cuid())
+  pustu     Puskesmas    @relation(fields: [pustuId], references: [id], onDelete: Cascade)
+  pustuId   String
+  nama      String
+  jabatan   String
+  image     FileStorage? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId   String?
+  urutan    Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([pustuId, urutan])
+}
+
+// Galeri foto PUSTU (lokasi, fasilitas, kegiatan); hapus permanen (tanpa panel Sampah).
+model FotoKegiatanPustu {
+  id         String      @id @default(cuid())
+  pustu      Puskesmas   @relation(fields: [pustuId], references: [id], onDelete: Cascade)
+  pustuId    String
+  image      FileStorage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId    String
+  keterangan String?
+  urutan     Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([pustuId, urutan])
 }
 
 model JamOperasional {
   id        String      @id @default(cuid())
-  workDays  String
-  weekDays  String
-  holiday   String
+  // Kolom lama (jam buka, jam tutup, teks akhir pekan/libur) tidak ditulis lagi; dipertahankan agar data lama
+  // tidak hilang. Pengganti: `jadwal` daftar { hari, jam } (format desa: "Senin – Kamis" / "08.00 – 14.00 WITA").
+  workDays  String?
+  weekDays  String?
+  holiday   String?
+  jadwal    Json?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   deletedAt DateTime    @default(now())
@@ -1369,10 +1422,12 @@ model JamOperasional {
 
 model KontakPuskesmas {
   id              String      @id @default(cuid())
-  kontakPuskesmas String
-  email           String
-  facebook        String
-  kontakUGD       String
+  // Semua opsional: tidak semua PUSTU punya email/telepon. `kontakUGD` = "Kontak Darurat / Ambulans".
+  kontakPuskesmas String?
+  email           String?
+  // Lama: tidak ditulis lagi, nilainya dipindah ke `Puskesmas.mediaSosial` (migrasi 20261116150000_konten_pustu).
+  facebook        String?
+  kontakUGD       String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   deletedAt       DateTime    @default(now())
