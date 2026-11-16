@@ -4,8 +4,6 @@ import ProgramPenghijauan from "./program-penghijauan";
 import DataLingkunganDesa from "./data-lingkungan-desa";
 import EdukasiLingkungan from "./edukasi-lingkungan";
 import KonservasiAdatBali from "./konservasi-adat-bali";
-import KegiatanDesa from "./gotong-royong";
-import KategoriKegiatan from "./gotong-royong/kategori-kegiatan";
 import KeteranganBankSampahTerdekat from "./pengelolaan-sampah/keterangan-bank-sampah";
 
 const Lingkungan = new Elysia({
@@ -18,8 +16,6 @@ const Lingkungan = new Elysia({
 .use(DataLingkunganDesa)
 .use(EdukasiLingkungan)
 .use(KonservasiAdatBali)
-.use(KegiatanDesa)
-.use(KategoriKegiatan)
 .use(KeteranganBankSampahTerdekat);
 
 

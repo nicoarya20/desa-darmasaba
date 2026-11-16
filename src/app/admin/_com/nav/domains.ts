@@ -126,7 +126,6 @@ export const lingkunganMenu: NavItem = {
     { id: "lingkungan.pengelolaan-sampah-bank-sampah", name: "Pengelolaan Sampah (Bank Sampah)", path: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah", basePath: "/admin/lingkungan/pengelolaan-sampah-bank-sampah" },
     { id: "lingkungan.program-penghijauan", name: "Program Penghijauan", path: "/admin/lingkungan/program-penghijauan", basePath: "/admin/lingkungan/program-penghijauan" },
     { id: "lingkungan.data-lingkungan-desa", name: "Data Lingkungan Desa", path: "/admin/lingkungan/data-lingkungan-desa", basePath: "/admin/lingkungan/data-lingkungan-desa" },
-    { id: "lingkungan.gotong-royong", name: "Gotong Royong", path: "/admin/lingkungan/gotong-royong/kegiatan-desa", basePath: "/admin/lingkungan/gotong-royong" },
     { id: "lingkungan.edukasi-lingkungan", name: "Edukasi Lingkungan", path: "/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan", basePath: "/admin/lingkungan/edukasi-lingkungan" },
     { id: "lingkungan.konservasi-adat-bali", name: "Konservasi Adat Bali", path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana", basePath: "/admin/lingkungan/konservasi-adat-bali" },
   ],

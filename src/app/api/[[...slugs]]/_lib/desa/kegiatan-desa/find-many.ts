@@ -7,6 +7,8 @@ async function kegiatanDesaFindMany(context: Context) {
   const limit = Number(context.query.limit) || 10;
   const search = (context.query.search as string) || '';
   const kategori = (context.query.kategori as string) || '';
+  // Id kategori tetap (mis. Gotong Royong) — lebih tepat dari `kategori` (nama, contains); menang bila keduanya dikirim.
+  const kategoriId = (context.query.kategoriId as string) || '';
   const skip = (page - 1) * limit;
 
   const where: any = { isActive: true };
@@ -18,7 +20,9 @@ async function kegiatanDesaFindMany(context: Context) {
     ];
   }
 
-  if (kategori) {
+  if (kategoriId) {
+    where.kategoriKegiatanId = kategoriId;
+  } else if (kategori) {
     where.kategoriKegiatan = {
       nama: { contains: kategori, mode: 'insensitive' },
     };

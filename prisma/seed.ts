@@ -379,9 +379,6 @@ import { isSeedOverwrite } from "./seed-prisma";
   // // ==================== SUBMENU DATA LINGKUNGAN DESA ==========
   await seedDataLingkunganDesa();
 
-  // // =========== SUBMENU GOTONG ROYONG ===========
-  await seedDataGotongRoyong();
-
   // // =========== SUBMENU EDUKASI LINGKUNGAN ===========
   await seedEdukasiLingkungan();
 
@@ -427,6 +424,8 @@ import { isSeedOverwrite } from "./seed-prisma";
   // ===== SOSIAL DASHBOARD =====
   await seedRingkasanKesehatan();
   await seedKegiatanDesa();
+  // Gotong Royong = kategori tetap Kegiatan Desa; kategorinya dibuat seedKegiatanDesa, jadi harus sesudahnya.
+  await seedDataGotongRoyong();
   await seedEventBudaya();
 
   // ===== DESA =====

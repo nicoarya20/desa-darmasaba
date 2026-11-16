@@ -4,6 +4,7 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateDashboardKegiatan from '@/app/admin/(dashboard)/_state/desa/kegiatanDesa';
 import colors from '@/con/colors';
 import { KATEGORI_PEMBANGUNAN_ID } from '@/lib/kegiatan-pembangunan';
+import { partisipanInputValue, toPartisipan } from '@/lib/kegiatan-partisipan';
 import ApiFetch from '@/lib/api-fetch';
 import {
   ActionIcon,
@@ -243,10 +244,12 @@ function EditKegiatanDesa() {
 
           <NumberInput
             label="Jumlah Partisipan"
+            description="Opsional, kosongkan bila tidak dicatat"
             placeholder="Masukkan jumlah partisipan"
-            value={formData.partisipan}
-            onChange={(val) => handleChange('partisipan', Number(val) || 0)}
+            value={partisipanInputValue(formData.partisipan)}
+            onChange={(val) => handleChange('partisipan', toPartisipan(val))}
             min={0}
+            allowDecimal={false}
           />
 
           {formData.kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID && (

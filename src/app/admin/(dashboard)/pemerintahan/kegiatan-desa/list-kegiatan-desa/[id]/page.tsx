@@ -8,6 +8,7 @@ import {
   isKegiatanPembangunan,
   isStatusPembangunan,
 } from '@/lib/kegiatan-pembangunan';
+import { formatPartisipanAdmin } from '@/lib/kegiatan-partisipan';
 import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -119,7 +120,7 @@ function DetailKegiatanDesa() {
 
               <Box>
                 <Text fz="lg" fw="bold">Partisipan</Text>
-                <Text fz="md" c="dimmed">{data.partisipan ?? 0} orang</Text>
+                <Text fz="md" c="dimmed">{formatPartisipanAdmin(data.partisipan)}</Text>
               </Box>
 
               {isKegiatanPembangunan(data) && (
