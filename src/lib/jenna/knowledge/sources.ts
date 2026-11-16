@@ -3,9 +3,12 @@ import { DESA_TIME_ZONE } from "@/app/(public)/_com/main-page/apbdes/apbdes.logi
 import { detailHref } from "@/app/(public)/_com/main-page/kabar-desa/kabar.logic";
 import { BERITA_BASE_HREF, PENGUMUMAN_BASE_HREF } from "@/app/(public)/_com/main-page/kabar-desa/kabar.meta";
 import { kegiatanDetailHref } from "@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic";
+import { inovasiDetailHref } from "@/app/(public)/(pages)/inovasi/inovasi-teknologi-desa/_com/inovasi.logic";
+import { INOVASI_TEKNOLOGI_HREF } from "@/app/(public)/(pages)/inovasi/inovasi-teknologi-desa/_com/inovasi.meta";
 import { LAYANAN_LIST_HREF, layananDetailHref } from "@/app/(public)/(pages)/pemerintahan/layanan/_com/layanan.meta";
 import { programHref } from "@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-folder";
 import { getSosmedHref } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
+import { inovasiKategoriLabel } from "@/lib/inovasi-teknologi/kategori";
 import { jadwalToText } from "@/lib/jadwal-pelayanan";
 import { htmlToKnowledgeText } from "./html";
 
@@ -444,12 +447,12 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSource[] = [
     searchFields: ["name", "description"], href: (row) => `/program-inovasi/${idOf(row)}`, menuHref: "/",
   }),
   defineSource({
-    key: "desa_digital", domain: "inovasi", tier: "C", label: "Desa Digital / Smart Village", model: "DesaDigital",
-    where: ACTIVE, select: { id: true, name: true, deskripsi: true, createdAt: true },
-    orderBy: [{ createdAt: "desc" }], take: 10, dateField: "createdAt",
-    fields: [["Nama", get("name")], ["Deskripsi", html("deskripsi")]],
-    searchFields: ["name", "deskripsi"],
-    href: (row) => `/inovasi/desa-digital-smart-village/${idOf(row)}`, menuHref: "/inovasi/desa-digital-smart-village",
+    // Gabungan Desa Digital / Smart Village + Teknologi Tepat Guna; kategori dibaca agar keduanya bisa dibedakan.
+    key: "inovasi_teknologi_desa", domain: "inovasi", tier: "C", label: "Inovasi Teknologi Desa", model: "InovasiTeknologiDesa",
+    where: ACTIVE, select: { id: true, name: true, kategori: true, deskripsi: true, createdAt: true },
+    orderBy: [{ createdAt: "desc" }], take: 15, dateField: "createdAt",
+    fields: [["Nama", get("name")], ["Kategori", (row) => inovasiKategoriLabel(row.kategori)], ["Deskripsi", html("deskripsi")]],
+    searchFields: ["name", "deskripsi"], href: (row) => inovasiDetailHref(String(row.id ?? "")), menuHref: INOVASI_TEKNOLOGI_HREF,
   }),
   defineSource({
     key: "program_kreatif", domain: "inovasi", tier: "C", label: "Program Kreatif Desa", model: "ProgramKreatif",
