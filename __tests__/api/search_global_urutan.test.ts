@@ -27,7 +27,6 @@ const ctx = (query: Record<string, string>): any => ({ query, params: {}, set: {
 
 /** Model prisma yang label `type`-nya berbeda dari nama modelnya; model lain berlabel sama (abaikan huruf besar). */
 const ALIAS_TYPE: Record<string, string> = {
-  formulirPermohonanKeberatan: 'permohonaninformasikeberatanpublik',
   indeksKepuasanMasyarakat: 'ikm',
   perbekelDariMasaKeMasa: 'perbekeldarmasaba',
   potensiDesa: 'potensi',
@@ -66,7 +65,8 @@ describe('global search — label type sejajar dengan model sumber', () => {
 
     expect(new Set(models).size).toBe(models.length);
     expect(models.sort()).toEqual(Object.keys(delegates).sort());
-    expect(models.length).toBe(88);
+    // 84 = 88 dikurangi 4 modul data pribadi yang dibuang (siswa, responden, permohonan informasi, keberatan; T20).
+    expect(models.length).toBe(84);
   });
 
   it('dokter, tarif layanan, dan pegawai BUMDes berlabel type yang benar', async () => {
