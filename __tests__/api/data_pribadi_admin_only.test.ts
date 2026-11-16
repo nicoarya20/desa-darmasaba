@@ -1,6 +1,7 @@
 // @vitest-environment node
 // GET berisi data pribadi warga (Ibu Hamil, Balita, kiriman Pengaduan & Administrasi Online, Siswa, pendaftar beasiswa,
-// peminjam buku, permohonan & keberatan PPID, responden IKM, ide inovatif, pendaftaran jadwal kesehatan) wajib admin:
+// peminjam buku, permohonan & keberatan PPID, responden IKM, ide inovatif, pendaftaran jadwal kesehatan,
+// permohonan surat) wajib admin:
 // request HTTP sungguhan lewat modul Elysia (prisma & auth di-mock). Master data & agregat publik tetap terbuka,
 // dan respons create publik tidak menggemakan NIK/HP. Keputusan: docs/decisions/2026-11-17-api-data-pribadi-admin-only.md
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -50,6 +51,7 @@ import PermohonanKeberatan from "@/app/api/[[...slugs]]/_lib/ppid/permohonan_keb
 import Responden from "@/app/api/[[...slugs]]/_lib/landing_page/indeks_kepuasan/responden";
 import AjukanIdeInovatif from "@/app/api/[[...slugs]]/_lib/inovasi/ajukan-ide-inovatif";
 import PendaftaranJadwalKegiatan from "@/app/api/[[...slugs]]/_lib/kesehatan/data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
+import AjukanPermohonan from "@/app/api/[[...slugs]]/_lib/desa/layanan/ajukan_permohonan";
 import { PESAN_DATA_PRIBADI_BUKAN_ADMIN } from "@/app/api/[[...slugs]]/_lib/_data-pribadi/guard";
 
 // Prefix induk dipasang ulang seperti di route.ts / index domain, agar URL test = URL produksi.
@@ -58,6 +60,7 @@ const app = new Elysia({ prefix: "/api" })
   .group("/inovasi", (g) => g.use(LayananOnlineDesa).use(AjukanIdeInovatif))
   .group("/ppid", (g) => g.use(PermohonanInformasiPublik).use(PermohonanKeberatan))
   .group("/landingpage", (g) => g.use(Responden))
+  .group("/desa", (g) => g.use(AjukanPermohonan))
   .group("/pendidikan", (g) =>
     g
       .group("/infosekolahpaud", (s) => s.use(Siswa).use(Pengajar))
@@ -104,6 +107,8 @@ const DITUTUP = [
   "/api/inovasi/ajukanideinovatif/ide-1",
   "/api/kesehatan/pendaftaran-jadwal-kegiatan/find-many",
   "/api/kesehatan/pendaftaran-jadwal-kegiatan/daftar-1",
+  "/api/desa/ajukanpermohonan/findMany",
+  "/api/desa/ajukanpermohonan/surat-1",
 ];
 const TETAP_PUBLIK = [
   `${LAYANAN}/administrasionline/jenislayanan/find-many`,
@@ -328,6 +333,13 @@ describe("create publik tidak menggemakan data pribadi", () => {
       message: "Sukses menambahkan pendaftaran jadwal kegiatan",
       body: { name: "Anak Rekaan", tanggal: "2026-11-17", namaOrangtua: "Ortu Rekaan", nomor: HP, alamat: "Jalan Rekaan 6", catatan: "-" },
       rahasia: ["Anak Rekaan", "Ortu Rekaan", HP, "Jalan Rekaan"],
+    },
+    {
+      url: "/api/desa/ajukanpermohonan/create",
+      model: "ajukanPermohonan",
+      message: "Ajukan permohonan berhasil dibuat",
+      body: { nama: "Pemohon Rekaan", nik: NIK, alamat: "Jalan Rekaan 7", nomorKk: "5100000000000099", kategoriId: "k-1" },
+      rahasia: [NIK, "5100000000000099", "Jalan Rekaan", "Pemohon Rekaan"],
     },
   ];
 

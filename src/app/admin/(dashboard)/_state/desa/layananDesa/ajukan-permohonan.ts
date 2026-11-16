@@ -43,7 +43,7 @@ const ajukanPermohonan = proxy({
           "create"
         ].post(ajukanPermohonan.create.form);
         if (res.status === 200) {
-          ajukanPermohonan.findMany.load();
+          // Tidak memuat ulang daftar: create() dipanggil form publik warga, daftar permohonan admin-only.
           toast.success("Ajukan permohonan berhasil disimpan!");
           return true;
         }
