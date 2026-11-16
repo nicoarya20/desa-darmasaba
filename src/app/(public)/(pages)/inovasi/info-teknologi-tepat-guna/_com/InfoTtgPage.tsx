@@ -1,12 +1,13 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
-import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { listSearchable, outOfRangePage, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { TtgCard } from './TtgCard';
 import { infoTtgListHref } from './info-ttg.logic';
 import { INFO_TTG_PAGE_LIMIT } from './info-ttg.meta';
@@ -29,6 +30,11 @@ export function InfoTtgPage() {
   const page = parsePage(searchParams.get('page'));
   const state = useInfoTtg(page, INFO_TTG_PAGE_LIMIT, search);
   const total = state.status === 'ready' ? state.total : null;
+  const validPage = outOfRangePage(state, page);
+
+  useEffect(() => {
+    if (validPage !== null) router.replace(infoTtgListHref({ search, page: validPage }));
+  }, [validPage, search, router]);
 
   return (
     <div className={kabar.section} style={KABAR_BRAND_VARS}>
@@ -62,8 +68,10 @@ type BodyProps = {
 
 /** Ubin entri untuk satu keadaan muat (diekspor untuk test). */
 export function InfoTtgBody({ state, search, page, onPage }: BodyProps) {
-  const items = state.status === 'ready' ? state.items : [];
-  const empty = state.status !== 'loading' && items.length === 0;
+  // Halaman di luar rentang sedang dialihkan → tetap kerangka, jangan sempat tampil pesan "Belum ada".
+  const loading = state.status === 'loading' || outOfRangePage(state, page) !== null;
+  const items = state.status === 'ready' && !loading ? state.items : [];
+  const empty = !loading && items.length === 0;
   const emptyText = state.status === 'error' ? T.error : search ? T.emptySearch(search) : T.empty;
 
   return (
@@ -71,7 +79,7 @@ export function InfoTtgBody({ state, search, page, onPage }: BodyProps) {
       <h2 id={LIST_TITLE_ID} className={l.srOnly}>
         {T.listLabel}
       </h2>
-      {state.status === 'loading' ? (
+      {loading ? (
         <ul className={s.list} aria-busy="true" aria-label={T.loading}>
           {Array.from({ length: PLACEHOLDER_ITEMS }, (_, i) => (
             <li key={i} className={`${s.item} ${kabar.placeholder}`} aria-hidden />

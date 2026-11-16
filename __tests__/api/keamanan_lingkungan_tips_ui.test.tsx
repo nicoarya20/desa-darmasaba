@@ -124,8 +124,8 @@ describe('TipCard', () => {
 });
 
 describe('TipsKeamananBody', () => {
-  const body = (state: Parameters<typeof TipsKeamananBody>[0]['state'], search = '') =>
-    render(<TipsKeamananBody state={state} search={search} page={1} onPage={() => {}} />);
+  const body = (state: Parameters<typeof TipsKeamananBody>[0]['state'], search = '', page = 1) =>
+    render(<TipsKeamananBody state={state} search={search} page={page} onPage={() => {}} />);
 
   it('semua tips tampil langsung (tanpa tautan detail); 1 halaman → tanpa paginasi', () => {
     const html = body({ status: 'ready', tips: [toTip(tips(1)), toTip(tips(2))], totalPages: 1, total: 2 });
@@ -149,6 +149,14 @@ describe('TipsKeamananBody', () => {
     const loading = body({ status: 'loading' });
     expect(loading).toContain('aria-busy="true"');
     expect(loading).toContain('aria-label="Memuat tips keamanan"');
+  });
+
+  it('?page di luar rentang padahal ada tips → kerangka selama dialihkan; total = 0 → tetap pesan kosong', () => {
+    const html = body({ status: 'ready', tips: [], totalPages: 2, total: 11 }, 'kunci', 99);
+    expect(html).toContain('aria-busy="true"');
+    expect(html).not.toContain('Tidak ada tips keamanan');
+    expect(html).not.toContain(`aria-label="${TIPS_KEAMANAN_TEXT.paginationLabel}"`);
+    expect(body({ status: 'ready', tips: [], totalPages: 1, total: 0 }, '', 99)).toContain('Belum ada tips keamanan.');
   });
 
   it('teks pengantar sesuai konteks tips (bukan salinan Pecalang/Patwal), tanpa em dash', () => {
