@@ -162,6 +162,15 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 ## P3. Schema & form admin
 
+- [ ] **Posyandu: telepon wajib di form admin, padahal data desa tidak punya nomor per posyandu** (terverifikasi 2026-11-16, sesi konten Posyandu)
+  - Lokasi: `_state/kesehatan/posyandu/posyandu.ts` (`templateForm.nomor` min 1), `_state/kesehatan/posyandu/posyandu.form.ts` (`cekFormPosyandu`), schema `Posyandu.nomor String` (NOT NULL).
+  - Dampak: admin harus mengisi nomor rekaan untuk 12 posyandu banjar dari dokumen desa (yang hanya berisi nama, alamat, foto).
+  - Usul: jadikan nomor opsional di form & state (kolom tetap NOT NULL, simpan ""; halaman publik sudah menampilkan "Nomor belum diisi").
+
+- [ ] **Posyandu find-many mengirim baris `FileStorage` lengkap ke publik** (terverifikasi 2026-11-16: `kesehatan/posyandu/find-many.ts` `include: { image: true }`)
+  - Dampak: `path`, `realName`, `mimeType` berkas ikut terkirim di direktori publik (bukan data pribadi, tapi detail server).
+  - Usul: `image: { select: { id: true, name: true, link: true } }` (pola `IMAGE_SELECT`); cek pemakai admin `findMany.data` dulu.
+
 - [ ] **Ganti gambar Kegiatan Desa tidak menghapus berkas lama** (terverifikasi 2026-11-16: `desa/kegiatan-desa/updt.ts` tanpa `removeReleasedFiles`)
   - Konteks: API Lingkungan → Gotong Royong (dihapus 2026-11-16, `docs/decisions/2026-11-16-gotong-royong-kategori-kegiatan.md`) dulu menghapus permanen gambar lama saat diganti; jalur Kegiatan Desa yang kini satu-satunya tidak. Dampak: berkas yatim menumpuk di MinIO.
   - Usul: ikuti pola menu lain di `docs/decisions/2026-11-12-sampah.md` (ambil `imageId` sebelum update, panggil `removeReleasedFiles("KegiatanDesa", [lama])` setelah update sukses bila berubah). Hapus kegiatan tetap soft delete (gambar dipertahankan).

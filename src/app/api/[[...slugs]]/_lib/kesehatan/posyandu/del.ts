@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 
+/** DELETE (admin): hapus posyandu; foto galeri ikut terhapus (cascade) beserta berkasnya. */
 const posyanduDelete = async (context: Context) => {
   const id = context.params?.id as string;
 
@@ -14,7 +16,7 @@ const posyanduDelete = async (context: Context) => {
 
   const posyandu = await prisma.posyandu.findUnique({
     where: { id },
-    include: { image: true },
+    include: { image: true, fotoKegiatan: { select: { imageId: true } } },
   });
 
   if (!posyandu) {
@@ -33,6 +35,7 @@ const posyanduDelete = async (context: Context) => {
   if (posyandu.image) {
     await removeStoredFile(posyandu.image, "Posyandu");
   }
+  await removeReleasedFiles("FotoKegiatanPosyandu", posyandu.fotoKegiatan.map((f) => f.imageId));
 
   return {
     success: true,

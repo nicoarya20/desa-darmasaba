@@ -9,10 +9,11 @@ import { IbuHamilPanel } from "./IbuHamilPanel";
 import { parseTab, posyanduTabHref } from "./posyandu.logic";
 import { POSYANDU_BRAND_VARS, type PosyanduTab } from "./posyandu.meta";
 import s from "./posyandu.module.css";
-import { loadPosyanduList, loadStats } from "./posyandu.source";
+import { loadPosyanduList, loadProfilPosyandu, loadStats } from "./posyandu.source";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
 import { PosyanduDirectory } from "./PosyanduDirectory";
 import { PosyanduTabs } from "./PosyanduTabs";
+import { ProfilPosyanduPanel } from "./ProfilPosyandu";
 import { RingkasanPanel } from "./RingkasanPanel";
 import { loadBanjarStats } from "./use-posyandu-data";
 
@@ -20,7 +21,7 @@ const TITLE_ID = "posyandu-page-title";
 const loadDesaStats = () => loadStats();
 
 /**
- * Halaman publik Posyandu: Ringkasan (ubin APBDes), Data Posyandu (direktori baris), Balita & Ibu Hamil
+ * Halaman publik Posyandu: Ringkasan (deskripsi umum, kartu klaster, ubin APBDes), Data Posyandu (direktori baris), Balita & Ibu Hamil
  * (angka gabungan per banjar, tanpa nama). Tab di `?tab=`; data tiap tab dimuat saat tab pertama dibuka.
  */
 export function PosyanduPage() {
@@ -31,6 +32,7 @@ export function PosyanduPage() {
   if (!visited.has(tab)) setVisited(new Set(visited).add(tab));
 
   const desa = useLazyLoad(loadDesaStats, true, "statistik kesehatan desa");
+  const profil = useLazyLoad(loadProfilPosyandu, visited.has("ringkasan"), "profil posyandu");
   const list = useLazyLoad(loadPosyanduList, visited.has("posyandu"), "daftar posyandu");
   const banjar = useLazyLoad(loadBanjarStats, visited.has("balita") || visited.has("ibu-hamil"), "statistik per banjar");
 
@@ -50,7 +52,12 @@ export function PosyanduPage() {
         </header>
         <PosyanduTabs value={tab} onChange={onTabChange} />
         <div className={s.body} key={tab}>
-          {tab === "ringkasan" ? <RingkasanPanel state={desa.state} onRetry={desa.retry} /> : null}
+          {tab === "ringkasan" ? (
+            <>
+              <ProfilPosyanduPanel state={profil.state} onRetry={profil.retry} />
+              <RingkasanPanel state={desa.state} onRetry={desa.retry} />
+            </>
+          ) : null}
           {tab === "posyandu" ? <PosyanduDirectory state={list.state} onRetry={list.retry} /> : null}
           {tab === "balita" ? <BalitaPanel desa={desa.state} banjar={banjar.state} onRetry={banjar.retry} /> : null}
           {tab === "ibu-hamil" ? <IbuHamilPanel desa={desa.state} banjar={banjar.state} onRetry={banjar.retry} /> : null}
