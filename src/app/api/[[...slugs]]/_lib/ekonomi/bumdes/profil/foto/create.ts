@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { MAX_FOTO_GALERI, fotoProfilCreateSchema } from "@/lib/bumdes-foto-profil";
-import { urutanFotoBaru } from "@/lib/bumdes-foto-urutan";
+import { urutanBaru } from "@/lib/konten-bersama/urutan.logic";
 import { PROFIL_BUMDES_ID } from "@/lib/bumdes-profil";
 import { validationFailure, writeFailure } from "../../http";
 import { FOTO_AKTIF_WHERE, FOTO_SELECT } from "./query";
@@ -34,7 +34,7 @@ export default async function fotoProfilCreate(context: Context) {
     return { success: false, message: `Galeri maksimal ${MAX_FOTO_GALERI} foto; sisa slot ${sisa} foto` };
   }
 
-  const urutan = urutanFotoBaru(_max.urutan, items.length);
+  const urutan = urutanBaru(_max.urutan, items.length);
   try {
     const data = await prisma.$transaction(
       items.map((item, i) =>
