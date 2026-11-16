@@ -1,5 +1,6 @@
 // @vitest-environment node
-// GET berisi data pribadi warga (Ibu Hamil, Balita, kiriman Pengaduan & Administrasi Online, Siswa) wajib admin:
+// GET berisi data pribadi warga (Ibu Hamil, Balita, kiriman Pengaduan & Administrasi Online, Siswa, pendaftar beasiswa,
+// peminjam buku) wajib admin:
 // request HTTP sungguhan lewat modul Elysia (prisma & auth di-mock). Master data & agregat publik tetap terbuka,
 // dan respons create publik tidak menggemakan NIK/HP. Keputusan: docs/decisions/2026-11-17-api-data-pribadi-admin-only.md
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -42,13 +43,21 @@ import LayananOnlineDesa from "@/app/api/[[...slugs]]/_lib/inovasi/layanan-onlin
 import Siswa from "@/app/api/[[...slugs]]/_lib/pendidikan/info-sekolah-paud/siswa";
 import Pengajar from "@/app/api/[[...slugs]]/_lib/pendidikan/info-sekolah-paud/pengajar";
 import RingkasanPendidikan from "@/app/api/[[...slugs]]/_lib/pendidikan/ringkasan";
+import Beasiswa from "@/app/api/[[...slugs]]/_lib/pendidikan/beasiswa-desa";
+import PerpustakaanDigital from "@/app/api/[[...slugs]]/_lib/pendidikan/perpustakaan-digital";
 import { PESAN_DATA_PRIBADI_BUKAN_ADMIN } from "@/app/api/[[...slugs]]/_lib/_data-pribadi/guard";
 
 // Prefix induk dipasang ulang seperti di route.ts / index domain, agar URL test = URL produksi.
 const app = new Elysia({ prefix: "/api" })
   .group("/kesehatan", (g) => g.use(Balita).use(IbuHamil).use(RingkasanKesehatan))
   .group("/inovasi", (g) => g.use(LayananOnlineDesa))
-  .group("/pendidikan", (g) => g.group("/infosekolahpaud", (s) => s.use(Siswa).use(Pengajar)).use(RingkasanPendidikan));
+  .group("/pendidikan", (g) =>
+    g
+      .group("/infosekolahpaud", (s) => s.use(Siswa).use(Pengajar))
+      .use(RingkasanPendidikan)
+      .use(Beasiswa)
+      .use(PerpustakaanDigital),
+  );
 
 const call = (url: string, init?: RequestInit) => app.handle(new Request(`http://localhost${url}`, init));
 const postJson = (url: string, body: unknown) =>
@@ -61,6 +70,8 @@ const unauthorized = () => ({
 const asRole = (roleId: string) => ({ authenticated: true, user: { id: "u-rekaan", roleId, isActive: true } }); // test-only
 
 const LAYANAN = "/api/inovasi/layananonlinedesa";
+const BEASISWA = "/api/pendidikan/beasiswa";
+const PERPUS = "/api/pendidikan/perpustakaandigital";
 const DITUTUP = [
   "/api/kesehatan/ibuhamil/find-many",
   "/api/kesehatan/ibuhamil/ibu-1",
@@ -72,6 +83,10 @@ const DITUTUP = [
   `${LAYANAN}/administrasionline/adm-1`,
   "/api/pendidikan/infosekolahpaud/siswa/find-many",
   "/api/pendidikan/infosekolahpaud/siswa/siswa-1",
+  `${BEASISWA}/beasiswapendaftar/findMany`,
+  `${BEASISWA}/beasiswapendaftar/pendaftar-1`,
+  `${PERPUS}/peminjamanbuku/findMany`,
+  `${PERPUS}/peminjamanbuku/pinjam-1`,
 ];
 const TETAP_PUBLIK = [
   `${LAYANAN}/administrasionline/jenislayanan/find-many`,
@@ -79,6 +94,9 @@ const TETAP_PUBLIK = [
   "/api/kesehatan/ringkasankesehatan/stats",
   "/api/pendidikan/ringkasan/stats",
   "/api/pendidikan/infosekolahpaud/pengajar/find-many",
+  `${BEASISWA}/ringkasan/stats`,
+  `${BEASISWA}/keunggulanprogram/findMany`,
+  `${PERPUS}/dataperpustakaan/findMany`,
 ];
 
 beforeEach(() => {
