@@ -1,7 +1,7 @@
 # Konten bersama: galeri, media sosial, kontak, struktur pengurus, lokasi
 
-Fondasi yang dipakai berulang oleh entri domain yang punya halaman/modal detail (Bank Sampah sudah memakai;
-Lembaga Sekolah, PUSTU, Posyandu menyusul). Keputusan: **tabel per domain** (FK aman, cascade jelas),
+Fondasi yang dipakai berulang oleh entri domain yang punya halaman/modal detail (Bank Sampah dan PUSTU sudah memakai;
+Lembaga Sekolah, Posyandu menyusul). Keputusan: **tabel per domain** (FK aman, cascade jelas),
 **kode bersama** (UI, validasi, helper API, state). Jangan salin komponen ke domain; pakai yang di bawah.
 
 ## Lokasi kode
@@ -43,4 +43,9 @@ koordinat. Hapus foto galeri / pengurus = **hapus permanen** (baris + berkas Min
    dan set `closeOnEscape={!pratinjauTerbuka}` di modal induk agar Escape hanya menutup pratinjau.
 
 Test acuan: `__tests__/api/konten_bersama_*.test.ts`, `bank_sampah_detail_{api,ui}.test.*`, `bank_sampah_admin_form.test.tsx`.
+
+PUSTU (`Puskesmas`): pemasangan sama (API `_lib/kesehatan/puskesmas/pustu.anak.ts`, state
+`_state/kesehatan/puskesmas/pustu.anak.state.ts`, admin `kesehatan/puskesmas/_com/pustu.anak-admin.tsx`), tanpa koordinat:
+tombol peta hanya dari link Google Maps. Field khusus PUSTU (jam per rentang hari, layanan unggulan, prosedur, tarif) ada di
+`src/lib/pustu/` — lihat `docs/decisions/2026-11-16-pustu-konten.md`. Test: `__tests__/api/pustu_*.test.*`.
 BUMDes memakai komponen galeri/gambar yang sama (perilaku & panel Sampah BUMDes tidak berubah).
