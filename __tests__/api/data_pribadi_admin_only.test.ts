@@ -87,7 +87,7 @@ beforeEach(() => {
 });
 
 describe("GET data pribadi warga — admin-only", () => {
-  it.each(DITUTUP)("%s tanpa sesi → 401, prisma tidak disentuh", async (url) => {
+  it.each(DITUTUP)("%s tanpa sesi → 401", async (url) => {
     const res = await call(url);
     expect(res.status).toBe(401);
     expect(await res.json()).toEqual({ success: false, message: "Unauthorized - Silakan login terlebih dahulu" });
