@@ -1,0 +1,53 @@
+'use client';
+import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
+import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import { useTransitionRouter } from 'next-view-transitions';
+import { useSearchParams } from 'next/navigation';
+import { KolaborasiList } from './KolaborasiList';
+import { kolaborasiListHref, kolaborasiSearchable, parseTahun, tahunTabs, type KolaborasiQuery } from './kolaborasi.logic';
+import { KOLABORASI_SEARCH_THRESHOLD } from './kolaborasi.meta';
+import { KOLABORASI_TEXT as T } from './kolaborasi.text';
+import { loadKolaborasi, loadMitra } from './kolaborasi.source';
+import { MitraWall } from './MitraWall';
+import { useLoadOnce } from './use-load-once';
+
+/**
+ * Halaman Kolaborasi Inovasi di `.section` Kabar Desa: kepala (kembali, judul, cari `?search=` bila > 6 entri atau sedang
+ * mencari, pil `?tahun=` bila ≥ 2 tahun), daftar baris per tahun (paginasi klien `?page=`), lalu dinding logo mitra.
+ */
+export function KolaborasiPage() {
+  const router = useTransitionRouter();
+  const searchParams = useSearchParams();
+  const query: KolaborasiQuery = {
+    tahun: parseTahun(searchParams.get('tahun')),
+    search: searchParams.get('search')?.trim() ?? '',
+    page: parsePage(searchParams.get('page')),
+  };
+  const kolaborasi = useLoadOnce(loadKolaborasi, 'kolaborasi inovasi');
+  const mitra = useLoadOnce(loadMitra, 'mitra kolaborasi');
+  const all = kolaborasi.status === 'ready' ? kolaborasi.data : null;
+
+  return (
+    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+      <KabarListHeader
+        title={T.title}
+        lead={T.lead}
+        searchLabel={T.searchLabel}
+        searchPlaceholder={T.searchPlaceholder}
+        kategoriLabel={T.kategoriLabel}
+        tabs={all ? tahunTabs(all, query) : []}
+        search={query.search}
+        onSearch={(next) => router.replace(kolaborasiListHref({ tahun: query.tahun, search: next }))}
+        searchable={kolaborasiSearchable(query.search, all?.length ?? null, KOLABORASI_SEARCH_THRESHOLD)}
+      />
+      <KolaborasiList
+        state={kolaborasi}
+        query={query}
+        onPage={(page) => router.push(kolaborasiListHref({ tahun: query.tahun, search: query.search, page }))}
+      />
+      <MitraWall state={mitra} />
+    </div>
+  );
+}
