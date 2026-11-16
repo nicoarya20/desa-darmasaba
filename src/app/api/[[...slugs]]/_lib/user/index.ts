@@ -6,8 +6,11 @@ import userFindUnique from "./findUnique";
 import userDelete from "./del"; // `delete` nggak boleh jadi nama file JS langsung, jadi biasanya `del.ts`
 import userUpdate from "./updt";
 import userDeleteAccount from "./delUser";
+import { resolveUserManager } from "./guard";
 
+// resolve lokal (tidak bocor ke router lain di route.ts): semua route /user hanya role 0/1.
 const User = new Elysia({ prefix: "/user" })
+  .resolve(resolveUserManager)
   .get("/findMany", userFindMany)
   .get("/findUnique/:id", userFindUnique)
   .put("/del/:id", userDelete, {

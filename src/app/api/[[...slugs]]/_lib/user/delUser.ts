@@ -1,8 +1,8 @@
 // /api/user/delUser.ts
 import prisma from '@/lib/prisma';
-import { Context } from 'elysia';
+import { denyDeveloperAccountChange, type UserManagerContext } from './guard';
 
-export default async function userDeleteAccount(context: Context) {
+export default async function userDeleteAccount(context: UserManagerContext) {
   const { id } = context.params as { id: string };
 
   try {
@@ -17,6 +17,9 @@ export default async function userDeleteAccount(context: Context) {
         message: 'User tidak ditemukan',
       };
     }
+
+    const forbidden = denyDeveloperAccountChange(context, context.actor, existingUser.roleId);
+    if (forbidden) return forbidden;
 
     // ✅ 2. Hapus SEMUA relasi dalam TRANSACTION
     const result = await prisma.$transaction(async (tx) => {
