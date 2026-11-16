@@ -1,25 +1,27 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import type { InovasiKategori } from "@/lib/inovasi-teknologi/kategori";
 
-type FormUpdate = Prisma.DesaDigitalGetPayload<{
-    select: {
-        id: true,
-        name: true,
-        deskripsi: true
-        imageId: true
-    }
-}>
-export default async function desaDigitalUpdate(context: Context) {
+type FormUpdate = {
+    name: string;
+    deskripsi: string;
+    imageId: string;
+    /** Opsional; tanpa field ini kategori lama dipertahankan (klien lama tetap jalan). */
+    kategori?: InovasiKategori;
+};
+
+/** Ubah satu entri Inovasi Teknologi Desa; gambar lama dihapus bila diganti. */
+export default async function inovasiTeknologiUpdate(context: Context) {
     try {
         const id = context.params?.id as string;
-        const body = (await context.body) as Omit<FormUpdate, "id">;
+        const body = (await context.body) as FormUpdate;
     
         const {
             name,
             deskripsi,
-            imageId
+            imageId,
+            kategori,
         } = body;
     
         if (!id) {
@@ -34,7 +36,7 @@ export default async function desaDigitalUpdate(context: Context) {
             })
         }
     
-        const existing = await prisma.desaDigital.findUnique({
+        const existing = await prisma.inovasiTeknologiDesa.findUnique({
             where: {id},
             include: {
                 image: true,
@@ -44,7 +46,7 @@ export default async function desaDigitalUpdate(context: Context) {
         if (!existing) {
             return new Response(JSON.stringify({
                 success: false,
-                message: "Desa digital tidak ditemukan",
+                message: "Inovasi teknologi desa tidak ditemukan",
             }), {
                 status: 404,
                 headers: {
@@ -53,25 +55,26 @@ export default async function desaDigitalUpdate(context: Context) {
             })
         }
     
-        const updated = await prisma.desaDigital.update({
+        const updated = await prisma.inovasiTeknologiDesa.update({
             where: { id },
             data: {
                 name,
                 deskripsi,
                 imageId,
+                kategori,
             }
         })
 
         if (existing.imageId && existing.imageId !== imageId) {
         const oldImage = existing.image;
         if (oldImage) {
-            await removeStoredFile(oldImage, "DesaDigital");
+            await removeStoredFile(oldImage, "InovasiTeknologiDesa");
         }
         }
     
         return new Response(JSON.stringify({
             success: true,
-            message: "Desa digital berhasil diupdate",
+            message: "Inovasi teknologi desa berhasil diupdate",
             data: updated,
         }), {
             status: 200,
@@ -80,10 +83,10 @@ export default async function desaDigitalUpdate(context: Context) {
             }
         })
     } catch (error) {
-        console.error("Error updating desa digital:", error); 
+        console.error(`Gagal update inovasi teknologi desa ${context.params?.id}:`, error); 
         return new Response(JSON.stringify({
             success: false,
-            message: "Terjadi kesalahan saat mengupdate desa digital",
+            message: "Terjadi kesalahan saat mengupdate inovasi teknologi desa",
         }), {
             status: 500,
             headers: {

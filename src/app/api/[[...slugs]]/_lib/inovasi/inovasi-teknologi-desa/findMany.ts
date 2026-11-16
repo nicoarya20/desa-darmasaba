@@ -1,43 +1,36 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { buildInovasiWhere, parseKategoriFilter } from "./inovasi-teknologi.query";
 
-export default async function desaDigitalFindMany(context: Context) {
-  // Ambil parameter dari query
+/** Daftar Inovasi Teknologi Desa aktif berpaginasi; query `page`, `limit`, `search`, `kategori` (digital|tepat-guna). */
+export default async function inovasiTeknologiFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
   const limit = Number(context.query.limit) || 10;
-  const search = (context.query.search as string) || '';
+  const search = (context.query.search as string) || "";
   const skip = (page - 1) * limit;
 
-  // Buat where clause
-  const where: any = { isActive: true };
-
-  // Tambahkan pencarian (jika ada)
-  if (search) {
-    where.OR = [
-      { name: { contains: search, mode: 'insensitive' } },
-      { deskripsi: { contains: search, mode: 'insensitive' } },
-    ];
+  const filter = parseKategoriFilter(context.query.kategori);
+  if (!filter.ok) {
+    context.set.status = 400;
+    return { success: false, message: `Kategori "${filter.value}" tidak dikenal`, data: [] };
   }
+  const where = buildInovasiWhere({ search, kategori: filter.kategori });
 
   try {
-    // Ambil data dan total count secara paralel
     const [data, total] = await Promise.all([
-      prisma.desaDigital.findMany({
+      prisma.inovasiTeknologiDesa.findMany({
         where,
-        include: {
-          image: true,
-        },
+        include: { image: true },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
-      prisma.desaDigital.count({ where }),
+      prisma.inovasiTeknologiDesa.count({ where }),
     ]);
 
     return {
       success: true,
-      message: "Berhasil ambil desa digital dengan pagination",
+      message: "Berhasil ambil inovasi teknologi desa dengan pagination",
       data,
       page,
       limit,
@@ -45,10 +38,11 @@ export default async function desaDigitalFindMany(context: Context) {
       totalPages: Math.ceil(total / limit),
     };
   } catch (e) {
-    console.error("Error di findMany paginated:", e);
+    console.error(`Gagal ambil inovasi teknologi desa (halaman ${page}, kategori "${filter.kategori ?? "semua"}"):`, e);
+    context.set.status = 500;
     return {
       success: false,
-      message: "Gagal mengambil data desa digital",
+      message: "Gagal mengambil data inovasi teknologi desa",
     };
   }
 }

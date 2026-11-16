@@ -2,7 +2,8 @@ import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
 
-export default async function desaDigitalDelete(context: Context) {
+/** Hapus satu entri Inovasi Teknologi Desa beserta gambarnya (bila tidak dirujuk data lain). */
+export default async function inovasiTeknologiDelete(context: Context) {
   const id = context.params?.id as string;
 
   if (!id) {
@@ -12,31 +13,31 @@ export default async function desaDigitalDelete(context: Context) {
     };
   }
 
-  const desaDigital = await prisma.desaDigital.findUnique({
+  const inovasi = await prisma.inovasiTeknologiDesa.findUnique({
     where: { id },
     include: {
       image: true,
     },
   });
 
-  if (!desaDigital) {
+  if (!inovasi) {
     return {
       status: 404,
-      body: "Desa digital tidak ditemukan",
+      body: "Inovasi teknologi desa tidak ditemukan",
     };
   }
 
-  await prisma.desaDigital.delete({
+  await prisma.inovasiTeknologiDesa.delete({
     where: { id },
   });
 
-  if (desaDigital.image) {
-    await removeStoredFile(desaDigital.image, "DesaDigital");
+  if (inovasi.image) {
+    await removeStoredFile(inovasi.image, "InovasiTeknologiDesa");
   }
 
   return {
     success: true,
-    message: "Desa digital berhasil dihapus",
+    message: "Inovasi teknologi desa berhasil dihapus",
     status: 200,
   };
 }

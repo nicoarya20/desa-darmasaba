@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 
-export default async function desaDigitalFindUnique(request: Request) {
+/** Detail satu entri Inovasi Teknologi Desa (termasuk `kategori` dan gambar). */
+export default async function inovasiTeknologiFindUnique(request: Request) {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split("/");
     const id = pathSegments[pathSegments.length - 1];
@@ -20,7 +21,7 @@ export default async function desaDigitalFindUnique(request: Request) {
             }, {status: 400});
         }
 
-        const data = await prisma.desaDigital.findUnique({
+        const data = await prisma.inovasiTeknologiDesa.findUnique({
             where: { id },
             include: {
                 image: true,
@@ -30,20 +31,20 @@ export default async function desaDigitalFindUnique(request: Request) {
         if (!data) {
             return Response.json({
                 success: false,
-                message: "Desa digital tidak ditemukan",
+                message: "Inovasi teknologi desa tidak ditemukan",
             }, {status: 404});
         }
 
         return Response.json({
             success: true,
-            message: "Success fetch desa digital by ID",
+            message: "Success fetch inovasi teknologi desa by ID",
             data,
         }, {status: 200});
     } catch (error) {
         console.error("Find by ID error:", error);
         return Response.json({
             success: false,
-            message: "Gagal mengambil desa digital: " + (error instanceof Error ? error.message : 'Unknown error'),
+            message: "Gagal mengambil inovasi teknologi desa: " + (error instanceof Error ? error.message : 'Unknown error'),
         }, {status: 500});
     }
 }
