@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.282] - 2026-11-16
+### Fixed
+- Pindah halaman yang sedang lambat dimuat (mis. pertama kali dibuka saat development, atau koneksi lambat) tidak lagi memunculkan error "Transition was aborted because of timeout in DOM update". Halaman tetap terbuka seperti biasa, hanya tanpa animasi perpindahan.
+
 ## [0.1.281] - 2026-11-16
 ### Added
 - **Menu admin baru Kependudukan › Dinamika Penduduk.** Admin mengisi total kelahiran, kematian, pindah masuk, dan pindah keluar per tahun. Satu tahun hanya boleh punya satu data; kalau tahunnya sudah ada, form menampilkan "Tahun sudah dipakai". Admin yang aksesnya dibatasi lewat Menu Access perlu diberi akses ke submenu ini dulu.
