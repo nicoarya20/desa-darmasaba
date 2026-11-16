@@ -25,10 +25,10 @@ export default function Page() {
         <Apbdes />
         <Prestasi />
         <LayananPotensi />
+        <LayananMasyarakat />
         <DesaAntiKorupsi />
         <SDGS />
         <Kepuasan />
-        <LayananMasyarakat />
       <ScrollToTopButton />
       </Stack>
 

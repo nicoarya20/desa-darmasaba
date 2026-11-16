@@ -1,5 +1,4 @@
-/** Label UI section Layanan Masyarakat di beranda. */
+/** Label aksesibilitas section Layanan Masyarakat di beranda (tanpa judul tampak; kartu duduk di bawah galeri). */
 export const LAYANAN_MASYARAKAT_TEXT = {
-  title: "Layanan Masyarakat",
-  lead: "Akses layanan publik Desa Darmasaba langsung dari beranda: urus surat, cek program bantuan, sampaikan pengaduan, dan telusuri informasi publik.",
+  ariaLabel: "Layanan Masyarakat",
 } as const;
