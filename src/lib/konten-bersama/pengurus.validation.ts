@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { skemaUrutan } from "./daftar-anak.validation";
+import { imageIdOpsional, skemaUrutan } from "./daftar-anak.validation";
 
 /** Batas panjang nama & jabatan pengurus. */
 export const MAX_TEKS_PENGURUS = 150;
@@ -10,14 +10,6 @@ const teksWajib = (label: string) =>
     .trim()
     .min(1, `${label} wajib diisi`)
     .max(MAX_TEKS_PENGURUS, `${label} maksimal ${MAX_TEKS_PENGURUS} karakter`);
-
-// Foto pengurus opsional: "" / null → null.
-const imageIdOpsional = z
-  .string()
-  .trim()
-  .nullable()
-  .optional()
-  .transform((v) => (v === undefined ? undefined : v || null));
 
 /**
  * Skema body struktur pengurus satu domain: `create` (POST daftar pengurus), `update` (PUT sebagian field;

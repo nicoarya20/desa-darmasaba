@@ -17,3 +17,11 @@ export const imageIdWajib = z
   .string({ required_error: "ID gambar wajib diisi" })
   .trim()
   .min(1, "ID gambar wajib diisi");
+
+/** ID berkas FileStorage opsional: ""/null → null (dikosongkan), tidak dikirim → `undefined` (tidak diubah). */
+export const imageIdOpsional = z
+  .string()
+  .trim()
+  .nullable()
+  .optional()
+  .transform((v) => (v === undefined ? undefined : v || null));

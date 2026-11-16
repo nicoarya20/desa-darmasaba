@@ -7,6 +7,11 @@ export const PENGAJAR_PATH = `${INFO_SEKOLAH_PATH}/pengajar`;
 /** `id` panel "Sekolah per jenjang"; tujuan `/lembaga` lama (`#lembaga`). */
 export const LEMBAGA_ANCHOR = "lembaga";
 
+/** Halaman detail satu sekolah. */
+export function lembagaDetailHref(id: string): string {
+  return `${INFO_SEKOLAH_PATH}/lembaga/${encodeURIComponent(id)}`;
+}
+
 export type InfoSekolahQuery = { jenjang: string; search: string; page: number };
 
 /** Path daftar → URL dengan `?jenjang=&search=&page=`; nilai kosong dan halaman 1 tidak ditulis. */

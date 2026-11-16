@@ -9,6 +9,10 @@ import { bacaMediaSosial, mediaSosialListSchema } from "@/lib/konten-bersama/med
 import { buatSkemaPengurus } from "@/lib/konten-bersama/pengurus.validation";
 import { buatSkemaGaleri } from "@/lib/konten-bersama/galeri.validation";
 import { cekUrutanIds, urutanBaru } from "@/lib/konten-bersama/urutan.logic";
+import { imageIdOpsional } from "@/lib/konten-bersama/daftar-anak.validation";
+import { koordinatBerpasangan } from "@/lib/konten-bersama/lokasi.logic";
+import { kolomMediaSosial } from "@/app/api/[[...slugs]]/_lib/_konten-bersama/media-sosial.data";
+import { Prisma } from "@prisma/client";
 
 describe("media sosial", () => {
   it("URL http/https diterima, URL invalid / skema lain / platform asing ditolak", () => {
@@ -107,5 +111,30 @@ describe("urutan & skema daftar anak", () => {
     expect(skema.create.safeParse({ items: [{ imageId: "a" }, { imageId: "b" }, { imageId: "c" }] }).error?.issues[0].message).toBe(
       "Maksimal 2 foto sekaligus",
     );
+  });
+});
+
+describe("perluasan untuk Lembaga Sekolah", () => {
+  it("koordinat opsional harus berpasangan", () => {
+    expect(koordinatBerpasangan({})).toBe(true);
+    expect(koordinatBerpasangan({ lat: null, lng: null })).toBe(true);
+    expect(koordinatBerpasangan({ lat: -8.6, lng: 115.2 })).toBe(true);
+    expect(koordinatBerpasangan({ lat: -8.6 })).toBe(false);
+    expect(koordinatBerpasangan({ lat: null, lng: 115.2 })).toBe(false);
+  });
+
+  it("imageIdOpsional: tidak dikirim tetap undefined, kosong → null", () => {
+    expect(imageIdOpsional.parse(undefined)).toBeUndefined();
+    expect(imageIdOpsional.parse(" ")).toBeNull();
+    expect(imageIdOpsional.parse(null)).toBeNull();
+    expect(imageIdOpsional.parse("img-1")).toBe("img-1");
+  });
+
+  it("kolomMediaSosial: tidak dikirim → tanpa kolom, kosong → DbNull", () => {
+    expect(kolomMediaSosial(undefined)).toEqual({});
+    expect(kolomMediaSosial([]).mediaSosial).toBe(Prisma.DbNull);
+    expect(kolomMediaSosial(null).mediaSosial).toBe(Prisma.DbNull);
+    const isi = [{ platform: "instagram" as const, url: "https://instagram.com/a" }];
+    expect(kolomMediaSosial(isi)).toEqual({ mediaSosial: isi });
   });
 });

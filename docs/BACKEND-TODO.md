@@ -77,6 +77,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 - [ ] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64)
   - Lokasi: `GET /api/pendidikan/infosekolahpaud/siswa/find-many` tanpa auth, mengirim nama siswa + sekolahnya.
+  - Sebagian tertutup (2026-11-16): `GET /lembagapendidikan/:id` (publik) tidak lagi mengirim daftar `siswa`/`pengajar`, diganti `_count { siswa, pengajar }` aktif (perubahan kontrak; satu-satunya konsumen state admin lembaga sudah disesuaikan). Create/update lembaga (admin) kini hanya meng-include `jenjangPendidikan`.
   - Usul: auth admin, publik hanya agregat (`/api/pendidikan/ringkasan/stats`), pola Balita/Ibu Hamil.
   - Pencarian global ikut membuka nama siswa (terverifikasi 2026-11-15): `src/app/api/[[...slugs]]/_lib/search/findMany.ts` tipe `siswa` (baris ±1287 & ±2346, `...siswa.map(... type: "siswa")`), ditaut `src/app/(public)/_com/searchUrl.tsx:88` ke `/siswa` (kini 308 ke halaman utama, tapi nama sudah tampil di hasil cari). Halaman publik Info Sekolah sejak rombak Pendidikan tidak lagi menampilkan nama siswa. Usul: buang tipe `siswa` dari pencarian publik.
   - Kecil: total siswa/pengajar publik = jumlah `perJenjang`, bukan `stats.jumlahPengajar` (beda bila ada lembaga nonaktif).
@@ -223,7 +224,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - [ ] **`deletedAt DateTime @default(now())` di banyak model** (118 kolom di schema)
   - Semua baris tercatat "terhapus" sejak dibuat; filter memakai `isActive`. Tidak berdampak ke tampilan, tapi menyesatkan. Usul: `DateTime?` tanpa default (migration hati-hati).
 
-- [ ] **Pendidikan (2026-11-15)**: `DataPendidikan.jumlah` String (usul Int + NumberInput, + kolom tahun/keterangan); `Lembaga` hanya nama + jenjang (tanpa alamat/NPSN/status/kontak); buku perpustakaan tanpa penulis/tahun/ketersediaan; Bimbingan Belajar tanpa field terstruktur tempat/jadwal/kontak/cara daftar; editor admin program (Link/Highlight/TextAlign/heading) melebihi allowlist sanitasi publik.
+- [ ] **Pendidikan (2026-11-15)**: `DataPendidikan.jumlah` String (usul Int + NumberInput, + kolom tahun/keterangan); ~~`Lembaga` hanya nama + jenjang~~ (selesai 2026-11-16: deskripsi, alamat, kontak, medsos, titik + link Google Maps, foto sekolah, bagan, pengurus, foto kegiatan — `docs/KONTEN-BERSAMA.md`; NPSN/status sekolah belum ada); buku perpustakaan tanpa penulis/tahun/ketersediaan; Bimbingan Belajar tanpa field terstruktur tempat/jadwal/kontak/cara daftar; editor admin program (Link/Highlight/TextAlign/heading) melebihi allowlist sanitasi publik.
 
 ## Jenna publik (tindak lanjut)
 

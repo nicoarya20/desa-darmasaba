@@ -8,6 +8,7 @@ import {
 import { linkRuteKoordinat } from "@/lib/konten-bersama/lokasi.logic";
 import { bacaMediaSosial } from "@/lib/konten-bersama/media-sosial.validation";
 import { GALERI_SELECT, PENGURUS_SELECT, URUTAN_ANAK } from "../../../_konten-bersama/daftar-anak.config";
+import { kolomMediaSosial } from "../../../_konten-bersama/media-sosial.data";
 
 /** Nama model untuk konteks log hapus berkas bank sampah. */
 export const BANK_SAMPAH_FILE_OWNER = "KeteranganBankSampahTerdekat";
@@ -39,7 +40,7 @@ export function dataBankSampah(body: BankSampahBody) {
   return {
     ...dasar,
     linkPetunjukArah: linkPetunjukArah || linkRuteKoordinat(body),
-    ...(mediaSosial !== undefined && { mediaSosial: mediaSosial?.length ? mediaSosial : Prisma.DbNull }),
+    ...kolomMediaSosial(mediaSosial),
     ...(fotoBaganStrukturId !== undefined && { fotoBaganStrukturId }),
   };
 }

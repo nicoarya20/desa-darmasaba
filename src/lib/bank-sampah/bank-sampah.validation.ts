@@ -2,6 +2,7 @@ import { z } from "zod";
 import { teksOpsionalParsial } from "@/lib/konten-bersama/teks.validation";
 import { linkGoogleMapsSchema } from "@/lib/konten-bersama/lokasi.logic";
 import { mediaSosialListSchema } from "@/lib/konten-bersama/media-sosial.validation";
+import { imageIdOpsional } from "@/lib/konten-bersama/daftar-anak.validation";
 import { idListUnik } from "@/lib/konten-bersama/urutan.logic";
 
 /** Batas jumlah pengurus per bank sampah. */
@@ -29,12 +30,7 @@ export const bankSampahBodySchema = z.object({
   kontak: teksOpsionalParsial({ label: "Kontak", max: MAX_KONTAK_BANK_SAMPAH }),
   mediaSosial: mediaSosialListSchema.nullable().optional(),
   linkPetunjukArah: linkGoogleMapsSchema,
-  fotoBaganStrukturId: z
-    .string()
-    .trim()
-    .nullable()
-    .optional()
-    .transform((v) => (v === undefined ? undefined : v || null)),
+  fotoBaganStrukturId: imageIdOpsional,
   programInovasiIds: z
     .array(z.string().trim().min(1, "ID program inovasi tidak boleh kosong"))
     .max(MAX_INOVASI_BANK_SAMPAH, `Maksimal ${MAX_INOVASI_BANK_SAMPAH} program inovasi`)

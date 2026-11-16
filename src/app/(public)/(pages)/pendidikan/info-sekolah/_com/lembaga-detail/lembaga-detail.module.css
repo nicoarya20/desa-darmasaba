@@ -1,0 +1,167 @@
+/*
+ * Detail sekolah (Info Sekolah › lembaga). Token warna (--ink, --muted, --tile, --line, --radius, --brand) dari
+ * .page info-sekolah.module.css + INFO_SEKOLAH_BRAND_VARS. Breakpoint apple.com: ≤1068px dan ≤734px.
+ */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap, 72px);
+  animation: contentIn 280ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes contentIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Foto sekolah selebar isi; tinggi dibatasi agar profil tetap terlihat di layar pertama. */
+.hero {
+  width: 100%;
+  height: clamp(220px, 38vw, 480px);
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+/* Profil (kiri) + panel informasi (kanan). Tanpa profil, panel selebar isi. */
+.overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 40px;
+  align-items: start;
+}
+
+.overview > :only-child {
+  grid-column: 1 / -1;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--brand);
+}
+
+.prose {
+  margin: 0;
+  max-width: 46rem;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.prewrap {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Panel informasi ---------- */
+.info {
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.infoTitle {
+  margin: 0 0 16px;
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.infoRow {
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.infoRow:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.infoLabel {
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.infoValue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.infoAction {
+  display: flex;
+  margin-top: 4px;
+}
+
+/* ---------- Tidak ditemukan ---------- */
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.backLink {
+  color: var(--brand);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.backLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1068px) {
+  .overview {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 28px;
+  }
+}
+
+@media (max-width: 734px) {
+  .overview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sectionTitle {
+    font-size: 21px;
+  }
+
+  .prose {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .info {
+    padding: 22px;
+  }
+}

@@ -1,18 +1,18 @@
 # Konten bersama: galeri, media sosial, kontak, struktur pengurus, lokasi
 
-Fondasi yang dipakai berulang oleh entri domain yang punya halaman/modal detail (Bank Sampah dan PUSTU sudah memakai;
-Lembaga Sekolah, Posyandu menyusul). Keputusan: **tabel per domain** (FK aman, cascade jelas),
+Fondasi yang dipakai berulang oleh entri domain yang punya halaman/modal detail (Bank Sampah, PUSTU, dan Lembaga
+Sekolah sudah memakai; Posyandu menyusul). Keputusan: **tabel per domain** (FK aman, cascade jelas),
 **kode bersama** (UI, validasi, helper API, state). Jangan salin komponen ke domain; pakai yang di bawah.
 
 ## Lokasi kode
 
 | Lapis | Lokasi | Isi |
 |---|---|---|
-| Logika murni | `src/lib/konten-bersama/` | `media-sosial.model.ts` (platform, label, ikon, `lengkapiUrlMedsos`), `media-sosial.validation.ts` (`mediaSosialListSchema`, `bacaMediaSosial`), `tautan.validation.ts` (`isHttpUrl`, `urlHttpSchema`), `kontak.link.ts` (`tautanKontak` → `tel:`/wa.me), `lokasi.logic.ts` (`linkGoogleMapsSchema`, `linkGoogleMaps`, `linkRuteKoordinat`, `PUSAT_PETA_DEFAULT`), `galeri.validation.ts` (`buatSkemaGaleri`), `pengurus.validation.ts` (`buatSkemaPengurus`), `daftar-anak.validation.ts` (`skemaUrutan`), `teks.validation.ts`, `urutan.logic.ts`, `konten-bersama.types.ts` (`FotoGaleriItem`, `PengurusItem`) |
-| API | `src/app/api/[[...slugs]]/_lib/_konten-bersama/` | `daftar-anak.config.ts` (`galeriConfig`, `pengurusConfig`, select bersama), `daftar-anak.handlers.ts` (`createDaftarAnakHandlers`: list, create, update, remove permanen + hapus berkas, reorder), `daftar-anak.routes.ts` (`createDaftarAnakRoutes`) |
-| State admin | `src/app/admin/(dashboard)/_state/konten-bersama/` | `daftar-anak.state.ts` (`createDaftarAnakState`), `unggah-gambar.ts` (`unggahGambar`, `hapusUnggahanYatim`) |
-| Komponen admin | `src/app/admin/(dashboard)/_com/konten-bersama/` | `media-sosial.input`, `lokasi.input` (peta + link Google Maps), `gambar.field` / `gambar.dropzone`, `galeri-foto.admin` (+ `-grid`, `-card`), `struktur-pengurus.admin` (+ `pengurus.form-modal`) |
-| Komponen publik | `src/app/(public)/_com/konten-bersama/` | `media-sosial.links`, `kontak.link`, `lokasi.tombol` ("Buka di Google Maps"), `galeri-foto.grid` (grid + pratinjau), `struktur-pengurus.view` (bagan lalu kartu pengurus), `konten-kosong` |
+| Logika murni | `src/lib/konten-bersama/` | `media-sosial.model.ts` (platform, label, ikon, `lengkapiUrlMedsos`), `media-sosial.validation.ts` (`mediaSosialListSchema`, `bacaMediaSosial`), `tautan.validation.ts` (`isHttpUrl`, `urlHttpSchema`), `kontak.link.ts` (`tautanKontak` → `tel:`/wa.me), `lokasi.logic.ts` (`linkGoogleMapsSchema`, `linkGoogleMaps`, `linkRuteKoordinat`, `PUSAT_PETA_DEFAULT`, `lintangSchema`/`bujurSchema` + `koordinatBerpasangan` untuk titik opsional), `galeri.validation.ts` (`buatSkemaGaleri`), `pengurus.validation.ts` (`buatSkemaPengurus`), `daftar-anak.validation.ts` (`skemaUrutan`, `imageIdWajib`, `imageIdOpsional` untuk foto opsional induk), `media-sosial.validation.ts` juga `mediaSosialDariInput` (baris form → body), `teks.validation.ts`, `urutan.logic.ts`, `konten-bersama.types.ts` (`FotoGaleriItem`, `PengurusItem`) |
+| API | `src/app/api/[[...slugs]]/_lib/_konten-bersama/` | `daftar-anak.config.ts` (`galeriConfig`, `pengurusConfig`, select bersama), `daftar-anak.handlers.ts` (`createDaftarAnakHandlers`: list, create, update, remove permanen + hapus berkas, reorder), `daftar-anak.routes.ts` (`createDaftarAnakRoutes`), `media-sosial.data.ts` (`kolomMediaSosial`: kosong → NULL, tidak dikirim → tidak diubah) |
+| State admin | `src/app/admin/(dashboard)/_state/konten-bersama/` | `daftar-anak.state.ts` (`createDaftarAnakState`), `detail-entri.state.ts` (`createDetailEntriState`: find-unique dengan `loading`/`gagal`, respons id lama diabaikan), `kirim-entri.ts` (`kirimEntri`: POST `/create` / PUT `/:id`, galat berpesan server), `unggah-gambar.ts` (`unggahGambar`, `hapusUnggahanYatim`) |
+| Komponen admin | `src/app/admin/(dashboard)/_com/konten-bersama/` | `media-sosial.input`, `lokasi.input` (peta + link Google Maps), `gambar.field` / `gambar.dropzone`, `galeri-foto.admin` (+ `-grid`, `-card`), `struktur-pengurus.admin` (+ `pengurus.form-modal`), `form-entri.frame` (kerangka halaman tambah/edit: kembali, judul, Reset/Simpan), `daftar-anak.admin-section` (pengurus + galeri di halaman edit) |
+| Komponen publik | `src/app/(public)/_com/konten-bersama/` | `media-sosial.links`, `kontak.link`, `lokasi.tombol` ("Buka di Google Maps"), `galeri-foto.grid` (grid + pratinjau), `struktur-pengurus.view` (bagan lalu kartu pengurus), `lokasi.peta` (`PetaLokasi`, peta baca-saja satu titik), `konten-kosong` |
 
 Aturan isi: URL media sosial wajib http/https (skema lain ditolak, data rusak dibuang saat dibaca);
 link Google Maps hanya host Google (`maps.app.goo.gl`, `goo.gl`, `g.page`, `google.*`), kosong = rute ke
@@ -42,10 +42,17 @@ koordinat. Hapus foto galeri / pengurus = **hapus permanen** (baris + berkas Min
    (+ `KontenKosong` untuk tab tanpa data). Bila galeri berada di dalam `Modal`, teruskan `onPreviewChange`
    dan set `closeOnEscape={!pratinjauTerbuka}` di modal induk agar Escape hanya menutup pratinjau.
 
-Test acuan: `__tests__/api/konten_bersama_*.test.ts`, `bank_sampah_detail_{api,ui}.test.*`, `bank_sampah_admin_form.test.tsx`.
+Domain kedua: **Lembaga Sekolah** (Info Sekolah) — migrasi `20261116140000_detail_lembaga_pendidikan`, API
+`_lib/pendidikan/info-sekolah-paud/lembaga/lembaga.{data,anak}.ts`, skema `src/lib/lembaga-pendidikan/`, state
+`_state/pendidikan/infoSekolahPaud/lembaga.{form,anak.state}.ts`, halaman detail publik
+`/pendidikan/info-sekolah/lembaga/[id]` (bagian kosong disembunyikan, bukan state kosong). Titik peta di sini
+opsional (`koordinatBerpasangan`) dan link Google Maps disimpan apa adanya (`linkGoogleMaps`, kosong = rute ke titik).
 
 PUSTU (`Puskesmas`): pemasangan sama (API `_lib/kesehatan/puskesmas/pustu.anak.ts`, state
 `_state/kesehatan/puskesmas/pustu.anak.state.ts`, admin `kesehatan/puskesmas/_com/pustu.anak-admin.tsx`), tanpa koordinat:
 tombol peta hanya dari link Google Maps. Field khusus PUSTU (jam per rentang hari, layanan unggulan, prosedur, tarif) ada di
 `src/lib/pustu/` — lihat `docs/decisions/2026-11-16-pustu-konten.md`. Test: `__tests__/api/pustu_*.test.*`.
+
+Test acuan: `__tests__/api/konten_bersama_*.test.ts`, `bank_sampah_detail_{api,ui}.test.*`, `bank_sampah_admin_form.test.tsx`,
+`lembaga_detail_{api,ui,admin}.test.*`, `pustu_*.test.*`.
 BUMDes memakai komponen galeri/gambar yang sama (perilaku & panel Sampah BUMDes tidak berubah).
