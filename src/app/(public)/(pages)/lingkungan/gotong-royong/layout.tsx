@@ -1,32 +1,12 @@
-// app/desa/berita/BeritaLayoutClient.tsx
-'use client'
-import colors from '@/con/colors';
-import { Box } from '@mantine/core';
+'use client';
 import dynamic from 'next/dynamic';
-import { usePathname } from 'next/navigation';
-import BackButton from '../../pemerintahan/layanan/_com/BackButto';
+import type { ReactNode } from 'react';
+import { GOTONG_ROYONG_SCOPE } from './_com/gotong-royong.scope';
 
-const LayoutTabsGotongRoyong = dynamic(
-  () => import('./_lib/layoutTabs'),
-  { ssr: false }
-);
+// Kerangka daftar Kegiatan Desa (kepala membaca useSearchParams → klien saja, sama dengan Kegiatan Desa).
+const KegiatanShell = dynamic(() => import('../../pemerintahan/kegiatan-desa/_com/KegiatanShell'), { ssr: false });
 
-export default function GotongRoyongLayoutClient({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const segments = pathname.split('/').filter(Boolean)
-  const isDetailPage = segments.length === 4; // [lingkungan, gotong-royong, kategori, id]
-
-  if (isDetailPage) {
-      // Tampilkan tanpa tab menu
-      return (
-        <Box bg={colors.Bg}>
-          <Box pt={33} px={{ base: 'md', md: 100 }}>
-            <BackButton />
-          </Box>
-          {children}
-        </Box>
-      );
-    }
-  
-  return <LayoutTabsGotongRoyong>{children}</LayoutTabsGotongRoyong>;
+/** Halaman Gotong Royong = daftar Kegiatan Desa berkategori Gotong Royong, tanpa pil kategori. */
+export default function GotongRoyongLayout({ children }: { children: ReactNode }) {
+  return <KegiatanShell scope={GOTONG_ROYONG_SCOPE}>{children}</KegiatanShell>;
 }

@@ -1,5 +1,6 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
 import { isPathHidden } from './menu-visibility.logic';
+import { kegiatanDetailHref } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic';
 
 type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
 
@@ -76,7 +77,8 @@ const getDetailUrl = (item: SearchItem) => {
     keteranganBankSampahTerdekat: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
     programPenghijauan: () => '/lingkungan/program-penghijauan',
     dataLingkunganDesa: () => '/lingkungan/data-lingkungan-desa',
-    gotongRoyong: (id, kategori) => `/lingkungan/gotong-royong/${kategori}/${id}`,
+    // Tipe lama `gotongRoyong` berisi SEMUA Kegiatan Desa (nama tipe dipertahankan) → detail Kegiatan Desa.
+    gotongRoyong: (id, kategori) => kegiatanDetailHref(kategori, String(id)),
     tujuanEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
     materiEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
     contohEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
