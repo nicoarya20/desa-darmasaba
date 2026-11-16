@@ -1,6 +1,7 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
 import { desaDigitalDetailHref } from '@/app/(public)/(pages)/inovasi/desa-digital-smart-village/_com/desa-digital.logic';
 import { programKreatifDetailHref } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
+import { gotongRoyongDetailHref } from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.logic';
 import { penghijauanDetailHref } from '@/app/(public)/(pages)/lingkungan/program-penghijauan/_com/penghijauan.logic';
 import { isPathHidden } from './menu-visibility.logic';
 
@@ -79,7 +80,8 @@ const getDetailUrl = (item: SearchItem) => {
     keteranganBankSampahTerdekat: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
     programPenghijauan: (id) => penghijauanDetailHref(String(id)),
     dataLingkunganDesa: () => '/lingkungan/data-lingkungan-desa',
-    gotongRoyong: (id, kategori) => `/lingkungan/gotong-royong/${kategori}/${id}`,
+    // Kategori kosong (cari global belum menyertakan kategori) → segmen cadangan, bukan "undefined".
+    gotongRoyong: (id, kategori) => gotongRoyongDetailHref(kategori, id),
     tujuanEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
     materiEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
     contohEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
