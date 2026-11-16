@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
+import { bacaStatistik } from "./program.body";
 
 type FormUpdate = {
   nama: string;
@@ -8,8 +9,8 @@ type FormUpdate = {
   ikonUrl?: string;
   icon: string;
   statistik?: {
-    tahun: number;
-    jumlah: number;
+    tahun: string;
+    jumlah: string;
   };
 };
 
@@ -28,24 +29,13 @@ export default async function programKemiskinanUpdate(context: Context) {
       return new Response(JSON.stringify({ success: false, message: "Program tidak ditemukan" }), { status: 404 });
     }
 
-    // update statistik (bisa update atau create kalau belum ada)
-    let statistikUpdate;
-
-    if (existing.statistikId) {
-      statistikUpdate = await prisma.statistikKemiskinan.update({
-        where: { id: existing.statistikId },
-        data: {
-          tahun: Number(body.statistik?.tahun),
-          jumlah: Number(body.statistik?.jumlah),
-        },
-      });
-    } else {
-      statistikUpdate = await prisma.statistikKemiskinan.create({
-        data: {
-          tahun: Number(body.statistik?.tahun),
-          jumlah: Number(body.statistik?.jumlah),
-        },
-      });
+    // Statistik opsional: kosong = biarkan statistik yang sudah ada (tidak dihapus).
+    const statistik = bacaStatistik(body.statistik);
+    let statistikId: string | null = existing.statistikId;
+    if (statistik && existing.statistikId) {
+      await prisma.statistikKemiskinan.update({ where: { id: existing.statistikId }, data: statistik });
+    } else if (statistik) {
+      statistikId = (await prisma.statistikKemiskinan.create({ data: statistik })).id;
     }
 
     const program = await prisma.programKemiskinan.update({
@@ -54,9 +44,7 @@ export default async function programKemiskinanUpdate(context: Context) {
         nama: body.nama,
         deskripsi: body.deskripsi,
         icon: body.icon,
-        statistik: {
-          connect: { id: statistikUpdate.id }, // konek ke statistik baru atau yang diperbarui
-        },
+        ...(statistikId ? { statistik: { connect: { id: statistikId } } } : {}),
       },
       include: { statistik: true },
     });
