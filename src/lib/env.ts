@@ -24,4 +24,11 @@ export const env = {
     .split(",")
     .map((e) => e.trim())
     .filter(Boolean),
+  // Comma-separated email → auto-promote ke roleId "0" (DEVELOPER)
+  DEVELOPER_EMAILS: optional("DEVELOPER_EMAIL", "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean),
+  // Opsional: 64 hex (32 byte) untuk AES-256-GCM API key provider Jenna. Kosong = simpan key ditolak.
+  JENNA_CREDENTIALS_KEY: optional("JENNA_CREDENTIALS_KEY", "").trim(),
 } as const;

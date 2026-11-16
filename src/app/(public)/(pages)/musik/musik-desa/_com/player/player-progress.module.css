@@ -1,0 +1,60 @@
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.time {
+  flex: none;
+  min-width: 36px;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--m-muted, #515154);
+  font-variant-numeric: tabular-nums;
+}
+
+.time:first-child {
+  text-align: right;
+}
+
+.slider {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Thumb hanya tampil saat slider disorot / difokus (gaya TIDAL). */
+.thumb {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.slider:hover .thumb,
+.thumb:focus-visible,
+.thumb[data-dragging] {
+  opacity: 1;
+}
+
+.line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: 2px;
+  background: var(--m-track, rgba(0, 0, 0, 0.12));
+}
+
+.lineFill {
+  display: block;
+  height: 100%;
+  background: var(--m-ink, #1d1d1f);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+}

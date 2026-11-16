@@ -2,35 +2,105 @@
 // Kebijakan role/akses Better Auth — fungsi murni, tanpa DB.
 import { describe, it, expect } from 'vitest';
 import {
+  ROLE_DEVELOPER,
   ROLE_SUPER_ADMIN,
   ROLE_USER,
   resolveRoleForNewUser,
+  shouldPromoteRole,
+  isDeveloperRole,
   isAdminRole,
   isAccountActive,
   publicOriginFromHeaders,
   isPublicPostPath,
   isPublicGetPath,
+  decideDevAccess,
+  defaultRouteForRole,
+  DEV_HOME_PATH,
+  ADMIN_HOME_PATH,
 } from '@/lib/auth-policy';
 
 describe('resolveRoleForNewUser', () => {
-  const supers = ['boss@desa.id', 'dev@desa.id'];
+  const lists = {
+    developerEmails: ['dev@desa.id', 'both@desa.id'],
+    superAdminEmails: ['boss@desa.id', 'both@desa.id'],
+  };
 
   it('user Google baru default roleId "5" (USER)', () => {
-    expect(resolveRoleForNewUser('warga@gmail.com', supers)).toBe(ROLE_USER);
+    expect(resolveRoleForNewUser('warga@gmail.com', lists)).toBe(ROLE_USER);
   });
 
   it('email di SUPER_ADMIN_EMAILS → roleId "1" (SUPER ADMIN)', () => {
-    expect(resolveRoleForNewUser('boss@desa.id', supers)).toBe(ROLE_SUPER_ADMIN);
+    expect(resolveRoleForNewUser('boss@desa.id', lists)).toBe(ROLE_SUPER_ADMIN);
+  });
+
+  it('email di DEVELOPER_EMAILS → roleId "0" (DEVELOPER)', () => {
+    expect(resolveRoleForNewUser('dev@desa.id', lists)).toBe(ROLE_DEVELOPER);
+  });
+
+  it('email di kedua list → DEVELOPER menang', () => {
+    expect(resolveRoleForNewUser('both@desa.id', lists)).toBe(ROLE_DEVELOPER);
+  });
+
+  it('pencocokan email case-insensitive (Better Auth simpan email lowercase)', () => {
+    const mixed = { developerEmails: ['Dev@Desa.id'], superAdminEmails: ['BOSS@desa.id'] };
+    expect(resolveRoleForNewUser('dev@desa.id', mixed)).toBe(ROLE_DEVELOPER);
+    expect(resolveRoleForNewUser('boss@desa.id', mixed)).toBe(ROLE_SUPER_ADMIN);
   });
 
   it('email null/kosong → USER', () => {
-    expect(resolveRoleForNewUser(null, supers)).toBe(ROLE_USER);
-    expect(resolveRoleForNewUser(undefined, supers)).toBe(ROLE_USER);
-    expect(resolveRoleForNewUser('', supers)).toBe(ROLE_USER);
+    expect(resolveRoleForNewUser(null, lists)).toBe(ROLE_USER);
+    expect(resolveRoleForNewUser(undefined, lists)).toBe(ROLE_USER);
+    expect(resolveRoleForNewUser('', lists)).toBe(ROLE_USER);
   });
 
-  it('list super admin kosong → selalu USER', () => {
-    expect(resolveRoleForNewUser('boss@desa.id', [])).toBe(ROLE_USER);
+  it('kedua list kosong → selalu USER', () => {
+    const empty = { developerEmails: [], superAdminEmails: [] };
+    expect(resolveRoleForNewUser('boss@desa.id', empty)).toBe(ROLE_USER);
+    expect(resolveRoleForNewUser('dev@desa.id', empty)).toBe(ROLE_USER);
+  });
+});
+
+describe('shouldPromoteRole', () => {
+  it('USER/admin biasa → dinaikkan ke SUPER ADMIN atau DEVELOPER', () => {
+    expect(shouldPromoteRole('5', ROLE_SUPER_ADMIN)).toBe(true);
+    expect(shouldPromoteRole('2', ROLE_SUPER_ADMIN)).toBe(true);
+    expect(shouldPromoteRole('1', ROLE_DEVELOPER)).toBe(true);
+  });
+
+  it('DEVELOPER tidak diturunkan ke SUPER ADMIN', () => {
+    expect(shouldPromoteRole('0', ROLE_SUPER_ADMIN)).toBe(false);
+  });
+
+  it('role sudah sama → tidak di-update', () => {
+    expect(shouldPromoteRole('1', ROLE_SUPER_ADMIN)).toBe(false);
+    expect(shouldPromoteRole('0', ROLE_DEVELOPER)).toBe(false);
+  });
+
+  it('roleId null/undefined dianggap USER; custom non-numerik → dinaikkan', () => {
+    expect(shouldPromoteRole(null, ROLE_SUPER_ADMIN)).toBe(true);
+    expect(shouldPromoteRole(undefined, ROLE_DEVELOPER)).toBe(true);
+    expect(shouldPromoteRole('custom-role', ROLE_SUPER_ADMIN)).toBe(true);
+  });
+});
+
+describe('isDeveloperRole', () => {
+  it('hanya roleId "0" (string atau number) = developer', () => {
+    expect(isDeveloperRole('0')).toBe(true);
+    expect(isDeveloperRole(0)).toBe(true);
+  });
+
+  it('super admin & role admin lain bukan developer', () => {
+    for (const r of ['1', '2', '3', '4', '5', 1, 5]) {
+      expect(isDeveloperRole(r)).toBe(false);
+    }
+  });
+
+  it('null/undefined/kosong/non-numerik → bukan developer (fail-closed)', () => {
+    expect(isDeveloperRole(null)).toBe(false);
+    expect(isDeveloperRole(undefined)).toBe(false);
+    expect(isDeveloperRole('')).toBe(false);
+    expect(isDeveloperRole(' 0')).toBe(false);
+    expect(isDeveloperRole('00')).toBe(false);
   });
 });
 
@@ -166,5 +236,53 @@ describe('isPublicGetPath', () => {
   it('path admin-only lain tidak ikut terbuka', () => {
     expect(isPublicGetPath('/api/user')).toBe(false);
     expect(isPublicGetPath('/api/imgs')).toBe(false);
+  });
+});
+
+describe('decideDevAccess (guard /dev di proxy & layout /dev)', () => {
+  it('cache miss: token ada → allow (layout & API memvalidasi penuh), tanpa token → login', () => {
+    expect(decideDevAccess(null, true)).toBe('allow');
+    expect(decideDevAccess(null, false)).toBe('login');
+  });
+
+  it('developer aktif → allow (roleId string atau number)', () => {
+    expect(decideDevAccess({ roleId: '0', isActive: true }, true)).toBe('allow');
+    expect(decideDevAccess({ roleId: 0 }, false)).toBe('allow');
+  });
+
+  it('akun nonaktif → login, termasuk developer', () => {
+    expect(decideDevAccess({ roleId: '0', isActive: false }, true)).toBe('login');
+    expect(decideDevAccess({ roleId: '5', isActive: false }, true)).toBe('login');
+  });
+
+  it.each(['1', '2', '3', '4'])('role admin %s (bukan developer) → admin', (roleId) => {
+    expect(decideDevAccess({ roleId, isActive: true }, true)).toBe('admin');
+  });
+
+  it('user biasa / roleId kosong → profile', () => {
+    expect(decideDevAccess({ roleId: '5', isActive: true }, true)).toBe('profile');
+    expect(decideDevAccess({ isActive: true }, true)).toBe('profile');
+  });
+});
+
+describe('defaultRouteForRole (tujuan setelah login)', () => {
+  it('developer ("0") → Developer Console /dev', () => {
+    expect(DEV_HOME_PATH).toBe('/dev');
+    expect(defaultRouteForRole('0')).toBe('/dev');
+    expect(defaultRouteForRole(0)).toBe('/dev');
+  });
+
+  it('role admin lain tidak berubah', () => {
+    expect(ADMIN_HOME_PATH).toBe('/admin/landing-page/profil/program-inovasi');
+    expect(defaultRouteForRole('1')).toBe(ADMIN_HOME_PATH);
+    expect(defaultRouteForRole('2')).toBe(ADMIN_HOME_PATH);
+    expect(defaultRouteForRole('3')).toBe('/admin/kesehatan/posyandu/list-posyandu');
+    expect(defaultRouteForRole('4')).toBe('/admin/pendidikan/info-sekolah/jenjang-pendidikan');
+  });
+
+  it('user biasa / tidak dikenal → /profile', () => {
+    expect(defaultRouteForRole('5')).toBe('/profile');
+    expect(defaultRouteForRole(undefined)).toBe('/profile');
+    expect(defaultRouteForRole('x')).toBe('/profile');
   });
 });

@@ -1,0 +1,48 @@
+.tile {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 200px;
+  height: 112px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+  transition: filter 200ms ease;
+}
+
+.label {
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover {
+    filter: brightness(1.15);
+  }
+}
+
+@media (max-width: 734px) {
+  .tile {
+    width: 160px;
+    height: 96px;
+  }
+
+  .label {
+    font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    transition: none;
+  }
+}

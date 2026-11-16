@@ -1,0 +1,14 @@
+/* Hover mengikuti token tema (var diset di DevConsoleShell/DevUserMenu); hover bawaan Mantine
+   selalu skema terang karena color scheme app tetap "light". */
+.navLink {
+  border-radius: 8px;
+  margin-bottom: 2px;
+}
+
+.navLink:hover:not([data-active]) {
+  background-color: var(--dev-hover);
+}
+
+.menuItem[data-hovered] {
+  background-color: var(--dev-hover);
+}

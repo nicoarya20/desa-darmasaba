@@ -1,0 +1,112 @@
+/*
+ * Pemutar layar penuh ponsel (Drawer bawah). Diawali `.root` (root Drawer) supaya menang atas kelas
+ * bawaan Mantine yang sama spesifisitasnya, apa pun urutan muat CSS (pola sama dengan Drawer antrean).
+ * Warna hanya lewat token --m-* tema terang.
+ */
+.root .content {
+  background: var(--m-bg, #fff);
+  color: var(--m-ink, #1d1d1f);
+}
+
+.root .body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 20px calc(20px + env(safe-area-inset-bottom, 0px));
+}
+
+.head {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--m-ink, #1d1d1f);
+  cursor: pointer;
+}
+
+.iconBtn:focus-visible,
+.queueBtn:focus-visible {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: 2px;
+}
+
+.kicker {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--m-muted, #515154);
+}
+
+/* Sampul sebesar mungkin tanpa mendorong kontrol keluar layar pada ponsel pendek. */
+.cover {
+  width: min(100%, 42dvh, 420px);
+  margin: auto auto 0;
+}
+
+.info {
+  min-width: 0;
+}
+
+.title,
+.artist,
+.note {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.artist {
+  margin-top: 4px;
+  font-size: 16px;
+  color: var(--m-muted, #515154);
+}
+
+.note {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--m-muted, #515154);
+}
+
+.transport {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.queueBtn {
+  display: inline-flex;
+  align-self: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: auto;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--m-surface, #f5f5f7);
+  color: var(--m-ink, #1d1d1f);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}

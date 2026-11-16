@@ -1,0 +1,214 @@
+/*
+ * Bar pemutar bawah (tema terang). Lapisan: (1) kaca blur halaman di belakang bar, (2) sampul lagu
+ * blur .4, (3) kaca putih .82, (4) isi. Hanya `backdrop-filter` standar: Lightning CSS menambah prefix
+ * -webkit- sendiri, dan menulis keduanya membuat versi standar dibuang (blur hilang di Chrome).
+ *
+ * Kontras: kasus terburuk (halaman & sampul hitam di belakang) kaca .82 menghasilkan abu ±#d1d1d1.
+ * Teks sekunder bar memakai --m-muted #515154 (±5,2:1 di situ); judul memakai --m-ink (±11:1).
+ * Jangan turunkan opasitas kaca atau pakai --m-subtle di bar tanpa menghitung ulang.
+ */
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50; /* di atas konten musik, di bawah navbar (100) & Drawer Mantine (200) */
+  height: calc(var(--m-bar-h, 88px) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  overflow: hidden;
+  isolation: isolate;
+  border-top: 1px solid var(--m-line, #d2d2d7);
+  color: var(--m-ink, #1d1d1f);
+  backdrop-filter: blur(24px) saturate(1.4);
+}
+
+.art {
+  position: absolute;
+  inset: -40px;
+  z-index: 0;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  max-width: none;
+  object-fit: cover;
+  filter: blur(48px) saturate(1.4);
+  opacity: 0.4;
+  animation: art-in 300ms ease;
+  pointer-events: none;
+}
+
+@keyframes art-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.tint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.82);
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.cover {
+  width: 56px;
+  flex: none;
+}
+
+/* Ponsel: area info lagu sebagai tombol pembuka pemutar layar penuh (reset gaya tombol bawaan). */
+.leftButton {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.leftButton:focus-visible {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: 2px;
+}
+
+.text {
+  min-width: 0;
+}
+
+.title,
+.artist,
+.meta {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.artist {
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--m-muted, #515154);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--m-muted, #515154);
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 0;
+}
+
+.volume {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.volumeSlider {
+  flex: none;
+  width: 110px;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+/* 735–1068px: slider volume disembunyikan, tombol bisu tetap ada (masih satu-satunya kendali suara di layar). */
+@media (max-width: 1068px) {
+  .volume .volumeSlider {
+    display: none;
+  }
+}
+
+@media (max-width: 734px) {
+  .bar {
+    height: calc(var(--m-bar-h, 72px) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 0 8px 0 12px;
+  }
+
+  /* Ponsel: kontrol volume seluruhnya disembunyikan (tombol volume perangkat), ruang untuk putar & berikutnya. */
+  .center,
+  .meta,
+  .volume {
+    display: none;
+  }
+
+  .cover {
+    width: 44px;
+  }
+
+  .left {
+    gap: 12px;
+  }
+
+  .title {
+    font-size: 15px;
+  }
+
+  .artist {
+    font-size: 13px;
+  }
+
+  .right {
+    gap: 0;
+  }
+
+  .mobileOnly {
+    display: contents;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art {
+    animation: none;
+  }
+}

@@ -16,7 +16,8 @@ BETTER_AUTH_SECRET="..."
 BETTER_AUTH_URL="..."
 GOOGLE_CLIENT_ID="..."
 GOOGLE_CLIENT_SECRET="..."
-SUPER_ADMIN_EMAIL="..."
+SUPER_ADMIN_EMAIL="..."     # comma-separated → roleId "1"
+DEVELOPER_EMAIL="..."       # comma-separated → roleId "0" (optional)
 
 # MinIO — sole object storage backend (replaced Seafile)
 MINIO_ENDPOINT="..."
@@ -25,7 +26,10 @@ MINIO_SECRET_KEY="..."
 MINIO_BUCKET="..."
 MINIO_USE_SSL="..."
 
-# Other integrations (WhatsApp, email, Telegram bot, ElevenLabs) also exist in
+# Jenna (asisten AI) — optional; encrypts provider API keys stored in DB (AES-256-GCM)
+JENNA_CREDENTIALS_KEY="..."  # 64 hex chars: openssl rand -hex 32
+
+# Other integrations (WhatsApp, email, Telegram bot) also exist in
 # .env.example — check there before assuming a var is unused.
 ```
 
@@ -38,6 +42,30 @@ dan dihapus permanen setelah 30 hari oleh scheduler di dalam proses aplikasi (`s
 24 jam. Tidak ada cron/infra tambahan. Saklar env `SAMPAH_PURGE_SCHEDULER=on|off` (kosong = on hanya di
 production). Keterbatasan: hanya jalan selama server hidup; bila ada >1 instance, tiap instance menjalankan purge
 (aman — hapus idempoten, hanya kerja dobel). Detail: `docs/decisions/2026-11-12-sampah.md`.
+
+## Operator: `JENNA_CREDENTIALS_KEY`
+
+Provider AI Jenna (base URL, model, API key) diatur di Developer Console `/dev/jenna/provider` (role DEVELOPER "0"), bukan lewat env. API key disimpan terenkripsi di tabel `JennaProvider` dengan kunci dari `JENNA_CREDENTIALS_KEY`:
+
+- Generate sekali per environment: `openssl rand -hex 32` (64 karakter hex), simpan di env stack.
+- Opsional: tanpa kunci (atau format salah) aplikasi tetap boot, halaman Jenna menampilkan peringatan dan **menolak** menyimpan API key (fail-closed, tidak pernah plaintext).
+- Mengganti/menghapus kunci membuat API key lama tidak bisa didekripsi — tes koneksi akan gagal dan API key harus diisi ulang di halaman Jenna.
+
+## Operator: Jenna publik (chat di website)
+
+Detail keputusan: `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
+- **Migrasi** `20261113170000_add_jenna_conversation` (tabel `JennaConversation`, `JennaMessage`) — jalan otomatis lewat entrypoint.
+- **Tidak ada env baru.** Hash sesi/IP memakai salt turunan `BETTER_AUTH_SECRET`; mengganti secret itu me-reset kuota harian efektif dan memutus percakapan lama dari sesinya.
+- **Cookie** `jenna_sid` (Path `/api/jenna`, 30 hari, HttpOnly, SameSite=Lax, Secure di production), dipasang oleh `/api/jenna/status` dan `/api/jenna/chat`.
+- **Retensi**: scheduler di `src/instrumentation.ts` hanya di production (tanpa saklar env), 10 menit setelah start lalu tiap 24 jam; menghapus percakapan lebih lama dari `retentionDays`.
+- **Satu instance**: limiter per menit dan "satu giliran per sesi" ada di memori proses (reset saat restart; >1 instance = batas berlaku per instance). Kuota harian dan budget token dihitung dari DB.
+- **SSE**: reverse proxy tidak boleh mem-buffer respons `/api/jenna/chat` (route sudah mengirim `X-Accel-Buffering: no`); cek streaming di stg.
+
+Setelah deploy, Jenna tetap tersembunyi sampai diatur developer (role 0):
+1. `/dev/jenna/provider`: isi provider + API key, tes koneksi (butuh `JENNA_CREDENTIALS_KEY`, lihat di atas).
+2. `/dev/jenna/batas`: `dailyTokensGlobal` > 0 (0 = Jenna tidak aktif untuk publik) dan retensi **30** hari (bawaan 90).
+3. `/dev/jenna`: aktifkan.
 
 ## Operator: backfill ukuran berkas (`FileStorage.size`)
 

@@ -1,0 +1,15 @@
+/*
+ * Teks khusus pembaca layar (tak terlihat, tetap dibaca) untuk seluruh aplikasi Musik Desa
+ * (app/, library/, player/). Satu sumber supaya tidak ada salinan yang berbeda isi.
+ */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

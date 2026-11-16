@@ -1,0 +1,27 @@
+/** Teks UI modal peminjaman buku. */
+export const PINJAM_TEXT = {
+  title: 'Pinjam buku',
+  nama: 'Nama lengkap',
+  namaPlaceholder: 'Nama sesuai KTP',
+  telp: 'Nomor WhatsApp/telepon',
+  telpPlaceholder: '81234567890',
+  telpHint: 'Tanpa angka 0 di depan, sudah diwakili +62.',
+  alamat: 'Alamat',
+  alamatPlaceholder: 'Banjar dan alamat rumah',
+  tanggal: 'Tanggal ambil',
+  tanggalPlaceholder: 'Pilih tanggal',
+  batas: (tanggal: string, hari: number) => `Kembalikan paling lambat ${tanggal} (${hari} hari).`,
+  catatan: 'Catatan (opsional)',
+  catatanPlaceholder: 'Misalnya jam yang cocok untuk dihubungi',
+  hitung: (n: number, max: number) => `${n}/${max}`,
+  privasi:
+    'Nama, nomor telepon, dan alamat hanya dipakai petugas perpustakaan desa untuk menghubungi Anda soal peminjaman ini.',
+  kirim: 'Kirim permintaan',
+  batal: 'Batal',
+  gagal: 'Permintaan belum terkirim. Periksa koneksi Anda, lalu coba lagi.',
+  suksesTitle: 'Permintaan terkirim',
+  suksesDesc: 'Petugas perpustakaan akan menghubungi Anda untuk memastikan peminjaman.',
+  suksesAmbil: 'Tanggal ambil',
+  suksesBatas: 'Batas kembali',
+  selesai: 'Selesai',
+} as const;

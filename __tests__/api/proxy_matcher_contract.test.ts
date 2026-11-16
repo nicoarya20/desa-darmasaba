@@ -14,6 +14,10 @@ describe('proxy matcher — path yang dijaga', () => {
     '/admin',
     '/admin/x/y',
     '/admin/landing-page/profil/program-inovasi',
+    // Developer Console: khusus role "0" (decideDevAccess).
+    '/dev',
+    '/dev/ringkasan',
+    '/dev/jenna',
     '/validasi',
     '/waiting-room',
   ])('%s → proxy jalan', (url) => {
@@ -33,6 +37,8 @@ describe('proxy matcher — path publik tidak disentuh', () => {
     '/api/landingpage/desaantikorupsi/p1/zip',
     '/api/landingpage/desaantikorupsi/p1/zip?folder=umum',
     '/administrasi', // prefix mirip "/admin" tapi bukan segmen /admin
+    '/devices', // prefix mirip "/dev" tapi bukan segmen /dev
+    '/api/developer/system', // API developer dijaga requireDeveloper, bukan proxy
   ])('%s → proxy tidak jalan', (url) => {
     expect(matches(url)).toBe(false);
   });

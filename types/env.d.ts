@@ -29,9 +29,6 @@ declare namespace NodeJS {
     NEXT_PUBLIC_BASE_SESSION_KEY?: string;
     NEXT_PUBLIC_BASE_TOKEN_KEY?: string;
 
-    // API Keys
-    ELEVENLABS_API_KEY?: string;
-
     // Environment
     NODE_ENV?: 'development' | 'production' | 'test';
   }

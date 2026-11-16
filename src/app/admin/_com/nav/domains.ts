@@ -156,6 +156,7 @@ export const kependudukanMenu: NavItem = {
     { id: "kependudukan.distribusi-umur", name: "Distribusi Umur", path: "/admin/kependudukan/distribusi-umur", basePath: "/admin/kependudukan/distribusi-umur" },
     { id: "kependudukan.data-banjar", name: "Data Banjar", path: "/admin/kependudukan/data-banjar", basePath: "/admin/kependudukan/data-banjar" },
     { id: "kependudukan.migrasi-penduduk", name: "Migrasi Penduduk", path: "/admin/kependudukan/migrasi-penduduk", basePath: "/admin/kependudukan/migrasi-penduduk" },
+    { id: "kependudukan.dinamika-penduduk", name: "Dinamika Penduduk", path: "/admin/kependudukan/dinamika-penduduk", basePath: "/admin/kependudukan/dinamika-penduduk" },
   ],
 }
 
@@ -186,4 +187,13 @@ export const pengaturanMenu: NavItem = {
     { id: "pengaturan.visibilitas-menu", name: "Visibilitas Menu", path: "/admin/pengaturan/visibilitas-menu", basePath: "/admin/pengaturan/visibilitas-menu" },
     { id: "pengaturan.menu-access", name: "Menu Access", path: "/admin/pengaturan/menu-access", basePath: "/admin/pengaturan/menu-access" },
   ],
+}
+
+// Hanya role "0" (ditambahkan getNavbar). Sengaja TIDAK masuk navBar/devBar/role* supaya
+// tidak bisa diberikan ke role lain lewat halaman Menu Access.
+// Satu item tanpa children: membuka Developer Console (/dev, layout sendiri).
+export const developerMenu: NavItem = {
+  id: "Developer",
+  name: "Developer",
+  path: "/dev",
 }

@@ -51,7 +51,7 @@ Detail lengkap tiap topik ada di `docs/` — baca sesuai kebutuhan task, jangan 
 6.  **Run build** (`bun run build`) to ensure no compile errors
 7.  **Fix any build errors** if they occur
 8.  **Commit** all changes AFTER successful build
-9.  **Update version** in `package.json` for every change
+9.  **Update version** in `package.json` once per branch/release (not per change/commit); all changes in the branch go into one CHANGELOG entry describing the final result
 10. **Push** to new branch with format: `tasks/[task-name]/[what-is-being-done]/[date-time]`
 11. **Push ke 2 Remote** - Push ke 2 remote origin dan deploy
 12. **Merge ke Branch** - Merge ke branch target (biasanya `stg` untuk staging atau `prod` untuk production) ke 2 remote origin dan deploy

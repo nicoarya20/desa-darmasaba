@@ -4,7 +4,7 @@
  * Keputusan: docs/decisions/2026-11-14-laporan-publik-moderasi.md.
  */
 import type { Prisma } from "@prisma/client";
-import { createLimiter } from "@/app/api/auth/_lib/rateLimiter";
+import { createLimiter } from "@/lib/rate-limit";
 import { optionalAuth } from "@/lib/api-auth";
 import { isAccountActive, isAdminRole } from "@/lib/auth-policy";
 

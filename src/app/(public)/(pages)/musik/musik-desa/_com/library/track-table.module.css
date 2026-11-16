@@ -1,0 +1,164 @@
+/* Kolom durasi 152px: muat "Audio belum tersedia" 14px satu baris (SF ±131px, Arial ±134px, Verdana ±151px). */
+.table {
+  --cols: 40px minmax(0, 2.4fr) minmax(0, 1fr) 72px 152px;
+}
+
+.head,
+.row {
+  display: grid;
+  grid-template-columns: var(--cols);
+  align-items: center;
+  gap: 16px;
+  padding: 0 12px;
+}
+
+.head {
+  height: 36px;
+  border-bottom: 1px solid var(--m-line, #d2d2d7);
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--m-subtle, #6e6e73);
+}
+
+.row {
+  position: relative;
+  min-height: 64px;
+  border-radius: 8px;
+  transition: background-color 150ms ease;
+}
+
+/* Tombol putar di sel judul; ::after menutup seluruh baris supaya klik di mana pun tetap memutar. */
+.hit {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.hit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+}
+
+/* Lagu tanpa audio: hanya sampul yang diredupkan; teks memakai warna token (tanpa opacity)
+   agar tetap ≥ 4.5:1, judul muted ≠ ink lagu yang bisa diputar. */
+.row[data-playable='false'] .cover {
+  opacity: 0.5;
+}
+
+.hit:focus-visible {
+  outline: none;
+}
+
+.hit:focus-visible::after {
+  outline: 2px solid var(--m-accent, #0a4e78);
+  outline-offset: -2px;
+}
+
+.num {
+  display: flex;
+  justify-content: center;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  color: var(--m-subtle, #6e6e73);
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cover {
+  display: block;
+  flex: none;
+}
+
+.title,
+.sub {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--m-ink, #1d1d1f);
+}
+
+.row[data-playable='false'] .title {
+  color: var(--m-muted, #515154);
+}
+
+.row[data-active='true'] .title {
+  color: var(--m-accent, #0a4e78);
+}
+
+.sub {
+  font-size: 14px;
+  color: var(--m-muted, #515154);
+}
+
+.row[data-playable='false'] .sub {
+  color: var(--m-subtle, #6e6e73);
+}
+
+.end {
+  font-size: 14px;
+  white-space: nowrap;
+  text-align: right;
+  color: var(--m-subtle, #6e6e73);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover {
+    background: var(--m-hover, rgba(0, 0, 0, 0.05));
+  }
+}
+
+@media (max-width: 734px) {
+  .table {
+    --cols: minmax(0, 1fr) auto;
+  }
+
+  .row {
+    padding: 0 4px;
+  }
+
+  /* Disembunyikan secara visual saja (pola sr-only; `composes` tak bisa dipakai di dalam @media): judul kolom
+     & sel #/genre/tahun tetap dibaca pembaca layar. Elemen absolute keluar dari alur grid. */
+  .head,
+  .num,
+  .wide {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}

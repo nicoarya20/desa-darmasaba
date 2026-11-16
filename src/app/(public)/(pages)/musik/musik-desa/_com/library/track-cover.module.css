@@ -1,0 +1,30 @@
+.cover {
+  position: relative;
+  display: block;
+  flex: none;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  isolation: isolate;
+}
+
+.cover[data-size='fill'] {
+  width: 100%;
+}
+
+.icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  color: var(--m-muted, #515154);
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  z-index: 1;
+}
+

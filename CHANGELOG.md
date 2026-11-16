@@ -1,5 +1,132 @@
 # Changelog
 
+## [0.1.281] - 2026-11-16
+### Added
+- **Menu admin baru Kependudukan › Dinamika Penduduk.** Admin mengisi total kelahiran, kematian, pindah masuk, dan pindah keluar per tahun. Satu tahun hanya boleh punya satu data; kalau tahunnya sudah ada, form menampilkan "Tahun sudah dipakai". Admin yang aksesnya dibatasi lewat Menu Access perlu diberi akses ke submenu ini dulu.
+
+### Changed
+- **Halaman publik Dinamika Penduduk** kini menampilkan angka resmi desa per tahun: kartu untuk tahun terbaru beserta pertumbuhan alami dan migrasi bersih, ditambah tabel perbandingan antar tahun. Sebelumnya angka dihitung dari jumlah catatan kelahiran/kematian di menu Kesehatan dan data migrasi tahun berjalan, sehingga periodenya tidak sama dan tidak cocok dengan rekap desa.
+- Kartu Dinamika Penduduk di Dashboard Kependudukan memakai data yang sama dan menampilkan tahun datanya.
+- Data seed kependudukan diganti dengan data resmi: 12 Banjar Dinas (Laporan Penduduk September 2026, total 10.262 jiwa / 2.308 KK) dan dinamika penduduk 2023–2025. Seed tidak menimpa data yang sudah ada di database.
+
+### Fixed
+- Kolom "Penduduk Miskin" diganti menjadi **"Keluarga Miskin"**, karena angkanya adalah jumlah KK penerima BLT Dana Desa, bukan jumlah jiwa. Halaman Data per Banjar diberi keterangan, dan form admin Data Banjar menjelaskan apa yang harus diisi.
+
+## [0.1.280] - 2026-11-15
+### Changed
+- **Ketujuh halaman menu Pendidikan kini memakai margin yang sama.** Lebar isi, jarak tepi kiri-kanan, jarak dari menu atas ke tombol kembali, dan jarak isi terakhir ke footer sekarang sama di setiap halaman, di layar lebar maupun ponsel. Sebelumnya tiap halaman punya lebar dan jarak sendiri, sehingga tepinya bergeser saat berpindah halaman.
+- Judul **Info Sekolah** dan **Data Pendidikan** kini rata kiri seperti halaman Pendidikan lain. Program Pendidikan Anak, Bimbingan Belajar Desa, dan Pendidikan Non Formal tidak lagi menempel ke tepi kiri di layar lebar.
+
+### Fixed
+- **Beasiswa Desa:** jarak antarbagian kini sama dari atas sampai bawah. Teks pembuka sejajar dengan bagian atas foto, dan "Alur seleksi" menjadi bagian sendiri, bukan sub-bagian berjarak setengah dari "Syarat pendaftaran".
+
+## [0.1.279] - 2026-11-15
+### Changed
+- **Ketujuh halaman menu Pendidikan dirombak** dengan latar putih dan gaya yang sama seperti halaman publik lain yang sudah diperbarui. Judul tiap halaman kini sama dengan nama menunya.
+- **Program Pendidikan Anak, Bimbingan Belajar Desa, dan Pendidikan Non Formal** tampil sebagai bagian berjudul yang mudah dibaca, tanpa kartu dan tooltip. Butir "Istilah: keterangan" tampil dengan istilah tebal. Bimbingan Belajar menampilkan lokasi dan jadwal di panel ringkas di bagian atas. Pendidikan Non Formal menampilkan jenis program sebagai daftar bernomor, dengan urutan Tujuan Program, Jenis Program, lalu Tempat Kegiatan. Bila sebagian isi gagal dimuat, bagian lain tetap tampil, dan halaman tidak lagi memuat tanpa akhir.
+- **Info Sekolah** kini satu halaman: angka lembaga, siswa, dan pengajar, sebaran lembaga per jenjang, serta daftar sekolah yang dikelompokkan per jenjang (PAUD, TK, SD, SMP, SMA, SMK, lalu jenjang lain). Daftar pengajar tampil per baris dengan kolom cari dan pilihan jenjang. Bila data gagal dimuat, halaman menampilkan pesan dan tombol "Coba lagi", bukan angka nol.
+- **Beasiswa Desa** kini satu halaman berisi jumlah pendaftar, dana tersalurkan, tahun ajaran, keunggulan program, syarat, dan alur seleksi. Formulir pendaftaran dicek sebelum dikirim (NIK 16 digit, nomor HP, tanggal lahir), dan galat dari server tampil di dalam formulir tanpa menghapus isian. Halaman "Pelajari Lebih Lanjut" digabung ke halaman ini; alamat lamanya diarahkan ke bagian Syarat.
+- **Perpustakaan Digital** kini katalog bersampul dengan pilihan kategori, kolom cari, dan urutan. Tiap buku punya halaman detail berisi deskripsi, langkah "Cara meminjam", dan buku lain di kategori yang sama. Formulir pinjam memuat catatan privasi, tanggal ambil hari ini sampai 14 hari ke depan, batas kembali 4 hari, dan layar konfirmasi setelah terkirim. Alamat kategori dan buku yang lama tetap bisa dibuka.
+- **Data Pendidikan** menampilkan penduduk menurut pendidikan terakhir sebagai daftar batang yang langsung bisa dibaca: jumlah orang dan persentase per jenjang, total tercatat, dan tanggal data terakhir diperbarui. Jumlah yang belum diisi berupa angka ditandai "Belum diisi" dan tidak ikut dihitung.
+
+### Removed
+- Daftar nama siswa tidak lagi ditampilkan di Info Sekolah untuk melindungi data anak; hanya jumlahnya yang tampil. Alamat `/pendidikan/info-sekolah/siswa` dan `/lembaga` diarahkan ke halaman Info Sekolah.
+- Beasiswa Desa: testimoni, angka "90%", dan linimasa bertanggal tetap (2025) dihapus karena bukan data dari pemerintah desa.
+
+### Fixed
+- **Keamanan:** isi teks dari CMS di halaman Pendidikan dibersihkan sebelum ditampilkan. Catatan di formulir pinjam buku dikirim sebagai teks biasa, jadi kode yang diketik di catatan tidak ikut berjalan.
+- Keunggulan Beasiswa Desa tampil semua. Sebelumnya paginasinya rusak sehingga sebagian tidak terlihat.
+
+## [0.1.277] - 2026-11-14
+### Added
+- **Jenna, asisten AI di website publik.** Pengunjung bisa bertanya lewat tombol "Tanya Jenna" di pojok kanan bawah setiap halaman publik (termasuk aplikasi Musik Desa). Jawaban tampil bertahap seperti sedang diketik, lengkap dengan daftar tautan sumber ke halaman website desa. Tombol hanya muncul bila Jenna diaktifkan di `/dev/jenna` dan kuota token harian lebih dari 0.
+  - **Sumber pengetahuan**: hanya data publik website desa yang masuk daftar izin (profil, layanan, berita, pengumuman, agenda, APBDes, potensi, kontak darurat, dan sejenisnya), mengikuti menu yang sedang ditampilkan. Data pribadi warga (siswa, pengajar, pengajuan, pengaduan, data kesehatan perorangan) tidak pernah dibaca Jenna.
+  - **Tautan & Sumber**: tautan halaman di jawaban selalu bisa diklik dan berlabel judul halaman. Path internal yang diizinkan (termasuk yang ditulis polos atau di dalam kode inline) otomatis dijadikan tautan; label memakai judul dari data (bila tidak ada: nama menu induk, lalu path tanpa `%20`), dan tautan panjang dibungkus sehingga panel tidak meluber ke samping. Daftar Sumber juga terisi walau model tidak menulis tautan: judul data yang ditampilkan sebagai jawaban (judul tebal, item daftar, atau awal baris) otomatis masuk Sumber; judul yang sekadar terselip di kalimat deskripsi tidak ikut, kecuali jawabannya berupa prosa tanpa item. Judul pendek atau satu kata (mis. nama menu) tidak dihitung, dan teks jawaban tidak diubah.
+  - **Kontak**: Jenna boleh menyebut kontak resmi kantor desa dari entri Media Sosial aktif berikon WhatsApp, Telepon, atau Gmail yang diisi admin, ditampilkan sama seperti yang dilihat pengunjung (nomor/email, bukan tautan `tel:`/`mailto:`). Bila belum ada, Jenna bilang kontaknya belum tercantum di website dan menyarankan datang pada jam layanan. Kontak organisasi publik (kontak darurat, polsek, puskesmas) juga boleh disebut. Kontak perorangan (pegawai, perangkat desa, warga, pemilik UMKM, kader) tidak pernah disebut.
+  - **Perlindungan dari spam dan penyalahgunaan**: hanya menerima permintaan dari website desa sendiri, satu pesan berjalan per pengunjung, batas pesan per menit, kuota pesan harian per sesi pengunjung dan per IP, serta batas token harian untuk seluruh website. Bila batas token habis, Jenna berhenti menjawab sampai besok.
+  - **Data pribadi**: NIK/nomor KK (termasuk yang dipisah tanda hubung atau menempel huruf, mis. `nik5103…`), nomor telepon, dan email yang diketik pengunjung disamarkan sebelum dikirim ke penyedia AI dan sebelum disimpan. Nominal rupiah, tanggal, dan jam tidak terpengaruh. Jawaban Jenna disaring: hanya tautan resmi website desa dan kontak publik yang lolos; nomor/email lain disamarkan.
+  - **Riwayat percakapan** disimpan dalam bentuk tersamar; sesi dan IP pengunjung hanya disimpan sebagai hash. Percakapan yang lebih lama dari masa simpan dihapus otomatis setiap hari.
+- **Bicara dengan Jenna lewat suara.** Bila sakelar "Suara di website desa" menyala, provider suara siap, dan kuota menit global hari ini masih ada, widget Jenna menampilkan tombol mikrofon di samping tombol kirim, termasuk di HP. Browser tanpa dukungan mikrofon/WebRTC tidak menampilkan tombol; chat teks tetap jalan.
+  - Sebelum pertama kali dipakai, pengunjung melihat kartu persetujuan: suara diproses layanan AI pihak ketiga, transkrip disimpan tersamar seperti chat, dan ada kuota menit harian. Pilihan diingat di browser itu.
+  - Selama sesi: status (menyambungkan, siap bicara, mendengarkan, Jenna berbicara), level mikrofon, sisa waktu sesi, sisa menit hari ini, dan tombol Akhiri. Pertanyaan suara dan jawabannya juga tampil di daftar pesan (ditandai ikon mikrofon), dan jawabannya dibacakan per kalimat.
+  - Jawaban suara memakai pengetahuan, perlindungan data pribadi, dan kuota token yang sama dengan chat teks, dengan gaya jawaban pendek tanpa tautan atau daftar.
+  - **Perlindungan dari penyalahgunaan**: harus ada persetujuan mikrofon, maksimal 3 kali mulai per menit per IP, satu sesi suara aktif per pengunjung, kuota menit harian per pengunjung, per IP, dan seluruh website (menit sesi yang sedang berjalan ikut dihitung), durasi maksimum per sesi, serta tutup otomatis saat pengunjung diam, menutup panel, berpindah tab lebih dari 30 detik, atau menutup halaman. Sesi yang ditinggal tanpa kabar ditutup server dalam ±1 menit dan hanya ditagih sampai kabar terakhir.
+  - `/api/jenna/status` (dipakai widget) memuat field `voiceEnabled`. Bila pengecekan suara gagal (mis. migrasi belum dijalankan), nilainya `false` dan chat teks tetap aktif.
+- **Developer Console (`/dev`)**, halaman khusus akun dengan role DEVELOPER, terpisah dari halaman admin dan punya tampilan sendiri. Akun DEVELOPER langsung masuk ke sini setelah login, dan tetap bisa membuka admin lewat tautan "Buka Admin". Di sidebar admin, akun DEVELOPER mendapat menu "Developer" untuk kembali ke konsol. Role lain tidak melihat menu ini, tidak bisa membuka `/dev` (admin dikembalikan ke halaman admin, warga ke profil), dan menu ini tidak bisa diberikan ke role lain lewat halaman Menu Access.
+  - **Ringkasan Sistem**: versi aplikasi, environment, lama server berjalan, status koneksi database dan penyimpanan berkas (MinIO) beserta kecepatannya, kesiapan Jenna, dan daftar env yang sudah atau belum diisi (hanya nama env, nilainya tidak pernah ditampilkan).
+  - **Jenna › Umum**: status Jenna (termasuk alasan bila tombol belum tampil di website, dan status suara: "Aktif (tombol mikrofon tampil di website)" atau "Aktif, belum bisa dipakai — cek halaman Suara"), aktif/nonaktif, nama asisten, catatan persona, dan tombol "Pakai Contoh Persona" (baru tersimpan setelah menekan Simpan).
+  - **Jenna › Batas Pemakaian**: panjang pesan, jumlah pesan per menit dan per hari (dihitung per sesi pengunjung dan per IP), batas token harian (0 berarti Jenna **tidak aktif** di website publik), dan lama penyimpanan riwayat percakapan.
+  - **Jenna › Provider**: penyedia AI (OpenAI-compatible atau Anthropic) dengan alamat server, model, dan API key, lengkap dengan "Tes koneksi" dan "Hapus API key". API key disimpan terenkripsi dan tidak pernah ditampilkan kembali; yang terlihat hanya 4 karakter terakhirnya. Bila kunci provider yang sedang dipakai dihapus, Jenna berhenti menjawab sampai kunci baru disimpan.
+  - **Jenna › Suara** (`/dev/jenna/suara`): sakelar "Suara di website desa" (default mati), provider suara (alamat gateway realtime, model suara, API key terenkripsi terpisah dari provider chat, "Tes koneksi", "Hapus API key"), dan batas suara (menit harian per pengunjung, menit harian seluruh website dengan 0 = suara tidak aktif, durasi maksimum satu sesi, tutup otomatis saat diam, nama suara). Halaman memberi peringatan bila sakelar menyala tetapi provider suara belum siap, kuota menit global masih 0, atau chat Jenna nonaktif.
+  - **Jenna › Percakapan** (`/dev/jenna/percakapan`): pemakaian hari ini (pesan, token dibanding kuota, error), daftar percakapan tersamar, filter percakapan dari pengunjung yang sama, isi percakapan, dan tombol hapus (mis. bila warga meminta datanya dihapus). Tiap pesan menampilkan model yang dipakai dan lama respons; giliran yang gagal menampilkan teks error dari penyedia AI.
+  - **Jenna › Pengetahuan** (`/dev/jenna/pengetahuan`, hanya baca): ukuran pengetahuan yang dikirim ke AI dibanding batasnya, peringatan bila terpotong, tombol untuk melihat isi persisnya, daftar sumber data (jumlah baris, mana yang disembunyikan lewat visibilitas menu), dan daftar tool yang dimiliki Jenna.
+  - **Jenna › Penggunaan** (`/dev/jenna/penggunaan`): pertanyaan, token, rata-rata lama respons, dan giliran gagal untuk 24 jam dan 7 hari terakhir; pemakaian per provider dan model; tool yang paling sering dipakai.
+  - **Jenna › Log Error** (`/dev/jenna/log-error`): daftar giliran yang gagal dalam 24 jam, 7 hari, atau 30 hari terakhir beserta sebab, provider, dan teks error asli dari penyedia AI, dengan tautan ke percakapannya. Giliran yang dibatalkan pengunjung tidak masuk daftar ini. Teks error hanya terlihat oleh DEVELOPER; kunci API dan data pribadi di dalamnya disamarkan sebelum disimpan, dan pengunjung tetap hanya melihat pesan umum.
+  - Bila ada perubahan yang belum disimpan, konsol meminta konfirmasi sebelum pindah ke halaman lain lewat menu konsol, atau sebelum halaman di-refresh/ditutup, supaya isian tidak hilang tanpa sengaja.
+- **Env baru `DEVELOPER_EMAIL`** (opsional, dipisah koma). Email yang terdaftar otomatis menjadi DEVELOPER (roleId "0") saat login pertama, atau dinaikkan ke DEVELOPER saat login berikutnya bila akunnya sudah ada. Bila email ada di `DEVELOPER_EMAIL` dan `SUPER_ADMIN_EMAIL`, DEVELOPER yang dipakai.
+
+### Fixed
+- Login dengan email yang terdaftar di `SUPER_ADMIN_EMAIL` tidak lagi menurunkan akun DEVELOPER menjadi SUPER ADMIN. Promosi dari env kini hanya menaikkan role, tidak pernah menurunkan.
+- Pencocokan email di `SUPER_ADMIN_EMAIL` dan `DEVELOPER_EMAIL` kini tidak membedakan huruf besar/kecil. Sebelumnya email yang ditulis dengan huruf kapital di env (mis. `Admin@Desa.id`) tidak dikenali saat login sehingga akunnya tidak mendapat role yang seharusnya.
+
+### Removed
+- Env `ELEVENLABS_API_KEY` dihapus dari contoh env (`.env.example`) dan dari daftar env di halaman Ringkasan Sistem, karena tidak ada fitur yang memakainya. Fitur baca berita memakai suara bawaan browser, bukan ElevenLabs.
+
+### Operator
+- Jalankan migrasi berikut (otomatis saat container start). Semuanya murni menambah tabel/kolom; data lain tidak diubah:
+  - `20261113100000_jenna_settings`: tabel `JennaSettings`, `JennaProvider`.
+  - `20261113170000_add_jenna_conversation`: tabel `JennaConversation`, `JennaMessage`.
+  - `20261114100000_jenna_message_telemetry`: 4 kolom opsional di `JennaMessage` (model, lama respons, teks error).
+  - `20261114120000_jenna_voice_settings`: 6 kolom ber-default di `JennaSettings`.
+  - `20261114130000_jenna_voice_session`: tabel `JennaVoiceSession` dan kolom `JennaMessage.modality` (default `'text'`).
+- Env baru `DEVELOPER_EMAIL` (opsional): tambahkan ke env stg/prod bila perlu, lalu restart container. Tanpa env ini perilaku sama seperti sebelumnya.
+- Env baru `JENNA_CREDENTIALS_KEY` (opsional) untuk mengenkripsi API key penyedia AI. Buat sekali per environment dengan `openssl rand -hex 32` (64 karakter), tambahkan ke env stg/prod, lalu restart container. Tanpa env ini aplikasi tetap berjalan, tetapi halaman Pengaturan Jenna menampilkan peringatan dan API key tidak bisa disimpan.
+- **Jangan mengganti atau menghapus `JENNA_CREDENTIALS_KEY` setelah dipakai.** API key yang sudah tersimpan tidak bisa dibuka lagi dengan kunci baru, sehingga tes koneksi gagal dan API key harus diisi ulang di Jenna › Provider dan Jenna › Suara.
+- `ELEVENLABS_API_KEY` boleh dihapus dari env stg/prod.
+- Setelah deploy, buka `/dev/jenna`: pastikan Provider lolos tes koneksi, isi kuota token harian lebih dari 0 dan masa simpan percakapan 30 hari di Batas Pemakaian, lalu aktifkan Jenna di Umum. Suara tetap mati sampai sakelar dinyalakan di `/dev/jenna/suara`.
+- Mengganti `BETTER_AUTH_SECRET` membuat hash sesi/IP lama tidak cocok lagi, sehingga hitungan kuota harian pengunjung mulai dari nol.
+- Batas pesan per menit disimpan di memori server, jadi berlaku per container (deploy saat ini 1 container).
+- Penutupan sesi suara di gateway memakai `POST {baseUrl}/live/sessions/{id}/hangup` yang **belum terverifikasi**: setelah uji di stg, cek kolom `JennaVoiceSession.hangupStatus` / log `[jenna-voice] hangup` (lihat `docs/BACKEND-TODO.md`).
+- Temuan keamanan di luar Jenna (`/api/tts`, `/api/subscribe`, CORS, security headers) dicatat di `docs/BACKEND-TODO.md` dan belum dikerjakan di rilis ini.
+- Alasan & detail: `docs/decisions/2026-11-13-developer-menu-jenna.md` dan `docs/decisions/2026-11-13-jenna-public-chat.md`.
+
+## [0.1.276] - 2026-11-14
+### Changed
+- **Halaman Musik Desa:** rak **Semua lagu** di halaman Musik kini diurutkan menurut judul A–Z, sehingga isinya tidak lagi sama persis dengan rak **Terbaru**.
+- Tombol **Ulang** kini punya tiga mode: mati (berhenti setelah lagu terakhir), ulang semua lagu, dan ulang satu lagu.
+- Di ponsel, ketuk judul lagu di bar pemutar untuk membuka **pemutar lengkap** berisi sampul besar, posisi lagu, acak, sebelumnya, putar/jeda, berikutnya, ulang, dan tombol Antrean.
+- Di layar menengah (tablet atau jendela browser yang sempit), tombol bisu tetap tampil di bar pemutar.
+- Selama belum ada lagu diputar, tombol **Buka antrean** tersedia di sebelah kolom cari, jadi panel antrean yang sudah ditutup bisa dibuka lagi.
+- Setiap menu musik kini punya judul tab sendiri: "Musik Desa", "Jelajahi · Musik Desa", dan "Playlist · Musik Desa".
+
+### Fixed
+- Mengklik lagu yang audionya belum tersedia tidak lagi menghentikan lagu yang sedang diputar; cukup muncul pemberitahuan.
+- Bila daftar lagu gagal dimuat, halaman kini menampilkan "Gagal memuat lagu" dengan tombol **Coba lagi**, bukan "Belum ada lagu".
+- Menekan lagu berikutnya berulang kali dengan cepat tidak lagi memunculkan pesan "Gagal memutar lagu" palsu. File audio yang rusak hanya memunculkan satu pesan, tidak masuk "Baru diputar", dan pemutar lanjut ke lagu berikutnya.
+- Penanda waktu lagu tidak lagi macet di 0:00 setelah posisi lagu digeser.
+- Kolom cari tidak lagi kehilangan huruf yang diketik saat koneksi lambat, tidak lagi menarik pengunjung kembali ke Jelajahi setelah pindah menu, dan tidak lagi menghapus pilihan genre atau artis.
+- Menekan "Bunyikan" setelah volume digeser ke nol kini mengembalikan volume terakhir.
+- "Baru diputar" tidak lagi saling menimpa bila halaman musik dibuka di beberapa tab.
+- Halaman 404 di bawah alamat /musik kini tetap menampilkan footer dan pemutar.
+- Halaman musik terasa lebih ringan saat lagu diputar, karena tidak lagi digambar ulang setiap detik.
+- **Aksesibilitas:** pembaca layar kini membacakan durasi dan keterangan audio pada setiap lagu, posisi lagu ("0:08 dari 2:34") dan volume ("70%"), serta tabel Jelajahi sebagai tabel. Setelah panel antrean ditutup, fokus kembali ke tombol Antrean. Animasi panel mengikuti pengaturan kurangi gerakan. Di ponsel, tombol filter dan tautan "Lihat semua" lebih mudah diketuk.
+
+## [0.1.275] - 2026-11-14
+### Changed
+- **Halaman Musik Desa dirombak** menjadi pemutar musik bergaya aplikasi streaming, tetap bertema terang seperti bagian situs lainnya. Sidebar kiri berisi menu **Musik**, **Jelajahi**, dan **Playlist**; di ponsel menu ini menjadi tombol pil di atas halaman.
+- Halaman **Musik** menampilkan lagu terbaru, semua lagu, artis desa, dan genre. Lagu bisa langsung diputar dari kartu atau daftar; lagu yang sedang diputar ditandai warna dan ikon equalizer. Mengklik lagu yang sedang diputar menjeda atau melanjutkannya.
+- Halaman **Jelajahi** untuk mencari lagu menurut judul, artis, atau genre, dan menyaring menurut genre atau artis. Kolom cari ada di atas setiap halaman musik, dan pilihan saringan tersimpan di alamat halaman.
+- Halaman **Playlist** sudah tersedia. Playlist nantinya disusun oleh admin desa (pengunjung tidak membuat playlist sendiri); sampai fitur admin-nya siap, halaman ini menampilkan "Belum ada playlist".
+- **Panel Antrean** di kanan menampilkan lagu yang sedang diputar dan lagu berikutnya, serta tab **Baru diputar** berisi lagu yang terakhir Anda putar di perangkat ini. Panel bisa ditutup dan dibuka lagi dari tombol Antrean di bar pemutar; di layar kecil panel muncul dari samping atau dari bawah.
+- **Bar pemutar baru** di bawah halaman musik dengan latar sampul lagu yang diburamkan: acak, sebelumnya, putar/jeda, berikutnya, ulang, posisi lagu, dan volume. Bar baru muncul setelah Anda memutar lagu, lalu tetap tampil walau lagu dijeda. Di halaman musik bar ini menggantikan pemutar lama; di halaman lain pemutar tidak berubah.
+- Halaman musik kini tampil selayar penuh tanpa footer situs, supaya terasa seperti aplikasi pemutar musik. Footer di halaman lain tidak berubah.
+
+### Fixed
+- Mode acak kini benar-benar mengacak urutan lagu sekali, sehingga daftar "Berikutnya" sesuai dengan lagu yang akan diputar.
+- Tombol lagu berikutnya dan sebelumnya melewati lagu yang audionya belum tersedia, alih-alih berhenti di lagu tersebut.
+- Menggeser volume setelah suara dibisukan kini benar-benar membunyikan lagu kembali.
+- Teks abu-abu di halaman musik (durasi, nama artis, judul kolom tabel, lagu yang audionya belum tersedia) kini cukup gelap untuk mudah dibaca di latar terang.
+
 ## [0.1.274] - 2026-11-14
 ### Fixed
 - Build image Docker untuk STG/produksi tidak lagi gagal di tahap pengecekan TypeScript ("Could not parse output from TypeScript's --showConfig"). Pengecekan tipe kini berjalan di dalam proses build, sehingga tidak terpengaruh batas output Bun di image Docker. Tidak ada perubahan tampilan atau perilaku situs.
