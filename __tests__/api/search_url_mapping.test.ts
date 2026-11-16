@@ -116,6 +116,11 @@ describe('pemetaan URL hasil pencarian global', () => {
     }
   });
 
+  it('programinovasi membuka overlay detail di beranda (/?program=id), bukan rute lama /program-inovasi', () => {
+    expect(getDetailUrl({ type: 'programinovasi', id: 'cm1abc' })).toBe('/?program=cm1abc');
+    expect(getDetailUrl({ type: 'programinovasi', id: 'a b&c' })).toBe('/?program=a%20b%26c');
+  });
+
   it('pasarDesa membuka detail produk UMKM', () => {
     expect(getDetailUrl({ type: 'pasarDesa', id: 'p1' })).toBe('/ekonomi/umkm/produk/p1');
   });
