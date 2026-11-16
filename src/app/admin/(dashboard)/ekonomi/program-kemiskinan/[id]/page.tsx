@@ -18,6 +18,7 @@ import { useProxy } from 'valtio/utils';
 import { IconKey, IconMapper } from '../../../_com/iconMap';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import programKemiskinanState from '../../../_state/ekonomi/program-kemiskinan';
+import { PenerimaPanel } from '../_com/PenerimaPanel';
 
 function DetailProgramKemiskinan() {
   const programState = useProxy(programKemiskinanState);
@@ -150,6 +151,8 @@ function DetailProgramKemiskinan() {
           </Paper>
         </Stack>
       </Paper>
+
+      <PenerimaPanel programId={data.id} />
 
       {/* Modal Konfirmasi Hapus */}
       <ModalKonfirmasiHapus
