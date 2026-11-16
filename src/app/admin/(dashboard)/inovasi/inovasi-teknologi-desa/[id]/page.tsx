@@ -1,44 +1,56 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { inovasiKategoriLabel } from '@/lib/inovasi-teknologi/kategori';
+import {
+  Box,
+  Button,
+  Group,
+  Image,
+  Paper,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
-import infoTeknoState from '../../../_state/inovasi/info-tekno';
+import inovasiTeknologiState from '../../../_state/inovasi/inovasi-teknologi-desa';
+import { ADMIN_INOVASI_TEKNOLOGI_HREF } from '../_com/kategori-inovasi';
 
-function DetailInfoTeknologiTepatGuna() {
-  const stateInfoTekno = useProxy(infoTeknoState)
+/** Detail admin Inovasi Teknologi Desa dengan aksi edit & hapus. */
+function DetailInovasiTeknologiDesa() {
+  const stateInovasi = useProxy(inovasiTeknologiState);
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const router = useRouter()
-  const params = useParams()
+  const router = useRouter();
+  const params = useParams();
 
   useShallowEffect(() => {
-    stateInfoTekno.findUnique.load(params?.id as string)
-  }, [])
+    stateInovasi.findUnique.load(params?.id as string);
+  }, []);
 
   const handleHapus = async () => {
-    if (!selectedId) return
+    if (!selectedId) return;
     // await delete dulu — tanpa ini, router.push berlari mendahului DELETE
     // yang belum commit, list mount & fetch data lama → item terhapus masih tampil.
-    const ok = await stateInfoTekno.delete.byId(selectedId)
-    setModalHapus(false)
-    setSelectedId(null)
-    if (ok) router.push("/admin/inovasi/info-teknologi-tepat-guna")
-  }
+    const ok = await stateInovasi.delete.byId(selectedId);
+    setModalHapus(false);
+    setSelectedId(null);
+    if (ok) router.push(ADMIN_INOVASI_TEKNOLOGI_HREF);
+  };
 
-  if (!stateInfoTekno.findUnique.data) {
+  if (!stateInovasi.findUnique.data) {
     return (
       <Stack py={10}>
         <Skeleton height={500} radius="md" />
       </Stack>
-    )
+    );
   }
 
-  const data = stateInfoTekno.findUnique.data
+  const data = stateInovasi.findUnique.data;
 
   return (
     <Box px={{ base: 0, md: 'lg' }} py="xs">
@@ -63,23 +75,29 @@ function DetailInfoTeknologiTepatGuna() {
       >
         <Stack gap="md">
           <Text fz="2xl" fw="bold" c={colors['blue-button']}>
-            Detail Info Teknologi Tepat Guna
+            Detail Inovasi Teknologi Desa
           </Text>
 
+          {/* Sub Card Detail */}
           <Paper bg="#ECEEF8" p="md" radius="md" shadow="xs">
             <Stack gap="sm">
-              <Box>
+              <Box pl={5}>
                 <Text fz="lg" fw="bold">Judul</Text>
                 <Text fz="md" c="dimmed">{data?.name || '-'}</Text>
               </Box>
 
-              <Box>
+              <Box pl={5}>
+                <Text fz="lg" fw="bold">Kategori</Text>
+                <Text fz="md" c="dimmed">{inovasiKategoriLabel(data?.kategori) || '-'}</Text>
+              </Box>
+
+              <Box pl={5}>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
                 <Text
                   fz="md"
                   c="dimmed"
-                  dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
+                  dangerouslySetInnerHTML={{ __html: data?.deskripsi || '-' }}
                 />
               </Box>
 
@@ -88,9 +106,9 @@ function DetailInfoTeknologiTepatGuna() {
                 {data?.image?.link ? (
                   <Image
                     src={data.image.link}
-                    alt={data.name || 'Gambar Teknologi'}
-                    w={150}
-                    h={150}
+                    alt={data.name || 'Gambar Inovasi Teknologi Desa'}
+                    w={200}
+                    h={200}
                     radius="md"
                     fit="cover"
                     loading="lazy"
@@ -100,8 +118,8 @@ function DetailInfoTeknologiTepatGuna() {
                 )}
               </Box>
 
-              {/* Action Buttons */}
-              <Group gap="sm" mt={10}>
+              {/* Tombol Aksi */}
+              <Group gap="sm">
                 <Button
                   color="red"
                   onClick={() => {
@@ -111,16 +129,13 @@ function DetailInfoTeknologiTepatGuna() {
                   variant="light"
                   radius="md"
                   size="md"
-                  disabled={stateInfoTekno.delete.loading}
                 >
                   <IconTrash size={20} />
                 </Button>
 
                 <Button
                   color="green"
-                  onClick={() =>
-                    router.push(`/admin/inovasi/info-teknologi-tepat-guna/${data.id}/edit`)
-                  }
+                  onClick={() => router.push(`${ADMIN_INOVASI_TEKNOLOGI_HREF}/${data.id}/edit`)}
                   variant="light"
                   radius="md"
                   size="md"
@@ -133,15 +148,15 @@ function DetailInfoTeknologiTepatGuna() {
         </Stack>
       </Paper>
 
-      {/* Modal Konfirmasi Hapus */}
+      {/* Modal Konfirmasi */}
       <ModalKonfirmasiHapus
         opened={modalHapus}
         onClose={() => setModalHapus(false)}
         onConfirm={handleHapus}
-        text='Apakah anda yakin ingin menghapus info teknologi tepat guna ini?'
+        text="Apakah Anda yakin ingin menghapus inovasi teknologi desa ini?"
       />
     </Box>
   );
 }
 
-export default DetailInfoTeknologiTepatGuna;
+export default DetailInovasiTeknologiDesa;

@@ -21,10 +21,12 @@ import ExifOrientationImg from 'react-exif-orientation-img';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
-import desaDigitalState from '../../../_state/inovasi/desa-digital';
+import inovasiTeknologiState from '../../../_state/inovasi/inovasi-teknologi-desa';
+import { ADMIN_INOVASI_TEKNOLOGI_HREF, KategoriSelect } from '../_com/kategori-inovasi';
 
-export default function CreateDesaDigital() {
-  const stateDesaDigital = useProxy(desaDigitalState, { sync: true }); // sync: cegah caret jump di controlled input
+/** Form tambah Inovasi Teknologi Desa (nama, kategori, deskripsi, gambar). */
+export default function CreateInovasiTeknologiDesa() {
+  const stateInovasi = useProxy(inovasiTeknologiState, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
@@ -40,18 +42,14 @@ export default function CreateDesaDigital() {
   // Check if form is valid
   const isFormValid = () => {
     return (
-      stateDesaDigital.create.form.name?.trim() !== '' &&
-      !isHtmlEmpty(stateDesaDigital.create.form.deskripsi) &&
+      stateInovasi.create.form.name?.trim() !== '' &&
+      !isHtmlEmpty(stateInovasi.create.form.deskripsi) &&
       file !== null
     );
   };
 
   const resetForm = () => {
-    stateDesaDigital.create.form = {
-      name: '',
-      deskripsi: '',
-      imageId: '',
-    };
+    stateInovasi.create.reset();
     setPreviewImage(null);
     setFile(null);
   };
@@ -73,12 +71,12 @@ export default function CreateDesaDigital() {
         return toast.error('Gagal mengunggah gambar');
       }
 
-      stateDesaDigital.create.form.imageId = uploaded.id;
+      stateInovasi.create.form.imageId = uploaded.id;
 
-      const success = await stateDesaDigital.create.create();
+      const success = await stateInovasi.create.create();
       if (success) {
         resetForm();
-        router.push('/admin/inovasi/desa-digital-smart-village');
+        router.push(ADMIN_INOVASI_TEKNOLOGI_HREF);
       }
     } catch (error) {
       console.error('Error in handleSubmit:', error);
@@ -102,7 +100,7 @@ export default function CreateDesaDigital() {
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
-          Tambah Desa Digital Smart Village
+          Tambah Inovasi Teknologi Desa
         </Title>
       </Group>
 
@@ -121,12 +119,17 @@ export default function CreateDesaDigital() {
         <Stack gap="lg">
           {/* Input Nama */}
           <TextInput
-            label="Nama Desa Digital"
-            placeholder="Masukkan nama desa digital"
-            value={stateDesaDigital.create.form.name}
-            onChange={(e) => (stateDesaDigital.create.form.name = e.target.value)}
+            label="Nama Inovasi"
+            placeholder="Masukkan nama inovasi"
+            value={stateInovasi.create.form.name}
+            onChange={(e) => (stateInovasi.create.form.name = e.target.value)}
             radius="md"
             withAsterisk
+          />
+
+          <KategoriSelect
+            value={stateInovasi.create.form.kategori}
+            onChange={(kategori) => (stateInovasi.create.form.kategori = kategori)}
           />
 
           {/* Deskripsi */}
@@ -135,9 +138,9 @@ export default function CreateDesaDigital() {
               Deskripsi
             </Text>
             <CreateEditor
-              value={stateDesaDigital.create.form.deskripsi}
+              value={stateInovasi.create.form.deskripsi}
               onChange={(val) => {
-                stateDesaDigital.create.form.deskripsi = val;
+                stateInovasi.create.form.deskripsi = val;
               }}
             />
           </Box>
@@ -145,7 +148,7 @@ export default function CreateDesaDigital() {
           {/* Upload Gambar */}
           <Box>
             <Text fw={500} fz="sm" mb={6}>
-              Gambar Desa Digital
+              Gambar Inovasi
             </Text>
             <Dropzone
               onDrop={(files) => {

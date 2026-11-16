@@ -1,8 +1,9 @@
 'use client';
 /* eslint-disable react-hooks/exhaustive-deps */
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
-import desaDigitalState from '@/app/admin/(dashboard)/_state/inovasi/desa-digital';
+import inovasiTeknologiState from '@/app/admin/(dashboard)/_state/inovasi/inovasi-teknologi-desa';
 import colors from '@/con/colors';
+import { INOVASI_KATEGORI_DEFAULT, type InovasiKategori } from '@/lib/inovasi-teknologi/kategori';
 import ApiFetch from '@/lib/api-fetch';
 import {
   ActionIcon,
@@ -23,9 +24,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import { ADMIN_INOVASI_TEKNOLOGI_HREF, KategoriSelect } from '../../_com/kategori-inovasi';
 
-function EditDigitalSmartVillage() {
-  const stateDesaDigital = useProxy(desaDigitalState);
+/** Form edit Inovasi Teknologi Desa (nama, kategori, deskripsi, gambar). */
+function EditInovasiTeknologiDesa() {
+  const stateInovasi = useProxy(inovasiTeknologiState);
   const router = useRouter();
   const params = useParams();
 
@@ -36,11 +39,13 @@ function EditDigitalSmartVillage() {
     name: '',
     deskripsi: '',
     imageId: '',
+    kategori: INOVASI_KATEGORI_DEFAULT as InovasiKategori,
   });
   const [originalData, setOriginalData] = useState({
     name: '',
     deskripsi: '',
     imageId: '',
+    kategori: INOVASI_KATEGORI_DEFAULT as InovasiKategori,
     imageUrl: '',
   });
 
@@ -65,17 +70,21 @@ function EditDigitalSmartVillage() {
       if (!id) return;
 
       try {
-        const data = await stateDesaDigital.edit.load(id);
+        const data = await stateInovasi.edit.load(id);
         if (data) {
+          // Form state sudah menormalkan kategori (nilai tak dikenal → bawaan).
+          const { kategori } = inovasiTeknologiState.edit.form;
           setFormData({
             name: data.name || '',
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
+            kategori,
           });
           setOriginalData({
             name: data.name || '',
             deskripsi: data.deskripsi || '',
             imageId: data.imageId || '',
+            kategori,
             imageUrl: data.image?.link || '',
           });
 
@@ -83,7 +92,7 @@ function EditDigitalSmartVillage() {
         }
       } catch (error) {
         console.error('Error loading data:', error);
-        toast.error('Gagal memuat data desa digital smart village');
+        toast.error('Gagal memuat data inovasi teknologi desa');
       }
     };
 
@@ -93,21 +102,20 @@ function EditDigitalSmartVillage() {
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      stateDesaDigital.edit.form = { ...stateDesaDigital.edit.form, ...formData };
+      stateInovasi.edit.form = { ...stateInovasi.edit.form, ...formData };
 
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
         const uploaded = res.data?.data;
         if (!uploaded?.id) return toast.error('Gagal upload gambar');
 
-        stateDesaDigital.edit.form.imageId = uploaded.id;
+        stateInovasi.edit.form.imageId = uploaded.id;
       }
 
-      await stateDesaDigital.edit.update();
-      toast.success('Desa digital smart village berhasil diperbarui!');
-      router.push('/admin/inovasi/desa-digital-smart-village');
+      // update() sudah menampilkan toast sukses/gagal; pindah halaman hanya bila tersimpan.
+      if (await stateInovasi.edit.update()) router.push(ADMIN_INOVASI_TEKNOLOGI_HREF);
     } catch (error) {
-      console.error('Error updating desa digital:', error);
+      console.error(`Gagal memperbarui inovasi teknologi desa ${params?.id}:`, error);
       toast.error('Terjadi kesalahan saat memperbarui data');
     } finally {
       setIsSubmitting(false);
@@ -119,6 +127,7 @@ function EditDigitalSmartVillage() {
       name: originalData.name,
       deskripsi: originalData.deskripsi,
       imageId: originalData.imageId,
+      kategori: originalData.kategori,
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
@@ -133,7 +142,7 @@ function EditDigitalSmartVillage() {
           <IconArrowBack color={colors['blue-button']} size={24} />
         </Button>
         <Title order={4} ml="sm" c="dark">
-          Edit Desa Digital Smart Village
+          Edit Inovasi Teknologi Desa
         </Title>
       </Group>
 
@@ -150,7 +159,7 @@ function EditDigitalSmartVillage() {
           {/* Dropzone Upload */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Gambar Desa Digital
+              Gambar Inovasi
             </Text>
             <Dropzone
               onDrop={(files) => {
@@ -233,6 +242,11 @@ function EditDigitalSmartVillage() {
             required
           />
 
+          <KategoriSelect
+            value={formData.kategori}
+            onChange={(kategori) => setFormData((prev) => ({ ...prev, kategori }))}
+          />
+
           {/* Editor Deskripsi */}
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
@@ -281,4 +295,4 @@ function EditDigitalSmartVillage() {
   );
 }
 
-export default EditDigitalSmartVillage;
+export default EditInovasiTeknologiDesa;
