@@ -1,6 +1,12 @@
 # Changelog
 
 ## [0.1.291] - 2026-11-17
+### Security
+- **Data pribadi warga tidak lagi bisa diambil tanpa login.** Daftar dan detail Ibu Hamil, Balita, kiriman Pengaduan Masyarakat, Administrasi Online, Ajukan Permohonan Surat, Siswa, Pendaftar Beasiswa, Peminjaman Buku, Permohonan & Keberatan Informasi PPID, Responden IKM, Ide Inovatif, dan Pendaftaran Jadwal Kegiatan kini hanya bisa dibuka admin. Sebelumnya NIK, nomor HP, dan alamat warga bisa diunduh siapa pun lewat API publik.
+- Formulir publik (pengaduan, administrasi online, permohonan, dll.) tetap bisa dipakai warga; setelah dikirim, sistem tidak lagi menampilkan kembali data pribadi pengirim.
+- Grafik Indeks Kepuasan Masyarakat di halaman publik kini memakai ringkasan tanpa nama responden.
+- Pencarian global tidak lagi menampilkan nama siswa, responden IKM, maupun pemohon informasi PPID.
+
 ### Added
 - **Bank Sampah: detail dalam modal.** Tiap lokasi di bagian "Lokasi Bank Sampah" kini punya tombol "Lihat detail" yang membuka modal dengan tab Profil (deskripsi, alamat, kontak, media sosial, inovasi TPS yang terhubung ke Program Inovasi), Struktur (foto bagan + daftar pengurus), dan Dokumentasi (galeri foto kegiatan). Memilih lokasi tetap menampilkan titiknya di peta, dan "Petunjuk arah" tetap membuka Google Maps. Admin mengisi semua field ini di form Bank Sampah; pengurus dan galeri diisi di halaman edit.
 - **Info Sekolah: detail lembaga.** Tiap sekolah/lembaga kini punya deskripsi, alamat, kontak, media sosial, foto sekolah, titik peta + link Google Maps, struktur organisasi (opsional), dan galeri foto kegiatan, dengan halaman detail publik `/pendidikan/info-sekolah/lembaga/[id]`. Bagian yang kosong tidak ditampilkan.
