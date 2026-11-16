@@ -1,4 +1,3 @@
-'use client';
 import {
   ALAMAT_MAKS,
   NAMA_MAKS,

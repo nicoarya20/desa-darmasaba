@@ -1,4 +1,3 @@
-'use client';
 import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import colors from '@/con/colors';
 import { sanitizeRichText } from '@/lib/rich-text';

@@ -1,4 +1,3 @@
-'use client';
 import { parseCsvPenerima, type HasilCsvPenerima } from '@/lib/program-kemiskinan/penerima-csv';
 import { TAHUN_MIN, tahunMaks, validasiTahun } from '@/lib/program-kemiskinan/penerima.rules';
 import { Alert, Button, FileInput, Group, List, Modal, NumberInput, Radio, Stack, Table, Text } from '@mantine/core';
