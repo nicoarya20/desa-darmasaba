@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.283] - 2026-11-16
+### Added
+- **Bank Sampah: detail dalam modal.** Klik kartu di "Keterangan Bank Sampah Terdekat" membuka modal dengan tab Profil (deskripsi, alamat, kontak, media sosial, inovasi TPS yang terhubung ke Program Inovasi), Struktur (foto bagan + daftar pengurus), dan Dokumentasi (galeri foto kegiatan). Tombol Rute dan Lihat Peta tetap langsung membuka peta. Admin mengisi semua field ini di form Bank Sampah; pengurus dan galeri diisi di halaman edit.
+- **Info Sekolah: detail lembaga.** Tiap sekolah/lembaga kini punya deskripsi, alamat, kontak, media sosial, foto sekolah, titik peta + link Google Maps, struktur organisasi (opsional), dan galeri foto kegiatan, dengan halaman detail publik `/pendidikan/info-sekolah/lembaga/[id]`. Bagian yang kosong tidak ditampilkan.
+- **Program Pengentasan Kemiskinan: penerima per tahun.** Program (PKH, CPP, BLT Desa) punya halaman detail dengan jumlah penerima per tahun, rekap per alamat, dan daftar penerima (hanya nama + alamat). Admin menambah penerima satu per satu atau impor CSV (hanya kolom nama dan alamat yang disimpan; kolom lain seperti NIK dan tanggal lahir diabaikan). Halaman daftar penerima tidak diindeks mesin pencari.
+- **Posyandu: profil dan klaster.** Tab admin baru "Profil & Klaster" untuk deskripsi umum Posyandu dan kegiatan klaster Balita, Remaja, dan Lansia (beserta jam pelayanan). Posyandu per banjar kini punya alamat dan galeri foto (lokasi dan kader). Halaman publik menampilkan deskripsi, kartu tiga klaster, dan daftar posyandu per banjar.
+
+### Changed
+- **Puskesmas menjadi PUSTU (Puskesmas Pembantu)** di menu, judul halaman, dan pencarian. Isinya kini memuat jam operasional per rentang hari, kontak + kontak darurat/ambulans, media sosial, layanan unggulan, prosedur pendaftaran, tarif BPJS dan non-BPJS, struktur organisasi, dan galeri. Facebook yang sudah tersimpan dipindah ke daftar media sosial. URL halaman tidak berubah.
+- **Desa Digital / Smart Village dan Info Teknologi Tepat Guna digabung menjadi "Inovasi Teknologi Desa"** dengan kategori Desa Digital dan Teknologi Tepat Guna. Data lama dari kedua menu dipindah ke menu gabungan, dan URL lama otomatis dialihkan ke `/inovasi/inovasi-teknologi-desa`. Admin yang sebelumnya punya akses ke Info Teknologi Tepat Guna otomatis mendapat akses ke menu gabungan.
+- **Gotong Royong menjadi kategori di Kegiatan Desa.** Kegiatan gotong royong kini diinput lewat menu Kegiatan Desa dengan kategori "Gotong Royong"; menu admin Lingkungan › Gotong Royong yang menduplikasi data yang sama dihapus. Halaman publik Gotong Royong hanya menampilkan kegiatan berkategori Gotong Royong. Admin yang punya akses Gotong Royong atau seluruh menu Lingkungan otomatis mendapat akses Kegiatan Desa. **Perlu tindakan admin:** kegiatan lama tidak dipindah otomatis, jadi halaman Gotong Royong kosong sampai kategori kegiatannya diubah ke "Gotong Royong".
+- Jumlah partisipan di Kegiatan Desa kini opsional. Bila kosong, jumlah partisipan tidak ditampilkan di halaman publik (sebelumnya tampil "0").
+- Menu **UMKM** berganti nama menjadi **UMKM & Pasar Desa** di navbar publik dan sidebar admin.
+- Admin UMKM kembali menampilkan tab **Produk** dan **Kategori Produk**. Tab Dashboard dan Penjualan tetap disembunyikan, dan pemesanan lewat website tetap nonaktif (pembeli menghubungi penjual lewat WhatsApp).
+
 ## [0.1.282] - 2026-11-16
 ### Fixed
 - Pindah halaman yang sedang lambat dimuat (mis. pertama kali dibuka saat development, atau koneksi lambat) tidak lagi memunculkan error "Transition was aborted because of timeout in DOM update". Halaman tetap terbuka seperti biasa, hanya tanpa animasi perpindahan.
