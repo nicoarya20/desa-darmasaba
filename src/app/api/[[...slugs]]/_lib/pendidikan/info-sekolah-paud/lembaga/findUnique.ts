@@ -1,30 +1,22 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { fail } from "../../../_struktur-organisasi/http";
+import { keDetail, LEMBAGA_DETAIL_INCLUDE } from "./lembaga.data";
 
+/** GET (publik): detail lembaga beserta foto, pengurus, galeri kegiatan, dan jumlah siswa/pengajar aktif. */
 export default async function lembagaPendidikanFindUnique(context: Context) {
-  const { params } = context;
-  const id = params?.id as string;
-
-  if (!id) {
-    throw new Error("ID tidak ditemukan dalam parameter");
-  }
+  const id = (context.params as { id?: string })?.id;
+  if (!id) return fail(context, 400, "ID lembaga pendidikan wajib diisi");
 
   const data = await prisma.lembaga.findUnique({
     where: { id },
-    include: {
-      jenjangPendidikan: true,
-      siswa: true,
-      pengajar: true,
-    },
+    include: LEMBAGA_DETAIL_INCLUDE,
   });
-
-  if (!data) {
-    throw new Error("Lembaga pendidikan tidak ditemukan");
-  }
+  if (!data) return fail(context, 404, "Lembaga pendidikan tidak ditemukan");
 
   return {
     success: true,
     message: "Data lembaga pendidikan ditemukan",
-    data,
+    data: keDetail(data),
   };
 }
