@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.284] - 2026-11-16
+### Changed
+- **Jarak dan tepi halaman Inovasi diseragamkan.** Jarak antar-bagian di Desa Digital dan Kolaborasi Inovasi kini sama (64px, ponsel 48px), dan judul "Mitra Kolaborasi" seukuran judul bagian lain.
+- **Formulir Ajukan Ide Inovatif dan Administrasi Online kini selebar halaman.** Sebelumnya berhenti di 1200px sehingga di layar lebar tersisa ruang kosong besar di kanan. Jarak antar-blok di kolom kiri kedua formulir juga disamakan.
+- **Ajukan Ide Inovatif**: isian wajib kini bertanda `*` dan pesan galatnya menjelaskan isian mana yang perlu diisi (sebelumnya hanya "Wajib diisi.").
+
+### Fixed
+- Membuka nomor halaman yang tidak ada (mis. dari tautan lama) di **Info Teknologi Tepat Guna** dan **Tips Keamanan** kini langsung pindah ke halaman terakhir, bukan menampilkan "Belum ada ..." padahal datanya ada.
+- Hasil pencarian **Desa Digital** dan **Program Kreatif Desa** kini membuka halaman detailnya, bukan halaman daftar.
+- **Administrasi Online** lebih nyaman dipakai dengan keyboard dan pembaca layar: kirim dengan isian salah langsung menuju isian yang salah, kirim gagal kembali ke tombol kirim, dan setelah terkirim atau mengajukan lagi kursor tidak lagi hilang.
+
 ## [0.1.283] - 2026-11-16
 ### Changed
 - **Menu Inovasi dirombak ke gaya Kabar Desa** (latar putih, judul dan pengantar di kiri, ubin abu muda), seragam dengan menu Kesehatan, Keamanan, dan Pendidikan.
