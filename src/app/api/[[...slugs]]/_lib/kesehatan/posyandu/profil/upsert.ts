@@ -52,7 +52,8 @@ export default async function profilPosyanduUpsert(context: Context) {
       ...klaster.map(upsertKlaster),
     ]);
 
-    const baru = new Map(klaster.map((k) => [k.sasaran, k.imageId]));
+    // Kunci string: kolom `sasaran` di DB bertipe string, bukan union SasaranKlaster.
+    const baru = new Map<string, (typeof klaster)[number]["imageId"]>(klaster.map((k) => [k.sasaran, k.imageId]));
     await removeReleasedFiles(
       KLASTER_FILE_OWNER,
       lama.map((l) => l.imageId),
