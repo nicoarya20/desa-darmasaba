@@ -19,10 +19,12 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Batas kiriman non-admin 5 per 10 menit per alamat (429 + `Retry-After`).
   - Sisa (di luar butir ini): user login role 5 masih bisa `PUT`/`DELETE` laporan karena guard global tidak cek role admin (T19 di `docs/penilaian-lomba-website-desa-2027.md`); tanpa captcha.
 
-- [ ] **API publik Balita & Ibu Hamil mengirim data pribadi**
-  - Lokasi: `src/app/api/[[...slugs]]/_lib/kesehatan/balita/find-many.ts` (mencari & mengembalikan `nik`, `alamat`, dst.), begitu juga `ibu-hamil`.
-  - Dampak: NIK/alamat/HP orang tua bisa diambil siapa pun lewat API. Halaman publik Posyandu sudah tidak memakainya (pakai agregat `ringkasankesehatan/stats`), tapi endpoint tetap terbuka.
-  - Usul: wajibkan auth admin untuk find-many/find-unique balita & ibu hamil.
+- [x] **API publik Balita & Ibu Hamil mengirim data pribadi** — selesai 2026-11-17 (`fix/lomba1117-a-data-pribadi`), keputusan di `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`:
+  - `GET /api/kesehatan/{balita,ibuhamil}/find-many` & `/:id` kini lewat `guardDataPribadi` (`_lib/_data-pribadi/guard.ts`): 401 tanpa sesi, 403 bukan admin (role 0-4). Halaman publik Posyandu tetap memakai agregat `ringkasankesehatan/stats` (tetap publik). Test: `__tests__/api/data_pribadi_admin_only.test.ts`.
+
+- [x] **API publik kiriman Pengaduan Masyarakat & Administrasi Online mengirim data pribadi** (terverifikasi prod 2026-11-17: NIK & HP pelapor, nama/alamat/telepon pemohon) — selesai 2026-11-17, keputusan yang sama:
+  - `GET .../layananonlinedesa/{pengaduanmasyarakat,administrasionline}/find-many` & `/:id` admin-only (guard yang sama). Master data `jenispengaduan/*` & `jenislayanan/*` tetap publik (dipakai form warga).
+  - `POST .../create` (publik) kini membalas `data: { id }` saja, tidak lagi menggemakan NIK/HP/alamat; `create()` state tidak lagi memuat ulang daftar kiriman setelah submit warga.
 
 - [ ] **Detail mengabaikan `isActive`**
   - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`).
@@ -75,9 +77,9 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: penyerang anonim cukup POST langsung untuk menjalankan skrip di sesi admin. Mengganti editor di form publik tidak menutup celah.
   - Usul: simpan teks polos / `sanitizeRichTextForStorage`, render teks polos di admin; validasi server (panjang, telepon, bukuId aktif, tanggal) + batas kiriman seperti Laporan Publik.
 
-- [ ] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64)
-  - Lokasi: `GET /api/pendidikan/infosekolahpaud/siswa/find-many` tanpa auth, mengirim nama siswa + sekolahnya.
-  - Usul: auth admin, publik hanya agregat (`/api/pendidikan/ringkasan/stats`), pola Balita/Ibu Hamil.
+- [ ] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64) — sebagian selesai 2026-11-17:
+  - [x] `GET /api/pendidikan/infosekolahpaud/siswa/find-many` & `/:id` kini admin-only (`guardDataPribadi`, lihat `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`); publik hanya agregat `/api/pendidikan/ringkasan/stats`. Pengajar sengaja tetap publik (hanya nama + lembaga, dipakai direktori pengajar Info Sekolah).
+  - [ ] Sisa: pencarian global (di bawah).
   - Pencarian global ikut membuka nama siswa (terverifikasi 2026-11-15): `src/app/api/[[...slugs]]/_lib/search/findMany.ts` tipe `siswa` (baris ±1287 & ±2346, `...siswa.map(... type: "siswa")`), ditaut `src/app/(public)/_com/searchUrl.tsx:88` ke `/siswa` (kini 308 ke halaman utama, tapi nama sudah tampil di hasil cari). Halaman publik Info Sekolah sejak rombak Pendidikan tidak lagi menampilkan nama siswa. Usul: buang tipe `siswa` dari pencarian publik.
   - Kecil: total siswa/pengajar publik = jumlah `perJenjang`, bukan `stats.jumlahPengajar` (beda bila ada lembaga nonaktif).
 
