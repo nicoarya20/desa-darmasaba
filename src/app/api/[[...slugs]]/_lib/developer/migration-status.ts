@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import prisma from "@/lib/prisma";
 import type { SystemOverviewResponse } from "@/lib/jenna/types";
+import { PING_TIMEOUT_MS, TimeoutError, withTimeout } from "./with-timeout";
 
 export type MigrationStatus = SystemOverviewResponse["migrations"];
 export type MigrationRow = { migration_name: string; finished_at: Date | null; rolled_back_at: Date | null };
@@ -44,10 +45,16 @@ export async function readMigrationStatus(): Promise<MigrationStatus> {
   }
 
   try {
-    const rows = await prisma.$queryRaw<MigrationRow[]>`
-      SELECT migration_name, finished_at, rolled_back_at FROM "_prisma_migrations"`;
+    const rows = await withTimeout(
+      prisma.$queryRaw<MigrationRow[]>`
+      SELECT migration_name, finished_at, rolled_back_at FROM "_prisma_migrations"`,
+    );
     return diffMigrations(folders, rows);
   } catch (err) {
+    if (err instanceof TimeoutError) {
+      console.warn("[developer/system] tabel _prisma_migrations tidak merespons:", err);
+      return { ok: false, error: `Riwayat migrasi tidak terbaca dalam ${PING_TIMEOUT_MS / 1000} detik.` };
+    }
     // Pesan generik: error driver bisa memuat host/kredensial koneksi.
     console.warn("[developer/system] gagal membaca tabel _prisma_migrations:", err);
     return { ok: false, error: "Gagal membaca riwayat migrasi dari database." };

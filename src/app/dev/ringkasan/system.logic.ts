@@ -1,3 +1,4 @@
+import type { Snapshot } from 'valtio';
 import type { SystemOverviewResponse } from '@/lib/jenna/types';
 import type { StatTone } from './_com/StatCard';
 
@@ -38,7 +39,7 @@ export function formatRelativeTime(iso: string, nowIso: string): string {
 
 /** Isi kartu "Migrasi database"; merah bila ada migrasi gagal atau tertunda. */
 export function migrationCard(
-  migrations: Readonly<SystemOverviewResponse['migrations']>,
+  migrations: Snapshot<SystemOverviewResponse['migrations']>,
   nowIso: string,
 ): { value: string; status: { tone: StatTone; label: string }; details: string } {
   if (!migrations.ok) {

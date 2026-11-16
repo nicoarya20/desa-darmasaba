@@ -9,30 +9,20 @@ import type { ApiResult, ServiceStatus, SystemOverviewResponse } from "@/lib/jen
 import { buildEnvChecklist } from "./env-checklist";
 import { requireDeveloper } from "./guard";
 import { readMigrationStatus } from "./migration-status";
-
-const PING_TIMEOUT_MS = 5000;
+import { PING_TIMEOUT_MS, TimeoutError, withTimeout } from "./with-timeout";
 
 async function ping(run: () => Promise<unknown>, failMessage: string): Promise<ServiceStatus> {
   const started = Date.now();
-  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    await Promise.race([
-      run(),
-      new Promise((_, reject) => {
-        timer = setTimeout(() => reject(new Error("timeout")), PING_TIMEOUT_MS);
-      }),
-    ]);
+    await withTimeout(run());
     return { ok: true, latencyMs: Date.now() - started, error: null };
   } catch (err) {
     // Pesan generik: error driver bisa memuat host/kredensial koneksi.
-    const timedOut = err instanceof Error && err.message === "timeout";
     return {
       ok: false,
       latencyMs: Date.now() - started,
-      error: timedOut ? `Tidak merespons dalam ${PING_TIMEOUT_MS / 1000} detik.` : failMessage,
+      error: err instanceof TimeoutError ? `Tidak merespons dalam ${PING_TIMEOUT_MS / 1000} detik.` : failMessage,
     };
-  } finally {
-    clearTimeout(timer);
   }
 }
 

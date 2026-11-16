@@ -12,7 +12,7 @@ type Props = { env: Readonly<SystemOverviewResponse['env']> };
 export function EnvChecklist({ env }: Props) {
   const { isDark } = useDarkMode();
   const tokens = themeTokens(isDark);
-  const missing = env.filter((e) => !e.set).length;
+  const missing = env.filter((e) => e.required && !e.set).length;
 
   return (
     <SectionCard
@@ -20,7 +20,7 @@ export function EnvChecklist({ env }: Props) {
       description="Hanya menampilkan apakah variabel sudah diatur; nilainya tidak pernah ditampilkan."
       aside={
         <Text size="sm" fw={500} c={missing > 0 ? tokens.colors.warning : tokens.colors.success}>
-          {missing > 0 ? `${missing} belum diatur` : 'Semua sudah diatur'}
+          {missing > 0 ? `${missing} wajib belum diatur` : 'Semua yang wajib sudah diatur'}
         </Text>
       }
     >
@@ -33,17 +33,17 @@ export function EnvChecklist({ env }: Props) {
         m={0}
         style={{ listStyle: 'none' }}
       >
-        {env.map(({ name, set }) => (
+        {env.map(({ name, set, required }) => (
           <Box component="li" key={name}>
             <Group gap="xs" wrap="nowrap">
-              <ThemeIcon size="sm" radius="xl" variant="light" color={set ? 'green' : 'red'} aria-hidden>
+              <ThemeIcon size="sm" radius="xl" variant="light" color={set ? 'green' : required ? 'red' : 'gray'} aria-hidden>
                 {set ? <IconCheck size={12} /> : <IconX size={12} />}
               </ThemeIcon>
               <Text size="sm" ff="monospace" c={tokens.colors.text.primary} style={{ wordBreak: 'break-all' }}>
                 {name}
               </Text>
-              <Text size="xs" c={set ? tokens.colors.text.muted : tokens.colors.error} ml="auto">
-                {set ? 'Diatur' : 'Belum diatur'}
+              <Text size="xs" c={set || !required ? tokens.colors.text.muted : tokens.colors.error} ml="auto">
+                {set ? 'Diatur' : required ? 'Belum diatur' : 'Opsional, belum diatur'}
               </Text>
             </Group>
           </Box>

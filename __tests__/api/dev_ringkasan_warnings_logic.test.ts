@@ -76,8 +76,8 @@ const healthy = (): SystemOverviewResponse => ({
   database: { ok: true, latencyMs: 3, error: null },
   minio: { ok: true, latencyMs: 5, error: null, bucket: 'desa' },
   env: [
-    { name: 'DATABASE_URL', set: true },
-    { name: 'MINIO_BUCKET', set: true },
+    { name: 'DATABASE_URL', set: true, required: true },
+    { name: 'MINIO_BUCKET', set: true, required: true },
   ],
   jenna: { cryptoConfigured: true, enabled: true, ready: true },
   migrations: {
@@ -113,17 +113,28 @@ describe('buildDevWarnings', () => {
     expect(buildDevWarnings(s)).toEqual([expect.objectContaining({ id: 'minio', severity: 'danger' })]);
   });
 
-  it('env belum diatur → warning menyebut nama env saja', () => {
+  it('env wajib belum diatur → warning menyebut nama env wajib saja', () => {
     const s = healthy();
     s.env = [
-      { name: 'DATABASE_URL', set: true },
-      { name: 'GOOGLE_CLIENT_ID', set: false },
-      { name: 'MINIO_BUCKET', set: false },
+      { name: 'DATABASE_URL', set: true, required: true },
+      { name: 'GOOGLE_CLIENT_ID', set: false, required: true },
+      { name: 'DEVELOPER_EMAIL', set: false, required: false },
+      { name: 'MINIO_BUCKET', set: false, required: true },
     ];
     const [w] = buildDevWarnings(s);
     expect(w).toMatchObject({ id: 'env-missing', severity: 'warning' });
-    expect(w.detail).toContain('GOOGLE_CLIENT_ID, MINIO_BUCKET');
-    expect(w.detail).not.toContain('DATABASE_URL');
+    expect(w.detail).toBe('Belum diatur: GOOGLE_CLIENT_ID, MINIO_BUCKET.');
+  });
+
+  it('env opsional kosong → bukan peringatan', () => {
+    const s = healthy();
+    s.env = [
+      { name: 'DATABASE_URL', set: true, required: true },
+      ...['SUPER_ADMIN_EMAIL', 'DEVELOPER_EMAIL', 'MINIO_USE_SSL', 'JENNA_CREDENTIALS_KEY', 'NEXT_PUBLIC_BASE_URL'].map(
+        (name) => ({ name, set: false, required: false }),
+      ),
+    ];
+    expect(buildDevWarnings(s)).toEqual([]);
   });
 
   it('kunci enkripsi Jenna belum ada → warning', () => {
@@ -178,7 +189,7 @@ describe('buildDevWarnings', () => {
 
   it('danger selalu di atas warning', () => {
     const s = healthy();
-    s.env = [{ name: 'DATABASE_URL', set: false }];
+    s.env = [{ name: 'DATABASE_URL', set: false, required: true }];
     s.jenna = { cryptoConfigured: false, enabled: true, ready: false };
     s.migrations = { ...healthy().migrations, pending: ['m1'], failed: ['m0'] } as SystemOverviewResponse['migrations'];
     s.database = { ok: false, latencyMs: 1, error: 'x' };

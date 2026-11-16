@@ -109,4 +109,29 @@ describe('migrations di GET /system', () => {
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('_prisma_migrations'), expect.any(Error));
     warn.mockRestore();
   });
+
+  it('tabel migrasi macet → ok false setelah 5 detik, field lain tetap ada', async () => {
+    asUser('0');
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    try {
+      let queried!: () => void;
+      const migrationQueried = new Promise<void>((resolve) => (queried = resolve));
+      migrationRows = () => {
+        queried();
+        return new Promise(() => {});
+      };
+      const pending = systemOverviewGet(ctx().context);
+      await migrationQueried;
+      await vi.advanceTimersByTimeAsync(5000);
+      const res = await pending;
+      if (!res.success) throw new Error('unreachable');
+      expect(res.data.migrations).toEqual({ ok: false, error: 'Riwayat migrasi tidak terbaca dalam 5 detik.' });
+      expect(res.data.database.ok).toBe(true);
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('_prisma_migrations'), expect.any(Error));
+    } finally {
+      vi.useRealTimers();
+      warn.mockRestore();
+    }
+  });
 });

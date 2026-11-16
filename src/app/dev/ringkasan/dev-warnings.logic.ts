@@ -1,3 +1,4 @@
+import type { Snapshot as ValtioSnapshot } from 'valtio';
 import type { SystemOverviewResponse } from '@/lib/jenna/types';
 
 export type DevWarning = {
@@ -8,7 +9,7 @@ export type DevWarning = {
   href?: string;
 };
 
-type Snapshot = Readonly<SystemOverviewResponse>;
+type Snapshot = ValtioSnapshot<SystemOverviewResponse>;
 
 /** Daftar "Perlu perhatian" dari snapshot Ringkasan Sistem; danger di atas, urutan sinyal dipertahankan. */
 export function buildDevWarnings(snapshot: Snapshot): DevWarning[] {
@@ -61,7 +62,7 @@ export function buildDevWarnings(snapshot: Snapshot): DevWarning[] {
     });
   }
 
-  const missingEnv = env.filter((e) => !e.set).map((e) => e.name);
+  const missingEnv = env.filter((e) => e.required && !e.set).map((e) => e.name);
   if (missingEnv.length > 0) {
     warnings.push({
       id: 'env-missing',
