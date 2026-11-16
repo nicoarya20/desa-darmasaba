@@ -11,7 +11,18 @@ const { EMPTY_IDE_FORM, IDE_FIELD_MAX, escapeHtml, firstInvalidField, textToPara
   await import('@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/ajukan-ide.logic');
 const { submitIde } = await import('@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/ajukan-ide.source');
 
-const messages = { required: 'Wajib diisi.', tooLong: (max: number) => `Maksimal ${max} karakter.` };
+// test-only: pesan per isian berbeda agar terlihat pesan mana yang dipakai.
+const messages = {
+  required: {
+    name: 'Isi nama.',
+    alamat: 'Isi alamat.',
+    namaIde: 'Isi nama ide.',
+    deskripsi: 'Isi deskripsi.',
+    masalah: 'Isi masalah.',
+    benefit: 'Isi manfaat.',
+  },
+  tooLong: (max: number) => `Maksimal ${max} karakter.`,
+};
 // test-only
 const filled = {
   name: 'Made Uji',
@@ -23,16 +34,16 @@ const filled = {
 };
 
 describe('validateIde', () => {
-  it('form kosong → semua isian wajib; galat pertama = nama', () => {
+  it('form kosong → semua isian wajib dengan pesan masing-masing; galat pertama = nama', () => {
     const errors = validateIde(EMPTY_IDE_FORM, messages);
+    expect(errors).toEqual(messages.required);
     expect(Object.keys(errors)).toEqual(['name', 'alamat', 'namaIde', 'deskripsi', 'masalah', 'benefit']);
-    expect(errors.name).toBe('Wajib diisi.');
     expect(firstInvalidField(errors)).toBe('name');
   });
 
   it('spasi saja tetap kosong; melebihi batas → pesan maksimal', () => {
     const errors = validateIde({ ...filled, masalah: '   ', name: 'x'.repeat(IDE_FIELD_MAX.name + 1) }, messages);
-    expect(errors).toEqual({ name: 'Maksimal 50 karakter.', masalah: 'Wajib diisi.' });
+    expect(errors).toEqual({ name: 'Maksimal 50 karakter.', masalah: 'Isi masalah.' });
     expect(firstInvalidField(errors)).toBe('name');
   });
 

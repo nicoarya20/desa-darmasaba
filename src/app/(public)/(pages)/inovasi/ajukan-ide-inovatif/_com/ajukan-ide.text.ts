@@ -18,7 +18,15 @@ export const AJUKAN_IDE_TEXT = {
   stepsTitle: "Setelah ide dikirim",
   formTitle: "Formulir ide inovatif",
   formLead: "Semua isian wajib diisi.",
-  required: "Wajib diisi.",
+  /** Pesan isian kosong per isian, senada Administrasi Online ("Isi nama lengkap, ..."). */
+  required: {
+    name: "Isi nama lengkap.",
+    alamat: "Isi alamat atau banjar tempat tinggal.",
+    namaIde: "Isi nama ide, cukup judul singkat.",
+    deskripsi: "Jelaskan ide Anda.",
+    masalah: "Isi masalah yang ingin dipecahkan ide ini.",
+    benefit: "Isi manfaat ide bagi warga dan desa.",
+  } satisfies Record<IdeField, string>,
   tooLong: (max: number) => `Maksimal ${max} karakter.`,
   count: (length: number, max: number) => `${length}/${max} karakter`,
   submit: "Kirim ide",

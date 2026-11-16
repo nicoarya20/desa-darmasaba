@@ -4,6 +4,7 @@ import { PermohonanSteps } from '@/app/(public)/(pages)/ppid/_com/PermohonanStep
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import formStyles from '@/app/(public)/(pages)/inovasi/_com/inovasi-form.module.css';
 import { AdministrasiForm, AdministrasiSent } from './AdministrasiForm';
 import { JenisLayananSection } from './JenisLayananSection';
 import s from './administrasi.module.css';
@@ -14,7 +15,7 @@ import { useJenisLayanan } from './use-jenis-layanan';
 /**
  * Halaman Administrasi Online di `.section` Kabar: kepala tanpa cari, lalu tata letak permohonan PPID (alur + jenis
  * layanan di kiri, kartu formulir `#f5f5f7` di kanan; di bawah 75em bertumpuk dengan formulir di atas, seragam Ajukan Ide).
- * Sukses → terima kasih di tempat formulir.
+ * Sukses → terima kasih di tempat formulir. `formStyles.fullWidth`: kartu formulir sampai tepi kanan halaman.
  */
 export function AdministrasiPage() {
   const jenis = useJenisLayanan();
@@ -36,7 +37,7 @@ export function AdministrasiPage() {
         onSearch={() => undefined}
         searchable={false}
       />
-      <div className={s.layout}>
+      <div className={`${formStyles.fullWidth} ${s.layout}`}>
         <PermohonanLayout
           aside={
             <div className={s.aside}>
