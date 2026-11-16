@@ -98,6 +98,7 @@ describe('form lembaga', () => {
     expect(html).toContain('data-testid="lokasi-input"');
     expect(html).toContain('value="https://facebook.com/tk_contoh"');
     expect(html).toContain('src="/api/img/sekolah.webp"');
+    expect(html).toContain('Hapus titik'); // lokasi sekolah opsional → titik bisa dikosongkan
   });
 });
 

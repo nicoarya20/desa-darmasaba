@@ -1,6 +1,6 @@
 'use client'
 import { linkGoogleMaps, PUSAT_PETA_DEFAULT, type Koordinat } from '@/lib/konten-bersama/lokasi.logic';
-import { Anchor, Box, Text, TextInput } from '@mantine/core';
+import { Anchor, Box, Button, Group, Text, TextInput } from '@mantine/core';
 import dynamic from 'next/dynamic';
 
 const LeafletMapEdit = dynamic(() => import('@/app/admin/(dashboard)/_com/leafletMapEdit'), { ssr: false });
@@ -12,13 +12,15 @@ type Props = {
   onLinkMapsChange: (link: string) => void;
   /** Pesan error link (dari validasi form), bila ada. */
   linkError?: string | null;
+  /** Bila diisi, titik bisa dikosongkan (lokasi opsional, mis. sekolah yang hanya punya link Google Maps). */
+  onKoordinatHapus?: () => void;
 };
 
 /**
  * Input lokasi (semua domain): pilih titik di peta + link Google Maps opsional (mis. link pendek
  * `maps.app.goo.gl/...` dari desa). Tanpa link, tombol publik memakai rute ke titik peta.
  */
-export default function LokasiInput({ koordinat, onKoordinatChange, linkMaps, onLinkMapsChange, linkError }: Props) {
+export default function LokasiInput({ koordinat, onKoordinatChange, linkMaps, onLinkMapsChange, linkError, onKoordinatHapus }: Props) {
   const tujuan = linkGoogleMaps(linkMaps.trim() || null, koordinat);
   return (
     <Box data-testid="lokasi-input">
@@ -28,9 +30,16 @@ export default function LokasiInput({ koordinat, onKoordinatChange, linkMaps, on
         <LeafletMapEdit initialPosition={koordinat ?? PUSAT_PETA_DEFAULT} onChange={onKoordinatChange} />
       </Box>
       {koordinat && (
-        <Text fz="xs" mt={4} c="green">
-          Lokasi dipilih: {koordinat.lat.toFixed(6)}, {koordinat.lng.toFixed(6)}
-        </Text>
+        <Group gap="xs" mt={4}>
+          <Text fz="xs" c="green">
+            Lokasi dipilih: {koordinat.lat.toFixed(6)}, {koordinat.lng.toFixed(6)}
+          </Text>
+          {onKoordinatHapus && (
+            <Button variant="subtle" color="red" size="compact-xs" onClick={onKoordinatHapus}>
+              Hapus titik
+            </Button>
+          )}
+        </Group>
       )}
       <TextInput
         mt="sm"
