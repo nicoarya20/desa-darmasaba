@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { skemaUrutan, imageIdWajib, teksOpsional } from "./daftar-anak.validation";
+import { imageIdWajib, skemaUrutan } from "./daftar-anak.validation";
+import { teksOpsional } from "./teks.validation";
 import { idListUnik } from "./urutan.logic";
 
 /** Batas keterangan foto galeri default (sama untuk semua domain kecuali dikonfigurasi lain). */

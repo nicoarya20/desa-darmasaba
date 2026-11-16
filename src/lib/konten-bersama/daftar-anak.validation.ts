@@ -12,17 +12,6 @@ export function skemaUrutan({ label, max }: { label: string; max: number }) {
   });
 }
 
-/** Teks opsional: kosong/spasi → null, melebihi `max` ditolak dengan pesan berlabel. */
-export function teksOpsional({ label, max }: { label: string; max: number }) {
-  return z
-    .string({ invalid_type_error: `${label} harus berupa teks` })
-    .trim()
-    .max(max, `${label} maksimal ${max} karakter`)
-    .nullable()
-    .optional()
-    .transform((v) => (v ? v : null));
-}
-
 /** ID berkas FileStorage wajib (gambar yang sudah diunggah). */
 export const imageIdWajib = z
   .string({ required_error: "ID gambar wajib diisi" })
