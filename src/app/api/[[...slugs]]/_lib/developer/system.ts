@@ -8,6 +8,7 @@ import { getJennaReadiness } from "@/lib/jenna/service";
 import type { ApiResult, ServiceStatus, SystemOverviewResponse } from "@/lib/jenna/types";
 import { buildEnvChecklist } from "./env-checklist";
 import { requireDeveloper } from "./guard";
+import { readMigrationStatus } from "./migration-status";
 
 const PING_TIMEOUT_MS = 5000;
 
@@ -51,11 +52,12 @@ export async function systemOverviewGet(context: Context): Promise<ApiResult<Sys
   const guard = await requireDeveloper(context);
   if (!guard.ok) return guard.body;
 
-  const [version, database, minio, jenna] = await Promise.all([
+  const [version, database, minio, jenna, migrations] = await Promise.all([
     readVersion(),
     ping(() => prisma.$queryRaw`SELECT 1`, "Gagal terhubung ke database."),
     pingMinio(),
     getJennaReadiness(),
+    readMigrationStatus(),
   ]);
 
   return {
@@ -68,6 +70,7 @@ export async function systemOverviewGet(context: Context): Promise<ApiResult<Sys
       minio: { ...minio, bucket: MINIO_BUCKET },
       env: buildEnvChecklist((name) => process.env[name]),
       jenna,
+      migrations,
       generatedAt: new Date().toISOString(),
     },
   };

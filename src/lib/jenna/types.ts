@@ -199,6 +199,19 @@ export interface SystemOverviewResponse {
   /** Hanya nama env dari allowlist + status terisi; nilai TIDAK pernah dikirim. */
   env: { name: string; set: boolean }[];
   jenna: { cryptoConfigured: boolean; enabled: boolean; ready: boolean };
+  /** Folder `prisma/migrations` vs tabel `_prisma_migrations`; `error` selalu pesan generik. */
+  migrations:
+    | {
+        ok: true;
+        total: number;
+        applied: number;
+        pending: string[];
+        failed: string[];
+        latestApplied: string | null;
+        /** ISO string. */
+        latestAppliedAt: string | null;
+      }
+    | { ok: false; error: string };
   /** ISO string waktu snapshot dibuat. */
   generatedAt: string;
 }
