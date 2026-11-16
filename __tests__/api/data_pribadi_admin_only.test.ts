@@ -194,4 +194,46 @@ describe("create publik tidak menggemakan data pribadi", () => {
     expect(text).not.toContain("Jalan Rekaan");
     expect(prismaMock.administrasiOnline.create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
   });
+
+  it("POST pendaftar beasiswa → hanya id, tanpa NIK/HP/alamat", async () => {
+    const res = await postJson(`${BEASISWA}/beasiswapendaftar/create`, {
+      namaLengkap: "Siswa Rekaan",
+      nis: "0000001",
+      kelas: "7",
+      jenisKelamin: "PEREMPUAN",
+      alamatDomisili: "Jalan Rekaan 2",
+      tempatLahir: "Kota Rekaan",
+      tanggalLahir: "2012-01-01",
+      namaOrtu: "Ortu Rekaan",
+      nik: NIK,
+      pekerjaanOrtu: "Petani",
+      penghasilan: "1000000",
+      noHp: HP,
+    });
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(JSON.parse(text)).toEqual({ success: true, message: "Berhasil membuat data pendaftar beasiswa", data: { id: "baru-1" } });
+    expect(text).not.toContain(NIK);
+    expect(text).not.toContain(HP);
+    expect(text).not.toContain("Jalan Rekaan");
+    expect(prismaMock.beasiswaPendaftar.create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
+  });
+
+  it("POST peminjaman buku → hanya id, tanpa nama/telepon/alamat peminjam", async () => {
+    const res = await postJson(`${PERPUS}/peminjamanbuku/create`, {
+      nama: "Peminjam Rekaan",
+      noTelp: HP,
+      alamat: "Jalan Rekaan 3",
+      bukuId: "buku-1",
+      tanggalPinjam: "2026-11-17T00:00:00.000Z",
+      batasKembali: "2026-11-24T00:00:00.000Z",
+    });
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(JSON.parse(text)).toEqual({ success: true, message: "Berhasil membuat peminjaman buku", data: { id: "baru-1" } });
+    expect(text).not.toContain(HP);
+    expect(text).not.toContain("Peminjam Rekaan");
+    expect(text).not.toContain("Jalan Rekaan");
+    expect(prismaMock.peminjamanBuku.create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
+  });
 });

@@ -36,12 +36,14 @@ export default async function beasiswaPendaftarCreate(context: Context) {
         penghasilan: body.penghasilan,
         noHp: body.noHp,
       },
+      select: { id: true },
     });
 
+    // Hanya id: dipanggil form pendaftaran warga, jangan gemakan NIK/HP/alamat pendaftar ke respons.
     return {
       success: true,
       message: "Berhasil membuat data pendaftar beasiswa",
-      data: result,
+      data: { id: result.id },
     };
   } catch (error) {
     // NIK pendaftar unik (@unique) → 409 "NIK sudah dipakai"; error lain di-throw

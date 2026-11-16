@@ -60,7 +60,7 @@ const beasiswaPendaftar = proxy({
           "create"
         ].post(cek.data);
         if (res.status === 200) {
-          beasiswaPendaftar.findMany.load();
+          // Tidak memuat ulang daftar: create() bisa dipanggil warga, daftar pendaftar admin-only.
           toast.success(
             "Data Berhasil Dibuat, Silahkan Menunggu Konfirmasi dari Admin di WhatsApp"
           );
