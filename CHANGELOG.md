@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.283] - 2026-11-16
+### Changed
+- **Menu Inovasi dirombak ke gaya Kabar Desa** (latar putih, judul dan pengantar di kiri, ubin abu muda), seragam dengan menu Kesehatan, Keamanan, dan Pendidikan.
+- **Desa Digital / Smart Village**: layanan terbaru tampil sebagai sorotan besar, sisanya kartu berfoto, 6 per halaman (sebelumnya 3). Kolom cari kini bertuliskan "Cari layanan digital" (sebelumnya "Cari Produk"). Halaman detail lebih bersih dengan tautan kembali di atas.
+- **Program Kreatif Desa**: ubin berikon yang seluruhnya bisa diklik, 9 per halaman. Kata kunci pencarian tidak lagi hilang saat pindah halaman, dan kolom cari tidak ikut hilang saat memuat. Detail tidak lagi memakai label formulir admin ("Deskripsi Singkat"/"Deskripsi").
+- **Kolaborasi Inovasi**: kolaborasi dikelompokkan per tahun dengan pil tahun untuk menyaring (kini memakai tahun kolaborasi, bukan tanggal input). Deskripsi lengkap kini bisa dibaca; yang panjang dibuka di tempat lewat "Baca selengkapnya". Logo mitra tampil utuh tanpa terpotong.
+- **Info Teknologi Tepat Guna**: tiap teknologi tampil sebagai ubin yang bisa dibaca langsung, foto tampil utuh dengan rasio aslinya, 10 per halaman.
+- **Ajukan Ide Inovatif**: formulir langsung tampil (sebelumnya tersembunyi di balik ikon bola lampu), disertai tujuan dan alur setelah ide dikirim. Bila pengiriman gagal, isian tidak lagi terhapus dan pesan galat tampil.
+- **Layanan Online Desa**: halaman utama berisi tiga ubin (Administrasi Online, Pengaduan Masyarakat, Informasi Desa). Administrasi Online kini halaman formulir sendiri, dengan galat per isian dan isian tetap tersimpan bila kirim gagal.
+- **Informasi Desa** kini langsung mengarah ke Berita dan Pengumuman Desa. Tautan lama ke detail berita/pengumuman dan ke halaman Pengaduan Masyarakat tetap berfungsi dan diarahkan ke halaman yang benar.
+
 ## [0.1.282] - 2026-11-16
 ### Fixed
 - Pindah halaman yang sedang lambat dimuat (mis. pertama kali dibuka saat development, atau koneksi lambat) tidak lagi memunculkan error "Transition was aborted because of timeout in DOM update". Halaman tetap terbuka seperti biasa, hanya tanpa animasi perpindahan.
