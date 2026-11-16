@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.286] - 2026-11-16
+### Fixed
+- **Keamanan: hanya Developer dan Super Admin yang bisa mengelola user dan role.** Sebelumnya akun Google mana pun yang login (role USER) bisa mengubah role siapa saja lewat API, termasuk menjadikan dirinya Super Admin, menghapus user lain, dan membaca daftar email staf. Kini API user (daftar, detail, ubah, nonaktifkan, hapus) serta tambah/ubah/hapus role menolak role selain Developer (0) dan Super Admin (1) dengan 401/403. Daftar nama role tetap bisa dibaca. Ini sejalan dengan menu User & Role di admin yang memang hanya tampil untuk dua role itu.
+- **Akun Developer terlindungi.** Hanya Developer yang boleh memberi role Developer atau mengubah, menonaktifkan, dan menghapus akun Developer.
+- **Ubah role atau nonaktifkan akun langsung mengeluarkan user itu.** Sesi login Better Auth-nya ikut dicabut (paling lambat sekitar 60 detik karena cache cookie), tidak lagi bertahan sampai 7 hari.
+
 ## [0.1.285] - 2026-11-16
 ### Changed
 - **Menu Lingkungan dirombak ke gaya Kabar Desa** (latar putih, judul dan pengantar di kiri, ubin dan baris abu muda), seragam dengan menu Inovasi, Kesehatan, Keamanan, dan Pendidikan.

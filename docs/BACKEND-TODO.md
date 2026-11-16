@@ -10,6 +10,23 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 ## P1. Keamanan & privasi (kerjakan dulu)
 
+- [x] **T19: API user & role tidak cek role admin** (terverifikasi 2026-11-16; T19 di `docs/penilaian-lomba-website-desa-2027.md:224`). Selesai v0.1.286 (`tasks/t19-admin-role-guard/...`, commit `d9794c60`):
+  - Guard bersama `requireRole` di `_lib/guard.ts`; `requireDeveloper` kini membungkusnya.
+  - Router `/user` memakai `.resolve(resolveUserManager)` (role 0/1). Mutasi role memakai `beforeHandle`; GET role tetap terbuka.
+  - `denyDeveloperAccountChange` melindungi akun role 0.
+  - `session.deleteMany` dipanggil saat role berubah atau akun dinonaktifkan. `delUser` sudah tercakup cascade.
+  - Test: `__tests__/api/user_role_admin_guard.test.ts` (66 test).
+  - Lokasi: guard global `src/app/api/[[...slugs]]/route.ts` (`onBeforeHandle`) hanya memanggil `requireAuth()`; `_lib/user/index.ts` (`findMany`, `findUnique`, `del`, `updt`, `delUser`) dan `_lib/user/role/index.ts` (`create`, `put`, `del`) tanpa cek role.
+  - Dampak: user Google mana pun (role 5) bisa `PUT /api/user/updt` dengan `roleId: "1"` untuk dirinya sendiri (naik jadi SUPER ADMIN), menghapus user lain, dan membaca daftar email staf. Ubah role/nonaktifkan juga tidak mencabut sesi Better Auth (`updt.ts` hanya menghapus `userSession` lama), jadi sesi lama tetap jalan sampai 7 hari.
+  - Keputusan (user, 2026-11-16): API user & role hanya untuk role 0/1 (sama dengan `canManageMenuAccess` dan menu User & Role di `dynamicNavbar.ts:20`); hanya Developer yang boleh memberi role 0 atau mengubah/menghapus akun role 0; sesi Better Auth dicabut saat role berubah atau akun dinonaktifkan.
+- [ ] **Sisa T19: mutasi admin lain masih hanya `requireAuth()`** (mis. Laporan Publik `PUT`/`DELETE`). User role 5 masih bisa mengubah/menghapus konten admin.
+  - Usul: guard global `isAdminRole` (role ≤ 4) di `onBeforeHandle` `route.ts` untuk semua mutasi non-publik.
+  - **Belum aman dipasang langsung**: tiga POST Elysia di luar `PUBLIC_POST_PATHS` dipanggil halaman publik, jadi warga login/role 5 akan kena 403:
+    - `/api/pendidikan/beasiswa/beasiswapendaftar/create` (`src/app/(public)/(pages)/pendidikan/beasiswa-desa/_com/beasiswa.source.ts:42`);
+    - `/api/ppid/permohonaninformasipublik/create` (`ppid/permohonan-informasi-publik/page.tsx:128`);
+    - `/api/ppid/permohonankeberataninformasipublik/create` (`ppid/permohonan-keberatan-informasi-publik/page.tsx:122`).
+  - Ketiganya perlu masuk `PUBLIC_POST_PATHS` (atau allowlist role 5) dulu. Daftar ditemukan lewat grep pemanggil frontend, jadi panggilan multi-baris bisa terlewat; cek ulang sebelum dikerjakan.
+
 - [x] **XSS tersimpan Laporan Publik** (terverifikasi) — selesai di dua lapis, dikerjakan sisi frontend (P1 Laporan Publik memang dialokasikan ke sini):
   - Render (v0.1.268, `fix/laporan-publik-xss`): detail admin merender `kronologi` & `penanganan[].deskripsi` lewat `sanitizeRichText`. Test: `__tests__/api/laporan_publik_admin_xss.test.tsx`.
   - Simpan (v0.1.269, `fix/laporan-publik-sanitasi-server`): `create.ts` & `updt.ts` menyimpan lewat `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`, `sanitize-html` dengan allowlist `RICH_TEXT_TAGS` yang sama, tanpa atribut). Data lama tidak diubah (prod 2026-11-13: 2 laporan, hanya `<p>`). Test: `__tests__/api/laporan_publik_sanitasi_server.test.ts`.
