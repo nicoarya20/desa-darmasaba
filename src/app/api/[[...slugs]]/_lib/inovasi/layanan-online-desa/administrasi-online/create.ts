@@ -24,15 +24,14 @@ export default async function administrasiOnlineCreate(context: Context) {
         nomorTelepon: body.nomorTelepon,
         jenisLayananId: body.jenisLayananId, // relasi ke JenisLayanan
       },
-      include: {
-        jenisLayanan: true, // Include data relasi
-      },
+      select: { id: true },
     });
 
+    // Hanya id: endpoint publik, jangan gemakan nama/alamat/nomor telepon pemohon ke respons.
     return {
       success: true,
       message: "Berhasil membuat administrasi online",
-      data: result,
+      data: { id: result.id },
     };
   } catch (error) {
     console.error("Error creating administrasi online:", error);

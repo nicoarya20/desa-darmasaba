@@ -40,7 +40,7 @@ const administrasiOnline = proxy({
             "create"
           ].post(administrasiOnline.create.form);
         if (res.status === 200) {
-          administrasiOnline.findMany.load();
+          // Tidak memuat ulang daftar: create() dipanggil form publik warga, daftar kiriman admin-only.
           toast.success("Data berhasil ditambahkan");
           return true;
         }
