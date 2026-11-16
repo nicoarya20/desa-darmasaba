@@ -121,7 +121,7 @@ const navbarListMenu = [
             },
             {
                 id: "3.3",
-                name: "Puskesmas",
+                name: "PUSTU (Puskesmas Pembantu)",
                 href: "/kesehatan/puskesmas",
                 hidden: true
             },

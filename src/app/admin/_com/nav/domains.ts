@@ -61,7 +61,7 @@ export const kesehatanMenu: NavItem = {
   children: [
     { id: "kesehatan.posyandu", name: "Posyandu", path: "/admin/kesehatan/posyandu/list-posyandu", basePath: "/admin/kesehatan/posyandu" },
     { id: "kesehatan.data-kesehatan-warga", name: "Data Kesehatan Warga", path: "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian", basePath: "/admin/kesehatan/data-kesehatan-warga" },
-    { id: "kesehatan.puskesmas", name: "Puskesmas", path: "/admin/kesehatan/puskesmas", basePath: "/admin/kesehatan/puskesmas" },
+    { id: "kesehatan.puskesmas", name: "PUSTU (Puskesmas Pembantu)", path: "/admin/kesehatan/puskesmas", basePath: "/admin/kesehatan/puskesmas" },
     { id: "kesehatan.program-kesehatan", name: "Program Kesehatan", path: "/admin/kesehatan/program-kesehatan", basePath: "/admin/kesehatan/program-kesehatan" },
     { id: "kesehatan.penanganan-darurat", name: "Penanganan Darurat", path: "/admin/kesehatan/penanganan-darurat", basePath: "/admin/kesehatan/penanganan-darurat" },
     { id: "kesehatan.kontak-darurat", name: "Kontak Darurat", path: "/admin/kesehatan/kontak-darurat", basePath: "/admin/kesehatan/kontak-darurat" },

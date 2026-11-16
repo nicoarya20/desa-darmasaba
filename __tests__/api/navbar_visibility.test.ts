@@ -8,7 +8,7 @@ import type { MenuItem } from '../../types/menu-item';
 
 const HIDDEN_KESEHATAN = [
   { name: 'Data Kesehatan Warga', href: '/kesehatan/data-kesehatan-warga' },
-  { name: 'Puskesmas', href: '/kesehatan/puskesmas' },
+  { name: 'PUSTU (Puskesmas Pembantu)', href: '/kesehatan/puskesmas' },
   { name: 'Penanganan Darurat', href: '/kesehatan/penanganan-darurat' },
   { name: 'Info Wabah/Penyakit', href: '/kesehatan/info-wabah-penyakit' },
 ];

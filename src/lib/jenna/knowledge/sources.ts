@@ -10,6 +10,8 @@ import { programHref } from "@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/pr
 import { getSosmedHref } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
 import { inovasiKategoriLabel } from "@/lib/inovasi-teknologi/kategori";
 import { jadwalToText } from "@/lib/jadwal-pelayanan";
+import { LABEL_PUSTU } from "@/lib/pustu/pustu.label";
+import { bacaJadwal, bacaLayananUnggulan } from "@/lib/pustu/pustu.validation";
 import { htmlToKnowledgeText } from "./html";
 
 // Registry allowlist pengetahuan Jenna — DEFAULT DENY: hanya model + field di sini yang boleh
@@ -360,18 +362,21 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSource[] = [
     searchFields: ["nama"], href: "/keamanan/polsek-terdekat", menuHref: "/keamanan/polsek-terdekat",
   }),
   defineSource({
-    key: "puskesmas", domain: "kesehatan", tier: "B", label: "Puskesmas", model: "Puskesmas",
+    key: "puskesmas", domain: "kesehatan", tier: "B", label: LABEL_PUSTU, model: "Puskesmas",
     where: ACTIVE,
     select: {
-      id: true, name: true, alamat: true,
-      jam: { select: { workDays: true, weekDays: true, holiday: true } },
+      id: true, name: true, alamat: true, layananUnggulan: true, tarifBpjs: true, tarifUmum: true,
+      jam: { select: { jadwal: true } },
       kontak: { select: { kontakPuskesmas: true, kontakUGD: true, email: true } },
     },
     fields: [
       ["Nama", get("name")], ["Alamat", get("alamat")],
-      ["Jam hari kerja", rel("jam", "workDays")], ["Jam akhir pekan", rel("jam", "weekDays")], ["Hari libur", rel("jam", "holiday")],
-      ["Telepon", rel("kontak", "kontakPuskesmas")], ["UGD", rel("kontak", "kontakUGD")], ["Email", rel("kontak", "email")],
+      ["Jam operasional", (row) => bacaJadwal((row.jam as KnowledgeRow | null)?.jadwal).map((j) => `${j.hari} ${j.jam}`).join("; ")],
+      ["Layanan unggulan", (row) => bacaLayananUnggulan(row.layananUnggulan).map((l) => l.judul).join(", ")],
+      ["Tarif BPJS", html("tarifBpjs")], ["Tarif umum", html("tarifUmum")],
+      ["Telepon", rel("kontak", "kontakPuskesmas")], ["Kontak darurat/ambulans", rel("kontak", "kontakUGD")], ["Email", rel("kontak", "email")],
     ],
+    cellMax: 300,
     searchFields: ["name"],
     href: (row) => `/kesehatan/puskesmas/${idOf(row)}`, menuHref: "/kesehatan/puskesmas",
   }),
