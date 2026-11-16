@@ -1,33 +1,27 @@
 import prisma from "@/lib/prisma";
+import { bankSampahBodySchema } from "@/lib/bank-sampah/bank-sampah.validation";
 import { Context } from "elysia";
+import { fail, validationFailure, writeFailure } from "../../../_struktur-organisasi/http";
+import { dataBankSampah, inovasiValid, PESAN_INOVASI_TIDAK_VALID } from "./bank-sampah.data";
 
-type FormCreateKeteranganBankSampahTerdekat = {
-    name: string;
-    alamat: string;
-    namaTempatMaps: string;
-    lat: number;
-    lng: number;
-}
-
+/** POST (admin): tambah bank sampah beserta detail opsional (deskripsi, kontak, medsos, bagan, inovasi). */
 export default async function keteranganBankSampahTerdekatCreate(context: Context) {
-    const body = context.body as FormCreateKeteranganBankSampahTerdekat;
+  const parsed = bankSampahBodySchema.safeParse(context.body);
+  if (!parsed.success) return validationFailure(context, parsed.error);
+  const body = parsed.data;
+  if (!(await inovasiValid(body.programInovasiIds))) return fail(context, 400, PESAN_INOVASI_TIDAK_VALID);
 
-    const linkPetunjukArah = `https://www.google.com/maps/dir/?api=1&destination=${body.lat},${body.lng}`;
-
-    const created = await prisma.keteranganBankSampahTerdekat.create({
-        data: {
-            name: body.name,
-            alamat: body.alamat,
-            namaTempatMaps: body.namaTempatMaps,
-            lat: body.lat,
-            lng: body.lng,
-            linkPetunjukArah,
-        },
-    });
-
+  const inovasi = body.programInovasiIds?.length
+    ? { programInovasi: { connect: body.programInovasiIds.map((id) => ({ id })) } }
+    : {};
+  try {
+    const created = await prisma.keteranganBankSampahTerdekat.create({ data: { ...dataBankSampah(body), ...inovasi } });
     return {
-        success: true,
-        message: "Sukses menambahkan keterangan bank sampah terdekat",
-        data: created,
+      success: true,
+      message: "Sukses menambahkan keterangan bank sampah terdekat",
+      data: created,
     };
+  } catch (error) {
+    return writeFailure(error, context);
+  }
 }
