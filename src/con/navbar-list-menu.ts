@@ -196,7 +196,7 @@ const navbarListMenu = [
         children: [
             {
                 id: "5.1",
-                name: "UMKM",
+                name: "UMKM & Pasar Desa",
                 href: "/ekonomi/umkm"
             },
             {
