@@ -86,6 +86,16 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Tambahan: `nik @unique` padahal berisi NIK orang tua (kakak-adik tidak bisa mendaftar, 409); validasi server hanya tipe.
   - Usul: whitelist + rate limit + validasi server (NIK 16 digit, dst.), meniru Laporan Publik; tinjau `@unique` nik.
 
+- [ ] **Program Kemiskinan: create/update/hapus program hanya dijaga "sudah login"** (terverifikasi 2026-11-16, sesi penerima program kemiskinan)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/program-kemiskinan/{create,updt,del}.ts` tanpa cek role; guard global `route.ts` hanya memastikan sesi. Endpoint penerima baru (`penerima/*`) sudah memakai `guardAdmin` (role 0–4).
+  - Dampak: user login role 5 bisa menghapus program, dan sejak 2026-11-16 penghapusan program ikut menghapus seluruh penerimanya (FK cascade).
+  - Usul: pasang `guardAdmin` (`_lib/landing_page/desa-anti-korupsi/admin-guard.ts`) di ketiga handler; pertimbangkan soft delete program.
+
+- [ ] **`/api/upl-csv` & `/api/upl-csv-single` mencetak isi berkas CSV ke log** (terverifikasi 2026-11-16)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/upl-csv.ts`, `upl-csv-single.ts` (`console.log` isi teks berkas), dipakai halaman uji `src/app/admin/csv/page.tsx` (`UploadCsv`). Tidak menyimpan apa pun.
+  - Dampak: bila dipakai untuk berkas data warga (mis. BNBA bantuan), NIK/nama masuk log server (Rule 12). Impor penerima Program Kemiskinan sengaja tidak memakainya.
+  - Usul: hapus route + halaman `admin/csv` bila hanya sisa uji coba, atau buang log isinya.
+
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
@@ -144,6 +154,10 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Info Sekolah: filter `jenjangPendidikanId` berisi NAMA (siswa memakai `jenjangPendidikanName`); lembaga tanpa `_count` siswa/pengajar; `ringkasan/stats.perJenjang` tidak terurut & memuat jenjang kosong; siswa/pengajar find-many dan `stats.jumlahPengajar` tidak menyaring `lembaga.isActive`.
   - Beasiswa: `ringkasan/stats.jumlahPenerima` = jumlah semua pendaftar (belum ada status seleksi); `BeasiswaConfig` tanpa periode/jadwal pendaftaran (frontend terpaksa tanpa tanggal).
   - Data Pendidikan: `findMany` count `total` mengabaikan filter search.
+
+- [ ] **Daftar Program Kemiskinan publik: deskripsi tanpa sanitasi & grafik statistik hanya dari halaman aktif** (terverifikasi 2026-11-16)
+  - Lokasi: `src/app/(public)/(pages)/ekonomi/program-kemiskinan/page.tsx` merender `deskripsi` lewat `dangerouslySetInnerHTML` tanpa `sanitizeRichText` (halaman detail baru sudah menyaring), memuat `limit=2` per halaman, dan grafik "Statistik Kemiskinan" dibangun dari program di halaman itu saja (statistik program di halaman lain tidak ikut).
+  - Usul: endpoint statistik tersendiri (semua `StatistikKemiskinan` urut tahun) + sanitasi deskripsi; `create/updt` program menyimpan lewat `sanitizeRichTextForStorage`.
 
 ## P3. Schema & form admin
 

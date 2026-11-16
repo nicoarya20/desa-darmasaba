@@ -21,7 +21,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import SelectIconProgram from '../../../_com/selectIcon';
-import programKemiskinanState from '../../../_state/ekonomi/program-kemiskinan';
+import programKemiskinanState, { statistikLengkapAtauKosong } from '../../../_state/ekonomi/program-kemiskinan';
 
 function CreateProgramKemiskinan() {
   const programState = useProxy(programKemiskinanState);
@@ -43,8 +43,7 @@ function CreateProgramKemiskinan() {
       programState.create.form.nama?.trim() !== '' &&
       programState.create.form.icon?.trim() !== '' &&
       !isHtmlEmpty(programState.create.form.deskripsi) &&
-      programState.create.form.statistik.jumlah?.trim() !== '' &&
-      programState.create.form.statistik.tahun?.trim() !== ''
+      statistikLengkapAtauKosong(programState.create.form.statistik)
     );
   };
 
@@ -147,7 +146,7 @@ function CreateProgramKemiskinan() {
 
           {/* Statistik */}
           <Text fw="bold" fz="sm">
-            Statistik Jumlah Masyarakat Miskin
+            Statistik Jumlah Masyarakat Miskin (opsional)
           </Text>
           <Group grow>
             <TextInput
@@ -158,7 +157,6 @@ function CreateProgramKemiskinan() {
               }
               label="Jumlah"
               placeholder="Masukkan jumlah masyarakat miskin"
-              required
             />
             <TextInput
               type="number"
@@ -168,7 +166,6 @@ function CreateProgramKemiskinan() {
               }
               label="Tahun"
               placeholder="Masukkan tahun"
-              required
             />
           </Group>
 

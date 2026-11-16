@@ -8,6 +8,9 @@ import { useState } from 'react';
 import { CartesianGrid, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
+import { Link } from 'next-view-transitions';
+import { programHref } from './_com/program-kemiskinan.source';
+import { PROGRAM_KARTU_TEXT } from './_com/program-kemiskinan.text';
 
 interface StatistikData {
   id: string;
@@ -117,7 +120,13 @@ function Page() {
           >
             {state.findMany.data.map(v => {
               return (
-                <Paper p={{ base: 'lg', md: 'xl' }} key={v.id}>
+                <Paper
+                  p={{ base: 'lg', md: 'xl' }}
+                  key={v.id}
+                  component={Link}
+                  href={programHref(v)}
+                  style={{ display: 'block', textDecoration: 'none' }}
+                >
                   <Title
                     order={3}
                     fw="bold"
@@ -133,6 +142,9 @@ function Page() {
                     style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                     dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                   />
+                  <Text mt="sm" fw={600} c={colors['blue-button']}>
+                    {PROGRAM_KARTU_TEXT.lihatPenerima}
+                  </Text>
                 </Paper>
               )
             })}
