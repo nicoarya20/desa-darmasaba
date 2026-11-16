@@ -1,6 +1,6 @@
 // @vitest-environment node
 // GET berisi data pribadi warga (Ibu Hamil, Balita, kiriman Pengaduan & Administrasi Online, Siswa, pendaftar beasiswa,
-// peminjam buku, responden IKM) wajib admin:
+// peminjam buku, permohonan & keberatan PPID, responden IKM, ide inovatif, pendaftaran jadwal kesehatan) wajib admin:
 // request HTTP sungguhan lewat modul Elysia (prisma & auth di-mock). Master data & agregat publik tetap terbuka,
 // dan respons create publik tidak menggemakan NIK/HP. Keputusan: docs/decisions/2026-11-17-api-data-pribadi-admin-only.md
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -45,13 +45,18 @@ import Pengajar from "@/app/api/[[...slugs]]/_lib/pendidikan/info-sekolah-paud/p
 import RingkasanPendidikan from "@/app/api/[[...slugs]]/_lib/pendidikan/ringkasan";
 import Beasiswa from "@/app/api/[[...slugs]]/_lib/pendidikan/beasiswa-desa";
 import PerpustakaanDigital from "@/app/api/[[...slugs]]/_lib/pendidikan/perpustakaan-digital";
+import PermohonanInformasiPublik from "@/app/api/[[...slugs]]/_lib/ppid/permohonan_informasi_publik";
+import PermohonanKeberatan from "@/app/api/[[...slugs]]/_lib/ppid/permohonan_keberatan_informasi_publik";
 import Responden from "@/app/api/[[...slugs]]/_lib/landing_page/indeks_kepuasan/responden";
+import AjukanIdeInovatif from "@/app/api/[[...slugs]]/_lib/inovasi/ajukan-ide-inovatif";
+import PendaftaranJadwalKegiatan from "@/app/api/[[...slugs]]/_lib/kesehatan/data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
 import { PESAN_DATA_PRIBADI_BUKAN_ADMIN } from "@/app/api/[[...slugs]]/_lib/_data-pribadi/guard";
 
 // Prefix induk dipasang ulang seperti di route.ts / index domain, agar URL test = URL produksi.
 const app = new Elysia({ prefix: "/api" })
-  .group("/kesehatan", (g) => g.use(Balita).use(IbuHamil).use(RingkasanKesehatan))
-  .group("/inovasi", (g) => g.use(LayananOnlineDesa))
+  .group("/kesehatan", (g) => g.use(Balita).use(IbuHamil).use(RingkasanKesehatan).use(PendaftaranJadwalKegiatan))
+  .group("/inovasi", (g) => g.use(LayananOnlineDesa).use(AjukanIdeInovatif))
+  .group("/ppid", (g) => g.use(PermohonanInformasiPublik).use(PermohonanKeberatan))
   .group("/landingpage", (g) => g.use(Responden))
   .group("/pendidikan", (g) =>
     g
@@ -89,8 +94,16 @@ const DITUTUP = [
   `${BEASISWA}/beasiswapendaftar/pendaftar-1`,
   `${PERPUS}/peminjamanbuku/findMany`,
   `${PERPUS}/peminjamanbuku/pinjam-1`,
+  "/api/ppid/permohonaninformasipublik/find-many",
+  "/api/ppid/permohonaninformasipublik/permohonan-1",
+  "/api/ppid/permohonankeberataninformasipublik/find-many",
+  "/api/ppid/permohonankeberataninformasipublik/keberatan-1",
   "/api/landingpage/responden/findMany",
   "/api/landingpage/responden/responden-1",
+  "/api/inovasi/ajukanideinovatif/find-many",
+  "/api/inovasi/ajukanideinovatif/ide-1",
+  "/api/kesehatan/pendaftaran-jadwal-kegiatan/find-many",
+  "/api/kesehatan/pendaftaran-jadwal-kegiatan/daftar-1",
 ];
 const TETAP_PUBLIK = [
   `${LAYANAN}/administrasionline/jenislayanan/find-many`,
@@ -103,6 +116,10 @@ const TETAP_PUBLIK = [
   `${PERPUS}/dataperpustakaan/findMany`,
   "/api/landingpage/responden/ringkasan",
 ];
+// Opsi form permohonan PPID (master data, respons `{ data }` tanpa `success`).
+const MASTER_PPID = ["jenisInformasi", "memperolehInformasi", "salinanInformasi"].map(
+  (m) => `/api/ppid/permohonaninformasipublik/${m}/find-many`,
+);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -156,6 +173,13 @@ describe("master data & agregat publik tetap terbuka", () => {
     const res = await call(url);
     expect(res.status).toBe(200);
     expect((await res.json()).success).toBe(true);
+    expect(requireAuthMock).not.toHaveBeenCalled();
+  });
+
+  it.each(MASTER_PPID)("%s tanpa sesi → 200 tanpa cek sesi", async (url) => {
+    const res = await call(url);
+    expect(res.status).toBe(200);
+    expect(Array.isArray((await res.json()).data)).toBe(true);
     expect(requireAuthMock).not.toHaveBeenCalled();
   });
 });
