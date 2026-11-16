@@ -36,7 +36,7 @@ export default async function permohonanInformasiPublikCreate(context: Context) 
     };
   }
 
-  await prisma.permohonanInformasiPublik.create({
+  const result = await prisma.permohonanInformasiPublik.create({
     data: {
       name: body.name,
       nik: body.nik,
@@ -47,11 +47,13 @@ export default async function permohonanInformasiPublikCreate(context: Context) 
       caraMemperolehInformasiId: body.caraMemperolehInformasiId,
       caraMemperolehSalinanInformasiId: body.caraMemperolehSalinanInformasiId,
     },
+    select: { id: true },
   });
 
+  // Hanya id: endpoint form publik, jangan gemakan NIK/HP/alamat/email pemohon ke respons.
   return {
     success: true,
     message: "Permohonan Informasi Publik Berhasil Dibuat",
-    data: { ...body },
+    data: { id: result.id },
   };
 }

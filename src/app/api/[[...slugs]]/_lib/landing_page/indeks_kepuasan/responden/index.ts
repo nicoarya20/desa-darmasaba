@@ -5,13 +5,21 @@ import respondenFindUnique from "./findUnique";
 import respondenCreate from "./create";
 import respondenUpdate from "./updt";
 import respondenDelete from "./del";
+import respondenRingkasan from "./ringkasan";
+import { guardDataPribadi } from "../../../_data-pribadi/guard";
 
 const Responden = new Elysia({ prefix: "/responden", tags: ["Desa/Responden"] })
-  .get("/findMany", respondenFindMany)
-  .get("/:id", async (context) => {
-    const response = await respondenFindUnique(context.request);
-    return response;
-  })
+  // Publik: hanya tanggal + kategori untuk grafik IKM, tanpa id & nama responden.
+  .get("/ringkasan", respondenRingkasan)
+  .get("/findMany", respondenFindMany, { beforeHandle: guardDataPribadi })
+  .get(
+    "/:id",
+    async (context) => {
+      const response = await respondenFindUnique(context.request);
+      return response;
+    },
+    { beforeHandle: guardDataPribadi }
+  )
   .post("/create", respondenCreate, {
     body: t.Object({
       name: t.String(),

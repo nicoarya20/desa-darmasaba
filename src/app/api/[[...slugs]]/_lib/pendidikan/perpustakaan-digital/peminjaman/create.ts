@@ -27,11 +27,13 @@ export default async function peminjamanBukuCreate(context: Context) {
         tanggalKembali: body.tanggalKembali,
         catatan: body.catatan,
       },
+      select: { id: true },
     });
+    // Hanya id: endpoint form publik, jangan gemakan nama/telepon/alamat peminjam ke respons.
     return {
       success: true,
       message: "Berhasil membuat peminjaman buku",
-      data: result,
+      data: { id: result.id },
     };
   } catch (error) {
     console.error("Error creating peminjaman buku:", error);

@@ -12,20 +12,20 @@ type FormCreate = {
 export default async function createAjukanPermohonan(context: Context){
     const body = context.body as FormCreate;
 
-    await prisma.ajukanPermohonan.create({
+    const result = await prisma.ajukanPermohonan.create({
         data: {
             nama: body.nama,
             nik: body.nik,
             alamat: body.alamat,
             nomorKk: body.nomorKk,
             kategoriId: body.kategoriId
-        }
+        },
+        select: { id: true },
     })
+    // Hanya id: endpoint form publik, jangan gemakan nama/NIK/alamat/nomor KK pemohon ke respons.
     return {
        success: true,
        message: 'Ajukan permohonan berhasil dibuat',
-       data: {
-        ...body
-       }
+       data: { id: result.id },
     }
 }

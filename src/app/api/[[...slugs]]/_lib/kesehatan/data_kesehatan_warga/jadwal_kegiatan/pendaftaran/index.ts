@@ -4,6 +4,7 @@ import pendaftaranJadwalKegiatanDelete from "./del";
 import pendaftaranJadwalKegiatanUpdate from "./updt";
 import pendaftaranJadwalKegiatanFindUnique from "./findUnique";
 import pendaftaranJadwalKegiatanFindMany from "./findMany";
+import { guardDataPribadi } from "../../../../_data-pribadi/guard";
 
 const PendaftaranJadwalKegiatan = new Elysia({
   prefix: "/pendaftaran-jadwal-kegiatan",
@@ -19,8 +20,8 @@ const PendaftaranJadwalKegiatan = new Elysia({
       catatan: t.String(),
     }),
   })
-  .get("/find-many", pendaftaranJadwalKegiatanFindMany)
-  .get("/:id", pendaftaranJadwalKegiatanFindUnique)
+  .get("/find-many", pendaftaranJadwalKegiatanFindMany, { beforeHandle: guardDataPribadi })
+  .get("/:id", pendaftaranJadwalKegiatanFindUnique, { beforeHandle: guardDataPribadi })
   .delete("/del/:id", pendaftaranJadwalKegiatanDelete)
   .put(
     "/:id",

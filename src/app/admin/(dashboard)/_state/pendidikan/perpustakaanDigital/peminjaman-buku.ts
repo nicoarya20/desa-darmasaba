@@ -76,7 +76,7 @@ const peminjamanBuku = proxy({
             "create"
           ].post(peminjamanBuku.create.form);
         if (res.status === 200) {
-          peminjamanBuku.findMany.load();
+          // Tidak memuat ulang daftar: create() bisa dipanggil warga, daftar peminjam admin-only.
           toast.success("Data Peminjaman Buku Berhasil Dibuat");
           return true;
         }

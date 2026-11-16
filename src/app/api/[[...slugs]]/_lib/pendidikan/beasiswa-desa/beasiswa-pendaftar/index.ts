@@ -4,6 +4,7 @@ import beasiswaPendaftarFindMany from "./findMany";
 import beasiswaPendaftarFindUnique from "./findUnique";
 import beasiswaPendaftarUpdate from "./updt";
 import beasiswaPendaftarDelete from "./del";
+import { guardDataPribadi } from "../../../_data-pribadi/guard";
 
 const BeasiswaPendaftar = new Elysia({
   prefix: "/beasiswapendaftar",
@@ -26,13 +27,15 @@ const BeasiswaPendaftar = new Elysia({
       noHp: t.String(),
     }),
   })
-  .get("/findMany", beasiswaPendaftarFindMany)
-  .get("/:id", async (context) => {
-    const response = await beasiswaPendaftarFindUnique(
-      context.request
-    );
-    return response;
-  })
+  .get("/findMany", beasiswaPendaftarFindMany, { beforeHandle: guardDataPribadi })
+  .get(
+    "/:id",
+    async (context) => {
+      const response = await beasiswaPendaftarFindUnique(context.request);
+      return response;
+    },
+    { beforeHandle: guardDataPribadi }
+  )
   .put(
     "/:id",
     async (context) => {

@@ -15,7 +15,7 @@ type FormCreate = {
 export default async function pengaduanMasyarakatCreate(context: Context){
     const body = context.body as FormCreate;
 
-    await prisma.pengaduanMasyarakat.create({
+    const created = await prisma.pengaduanMasyarakat.create({
         data: {
             name: body.name,
             email: body.email,
@@ -26,14 +26,14 @@ export default async function pengaduanMasyarakatCreate(context: Context){
             deskripsiPengaduan: body.deskripsiPengaduan,
             jenisPengaduanId: body.jenisPengaduanId,
             imageId: body.imageId,
-        }
+        },
+        select: { id: true },
     })
 
+    // Hanya id: endpoint publik, jangan gemakan NIK/HP/email pelapor ke respons.
     return {
         success: true,
         message: "Sukses menambahkan pengaduan masyarakat",
-        data: {
-            ...body,
-        }
+        data: { id: created.id },
     }
 }

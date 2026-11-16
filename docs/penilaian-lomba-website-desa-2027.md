@@ -203,7 +203,7 @@ Status: ❌ belum | 🟡 sebagian | ✅ beres
 
 | ID | Aspek | Temuan | Lokasi | Status 6 Nov |
 |---|---|---|---|---|
-| T1 | 8 | **API GET publik membocorkan data pribadi.** Semua GET terbuka kecuali `/api/user`, `/api/role`, `/api/fileStorage`, `/api/imgs`. `GET /api/inovasi/layananonlinedesa/pengaduanmasyarakat/find-many` mengembalikan NIK, email, nomor HP pelapor. Model lain berisi NIK/HP dengan pola sama: `PermohonanInformasiPublik`, `AjukanPermohonan`, `BeasiswaPendaftar`, `IbuHamil`, `Balita` | `src/app/api/[[...slugs]]/route.ts:97-112`, `_lib/inovasi/layanan-online-desa/pengaduan-masyarakat/findMany.ts` | ❌ (temuan kode, belum diuji ke server) |
+| T1 | 8 | **API GET publik membocorkan data pribadi.** Semua GET terbuka kecuali `/api/user`, `/api/role`, `/api/fileStorage`, `/api/imgs`. `GET /api/inovasi/layananonlinedesa/pengaduanmasyarakat/find-many` mengembalikan NIK, email, nomor HP pelapor. Model lain berisi NIK/HP dengan pola sama: `PermohonanInformasiPublik`, `AjukanPermohonan`, `BeasiswaPendaftar`, `IbuHamil`, `Balita` | `src/app/api/[[...slugs]]/route.ts:97-112`, `_lib/inovasi/layanan-online-desa/pengaduan-masyarakat/findMany.ts` | ✅ 2026-11-17 (kode): GET kiriman/data per orang warga admin-only lewat `guardDataPribadi`, create publik membalas `{ id }`; daftar endpoint di `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`. Verifikasi prod setelah deploy |
 | T2 | 8 | Halaman publik menampilkan data per orang (nama balita/ibu hamil, kelahiran/kematian, migrasi, siswa/pengajar) | Lihat `docs/permintaan-data-desa.md` bagian 13 | ❌ menunggu keputusan desa |
 | T3 | 8, 3 | Tidak ada tim redaksi/pengelola website, alamat fisik, telepon, email kantor desa | `src/app/darmasaba/_com/Footer.tsx` | ❌ |
 | T4 | 8 | Tidak ada header keamanan (HSTS, CSP, X-Frame-Options, nosniff) | `next.config.ts:9` (hanya Cache-Control) | ❌ |
@@ -222,7 +222,7 @@ Status: ❌ belum | 🟡 sebagian | ✅ beres
 | T17 | 5 | Kecepatan belum diukur | — | ❓ |
 | T18 | Admin | Domain `desa.id` belum ada | `.env.example:20` | ❌ |
 | T19 | 8 | **API mutasi tidak cek role admin.** Login Google terbuka → user baru role 5 USER; `requireAuth()` meloloskan role 5, jadi user biasa bisa POST/PUT/DELETE endpoint admin, termasuk update user dengan `roleId` (potensi naik jadi SUPER ADMIN). Ditemukan 6 Nov saat menyusun plan | `src/app/api/[[...slugs]]/route.ts:110-118`, `src/lib/api-auth.ts:51`, `_lib/user/updt.ts`, `src/lib/auth-policy.ts:15` | ❌ (temuan kode, belum dieksploitasi) |
-| T20 | 8 | Pencarian global mencari permohonan informasi publik berdasarkan NIK, ikut mengembalikan siswa/pengajar/responden | `_lib/search/findMany.ts:231`, `:1700` | ❌ |
+| T20 | 8 | Pencarian global mencari permohonan informasi publik berdasarkan NIK, ikut mengembalikan siswa/pengajar/responden | `_lib/search/findMany.ts:231`, `:1700` | ✅ 2026-11-17: tipe siswa, responden, permohonan & keberatan PPID dibuang; pengajar sengaja tetap (peran publik, lihat `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`) |
 | T21 | 8 | Rute auth lama (OTP/register/login manual) masih ada padahal auth = Better Auth Google-only | `src/app/api/auth/*` | ❓ perlu audit |
 
 Yang sudah baik saat baseline: navigasi + pencarian global, struktur header/body/footer,
