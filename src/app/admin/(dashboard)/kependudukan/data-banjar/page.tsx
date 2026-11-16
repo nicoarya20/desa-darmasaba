@@ -1,5 +1,6 @@
 'use client'
 import colors from '@/con/colors';
+import { MISKIN_LABEL } from '@/lib/data-banjar';
 import {
   Box,
   Button,
@@ -131,7 +132,7 @@ function ListDataBanjar({ search, year }: { search: string; year?: number }) {
                 <TableTh style={{ width: '25%' }}>Nama Banjar</TableTh>
                 <TableTh style={{ width: '15%' }}>Penduduk</TableTh>
                 <TableTh style={{ width: '15%' }}>KK</TableTh>
-                <TableTh style={{ width: '15%' }}>Miskin</TableTh>
+                <TableTh style={{ width: '15%' }}>{MISKIN_LABEL}</TableTh>
                 <TableTh style={{ width: '10%' }}>Tahun</TableTh>
                 <TableTh style={{ width: '10%' }}>Edit</TableTh>
                 <TableTh style={{ width: '10%' }}>Hapus</TableTh>
@@ -226,7 +227,7 @@ function ListDataBanjar({ search, year }: { search: string; year?: number }) {
                     </Box>
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>
-                        Penduduk Miskin
+                        {MISKIN_LABEL}
                       </Text>
                       <Text fz="sm" fw={500} lh={1.4}>
                         {item.miskin.toLocaleString('id-ID')}

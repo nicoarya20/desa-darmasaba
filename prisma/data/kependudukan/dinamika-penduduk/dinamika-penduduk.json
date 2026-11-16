@@ -1,26 +1,26 @@
 [
   {
-    "id": "cmk-dinamika-001",
-    "tahun": 2026,
-    "kelahiran": 45,
-    "kematian": 18,
-    "masuk": 22,
-    "keluar": 15
-  },
-  {
-    "id": "cmk-dinamika-002",
-    "tahun": 2025,
-    "kelahiran": 52,
-    "kematian": 21,
-    "masuk": 18,
-    "keluar": 12
+    "id": "cmk-dinamika-004",
+    "tahun": 2023,
+    "kelahiran": 128,
+    "kematian": 89,
+    "masuk": 72,
+    "keluar": 57
   },
   {
     "id": "cmk-dinamika-003",
     "tahun": 2024,
-    "kelahiran": 48,
-    "kematian": 19,
-    "masuk": 25,
-    "keluar": 20
+    "kelahiran": 103,
+    "kematian": 95,
+    "masuk": 82,
+    "keluar": 71
+  },
+  {
+    "id": "cmk-dinamika-002",
+    "tahun": 2025,
+    "kelahiran": 96,
+    "kematian": 82,
+    "masuk": 65,
+    "keluar": 61
   }
 ]

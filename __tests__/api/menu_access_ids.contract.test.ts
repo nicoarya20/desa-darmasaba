@@ -102,6 +102,7 @@ const EXPECTED_IDS: Record<string, string[]> = {
     'kependudukan.distribusi-umur',
     'kependudukan.data-banjar',
     'kependudukan.migrasi-penduduk',
+    'kependudukan.dinamika-penduduk',
   ],
   'Musik': [],
   'User & Role': [

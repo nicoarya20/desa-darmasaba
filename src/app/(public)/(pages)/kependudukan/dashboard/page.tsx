@@ -1,5 +1,6 @@
 'use client'
 import colors from '@/con/colors';
+import { MISKIN_LABEL } from '@/lib/data-banjar';
 import { Stack, Box, Paper, Text, Title, SimpleGrid, Skeleton, Group, Badge, Center } from '@mantine/core';
 import { IconUsers, IconHome, IconBasket, IconCoin, IconDatabaseOff } from '@tabler/icons-react';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
@@ -91,7 +92,7 @@ function Page() {
       color: '#FF9F43',
     },
     {
-      title: 'Penduduk Miskin',
+      title: MISKIN_LABEL,
       value: summary.totalKemiskinan,
       icon: IconCoin,
       color: '#EE5050',
@@ -157,7 +158,7 @@ function Page() {
         <Box px={{ base: "md", md: 100 }}>
           <Paper p="xl" withBorder>
             <Title order={3} mb="md" c={colors["blue-button"]}>
-              Dinamika Penduduk
+              Dinamika Penduduk {state.summary.data.dinamika.tahun}
             </Title>
             <SimpleGrid cols={{ base: 2, md: 4 }} spacing="md">
               <Paper p="md" bg="#6EDF9C">

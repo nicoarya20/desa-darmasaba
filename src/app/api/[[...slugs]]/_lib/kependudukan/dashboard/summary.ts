@@ -10,9 +10,7 @@ export default async function dashboardSummary() {
             totalKK,
             totalKelahiran,
             totalKemiskinan,
-            kematianData,
-            pindahMasukData,
-            pindahKeluarData,
+            dinamikaTerbaru,
             agamaData,
             umurData,
             banjarData
@@ -46,40 +44,11 @@ export default async function dashboardSummary() {
                 _sum: { miskin: true }
             }),
 
-            // Kematian data
-            prisma.kematian.findMany({
-                where: {
-                    isActive: true,
-                    tanggal: {
-                        gte: new Date(`${currentYear}-01-01`),
-                        lte: new Date(`${currentYear}-12-31`),
-                    }
-                },
-                orderBy: { tanggal: 'asc' }
-            }),
-            
-            // Pindah masuk
-            prisma.migrasiPenduduk.count({
-                where: {
-                    isActive: true,
-                    jenis: 'MASUK',
-                    tanggal: {
-                        gte: new Date(`${currentYear}-01-01`),
-                        lte: new Date(`${currentYear}-12-31`),
-                    }
-                }
-            }),
-            
-            // Pindah keluar
-            prisma.migrasiPenduduk.count({
-                where: {
-                    isActive: true,
-                    jenis: 'KELUAR',
-                    tanggal: {
-                        gte: new Date(`${currentYear}-01-01`),
-                        lte: new Date(`${currentYear}-12-31`),
-                    }
-                }
+            // Dinamika: total resmi per tahun dari admin (DinamikaPenduduk), tahun terbaru yang ada —
+            // data desa biasanya baru lengkap untuk tahun sebelumnya, jadi tidak dikunci ke currentYear.
+            prisma.dinamikaPenduduk.findFirst({
+                where: { isActive: true },
+                orderBy: { tahun: 'desc' },
             }),
             
             // Data agama
@@ -112,12 +81,15 @@ export default async function dashboardSummary() {
                     totalKelahiran: totalKelahiran,
                     totalKemiskinan: totalKemiskinan._sum.miskin || 0,
                 },
-                dinamika: {
-                    kelahiran: totalKelahiran,
-                    kematian: kematianData.length,
-                    pindahMasuk: pindahMasukData,
-                    pindahKeluar: pindahKeluarData,
-                },
+                dinamika: dinamikaTerbaru
+                    ? {
+                        tahun: dinamikaTerbaru.tahun,
+                        kelahiran: dinamikaTerbaru.kelahiran,
+                        kematian: dinamikaTerbaru.kematian,
+                        pindahMasuk: dinamikaTerbaru.masuk,
+                        pindahKeluar: dinamikaTerbaru.keluar,
+                    }
+                    : null,
                 agama: agamaData,
                 umur: umurData,
                 banjar: banjarData,

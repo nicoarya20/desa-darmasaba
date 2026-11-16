@@ -7,8 +7,10 @@ export async function seedDinamikaPenduduk() {
   console.log("Seeding Dinamika Penduduk...");
 
   for (const item of dinamikaPendudukJson) {
+    // Kunci upsert = tahun (unik), bukan id: baris tahun yang sama bisa sudah dibuat admin dengan id lain,
+    // dan create-by-id akan gagal unique constraint.
     await prisma.dinamikaPenduduk.upsert({
-      where: { id: item.id },
+      where: { tahun: item.tahun },
       update: {
         tahun: item.tahun,
         kelahiran: item.kelahiran,

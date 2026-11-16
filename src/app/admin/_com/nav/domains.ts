@@ -156,6 +156,7 @@ export const kependudukanMenu: NavItem = {
     { id: "kependudukan.distribusi-umur", name: "Distribusi Umur", path: "/admin/kependudukan/distribusi-umur", basePath: "/admin/kependudukan/distribusi-umur" },
     { id: "kependudukan.data-banjar", name: "Data Banjar", path: "/admin/kependudukan/data-banjar", basePath: "/admin/kependudukan/data-banjar" },
     { id: "kependudukan.migrasi-penduduk", name: "Migrasi Penduduk", path: "/admin/kependudukan/migrasi-penduduk", basePath: "/admin/kependudukan/migrasi-penduduk" },
+    { id: "kependudukan.dinamika-penduduk", name: "Dinamika Penduduk", path: "/admin/kependudukan/dinamika-penduduk", basePath: "/admin/kependudukan/dinamika-penduduk" },
   ],
 }
 
