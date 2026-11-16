@@ -84,6 +84,14 @@ describe('validateAdministrasi', () => {
     expect(logic.validateAdministrasi({ ...VALID, nomorTelepon: '0812345678' })).toEqual({});
     expect(logic.validateAdministrasi({ ...VALID, nomorTelepon: '08123456789012' }).nomorTelepon).toBe(E.nomorTelepon);
   });
+
+  it('isian salah pertama mengikuti urutan formulir (target fokus), bukan urutan kunci objek galat', () => {
+    expect(logic.ADMINISTRASI_FIELDS).toEqual(Object.keys(logic.EMPTY_ADMINISTRASI));
+    expect(logic.firstInvalidAdministrasiField(logic.validateAdministrasi(logic.EMPTY_ADMINISTRASI))).toBe('name');
+    expect(logic.firstInvalidAdministrasiField({ jenisLayananId: 'x', nomorTelepon: 'y' })).toBe('nomorTelepon');
+    expect(logic.firstInvalidAdministrasiField(logic.validateAdministrasi({ ...VALID, jenisLayananId: '' }))).toBe('jenisLayananId');
+    expect(logic.firstInvalidAdministrasiField({})).toBeUndefined();
+  });
 });
 
 describe('toAdministrasiPayload & toJenisLayananList', () => {

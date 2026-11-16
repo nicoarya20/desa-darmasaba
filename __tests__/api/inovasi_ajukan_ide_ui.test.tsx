@@ -118,6 +118,9 @@ describe('IdeThanks & InovasiFormCard', () => {
   it('terima kasih: judul bisa difokus (tabIndex -1) + aksi kirim ide lain', () => {
     const html = render(<IdeThanks onAgain={() => {}} />);
     expect(html).toMatch(/tabindex="-1"/i);
+    // Kartu bersama dengan `focusTitle`: section berlabel judul, judul tanpa cincin fokus, lead di kepala kartu.
+    expect(html).toMatch(new RegExp(`<section class="${f.card}" aria-labelledby="([^"]+)"><div class="${f.head}"><h2 id="\\1" tabindex="-1" class="${f.title} ${f.titleFocus}">`, 'i'));
+    expect(html).toContain(`<p class="${f.lead}">${T.thanksText}</p>`);
     expect(html).toContain(T.thanksTitle);
     expect(html).toContain(T.again);
   });
@@ -132,5 +135,8 @@ describe('IdeThanks & InovasiFormCard', () => {
     expect(html).toContain('>Formulir uji</h2>');
     expect(html).toContain(`<p class="${f.lead}">Keterangan uji</p>`);
     expect(render(<InovasiFormCard title="Tanpa lead">x</InovasiFormCard>)).not.toContain(f.lead);
+    // Kartu formulir biasa: judul tidak masuk urutan fokus program.
+    expect(html).not.toMatch(/tabindex/i);
+    expect(html).not.toContain(f.titleFocus);
   });
 });

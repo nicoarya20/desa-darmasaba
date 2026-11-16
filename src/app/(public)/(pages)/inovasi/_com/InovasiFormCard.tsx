@@ -1,10 +1,15 @@
-import { useId, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import s from './inovasi-form.module.css';
 
 type CardProps = {
   title: string;
   /** Kalimat pendek di bawah judul (opsional), mis. keterangan isian wajib. */
   lead?: string;
+  /**
+   * Keadaan sesudah kirim sukses (formulir & tombol kirim di-unmount): judul diberi tabIndex -1 dan difokus saat mount
+   * agar fokus tidak jatuh ke <body> dan judul dibacakan pembaca layar.
+   */
+  focusTitle?: boolean;
   children: ReactNode;
 };
 
@@ -13,12 +18,24 @@ type CardProps = {
  * isian satu kolom selebar kartu. Dipakai di dalam `PermohonanLayout` PPID di atas latar putih Kabar
  * (kartu putih `PermohonanFormCard` tidak terlihat di sana). Ukuran isian: `PERMOHONAN_FIELD`.
  */
-export function InovasiFormCard({ title, lead, children }: CardProps) {
+export function InovasiFormCard({ title, lead, focusTitle, children }: CardProps) {
   const titleId = useId();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (focusTitle) titleRef.current?.focus();
+  }, [focusTitle]);
+
   return (
     <section className={s.card} aria-labelledby={titleId}>
       <div className={s.head}>
-        <h2 id={titleId} className={s.title}>{title}</h2>
+        <h2
+          id={titleId}
+          ref={titleRef}
+          tabIndex={focusTitle ? -1 : undefined}
+          className={focusTitle ? `${s.title} ${s.titleFocus}` : s.title}
+        >
+          {title}
+        </h2>
         {lead ? <p className={s.lead}>{lead}</p> : null}
       </div>
       {children}

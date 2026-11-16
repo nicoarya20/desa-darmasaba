@@ -2,7 +2,7 @@
 // Layanan Online Desa: ubin hub, formulir Administrasi Online (galat/kirim gagal/memuat/sukses), daftar jenis
 // layanan, pemberitahuan pengalihan Informasi Desa, dan route lama yang dialihkan 307. jsdom rusak → renderToStaticMarkup.
 import { MantineProvider } from '@mantine/core';
-import type { AnchorHTMLAttributes } from 'react';
+import { createRef, type AnchorHTMLAttributes } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -24,6 +24,7 @@ vi.mock('@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal', () => ({ defau
 import { LayananOnlineTiles } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/LayananOnlinePage';
 import { JenisLayananSection } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/JenisLayananSection';
 import { AdministrasiForm, AdministrasiSent } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/AdministrasiForm';
+import f from '@/app/(public)/(pages)/inovasi/_com/inovasi-form.module.css';
 import { EMPTY_ADMINISTRASI, validateAdministrasi } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/administrasi.logic';
 import { ADMINISTRASI_TEXT as AT } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/administrasi.text';
 import type { JenisLayananState } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/use-jenis-layanan';
@@ -55,6 +56,7 @@ const form = (props: Partial<Parameters<typeof AdministrasiForm>[0]> = {}) =>
       jenis={READY}
       onField={() => {}}
       onSubmit={() => {}}
+      firstFieldRef={createRef<HTMLInputElement>()}
       {...props}
     />,
   );
@@ -92,6 +94,12 @@ describe('AdministrasiForm', () => {
     expect(html).toContain('aria-invalid="true"');
   });
 
+  it('tiap isian punya id `<prefix>-<field>` (target fokus isian salah pertama) + tombol kirim bertipe submit', () => {
+    const html = form();
+    for (const field of Object.keys(EMPTY_ADMINISTRASI)) expect(html).toMatch(new RegExp(`<input[^>]*id="[^"]+-${field}"`));
+    expect(html).toMatch(/<button[^>]*type="submit"/);
+  });
+
   it('kirim gagal → isian tetap + pesan role=alert', () => {
     const html = form({ values: VALID, status: 'failed' });
     expect(html).toContain(`value="${VALID.name}"`);
@@ -111,6 +119,13 @@ describe('AdministrasiSent & JenisLayananSection', () => {
   it('sukses: terima kasih menyebut jenis layanan + tombol ajukan lagi', () => {
     const html = render(<AdministrasiSent jenisNama="Surat Keterangan Usaha" onReset={() => {}} />);
     expect(html).toContain(`>${AT.sentTitle}</h2>`);
+    // Judul menerima fokus program setelah sukses (formulir di-unmount), tanpa masuk urutan Tab.
+    // React SSR menulis `tabIndex` (camelCase), jadi dicocokkan tanpa peka huruf.
+    expect(html).toMatch(new RegExp(`<h2[^>]*tabindex="-1"[^>]*>${AT.sentTitle}</h2>`, 'i'));
+    // Tanpa cincin fokus lewat kelas kartu bersama (`focusTitle`), bukan inline style.
+    expect(html).toContain(`class="${f.title} ${f.titleFocus}"`);
+    expect(html).not.toMatch(/style="[^"]*outline/);
+    expect(html).toMatch(/<section[^>]*aria-labelledby="([^"]+)"[\s\S]*<h2 id="\1"/);
     expect(html).toContain('role="status"');
     expect(html).toContain('Pengajuan Surat Keterangan Usaha sudah kami terima');
     expect(html).toContain(AT.sentAgain);

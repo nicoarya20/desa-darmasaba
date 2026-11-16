@@ -47,6 +47,11 @@
   font-weight: 600;
 }
 
+/* Judul yang difokus program (`focusTitle`, tabIndex -1) hanya untuk pembaca layar: tak bisa dicapai Tab, tanpa cincin. */
+.titleFocus:focus {
+  outline: none;
+}
+
 .lead {
   margin: 0;
   color: #515154;

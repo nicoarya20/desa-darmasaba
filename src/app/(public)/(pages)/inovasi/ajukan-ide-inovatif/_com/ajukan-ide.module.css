@@ -107,11 +107,6 @@
 }
 
 /* ---------- Terima kasih ---------- */
-/* Fokus dipindah program ke judul (tabIndex -1) hanya agar terbaca pembaca layar; tanpa cincin fokus. */
-.thanksTitle:focus {
-  outline: none;
-}
-
 .again {
   padding: 0;
   border: 0;
