@@ -1,3 +1,4 @@
+// @vitest-environment node
 // Bank Sampah: normalisasi langkah & lokasi, urut nama, saring klien, dan pilihan tautan "Petunjuk arah".
 import { describe, expect, it } from 'vitest';
 import {
