@@ -87,10 +87,11 @@ describe('parseCoords', () => {
 });
 
 describe('sortLokasi & filterLokasi', () => {
+  // namaTempatMaps diisi per lokasi (stg: sama dengan name); tanpa itu semua mewarisi "TPS3R Pudak Mesari" dari STG_LOKASI.
   const items = [
     lokasi({ id: '1', name: 'TPS3R Pudak Mesari' }),
-    lokasi({ id: '2', name: 'Bank Sampah Banjar 10', alamat: 'Jl. Raya Sibang' }),
-    lokasi({ id: '3', name: 'bank sampah banjar 2', alamat: 'Br. Tegal' }),
+    lokasi({ id: '2', name: 'Bank Sampah Banjar 10', namaTempatMaps: 'Bank Sampah Banjar 10', alamat: 'Jl. Raya Sibang' }),
+    lokasi({ id: '3', name: 'bank sampah banjar 2', namaTempatMaps: 'bank sampah banjar 2', alamat: 'Br. Tegal' }),
   ];
 
   it('urut nama A-Z tanpa beda huruf besar, angka alami (2 sebelum 10)', () => {
