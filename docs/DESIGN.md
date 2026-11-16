@@ -145,6 +145,16 @@ fz={{ base: "sm", md: "md" }}
 | `lg` | `16px` |
 | `xl` | `20px` |
 
+Token jarak tata letak situs publik (`src/app/globals.css`, nilai ≤734px dalam kurung):
+
+| Token | Nilai | Pakai untuk |
+|---|---|---|
+| `--edge-gutter` | `clamp(24px, 4vw, 64px)` (24px) | tepi kiri/kanan isi halaman |
+| `--section-gap` | `100px` (72px) | antar-section beranda; padding atas/bawah section = setengahnya |
+| `--block-gap` | `64px` (48px) | antar-bagian di DALAM satu halaman (sorotan → daftar, kelompok tahun → tahun, daftar → bagian Mitra) |
+
+Judul bagian di dalam halaman (`h2`) 28px (ponsel 24px), jarak judul → isi 24px (ponsel 20px), sama dengan `.blockTitle` Kabar. Jangan menulis 56/64/100px literal untuk jarak antar-bagian; pakai token.
+
 ---
 
 ## 5. Layout Public Site (`/`)
@@ -585,6 +595,7 @@ Tips **dibaca langsung tanpa membuka detail** (tidak ada halaman detail), di ker
   - kanan: judul (bila ada foto) + isi HTML editor admin 17px rata kiri, lebar baca maks 720px. Jarak antarblok lewat `gap` 0.8em; `<p></p>` kosong dari editor disembunyikan. Butir `ul` = disc, `ol` = angka (dipaksa, karena isi berada di dalam `<li>` dan peramban memberi lingkaran kosong), penanda warna brand, jarak antarbutir 10px.
   - tanpa foto dan tanpa isi → satu kolom berisi judul saja (`.tipSolo`).
   - Paginasi bulat `KabarListPagination` hanya bila > 1 halaman.
+  - `?page` melewati halaman terakhir padahal ada entri (tautan lama/diketik) → `outOfRangePage(state, page)` (`kabar-list.logic.ts`, pasangan server untuk `paginate`) memberi halaman terakhir yang sah → `router.replace`, kata kunci dipertahankan; selama dialihkan tetap kerangka memuat. Pesan "Belum ada" hanya bila `total` = 0. Dipakai juga Info TTG. Berita/Pengumuman/Kegiatan Desa/Keamanan Lingkungan (`useKabarPage`) belum (tidak mengekspos `total`).
 - **Detail**: tidak ada; seluruh isi tip tampil di daftar.
 - **Kosong**: kotak `#f5f5f7`: "Belum ada tips keamanan." atau "Tidak ada tips keamanan yang cocok dengan “…”.". Memuat → 2 ubin abu berdenyut (`aria-busy`).
 - **Galat**: "Tips keamanan gagal dimuat. Coba muat ulang halaman."; pemuat melempar Error berkonteks.
@@ -754,6 +765,7 @@ Gaya halaman Monev/CCTV dalam kerangka Pendidikan (`page-frame`); hanya `.panel`
 ### Kerangka menu Inovasi (`(pages)/inovasi/`)
 
 Keenam halaman Inovasi memakai bahasa Kabar Desa: `.section` `kabar.module.css` + `KABAR_BRAND_VARS`, wadah mendefinisikan `--gutter: var(--edge-gutter)`, kepala `KabarListHeader` (`tabs=[]` kecuali Kolaborasi), detail kolom 860px `kabar-detail.module.css` dengan tautan kembali teks "‹ Nama Daftar" (`.back` detail-umkm). Data dari `*.source.ts` per halaman (`ApiFetch` langsung, bukan state admin `admin/(dashboard)/_state`), logika murni di `*.logic.ts`. Memuat = kerangka berdenyut `aria-busy` (kepala & kolom cari tetap ter-mount); kosong/galat = kotak `#f5f5f7` satu kalimat; galat dilempar berkonteks. Kolom cari daftar pendek memakai `listSearchable(search, total)` (`_com/kabar-list/kabar-list.logic.ts`): tampil bila entri > `LIST_SEARCH_THRESHOLD` (6) atau URL sudah ber-`?search=`. Test: `__tests__/api/inovasi_<halaman>_{logic,ui}.test.ts(x)`.
+- **Ukuran seragam** (diaudit 2026-11-16 di 390/834/1024/1440/1920): tepi isi `--edge-gutter` di semua halaman termasuk formulir; padding atas/bawah 50 (ponsel 36); kepala → isi 40 (ponsel 28); antar-bagian `--block-gap`; judul bagian 28/24 → isi 24/20. Hasil cari global Desa Digital dan Program Kreatif membuka halaman detail (`desaDigitalDetailHref`/`programKreatifDetailHref` di `searchUrl.tsx`).
 
 ### Desa Digital / Smart Village (`/inovasi/desa-digital-smart-village[/{id}]`)
 
@@ -776,22 +788,26 @@ Folder: `_com/KolaborasiPage.tsx`, `KolaborasiList.tsx`, `KolaborasiRow.tsx`, `M
 - **Kepala**: pil tahun (`KabarListHeader` `tabs`) hanya bila ada ≥ 2 tahun atau `?tahun=` aktif: "Semua" di depan, tahun terbaru dulu, tahun URL tak dikenal tetap diberi pil aktif. Kolom cari lewat `listSearchable`.
 - **Daftar**: kelompok `h2` tahun (28/24px) berisi baris bergaris tanpa kartu: desktop `5fr | 7fr` (tablet `2fr | 3fr`, ponsel 1 kolom); kiri judul `h3` 24/21px + ringkasan 17px abu, kanan deskripsi (sanitize, lebar baca 720px) + "Bersama: {kolaborator}" 15px. Ringkasan berpola slug kebab-case disembunyikan (`isSlugLike`, MITIGASI SEMENTARA).
 - **Deskripsi dibuka di tempat** (keputusan user): teks polos ≤ 600 karakter tampil penuh; lebih panjang dipotong 4 baris (`line-clamp`) dengan tombol teks brand "Baca selengkapnya ⌄" / "Tampilkan lebih sedikit" (`aria-expanded` + `aria-controls`).
-- **Mitra Kolaborasi**: `h2` 32/28px + pengantar, dinding logo ubin `#f5f5f7` rasio 3:2 (radius 18px), logo `contain` dalam bingkai 64% × 68% dengan `mix-blend-mode: multiply` (latar putih logo melebur ke ubin), nama 17/15px di bawah ubin; 4/3/2 kolom; muat sendiri limit 100. Galat atau tanpa mitra → bagian tidak dirender (galat dilog).
+- **Jarak**: kelompok tahun → tahun `.group + .group { margin-top: var(--block-gap) }` (bukan `gap` flex `.list`, agar paginasi di dalamnya tetap memakai margin bawaannya 40/32); daftar → Mitra `--block-gap`.
+- **Mitra Kolaborasi**: `h2` 28/24px + pengantar (→ dinding 24/20px), dinding logo ubin `#f5f5f7` rasio 3:2 (radius 18px), logo `contain` dalam bingkai 64% × 68% dengan `mix-blend-mode: multiply` (latar putih logo melebur ke ubin), nama 17/15px di bawah ubin; 4/3/2 kolom; muat sendiri limit 100. Galat atau tanpa mitra → bagian tidak dirender (galat dilog).
 - **Pola umum**: ubin logo mitra/sponsor = rasio 3:2 + `contain` + `multiply`, bukan `cover` (logo terpotong).
 
 ### Info Teknologi Tepat Guna (`/inovasi/info-teknologi-tepat-guna`)
 
 Pola Tips Keamanan (dibaca langsung, tanpa detail). Folder: `_com/InfoTtgPage.tsx`, `TtgCard.tsx`, `info-ttg.{logic,source,meta,text}.ts`, `use-info-ttg.ts`, `info-ttg.module.css`.
-- Ubin `#f5f5f7` bersudut lancip, desktop 2 kolom, isi HTML (sanitize) dibaca langsung; 10 per halaman (server); kolom cari lewat `listSearchable`. Isi HTML kosong (`<p></p>`) dianggap tanpa isi → ubin satu kolom judul saja.
+- Ubin `#f5f5f7` bersudut lancip, desktop 2 kolom, isi HTML (sanitize) dibaca langsung; 10 per halaman (server); kolom cari lewat `listSearchable`. `?page` di luar rentang → `router.replace` ke halaman terakhir (lihat Tips Keamanan). Isi HTML kosong (`<p></p>`) dianggap tanpa isi → ubin satu kolom judul saja.
 - Beda dari Tips Keamanan: **foto rasio asli, tidak dipotong** (sebagian foto berisi teks produk), disisipkan berpadding 40px (ponsel 24px), lebar maks 560px karena sumber hanya ±720px. Kolom kiri `min(40%, 600px)` agar di layar lebar teks tidak terpisah celah dari foto. `alt=""` karena judul tepat di sebelah foto.
 - **Hutang teknis eksplisit**: ubin daftar baca-langsung (Tips Keamanan + Info TTG): hook muat per halaman, source find-many, dan CSS ubin ±150 baris nyaris sama. Disalin sengaja (2026-11-16) agar rombak Inovasi tidak menyentuh modul Keamanan; satukan ke `src/app/(public)/_com/` saat ada pemakai ketiga atau saat salah satunya diubah.
 
 ### Formulir publik Inovasi (Ajukan Ide Inovatif, Administrasi Online)
 
-Dipakai bersama: `inovasi/_com/InovasiFormCard.tsx` (ubin `#f5f5f7` radius 18, judul h2 24/21px, `lead` opsional) + `InovasiFormActions` + `inovasi-form.module.css`. `PermohonanFormCard` PPID berwarna putih sehingga tidak terlihat di latar putih Kabar.
-- Kepala `KabarListHeader` `searchable={false}`, lalu `PermohonanLayout` + `PermohonanSteps` PPID diimpor apa adanya (kiri alur menempel ≥75em, kanan formulir; lebar maks 75rem).
+Dipakai bersama: `inovasi/_com/InovasiFormCard.tsx` (ubin `#f5f5f7` radius 18, judul h2 24/21px, `lead` opsional, `focusTitle` opsional untuk kartu terima kasih: judul tabIndex -1 difokus saat mount, kelas `.titleFocus` tanpa cincin) + `InovasiFormActions` + `inovasi-form.module.css`. `PermohonanFormCard` PPID berwarna putih sehingga tidak terlihat di latar putih Kabar.
+- Kepala `KabarListHeader` `searchable={false}`, lalu `PermohonanLayout` + `PermohonanSteps` PPID diimpor apa adanya (kiri alur menempel ≥75em, kanan formulir).
+- **Selebar halaman**: pembungkus diberi `.fullWidth` (`inovasi-form.module.css`) yang menyetel `--ppid-measure: none` (melepas batas 75rem PPID tanpa mengubah PPID) sehingga tepi kanan kartu = `--edge-gutter` seperti halaman Inovasi lain. Kolom formulir tetap 7/12 tetapi maks 824px (isian 760px) agar tidak terlalu panjang di layar lebar; sisa lebar ke kolom kiri. Ukur: 1440 kiri 525 / kartu 735; 1920 kiri 904 / kartu 824.
+- **Kolom kiri**: antar-blok 40px (ponsel 32), judul blok 24/21px → isi 20px (blok catatan Musyawarah 17px tetap gaya catatan).
 - **Bertumpuk (< 75em)**: formulir dinaikkan DI ATAS kolom kiri lewat `order` di modul CSS halaman (Ajukan Ide `.formFirst > * > :last-child { order: -1 }`, Administrasi `.layout > div > :first-child { order: 1 }`); PPID tidak diubah.
-- Isian Mantine ukuran `PERMOHONAN_FIELD` (md, radius md, font 16px → tidak memicu zoom iOS), terkontrol state lokal (bukan state admin). Galat per isian: Ajukan Ide setelah blur atau mencoba kirim (fokus ke galat pertama), Administrasi setelah percobaan kirim pertama; tombol kirim tidak dinonaktifkan. Isian panjang = `Textarea` autosize + hitungan karakter, bukan editor admin.
+- Isian Mantine ukuran `PERMOHONAN_FIELD` (md, radius md, font 16px → tidak memicu zoom iOS), terkontrol state lokal (bukan state admin). Isian wajib bertanda `*` (`withAsterisk`) dengan pesan galat spesifik per isian (mis. "Isi nama lengkap."), bukan "Wajib diisi.". Galat per isian: Ajukan Ide setelah blur atau mencoba kirim, Administrasi setelah percobaan kirim pertama; tombol kirim tidak dinonaktifkan.
+- **Fokus keyboard** (kedua formulir): kirim dengan isian salah → isian salah pertama (galat sudah ter-render, `flushSync` di Administrasi); kirim gagal → kembali ke tombol kirim (tombol `loading` = `disabled` melepas fokus ke `<body>`); sukses → judul kartu terima kasih (tabIndex -1, tanpa cincin fokus); kirim lagi → isian pertama. Isian panjang = `Textarea` autosize + hitungan karakter, bukan editor admin.
 - Kirim gagal → isian tetap, pesan `role="alert"` di atas tombol. Sukses → keadaan terima kasih di tempat kartu (judul difokus / `role="status"`) + aksi teks untuk mengirim lagi. Tanpa toast.
 - Telepon: `type="tel" inputMode="numeric"`, saring digit di logika (maks 13 digit); JANGAN `maxLength` di input (menghitung strip/spasi sebelum disaring, nomor tempelan terpotong).
 - Teks warga yang dirender admin sebagai HTML wajib di-escape di frontend (Ajukan Ide: `deskripsi` dikirim sebagai paragraf `<p>` ter-escape); sanitize di admin menunggu backend (BACKEND-TODO P1).
