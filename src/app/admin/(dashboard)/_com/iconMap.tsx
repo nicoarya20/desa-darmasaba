@@ -143,6 +143,11 @@ const iconMap: Record<IconKey, React.FC<any>> = {
   book: IconBook
 }
 
+/** Benar bila `value` kunci ikon yang dikenal (untuk merender tanpa ikon alih-alih tanda tanya). */
+export function isIconKey(value: string): value is IconKey {
+  return Object.hasOwn(iconMap, value)
+}
+
 /* =======================
    Icon Mapper Component
 ======================= */
