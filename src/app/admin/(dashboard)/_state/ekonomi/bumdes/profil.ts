@@ -3,7 +3,7 @@ import { getServerMessage } from "@/utils/api-message";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
-import { uploadBumdesImage } from "./bumdes-image";
+import { unggahGambar } from "../../konten-bersama/unggah-gambar";
 
 export type ProfilBumdesData = {
   id: string;
@@ -74,7 +74,7 @@ const profilBumdes = proxy({
 
     profilBumdes.saving = true;
     try {
-      const imageId = newImage ? await uploadBumdesImage(newImage) : (profilBumdes.data?.imageId ?? null);
+      const imageId = newImage ? await unggahGambar(newImage) : (profilBumdes.data?.imageId ?? null);
       const { alamat, kontak, tahunBerdiri } = profilBumdes.form;
       const res = await ApiFetch.api.ekonomi.bumdes.profil.put({
         nama: cek.data.nama,

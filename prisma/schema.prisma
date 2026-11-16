@@ -122,6 +122,10 @@ model FileStorage {
   UnitUsahaBumDes  UnitUsahaBumDes[]
   FotoProfilBumDes FotoProfilBumDes[]
 
+  BankSampahFotoBagan    KeteranganBankSampahTerdekat[] @relation("BankSampahFotoBagan")
+  PengurusBankSampah     PengurusBankSampah[]
+  FotoKegiatanBankSampah FotoKegiatanBankSampah[]
+
   PerangkatDesa PerangkatDesa[]
 }
 
@@ -148,6 +152,8 @@ model ProgramInovasi {
   link        String?      @db.VarChar(255)
   // Galeri dokumentasi kegiatan program (bukti pelaksanaan), terpisah dari logo/cover `image`.
   images      FileStorage[] @relation("ProgramInovasiImages")
+  // Bank sampah / TPS yang menjalankan program ini (tab Profil modal bank sampah publik).
+  bankSampah  KeteranganBankSampahTerdekat[] @relation("BankSampahProgramInovasi")
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?    @default(now())
@@ -2113,6 +2119,48 @@ model KeteranganBankSampahTerdekat {
   updatedAt        DateTime @updatedAt
   deletedAt        DateTime @default(now())
   isActive         Boolean  @default(true)
+
+  // Detail di modal publik (Profil/Struktur/Dokumentasi). Semua opsional agar baris lama tetap valid.
+  deskripsi           String?                  @db.Text
+  kontak              String?
+  // Daftar { platform, url }; divalidasi skema bersama src/lib/konten-bersama/media-sosial.validation.ts.
+  mediaSosial         Json?
+  fotoBaganStruktur   FileStorage?             @relation("BankSampahFotoBagan", fields: [fotoBaganStrukturId], references: [id], onDelete: SetNull)
+  fotoBaganStrukturId String?
+  pengurus            PengurusBankSampah[]
+  fotoKegiatan        FotoKegiatanBankSampah[]
+  programInovasi      ProgramInovasi[]         @relation("BankSampahProgramInovasi")
+}
+
+// Pengurus bank sampah (struktur organisasi sederhana: nama + jabatan); hapus = hapus baris + foto.
+model PengurusBankSampah {
+  id           String                       @id @default(cuid())
+  bankSampah   KeteranganBankSampahTerdekat @relation(fields: [bankSampahId], references: [id], onDelete: Cascade)
+  bankSampahId String
+  nama         String
+  jabatan      String
+  image        FileStorage?                 @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId      String?
+  urutan       Int                          @default(0)
+  createdAt    DateTime                     @default(now())
+  updatedAt    DateTime                     @updatedAt
+
+  @@index([bankSampahId, urutan])
+}
+
+// Galeri foto kegiatan bank sampah; hapus permanen (tanpa panel Sampah).
+model FotoKegiatanBankSampah {
+  id           String                       @id @default(cuid())
+  bankSampah   KeteranganBankSampahTerdekat @relation(fields: [bankSampahId], references: [id], onDelete: Cascade)
+  bankSampahId String
+  image        FileStorage                  @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId      String
+  keterangan   String?
+  urutan       Int                          @default(0)
+  createdAt    DateTime                     @default(now())
+  updatedAt    DateTime                     @updatedAt
+
+  @@index([bankSampahId, urutan])
 }
 
 // ========================================= PORGRAM PENGHIJAUAN ========================================= //

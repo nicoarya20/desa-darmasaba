@@ -3,7 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 
-/** Batas ukuran satu gambar BUMDes yang diterima dropzone. */
+/** Batas ukuran satu gambar yang diterima dropzone konten bersama. */
 export const MAX_IMAGE_BYTES = 5 * 1024 ** 2;
 
 type Props = {
@@ -16,8 +16,8 @@ type Props = {
   mt?: string | number;
 };
 
-/** Dropzone gambar BUMDes (JPG/PNG/WebP, maks 5MB per file); dipakai field satu gambar dan galeri. */
-export default function BumdesDropzone({
+/** Dropzone gambar (JPG/PNG/WebP, maks 5MB per file); dipakai field satu gambar dan galeri semua domain. */
+export default function GambarDropzone({
   onDrop,
   multiple = false,
   disabled = false,

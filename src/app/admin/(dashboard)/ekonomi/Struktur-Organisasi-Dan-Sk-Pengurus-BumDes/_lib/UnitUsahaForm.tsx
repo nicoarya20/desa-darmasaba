@@ -6,7 +6,7 @@ import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BumdesImageField from './BumdesImageField';
+import GambarField from '@/app/admin/(dashboard)/_com/konten-bersama/gambar.field';
 
 export const UNIT_USAHA_LIST_PATH = '/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/unit-usaha';
 
@@ -35,7 +35,7 @@ export default function UnitUsahaForm({ title }: { title: string }) {
 
       <Paper w={{ base: '100%', md: '50%' }} bg={colors['white-1']} p="lg" radius="md" shadow="sm" withBorder>
         <Stack gap="md">
-          <BumdesImageField
+          <GambarField
             label="Gambar Unit Usaha"
             currentUrl={unit.currentImageUrl}
             file={file}

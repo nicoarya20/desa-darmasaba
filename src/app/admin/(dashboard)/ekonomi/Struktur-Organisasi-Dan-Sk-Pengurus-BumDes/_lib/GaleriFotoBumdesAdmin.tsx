@@ -9,8 +9,8 @@ import { Alert, Box, Group, Paper, Skeleton, Text, Title } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BumdesDropzone from './BumdesDropzone';
-import GaleriFotoAdminGrid from './GaleriFotoAdminGrid';
+import GambarDropzone from '@/app/admin/(dashboard)/_com/konten-bersama/gambar.dropzone';
+import GaleriFotoAdminGrid from '@/app/admin/(dashboard)/_com/konten-bersama/galeri-foto.admin-grid';
 
 /** Section admin "Galeri Foto" di bawah form Profil BUMDes: unggah banyak foto, keterangan, urutan, hapus. */
 export default function GaleriFotoBumdesAdmin({ profilTersimpan }: { profilTersimpan: boolean }) {
@@ -49,7 +49,7 @@ export default function GaleriFotoBumdesAdmin({ profilTersimpan }: { profilTersi
           Isi dan simpan profil BUMDes dulu sebelum menambah galeri foto.
         </Alert>
       ) : (
-        <BumdesDropzone
+        <GambarDropzone
           multiple
           disabled={penuh}
           loading={galeri.uploading}
