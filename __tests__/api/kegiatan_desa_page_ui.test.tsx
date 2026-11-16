@@ -51,13 +51,23 @@ describe('KegiatanDetailBody', () => {
     expect(html).not.toContain('justify');
   });
 
-  it('tanpa foto/lokasi/ringkasan → bagian itu tidak dirender, partisipan kosong = 0', () => {
-    const html = render(
-      <KegiatanDetailBody data={data({ image: null, lokasi: ' ', deskripsiSingkat: null, partisipan: null })} />,
-    );
-    expect(html).not.toContain(d.photo);
-    expect(html).not.toContain(s.lead);
-    expect(html).toContain('0 partisipan');
+  it('tanpa foto/lokasi/ringkasan/partisipan → bagian itu tidak dirender (partisipan null/0 tidak tampil)', () => {
+    for (const partisipan of [null, 0]) {
+      const html = render(
+        <KegiatanDetailBody data={data({ image: null, lokasi: ' ', deskripsiSingkat: null, partisipan })} />,
+      );
+      expect(html).not.toContain(d.photo);
+      expect(html).not.toContain(s.lead);
+      expect(html).not.toContain('partisipan');
+      expect(html).not.toContain(s.facts);
+    }
+  });
+
+  it('partisipan 0 tidak dirender walau lokasi ada (bug lama `{partisipan && …}` merender "0")', () => {
+    const html = render(<KegiatanDetailBody data={data({ partisipan: 0 })} />);
+    expect(html).toContain('Pura Dalem Kangin, Desa Adat Tegal');
+    expect(html).not.toContain('partisipan');
+    expect(html).not.toMatch(/>0</);
   });
 
   it('panel progres pembangunan hanya untuk kategori Pembangunan', () => {

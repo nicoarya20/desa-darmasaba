@@ -3,6 +3,7 @@ import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateDashboardKegiatan from '@/app/admin/(dashboard)/_state/desa/kegiatanDesa';
 import colors from '@/con/colors';
 import { KATEGORI_PEMBANGUNAN_ID } from '@/lib/kegiatan-pembangunan';
+import { partisipanInputValue, toPartisipan } from '@/lib/kegiatan-partisipan';
 import ApiFetch from '@/lib/api-fetch';
 import {
   ActionIcon,
@@ -153,10 +154,12 @@ export default function CreateKegiatanDesa() {
 
           <NumberInput
             label="Jumlah Partisipan"
+            description="Opsional, kosongkan bila tidak dicatat"
             placeholder="Masukkan jumlah partisipan"
-            value={kegiatanState.kegiatan.create.form.partisipan}
-            onChange={(val) => (kegiatanState.kegiatan.create.form.partisipan = Number(val) || 0)}
+            value={partisipanInputValue(kegiatanState.kegiatan.create.form.partisipan)}
+            onChange={(val) => (kegiatanState.kegiatan.create.form.partisipan = toPartisipan(val))}
             min={0}
+            allowDecimal={false}
           />
 
           {kegiatanState.kegiatan.create.form.kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID && (
