@@ -3,7 +3,7 @@ import { IconHeartHandshake } from '@tabler/icons-react';
 import type { Mitra } from './mitra.logic';
 import s from './mitra.module.css';
 import { KOLABORASI_TEXT as T } from './kolaborasi.text';
-import type { LoadState } from './use-load-once';
+import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 
 const TITLE_ID = 'mitra-kolaborasi-title';
 const PLACEHOLDER_TILES = 4;

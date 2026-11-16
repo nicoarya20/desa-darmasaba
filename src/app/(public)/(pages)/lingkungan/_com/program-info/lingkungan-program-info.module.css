@@ -1,0 +1,9 @@
+/*
+ * Halaman program CMS menu Lingkungan di kerangka Kabar (isi selebar layar, tepi --edge-gutter). Bagian program-info
+ * memakai kolom 5fr | 7fr (= baris Kolaborasi Inovasi), bukan 280px bawaan Pendidikan yang dirancang untuk isi 1200px:
+ * di layar lebar judul 280px membuat teks berhenti di tengah sementara garis bagian membentang penuh.
+ * ≤734px program-info sendiri menumpuk satu kolom.
+ */
+.page {
+  --pi-cols: minmax(0, 5fr) minmax(0, 7fr);
+}

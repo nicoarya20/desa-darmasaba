@@ -4,6 +4,7 @@ import roleDelete from "./del";
 import roleFindMany from "./findMany";
 import roleFindUnique from "./findUnique";
 import roleUpdate from "./updt";
+import { roleManagerBeforeHandle } from "../guard";
 
 const Role = new Elysia({
     prefix: "/role",
@@ -11,6 +12,7 @@ const Role = new Elysia({
 })
 
  .post("/create", roleCreate, {
+    beforeHandle: roleManagerBeforeHandle,
     body: t.Object({
       name: t.String(),
     }),
@@ -24,10 +26,11 @@ const Role = new Elysia({
     return response;
   })
   .put("/:id", roleUpdate, {
+    beforeHandle: roleManagerBeforeHandle,
     body: t.Object({
       name: t.String(),
     }),
   })
-  .delete("/del/:id", roleDelete);
+  .delete("/del/:id", roleDelete, { beforeHandle: roleManagerBeforeHandle });
 
 export default Role;

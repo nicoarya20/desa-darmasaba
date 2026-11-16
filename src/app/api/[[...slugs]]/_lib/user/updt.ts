@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getMenuIdsByRoleId } from "@/app/admin/(dashboard)/user&role/_com/getMenuIdByRole";
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import { denyDeveloperAccountChange, type UserManagerContext } from "./guard";
 
 // API update user
-export default async function userUpdate(context: Context) {
+export default async function userUpdate(context: UserManagerContext) {
   try {
     const { id, isActive, roleId } = (await context.body) as {
       id: string;
@@ -30,6 +30,9 @@ export default async function userUpdate(context: Context) {
     if (!currentUser) {
       return { success: false, message: "User tidak ditemukan" };
     }
+
+    const forbidden = denyDeveloperAccountChange(context, context.actor, currentUser.roleId, roleId);
+    if (forbidden) return forbidden;
 
     const isRoleChanged = roleId && currentUser.roleId !== roleId;
     const isActiveChanged =
@@ -79,6 +82,11 @@ export default async function userUpdate(context: Context) {
     // ✅ HAPUS SEMUA SESI USER DI DATABASE
     if (isRoleChanged) {
       await prisma.userSession.deleteMany({ where: { userId: id } });
+    }
+
+    // Cabut sesi Better Auth (tabel `session`) supaya role/status baru berlaku.
+    if (isRoleChanged || isActive === false) {
+      await prisma.session.deleteMany({ where: { userId: id } });
     }
 
     return {

@@ -4,8 +4,11 @@
  * tata letak isi. Bagian berlabel bergaris tanpa kartu (pola Dasar Hukum PPID): judul kiri | isi kanan.
  * Variabel --pi-* dibaca juga oleh bagian khas tiap halaman (panel Lokasi & Jadwal, daftar Jenis Program);
  * --brand dipasang ProgramInfoPage. Breakpoint mengikuti apple.com: ≤734px (mobile).
+ * Kerangka lain (Kabar menu Lingkungan) memakai ProgramInfoBody + kelas `.tokens` (token saja, tanpa min-height) dan
+ * boleh mengganti kolom bagian lewat `--pi-cols`.
  */
-.page {
+.page,
+.tokens {
   --pi-ink: #1d1d1f;
   --pi-muted: #515154;
   --pi-rule: #d2d2d7;
@@ -14,8 +17,11 @@
   --pi-read: 46rem;
   --pi-text: 19px;
   --pi-leading: 1.55;
-  min-height: 70vh;
   color: var(--pi-ink);
+}
+
+.page {
+  min-height: 70vh;
 }
 
 .layout {
@@ -25,15 +31,20 @@
   gap: 28px;
 }
 
+/* Kepala → isi 40px di kerangka Pendidikan (gap 28 + 12). Kerangka Kabar sudah berjarak dari KabarListHeader. */
+.layout > .sections,
+.layout > .pageNote {
+  margin-top: 12px;
+}
+
 .sections {
   width: 100%;
-  margin-top: 12px;
   border-bottom: 1px solid var(--pi-rule);
 }
 
 .section {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: var(--pi-cols, 280px minmax(0, 1fr));
   gap: 12px 40px;
   padding: 36px 0;
   border-top: 1px solid var(--pi-rule);
@@ -136,7 +147,7 @@
 
 .pageNote {
   width: 100%;
-  margin: 12px 0 0;
+  margin: 0;
   padding: 36px 0;
   border-top: 1px solid var(--pi-rule);
   color: var(--pi-muted);
@@ -151,7 +162,8 @@
 }
 
 @media (max-width: 734px) {
-  .page {
+  .page,
+  .tokens {
     --pi-text: 17px;
     --pi-leading: 1.5;
   }

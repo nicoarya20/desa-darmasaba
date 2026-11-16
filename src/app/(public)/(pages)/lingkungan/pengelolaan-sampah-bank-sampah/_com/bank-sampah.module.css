@@ -1,0 +1,206 @@
+/*
+ * Halaman Bank Sampah — bagian di atas kerangka Kabar (`.section` kabar.module.css + kepala kabar-list):
+ * jarak antar-bagian, judul bagian, dan alur bernomor "Cara menabung". Variabel warna (--brand, --ink, --muted,
+ * --line) dari kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  /* 64px, ≤734px 48px: token globals.css */
+  gap: var(--block-gap);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* ---------- Alur bernomor: desktop rel horizontal (kolom = jumlah langkah, --steps) ---------- */
+.steps {
+  --rail: #d2d2d7;
+  display: grid;
+  grid-template-columns: repeat(var(--steps, 5), minmax(0, 1fr));
+  gap: 0 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Rel tipis dari nomor ke nomor berikutnya (berhenti 12px sebelum nomor berikut, di tengah celah kolom). */
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 17px;
+  left: 48px;
+  right: -12px;
+  height: 2px;
+  background: var(--rail);
+}
+
+.stepNumber {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--brand);
+  border-radius: 50%;
+  color: var(--brand);
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Ikon garis brand tanpa lingkaran; IconMapper tidak menerima `stroke`, jadi garis ditipiskan di sini. */
+.stepIcon {
+  display: flex;
+  min-width: 32px;
+  min-height: 32px;
+  color: var(--brand);
+}
+
+.stepIcon svg {
+  stroke-width: 1.5;
+}
+
+.stepName {
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Kerangka memuat: kotak berdenyut setinggi satu langkah (spesifisitas di atas .placeholder kabar 280px). */
+.steps .stepPlaceholder {
+  min-height: 112px;
+  border-radius: 14px;
+}
+
+/* ---------- Alur vertikal: > STEPS_RAIL_MAX langkah, atau tablet/ponsel ---------- */
+.stepsVertical {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.stepsVertical .step {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  column-gap: 16px;
+  padding-bottom: 24px;
+}
+
+.stepsVertical .step:last-child {
+  padding-bottom: 0;
+}
+
+.stepsVertical .step:not(:last-child)::before {
+  top: 42px;
+  bottom: 6px;
+  left: 17px;
+  right: auto;
+  width: 2px;
+  height: auto;
+}
+
+.stepsVertical .stepBody {
+  flex-direction: row;
+  align-items: center;
+  min-height: 36px;
+}
+
+.stepsVertical .stepIcon {
+  flex: none;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .steps[aria-busy='true'] {
+    row-gap: 12px;
+  }
+
+  .steps .stepPlaceholder {
+    min-height: 52px;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 16px;
+    padding-bottom: 24px;
+  }
+
+  .step:last-child {
+    padding-bottom: 0;
+  }
+
+  .step:not(:last-child)::before {
+    top: 42px;
+    bottom: 6px;
+    left: 17px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+
+  .stepBody {
+    flex-direction: row;
+    align-items: center;
+    min-height: 36px;
+  }
+
+  .stepIcon {
+    flex: none;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .block {
+    gap: 20px;
+  }
+
+  .blockTitle {
+    font-size: 24px;
+    line-height: 1.17;
+  }
+
+  .stepIcon {
+    min-width: 28px;
+    min-height: 28px;
+  }
+
+  .stepIcon svg {
+    width: 28px;
+    height: 28px;
+  }
+}

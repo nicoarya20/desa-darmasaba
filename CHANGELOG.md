@@ -1,6 +1,12 @@
 # Changelog
 
-## [0.1.285] - 2026-11-16
+## [0.1.287] - 2026-11-16
+### Fixed
+- **Keamanan: hanya Developer dan Super Admin yang bisa mengelola user dan role.** Sebelumnya akun Google mana pun yang login (role USER) bisa mengubah role siapa saja lewat API, termasuk menjadikan dirinya Super Admin, menghapus user lain, dan membaca daftar email staf. Kini API user (daftar, detail, ubah, nonaktifkan, hapus) serta tambah/ubah/hapus role menolak role selain Developer (0) dan Super Admin (1) dengan 401/403. Daftar nama role tetap bisa dibaca. Ini sejalan dengan menu User & Role di admin yang memang hanya tampil untuk dua role itu.
+- **Akun Developer terlindungi.** Hanya Developer yang boleh memberi role Developer atau mengubah, menonaktifkan, dan menghapus akun Developer.
+- **Ubah role atau nonaktifkan akun langsung mengeluarkan user itu.** Sesi login Better Auth-nya ikut dicabut (paling lambat sekitar 60 detik karena cache cookie), tidak lagi bertahan sampai 7 hari.
+
+## [0.1.286] - 2026-11-16
 ### Added
 - **Jenna › Provider (OpenAI-compatible) bisa memakai model reasoning seperti `gpt-6-luna` tanpa setelan tambahan.** Sebelumnya setiap pertanyaan gagal dengan error `Unsupported parameter: 'max_tokens'`. Sekarang "Reasoning effort" default-nya **Otomatis**, ditentukan dari nama model: `gpt-6*` dan `gpt-5.x` dikirim `none` (nilai yang dibutuhkan agar tools jalan), `gpt-5` generasi awal dan seri `o` dikirim `low`, sedangkan model lain (mis. `gpt-4o-mini`) tidak dikirim apa-apa seperti sebelumnya. Bila reasoning effort dikirim, batas token memakai `max_completion_tokens` dan temperature tidak dikirim. Di bawah kolom Model tampil keterangan apa yang akan dikirim; pilihan manual (Jangan kirim / none / low / medium / high) ada di "Pengaturan lanjutan" untuk kasus khusus.
 
@@ -12,6 +18,20 @@
 ### Operator
 - Jalankan migrasi `20261116143000_jenna_provider_reasoning_effort` (otomatis saat container start). Murni menambah kolom nullable `JennaProvider.reasoningEffort`; data lain tidak diubah. Tidak ada env baru. Setelan provider yang sudah ada otomatis berada di mode Otomatis.
 - Untuk ganti model: di `/dev/jenna` › Provider isi nama model lalu klik "Simpan & tes". Bila tes gagal karena parameter, buka "Pengaturan lanjutan" dan pilih Reasoning effort secara manual.
+
+## [0.1.285] - 2026-11-16
+### Changed
+- **Menu Lingkungan dirombak ke gaya Kabar Desa** (latar putih, judul dan pengantar di kiri, ubin dan baris abu muda), seragam dengan menu Inovasi, Kesehatan, Keamanan, dan Pendidikan.
+- **Pengelolaan Sampah (Bank Sampah)**: cara menabung tampil sebagai langkah bernomor berikon (berjajar di desktop, menurun di ponsel). Lokasi Bank Sampah kini berupa daftar di samping peta: pilih lokasi untuk melihat titiknya di peta, atau klik titik di peta untuk menyorot lokasinya. Tiap lokasi punya tautan "Petunjuk arah".
+- **Program Penghijauan**: program tampil sebagai ubin berikon yang bisa diklik, dan tiap program kini punya halaman detail sendiri.
+- **Data Lingkungan Desa**: data tampil sebagai baris yang mudah dibaca. Jumlah tampil apa adanya (tanpa tanda "±" tambahan).
+- **Gotong Royong** kini satu halaman berisi kegiatan desa kategori Lingkungan dan Kebersihan, tanpa pilihan kategori. Detail kegiatan memakai tampilan detail Kegiatan Desa dengan tautan kembali "‹ Gotong Royong". Tautan lama (`/lingkungan/gotong-royong/semua` dan per kategori) diarahkan ke halaman baru.
+- **Edukasi Lingkungan** dan **Konservasi Adat Bali** tampil sebagai halaman bacaan bergaris (judul bagian di kiri, isi di kanan), seperti halaman program Pendidikan.
+
+### Fixed
+- Hasil pencarian **Gotong Royong** tidak lagi membuka alamat rusak (`/lingkungan/gotong-royong/undefined/...`).
+- Hasil pencarian **Program Penghijauan** kini membuka halaman detail programnya.
+- Ikon yang tidak dikenali di Bank Sampah, Program Penghijauan, dan Data Lingkungan kini disembunyikan, bukan tampil sebagai tanda tanya.
 
 ## [0.1.284] - 2026-11-16
 ### Changed
