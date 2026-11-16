@@ -37,11 +37,11 @@
   line-height: 1.5;
 }
 
-/* Kolom kiri: alur pengajuan lalu jenis layanan. */
+/* Kolom kiri: alur pengajuan lalu jenis layanan; jarak antar-blok 40/32px seragam Ajukan Ide (pola PPID). */
 .aside {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 40px;
 }
 
 /* Dua kelas: menimpa min-height 280px milik `kabar.placeholder` tanpa bergantung urutan CSS. */
@@ -91,6 +91,6 @@
 
 @media (max-width: 734px) {
   .aside {
-    gap: 40px;
+    gap: 32px;
   }
 }

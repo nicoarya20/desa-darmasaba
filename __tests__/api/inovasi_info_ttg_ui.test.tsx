@@ -64,8 +64,8 @@ describe('foto rasio asli (CSS)', () => {
 });
 
 describe('InfoTtgBody', () => {
-  const body = (state: Parameters<typeof InfoTtgBody>[0]['state'], search = '') =>
-    render(<InfoTtgBody state={state} search={search} page={1} onPage={() => {}} />);
+  const body = (state: Parameters<typeof InfoTtgBody>[0]['state'], search = '', page = 1) =>
+    render(<InfoTtgBody state={state} search={search} page={page} onPage={() => {}} />);
 
   it('entri dibaca langsung (tanpa tautan detail); 1 halaman → tanpa paginasi', () => {
     const html = body({ status: 'ready', items: [ttg(1), ttg(2)], totalPages: 1, total: 2 });
@@ -86,5 +86,16 @@ describe('InfoTtgBody', () => {
     expect(body({ status: 'ready', items: [], totalPages: 1, total: 0 })).toContain(`<p class="${kabar.empty}">${T.empty}</p>`);
     expect(body({ status: 'ready', items: [], totalPages: 1, total: 0 }, 'telur')).toContain(T.emptySearch('telur'));
     expect(body({ status: 'error' })).toContain(T.error);
+  });
+
+  it('?page di luar rentang padahal ada entri → kerangka selama dialihkan, bukan pesan kosong / paginasi', () => {
+    const html = body({ status: 'ready', items: [], totalPages: 1, total: 3 }, '', 99);
+    expect(html).toContain('aria-busy="true"');
+    expect(html).not.toContain(T.empty);
+    expect(html).not.toContain(`aria-label="${T.paginationLabel}"`);
+  });
+
+  it('?page di luar rentang dan total = 0 → tetap pesan kosong', () => {
+    expect(body({ status: 'ready', items: [], totalPages: 1, total: 0 }, '', 99)).toContain(T.empty);
   });
 });

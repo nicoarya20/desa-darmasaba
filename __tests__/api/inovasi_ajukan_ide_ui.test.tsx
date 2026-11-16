@@ -16,7 +16,7 @@ vi.mock('next/navigation', () => ({ useRouter: () => ({ back: vi.fn(), push: vi.
 import { AjukanIdePage } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/AjukanIdePage';
 import { IdeFormView, type IdeFormViewProps } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/IdeFormView';
 import { IdeThanks } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/IdeThanks';
-import { EMPTY_IDE_FORM } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/ajukan-ide.logic';
+import { EMPTY_IDE_FORM, IDE_FIELDS, validateIde } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/ajukan-ide.logic';
 import { AJUKAN_IDE_TEXT as T } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/ajukan-ide.text';
 import { InovasiFormCard } from '@/app/(public)/(pages)/inovasi/_com/InovasiFormCard';
 import f from '@/app/(public)/(pages)/inovasi/_com/inovasi-form.module.css';
@@ -68,7 +68,7 @@ describe('AjukanIdePage', () => {
 
 describe('urutan bertumpuk', () => {
   it('di bawah 75em formulir (kolom main PermohonanLayout) dinaikkan ke atas aside lewat order', () => {
-    expect(render(<AjukanIdePage />)).toContain(`<div class="${s.formFirst}">`);
+    expect(render(<AjukanIdePage />)).toContain(`<div class="${f.fullWidth} ${s.formFirst}">`);
     const css = readFileSync(
       path.join(process.cwd(), 'src/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/ajukan-ide.module.css'),
       'utf8',
@@ -85,10 +85,27 @@ describe('IdeFormView', () => {
   });
 
   it('galat hanya tampil untuk isian yang boleh tampil (shown)', () => {
-    const errors = { name: T.required, alamat: T.required };
+    const errors = { name: T.required.name, alamat: T.required.alamat };
     const html = render(<IdeFormView {...viewProps({ errors, shown: { name: true } })} />);
-    expect(html.split(T.required).length - 1).toBe(1);
+    expect(html).toContain(T.required.name);
+    expect(html).not.toContain(T.required.alamat);
     expect(html).toContain('aria-invalid="true"');
+  });
+
+  it('6 isian wajib bertanda * (seragam Administrasi Online)', () => {
+    const html = render(<IdeFormView {...viewProps()} />);
+    expect(html.match(/mantine-InputWrapper-required/g)).toHaveLength(IDE_FIELDS.length);
+  });
+
+  it('kirim kosong → pesan spesifik tiap isian (bukan "Wajib diisi."), tanpa em dash', () => {
+    const errors = validateIde(EMPTY_IDE_FORM, { required: T.required, tooLong: T.tooLong });
+    const html = render(<IdeFormView {...viewProps({ errors, shown: Object.fromEntries(IDE_FIELDS.map((k) => [k, true])) })} />);
+    const messages = Object.values(T.required);
+    expect(new Set(messages).size).toBe(IDE_FIELDS.length);
+    for (const message of messages) {
+      expect(html).toContain(message);
+      expect(message).not.toMatch(/wajib diisi|—/i);
+    }
   });
 
   it('kirim gagal → pesan role="alert"; tanpa gagal → tanpa alert', () => {
@@ -101,6 +118,9 @@ describe('IdeThanks & InovasiFormCard', () => {
   it('terima kasih: judul bisa difokus (tabIndex -1) + aksi kirim ide lain', () => {
     const html = render(<IdeThanks onAgain={() => {}} />);
     expect(html).toMatch(/tabindex="-1"/i);
+    // Kartu bersama dengan `focusTitle`: section berlabel judul, judul tanpa cincin fokus, lead di kepala kartu.
+    expect(html).toMatch(new RegExp(`<section class="${f.card}" aria-labelledby="([^"]+)"><div class="${f.head}"><h2 id="\\1" tabindex="-1" class="${f.title} ${f.titleFocus}">`, 'i'));
+    expect(html).toContain(`<p class="${f.lead}">${T.thanksText}</p>`);
     expect(html).toContain(T.thanksTitle);
     expect(html).toContain(T.again);
   });
@@ -115,5 +135,8 @@ describe('IdeThanks & InovasiFormCard', () => {
     expect(html).toContain('>Formulir uji</h2>');
     expect(html).toContain(`<p class="${f.lead}">Keterangan uji</p>`);
     expect(render(<InovasiFormCard title="Tanpa lead">x</InovasiFormCard>)).not.toContain(f.lead);
+    // Kartu formulir biasa: judul tidak masuk urutan fokus program.
+    expect(html).not.toMatch(/tabindex/i);
+    expect(html).not.toContain(f.titleFocus);
   });
 });

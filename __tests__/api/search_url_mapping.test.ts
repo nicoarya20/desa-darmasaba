@@ -101,6 +101,21 @@ describe('pemetaan URL hasil pencarian global', () => {
     expect(readFileSync(FIND_MANY, 'utf8')).not.toMatch(/prisma\.penghargaan/);
   });
 
+  it('desaDigital & programKreatif membuka halaman detail [id], bukan daftar', () => {
+    expect(getDetailUrl({ type: 'desaDigital', id: 'dd1' })).toBe('/inovasi/desa-digital-smart-village/dd1');
+    expect(getDetailUrl({ type: 'programKreatif', id: 'pk1' })).toBe('/inovasi/program-kreatif-desa/pk1');
+  });
+
+  it('API mengirim id untuk desaDigital & programKreatif (findMany tanpa select membatasi field)', () => {
+    const src = readFileSync(FIND_MANY, 'utf8');
+    for (const model of ['desaDigital', 'programKreatif']) {
+      // Tiap pemanggilan (blok per-tipe & GLOBAL SEARCH) sampai `take:` tidak boleh punya `select:` yang membuang id.
+      const calls = src.split(`prisma.${model}.findMany({`).slice(1).map((rest) => rest.slice(0, rest.indexOf('take:')));
+      expect(calls.length).toBeGreaterThanOrEqual(2);
+      for (const call of calls) expect(call).not.toMatch(/select\s*:/);
+    }
+  });
+
   it('pasarDesa membuka detail produk UMKM', () => {
     expect(getDetailUrl({ type: 'pasarDesa', id: 'p1' })).toBe('/ekonomi/umkm/produk/p1');
   });

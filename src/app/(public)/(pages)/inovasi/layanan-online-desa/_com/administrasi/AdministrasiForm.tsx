@@ -2,8 +2,15 @@ import { PERMOHONAN_FIELD } from '@/app/(public)/(pages)/ppid/_com/permohonan.me
 import { InovasiFormActions, InovasiFormCard } from '@/app/(public)/(pages)/inovasi/_com/InovasiFormCard';
 import colors from '@/con/colors';
 import { Button, Select, TextInput } from '@mantine/core';
-import type { FormEvent } from 'react';
-import type { AdministrasiErrors, AdministrasiField, AdministrasiValues } from './administrasi.logic';
+import { useEffect, useId, useRef, type FormEvent, type RefObject } from 'react';
+import { flushSync } from 'react-dom';
+import {
+  firstInvalidAdministrasiField,
+  validateAdministrasi,
+  type AdministrasiErrors,
+  type AdministrasiField,
+  type AdministrasiValues,
+} from './administrasi.logic';
 import s from './administrasi.module.css';
 import { ADMINISTRASI_TEXT as T } from './administrasi.text';
 import type { AdministrasiStatus } from './use-administrasi-form';
@@ -16,10 +23,18 @@ type Props = {
   jenis: JenisLayananState;
   onField: (field: AdministrasiField, raw: string) => void;
   onSubmit: () => void;
+  /** Isian pertama (Nama); halaman memfokusnya setelah "Ajukan layanan lain" memasang ulang formulir. */
+  firstFieldRef: RefObject<HTMLInputElement | null>;
 };
 
-/** Kartu formulir Administrasi Online: empat isian terkontrol, galat per isian, pesan kirim gagal (`role="alert"`). */
-export function AdministrasiForm({ values, errors, status, jenis, onField, onSubmit }: Props) {
+/**
+ * Kartu formulir Administrasi Online: empat isian terkontrol, galat per isian, pesan kirim gagal (`role="alert"`).
+ * Fokus: kirim dengan isian salah → isian salah pertama; kirim gagal → kembali ke tombol kirim.
+ */
+export function AdministrasiForm({ values, errors, status, jenis, onField, onSubmit, firstFieldRef }: Props) {
+  const idPrefix = useId();
+  const fieldId = (field: AdministrasiField) => `${idPrefix}-${field}`;
+  const submitRef = useRef<HTMLButtonElement>(null);
   const sending = status === 'sending';
   const options = jenis.status === 'ready' ? jenis.items.map((item) => ({ value: item.id, label: item.nama })) : [];
   const jenisPlaceholder =
@@ -29,9 +44,19 @@ export function AdministrasiForm({ values, errors, status, jenis, onField, onSub
         ? T.jenisLayanan.unavailable
         : T.jenisLayanan.placeholder;
 
+  // Selama mengirim tombol `loading` = `disabled`, jadi peramban melepas fokusnya ke <body>. Setelah gagal tombol aktif
+  // lagi di render berikutnya; fokus dikembalikan ke sana (pesan role="alert" tetap dibacakan).
+  useEffect(() => {
+    if (status === 'failed') submitRef.current?.focus();
+  }, [status]);
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    onSubmit();
+    // Hook menyalakan galat secara sinkron sebelum await pertama; flushSync merendernya dulu agar isian yang difokus
+    // sudah membawa aria-invalid + pesan galat (aria-describedby) saat dibacakan pembaca layar.
+    flushSync(onSubmit);
+    const invalid = firstInvalidAdministrasiField(validateAdministrasi(values));
+    if (invalid) document.getElementById(fieldId(invalid))?.focus();
   };
 
   return (
@@ -39,6 +64,8 @@ export function AdministrasiForm({ values, errors, status, jenis, onField, onSub
       <form className={s.form} onSubmit={handleSubmit} noValidate>
         <TextInput
           {...PERMOHONAN_FIELD}
+          id={fieldId('name')}
+          ref={firstFieldRef}
           label={T.name.label}
           placeholder={T.name.placeholder}
           autoComplete="name"
@@ -49,6 +76,7 @@ export function AdministrasiForm({ values, errors, status, jenis, onField, onSub
         />
         <TextInput
           {...PERMOHONAN_FIELD}
+          id={fieldId('alamat')}
           label={T.alamat.label}
           placeholder={T.alamat.placeholder}
           autoComplete="street-address"
@@ -59,6 +87,7 @@ export function AdministrasiForm({ values, errors, status, jenis, onField, onSub
         />
         <TextInput
           {...PERMOHONAN_FIELD}
+          id={fieldId('nomorTelepon')}
           type="tel"
           inputMode="numeric"
           // Tanpa maxLength: batas 13 dihitung dari digit (normalizeAdministrasiField), bukan dari ketikan berstrip.
@@ -72,6 +101,7 @@ export function AdministrasiForm({ values, errors, status, jenis, onField, onSub
         />
         <Select
           {...PERMOHONAN_FIELD}
+          id={fieldId('jenisLayananId')}
           label={T.jenisLayanan.label}
           placeholder={jenisPlaceholder}
           withAsterisk
@@ -88,7 +118,7 @@ export function AdministrasiForm({ values, errors, status, jenis, onField, onSub
           </p>
         ) : null}
         <InovasiFormActions>
-          <Button type="submit" size={PERMOHONAN_FIELD.size} radius={PERMOHONAN_FIELD.radius} color={colors['blue-button']} loading={sending}>
+          <Button ref={submitRef} type="submit" size={PERMOHONAN_FIELD.size} radius={PERMOHONAN_FIELD.radius} color={colors['blue-button']} loading={sending}>
             {T.submit}
           </Button>
         </InovasiFormActions>
@@ -97,10 +127,13 @@ export function AdministrasiForm({ values, errors, status, jenis, onField, onSub
   );
 }
 
-/** Keadaan sukses di tempat formulir: terima kasih + tombol mengajukan lagi. */
+/**
+ * Keadaan sukses di tempat formulir: terima kasih + tombol mengajukan lagi. Formulir (dan tombol kirim yang terfokus)
+ * di-unmount saat sukses, jadi fokus dipindah ke judul kartu (`focusTitle`) agar tidak jatuh ke <body>.
+ */
 export function AdministrasiSent({ jenisNama, onReset }: { jenisNama?: string; onReset: () => void }) {
   return (
-    <InovasiFormCard title={T.sentTitle}>
+    <InovasiFormCard title={T.sentTitle} focusTitle>
       <p className={s.sentLead} role="status">
         {T.sentLead(jenisNama)}
       </p>

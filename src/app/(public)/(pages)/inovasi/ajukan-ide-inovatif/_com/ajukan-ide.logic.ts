@@ -22,12 +22,15 @@ export const IDE_FIELD_MAX: Readonly<Record<IdeField, number>> = {
 
 export const EMPTY_IDE_FORM: IdeForm = { name: "", alamat: "", namaIde: "", deskripsi: "", masalah: "", benefit: "" };
 
+/** Pesan galat: isian kosong (per isian) dan melebihi batas panjang. */
+export type IdeMessages = { required: Readonly<Record<IdeField, string>>; tooLong: (max: number) => string };
+
 /** Galat per isian: wajib diisi (tanpa spasi saja) dan tidak melebihi batas panjang. Objek kosong = valid. */
-export function validateIde(form: IdeForm, messages: { required: string; tooLong: (max: number) => string }): IdeErrors {
+export function validateIde(form: IdeForm, messages: IdeMessages): IdeErrors {
   const errors: IdeErrors = {};
   for (const field of IDE_FIELDS) {
     const value = form[field].trim();
-    if (!value) errors[field] = messages.required;
+    if (!value) errors[field] = messages.required[field];
     else if (value.length > IDE_FIELD_MAX[field]) errors[field] = messages.tooLong(IDE_FIELD_MAX[field]);
   }
   return errors;

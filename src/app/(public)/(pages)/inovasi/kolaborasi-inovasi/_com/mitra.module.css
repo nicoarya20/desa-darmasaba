@@ -3,24 +3,26 @@
  * logo utuh (`contain`) berpadding; `mix-blend-mode: multiply` meleburkan latar putih logo (mis. BRI Peduli) ke ubin.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
  */
+/* Daftar → Mitra = jarak antar-blok di dalam satu halaman, bukan jarak antar-section beranda. */
 .mitra {
-  margin-top: var(--section-gap);
+  margin-top: var(--block-gap);
 }
 
 .intro {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
+/* Judul bagian = `.blockTitle` halaman Kabar lain (Desa Digital, Pencegahan Kriminalitas): 28px, ≤734px 24px. */
 .heading {
   margin: 0;
   color: var(--ink);
-  font-size: 32px;
-  line-height: 1.125;
+  font-size: 28px;
+  line-height: 1.14;
   font-weight: 700;
-  letter-spacing: 0.004em;
+  letter-spacing: -0.005em;
 }
 
 .lead {
@@ -103,12 +105,12 @@
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
   .intro {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 
   .heading {
-    font-size: 28px;
-    line-height: 1.14;
+    font-size: 24px;
+    line-height: 1.17;
   }
 
   .lead {

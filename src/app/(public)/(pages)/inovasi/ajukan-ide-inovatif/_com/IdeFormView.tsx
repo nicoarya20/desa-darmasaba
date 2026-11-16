@@ -37,7 +37,7 @@ export function IdeFormView({ idPrefix, form, errors, shown, sending, failed, on
             value: form[field],
             maxLength: IDE_FIELD_MAX[field],
             required: true,
-            withAsterisk: false,
+            withAsterisk: true,
             error: shown[field] ? errors[field] : undefined,
             onBlur: () => onBlur(field),
           };

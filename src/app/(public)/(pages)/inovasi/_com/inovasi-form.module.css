@@ -1,4 +1,24 @@
 /*
+ * Pembungkus `PermohonanLayout` (PPID) di halaman formulir Inovasi: melepas garis henti 1200px PPID
+ * (`--ppid-measure`, fallback 75rem di permohonan.module.css) agar kartu formulir sampai tepi kanan halaman seperti
+ * halaman Inovasi lain. PPID sendiri tidak berubah. Di 2 kolom (>= 75em, breakpoint literal PermohonanLayout) kolom
+ * formulir tetap 7/12 seperti PPID tetapi dibatasi --inovasi-form-max agar isian tidak terlalu panjang dibaca di layar
+ * lebar (824 - padding kartu 2 x 32 = isian 760px); sisa lebar jatuh ke kolom kiri.
+ */
+.fullWidth {
+  --ppid-measure: none;
+  --inovasi-form-max: 824px;
+  /* = gap 2 kolom .layout di permohonan.module.css. */
+  --inovasi-form-gap: 64px;
+}
+
+@media (min-width: 75em) {
+  .fullWidth > div {
+    grid-template-columns: minmax(0, 1fr) min(calc((100% - var(--inovasi-form-gap)) * 7 / 12), var(--inovasi-form-max));
+  }
+}
+
+/*
  * Kartu formulir halaman Inovasi di atas latar putih Kabar: satu-satunya permukaan berwarna di halaman
  * (ubin #f5f5f7 senada ubin Kabar), isian satu kolom. Breakpoint ponsel mengikuti apple.com (≤734px).
  */
@@ -25,6 +45,11 @@
   font-size: 24px;
   line-height: 1.2;
   font-weight: 600;
+}
+
+/* Judul yang difokus program (`focusTitle`, tabIndex -1) hanya untuk pembaca layar: tak bisa dicapai Tab, tanpa cincin. */
+.titleFocus:focus {
+  outline: none;
 }
 
 .lead {

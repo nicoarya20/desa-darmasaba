@@ -7,7 +7,8 @@
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 64px;
+  /* 64px, ≤734px 48px: token globals.css */
+  gap: var(--block-gap);
 }
 
 .block {
@@ -58,10 +59,6 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
-  .stack {
-    gap: 48px;
-  }
-
   .block {
     gap: 20px;
   }

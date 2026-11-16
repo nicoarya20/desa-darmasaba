@@ -9,6 +9,9 @@ export type AdministrasiErrors = Partial<Record<AdministrasiField, string>>;
 
 export const EMPTY_ADMINISTRASI: AdministrasiValues = { name: "", alamat: "", nomorTelepon: "", jenisLayananId: "" };
 
+/** Urutan isian di formulir (atas ke bawah); dipakai memilih isian salah pertama untuk difokus. */
+export const ADMINISTRASI_FIELDS: readonly AdministrasiField[] = ["name", "alamat", "nomorTelepon", "jenisLayananId"];
+
 /** Bentuk minimal item find-many jenis layanan. */
 export type JenisLayananApiItem = { id: string; nama?: string | null; deskripsi?: string | null };
 export type JenisLayanan = { id: string; nama: string; deskripsi: string };
@@ -34,6 +37,11 @@ export function validateAdministrasi(values: AdministrasiValues): AdministrasiEr
 
 export function hasAdministrasiErrors(errors: AdministrasiErrors): boolean {
   return Object.keys(errors).length > 0;
+}
+
+/** Isian salah paling atas (urutan formulir), atau `undefined` bila semua benar. */
+export function firstInvalidAdministrasiField(errors: AdministrasiErrors): AdministrasiField | undefined {
+  return ADMINISTRASI_FIELDS.find((field) => errors[field]);
 }
 
 /** Body kirim: teks dirapikan, telepon hanya digit. */

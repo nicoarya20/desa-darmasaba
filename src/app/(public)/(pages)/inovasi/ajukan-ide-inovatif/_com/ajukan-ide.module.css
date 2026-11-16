@@ -1,7 +1,7 @@
 /*
  * Ajukan Ide Inovatif — isi tata letak 2 kolom PPID (`PermohonanLayout`) di atas kerangka Kabar (`.section`).
  * Kiri: tujuan, alur bernomor PPID, pengantar Musyawarah (tanpa kartu). Kanan: kartu formulir Inovasi (#f5f5f7).
- * Judul kolom kiri meniru `.stepsTitle` permohonan.module.css (brand 24/600) agar ketiga blok seragam.
+ * Judul kolom kiri meniru `.stepsTitle` permohonan.module.css (brand 24/600, jarak ke isi 20px) agar ketiga blok seragam.
  * Breakpoint ponsel mengikuti apple.com (≤734px).
  */
 
@@ -23,7 +23,7 @@
 }
 
 .asideTitle {
-  margin: 0 0 16px;
+  margin: 0 0 20px;
   color: var(--brand);
   font-size: 24px;
   line-height: 1.2;
@@ -107,11 +107,6 @@
 }
 
 /* ---------- Terima kasih ---------- */
-/* Fokus dipindah program ke judul (tabIndex -1) hanya agar terbaca pembaca layar; tanpa cincin fokus. */
-.thanksTitle:focus {
-  outline: none;
-}
-
 .again {
   padding: 0;
   border: 0;
