@@ -4,6 +4,7 @@ import balitaDelete from "./del";
 import balitaFindById from "./find-by-id";
 import balitaFindMany from "./find-many";
 import balitaUpdate from "./updt";
+import { guardDataPribadi } from "../../_data-pribadi/guard";
 
 const Balita = new Elysia({ prefix: "/balita", tags: ["Kesehatan/Balita"] })
   .post("/create", balitaCreate, {
@@ -29,9 +30,9 @@ const Balita = new Elysia({ prefix: "/balita", tags: ["Kesehatan/Balita"] })
       catatan: t.Optional(t.String()),
     }),
   })
-  .get("/find-many", balitaFindMany)
+  .get("/find-many", balitaFindMany, { beforeHandle: guardDataPribadi })
   .delete("/del/:id", balitaDelete)
-  .get("/:id", balitaFindById)
+  .get("/:id", balitaFindById, { beforeHandle: guardDataPribadi })
   .put(
     "/:id",
     balitaUpdate,

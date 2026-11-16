@@ -91,7 +91,6 @@ const getDetailUrl = (item: SearchItem) => {
     nilaiKonservasiAdat: () => '/lingkungan/konservasi-adat-bali',
     jenjangPendidikan: () => '/pendidikan/info-sekolah',
     lembaga: (id) => lembagaDetailHref(String(id)),
-    siswa: () => '/pendidikan/info-sekolah/siswa',
     pengajar: () => '/pendidikan/info-sekolah/pengajar',
     keunggulanProgram: () => '/pendidikan/beasiswa-desa',
     tujuanProgram: () => '/pendidikan/program-pendidikan-anak',

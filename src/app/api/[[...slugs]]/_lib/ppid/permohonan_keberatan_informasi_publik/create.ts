@@ -37,20 +37,20 @@ export default async function permohonanKeberatanInformasiPublikCreate(
     };
   }
 
-  await prisma.formulirPermohonanKeberatan.create({
+  const result = await prisma.formulirPermohonanKeberatan.create({
     data: {
       name: body.name,
       email: body.email,
       notelp: body.notelp,
       alasan: body.alasan,
     },
+    select: { id: true },
   });
 
+  // Hanya id: endpoint form publik, jangan gemakan nama/email/telepon pemohon ke respons.
   return {
     success: true,
     message: "Permohonan Keberatan Informasi Publik Berhasil Dibuat",
-    data: {
-      ...body,
-    },
+    data: { id: result.id },
   };
 }

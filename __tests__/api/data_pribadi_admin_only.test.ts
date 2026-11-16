@@ -1,0 +1,354 @@
+// @vitest-environment node
+// GET berisi data pribadi warga (Ibu Hamil, Balita, kiriman Pengaduan & Administrasi Online, Siswa, pendaftar beasiswa,
+// peminjam buku, permohonan & keberatan PPID, responden IKM, ide inovatif, pendaftaran jadwal kesehatan,
+// permohonan surat) wajib admin:
+// request HTTP sungguhan lewat modul Elysia (prisma & auth di-mock). Master data & agregat publik tetap terbuka,
+// dan respons create publik tidak menggemakan NIK/HP. Keputusan: docs/decisions/2026-11-17-api-data-pribadi-admin-only.md
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import Elysia from "elysia";
+
+const { requireAuthMock, prismaMock } = vi.hoisted(() => {
+  // Prisma rekaan: setiap model.method → vi.fn dengan hasil netral, supaya handler mana pun bisa jalan.
+  const models = new Map<string, Record<string, ReturnType<typeof vi.fn>>>();
+  const result = (method: string) => {
+    if (method === "count") return 0;
+    if (method === "findMany") return [];
+    if (method === "findUnique") return { id: "id-rekaan" }; // test-only
+    if (method === "create") return { id: "baru-1" }; // test-only
+    return null;
+  };
+  const model = (name: string) => {
+    if (!models.has(name)) {
+      models.set(
+        name,
+        new Proxy({} as Record<string, ReturnType<typeof vi.fn>>, {
+          get: (fns, method: string) => (fns[method] ??= vi.fn(async () => result(method))),
+        }),
+      );
+    }
+    return models.get(name)!;
+  };
+  return {
+    requireAuthMock: vi.fn(),
+    prismaMock: new Proxy({}, { get: (_t, name: string) => model(name) }) as Record<string, Record<string, ReturnType<typeof vi.fn>>>,
+  };
+});
+vi.mock("@/lib/api-auth", () => ({ requireAuth: () => requireAuthMock() }));
+vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
+vi.mock("@/lib/minio", () => ({ default: {}, MINIO_BUCKET: "bucket-test" }));
+
+import Balita from "@/app/api/[[...slugs]]/_lib/kesehatan/balita";
+import IbuHamil from "@/app/api/[[...slugs]]/_lib/kesehatan/ibu-hamil";
+import RingkasanKesehatan from "@/app/api/[[...slugs]]/_lib/kesehatan/ringkasan-kesehatan";
+import LayananOnlineDesa from "@/app/api/[[...slugs]]/_lib/inovasi/layanan-online-desa";
+import Siswa from "@/app/api/[[...slugs]]/_lib/pendidikan/info-sekolah-paud/siswa";
+import Pengajar from "@/app/api/[[...slugs]]/_lib/pendidikan/info-sekolah-paud/pengajar";
+import RingkasanPendidikan from "@/app/api/[[...slugs]]/_lib/pendidikan/ringkasan";
+import Beasiswa from "@/app/api/[[...slugs]]/_lib/pendidikan/beasiswa-desa";
+import PerpustakaanDigital from "@/app/api/[[...slugs]]/_lib/pendidikan/perpustakaan-digital";
+import PermohonanInformasiPublik from "@/app/api/[[...slugs]]/_lib/ppid/permohonan_informasi_publik";
+import PermohonanKeberatan from "@/app/api/[[...slugs]]/_lib/ppid/permohonan_keberatan_informasi_publik";
+import Responden from "@/app/api/[[...slugs]]/_lib/landing_page/indeks_kepuasan/responden";
+import AjukanIdeInovatif from "@/app/api/[[...slugs]]/_lib/inovasi/ajukan-ide-inovatif";
+import PendaftaranJadwalKegiatan from "@/app/api/[[...slugs]]/_lib/kesehatan/data_kesehatan_warga/jadwal_kegiatan/pendaftaran";
+import AjukanPermohonan from "@/app/api/[[...slugs]]/_lib/desa/layanan/ajukan_permohonan";
+import { PESAN_DATA_PRIBADI_BUKAN_ADMIN } from "@/app/api/[[...slugs]]/_lib/_data-pribadi/guard";
+
+// Prefix induk dipasang ulang seperti di route.ts / index domain, agar URL test = URL produksi.
+const app = new Elysia({ prefix: "/api" })
+  .group("/kesehatan", (g) => g.use(Balita).use(IbuHamil).use(RingkasanKesehatan).use(PendaftaranJadwalKegiatan))
+  .group("/inovasi", (g) => g.use(LayananOnlineDesa).use(AjukanIdeInovatif))
+  .group("/ppid", (g) => g.use(PermohonanInformasiPublik).use(PermohonanKeberatan))
+  .group("/landingpage", (g) => g.use(Responden))
+  .group("/desa", (g) => g.use(AjukanPermohonan))
+  .group("/pendidikan", (g) =>
+    g
+      .group("/infosekolahpaud", (s) => s.use(Siswa).use(Pengajar))
+      .use(RingkasanPendidikan)
+      .use(Beasiswa)
+      .use(PerpustakaanDigital),
+  );
+
+const call = (url: string, init?: RequestInit) => app.handle(new Request(`http://localhost${url}`, init));
+const postJson = (url: string, body: unknown) =>
+  call(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
+const unauthorized = () => ({
+  authenticated: false,
+  response: new Response(JSON.stringify({ success: false, message: "Unauthorized - Silakan login terlebih dahulu" }), { status: 401 }),
+});
+const asRole = (roleId: string) => ({ authenticated: true, user: { id: "u-rekaan", roleId, isActive: true } }); // test-only
+
+const LAYANAN = "/api/inovasi/layananonlinedesa";
+const BEASISWA = "/api/pendidikan/beasiswa";
+const PERPUS = "/api/pendidikan/perpustakaandigital";
+const DITUTUP = [
+  "/api/kesehatan/ibuhamil/find-many",
+  "/api/kesehatan/ibuhamil/ibu-1",
+  "/api/kesehatan/balita/find-many",
+  "/api/kesehatan/balita/balita-1",
+  `${LAYANAN}/pengaduanmasyarakat/find-many`,
+  `${LAYANAN}/pengaduanmasyarakat/aduan-1`,
+  `${LAYANAN}/administrasionline/find-many`,
+  `${LAYANAN}/administrasionline/adm-1`,
+  "/api/pendidikan/infosekolahpaud/siswa/find-many",
+  "/api/pendidikan/infosekolahpaud/siswa/siswa-1",
+  `${BEASISWA}/beasiswapendaftar/findMany`,
+  `${BEASISWA}/beasiswapendaftar/pendaftar-1`,
+  `${PERPUS}/peminjamanbuku/findMany`,
+  `${PERPUS}/peminjamanbuku/pinjam-1`,
+  "/api/ppid/permohonaninformasipublik/find-many",
+  "/api/ppid/permohonaninformasipublik/permohonan-1",
+  "/api/ppid/permohonankeberataninformasipublik/find-many",
+  "/api/ppid/permohonankeberataninformasipublik/keberatan-1",
+  "/api/landingpage/responden/findMany",
+  "/api/landingpage/responden/responden-1",
+  "/api/inovasi/ajukanideinovatif/find-many",
+  "/api/inovasi/ajukanideinovatif/ide-1",
+  "/api/kesehatan/pendaftaran-jadwal-kegiatan/find-many",
+  "/api/kesehatan/pendaftaran-jadwal-kegiatan/daftar-1",
+  "/api/desa/ajukanpermohonan/findMany",
+  "/api/desa/ajukanpermohonan/surat-1",
+];
+const TETAP_PUBLIK = [
+  `${LAYANAN}/administrasionline/jenislayanan/find-many`,
+  `${LAYANAN}/pengaduanmasyarakat/jenispengaduan/find-many`,
+  "/api/kesehatan/ringkasankesehatan/stats",
+  "/api/pendidikan/ringkasan/stats",
+  "/api/pendidikan/infosekolahpaud/pengajar/find-many",
+  `${BEASISWA}/ringkasan/stats`,
+  `${BEASISWA}/keunggulanprogram/findMany`,
+  `${PERPUS}/dataperpustakaan/findMany`,
+  "/api/landingpage/responden/ringkasan",
+];
+// Opsi form permohonan PPID (master data, respons `{ data }` tanpa `success`).
+const MASTER_PPID = ["jenisInformasi", "memperolehInformasi", "salinanInformasi"].map(
+  (m) => `/api/ppid/permohonaninformasipublik/${m}/find-many`,
+);
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  requireAuthMock.mockResolvedValue(unauthorized());
+});
+
+describe("GET data pribadi warga — admin-only", () => {
+  it.each(DITUTUP)("%s tanpa sesi → 401", async (url) => {
+    const res = await call(url);
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ success: false, message: "Unauthorized - Silakan login terlebih dahulu" });
+    expect(requireAuthMock).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(DITUTUP)("%s sesi user biasa (role 5) → 403", async (url) => {
+    requireAuthMock.mockResolvedValue(asRole("5"));
+    const res = await call(url);
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ success: false, message: PESAN_DATA_PRIBADI_BUKAN_ADMIN });
+  });
+
+  it.each(DITUTUP)("%s sesi admin (role 2) → 200 dengan data", async (url) => {
+    requireAuthMock.mockResolvedValue(asRole("2"));
+    const res = await call(url);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.success).toBe(true);
+    expect(body.data).toBeDefined();
+  });
+
+  it("akun admin nonaktif → 403 dari requireAuth diteruskan", async () => {
+    requireAuthMock.mockResolvedValue({
+      authenticated: false,
+      response: new Response(JSON.stringify({ success: false, message: "Akun Anda tidak aktif. Hubungi administrator." }), { status: 403 }),
+    });
+    const res = await call("/api/kesehatan/balita/find-many");
+    expect(res.status).toBe(403);
+    expect(prismaMock.balita.findMany).not.toHaveBeenCalled();
+  });
+
+  it("admin kesehatan (3) & pendidikan (4) tetap boleh membaca", async () => {
+    requireAuthMock.mockResolvedValue(asRole("3"));
+    expect((await call("/api/kesehatan/ibuhamil/find-many")).status).toBe(200);
+    requireAuthMock.mockResolvedValue(asRole("4"));
+    expect((await call("/api/pendidikan/infosekolahpaud/siswa/find-many")).status).toBe(200);
+  });
+});
+
+describe("master data & agregat publik tetap terbuka", () => {
+  it.each(TETAP_PUBLIK)("%s tanpa sesi → 200 tanpa cek sesi", async (url) => {
+    const res = await call(url);
+    expect(res.status).toBe(200);
+    expect((await res.json()).success).toBe(true);
+    expect(requireAuthMock).not.toHaveBeenCalled();
+  });
+
+  it.each(MASTER_PPID)("%s tanpa sesi → 200 tanpa cek sesi", async (url) => {
+    const res = await call(url);
+    expect(res.status).toBe(200);
+    expect(Array.isArray((await res.json()).data)).toBe(true);
+    expect(requireAuthMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("ringkasan responden IKM publik", () => {
+  it("hanya memilih tanggal + nama kategori (tanpa id/nama responden), maks 1000 baris", async () => {
+    const res = await call("/api/landingpage/responden/ringkasan?limit=5000");
+    expect(res.status).toBe(200);
+    const args = prismaMock.responden.findMany.mock.calls[0][0];
+    const pilih = { select: { name: true } };
+    expect(args.select).toEqual({ tanggal: true, createdAt: true, jenisKelamin: pilih, rating: pilih, kelompokUmur: pilih });
+    expect(args.take).toBe(1000);
+    expect(args.where).toEqual({ isActive: true });
+  });
+
+  it("limit dari klien dihormati bila di bawah batas", async () => {
+    await call("/api/landingpage/responden/ringkasan?limit=20");
+    expect(prismaMock.responden.findMany.mock.calls[0][0].take).toBe(20);
+  });
+});
+
+describe("create publik tidak menggemakan data pribadi", () => {
+  // test-only: data rekaan, bukan warga sungguhan.
+  const NIK = "5100000000000001";
+  const HP = "080000000001";
+
+  it("POST pengaduan → hanya id, tanpa NIK/HP/email", async () => {
+    const res = await postJson(`${LAYANAN}/pengaduanmasyarakat/create`, {
+      name: "Warga Rekaan",
+      email: "rekaan@example.test",
+      nomorTelepon: HP,
+      nik: NIK,
+      judulPengaduan: "Lampu jalan mati",
+      lokasiKejadian: "Banjar Rekaan",
+      deskripsiPengaduan: "<p>Rekaan</p>",
+      jenisPengaduanId: "jp-1",
+      imageId: "img-1",
+    });
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(JSON.parse(text)).toEqual({ success: true, message: "Sukses menambahkan pengaduan masyarakat", data: { id: "baru-1" } });
+    expect(text).not.toContain(NIK);
+    expect(text).not.toContain(HP);
+    expect(requireAuthMock).not.toHaveBeenCalled();
+  });
+
+  it("POST administrasi online → hanya id, tanpa alamat/nomor telepon", async () => {
+    const res = await postJson(`${LAYANAN}/administrasionline/create`, {
+      name: "Warga Rekaan",
+      alamat: "Jalan Rekaan 1",
+      nomorTelepon: HP,
+      jenisLayananId: "jl-1",
+    });
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(JSON.parse(text)).toEqual({ success: true, message: "Berhasil membuat administrasi online", data: { id: "baru-1" } });
+    expect(text).not.toContain(HP);
+    expect(text).not.toContain("Jalan Rekaan");
+    expect(prismaMock.administrasiOnline.create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
+  });
+
+  it("POST pendaftar beasiswa → hanya id, tanpa NIK/HP/alamat", async () => {
+    const res = await postJson(`${BEASISWA}/beasiswapendaftar/create`, {
+      namaLengkap: "Siswa Rekaan",
+      nis: "0000001",
+      kelas: "7",
+      jenisKelamin: "PEREMPUAN",
+      alamatDomisili: "Jalan Rekaan 2",
+      tempatLahir: "Kota Rekaan",
+      tanggalLahir: "2012-01-01",
+      namaOrtu: "Ortu Rekaan",
+      nik: NIK,
+      pekerjaanOrtu: "Petani",
+      penghasilan: "1000000",
+      noHp: HP,
+    });
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(JSON.parse(text)).toEqual({ success: true, message: "Berhasil membuat data pendaftar beasiswa", data: { id: "baru-1" } });
+    expect(text).not.toContain(NIK);
+    expect(text).not.toContain(HP);
+    expect(text).not.toContain("Jalan Rekaan");
+    expect(prismaMock.beasiswaPendaftar.create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
+  });
+
+  it("POST peminjaman buku → hanya id, tanpa nama/telepon/alamat peminjam", async () => {
+    const res = await postJson(`${PERPUS}/peminjamanbuku/create`, {
+      nama: "Peminjam Rekaan",
+      noTelp: HP,
+      alamat: "Jalan Rekaan 3",
+      bukuId: "buku-1",
+      tanggalPinjam: "2026-11-17T00:00:00.000Z",
+      batasKembali: "2026-11-24T00:00:00.000Z",
+    });
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(JSON.parse(text)).toEqual({ success: true, message: "Berhasil membuat peminjaman buku", data: { id: "baru-1" } });
+    expect(text).not.toContain(HP);
+    expect(text).not.toContain("Peminjam Rekaan");
+    expect(text).not.toContain("Jalan Rekaan");
+    expect(prismaMock.peminjamanBuku.create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
+  });
+
+  // test-only: isian rekaan per form publik; `rahasia` = nilai yang tidak boleh muncul di respons.
+  const FORM_PUBLIK = [
+    {
+      url: "/api/ppid/permohonaninformasipublik/create",
+      model: "permohonanInformasiPublik",
+      message: "Permohonan Informasi Publik Berhasil Dibuat",
+      body: {
+        name: "Pemohon Rekaan",
+        nik: NIK,
+        notelp: HP,
+        alamat: "Jalan Rekaan 4",
+        email: "pemohon@example.test",
+        jenisInformasiDimintaId: null,
+        caraMemperolehInformasiId: null,
+        caraMemperolehSalinanInformasiId: null,
+      },
+      rahasia: [NIK, HP, "Jalan Rekaan", "pemohon@example.test"],
+    },
+    {
+      url: "/api/ppid/permohonankeberataninformasipublik/create",
+      model: "formulirPermohonanKeberatan",
+      message: "Permohonan Keberatan Informasi Publik Berhasil Dibuat",
+      body: { name: "Pemohon Rekaan", email: "keberatan@example.test", notelp: HP, alasan: "Alasan rekaan" },
+      rahasia: [HP, "keberatan@example.test", "Pemohon Rekaan"],
+    },
+    {
+      url: "/api/landingpage/responden/create",
+      model: "responden",
+      message: "Berhasil membuat responden",
+      body: { name: "Responden Rekaan", tanggal: "2026-11-17", jenisKelaminId: "jk-1", ratingId: "r-1", kelompokUmurId: "u-1" },
+      rahasia: ["Responden Rekaan"],
+    },
+    {
+      url: "/api/inovasi/ajukanideinovatif/create",
+      model: "ajukanIdeInovatif",
+      message: "Sukses menambahkan ajukan ide inovatif",
+      body: { name: "Pengaju Rekaan", deskripsi: "<p>Rekaan</p>", alamat: "Jalan Rekaan 5", namaIde: "Ide", masalah: "M", benefit: "B" },
+      rahasia: ["Pengaju Rekaan", "Jalan Rekaan"],
+    },
+    {
+      url: "/api/kesehatan/pendaftaran-jadwal-kegiatan/create",
+      model: "pendaftaranJadwalKegiatan",
+      message: "Sukses menambahkan pendaftaran jadwal kegiatan",
+      body: { name: "Anak Rekaan", tanggal: "2026-11-17", namaOrangtua: "Ortu Rekaan", nomor: HP, alamat: "Jalan Rekaan 6", catatan: "-" },
+      rahasia: ["Anak Rekaan", "Ortu Rekaan", HP, "Jalan Rekaan"],
+    },
+    {
+      url: "/api/desa/ajukanpermohonan/create",
+      model: "ajukanPermohonan",
+      message: "Ajukan permohonan berhasil dibuat",
+      body: { nama: "Pemohon Rekaan", nik: NIK, alamat: "Jalan Rekaan 7", nomorKk: "5100000000000099", kategoriId: "k-1" },
+      rahasia: [NIK, "5100000000000099", "Jalan Rekaan", "Pemohon Rekaan"],
+    },
+  ];
+
+  it.each(FORM_PUBLIK)("POST $url → hanya id", async ({ url, model, message, body, rahasia }) => {
+    const res = await postJson(url, body);
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(JSON.parse(text)).toEqual({ success: true, message, data: { id: "baru-1" } });
+    for (const nilai of rahasia) expect(text).not.toContain(nilai);
+    expect(prismaMock[model].create).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true } }));
+  });
+});

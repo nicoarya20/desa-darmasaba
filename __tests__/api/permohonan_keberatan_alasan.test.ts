@@ -67,11 +67,13 @@ describe('permohonanKeberatanInformasiPublikCreate', () => {
 
   it('saves the permohonan when alasan is within the limit', async () => {
     const context = buildContext(paragraph('Permohonan saya ditolak tanpa alasan'));
+    createMock.mockResolvedValue({ id: 'keberatan-1' }); // test-only
 
     const res = await permohonanKeberatanCreate(context as never);
 
     expect(context.set.status).toBeUndefined();
-    expect(res).toMatchObject({ success: true });
+    // Respons hanya id: tidak menggemakan nama/email/telepon pemohon.
+    expect(res).toEqual({ success: true, message: 'Permohonan Keberatan Informasi Publik Berhasil Dibuat', data: { id: 'keberatan-1' } });
     expect(createMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -4,6 +4,7 @@ import peminjamanBukuDelete from "./del";
 import peminjamanBukuFindMany from "./findMany";
 import peminjamanBukuFindUnique from "./findUnique";
 import peminjamanBukuUpdate from "./updt";
+import { guardDataPribadi } from "../../../_data-pribadi/guard";
 
 const PeminjamanBuku = new Elysia({
   prefix: "/peminjamanbuku",
@@ -23,13 +24,15 @@ const PeminjamanBuku = new Elysia({
     }),
   })
 
-  .get("/findMany", peminjamanBukuFindMany)
-  .get("/:id", async (context) => {
-    const response = await peminjamanBukuFindUnique(
-      context.request
-    );
-    return response;
-  })
+  .get("/findMany", peminjamanBukuFindMany, { beforeHandle: guardDataPribadi })
+  .get(
+    "/:id",
+    async (context) => {
+      const response = await peminjamanBukuFindUnique(context.request);
+      return response;
+    },
+    { beforeHandle: guardDataPribadi }
+  )
   .put("/:id", peminjamanBukuUpdate, {
     body: t.Object({
       nama: t.String(),

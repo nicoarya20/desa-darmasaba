@@ -1,17 +1,15 @@
-import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan";
 import { useEffect, useMemo } from "react";
 import { useSnapshot } from "valtio";
 import { summarizeKepuasan, type RespondenItem } from "./kepuasan.logic";
-import { RESPONDEN_CHART_LIMIT } from "./kepuasan.meta";
+import { kepuasanPublik, muatKepuasanPublik } from "./kepuasan.source";
 
 /** Data responden untuk section beranda: daftar (null = memuat), total server, dan ringkasan grafik. */
 export function useKepuasanData() {
-  const snap = useSnapshot(indeksKepuasanState.responden.findMany);
+  const snap = useSnapshot(kepuasanPublik);
 
   useEffect(() => {
-    // Muat sekali saat mount bila belum ada data. load() menangani error sendiri (data → []).
-    const findMany = indeksKepuasanState.responden.findMany;
-    if (!findMany.data && !findMany.loading) void findMany.load(1, RESPONDEN_CHART_LIMIT);
+    // Muat sekali saat mount bila belum ada data. muatKepuasanPublik() menangani error sendiri (data → []).
+    if (!kepuasanPublik.data && !kepuasanPublik.loading) void muatKepuasanPublik();
   }, []);
 
   const data = snap.data as readonly RespondenItem[] | null;

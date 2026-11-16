@@ -3,6 +3,7 @@ import ajukanIdeInovatifCreate from "./create";
 import ajukanIdeInovatifFindMany from "./findMany";
 import ajukanIdeInovatifFindUnique from "./findUnique";
 import ajukanIdeInovatifDelete from "./del";
+import { guardDataPribadi } from "../../_data-pribadi/guard";
 
 const AjukanIdeInovatif = new Elysia({
   prefix: "/ajukanideinovatif",
@@ -18,10 +19,14 @@ const AjukanIdeInovatif = new Elysia({
       benefit: t.String(),
     }),
   })
-  .get("/find-many", ajukanIdeInovatifFindMany)
-  .get("/:id", async (context) => {
-    const response = await ajukanIdeInovatifFindUnique(context.request);
-    return response;
-  })
+  .get("/find-many", ajukanIdeInovatifFindMany, { beforeHandle: guardDataPribadi })
+  .get(
+    "/:id",
+    async (context) => {
+      const response = await ajukanIdeInovatifFindUnique(context.request);
+      return response;
+    },
+    { beforeHandle: guardDataPribadi }
+  )
   .delete("/del/:id", ajukanIdeInovatifDelete);
 export default AjukanIdeInovatif;

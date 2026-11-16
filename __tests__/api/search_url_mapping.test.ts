@@ -12,19 +12,12 @@ const HOME = '/';
 
 /**
  * Tipe yang SENGAJA tidak punya URL detail.
- * - responden / permohonaninformasipublik / permohonaninformasikeberatanpublik:
- *   data pribadi warga, tidak boleh punya halaman publik. Penghapusannya dari
- *   pencarian dikerjakan di task terpisah (T20/F1-02).
  * - mediaSosial: tujuannya link eksternal (iconUrl / wa.me), bukan halaman
  *   internal; dites terpisah di bawah.
  */
-const NO_INTERNAL_URL = new Set([
-  'responden',
-  'permohonaninformasipublik',
-  'permohonaninformasikeberatanpublik',
-  'mediaSosial',
-]);
-const PRIVATE_DATA_TYPES = ['responden', 'permohonaninformasipublik', 'permohonaninformasikeberatanpublik'];
+const NO_INTERNAL_URL = new Set(['mediaSosial']);
+/** Data pribadi warga: sudah dibuang dari pencarian (T20, search_tanpa_data_pribadi.test.ts) dan tidak punya URL. */
+const PRIVATE_DATA_TYPES = ['siswa', 'responden', 'permohonaninformasipublik', 'permohonaninformasikeberatanpublik'];
 
 /** Ambil semua `type: "..."` yang dikirim API pada blok GLOBAL SEARCH. */
 function globalSearchTypes(): string[] {
@@ -54,9 +47,9 @@ describe('pemetaan URL hasil pencarian global', () => {
     expect(unmapped).toEqual([]);
   });
 
-  it('(a) tipe data pribadi tidak punya URL', () => {
+  it('(a) tipe data pribadi tidak dikirim API dan tidak punya URL', () => {
     for (const t of PRIVATE_DATA_TYPES) {
-      expect(types).toContain(t);
+      expect(types).not.toContain(t);
       expect(getDetailUrl(sampleItem(t))).toBe(HOME);
     }
   });

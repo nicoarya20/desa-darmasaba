@@ -53,7 +53,7 @@ const pengaduanMasyarakat = proxy({
             "create"
           ].post(pengaduanMasyarakat.create.form);
         if (res.status === 200) {
-          pengaduanMasyarakat.findMany.load();
+          // Tidak memuat ulang daftar: create() dipanggil form publik warga, daftar kiriman admin-only.
           toast.success("Data berhasil ditambahkan");
           return true;
         }

@@ -12,7 +12,7 @@ type FormCreate = {
 async function createPendaftaran(context: Context) {
   const body = context.body as FormCreate;
 
-  await prisma.pendaftaranJadwalKegiatan.create({
+  const result = await prisma.pendaftaranJadwalKegiatan.create({
     data: {
       name: body.name,
       tanggal: body.tanggal,
@@ -21,13 +21,13 @@ async function createPendaftaran(context: Context) {
       alamat: body.alamat,
       catatan: body.catatan,
     },
+    select: { id: true },
   });
+  // Hanya id: endpoint form publik, jangan gemakan nama anak/orang tua/alamat ke respons.
   return {
     success: true,
     message: "Sukses menambahkan pendaftaran jadwal kegiatan",
-    data: {
-      ...body,
-    },
+    data: { id: result.id },
   };
 }
 export default createPendaftaran;
