@@ -1007,10 +1007,11 @@ export default async function searchFindMany(context: Context) {
   }
 
   // ========================================= MENU INOVASI ========================================= //
-  // ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
+  // ========================================= INOVASI TEKNOLOGI DESA ========================================= //
+  // Gabungan Desa Digital / Smart Village + Info Teknologi Tepat Guna (satu tabel, berkategori).
 
-  if (type === "desaDigital") {
-    const data = await prisma.desaDigital.findMany({
+  if (type === "inovasiTeknologiDesa") {
+    const data = await prisma.inovasiTeknologiDesa.findMany({
       where: {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
@@ -1062,22 +1063,6 @@ export default async function searchFindMany(context: Context) {
     const data = await prisma.mitraKolaborasi.findMany({
       where: {
         OR: [{ name: { contains: query, mode: "insensitive" } }],
-      },
-      skip,
-      take: limitNum,
-    });
-    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
-  }
-
-  // ========================================= INFO TEKHNOLOGI TEPAT GUNA ========================================= //
-
-  if (type === "infoTekno") {
-    const data = await prisma.infoTekno.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { deskripsi: { contains: query, mode: "insensitive" } },
-        ],
       },
       skip,
       take: limitNum,
@@ -1516,11 +1501,10 @@ export default async function searchFindMany(context: Context) {
     programKemiskinan,
     sektorUnggulanDesa,
     demografiPekerjaan,
-    desaDigital,
+    inovasiTeknologiDesa,
     programKreatif,
     kolaborasiInovasi,
     mitraKolaborasi,
-    infoTekno,
     pengelolaanSampah,
     keteranganBankSampahTerdekat,
     programPenghijauan,
@@ -2180,7 +2164,7 @@ export default async function searchFindMany(context: Context) {
       },
       take: limitNum,
     }),
-    prisma.desaDigital.findMany({
+    prisma.inovasiTeknologiDesa.findMany({
       where: {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
@@ -2213,15 +2197,6 @@ export default async function searchFindMany(context: Context) {
     prisma.mitraKolaborasi.findMany({
       where: {
         OR: [{ name: { contains: query, mode: "insensitive" } }],
-      },
-      take: limitNum,
-    }),
-    prisma.infoTekno.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { deskripsi: { contains: query, mode: "insensitive" } },
-        ],
       },
       take: limitNum,
     }),
@@ -2548,11 +2523,10 @@ export default async function searchFindMany(context: Context) {
       ...programKemiskinan.map((b) => ({ type: "programKemiskinan", ...b })),
       ...sektorUnggulanDesa.map((b) => ({ type: "sektorUnggulanDesa", ...b })),
       ...demografiPekerjaan.map((b) => ({ type: "demografiPekerjaan", ...b })),
-      ...desaDigital.map((b) => ({ type: "desaDigital", ...b })),
+      ...inovasiTeknologiDesa.map((b) => ({ type: "inovasiTeknologiDesa", ...b })),
       ...programKreatif.map((b) => ({ type: "programKreatif", ...b })),
       ...kolaborasiInovasi.map((b) => ({ type: "kolaborasiInovasi", ...b })),
       ...mitraKolaborasi.map((b) => ({ type: "mitraKolaborasi", ...b })),
-      ...infoTekno.map((b) => ({ type: "infoTekno", ...b })),
       ...pengelolaanSampah.map((b) => ({ type: "pengelolaanSampah", ...b })),
       ...keteranganBankSampahTerdekat.map((b) => ({
         type: "keteranganBankSampahTerdekat",

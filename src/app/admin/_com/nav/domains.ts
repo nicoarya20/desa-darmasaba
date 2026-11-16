@@ -109,11 +109,12 @@ export const inovasiMenu: NavItem = {
   name: "Inovasi",
   path: "",
   children: [
-    { id: "inovasi.desa-digital-smart-village", name: "Desa Digital/Smart Village", path: "/admin/inovasi/desa-digital-smart-village", basePath: "/admin/inovasi/desa-digital-smart-village" },
+    // ID lama dipertahankan (tersimpan di UserMenuAccess); menu ini gabungan Desa Digital + Info Teknologi Tepat Guna
+    // (docs/decisions/2026-11-16-inovasi-teknologi-desa.md).
+    { id: "inovasi.desa-digital-smart-village", name: "Inovasi Teknologi Desa", path: "/admin/inovasi/inovasi-teknologi-desa", basePath: "/admin/inovasi/inovasi-teknologi-desa" },
     { id: "inovasi.layanan-online-desa", name: "Layanan Online Desa", path: "/admin/inovasi/layanan-online-desa/administrasi-online", basePath: "/admin/inovasi/layanan-online-desa" },
     { id: "inovasi.program-kreatif-desa", name: "Program Kreatif Desa", path: "/admin/inovasi/program-kreatif-desa", basePath: "/admin/inovasi/program-kreatif-desa" },
     { id: "inovasi.kolaborasi-inovasi", name: "Kolaborasi Inovasi", path: "/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi", basePath: "/admin/inovasi/kolaborasi-inovasi" },
-    { id: "inovasi.info-teknologi-tepat-guna", name: "Info Teknologi Tepat Guna", path: "/admin/inovasi/info-teknologi-tepat-guna", basePath: "/admin/inovasi/info-teknologi-tepat-guna" },
     { id: "inovasi.ajukan-ide-inovatif", name: "Ajukan Ide Inovatif", path: "/admin/inovasi/ajukan-ide-inovatif", basePath: "/admin/inovasi/ajukan-ide-inovatif" },
   ],
 }

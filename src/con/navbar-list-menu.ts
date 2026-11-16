@@ -255,9 +255,10 @@ const navbarListMenu = [
         name: "Inovasi",
         children: [
             {
+                // Gabungan Desa Digital/Smart Village + Info Teknologi Tepat Guna (href lama di-redirect, next.config.ts).
                 id: "6.1",
-                name: "Desa Digital/Smart Village",
-                href: "/inovasi/desa-digital-smart-village"
+                name: "Inovasi Teknologi Desa",
+                href: "/inovasi/inovasi-teknologi-desa"
             },
             {
                 id: "6.2",
@@ -273,11 +274,6 @@ const navbarListMenu = [
                 id: "6.4",
                 name: "Kolaborasi Inovasi",
                 href: "/inovasi/kolaborasi-inovasi"
-            },
-            {
-                id: "6.5",
-                name: "Info Teknologi Tepat Guna",
-                href: "/inovasi/info-teknologi-tepat-guna"
             },
             {
                 id: "6.6",

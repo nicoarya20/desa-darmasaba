@@ -68,11 +68,11 @@ const getDetailUrl = (item: SearchItem) => {
     programKemiskinan: () => '/ekonomi/program-kemiskinan',
     sektorUnggulanDesa: () => '/ekonomi/sektor-unggulan-desa',
     demografiPekerjaan: () => '/ekonomi/demografi-pekerjaan',
-    desaDigital: () => '/inovasi/desa-digital-smart-village',
+    // Gabungan Desa Digital + Info Teknologi Tepat Guna (satu tabel, berkategori).
+    inovasiTeknologiDesa: (id) => `/inovasi/inovasi-teknologi-desa/${id}`,
     programKreatif: () => '/inovasi/program-kreatif-desa',
     kolaborasiInovasi: () => '/inovasi/kolaborasi-inovasi',
     mitraKolaborasi: () => '/inovasi/kolaborasi-inovasi',
-    infoTekno: () => '/inovasi/info-teknologi-tepat-guna',
     pengelolaanSampah: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
     keteranganBankSampahTerdekat: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
     programPenghijauan: () => '/lingkungan/program-penghijauan',
