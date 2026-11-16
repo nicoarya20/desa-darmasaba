@@ -8,7 +8,12 @@
   --rule: #d2d2d7;
   display: flex;
   flex-direction: column;
-  gap: 56px;
+}
+
+/* Antar-kelompok tahun: token jarak antar-blok halaman (globals.css). Bukan gap flex `.list`, agar paginasi Kabar di
+   dalamnya tetap memakai margin-top bawaannya sendiri (40px, ≤734px 32px) seperti daftar Kabar lain. */
+.group + .group {
+  margin-top: var(--block-gap);
 }
 
 .year {
@@ -17,7 +22,7 @@
   font-size: 28px;
   line-height: 1.14;
   font-weight: 700;
-  letter-spacing: 0.004em;
+  letter-spacing: -0.005em;
   font-variant-numeric: tabular-nums;
 }
 
@@ -210,10 +215,6 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
-  .list {
-    gap: 40px;
-  }
-
   .year {
     font-size: 24px;
     line-height: 1.17;
