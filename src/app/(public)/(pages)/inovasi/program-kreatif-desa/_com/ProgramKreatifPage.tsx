@@ -1,15 +1,15 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
-import { paginate, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { listSearchable, paginate, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { ProgramKreatifPlaceholder, ProgramKreatifTiles } from './ProgramKreatifTiles';
-import { programKreatifListHref, programKreatifSearchable } from './program-kreatif.logic';
-import { PROGRAM_KREATIF_PAGE_SIZE, PROGRAM_KREATIF_SEARCH_THRESHOLD } from './program-kreatif.meta';
+import { programKreatifListHref } from './program-kreatif.logic';
+import { PROGRAM_KREATIF_PAGE_SIZE } from './program-kreatif.meta';
 import { PROGRAM_KREATIF_TEXT as T } from './program-kreatif.text';
 import { useProgramKreatif, type ProgramKreatifState } from './use-program-kreatif';
 
@@ -39,7 +39,7 @@ export function ProgramKreatifPage() {
         tabs={[]}
         search={search}
         onSearch={(next) => router.replace(programKreatifListHref({ search: next }))}
-        searchable={programKreatifSearchable(search, total, PROGRAM_KREATIF_SEARCH_THRESHOLD)}
+        searchable={listSearchable(search, total)}
       />
       <ProgramKreatifBody
         state={state}

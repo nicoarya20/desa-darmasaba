@@ -128,11 +128,6 @@ export function tahunTabs(items: readonly Kolaborasi[], query: Pick<KolaborasiQu
   ];
 }
 
-/** Kolom cari tampil bila kata kunci sedang aktif (agar bisa dihapus) atau entri melebihi ambang; jumlah belum diketahui → sembunyi. */
-export function kolaborasiSearchable(search: string, total: number | null, threshold: number): boolean {
-  return search !== "" || (total !== null && total > threshold);
-}
-
 /** Pesan daftar kosong: bedakan galat, belum ada data, tahun tanpa entri, dan cari tanpa hasil. */
 export function emptyMessage(query: Pick<KolaborasiQuery, "tahun" | "search">, failed: boolean): string {
   if (failed) return T.error;

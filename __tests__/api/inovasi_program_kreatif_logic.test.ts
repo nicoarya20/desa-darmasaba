@@ -5,7 +5,6 @@ import {
   isNotFoundMessage,
   programKreatifDetailHref,
   programKreatifListHref,
-  programKreatifSearchable,
   toProgramKreatifItem,
 } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
 
@@ -42,16 +41,6 @@ describe('URL', () => {
     expect(programKreatifDetailHref('a b')).toBe('/inovasi/program-kreatif-desa/a%20b');
     expect(programKreatifListHref()).toBe('/inovasi/program-kreatif-desa');
     expect(programKreatifListHref({ search: 'eco', page: 3 })).toBe('/inovasi/program-kreatif-desa?search=eco&page=3');
-  });
-});
-
-describe('programKreatifSearchable', () => {
-  it('kolom cari hanya bila > ambang atau sedang mencari', () => {
-    expect(programKreatifSearchable('', 6, 6)).toBe(false);
-    expect(programKreatifSearchable('', 7, 6)).toBe(true);
-    expect(programKreatifSearchable('eco', 0, 6)).toBe(true);
-    expect(programKreatifSearchable('', null, 6)).toBe(false);
-    expect(programKreatifSearchable('eco', null, 6)).toBe(true);
   });
 });
 

@@ -12,9 +12,6 @@ export const MITRA_FETCH_LIMIT = 100;
 /** Entri per halaman daftar (paginasi klien). */
 export const KOLABORASI_PAGE_LIMIT = 10;
 
-/** Kolom cari tampil bila kolaborasi lebih dari angka ini atau URL sudah ber-`?search=` (ambang sama dengan Tips Keamanan). */
-export const KOLABORASI_SEARCH_THRESHOLD = 6;
-
 /**
  * Deskripsi dengan teks polos lebih panjang dari ini dipotong 4 baris + tombol "Baca selengkapnya" (dibuka di tempat).
  * Deskripsi stg 108–397 karakter (1–3 kalimat) → tampil penuh tanpa tombol.

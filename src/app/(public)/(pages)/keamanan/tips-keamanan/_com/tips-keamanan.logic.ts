@@ -28,14 +28,6 @@ export function toTip(item: TipsKeamananApiItem): Tip {
   };
 }
 
-/**
- * Kolom cari tampil bila kata kunci sedang aktif (agar bisa dihapus) atau tips lebih dari ambang.
- * Selama memuat/galat tanpa kata kunci → disembunyikan (jumlah belum diketahui).
- */
-export function tipsSearchable(search: string, total: number | null, threshold: number): boolean {
-  return search !== "" || (total !== null && total > threshold);
-}
-
 /** URL daftar; `search` kosong dan halaman 1 tidak ditulis ke query. */
 export function tipsKeamananListHref(opts: { search?: string; page?: number } = {}): string {
   return withListQuery(TIPS_KEAMANAN_BASE_HREF, opts);

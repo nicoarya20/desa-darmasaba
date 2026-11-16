@@ -7,7 +7,6 @@ import {
   groupByYear,
   isSlugLike,
   kolaborasiListHref,
-  kolaborasiSearchable,
   parseTahun,
   sortKolaborasi,
   tahunTabs,
@@ -15,6 +14,8 @@ import {
   type KolaborasiApiItem,
 } from '@/app/(public)/(pages)/inovasi/kolaborasi-inovasi/_com/kolaborasi.logic';
 import { toMitra } from '@/app/(public)/(pages)/inovasi/kolaborasi-inovasi/_com/mitra.logic';
+import { listSearchable } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { LIST_SEARCH_THRESHOLD } from '@/app/(public)/_com/kabar-list/kabar-list.meta';
 
 const clean = (html: string) => `<!--clean-->${html}`; // test-only: penanda bahwa HTML lewat sanitize
 
@@ -133,14 +134,31 @@ describe('kolaborasiListHref / tahunTabs', () => {
   });
 });
 
-describe('kolaborasiSearchable / emptyMessage / toMitra', () => {
-  it('cari tampil bila > ambang atau kata kunci aktif; jumlah belum diketahui → sembunyi', () => {
-    expect(kolaborasiSearchable('', 4, 6)).toBe(false);
-    expect(kolaborasiSearchable('', 7, 6)).toBe(true);
-    expect(kolaborasiSearchable('bajra', 4, 6)).toBe(true);
-    expect(kolaborasiSearchable('', null, 6)).toBe(false);
+// listSearchable = modul bersama kabar-list (dipakai Tips Keamanan, Program Kreatif, Kolaborasi); belum ada file test kabar-list sendiri.
+describe('listSearchable (kabar-list)', () => {
+  it('ambang bawaan 6: ≤ ambang tanpa kata kunci → tersembunyi; > ambang → tampil', () => {
+    expect(LIST_SEARCH_THRESHOLD).toBe(6);
+    expect(listSearchable('', 3)).toBe(false);
+    expect(listSearchable('', 6)).toBe(false);
+    expect(listSearchable('', 7)).toBe(true);
   });
 
+  it('URL membawa ?search= → selalu tampil (agar bisa dihapus), walau 0 hasil atau jumlah belum diketahui', () => {
+    expect(listSearchable('bajra', 0)).toBe(true);
+    expect(listSearchable('bajra', null)).toBe(true);
+  });
+
+  it('jumlah belum diketahui (memuat/galat) tanpa kata kunci → tersembunyi', () => {
+    expect(listSearchable('', null)).toBe(false);
+  });
+
+  it('ambang bisa diganti pemakai', () => {
+    expect(listSearchable('', 3, 2)).toBe(true);
+    expect(listSearchable('', 3, 10)).toBe(false);
+  });
+});
+
+describe('emptyMessage / toMitra', () => {
   it('pesan kosong membedakan galat, data kosong, tahun, dan cari', () => {
     expect(emptyMessage({ tahun: null, search: '' }, true)).toBe('Kolaborasi inovasi gagal dimuat. Coba muat ulang halaman.');
     expect(emptyMessage({ tahun: null, search: '' }, false)).toBe('Belum ada kolaborasi inovasi.');

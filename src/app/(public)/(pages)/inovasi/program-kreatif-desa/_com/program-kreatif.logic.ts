@@ -45,14 +45,6 @@ export function toProgramKreatifItem(item: ProgramKreatifApiItem): ProgramKreati
 }
 
 /**
- * Kolom cari tampil bila kata kunci sedang aktif (agar bisa dihapus) atau program lebih dari ambang (aturan sama dengan
- * Tips Keamanan). Selama memuat/galat tanpa kata kunci → disembunyikan (jumlah belum diketahui).
- */
-export function programKreatifSearchable(search: string, total: number | null, threshold: number): boolean {
-  return search !== "" || (total !== null && total > threshold);
-}
-
-/**
  * Pesan API detail berarti "tidak ditemukan". MITIGASI SEMENTARA: `GET /api/inovasi/programkreatif/:id` membalas
  * HTTP 200 + `success:false` (bukan 404) untuk id yang tidak ada, sama bentuknya dengan galat server; pembedanya hanya
  * pesan. Hapus bila API membalas 404 (dicatat untuk backend).

@@ -1,13 +1,12 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
-import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { KolaborasiList } from './KolaborasiList';
-import { kolaborasiListHref, kolaborasiSearchable, parseTahun, tahunTabs, type KolaborasiQuery } from './kolaborasi.logic';
-import { KOLABORASI_SEARCH_THRESHOLD } from './kolaborasi.meta';
+import { kolaborasiListHref, parseTahun, tahunTabs, type KolaborasiQuery } from './kolaborasi.logic';
 import { KOLABORASI_TEXT as T } from './kolaborasi.text';
 import { loadKolaborasi, loadMitra } from './kolaborasi.source';
 import { MitraWall } from './MitraWall';
@@ -40,7 +39,7 @@ export function KolaborasiPage() {
         tabs={all ? tahunTabs(all, query) : []}
         search={query.search}
         onSearch={(next) => router.replace(kolaborasiListHref({ tahun: query.tahun, search: next }))}
-        searchable={kolaborasiSearchable(query.search, all?.length ?? null, KOLABORASI_SEARCH_THRESHOLD)}
+        searchable={listSearchable(query.search, all?.length ?? null)}
       />
       <KolaborasiList
         state={kolaborasi}
