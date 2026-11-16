@@ -1798,15 +1798,35 @@ model UnitUsahaBumDes {
 
 // ========================================= PROGRAM KEMISKINAN ========================================= //
 model ProgramKemiskinan {
-  id          String               @id @default(uuid())
+  id          String                      @id @default(uuid())
   nama        String
+  // Penanda URL publik (/ekonomi/program-kemiskinan/{slug}); null = halaman detail memakai id.
+  slug        String?                     @unique
   deskripsi   String
   icon        String
-  isActive    Boolean              @default(true)
-  statistikId String?              @unique
-  statistik   StatistikKemiskinan? @relation(fields: [statistikId], references: [id])
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  isActive    Boolean                     @default(true)
+  statistikId String?                     @unique
+  statistik   StatistikKemiskinan?        @relation(fields: [statistikId], references: [id])
+  penerima    PenerimaProgramKemiskinan[]
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @updatedAt
+}
+
+// Penerima bantuan per program per tahun. Sengaja hanya nama + alamat (keputusan user 2026-11-16):
+// NIK, tanggal lahir, nomor KK, dst. dari BNBA desa tidak disimpan.
+model PenerimaProgramKemiskinan {
+  id        String            @id @default(cuid())
+  programId String
+  program   ProgramKemiskinan @relation(fields: [programId], references: [id], onDelete: Cascade)
+  tahun     Int
+  nama      String
+  alamat    String
+  urutan    Int               @default(0)
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([programId, tahun])
 }
 
 model StatistikKemiskinan {
