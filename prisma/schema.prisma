@@ -127,6 +127,9 @@ model FileStorage {
   FotoKegiatanBankSampah FotoKegiatanBankSampah[]
 
   PerangkatDesa PerangkatDesa[]
+
+  KlasterPosyandu      KlasterPosyandu[]
+  FotoKegiatanPosyandu FotoKegiatanPosyandu[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -1321,21 +1324,63 @@ model Banjar {
 
 // ========================================= POSYANDU ========================================= //
 model Posyandu {
-  id              String       @id @default(cuid())
+  id              String                 @id @default(cuid())
   name            String
   nomor           String
   deskripsi       String
   jadwalPelayanan String
-  image           FileStorage? @relation(fields: [imageId], references: [id])
+  image           FileStorage?           @relation(fields: [imageId], references: [id])
   imageId         String?
-  banjar          Banjar?      @relation(fields: [banjarId], references: [id])
+  banjar          Banjar?                @relation(fields: [banjarId], references: [id])
   banjarId        String?
+  // Alamat tempat posyandu di banjar; nullable karena data lama belum punya alamat.
+  alamat          String?                @db.Text
   ibuHamil        IbuHamil[]
   balita          Balita[]
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  deletedAt       DateTime     @default(now())
-  isActive        Boolean      @default(true)
+  fotoKegiatan    FotoKegiatanPosyandu[]
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  deletedAt       DateTime               @default(now())
+  isActive        Boolean                @default(true)
+}
+
+// Deskripsi umum halaman Posyandu (singleton, pola ProfilBumDes): satu baris ber-id tetap, ditulis lewat upsert.
+model ProfilPosyandu {
+  id             String   @id @default("profil-posyandu")
+  deskripsi      String   @db.Text
+  fungsiKegiatan String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Kegiatan posyandu per klaster sasaran. `sasaran` dibatasi balita | remaja | lansia (validasi API + CHECK di
+// migrasi) dan unik: tiap klaster tepat satu baris, dibuat default oleh migrasi 20261116160000_konten_posyandu.
+model KlasterPosyandu {
+  id           String       @id @default(cuid())
+  sasaran      String       @unique
+  judul        String
+  deskripsi    String       @db.Text
+  jamPelayanan String?
+  image        FileStorage? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId      String?
+  urutan       Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+// Galeri foto lokasi & kader posyandu banjar (fondasi konten bersama); hapus permanen, tanpa panel Sampah.
+model FotoKegiatanPosyandu {
+  id         String      @id @default(cuid())
+  posyandu   Posyandu    @relation(fields: [posyanduId], references: [id], onDelete: Cascade)
+  posyanduId String
+  image      FileStorage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId    String
+  keterangan String?
+  urutan     Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([posyanduId, urutan])
 }
 
 // ========================================= PUSKESMAS ========================================= //
