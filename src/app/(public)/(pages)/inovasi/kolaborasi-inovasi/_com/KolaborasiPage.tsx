@@ -10,7 +10,7 @@ import { kolaborasiListHref, parseTahun, tahunTabs, type KolaborasiQuery } from 
 import { KOLABORASI_TEXT as T } from './kolaborasi.text';
 import { loadKolaborasi, loadMitra } from './kolaborasi.source';
 import { MitraWall } from './MitraWall';
-import { useLoadOnce } from './use-load-once';
+import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
 
 /**
  * Halaman Kolaborasi Inovasi di `.section` Kabar Desa: kepala (kembali, judul, cari `?search=` bila > 6 entri atau sedang
@@ -24,8 +24,8 @@ export function KolaborasiPage() {
     search: searchParams.get('search')?.trim() ?? '',
     page: parsePage(searchParams.get('page')),
   };
-  const kolaborasi = useLoadOnce(loadKolaborasi, 'kolaborasi inovasi');
-  const mitra = useLoadOnce(loadMitra, 'mitra kolaborasi');
+  const kolaborasi = useLoadOnce(loadKolaborasi, 'kolaborasi inovasi (Kolaborasi Inovasi)');
+  const mitra = useLoadOnce(loadMitra, 'mitra kolaborasi (Kolaborasi Inovasi)');
   const all = kolaborasi.status === 'ready' ? kolaborasi.data : null;
 
   return (

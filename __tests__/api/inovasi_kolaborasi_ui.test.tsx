@@ -15,7 +15,7 @@ import {
 } from '@/app/(public)/(pages)/inovasi/kolaborasi-inovasi/_com/kolaborasi.logic';
 import k from '@/app/(public)/(pages)/inovasi/kolaborasi-inovasi/_com/kolaborasi.module.css';
 import m from '@/app/(public)/(pages)/inovasi/kolaborasi-inovasi/_com/mitra.module.css';
-import type { LoadState } from '@/app/(public)/(pages)/inovasi/kolaborasi-inovasi/_com/use-load-once';
+import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>

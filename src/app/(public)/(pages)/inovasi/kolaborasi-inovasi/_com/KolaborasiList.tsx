@@ -7,7 +7,7 @@ import { emptyMessage, filterKolaborasi, groupByYear, type Kolaborasi, type Kola
 import { KOLABORASI_PAGE_LIMIT } from './kolaborasi.meta';
 import s from './kolaborasi.module.css';
 import { KOLABORASI_TEXT as T } from './kolaborasi.text';
-import type { LoadState } from './use-load-once';
+import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 
 const PLACEHOLDER_ROWS = 3;
 
