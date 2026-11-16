@@ -1,4 +1,5 @@
 import type { Context } from "elysia";
+import { AUDIT_ACTIONS, audit } from "@/lib/audit";
 import prisma from "@/lib/prisma";
 import type {
   JennaConversationDeleteResponse,
@@ -80,6 +81,15 @@ export async function jennaConversationGet(context: Context): Promise<ApiResult<
     context.set.status = 404;
     return { success: false, message: NOT_FOUND };
   }
+  // Hanya id: isi pesan warga tidak pernah masuk audit.
+  await audit({
+    actor: guard.user,
+    action: AUDIT_ACTIONS.JENNA_CONVERSATION_VIEW,
+    targetType: "jenna_conversation",
+    targetId: id,
+    summary: "Membuka detail percakapan Jenna",
+    meta: { conversationId: id },
+  });
   return { success: true, data: detail };
 }
 
@@ -98,5 +108,13 @@ export async function jennaConversationDelete(context: Context): Promise<ApiResu
     return { success: false, message: NOT_FOUND };
   }
   console.info(`[jenna] Percakapan ${id} dihapus oleh developer ${guard.user.id}`);
+  await audit({
+    actor: guard.user,
+    action: AUDIT_ACTIONS.JENNA_CONVERSATION_DELETE,
+    targetType: "jenna_conversation",
+    targetId: id,
+    summary: "Menghapus percakapan Jenna",
+    meta: { conversationId: id },
+  });
   return { success: true, data: { id } };
 }
