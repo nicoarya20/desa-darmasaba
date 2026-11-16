@@ -1,13 +1,14 @@
 'use client'
 import pengelolaanSampahState from '@/app/admin/(dashboard)/_state/lingkungan/pengelolaan-sampah';
 import colors from '@/con/colors';
-import { Box, Center, Flex, Group, Pagination, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Flex, Paper, SimpleGrid, Skeleton, Stack, Text, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { Icon, IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconDroplet, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRoute, IconRun, IconScale, IconSchool, IconSearch, IconShield, IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash, IconTree, IconTrendingUp, IconTrophy, IconTruck, IconUsers } from '@tabler/icons-react';
+import { Icon, IconAlertTriangle, IconAmbulance, IconBook, IconBuilding, IconBuildingCommunity, IconCash, IconChartLine, IconChristmasTreeFilled, IconClipboard, IconDroplet, IconFileText, IconFiretruck, IconFirstAidKit, IconHome, IconHomeEco, IconHospital, IconInfoCircle, IconLeaf, IconLifebuoy, IconMessageReport, IconPhoneCall, IconRecycle, IconRun, IconScale, IconSchool, IconSearch, IconShield, IconShieldFilled, IconShoppingCart, IconStethoscope, IconTent, IconTrash, IconTree, IconTrendingUp, IconTrophy, IconTruck, IconUsers } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
+import BankSampahList from './_com/bank-sampah.list';
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const LeafletMultiMarkerMap = dynamic(
@@ -152,45 +153,12 @@ function Page() {
         <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
           {/* Left side - List of bank locations */}
           <Box>
-            <Paper p="md" bg={colors['white-trans-1']} radius="lg">
-              <Text fz="xl" fw="bold" mb="md">Daftar Bank Sampah</Text>
-              <Stack gap="md">
-                {data2?.map((v, k) => (
-                  <Paper key={k} p="md" withBorder radius="md">
-                    <Group justify='space-between'>
-                      <Box>
-                        <Text fw="bold" fz="lg">{v.namaTempatMaps}</Text>
-                        <Text c="dimmed" fz="sm" mb="sm">{v.alamat}</Text>
-                      </Box>
-                      <Box>
-                        <IconRoute color={colors['blue-button']} size={30} />
-                        <Text fw={"bold"} fz="sm" c={colors['blue-button']}>Rute</Text>
-                      </Box>
-                    </Group>
-                        {v.lat && v.lng ? (
-                          <a
-                            href={`https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: colors['blue-button'], textDecoration: 'none' }}
-                          >
-                            <Text fz="sm">📌 Lihat Peta Lebih Besar</Text>
-                          </a>
-                        ) : (
-                          <Text c="dimmed" fz="sm">Koordinat belum tersedia</Text>
-                        )}
-                  </Paper>
-                ))}
-              </Stack>
-              <Center>
-                <Pagination
-                  value={page}
-                  onChange={(newPage) => load2(newPage, 3, debouncedSearch)} // load2 = list bank sampah (state2), bukan mekanisme
-                  total={totalPages}
-                  my="md"
-                />
-              </Center>
-            </Paper>
+            <BankSampahList
+              data={data2}
+              page={page}
+              totalPages={totalPages}
+              onPageChange={(newPage) => load2(newPage, 3, debouncedSearch)} // load2 = list bank sampah (state2), bukan mekanisme
+            />
           </Box>
 
           {/* Right side - Single map showing all locations */}
