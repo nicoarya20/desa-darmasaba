@@ -13,11 +13,17 @@ type Props = {
   /** Label aksesibilitas section, mis. "Galeri foto BUMDes". */
   ariaLabel: string
   testId?: string
+  /** Dipanggil saat pratinjau foto dibuka/ditutup (mis. agar modal induk tidak ikut tertutup oleh Escape). */
+  onPreviewChange?: (terbuka: boolean) => void
 }
 
 /** Galeri foto publik: grid 2/3/4 kolom, klik foto → modal ukuran penuh + keterangan; kosong → tidak dirender. */
-export default function GaleriFoto({ foto, namaPemilik, judul = 'Galeri Foto', ariaLabel, testId = 'galeri-foto' }: Props) {
-  const [aktif, setAktif] = useState<FotoGaleriItem | null>(null)
+export default function GaleriFoto({ foto, namaPemilik, judul = 'Galeri Foto', ariaLabel, testId = 'galeri-foto', onPreviewChange }: Props) {
+  const [aktif, setAktifState] = useState<FotoGaleriItem | null>(null)
+  const setAktif = (f: FotoGaleriItem | null) => {
+    setAktifState(f)
+    onPreviewChange?.(f !== null)
+  }
 
   if (foto.length === 0) return null
 
