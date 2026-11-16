@@ -3,15 +3,7 @@
 // Catatan: environment jsdom gagal start di repo ini, jadi markup diuji via renderToStaticMarkup.
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
-import { describe, expect, it, vi } from 'vitest';
-
-vi.mock('next-view-transitions', () => ({
-  Link: ({ href, children, ...rest }: React.ComponentProps<'a'>) => (
-    <a href={href} {...rest}>
-      {children}
-    </a>
-  ),
-}));
+import { describe, expect, it } from 'vitest';
 
 import { HeroSosmed, HeroStatus } from '@/app/(public)/_com/main-page/landing-page/HeroInfo';
 import { HeroProfile } from '@/app/(public)/_com/main-page/landing-page/HeroProfile';
@@ -150,6 +142,7 @@ describe('HeroProfile', () => {
 });
 
 describe('HeroPrograms', () => {
+  const noop = () => {};
   // test-only: 8 program fiktif — jumlah yang sama dengan data desa saat ini.
   const items = Array.from({ length: 8 }, (_, i) => ({
     id: `prog-${i + 1}`,
@@ -157,19 +150,20 @@ describe('HeroPrograms', () => {
     image: i === 7 ? null : { link: `/u/logo-${i + 1}.png` },
   })) as ProgramInovasiItem[];
 
-  it('semua program ada di rel sebagai tautan ke halaman detailnya', () => {
-    const html = render(<HeroPrograms items={items} loading={false} />);
+  it('semua program ada di rel sebagai tautan ke overlay detail di beranda (/?program=id)', () => {
+    const html = render(<HeroPrograms items={items} loading={false} onOpen={noop} />);
     expect(html).toContain(`<h2`);
     expect(html).toContain(LANDING_TEXT.programsTitle);
     expect(html.match(/<li/g)).toHaveLength(8);
     for (const item of items) {
-      expect(html).toContain(`href="/program-inovasi/${item.id}"`);
+      expect(html).toContain(`href="/?program=${item.id}"`);
+      expect(html).not.toContain('/program-inovasi/');
       expect(html).toContain(`>${item.name}<`);
     }
   });
 
   it('lebih dari 4 program → ada panah geser (kiri mati di awal) dan garis posisi', () => {
-    const html = render(<HeroPrograms items={items} loading={false} />);
+    const html = render(<HeroPrograms items={items} loading={false} onOpen={noop} />);
     expect(html).toMatch(new RegExp(`<button[^>]*disabled=""[^>]*aria-label="${LANDING_TEXT.programsPrev}"`));
     expect(html).toMatch(new RegExp(`<button(?![^>]*disabled)[^>]*aria-label="${LANDING_TEXT.programsNext}"`));
     expect(html).toContain('width:50.00%');
@@ -179,7 +173,7 @@ describe('HeroPrograms', () => {
   });
 
   it('4 program atau kurang → tanpa panah dan tanpa garis posisi', () => {
-    const html = render(<HeroPrograms items={items.slice(0, 4)} loading={false} />);
+    const html = render(<HeroPrograms items={items.slice(0, 4)} loading={false} onOpen={noop} />);
     expect(html.match(/<li/g)).toHaveLength(4);
     expect(html).not.toContain('<button');
     expect(html).not.toContain('translateX');
@@ -187,17 +181,17 @@ describe('HeroPrograms', () => {
   });
 
   it('program tanpa logo tetap punya ubin (ikon pengganti)', () => {
-    const html = render(<HeroPrograms items={items.slice(4)} loading={false} />);
+    const html = render(<HeroPrograms items={items.slice(4)} loading={false} onOpen={noop} />);
     expect(html.match(/<img/g)).toHaveLength(3);
     expect(html.match(/<svg/g)).toHaveLength(1);
   });
 
   it('kosong → satu kalimat; memuat → placeholder tanpa tautan dan tanpa panah', () => {
-    const empty = render(<HeroPrograms items={[]} loading={false} />);
+    const empty = render(<HeroPrograms items={[]} loading={false} onOpen={noop} />);
     expect(empty).toContain(LANDING_TEXT.programsEmpty);
     expect(empty).not.toContain('<li');
 
-    const loading = render(<HeroPrograms items={items} loading />);
+    const loading = render(<HeroPrograms items={items} loading onOpen={noop} />);
     expect(loading).not.toContain(LANDING_TEXT.programsEmpty);
     expect(loading).not.toContain('<a ');
     expect(loading).not.toContain('<button');

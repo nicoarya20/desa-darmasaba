@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.289] - 2026-11-16
+## [0.1.291] - 2026-11-17
 ### Added
 - **Bank Sampah: detail dalam modal.** Tiap lokasi di bagian "Lokasi Bank Sampah" kini punya tombol "Lihat detail" yang membuka modal dengan tab Profil (deskripsi, alamat, kontak, media sosial, inovasi TPS yang terhubung ke Program Inovasi), Struktur (foto bagan + daftar pengurus), dan Dokumentasi (galeri foto kegiatan). Memilih lokasi tetap menampilkan titiknya di peta, dan "Petunjuk arah" tetap membuka Google Maps. Admin mengisi semua field ini di form Bank Sampah; pengurus dan galeri diisi di halaman edit.
 - **Info Sekolah: detail lembaga.** Tiap sekolah/lembaga kini punya deskripsi, alamat, kontak, media sosial, foto sekolah, titik peta + link Google Maps, struktur organisasi (opsional), dan galeri foto kegiatan, dengan halaman detail publik `/pendidikan/info-sekolah/lembaga/[id]`. Bagian yang kosong tidak ditampilkan.
@@ -14,6 +14,20 @@
 - Jumlah partisipan di Kegiatan Desa kini opsional. Bila kosong, jumlah partisipan tidak ditampilkan di halaman publik (sebelumnya tampil "0").
 - Menu **UMKM** berganti nama menjadi **UMKM & Pasar Desa** di navbar publik dan sidebar admin.
 - Admin UMKM kembali menampilkan tab **Produk** dan **Kategori Produk**. Tab Dashboard dan Penjualan tetap disembunyikan, dan pemesanan lewat website tetap nonaktif (pembeli menghubungi penjual lewat WhatsApp).
+
+## [0.1.290] - 2026-11-16
+### Changed
+- **Kartu Layanan Masyarakat di beranda kini berada tepat di bawah galeri Layanan dan Potensi Desa**, menyatu dalam satu latar abu dengan galeri, bukan lagi section terpisah di dasar beranda (tepat di atas footer yang berisi 4 tautan yang sama). Judul "Layanan Masyarakat" dan teks pengantarnya dihapus; yang tampil hanya 4 kartu: Administrasi Kependudukan, Layanan Sosial, Pengaduan Masyarakat, dan Informasi Publik.
+- Di ponsel, 4 kartu yang sebelumnya ditumpuk (sekitar 900px) kini tampil sebagai daftar ringkas dalam satu kotak putih: ikon, judul, deskripsi singkat, dan panah. Tinggi daftar sekitar 340px. Kartu Pengaduan tetap membuka formulir pengaduan.
+
+## [0.1.289] - 2026-11-16
+### Changed
+- **Detail Program Inovasi kini tampil sebagai overlay di beranda**, bukan halaman terpisah. Klik ubin program di hero membuka kartu detail di atas beranda yang diburamkan: logo, nama, deskripsi yang lebih mudah dibaca (teks gelap, rata kiri), dan galeri Dokumentasi. Di ponsel overlay tampil layar penuh.
+- Foto dokumentasi dibuka besar di dalam overlay yang sama, bisa digeser ke foto sebelumnya/berikutnya (tombol, geser sentuh, atau panah keyboard). Esc atau "‹ Kembali" kembali ke detail.
+- Overlay punya alamat sendiri (`/?program=…`) sehingga bisa dibagikan; tombol back browser menutupnya dan posisi beranda tidak melompat. Hasil pencarian dan tautan dari asisten Jenna kini membuka overlay ini. Tautan lama `/program-inovasi/…` tetap berfungsi dan diarahkan ke overlay.
+
+### Fixed
+- Menutup overlay atau kembali (tombol back) dari alamat yang hanya berbeda parameter (mis. `/?program=…` → `/`) tidak lagi membuat layar macet sekitar 4 detik. Sebelumnya animasi pindah halaman dimulai lalu menunggu sampai batas waktu browser.
 
 ## [0.1.288] - 2026-11-16
 ### Added

@@ -13,7 +13,7 @@ import { LAYANAN_MASYARAKAT_TEXT } from "./layanan-masyarakat.text";
 // (editor tiptap + dropzone berat, dan fetch jenis pengaduan baru jalan saat dibutuhkan).
 const PengaduanMasyarakatModal = dynamic(() => import("../../pengaduan/PengaduanMasyarakatModal"), { ssr: false });
 
-/** Section beranda: 4 kartu layanan utama desa (sumber sama dengan footer "Layanan Desa"). */
+/** Section beranda: 4 kartu layanan utama desa tanpa judul, duduk di pita galeri Layanan & Potensi (sumber sama dengan footer "Layanan Desa"). */
 function LayananMasyarakat() {
   const [opened, { open, close }] = useDisclosure(false);
   const [mounted, setMounted] = useState(false);
@@ -23,15 +23,8 @@ function LayananMasyarakat() {
   };
 
   return (
-    <section className={s.section} style={LAYANAN_BRAND_VARS} aria-labelledby="layanan-masyarakat-title">
+    <section className={s.section} style={LAYANAN_BRAND_VARS} aria-label={LAYANAN_MASYARAKAT_TEXT.ariaLabel}>
       <div className={s.inner}>
-        <header className={s.header}>
-          <h2 id="layanan-masyarakat-title" className={s.title}>
-            {LAYANAN_MASYARAKAT_TEXT.title}
-          </h2>
-          <p className={s.lead}>{LAYANAN_MASYARAKAT_TEXT.lead}</p>
-        </header>
-
         <ul className={s.grid}>
           {LAYANAN_DESA.map((item) => (
             <li key={item.id} className={s.cell}>

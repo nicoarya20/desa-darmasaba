@@ -1,0 +1,59 @@
+import { Image, Modal } from "@mantine/core";
+import { sanitizeRichText } from "@/lib/rich-text";
+import l from "../landing.module.css";
+import type { GalleryView, ProgramHead } from "./program-overlay.logic";
+import s from "./program-overlay.module.css";
+import { PROGRAM_OVERLAY_TEXT as T } from "./program-overlay.text";
+import { ProgramOverlayGallery } from "./ProgramOverlayGallery";
+
+type Props = { head: ProgramHead; gallery: GalleryView; onOpenPhoto: (index: number) => void };
+
+/** Isi overlay: ubin logo + label + nama (judul dialog), deskripsi tersanitasi, galeri dokumentasi. */
+export function ProgramOverlayDetail({ head, gallery, onOpenPhoto }: Props) {
+  const description = sanitizeRichText(head.description);
+
+  return (
+    <div className={s.inner}>
+      <header className={s.head}>
+        {head.logo ? (
+          <span className={s.logoTile}>
+            <Image className={s.logo} src={head.logo} alt="" fit="contain" />
+          </span>
+        ) : null}
+        <div className={s.titles}>
+          <span className={s.eyebrow}>{T.eyebrow}</span>
+          <Modal.Title className={s.title}>{head.name}</Modal.Title>
+        </div>
+      </header>
+      {description ? (
+        <div className={s.richText} dangerouslySetInnerHTML={{ __html: description }} />
+      ) : (
+        <p className={`${s.richText} ${s.muted}`}>{T.emptyDescription}</p>
+      )}
+      <ProgramOverlayGallery gallery={gallery} onOpenPhoto={onOpenPhoto} />
+    </div>
+  );
+}
+
+const LINE_WIDTHS = ["100%", "96%", "92%", "58%"];
+
+/** Kerangka berdenyut saat dibuka lewat tautan langsung (belum ada preview dari rel). */
+export function ProgramOverlaySkeleton() {
+  return (
+    <div className={s.inner} aria-busy="true">
+      <span className={s.srOnly}>{T.loading}</span>
+      <div className={s.head} aria-hidden>
+        <span className={`${s.logoTile} ${s.skeletonFill} ${l.pulse}`} />
+        <div className={s.titles}>
+          <span className={`${s.bar} ${s.barEyebrow} ${l.pulse}`} />
+          <span className={`${s.bar} ${s.barTitle} ${l.pulse}`} />
+        </div>
+      </div>
+      <div className={s.lines} aria-hidden>
+        {LINE_WIDTHS.map((width) => (
+          <span key={width} className={`${s.bar} ${s.barLine} ${l.pulse}`} style={{ width }} />
+        ))}
+      </div>
+    </div>
+  );
+}

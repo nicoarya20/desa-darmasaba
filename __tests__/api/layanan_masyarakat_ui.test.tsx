@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Section "Layanan Masyarakat" beranda: 4 kartu dari daftar yang sama dengan footer
-// "Layanan Desa", kartu Pengaduan = tombol pembuka modal (bukan link), dan posisinya
-// tepat setelah Indeks Kepuasan Masyarakat.
+// "Layanan Desa", kartu Pengaduan = tombol pembuka modal (bukan link), tanpa judul sendiri,
+// dan posisinya tepat setelah galeri Layanan & Potensi (satu pita dengan galeri).
 import { describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -51,10 +51,12 @@ describe('LAYANAN_DESA', () => {
 describe('LayananMasyarakat', () => {
   const html = render(<LayananMasyarakat />);
 
-  it('judul h2 + pengantar, dan 4 kartu dengan judul h3', () => {
-    expect(html).toMatch(new RegExp(`<h2[^>]*id="layanan-masyarakat-title"[^>]*>${LAYANAN_MASYARAKAT_TEXT.title}</h2>`));
-    expect(html).toContain('aria-labelledby="layanan-masyarakat-title"');
-    expect(html).toContain(LAYANAN_MASYARAKAT_TEXT.lead);
+  it('tanpa judul h2/pengantar: section diberi aria-label, 4 kartu tetap berjudul h3', () => {
+    expect(LAYANAN_MASYARAKAT_TEXT).toEqual({ ariaLabel: 'Layanan Masyarakat' });
+    expect(html).toMatch(/<section[^>]*aria-label="Layanan Masyarakat"[^>]*>/);
+    expect(html).not.toContain('aria-labelledby');
+    expect(html).not.toContain('<h2');
+    expect(html).not.toContain('<header');
     expect(html.match(/<h3/g)).toHaveLength(4);
     for (const item of LAYANAN_DESA) {
       expect(html).toContain(`>${item.title}</h3>`);
@@ -89,9 +91,22 @@ describe('LayananMasyarakat', () => {
 });
 
 describe('Integrasi beranda & footer', () => {
-  it('section dipasang tepat setelah <Kepuasan /> di beranda', () => {
+  it('section dipasang tepat setelah galeri <LayananPotensi /> dan hanya sekali di beranda', () => {
     const page = SRC('app/(public)/page.tsx');
-    expect(page).toMatch(/<Kepuasan \/>\s*<LayananMasyarakat \/>/);
+    expect(page).toMatch(/<LayananPotensi \/>\s*<LayananMasyarakat \/>/);
+    expect(page.match(/<LayananMasyarakat \/>/g)).toHaveLength(1);
+    expect(page).not.toMatch(/<Kepuasan \/>\s*<LayananMasyarakat \/>/);
+  });
+
+  it('latar section transparan (satu pita dengan galeri) dan sisa gaya judul dibersihkan', () => {
+    const css = SRC('app/(public)/_com/main-page/layanan-masyarakat/layanan-masyarakat.module.css');
+    const section = css.match(/\.section \{[^}]*\}/)?.[0] ?? '';
+    expect(section).not.toMatch(/background/);
+    // Titik slide → kartu = setengah --block-gap (lebih rapat dari kartu → batas pita = --section-pad-y).
+    expect(section).toContain('--gallery-dots-tail: 15px;');
+    expect(section).toContain('margin-top: calc(var(--block-gap) / 2 - var(--section-pad-y) - var(--gallery-dots-tail));');
+    expect(section).toContain('padding: 0 16px var(--section-pad-y);');
+    expect(css).not.toMatch(/\.(header|title|lead)\s*\{/);
   });
 
   it('footer "Layanan Desa" tetap ada dan memakai daftar yang sama', () => {
