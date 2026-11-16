@@ -1,4 +1,6 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
+import { programKreatifDetailHref } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
+import { penghijauanDetailHref } from '@/app/(public)/(pages)/lingkungan/program-penghijauan/_com/penghijauan.logic';
 import { isPathHidden } from './menu-visibility.logic';
 import { kegiatanDetailHref } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic';
 import { lembagaDetailHref } from '@/app/(public)/(pages)/pendidikan/info-sekolah/_com/info-sekolah.logic';
@@ -71,12 +73,12 @@ const getDetailUrl = (item: SearchItem) => {
     demografiPekerjaan: () => '/ekonomi/demografi-pekerjaan',
     // Gabungan Desa Digital + Info Teknologi Tepat Guna (satu tabel, berkategori).
     inovasiTeknologiDesa: (id) => `/inovasi/inovasi-teknologi-desa/${id}`,
-    programKreatif: () => '/inovasi/program-kreatif-desa',
+    programKreatif: (id) => programKreatifDetailHref(String(id)),
     kolaborasiInovasi: () => '/inovasi/kolaborasi-inovasi',
     mitraKolaborasi: () => '/inovasi/kolaborasi-inovasi',
     pengelolaanSampah: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
     keteranganBankSampahTerdekat: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
-    programPenghijauan: () => '/lingkungan/program-penghijauan',
+    programPenghijauan: (id) => penghijauanDetailHref(String(id)),
     dataLingkunganDesa: () => '/lingkungan/data-lingkungan-desa',
     // Tipe lama `gotongRoyong` berisi SEMUA Kegiatan Desa (nama tipe dipertahankan) → detail Kegiatan Desa.
     gotongRoyong: (id, kategori) => kegiatanDetailHref(kategori, String(id)),

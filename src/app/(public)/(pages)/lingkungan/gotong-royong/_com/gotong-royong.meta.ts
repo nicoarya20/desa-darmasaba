@@ -1,21 +1,13 @@
-import { withListQuery } from "@/app/(public)/_com/kabar-list/kabar-list.logic";
-import { kegiatanDetailHref } from "@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic";
+/** Konstanta halaman Gotong Royong (`/lingkungan/gotong-royong/*`). */
+
+export const GOTONG_ROYONG_BASE_HREF = "/lingkungan/gotong-royong";
 
 /**
- * URL daftar Gotong Royong. Tetap `/semua` (bukan `/lingkungan/gotong-royong`) karena dipakai navbar dan menjadi
- * kunci `MenuVisibility.menuKey`; `/lingkungan/gotong-royong` dialihkan ke sini.
+ * Batas kegiatan Gotong Royong yang dimuat sekali (dipaginasi di klien). Kegiatan disaring per id kategori tetap
+ * `KATEGORI_GOTONG_ROYONG_ID` (src/lib/kegiatan-gotong-royong.ts), bukan nama — lihat
+ * docs/decisions/2026-11-16-gotong-royong-kategori-kegiatan.md.
  */
-export const GOTONG_ROYONG_LIST_PATH = "/lingkungan/gotong-royong/semua";
+export const GOTONG_ROYONG_LIMIT = 100;
 
-/** Nama kategori untuk segmen kosmetik URL detail (data detail dibaca dari `id`). */
-const GOTONG_ROYONG_KATEGORI_NAMA = "Gotong Royong";
-
-/** URL daftar Gotong Royong + `?search=&page=`; slug kategori diabaikan (hanya satu kategori). */
-export function gotongRoyongListHref(_slug: string, opts: { search?: string; page?: number } = {}): string {
-  return withListQuery(GOTONG_ROYONG_LIST_PATH, opts);
-}
-
-/** URL detail gotong royong = detail Kegiatan Desa (`/pemerintahan/kegiatan-desa/gotong%20royong/{id}`). */
-export function gotongRoyongDetailHref(id: string): string {
-  return kegiatanDetailHref(GOTONG_ROYONG_KATEGORI_NAMA, id);
-}
+/** Segmen kategori URL detail bila kategori kosong (segmen hanya kosmetik, data dibaca dari `id`). */
+export const GOTONG_ROYONG_FALLBACK_SLUG = "gotong-royong";

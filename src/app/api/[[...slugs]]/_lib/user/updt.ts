@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getMenuIdsByRoleId } from "@/app/admin/(dashboard)/user&role/_com/getMenuIdByRole";
+import { AUDIT_ACTIONS, audit } from "@/lib/audit";
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import { denyDeveloperAccountChange, type UserManagerContext } from "./guard";
 
 // API update user
-export default async function userUpdate(context: Context) {
+export default async function userUpdate(context: UserManagerContext) {
   try {
     const { id, isActive, roleId } = (await context.body) as {
       id: string;
@@ -24,12 +25,15 @@ export default async function userUpdate(context: Context) {
 
     const currentUser = await prisma.user.findUnique({
       where: { id },
-      select: { roleId: true, isActive: true },
+      select: { email: true, roleId: true, isActive: true },
     });
 
     if (!currentUser) {
       return { success: false, message: "User tidak ditemukan" };
     }
+
+    const forbidden = denyDeveloperAccountChange(context, context.actor, currentUser.roleId, roleId);
+    if (forbidden) return forbidden;
 
     const isRoleChanged = roleId && currentUser.roleId !== roleId;
     const isActiveChanged =
@@ -79,6 +83,38 @@ export default async function userUpdate(context: Context) {
     // ✅ HAPUS SEMUA SESI USER DI DATABASE
     if (isRoleChanged) {
       await prisma.userSession.deleteMany({ where: { userId: id } });
+    }
+
+    // Cabut sesi Better Auth (tabel `session`) supaya role/status baru berlaku.
+    if (isRoleChanged || isActive === false) {
+      await prisma.session.deleteMany({ where: { userId: id } });
+    }
+
+    const target = currentUser.email ?? id;
+    const base = { actor: context.actor, targetType: "user", targetId: id };
+    if (isRoleChanged) {
+      await audit({
+        ...base,
+        action: AUDIT_ACTIONS.USER_ROLE_UPDATE,
+        summary: `Mengubah role user ${target} dari ${currentUser.roleId} ke ${roleId}`,
+        meta: { fromRoleId: currentUser.roleId, toRoleId: roleId },
+      });
+    }
+    if (isActiveChanged) {
+      await audit({
+        ...base,
+        action: isActive ? AUDIT_ACTIONS.USER_ACTIVATE : AUDIT_ACTIONS.USER_DEACTIVATE,
+        summary: `${isActive ? "Mengaktifkan" : "Menonaktifkan"} user ${target}`,
+        meta: { fromIsActive: currentUser.isActive, toIsActive: isActive },
+      });
+    }
+    if (!isRoleChanged && !isActiveChanged) {
+      await audit({
+        ...base,
+        action: AUDIT_ACTIONS.USER_UPDATE,
+        summary: `Menyimpan user ${target} tanpa perubahan role/status`,
+        meta: { changedFields: [] },
+      });
     }
 
     return {

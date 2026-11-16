@@ -1,4 +1,5 @@
-/** Helper murni halaman daftar Kabar (Berita, Pengumuman, Kegiatan Desa, …): nomor halaman, paginasi klien, query URL, slug kategori. */
+/** Helper murni halaman daftar Kabar (Berita, Pengumuman, Kegiatan Desa, …): nomor halaman, paginasi klien & server, query URL, slug kategori, kolom cari. */
+import { LIST_SEARCH_THRESHOLD } from "./kabar-list.meta";
 
 /** Nomor halaman dari query `?page`; selain bilangan bulat positif → 1. */
 export function parsePage(raw: string | null | undefined): number {
@@ -21,6 +22,24 @@ export function paginate<T>(items: readonly T[], page: number, size: number): { 
   const totalPages = Math.max(1, Math.ceil(items.length / size));
   const current = Math.min(Math.max(1, page), totalPages);
   return { items: items.slice((current - 1) * size, current * size), page: current, totalPages };
+}
+
+/** Keadaan muat satu halaman daftar ber-paginasi server (bentuk minimal yang dibaca `outOfRangePage`). */
+export type ServerPageState = { status: "loading" } | { status: "error" } | { status: "ready"; totalPages: number; total: number };
+
+/**
+ * Pasangan server untuk `paginate`: `?page` melewati halaman terakhir padahal ada entri (tautan lama, diketik manual)
+ * → nomor halaman terakhir yang valid untuk dituju; selain itu `null` (masih memuat/galat, halaman sah, atau memang
+ * tidak ada entri sehingga pesan "Belum ada" yang benar).
+ */
+export function outOfRangePage(state: ServerPageState, page: number): number | null {
+  if (state.status !== "ready" || state.total <= 0 || page <= state.totalPages) return null;
+  return Math.max(1, state.totalPages);
+}
+
+/** Kolom cari tampil bila kata kunci aktif (agar bisa dihapus) atau entri > ambang; jumlah belum diketahui (`null`) tanpa kata kunci → sembunyi. */
+export function listSearchable(search: string, total: number | null, threshold = LIST_SEARCH_THRESHOLD): boolean {
+  return search !== "" || (total !== null && total > threshold);
 }
 
 /** Segmen URL daftar untuk semua kategori (Berita, Kegiatan Desa). */

@@ -1,24 +1,21 @@
 // @vitest-environment node
-// Gotong Royong = satu kategori tetap di Kegiatan Desa: halaman publik /lingkungan/gotong-royong hanya memuat
-// kategori itu (per id, bukan nama), tanpa pil kategori; URL lama dialihkan; filter API `kategoriId`; seed.
+// Gotong Royong = satu kategori tetap di Kegiatan Desa: filter API `kategoriId`, seed kategori, kepala Kegiatan Desa
+// tetap ber-pil, dan pencarian tipe gotongRoyong (berisi semua kegiatan) menaut ke detail Kegiatan Desa.
+// Halaman publik Gotong Royong (daftar/detail/URL) diuji di lingkungan_gotong_royong_{logic,ui}.test.*.
 import { MantineProvider } from '@mantine/core';
 import type { AnchorHTMLAttributes } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const kegiatanGet = vi.hoisted(() => vi.fn());
-const redirectMock = vi.hoisted(() => vi.fn());
-const permanentRedirectMock = vi.hoisted(() => vi.fn());
 const prismaMock = vi.hoisted(() => ({ kegiatanDesa: { findMany: vi.fn(), count: vi.fn() } }));
-const nav = vi.hoisted(() => ({ pathname: '/lingkungan/gotong-royong/semua' }));
+const nav = vi.hoisted(() => ({ pathname: '/pemerintahan/kegiatan-desa/semua' }));
 
 vi.mock('@/lib/api-fetch', () => ({
   default: { api: { desa: { kegiatandesa: { 'find-many': { get: kegiatanGet } } } } },
 }));
 vi.mock('@/lib/prisma', () => ({ default: prismaMock }));
 vi.mock('next/navigation', () => ({
-  redirect: redirectMock,
-  permanentRedirect: permanentRedirectMock,
   usePathname: () => nav.pathname,
   useSearchParams: () => new URLSearchParams(),
 }));
@@ -28,19 +25,6 @@ vi.mock('next-view-transitions', () => ({
 }));
 
 import KegiatanShell from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/KegiatanShell';
-import { KEGIATAN_DESA_SCOPE } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-scope';
-import {
-  GOTONG_ROYONG_LIST_PATH,
-  gotongRoyongDetailHref,
-  gotongRoyongListHref,
-} from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.meta';
-import {
-  GOTONG_ROYONG_SCOPE,
-  loadGotongRoyongPage,
-} from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.scope';
-import RootPage from '@/app/(public)/(pages)/lingkungan/gotong-royong/page';
-import KategoriPage from '@/app/(public)/(pages)/lingkungan/gotong-royong/[kategori]/page';
-import DetailPage from '@/app/(public)/(pages)/lingkungan/gotong-royong/[kategori]/[id]/page';
 import getDetailUrl from '@/app/(public)/_com/searchUrl';
 import kegiatanDesaFindMany from '@/app/api/[[...slugs]]/_lib/desa/kegiatan-desa/find-many';
 import { KATEGORI_GOTONG_ROYONG_ID } from '@/lib/kegiatan-gotong-royong';
@@ -54,68 +38,15 @@ const render = (node: React.ReactElement) =>
 
 beforeEach(() => vi.clearAllMocks());
 
-describe('loadGotongRoyongPage', () => {
-  it('selalu menyaring kategoriId tetap Gotong Royong, nama kategori dari URL diabaikan', async () => {
-    kegiatanGet.mockResolvedValue({ status: 200, data: { success: true, data: [], totalPages: 0 } });
-    await loadGotongRoyongPage({ page: 2, limit: 7, search: 'pura', kategori: 'budaya' });
-    expect(kegiatanGet).toHaveBeenCalledWith({
-      query: { page: 2, limit: 7, search: 'pura', kategoriId: KATEGORI_GOTONG_ROYONG_ID },
-    });
-  });
-
-  it('kartu menaut ke detail Kegiatan Desa', async () => {
-    // test-only: item find-many rekaan.
-    const item = { id: 'g1', judul: 'Kerja Bakti Banjar', tanggal: '2026-01-10T00:00:00.000Z', kategoriKegiatan: { nama: 'Gotong Royong' } };
-    kegiatanGet.mockResolvedValue({ status: 200, data: { success: true, data: [item], totalPages: 1 } });
-    const { items } = await loadGotongRoyongPage({ page: 1, limit: 7, search: '', kategori: '' });
-    expect(items[0].href).toBe('/pemerintahan/kegiatan-desa/gotong%20royong/g1');
-  });
-});
-
-describe('cakupan & URL Gotong Royong', () => {
-  it('tanpa pil kategori; URL daftar tetap /semua (href navbar), slug diabaikan', () => {
-    expect(GOTONG_ROYONG_SCOPE.withKategori).toBe(false);
-    expect(KEGIATAN_DESA_SCOPE.withKategori).toBe(true);
-    expect(GOTONG_ROYONG_LIST_PATH).toBe('/lingkungan/gotong-royong/semua');
-    expect(gotongRoyongListHref('budaya', { search: 'pura', page: 2 })).toBe(
-      '/lingkungan/gotong-royong/semua?search=pura&page=2',
-    );
-    expect(gotongRoyongDetailHref('g1')).toBe('/pemerintahan/kegiatan-desa/gotong%20royong/g1');
-  });
-
-  it('kepala halaman memakai judul Gotong Royong tanpa pil kategori (SSR)', () => {
-    const html = render(<KegiatanShell scope={GOTONG_ROYONG_SCOPE}>isi</KegiatanShell>);
-    expect(html).toContain('Gotong Royong Desa Darmasaba');
-    expect(html).not.toContain('<nav');
-    expect(html).not.toContain('Kegiatan Desa Darmasaba');
-  });
-
+describe('Kegiatan Desa & pencarian', () => {
   it('kepala Kegiatan Desa tetap punya pil "Semua"', () => {
     nav.pathname = '/pemerintahan/kegiatan-desa/semua';
     const html = render(<KegiatanShell>isi</KegiatanShell>);
     expect(html).toContain('href="/pemerintahan/kegiatan-desa/semua"');
     expect(html).toContain('Kegiatan Desa Darmasaba');
-    nav.pathname = '/lingkungan/gotong-royong/semua';
-  });
-});
-
-describe('URL lama Gotong Royong dialihkan', () => {
-  it('/lingkungan/gotong-royong → daftar /semua', () => {
-    RootPage();
-    expect(redirectMock).toHaveBeenCalledWith('/lingkungan/gotong-royong/semua');
   });
 
-  it('tab kategori lama → daftar /semua (permanen)', () => {
-    KategoriPage();
-    expect(permanentRedirectMock).toHaveBeenCalledWith('/lingkungan/gotong-royong/semua');
-  });
-
-  it('detail lama /{kategori}/{id} → detail Kegiatan Desa id yang sama (permanen)', async () => {
-    await DetailPage({ params: Promise.resolve({ kategori: 'lingkungan', id: 'g1' }) });
-    expect(permanentRedirectMock).toHaveBeenCalledWith('/pemerintahan/kegiatan-desa/gotong%20royong/g1');
-  });
-
-  it('hasil pencarian tipe gotongRoyong menaut langsung ke detail Kegiatan Desa', () => {
+  it('hasil pencarian tipe gotongRoyong (semua kegiatan desa) menaut ke detail Kegiatan Desa', () => {
     expect(getDetailUrl({ type: 'gotongRoyong', id: 'g1', kategori: 'Gotong Royong' })).toBe(
       '/pemerintahan/kegiatan-desa/gotong%20royong/g1',
     );

@@ -1,5 +1,8 @@
-// Tes koneksi provider Jenna dari server. Pesan hasil tidak pernah memuat API key atau body vendor.
-import { ANTHROPIC_VERSION, anthropicMessagesUrl } from "./provider/common";
+// Tes koneksi provider Jenna dari server. Pesan hasil tidak pernah memuat API key atau body vendor
+// (kecuali `error.param`/`error.code` pendek dari HTTP 400 OpenAI).
+import { ANTHROPIC_VERSION, anthropicMessagesUrl, readErrorBody } from "./provider/common";
+import { buildOpenAIChatBody, openAIChatUrl } from "./provider/openai-compatible";
+import type { ToolSpec } from "./provider/types";
 import { JENNA_VOICE_SLOT, type JennaSlot, type JennaVoiceSlot } from "./types";
 
 export type ConnectionTestConfig = {
@@ -7,11 +10,36 @@ export type ConnectionTestConfig = {
   model: string;
   apiKey: string;
   timeoutMs: number;
+  /** Dipakai slot chat_openai saja (setelan tersimpan, dikirim seperti chat publik). */
+  temperature: number | null;
+  reasoningEffort: string | null;
 };
 
 export type ConnectionTestResult = { ok: boolean; message: string; latencyMs: number };
 
 export type JennaTestSlot = JennaSlot | JennaVoiceSlot;
+
+const OPENAI_TEST_MAX_TOKENS = 16;
+
+// Jenna selalu mengirim tools, jadi tes ikut mengirim satu tool supaya aturan tools model ikut teruji.
+const PING_TOOL: ToolSpec = { name: "ping", description: "Tes koneksi.", parameters: { type: "object", properties: {} } };
+
+function openAIChatTestRequest(cfg: Omit<ConnectionTestConfig, "timeoutMs">): { url: string; init: RequestInit } {
+  const body = buildOpenAIChatBody(
+    { model: cfg.model, temperature: cfg.temperature, maxTokens: OPENAI_TEST_MAX_TOKENS, reasoningEffort: cfg.reasoningEffort },
+    [{ role: "user", content: "ping" }],
+    [PING_TOOL],
+    false,
+  );
+  return {
+    url: openAIChatUrl(cfg.baseUrl),
+    init: {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${cfg.apiKey}` },
+      body: JSON.stringify(body),
+    },
+  };
+}
 
 export function buildConnectionTestRequest(
   slot: JennaTestSlot,
@@ -31,6 +59,7 @@ export function buildConnectionTestRequest(
       },
     };
   }
+  if (slot === "chat_openai") return openAIChatTestRequest(cfg);
   return {
     url: `${cfg.baseUrl.replace(/\/+$/, "")}/models`,
     init: { method: "GET", headers: { authorization: `Bearer ${cfg.apiKey}` } },
@@ -47,6 +76,33 @@ export function describeHttpStatus(status: number): { ok: boolean; message: stri
   if (status === 429 || status === 529) return { ok: false, message: `Provider sibuk atau kena rate limit (HTTP ${status}).` };
   if (status >= 500) return { ok: false, message: `Provider sedang bermasalah (HTTP ${status}).` };
   return { ok: false, message: `Permintaan ditolak provider (HTTP ${status}). Periksa model dan konfigurasi.` };
+}
+
+const VENDOR_TOKEN_PATTERN = /^[A-Za-z0-9_.-]{1,64}$/;
+
+function vendorToken(value: unknown, apiKey: string): string | null {
+  if (typeof value !== "string" || !VENDOR_TOKEN_PATTERN.test(value)) return null;
+  return apiKey !== "" && value.includes(apiKey) ? null : value;
+}
+
+/**
+ * HTTP 400 OpenAI-compatible: hanya `error.param` dan `error.code` (token pendek) yang ditampilkan,
+ * `error.message` tidak pernah. null = tidak ada yang layak tampil (pakai pesan status biasa).
+ */
+export function describeOpenAIBadRequest(rawBody: string, apiKey: string): string | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(rawBody);
+  } catch {
+    // Body bukan JSON (atau terpotong batas baca): jatuh ke pesan status HTTP biasa.
+    return null;
+  }
+  const error = (parsed as { error?: { param?: unknown; code?: unknown } | null } | null)?.error;
+  const param = vendorToken(error?.param, apiKey);
+  const code = vendorToken(error?.code, apiKey);
+  if (!param && !code) return null;
+  const detail = param ? `parameter \`${param}\` ditolak${code ? ` (${code})` : ""}` : `kode galat ${code}`;
+  return `Permintaan ditolak provider (HTTP 400): ${detail}. Ubah Reasoning effort atau Temperature.`;
 }
 
 /** Gateway suara hanya dicek keterjangkauannya; selain 401/403, respons HTTP apa pun dianggap terjangkau. */
@@ -88,10 +144,19 @@ export async function runConnectionTest(
   const started = Date.now();
   try {
     const res = await fetchImpl(url, { ...init, redirect: "manual", signal: controller.signal, cache: "no-store" });
-    // Body vendor sengaja dibuang (bisa memuat detail akun); cukup status. Gagal cancel
-    // stream tidak memengaruhi hasil tes, jadi diabaikan.
-    await res.body?.cancel().catch(() => undefined);
-    const outcome = slot === JENNA_VOICE_SLOT ? describeVoiceHttpStatus(res.status) : describeHttpStatus(res.status);
+    let badRequest: string | null = null;
+    if (slot === "chat_openai" && res.status === 400) {
+      badRequest = describeOpenAIBadRequest(await readErrorBody(res), cfg.apiKey);
+    } else {
+      // Body vendor sengaja dibuang (bisa memuat detail akun); cukup status. Gagal cancel
+      // stream tidak memengaruhi hasil tes, jadi diabaikan.
+      await res.body?.cancel().catch(() => undefined);
+    }
+    const outcome = badRequest
+      ? { ok: false, message: badRequest }
+      : slot === JENNA_VOICE_SLOT
+        ? describeVoiceHttpStatus(res.status)
+        : describeHttpStatus(res.status);
     return { ...outcome, latencyMs: Date.now() - started };
   } catch (err) {
     return { ok: false, message: describeFetchError(err), latencyMs: Date.now() - started };

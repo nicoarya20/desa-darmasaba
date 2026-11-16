@@ -1,11 +1,21 @@
+import { AUDIT_ACTIONS, audit } from "@/lib/audit";
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { UserManagerContext } from "../guard";
 
-export default async function roleDelete(context: Context) {
+export default async function roleDelete(context: UserManagerContext) {
     const id = context.params.id as string;
 
-    await prisma.role.delete({
+    const deleted = await prisma.role.delete({
         where: { id },
+    });
+
+    await audit({
+        actor: context.actor,
+        action: AUDIT_ACTIONS.ROLE_DELETE,
+        targetType: "role",
+        targetId: id,
+        summary: `Menghapus role ${deleted.name}`,
+        meta: { name: deleted.name },
     });
 
     return {

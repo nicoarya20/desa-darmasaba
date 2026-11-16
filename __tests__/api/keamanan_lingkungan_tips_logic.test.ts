@@ -20,7 +20,7 @@ const { hasHtmlContent, keamananLingkunganDetailHref, keamananLingkunganListHref
 const { loadKeamananLingkunganDetail, loadKeamananLingkunganPage } = await import(
   '@/app/(public)/(pages)/keamanan/keamanan-lingkungan-pecalang-patwal/_com/keamanan-lingkungan.source'
 );
-const { tipsKeamananListHref, tipsSearchable, toTip } = await import(
+const { tipsKeamananListHref, toTip } = await import(
   '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan.logic'
 );
 const { loadTipsKeamananPage } = await import('@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan.source');
@@ -151,23 +151,6 @@ describe('Tips Keamanan: pemetaan & URL', () => {
   it('URL daftar', () => {
     expect(tipsKeamananListHref()).toBe('/keamanan/tips-keamanan');
     expect(tipsKeamananListHref({ search: 'rumah', page: 1 })).toBe('/keamanan/tips-keamanan?search=rumah');
-  });
-});
-
-describe('tipsSearchable', () => {
-  it('tips ≤ ambang tanpa kata kunci → tersembunyi; > ambang → tampil', () => {
-    expect(tipsSearchable('', 3, 6)).toBe(false);
-    expect(tipsSearchable('', 6, 6)).toBe(false);
-    expect(tipsSearchable('', 7, 6)).toBe(true);
-  });
-
-  it('URL membawa ?search= → selalu tampil (agar bisa dihapus), walau 0 hasil', () => {
-    expect(tipsSearchable('rumah', 0, 6)).toBe(true);
-    expect(tipsSearchable('rumah', null, 6)).toBe(true);
-  });
-
-  it('jumlah belum diketahui (memuat/galat) tanpa kata kunci → tersembunyi', () => {
-    expect(tipsSearchable('', null, 6)).toBe(false);
   });
 });
 

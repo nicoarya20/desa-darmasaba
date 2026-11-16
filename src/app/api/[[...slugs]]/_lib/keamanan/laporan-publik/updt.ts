@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { optionalAuth } from "@/lib/api-auth";
+import { AUDIT_ACTIONS, audit } from "@/lib/audit";
 import prisma from "@/lib/prisma";
 import { sanitizeRichTextForStorage } from "@/lib/rich-text-server";
 import { Context } from "elysia";
@@ -45,6 +47,11 @@ const LaporanPublikUpdate = async (context: Context) => {
     }
   }
 
+  const before =
+    status !== undefined
+      ? await prisma.laporanPublik.findUnique({ where: { id }, select: { status: true } })
+      : null;
+
   const updated = await prisma.laporanPublik.update({
     where: { id },
     data: updateData,
@@ -52,6 +59,19 @@ const LaporanPublikUpdate = async (context: Context) => {
       penanganan: true,
     },
   });
+
+  // Hanya keputusan moderasi (status) yang diaudit; isi laporan & pelapor tidak dicatat.
+  if (before && before.status !== updated.status) {
+    await audit({
+      // Sesi sudah diwajibkan guard global /api untuk PUT.
+      actor: await optionalAuth(),
+      action: AUDIT_ACTIONS.LAPORAN_PUBLIK_STATUS_UPDATE,
+      targetType: "laporan_publik",
+      targetId: id,
+      summary: `Mengubah status laporan publik dari ${before.status} ke ${updated.status}`,
+      meta: { fromStatus: before.status, toStatus: updated.status },
+    });
+  }
 
   return {
     success: true,

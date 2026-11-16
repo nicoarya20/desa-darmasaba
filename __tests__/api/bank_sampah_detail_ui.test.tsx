@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Modal detail Bank Sampah publik (tab Profil/Struktur/Dokumentasi dengan data & state kosong), card daftar
-// (tautan Rute/Peta tidak membuka modal, tombol keyboard), dan form admin memuat field detail baru.
+// Modal detail Bank Sampah publik (tab Profil/Struktur/Dokumentasi dengan data & state kosong) dan form admin
+// memuat field detail baru. Tombol "Lihat detail" per baris lokasi diuji di lingkungan_bank-sampah_ui.test.tsx.
 // jsdom rusak di repo ini → renderToStaticMarkup; klik tidak diuji.
 import { MantineProvider } from '@mantine/core';
 import type { AnchorHTMLAttributes } from 'react';
@@ -14,7 +14,6 @@ vi.mock('next/dynamic', () => ({ default: () => () => <div data-testid="peta" />
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn(), back: vi.fn() }) }));
 vi.mock('@/lib/api-fetch', () => ({ default: { api: {} } }));
 
-import BankSampahCard from '@/app/(public)/(pages)/lingkungan/pengelolaan-sampah-bank-sampah/_com/bank-sampah.card';
 import BankSampahDetailContent, {
   type TabBankSampah,
 } from '@/app/(public)/(pages)/lingkungan/pengelolaan-sampah-bank-sampah/_com/bank-sampah.detail-content';
@@ -104,17 +103,6 @@ describe('modal detail bank sampah', () => {
     expect(count(html, 'data-testid="galeri-foto-item"')).toBe(1);
     expect(html).toContain('Pemilahan sampah');
     expect(tab(kosong, 'dokumentasi')).toContain('Dokumentasi kegiatan belum tersedia.');
-  });
-});
-
-describe('card daftar bank sampah', () => {
-  it('tombol detail ber-aria (keyboard), Rute & Peta tetap tautan ke Google Maps', () => {
-    const html = render(<BankSampahCard item={lengkap} onOpen={noop} />);
-    expect(html).toMatch(/<button[^>]*aria-haspopup="dialog"[^>]*aria-label="Lihat detail TPS Contoh"/);
-    expect(html).toContain('href="https://www.google.com/maps/dir/?api=1&amp;destination=-8.6,115.2"');
-    expect(html).toContain('aria-label="Rute ke TPS Contoh (Google Maps)"');
-    expect(html).toContain('href="https://maps.app.goo.gl/Contoh123"');
-    expect(html).toContain('Lihat Peta Lebih Besar');
   });
 });
 

@@ -63,6 +63,8 @@ JennaWidget (DarmasabaShell, lazy, Valtio)
 
 Developer Console (`/dev/jenna/*`, API `/api/developer/jenna/*`, role 0): pengaturan (Umum, Batas Pemakaian, Provider), Pengetahuan (snapshot + sumber + tool, read-only; `src/lib/jenna/knowledge/admin.ts`), Percakapan (daftar tersamar + statistik), Penggunaan dan Log Error (`src/lib/jenna/chat/usage-admin.repo.ts`, sanitasi teks error di `src/lib/jenna/error-detail.ts`).
 
+Developer Console umum (role 0): Ringkasan Sistem `/dev/ringkasan` (API `/api/developer/system`: status DB/MinIO dengan batas 5 detik `developer/with-timeout.ts`, checklist env wajib/opsional `env-checklist.ts`, status migrasi `migration-status.ts`, peringatan "Perlu perhatian" dari fungsi murni `dev/ringkasan/dev-warnings.logic.ts`) dan grup Log: Log Audit `/dev/log/audit` + Log Login `/dev/log/login` (API `/api/developer/audit-log`, `/api/developer/login-log`, baca saja). Aturan tabel di `docs/DATABASE.md` › Log Audit & Log Login.
+
 ## Key Files
 
 | File | Purpose |

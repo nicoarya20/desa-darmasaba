@@ -1,19 +1,92 @@
 # Changelog
 
-## [0.1.283] - 2026-11-16
+## [0.1.289] - 2026-11-16
 ### Added
-- **Bank Sampah: detail dalam modal.** Klik kartu di "Keterangan Bank Sampah Terdekat" membuka modal dengan tab Profil (deskripsi, alamat, kontak, media sosial, inovasi TPS yang terhubung ke Program Inovasi), Struktur (foto bagan + daftar pengurus), dan Dokumentasi (galeri foto kegiatan). Tombol Rute dan Lihat Peta tetap langsung membuka peta. Admin mengisi semua field ini di form Bank Sampah; pengurus dan galeri diisi di halaman edit.
+- **Bank Sampah: detail dalam modal.** Tiap lokasi di bagian "Lokasi Bank Sampah" kini punya tombol "Lihat detail" yang membuka modal dengan tab Profil (deskripsi, alamat, kontak, media sosial, inovasi TPS yang terhubung ke Program Inovasi), Struktur (foto bagan + daftar pengurus), dan Dokumentasi (galeri foto kegiatan). Memilih lokasi tetap menampilkan titiknya di peta, dan "Petunjuk arah" tetap membuka Google Maps. Admin mengisi semua field ini di form Bank Sampah; pengurus dan galeri diisi di halaman edit.
 - **Info Sekolah: detail lembaga.** Tiap sekolah/lembaga kini punya deskripsi, alamat, kontak, media sosial, foto sekolah, titik peta + link Google Maps, struktur organisasi (opsional), dan galeri foto kegiatan, dengan halaman detail publik `/pendidikan/info-sekolah/lembaga/[id]`. Bagian yang kosong tidak ditampilkan.
 - **Program Pengentasan Kemiskinan: penerima per tahun.** Program (PKH, CPP, BLT Desa) punya halaman detail dengan jumlah penerima per tahun, rekap per alamat, dan daftar penerima (hanya nama + alamat). Admin menambah penerima satu per satu atau impor CSV (hanya kolom nama dan alamat yang disimpan; kolom lain seperti NIK dan tanggal lahir diabaikan). Halaman daftar penerima tidak diindeks mesin pencari.
 - **Posyandu: profil dan klaster.** Tab admin baru "Profil & Klaster" untuk deskripsi umum Posyandu dan kegiatan klaster Balita, Remaja, dan Lansia (beserta jam pelayanan). Posyandu per banjar kini punya alamat dan galeri foto (lokasi dan kader). Halaman publik menampilkan deskripsi, kartu tiga klaster, dan daftar posyandu per banjar.
 
 ### Changed
 - **Puskesmas menjadi PUSTU (Puskesmas Pembantu)** di menu, judul halaman, dan pencarian. Isinya kini memuat jam operasional per rentang hari, kontak + kontak darurat/ambulans, media sosial, layanan unggulan, prosedur pendaftaran, tarif BPJS dan non-BPJS, struktur organisasi, dan galeri. Facebook yang sudah tersimpan dipindah ke daftar media sosial. URL halaman tidak berubah.
-- **Desa Digital / Smart Village dan Info Teknologi Tepat Guna digabung menjadi "Inovasi Teknologi Desa"** dengan kategori Desa Digital dan Teknologi Tepat Guna. Data lama dari kedua menu dipindah ke menu gabungan, dan URL lama otomatis dialihkan ke `/inovasi/inovasi-teknologi-desa`. Admin yang sebelumnya punya akses ke Info Teknologi Tepat Guna otomatis mendapat akses ke menu gabungan.
-- **Gotong Royong menjadi kategori di Kegiatan Desa.** Kegiatan gotong royong kini diinput lewat menu Kegiatan Desa dengan kategori "Gotong Royong"; menu admin Lingkungan › Gotong Royong yang menduplikasi data yang sama dihapus. Halaman publik Gotong Royong hanya menampilkan kegiatan berkategori Gotong Royong. Admin yang punya akses Gotong Royong atau seluruh menu Lingkungan otomatis mendapat akses Kegiatan Desa. **Perlu tindakan admin:** kegiatan lama tidak dipindah otomatis, jadi halaman Gotong Royong kosong sampai kategori kegiatannya diubah ke "Gotong Royong".
+- **Desa Digital / Smart Village dan Info Teknologi Tepat Guna digabung menjadi "Inovasi Teknologi Desa"** dengan kategori Desa Digital dan Teknologi Tepat Guna. Data lama dari kedua menu dipindah ke menu gabungan, dan URL lama otomatis dialihkan ke `/inovasi/inovasi-teknologi-desa`. Admin yang sebelumnya punya akses ke Info Teknologi Tepat Guna otomatis mendapat akses ke menu gabungan. Tampilan sorotan Desa Digital dan kartu baca-langsung Teknologi Tepat Guna dari versi 0.1.283 diganti daftar kartu gabungan dengan pilihan kategori.
+- **Gotong Royong menjadi kategori di Kegiatan Desa.** Kegiatan gotong royong kini diinput lewat menu Kegiatan Desa dengan kategori "Gotong Royong"; menu admin Lingkungan › Gotong Royong yang menduplikasi data yang sama dihapus. Halaman publik Gotong Royong (`/lingkungan/gotong-royong`, tampilan dari 0.1.285) kini hanya menampilkan kegiatan berkategori Gotong Royong, bukan lagi Lingkungan + Kebersihan. Admin yang punya akses Gotong Royong atau seluruh menu Lingkungan otomatis mendapat akses Kegiatan Desa. **Perlu tindakan admin:** kegiatan lama tidak dipindah otomatis, jadi halaman Gotong Royong kosong sampai kategori kegiatannya diubah ke "Gotong Royong".
 - Jumlah partisipan di Kegiatan Desa kini opsional. Bila kosong, jumlah partisipan tidak ditampilkan di halaman publik (sebelumnya tampil "0").
 - Menu **UMKM** berganti nama menjadi **UMKM & Pasar Desa** di navbar publik dan sidebar admin.
 - Admin UMKM kembali menampilkan tab **Produk** dan **Kategori Produk**. Tab Dashboard dan Penjualan tetap disembunyikan, dan pemesanan lewat website tetap nonaktif (pembeli menghubungi penjual lewat WhatsApp).
+
+## [0.1.288] - 2026-11-16
+### Added
+- **Developer Console › Log › Log Audit (`/dev/log/audit`)**: catatan permanen siapa mengubah apa dan kapan, tidak bisa diubah atau dihapus dari aplikasi. Tercatat: ubah role, aktifkan/nonaktifkan, dan hapus user; tambah/ubah/hapus role; simpan setelan, provider, dan API key Jenna (hanya nama field dan host, API key tidak pernah dicatat); membuka dan menghapus percakapan Jenna; mengubah status dan menghapus Laporan Publik (tanpa isi laporan atau nama pelapor); mengubah visibilitas menu. Aksi hanya dicatat bila berhasil. Halaman punya filter aksi, pencarian, rentang tanggal, dan detail tiap catatan.
+- **Developer Console › Log › Log Login (`/dev/log/login`)**: riwayat login staf (berhasil, atau ditolak karena akun nonaktif) dengan IP dan perangkat, plus ringkasan 24 jam / 7 hari / ditolak / user unik. Riwayat dihapus otomatis setelah 90 hari.
+- **Ringkasan Sistem kini memberi peringatan "Perlu perhatian"** bila database atau MinIO bermasalah, env wajib belum diisi, kunci enkripsi Jenna belum ada, Jenna aktif tapi belum siap, atau ada migrasi gagal/tertunda. Bila tidak ada masalah tampil "Semua baik".
+- **Ringkasan Sistem menampilkan status migrasi database** (mis. "85/85 diterapkan", migrasi terakhir dan kapan).
+
+### Changed
+- Checklist env di Ringkasan Sistem membedakan env **wajib** dan **opsional**; env opsional yang kosong (mis. `SUPER_ADMIN_EMAIL`, `NEXT_PUBLIC_BASE_URL`) tidak lagi dianggap masalah.
+
+### Fixed
+- Gagal menghapus sesi akun nonaktif saat login kini tercatat di log server, tidak lagi diabaikan diam-diam.
+- Kolom IP di Log Login tidak lagi menampilkan `0000:0000:…:0000` yang membingungkan: login dari localhost diberi label "localhost / tidak diketahui", dan IPv6 (yang disimpan Better Auth sebagai subnet /64) ditampilkan ringkas, mis. `2001:db8:1:2::/64`, dengan alamat tersimpan di tooltip.
+
+### Operator
+- Jalankan migrasi `20261116170000_audit_log_login_log` (otomatis saat container start). Murni menambah tabel `AuditLog` dan `LoginLog`; data lain tidak diubah. Tidak ada env baru.
+- Log Login menyimpan IP dari header `x-forwarded-for`/`x-real-ip` yang dikirim reverse proxy; pastikan proxy menimpa (bukan meneruskan) header itu dari klien.
+
+## [0.1.287] - 2026-11-16
+### Fixed
+- **Keamanan: hanya Developer dan Super Admin yang bisa mengelola user dan role.** Sebelumnya akun Google mana pun yang login (role USER) bisa mengubah role siapa saja lewat API, termasuk menjadikan dirinya Super Admin, menghapus user lain, dan membaca daftar email staf. Kini API user (daftar, detail, ubah, nonaktifkan, hapus) serta tambah/ubah/hapus role menolak role selain Developer (0) dan Super Admin (1) dengan 401/403. Daftar nama role tetap bisa dibaca. Ini sejalan dengan menu User & Role di admin yang memang hanya tampil untuk dua role itu.
+- **Akun Developer terlindungi.** Hanya Developer yang boleh memberi role Developer atau mengubah, menonaktifkan, dan menghapus akun Developer.
+- **Ubah role atau nonaktifkan akun langsung mengeluarkan user itu.** Sesi login Better Auth-nya ikut dicabut (paling lambat sekitar 60 detik karena cache cookie), tidak lagi bertahan sampai 7 hari.
+
+## [0.1.286] - 2026-11-16
+### Added
+- **Jenna › Provider (OpenAI-compatible) bisa memakai model reasoning seperti `gpt-6-luna` tanpa setelan tambahan.** Sebelumnya setiap pertanyaan gagal dengan error `Unsupported parameter: 'max_tokens'`. Sekarang "Reasoning effort" default-nya **Otomatis**, ditentukan dari nama model: `gpt-6*` dan `gpt-5.x` dikirim `none` (nilai yang dibutuhkan agar tools jalan), `gpt-5` generasi awal dan seri `o` dikirim `low`, sedangkan model lain (mis. `gpt-4o-mini`) tidak dikirim apa-apa seperti sebelumnya. Bila reasoning effort dikirim, batas token memakai `max_completion_tokens` dan temperature tidak dikirim. Di bawah kolom Model tampil keterangan apa yang akan dikirim; pilihan manual (Jangan kirim / none / low / medium / high) ada di "Pengaturan lanjutan" untuk kasus khusus.
+
+### Changed
+- **"Tes koneksi" provider OpenAI-compatible kini menguji percakapan sungguhan**, bukan hanya API key. Tes mengirim satu pesan kecil yang memakai tools dengan setelan tersimpan (model, reasoning effort, temperature), sama seperti chat Jenna, jadi model atau setelan yang tidak cocok ketahuan sebelum dipakai warga. Bila ditolak (HTTP 400), pesan hasil menyebut parameter dan kode galat dari provider (mis. `max_tokens`, `unsupported_parameter`); isi pesan vendor dan API key tetap tidak ditampilkan. Setiap klik memakai sedikit token. Provider Anthropic dan suara tidak berubah.
+- **Halaman `/dev/jenna` › Provider dirombak agar lebih mudah dipakai.** Pilihan provider kini berupa dua kartu (OpenAI-compatible dan Anthropic) yang menampilkan model, status, badge "Aktif", dan tanda "Draf belum disimpan"; klik kartu untuk mengatur, tombol "Jadikan aktif" untuk mengganti provider yang dipakai chat publik (sebelumnya pilihan yang sama muncul dua kali). Isian diurutkan sesuai urutan kerja: API key, Model (dengan saran nama model), Base URL (langsung terisi URL resmi bila kosong), lalu Temperature, Max tokens, Timeout, dan Reasoning effort dilipat di "Pengaturan lanjutan" (terbuka sendiri bila ada nilai khusus atau isian yang salah). Status digabung jadi satu baris di atas form (Belum lengkap / Belum dites / Siap dipakai / Tes gagal). Tombol simpan menjadi **"Simpan & tes"**: setelah tersimpan, tes koneksi langsung berjalan; "Tes ulang" tetap ada. Form provider suara ikut urutan yang sama.
+- **Submenu Jenna di Developer Console diurutkan sesuai alur kerja** (sebelumnya alfabetis): pengaturan dulu (Umum, Provider, Pengetahuan, Suara), lalu Batas Pemakaian, lalu pemantauan (Percakapan, Penggunaan, Log Error).
+
+### Operator
+- Jalankan migrasi `20261116143000_jenna_provider_reasoning_effort` (otomatis saat container start). Murni menambah kolom nullable `JennaProvider.reasoningEffort`; data lain tidak diubah. Tidak ada env baru. Setelan provider yang sudah ada otomatis berada di mode Otomatis.
+- Untuk ganti model: di `/dev/jenna` › Provider isi nama model lalu klik "Simpan & tes". Bila tes gagal karena parameter, buka "Pengaturan lanjutan" dan pilih Reasoning effort secara manual.
+
+## [0.1.285] - 2026-11-16
+### Changed
+- **Menu Lingkungan dirombak ke gaya Kabar Desa** (latar putih, judul dan pengantar di kiri, ubin dan baris abu muda), seragam dengan menu Inovasi, Kesehatan, Keamanan, dan Pendidikan.
+- **Pengelolaan Sampah (Bank Sampah)**: cara menabung tampil sebagai langkah bernomor berikon (berjajar di desktop, menurun di ponsel). Lokasi Bank Sampah kini berupa daftar di samping peta: pilih lokasi untuk melihat titiknya di peta, atau klik titik di peta untuk menyorot lokasinya. Tiap lokasi punya tautan "Petunjuk arah".
+- **Program Penghijauan**: program tampil sebagai ubin berikon yang bisa diklik, dan tiap program kini punya halaman detail sendiri.
+- **Data Lingkungan Desa**: data tampil sebagai baris yang mudah dibaca. Jumlah tampil apa adanya (tanpa tanda "±" tambahan).
+- **Gotong Royong** kini satu halaman berisi kegiatan desa kategori Lingkungan dan Kebersihan, tanpa pilihan kategori. Detail kegiatan memakai tampilan detail Kegiatan Desa dengan tautan kembali "‹ Gotong Royong". Tautan lama (`/lingkungan/gotong-royong/semua` dan per kategori) diarahkan ke halaman baru.
+- **Edukasi Lingkungan** dan **Konservasi Adat Bali** tampil sebagai halaman bacaan bergaris (judul bagian di kiri, isi di kanan), seperti halaman program Pendidikan.
+
+### Fixed
+- Hasil pencarian **Gotong Royong** tidak lagi membuka alamat rusak (`/lingkungan/gotong-royong/undefined/...`).
+- Hasil pencarian **Program Penghijauan** kini membuka halaman detail programnya.
+- Ikon yang tidak dikenali di Bank Sampah, Program Penghijauan, dan Data Lingkungan kini disembunyikan, bukan tampil sebagai tanda tanya.
+
+## [0.1.284] - 2026-11-16
+### Changed
+- **Jarak dan tepi halaman Inovasi diseragamkan.** Jarak antar-bagian di Desa Digital dan Kolaborasi Inovasi kini sama (64px, ponsel 48px), dan judul "Mitra Kolaborasi" seukuran judul bagian lain.
+- **Formulir Ajukan Ide Inovatif dan Administrasi Online kini selebar halaman.** Sebelumnya berhenti di 1200px sehingga di layar lebar tersisa ruang kosong besar di kanan. Jarak antar-blok di kolom kiri kedua formulir juga disamakan.
+- **Ajukan Ide Inovatif**: isian wajib kini bertanda `*` dan pesan galatnya menjelaskan isian mana yang perlu diisi (sebelumnya hanya "Wajib diisi.").
+
+### Fixed
+- Membuka nomor halaman yang tidak ada (mis. dari tautan lama) di **Info Teknologi Tepat Guna** dan **Tips Keamanan** kini langsung pindah ke halaman terakhir, bukan menampilkan "Belum ada ..." padahal datanya ada.
+- Hasil pencarian **Desa Digital** dan **Program Kreatif Desa** kini membuka halaman detailnya, bukan halaman daftar.
+- **Administrasi Online** lebih nyaman dipakai dengan keyboard dan pembaca layar: kirim dengan isian salah langsung menuju isian yang salah, kirim gagal kembali ke tombol kirim, dan setelah terkirim atau mengajukan lagi kursor tidak lagi hilang.
+
+## [0.1.283] - 2026-11-16
+### Changed
+- **Menu Inovasi dirombak ke gaya Kabar Desa** (latar putih, judul dan pengantar di kiri, ubin abu muda), seragam dengan menu Kesehatan, Keamanan, dan Pendidikan.
+- **Desa Digital / Smart Village**: layanan terbaru tampil sebagai sorotan besar, sisanya kartu berfoto, 6 per halaman (sebelumnya 3). Kolom cari kini bertuliskan "Cari layanan digital" (sebelumnya "Cari Produk"). Halaman detail lebih bersih dengan tautan kembali di atas.
+- **Program Kreatif Desa**: ubin berikon yang seluruhnya bisa diklik, 9 per halaman. Kata kunci pencarian tidak lagi hilang saat pindah halaman, dan kolom cari tidak ikut hilang saat memuat. Detail tidak lagi memakai label formulir admin ("Deskripsi Singkat"/"Deskripsi").
+- **Kolaborasi Inovasi**: kolaborasi dikelompokkan per tahun dengan pil tahun untuk menyaring (kini memakai tahun kolaborasi, bukan tanggal input). Deskripsi lengkap kini bisa dibaca; yang panjang dibuka di tempat lewat "Baca selengkapnya". Logo mitra tampil utuh tanpa terpotong.
+- **Info Teknologi Tepat Guna**: tiap teknologi tampil sebagai ubin yang bisa dibaca langsung, foto tampil utuh dengan rasio aslinya, 10 per halaman.
+- **Ajukan Ide Inovatif**: formulir langsung tampil (sebelumnya tersembunyi di balik ikon bola lampu), disertai tujuan dan alur setelah ide dikirim. Bila pengiriman gagal, isian tidak lagi terhapus dan pesan galat tampil.
+- **Layanan Online Desa**: halaman utama berisi tiga ubin (Administrasi Online, Pengaduan Masyarakat, Informasi Desa). Administrasi Online kini halaman formulir sendiri, dengan galat per isian dan isian tetap tersimpan bila kirim gagal.
+- **Informasi Desa** kini langsung mengarah ke Berita dan Pengumuman Desa. Tautan lama ke detail berita/pengumuman dan ke halaman Pengaduan Masyarakat tetap berfungsi dan diarahkan ke halaman yang benar.
 
 ## [0.1.282] - 2026-11-16
 ### Fixed

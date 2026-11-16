@@ -1,7 +1,10 @@
-import { permanentRedirect } from 'next/navigation';
-import { GOTONG_ROYONG_LIST_PATH } from '../_com/gotong-royong.meta';
+import { redirect } from 'next/navigation';
+import { GOTONG_ROYONG_BASE_HREF } from '../_com/gotong-royong.meta';
 
-/** URL lama tab kategori (`/lingkungan/gotong-royong/{kategori}`) → daftar Gotong Royong (tab kategori sudah tidak ada). */
+/**
+ * URL daftar lama (`/lingkungan/gotong-royong/semua`, `/lingkungan/gotong-royong/{kategori}`) dari masa pil kategori:
+ * dialihkan (307) ke daftar tunggal supaya tautan/penanda lama tetap hidup.
+ */
 export default function Page() {
-  permanentRedirect(GOTONG_ROYONG_LIST_PATH);
+  redirect(GOTONG_ROYONG_BASE_HREF);
 }

@@ -7,10 +7,12 @@ export interface ProviderConfig {
   baseUrl: string;
   apiKey: string;
   model: string;
-  /** null = tidak dikirim (model reasoning menolak temperature). */
+  /** null = tidak dikirim. OpenAI: juga tidak dikirim bila reasoning effort efektif terisi. */
   temperature: number | null;
   /** null = DEFAULT_MAX_TOKENS (situs publik: biaya per jawaban harus berbatas). */
   maxTokens: number | null;
+  /** OpenAI saja; setelan mentah (null = Otomatis, "off", atau nilai). Nilai efektif: `resolveReasoningEffort`. */
+  reasoningEffort: string | null;
   timeoutMs: number;
 }
 

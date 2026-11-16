@@ -1,7 +1,12 @@
-import { redirect } from 'next/navigation';
-import { GOTONG_ROYONG_LIST_PATH } from './_com/gotong-royong.meta';
+import { Suspense } from 'react';
+import { GotongRoyongPage } from './_com/GotongRoyongPage';
 
-/** `/lingkungan/gotong-royong` → daftar Gotong Royong. */
+/** Daftar Gotong Royong: kegiatan desa kategori Lingkungan + Kebersihan (tautan navbar Lingkungan). */
 export default function Page() {
-  redirect(GOTONG_ROYONG_LIST_PATH);
+  // GotongRoyongPage membaca useSearchParams → wajib di dalam Suspense.
+  return (
+    <Suspense>
+      <GotongRoyongPage />
+    </Suspense>
+  );
 }

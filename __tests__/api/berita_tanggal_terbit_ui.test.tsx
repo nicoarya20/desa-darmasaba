@@ -1,12 +1,11 @@
 // @vitest-environment node
 // Tampilan Tanggal Terbit Berita: isian admin (type=date, terkontrol), tanggal di detail publik (WITA,
-// fallback createdAt), kartu Berita Terbaru, dan Kabar Desa. jsdom rusak → renderToStaticMarkup.
+// fallback createdAt), dan Kabar Desa. jsdom rusak → renderToStaticMarkup.
 import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { TanggalTerbitInput } from '@/app/admin/(dashboard)/pemerintahan/berita/list-berita/_com/TanggalTerbitInput';
 import { BeritaTanggal } from '@/app/(public)/(pages)/pemerintahan/berita/_com/BeritaTanggal';
-import BeritaCard from '@/app/(public)/(pages)/inovasi/layanan-online-desa/informasi-desa/_com/BeritaCard';
 import { toBeritaItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 
 const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
@@ -14,10 +13,6 @@ const render = (ui: React.ReactElement) => renderToStaticMarkup(<MantineProvider
 // test-only: 17 Agustus 2026 00:00 WITA = 16 Agustus 16:00 UTC
 const AGUSTUS = '2026-08-16T16:00:00.000Z';
 const DIBUAT = '2026-11-11T02:00:00.000Z';
-
-afterEach(() => {
-  vi.useRealTimers();
-});
 
 describe('TanggalTerbitInput (admin)', () => {
   it('input date wajib dengan nilai terkontrol dan label Tanggal Terbit', () => {
@@ -47,15 +42,6 @@ describe('BeritaTanggal (detail publik)', () => {
   it('respons lama tanpa tanggalTerbit → createdAt', () => {
     const html = render(<BeritaTanggal item={{ createdAt: DIBUAT }} />);
     expect(html).toContain('Rabu, 11 November 2026');
-  });
-});
-
-describe('BeritaCard (Berita Terbaru)', () => {
-  it('waktu relatif dihitung dari tanggal yang diberikan', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(DIBUAT));
-    const html = render(<BeritaCard judul="Upacara HUT RI" tanggal={new Date(AGUSTUS)} onClick={() => {}} />);
-    expect(html).toContain('3 bulan yang lalu');
   });
 });
 

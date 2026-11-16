@@ -4,6 +4,7 @@ import {
   JENNA_VOICE_SLOT,
   type JennaProviderDTO,
   type JennaProviderUpdateInput,
+  type JennaReasoningEffort,
   type JennaSettingsDTO,
   type JennaSettingsUpdateInput,
   type JennaVoiceProviderDTO,
@@ -16,6 +17,7 @@ import {
   VOICE_NAME_PATTERN,
   validateBaseUrl,
 } from '@/lib/jenna/validation';
+import { formatDateTime } from '../_com/format';
 
 /** Nilai NumberInput Mantine: '' saat dikosongkan. */
 export type NumberField = number | '';
@@ -194,6 +196,8 @@ export type ProviderForm = {
   model: string;
   temperature: NumberField;
   maxTokens: NumberField;
+  /** '' = Otomatis (null di API). Hanya OpenAI-compatible. */
+  reasoningEffort: JennaReasoningEffort | '';
   /** Ditampilkan dalam detik; API memakai milidetik. */
   timeoutSec: NumberField;
   /** Kosong = pertahankan kunci tersimpan. */
@@ -251,13 +255,36 @@ export function providerCopy(p: AnyProviderDTO): ProviderCopy {
   };
 }
 
+export type ModelSuggestion = { value: string; hint?: string };
+
+/** Saran isian Model (tetap bisa diketik bebas). */
+export const MODEL_SUGGESTIONS: Record<JennaProviderDTO['protocol'], readonly ModelSuggestion[]> = {
+  openai: [
+    { value: 'gpt-6-luna', hint: 'murah, reasoning' },
+    { value: 'gpt-5.6-luna', hint: 'reasoning' },
+    { value: 'gpt-5.4-nano', hint: 'reasoning' },
+    { value: 'gpt-4o-mini', hint: 'dimatikan OpenAI 14 Jan 2027' },
+  ],
+  anthropic: [
+    { value: 'claude-haiku-4-5', hint: 'murah' },
+    { value: 'claude-haiku-5-5', hint: 'murah, lebih baru' },
+    { value: 'claude-sonnet-5-5', hint: 'lebih mampu, lebih mahal' },
+  ],
+};
+
+/** Provider suara tanpa saran (ID model gateway beragam). */
+export const modelSuggestions = (p: AnyProviderDTO): readonly ModelSuggestion[] =>
+  isVoiceProvider(p) ? [] : MODEL_SUGGESTIONS[p.protocol];
+
+/** Slot chat dengan Base URL kosong dimulai dari URL resmi; ikut baseline, jadi tidak membuat form dirty. */
 export function providerFormFrom(p: AnyProviderDTO): ProviderForm {
   const voice = isVoiceProvider(p);
   return {
-    baseUrl: p.baseUrl,
+    baseUrl: voice || p.baseUrl !== '' ? p.baseUrl : BASE_URL_PLACEHOLDER[p.protocol],
     model: p.model,
     temperature: voice ? '' : (p.temperature ?? ''),
     maxTokens: voice ? '' : (p.maxTokens ?? ''),
+    reasoningEffort: voice ? '' : (p.reasoningEffort ?? ''),
     timeoutSec: p.timeoutMs / 1000,
     apiKey: '',
   };
@@ -302,6 +329,7 @@ export const providerEqual = (a: ProviderForm, b: ProviderForm) =>
   a.model.trim() === b.model.trim() &&
   a.temperature === b.temperature &&
   a.maxTokens === b.maxTokens &&
+  a.reasoningEffort === b.reasoningEffort &&
   a.timeoutSec === b.timeoutSec &&
   a.apiKey.trim() === b.apiKey.trim();
 
@@ -310,6 +338,7 @@ export function providerPayload(form: ProviderForm): JennaProviderUpdateInput {
     ...voiceProviderPayload(form),
     temperature: form.temperature === '' ? null : form.temperature,
     maxTokens: form.maxTokens === '' ? null : form.maxTokens,
+    reasoningEffort: form.reasoningEffort || null,
   };
 }
 
@@ -324,3 +353,60 @@ export function voiceProviderPayload(form: ProviderForm): JennaVoiceProviderUpda
 }
 
 export const hasErrors = (errors: object) => Object.keys(errors).length > 0;
+
+/** Sama dengan default server (`timeoutMs ?? 30000` di mappers). */
+export const DEFAULT_TIMEOUT_SEC = 30;
+
+const ADVANCED_FIELDS = ['temperature', 'maxTokens', 'reasoningEffort', 'timeoutSec'] as const;
+
+/** "Pengaturan lanjutan" dibuka saat mount bila ada nilai tersimpan selain default. */
+export const hasCustomAdvanced = (form: ProviderForm) =>
+  form.temperature !== '' ||
+  form.maxTokens !== '' ||
+  form.reasoningEffort !== '' ||
+  form.timeoutSec !== DEFAULT_TIMEOUT_SEC;
+
+/** Galat di dalam "Pengaturan lanjutan" memaksa panel terbuka supaya tidak tersembunyi. */
+export const hasAdvancedError = (errors: Partial<Record<keyof ProviderForm, string>>) =>
+  ADVANCED_FIELDS.some((key) => Boolean(errors[key]));
+
+/** Simpan akan langsung diikuti tes koneksi: hasil simpan lengkap (Base URL, model, API key) dan kunci enkripsi ada. */
+export function saveRunsTest(
+  form: ProviderForm,
+  p: Pick<AnyProviderDTO, 'hasApiKey'>,
+  cryptoConfigured: boolean,
+): boolean {
+  return (
+    cryptoConfigured &&
+    form.baseUrl.trim() !== '' &&
+    form.model.trim() !== '' &&
+    (p.hasApiKey || form.apiKey.trim() !== '')
+  );
+}
+
+export type ProviderStatusTone = 'green' | 'red' | 'orange' | 'gray' | 'blue';
+export type ProviderStatus = { tone: ProviderStatusTone; label: string; detail?: string };
+
+type StatusSource = Pick<
+  AnyProviderDTO,
+  'baseUrl' | 'model' | 'hasApiKey' | 'ready' | 'lastTestAt' | 'lastTestOk' | 'lastTestMessage'
+>;
+
+/** Status ringkas provider tersimpan (kartu & baris status form). */
+export function providerStatus(p: StatusSource, testing = false): ProviderStatus {
+  if (testing) return { tone: 'blue', label: 'Menguji…' };
+  if (!p.ready) {
+    const missing = [p.baseUrl === '' && 'Base URL', p.model === '' && 'model', !p.hasApiKey && 'API key'].filter(
+      (part): part is string => Boolean(part),
+    );
+    return {
+      tone: 'orange',
+      label: 'Belum lengkap',
+      ...(missing.length > 0 ? { detail: `Kurang: ${missing.join(', ')}.` } : {}),
+    };
+  }
+  if (!p.lastTestAt) return { tone: 'gray', label: 'Belum dites' };
+  const at = formatDateTime(p.lastTestAt);
+  if (p.lastTestOk) return { tone: 'green', label: `Siap dipakai · tes berhasil ${at}` };
+  return { tone: 'red', label: `Tes gagal · ${at}`, ...(p.lastTestMessage ? { detail: p.lastTestMessage } : {}) };
+}
