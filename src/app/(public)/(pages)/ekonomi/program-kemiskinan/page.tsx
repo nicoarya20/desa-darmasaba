@@ -12,42 +12,18 @@ import { Link } from 'next-view-transitions';
 import { programHref } from './_com/program-kemiskinan.source';
 import { PROGRAM_KARTU_TEXT } from './_com/program-kemiskinan.text';
 
-interface StatistikData {
-  id: string;
-  tahun: number;
-  jumlah: number;
-  icon: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface ProgramKemiskinanData {
-  id: string;
-  nama: string;
-  deskripsi: string;
-  icon: string;
-  statistik: StatistikData | null;
-  isActive: boolean;
-  statistikId: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 function Page() {
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const state = useProxy(programKemiskinanState)
 
+  // Statistik program kini opsional: program tanpa statistik dilewati.
   const statistikData = state.findMany.data
-    .filter((item): item is ProgramKemiskinanData & { statistik: StatistikData } => {
-      return !!item?.statistik && 
-             item.statistik.tahun !== undefined && 
-             item.statistik.jumlah !== undefined;
+    .flatMap((item) => {
+      const statistik = item?.statistik;
+      if (!statistik || statistik.tahun === undefined || statistik.jumlah === undefined) return [];
+      return [{ tahun: Number(statistik.tahun) || 0, jumlah: Number(statistik.jumlah) || 0 }];
     })
-    .map(item => ({
-      tahun: Number(item.statistik.tahun) || 0,
-      jumlah: Number(item.statistik.jumlah) || 0,
-    }))
     .sort((a, b) => a.tahun - b.tahun)
     .filter(item => !isNaN(item.tahun) && !isNaN(item.jumlah));
 
