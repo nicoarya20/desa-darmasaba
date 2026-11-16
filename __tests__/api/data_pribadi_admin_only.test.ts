@@ -1,6 +1,6 @@
 // @vitest-environment node
 // GET berisi data pribadi warga (Ibu Hamil, Balita, kiriman Pengaduan & Administrasi Online, Siswa, pendaftar beasiswa,
-// peminjam buku) wajib admin:
+// peminjam buku, responden IKM) wajib admin:
 // request HTTP sungguhan lewat modul Elysia (prisma & auth di-mock). Master data & agregat publik tetap terbuka,
 // dan respons create publik tidak menggemakan NIK/HP. Keputusan: docs/decisions/2026-11-17-api-data-pribadi-admin-only.md
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -45,12 +45,14 @@ import Pengajar from "@/app/api/[[...slugs]]/_lib/pendidikan/info-sekolah-paud/p
 import RingkasanPendidikan from "@/app/api/[[...slugs]]/_lib/pendidikan/ringkasan";
 import Beasiswa from "@/app/api/[[...slugs]]/_lib/pendidikan/beasiswa-desa";
 import PerpustakaanDigital from "@/app/api/[[...slugs]]/_lib/pendidikan/perpustakaan-digital";
+import Responden from "@/app/api/[[...slugs]]/_lib/landing_page/indeks_kepuasan/responden";
 import { PESAN_DATA_PRIBADI_BUKAN_ADMIN } from "@/app/api/[[...slugs]]/_lib/_data-pribadi/guard";
 
 // Prefix induk dipasang ulang seperti di route.ts / index domain, agar URL test = URL produksi.
 const app = new Elysia({ prefix: "/api" })
   .group("/kesehatan", (g) => g.use(Balita).use(IbuHamil).use(RingkasanKesehatan))
   .group("/inovasi", (g) => g.use(LayananOnlineDesa))
+  .group("/landingpage", (g) => g.use(Responden))
   .group("/pendidikan", (g) =>
     g
       .group("/infosekolahpaud", (s) => s.use(Siswa).use(Pengajar))
@@ -87,6 +89,8 @@ const DITUTUP = [
   `${BEASISWA}/beasiswapendaftar/pendaftar-1`,
   `${PERPUS}/peminjamanbuku/findMany`,
   `${PERPUS}/peminjamanbuku/pinjam-1`,
+  "/api/landingpage/responden/findMany",
+  "/api/landingpage/responden/responden-1",
 ];
 const TETAP_PUBLIK = [
   `${LAYANAN}/administrasionline/jenislayanan/find-many`,
@@ -97,6 +101,7 @@ const TETAP_PUBLIK = [
   `${BEASISWA}/ringkasan/stats`,
   `${BEASISWA}/keunggulanprogram/findMany`,
   `${PERPUS}/dataperpustakaan/findMany`,
+  "/api/landingpage/responden/ringkasan",
 ];
 
 beforeEach(() => {
@@ -152,6 +157,23 @@ describe("master data & agregat publik tetap terbuka", () => {
     expect(res.status).toBe(200);
     expect((await res.json()).success).toBe(true);
     expect(requireAuthMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("ringkasan responden IKM publik", () => {
+  it("hanya memilih tanggal + nama kategori (tanpa id/nama responden), maks 1000 baris", async () => {
+    const res = await call("/api/landingpage/responden/ringkasan?limit=5000");
+    expect(res.status).toBe(200);
+    const args = prismaMock.responden.findMany.mock.calls[0][0];
+    const pilih = { select: { name: true } };
+    expect(args.select).toEqual({ tanggal: true, createdAt: true, jenisKelamin: pilih, rating: pilih, kelompokUmur: pilih });
+    expect(args.take).toBe(1000);
+    expect(args.where).toEqual({ isActive: true });
+  });
+
+  it("limit dari klien dihormati bila di bawah batas", async () => {
+    await call("/api/landingpage/responden/ringkasan?limit=20");
+    expect(prismaMock.responden.findMany.mock.calls[0][0].take).toBe(20);
   });
 });
 
