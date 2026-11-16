@@ -1,0 +1,73 @@
+/*
+ * Halaman Desa Digital — bagian khusus di atas kerangka Kabar (`.section` kabar.module.css + kepala kabar-list):
+ * jarak sorotan ↔ blok kartu, judul blok, label & "Baca selengkapnya" sorotan, ringkasan kartu.
+ * Sorotan & kartu memakai kelas kabar.module.css (.featured, .card). Variabel warna dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* Label sorotan (tanpa titik pemisah `.kategori`, karena tidak diikuti tanggal). */
+.label {
+  color: var(--brand);
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+  color: var(--brand);
+  font-size: 17px;
+}
+
+.cardSummary {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.47;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a:hover .more {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .stack {
+    gap: 48px;
+  }
+
+  .block {
+    gap: 20px;
+  }
+
+  .blockTitle {
+    font-size: 24px;
+    line-height: 1.17;
+  }
+}

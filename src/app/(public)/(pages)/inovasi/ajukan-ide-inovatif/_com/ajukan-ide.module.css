@@ -1,0 +1,135 @@
+/*
+ * Ajukan Ide Inovatif — isi tata letak 2 kolom PPID (`PermohonanLayout`) di atas kerangka Kabar (`.section`).
+ * Kiri: tujuan, alur bernomor PPID, pengantar Musyawarah (tanpa kartu). Kanan: kartu formulir Inovasi (#f5f5f7).
+ * Judul kolom kiri meniru `.stepsTitle` permohonan.module.css (brand 24/600) agar ketiga blok seragam.
+ * Breakpoint ponsel mengikuti apple.com (≤734px).
+ */
+
+/* ---------- Urutan saat bertumpuk ---------- */
+/* PermohonanLayout = grid (aside | main) yang bertumpuk di bawah 75em (breakpoint literal, sama dengan
+   permohonan.module.css). Di sana formulir dinaikkan ke atas aside agar tidak terdorong ±1,3 layar ke bawah;
+   PPID sendiri tidak diubah. */
+@media (max-width: 74.99em) {
+  .formFirst > * > :last-child {
+    order: -1;
+  }
+}
+
+/* ---------- Kolom kiri ---------- */
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.asideTitle {
+  margin: 0 0 16px;
+  color: var(--brand);
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.tujuan {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.25em;
+  color: #1d1d1f;
+  font-size: 17px;
+  line-height: 1.47;
+  list-style: disc;
+}
+
+.tujuan li::marker {
+  color: var(--brand);
+}
+
+.musyawarah {
+  padding-top: 32px;
+  border-top: 1px solid #d2d2d7;
+}
+
+.musyawarahTitle {
+  margin: 0 0 8px;
+  color: #1d1d1f;
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.musyawarahText {
+  margin: 0 0 12px;
+  color: #515154;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link,
+.again {
+  color: var(--brand);
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.link:hover,
+.again:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Formulir ---------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formError {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #fff;
+  color: #b3261e;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---------- Terima kasih ---------- */
+/* Fokus dipindah program ke judul (tabIndex -1) hanya agar terbaca pembaca layar; tanpa cincin fokus. */
+.thanksTitle:focus {
+  outline: none;
+}
+
+.again {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+@media (max-width: 734px) {
+  .aside {
+    gap: 32px;
+  }
+
+  .asideTitle {
+    font-size: 21px;
+  }
+
+  .tujuan {
+    font-size: 16px;
+  }
+}

@@ -86,6 +86,18 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Tambahan: `nik @unique` padahal berisi NIK orang tua (kakak-adik tidak bisa mendaftar, 409); validasi server hanya tipe.
   - Usul: whitelist + rate limit + validasi server (NIK 16 digit, dst.), meniru Laporan Publik; tinjau `@unique` nik.
 
+- [ ] **Inovasi: daftar kiriman Administrasi Online & Pengaduan Masyarakat terbaca tanpa login** (terverifikasi statis 2026-11-16, rombak Inovasi v0.1.283)
+  - Lokasi: `GET /api/inovasi/layananonlinedesa/administrasionline/find-many` dan `GET /api/inovasi/layananonlinedesa/pengaduanmasyarakat/find-many`, juga `/:id` masing-masing. Guard `src/app/api/[[...slugs]]/route.ts:100` hanya memasukkan `/api/user`, `/api/role`, `/api/fileStorage`, `/api/imgs`, `/api/developer` ke `ADMIN_ONLY_GET_PATHS`.
+  - Dampak: siapa pun bisa mengunduh data warga. Sesi ce mengecek stg 2026-11-16 (hanya nama field, nilai tidak dicetak): administrasi memuat `name`, `alamat`, `nomorTelepon` (10 baris); pengaduan memuat `name`, `nik`, `email`, `nomorTelepon`, `lokasiKejadian`, `deskripsiPengaduan`, `image` (9 baris).
+  - Usul: jadikan find-many & `/:id` kiriman admin-only per path, **bukan** prefix `/administrasionline`: master data `.../administrasionline/jenislayanan/find-many` dan `.../pengaduanmasyarakat/jenispengaduan/find-many` harus tetap publik (dropdown formulir warga). Periksa juga find-many endpoint kiriman warga lain di `PUBLIC_POST_PATHS` (ajukan ide, peminjaman buku, responden IKM, ajukan permohonan, pendaftaran jadwal kesehatan, penjualan UMKM, laporan publik).
+  - Frontend: state admin `administrasiOnline.create.create()` memanggil `findMany.load()` setelah sukses, jadi formulir publik lama ikut menarik daftar data pribadi ke peramban warga. Halaman publik baru memakai `administrasi.source.ts` sendiri yang tidak memanggil find-many kiriman.
+
+- [ ] **Inovasi: XSS tersimpan di detail admin Ajukan Ide** (terverifikasi statis 2026-11-16)
+  - Lokasi: `src/app/admin/(dashboard)/inovasi/ajukan-ide-inovatif/[id]/page.tsx:79,89` merender `alamat` dan `deskripsi` lewat `dangerouslySetInnerHTML` tanpa sanitize. `POST /api/inovasi/ajukanideinovatif/create` publik (`src/lib/auth-policy.ts:151`) tanpa validasi.
+  - Dampak: siapa pun bisa POST `<img onerror>` langsung ke API, lalu skripnya jalan di sesi admin yang membuka detail.
+  - Frontend publik baru sudah meng-escape `alamat` dan mengirim `deskripsi` sebagai `<p>` ter-escape, tapi itu tidak melindungi dari POST langsung.
+  - Usul: pola Laporan Publik: `sanitizeRichText` (`src/lib/rich-text.ts`) di halaman admin (`alamat` cukup teks polos), dan `sanitizeRichTextForStorage` di create.
+
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
@@ -144,6 +156,12 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Info Sekolah: filter `jenjangPendidikanId` berisi NAMA (siswa memakai `jenjangPendidikanName`); lembaga tanpa `_count` siswa/pengajar; `ringkasan/stats.perJenjang` tidak terurut & memuat jenjang kosong; siswa/pengajar find-many dan `stats.jumlahPengajar` tidak menyaring `lembaga.isActive`.
   - Beasiswa: `ringkasan/stats.jumlahPenerima` = jumlah semua pendaftar (belum ada status seleksi); `BeasiswaConfig` tanpa periode/jadwal pendaftaran (frontend terpaksa tanpa tanggal).
   - Data Pendidikan: `findMany` count `total` mengabaikan filter search.
+
+- [ ] **Inovasi (2026-11-16, dilaporkan sesi rombak v0.1.283)**
+  - Kolaborasi: filter `year` di `inovasi/kolaborasi-inovasi/findMany.ts` menyaring `createdAt`, padahal model punya `tahun Int` (stg: entri `tahun` 2025 dibuat 2026-04-14 → muncul di `year=2026`); nilai non-angka (`year:2025` dari halaman lama) → `parseInt` NaN → `Invalid Date`. Usul: `where.tahun = Number(year)` bila bilangan bulat, 400 bila tidak. Frontend kini memuat sekali (limit 100) dan menyaring `tahun` di klien.
+  - Program Kreatif `GET /:id`: id tak ada → HTTP 200 + `success:false`; galat Prisma juga 200 + `error.message` mentah ke klien. Frontend memetakan "tidak ditemukan" dari isi pesan (`isNotFoundMessage` di `program-kreatif.logic.ts`, MITIGASI SEMENTARA). Usul: 404 / 500 tanpa membocorkan pesan, lalu hapus pemetaan.
+  - findUnique Desa Digital & Program Kreatif tidak menyaring `isActive` (pola butir P1 "Detail mengabaikan `isActive`").
+  - Ajukan Ide `create.ts`: tanpa try/catch (galat Prisma → 500 mentah), tanpa batas panjang (kolom `Text`), selalu `success: true` + menggemakan body; endpoint publik tanpa batas laju/anti-spam (pola Laporan Publik: rate limit per IP + honeypot). State admin `create()` memanggil `findMany.load()` (admin-only) → 401 bila dipakai dari halaman publik; halaman publik kini memakai `ajukan-ide.source.ts` sendiri.
 
 ## P3. Schema & form admin
 
@@ -207,6 +225,17 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 - [ ] **Pendidikan (2026-11-15)**: `DataPendidikan.jumlah` String (usul Int + NumberInput, + kolom tahun/keterangan); `Lembaga` hanya nama + jenjang (tanpa alamat/NPSN/status/kontak); buku perpustakaan tanpa penulis/tahun/ketersediaan; Bimbingan Belajar tanpa field terstruktur tempat/jadwal/kontak/cara daftar; editor admin program (Link/Highlight/TextAlign/heading) melebihi allowlist sanitasi publik.
 
+- [ ] **Inovasi (2026-11-16)**
+  - find-many Desa Digital & Program Kreatif tanpa `offset`/`skip`: publik memuat sekali `limit=100` lalu paginasi di klien (`console.warn` bila lebih). Kolaborasi sama (limit 100).
+  - Cari: Program Kreatif tidak mencari `slug` (= deskripsi singkat yang tampil di ubin); Kolaborasi hanya `name` + `slug`, tanpa `kolaborator`. Frontend Kolaborasi mencari di klien.
+  - Kolaborasi: kolom `slug` dipakai sebagai ringkasan (komentar skema "deskripsi singkat"), tapi entri stg "Forum Inovasi Desa (Tes)" berisi slug sungguhan. Frontend menyembunyikan ringkasan berpola kebab-case (`isSlugLike` di `kolaborasi.logic.ts`, MITIGASI SEMENTARA; ringkasan sah satu kata bertanda hubung ikut tersembunyi). Usul: ganti nama kolom (`ringkasan`) + validasi form admin.
+  - Mitra kolaborasi: `find-many` saat galat tanpa `data/page/totalPages` (beda dengan kolaborasi); tanpa kolom urutan tampil (logo mitra utama tak bisa didahulukan).
+  - Program Kreatif: kolom `icon` String bebas; kunci di luar `IconKey` (admin `_com/iconMap.tsx`) tampil sebagai ikon tanda tanya. Usul: validasi `t.Union` di create/update.
+  - Administrasi Online `create.ts`: body hanya `t.String()` (tanpa batas panjang, pola telepon, cek `jenisLayananId`); id jenis salah → galat FK Prisma mentah. Usul: `minLength` nama/alamat, `^[0-9]{10,13}$` telepon, 400/422 jelas. Jenis layanan find-many bawaan limit 10 (stg 7; publik baru memuat limit 100).
+  - Jenis layanan: keterangan campur HTML editor & teks polos yang mengulang nama. Usul: satu jenis isian teks polos singkat berisi syarat/lama proses.
+  - Ajukan Ide: skema `AjukanIdeInovatif` tanpa kontak (telepon/email) → desa tidak bisa menindaklanjuti pengusul. Usul kolom opsional.
+  - Gambar: `image.link` Info TTG & logo mitra menunjuk varian acak (`-mobile` 720px, `-desktop` 500px; varian `-desktop` logo mitra berupa PNG 1,6 KB). Publik menampilkan foto TTG maks 560px agar tidak buram.
+
 ## Jenna publik (tindak lanjut)
 
 Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
@@ -237,3 +266,4 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - Musik Desa (stg 2026-11-14): lagu uji "Lagu Tes" oleh artis "Tes" (tanpa tahun) tampil di publik; sampul 3 lagu seeder berupa gambar bertuliskan "No image"; genre "Pop" vs "pop" (frontend sudah menyatukannya saat tampil); 3 lagu belum punya file audio (lihat P3).
 - Lowongan Kerja (stg 2026-11-14): 5 dari 7 lowongan tertanggal April 2026 (data awal/seed, nomor kontak sama 089647037426) dan mungkin sudah tidak berlaku; tipe pekerjaan "Menjaga Toko" pada lowongan Toko Bangunan KBSM seharusnya tipe kerja (mis. Full Time).
 - Pendidikan (2026-11-15): Non Formal bagian ke-3 berjudul "Tempat Kegiatan" (seharusnya "Jenis Program yang Diselenggarakan"; seed `jenis-program-yang-diselenggarakan.json` + stg); `pengajar.json` = salinan `siswa.json` (dummy); Data Pendidikan stg "SD" ganda (874 & 90); judul buku ganda "Seni Berpikir Kritis"; seeder non formal mencetak log "fasilitas bimbingan belajar desa seeded".
+- Inovasi (stg 2026-11-16): logo "BRI Peduli" berlatar hampir putih (bukan transparan) sehingga tampak kotak samar di dinding mitra; unggah PNG/WebP transparan. Kolaborasi berisi entri uji "Forum Inovasi Desa (Tes)".

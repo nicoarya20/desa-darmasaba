@@ -1,15 +1,15 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
-import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { TipCard } from './TipCard';
-import { tipsKeamananListHref, tipsSearchable } from './tips-keamanan.logic';
-import { TIPS_KEAMANAN_PAGE_LIMIT, TIPS_KEAMANAN_SEARCH_THRESHOLD } from './tips-keamanan.meta';
+import { tipsKeamananListHref } from './tips-keamanan.logic';
+import { TIPS_KEAMANAN_PAGE_LIMIT } from './tips-keamanan.meta';
 import s from './tips-keamanan.module.css';
 import { TIPS_KEAMANAN_TEXT as T } from './tips-keamanan.text';
 import { useTipsKeamanan, type TipsKeamananState } from './use-tips-keamanan';
@@ -40,7 +40,7 @@ export function TipsKeamananPage() {
         tabs={[]}
         search={search}
         onSearch={(next) => router.replace(tipsKeamananListHref({ search: next }))}
-        searchable={tipsSearchable(search, total, TIPS_KEAMANAN_SEARCH_THRESHOLD)}
+        searchable={listSearchable(search, total)}
       />
       <TipsKeamananBody
         state={state}
