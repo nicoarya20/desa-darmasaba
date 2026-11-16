@@ -31,3 +31,8 @@ export function bacaMediaSosial(raw: unknown): MediaSosialItem[] {
     return [{ platform, url: url.trim() }];
   });
 }
+
+/** Body API dari baris input admin: baris tanpa URL diabaikan, URL dirapikan (spasi tepi dibuang). */
+export function mediaSosialDariInput(items: readonly MediaSosialItem[]): MediaSosialItem[] {
+  return items.filter((m) => m.url.trim() !== "").map((m) => ({ ...m, url: m.url.trim() }));
+}

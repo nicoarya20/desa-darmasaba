@@ -2,6 +2,7 @@ import { bankSampahBodySchema } from "@/lib/bank-sampah/bank-sampah.validation";
 import type { BankSampahDetail } from "@/lib/bank-sampah/bank-sampah.types";
 import { linkRuteKoordinat, type Koordinat } from "@/lib/konten-bersama/lokasi.logic";
 import type { MediaSosialItem } from "@/lib/konten-bersama/media-sosial.model";
+import { mediaSosialDariInput } from "@/lib/konten-bersama/media-sosial.validation";
 
 /** Nilai form admin bank sampah (create & edit). */
 export type BankSampahForm = {
@@ -62,7 +63,7 @@ export function payloadDariForm(form: BankSampahForm, baganId: string | null) {
     lng: form.koordinat?.lng as number,
     deskripsi: form.deskripsi,
     kontak: form.kontak,
-    mediaSosial: form.mediaSosial.filter((m) => m.url.trim() !== "").map((m) => ({ ...m, url: m.url.trim() })),
+    mediaSosial: mediaSosialDariInput(form.mediaSosial),
     linkPetunjukArah: form.linkMaps.trim(),
     fotoBaganStrukturId: baganId,
     programInovasiIds: [...form.programInovasiIds],
