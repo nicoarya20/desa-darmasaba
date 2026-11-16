@@ -11,7 +11,8 @@ import type { CctvItem } from "./cctv.source";
 import { CCTV_TEXT as T, STATUS_LABEL } from "./cctv.text";
 import x from "./cctv-explorer.module.css";
 import { CctvList } from "./CctvList";
-import type { Selection } from "./CctvMapSection";
+import type { MapSelection } from "@/app/(public)/_com/map-list/map-focus";
+import { revealMap } from "@/app/(public)/_com/map-list/list-scroll";
 
 // Leaflet butuh `window`: peta hanya dirender di peramban.
 const CctvMapSection = dynamic(() => import("./CctvMapSection"), {
@@ -27,7 +28,7 @@ const TITLE_ID = "cctv-peta-title";
  */
 export function CctvExplorer({ items }: { items: readonly CctvItem[] }) {
   const [query, setQuery] = useState("");
-  const [selection, setSelection] = useState<Selection | null>(null);
+  const [selection, setSelection] = useState<MapSelection | null>(null);
   const counter = useRef(0);
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +39,7 @@ export function CctvExplorer({ items }: { items: readonly CctvItem[] }) {
   // Titik terpilih yang tersaring keluar tidak lagi dianggap terpilih.
   const active = selection && shown.some((item) => item.id === selection.id) ? selection : null;
 
-  const select = (id: string | null, source: Selection["source"]) => {
+  const select = (id: string | null, source: MapSelection["source"]) => {
     counter.current += 1;
     setSelection(id ? { id, source, n: counter.current } : null);
   };
@@ -99,14 +100,4 @@ export function CctvExplorer({ items }: { items: readonly CctvItem[] }) {
 function legendStatuses(items: readonly CctvItem[]): CctvStatusKey[] {
   const keys: CctvStatusKey[] = ["online", "offline"];
   return items.some((item) => item.status === "unknown") ? [...keys, "unknown"] : keys;
-}
-
-/** Saat peta dan daftar bertumpuk (tablet/ponsel), gulir peta ke tampilan bila sebagian tertutup. */
-function revealMap(el: HTMLElement | null) {
-  if (!el) return;
-  const rect = el.getBoundingClientRect();
-  const navbar = 64;
-  if (rect.top >= navbar && rect.bottom <= window.innerHeight) return;
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 }

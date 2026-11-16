@@ -6,9 +6,10 @@ import { statusVars, type CctvStatusKey } from "./cctv.meta";
 import type { CctvItem } from "./cctv.source";
 import { CCTV_TEXT as T, STATUS_LABEL } from "./cctv.text";
 import x from "./cctv-explorer.module.css";
-import type { Selection } from "./CctvMapSection";
+import type { MapSelection } from "@/app/(public)/_com/map-list/map-focus";
+import { scrollRowIntoList } from "@/app/(public)/_com/map-list/list-scroll";
 
-type Props = { items: readonly CctvItem[]; selection: Selection | null; onPick: (id: string) => void };
+type Props = { items: readonly CctvItem[]; selection: MapSelection | null; onPick: (id: string) => void };
 
 /** Daftar CCTV ringkas; titik terpilih dari peta disorot dan digulir ke tampilan di dalam daftar yang bergulir. */
 export function CctvList({ items, selection, onPick }: Props) {
@@ -18,7 +19,7 @@ export function CctvList({ items, selection, onPick }: Props) {
 
   useEffect(() => {
     if (selection?.source !== "map") return;
-    scrollRowIntoList(listRef.current, selection.id);
+    scrollRowIntoList(listRef.current, `[data-cctv-id="${CSS.escape(selection.id)}"]`);
   }, [selection]);
 
   return (
@@ -81,17 +82,4 @@ function StatusLabel({ status }: { status: CctvStatusKey }) {
       {STATUS_LABEL[status]}
     </span>
   );
-}
-
-/** Gulir hanya di dalam daftar (desktop, daftar bergulir sendiri); daftar yang tidak bergulir tidak menggeser halaman. */
-function scrollRowIntoList(list: HTMLUListElement | null, id: string) {
-  if (!list || list.scrollHeight <= list.clientHeight) return;
-  const row = list.querySelector<HTMLElement>(`[data-cctv-id="${CSS.escape(id)}"]`);
-  if (!row) return;
-  // .rows ber-position relative → offsetTop baris diukur dari daftar.
-  const top = row.offsetTop;
-  const bottom = top + row.offsetHeight;
-  if (top >= list.scrollTop && bottom <= list.scrollTop + list.clientHeight) return;
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  list.scrollTo({ top: Math.max(0, top - 8), behavior: reduce ? "auto" : "smooth" });
 }
