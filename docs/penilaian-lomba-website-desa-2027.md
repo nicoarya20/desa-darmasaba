@@ -222,7 +222,7 @@ Status: ❌ belum | 🟡 sebagian | ✅ beres
 | T17 | 5 | Kecepatan belum diukur | — | ❓ |
 | T18 | Admin | Domain `desa.id` belum ada | `.env.example:20` | ❌ |
 | T19 | 8 | **API mutasi tidak cek role admin.** Login Google terbuka → user baru role 5 USER; `requireAuth()` meloloskan role 5, jadi user biasa bisa POST/PUT/DELETE endpoint admin, termasuk update user dengan `roleId` (potensi naik jadi SUPER ADMIN). Ditemukan 6 Nov saat menyusun plan | `src/app/api/[[...slugs]]/route.ts:110-118`, `src/lib/api-auth.ts:51`, `_lib/user/updt.ts`, `src/lib/auth-policy.ts:15` | ❌ (temuan kode, belum dieksploitasi) |
-| T20 | 8 | Pencarian global mencari permohonan informasi publik berdasarkan NIK, ikut mengembalikan siswa/pengajar/responden | `_lib/search/findMany.ts:231`, `:1700` | ❌ |
+| T20 | 8 | Pencarian global mencari permohonan informasi publik berdasarkan NIK, ikut mengembalikan siswa/pengajar/responden | `_lib/search/findMany.ts:231`, `:1700` | ✅ 2026-11-17: tipe siswa, responden, permohonan & keberatan PPID dibuang; pengajar sengaja tetap (peran publik, lihat `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`) |
 | T21 | 8 | Rute auth lama (OTP/register/login manual) masih ada padahal auth = Better Auth Google-only | `src/app/api/auth/*` | ❓ perlu audit |
 
 Yang sudah baik saat baseline: navigasi + pencarian global, struktur header/body/footer,

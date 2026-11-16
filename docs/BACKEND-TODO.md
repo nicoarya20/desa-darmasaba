@@ -66,21 +66,22 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: tidak ada lapis kedua bila ada XSS (mis. butir Laporan Publik di atas; jawaban Jenna sudah dirender tanpa HTML mentah).
   - Usul: CSP dasar (mulai `Content-Security-Policy-Report-Only`), plus `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors`.
 
-- [ ] **Pendidikan: daftar pendaftar beasiswa & peminjam buku terbuka tanpa login** (terverifikasi 2026-11-15, rombak menu Pendidikan)
-  - Lokasi: `GET /api/pendidikan/beasiswa/beasiswapendaftar/findMany` & `/:id`, `GET /api/pendidikan/perpustakaandigital/peminjamanbuku/findMany` & `/:id`. `ADMIN_ONLY_GET_PATHS` di `src/app/api/[[...slugs]]/route.ts:100` hanya berisi user/role/fileStorage/imgs/developer, jadi semua GET pendidikan publik.
-  - Dampak: stg (dicek sesi bf tanpa login, hanya nama field & total): 45 pendaftar beasiswa dengan NIK, no HP, alamat KTP/domisili, tanggal lahir, penghasilan, nama orang tua. Peminjam buku: nama, telepon, alamat, bisa dicari. Bila prod memakai kode yang sama, prod ikut terbuka.
-  - Tambahan: `create()` di `_state/pendidikan/beasiswa-desa.ts` dan `_state/.../peminjaman-buku.ts` memanggil `findMany.load()` setelah sukses, jadi browser warga anonim ikut mengambil daftar itu. Halaman publik baru tidak memakai `create()` state lagi.
-  - Usul: wajibkan auth admin untuk GET kedua resource; hapus `findMany.load()` setelah create di state.
+- [x] **Pendidikan: daftar pendaftar beasiswa & peminjam buku terbuka tanpa login** (terverifikasi stg 2026-11-15; prod 2026-11-17: 44 pendaftar dengan NIK + nomor HP) — selesai 2026-11-17 (`fix/lomba1117-a-data-pribadi`), keputusan di `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`:
+  - `GET /api/pendidikan/beasiswa/beasiswapendaftar/findMany` & `/:id`, `GET /api/pendidikan/perpustakaandigital/peminjamanbuku/findMany` & `/:id` kini lewat `guardDataPribadi` (401 tanpa sesi, 403 bukan admin). `ringkasan/stats`, `keunggulanprogram/*`, dan katalog `dataperpustakaan/*` tetap publik.
+  - `POST .../create` keduanya membalas `data: { id }` saja; `create()` di `_state/pendidikan/beasiswaDesa/beasiswa-pendaftar.ts` & `_state/.../peminjaman-buku.ts` tidak lagi memanggil `findMany.load()`.
+
+- [ ] **PPID & IKM: GET publik kiriman warga memuat data pribadi** (temuan kode 2026-11-17, belum dicek ke prod)
+  - Lokasi: `GET /api/ppid/permohonaninformasipublik/find-many` & `/:id` (nama, NIK, telepon, alamat, email pemohon), `GET /api/ppid/permohonankeberataninformasipublik/find-many` & `/:id` (nama, email, telepon), `GET /api/landingpage/responden/findMany` & `/:id` (nama responden IKM). Semua tanpa guard; prefix lengkap perlu dicek di `route.ts`.
+  - Sudah dibuang dari pencarian global (lihat butir siswa). Usul: pasang `guardDataPribadi` per rute seperti butir Balita/Pengaduan, pastikan halaman publik PPID/IKM hanya memakai master data & agregat, dan create publik membalas `{ id }`.
 
 - [ ] **Pendidikan: XSS tersimpan lewat catatan peminjaman buku** (terverifikasi 2026-11-15)
   - Lokasi: `POST /api/pendidikan/perpustakaandigital/peminjamanbuku/create` (publik, `PUBLIC_POST_PATHS` di `src/lib/auth-policy.ts:158`) menyimpan `catatan` apa adanya tanpa validasi; admin `src/app/admin/(dashboard)/pendidikan/perpustakaan-digital/peminjam/[id]/page.tsx:186` merendernya lewat `dangerouslySetInnerHTML`.
   - Dampak: penyerang anonim cukup POST langsung untuk menjalankan skrip di sesi admin. Mengganti editor di form publik tidak menutup celah.
   - Usul: simpan teks polos / `sanitizeRichTextForStorage`, render teks polos di admin; validasi server (panjang, telepon, bukuId aktif, tanggal) + batas kiriman seperti Laporan Publik.
 
-- [ ] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64) — sebagian selesai 2026-11-17:
+- [x] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64) — selesai 2026-11-17:
   - [x] `GET /api/pendidikan/infosekolahpaud/siswa/find-many` & `/:id` kini admin-only (`guardDataPribadi`, lihat `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`); publik hanya agregat `/api/pendidikan/ringkasan/stats`. Pengajar sengaja tetap publik (hanya nama + lembaga, dipakai direktori pengajar Info Sekolah).
-  - [ ] Sisa: pencarian global (di bawah).
-  - Pencarian global ikut membuka nama siswa (terverifikasi 2026-11-15): `src/app/api/[[...slugs]]/_lib/search/findMany.ts` tipe `siswa` (baris ±1287 & ±2346, `...siswa.map(... type: "siswa")`), ditaut `src/app/(public)/_com/searchUrl.tsx:88` ke `/siswa` (kini 308 ke halaman utama, tapi nama sudah tampil di hasil cari). Halaman publik Info Sekolah sejak rombak Pendidikan tidak lagi menampilkan nama siswa. Usul: buang tipe `siswa` dari pencarian publik.
+  - [x] Pencarian global (`_lib/search/findMany.ts`): tipe `siswa` dibuang dari cabang `type=` dan pencarian semua modul, beserta URL-nya di `searchUrl.tsx`. Sekalian dibuang tipe data pribadi lain yang ikut terindeks (T20): `responden` (IKM), `permohonaninformasipublik` (bisa dicari lewat NIK), `permohonaninformasikeberatanpublik`. Pendaftar beasiswa, peminjam buku, ibu hamil, balita, pengaduan, dan administrasi online tidak pernah terindeks. Test: `__tests__/api/search_tanpa_data_pribadi.test.ts`.
   - Kecil: total siswa/pengajar publik = jumlah `perJenjang`, bukan `stats.jumlahPengajar` (beda bila ada lembaga nonaktif).
 
 - [ ] **Pendidikan: form daftar beasiswa kemungkinan 401 untuk warga anonim** (terverifikasi statis 2026-11-15, belum diuji POST)
