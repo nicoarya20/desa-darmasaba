@@ -18,6 +18,7 @@ import {
   visibleUmkmTabs,
 } from '@/app/admin/(dashboard)/ekonomi/umkm/_lib/umkm-tabs.logic';
 import { ekonomiMenu } from '@/app/admin/_com/nav/domains';
+import navbarListMenu from '@/con/navbar-list-menu';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>).replace(
@@ -86,5 +87,12 @@ describe('tab admin UMKM yang disembunyikan', () => {
     const umkm = ekonomiMenu.children?.find((c) => c.id === 'ekonomi.umkm');
     expect(umkm?.path).toBe('/admin/ekonomi/umkm/data-umkm');
     expect(umkm?.basePath).toBe('/admin/ekonomi/umkm');
+  });
+
+  it('label menu UMKM menjadi "UMKM & Pasar Desa" di sidebar admin dan navbar publik', () => {
+    const sidebar = ekonomiMenu.children?.find((c) => c.id === 'ekonomi.umkm');
+    expect(sidebar?.name).toBe('UMKM & Pasar Desa');
+    const navbar = navbarListMenu.flatMap((m) => m.children ?? []).find((c) => c.href === '/ekonomi/umkm');
+    expect(navbar?.name).toBe('UMKM & Pasar Desa');
   });
 });
