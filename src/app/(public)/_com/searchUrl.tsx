@@ -1,6 +1,7 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
 import { desaDigitalDetailHref } from '@/app/(public)/(pages)/inovasi/desa-digital-smart-village/_com/desa-digital.logic';
 import { programKreatifDetailHref } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
+import { penghijauanDetailHref } from '@/app/(public)/(pages)/lingkungan/program-penghijauan/_com/penghijauan.logic';
 import { isPathHidden } from './menu-visibility.logic';
 
 type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
@@ -76,7 +77,7 @@ const getDetailUrl = (item: SearchItem) => {
     infoTekno: () => '/inovasi/info-teknologi-tepat-guna',
     pengelolaanSampah: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
     keteranganBankSampahTerdekat: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
-    programPenghijauan: () => '/lingkungan/program-penghijauan',
+    programPenghijauan: (id) => penghijauanDetailHref(String(id)),
     dataLingkunganDesa: () => '/lingkungan/data-lingkungan-desa',
     gotongRoyong: (id, kategori) => `/lingkungan/gotong-royong/${kategori}/${id}`,
     tujuanEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
