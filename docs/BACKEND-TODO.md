@@ -243,11 +243,6 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - [ ] **Captcha (Turnstile) saat spam muncul**
   - v1 sengaja tanpa captcha (Origin + honeypot + rate limit + kuota + budget). Pantau `/dev/jenna/percakapan`; bila spam lolos, tambah Turnstile di `src/app/api/jenna/chat/route.ts` (butuh env secret baru → diskusi dulu).
 
-- [ ] **Model reasoning OpenAI menolak `max_tokens`** (terverifikasi 2026-11-13)
-  - Lokasi: `src/lib/jenna/provider/openai-compatible.ts:54` mengirim `max_tokens`. Model o1/gpt-5 di API OpenAI mewajibkan `max_completion_tokens` dan menolak `max_tokens`.
-  - Dampak: memilih model itu di `/dev/jenna/provider` membuat setiap giliran gagal `provider_error`.
-  - Usul: kirim `max_completion_tokens` untuk model reasoning (deteksi nama model atau opsi di setelan provider), tetap `max_tokens` untuk server OpenAI-compatible lain.
-
 - [ ] **Verifikasi endpoint hangup sesi suara di stg**
   - Lokasi: `src/lib/jenna/voice/voice.relay.ts` (`hangupLiveSession`) memanggil `POST {baseUrl}/live/sessions/{id}/hangup`; endpoint belum terkonfirmasi dari dokumentasi resmi gateway.
   - Cek: setelah beberapa sesi suara di stg, lihat kolom `JennaVoiceSession.hangupStatus` dan log `[jenna-voice] hangup`. 2xx = benar; 404/405 = endpoint salah → sesi gateway hanya berakhir oleh timeout gateway (biaya gateway bisa berjalan lebih lama dari menit yang ditagih ke pengunjung).

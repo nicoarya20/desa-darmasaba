@@ -4,6 +4,7 @@ import {
   JENNA_VOICE_SLOT,
   type JennaProviderDTO,
   type JennaProviderUpdateInput,
+  type JennaReasoningEffort,
   type JennaSettingsDTO,
   type JennaSettingsUpdateInput,
   type JennaVoiceProviderDTO,
@@ -194,6 +195,8 @@ export type ProviderForm = {
   model: string;
   temperature: NumberField;
   maxTokens: NumberField;
+  /** '' = tidak dikirim. Hanya OpenAI-compatible. */
+  reasoningEffort: JennaReasoningEffort | '';
   /** Ditampilkan dalam detik; API memakai milidetik. */
   timeoutSec: NumberField;
   /** Kosong = pertahankan kunci tersimpan. */
@@ -258,6 +261,7 @@ export function providerFormFrom(p: AnyProviderDTO): ProviderForm {
     model: p.model,
     temperature: voice ? '' : (p.temperature ?? ''),
     maxTokens: voice ? '' : (p.maxTokens ?? ''),
+    reasoningEffort: voice ? '' : (p.reasoningEffort ?? ''),
     timeoutSec: p.timeoutMs / 1000,
     apiKey: '',
   };
@@ -302,6 +306,7 @@ export const providerEqual = (a: ProviderForm, b: ProviderForm) =>
   a.model.trim() === b.model.trim() &&
   a.temperature === b.temperature &&
   a.maxTokens === b.maxTokens &&
+  a.reasoningEffort === b.reasoningEffort &&
   a.timeoutSec === b.timeoutSec &&
   a.apiKey.trim() === b.apiKey.trim();
 
@@ -310,6 +315,7 @@ export function providerPayload(form: ProviderForm): JennaProviderUpdateInput {
     ...voiceProviderPayload(form),
     temperature: form.temperature === '' ? null : form.temperature,
     maxTokens: form.maxTokens === '' ? null : form.maxTokens,
+    reasoningEffort: form.reasoningEffort || null,
   };
 }
 

@@ -23,6 +23,7 @@ const voiceRow = (over: Partial<JennaProvider> = {}): JennaProvider => ({
   model: 'gpt-realtime',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 30000,
   lastTestAt: null,
   lastTestOk: null,

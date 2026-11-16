@@ -14,6 +14,7 @@ const CFG = {
   model: 'gpt-test',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 5000,
 };
 
@@ -60,6 +61,8 @@ describe('OpenAICompatibleProvider — permintaan', () => {
     expect(c.body.model).toBe('gpt-test');
     expect(c.body.max_tokens).toBe(DEFAULT_MAX_TOKENS);
     expect(DEFAULT_MAX_TOKENS).toBe(1024);
+    expect(c.body).not.toHaveProperty('max_completion_tokens');
+    expect(c.body).not.toHaveProperty('reasoning_effort');
     expect(c.body.temperature).toBeUndefined();
     expect(c.body.stream).toBeUndefined();
     expect(c.body.messages[0]).toEqual({ role: 'system', content: 'S' });
@@ -82,6 +85,24 @@ describe('OpenAICompatibleProvider — permintaan', () => {
     expect(b.max_tokens).toBe(500);
     expect(b.tools[0]).toEqual({ type: 'function', function: { name: 'cari', description: 'Cari', parameters } });
     expect(b.tool_choice).toBe('auto');
+  });
+
+  it('reasoningEffort diisi → reasoning_effort + max_completion_tokens, tanpa max_tokens (non-stream & stream)', async () => {
+    const cases = [
+      { cfg: { reasoningEffort: 'none', maxTokens: 500 }, limit: 500, stream: false },
+      { cfg: { reasoningEffort: 'high', maxTokens: null }, limit: DEFAULT_MAX_TOKENS, stream: false },
+      { cfg: { reasoningEffort: 'low', maxTokens: 700, temperature: 0.2 }, limit: 700, stream: true },
+    ];
+    for (const { cfg, limit, stream } of cases) {
+      const f = fakeFetch(() => (stream ? sse([textChunk('x')]) : json({ choices: [{ message: { content: 'x' } }] })));
+      await new OpenAICompatibleProvider({ ...CFG, ...cfg }, f.impl).chat(user(), stream ? { onDelta: () => {} } : {});
+      const b = f.calls[0].body;
+      expect(b.reasoning_effort).toBe(cfg.reasoningEffort);
+      expect(b.max_completion_tokens).toBe(limit);
+      expect(b).not.toHaveProperty('max_tokens');
+      expect(b.temperature).toBe(cfg.temperature);
+      expect(b.stream).toBe(stream ? true : undefined);
+    }
   });
 
   it('assistant tool_calls membawa arguments mentah; hasil tool menjadi role tool', async () => {
@@ -156,6 +177,9 @@ describe('OpenAICompatibleProvider — stream', () => {
     const res = await new OpenAICompatibleProvider(CFG, f.impl).chat(user(), { onDelta: (t) => deltas.push(t) });
     expect(f.calls[0].body.stream).toBe(true);
     expect(f.calls[0].body.stream_options).toEqual({ include_usage: true });
+    expect(f.calls[0].body.max_tokens).toBe(DEFAULT_MAX_TOKENS);
+    expect(f.calls[0].body).not.toHaveProperty('max_completion_tokens');
+    expect(f.calls[0].body).not.toHaveProperty('reasoning_effort');
     expect(deltas).toEqual(['Ha', 'lo']);
     expect(res).toEqual({
       type: 'tool_calls',

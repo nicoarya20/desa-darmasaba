@@ -40,6 +40,10 @@ export const JENNA_SETTINGS_LIMITS = {
   voiceName: { maxLength: 60 },
 } as const;
 
+/** `reasoning_effort` Chat Completions; hanya slot chat_openai. null = tidak dikirim (pakai `max_tokens`). */
+export const JENNA_REASONING_EFFORTS = ["none", "low", "medium", "high"] as const;
+export type JennaReasoningEffort = (typeof JENNA_REASONING_EFFORTS)[number];
+
 export const JENNA_PROVIDER_LIMITS = {
   baseUrl: { maxLength: 500 },
   model: { minLength: 1, maxLength: 200 },
@@ -82,6 +86,8 @@ export interface JennaProviderDTO {
   model: string;
   temperature: number | null;
   maxTokens: number | null;
+  /** Selalu null untuk slot selain chat_openai. */
+  reasoningEffort: JennaReasoningEffort | null;
   timeoutMs: number;
   hasApiKey: boolean;
   apiKeyHint: string | null;
@@ -137,6 +143,8 @@ export interface JennaProviderUpdateInput {
   model: string;
   temperature?: number | null;
   maxTokens?: number | null;
+  /** Kosong/null = tidak dikirim. Diabaikan (disimpan null) untuk slot selain chat_openai. */
+  reasoningEffort?: JennaReasoningEffort | "" | null;
   timeoutMs?: number;
   apiKey?: string;
 }

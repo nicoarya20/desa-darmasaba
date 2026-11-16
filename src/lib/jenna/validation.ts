@@ -2,10 +2,12 @@
 import {
   JENNA_CHAT_PROTOCOLS,
   JENNA_PROVIDER_LIMITS,
+  JENNA_REASONING_EFFORTS,
   JENNA_SETTINGS_LIMITS,
   JENNA_SLOTS,
   type JennaChatProtocol,
   type JennaProviderUpdateInput,
+  type JennaReasoningEffort,
   type JennaSettingsUpdateInput,
   type JennaSlot,
   type JennaVoiceProviderUpdateInput,
@@ -23,6 +25,10 @@ export function isJennaSlot(value: string): value is JennaSlot {
 
 export function isJennaChatProtocol(value: unknown): value is JennaChatProtocol {
   return typeof value === "string" && (JENNA_CHAT_PROTOCOLS as readonly string[]).includes(value);
+}
+
+export function isJennaReasoningEffort(value: unknown): value is JennaReasoningEffort {
+  return typeof value === "string" && (JENNA_REASONING_EFFORTS as readonly string[]).includes(value);
 }
 
 /**
@@ -138,12 +144,13 @@ export type ProviderUpdateValue = {
   model: string;
   temperature: number | null;
   maxTokens: number | null;
+  reasoningEffort: JennaReasoningEffort | null;
   timeoutMs: number;
   /** null = pertahankan kunci lama */
   apiKey: string | null;
 };
 
-/** Validasi body PUT provider. temperature/maxTokens undefined/null = tidak dikirim ke provider. */
+/** Validasi body PUT provider. temperature/maxTokens/reasoningEffort undefined/null/kosong = tidak dikirim ke provider. */
 export function validateProviderInput(
   input: JennaProviderUpdateInput,
   nodeEnv: string,
@@ -177,6 +184,14 @@ export function validateProviderInput(
     maxTokens = input.maxTokens;
   }
 
+  let reasoningEffort: JennaReasoningEffort | null = null;
+  if (input.reasoningEffort != null && input.reasoningEffort !== "") {
+    if (!isJennaReasoningEffort(input.reasoningEffort)) {
+      return { ok: false, error: `Reasoning effort harus kosong atau salah satu dari: ${JENNA_REASONING_EFFORTS.join(", ")}.` };
+    }
+    reasoningEffort = input.reasoningEffort;
+  }
+
   const timeoutMs = validateTimeoutMs(input.timeoutMs);
   if (!timeoutMs.ok) return timeoutMs;
   const apiKey = validateApiKey(input.apiKey);
@@ -184,7 +199,15 @@ export function validateProviderInput(
 
   return {
     ok: true,
-    value: { baseUrl: baseUrl.value, model, temperature, maxTokens, timeoutMs: timeoutMs.value, apiKey: apiKey.value },
+    value: {
+      baseUrl: baseUrl.value,
+      model,
+      temperature,
+      maxTokens,
+      reasoningEffort,
+      timeoutMs: timeoutMs.value,
+      apiKey: apiKey.value,
+    },
   };
 }
 
@@ -205,9 +228,9 @@ function validateApiKey(raw: string | undefined): ValidationResult<string | null
   return { ok: true, value: apiKey || null };
 }
 
-export type VoiceProviderUpdateValue = Omit<ProviderUpdateValue, "temperature" | "maxTokens">;
+export type VoiceProviderUpdateValue = Omit<ProviderUpdateValue, "temperature" | "maxTokens" | "reasoningEffort">;
 
-/** Validasi body PUT provider suara. Tidak ada temperature/maxTokens. */
+/** Validasi body PUT provider suara. Tidak ada temperature/maxTokens/reasoningEffort. */
 export function validateVoiceProviderInput(
   input: JennaVoiceProviderUpdateInput,
   nodeEnv: string,

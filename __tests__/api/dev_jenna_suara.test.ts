@@ -15,13 +15,15 @@ import {
   limitsFromSettings,
   limitsPayload,
   providerCopy,
+  providerEqual,
   providerErrors,
   providerFormFrom,
+  providerPayload,
   voiceProviderPayload,
   type ProviderForm,
 } from '@/app/dev/jenna/jenna-form.logic';
 import { toProviderDTOs, toSettingsDTO, toVoiceProviderDTO } from '@/lib/jenna/mappers';
-import type { JennaConfigResponse, JennaVoiceProviderDTO } from '@/lib/jenna/types';
+import type { JennaConfigResponse, JennaProviderDTO, JennaVoiceProviderDTO } from '@/lib/jenna/types';
 
 const voiceDTO = (over: Partial<JennaVoiceProviderDTO> = {}): JennaVoiceProviderDTO => ({
   ...toVoiceProviderDTO(null),
@@ -121,6 +123,7 @@ describe('form provider suara', () => {
       model: 'gpt-realtime',
       temperature: '',
       maxTokens: '',
+      reasoningEffort: '',
       timeoutSec: 30,
       apiKey: '',
     });
@@ -134,6 +137,7 @@ describe('form provider suara', () => {
     });
     expect(voiceProviderPayload(form({ apiKey: ' sk-x ' }))).toMatchObject({ apiKey: 'sk-x' });
     expect(voiceProviderPayload(form())).not.toHaveProperty('temperature');
+    expect(voiceProviderPayload(form())).not.toHaveProperty('reasoningEffort');
   });
 
   it('galat model memakai aturan suara', () => {
@@ -141,6 +145,22 @@ describe('form provider suara', () => {
     expect(providerErrors(form({ model: '' }), true).model).toBe('Model suara wajib diisi.');
     expect(providerErrors(form({ model: 'model spasi' }), true).model).toBe('Model suara tidak valid.');
     expect(providerErrors(form({ model: 'model spasi' })).model).toBeUndefined();
+  });
+});
+
+describe('form provider chat: reasoningEffort', () => {
+  const openaiDTO = (over: Partial<JennaProviderDTO> = {}): JennaProviderDTO => ({ ...toProviderDTOs([])[0], ...over });
+
+  it('DTO → form (null = ""), dirty terdeteksi, payload "" → null', () => {
+    const empty = providerFormFrom(openaiDTO());
+    expect(empty.reasoningEffort).toBe('');
+    expect(providerPayload(empty).reasoningEffort).toBeNull();
+
+    const filled = providerFormFrom(openaiDTO({ reasoningEffort: 'none' }));
+    expect(filled.reasoningEffort).toBe('none');
+    expect(providerPayload(filled).reasoningEffort).toBe('none');
+    expect(providerEqual(filled, empty)).toBe(false);
+    expect(providerEqual({ ...empty, reasoningEffort: 'none' }, filled)).toBe(true);
   });
 });
 

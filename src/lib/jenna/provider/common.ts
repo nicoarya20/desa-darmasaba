@@ -11,6 +11,8 @@ export interface ProviderConfig {
   temperature: number | null;
   /** null = DEFAULT_MAX_TOKENS (situs publik: biaya per jawaban harus berbatas). */
   maxTokens: number | null;
+  /** OpenAI saja. null = tidak dikirim (pakai `max_tokens`); diisi = `reasoning_effort` + `max_completion_tokens`. */
+  reasoningEffort: string | null;
   timeoutMs: number;
 }
 

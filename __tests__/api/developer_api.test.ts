@@ -55,6 +55,7 @@ const encRow = () => ({
   model: 'claude-x',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 30000,
   lastTestAt: null,
   lastTestOk: null,
@@ -183,6 +184,22 @@ describe('PUT /jenna/providers/:slot', () => {
     const arg = prismaMock.jennaProvider.upsert.mock.calls[0][0] as { update: Record<string, unknown> };
     expect(arg.update).not.toHaveProperty('apiKeyEnc');
     expect(arg.update).not.toHaveProperty('apiKeyHint');
+  });
+
+  it('reasoningEffort: disimpan untuk chat_openai, dipaksa null untuk chat_anthropic, nilai asing → 400', async () => {
+    asUser('0');
+    const openai = { baseUrl: 'https://api.openai.com/v1', model: 'gpt-6-luna' };
+    await jennaProviderUpdate(ctx({ ...openai, reasoningEffort: 'none' }, { slot: 'chat_openai' }).context);
+    await jennaProviderUpdate(ctx({ ...body, apiKey: '', reasoningEffort: 'low' }, { slot: 'chat_anthropic' }).context);
+    await jennaProviderUpdate(ctx({ ...openai, reasoningEffort: '' }, { slot: 'chat_openai' }).context);
+    const updates = prismaMock.jennaProvider.upsert.mock.calls.map((c) => (c[0] as { update: Record<string, unknown> }).update);
+    expect(updates.map((u) => u.reasoningEffort)).toEqual(['none', null, null]);
+
+    const { context, set } = ctx({ ...openai, reasoningEffort: 'turbo' }, { slot: 'chat_openai' });
+    const res = await jennaProviderUpdate(context);
+    expect(set.status).toBe(400);
+    expect(res).toMatchObject({ success: false, message: expect.stringContaining('Reasoning effort') });
+    expect(prismaMock.jennaProvider.upsert).toHaveBeenCalledTimes(3);
   });
 });
 

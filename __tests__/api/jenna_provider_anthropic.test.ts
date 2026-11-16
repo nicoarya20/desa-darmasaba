@@ -11,6 +11,7 @@ const CFG = {
   model: 'claude-test',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 5000,
 };
 

@@ -7,6 +7,7 @@ import { JENNA_SETTINGS_ID, toProviderDTO, toProviderDTOs, toSettingsDTO, toVoic
 import { invalidateJennaRuntimeCache } from "./provider/active";
 import {
   JENNA_PROTOCOL_SLOT,
+  JENNA_SLOT_PROTOCOL,
   JENNA_VOICE_SLOT,
   type JennaConfigResponse,
   type JennaProviderTestResponse,
@@ -66,12 +67,13 @@ export function updateJennaProvider(
   slot: JennaSlot,
   value: ProviderUpdateValue,
 ): Promise<ProviderUpdateResult> {
-  return saveProvider(userId, slot, value);
+  const reasoningEffort = JENNA_SLOT_PROTOCOL[slot] === "openai" ? value.reasoningEffort : null;
+  return saveProvider(userId, slot, { ...value, reasoningEffort });
 }
 
-/** Provider suara tidak memakai temperature/maxTokens. */
+/** Provider suara tidak memakai temperature/maxTokens/reasoningEffort. */
 export function updateJennaVoiceProvider(userId: string, value: VoiceProviderUpdateValue): Promise<ProviderUpdateResult> {
-  return saveProvider(userId, JENNA_VOICE_SLOT, { ...value, temperature: null, maxTokens: null });
+  return saveProvider(userId, JENNA_VOICE_SLOT, { ...value, temperature: null, maxTokens: null, reasoningEffort: null });
 }
 
 async function saveProvider(
@@ -92,6 +94,7 @@ async function saveProvider(
     model: value.model,
     temperature: value.temperature,
     maxTokens: value.maxTokens,
+    reasoningEffort: value.reasoningEffort,
     timeoutMs: value.timeoutMs,
     ...keyFields,
     lastTestAt: null,

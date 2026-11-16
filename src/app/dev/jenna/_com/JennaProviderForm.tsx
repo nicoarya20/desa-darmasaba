@@ -6,6 +6,7 @@ import {
   Group,
   NumberInput,
   PasswordInput,
+  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -14,7 +15,8 @@ import {
 import { IconKey, IconPlugConnected } from '@tabler/icons-react';
 import { useId, useState } from 'react';
 import { useSnapshot } from 'valtio';
-import { JENNA_PROVIDER_LIMITS } from '@/lib/jenna/types';
+import { JENNA_PROVIDER_LIMITS, JENNA_REASONING_EFFORTS } from '@/lib/jenna/types';
+import { isJennaReasoningEffort } from '@/lib/jenna/validation';
 import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
 import jennaState from '../../_state/jenna-state';
@@ -48,6 +50,13 @@ type Props = {
 };
 
 const toNumberField = (value: number | string): NumberField => (typeof value === 'number' ? value : '');
+
+// Nilai opsi Select tidak boleh kosong; '' di form dipetakan ke sentinel ini.
+const REASONING_EFFORT_NOT_SENT = 'not_sent';
+const REASONING_EFFORT_OPTIONS = [
+  { value: REASONING_EFFORT_NOT_SENT, label: 'Tidak dikirim (default)' },
+  ...JENNA_REASONING_EFFORTS.map((value) => ({ value, label: value })),
+];
 
 export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
   const { isDark } = useDarkMode();
@@ -187,6 +196,19 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
           error={errors.timeoutSec}
         />
       </SimpleGrid>
+
+      {!isVoiceProvider(provider) && provider.protocol === 'openai' && (
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+          <Select
+            label="Reasoning effort"
+            description="Isi hanya untuk model reasoning (mis. gpt-6-luna, gpt-5.x). Jenna memakai tools, jadi pilih &quot;none&quot;. Bila diisi, batas token dikirim sebagai max_completion_tokens."
+            data={REASONING_EFFORT_OPTIONS}
+            allowDeselect={false}
+            value={form.reasoningEffort || REASONING_EFFORT_NOT_SENT}
+            onChange={(v) => set('reasoningEffort', isJennaReasoningEffort(v) ? v : '')}
+          />
+        </SimpleGrid>
+      )}
 
       {!cryptoConfigured ? (
         <Alert color="orange" variant="light" icon={<IconKey size={16} />} title="API key tidak dapat disimpan">

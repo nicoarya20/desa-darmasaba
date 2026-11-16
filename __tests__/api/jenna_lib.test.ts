@@ -127,8 +127,27 @@ describe('validateProviderInput', () => {
   it('default timeout 30000, apiKey kosong = pertahankan (null)', () => {
     expect(validateProviderInput({ ...base, apiKey: '  ' }, 'production')).toEqual({
       ok: true,
-      value: { ...base, temperature: null, maxTokens: null, timeoutMs: 30000, apiKey: null },
+      value: { ...base, temperature: null, maxTokens: null, reasoningEffort: null, timeoutMs: 30000, apiKey: null },
     });
+  });
+
+  it('reasoningEffort: nilai valid dipertahankan, kosong/null → null, nilai asing ditolak', () => {
+    for (const effort of ['none', 'low', 'medium', 'high'] as const) {
+      expect(validateProviderInput({ ...base, reasoningEffort: effort }, 'production')).toMatchObject({
+        ok: true,
+        value: { reasoningEffort: effort },
+      });
+    }
+    for (const empty of ['', null, undefined] as const) {
+      expect(validateProviderInput({ ...base, reasoningEffort: empty }, 'production')).toMatchObject({
+        ok: true,
+        value: { reasoningEffort: null },
+      });
+    }
+    for (const bad of ['minimal', 'HIGH', ' none']) {
+      const r = validateProviderInput({ ...base, reasoningEffort: bad as never }, 'production');
+      expect(r).toEqual({ ok: false, error: 'Reasoning effort harus kosong atau salah satu dari: none, low, medium, high.' });
+    }
   });
 
   it('nilai di luar batas ditolak', () => {
@@ -154,6 +173,7 @@ const providerRow = (over: Partial<JennaProvider> = {}): JennaProvider => ({
   model: 'gpt-4o-mini',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 30000,
   lastTestAt: null,
   lastTestOk: null,
@@ -177,6 +197,14 @@ describe('mappers (API key tidak bocor)', () => {
   it('tanpa key → ready false, hint null', () => {
     const dto = toProviderDTO('chat_openai', providerRow({ apiKeyEnc: null }));
     expect(dto).toMatchObject({ hasApiKey: false, apiKeyHint: null, ready: false });
+  });
+
+  it('reasoningEffort: openai diteruskan; nilai asing, slot anthropic, dan tanpa row → null', () => {
+    expect(toProviderDTO('chat_openai', providerRow()).reasoningEffort).toBeNull();
+    expect(toProviderDTO('chat_openai', providerRow({ reasoningEffort: 'none' })).reasoningEffort).toBe('none');
+    expect(toProviderDTO('chat_openai', providerRow({ reasoningEffort: 'turbo' })).reasoningEffort).toBeNull();
+    expect(toProviderDTO('chat_anthropic', providerRow({ slot: 'chat_anthropic', reasoningEffort: 'low' })).reasoningEffort).toBeNull();
+    expect(toProviderDTO('chat_openai', null).reasoningEffort).toBeNull();
   });
 
   it('semua slot selalu ada; slot kosong pakai default', () => {

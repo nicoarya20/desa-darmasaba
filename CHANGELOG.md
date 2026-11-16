@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.285] - 2026-11-16
+### Added
+- **Jenna › Provider (OpenAI-compatible): pilihan "Reasoning effort"** (Tidak dikirim / none / low / medium / high). Dengan ini model reasoning OpenAI seperti `gpt-6-luna` bisa dipakai Jenna; sebelumnya setiap pertanyaan gagal dengan error `Unsupported parameter: 'max_tokens'`. Bila diisi, Jenna mengirim `reasoning_effort` dan batas token sebagai `max_completion_tokens`. Untuk Jenna pilih `none`, karena model tersebut hanya mendukung tools pada nilai itu (juga paling hemat dan cepat). Bila dibiarkan "Tidak dikirim" (default), perilaku sama seperti sebelumnya, jadi `gpt-4o-mini` dan server OpenAI-compatible lain tidak terpengaruh. Provider Anthropic dan suara tidak berubah.
+
+### Operator
+- Jalankan migrasi `20261116143000_jenna_provider_reasoning_effort` (otomatis saat container start). Murni menambah kolom nullable `JennaProvider.reasoningEffort`; data lain tidak diubah. Tidak ada env baru.
+- Untuk pindah ke `gpt-6-luna`: di `/dev/jenna` › Provider isi model `gpt-6-luna`, Reasoning effort `none`, kosongkan Temperature, Simpan, lalu uji dengan pertanyaan nyata di widget. "Tes koneksi" provider OpenAI hanya memeriksa API key (`GET /models`), bukan nama model atau dukungan tools.
+
 ## [0.1.284] - 2026-11-16
 ### Changed
 - **Jarak dan tepi halaman Inovasi diseragamkan.** Jarak antar-bagian di Desa Digital dan Kolaborasi Inovasi kini sama (64px, ponsel 48px), dan judul "Mitra Kolaborasi" seukuran judul bagian lain.

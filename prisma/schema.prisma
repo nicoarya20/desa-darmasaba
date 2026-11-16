@@ -2640,6 +2640,7 @@ model JennaProvider {
   model           String    @default("")
   temperature     Float?
   maxTokens       Int?
+  reasoningEffort String?
   timeoutMs       Int       @default(30000)
   lastTestAt      DateTime?
   lastTestOk      Boolean?

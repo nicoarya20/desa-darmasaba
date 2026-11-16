@@ -55,8 +55,15 @@ export class OpenAICompatibleProvider implements AIProvider {
     const body: Record<string, unknown> = {
       model: this.config.model,
       messages: messages.map(toOpenAIMessage),
-      max_tokens: this.config.maxTokens ?? DEFAULT_MAX_TOKENS,
     };
+    const maxTokens = this.config.maxTokens ?? DEFAULT_MAX_TOKENS;
+    // Model reasoning menolak `max_tokens`; server OpenAI-compatible lain belum tentu kenal `max_completion_tokens`.
+    if (this.config.reasoningEffort) {
+      body.reasoning_effort = this.config.reasoningEffort;
+      body.max_completion_tokens = maxTokens;
+    } else {
+      body.max_tokens = maxTokens;
+    }
     if (opts.tools?.length) {
       body.tools = opts.tools.map(toOpenAITool);
       body.tool_choice = "auto";

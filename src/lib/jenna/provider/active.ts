@@ -104,6 +104,7 @@ async function loadActiveProvider(): Promise<ActiveJennaProvider> {
     model: creds.model,
     temperature: row.temperature,
     maxTokens: row.maxTokens,
+    reasoningEffort: row.reasoningEffort,
     timeoutMs: row.timeoutMs,
   });
   return { provider, settings, slot, model: creds.model };

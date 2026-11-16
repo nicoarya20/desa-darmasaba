@@ -48,6 +48,7 @@ const Developer = new Elysia({ prefix: "/developer", tags: ["Developer"] })
       model: t.String({ maxLength: 500 }),
       temperature: t.Optional(t.Nullable(t.Number())),
       maxTokens: t.Optional(t.Nullable(t.Number())),
+      reasoningEffort: t.Optional(t.Nullable(t.String({ maxLength: 20 }))),
       timeoutMs: t.Optional(t.Number()),
       apiKey: t.Optional(t.String({ maxLength: 2000 })),
     }),
