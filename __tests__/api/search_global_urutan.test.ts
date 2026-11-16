@@ -66,7 +66,8 @@ describe('global search — label type sejajar dengan model sumber', () => {
 
     expect(new Set(models).size).toBe(models.length);
     expect(models.sort()).toEqual(Object.keys(delegates).sort());
-    expect(models.length).toBe(88);
+    // 2026-11-16: 88 → 87, DesaDigital + InfoTekno digabung jadi satu modul InovasiTeknologiDesa.
+    expect(models.length).toBe(87);
   });
 
   it('dokter, tarif layanan, dan pegawai BUMDes berlabel type yang benar', async () => {
