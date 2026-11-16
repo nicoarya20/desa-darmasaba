@@ -29,6 +29,11 @@ All uploaded files reference the `FileStorage` Prisma model. **MinIO is the prim
 
 Seafile was the previous storage backend and has been fully migrated to MinIO (`prisma/migrate-seafile-to-minio.ts`). `WIBU_UPLOAD_DIR` (local disk) and Seafile (`src/lib/seafile-auth-service.ts`, `SEAFILE_*` env vars) are both leftovers — still declared in `.env.example` but not referenced by any active upload/read/delete path. Don't rely on either for new file-handling code; use MinIO.
 
+## Log Audit & Log Login (Developer Console)
+Migrasi `20261116170000_audit_log_login_log` (additive). Keduanya hanya dibaca role 0 lewat `GET /api/developer/audit-log` / `login-log` (halaman `/dev/log/audit`, `/dev/log/login`). Tidak ada endpoint ubah/hapus.
+- **`AuditLog`** = jejak aksi admin, **append-only, tanpa retensi**. Tulis hanya lewat `audit()` di `src/lib/audit.ts`, **setelah** mutasi sukses, dengan aktor dari hasil guard (bukan body). `action` wajib anggota `AUDIT_ACTIONS` (daftar tertutup; aksi baru = tambah di sana + label di halaman Log Audit, test akan merah bila lupa). `actorEmail`/`actorRoleId` adalah snapshot saat aksi; `actorId` jadi null bila user dihapus (`onDelete: SetNull`). `meta` lewat `sanitizeAuditMeta` (string ≤500, kedalaman 3, ≤20 item) dan **tidak boleh** memuat PII warga, isi form/percakapan, nilai env, atau API key — catat nama field / id saja. Gagal tulis = `console.warn`, tidak membatalkan aksi. Tanpa IP/UA.
+- **`LoginLog`** = riwayat sign-in staf dari hook `after` Better Auth (`src/lib/auth.ts` → `recordLogin` di `src/lib/login-log.ts`): `result` ∈ `LOGIN_LOG_RESULTS` (`success`, `blocked_inactive`), IP & user agent (≤512) dari sesi Better Auth (header `x-forwarded-for`/`x-real-ip`). Dihapus otomatis setelah **90 hari** (`startLoginLogRetentionScheduler`, production saja, harian).
+
 ## Jenna: percakapan publik & allowlist pengetahuan
 `JennaConversation` / `JennaMessage` (migrasi `20261113170000_add_jenna_conversation`) menyimpan chat pengunjung anonim — tanpa relasi ke `User`:
 - `sessionHash` / `ipHash` = HMAC-SHA256 (`hashJennaIdentifier` di `src/lib/jenna/limits.ts`); token cookie dan IP asli tidak pernah disimpan. Kedua hash didenormalisasi ke `JennaMessage` supaya kuota harian dihitung tanpa join.
