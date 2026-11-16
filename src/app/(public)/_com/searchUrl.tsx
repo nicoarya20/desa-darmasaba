@@ -1,4 +1,6 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
+import { desaDigitalDetailHref } from '@/app/(public)/(pages)/inovasi/desa-digital-smart-village/_com/desa-digital.logic';
+import { programKreatifDetailHref } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
 import { isPathHidden } from './menu-visibility.logic';
 
 type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
@@ -67,8 +69,8 @@ const getDetailUrl = (item: SearchItem) => {
     programKemiskinan: () => '/ekonomi/program-kemiskinan',
     sektorUnggulanDesa: () => '/ekonomi/sektor-unggulan-desa',
     demografiPekerjaan: () => '/ekonomi/demografi-pekerjaan',
-    desaDigital: () => '/inovasi/desa-digital-smart-village',
-    programKreatif: () => '/inovasi/program-kreatif-desa',
+    desaDigital: (id) => desaDigitalDetailHref(String(id)),
+    programKreatif: (id) => programKreatifDetailHref(String(id)),
     kolaborasiInovasi: () => '/inovasi/kolaborasi-inovasi',
     mitraKolaborasi: () => '/inovasi/kolaborasi-inovasi',
     infoTekno: () => '/inovasi/info-teknologi-tepat-guna',
