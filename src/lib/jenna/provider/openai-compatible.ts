@@ -1,5 +1,6 @@
 // Adapter endpoint `/chat/completions` bergaya OpenAI (fetch saja, tanpa SDK).
 import { describeError } from "../error-detail";
+import { resolveReasoningEffort } from "../reasoning";
 import { createDeadline } from "../runtime/deadline";
 import {
   badResponse,
@@ -45,6 +46,41 @@ const toOpenAITool = (t: ToolSpec) => ({
   function: { name: t.name, description: t.description, parameters: t.parameters },
 });
 
+export const openAIChatUrl = (baseUrl: string): string => `${baseUrl.replace(/\/+$/, "")}/chat/completions`;
+
+/** Body Chat Completions; dipakai adapter dan tes koneksi supaya aturan parameternya satu. */
+export function buildOpenAIChatBody(
+  config: Pick<ProviderConfig, "model" | "temperature" | "maxTokens" | "reasoningEffort">,
+  messages: ChatMessage[],
+  tools: ToolSpec[] | undefined,
+  stream: boolean,
+): Record<string, unknown> {
+  const body: Record<string, unknown> = {
+    model: config.model,
+    messages: messages.map(toOpenAIMessage),
+  };
+  const maxTokens = config.maxTokens ?? DEFAULT_MAX_TOKENS;
+  const reasoningEffort = resolveReasoningEffort(config.model, config.reasoningEffort);
+  // Model reasoning menolak `max_tokens` dan umumnya `temperature`; server OpenAI-compatible lain
+  // belum tentu kenal `max_completion_tokens`.
+  if (reasoningEffort) {
+    body.reasoning_effort = reasoningEffort;
+    body.max_completion_tokens = maxTokens;
+  } else {
+    body.max_tokens = maxTokens;
+    if (config.temperature !== null) body.temperature = config.temperature;
+  }
+  if (tools?.length) {
+    body.tools = tools.map(toOpenAITool);
+    body.tool_choice = "auto";
+  }
+  if (stream) {
+    body.stream = true;
+    body.stream_options = { include_usage: true };
+  }
+  return body;
+}
+
 export class OpenAICompatibleProvider implements AIProvider {
   constructor(
     private readonly config: ProviderConfig,
@@ -52,29 +88,8 @@ export class OpenAICompatibleProvider implements AIProvider {
   ) {}
 
   async chat(messages: ChatMessage[], opts: ChatOptions = {}): Promise<ChatResult> {
-    const body: Record<string, unknown> = {
-      model: this.config.model,
-      messages: messages.map(toOpenAIMessage),
-    };
-    const maxTokens = this.config.maxTokens ?? DEFAULT_MAX_TOKENS;
-    // Model reasoning menolak `max_tokens`; server OpenAI-compatible lain belum tentu kenal `max_completion_tokens`.
-    if (this.config.reasoningEffort) {
-      body.reasoning_effort = this.config.reasoningEffort;
-      body.max_completion_tokens = maxTokens;
-    } else {
-      body.max_tokens = maxTokens;
-    }
-    if (opts.tools?.length) {
-      body.tools = opts.tools.map(toOpenAITool);
-      body.tool_choice = "auto";
-    }
-    if (this.config.temperature !== null) body.temperature = this.config.temperature;
-    if (opts.onDelta) {
-      body.stream = true;
-      body.stream_options = { include_usage: true };
-    }
-
-    const url = `${this.config.baseUrl.replace(/\/+$/, "")}/chat/completions`;
+    const body = buildOpenAIChatBody(this.config, messages, opts.tools, Boolean(opts.onDelta));
+    const url = openAIChatUrl(this.config.baseUrl);
     // Deadline mencakup pembacaan body juga (stream bisa berjalan lama).
     const deadline = createDeadline(this.config.timeoutMs, opts.signal);
     try {

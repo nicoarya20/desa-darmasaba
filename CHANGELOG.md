@@ -2,11 +2,14 @@
 
 ## [0.1.285] - 2026-11-16
 ### Added
-- **Jenna › Provider (OpenAI-compatible): pilihan "Reasoning effort"** (Tidak dikirim / none / low / medium / high). Dengan ini model reasoning OpenAI seperti `gpt-6-luna` bisa dipakai Jenna; sebelumnya setiap pertanyaan gagal dengan error `Unsupported parameter: 'max_tokens'`. Bila diisi, Jenna mengirim `reasoning_effort` dan batas token sebagai `max_completion_tokens`. Untuk Jenna pilih `none`, karena model tersebut hanya mendukung tools pada nilai itu (juga paling hemat dan cepat). Bila dibiarkan "Tidak dikirim" (default), perilaku sama seperti sebelumnya, jadi `gpt-4o-mini` dan server OpenAI-compatible lain tidak terpengaruh. Provider Anthropic dan suara tidak berubah.
+- **Jenna › Provider (OpenAI-compatible) bisa memakai model reasoning seperti `gpt-6-luna` tanpa setelan tambahan.** Sebelumnya setiap pertanyaan gagal dengan error `Unsupported parameter: 'max_tokens'`. Sekarang "Reasoning effort" default-nya **Otomatis**, ditentukan dari nama model: `gpt-6*` dan `gpt-5.x` dikirim `none` (nilai yang dibutuhkan agar tools jalan), `gpt-5` generasi awal dan seri `o` dikirim `low`, sedangkan model lain (mis. `gpt-4o-mini`) tidak dikirim apa-apa seperti sebelumnya. Bila reasoning effort dikirim, batas token memakai `max_completion_tokens` dan temperature tidak dikirim. Di bawah kolom Model tampil keterangan apa yang akan dikirim; pilihan manual (Jangan kirim / none / low / medium / high) ada di "Pengaturan lanjutan" untuk kasus khusus.
+
+### Changed
+- **"Tes koneksi" provider OpenAI-compatible kini menguji percakapan sungguhan**, bukan hanya API key. Tes mengirim satu pesan kecil yang memakai tools dengan setelan tersimpan (model, reasoning effort, temperature), sama seperti chat Jenna, jadi model atau setelan yang tidak cocok ketahuan sebelum dipakai warga. Bila ditolak (HTTP 400), pesan hasil menyebut parameter dan kode galat dari provider (mis. `max_tokens`, `unsupported_parameter`); isi pesan vendor dan API key tetap tidak ditampilkan. Setiap klik memakai sedikit token. Provider Anthropic dan suara tidak berubah.
 
 ### Operator
-- Jalankan migrasi `20261116143000_jenna_provider_reasoning_effort` (otomatis saat container start). Murni menambah kolom nullable `JennaProvider.reasoningEffort`; data lain tidak diubah. Tidak ada env baru.
-- Untuk pindah ke `gpt-6-luna`: di `/dev/jenna` › Provider isi model `gpt-6-luna`, Reasoning effort `none`, kosongkan Temperature, Simpan, lalu uji dengan pertanyaan nyata di widget. "Tes koneksi" provider OpenAI hanya memeriksa API key (`GET /models`), bukan nama model atau dukungan tools.
+- Jalankan migrasi `20261116143000_jenna_provider_reasoning_effort` (otomatis saat container start). Murni menambah kolom nullable `JennaProvider.reasoningEffort`; data lain tidak diubah. Tidak ada env baru. Setelan provider yang sudah ada otomatis berada di mode Otomatis.
+- Untuk ganti model: di `/dev/jenna` › Provider isi nama model, Simpan, lalu klik "Tes koneksi". Bila tes gagal karena parameter, buka "Pengaturan lanjutan" dan pilih Reasoning effort secara manual.
 
 ## [0.1.284] - 2026-11-16
 ### Changed

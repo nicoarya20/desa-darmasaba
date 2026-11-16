@@ -150,7 +150,7 @@ export type ProviderUpdateValue = {
   apiKey: string | null;
 };
 
-/** Validasi body PUT provider. temperature/maxTokens/reasoningEffort undefined/null/kosong = tidak dikirim ke provider. */
+/** Validasi body PUT provider. temperature/maxTokens undefined/null/kosong = tidak dikirim; reasoningEffort kosong = Otomatis (null). */
 export function validateProviderInput(
   input: JennaProviderUpdateInput,
   nodeEnv: string,

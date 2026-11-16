@@ -162,6 +162,13 @@ describe('form provider chat: reasoningEffort', () => {
     expect(providerEqual(filled, empty)).toBe(false);
     expect(providerEqual({ ...empty, reasoningEffort: 'none' }, filled)).toBe(true);
   });
+
+  it('"off" (Jangan kirim) bolak-balik DTO → form → payload dan beda dari Otomatis', () => {
+    const off = providerFormFrom(openaiDTO({ reasoningEffort: 'off' }));
+    expect(off.reasoningEffort).toBe('off');
+    expect(providerPayload(off).reasoningEffort).toBe('off');
+    expect(providerEqual(off, providerFormFrom(openaiDTO()))).toBe(false);
+  });
 });
 
 describe('aksi store provider suara', () => {

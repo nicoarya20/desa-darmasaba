@@ -87,21 +87,41 @@ describe('OpenAICompatibleProvider — permintaan', () => {
     expect(b.tool_choice).toBe('auto');
   });
 
-  it('reasoningEffort diisi → reasoning_effort + max_completion_tokens, tanpa max_tokens (non-stream & stream)', async () => {
+  it('reasoning efektif → reasoning_effort + max_completion_tokens, tanpa max_tokens & temperature (non-stream & stream)', async () => {
     const cases = [
-      { cfg: { reasoningEffort: 'none', maxTokens: 500 }, limit: 500, stream: false },
-      { cfg: { reasoningEffort: 'high', maxTokens: null }, limit: DEFAULT_MAX_TOKENS, stream: false },
-      { cfg: { reasoningEffort: 'low', maxTokens: 700, temperature: 0.2 }, limit: 700, stream: true },
+      { cfg: { model: 'gpt-6-luna', reasoningEffort: null, maxTokens: 500, temperature: 0.7 }, effort: 'none', limit: 500, stream: false },
+      { cfg: { model: 'gpt-6-luna', reasoningEffort: null, maxTokens: null, temperature: 0.7 }, effort: 'none', limit: DEFAULT_MAX_TOKENS, stream: true },
+      { cfg: { model: 'o4-mini', reasoningEffort: null, maxTokens: 300, temperature: null }, effort: 'low', limit: 300, stream: false },
+      { cfg: { model: 'gpt-test', reasoningEffort: 'high', maxTokens: null, temperature: 0 }, effort: 'high', limit: DEFAULT_MAX_TOKENS, stream: false },
+      { cfg: { model: 'gpt-4o-mini', reasoningEffort: 'low', maxTokens: 700, temperature: 0.2 }, effort: 'low', limit: 700, stream: true },
     ];
-    for (const { cfg, limit, stream } of cases) {
+    for (const { cfg, effort, limit, stream } of cases) {
       const f = fakeFetch(() => (stream ? sse([textChunk('x')]) : json({ choices: [{ message: { content: 'x' } }] })));
       await new OpenAICompatibleProvider({ ...CFG, ...cfg }, f.impl).chat(user(), stream ? { onDelta: () => {} } : {});
       const b = f.calls[0].body;
-      expect(b.reasoning_effort).toBe(cfg.reasoningEffort);
+      expect(b.reasoning_effort).toBe(effort);
       expect(b.max_completion_tokens).toBe(limit);
       expect(b).not.toHaveProperty('max_tokens');
-      expect(b.temperature).toBe(cfg.temperature);
+      expect(b).not.toHaveProperty('temperature');
       expect(b.stream).toBe(stream ? true : undefined);
+    }
+  });
+
+  it('reasoning tidak efektif (model biasa Otomatis, atau "off") → max_tokens + temperature seperti dulu', async () => {
+    const cases = [
+      { cfg: { model: 'gpt-4o-mini', reasoningEffort: null, temperature: 0.3 }, stream: false },
+      { cfg: { model: 'gpt-4o-mini', reasoningEffort: null, temperature: 0.3 }, stream: true },
+      { cfg: { model: 'gpt-6-luna', reasoningEffort: 'off', temperature: 0.3 }, stream: false },
+      { cfg: { model: 'gpt-6-luna', reasoningEffort: 'off', temperature: 0.3 }, stream: true },
+    ];
+    for (const { cfg, stream } of cases) {
+      const f = fakeFetch(() => (stream ? sse([textChunk('x')]) : json({ choices: [{ message: { content: 'x' } }] })));
+      await new OpenAICompatibleProvider({ ...CFG, ...cfg, maxTokens: 400 }, f.impl).chat(user(), stream ? { onDelta: () => {} } : {});
+      const b = f.calls[0].body;
+      expect(b.max_tokens).toBe(400);
+      expect(b.temperature).toBe(0.3);
+      expect(b).not.toHaveProperty('reasoning_effort');
+      expect(b).not.toHaveProperty('max_completion_tokens');
     }
   });
 

@@ -137,7 +137,7 @@ const INCOMPLETE_MESSAGE: Record<"chat" | "voice", string> = {
 };
 
 async function resolveTestOutcome(
-  row: { baseUrl: string; model: string; apiKeyEnc: string | null; timeoutMs: number },
+  row: Pick<JennaProvider, "baseUrl" | "model" | "apiKeyEnc" | "timeoutMs" | "temperature" | "reasoningEffort">,
   slot: JennaTestSlot,
 ): Promise<ConnectionTestResult> {
   if (!row.baseUrl || !row.model || !row.apiKeyEnc) {
@@ -158,7 +158,14 @@ async function resolveTestOutcome(
       latencyMs: 0,
     };
   }
-  return runConnectionTest(slot, { baseUrl: baseUrl.value, model: row.model, apiKey, timeoutMs: row.timeoutMs });
+  return runConnectionTest(slot, {
+    baseUrl: baseUrl.value,
+    model: row.model,
+    apiKey,
+    timeoutMs: row.timeoutMs,
+    temperature: row.temperature,
+    reasoningEffort: row.reasoningEffort,
+  });
 }
 
 type StoredTestResult = ConnectionTestResult & { testedAt: string; row: JennaProvider };

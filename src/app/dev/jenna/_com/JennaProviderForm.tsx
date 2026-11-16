@@ -1,5 +1,6 @@
 'use client';
 import {
+  Accordion,
   Alert,
   Badge,
   Button,
@@ -15,6 +16,7 @@ import {
 import { IconKey, IconPlugConnected } from '@tabler/icons-react';
 import { useId, useState } from 'react';
 import { useSnapshot } from 'valtio';
+import { describeReasoning, resolveReasoningEffort } from '@/lib/jenna/reasoning';
 import { JENNA_PROVIDER_LIMITS, JENNA_REASONING_EFFORTS } from '@/lib/jenna/types';
 import { isJennaReasoningEffort } from '@/lib/jenna/validation';
 import { useDarkMode } from '@/state/darkModeStore';
@@ -51,12 +53,13 @@ type Props = {
 
 const toNumberField = (value: number | string): NumberField => (typeof value === 'number' ? value : '');
 
-// Nilai opsi Select tidak boleh kosong; '' di form dipetakan ke sentinel ini.
-const REASONING_EFFORT_NOT_SENT = 'not_sent';
+// Nilai opsi Select tidak boleh kosong; '' (Otomatis) di form dipetakan ke sentinel ini.
+const REASONING_EFFORT_AUTO = 'auto';
 const REASONING_EFFORT_OPTIONS = [
-  { value: REASONING_EFFORT_NOT_SENT, label: 'Tidak dikirim (default)' },
-  ...JENNA_REASONING_EFFORTS.map((value) => ({ value, label: value })),
+  { value: REASONING_EFFORT_AUTO, label: 'Otomatis (disarankan)' },
+  ...JENNA_REASONING_EFFORTS.map((value) => ({ value, label: value === 'off' ? 'Jangan kirim' : value })),
 ];
+const ADVANCED_PANEL = 'advanced';
 
 export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
   const { isDark } = useDarkMode();
@@ -75,6 +78,8 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
   const errors = providerErrors(form, voice);
   const saving = snap.saving === slot;
   const testing = snap.testingSlot === slot;
+  const openai = !isVoiceProvider(provider) && provider.protocol === 'openai';
+  const reasoningSent = openai && resolveReasoningEffort(form.model, form.reasoningEffort) !== null;
   useReportDirty(slot, dirty);
 
   const set = <K extends keyof ProviderForm>(key: K, value: ProviderForm[K]) =>
@@ -133,18 +138,25 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
           onChange={(e) => set('baseUrl', e.currentTarget.value)}
           error={dirty ? errors.baseUrl : undefined}
         />
-        <TextInput
-          label={copy.modelLabel}
-          description={copy.modelDescription}
-          placeholder={copy.modelPlaceholder}
-          required
-          autoComplete="off"
-          spellCheck={false}
-          maxLength={JENNA_PROVIDER_LIMITS.model.maxLength}
-          value={form.model}
-          onChange={(e) => set('model', e.currentTarget.value)}
-          error={dirty ? errors.model : undefined}
-        />
+        <Stack gap={4}>
+          <TextInput
+            label={copy.modelLabel}
+            description={copy.modelDescription}
+            placeholder={copy.modelPlaceholder}
+            required
+            autoComplete="off"
+            spellCheck={false}
+            maxLength={JENNA_PROVIDER_LIMITS.model.maxLength}
+            value={form.model}
+            onChange={(e) => set('model', e.currentTarget.value)}
+            error={dirty ? errors.model : undefined}
+          />
+          {openai && (
+            <Text size="xs" c={tokens.colors.text.muted}>
+              {describeReasoning(form.model, form.reasoningEffort)}
+            </Text>
+          )}
+        </Stack>
       </SimpleGrid>
 
       <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
@@ -152,7 +164,11 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
           <>
             <NumberInput
               label="Temperature"
-              description={`${JENNA_PROVIDER_LIMITS.temperature.min}–${JENNA_PROVIDER_LIMITS.temperature.max}. Kosongkan = default provider.`}
+              description={
+                reasoningSent
+                  ? 'Diabaikan untuk model reasoning (nilai tetap disimpan).'
+                  : `${JENNA_PROVIDER_LIMITS.temperature.min}–${JENNA_PROVIDER_LIMITS.temperature.max}. Kosongkan = default provider.`
+              }
               min={JENNA_PROVIDER_LIMITS.temperature.min}
               max={JENNA_PROVIDER_LIMITS.temperature.max}
               step={0.1}
@@ -197,17 +213,32 @@ export function JennaProviderForm({ provider, live, cryptoConfigured }: Props) {
         />
       </SimpleGrid>
 
-      {!isVoiceProvider(provider) && provider.protocol === 'openai' && (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
-          <Select
-            label="Reasoning effort"
-            description="Isi hanya untuk model reasoning (mis. gpt-6-luna, gpt-5.x). Jenna memakai tools, jadi pilih &quot;none&quot;. Bila diisi, batas token dikirim sebagai max_completion_tokens."
-            data={REASONING_EFFORT_OPTIONS}
-            allowDeselect={false}
-            value={form.reasoningEffort || REASONING_EFFORT_NOT_SENT}
-            onChange={(v) => set('reasoningEffort', isJennaReasoningEffort(v) ? v : '')}
-          />
-        </SimpleGrid>
+      {openai && (
+        <Accordion
+          variant="contained"
+          chevronSize={14}
+          defaultValue={baseline.reasoningEffort !== '' ? ADVANCED_PANEL : null}
+        >
+          <Accordion.Item value={ADVANCED_PANEL}>
+            <Accordion.Control>
+              <Text fw={500} fz="sm">
+                Pengaturan lanjutan
+              </Text>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+                <Select
+                  label="Reasoning effort"
+                  description="Otomatis menyesuaikan nama model. Pilih manual hanya bila provider menolak setelan otomatis (cek dengan Tes koneksi). Bila dikirim, batas token memakai max_completion_tokens dan temperature tidak dikirim."
+                  data={REASONING_EFFORT_OPTIONS}
+                  allowDeselect={false}
+                  value={form.reasoningEffort || REASONING_EFFORT_AUTO}
+                  onChange={(v) => set('reasoningEffort', isJennaReasoningEffort(v) ? v : '')}
+                />
+              </SimpleGrid>
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
       )}
 
       {!cryptoConfigured ? (

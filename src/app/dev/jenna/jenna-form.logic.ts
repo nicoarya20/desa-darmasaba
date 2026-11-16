@@ -195,7 +195,7 @@ export type ProviderForm = {
   model: string;
   temperature: NumberField;
   maxTokens: NumberField;
-  /** '' = tidak dikirim. Hanya OpenAI-compatible. */
+  /** '' = Otomatis (null di API). Hanya OpenAI-compatible. */
   reasoningEffort: JennaReasoningEffort | '';
   /** Ditampilkan dalam detik; API memakai milidetik. */
   timeoutSec: NumberField;
