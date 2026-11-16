@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.289] - 2026-11-16
+### Changed
+- **Detail Program Inovasi kini tampil sebagai overlay di beranda**, bukan halaman terpisah. Klik ubin program di hero membuka kartu detail di atas beranda yang diburamkan: logo, nama, deskripsi yang lebih mudah dibaca (teks gelap, rata kiri), dan galeri Dokumentasi. Di ponsel overlay tampil layar penuh.
+- Foto dokumentasi dibuka besar di dalam overlay yang sama, bisa digeser ke foto sebelumnya/berikutnya (tombol, geser sentuh, atau panah keyboard). Esc atau "‹ Kembali" kembali ke detail.
+- Overlay punya alamat sendiri (`/?program=…`) sehingga bisa dibagikan; tombol back browser menutupnya dan posisi beranda tidak melompat. Hasil pencarian dan tautan dari asisten Jenna kini membuka overlay ini. Tautan lama `/program-inovasi/…` tetap berfungsi dan diarahkan ke overlay.
+
 ## [0.1.288] - 2026-11-16
 ### Added
 - **Developer Console › Log › Log Audit (`/dev/log/audit`)**: catatan permanen siapa mengubah apa dan kapan, tidak bisa diubah atau dihapus dari aplikasi. Tercatat: ubah role, aktifkan/nonaktifkan, dan hapus user; tambah/ubah/hapus role; simpan setelan, provider, dan API key Jenna (hanya nama field dan host, API key tidak pernah dicatat); membuka dan menghapus percakapan Jenna; mengubah status dan menghapus Laporan Publik (tanpa isi laporan atau nama pelapor); mengubah visibilitas menu. Aksi hanya dicatat bila berhasil. Halaman punya filter aksi, pencarian, rentang tanggal, dan detail tiap catatan.
