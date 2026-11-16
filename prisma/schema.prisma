@@ -125,6 +125,10 @@ model FileStorage {
   BankSampahFotoBagan    KeteranganBankSampahTerdekat[] @relation("BankSampahFotoBagan")
   PengurusBankSampah     PengurusBankSampah[]
   FotoKegiatanBankSampah FotoKegiatanBankSampah[]
+  LembagaFotoSekolah     Lembaga[]                      @relation("LembagaFotoSekolah")
+  LembagaFotoBagan       Lembaga[]                      @relation("LembagaFotoBagan")
+  PengurusLembaga        PengurusLembaga[]
+  FotoKegiatanLembaga    FotoKegiatanLembaga[]
 
   PerangkatDesa PerangkatDesa[]
 }
@@ -2332,6 +2336,54 @@ model Lembaga {
   updatedAt         DateTime          @updatedAt
   deletedAt         DateTime          @default(now())
   isActive          Boolean           @default(true)
+
+  // Detail sekolah untuk halaman detail publik. Semua opsional agar baris lama tetap valid.
+  deskripsi           String?               @db.Text
+  alamat              String?
+  kontak              String?
+  // Daftar { platform, url }; divalidasi skema bersama src/lib/konten-bersama/media-sosial.validation.ts.
+  mediaSosial         Json?
+  lat                 Float?
+  lng                 Float?
+  // Link dari desa (mis. maps.app.goo.gl); kosong = tombol publik memakai rute ke koordinat.
+  linkGoogleMaps      String?
+  fotoSekolah         FileStorage?          @relation("LembagaFotoSekolah", fields: [fotoSekolahId], references: [id], onDelete: SetNull)
+  fotoSekolahId       String?
+  fotoBaganStruktur   FileStorage?          @relation("LembagaFotoBagan", fields: [fotoBaganStrukturId], references: [id], onDelete: SetNull)
+  fotoBaganStrukturId String?
+  pengurus            PengurusLembaga[]
+  fotoKegiatan        FotoKegiatanLembaga[]
+}
+
+// Struktur organisasi sederhana sekolah (opsional; desa mengisi untuk TK); hapus = hapus baris + foto.
+model PengurusLembaga {
+  id        String       @id @default(cuid())
+  lembaga   Lembaga      @relation(fields: [lembagaId], references: [id], onDelete: Cascade)
+  lembagaId String
+  nama      String
+  jabatan   String
+  image     FileStorage? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId   String?
+  urutan    Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([lembagaId, urutan])
+}
+
+// Galeri foto kegiatan sekolah; hapus permanen (tanpa panel Sampah).
+model FotoKegiatanLembaga {
+  id         String      @id @default(cuid())
+  lembaga    Lembaga     @relation(fields: [lembagaId], references: [id], onDelete: Cascade)
+  lembagaId  String
+  image      FileStorage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId    String
+  keterangan String?
+  urutan     Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([lembagaId, urutan])
 }
 
 model Siswa {
