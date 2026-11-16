@@ -267,3 +267,41 @@ describe('leafSlot', () => {
     ]);
   });
 });
+
+describe('buildOrgTree — opsi showVacant (BUMDes)', () => {
+  // test-only: jabatan BUMDes stg 2026-11-16 (7 jabatan, 0 pengurus), nama disingkat.
+  const BUMDES_POSISI: PosisiItem[] = [
+    { id: 'musdes', nama: 'Musyawarah Desa', hierarki: 1, parentId: null, urutan: 1 },
+    { id: 'penasihat', nama: 'Penasihat', hierarki: 2, parentId: null, urutan: 1 },
+    { id: 'pengawas', nama: 'Pengawas', hierarki: 2, parentId: 'musdes', urutan: 2 },
+    { id: 'direktur', nama: 'Direktur', hierarki: 3, parentId: 'penasihat', urutan: 1 },
+    { id: 'kepala_unit', nama: 'Kepala Unit Usaha', hierarki: 6, parentId: null, urutan: 1 },
+  ];
+
+  it('bawaan (tanpa opsi) tidak berubah: tanpa pegawai → tanpa akar; jabatan kosong non-leluhur tidak digambar', () => {
+    expect(buildOrgTree([], BUMDES_POSISI)).toEqual([]);
+    expect(buildOrgTree([], BUMDES_POSISI, { showVacant: false })).toEqual([]);
+    expect(buildOrgTree(STG, POSISI, {})).toEqual(buildOrgTree(STG, POSISI));
+  });
+
+  it('semua jabatan digambar sebagai "belum ditugaskan"; akar lain bertingkat lebih rendah ditempel ke akar utama', () => {
+    const roots = buildOrgTree([], BUMDES_POSISI, { showVacant: true });
+    expect(titles(roots)).toEqual(['Musyawarah Desa']);
+    // Anak asli & akar tempelan diurutkan bersama (toNode: hierarki → urutan → judul), sama dengan jalur bawaan.
+    expect(titles(roots[0].children)).toEqual(['Penasihat', 'Pengawas', 'Kepala Unit Usaha']);
+    const penasihat = roots[0].children.find((node) => node.posisiId === 'penasihat');
+    expect(titles(penasihat?.children ?? [])).toEqual(['Direktur']);
+    expect(roots[0].people).toEqual([]);
+  });
+
+  it('pengurus aktif mengisi kotak jabatannya; nonaktif tidak, kotaknya tetap ada', () => {
+    const direktur = pegawai('b1', 'direktur', 'Direktur', 3, 'penasihat');
+    const nonaktif = pegawai('b2', 'pengawas', 'Pengawas', 2, 'musdes', { isActive: false });
+    const roots = buildOrgTree([direktur, nonaktif], BUMDES_POSISI, { showVacant: true });
+    const flat = (nodes: OrgNode[]): OrgNode[] => nodes.flatMap((node) => [node, ...flat(node.children)]);
+    const byId = new Map(flat(roots).map((node) => [node.posisiId, node]));
+    expect(byId.size).toBe(BUMDES_POSISI.length);
+    expect(byId.get('direktur')?.people.map((p) => p.id)).toEqual(['b1']);
+    expect(byId.get('pengawas')?.people).toEqual([]);
+  });
+});

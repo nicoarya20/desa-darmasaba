@@ -207,7 +207,7 @@ describe('Struktur Perangkat Desa — bagan baru', () => {
       ],
     },
   ];
-  const data = { loading: false, tree, visible: tree, search: '', setSearch: vi.fn(), query: '', reload: vi.fn() } as StrukturData;
+  const data = { loading: false, failed: false, tree, visible: tree, search: '', setSearch: vi.fn(), query: '', reload: vi.fn() } as StrukturData;
 
   it('kartu menaut ke profil perangkat desa, bukan ke rute PPID', () => {
     const html = render(<StrukturBody data={data} label="Bagan struktur perangkat desa" emptyHint="-" hrefFor={strukturPerangkatHref} />);
