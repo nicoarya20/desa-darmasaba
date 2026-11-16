@@ -1,4 +1,5 @@
 // /api/user/delUser.ts
+import { AUDIT_ACTIONS, audit } from '@/lib/audit';
 import prisma from '@/lib/prisma';
 import { denyDeveloperAccountChange, type UserManagerContext } from './guard';
 
@@ -48,6 +49,15 @@ export default async function userDeleteAccount(context: UserManagerContext) {
         sessionsDeleted: deletedSessions.count,
         menuAccessDeleted: deletedMenuAccess.count,
       };
+    });
+
+    await audit({
+      actor: context.actor,
+      action: AUDIT_ACTIONS.USER_DELETE,
+      targetType: 'user',
+      targetId: id,
+      summary: `Menghapus permanen user ${existingUser.email ?? id}`,
+      meta: { roleId: existingUser.roleId },
     });
 
     return {

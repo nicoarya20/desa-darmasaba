@@ -2535,6 +2535,8 @@ model User {
   menuVisibilityUpdates MenuVisibility[]
   jennaSettingsUpdates  JennaSettings[]  @relation("JennaSettingsUpdatedBy")
   jennaProviderUpdates  JennaProvider[]  @relation("JennaProviderUpdatedBy")
+  auditLogs             AuditLog[]
+  loginLogs             LoginLog[]
 
   @@map("users")
 }
@@ -3074,4 +3076,39 @@ model PerangkatDesa {
 
   @@index([posisiId])
   @@index([imageId])
+}
+
+// Jejak aksi admin (append-only). `meta` hanya id + nilai lama/baru field non-PII.
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorId     String?
+  actor       User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorEmail  String?
+  actorRoleId String?
+  action      String
+  targetType  String
+  targetId    String?
+  summary     String
+  meta        Json?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([action, createdAt])
+  @@index([actorId, createdAt])
+}
+
+// Riwayat login staf; `result` divalidasi di kode (success | blocked_inactive).
+model LoginLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String?
+  roleId    String?
+  result    String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
 }

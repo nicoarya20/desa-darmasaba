@@ -16,10 +16,11 @@ export async function resolveUserManager(context: Pick<Context, "set">) {
   return { actor: guard.user };
 }
 
-/** beforeHandle mutasi /role: role 0/1 saja; selain itu 401/403. */
-export async function roleManagerBeforeHandle(context: Pick<Context, "set">) {
+/** Resolve grup mutasi /role: role 0/1 → `actor` di context; selain itu 401/403. */
+export async function resolveRoleManager(context: Pick<Context, "set">) {
   const guard = await requireUserManager(context, "role");
-  if (!guard.ok) return guard.body;
+  if (!guard.ok) return status(context.set.status as number, guard.body);
+  return { actor: guard.user };
 }
 
 /** Hanya Developer yang boleh memberi role "0" atau mengubah/menghapus akun role "0" → selain itu 403. */

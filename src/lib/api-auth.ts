@@ -19,6 +19,7 @@ export type AuthUser = {
   id: string;
   roleId: string | number;
   isActive?: boolean;
+  email?: string | null;
   [key: string]: unknown;
 };
 
@@ -38,11 +39,13 @@ async function getSessionUser(): Promise<AuthUser | null> {
   if (!session?.user?.id) return null;
   const u = session.user as {
     id: string;
+    email?: string | null;
     roleId?: string;
     isActive?: boolean;
   };
   return {
     id: u.id,
+    ...(u.email ? { email: u.email } : {}),
     roleId: u.roleId ?? ROLE_USER,
     isActive: u.isActive ?? true,
   };

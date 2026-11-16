@@ -1,11 +1,12 @@
+import { AUDIT_ACTIONS, audit } from "@/lib/audit";
 import prisma from "@/lib/prisma";
-import { Context } from "elysia";
+import type { UserManagerContext } from "../guard";
 
 type FormCreate = {
     name: string;
 }
 
-export default async function roleCreate(context: Context) {
+export default async function roleCreate(context: UserManagerContext) {
     const body = (await context.body) as FormCreate;
 
     try {
@@ -13,6 +14,14 @@ export default async function roleCreate(context: Context) {
             data: {
                 name: body.name,
             },
+        });
+        await audit({
+            actor: context.actor,
+            action: AUDIT_ACTIONS.ROLE_CREATE,
+            targetType: "role",
+            targetId: result.id,
+            summary: `Membuat role ${result.name}`,
+            meta: { name: result.name },
         });
         return {
             success: true,

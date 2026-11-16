@@ -40,6 +40,17 @@ describe('requireAuth contract', () => {
     }
   });
 
+  it('sesi dengan email → email ikut diteruskan (additive, snapshot aktor audit)', async () => {
+    getSessionMock.mockResolvedValue({
+      user: { id: 'u1', email: 'admin@desa.id', roleId: '1', isActive: true },
+    });
+    const res = await requireAuth();
+    expect(res.authenticated).toBe(true);
+    if (res.authenticated) {
+      expect(res.user).toEqual({ id: 'u1', email: 'admin@desa.id', roleId: '1', isActive: true });
+    }
+  });
+
   it('user nonaktif → { authenticated:false, response 403 }', async () => {
     getSessionMock.mockResolvedValue({
       user: { id: 'u2', roleId: '2', isActive: false },
