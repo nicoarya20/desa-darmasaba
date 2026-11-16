@@ -1,17 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import pendaftaranJadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/pendafataranJadwalKegiatan';
 import colors from '@/con/colors';
 import { Button, Divider, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
-import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
 
 function CreatePendaftaran() {
   const stateCreate = useProxy(pendaftaranJadwalKegiatanState);
-
-  useEffect(() => {
-    stateCreate.findMany.load();
-  }, []);
 
   const resetForm = () => {
     stateCreate.create.form = {

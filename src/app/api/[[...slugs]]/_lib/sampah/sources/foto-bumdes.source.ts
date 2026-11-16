@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { MAX_FOTO_GALERI } from "@/lib/bumdes-foto-profil";
-import { urutanFotoBaru } from "@/lib/bumdes-foto-urutan";
+import { urutanBaru } from "@/lib/konten-bersama/urutan.logic";
 import { FOTO_AKTIF_WHERE } from "../../ekonomi/bumdes/profil/foto/query";
 import { createEntitySource } from "./entity.source";
 import { ENTITY_FILE_SELECT, idPageWhere, listWhere, TRASHED_ORDER_BY, TRASHED_WHERE } from "./entity-select";
@@ -23,7 +23,7 @@ async function pulihkanFoto(id: string): Promise<SampahActionResult> {
 
   await prisma.fotoProfilBumDes.update({
     where: { id },
-    data: { isActive: true, deletedAt: null, urutan: urutanFotoBaru(_max.urutan, 1)[0] },
+    data: { isActive: true, deletedAt: null, urutan: urutanBaru(_max.urutan, 1)[0] },
   });
   return { ok: true, message: "Foto dipulihkan ke galeri BUMDes" };
 }

@@ -12,19 +12,12 @@ const HOME = '/';
 
 /**
  * Tipe yang SENGAJA tidak punya URL detail.
- * - responden / permohonaninformasipublik / permohonaninformasikeberatanpublik:
- *   data pribadi warga, tidak boleh punya halaman publik. Penghapusannya dari
- *   pencarian dikerjakan di task terpisah (T20/F1-02).
  * - mediaSosial: tujuannya link eksternal (iconUrl / wa.me), bukan halaman
  *   internal; dites terpisah di bawah.
  */
-const NO_INTERNAL_URL = new Set([
-  'responden',
-  'permohonaninformasipublik',
-  'permohonaninformasikeberatanpublik',
-  'mediaSosial',
-]);
-const PRIVATE_DATA_TYPES = ['responden', 'permohonaninformasipublik', 'permohonaninformasikeberatanpublik'];
+const NO_INTERNAL_URL = new Set(['mediaSosial']);
+/** Data pribadi warga: sudah dibuang dari pencarian (T20, search_tanpa_data_pribadi.test.ts) dan tidak punya URL. */
+const PRIVATE_DATA_TYPES = ['siswa', 'responden', 'permohonaninformasipublik', 'permohonaninformasikeberatanpublik'];
 
 /** Ambil semua `type: "..."` yang dikirim API pada blok GLOBAL SEARCH. */
 function globalSearchTypes(): string[] {
@@ -54,9 +47,9 @@ describe('pemetaan URL hasil pencarian global', () => {
     expect(unmapped).toEqual([]);
   });
 
-  it('(a) tipe data pribadi tidak punya URL', () => {
+  it('(a) tipe data pribadi tidak dikirim API dan tidak punya URL', () => {
     for (const t of PRIVATE_DATA_TYPES) {
-      expect(types).toContain(t);
+      expect(types).not.toContain(t);
       expect(getDetailUrl(sampleItem(t))).toBe(HOME);
     }
   });
@@ -99,6 +92,26 @@ describe('pemetaan URL hasil pencarian global', () => {
     );
     expect(types).not.toContain('penghargaan');
     expect(readFileSync(FIND_MANY, 'utf8')).not.toMatch(/prisma\.penghargaan/);
+  });
+
+  it('inovasiTeknologiDesa & programKreatif membuka halaman detail [id], bukan daftar', () => {
+    expect(getDetailUrl({ type: 'inovasiTeknologiDesa', id: 'dd1' })).toBe('/inovasi/inovasi-teknologi-desa/dd1');
+    expect(getDetailUrl({ type: 'programKreatif', id: 'pk1' })).toBe('/inovasi/program-kreatif-desa/pk1');
+  });
+
+  it('API mengirim id untuk inovasiTeknologiDesa & programKreatif (findMany tanpa select membatasi field)', () => {
+    const src = readFileSync(FIND_MANY, 'utf8');
+    for (const model of ['inovasiTeknologiDesa', 'programKreatif']) {
+      // Tiap pemanggilan (blok per-tipe & GLOBAL SEARCH) sampai `take:` tidak boleh punya `select:` yang membuang id.
+      const calls = src.split(`prisma.${model}.findMany({`).slice(1).map((rest) => rest.slice(0, rest.indexOf('take:')));
+      expect(calls.length).toBeGreaterThanOrEqual(2);
+      for (const call of calls) expect(call).not.toMatch(/select\s*:/);
+    }
+  });
+
+  it('programinovasi membuka overlay detail di beranda (/?program=id), bukan rute lama /program-inovasi', () => {
+    expect(getDetailUrl({ type: 'programinovasi', id: 'cm1abc' })).toBe('/?program=cm1abc');
+    expect(getDetailUrl({ type: 'programinovasi', id: 'a b&c' })).toBe('/?program=a%20b%26c');
   });
 
   it('pasarDesa membuka detail produk UMKM', () => {

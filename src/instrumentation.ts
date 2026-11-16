@@ -1,5 +1,5 @@
-// Hook start server Next.js. Memasang scheduler purge Sampah, retensi percakapan Jenna, dan penyapu sesi suara
-// Jenna (runtime Node.js saja; Edge tidak punya Prisma/MinIO). Sampah: env SAMPAH_PURGE_SCHEDULER=on|off
+// Hook start server Next.js. Memasang scheduler purge Sampah, retensi percakapan Jenna, retensi LoginLog (90 hari),
+// dan penyapu sesi suara Jenna (runtime Node.js saja; Edge tidak punya Prisma/MinIO). Sampah: env SAMPAH_PURGE_SCHEDULER=on|off
 // (default on di production). Jenna: selalu on di production, tanpa env.
 
 /** Dipanggil Next.js sekali per proses server saat start. */
@@ -16,4 +16,6 @@ export async function register() {
   startJennaRetentionScheduler();
   const { startJennaVoiceSweeper } = await import("./lib/jenna/voice/voice.sweeper");
   startJennaVoiceSweeper();
+  const { startLoginLogRetentionScheduler } = await import("./lib/login-log");
+  startLoginLogRetentionScheduler();
 }

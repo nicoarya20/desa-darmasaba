@@ -1,10 +1,10 @@
 import { Image } from "@mantine/core";
 import { Prisma } from "@prisma/client";
 import { IconChevronLeft, IconChevronRight, IconPhotoOff } from "@tabler/icons-react";
-import { Link } from "next-view-transitions";
-import type { CSSProperties } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 import s from "./landing.module.css";
 import { LANDING_TEXT } from "./landing.text";
+import { isPlainLeftClick, programOverlayHref } from "./program-param.logic";
 import p from "./programs.module.css";
 import { getThumbStyle, RAIL_VISIBLE_TILES } from "./rail.logic";
 import { useRailScroll } from "./use-rail-scroll";
@@ -13,9 +13,22 @@ export type ProgramInovasiItem = Prisma.ProgramInovasiGetPayload<{ include: { im
 
 const TITLE_ID = "program-inovasi-title";
 
+type HeroProgramsProps = {
+  items: ProgramInovasiItem[];
+  loading: boolean;
+  /** Membuka overlay detail di beranda (klik kiri biasa); tautan asli tetap untuk tab baru/salin tautan. */
+  onOpen: (id: string) => void;
+};
+
 /** Rel program inovasi di kiri bawah hero: 4 ubin terlihat, sisanya digeser (seret, trackpad, atau panah). */
-export function HeroPrograms({ items, loading }: { items: ProgramInovasiItem[]; loading: boolean }) {
+export function HeroPrograms({ items, loading, onOpen }: HeroProgramsProps) {
   const { railRef, thumbRef, state, step } = useRailScroll(loading ? 0 : items.length);
+
+  const handleTileClick = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
+    if (!isPlainLeftClick(event)) return;
+    event.preventDefault();
+    onOpen(id);
+  };
 
   return (
     <div className={p.programs}>
@@ -66,7 +79,13 @@ export function HeroPrograms({ items, loading }: { items: ProgramInovasiItem[]; 
           >
             {items.map((item, index) => (
               <li key={item.id} className={p.railItem} style={{ "--i": index } as CSSProperties}>
-                <Link href={`/program-inovasi/${item.id}`} className={p.tile} title={item.name}>
+                {/* <a> biasa, bukan Link next-view-transitions: hanya query beranda yang berubah, tanpa transisi halaman. */}
+                <a
+                  href={programOverlayHref(item.id)}
+                  className={p.tile}
+                  title={item.name}
+                  onClick={(event) => handleTileClick(event, item.id)}
+                >
                   {item.image?.link ? (
                     <Image className={p.tileLogo} src={item.image.link} alt="" loading="lazy" fit="contain" />
                   ) : (
@@ -75,7 +94,7 @@ export function HeroPrograms({ items, loading }: { items: ProgramInovasiItem[]; 
                     </span>
                   )}
                   <span className={p.tileName}>{item.name}</span>
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

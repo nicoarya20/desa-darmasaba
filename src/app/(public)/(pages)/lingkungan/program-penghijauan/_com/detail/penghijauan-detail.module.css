@@ -1,0 +1,18 @@
+/*
+ * Detail Program Penghijauan — bagian khusus di atas kerangka artikel bersama (kabar-list/kabar-detail.module.css):
+ * `judul` admin sebagai pengantar. Variabel warna (--muted) dari kabar.module.css. Breakpoint: ≤734px (mobile).
+ */
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 21px;
+  line-height: 1.43;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 734px) {
+  .lead {
+    font-size: 19px;
+    line-height: 1.42;
+  }
+}

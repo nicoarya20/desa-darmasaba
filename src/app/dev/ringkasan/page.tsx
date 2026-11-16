@@ -5,6 +5,7 @@ import {
   IconBrandDocker,
   IconCloudUpload,
   IconDatabase,
+  IconHistory,
   IconRefresh,
   IconRobot,
   IconServer,
@@ -19,9 +20,11 @@ import systemState from '../_state/system-state';
 import { DeveloperPageHeader } from '../_com/DeveloperPageHeader';
 import { ErrorState } from '../_com/ErrorState';
 import { formatDateTime } from '../_com/format';
+import { DevWarnings } from './_com/DevWarnings';
 import { EnvChecklist } from './_com/EnvChecklist';
 import { StatCard, type StatTone } from './_com/StatCard';
-import { NODE_ENV_LABEL, formatUptime } from './system.logic';
+import { buildDevWarnings } from './dev-warnings.logic';
+import { NODE_ENV_LABEL, formatUptime, migrationCard } from './system.logic';
 
 /** Developer › Ringkasan Sistem. Guard role ada di ../layout.tsx. */
 export default function RingkasanSistemPage() {
@@ -94,9 +97,12 @@ function SystemOverview({ data }: { data: Snapshot<SystemOverviewResponse> }) {
     : !jenna.ready
       ? { tone: 'warn', label: 'Provider belum siap' }
       : { tone: 'ok', label: 'Siap' };
+  const migration = migrationCard(data.migrations, data.generatedAt);
 
   return (
     <Stack gap="lg">
+      <DevWarnings warnings={buildDevWarnings(data)} />
+
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md" verticalSpacing="md">
         <StatCard
           icon={<IconBrandDocker size={20} />}
@@ -125,6 +131,13 @@ function SystemOverview({ data }: { data: Snapshot<SystemOverviewResponse> }) {
           details={data.minio.error ?? `Bucket: ${data.minio.bucket}`}
         />
         <StatCard
+          icon={<IconHistory size={20} />}
+          title="Migrasi database"
+          value={migration.value}
+          status={migration.status}
+          details={migration.details}
+        />
+        <StatCard
           icon={<IconRobot size={20} />}
           title="Asisten Jenna"
           value={jenna.enabled ? 'Aktif' : 'Nonaktif'}
@@ -150,7 +163,7 @@ function SystemSkeleton() {
   return (
     <Stack gap="lg" aria-busy="true" aria-label="Memuat ringkasan sistem">
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md" verticalSpacing="md">
-        {Array.from({ length: 5 }, (_, i) => (
+        {Array.from({ length: 6 }, (_, i) => (
           <UnifiedCard key={i} padding="lg">
             <Stack gap="sm">
               <Skeleton height={32} width={32} radius="md" />

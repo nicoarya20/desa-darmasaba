@@ -2,7 +2,7 @@
 export const POSYANDU_TEXT = {
   pageTitle: "Posyandu Desa Darmasaba",
   pageLead:
-    "Jadwal dan kontak posyandu di tiap banjar, serta ringkasan kesehatan balita dan ibu hamil dalam angka gabungan.",
+    "Kegiatan posyandu per klaster, alamat dan jadwal posyandu di tiap banjar, serta ringkasan kesehatan balita dan ibu hamil dalam angka gabungan.",
   tabsLabel: "Bagian halaman posyandu",
   tabRingkasan: "Ringkasan",
   tabPosyandu: "Data Posyandu",
@@ -13,6 +13,17 @@ export const POSYANDU_TEXT = {
   privacyNote:
     "Semua angka adalah jumlah gabungan. Nama dan data pribadi balita maupun ibu hamil tidak ditampilkan.",
   retry: "Coba lagi",
+
+  // Profil & klaster
+  profilTitle: "Tentang Posyandu",
+  fungsiTitle: "Fungsi dan kegiatan utama",
+  klasterTitle: "Kegiatan per klaster",
+  klasterLead: "Pelayanan dilakukan setiap bulan di tiap banjar, dalam satu hari untuk ketiga klaster.",
+  jamKosong: "Jam belum diisi",
+  jamLabel: (jam: string) => `Pukul ${jam}`,
+  profilLoading: "Memuat informasi posyandu",
+  profilFailed: "Informasi posyandu gagal dimuat.",
+  profilEmpty: "Informasi posyandu belum diisi.",
 
   // Ringkasan
   ibuHamilLabel: "Ibu hamil aktif",
@@ -47,6 +58,7 @@ export const POSYANDU_TEXT = {
   jadwalKosong: "Jadwal belum diisi",
   nomorKosong: "Nomor belum diisi",
   banjarKosong: "Banjar belum diisi",
+  alamatKosong: "Alamat belum diisi",
   telepon: (nomor: string) => `Telepon ${nomor}`,
 
   // Per banjar
@@ -72,6 +84,9 @@ export const POSYANDU_TEXT = {
   detailFailed: "Detail posyandu gagal dimuat. Muat ulang halaman untuk mencoba lagi.",
   backToList: "Lihat semua posyandu",
   infoBanjar: "Banjar",
+  infoAlamat: "Alamat",
+  galeriTitle: "Foto lokasi dan kader",
+  galeriLabel: (name: string) => `Galeri foto ${name}`,
   infoJadwal: "Jadwal pelayanan",
   infoTelepon: "Telepon",
   callButton: "Telepon",

@@ -4,39 +4,44 @@ import { activeSlug, kategoriSlug, SEMUA_SLUG } from '@/app/(public)/_com/kabar-
 import { useTransitionRouter } from 'next-view-transitions';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { kegiatanListHref } from './kegiatan-list.logic';
-import { KEGIATAN_TEXT } from './kegiatan.text';
+import { KEGIATAN_DESA_SCOPE, type KegiatanScope } from './kegiatan-scope';
 import { loadKegiatanKategori, useKegiatanKategori } from './use-kegiatan-kategori';
 
-/** Kepala halaman daftar kegiatan: pil "Semua" + kategori kegiatan milik admin; kategori aktif dari segmen URL. */
-export function KegiatanHeader() {
+/**
+ * Kepala halaman daftar kegiatan: judul, kolom cari, lalu pil "Semua" + kategori milik admin (kategori aktif dari
+ * segmen URL). Cakupan tanpa kategori (Gotong Royong) tidak memuat kategori dan tidak menampilkan pil.
+ */
+export function KegiatanHeader({ scope = KEGIATAN_DESA_SCOPE }: { scope?: KegiatanScope }) {
   const router = useTransitionRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const kategori = useKegiatanKategori();
+  const { text, withKategori, listHref } = scope;
 
   const slug = activeSlug(pathname);
   const search = searchParams.get('search')?.trim() ?? '';
 
   useEffect(() => {
-    void loadKegiatanKategori();
-  }, []);
+    if (withKategori) void loadKegiatanKategori();
+  }, [withKategori]);
 
-  const tabs = [
-    { slug: SEMUA_SLUG, label: KEGIATAN_TEXT.semua },
-    ...kategori.map((nama) => ({ slug: kategoriSlug(nama), label: nama })),
-  ].map((tab) => ({ key: tab.slug, label: tab.label, href: kegiatanListHref(tab.slug, { search }), active: tab.slug === slug }));
+  const tabs = withKategori
+    ? [
+        { slug: SEMUA_SLUG, label: text.semua },
+        ...kategori.map((nama) => ({ slug: kategoriSlug(nama), label: nama })),
+      ].map((tab) => ({ key: tab.slug, label: tab.label, href: listHref(tab.slug, { search }), active: tab.slug === slug }))
+    : [];
 
   return (
     <KabarListHeader
-      title={KEGIATAN_TEXT.title}
-      lead={KEGIATAN_TEXT.lead}
-      searchLabel={KEGIATAN_TEXT.searchLabel}
-      searchPlaceholder={KEGIATAN_TEXT.searchPlaceholder}
-      kategoriLabel={KEGIATAN_TEXT.kategoriLabel}
+      title={text.title}
+      lead={text.lead}
+      searchLabel={text.searchLabel}
+      searchPlaceholder={text.searchPlaceholder}
+      kategoriLabel={text.kategoriLabel}
       tabs={tabs}
       search={search}
-      onSearch={(next) => router.replace(kegiatanListHref(slug, { search: next }))}
+      onSearch={(next) => router.replace(listHref(slug, { search: next }))}
     />
   );
 }

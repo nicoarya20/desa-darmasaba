@@ -17,7 +17,7 @@ export function LayananCard({ item, onOpenPengaduan }: LayananCardProps) {
       <h3 className={s.cardTitle}>{item.title}</h3>
       <p className={s.cardBody}>{item.description}</p>
       <span className={s.cardCta}>
-        {item.cta}
+        <span className={s.ctaLabel}>{item.cta}</span>
         <IconChevronRight size={16} stroke={2} aria-hidden />
       </span>
     </>

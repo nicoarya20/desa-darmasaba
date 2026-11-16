@@ -11,6 +11,7 @@ const CFG = {
   model: 'claude-test',
   temperature: null,
   maxTokens: null,
+  reasoningEffort: null,
   timeoutMs: 5000,
 };
 
@@ -46,7 +47,13 @@ describe('anthropicMessagesUrl (dipakai adapter & tes koneksi)', () => {
 
   it('tes koneksi memakai aturan yang sama', () => {
     for (const baseUrl of ['https://a.example', 'https://a.example/v1/']) {
-      const { url } = buildConnectionTestRequest('chat_anthropic', { baseUrl, model: 'm', apiKey: 'k' });
+      const { url } = buildConnectionTestRequest('chat_anthropic', {
+        baseUrl,
+        model: 'm',
+        apiKey: 'k',
+        temperature: null,
+        reasoningEffort: null,
+      });
       expect(url).toBe(anthropicMessagesUrl(baseUrl));
     }
   });

@@ -1,0 +1,340 @@
+/*
+ * Lokasi Bank Sampah: daftar bergaris | peta Leaflet. Desktop: daftar kiri bergulir setinggi peta, peta kanan.
+ * ≤1068px: peta di atas, daftar penuh di bawahnya. Tanpa koordinat sama sekali (.noMap): daftar selebar penuh.
+ * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line) dari kabar.module.css.
+ */
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+/* ---------- Daftar | peta ---------- */
+.explorer {
+  --map-h: 560px;
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  grid-template-rows: var(--map-h);
+  gap: 24px;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.search {
+  flex: none;
+}
+
+.explorer .sidePlaceholder {
+  min-height: 0;
+  border-radius: 14px;
+}
+
+.mapFrame {
+  position: relative;
+  min-width: 0;
+  height: var(--map-h);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e8e8ed;
+  /* Panel Leaflet ber-z-index ratusan: kurung di sini agar tidak menimpa navbar. */
+  isolation: isolate;
+  scroll-margin-top: 64px;
+}
+
+.mapFill {
+  width: 100%;
+  height: 100%;
+  font: inherit;
+}
+
+.noMap {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+}
+
+.noMap .rows {
+  overflow: visible;
+}
+
+.noMatch {
+  margin: 0;
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* ---------- Baris ---------- */
+/* Margin negatif = padding baris: teks sejajar tepi judul, latar sorot/hover melebar ke celah (pola daftar apple.com). */
+.rows {
+  --row-pad-x: 14px;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 0 calc(var(--row-pad-x) * -1);
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+.rows > li + li {
+  border-top: 1px solid var(--line);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  transition: background-color 160ms ease;
+}
+
+.rowSelected {
+  background: var(--tile);
+  box-shadow: inset 3px 0 0 var(--brand);
+}
+
+/* Baris terpilih berlatar abu: hilangkan garis pemisah di sekitarnya agar tidak memotong sudut. */
+.rows > li:has(.rowSelected),
+.rows > li:has(.rowSelected) + li {
+  border-top-color: transparent;
+}
+
+.pick {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 14px var(--row-pad-x) 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+}
+
+button.pick {
+  cursor: pointer;
+}
+
+button.pick:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+}
+
+.pick:last-child {
+  padding-bottom: 14px;
+}
+
+.name {
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.alamat {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.alamatIcon {
+  flex: none;
+  margin-top: 2px;
+}
+
+.kosong {
+  color: var(--subtle);
+  font-size: 13px;
+}
+
+.arah {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 2px;
+  margin: 0 var(--row-pad-x) 14px;
+  color: var(--brand);
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.aksi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0 var(--row-pad-x) 14px;
+}
+
+.aksi .arah {
+  margin: 0;
+}
+
+/* Tombol "Lihat detail" bergaya sama dengan tautan "Petunjuk arah". */
+.detail {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.arah:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ---------- Penanda & popup Leaflet ---------- */
+.marker > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 2.5px solid #fff;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+  transition: transform 160ms ease;
+}
+
+.markerSelected > span {
+  border-width: 3px;
+  box-shadow: 0 0 0 3px rgba(10, 78, 120, 0.4), 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.marker:focus-visible {
+  outline: none;
+}
+
+.marker:focus-visible > span {
+  box-shadow: 0 0 0 3px var(--brand), 0 1px 5px rgba(0, 0, 0, 0.45);
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.popupName {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.popupAlamat {
+  color: var(--muted);
+}
+
+/* Dua kelas: mengalahkan `.leaflet-container a` bawaan Leaflet. */
+.popup .popupArah {
+  margin-top: 6px;
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:not(.rowSelected):has(button.pick:hover) {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .arah:hover,
+  .popup .popupArah:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .marker:hover > span {
+    transform: scale(1.15);
+  }
+}
+
+/* ---------- Tablet: peta di atas, daftar penuh di bawahnya ---------- */
+@media (max-width: 1068px) {
+  .explorer {
+    --map-h: 440px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .mapFrame {
+    order: -1;
+  }
+
+  .explorer .sidePlaceholder {
+    min-height: 160px;
+  }
+
+  .rows {
+    overflow: visible;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .explorer {
+    --map-h: 340px;
+    gap: 16px;
+  }
+
+  .rows {
+    --row-pad-x: 10px;
+  }
+
+  .pick {
+    padding-top: 12px;
+    padding-bottom: 8px;
+  }
+
+  .pick:last-child {
+    padding-bottom: 12px;
+  }
+
+  .arah {
+    margin-bottom: 12px;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .marker > span {
+    transition: none;
+  }
+}

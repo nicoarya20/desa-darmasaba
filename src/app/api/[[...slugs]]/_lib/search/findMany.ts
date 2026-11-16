@@ -127,16 +127,6 @@ export default async function searchFindMany(context: Context) {
     return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
   }
 
-  //========================================= INDEKS KEPUASAAN MASYARAKAT ========================================= //
-  if (type === "responden") {
-    const data = await prisma.responden.findMany({
-      where: { name: { contains: query, mode: "insensitive" } },
-      skip,
-      take: limitNum,
-    });
-    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
-  }
-
   //========================================= MENU PPID ========================================= //
   //========================================= STRUKTUR PPID ========================================= //
   if (type === "strukturppid") {
@@ -222,39 +212,6 @@ export default async function searchFindMany(context: Context) {
         OR: [
           { jenisInformasi: { contains: query, mode: "insensitive" } },
           { deskripsi: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      skip,
-      take: limitNum,
-    });
-    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
-  }
-
-  //=========================================PERMOHONAN INFORMASI PUBLIK========================= //
-  if (type === "permohonaninformasipublik") {
-    const data = await prisma.permohonanInformasiPublik.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { nik: { contains: query, mode: "insensitive" } },
-          { alamat: { contains: query, mode: "insensitive" } },
-          { email: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      skip,
-      take: limitNum,
-    });
-    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
-  }
-
-  //=========================================PERMOHONAN INFORMASI KEBERATAN PUBLIK========================= //
-  if (type === "permohonaninformasikeberatanpublik") {
-    const data = await prisma.formulirPermohonanKeberatan.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { email: { contains: query, mode: "insensitive" } },
-          { alasan: { contains: query, mode: "insensitive" } },
         ],
       },
       skip,
@@ -1007,10 +964,11 @@ export default async function searchFindMany(context: Context) {
   }
 
   // ========================================= MENU INOVASI ========================================= //
-  // ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
+  // ========================================= INOVASI TEKNOLOGI DESA ========================================= //
+  // Gabungan Desa Digital / Smart Village + Info Teknologi Tepat Guna (satu tabel, berkategori).
 
-  if (type === "desaDigital") {
-    const data = await prisma.desaDigital.findMany({
+  if (type === "inovasiTeknologiDesa") {
+    const data = await prisma.inovasiTeknologiDesa.findMany({
       where: {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
@@ -1062,22 +1020,6 @@ export default async function searchFindMany(context: Context) {
     const data = await prisma.mitraKolaborasi.findMany({
       where: {
         OR: [{ name: { contains: query, mode: "insensitive" } }],
-      },
-      skip,
-      take: limitNum,
-    });
-    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
-  }
-
-  // ========================================= INFO TEKHNOLOGI TEPAT GUNA ========================================= //
-
-  if (type === "infoTekno") {
-    const data = await prisma.infoTekno.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { deskripsi: { contains: query, mode: "insensitive" } },
-        ],
       },
       skip,
       take: limitNum,
@@ -1284,17 +1226,6 @@ export default async function searchFindMany(context: Context) {
     return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
   }
 
-  if (type === "siswa") {
-    const data = await prisma.siswa.findMany({
-      where: {
-        OR: [{ nama: { contains: query, mode: "insensitive" } }],
-      },
-      skip,
-      take: limitNum,
-    });
-    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
-  }
-
   if (type === "pengajar") {
     const data = await prisma.pengajar.findMany({
       where: {
@@ -1465,14 +1396,11 @@ export default async function searchFindMany(context: Context) {
     sdgsdesa,
     apbdes,
     prestasidesa,
-    responden,
     strukturppid,
     visimisippid,
     dasarhukumppid,
     profileppid,
     daftarinformasipublik,
-    permohonaninformasipublik,
-    permohonaninformasikeberatanpublik,
     ikm,
     sejarahdesa,
     visimisidesa,
@@ -1516,11 +1444,10 @@ export default async function searchFindMany(context: Context) {
     programKemiskinan,
     sektorUnggulanDesa,
     demografiPekerjaan,
-    desaDigital,
+    inovasiTeknologiDesa,
     programKreatif,
     kolaborasiInovasi,
     mitraKolaborasi,
-    infoTekno,
     pengelolaanSampah,
     keteranganBankSampahTerdekat,
     programPenghijauan,
@@ -1534,7 +1461,6 @@ export default async function searchFindMany(context: Context) {
     nilaiKonservasiAdat,
     jenjangPendidikan,
     lembaga,
-    siswa,
     pengajar,
     keunggulanProgram,
     tujuanProgram,
@@ -1598,10 +1524,6 @@ export default async function searchFindMany(context: Context) {
       },
       take: limitNum,
     }),
-    prisma.responden.findMany({
-      where: { name: { contains: query, mode: "insensitive" } },
-      take: limitNum,
-    }),
     // ✅ FIXED
     prisma.strukturPPID.findMany({
       where: {
@@ -1659,27 +1581,6 @@ export default async function searchFindMany(context: Context) {
         OR: [
           { jenisInformasi: { contains: query, mode: "insensitive" } },
           { deskripsi: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      take: limitNum,
-    }),
-    prisma.permohonanInformasiPublik.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { nik: { contains: query, mode: "insensitive" } },
-          { alamat: { contains: query, mode: "insensitive" } },
-          { email: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      take: limitNum,
-    }),
-    prisma.formulirPermohonanKeberatan.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { email: { contains: query, mode: "insensitive" } },
-          { alasan: { contains: query, mode: "insensitive" } },
         ],
       },
       take: limitNum,
@@ -2180,7 +2081,7 @@ export default async function searchFindMany(context: Context) {
       },
       take: limitNum,
     }),
-    prisma.desaDigital.findMany({
+    prisma.inovasiTeknologiDesa.findMany({
       where: {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
@@ -2213,15 +2114,6 @@ export default async function searchFindMany(context: Context) {
     prisma.mitraKolaborasi.findMany({
       where: {
         OR: [{ name: { contains: query, mode: "insensitive" } }],
-      },
-      take: limitNum,
-    }),
-    prisma.infoTekno.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { deskripsi: { contains: query, mode: "insensitive" } },
-        ],
       },
       take: limitNum,
     }),
@@ -2343,12 +2235,6 @@ export default async function searchFindMany(context: Context) {
       },
       take: limitNum,
     }),
-    prisma.siswa.findMany({
-      where: {
-        OR: [{ nama: { contains: query, mode: "insensitive" } }],
-      },
-      take: limitNum,
-    }),
     prisma.pengajar.findMany({
       where: {
         OR: [{ nama: { contains: query, mode: "insensitive" } }],
@@ -2461,21 +2347,12 @@ export default async function searchFindMany(context: Context) {
       ...sdgsdesa.map((b) => ({ type: "sdgsdesa", ...b })),
       ...apbdes.map((b) => ({ type: "apbdes", ...b })),
       ...prestasidesa.map((b) => ({ type: "prestasidesa", ...b })),
-      ...responden.map((b) => ({ type: "responden", ...b })),
       ...strukturppid.map((b) => ({ type: "strukturppid", ...b })),
       ...visimisippid.map((b) => ({ type: "visimisippid", ...b })),
       ...dasarhukumppid.map((b) => ({ type: "dasarhukumppid", ...b })),
       ...profileppid.map((b) => ({ type: "profileppid", ...b })),
       ...daftarinformasipublik.map((b) => ({
         type: "daftarinformasipublik",
-        ...b,
-      })),
-      ...permohonaninformasipublik.map((b) => ({
-        type: "permohonaninformasipublik",
-        ...b,
-      })),
-      ...permohonaninformasikeberatanpublik.map((b) => ({
-        type: "permohonaninformasikeberatanpublik",
         ...b,
       })),
       ...ikm.map((b) => ({ type: "ikm", ...b })),
@@ -2548,11 +2425,10 @@ export default async function searchFindMany(context: Context) {
       ...programKemiskinan.map((b) => ({ type: "programKemiskinan", ...b })),
       ...sektorUnggulanDesa.map((b) => ({ type: "sektorUnggulanDesa", ...b })),
       ...demografiPekerjaan.map((b) => ({ type: "demografiPekerjaan", ...b })),
-      ...desaDigital.map((b) => ({ type: "desaDigital", ...b })),
+      ...inovasiTeknologiDesa.map((b) => ({ type: "inovasiTeknologiDesa", ...b })),
       ...programKreatif.map((b) => ({ type: "programKreatif", ...b })),
       ...kolaborasiInovasi.map((b) => ({ type: "kolaborasiInovasi", ...b })),
       ...mitraKolaborasi.map((b) => ({ type: "mitraKolaborasi", ...b })),
-      ...infoTekno.map((b) => ({ type: "infoTekno", ...b })),
       ...pengelolaanSampah.map((b) => ({ type: "pengelolaanSampah", ...b })),
       ...keteranganBankSampahTerdekat.map((b) => ({
         type: "keteranganBankSampahTerdekat",
@@ -2584,7 +2460,6 @@ export default async function searchFindMany(context: Context) {
       })),
       ...jenjangPendidikan.map((b) => ({ type: "jenjangPendidikan", ...b })),
       ...lembaga.map((b) => ({ type: "lembaga", ...b })),
-      ...siswa.map((b) => ({ type: "siswa", ...b })),
       ...pengajar.map((b) => ({ type: "pengajar", ...b })),
       ...keunggulanProgram.map((b) => ({ type: "keunggulanProgram", ...b })),
       ...tujuanProgram.map((b) => ({ type: "tujuanProgram", ...b })),

@@ -1,13 +1,14 @@
 import apb from "@/app/(public)/_com/main-page/apbdes/apbdes.module.css";
-import { IconSchool } from "@tabler/icons-react";
-import { LEMBAGA_ANCHOR, type InfoSekolahRingkasan, type JenjangGroup } from "./info-sekolah.logic";
+import { IconChevronRight, IconSchool } from "@tabler/icons-react";
+import { Link } from "next-view-transitions";
+import { LEMBAGA_ANCHOR, lembagaDetailHref, type InfoSekolahRingkasan, type JenjangGroup } from "./info-sekolah.logic";
 import { jenjangAccent, namaPanjangJenjang } from "./info-sekolah.meta";
 import s from "./info-sekolah.module.css";
 import { INFO_SEKOLAH_TEXT as T } from "./info-sekolah.text";
 
 const TITLE_ID = "info-sekolah-direktori-title";
 
-/** Panel "Sekolah per jenjang": satu kelompok per jenjang (urut baku) berisi angka jenjang + ubin nama lembaga. */
+/** Panel "Sekolah per jenjang": satu kelompok per jenjang (urut baku) berisi angka jenjang + ubin nama lembaga (tautan ke detail). */
 export function JenjangDirectory({ ringkasan }: { ringkasan: InfoSekolahRingkasan }) {
   return (
     <section id={LEMBAGA_ANCHOR} className={`${apb.panel} ${s.directory}`} aria-labelledby={TITLE_ID}>
@@ -43,11 +44,14 @@ function JenjangGroupBlock({ group }: { group: JenjangGroup }) {
       </div>
       <ul className={s.schools}>
         {group.lembaga.map((lembaga) => (
-          <li key={lembaga.id} className={s.school}>
-            <span className={s.schoolIcon} aria-hidden>
-              <IconSchool size={18} stroke={1.75} />
-            </span>
-            {lembaga.nama}
+          <li key={lembaga.id}>
+            <Link href={lembagaDetailHref(lembaga.id)} className={s.school}>
+              <span className={s.schoolIcon} aria-hidden>
+                <IconSchool size={18} stroke={1.75} />
+              </span>
+              <span className={s.schoolName}>{lembaga.nama}</span>
+              <IconChevronRight className={s.schoolArrow} size={18} stroke={1.75} aria-hidden />
+            </Link>
           </li>
         ))}
       </ul>

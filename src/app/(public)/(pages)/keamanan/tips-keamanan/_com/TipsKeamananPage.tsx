@@ -1,15 +1,16 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
-import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { listSearchable, outOfRangePage, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { TipCard } from './TipCard';
-import { tipsKeamananListHref, tipsSearchable } from './tips-keamanan.logic';
-import { TIPS_KEAMANAN_PAGE_LIMIT, TIPS_KEAMANAN_SEARCH_THRESHOLD } from './tips-keamanan.meta';
+import { tipsKeamananListHref } from './tips-keamanan.logic';
+import { TIPS_KEAMANAN_PAGE_LIMIT } from './tips-keamanan.meta';
 import s from './tips-keamanan.module.css';
 import { TIPS_KEAMANAN_TEXT as T } from './tips-keamanan.text';
 import { useTipsKeamanan, type TipsKeamananState } from './use-tips-keamanan';
@@ -28,6 +29,11 @@ export function TipsKeamananPage() {
   const page = parsePage(searchParams.get('page'));
   const state = useTipsKeamanan(page, TIPS_KEAMANAN_PAGE_LIMIT, search);
   const total = state.status === 'ready' ? state.total : null;
+  const validPage = outOfRangePage(state, page);
+
+  useEffect(() => {
+    if (validPage !== null) router.replace(tipsKeamananListHref({ search, page: validPage }));
+  }, [validPage, search, router]);
 
   return (
     <div className={kabar.section} style={KABAR_BRAND_VARS}>
@@ -40,7 +46,7 @@ export function TipsKeamananPage() {
         tabs={[]}
         search={search}
         onSearch={(next) => router.replace(tipsKeamananListHref({ search: next }))}
-        searchable={tipsSearchable(search, total, TIPS_KEAMANAN_SEARCH_THRESHOLD)}
+        searchable={listSearchable(search, total)}
       />
       <TipsKeamananBody
         state={state}
@@ -61,8 +67,10 @@ type BodyProps = {
 
 /** Ubin tips untuk satu keadaan muat (diekspor untuk test). */
 export function TipsKeamananBody({ state, search, page, onPage }: BodyProps) {
-  const tips = state.status === 'ready' ? state.tips : [];
-  const empty = state.status !== 'loading' && tips.length === 0;
+  // Halaman di luar rentang sedang dialihkan → tetap kerangka, jangan sempat tampil pesan "Belum ada".
+  const loading = state.status === 'loading' || outOfRangePage(state, page) !== null;
+  const tips = state.status === 'ready' && !loading ? state.tips : [];
+  const empty = !loading && tips.length === 0;
   const emptyText = state.status === 'error' ? T.error : search ? T.emptySearch(search) : T.empty;
 
   return (
@@ -70,7 +78,7 @@ export function TipsKeamananBody({ state, search, page, onPage }: BodyProps) {
       <h2 id={LIST_TITLE_ID} className={l.srOnly}>
         {T.listLabel}
       </h2>
-      {state.status === 'loading' ? (
+      {loading ? (
         <ul className={s.tips} aria-busy="true" aria-label={T.loading}>
           {Array.from({ length: PLACEHOLDER_TIPS }, (_, i) => (
             <li key={i} className={`${s.tip} ${kabar.placeholder}`} aria-hidden />

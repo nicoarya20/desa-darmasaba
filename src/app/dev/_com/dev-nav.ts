@@ -3,12 +3,15 @@ import {
   IconBug,
   IconChartBar,
   IconGauge,
+  IconHistory,
   IconHourglass,
+  IconLogin,
   IconMessages,
   IconMicrophone,
   IconPlugConnected,
   IconRobot,
   IconSettings,
+  IconShieldCheck,
   type Icon,
 } from '@tabler/icons-react';
 
@@ -20,18 +23,27 @@ export type DevNavEntry = DevNavLink | DevNavGroup;
 export const DEV_NAV: readonly DevNavEntry[] = [
   { label: 'Ringkasan Sistem', href: '/dev/ringkasan', icon: IconGauge },
   {
+    label: 'Log',
+    basePath: '/dev/log',
+    icon: IconHistory,
+    children: [
+      { label: 'Log Audit', href: '/dev/log/audit', icon: IconShieldCheck },
+      { label: 'Log Login', href: '/dev/log/login', icon: IconLogin },
+    ],
+  },
+  {
     label: 'Jenna',
     basePath: '/dev/jenna',
     icon: IconRobot,
     children: [
       { label: 'Umum', href: '/dev/jenna', icon: IconSettings, exact: true },
-      { label: 'Batas Pemakaian', href: '/dev/jenna/batas', icon: IconHourglass },
-      { label: 'Log Error', href: '/dev/jenna/log-error', icon: IconBug },
-      { label: 'Pengetahuan', href: '/dev/jenna/pengetahuan', icon: IconBook2 },
-      { label: 'Penggunaan', href: '/dev/jenna/penggunaan', icon: IconChartBar },
-      { label: 'Percakapan', href: '/dev/jenna/percakapan', icon: IconMessages },
       { label: 'Provider', href: '/dev/jenna/provider', icon: IconPlugConnected },
+      { label: 'Pengetahuan', href: '/dev/jenna/pengetahuan', icon: IconBook2 },
       { label: 'Suara', href: '/dev/jenna/suara', icon: IconMicrophone },
+      { label: 'Batas Pemakaian', href: '/dev/jenna/batas', icon: IconHourglass },
+      { label: 'Percakapan', href: '/dev/jenna/percakapan', icon: IconMessages },
+      { label: 'Penggunaan', href: '/dev/jenna/penggunaan', icon: IconChartBar },
+      { label: 'Log Error', href: '/dev/jenna/log-error', icon: IconBug },
     ],
   },
 ];

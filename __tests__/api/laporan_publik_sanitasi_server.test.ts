@@ -4,7 +4,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const prismaMock = vi.hoisted(() => ({
-  laporanPublik: { create: vi.fn(), update: vi.fn() },
+  laporanPublik: { create: vi.fn(), update: vi.fn(), findUnique: vi.fn() },
   penangananLaporanPublik: { deleteMany: vi.fn() },
 }));
 vi.mock('@/lib/prisma', () => ({ default: prismaMock }));

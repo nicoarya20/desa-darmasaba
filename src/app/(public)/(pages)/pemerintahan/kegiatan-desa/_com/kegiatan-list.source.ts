@@ -3,11 +3,18 @@ import { readFindMany, type FindManyBody } from "@/app/(public)/_com/main-page/k
 import ApiFetch from "@/lib/api-fetch";
 import { toKegiatanItem, type KegiatanApiItem } from "./kegiatan-list.logic";
 
-/** Satu halaman kegiatan desa aktif, opsional disaring kata kunci (judul/lokasi) dan/atau nama kategori. */
-export async function loadKegiatanPage({ page, limit, search, kategori }: KabarPageQuery): Promise<KabarPage> {
+/**
+ * Satu halaman kegiatan desa aktif, opsional disaring kata kunci (judul/lokasi) dan/atau nama kategori.
+ * `kategoriId` (id kategori tetap, mis. Gotong Royong) menyaring tepat per id dan menggantikan `kategori`.
+ */
+export async function loadKegiatanPage(
+  { page, limit, search, kategori }: KabarPageQuery,
+  kategoriId?: string,
+): Promise<KabarPage> {
   const query: Record<string, string | number> = { page, limit };
   if (search) query.search = search;
-  if (kategori) query.kategori = kategori;
+  if (kategoriId) query.kategoriId = kategoriId;
+  else if (kategori) query.kategori = kategori;
   const res = await ApiFetch.api.desa.kegiatandesa["find-many"].get({ query });
   const body = res.data as (FindManyBody & { totalPages?: number }) | null | undefined;
   const items = readFindMany<KegiatanApiItem>("kegiatan desa", res.status, body).map(toKegiatanItem);

@@ -3,7 +3,7 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import { IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import SelectIconProgramEdit from '@/app/admin/(dashboard)/_com/selectIconEdit';
-import programKemiskinanState from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
+import programKemiskinanState, { statistikLengkapAtauKosong } from '@/app/admin/(dashboard)/_state/ekonomi/program-kemiskinan';
 import colors from '@/con/colors';
 import {
   Box,
@@ -66,8 +66,7 @@ function EditProgramKemiskinan() {
       formData.nama?.trim() !== '' &&
       formData.icon?.trim() !== '' &&
       !isHtmlEmpty(formData.deskripsi) &&
-      formData.statistik.jumlah?.trim() !== '' &&
-      formData.statistik.tahun?.trim() !== ''
+      statistikLengkapAtauKosong(formData.statistik)
     );
   };
 
@@ -215,7 +214,7 @@ function EditProgramKemiskinan() {
 
           <Box>
             <Text fw="bold" fz="sm" mb={6}>
-              Statistik Jumlah Masyarakat Miskin
+              Statistik Jumlah Masyarakat Miskin (opsional)
             </Text>
             <TextInput
               type="number"
@@ -223,7 +222,6 @@ function EditProgramKemiskinan() {
               onChange={(e) => handleStatistikChange('jumlah', e.target.value)}
               label="Jumlah Masyarakat Miskin"
               placeholder="Masukkan jumlah masyarakat miskin"
-              required
             />
 
             <TextInput
@@ -232,7 +230,6 @@ function EditProgramKemiskinan() {
               onChange={(e) => handleStatistikChange('tahun', e.target.value)}
               label="Tahun"
               placeholder="Masukkan tahun"
-              required
               mt="sm"
             />
           </Box>

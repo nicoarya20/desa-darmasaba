@@ -4,6 +4,7 @@ import SiswaDelete from "./del";
 import SiswaFindMany from "./findMany";
 import SiswaFindUnique from "./findUnique";
 import SiswaUpdate from "./updt";
+import { guardDataPribadi } from "../../../_data-pribadi/guard";
 
 const Siswa = new Elysia({
   prefix: "/siswa",
@@ -11,10 +12,10 @@ const Siswa = new Elysia({
 })
 
   // ✅ Find all
-  .get("/find-many", SiswaFindMany)
+  .get("/find-many", SiswaFindMany, { beforeHandle: guardDataPribadi })
 
   // ✅ Find by ID
-  .get("/:id", SiswaFindUnique)
+  .get("/:id", SiswaFindUnique, { beforeHandle: guardDataPribadi })
 
   // ✅ Create
   .post("/create", SiswaCreate, {

@@ -30,8 +30,7 @@ import { seedSektorUnggulanDesa } from "./_seeder_list/ekonomi/seed_sektor_unggu
 import { seedStrukturBumdes } from "./_seeder_list/ekonomi/seed_struktur_bumdes";
 import { seedUmkm } from "./_seeder_list/ekonomi/seed_umkm";
 import { seedAjukan } from "./_seeder_list/inovasi/seed_ajukan";
-import { seedDesaDigital } from "./_seeder_list/inovasi/seed_desa_digital";
-import { seedInfoTeknologi } from "./_seeder_list/inovasi/seed_info_teknologi";
+import { seedInovasiTeknologiDesa } from "./_seeder_list/inovasi/seed_inovasi_teknologi_desa";
 import { seedKolaborasiInovasi } from "./_seeder_list/inovasi/seed_kolaborasi_inovasi";
 import { seedLayananOnlineDesa } from "./_seeder_list/inovasi/seed_layanan_online_desa";
 import { seedProgramKreatifDesa } from "./_seeder_list/inovasi/seed_program_kreatif_desa";
@@ -355,8 +354,8 @@ import { isSeedOverwrite } from "./seed-prisma";
   // // ====================== MENU INOVASI ==========================
   // // ====================== SUBMENU AJUKAN IDE INOVATIF ===========
   await seedAjukan();
-  // // ==================== SUBMENU DESA DIGITAL ====================
-  await seedDesaDigital();
+  // // ==================== SUBMENU INOVASI TEKNOLOGI DESA (Desa Digital + Teknologi Tepat Guna) ====
+  await seedInovasiTeknologiDesa();
 
   // // ==================== SUBMENU LAYANAN ONLINE DESA ==========
   await seedLayananOnlineDesa();
@@ -365,9 +364,6 @@ import { isSeedOverwrite } from "./seed-prisma";
   await seedProgramKreatifDesa();
   // // ==================== SUBMENU KOLABORASI INOVASI ==========
   await seedKolaborasiInovasi();
-
-  // // ==================== SUBMENU INFO TEKNOLOGI TEPAT GUNA ==========
-  await seedInfoTeknologi();
 
   // // ====================== MENU LINGKUNGAN ==========================
   // // ==================== SUBMENU PENGELOLAAN SAMPAH ==========
@@ -378,9 +374,6 @@ import { isSeedOverwrite } from "./seed-prisma";
 
   // // ==================== SUBMENU DATA LINGKUNGAN DESA ==========
   await seedDataLingkunganDesa();
-
-  // // =========== SUBMENU GOTONG ROYONG ===========
-  await seedDataGotongRoyong();
 
   // // =========== SUBMENU EDUKASI LINGKUNGAN ===========
   await seedEdukasiLingkungan();
@@ -427,6 +420,8 @@ import { isSeedOverwrite } from "./seed-prisma";
   // ===== SOSIAL DASHBOARD =====
   await seedRingkasanKesehatan();
   await seedKegiatanDesa();
+  // Gotong Royong = kategori tetap Kegiatan Desa; kategorinya dibuat seedKegiatanDesa, jadi harus sesudahnya.
+  await seedDataGotongRoyong();
   await seedEventBudaya();
 
   // ===== DESA =====

@@ -1,5 +1,8 @@
 import prisma from "@/lib/prisma";
+import { GALERI_SELECT, URUTAN_ANAK } from "../../_konten-bersama/daftar-anak.config";
+import { MAX_FOTO_KEGIATAN_POSYANDU } from "@/lib/posyandu/posyandu-konten.validation";
 
+/** GET (publik): detail posyandu beserta banjar dan galeri foto lokasi & kader. */
 export default async function findPosyanduById(request: Request) {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
@@ -25,6 +28,8 @@ export default async function findPosyanduById(request: Request) {
             include: {
                 image: true,
                 banjar: { select: { id: true, name: true } },
+                // Galeri foto lokasi & kader hanya di detail; find-many tetap ringan.
+                fotoKegiatan: { select: GALERI_SELECT, orderBy: [...URUTAN_ANAK], take: MAX_FOTO_KEGIATAN_POSYANDU },
             }
         })
 

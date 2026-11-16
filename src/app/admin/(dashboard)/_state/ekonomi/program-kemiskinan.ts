@@ -5,14 +5,19 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
+/** Statistik opsional: tahun & jumlah diisi keduanya atau dikosongkan keduanya (program bantuan tanpa statistik). */
+export function statistikLengkapAtauKosong(s: { tahun?: string | number; jumlah?: string | number }): boolean {
+  const kosong = (v: string | number | undefined) => String(v ?? "").trim() === "";
+  return kosong(s.tahun) === kosong(s.jumlah);
+}
+
 const templateForm = z.object({
   nama: z.string().min(1, "Nama minimal 1 karakter"),
   deskripsi: z.string().min(1, "Deskripsi minimal 1 karakter"),
   icon: z.string().min(1, "Icon minimal 1 karakter"),
-  statistik: z.object({
-    tahun: z.string().min(1, "Tahun minimal 1 karakter"),
-    jumlah: z.string().min(1, "Jumlah minimal 1 karakter"),
-  }),
+  statistik: z
+    .object({ tahun: z.string(), jumlah: z.string() })
+    .refine(statistikLengkapAtauKosong, { message: "Isi tahun dan jumlah statistik, atau kosongkan keduanya" }),
 });
 
 const defaultForm = {
@@ -155,8 +160,8 @@ const programKemiskinanState = proxy({
             deskripsi: data.deskripsi,
             icon: data.icon,
             statistik: {
-              tahun: data.statistik.tahun,
-              jumlah: data.statistik.jumlah,
+              tahun: data.statistik?.tahun?.toString() ?? "",
+              jumlah: data.statistik?.jumlah?.toString() ?? "",
             },
           };
           return data; // Return the loaded data

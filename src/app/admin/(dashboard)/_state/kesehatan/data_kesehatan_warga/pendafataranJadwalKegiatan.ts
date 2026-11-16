@@ -48,7 +48,7 @@ const pendaftaranJadwalKegiatanState = proxy({
         if (res.status === 200) {
           toast.success("Berhasil menambahkan jadwal kegiatan");
           this.resetForm();
-          await pendaftaranJadwalKegiatanState.findMany.load();
+          // Tidak memuat ulang daftar: submit() dipanggil form publik warga, daftar pendaftar admin-only.
           return res.data;
         }
       } catch (err: any) {

@@ -54,7 +54,7 @@ const tautanPenting: FooterLink[] = [
   },
   {
     title: "E-Government",
-    link: "/inovasi/desa-digital-smart-village",
+    link: "/inovasi/inovasi-teknologi-desa?kategori=digital",
   },
   {
     title: "Transparansi",

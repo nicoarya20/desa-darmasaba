@@ -61,7 +61,7 @@ export const kesehatanMenu: NavItem = {
   children: [
     { id: "kesehatan.posyandu", name: "Posyandu", path: "/admin/kesehatan/posyandu/list-posyandu", basePath: "/admin/kesehatan/posyandu" },
     { id: "kesehatan.data-kesehatan-warga", name: "Data Kesehatan Warga", path: "/admin/kesehatan/data-kesehatan-warga/persentase_data_kelahiran_kematian", basePath: "/admin/kesehatan/data-kesehatan-warga" },
-    { id: "kesehatan.puskesmas", name: "Puskesmas", path: "/admin/kesehatan/puskesmas", basePath: "/admin/kesehatan/puskesmas" },
+    { id: "kesehatan.puskesmas", name: "PUSTU (Puskesmas Pembantu)", path: "/admin/kesehatan/puskesmas", basePath: "/admin/kesehatan/puskesmas" },
     { id: "kesehatan.program-kesehatan", name: "Program Kesehatan", path: "/admin/kesehatan/program-kesehatan", basePath: "/admin/kesehatan/program-kesehatan" },
     { id: "kesehatan.penanganan-darurat", name: "Penanganan Darurat", path: "/admin/kesehatan/penanganan-darurat", basePath: "/admin/kesehatan/penanganan-darurat" },
     { id: "kesehatan.kontak-darurat", name: "Kontak Darurat", path: "/admin/kesehatan/kontak-darurat", basePath: "/admin/kesehatan/kontak-darurat" },
@@ -90,7 +90,7 @@ export const ekonomiMenu: NavItem = {
   path: "",
   children: [
     // UMKM masuk lewat Data UMKM selama tab Dashboard disembunyikan — docs/debt/2026-11-12-umkm-tab-disembunyikan.md
-    { id: "ekonomi.umkm", name: "UMKM", path: "/admin/ekonomi/umkm/data-umkm", basePath: "/admin/ekonomi/umkm" },
+    { id: "ekonomi.umkm", name: "UMKM & Pasar Desa", path: "/admin/ekonomi/umkm/data-umkm", basePath: "/admin/ekonomi/umkm" },
     { id: "ekonomi.lowongan-kerja-lokal", name: "Lowongan Kerja Lokal", path: "/admin/ekonomi/lowongan-kerja-lokal", basePath: "/admin/ekonomi/lowongan-kerja-lokal" },
     { id: "ekonomi.bumdes", name: "BUMDes", path: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/profil", basePath: "/admin/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes" },
     { id: "ekonomi.padesa", name: "PADesa (Pendapatan Asli Desa)", path: "/admin/ekonomi/PADesa-pendapatan-asli-desa/apbdesa", basePath: "/admin/ekonomi/PADesa-pendapatan-asli-desa" },
@@ -109,11 +109,12 @@ export const inovasiMenu: NavItem = {
   name: "Inovasi",
   path: "",
   children: [
-    { id: "inovasi.desa-digital-smart-village", name: "Desa Digital/Smart Village", path: "/admin/inovasi/desa-digital-smart-village", basePath: "/admin/inovasi/desa-digital-smart-village" },
+    // ID lama dipertahankan (tersimpan di UserMenuAccess); menu ini gabungan Desa Digital + Info Teknologi Tepat Guna
+    // (docs/decisions/2026-11-16-inovasi-teknologi-desa.md).
+    { id: "inovasi.desa-digital-smart-village", name: "Inovasi Teknologi Desa", path: "/admin/inovasi/inovasi-teknologi-desa", basePath: "/admin/inovasi/inovasi-teknologi-desa" },
     { id: "inovasi.layanan-online-desa", name: "Layanan Online Desa", path: "/admin/inovasi/layanan-online-desa/administrasi-online", basePath: "/admin/inovasi/layanan-online-desa" },
     { id: "inovasi.program-kreatif-desa", name: "Program Kreatif Desa", path: "/admin/inovasi/program-kreatif-desa", basePath: "/admin/inovasi/program-kreatif-desa" },
     { id: "inovasi.kolaborasi-inovasi", name: "Kolaborasi Inovasi", path: "/admin/inovasi/kolaborasi-inovasi/list-kolaborasi-inovasi", basePath: "/admin/inovasi/kolaborasi-inovasi" },
-    { id: "inovasi.info-teknologi-tepat-guna", name: "Info Teknologi Tepat Guna", path: "/admin/inovasi/info-teknologi-tepat-guna", basePath: "/admin/inovasi/info-teknologi-tepat-guna" },
     { id: "inovasi.ajukan-ide-inovatif", name: "Ajukan Ide Inovatif", path: "/admin/inovasi/ajukan-ide-inovatif", basePath: "/admin/inovasi/ajukan-ide-inovatif" },
   ],
 }
@@ -126,7 +127,6 @@ export const lingkunganMenu: NavItem = {
     { id: "lingkungan.pengelolaan-sampah-bank-sampah", name: "Pengelolaan Sampah (Bank Sampah)", path: "/admin/lingkungan/pengelolaan-sampah-bank-sampah/list-pengelolaan-sampah-bank-sampah", basePath: "/admin/lingkungan/pengelolaan-sampah-bank-sampah" },
     { id: "lingkungan.program-penghijauan", name: "Program Penghijauan", path: "/admin/lingkungan/program-penghijauan", basePath: "/admin/lingkungan/program-penghijauan" },
     { id: "lingkungan.data-lingkungan-desa", name: "Data Lingkungan Desa", path: "/admin/lingkungan/data-lingkungan-desa", basePath: "/admin/lingkungan/data-lingkungan-desa" },
-    { id: "lingkungan.gotong-royong", name: "Gotong Royong", path: "/admin/lingkungan/gotong-royong/kegiatan-desa", basePath: "/admin/lingkungan/gotong-royong" },
     { id: "lingkungan.edukasi-lingkungan", name: "Edukasi Lingkungan", path: "/admin/lingkungan/edukasi-lingkungan/tujuan-edukasi-lingkungan", basePath: "/admin/lingkungan/edukasi-lingkungan" },
     { id: "lingkungan.konservasi-adat-bali", name: "Konservasi Adat Bali", path: "/admin/lingkungan/konservasi-adat-bali/filosofi-tri-hita-karana", basePath: "/admin/lingkungan/konservasi-adat-bali" },
   ],

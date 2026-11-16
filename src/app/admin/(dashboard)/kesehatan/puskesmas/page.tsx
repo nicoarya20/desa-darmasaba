@@ -24,8 +24,10 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
-import puskesmasState from '../../_state/kesehatan/puskesmas/puskesmas';
+import pustuState from '../../_state/kesehatan/puskesmas/pustu.state';
+import { LABEL_PUSTU, LABEL_PUSTU_SINGKAT } from '@/lib/pustu/pustu.label';
 
+/** Halaman admin daftar PUSTU (Puskesmas Pembantu) berpaginasi dengan pencarian. */
 function Puskesmas() {
   const [search, setSearch] = useState("");
 
@@ -33,7 +35,7 @@ function Puskesmas() {
     <Box>
       {/* Header dengan Search */}
       <HeaderSearch
-        title='Puskesmas'
+        title={LABEL_PUSTU}
         placeholder='Cari nama atau alamat...'
         searchIcon={<IconSearch size={20} />}
         value={search}
@@ -46,7 +48,7 @@ function Puskesmas() {
 }
 
 function ListPuskesmas({ search }: { search: string }) {
-  const statePuskesmas = useProxy(puskesmasState);
+  const statePuskesmas = useProxy(pustuState);
   const router = useRouter();
   const [debouncedSearch] = useDebouncedValue(search, 1000);
 
@@ -70,7 +72,7 @@ function ListPuskesmas({ search }: { search: string }) {
     <Box py={{ base: 'sm', md: 'md' }}>
       <Paper withBorder bg={colors['white-1']} p={{ base: 'md', md: 'lg' }} shadow="md" radius="md">
         <Group justify="space-between" mb={{ base: 'sm', md: 'md' }}>
-          <Title order={4}>Daftar Puskesmas</Title>
+          <Title order={4}>Daftar {LABEL_PUSTU_SINGKAT}</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -90,7 +92,7 @@ function ListPuskesmas({ search }: { search: string }) {
               <TableTr>
                 <TableTh>
                   <Text fz="sm" fw={600} lh={1.2}>
-                    Nama Puskesmas
+                    Nama {LABEL_PUSTU_SINGKAT}
                   </Text>
                 </TableTh>
                 <TableTh>
@@ -126,7 +128,7 @@ function ListPuskesmas({ search }: { search: string }) {
                     </TableTd>
                     <TableTd>
                       <Text fz="sm" fw={500} lh={1.5} c="dimmed" truncate="end" lineClamp={1}>
-                        {item.kontak.kontakPuskesmas}
+                        {item.kontak?.kontakPuskesmas || '-'}
                       </Text>
                     </TableTd>
                     <TableTd>
@@ -151,7 +153,7 @@ function ListPuskesmas({ search }: { search: string }) {
                   <TableTd colSpan={4}>
                     <Center py={{ base: 'sm', md: 'md' }}>
                       <Text fz="sm" c="dimmed" ta="center">
-                        Tidak ada data puskesmas yang cocok
+                        Tidak ada data {LABEL_PUSTU_SINGKAT} yang cocok
                       </Text>
                     </Center>
                   </TableTd>
@@ -169,7 +171,7 @@ function ListPuskesmas({ search }: { search: string }) {
                 <Stack gap={'xs'}>
                   <Box>
                     <Text fz="sm" fw={600} lh={1.4}>
-                      Nama Puskesmas
+                      Nama {LABEL_PUSTU_SINGKAT}
                     </Text>
                     <Text fz="sm" fw={500} lh={1.45}>
                       {item.name}
@@ -188,7 +190,7 @@ function ListPuskesmas({ search }: { search: string }) {
                       Kontak
                     </Text>
                     <Text fz="sm" fw={500} lh={1.45} c="dimmed">
-                      {item.kontak.kontakPuskesmas}
+                      {item.kontak?.kontakPuskesmas || '-'}
                     </Text>
                   </Box>
                   <Button
@@ -210,7 +212,7 @@ function ListPuskesmas({ search }: { search: string }) {
           ) : (
             <Center py="md">
               <Text fz="sm" c="dimmed">
-                Tidak ada data puskesmas yang cocok
+                Tidak ada data {LABEL_PUSTU_SINGKAT} yang cocok
               </Text>
             </Center>
           )}

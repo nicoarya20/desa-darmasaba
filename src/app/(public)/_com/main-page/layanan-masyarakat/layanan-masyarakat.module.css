@@ -1,42 +1,28 @@
 /*
- * Section Layanan Masyarakat beranda — gaya bersih ala apple.com (sejalan IKM di atasnya):
- * latar #f5f5f7 sebagai pembeda dari IKM yang putih, kartu putih radius 18px tanpa border,
- * isi max-width 1100px. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ * Kartu Layanan Masyarakat beranda — tanpa judul, duduk di pita galeri Layanan & Potensi tepat di
+ * atasnya. Latar transparan (latar beranda = latar galeri) supaya tidak ada garis/beda warna.
+ * Jarak titik slide → kartu = setengah --block-gap (32/24px), sengaja lebih rapat daripada
+ * kartu → batas pita (--section-pad-y, 50/36px) supaya kartu terbaca milik galeri, bukan melayang.
+ * Galeri sudah memberi padding-bottom --section-pad-y + sisa baris kendali di bawah titik, jadi
+ * section ini ditarik ke atas dengan margin negatif (padding-top 0; isi tidak menimpa tombol jeda).
+ * Kartu putih radius 18px tanpa border, isi 1100px.
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet 2×2) dan ≤734px (ponsel: daftar baris gaya iOS).
  */
 .section {
   --ink: #1d1d1f;
   --muted: #6e6e73;
   --radius: 18px;
-  background: #f5f5f7;
-  padding: var(--section-pad-y) 16px;
+  /* Sisa baris kendali galeri di bawah titik slide: (.controls min-height 36px − .dotBar 6px) / 2,
+     karena titik di tengah vertikal baris. Ikut berubah bila ukuran itu di gallery.module.css berubah. */
+  --gallery-dots-tail: 15px;
+  margin-top: calc(var(--block-gap) / 2 - var(--section-pad-y) - var(--gallery-dots-tail));
+  padding: 0 16px var(--section-pad-y);
   color: var(--ink);
 }
 
 .inner {
   max-width: 1100px;
   margin: 0 auto;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.title {
-  margin: 0;
-  font-size: 40px;
-  line-height: 1.1;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--brand);
-}
-
-.lead {
-  margin: 12px auto 0;
-  max-width: 720px;
-  font-size: 19px;
-  line-height: 1.5;
-  color: var(--muted);
 }
 
 .grid {
@@ -146,32 +132,95 @@
   }
 }
 
-/* ---------- Mobile ---------- */
+/* ---------- Mobile: satu kotak putih berisi 4 baris (grup Pengaturan iOS) ---------- */
 @media (max-width: 734px) {
-  .title {
-    font-size: 32px;
-  }
-
-  .lead {
-    font-size: 17px;
-  }
-
   .grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+    gap: 0;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: #fff;
   }
 
+  /* Baris: ikon | judul + deskripsi | chevron. Grid area supaya DOM kartu tetap sama di semua lebar. */
   .card {
-    padding: 20px;
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon title cta"
+      "icon body cta";
+    column-gap: 14px;
+    align-items: center;
+    min-height: 64px;
+    padding: 12px 16px;
+    border-radius: 0;
+  }
+
+  /* Pemisah tipis antarbaris, mulai sejajar teks (inset seperti iOS). */
+  .cell + .cell .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 70px;
+    height: 1px;
+    background: #e8e8ed;
+  }
+
+  .card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .card:active {
+    background: #f2f2f7;
+  }
+
+  .card:focus-visible {
+    outline-offset: -2px;
   }
 
   .icon {
-    width: 44px;
-    height: 44px;
-    margin-bottom: 14px;
+    grid-area: icon;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+  }
+
+  .icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .cardTitle {
+    grid-area: title;
+    align-self: end;
+    font-size: 17px;
+    line-height: 1.24;
+    font-weight: 600;
+    letter-spacing: -0.005em;
   }
 
   .cardBody {
-    margin-bottom: 14px;
+    grid-area: body;
+    align-self: start;
+    display: -webkit-box;
+    margin: 2px 0 0;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.36;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .cardCta {
+    grid-area: cta;
+    color: #aeaeb2;
+  }
+
+  /* Chevron menggantikan label aksi; nama tautan tetap judul + deskripsi. */
+  .ctaLabel {
+    display: none;
   }
 }

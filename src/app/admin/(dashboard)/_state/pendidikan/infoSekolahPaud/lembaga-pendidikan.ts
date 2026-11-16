@@ -1,60 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import type { LembagaDetail } from "@/lib/lembaga-pendidikan/lembaga.types";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
-import { z } from "zod";
 import { SORT_BY_JENJANG } from "@/lib/jenjang-pendidikan-urutan";
+import { createDetailEntriState } from "../../konten-bersama/detail-entri.state";
+import { kirimEntri } from "../../konten-bersama/kirim-entri";
+import { hapusUnggahanYatim, unggahGambar } from "../../konten-bersama/unggah-gambar";
+import { LEMBAGA_API } from "./lembaga.anak.state";
+import { cekFormLembaga, payloadDariForm, type LembagaForm, type LembagaFotoBaru } from "./lembaga.form";
 
-const lembagaPendidikanForm = z.object({
-  nama: z.string().min(1, "Nama minimal 1 karakter"),
-  jenjangId: z.string().min(1, "Jenjang pendidikan minimal 1"),
-});
+const pesanError = (error: unknown, fallback: string) => (error instanceof Error ? error.message : fallback);
 
-const lembagaPendidikanDefaultForm = {
-  nama: "",
-  jenjangId: "",
-};
+/** Unggah foto baru (bila ada) lalu kembalikan id foto yang dipakai; id unggahan dicatat di `unggahan`. */
+async function idFoto(baru: File | null, tersimpan: string | null, unggahan: string[]): Promise<string | null> {
+  if (!baru) return tersimpan;
+  const id = await unggahGambar(baru);
+  unggahan.push(id);
+  return id;
+}
 
+/**
+ * State Lembaga Pendidikan (Info Sekolah): daftar berpaginasi, detail lengkap (admin), simpan form (dengan
+ * unggah foto sekolah & bagan), hapus (soft delete).
+ */
 const lembagaPendidikan = proxy({
-  create: {
-    form: { ...lembagaPendidikanDefaultForm },
-    loading: false,
-    async create() {
-      const cek = lembagaPendidikanForm.safeParse(
-        lembagaPendidikan.create.form
-      );
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        return toast.error(err);
-      }
-      try {
-        lembagaPendidikan.create.loading = true;
-        const res =
-          await ApiFetch.api.pendidikan.infosekolahpaud.lembagapendidikan[
-            "create"
-          ].post(lembagaPendidikan.create.form);
-        if (res.status === 200) {
-          lembagaPendidikan.findMany.load();
-          return toast.success("Data berhasil ditambahkan");
-        }
-        return toast.error("Gagal menambahkan data");
-      } catch (error) {
-        console.error("Gagal menambahkan lembaga pendidikan:", error);
-        toast.error("Gagal menambahkan data");
-      } finally {
-        lembagaPendidikan.create.loading = false;
-      }
-    },
-  },
   findMany: {
     data: null as Array<
       Prisma.LembagaGetPayload<{
         include: {
           jenjangPendidikan: true;
         };
+        // Sama dengan LEMBAGA_LIST_OMIT di API (find-many ringan).
+        omit: { deskripsi: true; mediaSosial: true };
       }> & {
         siswa?: [];
         pengajar?: [];
@@ -107,32 +86,39 @@ const lembagaPendidikan = proxy({
       }
     },
   },
-  findUnique: {
-    data: null as Prisma.LembagaGetPayload<{
-      include: {
-        jenjangPendidikan: true;
-        siswa: true;
-        pengajar: true;
+  findUnique: createDetailEntriState<LembagaDetail>({ url: (id) => `${LEMBAGA_API}/${encodeURIComponent(id)}`, tag: "lembaga" }),
+
+  saving: false,
+  /**
+   * Simpan form (id null = tambah). Foto baru diunggah dulu dan dibersihkan bila simpan gagal.
+   * Mengembalikan id lembaga, atau null bila gagal (pesan sudah ditampilkan).
+   */
+  async simpan(id: string | null, form: LembagaForm, fotoBaru: LembagaFotoBaru): Promise<string | null> {
+    const salah = cekFormLembaga(form);
+    if (salah) {
+      toast.error(salah);
+      return null;
+    }
+    lembagaPendidikan.saving = true;
+    const unggahan: string[] = [];
+    try {
+      const foto = {
+        fotoSekolahId: await idFoto(fotoBaru.fotoSekolah, form.fotoSekolahId, unggahan),
+        fotoBaganStrukturId: await idFoto(fotoBaru.bagan, form.fotoBaganStrukturId, unggahan),
       };
-    }> | null,
-    async load(id: string) {
-      try {
-        const res = await fetch(
-          `/api/pendidikan/infosekolahpaud/lembagapendidikan/${id}`
-        );
-        if (res.ok) {
-          const data = await res.json();
-          lembagaPendidikan.findUnique.data = data.data ?? null;
-        } else {
-          console.error("Failed to fetch data", res.status, res.statusText);
-          lembagaPendidikan.findUnique.data = null;
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        lembagaPendidikan.findUnique.data = null;
-      }
-    },
+      const savedId = await kirimEntri(LEMBAGA_API, id, payloadDariForm(form, foto), "lembaga pendidikan");
+      toast.success(id ? "Lembaga pendidikan berhasil diperbarui" : "Lembaga pendidikan berhasil ditambahkan");
+      return savedId;
+    } catch (error) {
+      console.error(`[lembaga] Gagal menyimpan lembaga ${id ?? "baru"}:`, error);
+      await hapusUnggahanYatim(unggahan, "foto lembaga");
+      toast.error(pesanError(error, "Gagal menyimpan lembaga pendidikan"));
+      return null;
+    } finally {
+      lembagaPendidikan.saving = false;
+    }
   },
+
   delete: {
     loading: false,
     async byId(id: string) {
@@ -141,7 +127,7 @@ const lembagaPendidikan = proxy({
       try {
         lembagaPendidikan.delete.loading = true;
 
-        // Pakai Eden (ApiFetch) — konsisten dgn create/find di file ini. Eden
+        // Pakai Eden (ApiFetch) — konsisten dgn findMany di file ini. Eden
         // tak set Content-Type json untuk DELETE tanpa body (hindari 400 parse
         // Elysia) dan content-type aware saat parse respons (hindari SyntaxError
         // bila body non-JSON).
@@ -167,134 +153,6 @@ const lembagaPendidikan = proxy({
       } finally {
         lembagaPendidikan.delete.loading = false;
       }
-    },
-  },
-  edit: {
-    id: "",
-    form: { ...lembagaPendidikanDefaultForm },
-    loading: false,
-
-    async load(id: string) {
-      if (!id) {
-        toast.warn("ID tidak valid");
-        return null;
-      }
-
-      try {
-        const response = await fetch(
-          `/api/pendidikan/infosekolahpaud/lembagapendidikan/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const result = await response.json();
-        if (result?.success) {
-          const data = result.data;
-          this.id = data.id;
-          this.form = {
-            nama: data.nama,
-            jenjangId: data.jenjangId,
-          };
-          return data;
-        } else {
-          throw new Error(result?.message || "Gagal memuat data");
-        }
-      } catch (error) {
-        console.error("Error loading lembaga pendidikan:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Gagal memuat data"
-        );
-        return null;
-      }
-    },
-
-    async update() {
-      const cek = lembagaPendidikanForm.safeParse(lembagaPendidikan.edit.form);
-      if (!cek.success) {
-        const err = `[${cek.error.issues
-          .map((v) => `${v.path.join(".")}`)
-          .join("\n")}] required`;
-        toast.error(err);
-        return false;
-      }
-
-      try {
-        lembagaPendidikan.edit.loading = true;
-        const response = await fetch(
-          `/api/pendidikan/infosekolahpaud/lembagapendidikan/${lembagaPendidikan.edit.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              nama: lembagaPendidikan.edit.form.nama,
-              jenjangId: lembagaPendidikan.edit.form.jenjangId,
-            }),
-          }
-        );
-
-        const responseClone = response.clone();
-
-        try {
-          const result = await response.json();
-
-          if (!response.ok) {
-            console.error(
-              "Update failed with status:",
-              response.status,
-              "Response:",
-              result
-            );
-            throw new Error(
-              result?.message ||
-                `Gagal mengupdate lembaga pendidikan (${response.status})`
-            );
-          }
-
-          if (result.success) {
-            toast.success(
-              result.message || "Berhasil memperbarui lembaga pendidikan"
-            );
-            await lembagaPendidikan.findMany.load();
-            return true;
-          } else {
-            throw new Error(
-              result.message || "Gagal mengupdate lembaga pendidikan"
-            );
-          }
-        } catch (error) {
-          try {
-            const text = await responseClone.text();
-            console.error("Error response text:", text);
-            throw new Error(`Gagal memproses respons dari server: ${text}`);
-          } catch (textError) {
-            console.error("Error parsing response as text:", textError);
-            console.error("Original error:", error);
-            throw new Error("Gagal memproses respons dari server");
-          }
-        }
-      } catch (error) {
-        console.error("Error updating lembaga pendidikan:", error);
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : "Gagal mengupdate lembaga pendidikan"
-        );
-        return false;
-      } finally {
-        lembagaPendidikan.edit.loading = false;
-      }
-    },
-    reset() {
-      lembagaPendidikan.edit.id = "";
-      lembagaPendidikan.edit.form = { ...lembagaPendidikanDefaultForm };
     },
   },
 });

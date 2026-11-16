@@ -8,43 +8,22 @@ import { useState } from 'react';
 import { CartesianGrid, Line, LineChart as RechartsLineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
-
-interface StatistikData {
-  id: string;
-  tahun: number;
-  jumlah: number;
-  icon: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface ProgramKemiskinanData {
-  id: string;
-  nama: string;
-  deskripsi: string;
-  icon: string;
-  statistik: StatistikData | null;
-  isActive: boolean;
-  statistikId: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Link } from 'next-view-transitions';
+import { programHref } from './_com/program-kemiskinan.source';
+import { PROGRAM_KARTU_TEXT } from './_com/program-kemiskinan.text';
 
 function Page() {
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const state = useProxy(programKemiskinanState)
 
+  // Statistik program kini opsional: program tanpa statistik dilewati.
   const statistikData = state.findMany.data
-    .filter((item): item is ProgramKemiskinanData & { statistik: StatistikData } => {
-      return !!item?.statistik && 
-             item.statistik.tahun !== undefined && 
-             item.statistik.jumlah !== undefined;
+    .flatMap((item) => {
+      const statistik = item?.statistik;
+      if (!statistik || statistik.tahun === undefined || statistik.jumlah === undefined) return [];
+      return [{ tahun: Number(statistik.tahun) || 0, jumlah: Number(statistik.jumlah) || 0 }];
     })
-    .map(item => ({
-      tahun: Number(item.statistik.tahun) || 0,
-      jumlah: Number(item.statistik.jumlah) || 0,
-    }))
     .sort((a, b) => a.tahun - b.tahun)
     .filter(item => !isNaN(item.tahun) && !isNaN(item.jumlah));
 
@@ -117,7 +96,13 @@ function Page() {
           >
             {state.findMany.data.map(v => {
               return (
-                <Paper p={{ base: 'lg', md: 'xl' }} key={v.id}>
+                <Paper
+                  p={{ base: 'lg', md: 'xl' }}
+                  key={v.id}
+                  component={Link}
+                  href={programHref(v)}
+                  style={{ display: 'block', textDecoration: 'none' }}
+                >
                   <Title
                     order={3}
                     fw="bold"
@@ -133,6 +118,9 @@ function Page() {
                     style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                     dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                   />
+                  <Text mt="sm" fw={600} c={colors['blue-button']}>
+                    {PROGRAM_KARTU_TEXT.lihatPenerima}
+                  </Text>
                 </Paper>
               )
             })}

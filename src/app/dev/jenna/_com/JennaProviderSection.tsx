@@ -1,26 +1,23 @@
 'use client';
-import { Badge, Group, SegmentedControl, Stack, Tabs, Text } from '@mantine/core';
-import { useState } from 'react';
+import { Box, SimpleGrid } from '@mantine/core';
+import { useId, useState } from 'react';
 import { useSnapshot } from 'valtio';
 import {
-  JENNA_CHAT_PROTOCOLS,
   JENNA_PROTOCOL_SLOT,
   JENNA_SLOT_PROTOCOL,
   type JennaChatProtocol,
   type JennaSlot,
 } from '@/lib/jenna/types';
-import { useDarkMode } from '@/state/darkModeStore';
-import { themeTokens } from '@/utils/themeTokens';
 import jennaState from '../../_state/jenna-state';
 import { ConfirmModal } from '../../_com/ConfirmModal';
 import { SectionCard } from '../../_com/SectionCard';
+import { JennaProviderCard } from './JennaProviderCard';
 import { JennaProviderForm } from './JennaProviderForm';
 import { PROTOCOL_LABEL } from './protocol';
 
-/** Pemilihan protokol aktif + form tiap slot provider (tab). */
+/** Kartu tiap slot provider (pilih form + ganti protokol aktif) dan form slot terpilih. */
 export function JennaProviderSection() {
-  const { isDark } = useDarkMode();
-  const tokens = themeTokens(isDark);
+  const panelIdPrefix = useId();
   const snap = useSnapshot(jennaState);
   const config = snap.config;
   const [tab, setTab] = useState<JennaSlot>(
@@ -50,60 +47,44 @@ export function JennaProviderSection() {
   return (
     <SectionCard
       title="Provider"
-      description="Layanan AI yang dipakai Jenna. Isi kedua provider bila perlu, lalu pilih satu sebagai protokol aktif."
+      description="Pilih provider yang dipakai Jenna untuk chat publik. Klik kartu untuk mengatur."
     >
-      <Stack gap={6}>
-        <Text size="sm" fw={500} c={tokens.colors.text.primary} id="jenna-protocol-label">
-          Protokol aktif
-        </Text>
-        <SegmentedControl
-          aria-labelledby="jenna-protocol-label"
-          fullWidth
-          value={settings.chatProtocol}
-          disabled={snap.saving !== null}
-          onChange={(value) => {
-            if (value !== settings.chatProtocol) setPendingProtocol(value as JennaChatProtocol);
-          }}
-          data={JENNA_CHAT_PROTOCOLS.map((protocol) => ({ value: protocol, label: PROTOCOL_LABEL[protocol] }))}
-        />
-        <Text size="xs" c={tokens.colors.text.muted}>
-          Chat publik hanya memakai provider dari protokol aktif.
-        </Text>
-      </Stack>
-
-      <Tabs value={tab} onChange={(value) => value && setTab(value as JennaSlot)} keepMounted>
-        <Tabs.List grow>
-          {providers.map((p) => {
-            const protocol = JENNA_SLOT_PROTOCOL[p.slot];
-            return (
-              <Tabs.Tab key={p.slot} value={p.slot}>
-                <Group gap={6} wrap="nowrap" justify="center">
-                  <span>{PROTOCOL_LABEL[protocol]}</span>
-                  {protocol === settings.chatProtocol && (
-                    <Badge size="xs" variant="filled" color="blue">
-                      Aktif
-                    </Badge>
-                  )}
-                  {snap.dirty[p.slot] && (
-                    <Badge size="xs" variant="light" color="yellow" aria-label="Ada perubahan belum disimpan">
-                      •
-                    </Badge>
-                  )}
-                </Group>
-              </Tabs.Tab>
-            );
-          })}
-        </Tabs.List>
-        {providers.map((p) => (
-          <Tabs.Panel key={p.slot} value={p.slot}>
-            <JennaProviderForm
+      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+        {providers.map((p) => {
+          const protocol = JENNA_SLOT_PROTOCOL[p.slot];
+          return (
+            <JennaProviderCard
+              key={p.slot}
               provider={p}
-              cryptoConfigured={cryptoConfigured}
-              live={settings.enabled && JENNA_SLOT_PROTOCOL[p.slot] === settings.chatProtocol}
+              active={protocol === settings.chatProtocol}
+              selected={tab === p.slot}
+              dirty={Boolean(snap.dirty[p.slot])}
+              testing={snap.testingSlot === p.slot}
+              panelId={`${panelIdPrefix}-${p.slot}`}
+              activateDisabled={snap.saving !== null}
+              onSelect={() => setTab(p.slot)}
+              onActivate={() => setPendingProtocol(protocol)}
             />
-          </Tabs.Panel>
-        ))}
-      </Tabs>
+          );
+        })}
+      </SimpleGrid>
+
+      {/* Semua form tetap ter-mount supaya draf & status dirty tiap slot tidak hilang saat pindah kartu. */}
+      {providers.map((p) => (
+        <Box
+          key={p.slot}
+          id={`${panelIdPrefix}-${p.slot}`}
+          role="region"
+          aria-label={`Pengaturan ${PROTOCOL_LABEL[JENNA_SLOT_PROTOCOL[p.slot]]}`}
+          hidden={tab !== p.slot}
+        >
+          <JennaProviderForm
+            provider={p}
+            cryptoConfigured={cryptoConfigured}
+            live={settings.enabled && JENNA_SLOT_PROTOCOL[p.slot] === settings.chatProtocol}
+          />
+        </Box>
+      ))}
 
       <ConfirmModal
         opened={pendingProtocol !== null}

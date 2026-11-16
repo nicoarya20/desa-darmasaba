@@ -18,12 +18,13 @@ export const UMKM_TABS: readonly UmkmTab[] = [
 
 /**
  * Tab yang DISEMBUNYIKAN (bukan dihapus) sejak 2026-11-12 atas permintaan desa, sementara.
- * Halaman, state, dan API-nya tetap aktif; hanya tombol tab & menu sidebar yang tak tampil.
+ * Produk & Kategori Produk dimunculkan lagi 2026-11-16 atas permintaan desa.
+ * Halaman, state, dan API-nya tetap aktif; hanya tombol tab yang tak tampil.
  * Menampilkan/menyembunyikan 'penjualan' WAJIB bersamaan dengan saklar `UMKM_PESANAN_TERCATAT`
  * (src/lib/umkm-pesanan.ts) — dikunci __tests__/api/umkm_hubungi_penjual_wa.test.tsx.
  * Cara memunculkan lagi: docs/debt/2026-11-12-umkm-tab-disembunyikan.md
  */
-export const HIDDEN_UMKM_TABS: readonly UmkmTabValue[] = ['dashboard', 'produk', 'penjualan', 'kategori-produk'];
+export const HIDDEN_UMKM_TABS: readonly UmkmTabValue[] = ['dashboard', 'penjualan'];
 
 /** Tab yang ditampilkan = semua tab kecuali yang ada di daftar tersembunyi. */
 export function visibleUmkmTabs(

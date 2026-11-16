@@ -88,7 +88,7 @@ model FileStorage {
   PelayananSuratKeteranganImage2 PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage2")
   PasarDesa                      PasarDesa[]
   PegawaiBumDes                  PegawaiBumDes[]
-  DesaDigital                    DesaDigital[]
+  InovasiTeknologiDesa           InovasiTeknologiDesa[]
   InfoTekno                      InfoTekno[]
   PengaduanMasyarakat            PengaduanMasyarakat[]
   KegiatanDesa                   KegiatanDesa[]
@@ -122,7 +122,22 @@ model FileStorage {
   UnitUsahaBumDes  UnitUsahaBumDes[]
   FotoProfilBumDes FotoProfilBumDes[]
 
+  BankSampahFotoBagan    KeteranganBankSampahTerdekat[] @relation("BankSampahFotoBagan")
+  PengurusBankSampah     PengurusBankSampah[]
+  FotoKegiatanBankSampah FotoKegiatanBankSampah[]
+  LembagaFotoSekolah     Lembaga[]                      @relation("LembagaFotoSekolah")
+  LembagaFotoBagan       Lembaga[]                      @relation("LembagaFotoBagan")
+  PengurusLembaga        PengurusLembaga[]
+  FotoKegiatanLembaga    FotoKegiatanLembaga[]
+
+  PustuFotoBagan    Puskesmas[]         @relation("PustuFotoBagan")
+  PengurusPustu     PengurusPustu[]
+  FotoKegiatanPustu FotoKegiatanPustu[]
+
   PerangkatDesa PerangkatDesa[]
+
+  KlasterPosyandu      KlasterPosyandu[]
+  FotoKegiatanPosyandu FotoKegiatanPosyandu[]
 }
 
 //========================================= MENU LANDING PAGE ========================================= //
@@ -148,6 +163,8 @@ model ProgramInovasi {
   link        String?      @db.VarChar(255)
   // Galeri dokumentasi kegiatan program (bukti pelaksanaan), terpisah dari logo/cover `image`.
   images      FileStorage[] @relation("ProgramInovasiImages")
+  // Bank sampah / TPS yang menjalankan program ini (tab Profil modal bank sampah publik).
+  bankSampah  KeteranganBankSampahTerdekat[] @relation("BankSampahProgramInovasi")
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?    @default(now())
@@ -1315,21 +1332,63 @@ model Banjar {
 
 // ========================================= POSYANDU ========================================= //
 model Posyandu {
-  id              String       @id @default(cuid())
+  id              String                 @id @default(cuid())
   name            String
   nomor           String
   deskripsi       String
   jadwalPelayanan String
-  image           FileStorage? @relation(fields: [imageId], references: [id])
+  image           FileStorage?           @relation(fields: [imageId], references: [id])
   imageId         String?
-  banjar          Banjar?      @relation(fields: [banjarId], references: [id])
+  banjar          Banjar?                @relation(fields: [banjarId], references: [id])
   banjarId        String?
+  // Alamat tempat posyandu di banjar; nullable karena data lama belum punya alamat.
+  alamat          String?                @db.Text
   ibuHamil        IbuHamil[]
   balita          Balita[]
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  deletedAt       DateTime     @default(now())
-  isActive        Boolean      @default(true)
+  fotoKegiatan    FotoKegiatanPosyandu[]
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  deletedAt       DateTime               @default(now())
+  isActive        Boolean                @default(true)
+}
+
+// Deskripsi umum halaman Posyandu (singleton, pola ProfilBumDes): satu baris ber-id tetap, ditulis lewat upsert.
+model ProfilPosyandu {
+  id             String   @id @default("profil-posyandu")
+  deskripsi      String   @db.Text
+  fungsiKegiatan String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Kegiatan posyandu per klaster sasaran. `sasaran` dibatasi balita | remaja | lansia (validasi API + CHECK di
+// migrasi) dan unik: tiap klaster tepat satu baris, dibuat default oleh migrasi 20261116160000_konten_posyandu.
+model KlasterPosyandu {
+  id           String       @id @default(cuid())
+  sasaran      String       @unique
+  judul        String
+  deskripsi    String       @db.Text
+  jamPelayanan String?
+  image        FileStorage? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId      String?
+  urutan       Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+// Galeri foto lokasi & kader posyandu banjar (fondasi konten bersama); hapus permanen, tanpa panel Sampah.
+model FotoKegiatanPosyandu {
+  id         String      @id @default(cuid())
+  posyandu   Posyandu    @relation(fields: [posyanduId], references: [id], onDelete: Cascade)
+  posyanduId String
+  image      FileStorage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId    String
+  keterangan String?
+  urutan     Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([posyanduId, urutan])
 }
 
 // ========================================= PUSKESMAS ========================================= //
@@ -1347,13 +1406,62 @@ model Puskesmas {
   updatedAt DateTime        @updatedAt
   deletedAt DateTime        @default(now())
   isActive  Boolean         @default(true)
+
+  // Konten PUSTU (Puskesmas Pembantu) di halaman publik. Semua opsional agar baris lama tetap valid.
+  // Daftar { platform, url }; divalidasi skema bersama src/lib/konten-bersama/media-sosial.validation.ts.
+  mediaSosial         Json?
+  // Daftar { judul, deskripsi }; divalidasi src/lib/pustu/pustu.validation.ts (dibaca utuh bersama barisnya).
+  layananUnggulan     Json?
+  linkPetunjukArah    String?
+  // Teks kaya editor admin, disanitasi saat simpan (src/lib/rich-text-server.ts).
+  prosedurPendaftaran String?             @db.Text
+  tarifBpjs           String?             @db.Text
+  tarifUmum           String?             @db.Text
+  fotoBaganStruktur   FileStorage?        @relation("PustuFotoBagan", fields: [fotoBaganStrukturId], references: [id], onDelete: SetNull)
+  fotoBaganStrukturId String?
+  pengurus            PengurusPustu[]
+  fotoKegiatan        FotoKegiatanPustu[]
+}
+
+// Pengurus PUSTU (struktur organisasi sederhana: nama + jabatan, tanpa NIP); hapus = hapus baris + foto.
+model PengurusPustu {
+  id        String       @id @default(cuid())
+  pustu     Puskesmas    @relation(fields: [pustuId], references: [id], onDelete: Cascade)
+  pustuId   String
+  nama      String
+  jabatan   String
+  image     FileStorage? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId   String?
+  urutan    Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([pustuId, urutan])
+}
+
+// Galeri foto PUSTU (lokasi, fasilitas, kegiatan); hapus permanen (tanpa panel Sampah).
+model FotoKegiatanPustu {
+  id         String      @id @default(cuid())
+  pustu      Puskesmas   @relation(fields: [pustuId], references: [id], onDelete: Cascade)
+  pustuId    String
+  image      FileStorage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId    String
+  keterangan String?
+  urutan     Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([pustuId, urutan])
 }
 
 model JamOperasional {
   id        String      @id @default(cuid())
-  workDays  String
-  weekDays  String
-  holiday   String
+  // Kolom lama (jam buka, jam tutup, teks akhir pekan/libur) tidak ditulis lagi; dipertahankan agar data lama
+  // tidak hilang. Pengganti: `jadwal` daftar { hari, jam } (format desa: "Senin – Kamis" / "08.00 – 14.00 WITA").
+  workDays  String?
+  weekDays  String?
+  holiday   String?
+  jadwal    Json?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   deletedAt DateTime    @default(now())
@@ -1363,10 +1471,12 @@ model JamOperasional {
 
 model KontakPuskesmas {
   id              String      @id @default(cuid())
-  kontakPuskesmas String
-  email           String
-  facebook        String
-  kontakUGD       String
+  // Semua opsional: tidak semua PUSTU punya email/telepon. `kontakUGD` = "Kontak Darurat / Ambulans".
+  kontakPuskesmas String?
+  email           String?
+  // Lama: tidak ditulis lagi, nilainya dipindah ke `Puskesmas.mediaSosial` (migrasi 20261116150000_konten_pustu).
+  facebook        String?
+  kontakUGD       String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   deletedAt       DateTime    @default(now())
@@ -1798,15 +1908,35 @@ model UnitUsahaBumDes {
 
 // ========================================= PROGRAM KEMISKINAN ========================================= //
 model ProgramKemiskinan {
-  id          String               @id @default(uuid())
+  id          String                      @id @default(uuid())
   nama        String
+  // Penanda URL publik (/ekonomi/program-kemiskinan/{slug}); null = halaman detail memakai id.
+  slug        String?                     @unique
   deskripsi   String
   icon        String
-  isActive    Boolean              @default(true)
-  statistikId String?              @unique
-  statistik   StatistikKemiskinan? @relation(fields: [statistikId], references: [id])
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  isActive    Boolean                     @default(true)
+  statistikId String?                     @unique
+  statistik   StatistikKemiskinan?        @relation(fields: [statistikId], references: [id])
+  penerima    PenerimaProgramKemiskinan[]
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @updatedAt
+}
+
+// Penerima bantuan per program per tahun. Sengaja hanya nama + alamat (keputusan user 2026-11-16):
+// NIK, tanggal lahir, nomor KK, dst. dari BNBA desa tidak disimpan.
+model PenerimaProgramKemiskinan {
+  id        String            @id @default(cuid())
+  programId String
+  program   ProgramKemiskinan @relation(fields: [programId], references: [id], onDelete: Cascade)
+  tahun     Int
+  nama      String
+  alamat    String
+  urutan    Int               @default(0)
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([programId, tahun])
 }
 
 model StatistikKemiskinan {
@@ -1945,17 +2075,25 @@ model Pembiayaan {
 }
 
 // ========================================= MENU INOVASI ========================================= //
-// ========================================= DESA DIGITAL / SMART VILLAGE ========================================= //
-model DesaDigital {
+// ========================================= INOVASI TEKNOLOGI DESA ========================================= //
+// Gabungan Desa Digital / Smart Village + Info Teknologi Tepat Guna (isi kedua menu sama, dibedakan `kategori`).
+// Tabel fisik tetap "DesaDigital" supaya id, FK gambar, dan data lama utuh; baris InfoTekno disalin ke sini dengan
+// kategori "tepat-guna" oleh migrasi 20261116120000_inovasi_teknologi_desa (juga memasang CHECK nilai kategori).
+// Nilai & label kategori: src/lib/inovasi-teknologi/kategori.ts.
+model InovasiTeknologiDesa {
   id        String       @id @default(cuid())
   name      String
   deskripsi String       @db.Text
+  kategori  String       @default("digital")
   image     FileStorage? @relation(fields: [imageId], references: [id])
   imageId   String?
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   deletedAt DateTime     @default(now())
   isActive  Boolean      @default(true)
+
+  @@index([kategori])
+  @@map("DesaDigital")
 }
 
 // ========================================= PROGRAM KREATIF ========================================= //
@@ -1996,7 +2134,10 @@ model MitraKolaborasi {
   isActive  Boolean      @default(true)
 }
 
-// ========================================= INFO TEKHNOLOGI TEPAT GUNA ========================================= //
+// ========================================= INFO TEKHNOLOGI TEPAT GUNA (CADANGAN) ========================================= //
+// Tidak dipakai kode lagi: isinya sudah disalin ke InovasiTeknologiDesa (kategori "tepat-guna"). Model dipertahankan
+// supaya schema tetap selaras dengan DB (tabel sengaja tidak di-drop sebagai cadangan sampai prod terverifikasi).
+// Hutang drop tabel: docs/debt/2026-11-16-drop-info-tekno.md.
 model InfoTekno {
   id        String       @id @default(cuid())
   name      String
@@ -2102,6 +2243,48 @@ model KeteranganBankSampahTerdekat {
   updatedAt        DateTime @updatedAt
   deletedAt        DateTime @default(now())
   isActive         Boolean  @default(true)
+
+  // Detail di modal publik (Profil/Struktur/Dokumentasi). Semua opsional agar baris lama tetap valid.
+  deskripsi           String?                  @db.Text
+  kontak              String?
+  // Daftar { platform, url }; divalidasi skema bersama src/lib/konten-bersama/media-sosial.validation.ts.
+  mediaSosial         Json?
+  fotoBaganStruktur   FileStorage?             @relation("BankSampahFotoBagan", fields: [fotoBaganStrukturId], references: [id], onDelete: SetNull)
+  fotoBaganStrukturId String?
+  pengurus            PengurusBankSampah[]
+  fotoKegiatan        FotoKegiatanBankSampah[]
+  programInovasi      ProgramInovasi[]         @relation("BankSampahProgramInovasi")
+}
+
+// Pengurus bank sampah (struktur organisasi sederhana: nama + jabatan); hapus = hapus baris + foto.
+model PengurusBankSampah {
+  id           String                       @id @default(cuid())
+  bankSampah   KeteranganBankSampahTerdekat @relation(fields: [bankSampahId], references: [id], onDelete: Cascade)
+  bankSampahId String
+  nama         String
+  jabatan      String
+  image        FileStorage?                 @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId      String?
+  urutan       Int                          @default(0)
+  createdAt    DateTime                     @default(now())
+  updatedAt    DateTime                     @updatedAt
+
+  @@index([bankSampahId, urutan])
+}
+
+// Galeri foto kegiatan bank sampah; hapus permanen (tanpa panel Sampah).
+model FotoKegiatanBankSampah {
+  id           String                       @id @default(cuid())
+  bankSampah   KeteranganBankSampahTerdekat @relation(fields: [bankSampahId], references: [id], onDelete: Cascade)
+  bankSampahId String
+  image        FileStorage                  @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId      String
+  keterangan   String?
+  urutan       Int                          @default(0)
+  createdAt    DateTime                     @default(now())
+  updatedAt    DateTime                     @updatedAt
+
+  @@index([bankSampahId, urutan])
 }
 
 // ========================================= PORGRAM PENGHIJAUAN ========================================= //
@@ -2273,6 +2456,54 @@ model Lembaga {
   updatedAt         DateTime          @updatedAt
   deletedAt         DateTime          @default(now())
   isActive          Boolean           @default(true)
+
+  // Detail sekolah untuk halaman detail publik. Semua opsional agar baris lama tetap valid.
+  deskripsi           String?               @db.Text
+  alamat              String?
+  kontak              String?
+  // Daftar { platform, url }; divalidasi skema bersama src/lib/konten-bersama/media-sosial.validation.ts.
+  mediaSosial         Json?
+  lat                 Float?
+  lng                 Float?
+  // Link dari desa (mis. maps.app.goo.gl); kosong = tombol publik memakai rute ke koordinat.
+  linkGoogleMaps      String?
+  fotoSekolah         FileStorage?          @relation("LembagaFotoSekolah", fields: [fotoSekolahId], references: [id], onDelete: SetNull)
+  fotoSekolahId       String?
+  fotoBaganStruktur   FileStorage?          @relation("LembagaFotoBagan", fields: [fotoBaganStrukturId], references: [id], onDelete: SetNull)
+  fotoBaganStrukturId String?
+  pengurus            PengurusLembaga[]
+  fotoKegiatan        FotoKegiatanLembaga[]
+}
+
+// Struktur organisasi sederhana sekolah (opsional; desa mengisi untuk TK); hapus = hapus baris + foto.
+model PengurusLembaga {
+  id        String       @id @default(cuid())
+  lembaga   Lembaga      @relation(fields: [lembagaId], references: [id], onDelete: Cascade)
+  lembagaId String
+  nama      String
+  jabatan   String
+  image     FileStorage? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId   String?
+  urutan    Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([lembagaId, urutan])
+}
+
+// Galeri foto kegiatan sekolah; hapus permanen (tanpa panel Sampah).
+model FotoKegiatanLembaga {
+  id         String      @id @default(cuid())
+  lembaga    Lembaga     @relation(fields: [lembagaId], references: [id], onDelete: Cascade)
+  lembagaId  String
+  image      FileStorage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId    String
+  keterangan String?
+  urutan     Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([lembagaId, urutan])
 }
 
 model Siswa {
@@ -2535,6 +2766,8 @@ model User {
   menuVisibilityUpdates MenuVisibility[]
   jennaSettingsUpdates  JennaSettings[]  @relation("JennaSettingsUpdatedBy")
   jennaProviderUpdates  JennaProvider[]  @relation("JennaProviderUpdatedBy")
+  auditLogs             AuditLog[]
+  loginLogs             LoginLog[]
 
   @@map("users")
 }
@@ -2640,6 +2873,7 @@ model JennaProvider {
   model           String    @default("")
   temperature     Float?
   maxTokens       Int?
+  reasoningEffort String?
   timeoutMs       Int       @default(30000)
   lastTestAt      DateTime?
   lastTestOk      Boolean?
@@ -3073,4 +3307,39 @@ model PerangkatDesa {
 
   @@index([posisiId])
   @@index([imageId])
+}
+
+// Jejak aksi admin (append-only). `meta` hanya id + nilai lama/baru field non-PII.
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorId     String?
+  actor       User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorEmail  String?
+  actorRoleId String?
+  action      String
+  targetType  String
+  targetId    String?
+  summary     String
+  meta        Json?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([action, createdAt])
+  @@index([actorId, createdAt])
+}
+
+// Riwayat login staf; `result` divalidasi di kode (success | blocked_inactive).
+model LoginLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String?
+  roleId    String?
+  result    String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
 }

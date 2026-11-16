@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { BANK_SAMPAH_LIST_OMIT } from "./bank-sampah.data";
 
-// Di findMany.ts
+// Batas atas `limit` agar satu request tidak menarik seluruh tabel.
+const MAX_LIMIT = 100;
+
+/** GET (publik): daftar bank sampah berpaginasi; ringan (tanpa deskripsi/medsos/relasi). */
 export default async function keteranganBankSampahTerdekatFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
-  const limit = Number(context.query.limit) || 10;
+  const limit = Math.min(MAX_LIMIT, Math.max(1, Number(context.query.limit) || 10));
   const search = (context.query.search as string) || '';
   const skip = (page - 1) * limit;
 
@@ -28,6 +32,7 @@ export default async function keteranganBankSampahTerdekatFindMany(context: Cont
         where,
         skip,
         take: limit,
+        omit: BANK_SAMPAH_LIST_OMIT,
         orderBy: { createdAt: 'desc' },
       }),
       prisma.keteranganBankSampahTerdekat.count({

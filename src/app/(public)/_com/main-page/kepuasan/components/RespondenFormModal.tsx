@@ -4,6 +4,7 @@ import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useProxy } from "valtio/utils";
 import { missingFormFields, submitResponden, toSelectOptions, type RequiredFormField } from "../kepuasan.logic";
+import { muatKepuasanPublik } from "../kepuasan.source";
 import { KEPUASAN_TEXT } from "../kepuasan.text";
 
 const T = KEPUASAN_TEXT.form;
@@ -14,7 +15,7 @@ type Props = { opened: boolean; onClose: () => void };
  * Form "Ajukan Responden". Kontrak: mengisi `indeksKepuasanState.responden.create.form`
  * { name, tanggal, jenisKelaminId, ratingId, kelompokUmurId } lalu memanggil `create.create()`.
  * `tanggal` tidak diisi pengunjung: diisi otomatis tanggal hari ini (jam lokal, "YYYY-MM-DD") saat submit.
- * Form direset + modal ditutup hanya bila `create()` mengembalikan true; bila gagal isian dipertahankan.
+ * Form direset + modal ditutup (lalu grafik publik dimuat ulang) hanya bila `create()` mengembalikan true; bila gagal isian dipertahankan.
  */
 export function RespondenFormModal({ opened, onClose }: Props) {
   const state = useProxy(indeksKepuasanState.responden);
@@ -56,6 +57,7 @@ export function RespondenFormModal({ opened, onClose }: Props) {
       onSuccess: () => {
         resetForm();
         handleClose();
+        void muatKepuasanPublik(); // grafik ikut menghitung responden baru
       },
     });
   };

@@ -22,30 +22,21 @@ export async function seedProgramKemiskinan() {
     console.log("📊 Statistik Kemiskinan seeded successfully");
   
     console.log("🔄 Seeding Program Kemiskinan...");
+    // Program bantuan (PKH, CPP, BLT Desa) punya slug URL publik; statistik hanya untuk entri yang
+    // membawa `tahun`. Penerima tidak di-seed: data warga diisi admin lewat impor CSV.
     for (const k of programKemiskinan) {
+      const statistik = k.tahun ? { connect: { tahun: k.tahun } } : undefined;
+      const data = {
+        nama: k.nama,
+        slug: k.slug ?? null,
+        deskripsi: k.deskripsi,
+        icon: k.icon,
+        statistik,
+      };
       await prisma.programKemiskinan.upsert({
         where: { id: k.id },
-        update: {
-          nama: k.nama,
-          deskripsi: k.deskripsi,
-          icon: k.icon,
-          statistik: {
-            connect: {
-              tahun: k.tahun, // 👈 BUKAN ID
-            },
-          },
-        },
-        create: {
-          id: k.id,
-          nama: k.nama,
-          deskripsi: k.deskripsi,
-          icon: k.icon,
-          statistik: {
-            connect: {
-              tahun: k.tahun,
-            },
-          },
-        },
+        update: data,
+        create: { id: k.id, ...data },
       });
     }
     console.log("✅ Program Kemiskinan seeded successfully");

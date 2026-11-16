@@ -1,6 +1,6 @@
 import { jadwalToText } from "@/lib/jadwal-pelayanan";
 import { Image } from "@mantine/core";
-import { IconCalendarTime, IconChevronRight, IconHeartHandshake, IconPhone } from "@tabler/icons-react";
+import { IconCalendarTime, IconChevronRight, IconHeartHandshake, IconMapPin, IconPhone } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
 import { useState } from "react";
 import { banjarLabel, posyanduDetailHref, telHref } from "./posyandu.logic";
@@ -10,12 +10,13 @@ import r from "./posyandu-rows.module.css";
 
 /**
  * Satu baris direktori: foto (hanya bila ada; tanpa foto → ikon di kotak putih, bukan gambar "No image") ·
- * banjar + nama + jadwal · pil telepon (tel:) · chevron. Seluruh baris = tautan detail lewat tautan nama yang diregangkan.
+ * banjar + nama + jadwal + alamat (bila ada) · pil telepon (tel:) · chevron. Seluruh baris = tautan detail lewat tautan nama yang diregangkan.
  */
 export function PosyanduRow({ item }: { item: PosyanduItem }) {
   const jadwal = jadwalToText(item.jadwalPelayanan);
   const nomor = item.nomor?.trim() ?? "";
   const tel = telHref(nomor);
+  const alamat = item.alamat?.trim() ?? "";
 
   return (
     <li className={r.row}>
@@ -29,6 +30,12 @@ export function PosyanduRow({ item }: { item: PosyanduItem }) {
           <IconCalendarTime size={16} stroke={1.75} aria-hidden className={r.jadwalIcon} />
           <span>{jadwal || T.jadwalKosong}</span>
         </p>
+        {alamat ? (
+          <p className={r.jadwal}>
+            <IconMapPin size={16} stroke={1.75} aria-hidden className={r.jadwalIcon} />
+            <span>{alamat}</span>
+          </p>
+        ) : null}
       </div>
       <div className={r.actions}>
         {tel ? (

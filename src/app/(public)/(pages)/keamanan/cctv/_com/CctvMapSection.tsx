@@ -1,18 +1,16 @@
 'use client';
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useMemo, useRef } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { FocusOnSelect, type MapSelection } from "@/app/(public)/_com/map-list/map-focus";
+import { useMemo, useRef } from "react";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { MAP_FIT_MAX_ZOOM, MAP_FOCUS_ZOOM, STATUS_META, type CctvStatusKey } from "./cctv.meta";
 import type { CctvItem } from "./cctv.source";
 import { CCTV_TEXT as T, STATUS_LABEL } from "./cctv.text";
 import x from "./cctv-explorer.module.css";
 
-/** Titik terpilih + asalnya; `n` naik tiap pilihan agar memilih titik yang sama dua kali tetap memfokuskan peta. */
-export type Selection = { id: string; source: "list" | "map"; n: number };
-
 type MappedItem = CctvItem & { latitude: number; longitude: number };
-type Props = { items: readonly MappedItem[]; selection: Selection | null; onSelect: (id: string | null) => void };
+type Props = { items: readonly MappedItem[]; selection: MapSelection | null; onSelect: (id: string | null) => void };
 
 /** Peta Leaflet titik CCTV: warna penanda = status; penanda terpilih membesar dan berada di atas penanda lain. */
 export default function CctvMapSection({ items, selection, onSelect }: Props) {
@@ -23,6 +21,7 @@ export default function CctvMapSection({ items, selection, onSelect }: Props) {
   // Batas awal dihitung sekali (MapContainer hanya membaca properti awal); saringan cari tidak menggeser peta.
   // eslint-disable-next-line react-hooks/exhaustive-deps -- sengaja hanya saat mount
   const view = useMemo(() => initialView(items), []);
+  const focused = items.find((item) => item.id === selection?.id);
 
   return (
     <MapContainer {...view} scrollWheelZoom={false} className={x.map} aria-label={T.mapLabel}>
@@ -61,35 +60,14 @@ export default function CctvMapSection({ items, selection, onSelect }: Props) {
           </Marker>
         );
       })}
-      <FocusOnSelect selection={selection} items={items} markers={markers} />
+      <FocusOnSelect
+        selection={selection}
+        position={focused ? [focused.latitude, focused.longitude] : null}
+        markers={markers}
+        zoom={MAP_FOCUS_ZOOM}
+      />
     </MapContainer>
   );
-}
-
-/** Pilihan dari daftar → terbang ke titik (langsung bila reduced motion) lalu buka popup-nya. */
-function FocusOnSelect({ selection, items, markers }: { selection: Selection | null; items: readonly MappedItem[]; markers: { current: Map<string, L.Marker> } }) {
-  const map = useMap();
-  useEffect(() => {
-    if (selection?.source !== "list") return;
-    const item = items.find((i) => i.id === selection.id);
-    if (!item) return;
-    const target = L.latLng(item.latitude, item.longitude);
-    const zoom = Math.max(map.getZoom(), MAP_FOCUS_ZOOM);
-    const open = () => markers.current.get(item.id)?.openPopup();
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      map.setView(target, zoom);
-      open();
-      return;
-    }
-    map.once("moveend", open);
-    map.flyTo(target, zoom, { duration: 0.6 });
-    // Pilihan baru sebelum terbang selesai: batalkan pembukaan popup titik lama.
-    return () => {
-      map.off("moveend", open);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- pemicu = pilihan baru (n), bukan perubahan saringan
-  }, [selection?.n]);
-  return null;
 }
 
 /** Isi popup penanda; span (bukan p) karena CSS Leaflet memberi margin besar pada p di dalam popup. */

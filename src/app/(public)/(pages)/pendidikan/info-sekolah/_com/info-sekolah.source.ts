@@ -1,4 +1,5 @@
 import { SORT_BY_JENJANG } from "@/lib/jenjang-pendidikan-urutan";
+import type { LembagaDetail } from "@/lib/lembaga-pendidikan/lembaga.types";
 import {
   buildRingkasan,
   type InfoSekolahQuery,
@@ -87,4 +88,12 @@ export async function loadPengajarPage({ jenjang, search, page }: InfoSekolahQue
     total: typeof body?.total === "number" ? body.total : items.length,
     totalPages: typeof body?.totalPages === "number" ? body.totalPages : 1,
   };
+}
+
+/** Detail satu sekolah untuk halaman detail publik; `null` = tidak ada atau sudah dinonaktifkan admin. */
+export async function loadLembagaDetail(id: string): Promise<LembagaDetail | null> {
+  const { status, body } = await getBody<LembagaDetail>(`${SEKOLAH_API}/lembagapendidikan/${encodeURIComponent(id)}`);
+  if (status === 404) return null;
+  const data = requireData(status, body, "detail lembaga pendidikan");
+  return data.isActive ? data : null;
 }

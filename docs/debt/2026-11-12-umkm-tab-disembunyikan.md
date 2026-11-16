@@ -2,18 +2,27 @@
 
 ## Apa yang disembunyikan & kenapa
 
-Atas permintaan desa, **untuk sementara** admin UMKM hanya menampilkan tab **Data UMKM**.
-Tab **Dashboard**, **Produk**, **Penjualan**, dan **Kategori Produk** **disembunyikan, bukan
-dihapus**:
+Atas permintaan desa, **untuk sementara** tab admin UMKM **Dashboard** dan **Penjualan**
+**disembunyikan, bukan dihapus**. Tab yang tampil: **Data UMKM**, **Produk**, dan
+**Kategori Produk**.
 
-- Halaman (`src/app/admin/(dashboard)/ekonomi/umkm/{dashboard,produk,penjualan,kategori-produk}`),
+Riwayat:
+- **2026-11-12** — hanya Data UMKM yang tampil; Dashboard, Produk, Penjualan, dan Kategori Produk
+  disembunyikan.
+- **2026-11-16** — Produk & Kategori Produk dimunculkan lagi atas permintaan desa. Dashboard &
+  Penjualan tetap disembunyikan; saklar `UMKM_PESANAN_TERCATAT` tetap `false`.
+
+Yang masih berlaku untuk tab tersembunyi:
+
+- Halaman (`src/app/admin/(dashboard)/ekonomi/umkm/{dashboard,penjualan}`),
   state Valtio (`src/app/admin/(dashboard)/_state/ekonomi/umkm/`), dan API
   (`src/app/api/[[...slugs]]/_lib/ekonomi/umkm/`) tetap ada dan tidak diubah — kecuali
   `POST .../penjualan/pesan` publik yang ditolak selama saklar pesanan mati (lihat di bawah).
 - Halaman tersebut masih bisa dibuka lewat URL langsung — yang hilang hanya tombol tab
   dan entry point menu.
-- Karena tinggal satu tab, bar tab (desktop & mobile) tidak dirender; layout hanya
-  menampilkan judul "Manajemen UMKM" + konten.
+- Karena tab tampil > 1, bar tab (desktop & mobile) dirender berisi 3 tab tersebut. Bila suatu
+  saat tinggal satu tab, bar tab otomatis tidak dirender (layout hanya judul "Manajemen UMKM" +
+  konten).
 
 ## File / konstanta yang mengatur
 
@@ -40,7 +49,7 @@ dihapus**:
 4. **Tab Penjualan & saklar pesanan diubah bersamaan.** Saat `penjualan` dihapus dari
    `HIDDEN_UMKM_TABS`, ubah `UMKM_PESANAN_TERCATAT` di `src/lib/umkm-pesanan.ts` menjadi `true`
    (dan sebaliknya). Test `umkm_hubungi_penjual_wa.test.tsx` gagal bila keduanya tidak selaras.
-   Sebaiknya tab Produk ikut dimunculkan agar admin bisa mengisi ulang stok. Setelah itu sesuaikan
+   Tab Produk sudah tampil (2026-11-16) sehingga admin bisa mengisi ulang stok. Setelah itu sesuaikan
    test yang mengunci keadaan nonaktif (`umkm_hubungi_penjual_wa.test.tsx` blok SSR & "keadaan saat
    ini", serta test "saklar mati" di `umkm_pesanan_publik.test.ts`).
 5. Bila semua tab sudah tampil kembali, hapus komentar hutang di `HIDDEN_UMKM_TABS` dan file ini.
