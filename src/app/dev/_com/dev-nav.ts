@@ -3,12 +3,15 @@ import {
   IconBug,
   IconChartBar,
   IconGauge,
+  IconHistory,
   IconHourglass,
+  IconLogin,
   IconMessages,
   IconMicrophone,
   IconPlugConnected,
   IconRobot,
   IconSettings,
+  IconShieldCheck,
   type Icon,
 } from '@tabler/icons-react';
 
@@ -19,6 +22,15 @@ export type DevNavEntry = DevNavLink | DevNavGroup;
 
 export const DEV_NAV: readonly DevNavEntry[] = [
   { label: 'Ringkasan Sistem', href: '/dev/ringkasan', icon: IconGauge },
+  {
+    label: 'Log',
+    basePath: '/dev/log',
+    icon: IconHistory,
+    children: [
+      { label: 'Log Audit', href: '/dev/log/audit', icon: IconShieldCheck },
+      { label: 'Log Login', href: '/dev/log/login', icon: IconLogin },
+    ],
+  },
   {
     label: 'Jenna',
     basePath: '/dev/jenna',

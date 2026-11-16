@@ -14,6 +14,7 @@ import { hasDirtySection, isNewTabClick, shouldConfirmLeave } from '@/app/dev/_c
 import { JENNA_PAGES, jennaPageMeta } from '@/app/dev/jenna/jenna-pages';
 
 const jenna = DEV_NAV.find((e): e is DevNavGroup => isDevNavGroup(e) && e.basePath === '/dev/jenna')!;
+const log = DEV_NAV.find((e): e is DevNavGroup => isDevNavGroup(e) && e.basePath === '/dev/log')!;
 const ringkasan = DEV_NAV.find((e): e is DevNavLink => !isDevNavGroup(e) && e.href === '/dev/ringkasan')!;
 const child = (href: string) => jenna.children.find((c) => c.href === href)!;
 
@@ -23,8 +24,12 @@ const activeHrefs = (pathname: string) =>
     .map((item) => item.href);
 
 describe('DEV_NAV', () => {
-  it('Ringkasan Sistem lalu grup Jenna berurutan alur kerja: Umum, Provider, Pengetahuan, Suara, Batas Pemakaian, Percakapan, Penggunaan, Log Error', () => {
-    expect(DEV_NAV.map((e) => e.label)).toEqual(['Ringkasan Sistem', 'Jenna']);
+  it('Ringkasan Sistem, grup Log (Log Audit, Log Login), lalu grup Jenna berurutan alur kerja: Umum, Provider, Pengetahuan, Suara, Batas Pemakaian, Percakapan, Penggunaan, Log Error', () => {
+    expect(DEV_NAV.map((e) => e.label)).toEqual(['Ringkasan Sistem', 'Log', 'Jenna']);
+    expect(log.children.map((c) => [c.label, c.href])).toEqual([
+      ['Log Audit', '/dev/log/audit'],
+      ['Log Login', '/dev/log/login'],
+    ]);
     expect(jenna.children.map((c) => [c.label, c.href])).toEqual([
       ['Umum', '/dev/jenna'],
       ['Provider', '/dev/jenna/provider'],
@@ -68,6 +73,8 @@ describe('isDevNavActive', () => {
     expect(activeHrefs('/dev/jenna/log-error')).toEqual(['/dev/jenna/log-error']);
     expect(activeHrefs('/dev/jenna/suara')).toEqual(['/dev/jenna/suara']);
     expect(activeHrefs('/dev/ringkasan')).toEqual(['/dev/ringkasan']);
+    expect(activeHrefs('/dev/log/audit')).toEqual(['/dev/log/audit']);
+    expect(activeHrefs('/dev/log/login')).toEqual(['/dev/log/login']);
   });
 
   it('Ringkasan tetap aktif untuk sub-path, bukan prefix mentah', () => {
@@ -101,6 +108,15 @@ describe('grup Jenna', () => {
     const open = { '/dev/jenna': false };
     openActiveGroups(open, '/dev/jenna');
     expect(open).toEqual({ '/dev/jenna': false });
+  });
+});
+
+describe('grup Log', () => {
+  it('aktif dan terbuka otomatis di /dev/log/*, tidak di /dev/logx', () => {
+    expect(isDevNavGroupActive('/dev/log/audit', log)).toBe(true);
+    expect(isDevNavGroupActive('/dev/log/login', log)).toBe(true);
+    expect(isDevNavGroupActive('/dev/logx', log)).toBe(false);
+    expect(openActiveGroups({}, '/dev/log/login')).toEqual({ '/dev/log': true });
   });
 });
 

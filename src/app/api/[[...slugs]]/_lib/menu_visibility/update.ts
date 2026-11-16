@@ -2,6 +2,7 @@ import { revalidateTag } from "next/cache";
 import type { Context } from "elysia";
 import prisma from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-auth";
+import { AUDIT_ACTIONS, audit } from "@/lib/audit";
 import { canManageMenuVisibility } from "@/lib/auth-policy";
 import { isKnownMenuKey, MENU_VISIBILITY_TAG, type MenuVisibilityRow } from "@/app/(public)/_com/menu-visibility.logic";
 
@@ -56,6 +57,13 @@ export default async function menuVisibilityUpdate(context: Context) {
   );
   // expire 0: navbar, pencarian & guard 404 publik langsung memakai pengaturan baru.
   revalidateTag(MENU_VISIBILITY_TAG, { expire: 0 });
+  await audit({
+    actor: authResult.user,
+    action: AUDIT_ACTIONS.MENU_VISIBILITY_UPDATE,
+    targetType: "menu_visibility",
+    summary: `Mengubah visibilitas ${items.length} menu publik`,
+    meta: { items: items.map(({ menuKey, isVisible }) => ({ menuKey, isVisible })) },
+  });
 
   const data: MenuVisibilityRow[] = await prisma.menuVisibility.findMany({
     select: { menuKey: true, isVisible: true },

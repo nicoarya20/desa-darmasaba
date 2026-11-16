@@ -244,7 +244,8 @@ describe('GET /system', () => {
     });
     if (!res.success) throw new Error('unreachable');
     expect(typeof res.data.version).toBe('string');
-    expect(res.data.env.every((e) => Object.keys(e).sort().join() === 'name,set')).toBe(true);
+    // Bentuk item dikunci: tidak ada field nilai env.
+    expect(res.data.env.every((e) => Object.keys(e).sort().join() === 'name,required,set')).toBe(true);
     expect(JSON.stringify(res)).not.toContain('nilai-rahasia');
     delete process.env.JENNA_TEST_SENTINEL;
   });

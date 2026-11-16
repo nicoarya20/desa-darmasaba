@@ -8,30 +8,21 @@ import { getJennaReadiness } from "@/lib/jenna/service";
 import type { ApiResult, ServiceStatus, SystemOverviewResponse } from "@/lib/jenna/types";
 import { buildEnvChecklist } from "./env-checklist";
 import { requireDeveloper } from "./guard";
-
-const PING_TIMEOUT_MS = 5000;
+import { readMigrationStatus } from "./migration-status";
+import { PING_TIMEOUT_MS, TimeoutError, withTimeout } from "./with-timeout";
 
 async function ping(run: () => Promise<unknown>, failMessage: string): Promise<ServiceStatus> {
   const started = Date.now();
-  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    await Promise.race([
-      run(),
-      new Promise((_, reject) => {
-        timer = setTimeout(() => reject(new Error("timeout")), PING_TIMEOUT_MS);
-      }),
-    ]);
+    await withTimeout(run());
     return { ok: true, latencyMs: Date.now() - started, error: null };
   } catch (err) {
     // Pesan generik: error driver bisa memuat host/kredensial koneksi.
-    const timedOut = err instanceof Error && err.message === "timeout";
     return {
       ok: false,
       latencyMs: Date.now() - started,
-      error: timedOut ? `Tidak merespons dalam ${PING_TIMEOUT_MS / 1000} detik.` : failMessage,
+      error: err instanceof TimeoutError ? `Tidak merespons dalam ${PING_TIMEOUT_MS / 1000} detik.` : failMessage,
     };
-  } finally {
-    clearTimeout(timer);
   }
 }
 
@@ -51,11 +42,12 @@ export async function systemOverviewGet(context: Context): Promise<ApiResult<Sys
   const guard = await requireDeveloper(context);
   if (!guard.ok) return guard.body;
 
-  const [version, database, minio, jenna] = await Promise.all([
+  const [version, database, minio, jenna, migrations] = await Promise.all([
     readVersion(),
     ping(() => prisma.$queryRaw`SELECT 1`, "Gagal terhubung ke database."),
     pingMinio(),
     getJennaReadiness(),
+    readMigrationStatus(),
   ]);
 
   return {
@@ -68,6 +60,7 @@ export async function systemOverviewGet(context: Context): Promise<ApiResult<Sys
       minio: { ...minio, bucket: MINIO_BUCKET },
       env: buildEnvChecklist((name) => process.env[name]),
       jenna,
+      migrations,
       generatedAt: new Date().toISOString(),
     },
   };

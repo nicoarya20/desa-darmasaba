@@ -11,7 +11,11 @@ import {
   describeHttpStatus,
   runConnectionTest,
 } from '@/lib/jenna/connection-test';
-import { buildEnvChecklist } from '@/app/api/[[...slugs]]/_lib/developer/env-checklist';
+import {
+  buildEnvChecklist,
+  SYSTEM_ENV_ALLOWLIST,
+  SYSTEM_ENV_REQUIRED,
+} from '@/app/api/[[...slugs]]/_lib/developer/env-checklist';
 
 const KEY = 'a'.repeat(64);
 const OTHER_KEY = 'b'.repeat(64);
@@ -362,10 +366,26 @@ describe('buildEnvChecklist', () => {
     const vals: Record<string, string> = { A: 'rahasia', B: '  ' };
     const list = buildEnvChecklist((n) => vals[n], ['A', 'B', 'C']);
     expect(list).toEqual([
-      { name: 'A', set: true },
-      { name: 'B', set: false },
-      { name: 'C', set: false },
+      { name: 'A', set: true, required: false },
+      { name: 'B', set: false, required: false },
+      { name: 'C', set: false, required: false },
     ]);
     expect(JSON.stringify(list)).not.toContain('rahasia');
+  });
+
+  it('penanda wajib: hanya env di daftar required', () => {
+    expect(buildEnvChecklist(() => undefined, ['A', 'B'], ['B'])).toEqual([
+      { name: 'A', set: false, required: false },
+      { name: 'B', set: false, required: true },
+    ]);
+  });
+
+  it('default: env inti wajib, env ber-default/berperingatan sendiri opsional', () => {
+    const required = Object.fromEntries(buildEnvChecklist(() => undefined).map((e) => [e.name, e.required]));
+    expect(required).toMatchObject({ DATABASE_URL: true, BETTER_AUTH_SECRET: true, MINIO_BUCKET: true, GOOGLE_CLIENT_SECRET: true });
+    for (const name of ['SUPER_ADMIN_EMAIL', 'DEVELOPER_EMAIL', 'MINIO_USE_SSL', 'JENNA_CREDENTIALS_KEY', 'NEXT_PUBLIC_BASE_URL']) {
+      expect(required[name]).toBe(false);
+    }
+    expect(SYSTEM_ENV_REQUIRED.every((n) => SYSTEM_ENV_ALLOWLIST.includes(n))).toBe(true);
   });
 });

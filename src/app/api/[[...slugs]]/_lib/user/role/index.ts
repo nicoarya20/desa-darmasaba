@@ -4,19 +4,12 @@ import roleDelete from "./del";
 import roleFindMany from "./findMany";
 import roleFindUnique from "./findUnique";
 import roleUpdate from "./updt";
-import { roleManagerBeforeHandle } from "../guard";
+import { resolveRoleManager } from "../guard";
 
 const Role = new Elysia({
     prefix: "/role",
     tags: ["User / Role"],
 })
-
- .post("/create", roleCreate, {
-    beforeHandle: roleManagerBeforeHandle,
-    body: t.Object({
-      name: t.String(),
-    }),
-  })
 
   .get("/findMany", roleFindMany)
   .get("/:id", async (context) => {
@@ -25,12 +18,21 @@ const Role = new Elysia({
     );
     return response;
   })
-  .put("/:id", roleUpdate, {
-    beforeHandle: roleManagerBeforeHandle,
-    body: t.Object({
-      name: t.String(),
-    }),
-  })
-  .delete("/del/:id", roleDelete, { beforeHandle: roleManagerBeforeHandle });
+  // resolve lokal grup: hanya mutasi yang butuh role 0/1 (+ `actor` untuk audit); GET tetap terbuka.
+  .guard({}, (app) =>
+    app
+      .resolve(resolveRoleManager)
+      .post("/create", roleCreate, {
+        body: t.Object({
+          name: t.String(),
+        }),
+      })
+      .put("/:id", roleUpdate, {
+        body: t.Object({
+          name: t.String(),
+        }),
+      })
+      .delete("/del/:id", roleDelete),
+  );
 
 export default Role;

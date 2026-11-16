@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.288] - 2026-11-16
+### Added
+- **Developer Console › Log › Log Audit (`/dev/log/audit`)**: catatan permanen siapa mengubah apa dan kapan, tidak bisa diubah atau dihapus dari aplikasi. Tercatat: ubah role, aktifkan/nonaktifkan, dan hapus user; tambah/ubah/hapus role; simpan setelan, provider, dan API key Jenna (hanya nama field dan host, API key tidak pernah dicatat); membuka dan menghapus percakapan Jenna; mengubah status dan menghapus Laporan Publik (tanpa isi laporan atau nama pelapor); mengubah visibilitas menu. Aksi hanya dicatat bila berhasil. Halaman punya filter aksi, pencarian, rentang tanggal, dan detail tiap catatan.
+- **Developer Console › Log › Log Login (`/dev/log/login`)**: riwayat login staf (berhasil, atau ditolak karena akun nonaktif) dengan IP dan perangkat, plus ringkasan 24 jam / 7 hari / ditolak / user unik. Riwayat dihapus otomatis setelah 90 hari.
+- **Ringkasan Sistem kini memberi peringatan "Perlu perhatian"** bila database atau MinIO bermasalah, env wajib belum diisi, kunci enkripsi Jenna belum ada, Jenna aktif tapi belum siap, atau ada migrasi gagal/tertunda. Bila tidak ada masalah tampil "Semua baik".
+- **Ringkasan Sistem menampilkan status migrasi database** (mis. "85/85 diterapkan", migrasi terakhir dan kapan).
+
+### Changed
+- Checklist env di Ringkasan Sistem membedakan env **wajib** dan **opsional**; env opsional yang kosong (mis. `SUPER_ADMIN_EMAIL`, `NEXT_PUBLIC_BASE_URL`) tidak lagi dianggap masalah.
+
+### Fixed
+- Gagal menghapus sesi akun nonaktif saat login kini tercatat di log server, tidak lagi diabaikan diam-diam.
+- Kolom IP di Log Login tidak lagi menampilkan `0000:0000:…:0000` yang membingungkan: login dari localhost diberi label "localhost / tidak diketahui", dan IPv6 (yang disimpan Better Auth sebagai subnet /64) ditampilkan ringkas, mis. `2001:db8:1:2::/64`, dengan alamat tersimpan di tooltip.
+
+### Operator
+- Jalankan migrasi `20261116170000_audit_log_login_log` (otomatis saat container start). Murni menambah tabel `AuditLog` dan `LoginLog`; data lain tidak diubah. Tidak ada env baru.
+- Log Login menyimpan IP dari header `x-forwarded-for`/`x-real-ip` yang dikirim reverse proxy; pastikan proxy menimpa (bukan meneruskan) header itu dari klien.
+
 ## [0.1.287] - 2026-11-16
 ### Fixed
 - **Keamanan: hanya Developer dan Super Admin yang bisa mengelola user dan role.** Sebelumnya akun Google mana pun yang login (role USER) bisa mengubah role siapa saja lewat API, termasuk menjadikan dirinya Super Admin, menghapus user lain, dan membaca daftar email staf. Kini API user (daftar, detail, ubah, nonaktifkan, hapus) serta tambah/ubah/hapus role menolak role selain Developer (0) dan Super Admin (1) dengan 401/403. Daftar nama role tetap bisa dibaca. Ini sejalan dengan menu User & Role di admin yang memang hanya tampil untuk dua role itu.
