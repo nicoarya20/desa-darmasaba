@@ -1,0 +1,199 @@
+/*
+ * PUSTU — bagian khusus di atas kerangka artikel kabar-detail.module.css (kolom 860px): ubin info
+ * (alamat, jam, kontak, kontak darurat), kartu layanan unggulan, tarif BPJS vs umum, dan kartu daftar.
+ * Variabel warna dari .section kabar.module.css. Breakpoint apple.com: ≤734px.
+ */
+
+/* ---------- Ubin info ---------- */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 24px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.tileHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.tileIcon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--brand);
+}
+
+.tileDarurat {
+  background: #fde8ea;
+}
+
+.tileDarurat .tileIcon {
+  color: #d70015;
+}
+
+.tileText {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.jadwalList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.jadwalList strong {
+  display: block;
+  font-weight: 600;
+}
+
+.subLabel {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.emailLink {
+  color: var(--brand);
+  font-size: 17px;
+}
+
+/* ---------- Blok bagian ---------- */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blockTitle {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------- Layanan unggulan & tarif ---------- */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  padding: 20px 22px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.cardTitle {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cardText {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.tarifLabel {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Daftar ---------- */
+.listHead {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.listTitle {
+  margin: 0;
+  font-size: 48px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.listLead {
+  margin: 0;
+  font-size: 19px;
+  color: var(--muted);
+}
+
+.listPhoto {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.listLink {
+  margin-top: 8px;
+  color: var(--brand);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+@media (max-width: 734px) {
+  .infoGrid,
+  .cardGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tile {
+    padding: 18px;
+  }
+
+  .blockTitle {
+    font-size: 24px;
+  }
+
+  .listTitle {
+    font-size: 32px;
+  }
+
+  .listLead {
+    font-size: 17px;
+  }
+}
