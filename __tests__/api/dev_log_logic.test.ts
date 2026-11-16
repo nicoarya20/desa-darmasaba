@@ -15,7 +15,9 @@ import {
   LOGIN_RESULT_LABELS,
   dateRangeParams,
   deviceLabel,
+  IP_LOCAL_UNKNOWN_LABEL,
   formatAuditMeta,
+  ipDisplay,
   logListQuery,
   loginResultColor,
   loginResultLabel,
@@ -98,6 +100,47 @@ describe('deviceLabel (User-Agent ringkas)', () => {
   it('kosong → tanda pisah', () => {
     expect(deviceLabel(null)).toBe('—');
     expect(deviceLabel('   ')).toBe('—');
+  });
+});
+
+describe('ipDisplay (IP tersimpan Better Auth)', () => {
+  it('kosong → tanda pisah', () => {
+    expect(ipDisplay(null)).toEqual({ text: '—', hint: null });
+    expect(ipDisplay('')).toEqual({ text: '—', hint: null });
+  });
+
+  it('IPv4 apa adanya; loopback → localhost dengan IP asli di hint', () => {
+    expect(ipDisplay('203.0.113.7')).toEqual({ text: '203.0.113.7', hint: null });
+    expect(ipDisplay('127.0.0.1')).toEqual({ text: 'localhost', hint: '127.0.0.1' });
+  });
+
+  it('IPv6 semua nol (expanded maupun "::") → localhost / tidak diketahui', () => {
+    for (const ip of ['0000:0000:0000:0000:0000:0000:0000:0000', '::']) {
+      const out = ipDisplay(ip);
+      expect(out.text).toBe(IP_LOCAL_UNKNOWN_LABEL);
+      expect(out.hint).toContain('::1');
+    }
+  });
+
+  it('IPv6 subnet /64 → ringkas RFC 5952 + /64, alamat tersimpan di hint', () => {
+    const stored = '2001:0db8:0001:0002:0000:0000:0000:0000';
+    const out = ipDisplay(stored);
+    expect(out.text).toBe('2001:db8:1:2::/64');
+    expect(out.hint).toContain(stored);
+    expect(out.hint).toContain('/64');
+    expect(ipDisplay('2001:0DB8:0000:0000:0000:0000:0000:0000').text).toBe('2001:db8::/64');
+  });
+
+  it('IPv6 penuh tanpa nol di belakang → ringkas RFC 5952 tanpa /64', () => {
+    expect(ipDisplay('2001:0db8:0000:0000:0001:0000:0000:0001').text).toBe('2001:db8::1:0:0:1');
+    expect(ipDisplay('2001:0db8:0001:0002:0003:0004:0005:0006').text).toBe('2001:db8:1:2:3:4:5:6');
+    expect(ipDisplay('2001:db8:1:2:3:4:5:6')).toEqual({ text: '2001:db8:1:2:3:4:5:6', hint: null });
+  });
+
+  it('bukan IP valid → apa adanya tanpa hint', () => {
+    for (const ip of ['unknown', '999.1.1.1', '1:2:3', '1::2::3', '2001:db8::zzzz']) {
+      expect(ipDisplay(ip)).toEqual({ text: ip, hint: null });
+    }
   });
 });
 

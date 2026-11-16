@@ -6,7 +6,15 @@ import { useDarkMode } from '@/state/darkModeStore';
 import { themeTokens } from '@/utils/themeTokens';
 import loginLogState from '../../_state/login-log-state';
 import { SectionCard } from '../../_com/SectionCard';
-import { LOGIN_RESULT_LABELS, deviceLabel, loginResultColor, loginResultLabel, roleLabel } from '../log.logic';
+import {
+  IP_LOCAL_UNKNOWN_LABEL,
+  LOGIN_RESULT_LABELS,
+  deviceLabel,
+  ipDisplay,
+  loginResultColor,
+  loginResultLabel,
+  roleLabel,
+} from '../log.logic';
 import { LogFilters } from './LogFilters';
 import { LogListBody, LogPersonCell, LogTimeCell } from './LogListBody';
 
@@ -16,6 +24,28 @@ const RESULT_OPTIONS = [
   { value: ALL, label: 'Semua' },
   ...(Object.entries(LOGIN_RESULT_LABELS) as [LoginLogResult, string][]).map(([value, label]) => ({ value, label })),
 ];
+
+function IpCell({ ip }: { ip: string | null }) {
+  const { text, hint } = ipDisplay(ip);
+  const isLabel = text === IP_LOCAL_UNKNOWN_LABEL;
+  const content = (
+    <Text
+      size="sm"
+      ff={isLabel ? undefined : 'monospace'}
+      c={isLabel ? 'dimmed' : undefined}
+      tabIndex={hint ? 0 : undefined}
+      style={{ wordBreak: 'break-all', cursor: hint ? 'help' : undefined }}
+    >
+      {text}
+    </Text>
+  );
+  if (!hint) return content;
+  return (
+    <Tooltip label={hint} multiline w={320} withArrow events={{ hover: true, focus: true, touch: true }}>
+      {content}
+    </Tooltip>
+  );
+}
 
 /** Daftar Log Login (terbaru dulu) dengan filter hasil, cari email/IP, dan rentang tanggal. */
 export function LoginLogList() {
@@ -92,9 +122,7 @@ export function LoginLogList() {
                     </Badge>
                   </Table.Td>
                   <Table.Td>
-                    <Text size="sm" ff="monospace" style={{ wordBreak: 'break-all' }}>
-                      {item.ipAddress ?? '—'}
-                    </Text>
+                    <IpCell ip={item.ipAddress} />
                   </Table.Td>
                   <Table.Td>
                     {item.userAgent ? (

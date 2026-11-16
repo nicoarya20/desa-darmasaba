@@ -12,6 +12,7 @@
 
 ### Fixed
 - Gagal menghapus sesi akun nonaktif saat login kini tercatat di log server, tidak lagi diabaikan diam-diam.
+- Kolom IP di Log Login tidak lagi menampilkan `0000:0000:…:0000` yang membingungkan: login dari localhost diberi label "localhost / tidak diketahui", dan IPv6 (yang disimpan Better Auth sebagai subnet /64) ditampilkan ringkas, mis. `2001:db8:1:2::/64`, dengan alamat tersimpan di tooltip.
 
 ### Operator
 - Jalankan migrasi `20261116170000_audit_log_login_log` (otomatis saat container start). Murni menambah tabel `AuditLog` dan `LoginLog`; data lain tidak diubah. Tidak ada env baru.
