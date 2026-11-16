@@ -1,12 +1,12 @@
 'use client'
-import type { FotoProfilBumdesData } from '@/app/admin/(dashboard)/_state/ekonomi/bumdes/foto-profil';
-import { MAX_KETERANGAN_FOTO } from '@/lib/bumdes-foto-profil';
+import { MAX_KETERANGAN_FOTO_GALERI } from '@/lib/konten-bersama/galeri.validation';
+import type { FotoGaleriItem } from '@/lib/konten-bersama/konten-bersama.types';
 import { ActionIcon, Group, Image, Paper, TextInput, Tooltip } from '@mantine/core';
 import { IconArrowLeft, IconArrowRight, IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 
 export type GaleriFotoAdminCardProps = {
-  foto: FotoProfilBumdesData;
+  foto: FotoGaleriItem;
   index: number;
   total: number;
   saving: boolean;
@@ -39,7 +39,7 @@ export default function GaleriFotoAdminCard({
         size="xs"
         aria-label={`Keterangan foto ${nomor}`}
         placeholder="Keterangan (opsional)"
-        maxLength={MAX_KETERANGAN_FOTO}
+        maxLength={MAX_KETERANGAN_FOTO_GALERI}
         value={keterangan}
         onChange={(e) => setKeterangan(e.currentTarget.value)}
         onKeyDown={(e) => {

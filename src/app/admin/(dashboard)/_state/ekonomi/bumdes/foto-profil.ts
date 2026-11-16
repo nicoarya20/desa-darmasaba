@@ -1,10 +1,9 @@
 import { moveDokumen } from "@/app/admin/(dashboard)/landing-page/desa-anti-korupsi/_lib/dokumen-draft";
 import ApiFetch from "@/lib/api-fetch";
-import { hapusBerkas } from "@/lib/file-storage-delete.client";
 import { getServerMessage } from "@/utils/api-message";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
-import { uploadBumdesImage } from "./bumdes-image";
+import { hapusUnggahanYatim, unggahGambar } from "../../konten-bersama/unggah-gambar";
 
 export type FotoProfilBumdesData = {
   id: string;
@@ -15,20 +14,6 @@ export type FotoProfilBumdesData = {
 };
 
 const pesanError = (error: unknown, fallback: string) => (error instanceof Error ? error.message : fallback);
-
-/**
- * Hapus permanen berkas yang sudah terunggah tetapi gagal didaftarkan ke galeri (tidak ada yang bisa dipulihkan).
- * Aman: belum ada baris galeri yang mereferensikannya. Kegagalan dicatat agar berkas yatim bisa dilacak.
- */
-async function hapusUnggahanYatim(imageIds: readonly string[]) {
-  const hasil = await Promise.allSettled(
-    imageIds.map((id) => hapusBerkas(id)),
-  );
-  const gagal = imageIds.filter((_, i) => hasil[i].status === "rejected");
-  if (gagal.length > 0) {
-    console.error(`[galeri BUMDes] Gagal membersihkan ${gagal.length} berkas yatim:`, gagal);
-  }
-}
 
 /** State galeri foto Profil BUMDes: `load` dipakai publik + admin; unggah/ubah/hapus/urutkan hanya admin. */
 const fotoProfilBumdes = proxy({
@@ -56,12 +41,12 @@ const fotoProfilBumdes = proxy({
     fotoProfilBumdes.uploading = true;
     const imageIds: string[] = [];
     try {
-      for (const file of files) imageIds.push(await uploadBumdesImage(file));
+      for (const file of files) imageIds.push(await unggahGambar(file));
       const res = await ApiFetch.api.ekonomi.bumdes.profil.foto.post({
         items: imageIds.map((imageId) => ({ imageId })),
       });
       if (res.status !== 200) {
-        await hapusUnggahanYatim(imageIds);
+        await hapusUnggahanYatim(imageIds, "galeri BUMDes");
         toast.error(getServerMessage(res) ?? "Gagal menambahkan foto ke galeri");
         return false;
       }
@@ -69,7 +54,7 @@ const fotoProfilBumdes = proxy({
       await fotoProfilBumdes.load();
       return true;
     } catch (error) {
-      await hapusUnggahanYatim(imageIds);
+      await hapusUnggahanYatim(imageIds, "galeri BUMDes");
       toast.error(pesanError(error, "Terjadi kesalahan saat mengunggah foto galeri"));
       return false;
     } finally {

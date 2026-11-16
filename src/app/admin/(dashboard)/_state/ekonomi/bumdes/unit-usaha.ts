@@ -3,7 +3,7 @@ import { getServerMessage } from "@/utils/api-message";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
-import { uploadBumdesImage } from "./bumdes-image";
+import { unggahGambar } from "../../konten-bersama/unggah-gambar";
 
 export type UnitUsahaData = {
   id: string;
@@ -108,7 +108,7 @@ const unitUsahaBumdes = proxy({
 
     unitUsahaBumdes.loading = true;
     try {
-      const imageId = newImage ? await uploadBumdesImage(newImage) : unitUsahaBumdes.currentImageId;
+      const imageId = newImage ? await unggahGambar(newImage) : unitUsahaBumdes.currentImageId;
       const payload = {
         nama: cek.data.nama,
         deskripsi: cek.data.deskripsi,
