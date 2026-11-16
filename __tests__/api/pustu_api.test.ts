@@ -70,6 +70,8 @@ describe("create", () => {
       { judul: "KIA", deskripsi: null },
     ]);
     expect(data.mediaSosial).toEqual(body.mediaSosial);
+    expect(data).not.toHaveProperty("imageId");
+    expect(data.image).toBeUndefined();
 
     await create(ctx({ ...dasar, jadwal: [], layananUnggulan: [], mediaSosial: [] }));
     const kosong = pu.create.mock.calls[1][0].data;
@@ -115,14 +117,29 @@ describe("create", () => {
 describe("update", () => {
   it("field tak dikirim tidak disentuh; jam & kontak diubah lewat relasi; foto lama yang diganti dilepas", async () => {
     pu.findUnique.mockResolvedValueOnce({ imageId: "foto-lama", fotoBaganStrukturId: "bagan" });
+    pu.update.mockResolvedValueOnce({ id: "pu1", imageId: "foto-baru", fotoBaganStrukturId: "bagan", jam: null });
     const res = await update(ctx({ ...dasar, imageId: "foto-baru", jadwal }, { id: "pu1" }));
     expect(res).toMatchObject({ success: true });
     const data = pu.update.mock.calls[0][0].data;
+    // Relasi "checked" (connect) karena digabung dengan nested update jam; tidak boleh ada FK skalar.
+    expect(data.image).toEqual({ connect: { id: "foto-baru" } });
+    expect(data).not.toHaveProperty("imageId");
+    expect(data.fotoBaganStruktur).toBeUndefined();
     expect(data.jam).toEqual({ update: { jadwal } });
     expect(data).not.toHaveProperty("kontak");
     expect(data.mediaSosial).toBeUndefined();
     expect(data.prosedurPendaftaran).toBeUndefined();
-    expect(removeReleasedFiles).toHaveBeenCalledWith("Puskesmas", ["foto-lama", "bagan"], ["foto-baru", undefined]);
+    expect(removeReleasedFiles).toHaveBeenCalledWith("Puskesmas", ["foto-lama", "bagan"], ["foto-baru", "bagan"]);
+  });
+
+  it("foto lokasi & bagan dikosongkan → disconnect, berkas lama dilepas", async () => {
+    pu.findUnique.mockResolvedValueOnce({ imageId: "foto-lama", fotoBaganStrukturId: "bagan" });
+    pu.update.mockResolvedValueOnce({ id: "pu1", imageId: null, fotoBaganStrukturId: null, jam: null });
+    await update(ctx({ ...dasar, imageId: null, fotoBaganStrukturId: "" }, { id: "pu1" }));
+    const data = pu.update.mock.calls[0][0].data;
+    expect(data.image).toEqual({ disconnect: true });
+    expect(data.fotoBaganStruktur).toEqual({ disconnect: true });
+    expect(removeReleasedFiles).toHaveBeenCalledWith("Puskesmas", ["foto-lama", "bagan"], [null, null]);
   });
 
   it("PUSTU tidak ada → 404", async () => {

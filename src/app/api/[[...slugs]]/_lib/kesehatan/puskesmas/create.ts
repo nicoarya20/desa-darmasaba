@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { pustuBodySchema } from "@/lib/pustu/pustu.validation";
 import { Context } from "elysia";
 import { validationFailure, writeFailure } from "../../_struktur-organisasi/http";
-import { PUSTU_RINGKAS_SELECT, dataJam, dataKontak, dataPustu, keRingkas } from "./pustu.data";
+import { PUSTU_RINGKAS_SELECT, dataJam, dataKontak, dataPustu, hubungkanGambar, keRingkas } from "./pustu.data";
 
 /** POST (admin): tambah PUSTU beserta jam operasional & kontak (satu operasi nested, atomik). */
 export default async function puskesmasCreate(context: Context) {
@@ -14,6 +14,8 @@ export default async function puskesmasCreate(context: Context) {
     const created = await prisma.puskesmas.create({
       data: {
         ...dataPustu(body),
+        image: hubungkanGambar(body.imageId),
+        fotoBaganStruktur: hubungkanGambar(body.fotoBaganStrukturId),
         jam: { create: dataJam(body) },
         kontak: { create: dataKontak(body) },
       },

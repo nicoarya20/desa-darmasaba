@@ -55,9 +55,9 @@ export function keDetail({ jam, ...row }: DetailRow) {
 }
 
 /** Daftar Json kosong disimpan NULL; `undefined` = tidak diubah. */
-function json<T>(list: T[] | null | undefined) {
+function json(list: readonly Prisma.InputJsonObject[] | null | undefined) {
   if (list === undefined) return undefined;
-  return list?.length ? (list as Prisma.InputJsonValue) : Prisma.DbNull;
+  return list?.length ? list : Prisma.DbNull;
 }
 
 /** HTML editor → disanitasi (allowlist tag publik); isi kosong ("<p></p>") → null; `undefined` = tidak diubah. */
@@ -67,19 +67,31 @@ export function teksKayaTersimpan(html: string | null | undefined): string | nul
   return htmlToPlainText(bersih) === "" ? null : bersih;
 }
 
-/** Data Prisma kolom induk `Puskesmas` dari body tervalidasi (tanpa relasi jam/kontak). */
+// Relasi gambar ditulis sebagai input Prisma "checked" (connect/disconnect), bukan FK skalar, karena digabung
+// dengan nested write jam/kontak dalam satu operasi — Prisma menolak campuran FK skalar + nested relasi.
+
+/** Relasi gambar saat create: id → connect, kosong → tidak dihubungkan. */
+export function hubungkanGambar(id: string | null | undefined) {
+  return id ? { connect: { id } } : undefined;
+}
+
+/** Relasi gambar saat update: id → connect, null → disconnect, `undefined` → tidak diubah. */
+export function ubahGambar(id: string | null | undefined) {
+  if (id === undefined) return undefined;
+  return id ? { connect: { id } } : { disconnect: true as const };
+}
+
+/** Data Prisma kolom skalar induk `Puskesmas` dari body tervalidasi (tanpa relasi gambar/jam/kontak). */
 export function dataPustu(body: PustuBody) {
   return {
     name: body.name,
     alamat: body.alamat,
-    imageId: body.imageId,
     mediaSosial: json(body.mediaSosial),
     layananUnggulan: json(body.layananUnggulan),
     linkPetunjukArah: body.linkPetunjukArah,
     prosedurPendaftaran: teksKayaTersimpan(body.prosedurPendaftaran),
     tarifBpjs: teksKayaTersimpan(body.tarifBpjs),
     tarifUmum: teksKayaTersimpan(body.tarifUmum),
-    fotoBaganStrukturId: body.fotoBaganStrukturId,
   };
 }
 

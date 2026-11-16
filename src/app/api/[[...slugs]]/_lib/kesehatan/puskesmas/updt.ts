@@ -4,7 +4,7 @@ import { pustuBodySchema } from "@/lib/pustu/pustu.validation";
 import { Context } from "elysia";
 import { fail, validationFailure } from "../../_struktur-organisasi/http";
 import removeReleasedFiles from "../../fileStorage/_lib/removeReleasedFiles";
-import { PUSTU_FILE_OWNER, PUSTU_RINGKAS_SELECT, dataJam, dataKontak, dataPustu, keRingkas } from "./pustu.data";
+import { PUSTU_FILE_OWNER, PUSTU_RINGKAS_SELECT, dataJam, dataKontak, dataPustu, keRingkas, ubahGambar } from "./pustu.data";
 
 /**
  * PUT (admin): ubah PUSTU. Field opsional yang tidak dikirim dibiarkan; jam & kontak diubah lewat relasinya.
@@ -26,6 +26,8 @@ export default async function puskesmasUpdate(context: Context) {
       where: { id },
       data: {
         ...dataPustu(body),
+        image: ubahGambar(body.imageId),
+        fotoBaganStruktur: ubahGambar(body.fotoBaganStrukturId),
         ...(body.jadwal !== undefined && { jam: { update: dataJam(body) } }),
         ...(body.kontak !== undefined && { kontak: { update: dataKontak(body) } }),
       },
