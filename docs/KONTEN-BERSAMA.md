@@ -44,3 +44,7 @@ koordinat. Hapus foto galeri / pengurus = **hapus permanen** (baris + berkas Min
 
 Test acuan: `__tests__/api/konten_bersama_*.test.ts`, `bank_sampah_detail_{api,ui}.test.*`, `bank_sampah_admin_form.test.tsx`.
 BUMDes memakai komponen galeri/gambar yang sama (perilaku & panel Sampah BUMDes tidak berubah).
+
+Posyandu (2026-11-16) memakai galeri saja: `FotoKegiatanPosyandu` (foto lokasi & kader per posyandu banjar),
+`_lib/kesehatan/posyandu/posyandu.anak.ts`, state `_state/kesehatan/posyandu/posyandu.anak.state.ts`, galeri publik di
+detail posyandu — lihat `docs/decisions/2026-11-16-konten-posyandu.md`.
