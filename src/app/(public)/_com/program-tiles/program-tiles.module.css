@@ -1,7 +1,7 @@
 /*
- * Halaman Program Kreatif Desa — ubin program tanpa foto di atas kerangka Kabar (`.section` kabar.module.css + kepala
- * kabar-list). Seluruh ubin = tautan detail. Variabel warna (--brand, --ink, --muted, --tile, --radius) dari
- * kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ * Ubin program tanpa foto (Program Kreatif Desa, Program Penghijauan) di atas kerangka Kabar (`.section`
+ * kabar.module.css + kepala kabar-list). Seluruh ubin = tautan detail. Variabel warna (--brand, --ink, --muted,
+ * --tile, --radius) dari kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
  */
 .tiles {
   display: grid;

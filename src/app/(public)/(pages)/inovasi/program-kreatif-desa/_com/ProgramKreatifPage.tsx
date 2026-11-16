@@ -5,9 +5,9 @@ import { listSearchable, paginate, parsePage } from '@/app/(public)/_com/kabar-l
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import { ProgramTiles, ProgramTilesPlaceholder } from '@/app/(public)/_com/program-tiles/ProgramTiles';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
-import { ProgramKreatifPlaceholder, ProgramKreatifTiles } from './ProgramKreatifTiles';
 import { programKreatifListHref } from './program-kreatif.logic';
 import { PROGRAM_KREATIF_PAGE_SIZE } from './program-kreatif.meta';
 import { PROGRAM_KREATIF_TEXT as T } from './program-kreatif.text';
@@ -69,11 +69,11 @@ export function ProgramKreatifBody({ state, search, page, onPage }: BodyProps) {
       <h2 id={LIST_TITLE_ID} className={l.srOnly}>
         {T.listLabel}
       </h2>
-      {state.status === 'loading' ? <ProgramKreatifPlaceholder count={PLACEHOLDER_TILES} /> : null}
+      {state.status === 'loading' ? <ProgramTilesPlaceholder count={PLACEHOLDER_TILES} label={T.loading} /> : null}
       {empty ? <p className={kabar.empty}>{emptyText}</p> : null}
       {current.items.length > 0 ? (
         <>
-          <ProgramKreatifTiles items={current.items} />
+          <ProgramTiles items={current.items} label={T.listLabel} moreLabel={T.selengkapnya} />
           <KabarListPagination total={current.totalPages} value={current.page} label={T.paginationLabel} onChange={onPage} />
         </>
       ) : null}
