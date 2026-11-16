@@ -77,7 +77,9 @@ const EXPECTED_IDS: Record<string, string[]> = {
     'inovasi.layanan-online-desa',
     'inovasi.program-kreatif-desa',
     'inovasi.kolaborasi-inovasi',
-    'inovasi.info-teknologi-tepat-guna',
+    // 2026-11-16: 'inovasi.info-teknologi-tepat-guna' dihapus — digabung ke 'inovasi.desa-digital-smart-village'
+    // (kini bernama Inovasi Teknologi Desa). Data UserMenuAccess dimigrasi di
+    // prisma/migrations/20261116120000_inovasi_teknologi_desa; docs/decisions/2026-11-16-inovasi-teknologi-desa.md.
     'inovasi.ajukan-ide-inovatif',
   ],
   'Lingkungan': [
