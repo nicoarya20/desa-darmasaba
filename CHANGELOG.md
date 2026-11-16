@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.285] - 2026-11-16
+### Changed
+- **Menu Lingkungan dirombak ke gaya Kabar Desa** (latar putih, judul dan pengantar di kiri, ubin dan baris abu muda), seragam dengan menu Inovasi, Kesehatan, Keamanan, dan Pendidikan.
+- **Pengelolaan Sampah (Bank Sampah)**: cara menabung tampil sebagai langkah bernomor berikon (berjajar di desktop, menurun di ponsel). Lokasi Bank Sampah kini berupa daftar di samping peta: pilih lokasi untuk melihat titiknya di peta, atau klik titik di peta untuk menyorot lokasinya. Tiap lokasi punya tautan "Petunjuk arah".
+- **Program Penghijauan**: program tampil sebagai ubin berikon yang bisa diklik, dan tiap program kini punya halaman detail sendiri.
+- **Data Lingkungan Desa**: data tampil sebagai baris yang mudah dibaca. Jumlah tampil apa adanya (tanpa tanda "±" tambahan).
+- **Gotong Royong** kini satu halaman berisi kegiatan desa kategori Lingkungan dan Kebersihan, tanpa pilihan kategori. Detail kegiatan memakai tampilan detail Kegiatan Desa dengan tautan kembali "‹ Gotong Royong". Tautan lama (`/lingkungan/gotong-royong/semua` dan per kategori) diarahkan ke halaman baru.
+- **Edukasi Lingkungan** dan **Konservasi Adat Bali** tampil sebagai halaman bacaan bergaris (judul bagian di kiri, isi di kanan), seperti halaman program Pendidikan.
+
+### Fixed
+- Hasil pencarian **Gotong Royong** tidak lagi membuka alamat rusak (`/lingkungan/gotong-royong/undefined/...`).
+- Hasil pencarian **Program Penghijauan** kini membuka halaman detail programnya.
+- Ikon yang tidak dikenali di Bank Sampah, Program Penghijauan, dan Data Lingkungan kini disembunyikan, bukan tampil sebagai tanda tanya.
+
 ## [0.1.284] - 2026-11-16
 ### Changed
 - **Jarak dan tepi halaman Inovasi diseragamkan.** Jarak antar-bagian di Desa Digital dan Kolaborasi Inovasi kini sama (64px, ponsel 48px), dan judul "Mitra Kolaborasi" seukuran judul bagian lain.

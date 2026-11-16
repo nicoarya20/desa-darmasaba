@@ -13,7 +13,7 @@ import { ProgramKreatifDetailBody } from '@/app/(public)/(pages)/inovasi/program
 import ds from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/detail/program-kreatif-detail.module.css';
 import { ProgramKreatifBody } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/ProgramKreatifPage';
 import { toProgramKreatifItem } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
-import s from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.module.css';
+import s from '@/app/(public)/_com/program-tiles/program-tiles.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 

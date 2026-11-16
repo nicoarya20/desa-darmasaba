@@ -1,0 +1,141 @@
+/*
+ * Data Lingkungan Desa — daftar baris bergaris di atas kerangka Kabar (`.section` kabar.module.css + kepala kabar-list),
+ * pola baris Kolaborasi Inovasi: kiri ikon + nama + jumlah, kanan deskripsi (lebar baca 720px). Tanpa kartu/ubin angka
+ * (`jumlah` teks bebas, mis. "1 paket kegiatan"). Variabel warna (--brand, --ink, --muted, --tile, --radius) dari
+ * kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.rows {
+  --rule: #d2d2d7;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 12px 48px;
+  padding: 32px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.row:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Ikon garis brand tanpa lingkaran; IconMapper tidak menerima `stroke`, jadi garis ditipiskan di sini. */
+.icon {
+  display: flex;
+  margin-bottom: 4px;
+  color: var(--brand);
+}
+
+.icon svg {
+  stroke-width: 1.5;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+  letter-spacing: 0.009em;
+  overflow-wrap: anywhere;
+}
+
+.amount {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.47;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Deskripsi (teks/HTML editor admin, sudah disaring) ---------- */
+.prose {
+  min-width: 0;
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.53;
+  overflow-wrap: anywhere;
+}
+
+.prose > *,
+.prose li > p {
+  margin: 0;
+}
+
+.prose > * + * {
+  margin-top: 0.8em;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.25em;
+}
+
+/* Deskripsi berada di dalam <li> baris: tanpa ini peramban memberi butir bersarang (lingkaran kosong). */
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+/* ---------- Memuat ---------- */
+.placeholderRow {
+  height: 112px;
+  margin: 16px 0;
+  border-radius: var(--radius, 18px);
+  background: var(--tile);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .placeholderRow {
+    animation: none;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .row {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 12px 32px;
+  }
+
+  .title {
+    font-size: 21px;
+    line-height: 1.19;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 24px 0;
+  }
+
+  .prose {
+    line-height: 1.47;
+  }
+}
