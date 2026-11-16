@@ -1,0 +1,29 @@
+/*
+ * Program Pengentasan Kemiskinan — bagian khusus di atas kerangka Kabar: jarak antar-bagian dan susunan dua ubin
+ * tautan silang. Baris program memakai data-lingkungan.module.css. Breakpoint apple.com: ≤1068px dan ≤734px.
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  /* 64px, ≤734px 48px: token globals.css */
+  gap: var(--block-gap);
+}
+
+/* Dua ubin berdampingan di desktop; bertumpuk mulai tablet (teks ubin tidak terjepit). */
+.terkait {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 1068px) {
+  .terkait {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 734px) {
+  .terkait {
+    gap: 12px;
+  }
+}

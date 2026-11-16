@@ -1,0 +1,106 @@
+/*
+ * Jumlah Penduduk Miskin — bagian khusus di atas kerangka Kabar (`.section` kabar.module.css + kepala kabar-list):
+ * jarak antar-bagian dan kartu tahun terbaru (nilai sama dengan kartu Jumlah Pengangguran). Panel batang dari modul
+ * `stat-bars`. Variabel warna (--brand, --ink, --muted, --subtle, --tile, --radius) dari kabar.module.css.
+ * Breakpoint apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  /* 64px, ≤734px 48px: token globals.css */
+  gap: var(--block-gap);
+}
+
+/*
+ * Kartu tahun terbaru | panel per tahun berdampingan di desktop (kartu sendirian selebar layar terlalu kosong);
+ * bertumpuk mulai tablet. Tanpa panel (satu tahun) kartu tetap di kolom kiri.
+ */
+.content {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(0, 3fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.cardLabel {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.33;
+  font-weight: 600;
+}
+
+.cardValue {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--brand);
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.cardNote {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.43;
+}
+
+.cardNote svg {
+  flex: none;
+}
+
+.updated {
+  margin: 0;
+  color: var(--subtle);
+  font-size: 14px;
+  line-height: 1.43;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .cardValue {
+    font-size: 32px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .card {
+    padding: 20px;
+  }
+
+  .content {
+    gap: 12px;
+  }
+}
