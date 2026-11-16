@@ -1,6 +1,7 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
 import { isPathHidden } from './menu-visibility.logic';
 import { kegiatanDetailHref } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic';
+import { lembagaDetailHref } from '@/app/(public)/(pages)/pendidikan/info-sekolah/_com/info-sekolah.logic';
 
 type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
 
@@ -86,7 +87,7 @@ const getDetailUrl = (item: SearchItem) => {
     bentukKonservasiBerdasarkanAdat: () => '/lingkungan/konservasi-adat-bali',
     nilaiKonservasiAdat: () => '/lingkungan/konservasi-adat-bali',
     jenjangPendidikan: () => '/pendidikan/info-sekolah',
-    lembaga: () => '/pendidikan/info-sekolah/lembaga',
+    lembaga: (id) => lembagaDetailHref(String(id)),
     siswa: () => '/pendidikan/info-sekolah/siswa',
     pengajar: () => '/pendidikan/info-sekolah/pengajar',
     keunggulanProgram: () => '/pendidikan/beasiswa-desa',

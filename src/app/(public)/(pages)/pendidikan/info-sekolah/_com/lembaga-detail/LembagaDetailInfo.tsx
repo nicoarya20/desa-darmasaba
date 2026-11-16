@@ -20,7 +20,8 @@ function Baris({ label, children }: { label: string; children: ReactNode }) {
 /** Panel "Informasi" detail sekolah: jenjang, angka siswa/pengajar, lalu alamat/kontak/medsos yang terisi saja. */
 export function LembagaDetailInfo({ data }: { data: LembagaDetail }) {
   const jenjang = data.jenjangPendidikan?.nama ?? null;
-  const tautanMaps = <TombolGoogleMaps link={data.linkGoogleMaps} koordinat={data} />;
+  const titik = { lat: data.lat ?? undefined, lng: data.lng ?? undefined };
+  const tautanMaps = <TombolGoogleMaps link={data.linkGoogleMaps} koordinat={titik} />;
   return (
     <aside className={d.info} aria-labelledby="lembaga-info-title">
       <h2 id="lembaga-info-title" className={d.infoTitle}>

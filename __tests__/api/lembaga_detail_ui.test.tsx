@@ -18,6 +18,7 @@ import { buildRingkasan } from '@/app/(public)/(pages)/pendidikan/info-sekolah/_
 import { loadLembagaDetail } from '@/app/(public)/(pages)/pendidikan/info-sekolah/_com/info-sekolah.source';
 import { LembagaDetailBody } from '@/app/(public)/(pages)/pendidikan/info-sekolah/_com/lembaga-detail/LembagaDetailPage';
 import type { LoadState } from '@/app/(public)/_com/lazy-load/use-lazy-load';
+import getDetailUrl from '@/app/(public)/_com/searchUrl';
 import type { LembagaDetail } from '@/lib/lembaga-pendidikan/lembaga.types';
 
 const render = (node: React.ReactElement) =>
@@ -130,6 +131,8 @@ describe('direktori sekolah per jenjang', () => {
     );
     const html = render(<JenjangDirectory ringkasan={ringkasan} />);
     expect(html).toContain('href="/pendidikan/info-sekolah/lembaga/lb%201"');
+    // Hasil pencarian global tipe lembaga juga menuju detail (dulu ke /lembaga yang 308 ke direktori).
+    expect(getDetailUrl({ type: 'lembaga', id: 'lb1' })).toBe('/pendidikan/info-sekolah/lembaga/lb1');
   });
 });
 
