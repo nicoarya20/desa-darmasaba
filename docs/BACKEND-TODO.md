@@ -75,6 +75,9 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Grafik IKM publik (beranda & `/ppid/indeks-kepuasan-masyarakat`) pindah ke `GET /api/landingpage/responden/ringkasan` (publik, hanya tanggal + nama kategori, tanpa id/nama, maks 1000) lewat `main-page/kepuasan/kepuasan.source.ts`.
   - `POST .../create` kelimanya membalas `data: { id }` saja; form publik ide inovatif & pendaftaran jadwal tidak lagi memuat daftar (saat mount / setelah submit).
 
+- [x] **Permohonan surat (Ajukan Permohonan): GET publik memuat nama, NIK, alamat, nomor KK** (temuan kode 2026-11-17) — selesai 2026-11-17, keputusan yang sama:
+  - `GET /api/desa/ajukanpermohonan/findMany` & `/:id` lewat `guardDataPribadi`; `POST .../create` (publik) membalas `data: { id }`; `create()` state tidak lagi memuat ulang daftar.
+
 - [ ] **Pendidikan: XSS tersimpan lewat catatan peminjaman buku** (terverifikasi 2026-11-15)
   - Lokasi: `POST /api/pendidikan/perpustakaandigital/peminjamanbuku/create` (publik, `PUBLIC_POST_PATHS` di `src/lib/auth-policy.ts:158`) menyimpan `catatan` apa adanya tanpa validasi; admin `src/app/admin/(dashboard)/pendidikan/perpustakaan-digital/peminjam/[id]/page.tsx:186` merendernya lewat `dangerouslySetInnerHTML`.
   - Dampak: penyerang anonim cukup POST langsung untuk menjalankan skrip di sesi admin. Mengganti editor di form publik tidak menutup celah.
