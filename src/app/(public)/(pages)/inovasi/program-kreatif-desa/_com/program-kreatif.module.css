@@ -1,0 +1,111 @@
+/*
+ * Halaman Program Kreatif Desa — ubin program tanpa foto di atas kerangka Kabar (`.section` kabar.module.css + kepala
+ * kabar-list). Seluruh ubin = tautan detail. Variabel warna (--brand, --ink, --muted, --tile, --radius) dari
+ * kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tiles > li {
+  display: flex;
+  min-width: 0;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 32px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Ikon garis brand tanpa lingkaran; IconMapper tidak menerima `stroke`, jadi garis ditipiskan di sini. */
+.icon {
+  display: flex;
+  margin-bottom: 8px;
+  color: var(--brand);
+}
+
+.icon svg {
+  stroke-width: 1.5;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.19;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.summary {
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* Didorong ke dasar ubin agar "Selengkapnya" sebaris di satu baris grid. */
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: 6px;
+  color: var(--brand);
+  font-size: 17px;
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover .title,
+  .tile:hover .more {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tile {
+    padding: 28px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .tiles {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .tile {
+    padding: 24px;
+  }
+
+  .title {
+    font-size: 19px;
+  }
+}
