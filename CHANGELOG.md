@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.290] - 2026-11-16
+### Changed
+- **Kartu Layanan Masyarakat di beranda kini berada tepat di bawah galeri Layanan dan Potensi Desa**, menyatu dalam satu latar abu dengan galeri, bukan lagi section terpisah di dasar beranda (tepat di atas footer yang berisi 4 tautan yang sama). Judul "Layanan Masyarakat" dan teks pengantarnya dihapus; yang tampil hanya 4 kartu: Administrasi Kependudukan, Layanan Sosial, Pengaduan Masyarakat, dan Informasi Publik.
+- Di ponsel, 4 kartu yang sebelumnya ditumpuk (sekitar 900px) kini tampil sebagai daftar ringkas dalam satu kotak putih: ikon, judul, deskripsi singkat, dan panah. Tinggi daftar sekitar 340px. Kartu Pengaduan tetap membuka formulir pengaduan.
+
 ## [0.1.289] - 2026-11-16
 ### Changed
 - **Detail Program Inovasi kini tampil sebagai overlay di beranda**, bukan halaman terpisah. Klik ubin program di hero membuka kartu detail di atas beranda yang diburamkan: logo, nama, deskripsi yang lebih mudah dibaca (teks gelap, rata kiri), dan galeri Dokumentasi. Di ponsel overlay tampil layar penuh.
