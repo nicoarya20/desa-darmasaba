@@ -1,7 +1,8 @@
 // @vitest-environment node
 // Pencarian global publik tidak boleh memuat data per orang warga (UU PDP, aspek 8 lomba; T20):
 // siswa (anak di bawah umur), responden IKM, permohonan informasi publik (NIK/HP/alamat), keberatan PPID,
-// serta model yang GET-nya admin-only (pendaftar beasiswa, peminjam buku, ibu hamil, balita, pengaduan, administrasi online).
+// serta model yang GET-nya admin-only (pendaftar beasiswa, peminjam buku, ibu hamil, balita, pengaduan, administrasi online,
+// ide inovatif, pendaftaran jadwal kesehatan).
 // Prisma ditiru dengan Proxy: setiap model.findMany mengembalikan satu baris rekaan, panggilan dicatat per model.
 // Keputusan: docs/decisions/2026-11-17-api-data-pribadi-admin-only.md
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -35,6 +36,8 @@ const MODEL_DATA_PRIBADI = [
   'balita',
   'pengaduanMasyarakat',
   'administrasiOnline',
+  'ajukanIdeInovatif',
+  'pendaftaranJadwalKegiatan',
 ];
 const TIPE_DATA_PRIBADI = ['siswa', 'responden', 'permohonaninformasipublik', 'permohonaninformasikeberatanpublik'];
 
