@@ -1,0 +1,129 @@
+/*
+ * Hub Layanan Online Desa — tiga ubin layanan tanpa foto di atas kerangka Kabar (`.section` kabar.module.css + kepala
+ * kabar-list), senada ubin Program Kreatif. Variabel warna (--brand, --ink, --muted, --tile, --radius) dari
+ * kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* `position: relative` = jangkar lapisan klik `.stretch::after`. */
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 32px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.icon {
+  display: flex;
+  margin-bottom: 8px;
+  color: var(--brand);
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.19;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+/* Didorong ke dasar ubin agar aksi sebaris di satu baris grid. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand);
+  font: inherit;
+  font-size: 17px;
+  line-height: 1.47;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Aksi tunggal: seluruh ubin jadi area klik; cincin fokus pindah ke tepi ubin. */
+.stretch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+}
+
+.stretch:focus-visible {
+  outline: none;
+}
+
+.stretch:focus-visible::after {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .action:hover,
+  .tile:has(.stretch:hover) .title,
+  .tile:has(.stretch:hover) .action {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .tile {
+    padding: 28px;
+  }
+}
+
+/* ---------- Bertumpuk: di bawah ini tiga kolom terlalu sempit untuk aksi "Sampaikan pengaduan ›" ---------- */
+@media (max-width: 834px) {
+  .tiles {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .tile {
+    padding: 24px;
+  }
+
+  .title {
+    font-size: 19px;
+  }
+}

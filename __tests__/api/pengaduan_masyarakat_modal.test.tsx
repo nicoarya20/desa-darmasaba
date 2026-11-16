@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Modal form pengaduan masyarakat (komponen reusable, dipakai halaman layanan
-// online desa & footer) + halaman existing tetap memakai komponen yang sama.
+// Modal form pengaduan masyarakat (komponen reusable, dipakai hub layanan online
+// desa, footer & beranda) + ubin Pengaduan di hub membuka komponen yang sama.
 import { describe, it, expect, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
@@ -54,19 +54,43 @@ describe('PengaduanMasyarakatModal', () => {
   });
 });
 
-describe('halaman layanan online desa — kartu Pengaduan Masyarakat', () => {
-  it('memakai PengaduanMasyarakatModal yang sama, tertutup sampai kartu diklik', async () => {
+describe('hub layanan online desa — ubin Pengaduan Masyarakat', () => {
+  // Hub dirender utuh dengan modal tiruan: hanya cek ubin + status opened yang diteruskan ke modal bersama.
+  const renderHub = async (query: string) => {
     vi.resetModules();
     vi.doMock('@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal', () => ({
       default: ({ opened }: { opened: boolean }) => <div data-testid="pengaduan-modal" data-opened={String(opened)} />,
     }));
-    const { default: PengaduanMasyarakat } = await import(
-      '@/app/(public)/(pages)/inovasi/layanan-online-desa/pengaduan-masyarakat/page'
-    );
-    const html = render(<PengaduanMasyarakat />);
-    expect(html).toContain('Pengaduan Masyarakat');
+    vi.doMock('next/navigation', () => ({
+      useRouter: () => ({ replace: vi.fn() }),
+      useSearchParams: () => new URLSearchParams(query),
+    }));
+    vi.doMock('next-view-transitions', () => ({
+      Link: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+      useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn(), replace: vi.fn() }),
+    }));
+    try {
+      const { LayananOnlinePage } = await import(
+        '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/LayananOnlinePage'
+      );
+      return render(<LayananOnlinePage />);
+    } finally {
+      vi.doUnmock('@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal');
+      vi.doUnmock('next/navigation');
+      vi.doUnmock('next-view-transitions');
+    }
+  };
+
+  it('memakai PengaduanMasyarakatModal yang sama, tertutup sampai ubin diklik', async () => {
+    const html = await renderHub('');
+    expect(html).toContain('>Pengaduan Masyarakat</h2>');
     expect(html).toContain('Sampaikan keluhan dan aspirasi Anda');
+    expect(html).toMatch(/<button type="button"[^>]*>Sampaikan pengaduan/);
     expect(html).toContain('data-testid="pengaduan-modal" data-opened="false"');
-    vi.doUnmock('@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal');
+  });
+
+  it('?layanan=pengaduan (tujuan alih route lama) → modal terbuka saat dimuat', async () => {
+    const html = await renderHub('layanan=pengaduan');
+    expect(html).toContain('data-testid="pengaduan-modal" data-opened="true"');
   });
 });

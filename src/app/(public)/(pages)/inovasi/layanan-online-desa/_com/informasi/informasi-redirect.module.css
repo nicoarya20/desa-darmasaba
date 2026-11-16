@@ -1,0 +1,30 @@
+/* Keadaan memuat singkat selama detail lama Informasi Desa dialihkan ke URL kanonik (di dalam `.section` Kabar). */
+.notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 16px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  text-align: center;
+}
+
+.opening {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+.link {
+  color: var(--brand);
+  font-size: 17px;
+  line-height: 1.47;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
