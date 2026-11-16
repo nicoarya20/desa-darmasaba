@@ -4,6 +4,8 @@
 // Mengubah/menghapus ID = Menu Access user yang sudah tersimpan diam-diam hilang.
 // JANGAN update snapshot ini tanpa migrasi data UserMenuAccess + update docs + bump versi.
 // Menambah submenu baru (ID baru) boleh: tambahkan di snapshot pada commit yang sama.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { navBar, pengaturanMenu } from '@/app/admin/_com/list_PageAdmin';
 import { isUnderPath } from '@/app/admin/_com/nav/menu-access.logic';
@@ -84,7 +86,6 @@ const EXPECTED_IDS: Record<string, string[]> = {
     'lingkungan.pengelolaan-sampah-bank-sampah',
     'lingkungan.program-penghijauan',
     'lingkungan.data-lingkungan-desa',
-    'lingkungan.gotong-royong',
     'lingkungan.edukasi-lingkungan',
     'lingkungan.konservasi-adat-bali',
   ],
@@ -121,11 +122,28 @@ const EXPECTED_IDS: Record<string, string[]> = {
   ],
 }; // test-only
 
+// ID yang sudah dihapus → folder migrasi data UserMenuAccess yang memindahkan pemegangnya.
+// Jangan dipakai ulang untuk menu lain (baris lama di DB bisa saja tertinggal di backup/restore).
+const RETIRED_IDS: Record<string, string> = {
+  // Gotong Royong kini kategori di Kegiatan Desa → pemegang dipindah ke 'desa.kegiatan-desa'.
+  'lingkungan.gotong-royong': '20261116100000_kategori_gotong_royong',
+}; // test-only
+
 describe('kontrak ID Menu Access', () => {
   it('ID section & submenu sama persis dengan snapshot (urutan tampilan ikut dijaga)', () => {
     const actual = Object.fromEntries(ALL_SECTIONS.map((s) => [s.id, (s.children ?? []).map((c) => c.id)]));
     expect(actual).toEqual(EXPECTED_IDS);
     expect(ALL_SECTIONS.map((s) => s.id)).toEqual(Object.keys(EXPECTED_IDS));
+  });
+
+  it('ID pensiun tidak dipakai lagi dan punya migrasi data UserMenuAccess', () => {
+    const ids = new Set([...ALL_SECTIONS.map((s) => s.id), ...SUBMENUS.map((c) => c.id)]);
+    for (const [id, migration] of Object.entries(RETIRED_IDS)) {
+      expect(ids.has(id), id).toBe(false);
+      const sql = readFileSync(join(process.cwd(), 'prisma/migrations', migration, 'migration.sql'), 'utf8');
+      expect(sql, migration).toContain('"UserMenuAccess"');
+      expect(sql, migration).toContain(`'${id}'`);
+    }
   });
 
   it('semua ID (section + submenu) unik', () => {

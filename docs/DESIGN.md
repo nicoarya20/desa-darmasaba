@@ -981,6 +981,7 @@ ID di `menuIds` (kontrak permanen, dijaga `__tests__/api/menu_access_ids.contrac
 - **ID section** (`"Landing Page"`, `"PPID"`, `"Desa"`, …) = akses ke semua submenu section itu. Data lama; dicocokkan dengan normalisasi trim + lowercase.
 - **ID submenu** = slug `<section-slug>.<submenu-slug>` (mis. `landing-page.apbdes`, `desa.struktur-perangkat-desa`) = akses ke submenu itu saja; section tampil dengan anak tersaring.
 - **`basePath`** per submenu = prefix folder route yang dicakup (list/create/edit/kategori), dicocokkan per segmen (`/admin/x/ab` tidak cocok dengan `/admin/x/a`).
+- **ID pensiun** (submenu yang dihapus, mis. `lingkungan.gotong-royong` → `desa.kegiatan-desa`) dicatat di `RETIRED_IDS` contract test beserta migrasi data `UserMenuAccess`-nya; jangan dipakai ulang.
 
 Halaman **Pengaturan › Menu Access** (`/admin/pengaturan/menu-access`; URL lama `/admin/user&role/menu-access` di-redirect) membatasi menu admin per user (tabel `UserMenuAccess`; kosong = fallback role) dengan checkbox pohon (section = induk, indeterminate bila sebagian); simpan ID section bila semua submenu dipilih, selain itu ID submenu. Section User & Role dan Pengaturan tidak bisa dipilih.
 
@@ -1312,7 +1313,7 @@ p={{ base: "sm", md: "lg" }}
 | Kependudukan | Dashboard statistik, Data Per Banjar, Dinamika, Distribusi Agama/Umur |
 | Ekonomi | UMKM, Lowongan Kerja, BUMDesa, PADesa, Transparansi APBDes (grafik + tabel) |
 | Keamanan | Data keamanan wilayah |
-| Lingkungan | Bank Sampah, Penghijauan, Gotong Royong |
+| Lingkungan | Bank Sampah, Penghijauan, Gotong Royong (= kategori Kegiatan Desa, lihat `docs/decisions/2026-11-16-gotong-royong-kategori-kegiatan.md`) |
 | Pendidikan | Data lembaga pendidikan |
 | Inovasi | Inovasi desa |
 | Musik | Koleksi musik/gamelan; aplikasi gaya TIDAL terang (Musik · Jelajahi · Playlist) |
