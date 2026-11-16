@@ -10,6 +10,13 @@ export const PROFIL_POSYANDU_ID = "profil-posyandu";
 export const SASARAN_KLASTER = ["balita", "remaja", "lansia"] as const;
 export type SasaranKlaster = (typeof SASARAN_KLASTER)[number];
 
+/** Sebutan klaster untuk UI admin & publik. */
+export const LABEL_SASARAN_KLASTER: Record<SasaranKlaster, string> = {
+  balita: "Balita",
+  remaja: "Remaja",
+  lansia: "Lansia & PROLANIS",
+};
+
 export const MAX_DESKRIPSI_PROFIL_POSYANDU = 10000;
 export const MAX_JUDUL_KLASTER = 120;
 export const MAX_DESKRIPSI_KLASTER = 2000;

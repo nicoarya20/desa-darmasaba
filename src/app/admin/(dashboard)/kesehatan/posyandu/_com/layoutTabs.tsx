@@ -2,7 +2,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import { IconBabyCarriage, IconCategory, IconClipboard, IconClipboardText, IconGenderDemigirl, IconNews } from '@tabler/icons-react';
+import { IconBabyCarriage, IconCategory, IconClipboard, IconClipboardText, IconGenderDemigirl, IconInfoCircle, IconNews } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -16,6 +16,12 @@ function LayoutTabsPosyandu({ children }: { children: React.ReactNode }) {
             value: "list_posyandu",
             href: "/admin/kesehatan/posyandu/list-posyandu",
             icon: <IconNews size={18} stroke={1.8} />
+        },
+        {
+            label: "Profil & Klaster",
+            value: "profil_klaster",
+            href: "/admin/kesehatan/posyandu/profil-klaster",
+            icon: <IconInfoCircle size={18} stroke={1.8} />
         },
         {
             label: "Balita",
