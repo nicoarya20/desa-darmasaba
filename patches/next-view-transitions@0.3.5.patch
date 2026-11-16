@@ -1,5 +1,5 @@
 diff --git a/dist/index.js b/dist/index.js
-index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..27e7cf7aa230754d22d076ba40ea5c4cac1e3a17 100644
+index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..6403abe872e6d5b05a7676ab18c2223e79f1faf5 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -4,6 +4,31 @@ import NextLink from 'next/link';
@@ -34,7 +34,30 @@ index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..27e7cf7aa230754d22d076ba40ea5c4c
  function useHash() {
      return useSyncExternalStore(subscribeHash, getHashSnapshot, getServerHashSnapshot);
  }
-@@ -37,10 +62,11 @@ function useBrowserNativeTransitions() {
+@@ -24,6 +49,8 @@ function subscribeHash(onStoreChange) {
+ function useBrowserNativeTransitions() {
+     const pathname = usePathname();
+     const currentPathname = useRef(pathname);
++    // PATCH(desa-darmasaba): hash terakhir yang dirender, pasangan currentPathname.
++    const currentHash = useRef(null);
+     // This is a global state to keep track of the view transition state.
+     const [currentViewTransition, setCurrentViewTransition] = useState(null);
+     useEffect(()=>{
+@@ -31,16 +58,25 @@ function useBrowserNativeTransitions() {
+             return ()=>{};
+         }
+         const onPopState = ()=>{
++            // PATCH(desa-darmasaba): transisi hanya dilepas oleh effect [hash, pathname]
++            // di bawah. Popstate yang cuma mengubah query (mis. menutup overlay
++            // `/?program=x` → `/`) tidak mengubah keduanya, jadi transisinya tak pernah
++            // dilepas dan Chrome membekukan layar sampai batas DOM update (~4 detik).
++            // Tanpa perubahan pathname/hash tidak ada yang dianimasikan: lewati.
++            if (window.location.pathname === currentPathname.current && window.location.hash === currentHash.current) {
++                return;
++            }
+             let pendingViewTransitionResolve;
+             const pendingViewTransition = new Promise((resolve)=>{
+                 pendingViewTransitionResolve = resolve;
              });
              const pendingStartViewTransition = new Promise((resolve)=>{
                  // @ts-ignore
@@ -47,7 +70,15 @@ index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..27e7cf7aa230754d22d076ba40ea5c4c
              });
              setCurrentViewTransition([
                  pendingStartViewTransition,
-@@ -142,8 +168,11 @@ function useTransitionRouter() {
+@@ -69,6 +105,7 @@ function useBrowserNativeTransitions() {
+         // When the new route component is actually mounted, we finish the view
+         // transition.
+         currentPathname.current = pathname;
++        currentHash.current = hash;
+         if (transitionRef.current) {
+             transitionRef.current[1]();
+             transitionRef.current = null;
+@@ -142,8 +179,11 @@ function useTransitionRouter() {
                          finishViewTransition(()=>resolve);
                      });
                  }));

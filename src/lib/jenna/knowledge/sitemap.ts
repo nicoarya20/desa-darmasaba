@@ -18,11 +18,10 @@ export const JENNA_KNOWLEDGE_REVALIDATE_SECONDS = 1800;
 export type SiteMapEntry = { group: string; name: string; href: string };
 
 // Halaman detail yang URL-nya bukan turunan href submenu (submenu-nya `/semua`), mengikuti visibilitas submenu itu.
-// `null` = tidak punya submenu (mis. detail program inovasi dari beranda) → selalu terlihat.
+// `null` = tidak punya submenu → selalu terlihat.
 const DETAIL_BASES: readonly { base: string; gate: string | null }[] = [
   { base: BERITA_BASE_HREF, gate: BERITA_LIST_HREF },
   { base: KEGIATAN_BASE_HREF, gate: `${KEGIATAN_BASE_HREF}/semua` },
-  { base: "/program-inovasi", gate: null },
 ];
 
 function flatten(menus: readonly MenuItem[], group = ""): SiteMapEntry[] {

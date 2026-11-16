@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { DESA_TIME_ZONE } from "@/app/(public)/_com/main-page/apbdes/apbdes.logic";
+import { programOverlayHref } from "@/app/(public)/_com/main-page/landing-page/program-param.logic";
 import { detailHref } from "@/app/(public)/_com/main-page/kabar-desa/kabar.logic";
 import { BERITA_BASE_HREF, PENGUMUMAN_BASE_HREF } from "@/app/(public)/_com/main-page/kabar-desa/kabar.meta";
 import { kegiatanDetailHref } from "@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic";
@@ -436,12 +437,12 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSource[] = [
     searchFields: ["nama", "lokasi", "deskripsi"], href: "/pemerintahan/event-budaya", menuHref: "/pemerintahan/event-budaya",
   }),
   defineSource({
-    // Ditampilkan di beranda (tanpa submenu) → selalu terlihat.
+    // Ditampilkan di beranda (tanpa submenu) → selalu terlihat; detail = overlay beranda `/?program={id}`.
     key: "program_inovasi", domain: "inovasi", tier: "C", label: "Program Inovasi", model: "ProgramInovasi",
     where: ACTIVE, select: { id: true, name: true, description: true, createdAt: true },
     orderBy: [{ createdAt: "desc" }], take: 10, dateField: "createdAt",
     fields: [["Nama", get("name")], ["Deskripsi", html("description")]],
-    searchFields: ["name", "description"], href: (row) => `/program-inovasi/${idOf(row)}`, menuHref: "/",
+    searchFields: ["name", "description"], href: (row) => programOverlayHref(String(row?.id ?? "")), menuHref: "/",
   }),
   defineSource({
     key: "desa_digital", domain: "inovasi", tier: "C", label: "Desa Digital / Smart Village", model: "DesaDigital",

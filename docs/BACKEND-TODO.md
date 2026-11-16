@@ -187,6 +187,12 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Program Penghijauan `GET /:id`: id tak ada → HTTP 200 + `success:false` berbentuk sama dengan galat server. Frontend membedakan lewat pesan (`isNotFoundMessage` di `program-penghijauan/_com/penghijauan.logic.ts`, MITIGASI SEMENTARA). Usul: 404 / 500, lalu hapus pemetaan pesan.
   - Bank Sampah `pengelolaansampah/find-many` & `keteranganbankterdekat/find-many`: `catch` membalas HTTP 200 + `success:false` + `data:[]` saat query gagal (frontend membaca `success`, tapi monitoring melihatnya sukses). Usul: 500.
 
+- [ ] **Detail Program Inovasi: program nonaktif ikut terkirim & id tak ada → 500** (terverifikasi: `landing_page/profile/program-inovasi/findUnique.ts`, 2026-11-16)
+  - `GET /api/landingpage/programinovasi/:id` tidak menyaring `isActive` (findMany menyaring `isActive: true`), jadi tautan lama/dibagikan ke program yang dinonaktifkan admin tetap tampil. Mitigasi frontend (MITIGASI SEMENTARA): overlay beranda `/?program={id}` menganggap `isActive === false` sebagai tidak ditemukan (`landing-page/program-overlay/program-overlay.source.ts`).
+  - Id tidak ditemukan → `throw new Error` → HTTP 500, bukan 404 / `success:false`. Overlay tidak bisa membedakan "tidak ditemukan" dari galat server, jadi memakai satu kalimat netral.
+  - Usul: `findFirst({ where: { id, isActive: true } })`; tidak ditemukan → `set.status = 404; return { success: false, message: "Program inovasi tidak ditemukan" }`.
+  - Info: stg belum mengirim `images` di findUnique (fitur galeri dokumentasi belum ter-deploy); galeri overlay muncul otomatis begitu terkirim.
+
 ## P3. Schema & form admin
 
 - [ ] **Rating produk UMKM tidak punya sumber data** (terverifikasi, 2026-11-13)

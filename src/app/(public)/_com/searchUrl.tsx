@@ -1,6 +1,7 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
 import { desaDigitalDetailHref } from '@/app/(public)/(pages)/inovasi/desa-digital-smart-village/_com/desa-digital.logic';
 import { programKreatifDetailHref } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
+import { programOverlayHref } from '@/app/(public)/_com/main-page/landing-page/program-param.logic';
 import { gotongRoyongDetailHref } from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.logic';
 import { penghijauanDetailHref } from '@/app/(public)/(pages)/lingkungan/program-penghijauan/_com/penghijauan.logic';
 import { isPathHidden } from './menu-visibility.logic';
@@ -10,7 +11,7 @@ type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
 const getDetailUrl = (item: SearchItem) => {
   const { type, id, kategori } = item;
   const map: Record<string, (id: string | number, kategori?: string, item?: SearchItem) => string> = {
-    programinovasi: (id) => `/program-inovasi/${id}`,
+    programinovasi: (id) => programOverlayHref(id),
     // Tujuan media sosial adalah link eksternal; kosong → beranda (tempat ikon sosmed tampil).
     mediaSosial: (_id, _kategori, item) =>
       getSosmedHref(item?.icon as string | null, item?.iconUrl as string | null) ?? '/',

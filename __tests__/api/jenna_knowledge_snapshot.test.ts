@@ -79,7 +79,8 @@ describe("isAllowedJennaHref", () => {
 describe("buildPublicRoutes / visibleSiteMap", () => {
   it("memuat beranda, basis detail, URL sosial; tanpa halaman kesehatan yang tersembunyi default", () => {
     expect(ROUTES.has("/")).toBe(true);
-    expect(ROUTES.has("/program-inovasi")).toBe(true);
+    // Detail program inovasi kini overlay beranda (/?program=id) → bukan basis detail lagi; rute lama 307.
+    expect(ROUTES.has("/program-inovasi")).toBe(false);
     expect(ROUTES.has("/pemerintahan/berita")).toBe(true);
     expect(ROUTES.has("https://www.instagram.com/desadarmasaba")).toBe(true);
     for (const hidden of ["/kesehatan/puskesmas", "/kesehatan/penanganan-darurat", "/kesehatan/info-wabah-penyakit"]) {
@@ -99,6 +100,13 @@ describe("buildPublicRoutes / visibleSiteMap", () => {
     const hrefs = visibleSiteMap({}).map((entry) => entry.href);
     expect(new Set(hrefs).size).toBe(hrefs.length);
     expect(hrefs).not.toContain("/kesehatan/puskesmas");
+  });
+
+  it("program inovasi menaut ke overlay beranda /?program=id dan lolos allowlist lewat \"/\"", () => {
+    const program = source("program_inovasi");
+    const row = { id: "pi 1", name: "X" };
+    expect(program.href(row)).toBe("/?program=pi%201");
+    expect(resolveSourceHref(program, row, ROUTES)).toBe("/?program=pi%201");
   });
 
   it("resolveSourceHref jatuh ke halaman menu bila detail tidak diizinkan", () => {

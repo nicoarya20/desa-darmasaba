@@ -2,6 +2,7 @@
 import profileLandingPageState from "@/app/admin/(dashboard)/_state/landing-page/profile";
 import { Image } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
+import { Suspense } from "react";
 import { useProxy } from "valtio/utils";
 import { HeroSosmed, HeroStatus } from "./HeroInfo";
 import { HeroProfile, HeroProfileSkeleton } from "./HeroProfile";
@@ -9,7 +10,9 @@ import { HeroRibbons } from "./HeroRibbons";
 import { HeroPrograms, type ProgramInovasiItem } from "./HeroPrograms";
 import s from "./landing.module.css";
 import { LANDING_TEXT } from "./landing.text";
+import { ProgramOverlaySlot } from "./ProgramOverlaySlot";
 import { useLandingData } from "./use-landing-data";
+import { useProgramOpen } from "./use-program-param";
 
 const TITLE_ID = "landing-hero-title";
 
@@ -17,6 +20,8 @@ const TITLE_ID = "landing-hero-title";
 function LandingPage() {
   const { socialMedia, profile, loadingSosmed, loadingProfile, workStatus } = useLandingData();
   const programs = useProxy(profileLandingPageState.programInovasi);
+  const openProgram = useProgramOpen();
+  const programItems = (programs.findMany.data ?? []) as ProgramInovasiItem[];
 
   useShallowEffect(() => {
     programs.findMany.load();
@@ -50,10 +55,12 @@ function LandingPage() {
 
       {loadingProfile ? <HeroProfileSkeleton /> : profile && <HeroProfile data={profile} />}
 
-      <HeroPrograms
-        items={(programs.findMany.data ?? []) as ProgramInovasiItem[]}
-        loading={programs.findMany.loading}
-      />
+      <HeroPrograms items={programItems} loading={programs.findMany.loading} onOpen={openProgram} />
+
+      {/* Hanya slot ini yang membaca ?program=; Suspense menjaga hero tetap dirender saat search params belum siap. */}
+      <Suspense fallback={null}>
+        <ProgramOverlaySlot items={programItems} />
+      </Suspense>
     </section>
   );
 }
