@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
+import { getServerMessage } from "@/utils/api-message";
+import type { FotoGaleriItem } from "@/lib/konten-bersama/konten-bersama.types";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
@@ -8,7 +10,8 @@ import { z } from "zod";
 const templateForm = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   nomor: z.string().min(1, { message: "Nomor is required" }),
-  deskripsi: z.string().min(1, { message: "Deskripsi is required" }),
+  // Keterangan per posyandu opsional: deskripsi umum halaman kini di Profil & Klaster.
+  deskripsi: z.string(),
   imageId: z.string().nonempty(),
   jadwalPelayanan: z.string().min(1, { message: "Jadwal Pelayanan is required" }),
 });
@@ -20,19 +23,22 @@ const defaultForm = {
   imageId: "",
   jadwalPelayanan: "",
   banjarId: "",
+  alamat: "",
 };
 
 const posyandustate = proxy({
   create: {
     form: { ...defaultForm },
     loading: false,
-    async create() {
+    /** Kirim form tambah; true bila tersimpan (toast sukses/gagal ditampilkan di sini). */
+    async create(): Promise<boolean> {
         const cek = templateForm.safeParse(posyandustate.create.form);
         if (!cek.success) {
             const err = `[${cek.error.issues
                 .map((v) => `${v.path.join(".")}`)
                 .join("\n")}] required`;
-            return toast.error(err);
+            toast.error(err);
+            return false;
         }
 
         try {
@@ -40,11 +46,15 @@ const posyandustate = proxy({
             const res = await ApiFetch.api.kesehatan.posyandu["create"].post(posyandustate.create.form);
             if (res.status === 200) {
                 posyandustate.findMany.load();
-                return toast.success("Posyandu berhasil disimpan!");
+                toast.success("Posyandu berhasil disimpan!");
+                return true;
             }
-            return toast.error("Gagal menyimpan posyandu");
+            toast.error(getServerMessage(res) ?? "Gagal menyimpan posyandu");
+            return false;
         } catch (error) {
-            console.log((error as Error).message);
+            console.error("Gagal menambahkan posyandu:", error);
+            toast.error("Gagal menyimpan posyandu");
+            return false;
         } finally {
             posyandustate.create.loading = false;
         }
@@ -95,12 +105,12 @@ const posyandustate = proxy({
   },
   findUnique: {
     data: null as
-    | Prisma.PosyanduGetPayload<{
+    | (Prisma.PosyanduGetPayload<{
         include: {
             image: true;
             banjar: { select: { id: true; name: true } };
         }
-    }> | null,
+    }> & { fotoKegiatan?: FotoGaleriItem[] }) | null,
     async load(id: string) {
         try {
             const res = await fetch(`/api/kesehatan/posyandu/${id}`);
@@ -180,6 +190,7 @@ const posyandustate = proxy({
                     imageId: data.imageId || "",
                     jadwalPelayanan: data.jadwalPelayanan || "",
                     banjarId: data.banjarId || "",
+                    alamat: data.alamat || "",
                 };
                 return data;
             } else {
@@ -215,6 +226,7 @@ const posyandustate = proxy({
                     imageId: this.form.imageId,
                     jadwalPelayanan: this.form.jadwalPelayanan,
                     banjarId: this.form.banjarId || undefined,
+                    alamat: this.form.alamat,
                 }),
             });
             
