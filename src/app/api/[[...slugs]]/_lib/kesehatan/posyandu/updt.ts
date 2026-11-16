@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import { alamatPosyanduSchema } from "@/lib/posyandu/posyandu-konten.validation";
 
 type FormUpdate = {
     name: string;
@@ -9,8 +10,10 @@ type FormUpdate = {
     imageId: string;
     jadwalPelayanan: string;
     banjarId?: string;
+    alamat?: string | null;
 };
 
+/** PUT (admin): ubah posyandu banjar; `alamat` tidak dikirim = tidak diubah, kosong = dikosongkan. */
 export default async function posyanduUpdate(context: Context) {
     try {
         const id = context.params?.id as string;
@@ -24,6 +27,14 @@ export default async function posyanduUpdate(context: Context) {
             jadwalPelayanan,
             banjarId,
         } = body;
+
+        const alamat = alamatPosyanduSchema.safeParse(body.alamat);
+        if (!alamat.success) {
+            return Response.json({
+                success: false,
+                message: alamat.error.issues.map((issue) => issue.message).join("; "),
+            }, { status: 400 })
+        }
 
         if(!id) {
             return new Response(JSON.stringify({
@@ -65,6 +76,7 @@ export default async function posyanduUpdate(context: Context) {
                 imageId,
                 jadwalPelayanan,
                 banjarId: banjarId || null,
+                alamat: alamat.data,
             }
         })
 
