@@ -25,7 +25,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Usul: wajibkan auth admin untuk find-many/find-unique balita & ibu hamil.
 
 - [ ] **Detail mengabaikan `isActive`**
-  - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`).
+  - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`), `lingkungan/program-penghijauan/findUnique.ts` (terverifikasi 2026-11-16: `findUnique({ where: { id } })`, padahal find-many menyaring `isActive: true`; `datalingkungandesa/:id` dilaporkan sama, belum dipakai halaman publik).
   - Dampak: entri yang dinonaktifkan admin tetap bisa dibuka lewat URL detail (frontend publik kini menganggapnya "tidak ditemukan", tapi API tetap mengirim data).
   - Usul: `where: { id, isActive: true }` untuk endpoint publik.
   - Lowongan Kerja, tambahan (terverifikasi 2026-11-14): `deletedAt` tidak bisa dipakai sebagai penanda hapus. Schema `LowonganPekerjaan.deletedAt DateTime @default(now())` (tidak nullable), jadi selalu terisi saat dibuat (stg: 7/7 lowongan `deletedAt` = `createdAt`), dan `del.ts` melakukan hard delete (`prisma.lowonganPekerjaan.delete`). Halaman detail publik baru (`_com/detail/lowongan-detail.adapter.logic.ts`, `isLowonganTampil`, MITIGASI SEMENTARA(lowongan-detail)) hanya menyaring `isActive` dan sengaja mengabaikan `deletedAt`. Usul: bila ingin soft delete, ubah jadi `deletedAt DateTime?` (migrasi set `NULL` untuk baris yang ada), `del.ts` mengisi `deletedAt`, lalu findMany/findUnique menyaring `deletedAt: null`.
@@ -163,6 +163,13 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - findUnique Desa Digital & Program Kreatif tidak menyaring `isActive` (pola butir P1 "Detail mengabaikan `isActive`").
   - Ajukan Ide `create.ts`: tanpa try/catch (galat Prisma → 500 mentah), tanpa batas panjang (kolom `Text`), selalu `success: true` + menggemakan body; endpoint publik tanpa batas laju/anti-spam (pola Laporan Publik: rate limit per IP + honeypot). State admin `create()` memanggil `findMany.load()` (admin-only) → 401 bila dipakai dari halaman publik; halaman publik kini memakai `ajukan-ide.source.ts` sendiri.
 
+- [ ] **Lingkungan (2026-11-16, rombak menu Lingkungan v0.1.285)**
+  - Cari global `type: "gotongRoyong"` (terverifikasi: `src/app/api/[[...slugs]]/_lib/search/findMany.ts` ±1153) memuat **semua** `kegiatanDesa`: tanpa saring kategori, tanpa `isActive: true`, tanpa `include: { kategoriKegiatan }`. Akibat: kegiatan Olahraga/PKK dst. muncul sebagai hasil "Gotong Royong". Dulu `searchUrl.tsx` membentuk `/lingkungan/gotong-royong/undefined/{id}`; kini frontend memakai segmen cadangan `lingkungan` dan detail menerima kegiatan kategori apa pun (`gotong-royong/[kategori]/[id]/page.tsx`). Kegiatan Desa tidak punya tipe cari sendiri. Usul: tipe `kegiatanDesa` (→ `/pemerintahan/kegiatan-desa/{kategori}/{id}`) untuk semua kegiatan, `gotongRoyong` hanya kategori Lingkungan/Kebersihan, `isActive: true`, sertakan `kategoriKegiatan`.
+  - Dua endpoint untuk tabel kegiatan yang sama berbeda perilaku: `/api/desa/kegiatandesa/find-many` (kategori `contains`, cari judul+lokasi, urut `tanggal asc`) vs `/api/lingkungan/kegiatandesa/find-many` (kategori `equals`, cari judul+deskripsi+kategori, urut `createdAt desc`); `kategori` hanya menerima satu nama sehingga Gotong Royong memanggil sekali per kategori (limit 100) lalu menggabung & mempaginasi di klien. Usul: terima beberapa nama (`kategori=Lingkungan,Kebersihan`) dengan `equals`, lalu frontend kembali ke paginasi server. `GET /api/lingkungan/kegiatandesa/:id` melempar Error saat id tidak ada (bukan `success:false` seperti endpoint desa); publik memakai endpoint desa.
+  - Edukasi Lingkungan & Konservasi Adat Bali: pola sama dengan butir Pendidikan di atas. `find-by-id` 6 handler (terverifikasi untuk 3 handler konservasi: `context?.params?.slugs?.[0]`) mengabaikan `?id=edit` → selalu `findFirst()` tanpa where. `updt.ts` keenamnya menyimpan `judul`/`deskripsi` HTML tanpa sanitasi (publik menyaring lewat `sanitizeRichText`). Nama folder `materi-edukasi-lingkunga` & file `findUnqiue.ts` salah ketik (kosmetik, jangan rename tanpa koordinasi).
+  - Program Penghijauan `GET /:id`: id tak ada → HTTP 200 + `success:false` berbentuk sama dengan galat server. Frontend membedakan lewat pesan (`isNotFoundMessage` di `program-penghijauan/_com/penghijauan.logic.ts`, MITIGASI SEMENTARA). Usul: 404 / 500, lalu hapus pemetaan pesan.
+  - Bank Sampah `pengelolaansampah/find-many` & `keteranganbankterdekat/find-many`: `catch` membalas HTTP 200 + `success:false` + `data:[]` saat query gagal (frontend membaca `success`, tapi monitoring melihatnya sukses). Usul: 500.
+
 ## P3. Schema & form admin
 
 - [ ] **Rating produk UMKM tidak punya sumber data** (terverifikasi, 2026-11-13)
@@ -236,6 +243,12 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Ajukan Ide: skema `AjukanIdeInovatif` tanpa kontak (telepon/email) → desa tidak bisa menindaklanjuti pengusul. Usul kolom opsional.
   - Gambar: `image.link` Info TTG & logo mitra menunjuk varian acak (`-mobile` 720px, `-desktop` 500px; varian `-desktop` logo mitra berupa PNG 1,6 KB). Publik menampilkan foto TTG maks 560px agar tidak buram.
 
+- [ ] **Lingkungan (2026-11-16)**
+  - `deletedAt DateTime @default(now())` juga di Pengelolaan Sampah, Keterangan Bank Sampah, Program Penghijauan, Data Lingkungan (stg: `deletedAt` = `createdAt`); pola butir Lowongan Kerja.
+  - Bank Sampah: urutan langkah = `createdAt ASC` (tanpa kolom urutan; admin tak bisa menyusun ulang tanpa hapus-buat ulang). `linkPetunjukArah` teks bebas tanpa validasi URL (publik hanya menerima http(s), selain itu rute dari lat/lng); usul validasi `https://` di form + API. `name` dan `namaTempatMaps` identik di stg; jelaskan bedanya di form admin atau hapus salah satu.
+  - Data Lingkungan: `jumlah` String bebas (stg "1 paket kegiatan", "100"); halaman lama menambah "±", kini tampil apa adanya. Bila desa ingin angka sorotan, perlu kolom angka + satuan terpisah. Cari find-many: Penghijauan hanya `name` + `judul`, Data Lingkungan `name` + `deskripsi` (publik mencari di klien, tidak terdampak).
+  - Kategori kegiatan: "Sosial" tercatat dua kali di `kategorikegiatan` (stg).
+
 ## Jenna publik (tindak lanjut)
 
 Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
@@ -267,3 +280,4 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - Lowongan Kerja (stg 2026-11-14): 5 dari 7 lowongan tertanggal April 2026 (data awal/seed, nomor kontak sama 089647037426) dan mungkin sudah tidak berlaku; tipe pekerjaan "Menjaga Toko" pada lowongan Toko Bangunan KBSM seharusnya tipe kerja (mis. Full Time).
 - Pendidikan (2026-11-15): Non Formal bagian ke-3 berjudul "Tempat Kegiatan" (seharusnya "Jenis Program yang Diselenggarakan"; seed `jenis-program-yang-diselenggarakan.json` + stg); `pengajar.json` = salinan `siswa.json` (dummy); Data Pendidikan stg "SD" ganda (874 & 90); judul buku ganda "Seni Berpikir Kritis"; seeder non formal mencetak log "fasilitas bimbingan belajar desa seeded".
 - Inovasi (stg 2026-11-16): logo "BRI Peduli" berlatar hampir putih (bukan transparan) sehingga tampak kotak samar di dinding mitra; unggah PNG/WebP transparan. Kolaborasi berisi entri uji "Forum Inovasi Desa (Tes)".
+- Lingkungan (stg 2026-11-16): langkah Bank Sampah ke-6 "Pilih sampah sesai jenisnya (Tes )" (id `cmrbohsmq0000nr0rjvdv3gqa`) adalah data uji; Data Lingkungan berisi entri uji "Test QA Data Lingkungan" (ikon `icon-test`); judul Konservasi "Filosofi Tri Hita Karuna" seharusnya "Karana".
