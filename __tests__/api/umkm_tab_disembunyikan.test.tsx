@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Admin UMKM sementara hanya menampilkan tab Data UMKM; Dashboard, Produk, Penjualan,
-// dan Kategori Produk disembunyikan (bukan dihapus) — docs/debt/2026-11-12-umkm-tab-disembunyikan.md
+// Admin UMKM menampilkan tab Data UMKM, Produk, dan Kategori Produk; Dashboard dan Penjualan
+// masih disembunyikan (bukan dihapus) — docs/debt/2026-11-12-umkm-tab-disembunyikan.md
 import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
@@ -26,16 +26,24 @@ const render = (node: React.ReactElement) =>
   );
 
 describe('tab admin UMKM yang disembunyikan', () => {
-  it('daftar tersembunyi berisi tepat 4 tab yang diminta desa', () => {
-    expect([...HIDDEN_UMKM_TABS].sort()).toEqual(
-      ['dashboard', 'produk', 'penjualan', 'kategori-produk'].sort(),
-    );
+  it('daftar tersembunyi tinggal Dashboard dan Penjualan', () => {
+    expect([...HIDDEN_UMKM_TABS].sort()).toEqual(['dashboard', 'penjualan'].sort());
   });
 
-  it('tab yang tampil hanya Data UMKM, sehingga bar tab tidak perlu', () => {
+  it('tab yang tampil: Data UMKM, Produk, Kategori Produk — sehingga bar tab dirender', () => {
     const tabs = visibleUmkmTabs();
+    expect(tabs.map((t) => t.value)).toEqual(['data-umkm', 'produk', 'kategori-produk']);
+    expect(tabs.map((t) => t.href)).toEqual([
+      '/admin/ekonomi/umkm/data-umkm',
+      '/admin/ekonomi/umkm/produk',
+      '/admin/ekonomi/umkm/kategori-produk',
+    ]);
+    expect(shouldShowUmkmTabBar(tabs)).toBe(true);
+  });
+
+  it('satu tab saja tidak memerlukan bar tab', () => {
+    const tabs = visibleUmkmTabs(UMKM_TABS, ['dashboard', 'produk', 'penjualan', 'kategori-produk']);
     expect(tabs.map((t) => t.value)).toEqual(['data-umkm']);
-    expect(tabs[0].href).toBe('/admin/ekonomi/umkm/data-umkm');
     expect(shouldShowUmkmTabBar(tabs)).toBe(false);
   });
 
@@ -55,7 +63,7 @@ describe('tab admin UMKM yang disembunyikan', () => {
     expect(shouldShowUmkmTabBar(tabs)).toBe(true);
   });
 
-  it('SSR LayoutTabs: judul + konten tampil, tanpa tablist dan tanpa label tab tersembunyi', () => {
+  it('SSR LayoutTabs: judul, bar tab dengan 3 tab tampil, tanpa label tab tersembunyi', () => {
     const html = render(
       <LayoutTabs>
         <p>Isi Data UMKM</p>
@@ -63,9 +71,13 @@ describe('tab admin UMKM yang disembunyikan', () => {
     );
     expect(html).toContain('Manajemen UMKM');
     expect(html).toContain('<p>Isi Data UMKM</p>');
-    expect(html).not.toContain('role="tablist"');
-    expect(html).not.toContain('role="tab"');
-    for (const label of ['Dashboard', 'Produk', 'Penjualan', 'Kategori Produk']) {
+    expect(html).toContain('role="tablist"');
+    // Bar tab desktop + mobile masing-masing merender 3 tab.
+    expect(html.match(/role="tab"/g)).toHaveLength(6);
+    for (const label of ['Data UMKM', 'Produk', 'Kategori Produk']) {
+      expect(html).toContain(label);
+    }
+    for (const label of ['Dashboard', 'Penjualan']) {
       expect(html).not.toContain(label);
     }
   });
