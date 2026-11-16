@@ -5,11 +5,15 @@
 import { Prisma } from "@prisma/client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// Payload Prisma di mock diperiksa field per field oleh test, jadi bentuknya sengaja longgar.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- payload Prisma dinamis per test
+type MockData = Record<string, any>;
+
 const { prismaMock, removeReleasedFiles } = vi.hoisted(() => ({
   prismaMock: {
     lembaga: {
-      create: vi.fn((args: { data: object }) => Promise.resolve({ id: "lb1", ...args.data })),
-      update: vi.fn((args: { data: object }) => Promise.resolve({ id: "lb1", ...args.data })),
+      create: vi.fn((args: { data: MockData }): Promise<MockData> => Promise.resolve({ id: "lb1", ...args.data })),
+      update: vi.fn((args: { data: MockData }): Promise<MockData> => Promise.resolve({ id: "lb1", ...args.data })),
       findUnique: vi.fn(),
       findFirst: vi.fn(),
       findMany: vi.fn(),

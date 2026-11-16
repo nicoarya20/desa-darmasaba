@@ -8,11 +8,15 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// Payload Prisma di mock diperiksa field per field oleh test, jadi bentuknya sengaja longgar.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- payload Prisma dinamis per test
+type MockData = Record<string, any>;
+
 const { prismaMock, removeReleasedFiles } = vi.hoisted(() => ({
   prismaMock: {
     puskesmas: {
-      create: vi.fn((args: { data: object }) => Promise.resolve({ id: "pu1", jam: null, ...args.data })),
-      update: vi.fn((args: { data: object }) => Promise.resolve({ id: "pu1", jam: null, ...args.data })),
+      create: vi.fn((args: { data: MockData }): Promise<MockData> => Promise.resolve({ id: "pu1", jam: null, ...args.data })),
+      update: vi.fn((args: { data: MockData }): Promise<MockData> => Promise.resolve({ id: "pu1", jam: null, ...args.data })),
       findUnique: vi.fn(),
       findMany: vi.fn(),
       count: vi.fn(),

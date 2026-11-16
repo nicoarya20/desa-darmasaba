@@ -4,6 +4,10 @@
 // rute `/profil` & `/:id/foto-kegiatan` terpasang. Prisma & penghapus berkas di-mock.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// Payload Prisma di mock diperiksa field per field oleh test, jadi bentuknya sengaja longgar.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- payload Prisma dinamis per test
+type MockData = Record<string, any>;
+
 const { prismaMock, removeReleasedFiles, removeStoredFile } = vi.hoisted(() => ({
   prismaMock: {
     $transaction: vi.fn((ops: unknown[]) => Promise.all(ops)),
@@ -11,8 +15,8 @@ const { prismaMock, removeReleasedFiles, removeStoredFile } = vi.hoisted(() => (
     klasterPosyandu: { findMany: vi.fn(), upsert: vi.fn((a: unknown) => Promise.resolve(a)) },
     posyandu: {
       findUnique: vi.fn(),
-      create: vi.fn((a: { data: object }) => Promise.resolve({ id: "p1", ...a.data })),
-      update: vi.fn((a: { data: object }) => Promise.resolve({ id: "p1", ...a.data })),
+      create: vi.fn((a: { data: MockData }): Promise<MockData> => Promise.resolve({ id: "p1", ...a.data })),
+      update: vi.fn((a: { data: MockData }): Promise<MockData> => Promise.resolve({ id: "p1", ...a.data })),
       delete: vi.fn(),
     },
     fotoKegiatanPosyandu: { findMany: vi.fn() },
