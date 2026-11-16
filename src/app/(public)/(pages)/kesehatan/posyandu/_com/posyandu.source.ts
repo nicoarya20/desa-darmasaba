@@ -1,3 +1,5 @@
+import type { FotoGaleriItem } from "@/lib/konten-bersama/konten-bersama.types";
+import type { ProfilPosyanduData } from "@/lib/posyandu/posyandu-konten.types";
 import type { PosyanduStats } from "./posyandu.logic";
 import { POSYANDU_LIST_LIMIT } from "./posyandu.meta";
 
@@ -10,6 +12,10 @@ export type PosyanduItem = {
   jadwalPelayanan: string | null;
   image: { link: string } | null;
   banjar: { id: string; name: string } | null;
+  /** Alamat tempat posyandu (opsional; data lama belum punya). */
+  alamat?: string | null;
+  /** Galeri foto lokasi & kader; hanya dikirim endpoint detail. */
+  fotoKegiatan?: FotoGaleriItem[];
 };
 
 export type BanjarOption = { id: string; name: string };
@@ -42,6 +48,12 @@ export async function loadPosyandu(id: string): Promise<PosyanduItem | null> {
   const { status, body } = await getBody<PosyanduItem>(`${API}/posyandu/${encodeURIComponent(id)}`);
   if (status === 404) return null;
   return requireData(status, body, what);
+}
+
+/** Deskripsi umum posyandu + kegiatan per klaster (tanpa data pribadi). */
+export async function loadProfilPosyandu(): Promise<ProfilPosyanduData> {
+  const { status, body } = await getBody<ProfilPosyanduData>(`${API}/posyandu/profil`);
+  return requireData(status, body, "profil posyandu");
 }
 
 /** Daftar banjar aktif (urut nama). */

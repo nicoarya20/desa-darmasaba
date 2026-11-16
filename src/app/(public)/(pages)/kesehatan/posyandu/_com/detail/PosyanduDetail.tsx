@@ -5,7 +5,8 @@ import { KABAR_BRAND_VARS } from "@/app/(public)/_com/main-page/kabar-desa/kabar
 import kabar from "@/app/(public)/_com/main-page/kabar-desa/kabar.module.css";
 import { jadwalToLines, jadwalToText } from "@/lib/jadwal-pelayanan";
 import { Image } from "@mantine/core";
-import { IconCalendarTime, IconChevronRight, IconMapPin, IconPhone, type Icon } from "@tabler/icons-react";
+import GaleriFoto from "@/app/(public)/_com/konten-bersama/galeri-foto.grid";
+import { IconBuildingCommunity, IconCalendarTime, IconChevronRight, IconMapPin, IconPhone, type Icon } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
 import { useState, type ReactNode } from "react";
 import { banjarLabel, posyanduTabHref, telHref } from "../posyandu.logic";
@@ -14,7 +15,7 @@ import { POSYANDU_TEXT as T } from "../posyandu.text";
 import s from "./posyandu-detail.module.css";
 import { usePosyanduDetail } from "./use-posyandu-detail";
 
-/** Halaman detail posyandu (pola detail Pengumuman, kolom 860px): banjar, nama, foto bila ada, info, deskripsi. */
+/** Halaman detail posyandu (pola detail Pengumuman, kolom 860px): banjar, nama, foto, info, keterangan, galeri. */
 export function PosyanduDetail({ id }: { id: string }) {
   const state = usePosyanduDetail(id);
 
@@ -45,6 +46,8 @@ export function PosyanduDetailBody({ data }: { data: PosyanduItem }) {
   const tel = telHref(nomor);
   const deskripsi = data.deskripsi?.trim() ?? "";
   const adaDeskripsi = deskripsi.replace(/<[^>]*>|&nbsp;/g, "").trim().length > 0;
+  const alamat = data.alamat?.trim() ?? "";
+  const foto = data.fotoKegiatan ?? [];
 
   return (
     <>
@@ -56,8 +59,11 @@ export function PosyanduDetailBody({ data }: { data: PosyanduItem }) {
       {data.image?.link ? <Photo link={data.image.link} name={data.name} /> : null}
 
       <dl className={s.info}>
-        <InfoRow icon={IconMapPin} label={T.infoBanjar}>
+        <InfoRow icon={IconBuildingCommunity} label={T.infoBanjar}>
           {banjar || <span className={s.kosong}>{T.banjarKosong}</span>}
+        </InfoRow>
+        <InfoRow icon={IconMapPin} label={T.infoAlamat}>
+          {alamat || <span className={s.kosong}>{T.alamatKosong}</span>}
         </InfoRow>
         <InfoRow icon={IconCalendarTime} label={T.infoJadwal}>
           <JadwalLines value={data.jadwalPelayanan} />
@@ -84,6 +90,15 @@ export function PosyanduDetailBody({ data }: { data: PosyanduItem }) {
           </h2>
           {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
           <div className={d.content} dangerouslySetInnerHTML={{ __html: deskripsi }} />
+        </section>
+      ) : null}
+
+      {foto.length > 0 ? (
+        <section className={s.block} aria-labelledby="posyandu-galeri">
+          <h2 id="posyandu-galeri" className={s.blockTitle}>
+            {T.galeriTitle}
+          </h2>
+          <GaleriFoto foto={foto} namaPemilik={data.name} judul={null} ariaLabel={T.galeriLabel(data.name)} />
         </section>
       ) : null}
     </>
