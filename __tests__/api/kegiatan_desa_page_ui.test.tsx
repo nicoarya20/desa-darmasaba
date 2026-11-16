@@ -9,7 +9,18 @@ vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
   useTransitionRouter: () => ({ back: vi.fn() }),
 }));
-import { KegiatanDetailBody } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/KegiatanDetail';
+// test-only: keadaan muat detail diatur per test (komponen KegiatanDetail utuh).
+const detailState = vi.hoisted(() => ({ current: { status: 'loading' } as KegiatanDetailState }));
+vi.mock('@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/use-kegiatan-detail', () => ({
+  useKegiatanDetail: () => detailState.current,
+}));
+import {
+  KegiatanDetail as KegiatanDetailPage,
+  KegiatanDetailBody,
+} from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/KegiatanDetail';
+import type { KegiatanDetailState } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/use-kegiatan-detail';
+import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
+import { BACK_BUTTON_LABEL } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import type { KegiatanDetail } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/kegiatan-detail.source';
 import s from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/kegiatan-detail.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
@@ -78,5 +89,32 @@ describe('KegiatanDetailBody', () => {
     expect(html).toContain('Progres Pembangunan');
     expect(html).toContain('60%');
     expect(html).toContain('Dana Desa');
+  });
+});
+
+describe('KegiatanDetail prop list (pemakai lain, mis. Gotong Royong)', () => {
+  const list = { label: 'Gotong Royong', href: '/lingkungan/gotong-royong' };
+
+  it('tanpa list: tombol ikon kembali, kategori menaut ke daftar Kegiatan Desa (tampilan Kegiatan Desa)', () => {
+    detailState.current = { status: 'ready', data: data() };
+    const html = render(<KegiatanDetailPage id="k1" />);
+    expect(html).toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
+    expect(html).not.toContain(`class="${back.back}"`);
+    expect(html).toContain('href="/pemerintahan/kegiatan-desa/lingkungan"');
+  });
+
+  it('dengan list: tautan teks "‹ label" ke daftar, tanpa tombol ikon, kategori teks biasa', () => {
+    detailState.current = { status: 'ready', data: data() };
+    const html = render(<KegiatanDetailPage id="k1" list={list} />);
+    expect(html).toMatch(new RegExp(`<a href="/lingkungan/gotong-royong" class="${back.back}"><svg[^]*?</svg>Gotong Royong</a>`));
+    expect(html).not.toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
+    expect(html).toContain(`<span class="${d.kategori}">Lingkungan</span>`);
+    expect(html).not.toContain('/pemerintahan/kegiatan-desa');
+  });
+
+  it('tidak ditemukan: "Lihat semua kegiatan" menuju list.href bila ada, daftar Kegiatan Desa bila tidak', () => {
+    detailState.current = { status: 'notfound' };
+    expect(render(<KegiatanDetailPage id="x" list={list} />)).toContain(`href="/lingkungan/gotong-royong" class="${d.emptyLink}"`);
+    expect(render(<KegiatanDetailPage id="x" />)).toContain(`href="/pemerintahan/kegiatan-desa/semua" class="${d.emptyLink}"`);
   });
 });
