@@ -17,3 +17,26 @@
     align-self: start;
   }
 }
+
+/* Isi teks kaya profil lembaga (hanya p, br, strong, em, u, ul, ol, li dari sanitizeRichText). */
+.rich {
+  overflow-wrap: anywhere;
+}
+
+.rich p {
+  margin: 0 0 0.8em;
+}
+
+.rich ul,
+.rich ol {
+  margin: 0 0 0.8em;
+  padding-left: 1.4em;
+}
+
+.rich li + li {
+  margin-top: 0.3em;
+}
+
+.rich > :last-child {
+  margin-bottom: 0;
+}
