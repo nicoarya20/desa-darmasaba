@@ -22,7 +22,10 @@ export async function serveStoredFile(context: Context, data: ServableFile) {
     // Range request dipakai browser untuk seek audio/video (mis. drag slider
     // durasi musik). Tanpa dukungan ini, audio.currentTime tidak bisa lompat
     // ke posisi yang belum ter-buffer — browser diam-diam mengabaikan seek.
-    const rangeHeader = context.headers.range;
+    // Dibaca dari Request asli, BUKAN context.headers: Elysia hanya mengisi context.headers bila handler rute
+    // sendiri terdeteksi memakainya, padahal handler (findUniq.ts) hanya meneruskan context ke fungsi ini sehingga
+    // context.headers undefined dan setiap berkas non-gambar (PDF/audio) salah dilaporkan 404.
+    const rangeHeader = context.request.headers.get("range");
 
     if (rangeHeader) {
       const stat = await minio.statObject(MINIO_BUCKET, objectPath);
