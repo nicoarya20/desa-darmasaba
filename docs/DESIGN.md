@@ -4,6 +4,66 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 
 ---
 
+## 0. Membuat Halaman Publik Baru (mulai di sini)
+
+Ringkasan untuk developer/AI yang menambah halaman situs publik supaya seragam dengan halaman yang sudah dirombak. Detail tiap pola ada di bagian yang dirujuk; catatan per halaman di §5 adalah riwayat, bukan bacaan wajib.
+
+### 0.1 Pilih kerangka sesuai jenis halaman
+
+| Jenis halaman | Kerangka | Contoh yang bisa disalin |
+|---|---|---|
+| Daftar teks (berita, kegiatan, program) + paginasi | `.section` `kabar.module.css` + `KABAR_BRAND_VARS` + `KabarListHeader` + `KabarListPagination` (`_com/kabar-list/`) | `(pages)/pemerintahan/kegiatan-desa/` (§5 Kegiatan Desa) |
+| Detail artikel/entri | kolom 860px `_com/kabar-list/kabar-detail.module.css`, foto utama `.photo` | `(pages)/pemerintahan/kegiatan-desa/_com/detail/KegiatanDetail.tsx` |
+| Statistik satu dimensi (jumlah per kategori) | `.section` Kabar + `KabarListHeader searchable={false}` + `StatBarsPanel` (`_com/stat-bars/`) | `(pages)/ekonomi/demografi-pekerjaan/` (§5 Modul batang statistik) |
+| Anggaran/tabel rupiah berhirarki | komponen APBDes (`_com/main-page/apbdes/`, `ApbdesRows`) | `/apbdes`, PADesa (§5 APBDes) |
+| Teks program dari CMS (judul + deskripsi HTML) | `ProgramInfoBody` + `.tokens` (`(pages)/pendidikan/_com/program-info/`) | `(pages)/lingkungan/edukasi-lingkungan/` (§5 Edukasi Lingkungan) |
+| Halaman di menu Pendidikan | `page-frame` 1200px (`(pages)/pendidikan/_com/page-frame/`) | §5 Kerangka halaman Pendidikan |
+
+Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) memakai kerangka Kabar, bukan `page-frame`. Jangan menulis padding/max-width halaman sendiri.
+
+### 0.2 Susunan file per halaman
+
+```
+(pages)/<menu>/<halaman>/
+  page.tsx                  // tipis: render komponen dari _com
+  _com/<Halaman>Page.tsx    // kerangka + keadaan (memuat/kosong/galat/isi)
+  _com/<halaman>.source.ts  // ApiFetch langsung; galat dilempar berkonteks
+  _com/<halaman>.logic.ts   // fungsi murni (normalisasi, ringkasan, urutan)
+  _com/<halaman>.text.ts    // semua teks UI
+  _com/<halaman>.meta.ts    // ikon/warna (bila perlu)
+  _com/<halaman>.module.css // hanya gaya khas halaman
+```
+
+- Data dimuat sekali lewat `useLoadOnce(load, "data X (Nama Halaman)")` (`_com/load-once/`), **bukan** state admin `admin/(dashboard)/_state`.
+- Batas ukuran file mengikuti aturan project (komponen ≤150 baris, logic ≤200, file apa pun ≤500). Pecah komponen sebelum melewati batas.
+- Test: `__tests__/api/<menu>_<halaman>_{logic,ui}.test.ts(x)`. Test UI memakai `// @vitest-environment node` + `renderToStaticMarkup` (jsdom tidak dipakai di repo ini). Contoh: `ekonomi_demografi_pekerjaan_ui.test.tsx`.
+
+### 0.3 Token yang wajib dipakai
+
+- **Jarak**: `--edge-gutter` (tepi kiri/kanan), `--section-gap` (antar-section beranda, isi terakhir → footer), `--block-gap` (antar-bagian di dalam halaman). Lihat §4. Jangan angka literal 56/64/100px.
+- **`--gutter`**: wadah pemakai `KabarListHeader` wajib set `--gutter: var(--edge-gutter)`, kalau tidak rel pil di ponsel melebar.
+- **Warna**: brand `blue-button` `#0A4E78`, tinta `#1d1d1f`, abu teks `#6e6e73`/`#515154`, panel/ubin `#f5f5f7` radius 18px tanpa border/bayangan, garis `#d2d2d7` (§2.1).
+- **Tipografi**: `h1` 48px (≤734px 32) brand rata kiri + satu kalimat pengantar 19px abu (maks 640px); judul bagian `h2` 28px (ponsel 24), jarak judul → isi 24px (ponsel 20).
+- **Breakpoint CSS**: 1068px (tablet) dan 734px (ponsel).
+
+### 0.4 Aturan tetap (keputusan user)
+
+1. **Hover tautan = sapuan warna**, bukan garis bawah. Pakai `link-reveal` (`.trigger` + `.title`/`.cta`/`.chevron`); `<Anchor>` wajib `underline="never"`. Dijaga test `__tests__/api/no_hover_underline_guard.test.ts` (gagal bila dilanggar). Lihat §5 Modul sapuan warna tautan.
+2. **Tautan kembali di halaman detail** = teks "‹ Nama Daftar" (`.back` dari `detail-umkm.module.css`) + `.chevronBack`, bukan tombol ikon panah.
+3. **Keadaan selalu dibedakan**: memuat = kerangka berdenyut `aria-busy`; kosong = kotak `#f5f5f7` satu kalimat ("Belum ada …"); galat = kalimat berbeda (`role="alert"`). Jangan tampilkan grafik kosong, "0 orang", atau "Rp 0" untuk data yang belum diisi; tulis "Belum diisi".
+4. **Teks UI**: Bahasa Indonesia, tanpa em dash (—), tanpa emoji (ikon dari `@tabler/icons-react`).
+5. **Alamat induk menu** (`/keamanan`, `/ekonomi`, dst.) sengaja 404; jangan buat halaman induk. Submenu yang disembunyikan (`hidden: true` di `src/con/navbar-list-menu.ts`) juga 404.
+6. **Gerak**: hormati `prefers-reduced-motion`; hover hanya di `(hover: hover) and (pointer: fine)`. Tulis `backdrop-filter` tanpa `-webkit-` manual (Lightning CSS).
+7. **Mobile**: tidak boleh ada geser horizontal halaman; baris pil/kartu yang geser harus di dalam relnya sendiri.
+
+### 0.5 Mendaftarkan halaman
+
+- Menu navbar: `src/con/navbar-list-menu.ts` (§7). Halaman di luar navbar yang perlu muncul di pencarian: `src/con/search-extra-pages.ts`.
+- Hasil cari global yang membuka detail: helper href di `_com/searchUrl.tsx`.
+- Setelah halaman jadi, tambahkan catatan singkatnya di §5 (rute, folder, test) supaya dokumen ini tetap sinkron.
+
+---
+
 ## 1. Tech Stack UI
 
 | Paket | Versi | Kegunaan |
