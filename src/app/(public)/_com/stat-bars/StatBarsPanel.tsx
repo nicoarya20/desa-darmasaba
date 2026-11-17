@@ -18,8 +18,12 @@ export type StatBarsPanelProps<T extends StatBarItem> = {
   unit?: string;
   /** Ada → kotak total di kanan kepala (hanya bila total terisi). */
   totalLabel?: string;
+  /** Baris kecil di bawah angka total (mis. "2.322 KK"); hanya tampil bersama kotak total. */
+  totalDetail?: string;
   /** Persen porsi tiap baris. Bawaan true. */
   showShare?: boolean;
+  /** Format persen porsi (0–100). Bawaan `formatPercent` (maks 1 desimal); ganti bila porsi kecil harus tetap terbaca. */
+  formatShare?: (share: number) => string;
   /** false → tanpa batang (mis. satuan antarbaris berbeda). Bawaan true. */
   showBars?: boolean;
   /** Segmen batang + legenda (mis. laki-laki | perempuan); nilai per baris dari `item.segments`. */
@@ -29,17 +33,21 @@ export type StatBarsPanelProps<T extends StatBarItem> = {
   footnote?: string;
 };
 
-type RowOptions = Pick<StatBarsPanelProps<StatBarItem>, "unit" | "showShare" | "showBars" | "segments"> & { notFilledLabel: string };
+type RowOptions = Pick<StatBarsPanelProps<StatBarItem>, "unit" | "showShare" | "showBars" | "segments"> & {
+  notFilledLabel: string;
+  formatShare: (share: number) => string;
+};
 
 /** Panel `#f5f5f7`: kepala (judul, caption, meta, legenda segmen, total), daftar batang horizontal HTML, catatan kaki. */
 export function StatBarsPanel<T extends StatBarItem>(props: StatBarsPanelProps<T>) {
-  const { titleId, title, caption, meta, summary, unit, totalLabel, segments, footnote } = props;
+  const { titleId, title, caption, meta, summary, unit, totalLabel, totalDetail, segments, footnote } = props;
   const options: RowOptions = {
     unit,
     segments,
     showShare: props.showShare ?? true,
     showBars: props.showBars ?? true,
     notFilledLabel: props.notFilledLabel ?? STAT_BARS_TEXT.notFilled,
+    formatShare: props.formatShare ?? formatPercent,
   };
   return (
     <div className={s.panel} style={STAT_BARS_VARS}>
@@ -61,6 +69,7 @@ export function StatBarsPanel<T extends StatBarItem>(props: StatBarsPanelProps<T
               {formatJumlah(summary.total)}
               {unit ? <span className={s.totalUnit}>{unit}</span> : null}
             </span>
+            {totalDetail ? <span className={s.totalDetail}>{totalDetail}</span> : null}
           </p>
         ) : null}
       </div>
@@ -77,11 +86,11 @@ export function StatBarsPanel<T extends StatBarItem>(props: StatBarsPanelProps<T
 
 /** Satu baris: label, batang (tunggal atau bersegmen), angka + persen tercetak langsung (tanpa hover). */
 export function StatBarRowItem({ row, index, options }: { row: StatBarRow; index: number; options: RowOptions }) {
-  const { unit, showShare, showBars, segments, notFilledLabel } = options;
+  const { unit, showShare, showBars, segments, notFilledLabel, formatShare } = options;
   if (row.value === null) {
     return (
       <li className={s.row}>
-        <span className={s.name}>{row.label}</span>
+        <RowName row={row} />
         <span className={s.missing}>{notFilledLabel}</span>
       </li>
     );
@@ -89,7 +98,7 @@ export function StatBarRowItem({ row, index, options }: { row: StatBarRow; index
   const segmented = Boolean(segments?.length && row.segments?.length);
   return (
     <li className={segmented ? `${s.row} ${s.hasSegs}` : s.row}>
-      <span className={s.name}>{row.label}</span>
+      <RowName row={row} />
       {showBars ? (
         <span className={s.track} aria-hidden>
           {segmented ? (
@@ -110,11 +119,21 @@ export function StatBarRowItem({ row, index, options }: { row: StatBarRow; index
           <>
             <span className={s.count}>{formatJumlah(row.value)}</span>
             {unit ? <span className={s.unit}>{unit}</span> : null}
-            {showShare && row.share !== null ? <span className={s.share}>{formatPercent(row.share)}</span> : null}
+            {showShare && row.share !== null ? <span className={s.share}>{formatShare(row.share)}</span> : null}
           </>
         )}
       </span>
       {segmented ? <StatSegmentFigures segments={segments!} values={row.segments!} wide={!showBars} /> : null}
     </li>
+  );
+}
+
+/** Label baris + teks kecil `detail` opsional di bawahnya (tetap di area nama, juga di ponsel). */
+function RowName({ row }: { row: StatBarRow }) {
+  return (
+    <span className={s.name}>
+      {row.label}
+      {row.detail ? <span className={s.detail}>{row.detail}</span> : null}
+    </span>
   );
 }

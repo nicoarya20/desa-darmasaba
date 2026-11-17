@@ -77,6 +77,12 @@
   color: var(--sb-muted);
 }
 
+.totalDetail {
+  font-size: 15px;
+  color: var(--sb-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---------- Daftar batang ---------- */
 .list {
   display: flex;
@@ -110,6 +116,16 @@
   font-size: 17px;
   font-weight: 600;
   overflow-wrap: anywhere;
+}
+
+/* Teks kecil di bawah label (StatBarItem.detail). */
+.detail {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--sb-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Tanpa latar: panjang batang relatif ke nilai terbesar, bukan porsi dari sebuah batas. */

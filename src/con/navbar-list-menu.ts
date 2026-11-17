@@ -326,26 +326,6 @@ const navbarListMenu = [
                 id: "8.1",
                 name: "Dashboard Kependudukan",
                 href: "/kependudukan/dashboard"
-            },
-            {
-                id: "8.2",
-                name: "Data Per Banjar",
-                href: "/kependudukan/data-per-banjar"
-            },
-            {
-                id: "8.3",
-                name: "Dinamika Penduduk",
-                href: "/kependudukan/dinamika-penduduk"
-            },
-            {
-                id: "8.4",
-                name: "Distribusi Agama",
-                href: "/kependudukan/distribusi-agama"
-            },
-            {
-                id: "8.5",
-                name: "Distribusi Umur",
-                href: "/kependudukan/distribusi-umur"
             }
         ]
     },

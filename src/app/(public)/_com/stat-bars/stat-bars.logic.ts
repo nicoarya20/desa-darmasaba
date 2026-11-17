@@ -10,6 +10,8 @@ export type StatBarItem = {
   figure?: string;
   /** ISO string (fetch) atau Date (ApiFetch/Eden mengubah tanggal ISO jadi Date). */
   updatedAt?: string | Date | null;
+  /** Teks kecil di bawah label (mis. "230 KK"); tidak menggantikan angka + persen. */
+  detail?: string;
 };
 
 /** Baris siap tampil: porsi dari total (persen) dan panjang batang relatif ke nilai terbesar. */

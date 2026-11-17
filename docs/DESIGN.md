@@ -789,7 +789,7 @@ Panel `#f5f5f7` berisi daftar batang horizontal HTML (`<ol aria-labelledby>`), d
 - CSS dipecah tiga: `stat-bars.module.css` (panel, kepala, baris, batang), `stat-segments.module.css` (legenda + rincian segmen), `stat-bars-states.module.css` (ubin kosong/galat, pil coba lagi).
 
 Test: `__tests__/api/stat_bars_{logic,ui}.test.ts(x)`.
-- **Data**: pemakai menormalkan sendiri ke `StatBarItem { id, label, value: number | null, segments?, figure?, updatedAt? }`. `updatedAt` boleh string atau `Date` (ApiFetch/Eden mengubah ISO jadi Date). `summarizeStatBars(items, { compare? })` menghasilkan:
+- **Data**: pemakai menormalkan sendiri ke `StatBarItem { id, label, value: number | null, segments?, figure?, updatedAt?, detail? }` (`detail` = teks kecil 14px abu di bawah label, mis. "230 KK"; tidak menggantikan angka + persen, beda dengan `figure`). `updatedAt` boleh string atau `Date` (ApiFetch/Eden mengubah ISO jadi Date). `summarizeStatBars(items, { compare? })` menghasilkan:
   - `total`: jumlah baris terisi; null bila tak satu pun terisi;
   - `share`: persen porsi, hanya bila total > 0;
   - `width`: 0–100, relatif ke nilai terbesar;
@@ -800,8 +800,8 @@ Test: `__tests__/api/stat_bars_{logic,ui}.test.ts(x)`.
   Urutan mengikuti masukan, kecuali `compare` diberikan (`compareStatValueDesc` = terbanyak dulu, kosong di akhir, stabil). Label ganda tidak digabung; kunci React = `id`. `parseJumlah` menerima angka bulat ≥ 0, teks bulat polos (`874`), atau bertitik ribuan (`1.200`); selain itu null.
 - **Props panel**:
   - Wajib: `titleId`, `title`, `summary`.
-  - Kepala: `caption?`, `meta?` (baris kecil abu, mis. "Data diperbarui …"), `totalLabel?` (kotak total di kanan kepala, hanya bila total ≠ null).
-  - Angka: `unit?` (satuan setelah angka), `showShare?` (bawaan true), `notFilledLabel?`.
+  - Kepala: `caption?`, `meta?` (baris kecil abu, mis. "Data diperbarui …"), `totalLabel?` (kotak total di kanan kepala, hanya bila total ≠ null), `totalDetail?` (baris kecil abu di bawah angka total, mis. "2.322 kepala keluarga").
+  - Angka: `unit?` (satuan setelah angka), `showShare?` (bawaan true), `formatShare?` (format persen porsi; bawaan `formatPercent` maks 1 desimal), `notFilledLabel?`.
   - Bentuk: `showBars?` (bawaan true; false = label kiri, angka kanan tanpa batang, untuk baris yang satuannya berbeda-beda).
   - `segments?`, `footnote?` (catatan kaki 14px abu di bawah daftar).
 
@@ -820,6 +820,7 @@ Test: `__tests__/api/stat_bars_{logic,ui}.test.ts(x)`.
   - `StatBarsSkeleton { label, rows = 4 }`: kerangka panel `aria-busy`.
   - `StatBarsEmpty { icon?, title?, body }`: ubin `#f5f5f7`, ikon dalam lingkaran `--stat-tint`.
   - `StatBarsError { message, onRetry?, retryLabel? }`: `role="alert"`; pil putih "Coba lagi" hanya bila `onRetry` ada (halaman `useLoadOnce` tidak punya retry, jadi tanpa tombol).
+  - Ketiganya menerima `title?` + `titleId?` → `h2 id={titleId}`, untuk section yang judulnya harus ada di semua keadaan (target `#anchor` + `aria-labelledby`).
 
   Kosong dan galat selalu dua pesan berbeda.
 - **Gerak**:
@@ -832,6 +833,8 @@ Test: `__tests__/api/stat_bars_{logic,ui}.test.ts(x)`.
   - Sektor Unggulan Desa (`SektorRanking`): `figure` per baris, tanpa persen, `showBars` hanya bila satuan sebanding.
   - Jumlah Penduduk Miskin: tanpa persen.
   - Sebaran pengangguran (`_com/pengangguran/SebaranSection`): total.
+  - Dashboard Kependudukan: Per Banjar (`detail` KK, `totalDetail`), Umur (tanpa `compare`, total/persen disembunyikan bila tumpang tindih), Agama (`formatShare`), judul di ubin keadaan.
+  - Dashboard Kependudukan › Dinamika **tidak** memakai `StatBarsPanel`, tetapi mengimpor kelas internal `stat-bars.module.css` + `stat-segments.module.css` dan `STAT_BARS_VARS`/`statSegmentColor` langsung: neraca butuh label segmen berbeda per baris dan kotak total berisi **selisih** (panel selalu menjumlah). Hutang teknis: jadikan opsi panel bila ada pemakai neraca kedua; jangan ganti nama kelas itu tanpa memperbarui Dinamika.
 
 ### Data Pendidikan (`/pendidikan/data-pendidikan`)
 
@@ -1151,6 +1154,32 @@ Gaya halaman lowongan Welcome to the Jungle, senada kartu daftar. `[id]/page.tsx
 - **Keadaan** (`DetailStatus`): memuat → kerangka berbentuk kartu (`role=status`, `aria-busy`); tidak ditemukan → "Lowongan tidak ditemukan"; galat → "Coba lagi" (`role=alert`); keduanya + tautan "Lihat semua lowongan".
 - **CSS**: `lowongan-detail.module.css` (kerangka, kepala, penutup), `detail-section.module.css`, `kontak-aksi.module.css` (tombol + bilah), `detail-status.module.css`; pil & tanggal memakai kelas `lowongan-card.module.css`.
 
+### Dashboard Kependudukan (`/kependudukan/dashboard`)
+
+Satu halaman pengganti lima halaman lama (Dashboard, Data Per Banjar, Dinamika Penduduk, Distribusi Agama, Distribusi Umur), keputusan di `docs/decisions/2026-11-17-dashboard-kependudukan-satu-halaman.md`. Kerangka menu Ekonomi: `.section` Kabar + `KABAR_BRAND_VARS`, `--gutter: var(--edge-gutter)`, `KabarListHeader` `tabs=[]` `searchable={false}` (h1 rata kiri + satu kalimat pengantar), latar putih, panel modul batang statistik. Urutan: Ringkasan (hero) → `#banjar` → `#umur` → `#agama` → `#dinamika` → Terkait, berjarak `--block-gap`.
+
+- **File** `(pages)/kependudukan/`: `dashboard/page.tsx` (server, `metadata.title`) → `_com/frame/KependudukanPage.tsx`. Kerangka `_com/frame/` (hero, `SectionNav` + `use-section-nav`, `KependudukanTerkait`, `kependudukan.meta.ts` href/anchor, `kependudukan.text.ts`); data `_com/data/` (`kependudukan-data.types.ts` kontrak `DatasetSlice`, `.logic`, `.source`, `use-kependudukan-data.ts`); section `_com/{banjar,umur,agama,dinamika}/`. Test `__tests__/api/kependudukan_*.test.ts(x)`.
+- **Data**: 4 `GET /api/kependudukan/{databanjar,distribusiumur,distribusiagama,dinamikapenduduk}/find-many?page=1&limit=100`, masing-masing sekali (bukan state admin, **bukan** `/dashboard/summary`). Tiap dataset memilih **tahun terbarunya sendiri** dan menuliskannya di kepala section; tidak ada pemilih tahun global. Memuat semua tahun dengan limit 100 = MITIGASI SEMENTARA(kependudukan-limit) karena belum ada endpoint daftar tahun tersedia; `console.warn` bila `total` > baris termuat. Slice per dataset `loading | error | ready` + `retry()`; galat ≠ kosong. Section mem-parse baris mentahnya sendiri (baris tak valid dibuang, angka tak terbaca → "Belum diisi", tidak ikut total).
+- **Hero Ringkasan** (`#ringkasan`, h2 tersembunyi): 4 kartu `--tile` (grid `1.35fr 1fr 1fr 1fr`, ≤1068px dan ponsel 2×2): Total penduduk ("{n} banjar · Data {tahun}"), Kepala keluarga, Rata-rata per keluarga (jiwa/KK 1 desimal), Pertumbuhan bersih (lahir + datang − meninggal − pindah, bertanda, "(tahun berjalan)" bila tahun ini). Hanya angka turunan aman; "Kelahiran Tahun Ini" (model Kesehatan), keluarga miskin, dan migrasi tidak tampil. Kosong → "Belum diisi"; galat → "Gagal dimuat" (coba lagi ada di section, ikut memperbarui hero).
+- **Rel pil** (`nav`): sticky di bawah navbar (`top` 44px, <62em 48px), latar putih 92% + `backdrop-filter`; pil 36px `--tile`, aktif `--brand` (`aria-current="location"`); ponsel geser samping, pil aktif digeser masuk pandangan. Klik → `scrollIntoView` (halus, `auto` saat reduced motion) + `history.replaceState`. **Scroll-spy**: garis baca = tepi bawah rel + 40px, diukur di event `scroll`/`resize`. Section memakai `scroll-margin-top: var(--kependudukan-scroll-margin)` 128px (≤734px 120px). Buka `#anchor` langsung → gulir sekali setelah semua dataset selesai dimuat.
+- **Rute lama & navbar**: menu Kependudukan di navbar hanya satu butir, "Dashboard Kependudukan" (`/kependudukan/dashboard`); 4 submenu lama dihapus (revisi user 2026-11-17). Rute lama `data-per-banjar`, `distribusi-umur`, `distribusi-agama`, `dinamika-penduduk` tetap ada sebagai `permanentRedirect` (308) ke `/kependudukan/dashboard#{banjar|umur|agama|dinamika}` untuk bookmark dan mesin pencari. URL lama bukan lagi kunci visibilitas (override DB lamanya diabaikan `isKnownMenuKey`). Jenna: `href` → `#anchor`, `menuHref` → `/kependudukan/dashboard`.
+- **Semua section selalu tampil**: tidak ada saklar visibilitas per section; menyembunyikan butir "Dashboard Kependudukan" menyembunyikan seluruh halaman.
+- **Terkait**: 3 ubin `EkonomiTerkait` (Penduduk Miskin, Demografi Pekerjaan, Data Pendidikan), disaring visibilitas. Hutang: impor lintas menu `ekonomi/_com/terkait`; pindahkan ke `(public)/_com` bila dipakai menu ketiga.
+
+#### Per Banjar (`#banjar`)
+`StatBarsPanel` tanpa CSS sendiri: "Penduduk per banjar", caption "Data {tahun} · {n} banjar, terbanyak di atas", total jiwa + `totalDetail` "{KK} kepala keluarga". Baris urut terbanyak: nama + `detail` "{kk} KK" · batang · jiwa + persen. **Keluarga miskin**: kolom NOT NULL default 0 → bila tak satu banjar pun > 0 dianggap belum diisi (catatan kaki, tanpa angka; MITIGASI SEMENTARA); bila ada yang terisi → "· {n} keluarga miskin" di detail + keterangan `MISKIN_LABEL`. `banjarTotals` dipakai hero. Ponsel: daftar stat-bars, tanpa tabel/geser samping.
+
+#### Kelompok Umur (`#umur`)
+Panel stat-bars tanpa `compare` (urut umur termuda → tertua). Label dirapikan (`0-14` → "0–14 tahun", `65+` → "65 tahun ke atas"); tak terbaca tampil apa adanya di akhir. **Susunan diperiksa** (`findUmurIssue`): kelompok tumpang tindih / label ganda / tak terbaca → semua baris tetap tampil, **total dan persen disembunyikan** + catatan pasangan yang bertumpuk. **Angka turunan** (`umurTurunan`, 2 ubin `#f5f5f7`): Usia produktif 15–64 dan Rasio ketergantungan, hanya bila kelompok saling lepas, terisi, menyambung dari 0, dan tak melintasi batas 15/65. Tanpa piramida (tidak ada L/P). Bila total tampil: catatan "total dihitung dari isian kelompok umur, bisa berbeda dengan jumlah penduduk per banjar".
+
+#### Agama (`#agama`)
+`StatBarsPanel` satu warna brand, bukan pai (sebaran jomplang, Hindu ±91%). Kode admin → label manusiawi (`agamaLabel`, tak dikenal → title-case; kode mentah tak pernah tampil). Urut terbanyak, "Lainnya" terakhir. Persen angka asli lewat `formatShare` (≥0,1% satu desimal, di bawahnya satu angka penting: "0,05%"). Catatan kaki total ≠ banjar, setara Umur.
+
+#### Dinamika Penduduk (`#dinamika`)
+Neraca dua baris di panel stat-bars: **Bertambah** (kelahiran + pindah masuk) vs **Berkurang** (kematian + pindah keluar). Warna = sebab (segmen 0 brand = alami, segmen 1 = perpindahan, celah 2px), baris = arah; rincian tercetak di bawah batang (batang `aria-hidden`). Kotak kanan "Perubahan bersih" bertanda (`formatSelisih`); catatan pertumbuhan alami + migrasi bersih. Meta "Data {tahun}" + "· tahun berjalan, angka masih bisa bertambah" bila tahun ini (`--sb-muted`, 4,8:1). **Riwayat**: `<details>` tertutup, hanya bila ≥2 tahun; tabel 6 kolom, ponsel ≤734px blok per tahun 2×2 + Bersih (`data-label`). Tanpa selisih vs tahun lalu. Migrasi Penduduk (data per orang) tidak dipakai publik. Hutang: `DinamikaNeraca` mengimpor kelas internal stat-bars (lihat "Modul batang statistik › Pemakai").
+
+Keadaan semua section: memuat → `StatBarsSkeleton` berjudul; galat → `StatBarsError` berjudul + "Coba lagi" (dataset itu saja); kosong → `StatBarsEmpty` berjudul "…belum diisi", tanpa angka 0. h2 section ada di semua keadaan (`title`/`titleId` di ubin keadaan).
+
 ### Musik Desa (`/musik/musik-desa[/jelajahi|/playlist]`)
 Tata letak aplikasi gaya TIDAL, **bertema terang mengikuti situs** (user menolak versi hitam, 2026-11-14). Semua file di `(pages)/musik/musik-desa/`; satu `layout.tsx` (`_com/app/MusikApp`) membungkus ketiga rute supaya sidebar, panel antrean, dan bar pemutar tidak dipasang ulang saat pindah menu.
 - **Token** (`_com/app/musik-app.module.css`, kelas `.app` + `.tokens` untuk Drawer di portal): `--m-bg #fff`, `--m-surface #f5f5f7`, `--m-elev #f0f0f2`, `--m-hover rgba(0,0,0,.05)`, `--m-active rgba(0,0,0,.06)`, `--m-line #d2d2d7`, `--m-ink #1d1d1f`, `--m-muted #515154`, `--m-subtle #6e6e73` (keduanya ≥4,5:1 di putih & `--m-surface`; `#86868b` lama 3,6:1 gagal AA; `--m-subtle` di atas `--m-elev` hanya 4,46:1 → placeholder cari memakai `--m-muted`), `--m-accent #0a4e78` (brand; `#5da9d8` gagal kontras di putih), `--m-solid #1d1d1f` / `--m-on-solid #fff` (tombol & pil "terbalik"), `--m-track rgba(0,0,0,.12)` (rel slider), `--m-bar-h 88px` (≤734px 72px), `--m-left-w 240px`, `--m-right-w 320px`. Modul lain membaca token dengan nilai cadangan terang.
@@ -1335,7 +1364,7 @@ File: `src/con/navbar-list-menu.ts`
 | 5 | Ekonomi | 11 (termasuk Kesejahteraan Masyarakat) |
 | 6 | Inovasi | 6 |
 | 7 | Lingkungan | 6 |
-| 8 | Kependudukan | 5 |
+| 8 | Kependudukan | 1 (Dashboard Kependudukan, satu halaman) |
 | 9 | Pendidikan | 7 |
 | 10 | Musik | 1 |
 
@@ -1682,7 +1711,7 @@ p={{ base: "sm", md: "lg" }}
 | PPID | Profil, Struktur, Visi Misi, Dasar Hukum, Permohonan Informasi |
 | Desa | Profil, Potensi, Berita, Pengumuman, Gallery, Layanan, Agenda & Kalender Desa |
 | Kesehatan | Data Posyandu (balita, ibu hamil, ringkasan), PUSTU (Puskesmas Pembantu), Program, Info Wabah |
-| Kependudukan | Dashboard statistik, Data Per Banjar, Dinamika, Distribusi Agama/Umur |
+| Kependudukan | Dashboard Kependudukan satu halaman (Ringkasan, Per Banjar, Umur, Agama, Dinamika); 4 rute lama redirect 308 ke `#anchor` |
 | Ekonomi | UMKM, Lowongan Kerja, BUMDesa, PADesa, Transparansi APBDes (grafik + tabel) |
 | Keamanan | Data keamanan wilayah |
 | Lingkungan | Bank Sampah, Penghijauan, Gotong Royong (= kategori Kegiatan Desa, lihat `docs/decisions/2026-11-16-gotong-royong-kategori-kegiatan.md`) |

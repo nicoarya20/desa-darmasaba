@@ -58,7 +58,8 @@ describe('flattenMenu', () => {
   });
 
   it('config navbar nyata menghasilkan semua submenu ber-href', () => {
-    expect(submenus.length).toBeGreaterThanOrEqual(68);
+    // 64: Kependudukan kini satu butir (Dashboard); 4 submenu lamanya dihapus 2026-11-17 (rute lama redirect).
+    expect(submenus.length).toBeGreaterThanOrEqual(64);
     expect(flattenMenu(navbarListMenu)).toHaveLength(submenus.length);
   });
 });

@@ -1,0 +1,153 @@
+/*
+ * Hero Dashboard Kependudukan: kartu ringkasan gaya kartu Monev/Penduduk Miskin (#f5f5f7, radius 18, angka 40px brand).
+ * Desktop 4 kolom (kartu total penduduk lebih lebar), tablet & ponsel 2 × 2. Variabel warna dari kabar.module.css.
+ * Breakpoint apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr 1fr;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.33;
+  font-weight: 600;
+}
+
+.value {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+  color: var(--brand);
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.43;
+}
+
+/* Kosong/galat: kalimat abu setinggi kira-kira angka, bukan 0. */
+.missing {
+  margin: 0;
+  color: var(--subtle);
+  font-size: 19px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.skeleton {
+  display: block;
+  width: 60%;
+  height: 40px;
+  border-radius: 8px;
+  background: #e8e8ed;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .value {
+    font-size: 32px;
+  }
+
+  .skeleton {
+    height: 32px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .grid {
+    gap: 12px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .value {
+    font-size: 28px;
+  }
+
+  .unit {
+    font-size: 15px;
+  }
+
+  .note {
+    font-size: 13px;
+  }
+
+  .missing {
+    font-size: 17px;
+  }
+
+  .skeleton {
+    height: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
