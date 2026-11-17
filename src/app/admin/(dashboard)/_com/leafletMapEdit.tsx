@@ -8,9 +8,13 @@ import L, { LeafletMouseEvent } from 'leaflet';
 
 type Posisi = { lat: number; lng: number };
 
+type Fokus = Posisi & { zoom: number; id: number };
+
 type Props = {
   initialPosition: Posisi;
   onChange: (pos: Posisi) => void;
+  /** Geser tampilan peta tanpa memilih titik; `id` baru = geser lagi meski posisinya sama. */
+  fokus?: Fokus;
 };
 
 /** Geser peta saat posisi diubah dari luar (cari/ketik koordinat); posisi hasil klik admin sendiri dilewati. */
@@ -25,7 +29,15 @@ function IkutiPosisi({ lat, lng, posisiKlik }: Posisi & { posisiKlik: RefObject<
   return null;
 }
 
-export default function LeafletMapEdit({ initialPosition, onChange }: Props) {
+function GeserFokus({ lat, lng, zoom, id }: Fokus) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([lat, lng], zoom);
+  }, [map, lat, lng, zoom, id]);
+  return null;
+}
+
+export default function LeafletMapEdit({ initialPosition, onChange, fokus }: Props) {
   const [markerPos, setMarkerPos] = useState(initialPosition);
   const posisiKlik = useRef<Posisi | null>(null);
   const { lat, lng } = initialPosition;
@@ -75,6 +87,7 @@ export default function LeafletMapEdit({ initialPosition, onChange }: Props) {
       />
       <LocationMarker />
       <IkutiPosisi lat={lat} lng={lng} posisiKlik={posisiKlik} />
+      {fokus && <GeserFokus {...fokus} />}
     </MapContainer>
   );
 }

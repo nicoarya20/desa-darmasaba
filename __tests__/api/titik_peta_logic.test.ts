@@ -84,11 +84,19 @@ describe("petakanResponsCari", () => {
     ).toEqual({ ok: true, hasil: data });
   });
 
-  it("daftar kosong → pesan tidak ditemukan", () => {
-    expect(petakanResponsCari(200, { success: true, data: [] })).toEqual({ ok: false, pesan: PESAN_TIDAK_DITEMUKAN });
+  it("daftar kosong atau berisi entri tidak sah semua → tidak ditemukan + kosong", () => {
+    const kosong = { ok: false, pesan: PESAN_TIDAK_DITEMUKAN, kosong: true };
+    expect(petakanResponsCari(200, { success: true, data: [] })).toEqual(kosong);
+    expect(petakanResponsCari(200, { success: true, data: [{ lat: 99, lng: 0, label: "x" }, { lat: 1, lng: 1 }, null] })).toEqual(kosong);
   });
 
-  it("429 → terlalu sering; 400/401/403/502 → message server; tanpa message → pesan umum", () => {
+  it("pesan tidak ditemukan/gagal memberi petunjuk tempel koordinat ke kolom Lintang", () => {
+    expect(PESAN_TIDAK_DITEMUKAN).toMatch(/OpenStreetMap/);
+    expect(PESAN_TIDAK_DITEMUKAN).toMatch(/tempel koordinat\/link Google Maps ke kolom Lintang/);
+    expect(PESAN_CARI_GAGAL).toMatch(/tempel koordinat\/link Google Maps ke kolom Lintang/);
+  });
+
+  it("429 → terlalu sering; 400/401/403/502 → message server; tanpa message → pesan umum (semua tanpa kosong)", () => {
     expect(petakanResponsCari(429, { success: false, message: "Rate limit" })).toEqual({ ok: false, pesan: PESAN_TERLALU_SERING });
     expect(petakanResponsCari(502, { success: false, message: "Layanan peta tidak merespons" })).toEqual({
       ok: false,
@@ -117,6 +125,15 @@ describe("cariTitikAlamat", () => {
     await expect(cariTitikAlamat("abc", html)).resolves.toEqual({ ok: false, pesan: PESAN_CARI_GAGAL });
     const limit = vi.fn().mockResolvedValue(new Response("{}", { status: 429, headers: { "Retry-After": "30" } }));
     await expect(cariTitikAlamat("abc", limit)).resolves.toEqual({ ok: false, pesan: PESAN_TERLALU_SERING });
+  });
+
+  it("200 daftar kosong → kosong: true", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ success: true, data: [] }), { status: 200 }));
+    await expect(cariTitikAlamat("Kantor Desa Darmasaba", fetcher)).resolves.toEqual({
+      ok: false,
+      pesan: PESAN_TIDAK_DITEMUKAN,
+      kosong: true,
+    });
   });
 
   it("galat jaringan → pesan umum (dicatat ke console)", async () => {

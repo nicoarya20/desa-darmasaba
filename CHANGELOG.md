@@ -6,6 +6,7 @@
   - Tombol **"Cari di peta"** mencari koordinat dari alamat yang sudah diisi di form. Satu hasil langsung dipakai; beberapa hasil ditampilkan sebagai pilihan. Data pencarian berasal dari OpenStreetMap.
   - Kolom **Lintang** dan **Bujur** bisa diketik, ditempel langsung dari Google Maps (klik kanan titik, lalu salin, mis. `-8.571234, 115.192345`), atau diisi dari link Google Maps yang memuat koordinat.
   - Peta ikut bergeser ke titik baru. Klik peta tetap bisa dipakai untuk merapikan posisi.
+  - Bila tempat yang dicari belum ada di OpenStreetMap (mis. "Kantor Desa Darmasaba"), peta diarahkan ke wilayah Desa Darmasaba agar titiknya bisa langsung diklik, dengan petunjuk untuk menempel koordinat atau link Google Maps ke kolom Lintang. Titik dan Lokasi tidak diubah.
 - **Form CCTV: Lokasi terisi otomatis dari titik peta**. Setelah peta diklik atau lintang/bujur diisi, kolom Lokasi terisi alamat titik itu, mis. "Jalan Tugu Pahlawan, Sibangkaja, Abiansemal". Lokasi yang sudah diketik atau diubah admin tidak ditimpa.
   - Bila titiknya tepat di tempat yang punya nama di OpenStreetMap, di bawah Nama/Deskripsi muncul "Saran dari peta" dengan tombol **Pakai**. Nama tidak pernah diisi otomatis.
 

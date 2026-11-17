@@ -1,13 +1,16 @@
 import { bujurSchema, lintangSchema, type Koordinat } from '@/lib/konten-bersama/lokasi.logic';
 
 export type HasilGeocode = Koordinat & { label: string };
-export type HasilCari = { ok: true; hasil: HasilGeocode[] } | { ok: false; pesan: string };
+/** `kosong`: pencarian berhasil tetapi tanpa kandidat sah (bukan galat layanan). */
+export type HasilCari = { ok: true; hasil: HasilGeocode[] } | { ok: false; pesan: string; kosong?: true };
 
 export const MIN_KUERI_CARI = 3;
 export const MAX_KUERI_CARI = 200;
-export const PESAN_TIDAK_DITEMUKAN = 'Lokasi tidak ditemukan, coba alamat yang lebih umum atau isi koordinat manual';
+export const ZOOM_WILAYAH = 15;
+export const PESAN_TIDAK_DITEMUKAN =
+  'Tempat ini belum ada di OpenStreetMap. Peta diarahkan ke wilayah Desa Darmasaba: klik titik yang tepat di peta, atau tempel koordinat/link Google Maps ke kolom Lintang.';
 export const PESAN_TERLALU_SERING = 'Terlalu sering, coba lagi sebentar';
-export const PESAN_CARI_GAGAL = 'Pencarian lokasi gagal, coba lagi atau isi koordinat manual';
+export const PESAN_CARI_GAGAL = 'Pencarian lokasi gagal, coba lagi atau tempel koordinat/link Google Maps ke kolom Lintang';
 
 export function kueriCariValid(kueri: string): boolean {
   const panjang = kueri.trim().length;
@@ -25,7 +28,7 @@ export function petakanResponsCari(status: number, body: unknown): HasilCari {
   const b = (body && typeof body === 'object' ? body : {}) as { success?: unknown; data?: unknown; message?: unknown };
   if (status === 200 && b.success === true && Array.isArray(b.data)) {
     const hasil = b.data.filter(hasilValid).map(({ lat, lng, label }) => ({ lat, lng, label }));
-    return hasil.length ? { ok: true, hasil } : { ok: false, pesan: PESAN_TIDAK_DITEMUKAN };
+    return hasil.length ? { ok: true, hasil } : { ok: false, pesan: PESAN_TIDAK_DITEMUKAN, kosong: true };
   }
   if (status === 429) return { ok: false, pesan: PESAN_TERLALU_SERING };
   return { ok: false, pesan: typeof b.message === 'string' && b.message.trim() ? b.message : PESAN_CARI_GAGAL };

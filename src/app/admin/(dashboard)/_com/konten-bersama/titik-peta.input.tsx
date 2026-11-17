@@ -11,6 +11,7 @@ import {
   cekSumbuTeks,
   JEDA_CARI_ALAMAT_MS,
   kueriCariValid,
+  ZOOM_WILAYAH,
   type AlamatTitik,
   type HasilGeocode,
 } from './titik-peta.logic';
@@ -35,9 +36,10 @@ const kunciKoordinat = (k: Koordinat | null) => (k ? `${k.lat},${k.lng}` : '');
 export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, onKoordinatHapus, onAlamatTitik }: Props) {
   const [kueriManual, setKueriManual] = useState<string | null>(null);
   const [memuat, setMemuat] = useState(false);
-  const [pesanCari, setPesanCari] = useState<string | null>(null);
+  const [pesanCari, setPesanCari] = useState<{ teks: string; panduan: boolean } | null>(null);
   const [pilihan, setPilihan] = useState<HasilGeocode[]>([]);
   const [terpilih, setTerpilih] = useState<HasilGeocode | null>(null);
+  const [fokusPeta, setFokusPeta] = useState<(Koordinat & { zoom: number; id: number }) | undefined>(undefined);
 
   const [teksLat, setTeksLat] = useState(koordinat ? formatSumbu(koordinat.lat) : '');
   const [teksLng, setTeksLng] = useState(koordinat ? formatSumbu(koordinat.lng) : '');
@@ -105,6 +107,7 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
   }
 
   function ubahKoordinatManual(k: Koordinat) {
+    setPesanCari(null);
     jadwalkanCariAlamat(k);
     onKoordinatChange(k);
   }
@@ -123,8 +126,11 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
     setPilihan([]);
     const hasil = await cariTitikAlamat(kueri);
     setMemuat(false);
-    if (!hasil.ok) setPesanCari(hasil.pesan);
-    else if (hasil.hasil.length === 1) pakaiHasil(hasil.hasil[0]);
+    if (!hasil.ok) {
+      setPesanCari({ teks: hasil.pesan, panduan: hasil.kosong === true });
+      // Tempat belum ada di OSM → tampilkan wilayah desa agar admin bisa klik titiknya; titik & Lokasi tidak diubah.
+      if (hasil.kosong) setFokusPeta((f) => ({ ...PUSAT_PETA_DEFAULT, zoom: ZOOM_WILAYAH, id: (f?.id ?? 0) + 1 }));
+    } else if (hasil.hasil.length === 1) pakaiHasil(hasil.hasil[0]);
     else setPilihan(hasil.hasil);
   }
 
@@ -183,7 +189,7 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
         </Button>
       </Group>
 
-      {pesanCari && <Text fz="xs" c="red" mt={4}>{pesanCari}</Text>}
+      {pesanCari && <Text fz="xs" c={pesanCari.panduan ? 'orange.8' : 'red'} mt={4}>{pesanCari.teks}</Text>}
       {pilihan.length > 0 && (
         <Paper withBorder radius="md" p={4} mt={6}>
           <Text fz="xs" c="dimmed" px={8} pt={4}>Pilih lokasi yang sesuai:</Text>
@@ -231,7 +237,7 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
       </Text>
 
       <Box mt="sm" style={{ height: 300, width: '100%', borderRadius: 8, overflow: 'hidden', border: '1px solid #e0e0e0' }}>
-        <LeafletMapEdit initialPosition={koordinat ?? PUSAT_PETA_DEFAULT} onChange={ubahKoordinatManual} />
+        <LeafletMapEdit initialPosition={koordinat ?? PUSAT_PETA_DEFAULT} onChange={ubahKoordinatManual} fokus={fokusPeta} />
       </Box>
       {koordinat && (
         <Group gap="xs" mt={4}>
