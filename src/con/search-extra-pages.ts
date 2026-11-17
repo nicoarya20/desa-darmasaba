@@ -69,6 +69,20 @@ const searchExtraPages: MenuItem[] = [
     name: 'Informasi',
     children: [{ id: 'x5.1', name: 'Peta Informasi (Semua Halaman)', href: '/peta-informasi' }],
   },
+  {
+    // Section di halaman Dashboard Kependudukan (navbar hanya satu butir). Href ditulis literal karena `src/con`
+    // tidak boleh mengimpor dari folder halaman; kesamaannya dengan `kependudukanSectionHref` dijaga test
+    // (__tests__/api/search_menu.test.ts). Nama memuat kata yang lazim diketik warga (banjar, umur/usia, agama,
+    // kelahiran/kematian/pindah); kata "penduduk" sudah cocok lewat nama grup.
+    id: 'x6',
+    name: 'Kependudukan',
+    children: [
+      { id: 'x6.1', name: 'Penduduk per Banjar', href: '/kependudukan/dashboard#banjar' },
+      { id: 'x6.2', name: 'Kelompok Umur (Usia)', href: '/kependudukan/dashboard#umur' },
+      { id: 'x6.3', name: 'Agama Penduduk', href: '/kependudukan/dashboard#agama' },
+      { id: 'x6.4', name: 'Dinamika Penduduk (Kelahiran, Kematian, Pindah)', href: '/kependudukan/dashboard#dinamika' },
+    ],
+  },
 ];
 
 export default searchExtraPages;

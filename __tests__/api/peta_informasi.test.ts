@@ -108,6 +108,17 @@ describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () =>
     expect(desa.indexOf('/pemerintahan/profil')).toBeLessThan(desa.indexOf('/pemerintahan/galery/video'));
   });
 
+  it('"Kependudukan" navbar (Dashboard) digabung dengan empat section dashboard dari halaman tambahan', () => {
+    expect(groups.filter((g) => g.name === 'Kependudukan')).toHaveLength(1);
+    expect(groups.find((g) => g.name === 'Kependudukan')!.pages.map((p) => [p.label, p.href])).toEqual([
+      ['Dashboard Kependudukan', '/kependudukan/dashboard'],
+      ['Penduduk per Banjar', '/kependudukan/dashboard#banjar'],
+      ['Kelompok Umur (Usia)', '/kependudukan/dashboard#umur'],
+      ['Agama Penduduk', '/kependudukan/dashboard#agama'],
+      ['Dinamika Penduduk (Kelahiran, Kematian, Pindah)', '/kependudukan/dashboard#dinamika'],
+    ]);
+  });
+
   it('saring "apbdes" hanya menampilkan APBDes di grup Transparansi', () => {
     expect(petaInformasiGroups('apbdes')).toEqual([
       { name: 'Transparansi', pages: [expect.objectContaining({ label: 'APBDes', href: '/apbdes' })] },
