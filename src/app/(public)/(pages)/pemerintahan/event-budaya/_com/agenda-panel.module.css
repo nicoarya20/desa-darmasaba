@@ -3,6 +3,7 @@
  * dan isi modal rincian acara (panel Acara mendatang di agenda-mendatang.module.css).
  * Variabel warna (--ink, --muted, --tile, --line, --brand) dari `.page` (kalender.module.css);
  * modal dirender di portal sehingga variabelnya didefinisikan ulang di `.modalContent`.
+ * Gelap: tint status = warna status 16% di atas ubin, teks status versi terang (Apple system colors).
  */
 
 /* ---------- Pil hitung mundur ---------- */
@@ -11,7 +12,7 @@
   align-items: center;
   padding: 3px 10px;
   border-radius: 980px;
-  background: #e5f2fa;
+  background: var(--c-brand-tint);
   color: var(--brand);
   font-size: 13px;
   line-height: 1.3;
@@ -20,17 +21,17 @@
 }
 
 .hitung[data-nada="berlangsung"] {
-  background: #e3f5e8;
-  color: #17763a;
+  background: light-dark(#e3f5e8, rgba(48, 209, 88, 0.16));
+  color: light-dark(#17763a, #30d158);
 }
 
 .hitung[data-nada="segera"] {
-  background: #fff0dd;
-  color: #a04800;
+  background: light-dark(#fff0dd, rgba(255, 159, 10, 0.16));
+  color: light-dark(#a04800, #ffb340);
 }
 
 .hitung[data-nada="selesai"] {
-  background: #ececf0;
+  background: light-dark(#ececf0, var(--c-placeholder));
   color: var(--muted);
 }
 
@@ -173,24 +174,24 @@ button.legendItem {
 }
 
 .yearCell[data-tingkat="1"] {
-  background: #e5f2fa;
+  background: var(--c-brand-tint);
 }
 
 .yearCell[data-tingkat="2"] {
-  background: #b8daef;
+  background: light-dark(#b8daef, #1a3d5c);
 }
 
 .yearCell[data-tingkat="3"] {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .yearCell[aria-current="date"] {
-  box-shadow: inset 0 0 0 2px var(--brand), 0 0 0 2px #fff inset;
+  box-shadow: inset 0 0 0 2px var(--brand), 0 0 0 2px var(--c-bg) inset;
 }
 
 .yearCell[data-tingkat="3"][aria-current="date"] {
-  box-shadow: inset 0 0 0 2px var(--brand), inset 0 0 0 4px #fff;
+  box-shadow: inset 0 0 0 2px var(--brand), inset 0 0 0 4px var(--c-bg);
 }
 
 /* Bulan berjalan: titik kecil di pojok. */
@@ -220,10 +221,11 @@ button.legendItem {
 
 /* ---------- Modal rincian ---------- */
 .modalContent {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #86868b;
-  --line: rgba(0, 0, 0, 0.08);
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --subtle: var(--c-subtle);
+  --line: var(--c-line);
+  --brand: var(--c-brand);
 }
 
 .modalHeader {
@@ -259,6 +261,10 @@ button.legendItem {
   gap: 8px;
   margin: 0;
   color: var(--ev-ink);
+
+  @mixin dark {
+    color: color-mix(in srgb, var(--ev) 40%, var(--c-ink));
+  }
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -341,7 +347,7 @@ button.legendItem {
   }
 
   .yearCell:hover {
-    box-shadow: inset 0 0 0 2px rgba(10, 78, 120, 0.35);
+    box-shadow: inset 0 0 0 2px light-dark(rgba(10, 78, 120, 0.35), rgba(108, 180, 228, 0.45));
   }
 }
 

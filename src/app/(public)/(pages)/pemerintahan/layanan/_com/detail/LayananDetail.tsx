@@ -1,4 +1,5 @@
 'use client';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import { Image } from '@mantine/core';
@@ -6,7 +7,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import BackButton from '../BackButto';
-import { LAYANAN_BRAND_VARS, LAYANAN_LIST_HREF } from '../layanan.meta';
+import { LAYANAN_LIST_HREF } from '../layanan.meta';
 import page from '../layanan.module.css';
 import { AjukanPermohonanModal } from './AjukanPermohonanModal';
 import s from './layanan-detail.module.css';
@@ -19,7 +20,7 @@ export function LayananDetail({ id }: { id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
-    <div className={page.page} style={LAYANAN_BRAND_VARS}>
+    <div className={page.page}>
       <article className={s.wrap} aria-busy={state.status === 'loading' || undefined}>
         <BackButton />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
@@ -65,7 +66,7 @@ export function LayananDetailBody({ data, onAjukan }: { data: LayananDetailData;
       </header>
 
       {/* Persyaratan & alur dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
-      <div className={s.content} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
+      <div className={`${s.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
 
       {data.image2?.link ? (
         <figure className={s.figure}>

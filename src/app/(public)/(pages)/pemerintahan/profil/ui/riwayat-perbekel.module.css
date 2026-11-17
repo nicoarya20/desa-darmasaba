@@ -13,7 +13,7 @@
   display: flex;
   flex-direction: column;
   padding: 14px;
-  border: 1px solid rgb(255 255 255 / 0.7);
+  border: 1px solid var(--card-edge);
   border-radius: 24px;
   background: var(--vm-card);
   box-shadow: 0 12px 32px rgb(10 78 120 / 0.1);
@@ -25,7 +25,7 @@
   overflow: hidden;
   aspect-ratio: 4 / 5;
   border-radius: 16px;
-  background: #dfe5ef;
+  background: light-dark(#dfe5ef, var(--c-placeholder));
 }
 
 .photoImage {
@@ -38,7 +38,7 @@
 .silhouette {
   width: 45%;
   height: 45%;
-  color: #b1bdd1;
+  color: light-dark(#b1bdd1, #636366);
 }
 
 .body {
@@ -70,7 +70,7 @@
   margin: 8px 0 0;
   padding: 4px 12px;
   border-radius: 999px;
-  background: rgb(10 78 120 / 0.1);
+  background: light-dark(rgb(10 78 120 / 0.1), rgb(108 180 228 / 0.16));
   color: var(--brand);
   font-size: 14px;
   line-height: 1.4;

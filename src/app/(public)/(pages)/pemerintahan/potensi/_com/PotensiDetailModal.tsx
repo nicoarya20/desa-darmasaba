@@ -1,3 +1,4 @@
+import rt from "@/app/(public)/_com/rich-text/rich-text.module.css";
 import { Image, Modal } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { PotensiDetailInfo } from "./PotensiDetailInfo";
@@ -30,7 +31,7 @@ function DetailContent({ item, onClose }: { item: PotensiItem; onClose: () => vo
       <Modal.Body>
         <div className={s.detailBody}>
           {content ? (
-            <div className={s.richText} dangerouslySetInnerHTML={{ __html: content }} />
+            <div className={`${s.richText} ${rt.root}`} dangerouslySetInnerHTML={{ __html: content }} />
           ) : (
             <p className={s.richText}>{POTENSI_TEXT.emptyDescription}</p>
           )}

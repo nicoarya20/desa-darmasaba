@@ -1,11 +1,11 @@
 'use client';
 
-import colors from '@/con/colors';
 import { Box, Container, Stack, Tabs, TabsList, TabsTab, Text } from '@mantine/core';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import BackButton from '../../layanan/_com/BackButto';
+import g from './galery.module.css';
 import type { SearchBarProps } from './searchBar';
 
 // ✅ Definisikan tabs di luar komponen (statis, aman untuk SSR)
@@ -46,7 +46,7 @@ export default function LayoutTabsGalery({ children }: LayoutTabsGaleryProps) {
   };
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
+    <Stack pos="relative" bg="var(--c-hero-bg)" py="xl" gap="22" className={g.vars}>
       {/* 🔙 Header */}
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
@@ -57,7 +57,7 @@ export default function LayoutTabsGalery({ children }: LayoutTabsGaleryProps) {
         <Stack align="center" gap="0">
           <Text
             fz={{ base: '2rem', md: '3.4rem' }}
-            c={colors['blue-button']}
+            c="var(--c-brand)"
             fw="bold"
             ta="center"
           >
@@ -73,11 +73,11 @@ export default function LayoutTabsGalery({ children }: LayoutTabsGaleryProps) {
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
-        color={colors['blue-button']}
+        color="var(--c-brand-fill)"
         variant="pills"
         keepMounted={false}
       >
-        <Box px={{ base: 'md', md: 100 }} py="md" bg={colors['BG-trans']}>
+        <Box px={{ base: 'md', md: 100 }} py="md" bg="var(--galery-band)">
           <TabsList>
             {TABS.map((tab) => (
               <TabsTab key={tab.value} value={tab.value}>
