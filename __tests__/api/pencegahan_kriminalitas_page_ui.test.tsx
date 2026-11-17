@@ -15,6 +15,7 @@ import { toPencegahanItem } from '@/app/(public)/(pages)/keamanan/pencegahan-kri
 import s from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/pencegahan.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -111,7 +112,7 @@ describe('PencegahanDetailBody', () => {
     expect(html).toContain('Ringkasan &amp; program 1');
     expect(html).toContain('aria-label="Putar video: Program 1"');
     expect(html).not.toContain('<iframe');
-    expect(html).toContain(`<div class="${d.content}"><ul><li><p>Langkah 1</p></li></ul></div>`);
+    expect(html).toContain(`<div class="${d.content} ${rt.root}"><ul><li><p>Langkah 1</p></li></ul></div>`);
     for (const label of ['Deskripsi Singkat', 'Deskripsi Lengkap', '>Judul<', '>Video<']) expect(html).not.toContain(label);
   });
 

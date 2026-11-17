@@ -20,6 +20,7 @@ import { TIPS_KEAMANAN_TEXT } from '@/app/(public)/(pages)/keamanan/tips-keamana
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -89,7 +90,7 @@ describe('KeamananLingkunganDetailBody', () => {
     expect(html).toContain(`<h1 class="${d.title}">Kegiatan keamanan 1</h1>`);
     expect(html).toContain(`<figure class="${d.photo}">`);
     expect(html).toContain('href="/api/img/kl1.webp" target="_blank"');
-    expect(html).toContain(`class="${d.content}"><p>Isi kegiatan 1</p>`);
+    expect(html).toContain(`class="${d.content} ${rt.root}"><p>Isi kegiatan 1</p>`);
     expect(html).not.toContain('Deskripsi');
   });
 
@@ -107,14 +108,14 @@ describe('TipCard', () => {
     expect(html).not.toContain('no-image');
     expect(html).not.toContain('<img');
     expect(html).toContain(`<div class="${ts.aside}"><h3 class="${ts.title}">Tips 1</h3></div>`);
-    expect(html).toContain(`<div class="${ts.content}"><p></p><ul><li><p>Kunci pintu</p></li>`);
+    expect(html).toContain(`<div class="${ts.content} ${rt.root}"><p></p><ul><li><p>Kunci pintu</p></li>`);
   });
 
   it('dengan foto: foto di kolom kiri, judul + isi di kolom kanan', () => {
     const html = render(<TipCard tip={toTip(tips(2, { image: { link: '/api/img/tipu.webp' } }))} />);
     expect(html).toContain(`<figure class="${ts.photo}">`);
     expect(html).toContain('src="/api/img/tipu.webp"');
-    expect(html).toContain(`<div class="${ts.body}"><h3 class="${ts.title}">Tips 2</h3><div class="${ts.content}">`);
+    expect(html).toContain(`<div class="${ts.body}"><h3 class="${ts.title}">Tips 2</h3><div class="${ts.content} ${rt.root}">`);
   });
 
   it('tanpa foto & tanpa isi → ubin satu kolom berisi judul saja', () => {

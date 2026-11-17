@@ -2,6 +2,7 @@
  * Detail Laporan Publik — bagian khusus di atas kerangka artikel Kabar (kabar-detail.module.css, kolom 860px):
  * panel fakta (lokasi, waktu kejadian) dan linimasa vertikal Kronologi → Penanganan → Status saat ini.
  * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line, --radius) dari kabar.module.css.
+ * Warna nada linimasa gelap = varian terang sistem, sama dengan pil status (../laporan-status.module.css).
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
 .meta {
@@ -98,29 +99,29 @@
   height: var(--marker);
   border: 3px solid var(--brand);
   border-radius: 50%;
-  background: #fff;
+  background: var(--c-bg);
 }
 
 .step[data-tone="kosong"] .marker {
-  border-color: #c7c7cc;
+  border-color: light-dark(#c7c7cc, #636366);
 }
 
 .step[data-tone="selesai"] .marker {
-  border-color: #19733a;
-  background: #19733a;
+  border-color: light-dark(#19733a, #30d158);
+  background: light-dark(#19733a, #30d158);
 }
 
 .step[data-tone="proses"] .marker {
-  border-color: #8f5100;
+  border-color: light-dark(#8f5100, #ffb340);
 }
 
 .step[data-tone="gagal"] .marker {
-  border-color: #c4001a;
-  background: #c4001a;
+  border-color: light-dark(#c4001a, #ff6961);
+  background: light-dark(#c4001a, #ff6961);
 }
 
 .step[data-tone="lain"] .marker {
-  border-color: #86868b;
+  border-color: var(--c-subtle);
 }
 
 .stepHead {
@@ -176,7 +177,7 @@
   padding: 0 18px;
   border: 0;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--ink);
   font: inherit;
   font-size: 15px;
@@ -197,7 +198,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .retry:hover {
-    background: #e8e8ed;
+    background: light-dark(#e8e8ed, #3a3a3c);
   }
 }
 

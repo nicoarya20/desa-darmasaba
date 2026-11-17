@@ -1,6 +1,8 @@
 /*
  * Panel peta + daftar CCTV (di dalam .panel APBDes). Desktop: peta | daftar bergulir setinggi peta.
  * ≤1068px: peta di atas, daftar penuh di bawahnya. Variabel warna diwarisi dari .section APBDes.
+ * Tema gelap: peta (tile OSM), penanda, dan popup Leaflet (latar putih bawaan) sengaja tetap terang lewat "pulau
+ * terang" .map (pola lokasi.module.css Bank Sampah). Varian tile gelap menunggu keputusan user.
  */
 .head {
   display: flex;
@@ -61,7 +63,7 @@
   height: var(--map-h);
   border-radius: 14px;
   overflow: hidden;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   /* Panel Leaflet ber-z-index ratusan: kurung di sini agar tidak menimpa navbar. */
   isolation: isolate;
   scroll-margin-top: 64px;
@@ -74,6 +76,17 @@
 }
 
 .map {
+  /*
+   * Pulau terang: tile OpenStreetMap tetap terang di tema gelap, jadi penanda dan popup putih Leaflet ikut terang.
+   * --brand/--ink/--muted dikunci ke nilai terang token (= nilai lama, terang identik). Catatan: light-dark() di
+   * proyek ini diubah postcss-preset-mantine menjadi aturan [data-mantine-color-scheme], jadi color-scheme: light di
+   * sini hanya mengunci kontrol native, bukan light-dark(); jangan pakai light-dark() di dalam pulau ini.
+   * Bila tile kelak digelapkan, pulau ini dibuang.
+   */
+  color-scheme: light;
+  --brand: #0a4e78;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
   font: inherit;
 }
 
@@ -87,7 +100,7 @@
   padding: 24px;
   text-align: center;
   color: var(--subtle);
-  background: #fff;
+  background: var(--c-tile-alt);
 }
 
 .mapEmpty p {
@@ -123,9 +136,9 @@
   min-height: 0;
 }
 
-/* Kolom cari Layanan berlatar --tile; di dalam panel #f5f5f7 latarnya dijadikan putih. */
+/* Kolom cari Layanan berlatar --tile; di dalam panel (--c-tile) latarnya dinaikkan satu tingkat (putih di terang). */
 .search {
-  --tile: #fff;
+  --tile: var(--c-tile-alt);
   flex: none;
 }
 
@@ -174,7 +187,7 @@
 }
 
 .row[aria-pressed="true"] {
-  background: #fff;
+  background: var(--c-tile-alt);
   box-shadow: inset 3px 0 0 var(--brand);
 }
 
@@ -183,7 +196,7 @@
   outline-offset: -2px;
 }
 
-/* Baris terpilih berlatar putih: hilangkan garis pemisah di sekitarnya agar tidak memotong sudut. */
+/* Baris terpilih berlatar ubin (putih di terang): hilangkan garis pemisah di sekitarnya agar tidak memotong sudut. */
 .rows > li:has(.row[aria-pressed="true"]),
 .rows > li:has(.row[aria-pressed="true"]) + li {
   border-top-color: transparent;
@@ -287,7 +300,7 @@
 }
 
 .marker:focus-visible > span {
-  box-shadow: 0 0 0 3px #0a4e78, 0 1px 5px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 3px var(--brand), 0 1px 5px rgba(0, 0, 0, 0.45);
 }
 
 .popup {
@@ -295,7 +308,7 @@
   flex-direction: column;
   gap: 2px;
   min-width: 160px;
-  color: #1d1d1f;
+  color: var(--ink);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -304,7 +317,7 @@
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: #0a4e78;
+  color: var(--brand);
 }
 
 .popupName {
@@ -313,7 +326,7 @@
 }
 
 .popupLokasi {
-  color: #6e6e73;
+  color: var(--muted);
 }
 
 .popupStatus {
@@ -323,7 +336,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .row:not(.rowStatic):not([aria-pressed="true"]):hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: light-dark(rgba(0, 0, 0, 0.04), rgb(255 255 255 / 6%));
   }
 
   .marker:hover > span {
