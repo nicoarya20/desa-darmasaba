@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.295] - 2026-11-17
+### Added
+- Cari global kini menemukan bagian Dashboard Kependudukan: ketik "banjar", "umur", "agama", "dinamika", atau "kelahiran" untuk langsung membuka bagian yang sesuai. Keempat bagian juga tampil di Peta Informasi.
+
+### Changed
+- Bagian Dinamika Penduduk cukup menulis tahun datanya ("Data 2026"), tanpa keterangan "tahun berjalan".
+
+### Fixed
+- Halaman tambahan di cari global dan Peta Informasi yang menaut ke bagian halaman (alamat ber-`#`) kini ikut tersembunyi bila halamannya disembunyikan admin.
+
 ## [0.1.294] - 2026-11-17
 ### Changed
 - **Lima halaman Kependudukan kini menjadi satu Dashboard Kependudukan**: ringkasan, penduduk per banjar, kelompok umur, agama, dan dinamika penduduk dalam satu halaman bergaya menu Ekonomi. Deretan pil di bawah navbar menempel saat digulir dan menandai bagian yang sedang dibaca.
