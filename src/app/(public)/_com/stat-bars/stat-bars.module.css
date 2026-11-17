@@ -2,16 +2,16 @@
  * Panel statistik batang bersama (Data Pendidikan, menu Ekonomi). Bentuk = panel APBDes/Monev (#f5f5f7, radius 18,
  * padding 28/24/20) + daftar batang HTML. --brand dari wadah pemakai; warna segmen dari STAT_BARS_VARS.
  * Legenda & rincian segmen: stat-segments.module.css; ubin kosong/galat: stat-bars-states.module.css.
- * Variabel --sb-* dibuat di sini supaya panel tidak bergantung pada token halaman pemakai.
+ * Variabel --sb-* = alias token --c-* (theme-tokens.css) supaya panel tidak bergantung pada token halaman pemakai.
  * Breakpoint apple.com: ≤1068px dan ≤734px.
  */
 .panel {
-  --sb-ink: #1d1d1f;
-  --sb-muted: #6e6e73;
-  --sb-subtle: #86868b;
-  --sb-line: rgba(0, 0, 0, 0.08);
+  --sb-ink: var(--c-ink);
+  --sb-muted: var(--c-muted);
+  --sb-subtle: var(--c-subtle);
+  --sb-line: var(--c-line);
   color: var(--sb-ink);
-  background: #f5f5f7;
+  background: var(--c-tile);
   border-radius: 18px;
   padding: 28px;
 }

@@ -5,10 +5,10 @@
  * Baris 17px / line-height 25px + padding bawah 7px = 32px; jarak antar-kelompok 26px.
  */
 .page {
-  --ink: #1d1d1f;
-  --line: #d2d2d7;
-  --brand: #0a4e78;
-  background: #fff;
+  --ink: var(--c-ink);
+  --line: var(--c-line-strong);
+  --brand: var(--c-brand);
+  background: var(--c-bg);
   color: var(--ink);
   padding-bottom: var(--section-gap);
 }

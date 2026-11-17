@@ -1,7 +1,7 @@
 /*
  * Halaman daftar Kabar (Berita, Pengumuman) — kepala (judul brand, pengantar, kolom cari, pil kategori) dan paginasi.
  * Variabel warna (--brand, --tile, --ink, …) diwarisi dari `.section` Kabar Desa (kabar.module.css) yang
- * membungkus halaman (BeritaShell / PengumumanShell).
+ * membungkus halaman (BeritaShell / PengumumanShell); isian & tombol isi langsung dari token --c-* (tema gelap).
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
 .header {
@@ -81,7 +81,7 @@
 .searchInput:focus {
   outline: none;
   border-color: var(--brand);
-  background: #fff;
+  background: var(--c-tile-alt);
 }
 
 /* ---------- Pil kategori ---------- */
@@ -106,9 +106,10 @@
   transition: background-color 200ms ease, color 200ms ease;
 }
 
+/* Pil aktif = tombol isi: --brand gelap (#6cb4e4) terlalu terang untuk teks putih. */
 .pill[aria-current="page"] {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .pill:focus-visible {
@@ -134,8 +135,8 @@
 }
 
 .pageControl[data-active] {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .pageControl:disabled {
@@ -167,7 +168,7 @@
 @media (hover: hover) and (pointer: fine) {
   .pill:not([aria-current="page"]):hover,
   .pageControl:not([data-active]):not(:disabled):hover {
-    background: #e8e8ed;
+    background: var(--c-placeholder);
   }
 }
 

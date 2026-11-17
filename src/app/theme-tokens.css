@@ -65,3 +65,11 @@
   --c-open: #30d158;
   --c-closed: #ff453a;
 }
+
+/* Tooltip Mantine di situs publik: bawaan Mantine gelap = gelembung abu terang (gray-2) berteks hitam yang menyala
+   di latar hitam; samakan dengan tooltip navbar (navbar.module.css .tooltip): ubin token. Terang tetap bawaan.
+   Tooltip ber-prop `color` tetap menang (Mantine menulis --tooltip-bg inline). Admin selalu terang → tak terpengaruh. */
+:root[data-mantine-color-scheme="dark"] .mantine-Tooltip-tooltip {
+  --tooltip-bg: var(--c-tile-alt);
+  --tooltip-color: var(--c-ink);
+}
