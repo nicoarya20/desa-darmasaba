@@ -141,6 +141,13 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Halaman publik baru menyaring di klien (`sanitizeRichText`) dan video lewat `VideoFacade` (iframe hanya setelah klik, YouTube/Vimeo saja), tapi halaman admin dan konsumen API lain tidak terlindungi.
   - Usul: `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`) di create/updt; validasi `linkVideo` hanya URL https YouTube/Vimeo.
 
+- [ ] **Migrasi Penduduk: GET publik membuka data per orang** (terverifikasi orchestrator di stg 2026-11-17, rombak Dashboard Kependudukan)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/kependudukan/migrasi-penduduk/index.ts`. `GET /api/kependudukan/migrasipenduduk/find-many` dan `GET /:id` tanpa `beforeHandle`, dan tidak masuk `ADMIN_ONLY_GET_PATHS` di `route.ts`.
+  - Dampak: tanpa login, siapa pun bisa mengunduh `nama`, `jenis` (MASUK/KELUAR), `tanggal`, `asal`/`tujuan`, `alasan` pindah tiap warga. stg: 7 baris (6 seed, **1 isian admin** 2026-09-24). Prod belum dicek. Jenna sudah mengecualikannya (`src/lib/jenna/knowledge/sources.ts:22`), API-nya masih terbuka.
+  - Pemakai: hanya admin (`_state/kependudukan/migrasi-penduduk.ts`, `/admin/kependudukan/migrasi-penduduk/*`). Rute publik 404; Dashboard Kependudukan tidak memakainya (keputusan user 2026-11-17).
+  - Usul: `{ beforeHandle: guardDataPribadi }` di `find-many` dan `/:id`, pola sama dengan `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`; tambah kasus ke `__tests__/api/data_pribadi_admin_only.test.ts`. `/:id` memakai `Request` mentah + `Response.json`, ubah ke `context` sekalian.
+  - Sekalian (P3) di `migrasi-penduduk/findMany.ts`: `limit` tanpa batas atas; `where: any` + `eslint-disable`; galat dibalas `success:false` HTTP 200; filter tahun `lte: '${tahun}-12-31'` membuang rekaman 31 Des (pakai `lt: '${tahun+1}-01-01'`); `totalPages` 0 saat kosong.
+
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
@@ -234,6 +241,13 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Halaman `/ekonomi/PADesa-pendapatan-asli-desa` kini membaca APBDes pos `4.1` (`/api/landingpage/apbdes/findMany`). Model `ApbDesa`/`Pendapatan`/`Belanja`/`Pembiayaan` + menu admin PADesa jadi duplikat.
   - Usul: pensiunkan menu admin PADesa (atau arahkan ke APBDes). Bila dipertahankan: `apbdesa/findMany.ts:14-18` search memakai field yang tidak ada (`success:false`, cari admin rusak); komentar "tahun unik → 409" tanpa `@@unique` di schema; `value Int` tidak muat Rp 21,4 M; MultiSelect form hanya memuat 10 item.
   - APBDes: `APBDesItem.totalRealisasi`/`persentase` tidak ikut diperbarui saat realisasi berubah (lokal 2025 pos 4.1 = 0 padahal `realisasiItems` Rp 132 jt). Publik menghitung dari `realisasiItems`.
+
+- [ ] **Kependudukan: belum ada daftar tahun tersedia; summary terkunci tahun berjalan** (terverifikasi 2026-11-17, Dashboard Kependudukan)
+  - `find-many` `databanjar`/`distribusiagama`/`distribusiumur` sudah menerima `?tahun=`, tetapi tidak ada cara mengetahui tahun terbaru/tersedia. Dashboard memuat semua tahun (`limit=100`) lalu memilih di klien: MITIGASI SEMENTARA(kependudukan-limit), `kependudukan/_com/data/kependudukan-data.logic.ts`. DataBanjar tumbuh 12 baris/tahun.
+  - `dashboard/summary.ts` memakai `currentYear` hardcode dan selalu mengembalikan objek angka → Januari tahun baru tampil 0 sebagai fakta; `totalKelahiran` (`summary.ts:31-39`) menghitung model `Kelahiran` (Kesehatan, 3 di stg) padahal Dinamika 2026 = 45.
+  - Summary + `_state/kependudukan/dashboard.ts` kini tidak dipakai halaman publik (sengaja tidak dihapus). Usul: `tahunTersedia` (aditif) di find-many atau summary + `?tahun=` di summary; `totalKelahiran` dibuang atau diambil dari `DinamikaPenduduk`; putuskan summary dipertahankan untuk admin atau dihapus. Setelah ada, hapus mitigasinya.
+- [ ] **DataBanjar `miskin` tak bisa "belum diisi"**: kolom `Int` NOT NULL, form admin bawaan 0 → stg 2026 12 × 0 (Ekonomi › Penduduk Miskin 2026 = 5). Frontend MITIGASI SEMENTARA: semua 0 = belum diisi (`banjarTotals.miskinTerisi`). Usul: kolom nullable + form kosong bawaan.
+- [ ] **`dinamikapenduduk/find-many` tanpa `updatedAt`** (`findMany.ts:17` `select`), jadi Dinamika tidak bisa menulis "Data diperbarui …". Usul: tambah `updatedAt: true` (aditif). `findUnique.ts` juga tidak menyaring `isActive`.
 
 ## P3. Schema & form admin
 
@@ -335,6 +349,15 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Kesejahteraan: `del.ts` membalas `{status:404}` dengan HTTP 200; `deletedAt @default(now())` padahal hapus permanen; form admin mewajibkan `imageId` padahal schema opsional; belum masuk cari global (`search/findMany.ts`).
   - BUMDes: belum ada model/endpoint dokumen (SK pengurus, Perdes, AD/ART, laporan). Publik sudah menyiapkan `DokumenBumdes` (tersembunyi selama kosong); isi `loadDokumen` di `bumdes.source.ts` dengan bentuk `{ id, judul, keterangan, href }` (`TODO(bumdes-dokumen)`).
 
+- [ ] **Kependudukan: schema, seed & form admin** (Dashboard Kependudukan 2026-11-17; skema umur terverifikasi orchestrator, sisanya dilaporkan sesi pekerja)
+  - **Distribusi Umur, dua skema kelompok bertabrakan (prioritas tinggi)**: seeder (`prisma/_seeder_list/kependudukan/seed_distribusi_umur.ts`) + komentar schema memakai `0-14/15-24/25-54/55-64/65+`, form admin create & edit (`admin/(dashboard)/kependudukan/distribusi-umur/{create,[id]}/page.tsx`) hanya `0-5/6-12/13-17/18-25/26-35/36-45/46-55/56-65/65+` (bertumpuk di umur 65). stg 2026: `0-14` dan `6-12` berdampingan (jumlah 4.305, padahal 4.215); baris seed tampil kosong di form edit. Publik menyembunyikan total & persen bila tumpang tindih. Usul: satu skema resmi berbatas 15 & 65, opsi form disamakan, data lama dirapikan.
+  - Tanpa unique: `DistribusiUmur (tahun, rentangUmur)`, `DataBanjar (nama, tahun)`; `DataBanjar.nama` teks bebas (model `Banjar` berisi 8 nama rekaan, bukan 12 banjar dinas).
+  - Distribusi Umur: `findMany` hanya menyaring `isActive`, `del` hard delete (tak konsisten dengan `deletedAt`).
+  - Seeder Dinamika (`seed_dinamika_penduduk.ts:12-20`) upsert dengan cabang `update` berisi angka seed → seed ulang menimpa koreksi admin. Usul: `update: {}`.
+  - Seed lokal DataBanjar (`prisma/data/kependudukan/data-banjar/data-banjar.json`): nama + angka rekaan (4.200) ≠ stg (10.254, 12 banjar).
+  - Form admin Distribusi Agama: opsi `KRISTEN` umum berdampingan dengan Protestan/Katolik.
+  - Admin Data Banjar `page.tsx:291`: Pagination `load(newPage, 10, search)` membuang filter tahun.
+
 ## Jenna publik (tindak lanjut)
 
 Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
@@ -363,3 +386,4 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - Inovasi (stg 2026-11-16): logo "BRI Peduli" berlatar hampir putih (bukan transparan) sehingga tampak kotak samar di dinding mitra; unggah PNG/WebP transparan. Kolaborasi berisi entri uji "Forum Inovasi Desa (Tes)".
 - Lingkungan (stg 2026-11-16): langkah Bank Sampah ke-6 "Pilih sampah sesai jenisnya (Tes )" (id `cmrbohsmq0000nr0rjvdv3gqa`) adalah data uji; Data Lingkungan berisi entri uji "Test QA Data Lingkungan" (ikon `icon-test`); judul Konservasi "Filosofi Tri Hita Karuna" seharusnya "Karana".
 - Ekonomi (stg 2026-11-16): Pengangguran ada tahun 9999 (kartu "bulan terbaru" jadi "Februari 9999") dan 2021; Penduduk Miskin 2026 = 5 orang (turun dari 390, tampak data uji); Demografi Pekerjaan berisi "Test QA Pekerjaan"; PADesa "tes" 950 jt + "Penanggulangan Bencana…" ganda; hierarki jabatan BUMDes janggal (Direktur/Bendahara/Sekretaris/Pengawas di bawah Penasihat, Penasihat & Kepala Unit tanpa induk) dan 0 pengurus; Kesejahteraan 6 program tanpa foto/galeri/video; usia kerja menganggur 2 baris sebaran tanpa periode.
+- Kependudukan (stg 2026-11-17): Distribusi Agama = data seed (id `cmk-agama-00x`, total 4.215 ≈ 41% dari total banjar 10.254) + satu baris "LAINNYA 10" tahun 2020 (tampak uji coba); Dinamika Penduduk 100% seed (id `cmk-dinamika-00x`, termasuk 2026); Distribusi Umur 2026 mencampur kelompok seed & form admin. Hanya Data per Banjar yang tampak isian asli.
