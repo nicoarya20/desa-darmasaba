@@ -185,13 +185,6 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .toggle:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .toggleIcon,
   .placeholderRow {

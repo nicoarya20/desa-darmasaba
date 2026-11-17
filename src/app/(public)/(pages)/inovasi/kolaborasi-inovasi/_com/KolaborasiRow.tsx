@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useId, useState } from 'react';
 import type { Kolaborasi } from './kolaborasi.logic';
@@ -16,6 +17,7 @@ export function KolaborasiRow({ item }: { item: Kolaborasi }) {
   const [open, setOpen] = useState(false);
   const collapsible = Boolean(item.html) && item.textLength > KOLABORASI_COLLAPSE_THRESHOLD;
   const collapsed = collapsible && !open;
+  const toggleLabel = open ? T.readLess : T.readMore;
 
   return (
     <li className={s.row}>
@@ -34,12 +36,15 @@ export function KolaborasiRow({ item }: { item: Kolaborasi }) {
         {collapsible ? (
           <button
             type="button"
-            className={s.toggle}
+            className={`${s.toggle} ${r.trigger}`}
             aria-expanded={open}
             aria-controls={bodyId}
             onClick={() => setOpen((value) => !value)}
           >
-            {open ? T.readLess : T.readMore}
+            {/* Chevron bawah sudah berputar saat terbuka; sengaja tanpa `r.chevron` (geser kanan bentrok rotate). */}
+            <span className={r.cta} data-text={toggleLabel}>
+              {toggleLabel}
+            </span>
             <IconChevronDown className={s.toggleIcon} size={16} stroke={2} aria-hidden />
           </button>
         ) : null}
