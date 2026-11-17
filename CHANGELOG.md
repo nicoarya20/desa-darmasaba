@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.296] - 2026-11-17
+### Added
+- **Submenu baru Inovasi › Program Inovasi** (`/inovasi/program-inovasi`): daftar semua program inovasi desa berupa ubin logo, dengan data yang sama seperti rel "Program Inovasi Desa" di beranda. Submenu ini bisa disembunyikan atau ditampilkan dari Pengaturan › Visibilitas Menu.
+- **Halaman detail tiap program** (`/inovasi/program-inovasi/{id}`) yang bisa ditemukan mesin pencari dan dibagikan: judul dan cuplikan program serta logonya tampil saat tautan dibagikan. Judul bagian seperti Tujuan, Sasaran, dan Ruang Lingkup tampil sebagai judul. Program yang dinonaktifkan admin menampilkan halaman tidak ditemukan.
+- **Urutan tampil program inovasi**: form tambah/edit Program Inovasi di admin punya isian "Urutan tampil (opsional)". Angka 1 tampil paling depan di beranda dan halaman Program Inovasi; yang dikosongkan tetap urut abjad setelah yang bernomor. Daftar admin menampilkan kolom Urutan.
+
+### Changed
+- Overlay detail program di beranda kini punya tautan "Lihat halaman lengkap".
+- Tautan lama `/program-inovasi/{id}` kini membuka halaman detail baru, bukan overlay beranda.
+
+### Fixed
+- Jumlah halaman di daftar Program Inovasi admin kini benar saat mencari (sebelumnya dihitung dari semua program).
+
 ## [0.1.295] - 2026-11-17
 ### Added
 - **Footer kini menampilkan kontak resmi kantor desa**: Kantor Perbekel Desa Darmasaba, Jl. Raya Darmasaba – Lukluk (80352), telepon (0361) 8441518 (bisa diklik untuk menelepon), dan email ddarmasaba@gmail.com (bisa diklik untuk mengirim email), beserta nama pengelola website. Nama tim redaksi akan ditambahkan setelah SK Tim Pengelola Website diterima dari desa.
