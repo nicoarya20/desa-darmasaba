@@ -26,8 +26,7 @@ export const KEPENDUDUKAN_TEXT = {
     data: (tahun: number) => `Data ${tahun}`,
     banjar: (jumlah: number, tahun: number) => `${jumlah} banjar · Data ${tahun}`,
     jiwaPerKkNote: (tahun: number) => `Jiwa per kepala keluarga · Data ${tahun}`,
-    pertumbuhanNote: (tahun: number, berjalan: boolean) =>
-      `Lahir dan datang dikurangi meninggal dan pindah · ${tahun}${berjalan ? ' (tahun berjalan)' : ''}`,
+    pertumbuhanNote: (tahun: number) => `Lahir dan datang dikurangi meninggal dan pindah · ${tahun}`,
   },
   terkait: {
     miskinTitle: 'Jumlah Penduduk Miskin',

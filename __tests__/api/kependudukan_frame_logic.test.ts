@@ -46,8 +46,6 @@ const DINAMIKA_STG = [
   { id: 'd3', tahun: 2024, kelahiran: 48, kematian: 19, masuk: 25, keluar: 20 },
 ];
 const ready = (rows: unknown[]): DatasetSlice => toDatasetSlice({ status: 'ready', rows }, noop);
-const NOV_2026 = new Date('2026-11-17T03:00:00Z');
-const JAN_2027 = new Date('2027-01-05T03:00:00Z');
 
 describe('pilih tahun terbaru per dataset', () => {
   it('limit muat eksplisit 100 (bukan bawaan API 10)', () => {
@@ -128,38 +126,34 @@ describe('rel pil + scroll-spy', () => {
 });
 
 describe('kartu hero', () => {
-  it('stg: 10.254 jiwa · 2.322 KK · 4,4 jiwa/KK (2026) · pertumbuhan +34 (2026, tahun berjalan)', () => {
-    const cards = heroCards(ready(BANJAR_STG), ready(DINAMIKA_STG), NOV_2026);
+  it('stg: 10.254 jiwa · 2.322 KK · 4,4 jiwa/KK (2026) · pertumbuhan +34 (2026)', () => {
+    const cards = heroCards(ready(BANJAR_STG), ready(DINAMIKA_STG));
     expect(cards.map((c) => c.key)).toEqual(['penduduk', 'kk', 'jiwaPerKk', 'pertumbuhan']);
     expect(cards[0]).toMatchObject({ status: 'ready', value: '10.254', unit: 'jiwa', note: '12 banjar · Data 2026' });
     expect(cards[1]).toMatchObject({ status: 'ready', value: '2.322', unit: 'KK', note: 'Data 2026' });
     expect(cards[2]).toMatchObject({ status: 'ready', value: '4,4', unit: 'jiwa' });
     expect(cards[3]).toMatchObject({ status: 'ready', value: '+34', unit: 'jiwa' });
-    expect(cards[3].note).toContain('2026 (tahun berjalan)');
-  });
-
-  it('Januari tahun baru: tetap memakai tahun terbaru yang ada, bukan 0', () => {
-    const cards = heroCards(ready(BANJAR_STG), ready(DINAMIKA_STG), JAN_2027);
-    expect(cards[0].value).toBe('10.254');
-    expect(cards[3].note).toContain('· 2026');
+    // Catatan cukup tahun data; keterangan "(tahun berjalan)" dihapus (revisi user 2026-11-17).
+    expect(cards[3].note).toBe('Lahir dan datang dikurangi meninggal dan pindah · 2026');
+    expect(cards[3].note).toContain('2026');
     expect(cards[3].note).not.toContain('tahun berjalan');
   });
 
   it('pertumbuhan negatif ditulis bertanda minus', () => {
     const turun = [{ id: 'd', tahun: 2025, kelahiran: 10, kematian: 30, masuk: 5, keluar: 10 }];
-    expect(heroCards(ready(BANJAR_STG), ready(turun), NOV_2026)[3].value).toBe('-25');
+    expect(heroCards(ready(BANJAR_STG), ready(turun))[3].value).toBe('-25');
   });
 
   it('dataset kosong → "empty" tanpa nilai; galat/memuat diteruskan per dataset', () => {
-    const empty = heroCards(ready([]), ready([]), NOV_2026);
+    const empty = heroCards(ready([]), ready([]));
     expect(empty.every((c) => c.status === 'empty' && c.value === undefined)).toBe(true);
-    const mixed = heroCards(toDatasetSlice({ status: 'error' }, noop), toDatasetSlice({ status: 'loading' }, noop), NOV_2026);
+    const mixed = heroCards(toDatasetSlice({ status: 'error' }, noop), toDatasetSlice({ status: 'loading' }, noop));
     expect(mixed.map((c) => c.status)).toEqual(['error', 'error', 'error', 'loading']);
   });
 
   it('KK nol di semua banjar → jiwa/KK "empty" (tidak membagi nol)', () => {
     const tanpaKk = BANJAR_STG.map((b) => ({ ...b, kk: 0 }));
-    const cards = heroCards(ready(tanpaKk), ready(DINAMIKA_STG), NOV_2026);
+    const cards = heroCards(ready(tanpaKk), ready(DINAMIKA_STG));
     expect(cards[1]).toMatchObject({ status: 'ready', value: '0' });
     expect(cards[2].status).toBe('empty');
   });

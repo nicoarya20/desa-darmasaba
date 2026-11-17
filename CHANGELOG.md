@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.297] - 2026-11-17
+### Changed
+- Kartu "Pertumbuhan bersih" di Dashboard Kependudukan cukup menulis tahun datanya, tanpa keterangan "tahun berjalan" (seragam dengan bagian Dinamika Penduduk).
+
 ## [0.1.296] - 2026-11-17
 ### Added
 - Cari global kini menemukan bagian Dashboard Kependudukan: ketik "banjar", "umur", "agama", "dinamika", atau "kelahiran" untuk langsung membuka bagian yang sesuai. Keempat bagian juga tampil di Peta Informasi.

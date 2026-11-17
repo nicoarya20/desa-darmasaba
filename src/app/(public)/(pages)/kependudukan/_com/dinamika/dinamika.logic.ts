@@ -67,8 +67,3 @@ export function ringkasDinamika(row: DinamikaRow): DinamikaRingkasan {
     lebar: { bertambah: lebar(neraca.bertambah), berkurang: lebar(neraca.berkurang) },
   };
 }
-
-/** Tahun data = tahun kalender berjalan → angka masih bisa bertambah sampai akhir tahun. */
-export function isTahunBerjalan(tahun: number, now: Date): boolean {
-  return tahun === now.getFullYear();
-}

@@ -1,9 +1,8 @@
 // @vitest-environment node
-// Dinamika Penduduk (Dashboard Kependudukan): parser baris API, neraca bertambah/berkurang, tahun berjalan.
+// Dinamika Penduduk (Dashboard Kependudukan): parser baris API, neraca bertambah/berkurang.
 import { describe, expect, it } from 'vitest';
 import {
   dinamikaNeraca,
-  isTahunBerjalan,
   parseDinamikaRow,
   parseDinamikaRows,
   ringkasDinamika,
@@ -91,13 +90,5 @@ describe('ringkasDinamika', () => {
     const r = ringkasDinamika({ id: 'z', tahun: 2021, kelahiran: 0, kematian: 0, masuk: 0, keluar: 0 });
     expect(r.lebar).toEqual({ bertambah: 0, berkurang: 0 });
     expect(r.bersih).toBe(0);
-  });
-});
-
-describe('isTahunBerjalan', () => {
-  it('sama dengan tahun kalender → true, tahun lalu → false', () => {
-    const now = new Date(2026, 10, 17);
-    expect(isTahunBerjalan(2026, now)).toBe(true);
-    expect(isTahunBerjalan(2025, now)).toBe(false);
   });
 });
