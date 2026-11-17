@@ -53,3 +53,5 @@ Admin (role admin 0–4, dicek di handler lewat `guardAdmin` karena GET di luar 
 - Data penerima diisi admin lewat impor CSV; seed tidak berisi data warga.
 - Mengubah alamat menjadi banjar baku (bukan teks bebas) akan membuat rekap lebih rapi; kini rekap mengelompokkan teks
   alamat yang sama persis (setelah spasi dirapikan), jadi "BR. BUCU" dan "Br Bucu" terhitung terpisah.
+
+> **Catatan 2026-11-17 (rombak Ekonomi v0.1.292):** halaman daftar `/ekonomi/program-kemiskinan` kini memakai kerangka Kabar Desa: daftar baris (bukan kartu), judul tiap baris menaut ke detail lewat `programHref` (kini di `program-kemiskinan.logic.ts`). Grafik "Statistik Kemiskinan Masyarakat" disembunyikan karena angkanya bertentangan dengan Jumlah Penduduk Miskin (lihat docs/BACKEND-TODO.md). Halaman detail `[slug]` tidak diubah.

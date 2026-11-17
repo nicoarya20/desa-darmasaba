@@ -1,0 +1,70 @@
+/*
+ * Detail Kesejahteraan Masyarakat — bagian khusus di atas kerangka artikel bersama (kabar-list/kabar-detail.module.css):
+ * pengantar (HTML ringkasan admin yang disanitasi), tautan video non-YouTube, dan blok galeri. Video YouTube memakai
+ * fasad Pencegahan Kriminalitas. Variabel warna (--brand, --ink, --muted) dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
+ */
+.lead {
+  color: var(--muted);
+  font-size: 21px;
+  line-height: 1.43;
+  overflow-wrap: anywhere;
+}
+
+.lead p,
+.lead ul,
+.lead ol {
+  margin: 0;
+}
+
+.lead > * + * {
+  margin-top: 0.6em;
+}
+
+.videoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: auto;
+  color: var(--brand);
+  font-size: 17px;
+  text-decoration: none;
+}
+
+.videoLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .videoLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+@media (max-width: 734px) {
+  .lead {
+    font-size: 19px;
+    line-height: 1.42;
+  }
+
+  .blockTitle {
+    font-size: 21px;
+    line-height: 1.19;
+  }
+}

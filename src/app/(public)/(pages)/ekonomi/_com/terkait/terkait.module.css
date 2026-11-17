@@ -1,0 +1,81 @@
+/*
+ * Ubin tautan silang menu Ekonomi (diangkat dari Kesejahteraan Masyarakat tanpa perubahan tampilan). Variabel warna
+ * (--brand, --muted, --tile, --radius) dari kabar.module.css wadah. Breakpoint apple.com: ≤734px (mobile).
+ */
+.terkait {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  padding: 28px 32px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  color: inherit;
+  text-decoration: none;
+}
+
+.terkait:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.icon {
+  display: grid;
+  color: var(--brand);
+}
+
+.icon svg {
+  stroke-width: 1.5;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.19;
+  font-weight: 600;
+}
+
+.text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+.aksi {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+  color: var(--brand);
+  font-size: 17px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .terkait:hover .aksi {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  /* Ikon di atas, judul + kalimat, aksi di bawah (tidak berdesakan di 390px). */
+  .terkait {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 24px;
+  }
+
+  .title {
+    font-size: 19px;
+    line-height: 1.21;
+  }
+}

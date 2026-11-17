@@ -1,5 +1,57 @@
 # Changelog
 
+## [0.1.295] - 2026-11-17
+### Added
+- **Footer kini menampilkan kontak resmi kantor desa**: Kantor Perbekel Desa Darmasaba, Jl. Raya Darmasaba – Lukluk (80352), telepon (0361) 8441518 (bisa diklik untuk menelepon), dan email ddarmasaba@gmail.com (bisa diklik untuk mengirim email), beserta nama pengelola website. Nama tim redaksi akan ditambahkan setelah SK Tim Pengelola Website diterima dari desa.
+
+### Changed
+- **Kontak PPID** di halaman Daftar Informasi Publik dan Permohonan Keberatan kini memakai email dan telepon resmi kantor desa. Sebelumnya tertulis nomor WhatsApp contoh "081-xxx-xxx-xxx" dan dua alamat email yang berbeda.
+- **Halaman Posyandu** kini hanya menampilkan tab Ringkasan (deskripsi dan kegiatan per klaster) dan Data Posyandu. Tab Balita dan Ibu Hamil serta kartu angka kesehatan disembunyikan sementara sampai rekap resmi dari Puskesmas tersedia.
+- Tahun hak cipta di footer kini mengikuti tahun berjalan.
+
+## [0.1.294] - 2026-11-17
+### Changed
+- **Lima halaman Kependudukan kini menjadi satu Dashboard Kependudukan**: ringkasan, penduduk per banjar, kelompok umur, agama, dan dinamika penduduk dalam satu halaman bergaya menu Ekonomi. Deretan pil di bawah navbar menempel saat digulir dan menandai bagian yang sedang dibaca.
+- **Ringkasan di atas**: total penduduk, kepala keluarga, rata-rata jiwa per keluarga, dan pertumbuhan bersih, masing-masing dengan tahun datanya. Tiap bagian memakai tahun data terbarunya sendiri dan menuliskannya di kepala bagian.
+- **Angka terbaca tanpa mengarahkan kursor**: per banjar, umur, dan agama memakai daftar batang mendatar (termasuk di ponsel, tanpa tabel yang harus digeser). Dinamika penduduk tampil sebagai neraca Bertambah dan Berkurang beserta perubahan bersihnya, dengan riwayat per tahun yang bisa dibuka.
+- Menu Kependudukan di navbar kini satu butir, "Dashboard Kependudukan". Alamat lama (mis. `/kependudukan/distribusi-agama`) tetap berfungsi dan langsung membuka bagian yang sesuai di dashboard.
+- Bila kelompok umur cukup lengkap, ditampilkan juga jumlah usia produktif dan rasio ketergantungan.
+
+### Removed
+- Submenu Data Per Banjar, Dinamika Penduduk, Distribusi Agama, dan Distribusi Umur, beserta saklar sembunyikan "Distribusi Agama" di pengaturan menu admin (isinya kini ada di Dashboard Kependudukan).
+
+### Fixed
+- Data per Banjar tidak lagi kehilangan banjar (sebelumnya hanya 10 banjar pertama yang tampil, total 8.409 dari 10.254 jiwa).
+- Distribusi Umur dan Distribusi Agama tidak lagi mencampur data beberapa tahun sekaligus (kelompok "65+" sempat muncul dua kali); nama agama tampil rapi, bukan kode seperti "KRISTEN_PROTESTAN".
+- Kelompok umur yang tumpang tindih tidak lagi menghasilkan total dan persen yang menyesatkan; halaman memberi catatan sebagai gantinya.
+- Angka "Kelahiran Tahun Ini" yang bertentangan dengan data dinamika penduduk dihapus; jumlah keluarga miskin yang belum diisi tidak lagi tampil sebagai 0.
+- Pesan gagal memuat kini berbeda dari pesan data kosong, dan tiap bagian bisa dimuat ulang sendiri.
+
+## [0.1.293] - 2026-11-17
+### Changed
+- **Nama Perbekel di beranda kini selalu satu baris**, sepanjang apa pun gelarnya. Kartu nama melebar dulu sampai selebar foto; bila masih kurang, ukuran huruf nama mengecil seperlunya, di semua ukuran layar.
+
+## [0.1.292] - 2026-11-17
+### Changed
+- **Sembilan halaman menu Ekonomi dirombak ke gaya Kabar Desa** (judul rata kiri, satu kalimat pengantar, tepi dan jarak sama dengan menu Lingkungan): BUMDes, PADesa, Jumlah Pengangguran, Penduduk Usia Kerja yang Menganggur, Jumlah Penduduk Miskin, Program Pengentasan Kemiskinan, Sektor Unggulan Desa, Demografi Pekerjaan, dan Kesejahteraan Masyarakat.
+- **Tempat data disediakan**: bagian yang belum diisi admin tampil sebagai kotak satu kalimat ("… akan tampil di sini"), bukan grafik kosong, "0 Orang", atau "Rp 0". Begitu admin mengisi data lewat CMS, data langsung tampil. Pesan gagal memuat kini berbeda dari pesan data kosong.
+- **Angka statistik kini terbaca tanpa mengarahkan kursor**: Demografi Pekerjaan, Sektor Unggulan, Penduduk Miskin, dan sebaran pengangguran memakai daftar batang mendatar (seperti Data Pendidikan), termasuk di ponsel. Demografi Pekerjaan menampilkan pembagian laki-laki dan perempuan per pekerjaan.
+- **PADesa kini diambil dari APBDes pos 4.1 "Pendapatan Asli Desa"**: tahun anggaran ditampilkan, anggaran dibanding realisasi, porsi dari Pendapatan Desa, dan rincian sumbernya, dengan tautan ke APBDes lengkap. Admin cukup mengisi APBDes.
+- **BUMDes**: profil, galeri, unit usaha, dan bagan pengurus dalam satu halaman. Jabatan yang belum diisi tampil "Belum ditugaskan". Halaman profil pengurus hanya menampilkan foto, nama, dan jabatan. Kontak BUMDes bisa langsung ditelepon atau dihubungi lewat WhatsApp (nomor seluler).
+- **Sektor Unggulan Desa** menampilkan peringkat sektor dengan angka apa adanya (tanpa satuan "Ton" yang keliru) dan tautan ke Potensi Desa.
+- **Kesejahteraan Masyarakat**: sorotan program terbaru tidak lagi mengulang kartu pertama, deskripsi program tampil di halaman detail, video baru dimuat setelah tombol putar diklik, dan ada galeri foto.
+- Halaman Penduduk Miskin, Program Pengentasan Kemiskinan, dan Kesejahteraan Masyarakat saling menaut lewat ubin "halaman terkait".
+- **Program Pengentasan Kemiskinan** tampil sebagai daftar baris; judul tiap program menaut ke halaman detail penerima bantuan per tahun.
+
+### Fixed
+- Jumlah Pengangguran kini menampilkan data tahun terbaru (sebelumnya data 2026 tidak pernah tampil), dan kartu ringkasan menunjukkan bulan terbaru beserta perubahannya, bukan total setahun yang menghitung orang yang sama berulang.
+- Kartu Jumlah Penduduk Miskin menunjukkan tahun terbaru dan selisihnya dari tahun sebelumnya, bukan jumlah semua tahun ("2.160 Orang").
+- PADesa tidak lagi menampilkan "Sisa Anggaran" minus yang menyesatkan.
+- Penduduk Usia Kerja yang Menganggur tidak lagi menjumlahkan beberapa baris sebaran sehingga angkanya berlipat.
+- Program Pengentasan Kemiskinan: ganti halaman tidak lagi memicu dua permintaan yang saling balap; grafik "Statistik Kemiskinan Masyarakat" yang angkanya bertentangan dengan data penduduk miskin disembunyikan sampai artinya jelas.
+- Halaman yang menampilkan lebih dari 10 data (Demografi Pekerjaan, Sektor Unggulan, Penduduk Miskin) tidak lagi diam-diam membuang data terlama.
+- Kesejahteraan Masyarakat tidak lagi memuat gambar pengganti yang rusak (404).
+
 ## [0.1.291] - 2026-11-17
 ### Security
 - **Data pribadi warga tidak lagi bisa diambil tanpa login.** Daftar dan detail Ibu Hamil, Balita, kiriman Pengaduan Masyarakat, Administrasi Online, Ajukan Permohonan Surat, Siswa, Pendaftar Beasiswa, Peminjaman Buku, Permohonan & Keberatan Informasi PPID, Responden IKM, Ide Inovatif, dan Pendaftaran Jadwal Kegiatan kini hanya bisa dibuka admin. Sebelumnya NIK, nomor HP, dan alamat warga bisa diunduh siapa pun lewat API publik.

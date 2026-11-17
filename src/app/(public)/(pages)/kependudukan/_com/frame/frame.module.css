@@ -1,0 +1,40 @@
+/*
+ * Kerangka Dashboard Kependudukan di atas `.section` Kabar (kabar.module.css): jarak antar-section dan sasaran
+ * lompatan anchor. Rel pil di section-nav.module.css, kartu ringkasan di hero.module.css.
+ */
+.page {
+  /* Navbar tetap 44px + rel pil ±60px + napas 24px; dipakai juga DinamikaSection lewat variabel yang sama. */
+  --kependudukan-scroll-margin: 128px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  /* 64px, ≤734px 48px: token globals.css */
+  gap: var(--block-gap);
+}
+
+/* Section milik sesi lain merender <section id> sendiri: lompatan hash berhenti di bawah rel pil sticky. */
+.stack > section {
+  scroll-margin-top: var(--kependudukan-scroll-margin);
+}
+
+.terkait {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 1068px) {
+  .terkait {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Bar ponsel 48px + rel pil ±56px + napas 16px. */
+@media (max-width: 734px) {
+  .page {
+    --kependudukan-scroll-margin: 120px;
+  }
+}

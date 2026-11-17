@@ -54,15 +54,46 @@ function leadsBackTo(draft: Draft, drafts: ReadonlyMap<string, Draft>): boolean 
   return false;
 }
 
+/** Opsi susun bagan. */
+export type OrgTreeOptions = {
+  /**
+   * `true` → SEMUA jabatan di `posisiList` digambar, yang belum punya pegawai sebagai "belum ditugaskan" (BUMDes:
+   * tempat pengurus disediakan sebelum admin mengisi). Bawaan `false`: hanya jabatan berpegawai + leluhurnya
+   * (PPID, Perangkat Desa).
+   */
+  showVacant?: boolean;
+};
+
+/** Kotak jabatan tanpa pegawai dari daftar jabatan. */
+function vacantDraft(pos: PosisiItem): Draft {
+  return {
+    posisiId: pos.id,
+    title: pos.nama,
+    hierarki: pos.hierarki,
+    parentId: pos.parentId ?? null,
+    urutan: pos.urutan ?? null,
+    people: [],
+    children: [],
+  };
+}
+
 /**
  * Susun pohon bagan dari pegawai aktif. Jabatan induk (dan leluhurnya) yang belum punya pegawai diambil dari
  * `posisiList` dan digambar sebagai kotak "belum ditugaskan" agar bawahannya tetap tampil di bawah induknya.
  * Bila `posisiList` membawa `parentId`, kotak itu ditempel ke induk sebenarnya; bila tidak (API jabatan PPID),
  * kotak tanpa induk ditempel ke akar utama bila tingkatnya lebih rendah, selain itu tetap jadi akar terpisah.
+ * `options.showVacant` menggambar juga jabatan kosong yang bukan leluhur siapa pun (lihat `OrgTreeOptions`).
  */
-export function buildOrgTree(pegawai: readonly PegawaiItem[], posisiList: readonly PosisiItem[]): OrgNode[] {
+export function buildOrgTree(
+  pegawai: readonly PegawaiItem[],
+  posisiList: readonly PosisiItem[],
+  options: OrgTreeOptions = {},
+): OrgNode[] {
   const posisiById = new Map(posisiList.map((pos) => [pos.id, pos]));
   const drafts = new Map<string, Draft>();
+  if (options.showVacant) {
+    for (const pos of posisiList) drafts.set(pos.id, vacantDraft(pos));
+  }
   for (const p of pegawai) {
     if (!p.isActive) continue;
     const person = { id: p.id, name: p.namaLengkap, image: p.image?.link || null };
@@ -88,15 +119,7 @@ export function buildOrgTree(pegawai: readonly PegawaiItem[], posisiList: readon
   for (let draft = pending.pop(); draft; draft = pending.pop()) {
     const parent = draft.parentId ? posisiById.get(draft.parentId) : undefined;
     if (!parent || drafts.has(parent.id)) continue;
-    const vacant: Draft = {
-      posisiId: parent.id,
-      title: parent.nama,
-      hierarki: parent.hierarki,
-      parentId: parent.parentId ?? null,
-      urutan: parent.urutan ?? null,
-      people: [],
-      children: [],
-    };
+    const vacant = vacantDraft(parent);
     drafts.set(parent.id, vacant);
     pending.push(vacant);
   }

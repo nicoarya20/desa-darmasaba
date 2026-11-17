@@ -147,10 +147,11 @@ describe('Permohonan Keberatan — editor alasan & kontak', () => {
     expect(keberatan).toContain('0/2000 karakter');
   });
 
-  it('kontak PPID tampil sebagai daftar istilah dengan nilai lama apa adanya', () => {
+  it('kontak PPID tampil sebagai daftar istilah dengan kontak resmi kantor desa (tanpa nomor contoh)', () => {
     expect(keberatan).toContain('>Kontak PPID</h2>');
-    expect(keberatan).toMatch(/<dt>Email<\/dt><dd>desadarmasaba@badungkab\.go\.id<\/dd>/);
-    expect(keberatan).toMatch(/<dt>WhatsApp<\/dt><dd>081-xxx-xxx-xxx<\/dd>/);
+    expect(keberatan).toMatch(/<dt>Email<\/dt><dd>ddarmasaba@gmail\.com<\/dd>/);
+    expect(keberatan).toMatch(/<dt>Telepon<\/dt><dd>\(0361\) 8441518<\/dd>/);
+    expect(keberatan).not.toContain('081-xxx');
   });
 });
 

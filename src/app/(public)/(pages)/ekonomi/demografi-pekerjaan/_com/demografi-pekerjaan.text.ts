@@ -1,0 +1,20 @@
+/** Teks halaman publik Demografi Pekerjaan (penduduk menurut pekerjaan, dirinci laki-laki dan perempuan). */
+export const DEMOGRAFI_PEKERJAAN_TEXT = {
+  title: "Demografi Pekerjaan",
+  lead: "Jumlah penduduk Desa Darmasaba menurut jenis pekerjaan, dirinci laki-laki dan perempuan.",
+  searchLabel: "Cari pekerjaan",
+  kategoriLabel: "Kategori pekerjaan",
+  panelTitle: "Penduduk menurut pekerjaan",
+  panelCaption: "Persen menunjukkan porsi tiap pekerjaan dari seluruh penduduk yang tercatat.",
+  updated: (tanggal: string) => `Data diperbarui ${tanggal}`,
+  totalLabel: "Total tercatat",
+  unit: "orang",
+  laki: "Laki-laki",
+  perempuan: "Perempuan",
+  notFilled: "Belum diisi",
+  notFilledNote: (n: number) => `${n} pekerjaan belum diisi jumlahnya dengan benar, jadi tidak ikut dihitung dalam total dan persen.`,
+  emptyTitle: "Belum ada data pekerjaan penduduk",
+  emptyBody: "Jumlah penduduk menurut pekerjaan akan tampil di sini setelah diisi oleh pemerintah desa.",
+  failed: "Data demografi pekerjaan gagal dimuat. Periksa koneksi lalu muat ulang halaman.",
+  loading: "Memuat data demografi pekerjaan",
+} as const;

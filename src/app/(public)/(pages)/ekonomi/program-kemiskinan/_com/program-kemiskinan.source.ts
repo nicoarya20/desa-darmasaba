@@ -1,13 +1,29 @@
-import ApiFetch from '@/lib/api-fetch';
-import type { HalamanPenerima, ProgramPublik, RekapPublik } from './program-kemiskinan.types';
+import { readFindMany, type FindManyBody } from "@/app/(public)/_com/main-page/kabar-desa/kabar.source";
+import ApiFetch from "@/lib/api-fetch";
+import { toProgramKemiskinan, type ProgramKemiskinan, type ProgramKemiskinanApiItem } from "./program-kemiskinan.logic";
+import { PROGRAM_KEMISKINAN_FETCH_LIMIT } from "./program-kemiskinan.meta";
+import type { HalamanPenerima, ProgramPublik, RekapPublik } from "./program-kemiskinan.types";
 
 /** Jumlah penerima per halaman di daftar publik. */
 export const PENERIMA_PUBLIK_LIMIT = 20;
 
-/** URL detail publik program: slug bila ada, selain itu id. */
-export function programHref(p: { id: string; slug?: string | null }): string {
-  return `/ekonomi/program-kemiskinan/${encodeURIComponent(p.slug || p.id)}`;
+// ---------- Daftar program ----------
+
+/** Semua program aktif (sekali muat, urut createdAt terbaru); saring kata kunci & paginasi di klien. */
+export async function loadProgramKemiskinan(): Promise<ProgramKemiskinan[]> {
+  const res = await ApiFetch.api.ekonomi.programkemiskinan["find-many"].get({
+    query: { page: 1, limit: PROGRAM_KEMISKINAN_FETCH_LIMIT },
+  });
+  const body = res.data as (FindManyBody & { total?: number }) | null | undefined;
+  const items = readFindMany<ProgramKemiskinanApiItem>("program pengentasan kemiskinan", res.status, body);
+  const total = Number(body?.total);
+  if (Number.isFinite(total) && total > items.length) {
+    console.warn(`Program pengentasan kemiskinan: ${total} entri, hanya ${items.length} pertama yang ditampilkan (batas muat klien).`);
+  }
+  return items.map((item) => toProgramKemiskinan(item));
 }
+
+// ---------- Detail program + penerima (endpoint publik/*) ----------
 
 /** Detail program aktif (slug atau id); `null` = tidak ditemukan/nonaktif (404); galat lain → Error berkonteks. */
 export async function loadProgramPublik(key: string): Promise<ProgramPublik | null> {

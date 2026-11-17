@@ -2,6 +2,7 @@
 import permohonanKeberatanInformasi from '@/app/admin/(dashboard)/_state/ppid/permohonan_keberatan_informasi_publik/permohonanKeberatanInformasi';
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
 import colors from '@/con/colors';
+import { KONTAK_DESA } from '@/con/kontak-desa';
 import {
   ALASAN_KEBERATAN_MAX_LENGTH,
   richTextLength,
@@ -44,10 +45,10 @@ const steps: PermohonanStep[] = [
   },
 ];
 
-// Nilai kontak dipertahankan apa adanya dari halaman lama (nomor WhatsApp masih placeholder — urusan data).
+// Kontak resmi kantor desa (src/con/kontak-desa.ts). Nomor WhatsApp PPID belum diberikan desa, jadi tidak dicantumkan.
 const contacts = [
-  { label: 'Email', value: 'desadarmasaba@badungkab.go.id' },
-  { label: 'WhatsApp', value: '081-xxx-xxx-xxx' },
+  { label: 'Email', value: KONTAK_DESA.email },
+  { label: 'Telepon', value: KONTAK_DESA.telepon },
 ];
 
 function Page() {

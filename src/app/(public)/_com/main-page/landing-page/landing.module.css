@@ -211,12 +211,16 @@
   background: rgb(255 255 255 / 45%);
 }
 
+/* Lebar mengikuti nama: minimal 460px, melebar untuk nama panjang sampai selebar kolom foto;
+   lewat dari itu ukuran huruf nama diperkecil (use-fit-text.ts) agar tetap satu baris. */
 .nameCard {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: min(100%, 460px);
+  width: fit-content;
+  min-width: min(100%, 460px);
+  max-width: 100%;
   margin-top: -32px;
   padding: 14px 22px;
   background: rgb(255 255 255 / 96%);
@@ -242,6 +246,7 @@
   line-height: 1.25;
   font-weight: 700;
   color: var(--brand);
+  white-space: nowrap;
 }
 
 .sosmedLink:focus-visible {

@@ -1,0 +1,175 @@
+/*
+ * Section Dinamika Penduduk (Dashboard Kependudukan). Panel, kepala, batang, dan legenda memakai modul bersama
+ * stat-bars (impor kelasnya); berkas ini hanya: anchor, meta tahun, dan riwayat per tahun di balik <details>.
+ * Warna teks dari --sb-* (.panel stat-bars.module.css). Breakpoint apple.com: ≤1068px dan ≤734px.
+ */
+.section {
+  /* Ruang di bawah navbar + rel pil sticky saat dilompati lewat #dinamika (sama dengan section lain, kerangka 5b). */
+  scroll-margin-top: var(--kependudukan-scroll-margin, 128px);
+}
+
+/* Meta tahun: --sb-muted (#6e6e73, 4,8:1 di #f5f5f7), bukan --sb-subtle (3,3:1) karena berisi informasi. */
+.meta {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--sb-muted);
+}
+
+.angka {
+  color: var(--sb-ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Riwayat per tahun ---------- */
+.riwayat {
+  margin-top: 20px;
+  border-top: 1px solid var(--sb-line);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 16px 0 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--brand);
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.chevron {
+  flex: none;
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.riwayat[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.riwayatCaption {
+  margin: 8px 0 12px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--sb-muted);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 12px 0 12px 16px;
+  border-top: 1px solid var(--sb-line);
+  text-align: left;
+}
+
+.table th:first-child {
+  padding-left: 0;
+}
+
+.table thead th {
+  border-top: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sb-muted);
+}
+
+.table .num {
+  text-align: right;
+}
+
+.tahun {
+  font-weight: 700;
+}
+
+.bersih {
+  font-weight: 700;
+}
+
+/* Tahun yang sedang ditampilkan di neraca (tahunnya juga tertulis di kepala panel). */
+.aktif .tahun {
+  color: var(--brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
+/* ---------- Mobile: tiap tahun satu blok, 4 angka 2×2 + bersih, tanpa geser samping ---------- */
+@media (max-width: 734px) {
+  .summary {
+    font-size: 16px;
+  }
+
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .table,
+  .table tbody {
+    display: block;
+  }
+
+  .table tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--sb-line);
+  }
+
+  .table tbody tr:first-child {
+    border-top: 0;
+  }
+
+  .table th,
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0;
+    border-top: 0;
+    font-size: 15px;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    color: var(--sb-muted);
+    font-weight: 400;
+  }
+
+  .table .tahun {
+    grid-column: 1 / -1;
+    font-size: 17px;
+  }
+
+  .table .bersih {
+    grid-column: 1 / -1;
+  }
+}

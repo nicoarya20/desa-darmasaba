@@ -1,0 +1,87 @@
+/*
+ * Rel pil Dashboard Kependudukan: sticky tepat di bawah navbar tetap (desktop 44px, bar ponsel 48px di bawah
+ * breakpoint md Mantine 62em), selebar layar (keluar dari --gutter kerangka Kabar), pil gaya KabarListHeader.
+ * Variabel warna (--brand, --ink, --tile) dari kabar.module.css.
+ */
+.rail {
+  position: sticky;
+  top: 44px;
+  z-index: 5;
+  /* -12px: pil sejajar 28px di bawah kepala; isi 40px di bawah pil */
+  margin: -12px calc(var(--gutter) * -1) 28px;
+  padding: 12px var(--gutter);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+.list {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 16px;
+  border-radius: 980px;
+  background: var(--tile);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.pill[aria-current="location"] {
+  background: var(--brand);
+  color: #fff;
+}
+
+.pill:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pill:not([aria-current="location"]):hover {
+    background: #e8e8ed;
+  }
+}
+
+/* Bar ponsel 48px di bawah md (62em) Mantine; jarak rel → isi seperti kepala → isi ponsel. */
+@media (max-width: 61.99em) {
+  .rail {
+    top: 48px;
+  }
+}
+
+@media (max-width: 734px) {
+  .rail {
+    margin-top: -10px;
+    margin-bottom: 18px;
+    padding: 10px var(--gutter);
+  }
+
+  .pill {
+    font-size: 14px;
+    padding: 6px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill {
+    transition: none;
+  }
+}

@@ -1,11 +1,9 @@
 'use client';
-import { StrukturDetail } from '@/app/(public)/_com/struktur-organisasi/StrukturDetail';
 import { useParams } from 'next/navigation';
-import { loadPegawaiBumdesDetail } from '../_com/struktur-bumdes.source';
-import { STRUKTUR_BUMDES_TEXT as T } from '../_com/struktur-bumdes.text';
+import { PengurusDetailView } from '../_com/detail/PengurusDetail';
 
 /** Profil pengurus BUMDes dari bagan Struktur Pengurus BUMDes. */
-export default function DetailPegawaiBumdes() {
+export default function Page() {
   const { id } = useParams<{ id: string }>();
-  return <StrukturDetail id={id} load={loadPegawaiBumdesDetail} text={T.detail} />;
+  return <PengurusDetailView id={id} />;
 }

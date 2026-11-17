@@ -2,7 +2,7 @@
 export const POSYANDU_TEXT = {
   pageTitle: "Posyandu Desa Darmasaba",
   pageLead:
-    "Kegiatan posyandu per klaster, alamat dan jadwal posyandu di tiap banjar, serta ringkasan kesehatan balita dan ibu hamil dalam angka gabungan.",
+    "Kegiatan posyandu per klaster serta alamat dan jadwal posyandu di tiap banjar Desa Darmasaba.",
   tabsLabel: "Bagian halaman posyandu",
   tabRingkasan: "Ringkasan",
   tabPosyandu: "Data Posyandu",

@@ -1,3 +1,5 @@
+import { KONTAK_DESA } from '@/con/kontak-desa';
+
 /** Label UI halaman publik Daftar Informasi Publik (daftar + detail). */
 export const DAFTAR_TEXT = {
   title: 'Daftar Informasi Publik',
@@ -21,9 +23,9 @@ export const DAFTAR_TEXT = {
   paginationLabel: 'Halaman daftar informasi publik',
   kontakTitle: 'Kontak PPID',
   kontakEmailLabel: 'Email:',
-  kontakEmail: 'ppid@desadarmasaba.id',
-  kontakWhatsappLabel: 'WhatsApp:',
-  kontakWhatsapp: '081-xxx-xxx-xxx',
+  kontakEmail: KONTAK_DESA.email,
+  kontakTeleponLabel: 'Telepon:',
+  kontakTelepon: KONTAK_DESA.telepon,
   detailTitle: 'Detail Informasi Publik',
   detailLead: 'Jenis, tanggal publikasi, dan deskripsi lengkap informasi publik.',
   detailLoading: 'Memuat detail informasi publik',

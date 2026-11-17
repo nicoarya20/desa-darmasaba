@@ -1,0 +1,94 @@
+/*
+ * Segmen panel stat-bars: legenda di kepala dan rincian angka per baris. Warna titik dari STAT_BARS_VARS
+ * (--stat-seg-N), teks dari --sb-* yang didefinisikan .panel stat-bars.module.css.
+ * Breakpoint apple.com: ≤1068px dan ≤734px.
+ */
+
+/* Legenda: titik + label + jumlah + porsi, sebaris dan boleh turun baris. */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.legendValue {
+  font-weight: 700;
+}
+
+.legendShare {
+  color: var(--sb-muted);
+}
+
+.dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* Rincian per baris: di bawah batang (kolom batang ke kanan). Grid baris = .row stat-bars.module.css (jarak 20px,
+   margin negatif mendekatkan rincian ke batangnya). */
+.segFigures {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: -12px;
+  font-size: 14px;
+  color: var(--sb-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Panel tanpa batang: rincian selebar baris. */
+.wide {
+  grid-column: 1 / -1;
+}
+
+.segFigure {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.segFigure .dot {
+  width: 8px;
+  height: 8px;
+}
+
+.segValue {
+  font-weight: 600;
+  color: var(--sb-ink);
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .segFigures {
+    margin-top: -8px;
+  }
+}
+
+/* ---------- Mobile: rincian di area "segs" baris (.row.hasSegs) ---------- */
+@media (max-width: 734px) {
+  .legend {
+    font-size: 14px;
+    gap: 6px 16px;
+  }
+
+  .segFigures,
+  .wide {
+    grid-area: segs;
+    margin-top: 0;
+    font-size: 13px;
+  }
+}
