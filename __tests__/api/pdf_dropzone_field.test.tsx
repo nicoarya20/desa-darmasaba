@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
 import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
+import { PDF_MAX_SIZE_MB } from '@/app/admin/_com/upload/pdf-upload';
 
 vi.mock('react-toastify', () => ({ toast: { error: vi.fn() } }));
 
@@ -37,5 +38,9 @@ describe('PdfDropzoneField', () => {
 
   it('menampilkan keterangan opsional', () => {
     expect(render({ description: 'Opsional' })).toContain('Opsional');
+  });
+
+  it('batas unggah 20 MB agar PDF pindaian desa (12 MB) tidak ditolak', () => {
+    expect(PDF_MAX_SIZE_MB).toBe(20);
   });
 });

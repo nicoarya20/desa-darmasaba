@@ -1,8 +1,8 @@
 import ApiFetch from "@/lib/api-fetch";
 import { toast } from "react-toastify";
 
-/** Batas ukuran berkas PDF yang boleh diunggah dari form admin (MB). */
-export const PDF_MAX_SIZE_MB = 10;
+/** Batas ukuran berkas PDF yang boleh diunggah dari form admin (MB). 20 MB karena SK/Perbekel hasil pindai desa bisa >12 MB. */
+export const PDF_MAX_SIZE_MB = 20;
 
 /** Unggah satu PDF lewat jalur FileStorage (MinIO); kembalikan id file, atau null bila gagal (toast sudah tampil). */
 export async function uploadPdfFile(file: File): Promise<string | null> {
