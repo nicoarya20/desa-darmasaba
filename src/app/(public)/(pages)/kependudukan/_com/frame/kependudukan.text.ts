@@ -1,0 +1,42 @@
+/** Teks kerangka Dashboard Kependudukan (kepala, hero, rel pil, tautan terkait). */
+export const KEPENDUDUKAN_TEXT = {
+  title: 'Dashboard Kependudukan',
+  lead: 'Ringkasan data penduduk Desa Darmasaba dari catatan pemerintah desa. Setiap bagian memakai data tahun terbaru yang tersedia.',
+  searchLabel: 'Cari data kependudukan',
+  kategoriLabel: 'Bagian dashboard',
+  navLabel: 'Bagian Dashboard Kependudukan',
+  nav: {
+    ringkasan: 'Ringkasan',
+    banjar: 'Per Banjar',
+    umur: 'Umur',
+    agama: 'Agama',
+    dinamika: 'Dinamika',
+  },
+  hero: {
+    title: 'Ringkasan',
+    loading: 'Memuat ringkasan kependudukan',
+    belumDiisi: 'Belum diisi',
+    gagal: 'Gagal dimuat',
+    penduduk: 'Total penduduk',
+    kk: 'Kepala keluarga',
+    jiwaPerKk: 'Rata-rata per keluarga',
+    pertumbuhan: 'Pertumbuhan bersih',
+    unitJiwa: 'jiwa',
+    unitKk: 'KK',
+    data: (tahun: number) => `Data ${tahun}`,
+    banjar: (jumlah: number, tahun: number) => `${jumlah} banjar · Data ${tahun}`,
+    jiwaPerKkNote: (tahun: number) => `Jiwa per kepala keluarga · Data ${tahun}`,
+    pertumbuhanNote: (tahun: number, berjalan: boolean) =>
+      `Lahir dan datang dikurangi meninggal dan pindah · ${tahun}${berjalan ? ' (tahun berjalan)' : ''}`,
+  },
+  terkait: {
+    miskinTitle: 'Jumlah Penduduk Miskin',
+    miskinText: 'Jumlah penduduk miskin desa per tahun.',
+    pekerjaanTitle: 'Demografi Pekerjaan',
+    pekerjaanText: 'Sebaran pekerjaan penduduk menurut jenis kelamin.',
+    pendidikanTitle: 'Data Pendidikan',
+    pendidikanText: 'Penduduk menurut pendidikan terakhir yang ditamatkan.',
+    aksi: 'Lihat data',
+    label: (judul: string) => `Halaman terkait: ${judul}`,
+  },
+} as const;
