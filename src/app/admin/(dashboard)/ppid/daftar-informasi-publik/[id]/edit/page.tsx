@@ -10,6 +10,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
+import { uploadPdfFile } from '@/app/admin/_com/upload/pdf-upload';
 
 interface FormDaftarInformasi {
   jenisInformasi: string;
@@ -34,6 +36,9 @@ function EditDaftarInformasiPublik() {
     deskripsi: '',
     tanggal: '',
   });
+
+  // PDF baru yang dipilih; diunggah saat Simpan (berkas lama diganti hanya bila ada pilihan baru).
+  const [file, setFile] = useState<File | null>(null);
 
   // Check if form is valid
   const isFormValid = () => {
@@ -83,18 +88,25 @@ function EditDaftarInformasiPublik() {
   // Tombol Batal → balikin ke data original
   const handleResetForm = () => {
     setFormData(originalData);
+    setFile(null);
     toast.info('Form dikembalikan ke data awal');
   };
 
   const handleSubmit = async () => {
     try {
+      let newFileId: string | undefined;
+      if (file) {
+        const uploadedId = await uploadPdfFile(file);
+        if (!uploadedId) return; // toast galat sudah ditampilkan uploadPdfFile
+        newFileId = uploadedId;
+      }
       daftarInformasi.edit.form = {
         ...daftarInformasi.edit.form,
         jenisInformasi: formData.jenisInformasi.trim(),
         deskripsi: formData.deskripsi.trim(),
         tanggal: formData.tanggal.trim(),
       };
-      await daftarInformasi.edit.update();
+      await daftarInformasi.edit.update(newFileId);
       router.push('/admin/ppid/daftar-informasi-publik');
     } catch (error) {
       console.error('Error updating daftar informasi:', error);
@@ -147,6 +159,14 @@ function EditDaftarInformasiPublik() {
             value={formatDateForInput(formData.tanggal)}
             onChange={(e) => handleChange('tanggal', e.target.value)}
             required
+          />
+
+          <PdfDropzoneField
+            label="Berkas PDF"
+            description="Opsional. Dokumen yang bisa diunduh pengunjung dari baris ini."
+            file={file}
+            onChange={setFile}
+            currentFile={daftarInformasi.edit.currentFile}
           />
 
           <Group justify="right" mt="md">

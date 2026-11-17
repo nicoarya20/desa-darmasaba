@@ -12,6 +12,7 @@ const DasarHukumPPID = new Elysia({
             id: t.String(),
             judul: t.String(),
             content: t.String(),
+            fileId: t.Optional(t.String()),
         })
     })
 

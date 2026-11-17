@@ -77,3 +77,14 @@
     font-size: 16px;
   }
 }
+
+/* Tautan "Unduh PDF" di bawah daftar: sejajar kolom isi (kolom 2 grid .section), satu kolom penuh di ponsel. */
+.unduh {
+  grid-column: 2;
+}
+
+@media (max-width: 734px) {
+  .unduh {
+    grid-column: 1;
+  }
+}

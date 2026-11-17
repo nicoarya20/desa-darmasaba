@@ -87,6 +87,15 @@ function Page() {
                 textAlign: 'justify',
               }}
             />
+
+            {listDasarHukum.findById.data.file && (
+              <Text fz="sm" mt="lg">
+                Berkas PDF:{' '}
+                <a href={listDasarHukum.findById.data.file.link} target="_blank" rel="noreferrer">
+                  {listDasarHukum.findById.data.file.realName}
+                </a>
+              </Text>
+            )}
           </Box>
         </Paper>
       </Stack>

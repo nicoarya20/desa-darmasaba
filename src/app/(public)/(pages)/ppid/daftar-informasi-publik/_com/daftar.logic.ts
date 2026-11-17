@@ -4,6 +4,8 @@ export type InformasiItem = {
   jenisInformasi: string;
   deskripsi: string;
   tanggal?: string | Date | null;
+  /** Berkas PDF baris ini; kosong/null untuk baris lama tanpa berkas. */
+  file?: { link: string; realName: string } | null;
 };
 
 /** Jumlah baris per halaman daftar (sama dengan `limit` yang dikirim ke API). */

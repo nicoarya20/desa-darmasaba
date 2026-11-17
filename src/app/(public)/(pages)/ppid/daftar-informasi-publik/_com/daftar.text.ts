@@ -28,6 +28,7 @@ export const DAFTAR_TEXT = {
   kontakTelepon: KONTAK_DESA.telepon,
   detailTitle: 'Detail Informasi Publik',
   detailLead: 'Jenis, tanggal publikasi, dan deskripsi lengkap informasi publik.',
+  detailBerkas: 'Berkas',
   detailLoading: 'Memuat detail informasi publik',
   notFound: 'Informasi tidak ditemukan',
   backToList: 'Kembali ke Daftar',

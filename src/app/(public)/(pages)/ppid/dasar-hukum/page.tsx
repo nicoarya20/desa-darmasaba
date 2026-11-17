@@ -6,8 +6,7 @@ import { useProxy } from 'valtio/utils'
 import { PpidPage } from '../_com/PpidPage'
 import { PpidSectionsSkeleton } from '../_com/PpidSectionsSkeleton'
 import s from '../_com/ppid-sections.module.css'
-import { DasarHukumList } from './_com/DasarHukumList'
-import { parseDasarHukumItems } from './_com/dasar-hukum.logic'
+import { DasarHukumSection } from './_com/DasarHukumSection'
 import { DASAR_HUKUM_TEXT } from './_com/dasar-hukum.text'
 
 /** Baris tunggal dasar hukum PPID di CMS. */
@@ -27,18 +26,9 @@ export default function Page() {
 
   let content
   if (data) {
-    // Isi yang bukan satu daftar teks polos (null) dirender apa adanya agar tidak ada yang hilang.
-    const items = parseDasarHukumItems(data.content)
     content = (
       <div className={s.sections}>
-        <section className={s.section} aria-labelledby="ppid-dasar-hukum">
-          <h2 id="ppid-dasar-hukum" className={s.sectionLabel} dangerouslySetInnerHTML={{ __html: data.judul }} />
-          {items ? (
-            <DasarHukumList items={items} />
-          ) : (
-            <div className={s.body} dangerouslySetInnerHTML={{ __html: data.content }} />
-          )}
-        </section>
+        <DasarHukumSection data={data} />
       </div>
     )
   } else if (loaded) {
