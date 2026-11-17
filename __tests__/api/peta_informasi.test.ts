@@ -4,15 +4,10 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
 import searchExtraPages from '@/con/search-extra-pages';
-import { flattenMenu } from '@/app/(public)/_com/searchMenu';
+import { DEFAULT_SEARCH_MENUS, flattenMenu } from '@/app/(public)/_com/searchMenu';
 import { visibleMenu } from '@/app/(public)/_com/navbar-menu.logic';
 import { hiddenMenuHrefs, isPathHidden } from '@/app/(public)/_com/menu-visibility.logic';
-import {
-  countPages,
-  groupPetaInformasi,
-  PETA_INFORMASI_HREF,
-  petaInformasiGroups,
-} from '@/app/(public)/(tambahan)/peta-informasi/_lib/petaInformasi';
+import { groupPetaInformasi, PETA_INFORMASI_HREF } from '@/app/(public)/(tambahan)/peta-informasi/_lib/petaInformasi';
 import type { MenuItem } from '../../types/menu-item';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
@@ -39,41 +34,26 @@ const FIXTURE: MenuItem[] = [
   { id: 'x3', name: 'Informasi', children: [{ id: 'x3.1', name: 'Peta', href: PETA_INFORMASI_HREF }] },
 ]; // test-only
 
-describe('groupPetaInformasi / petaInformasiGroups (fixture)', () => {
+describe('groupPetaInformasi (fixture)', () => {
+  const groups = groupPetaInformasi(flattenMenu(FIXTURE));
+
   it('grup senama digabung, urutan kemunculan pertama, href ganda dibuang', () => {
-    const groups = petaInformasiGroups('', FIXTURE);
     expect(groups.map((g) => g.name)).toEqual(['Desa', 'Kesehatan', 'Transparansi']);
     expect(groups[0].pages.map((p) => p.label)).toEqual(['Profil', 'Galeri Video']);
   });
 
   it('halaman Peta Informasi sendiri dibuang dan grup yang jadi kosong tidak ikut', () => {
-    const groups = groupPetaInformasi(flattenMenu(FIXTURE));
     expect(hrefsOf(groups)).not.toContain(PETA_INFORMASI_HREF);
     expect(groups.map((g) => g.name)).not.toContain('Informasi');
   });
 
-  it('query saring memakai searchMenu: hanya yang cocok, tetap urutan config', () => {
-    expect(hrefsOf(petaInformasiGroups('video', FIXTURE))).toEqual(['/d/video']);
-    // "desa" cocok lewat nama menu utama → semua halaman grup Desa, urutan config
-    expect(petaInformasiGroups('DESA', FIXTURE)).toEqual([
-      { name: 'Desa', pages: petaInformasiGroups('', FIXTURE)[0].pages },
-    ]);
-  });
-
-  it('query hanya spasi = semua; tidak ada yang cocok = []', () => {
-    expect(petaInformasiGroups('   ', FIXTURE)).toEqual(petaInformasiGroups('', FIXTURE));
-    expect(petaInformasiGroups('zzzqqq', FIXTURE)).toEqual([]);
-    expect(petaInformasiGroups('peta', FIXTURE)).toEqual([]);
-  });
-
-  it('countPages menjumlah halaman semua grup', () => {
-    expect(countPages(petaInformasiGroups('', FIXTURE))).toBe(4);
-    expect(countPages([])).toBe(0);
+  it('daftar kosong = tanpa grup', () => {
+    expect(groupPetaInformasi([])).toEqual([]);
   });
 });
 
 describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () => {
-  const groups = petaInformasiGroups('');
+  const groups = groupPetaInformasi(flattenMenu(DEFAULT_SEARCH_MENUS));
   // Halaman tambahan di bawah submenu yang default-hidden (mis. data-kesehatan-warga/*) ikut tersembunyi.
   const defaultHidden = hiddenMenuHrefs({});
   const expected = [...flattenMenu(visibleMenu(navbarListMenu)), ...flattenMenu(searchExtraPages)]
@@ -118,12 +98,6 @@ describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () =>
       ['Dinamika Penduduk (Kelahiran, Kematian, Pindah)', '/kependudukan/dashboard#dinamika'],
     ]);
   });
-
-  it('saring "apbdes" hanya menampilkan APBDes di grup Transparansi', () => {
-    expect(petaInformasiGroups('apbdes')).toEqual([
-      { name: 'Transparansi', pages: [expect.objectContaining({ label: 'APBDes', href: '/apbdes' })] },
-    ]);
-  });
 });
 
 describe('route & pintu masuk Peta Informasi', () => {
@@ -132,24 +106,11 @@ describe('route & pintu masuk Peta Informasi', () => {
     expect(matchesRealPage(PETA_INFORMASI_HREF, publicRoutes())).toBe(true);
   });
 
-  it('page.tsx tipis merender komponen PetaInformasi', () => {
+  it('page.tsx tipis: metadata judul + deskripsi, merender komponen PetaInformasi', () => {
     const page = read(path.join(PETA_DIR, 'page.tsx'));
     expect(page).toMatch(/import PetaInformasi from '\.\/_com\/PetaInformasi'/);
     expect(page).toContain('<PetaInformasi />');
-  });
-
-  it('UI: H1, input saring berlabel, H2 per grup, <ul>/<li> + Link next-view-transitions', () => {
-    const view = read(path.join(PETA_DIR, '_com/PetaInformasi.tsx'));
-    expect(view).toMatch(/<Title order=\{1\}[^>]*>\s*Peta Informasi/);
-    expect(view).toMatch(/label="Saring halaman"/);
-    // Menu efektif (default + override DB) dari useMenuVisibility, bukan DEFAULT_SEARCH_MENUS statis.
-    expect(view).toMatch(/petaInformasiGroups\(query, searchMenus\)/);
-    expect(view).toContain('Tidak ada halaman yang cocok');
-    const card = read(path.join(PETA_DIR, '_com/PetaInformasiGroupCard.tsx'));
-    expect(card).toMatch(/<Title[^>]*order=\{2\}/);
-    expect(card).toMatch(/component="ul"[\s\S]*component="li"/);
-    expect(card).toMatch(/import \{ Link \} from 'next-view-transitions'/);
-    expect(card).toMatch(/<Anchor\s+component=\{Link\}\s+href=\{page\.href\}/);
+    expect(page).toMatch(/export const metadata: Metadata = \{\s*title: PETA_INFORMASI_TEXT\.title,\s*description: PETA_INFORMASI_TEXT\.description,\s*\}/);
   });
 
   it('search-extra-pages memuat entri Peta Informasi yang bisa dicari', () => {
@@ -158,11 +119,12 @@ describe('route & pintu masuk Peta Informasi', () => {
     );
   });
 
-  it('footer grup "Tautan Penting" menautkan Peta Informasi', () => {
+  // Pintu masuk footer pindah ke baris legal (FooterLegal, pola apple "Site Map"); dites di footer_legal.test.tsx.
+  it('footer grup "Tautan Penting" tidak lagi memuat Peta Informasi (tak dobel dengan baris legal)', () => {
     const footer = read(FOOTER);
     const tautanPenting = footer.slice(footer.indexOf('const tautanPenting'), footer.indexOf('const linkGroups'));
-    expect(tautanPenting).toMatch(/title: "Peta Informasi",\s*link: PETA_INFORMASI_HREF/);
-    expect(footer).toMatch(/import \{ PETA_INFORMASI_HREF \} from '\.\.\/\(tambahan\)\/peta-informasi\/_lib\/petaInformasi'/);
+    expect(tautanPenting).not.toContain('Peta Informasi');
+    expect(tautanPenting).not.toContain('PETA_INFORMASI_HREF');
   });
 
   it('dropdown pencarian: keadaan "Tidak ada hasil" punya tautan "Buka Peta Informasi"', () => {

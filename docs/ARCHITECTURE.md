@@ -75,6 +75,8 @@ Developer Console umum (role 0): Ringkasan Sistem `/dev/ringkasan` (API `/api/de
 | `src/lib/api-auth.ts` | Better Auth session validation in API routes (`auth.api.getSession()`) |
 | `src/lib/api-fetch.ts` | Typed fetch wrapper used by frontend |
 | `src/lib/minio.ts` | MinIO client — primary object storage backend |
+| `src/app/sitemap.ts`, `src/app/robots.ts` | sitemap.xml (beranda + halaman menu terlihat, logika di `src/app/(public)/_com/sitemap.logic.ts`, per request karena baca override visibilitas dari DB; detail DB belum) dan robots.txt (disallow rute non-publik) |
+| `src/lib/site-url.ts` | `SITE_URL` untuk `metadataBase`, sitemap, robots (fallback stg sampai domain prod lewat env, lihat `MIND/PLAN/plan-seo.md` Fase A) |
 | `next.config.ts` | Next.js config (cache headers, allowed origins) |
 | `postcss.config.cjs` | Mantine CSS preset and breakpoints |
 | `docker-entrypoint.sh` | Runs `prisma migrate deploy` then starts app |

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.302] - 2026-11-17
+### Added
+- **sitemap.xml dan robots.txt** untuk mesin pencari. Sitemap memuat beranda dan semua halaman menu yang sedang tampil (68 halaman); halaman yang disembunyikan lewat Pengaturan > Visibilitas Menu otomatis tidak ikut. robots.txt menutup halaman admin, API, dan login dari mesin pencari. Halaman detail (berita, pengumuman, dll.) belum dimasukkan. Catatan: alamat di dalamnya masih mengikuti alamat situs bawaan (stg) sampai domain produksi diatur lewat env.
+- **Halaman tidak ditemukan (404)** kini punya tautan **"Atau lihat Peta Informasi"** di bawah kolom cari.
+- **Baris paling bawah footer** kini berisi hak cipta lalu tautan berpemisah "|" seperti footer apple.com, dimulai dengan **Peta Informasi**.
+
+### Changed
+- **Peta Informasi** (`/peta-informasi`) ditata ulang mengikuti gaya peta situs apple.com: judul kecil bergaris bawah, lalu tiap menu tampil sebagai subjudul dengan daftar tautannya dalam tiga kolom (satu kolom di ponsel). Kolom saring, hitungan halaman, dan kartu dihapus.
+- Tautan Peta Informasi di footer dipindah dari grup "Tautan Penting" ke baris paling bawah.
+
 ## [0.1.301] - 2026-11-17
 ### Added
 - **Peta wilayah bisa diunggah sebagai file** di admin Pemerintahan > Profil > Letak & Batas Wilayah, lewat field baru **File Peta Wilayah**. File bisa berupa gambar (JPG, PNG, WebP, maks 5 MB) atau PDF (maks 10 MB), dan bisa dilihat, diganti, atau dihapus sebelum menekan **Simpan**.

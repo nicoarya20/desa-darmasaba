@@ -4,6 +4,7 @@ import "./globals.css"; // Sisanya import di globals.css
 import LoadDataFirstClient from "@/app/(public)/_com/LoadDataFirstClient";
 import { GATE_SPLASH_HEAD_SCRIPT } from "@/app/(public)/_com/splash/gate-splash.session";
 import { MusicProvider } from "@/app/context/MusicContext";
+import { SITE_URL } from "@/lib/site-url";
 import {
   ColorSchemeScript,
   MantineProvider,
@@ -23,13 +24,8 @@ export const viewport: Viewport = {
 };
 
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL?.startsWith("http")
-    ? process.env.NEXT_PUBLIC_BASE_URL
-    : "https://desa-darmasaba-stg.wibudev.com";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL),
+  metadataBase: new URL(SITE_URL),
   
   title: {
     default: "Desa Darmasaba",

@@ -1,6 +1,7 @@
 /*
- * Halaman 404 — pola apple.com: satu kalimat besar di tengah lalu kolom cari lebar, tanpa angka 404,
- * ilustrasi, atau tombol. Navbar & footer berasal dari DarmasabaShell (src/app/not-found.tsx).
+ * Halaman 404 — pola apple.com: satu kalimat besar di tengah, kolom cari lebar, lalu satu tautan
+ * "Atau lihat Peta Informasi ›" (apple: "Or see our site map ›"); tanpa angka 404, ilustrasi, atau tombol.
+ * Navbar & footer berasal dari DarmasabaShell (src/app/not-found.tsx).
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
 .section {
@@ -28,6 +29,14 @@
   text-wrap: balance;
 }
 
+.searchBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
 .search {
   width: min(100%, 560px);
   text-align: start;
@@ -48,6 +57,24 @@
 
 .searchIcon {
   color: var(--subtle);
+}
+
+/* Tautan Peta Informasi: 17px brand seperti apple (#0070c9 → brand kita); hover = varian aksi link-reveal
+   (sapuan ke #1C6EA4 + tebal, chevron geser 3px), tanpa garis bawah. */
+.sitemap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--brand);
+  font-size: 17px;
+  line-height: 1.47;
+  text-decoration: none;
+}
+
+.sitemap:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 @media (max-width: 734px) {

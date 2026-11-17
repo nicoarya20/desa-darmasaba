@@ -13,7 +13,7 @@ import {
   toOverrides,
 } from '@/app/(public)/_com/menu-visibility.logic';
 import { flattenMenu } from '@/app/(public)/_com/searchMenu';
-import { petaInformasiGroups } from '@/app/(public)/(tambahan)/peta-informasi/_lib/petaInformasi';
+import { groupPetaInformasi } from '@/app/(public)/(tambahan)/peta-informasi/_lib/petaInformasi';
 import { isSearchResultHidden } from '@/app/(public)/_com/searchUrl';
 import type { MenuItem } from '../../types/menu-item';
 
@@ -79,7 +79,7 @@ describe('merge default config + override → menu efektif', () => {
 
   it('Peta Informasi memakai menu efektif yang dioper', () => {
     const { searchMenus } = effectiveMenuVisibility({ [CCTV]: false, [PUSKESMAS]: true });
-    const hrefs = petaInformasiGroups('', searchMenus).flatMap((g) => g.pages.map((p) => p.href));
+    const hrefs = groupPetaInformasi(flattenMenu(searchMenus)).flatMap((g) => g.pages.map((p) => p.href));
     expect(hrefs).not.toContain(CCTV);
     expect(hrefs).toContain(PUSKESMAS);
   });

@@ -1,10 +1,9 @@
-import searchMenu, { DEFAULT_SEARCH_MENUS, flattenMenu, type MenuSearchItem } from '@/app/(public)/_com/searchMenu';
-import type { MenuItem } from '../../../../../../types/menu-item';
+import type { MenuSearchItem } from '@/app/(public)/_com/searchMenu';
 
 /** Alamat halaman Peta Informasi; dipakai footer dan dropdown pencarian sebagai pintu masuk. */
 export const PETA_INFORMASI_HREF = '/peta-informasi';
 
-/** Satu kartu di Peta Informasi: nama menu utama dan halaman-halaman di dalamnya. */
+/** Satu kelompok di Peta Informasi: nama menu utama dan halaman-halaman di dalamnya. */
 export type PetaInformasiGroup = {
   name: string;
   pages: MenuSearchItem[];
@@ -26,23 +25,4 @@ export function groupPetaInformasi(pages: readonly MenuSearchItem[]): PetaInform
     else groups.set(page.parent, [page]);
   }
   return [...groups].map(([name, grouped]) => ({ name, pages: grouped }));
-}
-
-/**
- * Grup Peta Informasi untuk teks saring: kosong → semua halaman; selain itu hanya halaman
- * yang cocok menurut `searchMenu`, tetap dalam urutan config (bukan urutan relevansi).
- */
-export function petaInformasiGroups(
-  query: string,
-  menus: readonly MenuItem[] = DEFAULT_SEARCH_MENUS,
-): PetaInformasiGroup[] {
-  const all = flattenMenu(menus);
-  if (!query.trim()) return groupPetaInformasi(all);
-  const matched = new Set(searchMenu(query, menus).map((m) => m.href));
-  return groupPetaInformasi(all.filter((page) => matched.has(page.href)));
-}
-
-/** Jumlah seluruh halaman dalam daftar grup (untuk ringkasan hasil saring). */
-export function countPages(groups: readonly PetaInformasiGroup[]): number {
-  return groups.reduce((total, group) => total + group.pages.length, 0);
 }
