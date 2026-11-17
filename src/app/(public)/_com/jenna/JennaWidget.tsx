@@ -1,7 +1,6 @@
 "use client";
 
 import { useMusic } from "@/app/context/MusicContext";
-import colors from "@/con/colors";
 import stateNav from "@/state/state-nav";
 import { ActionIcon, Drawer, FocusTrap, Paper, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
@@ -54,7 +53,7 @@ export default function JennaWidget() {
           size={56}
           radius="xl"
           variant="filled"
-          color={colors["blue-button"]}
+          color="var(--c-brand-fill)"
           aria-label="Tanya Jenna"
           aria-haspopup="dialog"
           onClick={() => (jennaState.open = true)}

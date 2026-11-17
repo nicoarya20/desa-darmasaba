@@ -1,4 +1,3 @@
-import colors from "@/con/colors";
 import { ActionIcon, Button, Group, ThemeIcon } from "@mantine/core";
 import { IconMessageChatbot, IconRefresh, IconX } from "@tabler/icons-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
@@ -51,11 +50,11 @@ export function JennaPanel({ title, onClose, getPageContext }: Props) {
         wrap="nowrap"
         px="md"
         py="sm"
-        bg="white"
-        style={{ borderBottom: `1px solid ${colors.grey[2]}` }}
+        bg="var(--jenna-surface)"
+        style={{ borderBottom: "1px solid var(--jenna-line)" }}
       >
         <Group gap="xs" wrap="nowrap" style={{ minWidth: 0 }}>
-          <ThemeIcon radius="xl" size="md" color={colors["blue-button"]} aria-hidden="true">
+          <ThemeIcon radius="xl" size="md" color="var(--c-brand-fill)" aria-hidden="true">
             <IconMessageChatbot size={18} />
           </ThemeIcon>
           {title}
@@ -64,7 +63,7 @@ export function JennaPanel({ title, onClose, getPageContext }: Props) {
           <Button
             size="compact-sm"
             variant="subtle"
-            color={colors["blue-button"]}
+            color="var(--c-brand)"
             leftSection={<IconRefresh size={14} />}
             disabled={snap.messages.length === 0}
             onClick={jennaState.reset}

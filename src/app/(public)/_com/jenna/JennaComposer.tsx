@@ -1,4 +1,3 @@
-import colors from "@/con/colors";
 import { ActionIcon, Box, Button, Group, Text, Textarea } from "@mantine/core";
 import { IconMicrophone, IconPlayerStopFilled, IconSend } from "@tabler/icons-react";
 import { useState } from "react";
@@ -31,8 +30,8 @@ export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onS
     <Box
       component="form"
       p="sm"
-      bg="white"
-      style={{ borderTop: `1px solid ${colors.grey[2]}` }}
+      bg="var(--jenna-surface)"
+      style={{ borderTop: "1px solid var(--jenna-line)" }}
       onSubmit={(e) => {
         e.preventDefault();
         submit();
@@ -91,7 +90,7 @@ export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onS
                 size={36}
                 radius="xl"
                 variant="light"
-                color={colors["blue-button"]}
+                color="var(--c-brand)"
                 aria-label={voiceLabel}
                 title={voiceLabel}
                 onClick={onVoice}
@@ -104,7 +103,7 @@ export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onS
               size={36}
               radius="xl"
               variant="filled"
-              color={colors["blue-button"]}
+              color="var(--c-brand-fill)"
               aria-label="Kirim pertanyaan"
               disabled={empty}
             >
@@ -113,7 +112,7 @@ export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onS
           </Group>
         )}
       </Group>
-      <Text fz="xs" c={draft.length >= maxChars ? "red.8" : "gray.7"} ta="right" mt={4}>
+      <Text fz="xs" c={draft.length >= maxChars ? "var(--jenna-danger)" : "var(--jenna-text-3)"} ta="right" mt={4}>
         {draft.length}/{maxChars}
       </Text>
     </Box>

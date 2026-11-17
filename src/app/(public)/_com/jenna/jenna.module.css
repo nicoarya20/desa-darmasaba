@@ -37,12 +37,39 @@
   --jenna-panel-bottom: 88px;
 }
 
+/* Warna panel sebagai variabel di .body (pembungkus isi Paper desktop dan Drawer ponsel): prop Mantine
+   `c`/`bg`/`color` menulis inline style, jadi komponen membaca var(--jenna-*) dan tema gelap cukup
+   menimpa variabelnya di sini. Terang = nilai lama (putih, colors.grey[2], gray.7–9 Mantine). */
 .body {
+  --jenna-surface: #fff;
+  --jenna-line: #cbcacd;
+  --jenna-text-1: var(--mantine-color-gray-9);
+  --jenna-text-2: var(--mantine-color-gray-8);
+  --jenna-text-3: var(--mantine-color-gray-7);
+  --jenna-danger: var(--mantine-color-red-8);
+  --jenna-notice: var(--mantine-color-yellow-0);
+  --jenna-error-bg: var(--mantine-color-red-0);
+  --jenna-error-line: var(--mantine-color-red-3);
+  --jenna-error-ink: var(--mantine-color-red-9);
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
   background: #f4f5f6;
+
+  @mixin dark {
+    --jenna-surface: var(--c-tile);
+    --jenna-line: var(--c-line);
+    --jenna-text-1: var(--c-ink);
+    --jenna-text-2: var(--c-ink-2);
+    --jenna-text-3: var(--c-muted);
+    --jenna-danger: var(--mantine-color-red-4);
+    --jenna-notice: rgba(250, 176, 5, 0.14);
+    --jenna-error-bg: rgba(250, 82, 82, 0.12);
+    --jenna-error-line: rgba(250, 82, 82, 0.45);
+    --jenna-error-ink: var(--mantine-color-red-3);
+    background: var(--c-bg-alt);
+  }
 }
 
 .bubbleUser {
@@ -50,8 +77,8 @@
   max-width: 85%;
   padding: 8px 12px;
   border-radius: 12px 12px 4px 12px;
-  background: #0a4e78;
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -70,6 +97,12 @@
   background: #fff;
   border: 1px solid #cbcacd;
   color: #1a1b1e;
+
+  @mixin dark {
+    background: var(--c-tile-alt);
+    border-color: var(--c-line);
+    color: var(--c-ink);
+  }
   /* Tautan/sumber panjang tanpa spasi (path, URL) dibungkus agar panel tidak pernah geser horizontal. */
   min-width: 0;
   overflow-wrap: anywhere;
