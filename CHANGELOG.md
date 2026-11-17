@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.295] - 2026-11-17
+## [0.1.296] - 2026-11-17
 ### Added
 - Cari global kini menemukan bagian Dashboard Kependudukan: ketik "banjar", "umur", "agama", "dinamika", atau "kelahiran" untuk langsung membuka bagian yang sesuai. Keempat bagian juga tampil di Peta Informasi.
 
@@ -9,6 +9,15 @@
 
 ### Fixed
 - Halaman tambahan di cari global dan Peta Informasi yang menaut ke bagian halaman (alamat ber-`#`) kini ikut tersembunyi bila halamannya disembunyikan admin.
+
+## [0.1.295] - 2026-11-17
+### Added
+- **Footer kini menampilkan kontak resmi kantor desa**: Kantor Perbekel Desa Darmasaba, Jl. Raya Darmasaba – Lukluk (80352), telepon (0361) 8441518 (bisa diklik untuk menelepon), dan email ddarmasaba@gmail.com (bisa diklik untuk mengirim email), beserta nama pengelola website. Nama tim redaksi akan ditambahkan setelah SK Tim Pengelola Website diterima dari desa.
+
+### Changed
+- **Kontak PPID** di halaman Daftar Informasi Publik dan Permohonan Keberatan kini memakai email dan telepon resmi kantor desa. Sebelumnya tertulis nomor WhatsApp contoh "081-xxx-xxx-xxx" dan dua alamat email yang berbeda.
+- **Halaman Posyandu** kini hanya menampilkan tab Ringkasan (deskripsi dan kegiatan per klaster) dan Data Posyandu. Tab Balita dan Ibu Hamil serta kartu angka kesehatan disembunyikan sementara sampai rekap resmi dari Puskesmas tersedia.
+- Tahun hak cipta di footer kini mengikuti tahun berjalan.
 
 ## [0.1.294] - 2026-11-17
 ### Changed

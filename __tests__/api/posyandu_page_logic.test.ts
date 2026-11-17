@@ -125,9 +125,10 @@ describe('targetStuntingTampil', () => {
 });
 
 describe('tab & tautan', () => {
-  it('parseTab menerima 4 tab, nilai lain → ringkasan', () => {
-    expect(parseTab('balita')).toBe('balita');
-    expect(parseTab('ibu-hamil')).toBe('ibu-hamil');
+  it('parseTab menerima tab yang tampil; tab tersembunyi (balita, ibu hamil) & nilai lain → ringkasan', () => {
+    expect(parseTab('balita')).toBe('ringkasan');
+    expect(parseTab('ibu-hamil')).toBe('ringkasan');
+    expect(parseTab('balita', ['ringkasan', 'posyandu', 'balita', 'ibu-hamil'])).toBe('balita');
     expect(parseTab('posyandu')).toBe('posyandu');
     expect(parseTab('xyz')).toBe('ringkasan');
     expect(parseTab(null)).toBe('ringkasan');
