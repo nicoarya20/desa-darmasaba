@@ -1,0 +1,42 @@
+/*
+ * Baris legal footer, meniru apple.com (.ac-gf-footer-legal): hak cipta lalu tautan 12px, jarak 30px di
+ * desktop; ≤734px tautan turun ke bawah hak cipta (jarak 8px) dan boleh terbungkus.
+ * Pemisah "|" = garis 1px × 10px di antara butir (pseudo-element, tidak dibaca pembaca layar), teks ↔ garis 9px.
+ */
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 30px;
+  row-gap: 8px;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.item:not(:last-child)::after {
+  content: '';
+  flex-shrink: 0;
+  width: 1px;
+  height: 10px;
+  margin-inline: 9px;
+  background: rgb(243 242 236 / 50%);
+}
+
+@media (max-width: 734px) {
+  .legal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
