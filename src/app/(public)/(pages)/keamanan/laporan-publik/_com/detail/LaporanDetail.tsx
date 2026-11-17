@@ -1,5 +1,6 @@
 'use client';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconCalendarEvent, IconChevronRight, IconMapPin } from '@tabler/icons-react';
@@ -30,9 +31,11 @@ export function LaporanDetailView({ state, onRetry }: { state: LaporanDetailStat
         {state.status === 'notfound' ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{T.notFound}</p>
-            <Link href={LAPORAN_LIST_HREF} className={d.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={LAPORAN_LIST_HREF} className={`${d.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}
@@ -56,8 +59,10 @@ function DetailBody({ data }: { data: LaporanPublik }) {
     <>
       <header className={d.head}>
         <p className={`${d.meta} ${s.meta}`}>
-          <Link href={LAPORAN_LIST_HREF} className={d.kategori}>
-            {T.kategori}
+          <Link href={LAPORAN_LIST_HREF} className={`${d.kategori} ${r.trigger}`}>
+            <span className={r.cta} data-text={T.kategori}>
+              {T.kategori}
+            </span>
           </Link>
           <LaporanStatus status={data.status} />
         </p>

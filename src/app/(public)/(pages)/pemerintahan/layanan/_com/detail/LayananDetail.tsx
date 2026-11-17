@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import { Image } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -26,9 +27,11 @@ export function LayananDetail({ id }: { id: string }) {
         {state.status === 'notfound' ? (
           <div className={page.empty}>
             <p className={s.emptyText}>{T.notFound}</p>
-            <Link href={LAYANAN_LIST_HREF} className={s.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={LAYANAN_LIST_HREF} className={`${s.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}
@@ -49,8 +52,10 @@ export function LayananDetailBody({ data, onAjukan }: { data: LayananDetailData;
   return (
     <>
       <header className={s.head}>
-        <Link href={LAYANAN_LIST_HREF} className={s.kategori}>
-          {T.kategori}
+        <Link href={LAYANAN_LIST_HREF} className={`${s.kategori} ${r.trigger}`}>
+          <span className={r.cta} data-text={T.kategori}>
+            {T.kategori}
+          </span>
         </Link>
         <h1 className={s.title}>{data.name}</h1>
         <div className={s.actions}>

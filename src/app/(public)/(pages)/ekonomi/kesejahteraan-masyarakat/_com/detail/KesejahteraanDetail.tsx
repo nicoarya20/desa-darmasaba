@@ -3,6 +3,7 @@ import { VideoFacade } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminal
 import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
 import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { Image } from '@mantine/core';
@@ -33,9 +34,11 @@ export function KesejahteraanDetail({ id }: { id: string }) {
         {state.status === 'notfound' || state.status === 'error' ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
-            <Link href={kesejahteraanListHref()} className={d.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={kesejahteraanListHref()} className={`${d.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}
@@ -53,8 +56,10 @@ export function KesejahteraanDetailBody({ detail }: { detail: Detail }) {
     <>
       <header className={d.head}>
         <p className={d.meta}>
-          <Link href={kesejahteraanListHref()} className={d.kategori}>
-            {T.kategori}
+          <Link href={kesejahteraanListHref()} className={`${d.kategori} ${r.trigger}`}>
+            <span className={r.cta} data-text={T.kategori}>
+              {T.kategori}
+            </span>
           </Link>
         </p>
         <h1 className={d.title}>{detail.title}</h1>
@@ -71,8 +76,10 @@ export function KesejahteraanDetailBody({ detail }: { detail: Detail }) {
 
       {detail.videoId ? <VideoFacade videoId={detail.videoId} title={detail.title} /> : null}
       {detail.videoHref ? (
-        <a href={detail.videoHref} target="_blank" rel="noopener noreferrer" className={s.videoLink}>
-          {T.bukaVideo}
+        <a href={detail.videoHref} target="_blank" rel="noopener noreferrer" className={`${s.videoLink} ${r.trigger}`}>
+          <span className={r.cta} data-text={T.bukaVideo}>
+            {T.bukaVideo}
+          </span>
           <IconArrowUpRight size={16} stroke={2} aria-hidden />
         </a>
       ) : null}

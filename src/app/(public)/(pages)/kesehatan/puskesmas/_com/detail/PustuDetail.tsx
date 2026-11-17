@@ -1,6 +1,7 @@
 'use client';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import pustuState from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/pustu.state';
@@ -40,9 +41,11 @@ export default function PustuDetail() {
         {snap.gagal ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{snap.tidakDitemukan ? T.detailTidakDitemukan : T.detailGagal}</p>
-            <Link href="/kesehatan/puskesmas" className={d.emptyLink}>
-              {T.kembaliKeDaftar}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href="/kesehatan/puskesmas" className={`${d.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.kembaliKeDaftar}>
+                {T.kembaliKeDaftar}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}

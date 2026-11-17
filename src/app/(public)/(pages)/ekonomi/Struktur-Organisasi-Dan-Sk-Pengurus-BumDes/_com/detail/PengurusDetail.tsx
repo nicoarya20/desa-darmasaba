@@ -1,6 +1,7 @@
 'use client';
 import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
@@ -29,9 +30,11 @@ export function PengurusDetailView({ id }: { id: string }) {
         {state.status === 'notfound' || state.status === 'error' ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
-            <Link href={LIST_HREF} className={d.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={LIST_HREF} className={`${d.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}

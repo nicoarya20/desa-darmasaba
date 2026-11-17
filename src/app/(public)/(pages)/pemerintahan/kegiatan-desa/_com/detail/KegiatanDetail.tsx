@@ -1,6 +1,7 @@
 'use client';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import { kategoriSlug, SEMUA_SLUG } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { isKegiatanPembangunan } from '@/lib/kegiatan-pembangunan';
@@ -45,9 +46,11 @@ export function KegiatanDetail({ id, list }: { id: string; list?: KegiatanDetail
         {state.status === 'notfound' || state.status === 'error' ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
-            <Link href={list?.href ?? kegiatanListHref(SEMUA_SLUG)} className={d.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={list?.href ?? kegiatanListHref(SEMUA_SLUG)} className={`${d.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}
@@ -70,8 +73,10 @@ export function KegiatanDetailBody({ data, linkKategori = true }: { data: Detail
       <header className={d.head}>
         <p className={d.meta}>
           {kategori && linkKategori ? (
-            <Link href={kegiatanListHref(kategoriSlug(kategori))} className={d.kategori}>
-              {kategori}
+            <Link href={kegiatanListHref(kategoriSlug(kategori))} className={`${d.kategori} ${r.trigger}`}>
+              <span className={r.cta} data-text={kategori}>
+                {kategori}
+              </span>
             </Link>
           ) : null}
           {kategori && !linkKategori ? <span className={d.kategori}>{kategori}</span> : null}
