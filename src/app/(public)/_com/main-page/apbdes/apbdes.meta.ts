@@ -27,7 +27,7 @@ export function accentVars(tipe: Tipe): CSSProperties {
 /**
  * Variabel warna brand (teks/tautan + hover) untuk halaman yang memakai kerangka APBDes.
  * @deprecated Section beranda tidak lagi memakainya: `.section` apbdes.module.css sudah mengalias `--brand` ke token
- * `--c-brand`. Dipertahankan untuk halaman /apbdes dan menu lain (Fase 2/3 dark theme); nilainya token, jadi tema
+ * `--c-brand`, begitu juga halaman /apbdes. Dipertahankan untuk menu lain (Fase 3 dark theme); nilainya token, jadi tema
  * terang identik dan tema gelap ikut. Tombol isi tidak memakai variabel ini (pakai --c-brand-fill).
  */
 export const APBDES_BRAND_VARS = {

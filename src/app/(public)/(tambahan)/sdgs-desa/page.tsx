@@ -2,13 +2,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import sdgsDesa from '@/app/admin/(dashboard)/_state/landing-page/sdgs-desa';
-import colors from '@/con/colors';
 import { BarChart } from '@mantine/charts';
 import { Box, Center, Container, Image, LoadingOverlay, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { IconMoodSad } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto';
+import s from './sdgs-desa.module.css';
 
 function Page() {
   type SdgsDesa = {
@@ -88,7 +88,7 @@ function Page() {
   }, [state.data]);
 
   return (
-    <Stack pos="relative" py="xl" gap={32}>
+    <Stack className={s.page} pos="relative" py="xl" gap={32}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
@@ -124,8 +124,8 @@ function Page() {
           {!loading && state.data && state.data.length > 0 && (
             <Center mb="xl">
               <Box ta="center">
-                <Title order={2} c={colors['blue-button']}>Rata-Rata SDGs Desa : </Title>
-                <Text fw={700} c={colors['blue-button']} fz="2rem" style={{ minHeight: '4rem' }}>
+                <Title order={2} c="var(--c-brand)">Rata-Rata SDGs Desa : </Title>
+                <Text fw={700} c="var(--c-brand)" fz="2rem" style={{ minHeight: '4rem' }}>
                   {averageScore} %
                 </Text>
                 <Text fs={"italic"} ta="center" fz="lg">
@@ -163,7 +163,7 @@ function Page() {
                   <Box
                     p="md"
                     style={{
-                      background: 'linear-gradient(145deg, #f8f9fa, #ffffff)',
+                      background: 'var(--sdgs-plate)',
                       borderRadius: '12px',
                       width: '100%',
                       height: 160,
@@ -185,13 +185,13 @@ function Page() {
                     />
                   </Box>
                   <Stack gap="xs" align="center" style={{ width: '100%' }}>
-                    <Title order={4} ta="center" c="dark" fw={600} lineClamp={2} style={{ minHeight: '3rem' }}>
+                    <Title order={4} ta="center" c="var(--sdgs-goal-title)" fw={600} lineClamp={2} style={{ minHeight: '3rem' }}>
                       {item.name}
                     </Title>
                     <Text
                       ta="center"
                       fw={700}
-                      c={colors['blue-button']}
+                      c="var(--c-brand)"
                       fz="2rem"
                       lineClamp={2}
                       style={{ minHeight: '4rem' }}
@@ -214,7 +214,7 @@ function Page() {
           {/* Chart */}
           <Box mt={30} style={{ width: '100%' }}>
             <Paper
-              bg={colors['white-1']}
+              bg="var(--sdgs-chart-bg)"
               py={90}
               px={{ base: 12, sm: 24, md: 50 }}
               radius="md"
@@ -241,7 +241,7 @@ function Page() {
                         series={[
                           {
                             name: 'jumlah',
-                            color: colors['blue-button'],
+                            color: 'var(--c-chart-1)',
                           },
                         ]}
                         withTooltip
