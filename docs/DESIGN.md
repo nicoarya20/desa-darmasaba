@@ -779,6 +779,8 @@ Katalog gaya UMKM/TIDAL + detail gaya produk UMKM + modal pinjam. Folder `(pages
 
 ### Modul sapuan warna tautan (`(public)/_com/link-reveal/`)
 
+> **Aturan tetap (keputusan user, 2026-11-17): situs publik tidak memakai garis bawah sebagai efek hover.** Semua tautan baru — judul kartu/baris, tautan aksi, tautan Mantine `<Anchor>` (bawaannya `underline="hover"`, set `underline="never"`) — wajib memakai modul ini. Jangan menulis `text-decoration: underline` di aturan `:hover`. Pengecualian hanya: tautan di dalam teks kaya / Jenna (garis bawah **permanen**, bukan hover) dan fallback `forced-colors` modul ini.
+
 Pengganti garis bawah hover di tautan yang bentuknya sudah jelas bisa diklik (kartu, baris, tautan aksi bertanda chevron). Satu file `link-reveal.module.css`; kelas dipakai lintas komponen. Rencana & inventaris: `MIND/PLAN/link-hover-reveal*.md` (fase 1 = beranda; fase 2 = sisa situs publik).
 
 - **Cara kerja**: gradasi 2 warna (target | `currentColor`) selebar 200% di-`background-clip: text` dengan fill teks transparan; posisi digeser 100% → 0 dalam 450ms `cubic-bezier(0.22, 1, 0.36, 1)`, jadi warna menyapu kiri → kanan dan kursor keluar di tengah membalik mulus. Warna diam tetap `color` komponen.
