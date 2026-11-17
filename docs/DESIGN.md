@@ -779,7 +779,7 @@ Katalog gaya UMKM/TIDAL + detail gaya produk UMKM + modal pinjam. Folder `(pages
 
 ### Modul sapuan warna tautan (`(public)/_com/link-reveal/`)
 
-> **Aturan tetap (keputusan user, 2026-11-17): situs publik tidak memakai garis bawah sebagai efek hover.** Semua tautan baru — judul kartu/baris, tautan aksi, tautan Mantine `<Anchor>` (bawaannya `underline="hover"`, set `underline="never"`) — wajib memakai modul ini. Jangan menulis `text-decoration: underline` di aturan `:hover`. Pengecualian hanya: tautan di dalam teks kaya / Jenna (garis bawah **permanen**, bukan hover) dan fallback `forced-colors` modul ini.
+> **Aturan tetap (keputusan user, 2026-11-17): situs publik tidak memakai garis bawah sebagai efek hover.** Semua tautan baru — judul kartu/baris, tautan aksi, tautan Mantine `<Anchor>` (bawaannya `underline="hover"`, set `underline="never"`) — wajib memakai modul ini. Jangan menulis `text-decoration: underline` di aturan `:hover`. Pengecualian hanya: tautan di dalam teks kaya / Jenna (garis bawah **permanen**, bukan hover), **footer** (`Footer*.tsx`: `<Anchor>` bawaan Mantine tetap `underline="hover"`, keputusan user 2026-11-17: konvensi footer situs, dan latar biru gradasi tak cocok untuk sapuan), dan fallback `forced-colors` modul ini.
 
 Pengganti garis bawah hover di tautan yang bentuknya sudah jelas bisa diklik (kartu, baris, tautan aksi bertanda chevron). Satu file `link-reveal.module.css`; kelas dipakai lintas komponen. Rencana & inventaris: `MIND/PLAN/link-hover-reveal*.md` (fase 1 = beranda; fase 2 = sisa situs publik).
 
@@ -803,7 +803,6 @@ Pengganti garis bawah hover di tautan yang bentuknya sudah jelas bisa diklik (ka
   - Tautan kembali "‹ …": `lembaga-detail` `.backLink`, Daftar Informasi Publik `[id]` `.backLink`, `detail-umkm` `.back` (menunggu keputusan seragam tautan kembali).
   - `ProgramBreadcrumb` DAK (`Anchor` `lineClamp={1}`): `.cta` inline-flex merusak elipsis, dan `.title` tak terlihat karena warna diamnya sudah `#0A4E78`.
   - Tautan "Petunjuk arah" di popup peta Leaflet Bank Sampah.
-  - Footer (`Footer*.tsx`): ditunda.
 
 ### Modul batang statistik (`(public)/_com/stat-bars/`)
 
