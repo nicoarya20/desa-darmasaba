@@ -763,19 +763,22 @@ Kerangka Pendidikan (`page-frame`, isi 1200px, kepala `PpidHeader` rata kiri); k
 - **State**: memuat = kerangka ubin `aria-busy`; galat = pesan + "Coba lagi"; kosong = pesan.
 - **Alamat lama**: `/pendidikan/beasiswa-desa/pelajari-lebih-lanjut` → 308 ke `/pendidikan/beasiswa-desa#syarat` (`scroll-margin-top: 72px`).
 
-### Perpustakaan Digital (`/pendidikan/perpustakaan-digital/{semua|kategori}[/{id}]`)
-Katalog gaya UMKM/TIDAL + detail gaya produk UMKM + modal pinjam. Folder `(pages)/pendidikan/perpustakaan-digital/`: `layout.tsx` (server, `PerpusDataProvider`: katalog dimuat SEKALI untuk daftar + rel buku lain), `semua/page.tsx` & `[kategoriBuku]/page.tsx` → `_com/PerpusKatalog`, `[kategoriBuku]/[id]/page.tsx` → `_com/detail/BukuDetail`. Data lewat sumber sendiri (`_com/perpus.source.ts`, `_lib/peminjaman.source.ts`); state admin `_state/pendidikan/perpustakaan-digital` tidak dipakai di publik. Test: `__tests__/api/perpus_katalog_logic.test.ts`, `perpus_adapter_source.test.ts`, `perpus_katalog_ui.test.tsx`, `perpus_detail_ui.test.tsx`, `peminjaman-form.test.ts`, `notelp_perpus.test.ts`.
-- **Kerangka Pendidikan** (`page-frame`, isi 1200px) untuk katalog dan detail. `--gutter` WAJIB ada di leluhur (disediakan `.frame`) karena rel pil `KabarListHeader` di ≤734px melebar ke tepi memakai `--gutter` leluhur (tanpa itu pil tidak terpotong → tata letak ponsel melebar ±1270px dan diperkecil).
-- **Kepala**: `KabarListHeader` (kembali, h1 "Perpustakaan Digital", pengantar, kolom cari `?search=`, pil "Semua" + kategori yang punya buku, urut nama). Slug kategori = nama huruf kecil spasi→"-" (sama dengan tautan lama); bentuk lama ter-encode (`/Anak%20Dan%20Remaja`) tetap diterima; slug tak dikenal tetap jadi pil aktif terakhir.
-- **Baris alat**: h2 21px "n buku" (+ "dari m" abu saat mencari) | Urutkan (Select gaya katalog UMKM, `?urut=judul`; Terbaru bawaan tidak ditulis ke URL), hanya bila > 1 buku.
-- **Grid** `repeat(auto-fill, minmax(168px, 1fr))` jarak 40/28px; ≤734px 2 kolom 28/16px. Kartu = SATU tautan ke detail: sampul 2:3 radius kecil (`#f5f5f7` + ikon buku bila tanpa sampul, `loading="lazy"`), judul h3 maks 2 baris, kategori 12px huruf besar abu. Tanpa deskripsi, tanpa tombol pinjam.
-- **Keadaan**: memuat 12 kartu kerangka (`aria-busy`); galat = `KatalogEmpty` + Coba lagi (`role="alert"`); kosong = "Belum ada buku"; cari kosong = pesan + "Hapus kata kunci"; kategori kosong = "Belum ada buku di kategori X". Tanpa paginasi (muat sekali ≤ 100, lihat MITIGASI).
-- **Detail**: kerangka `page-frame` (bukan `.page/.inner` 1120 detail UMKM); kembali "‹ Perpustakaan Digital" (`detail-umkm.module.css` `.back`), grid sampul ≤320px (sticky) | info jarak 56px: kategori (tautan ke daftarnya, 12px brand huruf besar) → h1 40px (34 @1068, 28 @734) → deskripsi HTML tersanitasi (h2 "Tentang buku ini" sr-only) → tombol pil 48px brand "Pinjam buku ini" → panel `#f5f5f7` radius 18 "Cara meminjam" 3 langkah (isi formulir; petugas menghubungi; ambil + kembalikan ≤ 4 hari). ≤734px bertumpuk, sampul di atas.
-- **Rel "Buku lain di kategori ini"**: kartu yang sama di rel geser (`useRailScroll`, panah bulat desktop), lebar kartu 176px (136px ponsel), maks 12, terbaru dulu; tidak dirender bila data belum siap/galat/0 buku.
-- **Tidak ditemukan/nonaktif**: `KatalogEmpty` "Buku tidak ditemukan"; galat: + Coba lagi.
-- **Modal pinjam**: Mantine Modal radius 18 (layar penuh ≤734px). Kepala buku (sampul kecil, kategori, judul) di ubin `#f5f5f7`. Isian: Nama (3–100), Nomor WhatsApp/telepon (prefix "+62", digit saja), Alamat (5–200), Tanggal ambil (`DateInput` locale id, hari ini s.d. +14 hari WITA, di bawahnya "Kembalikan paling lambat {tanggal} (4 hari)."), Catatan opsional Textarea maks 500 + penghitung. Galat tampil setelah blur atau tekan Kirim. Catatan privasi di ubin abu. Aksi Batal (default) | Kirim permintaan (brand). Sukses: ikon centang hijau, "Permintaan terkirim", nomor +62, `<dl>` Tanggal ambil | Batas kembali dalam dua ubin, tombol Selesai.
-- **Payload**: tanggal disimpan 12.00 WITA (`YYYY-MM-DDT04:00:00.000Z`) supaya tanggal sama di WIB/WITA/WIT; `batasKembali` = ambil + 4 hari; tanpa `tanggalKembali`; catatan di-escape ke HTML (MITIGASI perpus-catatan).
-- **MITIGASI SEMENTARA**: `perpus-katalog` (saring/cari/urut di klien, batas 100 + console.warn), `perpus-detail` (buku nonaktif dianggap tidak ditemukan di klien), `perpus-catatan` (escape karena admin merender catatan sebagai HTML). Semua menunjuk docs/BACKEND-TODO.md.
+### Perpustakaan Digital (`/pendidikan/perpustakaan-digital`)
+Halaman **penghubung** ke website perpustakaan desa (Pustaka Ananta Loka) — katalog, detail buku, dan modal pinjam sudah
+dihapus; URL lama dialihkan permanen ke halaman ini (`next.config.ts`). Alasan: `docs/decisions/2026-11-17-perpustakaan-link-eksternal.md`.
+Folder `(pages)/pendidikan/perpustakaan-digital/`: `page.tsx` → `_com/PerpusPenghubung` (`PerpusPenghubungPanel` diekspor untuk test),
+data lewat `_com/perpus-website.source.ts` + `use-perpus-website.ts` (state admin tidak dipakai di publik).
+Test: `__tests__/api/perpus_penghubung_ui.test.tsx`, `perpus_penghubung_routes.test.ts`.
+- **Kerangka Pendidikan** (`page-frame`, isi 1200px), `BackButton`, lalu kepala `PpidHeader` (h1 "Perpustakaan Digital" + pengantar).
+- **Panel** `#f5f5f7` radius 18, maks 46rem: ikon buku brand 40px → label kecil huruf besar abu → h2 nama platform 32px brand
+  (≤734px 26) → deskripsi 19px (≤734px 17, `white-space: pre-line`) → tombol pil 48px brand "Kunjungi Website Perpustakaan"
+  (`target="_blank" rel="noopener noreferrer"`, hover `#1c6ea4`) → keterangan 14px "Membuka {host} di tab baru."
+  yang terhubung ke tombol lewat `aria-describedby`. ≤734px tombol selebar panel.
+- **Keadaan**: memuat = panel kerangka `role="status" aria-busy` (label dibacakan pembaca layar); galat = pesan `role="alert"`;
+  belum diatur admin = "Tautan website perpustakaan belum tersedia." Ketiganya **tanpa** tombol.
+- **Tombol terisi, bukan tautan teks**: tidak memakai sapuan `link-reveal` dan tidak ada garis bawah hover (lihat aturan di bawah).
+- **Teks & pengaturan**: `_com/perpus.text.ts` untuk teks tetap; nama platform, deskripsi, dan URL dari admin
+  (Pendidikan › Perpustakaan Digital › tab **Website Perpustakaan**), bukan hardcode.
 
 ### Modul sapuan warna tautan (`(public)/_com/link-reveal/`)
 

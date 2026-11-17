@@ -100,7 +100,6 @@ const getDetailUrl = (item: SearchItem) => {
     tujuanPendidikanNonFormal: () => '/pendidikan/pendidikan-non-formal',
     tempatKegiatan: () => '/pendidikan/pendidikan-non-formal',
     jenisProgramYangDiselenggarakan: () => '/pendidikan/pendidikan-non-formal',
-    dataPerpustakaan: () => '/pendidikan/perpustakaan-digital/semua',
     dataPendidikan: () => '/pendidikan/data-pendidikan',
 
   };

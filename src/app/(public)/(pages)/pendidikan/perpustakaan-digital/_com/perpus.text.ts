@@ -1,48 +1,12 @@
-/** Teks UI katalog & detail Perpustakaan Digital publik. */
+/** Teks halaman penghubung Perpustakaan Digital (`/pendidikan/perpustakaan-digital`). */
 export const PERPUS_TEXT = {
   title: 'Perpustakaan Digital',
-  lead: 'Jelajahi koleksi buku perpustakaan desa, lalu ajukan peminjaman langsung dari halaman buku.',
-  searchLabel: 'Cari buku',
-  searchPlaceholder: 'Cari judul atau topik',
-  kategoriLabel: 'Kategori buku',
-  semua: 'Semua',
-  daftarLabel: 'Daftar buku',
-  jumlah: (n: number) => `${n} buku`,
-  dariTotal: (m: number) => `dari ${m}`,
-  urutkan: 'Urutkan',
-  urut: { terbaru: 'Terbaru', judul: 'Judul A–Z' },
-  memuat: 'Memuat koleksi buku',
-  kosongTitle: 'Belum ada buku',
-  kosongDesc: 'Koleksi perpustakaan digital belum diisi.',
-  kosongKategori: (nama: string) => `Belum ada buku di kategori ${nama}.`,
-  cariKosongTitle: 'Tidak ada buku yang cocok',
-  cariKosongDesc: (q: string) => `Tidak ada buku yang cocok dengan “${q}”.`,
-  hapusCari: 'Hapus kata kunci',
-  gagalTitle: 'Koleksi buku belum bisa dimuat',
-  gagalDesc: 'Periksa koneksi Anda, lalu coba lagi.',
-  cobaLagi: 'Coba lagi',
-} as const;
-
-/** Teks UI halaman detail buku. */
-export const BUKU_DETAIL_TEXT = {
-  kembali: 'Perpustakaan Digital',
-  memuat: 'Memuat detail buku',
-  notFoundTitle: 'Buku tidak ditemukan',
-  notFoundDesc: 'Buku ini mungkin sudah dihapus atau tidak lagi tersedia.',
-  errorTitle: 'Detail buku belum bisa dimuat',
-  errorDesc: 'Periksa koneksi Anda, lalu coba lagi.',
-  cobaLagi: 'Coba lagi',
-  deskripsi: 'Tentang buku ini',
-  deskripsiKosong: 'Belum ada deskripsi untuk buku ini.',
-  pinjam: 'Pinjam buku ini',
-  caraTitle: 'Cara meminjam',
-  caraLangkah: (hari: number) => [
-    'Isi formulir peminjaman dan pilih tanggal ambil.',
-    'Petugas perpustakaan akan menghubungi Anda lewat nomor telepon yang diisi.',
-    `Ambil buku di perpustakaan desa, lalu kembalikan paling lambat ${hari} hari setelah tanggal ambil.`,
-  ],
-  lainTitle: 'Buku lain di kategori ini',
-  lainJumlah: (n: number) => `${n} buku`,
-  sebelumnya: 'Buku sebelumnya',
-  berikutnya: 'Buku berikutnya',
+  lead: 'Koleksi buku digital Desa Darmasaba dikelola di website perpustakaan desa. Baca ebook kapan saja dan di mana saja.',
+  eyebrow: 'Website perpustakaan desa',
+  cta: 'Kunjungi Website Perpustakaan',
+  /** Keterangan di bawah tombol; juga dibacakan pembaca layar lewat aria-describedby. */
+  opensNewTab: (host: string) => `Membuka ${host} di tab baru.`,
+  loading: 'Memuat informasi perpustakaan',
+  error: 'Informasi perpustakaan gagal dimuat. Coba muat ulang halaman.',
+  empty: 'Tautan website perpustakaan belum tersedia.',
 } as const;

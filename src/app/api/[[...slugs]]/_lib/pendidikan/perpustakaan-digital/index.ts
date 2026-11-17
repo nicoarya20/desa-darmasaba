@@ -2,6 +2,7 @@ import Elysia from "elysia";
 import DataPerpustakaan from "./data-perpustakaan";
 import KategoriBuku from "./kategori-buku";
 import PeminjamanBuku from "./peminjaman";
+import PengaturanPerpustakaan from "./pengaturan";
 
 const PerpustakaanDigital = new Elysia({
   prefix: "/perpustakaandigital",
@@ -9,6 +10,7 @@ const PerpustakaanDigital = new Elysia({
 })
   .use(DataPerpustakaan)
   .use(KategoriBuku)
-  .use(PeminjamanBuku);
+  .use(PeminjamanBuku)
+  .use(PengaturanPerpustakaan);
 
 export default PerpustakaanDigital;

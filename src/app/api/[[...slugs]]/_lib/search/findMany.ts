@@ -1352,26 +1352,6 @@ export default async function searchFindMany(context: Context) {
     return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
   }
 
-  // ========================================= PERPUSTAKAAN ========================================= //
-  if (type === "dataPerpustakaan") {
-    const data = await prisma.dataPerpustakaan.findMany({
-      where: {
-        OR: [
-          { judul: { contains: query, mode: "insensitive" } },
-          { deskripsi: { contains: query, mode: "insensitive" } },
-          {
-            kategori: {
-              OR: [{ name: { contains: query, mode: "insensitive" } }],
-            },
-          },
-        ],
-      },
-      skip,
-      take: limitNum,
-    });
-    return { data, nextPage: data.length < limitNum ? null : pageNum + 1 };
-  }
-
   // ========================================= DATA PENDIDIKAN ========================================= //
   if (type === "dataPendidikan") {
     const data = await prisma.dataPendidikan.findMany({
@@ -1470,7 +1450,6 @@ export default async function searchFindMany(context: Context) {
     tujuanPendidikanNonFormal,
     tempatKegiatan,
     jenisProgramYangDiselenggarakan,
-    dataPerpustakaan,
     dataPendidikan
   ] = await Promise.all([
     prisma.pejabatDesa.findMany({
@@ -2313,20 +2292,6 @@ export default async function searchFindMany(context: Context) {
       },
       take: limitNum,
     }),
-    prisma.dataPerpustakaan.findMany({
-      where: {
-        OR: [
-          { judul: { contains: query, mode: "insensitive" } },
-          { deskripsi: { contains: query, mode: "insensitive" } },
-          {
-            kategori: {
-              OR: [{ name: { contains: query, mode: "insensitive" } }],
-            },
-          },
-        ],
-      },
-      take: limitNum,
-    }),
     prisma.dataPendidikan.findMany({
       where: {
         OR: [
@@ -2481,7 +2446,6 @@ export default async function searchFindMany(context: Context) {
         type: "jenisProgramYangDiselenggarakan",
         ...b,
       })),
-      ...dataPerpustakaan.map((b) => ({ type: "dataPerpustakaan", ...b })),
       ...dataPendidikan.map((b) => ({ type: "dataPendidikan", ...b })),
     ],
     nextPage: null, // bisa dibuat lebih kompleks kalau perlu

@@ -142,7 +142,7 @@ export const pendidikanMenu: NavItem = {
     { id: "pendidikan.program-pendidikan-anak", name: "Program Pendidikan Anak", path: "/admin/pendidikan/program-pendidikan-anak/tujuan-program", basePath: "/admin/pendidikan/program-pendidikan-anak" },
     { id: "pendidikan.bimbingan-belajar-desa", name: "Bimbingan Belajar Desa", path: "/admin/pendidikan/bimbingan-belajar-desa/tujuan-program", basePath: "/admin/pendidikan/bimbingan-belajar-desa" },
     { id: "pendidikan.pendidikan-non-formal", name: "Pendidikan Non Formal", path: "/admin/pendidikan/pendidikan-non-formal/tujuan-program", basePath: "/admin/pendidikan/pendidikan-non-formal" },
-    { id: "pendidikan.perpustakaan-digital", name: "Perpustakaan Digital", path: "/admin/pendidikan/perpustakaan-digital/data-perpustakaan", basePath: "/admin/pendidikan/perpustakaan-digital" },
+    { id: "pendidikan.perpustakaan-digital", name: "Perpustakaan Digital", path: "/admin/pendidikan/perpustakaan-digital/website", basePath: "/admin/pendidikan/perpustakaan-digital" },
     { id: "pendidikan.data-pendidikan", name: "Data Pendidikan", path: "/admin/pendidikan/data-pendidikan", basePath: "/admin/pendidikan/data-pendidikan" },
   ],
 }

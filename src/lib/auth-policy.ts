@@ -154,8 +154,6 @@ export const PUBLIC_POST_PATHS: readonly string[] = [
   // Upload gambar khusus pengaduan (image-only, tervalidasi) — bukan
   // /api/fileStorage/create yang generik & tetap admin-only.
   "/api/inovasi/layananonlinedesa/pengaduanmasyarakat/upload",
-  // Pinjam buku: form publik warga anonim, data peminjam diisi manual di form.
-  "/api/pendidikan/perpustakaandigital/peminjamanbuku/create",
   // Survei Indeks Kepuasan Masyarakat (IKM): warga anonim mengisi rating layanan
   // di /ppid/indeks-kepuasan-masyarakat. Master data (jenis kelamin,
   // rating, kelompok umur) di path lain & tetap admin-only.

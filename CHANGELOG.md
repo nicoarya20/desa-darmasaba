@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.300] - 2026-11-17
+### Changed
+- **Perpustakaan Digital kini menautkan website perpustakaan desa.** Desa sudah punya perpustakaan digital sendiri (Pustaka Ananta Loka), jadi halaman `/pendidikan/perpustakaan-digital` tidak lagi menampilkan katalog buku, melainkan profil singkat perpustakaan beserta tombol "Kunjungi Website Perpustakaan" yang terbuka di tab baru. Tautan katalog lama yang sudah dibagikan warga tetap sampai ke halaman ini, tidak jadi halaman error.
+- **Admin bisa mengganti alamat website perpustakaan sendiri** dari Pendidikan › Perpustakaan Digital › tab "Website Perpustakaan" (nama platform, deskripsi, dan alamat), tanpa perlu menunggu deploy. Alamat wajib diawali `https://`.
+- **Tab Data Perpustakaan, Kategori Buku, dan Peminjam jadi arsip**, diberi nama "Arsip …" beserta keterangan bahwa isinya tidak tampil di website publik. Datanya tetap utuh dan bisa diperiksa; belum ada yang dihapus.
+- Hasil pencarian di website tidak lagi memuat judul buku dari katalog lama, dan asisten Jenna mengarahkan pengunjung ke halaman perpustakaan yang baru.
+
+### Removed
+- **Formulir pinjam buku di website dihentikan.** Peminjaman kini mengikuti ketentuan di website perpustakaan desa, jadi warga tidak lagi mengisi data pribadi (nama, nomor telepon, alamat) untuk pinjam buku di website ini.
+
+### Fixed
+- **Celah keamanan pada catatan peminjaman ditutup.** Catatan peminjam dulu bisa dikirim siapa pun tanpa login dan ditampilkan apa adanya di halaman admin, sehingga berpotensi menjalankan skrip berbahaya di sesi admin. Jalur kirim tanpa login sudah ditutup dan catatan sekarang ditampilkan sebagai teks biasa, termasuk untuk data lama.
+
 ## [0.1.299] - 2026-11-17
 ### Added
 - **Submenu baru Inovasi › Program Inovasi** (`/inovasi/program-inovasi`): daftar semua program inovasi desa berupa ubin logo, dengan data yang sama seperti rel "Program Inovasi Desa" di beranda. Submenu ini bisa disembunyikan atau ditampilkan dari Pengaturan › Visibilitas Menu.

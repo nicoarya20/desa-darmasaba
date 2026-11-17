@@ -25,7 +25,6 @@ const PUBLIC_FORMS: readonly { name: string; href: string; note: string }[] = [
   { name: "Ajukan ide inovatif", href: "/inovasi/ajukan-ide-inovatif", note: "usulan ide untuk desa" },
   { name: "Laporan keamanan lingkungan", href: "/keamanan/laporan-publik", note: "laporan kejadian keamanan" },
   { name: "Survei Indeks Kepuasan Masyarakat", href: "/ppid/indeks-kepuasan-masyarakat", note: "penilaian layanan desa" },
-  { name: "Peminjaman buku perpustakaan digital", href: "/pendidikan/perpustakaan-digital/semua", note: "pilih buku lalu isi form pinjam" },
   { name: "Pesan produk UMKM", href: "/ekonomi/umkm", note: "buka halaman produk lalu gunakan tombol pesan" },
   { name: "Pendaftaran kegiatan kesehatan", href: "/kesehatan/data-kesehatan-warga/jadwal-kegiatan-page", note: "pilih jadwal lalu daftar" },
 ];
@@ -34,6 +33,8 @@ const INFO_PAGES: readonly { name: string; href: string }[] = [
   { name: "Permohonan informasi publik (PPID)", href: "/ppid/permohonan-informasi-publik" },
   { name: "Keberatan informasi publik (PPID)", href: "/ppid/permohonan-keberatan-informasi-publik" },
   { name: "Daftar informasi publik", href: "/ppid/daftar-informasi-publik" },
+  // Ebook desa ada di website perpustakaan eksternal; halaman ini menautkannya (tidak ada form pinjam di website).
+  { name: "Perpustakaan Digital (ebook desa)", href: "/pendidikan/perpustakaan-digital" },
   { name: "Kontak darurat", href: "/keamanan/kontak-darurat" },
 ];
 

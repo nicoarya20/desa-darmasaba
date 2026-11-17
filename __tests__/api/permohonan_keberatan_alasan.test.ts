@@ -11,10 +11,18 @@ import {
   ALASAN_KEBERATAN_MAX_HTML_LENGTH,
   ALASAN_KEBERATAN_MAX_LENGTH,
   ALASAN_KEBERATAN_TOO_LONG_MESSAGE,
+  richTextLength,
   validateAlasanKeberatanLength,
 } from '@/lib/permohonan-keberatan';
 
 const paragraph = (text: string) => `<p>${text}</p>`;
+
+describe('richTextLength', () => {
+  it('menghitung teks tanpa tag, dipangkas', () => {
+    expect(richTextLength('<p> Halo <strong>desa</strong> </p>')).toBe(9);
+    expect(richTextLength(undefined)).toBe(0);
+  });
+});
 
 describe('validateAlasanKeberatanLength', () => {
   it('accepts alasan exactly at the limit (tags are not counted)', () => {
