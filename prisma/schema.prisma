@@ -3046,6 +3046,28 @@ model DataBanjar {
   @@index([isActive])
 }
 
+// ========================================= LAPORAN PENDUDUK BULANAN ========================================= //
+// Laporan SID per banjar per bulan (juknis lomba 1.3). Tabel BARU & terpisah: DataBanjar (snapshot tahunan)
+// tidak diubah supaya halaman publik Kependudukan dan summary dashboard tetap utuh.
+// `banjar` = teks nama banjar (sama seperti DataBanjar.nama), bukan FK, jadi laporan lama tetap utuh bila banjar diubah.
+// Tanpa unique (banjar, tahun, bulan): soft delete (deletedAt/isActive) membuat unique index memblokir input ulang,
+// jadi duplikat aktif dicegah di API.
+model LaporanPendudukBulanan {
+  id        String    @id @default(cuid())
+  banjar    String // Nama banjar
+  tahun     Int // Tahun laporan
+  bulan     Int // 1-12 (divalidasi di API)
+  lakiLaki  Int // Jumlah penduduk laki-laki
+  perempuan Int // Jumlah penduduk perempuan
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
+
+  @@index([tahun, bulan])
+  @@index([banjar])
+}
+
 // ========================================= DISTRIBUSI AGAMA ========================================= //
 model DistribusiAgama {
   id        String    @id @default(cuid())

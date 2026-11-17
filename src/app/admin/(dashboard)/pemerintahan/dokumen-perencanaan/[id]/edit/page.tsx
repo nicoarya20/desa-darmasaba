@@ -8,7 +8,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import DokumenPerencanaanForm from '../../_com/DokumenPerencanaanForm';
 
-const LIST_PATH = '/admin/pemerintahan/kegiatan-desa/dokumen-perencanaan';
+const LIST_PATH = '/admin/pemerintahan/dokumen-perencanaan';
 
 /** Admin: ubah dokumen perencanaan; PDF lama dipertahankan bila tidak memilih berkas baru. */
 export default function EditDokumenPerencanaan() {
