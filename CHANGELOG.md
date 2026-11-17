@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.301] - 2026-11-17
+### Added
+- **Peta wilayah bisa diunggah sebagai file** di admin Pemerintahan > Profil > Letak & Batas Wilayah, lewat field baru **File Peta Wilayah**. File bisa berupa gambar (JPG, PNG, WebP, maks 5 MB) atau PDF (maks 10 MB), dan bisa dilihat, diganti, atau dihapus sebelum menekan **Simpan**.
+  - Di halaman publik Pemerintahan > Profil, file peta tampil di bagian Letak & Batas Wilayah, di atas peta embed. Gambar bisa diklik untuk dibuka ukuran penuh; PDF dibuka lewat tombol **Lihat peta wilayah (PDF)**.
+  - Peta embed tetap tampil seperti sebelumnya. Bila URL embed kosong, peta Kantor Perbekel tetap tampil.
+  - Butuh migrasi database `20261117173000_wilayah_peta_file` (menambah kolom opsional; data lama tidak berubah).
+
 ## [0.1.300] - 2026-11-17
 ### Added
 - **Titik peta tidak harus diklik manual lagi**. Ini berlaku di form CCTV (tambah dan edit), Bank Sampah, dan Lembaga Pendidikan.

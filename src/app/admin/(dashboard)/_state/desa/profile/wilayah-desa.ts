@@ -1,4 +1,4 @@
-import { wilayahDesaSchema } from "@/lib/wilayah-desa";
+import { wilayahDesaSchema, type WilayahPetaFile } from "@/lib/wilayah-desa";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 
@@ -14,6 +14,8 @@ export type WilayahDesaData = {
   luasWilayah: number | null;
   keterangan: string | null;
   petaEmbedUrl: string | null;
+  petaFileId: string | null;
+  petaFile: WilayahPetaFile | null;
   updatedAt: string;
 };
 
@@ -87,8 +89,9 @@ const wilayahDesa = proxy({
     loading: false,
     error: null as string | null,
 
-    async submit(form: WilayahDesaFormValues) {
-      const payload = toWilayahPayload(form);
+    /** `petaFileId`: undefined = file peta tidak diubah, null = hapus, string = id FileStorage baru. */
+    async submit(form: WilayahDesaFormValues, petaFileId?: string | null) {
+      const payload = { ...toWilayahPayload(form), petaFileId };
       const validation = wilayahDesaSchema.safeParse(payload);
       if (!validation.success) {
         toast.error(validation.error.issues[0]?.message ?? "Form tidak valid");

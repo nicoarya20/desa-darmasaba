@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { PENGUMUMAN_FILE_SELECT } from "@/lib/pengumuman-lampiran";
 import { WILAYAH_DESA_ID } from "@/lib/wilayah-desa";
 
 /** Kolom yang diekspos ke klien (kontrak output; hanya boleh bertambah). */
@@ -11,6 +12,8 @@ export const WILAYAH_DESA_SELECT = {
   luasWilayah: true,
   keterangan: true,
   petaEmbedUrl: true,
+  petaFileId: true,
+  petaFile: { select: PENGUMUMAN_FILE_SELECT },
   updatedAt: true,
 } as const;
 

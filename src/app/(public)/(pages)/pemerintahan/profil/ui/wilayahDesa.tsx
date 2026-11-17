@@ -6,6 +6,7 @@ import { KANTOR_MAP_EMBED_URL } from '../_com/profil.meta';
 import { PROFIL_TEXT } from '../_com/profil.text';
 import { useLoadOnce } from '../_com/use-load-once';
 import m from './media.module.css';
+import { WilayahPetaFile } from './wilayahPetaFile';
 
 const T = PROFIL_TEXT.wilayah;
 
@@ -17,8 +18,9 @@ const ARAH_LIST = [
 ] as const;
 
 /**
- * Section Letak & Batas Wilayah: batas empat arah, luas, keterangan, lalu peta. Peta wilayah dari CMS bila ada;
- * bila belum diisi admin, tampil peta Kantor Perbekel (sebelumnya peta tanpa judul di puncak halaman).
+ * Section Letak & Batas Wilayah: batas empat arah, luas, keterangan, file peta CMS (gambar/PDF) bila ada, lalu peta
+ * embed. Peta embed dari CMS bila ada; bila belum diisi admin, tampil peta Kantor Perbekel (sebelumnya peta tanpa
+ * judul di puncak halaman).
  */
 function WilayahDesa() {
   const state = useProxy(stateProfileDesa.wilayahDesa);
@@ -54,6 +56,8 @@ function WilayahDesa() {
       )}
 
       {data?.keterangan ? <p className={m.note}>{data.keterangan}</p> : null}
+
+      <WilayahPetaFile file={data?.petaFile} />
 
       <figure className={m.map}>
         <iframe
