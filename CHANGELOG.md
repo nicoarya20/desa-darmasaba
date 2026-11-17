@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.292] - 2026-11-17
+### Added
+- **Footer kini menampilkan kontak resmi kantor desa**: Kantor Perbekel Desa Darmasaba, Jl. Raya Darmasaba – Lukluk (80352), telepon (0361) 8441518 (bisa diklik untuk menelepon), dan email ddarmasaba@gmail.com (bisa diklik untuk mengirim email), beserta nama pengelola website. Nama tim redaksi akan ditambahkan setelah SK Tim Pengelola Website diterima dari desa.
+
+### Changed
+- **Kontak PPID** di halaman Daftar Informasi Publik dan Permohonan Keberatan kini memakai email dan telepon resmi kantor desa. Sebelumnya tertulis nomor WhatsApp contoh "081-xxx-xxx-xxx" dan dua alamat email yang berbeda.
+- **Halaman Posyandu** kini hanya menampilkan tab Ringkasan (deskripsi dan kegiatan per klaster) dan Data Posyandu. Tab Balita dan Ibu Hamil serta kartu angka kesehatan disembunyikan sementara sampai rekap resmi dari Puskesmas tersedia.
+- Tahun hak cipta di footer kini mengikuti tahun berjalan.
+
+### Fixed
+- **Halaman Jumlah Penduduk Miskin** kini menampilkan angka tahun terbaru (mis. "Jumlah Penduduk Miskin Tahun 2026: 26 Orang"). Sebelumnya halaman menjumlahkan semua tahun sehingga tertulis "80 Orang". Grafik per tahun juga diurutkan dari tahun terlama.
+
 ## [0.1.291] - 2026-11-17
 ### Security
 - **Data pribadi warga tidak lagi bisa diambil tanpa login.** Daftar dan detail Ibu Hamil, Balita, kiriman Pengaduan Masyarakat, Administrasi Online, Ajukan Permohonan Surat, Siswa, Pendaftar Beasiswa, Peminjaman Buku, Permohonan & Keberatan Informasi PPID, Responden IKM, Ide Inovatif, dan Pendaftaran Jadwal Kegiatan kini hanya bisa dibuka admin. Sebelumnya NIK, nomor HP, dan alamat warga bisa diunduh siapa pun lewat API publik.
