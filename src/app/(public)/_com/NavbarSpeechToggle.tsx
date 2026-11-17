@@ -15,7 +15,7 @@ export function NavbarSpeechToggle() {
   const label = active ? SPEECH_LABEL_ON : SPEECH_LABEL_OFF;
 
   return (
-    <Tooltip label={label} position="bottom" withArrow>
+    <Tooltip label={label} position="bottom" withArrow classNames={{ tooltip: s.tooltip }}>
       <button
         type="button"
         className={`${s.barItem} ${s.speechToggle}`}

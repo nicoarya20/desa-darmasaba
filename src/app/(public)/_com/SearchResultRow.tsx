@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Text } from '@mantine/core';
+import s from './global-search.module.css';
 
 type SearchResultRowProps = {
   title: string;
@@ -14,16 +15,8 @@ export default function SearchResultRow({ title, subtitle, isNavigating, onClick
   return (
     <Box
       p="sm"
-      className="search-result-item" // Add class untuk prevent close
-      style={{
-        borderBottom: '1px solid #f1f1f1',
-        cursor: isNavigating ? 'wait' : 'pointer',
-        background: 'white',
-        transition: 'background 0.2s',
-        opacity: isNavigating ? 0.6 : 1,
-      }}
-      onMouseEnter={(e) => !isNavigating && (e.currentTarget.style.background = '#f9f9f9')}
-      onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+      className={`search-result-item ${s.row}`} // search-result-item: penanda baris hasil (cegah popover tertutup)
+      data-navigating={isNavigating}
       onClick={onClick}
     >
       <Text size="sm" fw={500} lineClamp={1}>

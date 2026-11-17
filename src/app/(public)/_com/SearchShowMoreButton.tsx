@@ -1,7 +1,7 @@
 'use client';
 
-import colors from '@/con/colors';
 import { Text, UnstyledButton } from '@mantine/core';
+import s from './global-search.module.css';
 
 type SearchShowMoreButtonProps = {
   hiddenCount: number;
@@ -15,9 +15,7 @@ export default function SearchShowMoreButton({ hiddenCount, onExpand }: SearchSh
       type="button"
       w="100%"
       p="sm"
-      style={{ borderBottom: `1px solid ${colors.grey[1]}`, transition: 'background 0.2s' }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = colors['blue-button-1'])}
-      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+      className={s.showMore}
       onClick={(e) => {
         // buka di tempat: jangan menutup popover atau memicu navigasi baris hasil
         e.preventDefault();
@@ -25,7 +23,7 @@ export default function SearchShowMoreButton({ hiddenCount, onExpand }: SearchSh
         onExpand();
       }}
     >
-      <Text size="sm" fw={500} c={colors['blue-button']}>
+      <Text size="sm" fw={500} c="var(--c-brand)">
         Tampilkan {hiddenCount} halaman lainnya
       </Text>
     </UnstyledButton>
