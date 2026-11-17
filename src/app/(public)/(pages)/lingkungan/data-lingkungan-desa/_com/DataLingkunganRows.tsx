@@ -2,6 +2,7 @@ import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPag
 import { paginate } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import { dataLingkunganEmptyMessage, filterDataLingkungan, type DataLingkungan } from './data-lingkungan.logic';
 import { DATA_LINGKUNGAN_PAGE_SIZE } from './data-lingkungan.meta';
@@ -58,7 +59,7 @@ export function DataLingkunganRow({ item }: { item: DataLingkungan }) {
         <h3 className={s.title}>{item.title}</h3>
         {item.amount ? <p className={s.amount}>{item.amount}</p> : null}
       </div>
-      {item.html ? <div className={s.prose} dangerouslySetInnerHTML={{ __html: item.html }} /> : null}
+      {item.html ? <div className={`${s.prose} ${rt.root}`} dangerouslySetInnerHTML={{ __html: item.html }} /> : null}
     </li>
   );
 }

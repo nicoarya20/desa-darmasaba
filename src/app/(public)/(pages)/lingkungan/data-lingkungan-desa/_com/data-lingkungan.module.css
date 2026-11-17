@@ -5,7 +5,7 @@
  * kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
  */
 .rows {
-  --rule: #d2d2d7;
+  --rule: var(--c-line-strong);
   margin: 0;
   padding: 0;
   list-style: none;

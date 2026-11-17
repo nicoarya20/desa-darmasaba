@@ -11,6 +11,7 @@ import {
 import s from '@/app/(public)/(pages)/lingkungan/data-lingkungan-desa/_com/data-lingkungan.module.css';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -29,7 +30,8 @@ describe('DataLingkunganRows', () => {
     expect(html).toContain(`<span class="${s.icon}" aria-hidden="true"><svg`);
     expect(html).toContain(`<h3 class="${s.title}">Data 1</h3>`);
     expect(html).toContain(`<p class="${s.amount}">1 paket kegiatan</p>`);
-    expect(html).toContain(`<div class="${s.prose}"><p>Deskripsi data 1</p></div>`);
+    // Deskripsi CMS dibungkus penetral tema rt.root (dark theme).
+    expect(html).toContain(`<div class="${s.prose} ${rt.root}"><p>Deskripsi data 1</p></div>`);
     expect(html).not.toContain('±');
     expect(html).not.toContain('mantine-Badge');
   });
