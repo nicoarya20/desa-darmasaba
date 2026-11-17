@@ -267,7 +267,8 @@ describe('pita latar hero', () => {
 
   it('satu path tertutup per pita, berurutan warna, hanya berisi angka valid', () => {
     const paths = buildRibbonPaths();
-    expect(paths.map((path) => path.color)).toEqual(RIBBON_STRIPES.map((stripe) => stripe.color));
+    // Warna lewat variabel CSS --ribbon-1..n (terang/gelap di landing.module.css), urut dari pita terdalam.
+    expect(paths.map((path) => path.fill)).toEqual(RIBBON_STRIPES.map((_, i) => `var(--ribbon-${i + 1})`));
     for (const { d } of paths) {
       expect(d).toMatch(/^M-?[\d.]+ -?[\d.]+(L-?[\d.]+ -?[\d.]+)+Z$/);
     }
@@ -282,5 +283,7 @@ describe('pita latar hero', () => {
     expect(html).toContain('preserveAspectRatio="none"');
     expect(html).toContain(`viewBox="0 0 ${RIBBON_VIEWBOX.width} ${RIBBON_VIEWBOX.height}"`);
     expect(html.match(/<path/g)).toHaveLength(RIBBON_STRIPES.length);
+    expect(html).toContain('fill="var(--ribbon-1)"');
+    expect(html).not.toMatch(/<path[^>]*fill="#/);
   });
 });

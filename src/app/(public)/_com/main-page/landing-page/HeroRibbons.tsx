@@ -4,7 +4,10 @@ import { buildRibbonPaths, RIBBON_VIEWBOX } from "./ribbons.logic";
 const PATHS = buildRibbonPaths();
 const { width, height } = RIBBON_VIEWBOX;
 
-/** Latar hero: berkas pita warna diam yang turun dari atas-tengah lalu lewat di belakang foto Perbekel. */
+/**
+ * Latar hero: berkas pita warna diam yang turun dari atas-tengah lalu lewat di belakang foto Perbekel.
+ * Warna pita dari variabel CSS --ribbon-n (terang/gelap di landing.module.css); gradasi putih di <defs> hanya masker.
+ */
 export function HeroRibbons() {
   return (
     <svg
@@ -24,8 +27,8 @@ export function HeroRibbons() {
         </mask>
       </defs>
       <g mask="url(#hero-ribbon-mask)">
-        {PATHS.map(({ color, d }, index) => (
-          <path key={index} d={d} fill={color} />
+        {PATHS.map(({ fill, d }, index) => (
+          <path key={index} d={d} fill={fill} />
         ))}
       </g>
     </svg>
