@@ -37,7 +37,7 @@ Detail lengkap tiap topik ada di `docs/` — baca sesuai kebutuhan task, jangan 
 - Architecture, request flow, domain modules, key files: `docs/ARCHITECTURE.md`
 - Database conventions, auth flow, file handling: `docs/DATABASE.md`
 - Env vars, Docker, CI/CD, releasing: `docs/DEPLOYMENT.md`
-- UI/UX design system, tokens, komponen, pola halaman: `docs/DESIGN.md`
+- UI/UX design system, tokens, komponen, pola halaman: `docs/DESIGN.md` (membuat halaman publik baru: mulai dari §0)
 - AI collaboration contract, rules, and guidelines: @AI-CONTRACT.md
 - Keputusan arsitektur / migrasi (ADR, baca saat menyentuh area terkait): `docs/decisions/`
 - **Backend TODO** (temuan frontend yang menunggu dikerjakan di API/schema/form admin, termasuk isu keamanan): `docs/BACKEND-TODO.md` — **wajib baca sebelum menyentuh `src/app/api/`, `prisma/`, atau `src/app/admin/`**; centang/hapus butir yang sudah selesai
