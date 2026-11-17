@@ -40,10 +40,10 @@ describe('pita hero terang/gelap', () => {
     '#062f49', '#0b3d5e', '#0a4e78', '#2f6f99', '#d4a72c', '#5f8db3',
     '#7fa6c6', '#a9c3da', '#ffffff', '#c8102e', '#bccbe0',
   ];
-  // test-only: tabel pita gelap di plan Fase 1.
+  // test-only: pita gelap varian B "Biru tegas" (dipilih user 2026-11-17): pita pucat luar diturunkan ke biru baja.
   const DARK = [
-    '#0d3a5a', '#124a72', '#1a5f8f', '#2f78a8', '#d4a72c', '#4f7fa6',
-    '#6a90b3', '#87a6c2', '#c9d5e2', '#c8102e', '#8ea3bd',
+    '#0d3a5a', '#124a72', '#1a5f8f', '#2f78a8', '#d4a72c', '#3f6b92',
+    '#4f7194', '#3d5a78', '#d9e1ea', '#c8102e', '#2b4560',
   ];
   const GOLD = 4;
   const RED = 9;

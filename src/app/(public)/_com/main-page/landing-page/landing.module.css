@@ -20,18 +20,18 @@
   --skeleton: light-dark(rgb(255 255 255 / 45%), rgb(255 255 255 / 8%));
   --shadow-tint: light-dark(rgb(6 47 73 / 10%), rgb(0 0 0 / 40%));
   /* Pita latar (HeroRibbons, dalam → luar, urutan = RIBBON_STRIPES). Gelap: navy dalam diangkat agar tak hilang ke
-     latar, putih/abu terang diredam, emas & merah tetap (MIND/PLAN/plan-dark-theme.md, Fase 1). */
+     latar, pita pucat luar jadi biru baja agar tak keperakan (varian B "Biru tegas", pilihan user), emas & merah tetap. */
   --ribbon-1: light-dark(#062f49, #0d3a5a);
   --ribbon-2: light-dark(#0b3d5e, #124a72);
   --ribbon-3: light-dark(#0a4e78, #1a5f8f);
   --ribbon-4: light-dark(#2f6f99, #2f78a8);
   --ribbon-5: light-dark(#d4a72c, #d4a72c);
-  --ribbon-6: light-dark(#5f8db3, #4f7fa6);
-  --ribbon-7: light-dark(#7fa6c6, #6a90b3);
-  --ribbon-8: light-dark(#a9c3da, #87a6c2);
-  --ribbon-9: light-dark(#ffffff, #c9d5e2);
+  --ribbon-6: light-dark(#5f8db3, #3f6b92);
+  --ribbon-7: light-dark(#7fa6c6, #4f7194);
+  --ribbon-8: light-dark(#a9c3da, #3d5a78);
+  --ribbon-9: light-dark(#ffffff, #d9e1ea);
   --ribbon-10: light-dark(#c8102e, #c8102e);
-  --ribbon-11: light-dark(#bccbe0, #8ea3bd);
+  --ribbon-11: light-dark(#bccbe0, #2b4560);
   --gutter: var(--edge-gutter);
   /* Tinggi foto ikut lebar DAN tinggi layar, supaya seluruh hero tetap masuk layar pertama di laptop. */
   --photo-h: clamp(340px, min(38vw, 66vh), 700px);
@@ -242,7 +242,8 @@
   max-width: 100%;
   margin-top: -32px;
   padding: 14px 22px;
-  background: light-dark(rgb(255 255 255 / 96%), rgb(26 37 50 / 96%));
+  /* Gelap: solid (= --tile), potongan bawah foto (seragam putih) tembus lewat alpha di latar gelap. */
+  background: light-dark(rgb(255 255 255 / 96%), var(--tile));
   border-radius: 18px;
   box-shadow: 0 4px 16px var(--shadow-tint);
 }
