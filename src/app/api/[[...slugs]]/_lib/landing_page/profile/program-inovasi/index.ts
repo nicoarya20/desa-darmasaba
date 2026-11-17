@@ -25,6 +25,8 @@ const ProgramInovasi = new Elysia({
       imageId: t.Optional(t.Nullable(t.String())),
       // Galeri dokumentasi (id FileStorage); batas jumlah dicek di handler.
       imageIds: t.Optional(t.Array(t.String())),
+      // Urutan tampil opsional (1 = paling depan); rentang & bilangan bulat dicek di handler.
+      urutan: t.Optional(t.Nullable(t.Number())),
     }),
   })
 
@@ -37,6 +39,8 @@ const ProgramInovasi = new Elysia({
       imageId: t.Optional(t.Nullable(t.String())),
       // Dikirim → galeri diganti (set); tidak dikirim → galeri tidak diubah.
       imageIds: t.Optional(t.Array(t.String())),
+      // Dikirim → urutan diganti (null = dikosongkan); tidak dikirim → tidak diubah.
+      urutan: t.Optional(t.Nullable(t.Number())),
     }),
   })
   // ✅ Delete
