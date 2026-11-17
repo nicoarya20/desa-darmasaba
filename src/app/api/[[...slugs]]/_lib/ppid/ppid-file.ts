@@ -9,7 +9,7 @@ export const PESAN_FILE_PPID_TIDAK_ADA = "Berkas tidak ditemukan di penyimpanan"
 
 /**
  * Tolak `fileId` yang tidak ada di FileStorage (status 400). Mengembalikan body galat, atau null bila `fileId`
- * kosong (tidak mengubah berkas) atau valid. Dipakai Dasar Hukum dan Daftar Informasi Publik.
+ * kosong (tidak mengubah berkas) atau valid. Dipakai dokumen Dasar Hukum dan Daftar Informasi Publik.
  */
 export async function rejectUnknownPpidFile(
   set: Context["set"],
