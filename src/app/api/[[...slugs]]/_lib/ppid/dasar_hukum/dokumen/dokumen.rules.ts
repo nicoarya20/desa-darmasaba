@@ -22,8 +22,3 @@ export function validateJudulDokumen(raw: string): JudulDokumenResult {
   if (/[<>]/.test(judul)) return { ok: false, message: PESAN_JUDUL_DOKUMEN.bukanTeksPolos };
   return { ok: true, judul };
 }
-
-/** Judul awal dari nama berkas: ekstensi `.pdf` dibuang, selebihnya apa adanya (dipangkas ke batas panjang). */
-export function judulDariNamaFile(namaFile: string): string {
-  return namaFile.replace(/\.pdf$/i, "").trim().slice(0, JUDUL_DOKUMEN_MAX);
-}
