@@ -8,6 +8,8 @@
   background: var(--tile);
 }
 
+/* Hover judul baris & "Semua pengumuman": sapuan warna dari _com/link-reveal (bukan garis bawah). */
+
 .head {
   display: flex;
   align-items: baseline;
@@ -89,14 +91,6 @@
 @keyframes pulse {
   50% {
     opacity: 0.55;
-  }
-}
-
-@media (hover: hover) {
-  .row:hover .rowTitle,
-  .textLink:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 }
 

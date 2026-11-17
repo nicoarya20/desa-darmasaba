@@ -1,6 +1,7 @@
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { formatTanggalKabar } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconPlayerPlayFilled, IconShieldCheck } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import type { PencegahanItem } from './pencegahan.logic';
@@ -14,7 +15,7 @@ export function PencegahanCards({ items }: { items: readonly PencegahanItem[] })
     <ul className={`${kabar.rail} ${kabar.railGrid}`} aria-label={T.cardsLabel}>
       {items.map((item) => (
         <li key={item.id}>
-          <Link href={item.href} className={kabar.card}>
+          <Link href={item.href} className={`${kabar.card} ${r.trigger}`}>
             <span className={kabar.cardPhoto}>
               {item.videoId ? (
                 <YoutubeThumb
@@ -40,7 +41,7 @@ export function PencegahanCards({ items }: { items: readonly PencegahanItem[] })
                 <time dateTime={new Date(item.createdAt).toISOString()}>{formatTanggalKabar(item.createdAt)}</time>
               </p>
               <h3 className={kabar.cardTitle}>
-                {item.title}
+                <span className={r.title}>{item.title}</span>
                 {item.videoId ? <span className={l.srOnly}> ({T.adaVideo})</span> : null}
               </h3>
             </span>

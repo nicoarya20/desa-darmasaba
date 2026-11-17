@@ -1,0 +1,118 @@
+/*
+ * Sapuan warna pengganti garis bawah hover (MIND/PLAN/link-hover-reveal.md).
+ * Warna teks menyapu kiri→kanan: gradasi 2 warna (target | warna diam) selebar 200%, digeser dari
+ * kanan ke kiri, dan hanya terlihat lewat bentuk huruf (background-clip: text + fill transparan).
+ * Warna diam = currentColor, jadi `color` milik komponen tetap jadi sumbernya (fill-nya saja yang transparan).
+ *
+ * - `.trigger` : elemen yang di-hover/difokus (kartu, baris, atau tautan itu sendiri).
+ * - `.title`   : span INLINE di dalam judul. Judul 2 baris disapu baris 1 lalu baris 2
+ *                (box-decoration-break: slice = potongan baris dianggap satu pita).
+ * - `.cta`     : label tautan aksi; wajib `data-text` = teks yang sama. Salinan tebal tak terlihat
+ *                (::after, visibility hidden → tidak dibaca pembaca layar) mencadangkan lebar versi
+ *                tebal, jadi chevron tidak bergeser saat label menebal.
+ * - `.chevron` : ikon chevron di samping `.cta`, geser 3px ke kanan.
+ * JANGAN dipakai untuk tautan di dalam teks kaya (`.content a`, Jenna): di sana garis bawah permanen (WCAG 1.4.1).
+ */
+.title,
+.cta {
+  --reveal-duration: 450ms;
+  --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  background-image: linear-gradient(to right, var(--reveal-to) 50%, currentColor 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  box-decoration-break: slice;
+  transition: background-position var(--reveal-duration) var(--reveal-ease);
+}
+
+/* Judul kartu/baris: warna diam ikut komponen → blue-button (colors.ts). */
+.title {
+  --reveal-to: #0a4e78;
+}
+
+/* Label aksi: diam brand (dari komponen) → #1C6EA4 (biru atas gradasi footer; lebih terang dari brand,
+   kontras ±5:1 di #f5f5f7) + tebal. */
+.cta {
+  --reveal-to: #1c6ea4;
+  display: inline-flex;
+  flex-direction: column;
+  transition:
+    background-position var(--reveal-duration) var(--reveal-ease),
+    font-weight var(--reveal-duration) var(--reveal-ease);
+}
+
+.cta::after {
+  content: attr(data-text);
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  font-weight: 700;
+  pointer-events: none;
+  user-select: none;
+}
+
+.chevron {
+  flex-shrink: 0;
+  transition: transform var(--reveal-duration, 450ms) var(--reveal-ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* Teks terseleksi: kembalikan fill supaya tidak tertutup sorotan seleksi. */
+.title::selection,
+.cta::selection {
+  -webkit-text-fill-color: currentColor;
+}
+
+.trigger:focus-visible .title,
+.trigger:focus-visible .cta {
+  background-position: 0 0;
+}
+
+.trigger:focus-visible .cta {
+  font-weight: 700;
+}
+
+.trigger:focus-visible .chevron {
+  transform: translateX(3px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .trigger:hover .title,
+  .trigger:hover .cta {
+    background-position: 0 0;
+  }
+
+  .trigger:hover .cta {
+    font-weight: 700;
+  }
+
+  .trigger:hover .chevron {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title,
+  .cta,
+  .chevron {
+    transition: none;
+  }
+}
+
+/* Mode kontras tinggi: tanpa gradasi; teks warna sistem + garis bawah saat hover/fokus. */
+@media (forced-colors: active) {
+  .title,
+  .cta {
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  .trigger:hover .title,
+  .trigger:hover .cta,
+  .trigger:focus-visible .title,
+  .trigger:focus-visible .cta {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}

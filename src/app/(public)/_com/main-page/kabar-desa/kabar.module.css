@@ -233,18 +233,11 @@
   }
 }
 
-/* ---------- Hover (hanya perangkat dengan pointer) ---------- */
+/* ---------- Hover (hanya perangkat dengan pointer); sapuan warna judul & tautan: _com/link-reveal ---------- */
 @media (hover: hover) {
   .featured:hover .photoImg,
   .card:hover .photoImg {
     transform: scale(1.03);
-  }
-
-  .featured:hover .featuredTitle,
-  .card:hover .cardTitle,
-  .allLink:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 }
 

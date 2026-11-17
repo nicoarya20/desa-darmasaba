@@ -1,6 +1,7 @@
 import { Image } from "@mantine/core";
 import { IconNews } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
+import r from "../../link-reveal/link-reveal.module.css";
 import { formatTanggalKabar, splitFeatured, type KabarItem } from "./kabar.logic";
 import { KABAR_BERITA_LIMIT } from "./kabar.meta";
 import s from "./kabar.module.css";
@@ -71,13 +72,15 @@ export function KabarBerita({
 
   return (
     <div className={s.berita}>
-      <Link href={featured.href} className={s.featured}>
+      <Link href={featured.href} className={`${s.featured} ${r.trigger}`}>
         <span className={s.featuredPhoto}>
           <Photo url={featured.imageUrl} />
         </span>
         <span className={s.featuredBody}>
           <Meta item={featured} />
-          <h3 className={s.featuredTitle}>{featured.title}</h3>
+          <h3 className={s.featuredTitle}>
+            <span className={r.title}>{featured.title}</span>
+          </h3>
           {featured.summary ? <span className={s.featuredSummary}>{featured.summary}</span> : null}
         </span>
       </Link>
@@ -86,13 +89,15 @@ export function KabarBerita({
         <ul className={railClass} aria-label={listLabel}>
           {rest.map((item) => (
             <li key={item.id}>
-              <Link href={item.href} className={s.card}>
+              <Link href={item.href} className={`${s.card} ${r.trigger}`}>
                 <span className={s.cardPhoto}>
                   <Photo url={item.imageUrl} />
                 </span>
                 <span className={s.cardBody}>
                   <Meta item={item} />
-                  <h3 className={s.cardTitle}>{item.title}</h3>
+                  <h3 className={s.cardTitle}>
+                    <span className={r.title}>{item.title}</span>
+                  </h3>
                 </span>
               </Link>
             </li>

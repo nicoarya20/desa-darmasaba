@@ -14,6 +14,5 @@ export const LAYANAN_ICONS: Readonly<Record<LayananDesa["id"], Icon>> = {
 /** Variabel warna brand section (judul, ikon, label aksi). */
 export const LAYANAN_BRAND_VARS = {
   "--brand": colors["blue-button"],
-  "--brand-hover": colors["blue-button-6"],
   "--brand-tint": colors["blue-button-1"],
 } as CSSProperties;

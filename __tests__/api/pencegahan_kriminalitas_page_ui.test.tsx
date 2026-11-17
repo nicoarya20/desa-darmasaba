@@ -14,6 +14,7 @@ import { PencegahanBody } from '@/app/(public)/(pages)/keamanan/pencegahan-krimi
 import { toPencegahanItem } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/pencegahan.logic';
 import s from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/pencegahan.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -46,9 +47,9 @@ describe('PencegahanBody', () => {
 
   it('sorotan tidak muncul lagi sebagai kartu; kartu memakai kelas Kabar', () => {
     const html = body(ready([api(1), api(2), api(3)]));
-    expect(html).not.toContain(`<h3 class="${kabar.cardTitle}">Program 1`);
-    expect(html).toContain(`<h3 class="${kabar.cardTitle}">Program 2`);
-    expect(html).toContain(`<h3 class="${kabar.cardTitle}">Program 3`);
+    expect(html).not.toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 1`);
+    expect(html).toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 2`);
+    expect(html).toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 3`);
     expect(html).toContain('>Program lainnya</h2>');
     expect(html).toContain(`class="${kabar.rail} ${kabar.railGrid}"`);
   });
@@ -66,14 +67,14 @@ describe('PencegahanBody', () => {
     const searched = body(ready([api(1), api(2)]), 'maling');
     expect(searched).not.toContain(s.sorotan);
     expect(searched).toContain('>Hasil pencarian</h2>');
-    expect(searched).toContain(`<h3 class="${kabar.cardTitle}">Program 1`);
+    expect(searched).toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 1`);
 
     const list = Array.from({ length: 9 }, (_, i) => api(i + 1));
     const page2 = body(ready(list), '', 2);
     expect(page2).not.toContain(s.sorotan);
-    expect(page2).toContain(`<h3 class="${kabar.cardTitle}">Program 8`);
-    expect(page2).toContain(`<h3 class="${kabar.cardTitle}">Program 9`);
-    expect(page2).not.toContain(`<h3 class="${kabar.cardTitle}">Program 7`);
+    expect(page2).toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 8`);
+    expect(page2).toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 9`);
+    expect(page2).not.toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 7`);
     expect(page2).toContain('aria-label="Halaman daftar program pencegahan kriminalitas"');
   });
 
