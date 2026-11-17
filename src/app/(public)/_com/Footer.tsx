@@ -9,6 +9,7 @@ import { LAYANAN_DESA } from '@/con/layanan-desa';
 import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInformasi';
 import { toast } from 'react-toastify';
 import { FooterKontakBupati } from './FooterKontakBupati';
+import { FooterKontakDesa } from './FooterKontakDesa';
 
 // Footer tampil di semua halaman publik: modal (editor tiptap + dropzone) dimuat
 // terpisah & baru dipasang saat pertama dibuka, supaya tidak membebani bundle
@@ -238,6 +239,7 @@ function Footer() {
                       </ActionIcon>
                     ))}
                   </Flex>
+                  <FooterKontakDesa />
                 </Stack>
 
                 <Stack gap="xs">
@@ -258,7 +260,7 @@ function Footer() {
 
               <Divider color="white" opacity={0.2} />
 
-              <Text fz="xs" c="#F3F2EC">© 2025 Desa Darmasaba. Hak cipta dilindungi.</Text>
+              <Text fz="xs" c="#F3F2EC">© {new Date().getFullYear()} Desa Darmasaba. Hak cipta dilindungi.</Text>
             </Stack>
           </Container>
         </Box>

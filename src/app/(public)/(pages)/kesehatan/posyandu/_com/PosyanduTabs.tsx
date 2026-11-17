@@ -1,5 +1,5 @@
 import { ScrollArea, SegmentedControl } from "@mantine/core";
-import { POSYANDU_TABS, type PosyanduTab } from "./posyandu.meta";
+import { POSYANDU_TABS_TAMPIL, type PosyanduTab } from "./posyandu.meta";
 import s from "./posyandu.module.css";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
 
@@ -16,7 +16,7 @@ const LABELS: Record<PosyanduTab, React.ReactNode> = {
   "ibu-hamil": T.tabIbuHamil,
 };
 
-const DATA = POSYANDU_TABS.map((value) => ({ value, label: LABELS[value] }));
+const DATA = POSYANDU_TABS_TAMPIL.map((value) => ({ value, label: LABELS[value] }));
 
 /** Pemilih bagian halaman (gaya pemilih tahun APBDes), di tengah di bawah judul. */
 export function PosyanduTabs({ value, onChange }: { value: PosyanduTab; onChange: (tab: PosyanduTab) => void }) {

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { BalitaPanel } from "./BalitaPanel";
 import { IbuHamilPanel } from "./IbuHamilPanel";
 import { parseTab, posyanduTabHref } from "./posyandu.logic";
-import { POSYANDU_BRAND_VARS, type PosyanduTab } from "./posyandu.meta";
+import { POSYANDU_BRAND_VARS, POSYANDU_TABS_TAMPIL, RINGKASAN_STATISTIK_TAMPIL, type PosyanduTab } from "./posyandu.meta";
 import s from "./posyandu.module.css";
 import { loadPosyanduList, loadProfilPosyandu, loadStats } from "./posyandu.source";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
@@ -23,6 +23,7 @@ const loadDesaStats = () => loadStats();
 /**
  * Halaman publik Posyandu: Ringkasan (deskripsi umum, kartu klaster, ubin APBDes), Data Posyandu (direktori baris), Balita & Ibu Hamil
  * (angka gabungan per banjar, tanpa nama). Tab di `?tab=`; data tiap tab dimuat saat tab pertama dibuka.
+ * Tab/kartu statistik bisa disembunyikan lewat `POSYANDU_TABS_TERSEMBUNYI` & `RINGKASAN_STATISTIK_TAMPIL` (posyandu.meta.ts).
  */
 export function PosyanduPage() {
   const router = useRouter();
@@ -31,7 +32,9 @@ export function PosyanduPage() {
   // Tab bisa berubah dari luar (tombol kembali peramban): catat sebagai sudah dibuka saat render.
   if (!visited.has(tab)) setVisited(new Set(visited).add(tab));
 
-  const desa = useLazyLoad(loadDesaStats, true, "statistik kesehatan desa");
+  // Statistik gabungan hanya dimuat bila ada bagian yang menampilkannya (kartu Ringkasan / tab Balita / Ibu Hamil).
+  const butuhStatistik = RINGKASAN_STATISTIK_TAMPIL || POSYANDU_TABS_TAMPIL.some((t) => t === "balita" || t === "ibu-hamil");
+  const desa = useLazyLoad(loadDesaStats, butuhStatistik, "statistik kesehatan desa");
   const profil = useLazyLoad(loadProfilPosyandu, visited.has("ringkasan"), "profil posyandu");
   const list = useLazyLoad(loadPosyanduList, visited.has("posyandu"), "daftar posyandu");
   const banjar = useLazyLoad(loadBanjarStats, visited.has("balita") || visited.has("ibu-hamil"), "statistik per banjar");
@@ -55,7 +58,7 @@ export function PosyanduPage() {
           {tab === "ringkasan" ? (
             <>
               <ProfilPosyanduPanel state={profil.state} onRetry={profil.retry} />
-              <RingkasanPanel state={desa.state} onRetry={desa.retry} />
+              {RINGKASAN_STATISTIK_TAMPIL ? <RingkasanPanel state={desa.state} onRetry={desa.retry} /> : null}
             </>
           ) : null}
           {tab === "posyandu" ? <PosyanduDirectory state={list.state} onRetry={list.retry} /> : null}

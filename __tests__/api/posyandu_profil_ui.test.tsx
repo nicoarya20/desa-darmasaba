@@ -95,11 +95,10 @@ describe('Profil & klaster (tab Ringkasan)', () => {
     expect(out).toContain(T.retry);
   });
 
-  it('halaman: tab Ringkasan memuat profil lalu statistik (keduanya memuat)', () => {
+  it('halaman: tab Ringkasan memuat profil; kartu statistik disembunyikan (RINGKASAN_STATISTIK_TAMPIL false)', () => {
     const page = render(<PosyanduPage />);
-    const iProfil = page.indexOf(`aria-label="${T.profilLoading}"`);
-    expect(iProfil).toBeGreaterThan(-1);
-    expect(page.indexOf(`aria-label="${T.statsLoading}"`)).toBeGreaterThan(iProfil);
+    expect(page.indexOf(`aria-label="${T.profilLoading}"`)).toBeGreaterThan(-1);
+    expect(page).not.toContain(`aria-label="${T.statsLoading}"`);
   });
 });
 

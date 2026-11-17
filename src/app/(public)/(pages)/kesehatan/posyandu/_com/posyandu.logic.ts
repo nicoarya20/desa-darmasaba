@@ -1,4 +1,4 @@
-import { DEFAULT_TAB, POSYANDU_HREF, POSYANDU_TABS, PRIVASI_AMBANG, type PosyanduTab } from "./posyandu.meta";
+import { DEFAULT_TAB, POSYANDU_HREF, POSYANDU_TABS_TAMPIL, PRIVASI_AMBANG, type PosyanduTab } from "./posyandu.meta";
 
 /** Bentuk respons `GET /api/kesehatan/ringkasankesehatan/stats` yang dipakai halaman publik. */
 export type PosyanduStats = {
@@ -81,9 +81,12 @@ export function hasUnassigned(desa: PosyanduStats, rows: readonly BanjarStatsRow
   return rows.every((row) => row.stats) && desa[key] > sum;
 }
 
-/** Tab dari `?tab=`; nilai asing → Ringkasan. */
-export function parseTab(value: string | null | undefined): PosyanduTab {
-  return (POSYANDU_TABS as readonly string[]).includes(value ?? "") ? (value as PosyanduTab) : DEFAULT_TAB;
+/** Tab dari `?tab=`; nilai asing atau tab yang sedang disembunyikan → Ringkasan. */
+export function parseTab(
+  value: string | null | undefined,
+  tampil: readonly PosyanduTab[] = POSYANDU_TABS_TAMPIL,
+): PosyanduTab {
+  return (tampil as readonly string[]).includes(value ?? "") ? (value as PosyanduTab) : DEFAULT_TAB;
 }
 
 /** URL halaman pada tab tertentu (Ringkasan = URL polos). */
