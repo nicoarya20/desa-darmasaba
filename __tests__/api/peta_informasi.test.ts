@@ -149,7 +149,7 @@ describe('route & pintu masuk Peta Informasi', () => {
     expect(card).toMatch(/<Title[^>]*order=\{2\}/);
     expect(card).toMatch(/component="ul"[\s\S]*component="li"/);
     expect(card).toMatch(/import \{ Link \} from 'next-view-transitions'/);
-    expect(card).toMatch(/component=\{Link\} href=\{page\.href\}/);
+    expect(card).toMatch(/<Anchor\s+component=\{Link\}\s+href=\{page\.href\}/);
   });
 
   it('search-extra-pages memuat entri Peta Informasi yang bisa dicari', () => {
@@ -168,8 +168,10 @@ describe('route & pintu masuk Peta Informasi', () => {
   it('dropdown pencarian: keadaan "Tidak ada hasil" punya tautan "Buka Peta Informasi"', () => {
     const src = read(GLOBAL_SEARCH);
     const empty = src.slice(src.indexOf('Tidak ada hasil'));
+    // Label dibungkus span sapuan warna (`r.cta`, pengganti garis bawah hover); teksnya konstanta di file yang sama.
     expect(empty.slice(0, empty.indexOf('</Stack>'))).toMatch(
-      /<Anchor href=\{PETA_INFORMASI_HREF\}[^\n]*handleSelectMenu\(e, PETA_INFORMASI_HREF\)\}>\s*Buka Peta Informasi\s*<\/Anchor>/,
+      /<Anchor\s+href=\{PETA_INFORMASI_HREF\}[\s\S]*?underline="never"[\s\S]*?onClick=\{\(e\) => handleSelectMenu\(e, PETA_INFORMASI_HREF\)\}\s*>\s*<span className=\{r\.cta\} data-text=\{PETA_INFORMASI_LABEL\}>\s*\{PETA_INFORMASI_LABEL\}\s*<\/span>\s*<\/Anchor>/,
     );
+    expect(src).toContain("const PETA_INFORMASI_LABEL = 'Buka Peta Informasi';");
   });
 });

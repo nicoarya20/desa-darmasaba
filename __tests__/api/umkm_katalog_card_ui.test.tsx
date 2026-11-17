@@ -19,6 +19,8 @@ import type { KatalogProduk, KatalogToko } from '@/app/(public)/(pages)/ekonomi/
 import g from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-grid.module.css';
 import p from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/produk-card.module.css';
 import m from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/katalog-media.module.css';
+import tc from '@/app/(public)/(pages)/ekonomi/umkm/_com/katalog/toko-card.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -57,7 +59,8 @@ describe('ProdukCard', () => {
     const html = render(<ProdukCard produk={produk()} />);
     expect(count(html, '<a ')).toBe(1);
     expect(html).toContain('href="/ekonomi/umkm/produk/p1"');
-    expect(html).toMatch(/<h3 [^>]*>Ayam Kampung Organik<\/h3>/);
+    expect(html).toContain(`class="${p.card} ${r.trigger}"`);
+    expect(html).toContain(`<h3 class="${p.name}"><span class="${r.title}">Ayam Kampung Organik</span></h3>`);
     expect(html).not.toContain('<h2');
     expect(text(html)).toBe(`Rp80.000 / ekor Ayam Kampung Organik Peternakan Sari ${T.ratingKosong}`);
     expect(html).toContain('loading="lazy"');
@@ -110,7 +113,8 @@ describe('TokoCard', () => {
     const html = render(<TokoCard toko={toko()} jumlahProduk={3} />);
     expect(count(html, '<a ')).toBe(1);
     expect(html).toContain('href="/ekonomi/umkm/u1"');
-    expect(html).toMatch(/<h3 [^>]*>Peternakan Sari<\/h3>/);
+    expect(html).toContain(`class="${tc.card} ${r.trigger}"`);
+    expect(html).toContain(`<h3 class="${tc.name}"><span class="${r.title}">Peternakan Sari</span></h3>`);
     expect(text(html)).toBe(`Peternakan Peternakan Sari Made Sari Br. Tengah ${T.jumlahProduk(3)}`);
   });
 

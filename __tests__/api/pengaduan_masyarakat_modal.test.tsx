@@ -24,6 +24,8 @@ vi.mock('@/app/admin/(dashboard)/_com/createEditor', () => ({
 }));
 
 import PengaduanMasyarakatModal from '@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal';
+import lo from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/layanan-online.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 // env="test" mematikan portal & transisi Mantine → isi Modal ikut ter-render di SSR.
 const render = (node: React.ReactElement) =>
@@ -83,9 +85,12 @@ describe('hub layanan online desa — ubin Pengaduan Masyarakat', () => {
 
   it('memakai PengaduanMasyarakatModal yang sama, tertutup sampai ubin diklik', async () => {
     const html = await renderHub('');
-    expect(html).toContain('>Pengaduan Masyarakat</h2>');
+    // Ubin beraksi tunggal (stretch): ubin = pemicu sapuan, judul dibungkus span .title (_com/link-reveal).
+    expect(html).toContain(`<h2 class="${lo.title}"><span class="${r.title}">Pengaduan Masyarakat</span></h2>`);
     expect(html).toContain('Sampaikan keluhan dan aspirasi Anda');
-    expect(html).toMatch(/<button type="button"[^>]*>Sampaikan pengaduan/);
+    expect(html).toMatch(
+      new RegExp(`<button type="button" class="${lo.action} ${lo.stretch} ${r.trigger}"><span class="${r.cta}" data-text="Sampaikan pengaduan">Sampaikan pengaduan</span>`),
+    );
     expect(html).toContain('data-testid="pengaduan-modal" data-opened="false"');
   });
 

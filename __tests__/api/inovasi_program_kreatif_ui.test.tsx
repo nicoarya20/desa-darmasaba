@@ -14,6 +14,7 @@ import ds from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/detail/
 import { ProgramKreatifBody } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/ProgramKreatifPage';
 import { toProgramKreatifItem } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
 import s from '@/app/(public)/_com/program-tiles/program-tiles.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
@@ -36,11 +37,11 @@ const body = (state: Parameters<typeof ProgramKreatifBody>[0]['state'], search =
 describe('ProgramKreatifBody', () => {
   it('ubin = tautan detail: ikon garis, judul h3, deskripsi singkat, "Selengkapnya"', () => {
     const html = body(ready([api(1), api(2)]));
-    expect(html).toContain(`<a href="/inovasi/program-kreatif-desa/pk1" class="${s.tile}">`);
+    expect(html).toContain(`<a href="/inovasi/program-kreatif-desa/pk1" class="${s.tile} ${r.trigger}">`);
     expect(html).toContain(`<span class="${s.icon}" aria-hidden="true"><svg`);
-    expect(html).toContain(`<h3 class="${s.title}">Program 1</h3>`);
+    expect(html).toContain(`<h3 class="${s.title}"><span class="${r.title}">Program 1</span></h3>`);
     expect(html).toContain(`<span class="${s.summary}">Ringkasan program 1</span>`);
-    expect(html).toContain('Selengkapnya');
+    expect(html).toContain(`<span class="${r.cta}" data-text="Selengkapnya">Selengkapnya</span>`);
     expect(html).not.toContain('<img');
   });
 
@@ -54,8 +55,8 @@ describe('ProgramKreatifBody', () => {
     const list = Array.from({ length: 10 }, (_, i) => api(i + 1));
     expect(body(ready(list))).toContain('aria-label="Halaman daftar program kreatif"');
     const page2 = body(ready(list), '', 2);
-    expect(page2).toContain(`<h3 class="${s.title}">Program 10</h3>`);
-    expect(page2).not.toContain(`<h3 class="${s.title}">Program 9</h3>`);
+    expect(page2).toContain(`<h3 class="${s.title}"><span class="${r.title}">Program 10</span></h3>`);
+    expect(page2).not.toContain(`<h3 class="${s.title}"><span class="${r.title}">Program 9</span></h3>`);
     expect(body(ready([api(1)]))).not.toContain('Halaman daftar program kreatif');
   });
 
