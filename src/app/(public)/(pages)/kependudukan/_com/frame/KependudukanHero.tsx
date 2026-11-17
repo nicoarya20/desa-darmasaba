@@ -27,8 +27,8 @@ function CardValue({ card }: { card: HeroCard }) {
  * Hero `#ringkasan`: empat kartu `#f5f5f7` (total penduduk lebih lebar). Galat cukup ditulis di kartu; tombol
  * "Coba lagi" ada di section datanya (Per Banjar / Dinamika).
  */
-export function KependudukanHero({ banjar, dinamika, now = new Date() }: { banjar: DatasetSlice; dinamika: DatasetSlice; now?: Date }) {
-  const cards = heroCards(banjar, dinamika, now);
+export function KependudukanHero({ banjar, dinamika }: { banjar: DatasetSlice; dinamika: DatasetSlice }) {
+  const cards = heroCards(banjar, dinamika);
   const busy = cards.some((c) => c.status === 'loading');
   return (
     <section id={RINGKASAN_ANCHOR} aria-labelledby={TITLE_ID} aria-busy={busy || undefined}>
