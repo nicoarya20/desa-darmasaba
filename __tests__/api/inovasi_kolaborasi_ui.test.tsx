@@ -17,6 +17,7 @@ import k from '@/app/(public)/(pages)/inovasi/kolaborasi-inovasi/_com/kolaborasi
 import m from '@/app/(public)/(pages)/inovasi/kolaborasi-inovasi/_com/mitra.module.css';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -85,7 +86,8 @@ describe('KolaborasiRow', () => {
   it('deskripsi > 600 karakter → terpotong + tombol "Baca selengkapnya" yang mengendalikan deskripsi', () => {
     const panjang = `<p>${'Kalimat panjang tentang kolaborasi desa. '.repeat(20)}</p>`;
     const html = render(<KolaborasiRow item={entri('a', 2025, panjang)} />);
-    expect(html).toContain(`class="${k.prose} ${k.clamped}"`);
+    // Wadah rich text membawa penetral tema rt.root (dark theme) di samping kelas tata letak.
+    expect(html).toContain(`class="${k.prose} ${k.clamped} ${rt.root}"`);
     expect(html).toContain('aria-expanded="false"');
     expect(html).toContain('Baca selengkapnya');
     const controls = /aria-controls="([^"]+)"/.exec(html)?.[1];

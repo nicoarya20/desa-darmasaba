@@ -1,4 +1,3 @@
-import colors from '@/con/colors';
 import { Button, Textarea, TextInput } from '@mantine/core';
 import type { FormEvent } from 'react';
 import { PERMOHONAN_FIELD } from '../../../ppid/_com/permohonan.meta';
@@ -62,7 +61,7 @@ export function IdeFormView({ idPrefix, form, errors, shown, sending, failed, on
           </p>
         ) : null}
         <InovasiFormActions>
-          <Button id={`${idPrefix}-submit`} type="submit" size="md" radius="md" color={colors['blue-button']} loading={sending}>
+          <Button id={`${idPrefix}-submit`} type="submit" size="md" radius="md" color="var(--c-brand-fill)" loading={sending}>
             {T.submit}
           </Button>
         </InovasiFormActions>

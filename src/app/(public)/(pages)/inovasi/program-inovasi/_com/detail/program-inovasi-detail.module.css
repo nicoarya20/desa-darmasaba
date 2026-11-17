@@ -12,8 +12,8 @@
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  /* Putih: kebanyakan logo program berlatar putih. */
-  background: #fff;
+  /* Putih: kebanyakan logo program berlatar putih. Gelap: pelat logo #d9e1ea (sama dengan overlay beranda). */
+  background: light-dark(#fff, #d9e1ea);
 }
 
 .logoImg {

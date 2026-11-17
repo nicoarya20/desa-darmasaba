@@ -5,7 +5,7 @@
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
  */
 .list {
-  --rule: #d2d2d7;
+  --rule: var(--c-line-strong);
   display: flex;
   flex-direction: column;
 }

@@ -2,7 +2,7 @@
 import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -16,7 +16,7 @@ export function ProgramKreatifDetail({ id }: { id: string }) {
   const state = useProgramKreatifDetail(id);
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         <Link href={programKreatifListHref()} className={`${back.back} ${r.trigger}`}>
           <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
@@ -57,7 +57,7 @@ export function ProgramKreatifDetailBody({ data }: { data: ProgramKreatifApiItem
       </header>
 
       {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
-      {data.deskripsi ? <div className={d.content} dangerouslySetInnerHTML={{ __html: data.deskripsi }} /> : null}
+      {data.deskripsi ? <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.deskripsi }} /> : null}
     </>
   );
 }
