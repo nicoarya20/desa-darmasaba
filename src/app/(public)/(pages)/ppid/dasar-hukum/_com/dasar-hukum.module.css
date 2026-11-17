@@ -78,13 +78,58 @@
   }
 }
 
-/* Tautan "Unduh PDF" di bawah daftar: sejajar kolom isi (kolom 2 grid .section), satu kolom penuh di ponsel. */
-.unduh {
-  grid-column: 2;
+/* Dokumen Dasar Hukum (PDF): satu baris per dokumen, judul di kiri dan tautan "Lihat"/"Unduh" di kanan; di ponsel
+   tautan turun ke bawah judul. Garis, warna, dan pewarisan variabel sama dengan .list di atas. */
+.dokumen {
+  max-width: 43rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dokumenItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 18px 0;
+  border-top: 1px solid var(--ppid-rule);
+}
+
+.dokumenItem:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.dokumenItem:last-child {
+  padding-bottom: 0;
+}
+
+.dokumenJudul {
+  flex: 1 1 20rem;
+  min-width: 0;
+  color: var(--ppid-text);
+  font-size: 19px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.dokumenAksi {
+  display: flex;
+  gap: 20px;
 }
 
 @media (max-width: 734px) {
-  .unduh {
-    grid-column: 1;
+  .dokumenItem {
+    padding: 16px 0;
+  }
+
+  .dokumenJudul {
+    font-size: 17px;
+    line-height: 24px;
   }
 }

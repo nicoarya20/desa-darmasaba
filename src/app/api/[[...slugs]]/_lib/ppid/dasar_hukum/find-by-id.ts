@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import { PPID_FILE_SELECT } from "../ppid-file";
 
 export default async function dasarHukumPPIDFindById(context: Context) {
     try {
@@ -8,9 +7,7 @@ export default async function dasarHukumPPIDFindById(context: Context) {
 
         // If no ID provided, get the first profile
         if (!id) {
-            const data = await prisma.dasarHukumPPID.findFirst({
-                include: { file: { select: PPID_FILE_SELECT } },
-            });
+            const data = await prisma.dasarHukumPPID.findFirst();
             return {
                 success: true,
                 data,
@@ -19,7 +16,6 @@ export default async function dasarHukumPPIDFindById(context: Context) {
 
         const data = await prisma.dasarHukumPPID.findUniqueOrThrow({
             where: { id },
-            include: { file: { select: PPID_FILE_SELECT } },
         });
 
         return {

@@ -1,6 +1,7 @@
 // @vitest-environment node
-// Lomba 2.5: state admin PPID (Valtio) untuk berkas PDF dan profil lembaga. `fileId` hanya dikirim bila ada PDF
-// baru, data berkas dari API ikut tersimpan di state, dan simpan profil lembaga melapor sukses/gagal dengan benar.
+// Lomba 2.5: state admin PPID (Valtio) untuk berkas PDF Daftar Informasi dan profil lembaga (+ regresi simpan teks
+// Dasar Hukum). `fileId` hanya dikirim bila ada PDF baru, data berkas dari API ikut tersimpan di state, dan simpan
+// profil lembaga melapor sukses/gagal dengan benar.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { toast, apiPost, apiGet } = vi.hoisted(() => ({
@@ -29,7 +30,7 @@ const jsonResponse = (body: unknown, status = 200) => ({ ok: status < 400, statu
 
 // test-only: berkas dan baris fiktif.
 const FILE = { id: 'f1', link: '/api/fileStorage/findUnique/a.pdf', realName: 'a.pdf' };
-const HUKUM = { id: '1', judul: 'Judul dasar hukum', content: 'Isi dasar hukum', fileId: 'f-lama', file: { ...FILE, id: 'f-lama' } };
+const HUKUM = { id: '1', judul: 'Judul dasar hukum', content: 'Isi dasar hukum' };
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -37,27 +38,21 @@ beforeEach(() => {
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
 });
 
-describe('state dasar hukum: save', () => {
-  it('tanpa newFileId: payload hanya id, judul, content (berkas lama tidak dikirim ulang)', async () => {
+describe('state dasar hukum: save (teks saja)', () => {
+  it('mengirim id, judul, content lalu memuat ulang data', async () => {
     apiPost.dasarHukumUpdate.mockResolvedValue({ status: 200 });
     apiGet.dasarHukumFind.mockResolvedValue({ status: 200, data: { data: HUKUM } });
-    expect(await stateDasarHukum.update.save(HUKUM)).toBe(true);
+    await stateDasarHukum.update.save(HUKUM);
     expect(apiPost.dasarHukumUpdate).toHaveBeenCalledWith({ id: '1', judul: HUKUM.judul, content: HUKUM.content });
+    expect(stateDasarHukum.findById.data).toEqual(HUKUM);
+    expect(toast.success).toHaveBeenCalledOnce();
   });
 
-  it('dengan newFileId: fileId ikut dikirim dan data dimuat ulang', async () => {
-    apiPost.dasarHukumUpdate.mockResolvedValue({ status: 200 });
-    apiGet.dasarHukumFind.mockResolvedValue({ status: 200, data: { data: { ...HUKUM, fileId: FILE.id, file: FILE } } });
-    expect(await stateDasarHukum.update.save(HUKUM, FILE.id)).toBe(true);
-    expect(apiPost.dasarHukumUpdate).toHaveBeenCalledWith({ id: '1', judul: HUKUM.judul, content: HUKUM.content, fileId: FILE.id });
-    expect(stateDasarHukum.findById.data?.file).toEqual(FILE);
-  });
-
-  it('form tidak valid atau server menolak: mengembalikan false dan memberi tahu pengguna', async () => {
-    expect(await stateDasarHukum.update.save({ ...HUKUM, judul: 'ab' })).toBe(false);
+  it('form tidak valid atau server menolak: tidak menyimpan dan memberi tahu pengguna', async () => {
+    await stateDasarHukum.update.save({ ...HUKUM, judul: 'ab' });
     expect(apiPost.dasarHukumUpdate).not.toHaveBeenCalled();
     apiPost.dasarHukumUpdate.mockResolvedValue({ status: 400 });
-    expect(await stateDasarHukum.update.save(HUKUM, 'tidak-ada')).toBe(false);
+    await stateDasarHukum.update.save(HUKUM);
     expect(toast.error).toHaveBeenCalledTimes(2);
   });
 });

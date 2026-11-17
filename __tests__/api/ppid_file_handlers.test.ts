@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Lomba 2.5: berkas PDF di Dasar Hukum PPID dan Daftar Informasi Publik. Handler diuji lewat modul Elysia dengan
+// Lomba 2.5: berkas PDF di Daftar Informasi Publik (+ regresi teks Dasar Hukum PPID). Handler diuji lewat modul Elysia dengan
 // prisma & penghapus berkas di-mock: `fileId` valid diterima, yang tidak ada di FileStorage ditolak (400), berkas
 // lama dihapus SETELAH relasi dipindah, dan respons membawa `file` (id, link, realName).
 import Elysia from 'elysia';
@@ -42,29 +42,8 @@ beforeEach(() => {
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
 });
 
-describe('POST /dasarhukumppid/update', () => {
-  it('menyimpan fileId yang ada di FileStorage', async () => {
-    fileStorage.findUnique.mockResolvedValue({ id: FILE.id });
-    dasarHukum.findUnique.mockResolvedValue({ fileId: null });
-    const res = await send('POST', '/dasarhukumppid/update', { ...FORM_HUKUM, fileId: FILE.id });
-    expect(res.status).toBe(200);
-    expect(dasarHukum.update).toHaveBeenCalledWith({
-      where: { id: '1' },
-      data: { judul: FORM_HUKUM.judul, content: FORM_HUKUM.content, fileId: FILE.id },
-    });
-    expect(removeStoredFile).not.toHaveBeenCalled();
-  });
-
-  it('menolak fileId yang tidak ada di FileStorage dan tidak menulis apa pun', async () => {
-    fileStorage.findUnique.mockResolvedValue(null);
-    const res = await send('POST', '/dasarhukumppid/update', { ...FORM_HUKUM, fileId: 'tidak-ada' });
-    expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({ success: false, message: PESAN_FILE_PPID_TIDAK_ADA });
-    expect(dasarHukum.update).not.toHaveBeenCalled();
-    expect(removeStoredFile).not.toHaveBeenCalled();
-  });
-
-  it('tanpa fileId: teks saja yang berubah, berkas lama dibiarkan', async () => {
+describe('Dasar Hukum PPID (teks saja; PDF-nya kini di tabel dokumen)', () => {
+  it('update hanya menulis judul & content, tanpa berkas', async () => {
     const res = await send('POST', '/dasarhukumppid/update', FORM_HUKUM);
     expect(res.status).toBe(200);
     expect(dasarHukum.update).toHaveBeenCalledWith({
@@ -75,41 +54,11 @@ describe('POST /dasarhukumppid/update', () => {
     expect(removeStoredFile).not.toHaveBeenCalled();
   });
 
-  it('mengganti berkas: berkas lama dihapus setelah relasi dipindah', async () => {
-    fileStorage.findUnique.mockResolvedValue({ id: FILE.id });
-    dasarHukum.findUnique.mockResolvedValue({ fileId: 'file-lama' });
-    await send('POST', '/dasarhukumppid/update', { ...FORM_HUKUM, fileId: FILE.id });
-    expect(removeStoredFile).toHaveBeenCalledWith({ id: 'file-lama' }, 'DasarHukumPPID');
-    expect(orderOf(removeStoredFile)).toBeGreaterThan(orderOf(dasarHukum.update));
-  });
-
-  it('menyimpan ulang dengan berkas yang sama tidak menghapus apa pun', async () => {
-    fileStorage.findUnique.mockResolvedValue({ id: FILE.id });
-    dasarHukum.findUnique.mockResolvedValue({ fileId: FILE.id });
-    await send('POST', '/dasarhukumppid/update', { ...FORM_HUKUM, fileId: FILE.id });
-    expect(removeStoredFile).not.toHaveBeenCalled();
-  });
-
-  it('menolak fileId bukan string (kontrak body)', async () => {
-    const res = await send('POST', '/dasarhukumppid/update', { ...FORM_HUKUM, fileId: 123 });
-    expect(res.status).toBe(422);
-    expect(dasarHukum.update).not.toHaveBeenCalled();
-  });
-});
-
-describe('GET /dasarhukumppid/find-by-id', () => {
-  it('menyertakan file (id, link, realName) bila ada', async () => {
-    dasarHukum.findFirst.mockResolvedValue({ ...FORM_HUKUM, fileId: FILE.id, file: FILE });
-    const res = await send('GET', '/dasarhukumppid/find-by-id');
-    const json = await res.json();
-    expect(json.data.file).toEqual(FILE);
-    expect(dasarHukum.findFirst).toHaveBeenCalledWith({ include: { file: { select: PPID_FILE_SELECT } } });
-  });
-
-  it('data lama tanpa berkas: file null, teks tetap ada', async () => {
-    dasarHukum.findFirst.mockResolvedValue({ ...FORM_HUKUM, fileId: null, file: null });
+  it('find-by-id mengembalikan baris teks apa adanya (tanpa relasi file)', async () => {
+    dasarHukum.findFirst.mockResolvedValue(FORM_HUKUM);
     const json = await (await send('GET', '/dasarhukumppid/find-by-id')).json();
-    expect(json.data).toMatchObject({ judul: FORM_HUKUM.judul, file: null });
+    expect(json).toEqual({ success: true, data: FORM_HUKUM });
+    expect(dasarHukum.findFirst).toHaveBeenCalledWith();
   });
 });
 

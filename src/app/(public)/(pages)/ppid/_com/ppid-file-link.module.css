@@ -1,4 +1,4 @@
-/* Tautan "Unduh PDF" berkas PPID (Dasar Hukum, Daftar Informasi Publik). Warna brand dari `--brand` milik PpidPage;
+/* Tautan berkas PPID ("Unduh PDF" Daftar Informasi Publik; "Lihat"/"Unduh" dokumen Dasar Hukum). Warna brand dari `--brand` milik PpidPage;
    hover memakai sapuan warna link-reveal (.trigger + .cta), bukan garis bawah. */
 .link {
   display: inline-flex;

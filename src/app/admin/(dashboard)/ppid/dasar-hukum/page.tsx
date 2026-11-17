@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateDasarHukumPPID from '../../_state/ppid/dasar_hukum/dasarHukum';
 import DOMPurify from 'dompurify';
+import { DokumenDasarHukumPreview } from './_com/DokumenDasarHukumPreview';
 
 function Page() {
   const router = useRouter();
@@ -88,14 +89,7 @@ function Page() {
               }}
             />
 
-            {listDasarHukum.findById.data.file && (
-              <Text fz="sm" mt="lg">
-                Berkas PDF:{' '}
-                <a href={listDasarHukum.findById.data.file.link} target="_blank" rel="noreferrer">
-                  {listDasarHukum.findById.data.file.realName}
-                </a>
-              </Text>
-            )}
+            <DokumenDasarHukumPreview />
           </Box>
         </Paper>
       </Stack>

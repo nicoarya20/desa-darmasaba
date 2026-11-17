@@ -2,7 +2,7 @@ import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconDownload } from '@tabler/icons-react';
 import s from './ppid-file-link.module.css';
 
-/** Berkas PPID dari API (`file` pada Dasar Hukum / Daftar Informasi Publik). */
+/** Berkas PPID dari API (`file` pada Daftar Informasi Publik dan dokumen Dasar Hukum). */
 export type PpidFile = { link: string; realName: string };
 
 /** Teks tautan unduh berkas PPID. */
