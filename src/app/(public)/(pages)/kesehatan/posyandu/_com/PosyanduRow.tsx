@@ -1,3 +1,4 @@
+import reveal from "@/app/(public)/_com/link-reveal/link-reveal.module.css";
 import { jadwalToText } from "@/lib/jadwal-pelayanan";
 import { Image } from "@mantine/core";
 import { IconCalendarTime, IconChevronRight, IconHeartHandshake, IconMapPin, IconPhone } from "@tabler/icons-react";
@@ -23,8 +24,9 @@ export function PosyanduRow({ item }: { item: PosyanduItem }) {
       <Thumb link={item.image?.link} />
       <div className={r.main}>
         <p className={r.kicker}>{item.banjar?.name ? banjarLabel(item.banjar.name) : T.banjarKosong}</p>
-        <Link href={posyanduDetailHref(item.id)} className={r.name}>
-          {item.name}
+        {/* Tautan nama diregangkan (::after) menutup baris, jadi hover baris = hover tautan → sapuan warna nama. */}
+        <Link href={posyanduDetailHref(item.id)} className={`${r.name} ${reveal.trigger}`}>
+          <span className={reveal.title}>{item.name}</span>
         </Link>
         <p className={`${r.jadwal} ${jadwal ? "" : r.kosong}`}>
           <IconCalendarTime size={16} stroke={1.75} aria-hidden className={r.jadwalIcon} />
