@@ -188,7 +188,7 @@ File: `src/app/theme-tokens.css` (diimpor `globals.css`). Terang di `:root` = **
 - Section beranda meng-alias variabel lokal ke token (`.section { --ink: var(--c-ink); … }`). Nilai lokal yang beda dari token: `light-dark(terang lama, gelap)`.
 - Teks/ikon brand = `--c-brand`. Tombol pil isi (`.ctaLink`/`.ctaButton`/`.cta`/`.download`) memakai `--c-brand-fill` + `--c-on-brand` + `--c-brand-fill-hover` langsung (bukan alias `.section`), karena kelasnya juga dipakai di luar `.section`.
 - Warna grafik dari JS = string `"var(--c-chart-n)"`.
-- Logo/ikon pihak ketiga di tema gelap diberi pelat `#f5f5f7` (rel Program Inovasi, overlay Program Inovasi, ikon sosmed hero).
+- Logo/ikon pihak ketiga di tema gelap diberi pelat `#d9e1ea` (= pita putih gelap; `#f5f5f7` terlalu silau di hero gelap) (rel Program Inovasi, overlay Program Inovasi, ikon sosmed hero).
 - Komponen yang menerima warna lewat prop Mantine membaca `var()` yang dipasang kelas pembungkus: Jenna `--jenna-*` di `.body`, FixedPlayerBar `--player-fab`.
 - **Pulau terang** (sengaja tetap terang di tema gelap sampai Fase 2): `/desa-anti-korupsi/detail` & `/desa-anti-korupsi/program/[id]` (`antikorupsi-detail.module.css` `.page` + `ANTIKORUPSI_BRAND_VARS`), `/ppid/indeks-kepuasan-masyarakat` (`.surface` ikm mengunci `--c-tile`/`--c-chart-*` ke nilai terang).
 
@@ -320,7 +320,7 @@ Layar pertama beranda: menjawab "ini situs siapa" sebelum yang lain. Folder: `_c
 - **Tablet ≤1068px**: rel program melebar penuh di bawah teks dan foto (kolom kiri terlalu sempit untuk 4 ubin); foto `clamp(300px, 42vw, 460px)`.
 - **Mobile ≤734px**: satu kolom (teks → foto 320px → program); rel program sampai tepi layar (ubin 132px, ubin berikutnya mengintip), tanpa tombol panah. Pita latar hanya di belakang foto: SVG jadi item grid di sel `profile`, dilebarkan 1600/1100 kali lebar layar dan digeser ke kiri sehingga yang tampil potongan kanan gambar (x 500–1600) — turun dari kiri atas foto lalu keluar tepi kanan, tidak menyentuh teks. Jarak ikon media sosial → foto 16px.
 - **Loading**: placeholder berdenyut seukuran foto, pil status, dan 4 ubin (tanpa denyut saat reduced motion).
-- **Tema gelap**: warna pita `--ribbon-1..11` lokal di `.section` landing (`light-dark`; emas & merah sama di kedua tema), path `fill="var(--ribbon-N)"`. Ubin hero gelap `#1a2532` (nilai lokal). Ikon sosmed & logo ubin program di atas pelat `#f5f5f7` (§2.5).
+- **Tema gelap**: warna pita `--ribbon-1..11` lokal di `.section` landing (`light-dark`; emas & merah sama di kedua tema), path `fill="var(--ribbon-N)"`. Ubin hero gelap `#1a2532` (nilai lokal). Ikon sosmed & logo ubin program di atas pelat `#d9e1ea` (§2.5).
 
 #### Overlay detail Program Inovasi (`/?program={id}`)
 
@@ -334,7 +334,7 @@ Klik ubin rel hero membuka overlay ini agar pengunjung tetap di beranda; halaman
 - **Dokumentasi**: `h3` 24px (ponsel 21) + grid 3 kolom (ponsel 2), foto 4:3 radius 14px. Klik → **tampilan besar di dalam overlay yang sama** (bukan modal bertumpuk; detail tetap ter-mount + `inert` sehingga posisi gulir tidak hilang): "‹ Kembali" kiri atas, penghitung "2 / 7", foto `contain` di panggung `#f5f5f7`, tombol ‹ › bulat 44px (ponsel 40) berhenti di ujung, geser sentuh ≥48px, panah keyboard. Esc di tampilan besar = kembali ke detail (fokus balik ke foto asal), Esc berikutnya menutup. Tanpa foto → bagian tidak dirender.
 - **Keadaan**: dari ubin (preview) nama/logo/deskripsi tampil seketika; galeri kerangka berdenyut sebanyak `_count.images` (maks 6, 0 → tanpa kerangka) sampai findUnique selesai. Tautan langsung → kerangka `aria-busy`. Tidak ditemukan/galat tanpa preview → kotak `#f5f5f7` satu kalimat. Galat dengan preview → detail tetap, kotak "Dokumentasi belum bisa dimuat." hanya bila `_count.images > 0`.
 - **Data**: findMany rel tidak membawa `images`, jadi overlay memuat `GET /api/landingpage/programinovasi/:id` sendiri (ApiFetch, bukan state admin); respons untuk id lama dibuang, hasil lama dikosongkan saat dibuka lagi; `isActive === false` dianggap tidak ditemukan.
-- **Tema gelap**: logo program di atas pelat `#f5f5f7` (§2.5).
+- **Tema gelap**: logo program di atas pelat `#d9e1ea` (§2.5).
 
 ### Galeri Layanan & Potensi Desa (Beranda)
 
@@ -376,7 +376,7 @@ Gaya bersih apple.com. Folder: `_com/main-page/apbdes/` — `index.tsx` (section
 - **Gerak**: konten fade + naik 6px 280ms tiap ganti tahun (`key=tahun`); progress bar transisi lebar 600ms. `prefers-reduced-motion`: keduanya mati. Loading = skeleton (bukan overlay).
 - **CTA**: pill "Lihat semua data APBDes" → `/apbdes`, di bawah section.
 - **Halaman detail** `(tambahan)/apbdes/page.tsx`: memakai `ApbdesBody` (`components/ApbdesBody.tsx`) + hook `use-apbdes-data.ts` yang sama dengan beranda, `variant="full"` (beranda `"compact"`). Bedanya: `BackButton` di atas, judul `h1`, accordion terbuka semua sejak awal, kolom kelima **Lebih/(Kurang)** = anggaran − realisasi gabungan (desktop 72 | uraian | 200 | 160 | 160px; tablet 56/140/140/140; mobile baris ke-4 di bawah realisasi), dan panel dokumen (`components/ApbdesDocument.tsx`: judul + tombol "Unduh dokumen", tanpa gambar) yang hanya muncul bila tahun terpilih punya `file`.
-- **Tema gelap**: aksen per tipe lewat `--apbdes-{pendapatan,belanja,pembiayaan}-{accent,tint}` dan warna grafik `--apbdes-chart-pagu`/`--apbdes-chart-realisasi`, dipasang di `.section`/`.card`/`.panel`. Pagu gelap = `--c-chart-2` (bukan `chart-3`) supaya urutan visual pagu < realisasi tetap.
+- **Tema gelap**: aksen per tipe lewat `--apbdes-{pendapatan,belanja,pembiayaan}-{accent,tint}` dan warna grafik `--apbdes-chart-pagu`/`--apbdes-chart-realisasi`, dipasang di `.section`/`.card`/`.panel`. Pagu gelap = `#4a7598` lokal (3,4:1 di ubin, 2,2:1 terhadap realisasi; `chart-3` gelap terlalu terang, `chart-2` hanya 1,5:1 terhadap realisasi) supaya pagu redup < realisasi tegas seperti di terang.
 
 ### Prestasi dan Penghargaan Desa (Beranda & halaman gabungan)
 
@@ -915,7 +915,7 @@ Pengganti garis bawah hover di tautan yang bentuknya sudah jelas bisa diklik (ka
   - *Popup peta Leaflet* (Bank Sampah "Petunjuk arah ›", dirender React lewat react-leaflet `<Popup>`): `<a>` `.trigger` + `.cta` + span "›" `.chevron`; tautan `inline-flex` + `align-self: flex-start`. Selektor dua kelas `.popup .popupArah` tetap perlu untuk mengalahkan warna `.leaflet-container a`.
   - *Label abu kecil di sel sempit* (Kalender "+n lainnya"): `.title` (warna saja, tanpa tebal) supaya lebar sel grid tetap.
 - **Aksesibilitas**: reduced motion → warna langsung tanpa sapuan; `forced-colors: active` → gradasi dibuang, teks warna sistem + garis bawah saat hover/fokus; teks terseleksi fill-nya dikembalikan.
-- **Tema gelap**: `.title` `--reveal-to: var(--c-brand)`; `.titleBrand`/`.cta` `light-dark(#1c6ea4, var(--c-brand-hover))`.
+- **Tema gelap**: `.title` `--reveal-to: var(--c-brand)`; `.titleBrand`/`.cta` `light-dark(#1c6ea4, var(--c-ink))` (sapuan putih; `--c-brand-hover` hanya ±1,2:1 terhadap brand gelap).
 - **Jangan** dipakai untuk tautan di dalam teks kaya (`.content a`, Jenna markdown): di sana garis bawah permanen tetap (WCAG 1.4.1). Tulis properti tanpa prefiks (Lightning CSS Next 16 yang menambahkan).
 - **Catatan font**: font situs (`San Francisco`, `font.otf`) hanya 1 ketebalan, jadi "tebal" = tebal sintetis (lebar huruf sama, tidak beranimasi). Cadangan lebar tetap dipasang untuk font cadangan sistem.
 - **Garis bawah permanen yang disengaja** (bukan efek hover, jadi bukan pelanggaran aturan tetap): teks kaya/Jenna, dan tautan alamat Google Maps detail Lowongan (`.placeLink`, menebal saat hover; tautan berdiri sendiri di antara teks alamat).

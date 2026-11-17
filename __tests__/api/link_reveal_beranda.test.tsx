@@ -168,14 +168,14 @@ describe('CSS', () => {
     expect(css).toMatch(/@media \(forced-colors: active\) \{[\s\S]*background-image: none;[\s\S]*text-decoration: underline;/);
   });
 
-  it('warna target ikut tema: judul → token brand, aksi → #1C6EA4 terang / --c-brand-hover gelap', () => {
+  it('warna target ikut tema: judul → token brand, aksi → #1C6EA4 terang / --c-ink gelap', () => {
     // Blok yang selektornya persis satu kelas (blok bersama ".title,\n.cta" tidak memuat --reveal-to).
     const block = (sel: string) =>
       css.split('}').find((b) => b.replace(/\/\*[\s\S]*?\*\//g, '').split('{')[0].trim() === sel) ?? '';
     // Terang tetap #0A4E78 lewat token (--c-brand terang = #0a4e78, dikunci theme_tokens_contrast.test.ts).
     expect(block('.title')).toContain('--reveal-to: var(--c-brand);');
-    // #1C6EA4 di latar gelap hanya ±3:1 → gelap pakai --c-brand-hover (lebih terang dari brand).
-    expect(block('.cta')).toContain('--reveal-to: light-dark(#1c6ea4, var(--c-brand-hover));');
+    // #1C6EA4 di latar gelap hanya ±3:1, --c-brand-hover ±1,2:1 terhadap brand → gelap pakai --c-ink (putih).
+    expect(block('.cta')).toContain('--reveal-to: light-dark(#1c6ea4, var(--c-ink));');
     expect(css).not.toMatch(/--reveal-to:\s*#/);
   });
 

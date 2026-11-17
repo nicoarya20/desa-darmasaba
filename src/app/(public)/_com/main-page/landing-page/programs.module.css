@@ -163,12 +163,13 @@
 }
 
 /* Logo program umumnya gelap/berwarna di atas transparan: di tema gelap diberi pelat terang agar tetap terbaca.
-   Tema terang tanpa pelat (ubin sudah putih), jadi tampilannya tidak berubah. */
+   Tema terang tanpa pelat (ubin sudah putih), jadi tampilannya tidak berubah. Pelat gelap #D9E1EA (= pita putih
+   gelap --ribbon-9), bukan #F5F5F7 yang paling silau di hero gelap. */
 .tile .tileLogo {
   @mixin dark {
     padding: 6px;
     border-radius: 10px;
-    background: #f5f5f7;
+    background: #d9e1ea;
   }
 }
 

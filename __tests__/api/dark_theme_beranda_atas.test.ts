@@ -149,8 +149,10 @@ describe('APBDes: aksen kategori & grafik ikut tema', () => {
     expect(css).toMatch(/\.section,\s*\.card,\s*\.panel\s*\{\s*--apbdes-pendapatan-accent/);
   });
 
-  it('grafik pagu/realisasi dari token grafik; terang tetap chart-3 (pagu) dan chart-1 (realisasi)', () => {
-    expect(lightDark(css, '--apbdes-chart-pagu')).toEqual({ light: 'var(--c-chart-3)', dark: 'var(--c-chart-2)' });
+  it('grafik pagu/realisasi: terang tetap chart-3 (pagu) dan chart-1 (realisasi); gelap pagu biru redup', () => {
+    // Gelap: pagu #4a7598 (audit 2026-11-18) — ≥3:1 di ubin #1d1d1f dan ≥2:1 terhadap realisasi #6cb4e4,
+    // lebih redup dari realisasi seperti urutan di terang (chart-2 #2f91cc cuma 1,5:1 terhadap realisasi).
+    expect(lightDark(css, '--apbdes-chart-pagu')).toEqual({ light: 'var(--c-chart-3)', dark: '#4a7598' });
     expect(css).toContain('--apbdes-chart-realisasi: var(--c-chart-1);');
     const chart = SRC(`${MAIN}/apbdes/components/ApbdesChart.tsx`);
     expect(chart).toContain('color: "var(--apbdes-chart-pagu)"');

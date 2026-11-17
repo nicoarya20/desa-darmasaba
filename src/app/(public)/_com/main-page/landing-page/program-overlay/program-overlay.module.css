@@ -88,8 +88,9 @@
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 24px;
-  /* Pelat logo tetap terang di tema gelap (logo umumnya gelap di atas transparan). */
-  background: light-dark(#fff, #f5f5f7);
+  /* Pelat logo tetap terang di tema gelap (logo umumnya gelap di atas transparan); #D9E1EA sama dengan pelat
+     ubin program di hero (programs.module.css), tidak silau. */
+  background: light-dark(#fff, #d9e1ea);
 }
 
 .logo {

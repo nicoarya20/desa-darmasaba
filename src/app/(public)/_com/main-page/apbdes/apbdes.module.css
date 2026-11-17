@@ -100,9 +100,10 @@
   --apbdes-belanja-tint: var(--c-brand-tint);
   --apbdes-pembiayaan-accent: light-dark(var(--mantine-color-orange-7), var(--mantine-color-orange-4));
   --apbdes-pembiayaan-tint: light-dark(var(--mantine-color-orange-0), rgb(253 126 20 / 18%));
-  /* Grafik pagu vs realisasi (ApbdesChart): realisasi = seri utama. Di gelap pagu turun ke --c-chart-2 supaya batang
-     pagu tidak lebih menyala daripada realisasi (--c-chart-3 gelap justru paling terang). */
-  --apbdes-chart-pagu: light-dark(var(--c-chart-3), var(--c-chart-2));
+  /* Grafik pagu vs realisasi (ApbdesChart): realisasi = seri utama, pagu = biru lebih redup (urutan sama dengan terang).
+     Gelap: #4A7598 khusus grafik ini (bukan token), karena --c-chart-3 gelap justru paling terang dan --c-chart-2
+     (#2F91CC) cuma 1,5:1 terhadap realisasi #6CB4E4. #4A7598 = 3,4:1 di ubin #1D1D1F, 2,2:1 terhadap realisasi. */
+  --apbdes-chart-pagu: light-dark(var(--c-chart-3), #4a7598);
   --apbdes-chart-realisasi: var(--c-chart-1);
 }
 

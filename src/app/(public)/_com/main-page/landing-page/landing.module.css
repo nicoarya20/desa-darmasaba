@@ -192,8 +192,9 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  /* Ikon media sosial dari admin bisa hitam (TikTok): di tema gelap tetap di atas pelat terang. */
-  background: light-dark(var(--tile), #f5f5f7);
+  /* Ikon media sosial dari admin bisa hitam (TikTok): di tema gelap tetap di atas pelat terang, diredam ke
+     #D9E1EA (= pita putih gelap --ribbon-9) agar tidak silau. */
+  background: light-dark(var(--tile), #d9e1ea);
   border-radius: 50%;
   color: light-dark(var(--brand), #0a4e78);
   font-weight: 700;
