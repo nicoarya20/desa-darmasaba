@@ -115,6 +115,8 @@ function EditCctv() {
           />
 
           <TitikPetaInput
+            // Form tampil sebelum data termuat → pasang ulang saat data masuk agar mode awal ikut titik tersimpan.
+            key={state.edit.id || 'baru'}
             koordinat={koordinat}
             onKoordinatChange={handleMapChange}
             alamat={state.edit.form.lokasi}

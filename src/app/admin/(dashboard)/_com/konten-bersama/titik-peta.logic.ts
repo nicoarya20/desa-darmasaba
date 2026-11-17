@@ -1,16 +1,31 @@
 import { bujurSchema, lintangSchema, type Koordinat } from '@/lib/konten-bersama/lokasi.logic';
 
 export type HasilGeocode = Koordinat & { label: string };
-/** `kosong`: pencarian berhasil tetapi tanpa kandidat sah (bukan galat layanan). */
-export type HasilCari = { ok: true; hasil: HasilGeocode[] } | { ok: false; pesan: string; kosong?: true };
+/**
+ * `kosong`: pencarian berhasil tetapi tanpa kandidat sah (bukan galat layanan).
+ * `terlaluSering`: dibatasi (429) — cukup tunggu, tidak perlu ditawari isi lintang & bujur.
+ */
+export type HasilCari = { ok: true; hasil: HasilGeocode[] } | { ok: false; pesan: string; kosong?: true; terlaluSering?: true };
+
+export type ModeTitik = 'alamat' | 'koordinat';
+
+/** Form yang dibuka dengan titik tersimpan langsung menampilkan lintang & bujur; selain itu cari alamat. */
+export function modeTitikAwal(koordinat: Koordinat | null): ModeTitik {
+  return koordinat ? 'koordinat' : 'alamat';
+}
+
+/** Cari gagal → tawarkan pindah ke isian lintang & bujur, kecuali karena terlalu sering. */
+export function tawarkanIsiKoordinat(hasil: Extract<HasilCari, { ok: false }>): boolean {
+  return hasil.terlaluSering !== true;
+}
 
 export const MIN_KUERI_CARI = 3;
 export const MAX_KUERI_CARI = 200;
 export const ZOOM_WILAYAH = 15;
 export const PESAN_TIDAK_DITEMUKAN =
-  'Tempat ini belum ada di OpenStreetMap. Peta diarahkan ke wilayah Desa Darmasaba: klik titik yang tepat di peta, atau tempel koordinat/link Google Maps ke kolom Lintang.';
+  'Tempat ini belum ada di OpenStreetMap. Peta diarahkan ke wilayah Desa Darmasaba: klik titik yang tepat di peta, atau isi lintang & bujur (bisa ditempel dari Google Maps).';
 export const PESAN_TERLALU_SERING = 'Terlalu sering, coba lagi sebentar';
-export const PESAN_CARI_GAGAL = 'Pencarian lokasi gagal, coba lagi atau tempel koordinat/link Google Maps ke kolom Lintang';
+export const PESAN_CARI_GAGAL = 'Pencarian lokasi gagal. Coba lagi, atau isi lintang & bujur.';
 
 export function kueriCariValid(kueri: string): boolean {
   const panjang = kueri.trim().length;
@@ -30,7 +45,7 @@ export function petakanResponsCari(status: number, body: unknown): HasilCari {
     const hasil = b.data.filter(hasilValid).map(({ lat, lng, label }) => ({ lat, lng, label }));
     return hasil.length ? { ok: true, hasil } : { ok: false, pesan: PESAN_TIDAK_DITEMUKAN, kosong: true };
   }
-  if (status === 429) return { ok: false, pesan: PESAN_TERLALU_SERING };
+  if (status === 429) return { ok: false, pesan: PESAN_TERLALU_SERING, terlaluSering: true };
   return { ok: false, pesan: typeof b.message === 'string' && b.message.trim() ? b.message : PESAN_CARI_GAGAL };
 }
 

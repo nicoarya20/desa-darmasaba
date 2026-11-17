@@ -10,12 +10,15 @@ import {
   cekSumbuTeks,
   koordinatDariTeks,
   kueriCariValid,
+  modeTitikAwal,
   petakanResponsAlamat,
   petakanResponsCari,
   PESAN_CARI_GAGAL,
   PESAN_TERLALU_SERING,
   PESAN_TIDAK_DITEMUKAN,
   saranNamaTampil,
+  tawarkanIsiKoordinat,
+  type HasilCari,
 } from "@/app/admin/(dashboard)/_com/konten-bersama/titik-peta.logic";
 
 describe("parseKoordinatTeks", () => {
@@ -90,14 +93,19 @@ describe("petakanResponsCari", () => {
     expect(petakanResponsCari(200, { success: true, data: [{ lat: 99, lng: 0, label: "x" }, { lat: 1, lng: 1 }, null] })).toEqual(kosong);
   });
 
-  it("pesan tidak ditemukan/gagal memberi petunjuk tempel koordinat ke kolom Lintang", () => {
+  it("pesan tidak ditemukan/gagal mengarahkan ke mode lintang & bujur (tanpa menyebut kolom tertentu)", () => {
     expect(PESAN_TIDAK_DITEMUKAN).toMatch(/OpenStreetMap/);
-    expect(PESAN_TIDAK_DITEMUKAN).toMatch(/tempel koordinat\/link Google Maps ke kolom Lintang/);
-    expect(PESAN_CARI_GAGAL).toMatch(/tempel koordinat\/link Google Maps ke kolom Lintang/);
+    expect(PESAN_TIDAK_DITEMUKAN).toMatch(/isi lintang & bujur \(bisa ditempel dari Google Maps\)/);
+    expect(PESAN_CARI_GAGAL).toBe("Pencarian lokasi gagal. Coba lagi, atau isi lintang & bujur.");
+    expect(`${PESAN_TIDAK_DITEMUKAN} ${PESAN_CARI_GAGAL}`).not.toMatch(/kolom Lintang/);
   });
 
-  it("429 → terlalu sering; 400/401/403/502 → message server; tanpa message → pesan umum (semua tanpa kosong)", () => {
-    expect(petakanResponsCari(429, { success: false, message: "Rate limit" })).toEqual({ ok: false, pesan: PESAN_TERLALU_SERING });
+  it("429 → terlalu sering + terlaluSering; 400/401/403/502 → message server; tanpa message → pesan umum (semua tanpa kosong)", () => {
+    expect(petakanResponsCari(429, { success: false, message: "Rate limit" })).toEqual({
+      ok: false,
+      pesan: PESAN_TERLALU_SERING,
+      terlaluSering: true,
+    });
     expect(petakanResponsCari(502, { success: false, message: "Layanan peta tidak merespons" })).toEqual({
       ok: false,
       pesan: "Layanan peta tidak merespons",
@@ -105,6 +113,24 @@ describe("petakanResponsCari", () => {
     expect(petakanResponsCari(403, { success: false, message: "Forbidden" })).toEqual({ ok: false, pesan: "Forbidden" });
     expect(petakanResponsCari(500, null)).toEqual({ ok: false, pesan: PESAN_CARI_GAGAL });
     expect(petakanResponsCari(200, { success: false })).toEqual({ ok: false, pesan: PESAN_CARI_GAGAL });
+  });
+});
+
+describe("modeTitikAwal", () => {
+  it("titik tersimpan → koordinat; tanpa titik → alamat", () => {
+    expect(modeTitikAwal({ lat: -8.57, lng: 115.19 })).toBe("koordinat");
+    expect(modeTitikAwal(null)).toBe("alamat");
+  });
+});
+
+describe("tawarkanIsiKoordinat", () => {
+  const gagal = (h: HasilCari) => (h.ok ? expect.unreachable("harus gagal") : h);
+
+  it("tidak ditemukan & galat layanan/jaringan → ditawari; terlalu sering → tidak", () => {
+    expect(tawarkanIsiKoordinat(gagal(petakanResponsCari(200, { success: true, data: [] })))).toBe(true);
+    expect(tawarkanIsiKoordinat(gagal(petakanResponsCari(502, { success: false, message: "Layanan peta tidak merespons" })))).toBe(true);
+    expect(tawarkanIsiKoordinat(gagal(petakanResponsCari(500, null)))).toBe(true);
+    expect(tawarkanIsiKoordinat(gagal(petakanResponsCari(429, {})))).toBe(false);
   });
 });
 
@@ -124,7 +150,7 @@ describe("cariTitikAlamat", () => {
     const html = vi.fn().mockResolvedValue(new Response("<html>Bad Gateway</html>", { status: 502 }));
     await expect(cariTitikAlamat("abc", html)).resolves.toEqual({ ok: false, pesan: PESAN_CARI_GAGAL });
     const limit = vi.fn().mockResolvedValue(new Response("{}", { status: 429, headers: { "Retry-After": "30" } }));
-    await expect(cariTitikAlamat("abc", limit)).resolves.toEqual({ ok: false, pesan: PESAN_TERLALU_SERING });
+    await expect(cariTitikAlamat("abc", limit)).resolves.toEqual({ ok: false, pesan: PESAN_TERLALU_SERING, terlaluSering: true });
   });
 
   it("200 daftar kosong → kosong: true", async () => {
