@@ -34,9 +34,11 @@ export function KegiatanDetail({ id, list }: { id: string; list?: KegiatanDetail
     <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         {list ? (
-          <Link href={list.href} className={back.back}>
-            <IconChevronLeft size={16} stroke={2} aria-hidden />
-            {list.label}
+          <Link href={list.href} className={`${back.back} ${r.trigger}`}>
+            <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
+            <span className={r.cta} data-text={list.label}>
+              {list.label}
+            </span>
           </Link>
         ) : (
           <BackButton />

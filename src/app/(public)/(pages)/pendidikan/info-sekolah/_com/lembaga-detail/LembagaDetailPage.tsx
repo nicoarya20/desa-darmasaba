@@ -1,5 +1,6 @@
 'use client';
 import BackButton from "@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto";
+import r from "@/app/(public)/_com/link-reveal/link-reveal.module.css";
 import { useLazyLoad, type LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import type { LembagaDetail } from "@/lib/lembaga-pendidikan/lembaga.types";
 import { Link } from "next-view-transitions";
@@ -45,8 +46,10 @@ export function LembagaDetailBody({ state, onRetry }: { state: LoadState<Lembaga
     return (
       <div className={d.notFound}>
         <InfoSekolahEmpty title={T.notFoundTitle} message={T.notFoundBody} />
-        <Link href={`${INFO_SEKOLAH_PATH}#${LEMBAGA_ANCHOR}`} className={d.backLink}>
-          {T.backToList}
+        <Link href={`${INFO_SEKOLAH_PATH}#${LEMBAGA_ANCHOR}`} className={`${d.backLink} ${r.trigger}`}>
+          <span className={r.cta} data-text={T.backToList}>
+            {T.backToList}
+          </span>
         </Link>
       </div>
     );

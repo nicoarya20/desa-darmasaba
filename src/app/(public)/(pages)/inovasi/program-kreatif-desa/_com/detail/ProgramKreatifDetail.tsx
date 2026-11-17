@@ -18,9 +18,11 @@ export function ProgramKreatifDetail({ id }: { id: string }) {
   return (
     <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
-        <Link href={programKreatifListHref()} className={back.back}>
-          <IconChevronLeft size={16} stroke={2} aria-hidden />
-          {T.kembali}
+        <Link href={programKreatifListHref()} className={`${back.back} ${r.trigger}`}>
+          <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
+          <span className={r.cta} data-text={T.kembali}>
+            {T.kembali}
+          </span>
         </Link>
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
         {state.status === 'ready' ? <ProgramKreatifDetailBody data={state.data} /> : null}

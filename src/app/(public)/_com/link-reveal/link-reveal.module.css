@@ -11,6 +11,8 @@
  *                (::after, visibility hidden → tidak dibaca pembaca layar) mencadangkan lebar versi
  *                tebal, jadi chevron tidak bergeser saat label menebal.
  * - `.chevron` : ikon chevron di samping `.cta`, geser 3px ke kanan.
+ * - `.chevronBack` : chevron KIRI tautan kembali ("‹ Daftar"), geser 3px ke kiri (arah tujuan tautan).
+ *                Chevron berupa teks dalam span: beri span itu `display: inline-block` (transform tak berlaku di inline).
  * JANGAN dipakai untuk tautan di dalam teks kaya (`.content a`, Jenna): di sana garis bawah permanen (WCAG 1.4.1).
  */
 .title,
@@ -53,7 +55,8 @@
   user-select: none;
 }
 
-.chevron {
+.chevron,
+.chevronBack {
   flex-shrink: 0;
   transition: transform var(--reveal-duration, 450ms) var(--reveal-ease, cubic-bezier(0.22, 1, 0.36, 1));
 }
@@ -77,6 +80,10 @@
   transform: translateX(3px);
 }
 
+.trigger:focus-visible .chevronBack {
+  transform: translateX(-3px);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .trigger:hover .title,
   .trigger:hover .cta {
@@ -90,12 +97,17 @@
   .trigger:hover .chevron {
     transform: translateX(3px);
   }
+
+  .trigger:hover .chevronBack {
+    transform: translateX(-3px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .title,
   .cta,
-  .chevron {
+  .chevron,
+  .chevronBack {
     transition: none;
   }
 }

@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import p from '../detail-umkm/detail-umkm.module.css';
@@ -23,9 +24,11 @@ export function DetailTokoView({ id }: { id: string }) {
   return (
     <div className={p.page} style={KATALOG_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
       <div className={p.inner}>
-        <Link href={BACK_HREF} className={p.back}>
-          <IconChevronLeft size={16} stroke={2} aria-hidden="true" />
-          {T.backToList}
+        <Link href={BACK_HREF} className={`${p.back} ${r.trigger}`}>
+          <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden="true" />
+          <span className={r.cta} data-text={T.backToList}>
+            {T.backToList}
+          </span>
         </Link>
         {state.status === 'ready' ? (
           <>
