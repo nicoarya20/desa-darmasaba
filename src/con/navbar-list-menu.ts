@@ -255,6 +255,12 @@ const navbarListMenu = [
         name: "Inovasi",
         children: [
             {
+                // Data sama dengan rel "Program Inovasi Desa" di beranda (dikelola di admin Landing Page › Profil).
+                id: "6.7",
+                name: "Program Inovasi",
+                href: "/inovasi/program-inovasi"
+            },
+            {
                 // Gabungan Desa Digital/Smart Village + Info Teknologi Tepat Guna (href lama di-redirect, next.config.ts).
                 id: "6.1",
                 name: "Inovasi Teknologi Desa",

@@ -1,0 +1,82 @@
+'use client';
+import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
+import { listSearchable, paginate, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
+import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import { ProgramTiles, ProgramTilesPlaceholder } from '@/app/(public)/_com/program-tiles/ProgramTiles';
+import { useTransitionRouter } from 'next-view-transitions';
+import { useSearchParams } from 'next/navigation';
+import { programInovasiListHref } from './program-inovasi.logic';
+import { PROGRAM_INOVASI_PAGE_SIZE } from './program-inovasi.meta';
+import { PROGRAM_INOVASI_TEXT as T } from './program-inovasi.text';
+import { useProgramInovasi, type ProgramInovasiState } from './use-program-inovasi';
+
+const LIST_TITLE_ID = 'program-inovasi-list-title';
+const PLACEHOLDER_TILES = 6;
+
+/**
+ * Halaman Program Inovasi di `.section` Kabar Desa: kepala (kembali, judul, cari `?search=` bila program > 6 atau
+ * sedang mencari), lalu ubin logo program (`?page=`, dipaginasi di klien). Data & urutan sama dengan rel beranda.
+ */
+export function ProgramInovasiPage() {
+  const router = useTransitionRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search')?.trim() ?? '';
+  const page = parsePage(searchParams.get('page'));
+  const state = useProgramInovasi(search);
+  const total = state.status === 'ready' ? state.items.length : null;
+
+  return (
+    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+      <KabarListHeader
+        title={T.title}
+        lead={T.lead}
+        searchLabel={T.searchLabel}
+        searchPlaceholder={T.searchPlaceholder}
+        kategoriLabel={T.kategoriLabel}
+        tabs={[]}
+        search={search}
+        onSearch={(next) => router.replace(programInovasiListHref({ search: next }))}
+        searchable={listSearchable(search, total)}
+      />
+      <ProgramInovasiBody
+        state={state}
+        search={search}
+        page={page}
+        onPage={(next) => router.push(programInovasiListHref({ search, page: next }))}
+      />
+    </div>
+  );
+}
+
+type BodyProps = {
+  state: ProgramInovasiState;
+  search: string;
+  page: number;
+  onPage: (page: number) => void;
+};
+
+/** Ubin + paginasi untuk satu keadaan muat (diekspor untuk test). */
+export function ProgramInovasiBody({ state, search, page, onPage }: BodyProps) {
+  const current = paginate(state.status === 'ready' ? state.items : [], page, PROGRAM_INOVASI_PAGE_SIZE);
+  const empty = state.status !== 'loading' && current.items.length === 0;
+  const emptyText = state.status === 'error' ? T.error : search ? T.emptySearch(search) : T.empty;
+
+  return (
+    <section aria-labelledby={LIST_TITLE_ID}>
+      <h2 id={LIST_TITLE_ID} className={l.srOnly}>
+        {T.listLabel}
+      </h2>
+      {state.status === 'loading' ? <ProgramTilesPlaceholder count={PLACEHOLDER_TILES} label={T.loading} /> : null}
+      {empty ? <p className={kabar.empty}>{emptyText}</p> : null}
+      {current.items.length > 0 ? (
+        <>
+          <ProgramTiles items={current.items} label={T.listLabel} moreLabel={T.selengkapnya} />
+          <KabarListPagination total={current.totalPages} value={current.page} label={T.paginationLabel} onChange={onPage} />
+        </>
+      ) : null}
+    </section>
+  );
+}

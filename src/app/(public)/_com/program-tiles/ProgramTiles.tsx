@@ -1,16 +1,22 @@
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconMapper, type IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
+import { Image } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import s from './program-tiles.module.css';
 
-/** Satu ubin program: judul, ringkasan (boleh kosong), kunci ikon `IconMapper` (kosong → tanpa ikon), tautan detail. */
+/**
+ * Satu ubin program: judul, ringkasan (boleh kosong), kunci ikon `IconMapper` (kosong → tanpa ikon), logo opsional
+ * (Program Inovasi), tautan detail.
+ */
 export type ProgramTileItem = {
   id: string;
   title: string;
   summary: string;
   /** Pemakai yang ingin "kunci tak dikenal → tanpa ikon" menyaringnya dulu dengan `isIconKey`. */
   icon?: string;
+  /** URL logo program; diisi → kotak logo di atas judul (menggantikan ikon). */
+  logo?: string;
   href: string;
 };
 
@@ -29,7 +35,11 @@ export function ProgramTiles({ items, label, moreLabel }: TilesProps) {
       {items.map((item) => (
         <li key={item.id}>
           <Link href={item.href} className={s.tile}>
-            {item.icon ? (
+            {item.logo ? (
+              <span className={s.logo}>
+                <Image className={s.logoImg} src={item.logo} alt="" fit="contain" loading="lazy" />
+              </span>
+            ) : item.icon ? (
               <span className={s.icon} aria-hidden>
                 <IconMapper name={item.icon as IconKey} size={32} color="currentColor" />
               </span>
