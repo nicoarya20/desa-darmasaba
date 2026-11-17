@@ -109,7 +109,7 @@
 }
 
 .colAksi {
-  width: 96px;
+  width: 128px;
 }
 
 .table tbody .no {
@@ -192,6 +192,14 @@
 
 .kontakValue {
   font-weight: 600;
+}
+
+/* Sel aksi: "Detail" lalu "Unduh PDF" (bila ada berkas) bertumpuk, rata kiri. */
+.aksiStack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 /* ---------- Detail ---------- */

@@ -1,0 +1,19 @@
+/* Tautan "Unduh PDF" berkas PPID (Dasar Hukum, Daftar Informasi Publik). Warna brand dari `--brand` milik PpidPage;
+   hover memakai sapuan warna link-reveal (.trigger + .cta), bukan garis bawah. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brand);
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 6px;
+}

@@ -3,6 +3,7 @@ import { htmlToPlainText } from '@/lib/rich-text';
 import { Skeleton } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
+import { PpidFileLink } from '../../_com/PpidFileLink';
 import { daftarDetailHref, formatTanggal, rowNumber, type InformasiItem } from './daftar.logic';
 import s from './daftar.module.css';
 import { DAFTAR_TEXT } from './daftar.text';
@@ -43,16 +44,19 @@ export function DaftarTable({ items, page, busy = false }: Props) {
               <td className={s.deskripsi}>{htmlToPlainText(item.deskripsi) || DAFTAR_TEXT.emptyValue}</td>
               <td className={s.tanggal}>{formatTanggal(item.tanggal, DAFTAR_TEXT.emptyValue)}</td>
               <td className={s.aksi}>
-                <Link
-                  href={daftarDetailHref(item.id)}
-                  className={`${s.detailLink} ${r.trigger}`}
-                  aria-label={DAFTAR_TEXT.detailLabel(item.jenisInformasi)}
-                >
-                  <span className={r.cta} data-text={DAFTAR_TEXT.detail}>
-                    {DAFTAR_TEXT.detail}
-                  </span>
-                  <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
-                </Link>
+                <div className={s.aksiStack}>
+                  <Link
+                    href={daftarDetailHref(item.id)}
+                    className={`${s.detailLink} ${r.trigger}`}
+                    aria-label={DAFTAR_TEXT.detailLabel(item.jenisInformasi)}
+                  >
+                    <span className={r.cta} data-text={DAFTAR_TEXT.detail}>
+                      {DAFTAR_TEXT.detail}
+                    </span>
+                    <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
+                  </Link>
+                  <PpidFileLink file={item.file} subject={item.jenisInformasi} />
+                </div>
               </td>
             </tr>
           ))}
