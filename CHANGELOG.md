@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.298] - 2026-11-17
+## [0.1.299] - 2026-11-17
 ### Added
 - **Titik peta tidak harus diklik manual lagi**. Ini berlaku di form CCTV (tambah dan edit), Bank Sampah, dan Lembaga Pendidikan.
   - Pilih cara mengisi lewat dua tab: **Cari alamat** atau **Lintang & bujur**. Peta tetap tampil di bawahnya, dan isian tidak hilang saat berpindah tab. Form yang sudah punya titik langsung membuka tab Lintang & bujur.
