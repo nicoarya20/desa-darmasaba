@@ -14,6 +14,8 @@ type DasarHukumForm = Prisma.DasarHukumPPIDGetPayload<{
     id: true;
     judul: true;
     content: true;
+    fileId: true;
+    file: { select: { id: true; link: true; realName: true } };
   };
 }>;
 
@@ -26,7 +28,9 @@ const stateDasarHukumPPID = proxy({
         id: '',
         judul: '',
         content: '',
-      } as DasarHukumForm;
+        fileId: null,
+        file: null,
+      };
     },
     async load(id: string) {
       try {
@@ -50,28 +54,36 @@ const stateDasarHukumPPID = proxy({
 
   update: {
     loading: false,
-    async save(data: DasarHukumForm) {
+    /** Simpan teks; `newFileId` (opsional) = id PDF yang baru diunggah untuk menggantikan berkas lama. Mengembalikan true bila tersimpan. */
+    async save(data: DasarHukumForm, newFileId?: string): Promise<boolean> {
       const cek = templateForm.safeParse(data);
       if (!cek.success) {
         const errors = cek.error.issues
           .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
           .join(", ");
         toast.error(`Form tidak valid: ${errors}`);
-        return;
+        return false;
       }
 
       try {
         stateDasarHukumPPID.update.loading = true;
-        const res = await ApiFetch.api.ppid.dasarhukumppid["update"].post(data);
+        const res = await ApiFetch.api.ppid.dasarhukumppid["update"].post({
+          id: data.id,
+          judul: data.judul,
+          content: data.content,
+          ...(newFileId ? { fileId: newFileId } : {}),
+        });
         if (res.status === 200) {
           toast.success("Data dasar hukum berhasil diubah");
           await stateDasarHukumPPID.findById.load(data.id);
-        } else {
-          toast.error("Gagal mengubah data dasar hukum");
+          return true;
         }
+        toast.error("Gagal mengubah data dasar hukum");
+        return false;
       } catch (error) {
         console.error((error as Error).message);
         toast.error("Terjadi kesalahan saat mengubah data dasar hukum");
+        return false;
       } finally {
         stateDasarHukumPPID.update.loading = false;
       }

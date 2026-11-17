@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import stateDasarHukumPPID from '../../../_state/ppid/dasar_hukum/dasarHukum';
 import { toast } from 'react-toastify';
+import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
+import { uploadPdfFile } from '@/app/admin/_com/upload/pdf-upload';
 
 const PPIDTextEditor = dynamic(
   () => import('../../_com/PPIDTextEditor').then(mod => mod.PPIDTextEditor),
@@ -22,6 +24,8 @@ function EditDasarHukum() {
   // Gabungkan judul & content jadi satu state lokal
   const [formData, setFormData] = useState({ judul: '', content: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // PDF baru yang dipilih; diunggah saat Simpan (berkas lama diganti hanya bila ada pilihan baru).
+  const [file, setFile] = useState<File | null>(null);
   const [originalData, setOriginalData] = useState({
     judul: '',
     content: '',
@@ -68,18 +72,22 @@ function EditDasarHukum() {
       judul: originalData.judul,
       content: originalData.content,
     });
+    setFile(null);
     toast.info("Form dikembalikan ke data awal");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!dasarHukumState.findById.data) return;
     try {
       setIsSubmitting(true);
-      if (dasarHukumState.findById.data) {
-        // Update global state hanya saat submit
-        const updated = { ...dasarHukumState.findById.data, ...formData };
-        dasarHukumState.update.save(updated);
+      let newFileId: string | undefined;
+      if (file) {
+        const uploadedId = await uploadPdfFile(file);
+        if (!uploadedId) return; // toast galat sudah ditampilkan uploadPdfFile
+        newFileId = uploadedId;
       }
-      router.push('/admin/ppid/dasar-hukum');
+      const saved = await dasarHukumState.update.save({ ...dasarHukumState.findById.data, ...formData }, newFileId);
+      if (saved) router.push('/admin/ppid/dasar-hukum');
     } catch (error) {
       console.error("Error updating dasar hukum:", error);
       toast.error("Terjadi kesalahan saat memperbarui dasar hukum");
@@ -133,6 +141,14 @@ function EditDasarHukum() {
               />
             </Box>
           </Box>
+
+          <PdfDropzoneField
+            label="Berkas PDF"
+            description="Opsional. Dokumen peraturan yang bisa diunduh pengunjung."
+            file={file}
+            onChange={setFile}
+            currentFile={dasarHukumState.findById.data?.file}
+          />
 
          {/* ======= Tombol Aksi ======= */}
          <Group justify="right">

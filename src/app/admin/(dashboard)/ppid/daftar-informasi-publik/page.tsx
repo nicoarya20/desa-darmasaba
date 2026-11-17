@@ -25,6 +25,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
 import daftarInformasiPublik from '../../_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
+import { BerkasLink } from './_com/BerkasLink';
 
 function DaftarInformasiPublik() {
   const [search, setSearch] = useState('');
@@ -106,9 +107,14 @@ function ListDaftarInformasi({ search }: { search: string }) {
                         Jenis Informasi
                       </Text>
                     </TableTh>
-                    <TableTh w="40%">
+                    <TableTh w="30%">
                       <Text fw={600} lh={1.4}>
                         Deskripsi
+                      </Text>
+                    </TableTh>
+                    <TableTh w="15%">
+                      <Text fw={600} lh={1.4}>
+                        Berkas PDF
                       </Text>
                     </TableTh>
                     <TableTh ta="center" w="20%">
@@ -130,6 +136,9 @@ function ListDaftarInformasi({ search }: { search: string }) {
                         <Text fz="sm" lh={1.5} c="dimmed" lineClamp={1}>
                           {item.deskripsi?.replace(/<[^>]*>?/gm, '').substring(0, 80)}...
                         </Text>
+                      </TableTd>
+                      <TableTd>
+                        <BerkasLink file={item.file} />
                       </TableTd>
                       <TableTd ta="center">
                         <Button
@@ -171,6 +180,12 @@ function ListDaftarInformasi({ search }: { search: string }) {
                       <Text fz="sm" fw={500} lh={1.5} c="dimmed">
                         {item.deskripsi?.replace(/<[^>]*>?/gm, '').substring(0, 80)}...
                       </Text>
+                    </Box>
+                    <Box>
+                      <Text fw={600} lh={1.4}>
+                        Berkas PDF
+                      </Text>
+                      <BerkasLink file={item.file} />
                     </Box>
                     <Box>
                       <Button
