@@ -79,8 +79,6 @@ function hoverUnderlineSelectors(rel: string): string[] {
 
 describe('CSS jatah 86: garis bawah hover sudah diganti sapuan warna', () => {
   it.each([
-    'pendidikan/perpustakaan-digital/_com/buku-card.module.css',
-    'pendidikan/perpustakaan-digital/_com/detail/buku-detail.module.css',
     'pendidikan/info-sekolah/_com/info-sekolah.module.css',
     'inovasi/ajukan-ide-inovatif/_com/ajukan-ide.module.css',
     'inovasi/kolaborasi-inovasi/_com/kolaborasi.module.css',

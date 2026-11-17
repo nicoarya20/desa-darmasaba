@@ -1,0 +1,14 @@
+/*
+ * Akar halaman Perpustakaan Digital — kerangka (latar putih, tepi, lebar 1200, jarak atas/bawah) dari
+ * pendidikan/_com/page-frame; di sini hanya warna dasar dan jarak antarbagian (--section-gap: 100/72px).
+ */
+.page {
+  color: #1d1d1f;
+  min-height: 70vh;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}

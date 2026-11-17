@@ -100,7 +100,7 @@ model FileStorage {
   MediaSosial                    MediaSosial[]
   DokumenDesaAntiKorupsi         DokumenDesaAntiKorupsi[]
   DokumenAPBDes                  DokumenAPBDes[]
-  SDGSDesa                      SdgsDesa[]
+  SDGSDesa                       SdgsDesa[]
   APBDesImage                    APBDes[]                   @relation("APBDesImage")
   APBDesFile                     APBDes[]                   @relation("APBDesFile")
   PrestasiDesa                   PrestasiDesa[]
@@ -156,22 +156,22 @@ model PejabatDesa {
 }
 
 model ProgramInovasi {
-  id          String       @id @default(cuid())
-  name        String       @unique @db.VarChar(255)
-  description String?      @db.Text
-  image       FileStorage? @relation(fields: [imageId], references: [id])
+  id          String                         @id @default(cuid())
+  name        String                         @unique @db.VarChar(255)
+  description String?                        @db.Text
+  image       FileStorage?                   @relation(fields: [imageId], references: [id])
   imageId     String?
-  link        String?      @db.VarChar(255)
+  link        String?                        @db.VarChar(255)
   // Urutan tampil (rel beranda + halaman Inovasi): angka kecil di depan, kosong di belakang lalu abjad.
   urutan      Int?
   // Galeri dokumentasi kegiatan program (bukti pelaksanaan), terpisah dari logo/cover `image`.
-  images      FileStorage[] @relation("ProgramInovasiImages")
+  images      FileStorage[]                  @relation("ProgramInovasiImages")
   // Bank sampah / TPS yang menjalankan program ini (tab Profil modal bank sampah publik).
   bankSampah  KeteranganBankSampahTerdekat[] @relation("BankSampahProgramInovasi")
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  deletedAt   DateTime?    @default(now())
-  isActive    Boolean      @default(true)
+  createdAt   DateTime                       @default(now())
+  updatedAt   DateTime                       @updatedAt
+  deletedAt   DateTime?                      @default(now())
+  isActive    Boolean                        @default(true)
 }
 
 model MediaSosial {
@@ -265,13 +265,13 @@ model SdgsDesa {
 
 //========================================= APBDes ========================================= //
 model APBDes {
-  id        String       @id @default(cuid())
+  id        String                @id @default(cuid())
   tahun     Int?
   name      String? // misalnya: "APBDes Tahun 2025"
   deskripsi String?
   jumlah    String? // total keseluruhan (opsional, bisa juga dihitung dari items)
   items     APBDesItem[]
-  image     FileStorage? @relation("APBDesImage", fields: [imageId], references: [id])
+  image     FileStorage?          @relation("APBDesImage", fields: [imageId], references: [id])
   imageId   String?
   // Kolom lama (satu berkas per tahun), digantikan DokumenAPBDes. Migrasi 20261112150000 menyalin
   // isinya; kolom dipertahankan satu rilis demi rollback & klien lama, lalu dihapus di rilis berikut.
@@ -1825,37 +1825,37 @@ model LowonganPekerjaan {
 // ========================================= STRUKTUR ORGANISASI ========================================= //
 
 model PosisiOrganisasiBumDes {
-  id                       String                     @id @default(cuid())
-  nama                     String                     @db.VarChar(100)
-  deskripsi                String?                    @db.Text
-  hierarki                 Int
+  id        String                   @id @default(cuid())
+  nama      String                   @db.VarChar(100)
+  deskripsi String?                  @db.Text
+  hierarki  Int
   // Urutan antar-jabatan selevel di bagan (kecil dulu); sama dengan Struktur Perangkat Desa.
-  urutan                   Int                        @default(0)
-  pegawai                  PegawaiBumDes[]
-  parentId                 String?
-  isActive                 Boolean                    @default(true)
-  createdAt                DateTime                   @default(now())
-  updatedAt                DateTime                   @updatedAt
-  parent                   PosisiOrganisasiBumDes?    @relation("Parent", fields: [parentId], references: [id])
-  children                 PosisiOrganisasiBumDes[]   @relation("Parent")
+  urutan    Int                      @default(0)
+  pegawai   PegawaiBumDes[]
+  parentId  String?
+  isActive  Boolean                  @default(true)
+  createdAt DateTime                 @default(now())
+  updatedAt DateTime                 @updatedAt
+  parent    PosisiOrganisasiBumDes?  @relation("Parent", fields: [parentId], references: [id])
+  children  PosisiOrganisasiBumDes[] @relation("Parent")
 }
 
 model PegawaiBumDes {
-  id                       String                     @id @default(cuid())
-  namaLengkap              String                     @db.VarChar(255)
-  gelarAkademik            String?                    @db.VarChar(100)
-  image                    FileStorage?               @relation(fields: [imageId], references: [id])
-  imageId                  String?
-  tanggalMasuk             DateTime?                  @db.Date
+  id            String                 @id @default(cuid())
+  namaLengkap   String                 @db.VarChar(255)
+  gelarAkademik String?                @db.VarChar(100)
+  image         FileStorage?           @relation(fields: [imageId], references: [id])
+  imageId       String?
+  tanggalMasuk  DateTime?              @db.Date
   // Tidak unik: email opsional, boleh kosong (null) untuk banyak pegawai.
-  email                    String?                    @db.VarChar(255)
-  telepon                  String?                    @db.VarChar(20)
-  alamat                   String?                    @db.Text
-  posisiId                 String                     @db.VarChar(50)
-  isActive                 Boolean                    @default(true)
-  createdAt                DateTime                   @default(now())
-  updatedAt                DateTime                   @updatedAt
-  posisi                   PosisiOrganisasiBumDes     @relation(fields: [posisiId], references: [id])
+  email         String?                @db.VarChar(255)
+  telepon       String?                @db.VarChar(20)
+  alamat        String?                @db.Text
+  posisiId      String                 @db.VarChar(50)
+  isActive      Boolean                @default(true)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  posisi        PosisiOrganisasiBumDes @relation(fields: [posisiId], references: [id])
 }
 
 // Profil BUMDes (singleton): satu baris dengan id tetap "profil-bumdes", ditulis lewat upsert.
@@ -2734,6 +2734,18 @@ enum StatusPeminjaman {
   Dikembalikan
   Terlambat
   Dibatalkan
+}
+
+// Pengaturan halaman penghubung /pendidikan/perpustakaan-digital: desa memakai perpustakaan digital eksternal
+// (Pustaka Ananta Loka), jadi website hanya menampilkan profil singkat + tautan. Satu baris aktif (pola BeasiswaConfig).
+model PerpustakaanConfig {
+  id           String   @id @default(cuid())
+  namaPlatform String
+  deskripsi    String   @db.Text
+  websiteUrl   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  isActive     Boolean  @default(true)
 }
 
 // ========================================= DATA PENDIDIKAN ========================================= //

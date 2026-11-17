@@ -65,9 +65,10 @@ describe('global search — label type sejajar dengan model sumber', () => {
 
     expect(new Set(models).size).toBe(models.length);
     expect(models.sort()).toEqual(Object.keys(delegates).sort());
-    // 83 = 88 - 1 (DesaDigital + InfoTekno digabung jadi InovasiTeknologiDesa, 2026-11-16)
-    //      - 4 modul data pribadi dibuang (siswa, responden, permohonan informasi, keberatan; T20, 2026-11-17).
-    expect(models.length).toBe(83);
+    // 82 = 88 - 1 (DesaDigital + InfoTekno digabung jadi InovasiTeknologiDesa, 2026-11-16)
+    //      - 4 modul data pribadi dibuang (siswa, responden, permohonan informasi, keberatan; T20, 2026-11-17)
+    //      - 1 DataPerpustakaan dibuang (katalog pindah ke website eksternal, 2026-11-17).
+    expect(models.length).toBe(82);
   });
 
   it('dokter, tarif layanan, dan pegawai BUMDes berlabel type yang benar', async () => {

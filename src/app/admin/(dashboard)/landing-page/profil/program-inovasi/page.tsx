@@ -19,8 +19,6 @@ import { labelJumlahDokumentasi } from './_lib/dokumentasi.logic';
  * diratakan jadi plain text dulu sebelum di-clamp.
  *
  * Regex dipakai (bukan DOMParser) supaya tetap aman saat SSR.
- * Pola sama dengan `toPlainText` di
- * src/app/(public)/(pages)/pendidikan/perpustakaan-digital/semua/content.tsx
  */
 function toPlainText(html?: string | null) {
   if (!html) return '';

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.303] - 2026-11-17
+### Changed
+- **Perpustakaan Digital kini menautkan website perpustakaan desa.** Desa sudah punya perpustakaan digital sendiri (Pustaka Ananta Loka), jadi halaman `/pendidikan/perpustakaan-digital` tidak lagi menampilkan katalog buku. Gantinya halaman bergaya sama dengan Beasiswa Desa: kepala berisi nama dan deskripsi perpustakaan, tombol "Kunjungi Website Perpustakaan" (terbuka di tab baru) dan ilustrasi rak buku, lalu bagian "Yang tersedia di perpustakaan", "Cara membaca" bernomor, dan ajakan penutup. Tautan katalog lama yang sudah dibagikan warga tetap sampai ke halaman ini, tidak jadi halaman error.
+- **Admin bisa mengganti alamat website perpustakaan sendiri** dari Pendidikan › Perpustakaan Digital › tab "Website Perpustakaan" (nama platform, deskripsi, dan alamat), tanpa perlu menunggu deploy. Alamat wajib diawali `https://`.
+- **Tab Data Perpustakaan, Kategori Buku, dan Peminjam jadi arsip**, diberi nama "Arsip …" beserta keterangan bahwa isinya tidak tampil di website publik. Datanya tetap utuh dan bisa diperiksa; belum ada yang dihapus.
+- Hasil pencarian di website tidak lagi memuat judul buku dari katalog lama, dan asisten Jenna mengarahkan pengunjung ke halaman perpustakaan yang baru.
+
+### Removed
+- **Formulir pinjam buku di website dihentikan.** Peminjaman kini mengikuti ketentuan di website perpustakaan desa, jadi warga tidak lagi mengisi data pribadi (nama, nomor telepon, alamat) untuk pinjam buku di website ini.
+
+### Fixed
+- **Celah keamanan pada catatan peminjaman ditutup.** Catatan peminjam dulu bisa dikirim siapa pun tanpa login dan ditampilkan apa adanya di halaman admin, sehingga berpotensi menjalankan skrip berbahaya di sesi admin. Jalur kirim tanpa login sudah ditutup dan catatan sekarang ditampilkan sebagai teks biasa, termasuk untuk data lama.
+
 ## [0.1.302] - 2026-11-17
 ### Added
 - **sitemap.xml dan robots.txt** untuk mesin pencari. Sitemap memuat beranda dan semua halaman menu yang sedang tampil (68 halaman); halaman yang disembunyikan lewat Pengaturan > Visibilitas Menu otomatis tidak ikut. robots.txt menutup halaman admin, API, dan login dari mesin pencari. Halaman detail (berita, pengumuman, dll.) belum dimasukkan. Catatan: alamat di dalamnya masih mengikuti alamat situs bawaan (stg) sampai domain produksi diatur lewat env.

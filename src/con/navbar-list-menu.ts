@@ -367,7 +367,7 @@ const navbarListMenu = [
             {
                 id: "9.6",
                 name: "Perpustakaan Digital",
-                href: "/pendidikan/perpustakaan-digital/semua"
+                href: "/pendidikan/perpustakaan-digital"
             },
             {
                 id: "9.7",

@@ -95,10 +95,10 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - [x] **Permohonan surat (Ajukan Permohonan): GET publik memuat nama, NIK, alamat, nomor KK** (temuan kode 2026-11-17) — selesai 2026-11-17, keputusan yang sama:
   - `GET /api/desa/ajukanpermohonan/findMany` & `/:id` lewat `guardDataPribadi`; `POST .../create` (publik) membalas `data: { id }`; `create()` state tidak lagi memuat ulang daftar.
 
-- [ ] **Pendidikan: XSS tersimpan lewat catatan peminjaman buku** (terverifikasi 2026-11-15)
-  - Lokasi: `POST /api/pendidikan/perpustakaandigital/peminjamanbuku/create` (publik, `PUBLIC_POST_PATHS` di `src/lib/auth-policy.ts:158`) menyimpan `catatan` apa adanya tanpa validasi; admin `src/app/admin/(dashboard)/pendidikan/perpustakaan-digital/peminjam/[id]/page.tsx:186` merendernya lewat `dangerouslySetInnerHTML`.
-  - Dampak: penyerang anonim cukup POST langsung untuk menjalankan skrip di sesi admin. Mengganti editor di form publik tidak menutup celah.
-  - Usul: simpan teks polos / `sanitizeRichTextForStorage`, render teks polos di admin; validasi server (panjang, telepon, bukuId aktif, tanggal) + batas kiriman seperti Laporan Publik.
+- [x] **Pendidikan: XSS tersimpan lewat catatan peminjaman buku** (terverifikasi 2026-11-15) — selesai 2026-11-17 (`feature/perpustakaan-link-eksternal`), keputusan di `docs/decisions/2026-11-17-perpustakaan-link-eksternal.md`:
+  - Jalur anonim ditutup: `POST .../peminjamanbuku/create` dibuang dari `PUBLIC_POST_PATHS` (perpustakaan pindah ke website eksternal, form pinjam publik dihapus) → penyerang tanpa login tidak bisa lagi menulis `catatan`.
+  - Render admin diperbaiki: detail peminjam memakai `htmlToPlainText` sebagai teks, bukan `dangerouslySetInnerHTML`, jadi data lama yang sudah tersimpan juga tidak dieksekusi.
+  - **Sisa**: validasi server `peminjamanbuku/create` (panjang, telepon, bukuId aktif, tanggal) belum ditambah — endpointnya kini admin-only, jadi bukan lagi P1. Wajib dikerjakan bila peminjaman buku fisik dihidupkan kembali sebagai form publik.
 
 - [x] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64) — selesai 2026-11-17:
   - [x] `GET /api/pendidikan/infosekolahpaud/siswa/find-many` & `/:id` kini admin-only (`guardDataPribadi`, lihat `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`); publik hanya agregat `/api/pendidikan/ringkasan/stats`. Pengajar sengaja tetap publik (hanya nama + lembaga, dipakai direktori pengajar Info Sekolah).

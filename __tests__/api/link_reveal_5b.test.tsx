@@ -206,7 +206,6 @@ describe('Tautan kembali "‹ …": sapuan .cta, chevron kiri .chevronBack berge
     '(pages)/ekonomi/umkm/_com/detail-toko/DetailTokoView.tsx',
     '(pages)/ekonomi/kesejahteraan-masyarakat/_com/detail/KesejahteraanDetail.tsx',
     '(pages)/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/_com/detail/PengurusDetail.tsx',
-    '(pages)/pendidikan/perpustakaan-digital/_com/detail/BukuDetail.tsx',
     '(pages)/lingkungan/program-penghijauan/_com/detail/PenghijauanDetail.tsx',
     '(pages)/pemerintahan/kegiatan-desa/_com/detail/KegiatanDetail.tsx',
     '(pages)/inovasi/program-kreatif-desa/_com/detail/ProgramKreatifDetail.tsx',
