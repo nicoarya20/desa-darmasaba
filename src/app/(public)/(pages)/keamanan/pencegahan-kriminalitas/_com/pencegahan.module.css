@@ -206,12 +206,6 @@
     background: var(--brand);
     transform: translate(-50%, -50%) scale(1.06);
   }
-
-  .sorotanTitle a:hover,
-  .more:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

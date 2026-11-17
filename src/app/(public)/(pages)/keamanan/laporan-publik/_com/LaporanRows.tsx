@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronRight, IconMapPin } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { formatTanggalWaktu, laporanDetailHref, type LaporanPublik } from './laporan.logic';
@@ -34,9 +35,11 @@ export function LaporanRows({ items, loading, placeholderRows }: Props) {
         const lokasi = item.lokasi?.trim();
         return (
           <li key={item.id}>
-            <Link href={laporanDetailHref(item.id)} className={s.row}>
+            <Link href={laporanDetailHref(item.id)} className={`${s.row} ${r.trigger}`}>
               <span className={s.body}>
-                <span className={s.title}>{item.judul}</span>
+                <span className={s.title}>
+                  <span className={r.title}>{item.judul}</span>
+                </span>
                 <span className={s.meta}>
                   <span className={s.lokasi}>
                     <IconMapPin size={15} stroke={1.75} aria-hidden />

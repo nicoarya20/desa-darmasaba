@@ -278,11 +278,6 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .mapLink:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
   .pick:not([aria-pressed='true']):hover {
     background: #e8e8ed;
   }
