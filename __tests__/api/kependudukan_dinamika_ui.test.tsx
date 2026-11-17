@@ -18,8 +18,6 @@ const STG = [
   { id: 'cmk-dinamika-002', tahun: 2025, kelahiran: 52, kematian: 21, masuk: 18, keluar: 12 },
   { id: 'cmk-dinamika-003', tahun: 2024, kelahiran: 48, kematian: 19, masuk: 25, keluar: 20 },
 ];
-const NOV_2026 = new Date(2026, 10, 17);
-const JAN_2027 = new Date(2027, 0, 5);
 
 const slice = (patch: Partial<DatasetSlice>): DatasetSlice => ({
   status: 'ready',
@@ -30,7 +28,7 @@ const slice = (patch: Partial<DatasetSlice>): DatasetSlice => ({
   retry: () => {},
   ...patch,
 });
-const section = (data: DatasetSlice, now = NOV_2026) => render(<DinamikaSection data={data} now={now} />);
+const section = (data: DatasetSlice) => render(<DinamikaSection data={data} />);
 
 describe('DinamikaSection siap', () => {
   it('anchor #dinamika berlabel judul h2', () => {
@@ -53,11 +51,11 @@ describe('DinamikaSection siap', () => {
     expect(out).toContain('Migrasi bersih +7');
   });
 
-  it('tahun berjalan diberi catatan; tahun yang sudah lewat tidak', () => {
-    expect(text(section(slice({}), NOV_2026))).toContain(`Data 2026 · ${T.berjalan}`);
-    const lewat = text(section(slice({}), JAN_2027));
-    expect(lewat).toContain('Data 2026');
-    expect(lewat).not.toContain(T.berjalan);
+  it('meta tahun cukup "Data 2026", tanpa keterangan tahun berjalan (revisi user 2026-11-17)', () => {
+    const out = text(section(slice({})));
+    expect(out).toContain('Data 2026');
+    expect(out).not.toContain('tahun berjalan');
+    expect(out).not.toContain('masih bisa bertambah');
   });
 
   it('riwayat semua tahun di <details> tertutup, terbaru dulu, dengan bersih per tahun', () => {
@@ -79,7 +77,7 @@ describe('DinamikaSection siap', () => {
 
   it('bersih negatif ditulis dengan tanda minus', () => {
     const turun = { id: 't', tahun: 2023, kelahiran: 5, kematian: 20, masuk: 3, keluar: 10 };
-    const out = text(section(slice({ tahun: 2023, rows: [turun], allRows: [turun] }), JAN_2027));
+    const out = text(section(slice({ tahun: 2023, rows: [turun], allRows: [turun] })));
     expect(out).toContain('Perubahan bersih -22 orang');
   });
 
