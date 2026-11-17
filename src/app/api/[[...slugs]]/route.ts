@@ -31,6 +31,7 @@ import Search from "./_lib/search";
 import MenuVisibility from "./_lib/menu_visibility";
 import Sampah from "./_lib/sampah";
 import Developer from "./_lib/developer";
+import Geocode from "./_lib/geocode";
 
 const ROOT = process.cwd();
 
@@ -147,6 +148,7 @@ const ApiServer = new Elysia()
       .use(MenuVisibility)
       .use(Sampah)
       .use(Developer)
+      .use(Geocode)
       .get("/layanan", layanan)
       .get("/potensi", getPotensi)
       .get(

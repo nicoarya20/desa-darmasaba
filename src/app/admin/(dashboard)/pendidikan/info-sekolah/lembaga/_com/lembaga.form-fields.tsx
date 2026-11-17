@@ -59,6 +59,7 @@ export default function LembagaFormFields({ value, onChange, jenjangOptions, fot
         koordinat={value.koordinat}
         onKoordinatChange={(koordinat) => onChange({ koordinat })}
         onKoordinatHapus={() => onChange({ koordinat: null })}
+        alamat={value.alamat}
         linkMaps={value.linkMaps}
         onLinkMapsChange={(linkMaps) => onChange({ linkMaps })}
         linkError={cekLink.success ? null : cekLink.error.issues[0]?.message}

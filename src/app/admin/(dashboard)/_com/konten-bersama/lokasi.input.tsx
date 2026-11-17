@@ -1,9 +1,7 @@
 'use client'
-import { linkGoogleMaps, PUSAT_PETA_DEFAULT, type Koordinat } from '@/lib/konten-bersama/lokasi.logic';
-import { Anchor, Box, Button, Group, Text, TextInput } from '@mantine/core';
-import dynamic from 'next/dynamic';
-
-const LeafletMapEdit = dynamic(() => import('@/app/admin/(dashboard)/_com/leafletMapEdit'), { ssr: false });
+import { linkGoogleMaps, type Koordinat } from '@/lib/konten-bersama/lokasi.logic';
+import { Anchor, Box, TextInput } from '@mantine/core';
+import TitikPetaInput from './titik-peta.input';
 
 type Props = {
   koordinat: Koordinat | null;
@@ -14,33 +12,19 @@ type Props = {
   linkError?: string | null;
   /** Bila diisi, titik bisa dikosongkan (lokasi opsional, mis. sekolah yang hanya punya link Google Maps). */
   onKoordinatHapus?: () => void;
+  /** Alamat dari form, dipakai sebagai kata kunci awal "Cari di peta". */
+  alamat?: string;
 };
 
 /**
- * Input lokasi (semua domain): pilih titik di peta + link Google Maps opsional (mis. link pendek
- * `maps.app.goo.gl/...` dari desa). Tanpa link, tombol publik memakai rute ke titik peta.
+ * Input lokasi (semua domain): titik peta (cari alamat / lintang-bujur / klik) + link Google Maps opsional
+ * (mis. link pendek `maps.app.goo.gl/...` dari desa). Tanpa link, tombol publik memakai rute ke titik peta.
  */
-export default function LokasiInput({ koordinat, onKoordinatChange, linkMaps, onLinkMapsChange, linkError, onKoordinatHapus }: Props) {
+export default function LokasiInput({ koordinat, onKoordinatChange, linkMaps, onLinkMapsChange, linkError, onKoordinatHapus, alamat }: Props) {
   const tujuan = linkGoogleMaps(linkMaps.trim() || null, koordinat);
   return (
     <Box data-testid="lokasi-input">
-      <Text fw="bold" fz="sm" mb={6}>Pilih Lokasi di Peta</Text>
-      <Text fz="xs" c="dimmed" mb={4}>Klik pada peta untuk menandai lokasi</Text>
-      <Box style={{ height: 300, width: '100%', borderRadius: 8, overflow: 'hidden' }}>
-        <LeafletMapEdit initialPosition={koordinat ?? PUSAT_PETA_DEFAULT} onChange={onKoordinatChange} />
-      </Box>
-      {koordinat && (
-        <Group gap="xs" mt={4}>
-          <Text fz="xs" c="green">
-            Lokasi dipilih: {koordinat.lat.toFixed(6)}, {koordinat.lng.toFixed(6)}
-          </Text>
-          {onKoordinatHapus && (
-            <Button variant="subtle" color="red" size="compact-xs" onClick={onKoordinatHapus}>
-              Hapus titik
-            </Button>
-          )}
-        </Group>
-      )}
+      <TitikPetaInput koordinat={koordinat} onKoordinatChange={onKoordinatChange} alamat={alamat} onKoordinatHapus={onKoordinatHapus} />
       <TextInput
         mt="sm"
         label="Link Google Maps"
