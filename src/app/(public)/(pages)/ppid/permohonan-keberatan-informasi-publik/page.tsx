@@ -1,7 +1,6 @@
 'use client'
 import permohonanKeberatanInformasi from '@/app/admin/(dashboard)/_state/ppid/permohonan_keberatan_informasi_publik/permohonanKeberatanInformasi';
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
-import colors from '@/con/colors';
 import { KONTAK_DESA } from '@/con/kontak-desa';
 import {
   ALASAN_KEBERATAN_MAX_LENGTH,
@@ -203,7 +202,7 @@ function Page() {
                 size="md"
                 radius="xl"
                 fw={600}
-                bg={colors['blue-button']}
+                bg="var(--c-brand-fill)"
                 disabled={!isFormValid()}
               >
                 Kirim Permohonan

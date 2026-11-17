@@ -4,9 +4,12 @@
  * Breakpoint 2 kolom ditulis literal 75em (= lg tema Mantine); $mantine-breakpoint-lg postcss bernilai 80em.
  */
 .layout {
-  --permohonan-ink: #1d1d1f;
-  --permohonan-muted: #515154;
-  --permohonan-line: #8ba8c1;
+  --permohonan-ink: var(--c-ink);
+  --permohonan-muted: var(--c-ink-2);
+  /* Garis penghubung nomor alur: biru-abu di terang, biru redup (pita hero gelap) di gelap. */
+  --permohonan-line: light-dark(#8ba8c1, #3d5a78);
+  /* Kartu formulir: putih di terang, ubin --c-tile di gelap. */
+  --permohonan-card: light-dark(#fff, var(--c-tile));
   /* Navbar desktop 44px + jarak 32px. */
   --permohonan-sticky-top: calc(44px + 32px);
   display: grid;
@@ -97,7 +100,7 @@
   gap: 20px;
   padding: 32px;
   border-radius: 18px;
-  background: #fff;
+  background: var(--permohonan-card);
 }
 
 .cardTitle {

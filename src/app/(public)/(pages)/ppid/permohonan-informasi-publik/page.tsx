@@ -244,7 +244,7 @@ function Page() {
 
           <Checkbox
             size="sm"
-            color={colors['blue-button']}
+            color="var(--c-brand-fill)"
             checked={setuju}
             onChange={(e) => setSetuju(e.currentTarget.checked)}
             label="Saya menyatakan bahwa data yang saya berikan benar adanya dan informasi yang diminta akan digunakan sesuai ketentuan."
@@ -254,7 +254,7 @@ function Page() {
             <Button
               size="md"
               radius="xl"
-              bg={colors['blue-button']}
+              bg="var(--c-brand-fill)"
               leftSection={<IconSend2 size={20} color={colors['white-1']} />}
               onClick={submitForms}
               disabled={!isFormValid()}

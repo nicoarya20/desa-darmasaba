@@ -1,6 +1,7 @@
 'use client';
 
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import { Skeleton } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
@@ -52,7 +53,7 @@ export default function DetailInformasiPublikUser() {
         <div>
           <dt className={s.detailTerm}>{DAFTAR_TEXT.columns.deskripsi}</dt>
           <dd
-            className={s.detailValue}
+            className={`${s.detailValue} ${rt.root}`}
             dangerouslySetInnerHTML={{ __html: data.deskripsi || DAFTAR_TEXT.emptyValue }}
           />
         </div>
