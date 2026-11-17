@@ -126,9 +126,9 @@ describe('NowPlayingBar', () => {
     expect(html).toContain('4:10');
     expect(html).toMatch(/<img[^>]*src="https:\/\/example.test\/a.jpg"[^>]*alt=""[^>]*aria-hidden="true"/);
     expect(button(html, PLAYER_TEXT.pause)).not.toContain('disabled');
-    // Slider tema terang: isi = tinta, rel = token --m-track.
-    expect(html).toContain('--slider-color:var(--m-ink, #1d1d1f)');
-    expect(html).toContain('--slider-track-bg:var(--m-track, rgba(0, 0, 0, 0.12))');
+    // Slider: isi = tinta, rel = token --m-track (nilai terang/gelap di musik-app.module.css, tanpa cadangan).
+    expect(html).toContain('--slider-color:var(--m-ink)');
+    expect(html).toContain('--slider-track-bg:var(--m-track)');
   });
 
   it('lagu tanpa audio: putar nonaktif, next tetap aktif, keterangan audio belum tersedia', () => {
@@ -219,11 +219,12 @@ describe('NowPlayingBar', () => {
     expect(media('max-width: 734px')).toMatch(/\.volume\s*\{\s*display: none;/);
   });
 
-  it('tema terang: kaca putih di bar, tanpa cadangan warna gelap di modul pemutar', async () => {
+  it('kaca bar: putih di terang, gelap lewat @mixin dark; tanpa cadangan warna lama di modul pemutar', async () => {
     const { readFileSync, readdirSync } = await import('node:fs');
     const dir = 'src/app/(public)/(pages)/musik/musik-desa/_com/player';
     const bar = readFileSync(`${dir}/now-playing-bar.module.css`, 'utf8');
     expect(bar).toContain('background: rgba(255, 255, 255, 0.82);');
+    expect(bar).toMatch(/@mixin dark \{\s*background: rgba\(22, 22, 23, 0\.86\);/);
     const sources = readdirSync(dir)
       .filter((f) => /\.(css|tsx?)$/.test(f))
       .map((f) => readFileSync(`${dir}/${f}`, 'utf8'))
@@ -281,10 +282,10 @@ describe('QueuePanel', () => {
     const block = (sel: string) => css.match(new RegExp(`\\n${sel.replace(/[.[\]']/g, '\\$&')} \\{([^}]*)\\}`))?.[1];
     expect(block(".row[data-playable='false']")).toBeUndefined();
     expect(block(".row[data-playable='false'] .cover")).toContain('opacity: 0.5;');
-    expect(block(".row[data-playable='false'] .rowTitle")).toContain('color: var(--m-muted, #515154);');
-    expect(block(".row[data-playable='false'] .rowArtist")).toContain('color: var(--m-subtle, #6e6e73);');
+    expect(block(".row[data-playable='false'] .rowTitle")).toContain('color: var(--m-muted);');
+    expect(block(".row[data-playable='false'] .rowArtist")).toContain('color: var(--m-subtle);');
     // Latar hover (--m-hover di atas --m-surface ±#e9e9eb) membuat --m-subtle hanya 4,18:1.
-    expect(block(".row[data-playable='false']:hover .rowArtist")).toContain('color: var(--m-muted, #515154);');
+    expect(block(".row[data-playable='false']:hover .rowArtist")).toContain('color: var(--m-muted);');
     // Aksen lagu yang sedang diputar ditulis sesudahnya supaya menang walau lagunya tanpa audio.
     expect(css.indexOf(".row[data-current='true'] .rowTitle")).toBeGreaterThan(
       css.indexOf(".row[data-playable='false'] .rowTitle")
@@ -292,7 +293,7 @@ describe('QueuePanel', () => {
     const sources = ['queue-panel', 'now-playing-bar', 'player-progress']
       .map((f) => readFileSync(`${dir}/${f}.module.css`, 'utf8'))
       .join('\n');
-    // Nilai cadangan mengikuti token baru (≥ 4,5:1); --bar-muted lokal sudah disatukan ke --m-muted.
+    // Cadangan lama yang gagal kontras tidak kembali; --bar-muted lokal sudah disatukan ke --m-muted.
     expect(sources).not.toMatch(/--m-muted, #6e6e73|--m-subtle, #86868b|--bar-muted/);
   });
 

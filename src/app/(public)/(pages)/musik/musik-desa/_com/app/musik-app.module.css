@@ -1,29 +1,35 @@
 /*
- * Kerangka aplikasi Musik Desa gaya TIDAL (struktur), dengan tema TERANG mengikuti situs (revisi user
- * 2026-11-14: "jangan di hitam"). Semua warna lewat token di bawah; modul lain (library/, player/)
- * membacanya dengan cadangan, mis. `var(--m-ink, #1d1d1f)`. `.tokens` dipasang juga di Drawer antrean
- * karena Drawer dirender lewat portal di luar `.app`.
- * --m-solid/--m-on-solid = tombol/pil "terbalik" (latar gelap, teks putih); --m-track = rel slider.
+ * Kerangka aplikasi Musik Desa gaya TIDAL (struktur), mengikuti tema situs terang/gelap (dark theme
+ * 2026-11-18; penolakan "jangan di hitam" 2026-11-14 karena saat itu belum ada pilihan tema).
+ * Semua warna lewat token di bawah, alias ke token situs `--c-*` (src/app/theme-tokens.css); modul lain
+ * (library/, player/) membacanya tanpa cadangan karena semua pemakai ada di dalam `.app` atau `.tokens`.
+ * `.tokens` dipasang juga di Drawer antrean & pemutar lengkap karena Drawer dirender lewat portal di luar `.app`.
+ * --m-solid/--m-on-solid = tombol/pil "terbalik" (terang: latar tinta teks putih; gelap: latar putih teks hitam);
+ * --m-track = rel slider. Nilai tanpa token situs: literal terang lama + `@mixin dark`.
  * Tulis `backdrop-filter` tanpa `-webkit-` manual (Lightning CSS, lihat navbar.module.css).
  */
 .app,
 .tokens {
-  --m-bg: #fff;
-  --m-surface: #f5f5f7;
+  --m-bg: var(--c-bg);
+  --m-surface: var(--c-tile);
   --m-elev: #f0f0f2;
   --m-hover: rgba(0, 0, 0, 0.05);
   --m-active: rgba(0, 0, 0, 0.06);
-  --m-line: #d2d2d7;
-  --m-ink: #1d1d1f;
+  --m-line: var(--c-line-strong);
+  --m-ink: var(--c-ink);
   /* Teks sekunder, kontras WCAG AA (≥4,5:1) untuk teks 13–15px: muted #515154 7,9:1 di putih;
      subtle #6e6e73 5,1:1 di putih / 4,7:1 di --m-surface, tapi 4,46:1 di --m-elev (jangan untuk teks
-     di atas --m-elev). #86868b lama hanya 3,6:1. Hierarki: ink > muted > subtle. */
-  --m-muted: #515154;
-  --m-subtle: #6e6e73;
-  --m-accent: #0a4e78; /* colors['blue-button']; #5da9d8 lama gagal kontras di latar putih */
-  --m-solid: #1d1d1f;
-  --m-on-solid: #fff;
+     di atas --m-elev). #86868b lama hanya 3,6:1. Hierarki: ink > muted > subtle.
+     Gelap: muted #c7c7cc, subtle #a1a1a6 (5,5:1 di --m-elev gelap #2a2a2c). */
+  --m-muted: var(--c-ink-2);
+  --m-subtle: var(--c-muted);
+  --m-accent: var(--c-brand); /* terang #0a4e78 = colors['blue-button']; #5da9d8 lama gagal kontras di latar putih */
+  --m-solid: var(--c-ink);
+  --m-on-solid: var(--c-bg);
   --m-track: rgba(0, 0, 0, 0.12);
+  /* Ikon/inisial di atas gradasi pastel sampul cadangan (musik-palette.ts COVER_TONES): gradasinya sama di
+     dua tema, jadi warnanya tetap (bukan --m-muted, yang di gelap jadi terang dan hilang di atas pastel). */
+  --m-on-cover: #515154;
   --m-bar-h: 88px; /* tinggi NowPlayingBar */
   /* Ruang yang dipakai bar di bawah layar: 0 sampai lagu pertama dipilih (NowPlayingBar belum
      dirender), lalu tinggi bar + safe-area bawah (iPhone). Diatur lewat data-bar di .app. */
@@ -35,6 +41,13 @@
      <Space> penyangga navbar di DarmasabaShell.tsx (2.75rem / 3rem): ubah bersamaan. */
   --m-nav: 44px;
   color: var(--m-ink);
+
+  @mixin dark {
+    --m-elev: #2a2a2c; /* = --c-tile-alt gelap: pil/kolom cari di atas latar hitam */
+    --m-hover: rgba(255, 255, 255, 0.08);
+    --m-active: rgba(255, 255, 255, 0.12);
+    --m-track: rgba(255, 255, 255, 0.2);
+  }
 }
 
 @media (max-width: 61.99em) {

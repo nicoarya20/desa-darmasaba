@@ -35,8 +35,8 @@
 
 .tile[aria-pressed='true'] .avatar {
   box-shadow:
-    0 0 0 3px var(--m-bg, #fff),
-    0 0 0 5px var(--m-ink, #1d1d1f);
+    0 0 0 3px var(--m-bg),
+    0 0 0 5px var(--m-ink);
 }
 
 .img {
@@ -51,7 +51,7 @@
 .initials {
   font-size: calc(var(--avatar) * 0.3);
   font-weight: 700;
-  color: var(--m-muted, #515154);
+  color: var(--m-on-cover); /* tetap di dua tema: di atas gradasi pastel */
 }
 
 .name {
@@ -61,7 +61,7 @@
   text-overflow: ellipsis;
   font-size: 16px;
   font-weight: 600;
-  color: var(--m-ink, #1d1d1f);
+  color: var(--m-ink);
 }
 
 .tile[data-size='sm'] .name {
@@ -70,11 +70,11 @@
 
 .count {
   font-size: 14px;
-  color: var(--m-muted, #515154);
+  color: var(--m-muted);
 }
 
 .tile:focus-visible {
-  outline: 2px solid var(--m-accent, #0a4e78);
+  outline: 2px solid var(--m-accent);
   outline-offset: 4px;
   border-radius: 12px;
 }
