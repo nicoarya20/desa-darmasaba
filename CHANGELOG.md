@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.299] - 2026-11-17
+## [0.1.300] - 2026-11-17
 ### Added
 - **Titik peta tidak harus diklik manual lagi**. Ini berlaku di form CCTV (tambah dan edit), Bank Sampah, dan Lembaga Pendidikan.
   - Pilih cara mengisi lewat dua tab: **Cari alamat** atau **Lintang & bujur**. Peta tetap tampil di bawahnya, dan isian tidak hilang saat berpindah tab. Form yang sudah punya titik langsung membuka tab Lintang & bujur.
@@ -14,6 +14,19 @@
 ### Fixed
 - Peta di form lokasi (CCTV, Bank Sampah, Lembaga Pendidikan) kini terbuka di Desa Darmasaba. Sebelumnya Bank Sampah dan Lembaga Pendidikan terbuka di sekitar Denpasar.
 - Halaman edit CCTV kini menampilkan tampilan memuat sampai data CCTV tersebut selesai dimuat. Sebelumnya form bisa sempat menampilkan data CCTV yang dibuka sebelumnya, dan bila data gagal dimuat, menekan **Simpan** dapat menimpa CCTV ini dengan data CCTV lain. Bila data tidak ditemukan atau gagal dimuat, kini muncul pesan dengan tombol **Coba lagi** dan **Kembali ke daftar CCTV**, tanpa form.
+
+## [0.1.299] - 2026-11-17
+### Added
+- **Submenu baru Inovasi › Program Inovasi** (`/inovasi/program-inovasi`): daftar semua program inovasi desa berupa ubin logo, dengan data yang sama seperti rel "Program Inovasi Desa" di beranda. Submenu ini bisa disembunyikan atau ditampilkan dari Pengaturan › Visibilitas Menu.
+- **Halaman detail tiap program** (`/inovasi/program-inovasi/{id}`) yang bisa ditemukan mesin pencari dan dibagikan: judul dan cuplikan program serta logonya tampil saat tautan dibagikan. Judul bagian seperti Tujuan, Sasaran, dan Ruang Lingkup tampil sebagai judul. Program yang dinonaktifkan admin menampilkan halaman tidak ditemukan.
+- **Urutan tampil program inovasi**: form tambah/edit Program Inovasi di admin punya isian "Urutan tampil (opsional)". Angka 1 tampil paling depan di beranda dan halaman Program Inovasi; yang dikosongkan tetap urut abjad setelah yang bernomor. Daftar admin menampilkan kolom Urutan.
+
+### Changed
+- Overlay detail program di beranda kini punya tautan "Lihat halaman lengkap".
+- Tautan lama `/program-inovasi/{id}` kini membuka halaman detail baru, bukan overlay beranda.
+
+### Fixed
+- Jumlah halaman di daftar Program Inovasi admin kini benar saat mencari (sebelumnya dihitung dari semua program).
 
 ## [0.1.298] - 2026-11-17
 ### Changed

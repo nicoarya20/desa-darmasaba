@@ -70,6 +70,11 @@ function DetailProgramInovasi() {
               </Box>
 
               <Box>
+                <Text fz="lg" fw="bold">Urutan Tampil</Text>
+                <Text fz="md" c="dimmed">{data.urutan ?? 'Kosong (urut abjad)'}</Text>
+              </Box>
+
+              <Box>
                 <Text fz="lg" fw="bold">Gambar</Text>
                 {data.image?.link ? (
                   <Image

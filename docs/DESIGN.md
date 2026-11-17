@@ -4,6 +4,66 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 
 ---
 
+## 0. Membuat Halaman Publik Baru (mulai di sini)
+
+Ringkasan untuk developer/AI yang menambah halaman situs publik supaya seragam dengan halaman yang sudah dirombak. Detail tiap pola ada di bagian yang dirujuk; catatan per halaman di §5 adalah riwayat, bukan bacaan wajib.
+
+### 0.1 Pilih kerangka sesuai jenis halaman
+
+| Jenis halaman | Kerangka | Contoh yang bisa disalin |
+|---|---|---|
+| Daftar teks (berita, kegiatan, program) + paginasi | `.section` `kabar.module.css` + `KABAR_BRAND_VARS` + `KabarListHeader` + `KabarListPagination` (`_com/kabar-list/`) | `(pages)/pemerintahan/kegiatan-desa/` (§5 Kegiatan Desa) |
+| Detail artikel/entri | kolom 860px `_com/kabar-list/kabar-detail.module.css`, foto utama `.photo` | `(pages)/pemerintahan/kegiatan-desa/_com/detail/KegiatanDetail.tsx` |
+| Statistik satu dimensi (jumlah per kategori) | `.section` Kabar + `KabarListHeader searchable={false}` + `StatBarsPanel` (`_com/stat-bars/`) | `(pages)/ekonomi/demografi-pekerjaan/` (§5 Modul batang statistik) |
+| Anggaran/tabel rupiah berhirarki | komponen APBDes (`_com/main-page/apbdes/`, `ApbdesRows`) | `/apbdes`, PADesa (§5 APBDes) |
+| Teks program dari CMS (judul + deskripsi HTML) | `ProgramInfoBody` + `.tokens` (`(pages)/pendidikan/_com/program-info/`) | `(pages)/lingkungan/edukasi-lingkungan/` (§5 Edukasi Lingkungan) |
+| Halaman di menu Pendidikan | `page-frame` 1200px (`(pages)/pendidikan/_com/page-frame/`) | §5 Kerangka halaman Pendidikan |
+
+Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) memakai kerangka Kabar, bukan `page-frame`. Jangan menulis padding/max-width halaman sendiri.
+
+### 0.2 Susunan file per halaman
+
+```
+(pages)/<menu>/<halaman>/
+  page.tsx                  // tipis: render komponen dari _com
+  _com/<Halaman>Page.tsx    // kerangka + keadaan (memuat/kosong/galat/isi)
+  _com/<halaman>.source.ts  // ApiFetch langsung; galat dilempar berkonteks
+  _com/<halaman>.logic.ts   // fungsi murni (normalisasi, ringkasan, urutan)
+  _com/<halaman>.text.ts    // semua teks UI
+  _com/<halaman>.meta.ts    // ikon/warna (bila perlu)
+  _com/<halaman>.module.css // hanya gaya khas halaman
+```
+
+- Data dimuat sekali lewat `useLoadOnce(load, "data X (Nama Halaman)")` (`_com/load-once/`), **bukan** state admin `admin/(dashboard)/_state`.
+- Batas ukuran file mengikuti aturan project (komponen ≤150 baris, logic ≤200, file apa pun ≤500). Pecah komponen sebelum melewati batas.
+- Test: `__tests__/api/<menu>_<halaman>_{logic,ui}.test.ts(x)`. Test UI memakai `// @vitest-environment node` + `renderToStaticMarkup` (jsdom tidak dipakai di repo ini). Contoh: `ekonomi_demografi_pekerjaan_ui.test.tsx`.
+
+### 0.3 Token yang wajib dipakai
+
+- **Jarak**: `--edge-gutter` (tepi kiri/kanan), `--section-gap` (antar-section beranda, isi terakhir → footer), `--block-gap` (antar-bagian di dalam halaman). Lihat §4. Jangan angka literal 56/64/100px.
+- **`--gutter`**: wadah pemakai `KabarListHeader` wajib set `--gutter: var(--edge-gutter)`, kalau tidak rel pil di ponsel melebar.
+- **Warna**: brand `blue-button` `#0A4E78`, tinta `#1d1d1f`, abu teks `#6e6e73`/`#515154`, panel/ubin `#f5f5f7` radius 18px tanpa border/bayangan, garis `#d2d2d7` (§2.1).
+- **Tipografi**: `h1` 48px (≤734px 32) brand rata kiri + satu kalimat pengantar 19px abu (maks 640px); judul bagian `h2` 28px (ponsel 24), jarak judul → isi 24px (ponsel 20).
+- **Breakpoint CSS**: 1068px (tablet) dan 734px (ponsel).
+
+### 0.4 Aturan tetap (keputusan user)
+
+1. **Hover tautan = sapuan warna**, bukan garis bawah. Pakai `link-reveal` (`.trigger` + `.title`/`.cta`/`.chevron`); `<Anchor>` wajib `underline="never"`. Dijaga test `__tests__/api/no_hover_underline_guard.test.ts` (gagal bila dilanggar). Lihat §5 Modul sapuan warna tautan.
+2. **Tautan kembali di halaman detail** = teks "‹ Nama Daftar" (`.back` dari `detail-umkm.module.css`) + `.chevronBack`, bukan tombol ikon panah.
+3. **Keadaan selalu dibedakan**: memuat = kerangka berdenyut `aria-busy`; kosong = kotak `#f5f5f7` satu kalimat ("Belum ada …"); galat = kalimat berbeda (`role="alert"`). Jangan tampilkan grafik kosong, "0 orang", atau "Rp 0" untuk data yang belum diisi; tulis "Belum diisi".
+4. **Teks UI**: Bahasa Indonesia, tanpa em dash (—), tanpa emoji (ikon dari `@tabler/icons-react`).
+5. **Alamat induk menu** (`/keamanan`, `/ekonomi`, dst.) sengaja 404; jangan buat halaman induk. Submenu yang disembunyikan (`hidden: true` di `src/con/navbar-list-menu.ts`) juga 404.
+6. **Gerak**: hormati `prefers-reduced-motion`; hover hanya di `(hover: hover) and (pointer: fine)`. Tulis `backdrop-filter` tanpa `-webkit-` manual (Lightning CSS).
+7. **Mobile**: tidak boleh ada geser horizontal halaman; baris pil/kartu yang geser harus di dalam relnya sendiri.
+
+### 0.5 Mendaftarkan halaman
+
+- Menu navbar: `src/con/navbar-list-menu.ts` (§7). Halaman di luar navbar yang perlu muncul di pencarian: `src/con/search-extra-pages.ts`.
+- Hasil cari global yang membuka detail: helper href di `_com/searchUrl.tsx`.
+- Setelah halaman jadi, tambahkan catatan singkatnya di §5 (rute, folder, test) supaya dokumen ini tetap sinkron.
+
+---
+
 ## 1. Tech Stack UI
 
 | Paket | Versi | Kegunaan |
@@ -211,16 +271,16 @@ Layar pertama beranda: menjawab "ini situs siapa" sebelum yang lain. Folder: `_c
 - **Bentuk**: satu permukaan `#D1D9E8` (`colors.Bg`) selebar layar, jarak tepi `--edge-gutter` (`globals.css`: `clamp(24px, 4vw, 64px)`; mobile 16px), **tanpa kartu pembungkus**. Kiri: 2 logo (ubin putih 56px) + "PEMERINTAH DESA DARMASABA" (15px kapital, `blue-button`) + wilayah; `h1` sambutan (`clamp(2rem, 4.4vw, 3.6rem)`, `blue-button-7`) dengan baris salam di atasnya; status kantor; ikon media sosial (bulat putih 44px, tautan asli tab baru). Kanan: foto Perbekel `object-fit: contain` rata bawah **setinggi hero** (kolom kanan merentang dua baris grid: `"copy profile" / "programs profile"`, kolom `1.3fr / 1fr`), tinggi `--photo-h` = `clamp(340px, min(38vw, 66vh), 700px)` (ikut tinggi layar supaya hero tetap di layar pertama laptop), kartu nama putih menimpa dasar foto 32px. Tanpa foto → hanya kartu nama.
 - **Status kantor**: satu baris pil putih — titik hijau/merah, "Kantor buka/tutup", lalu "Jam layanan 07:30 - 15:30" atau nama hari libur/"Libur Akhir Pekan". Jam: Senin–Kamis 07:30–15:30, Jumat 07:30–12:00; hari libur nasional mengalahkan jam kerja; diperbarui tiap menit.
 - **Pita latar** (`HeroRibbons`): satu SVG diam di belakang semua isi — berkas 11 pita sejajar (biru brand, biru muda, putih, satu garis emas `#d4a72c`, satu garis merah `#c8102e`; warna dari seragam Perbekel) yang turun dari atas-tengah lalu mendatar di belakang foto sampai keluar tepi kanan; melebar 1,35× di pangkal (kipas), memudar ke atas lewat mask. Path dihitung sekali saat modul dimuat dari garis tengah Bézier (`ribbons.logic.ts`); `preserveAspectRatio="none"` supaya ikut ukuran hero. Tepi luar berkas tetap, jadi pita tidak pernah menyentuh teks sambutan. **Tanpa gerak.** Di mobile pita pindah ke sel foto saja (lihat butir Mobile). Alasan bentuk: panel warna di belakang foto dan foto desa sebagai latar penuh sudah dicoba dan ditolak.
-- **Program inovasi**: judul kecil kapital "Program Inovasi Desa" + rel geser berisi **semua program** (urutan dari API) di kiri bawah, di bawah teks. Ubin putih seragam (radius 16px, logo `contain` tinggi 72px, nama 14px maks 2 baris) → membuka **overlay detail** di beranda (`/?program={id}`, lihat di bawah). 4 ubin terlihat penuh (`RAIL_VISIBLE_TILES` = `--visible-tiles`), ubin ke-5 mengintip 48px. Geser dengan scroll bawaan browser (`scroll-snap-type: x mandatory`, berhenti di tepi ubin): seret, trackpad, atau 2 tombol panah bulat putih 40px di kanan judul (sekali klik = 2 ubin; mati di ujung). **Tanpa putar otomatis, tanpa loop** — logo yang berjalan sendiri terbaca seperti banner sponsor, dan galeri Layanan & Potensi di bawahnya sudah bergerak sendiri; mesin galeri itu sengaja tidak dipakai ulang. Tepi rel **memudar bertahap** (`mask-image`, 72px; mobile 40px) hanya di sisi yang masih punya ubin tersembunyi (`data-fade-start`/`data-fade-end` dari posisi geser; lebar gradasi bertransisi lewat `@property`). Di bawah rel: garis posisi 3px biru brand polos di lintasan biru tipis (lebar = porsi terlihat), ditulis langsung ke DOM tiap event scroll. Gerak lain: ubin masuk bergiliran sekali (70ms per ubin), hover naik 2px (pointer saja). ≤4 program → tanpa panah, garis posisi, dan gradasi. Reduced motion: tanpa animasi masuk/transisi, panah menggeser seketika.
+- **Program inovasi**: judul kecil kapital "Program Inovasi Desa" + rel geser berisi **semua program** (urutan dari API: `urutan` isian admin naik, kosong di belakang, lalu abjad — `PROGRAM_INOVASI_ORDER_BY` di `src/lib/program-inovasi.ts`) di kiri bawah, di bawah teks. Ubin putih seragam (radius 16px, logo `contain` tinggi 72px, nama 14px maks 2 baris) → membuka **overlay detail** di beranda (`/?program={id}`, lihat di bawah). 4 ubin terlihat penuh (`RAIL_VISIBLE_TILES` = `--visible-tiles`), ubin ke-5 mengintip 48px. Geser dengan scroll bawaan browser (`scroll-snap-type: x mandatory`, berhenti di tepi ubin): seret, trackpad, atau 2 tombol panah bulat putih 40px di kanan judul (sekali klik = 2 ubin; mati di ujung). **Tanpa putar otomatis, tanpa loop** — logo yang berjalan sendiri terbaca seperti banner sponsor, dan galeri Layanan & Potensi di bawahnya sudah bergerak sendiri; mesin galeri itu sengaja tidak dipakai ulang. Tepi rel **memudar bertahap** (`mask-image`, 72px; mobile 40px) hanya di sisi yang masih punya ubin tersembunyi (`data-fade-start`/`data-fade-end` dari posisi geser; lebar gradasi bertransisi lewat `@property`). Di bawah rel: garis posisi 3px biru brand polos di lintasan biru tipis (lebar = porsi terlihat), ditulis langsung ke DOM tiap event scroll. Gerak lain: ubin masuk bergiliran sekali (70ms per ubin), hover naik 2px (pointer saja). ≤4 program → tanpa panah, garis posisi, dan gradasi. Reduced motion: tanpa animasi masuk/transisi, panah menggeser seketika.
 - **Tablet ≤1068px**: rel program melebar penuh di bawah teks dan foto (kolom kiri terlalu sempit untuk 4 ubin); foto `clamp(300px, 42vw, 460px)`.
 - **Mobile ≤734px**: satu kolom (teks → foto 320px → program); rel program sampai tepi layar (ubin 132px, ubin berikutnya mengintip), tanpa tombol panah. Pita latar hanya di belakang foto: SVG jadi item grid di sel `profile`, dilebarkan 1600/1100 kali lebar layar dan digeser ke kiri sehingga yang tampil potongan kanan gambar (x 500–1600) — turun dari kiri atas foto lalu keluar tepi kanan, tidak menyentuh teks. Jarak ikon media sosial → foto 16px.
 - **Loading**: placeholder berdenyut seukuran foto, pil status, dan 4 ubin (tanpa denyut saat reduced motion).
 
 #### Overlay detail Program Inovasi (`/?program={id}`)
 
-Detail program tidak lagi punya halaman sendiri: datanya tipis (nama, logo, deskripsi, galeri dokumentasi), dan pintu masuknya rel hero, jadi pengunjung tetap di beranda. Folder `landing-page/program-overlay/`: `ProgramInovasiOverlay.tsx` (Modal + keadaan), `ProgramOverlayDetail.tsx` (kepala, deskripsi, kerangka), `ProgramOverlayGallery.tsx`, `ProgramOverlayPhoto.tsx` (tampilan besar), `program-overlay.logic.ts` (murni), `program-overlay.source.ts`, `use-program-detail.ts`, `use-photo-viewer.ts`, `program-overlay.text.ts`, `program-overlay.module.css`, `program-overlay-photo.module.css`. Penyambungan: `program-param.logic.ts`, `use-program-param.ts`, `ProgramOverlaySlot.tsx`. Test: `__tests__/api/program_inovasi_overlay_{logic,ui}.test.ts(x)`, `program_inovasi_param_logic.test.ts`.
+Klik ubin rel hero membuka overlay ini agar pengunjung tetap di beranda; halaman detail yang bisa diindeks ada di `/inovasi/program-inovasi/{id}` (lihat "Program Inovasi" di bagian Inovasi), ditautkan dari overlay lewat "Lihat halaman lengkap ›" di bawah nama. Folder `landing-page/program-overlay/`: `ProgramInovasiOverlay.tsx` (Modal + keadaan), `ProgramOverlayDetail.tsx` (kepala, deskripsi, kerangka), `ProgramOverlayGallery.tsx`, `ProgramOverlayPhoto.tsx` (tampilan besar), `program-overlay.logic.ts` (murni), `program-overlay.source.ts`, `use-program-detail.ts`, `use-photo-viewer.ts`, `program-overlay.text.ts`, `program-overlay.module.css`, `program-overlay-photo.module.css`. Penyambungan: `program-param.logic.ts`, `use-program-param.ts`, `ProgramOverlaySlot.tsx`. Test: `__tests__/api/program_inovasi_overlay_{logic,ui}.test.ts(x)`, `program_inovasi_param_logic.test.ts`.
 
-- **Alamat**: `/?program={id}`, dibentuk HANYA lewat `programOverlayHref(id)`; dipakai ubin hero, cari global (`searchUrl.tsx`), Jenna (`sources.ts`), dan redirect 307 rute lama `/program-inovasi/[id]` (folder rute tetap ada karena `_com/DokumentasiGaleri` dipakai admin + Pengumuman). Ubin tetap `<a href>` asli (klik tengah/Cmd-klik/salin tautan jalan); hanya klik kiri biasa (`isPlainLeftClick`) yang di-`preventDefault` lalu `router.push(href, { scroll: false })`. Jangan pakai `Link` next-view-transitions untuk perubahan query saja (memicu transisi halaman).
+- **Alamat**: `/?program={id}`, dibentuk HANYA lewat `programOverlayHref(id)`; dipakai ubin hero, cari global (`searchUrl.tsx`), dan Jenna (`sources.ts`). Rute lama `/program-inovasi/[id]` kini redirect 307 ke `/inovasi/program-inovasi/{id}` (folder rute tetap ada karena `_com/DokumentasiGaleri` dipakai admin, Pengumuman, dan halaman detail). Ubin tetap `<a href>` asli (klik tengah/Cmd-klik/salin tautan jalan); hanya klik kiri biasa (`isPlainLeftClick`) yang di-`preventDefault` lalu `router.push(href, { scroll: false })`. Jangan pakai `Link` next-view-transitions untuk perubahan query saja (memicu transisi halaman).
 - **Tutup**: dibuka lewat push di sesi ini → `router.back()` (tombol back browser = tutup); tautan langsung/reload → `router.replace("/", { scroll: false })` agar × tidak keluar situs. Posisi gulir beranda tidak berubah. `useSearchParams` hanya di `ProgramOverlaySlot` yang dibungkus `<Suspense fallback={null}>`, agar hero tidak ikut tertahan.
 - **Kartu**: Modal Mantine di atas beranda yang di-blur (gelap 45% + blur 10px, pola overlay Potensi). Desktop 880px, radius 28px (dipasang di CSS `.content`; prop `radius` `Modal.Root` hanya mengenai `Modal.Header`), tinggi maks `100dvh - 64px`, bilah atas tetap berisi × bulat 40px `#f5f5f7`, isi scroll di dalam. Ponsel ≤734px: `fullScreen`, transisi `slide-up` 320ms (desktop `pop` 220ms); reduced motion → durasi 0. Tutup: ×, Esc, klik latar.
 - **Kepala** rata kiri: ubin logo putih 120px (ponsel 88px, padding 10/8px), garis 1px `rgba(0,0,0,.08)`, logo `contain`, tanpa bayangan/glow; tanpa logo → ubin tidak dirender. Label "Program Inovasi" 12px kapital brand, nama = `Modal.Title` 40px (tablet 34, ponsel 28).
@@ -901,8 +961,14 @@ Pola Pencegahan Kriminalitas tanpa video. Folder: `_com/DesaDigitalPage.tsx`, `D
 
 Folder: `_com/ProgramKreatifPage.tsx`, `program-kreatif.{logic,source,meta,text}.ts`, `use-program-kreatif.ts`; ubin dari `src/app/(public)/_com/program-tiles/` (bersama Program Penghijauan); detail `_com/detail/ProgramKreatifDetail.tsx` (+ `use-program-kreatif-detail.ts`, `program-kreatif-detail.module.css`).
 - **Daftar** tanpa foto: ubin `#f5f5f7` radius 18px 3/2/1 kolom (≤1068px 2, ≤734px 1), seluruh ubin = tautan detail: ikon garis `IconMapper` 32px brand (stroke 1.5 lewat CSS, tanpa lingkaran), judul 21px/600, deskripsi singkat (`slug`) 17px abu maks 3 baris, "Selengkapnya ›" brand di dasar ubin. 9 ubin per halaman, paginasi klien; kolom cari lewat `listSearchable`.
-- **Ubin program bersama** (`src/app/(public)/_com/program-tiles/`): `ProgramTiles { items, label, moreLabel }` + `ProgramTilesPlaceholder { count, label }`, CSS `program-tiles.module.css`. `ProgramTiles` merender `icon` apa adanya; pemakai yang ingin kunci ikon tak dikenal tampil tanpa ikon menyaringnya dengan `isIconKey` (`admin/(dashboard)/_com/iconMap.tsx`). Pemakai: Program Kreatif Desa, Program Penghijauan.
+- **Ubin program bersama** (`src/app/(public)/_com/program-tiles/`): `ProgramTiles { items, label, moreLabel }` + `ProgramTilesPlaceholder { count, label }`, CSS `program-tiles.module.css`. `ProgramTiles` merender `icon` apa adanya; pemakai yang ingin kunci ikon tak dikenal tampil tanpa ikon menyaringnya dengan `isIconKey` (`admin/(dashboard)/_com/iconMap.tsx`). Item boleh membawa `logo` (URL): kotak logo putih 16:9 `contain` menggantikan ikon. Pemakai: Program Kreatif Desa, Program Penghijauan, Program Inovasi (logo).
 - **Detail**: "‹ Program Kreatif Desa", kategori "PROGRAM KREATIF DESA", `h1`, `slug` sebagai pengantar 21px abu, isi HTML; tanpa label gaya form admin ("Deskripsi Singkat"/"Deskripsi"). Id tak dikenal dipetakan dari pesan API (`isNotFoundMessage`, MITIGASI SEMENTARA, lihat BACKEND-TODO).
+
+### Program Inovasi (`/inovasi/program-inovasi[/{id}]`)
+
+Submenu pertama Inovasi. Data sama dengan rel "Program Inovasi Desa" beranda (tabel `ProgramInovasi`, dikelola di admin Landing Page › Profil › Program Inovasi; tidak ada menu admin terpisah). Folder: `_com/ProgramInovasiPage.tsx`, `program-inovasi.{logic,source,meta,text}.ts`, `use-program-inovasi.ts`; detail `_com/detail/ProgramInovasiDetail.tsx` + `program-inovasi-detail.logic.ts` + `program-inovasi-detail.module.css`; query server `src/lib/program-inovasi.server.ts`. Test: `__tests__/api/inovasi_program_inovasi_{logic,ui}.test.ts(x)`.
+- **Daftar**: `ProgramTiles` dengan logo, ringkasan = teks polos deskripsi (3 baris), urutan dari findMany (`urutan` lalu abjad). 9 ubin per halaman, paginasi klien; kolom cari lewat `listSearchable`.
+- **Detail** dirender di **server** (isi ikut HTML pertama untuk mesin pencari): `getProgramInovasiPublik` (prisma, `isActive: true`, di-`cache` per request) → tidak ada/nonaktif = 404. `generateMetadata`: judul nama program, deskripsi cuplikan ≤160 karakter, kanonik, og:image logo. Isi disanitasi di server `sanitizeArticleHtml` (`src/lib/rich-text-server.ts`, mempertahankan `h2–h4`, `hr`, daftar, kutipan, tautan `target=_blank rel=noopener`), jadi judul bagian "Tujuan/Sasaran/Ruang Lingkup" tampil (overlay beranda memakai `sanitizeRichText`, yang membuang tag judul dan garis: teksnya tetap, tanpa gaya judul). Tata letak kerangka `kabar-detail.module.css`: "‹ Program Inovasi", kotak logo putih 240px (ponsel 180), kategori "PROGRAM INOVASI DESA", `h1`, isi, galeri `DokumentasiGaleri`.
 
 ### Kolaborasi Inovasi (`/inovasi/kolaborasi-inovasi`)
 

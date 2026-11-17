@@ -13,6 +13,7 @@ import profileLandingPageState from '../../../../_state/landing-page/profile';
 import { emptyProgramInovasiForm } from '@/app/admin/(dashboard)/_state/landing-page/profile/program-inovasi';
 import { DokumentasiUploader } from '../_com/DokumentasiUploader';
 import { LogoDropzone } from '../_com/LogoDropzone';
+import { UrutanInput } from '../_com/UrutanInput';
 import { useProgramInovasiMedia } from '../_lib/useProgramInovasiMedia';
 
 function CreateProgramInovasi() {
@@ -87,6 +88,11 @@ function CreateProgramInovasi() {
             value={snap.create.form.name}
             onChange={(e) => (stateProgramInovasi.create.form.name = e.target.value)}
             required
+          />
+
+          <UrutanInput
+            value={snap.create.form.urutan}
+            onChange={(urutan) => (stateProgramInovasi.create.form.urutan = urutan)}
           />
 
           {/* ======= Deskripsi ======= */}

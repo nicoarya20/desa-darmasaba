@@ -2,6 +2,7 @@
 export const PROGRAM_OVERLAY_TEXT = {
   eyebrow: "Program Inovasi",
   close: "Tutup detail program",
+  fullPage: "Lihat halaman lengkap",
   loading: "Memuat detail program inovasi",
   emptyDescription: "Belum ada deskripsi.",
   unavailable: "Program inovasi ini tidak ditemukan atau belum bisa dimuat.",
