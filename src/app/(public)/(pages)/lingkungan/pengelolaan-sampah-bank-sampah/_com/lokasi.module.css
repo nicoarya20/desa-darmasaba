@@ -258,8 +258,13 @@ button.pick:focus-visible {
   color: var(--muted);
 }
 
-/* Dua kelas: mengalahkan `.leaflet-container a` bawaan Leaflet. */
+/* Dua kelas: mengalahkan `.leaflet-container a` bawaan Leaflet (warna). Label `.cta` + "›" `.chevron`
+   (sapuan warna, _com/link-reveal); inline-flex agar "›" jadi item flex yang bisa digeser. */
 .popup .popupArah {
+  display: inline-flex;
+  align-items: baseline;
+  align-self: flex-start;
+  gap: 4px;
   margin-top: 6px;
   color: var(--brand);
   font-weight: 600;
@@ -269,12 +274,6 @@ button.pick:focus-visible {
 @media (hover: hover) and (pointer: fine) {
   .row:not(.rowSelected):has(button.pick:hover) {
     background: rgba(0, 0, 0, 0.04);
-  }
-
-  /* Popup peta Leaflet sengaja tetap garis bawah (di luar pola judul/CTA sapuan warna; lihat MIND/PLAN/link-hover-reveal.md). */
-  .popup .popupArah:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 
   .marker:hover > span {

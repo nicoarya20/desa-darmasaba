@@ -7,6 +7,8 @@
  * - `.trigger` : elemen yang di-hover/difokus (kartu, baris, atau tautan itu sendiri).
  * - `.title`   : span INLINE di dalam judul. Judul 2 baris disapu baris 1 lalu baris 2
  *                (box-decoration-break: slice = potongan baris dianggap satu pita).
+ * - `.titleBrand` : tambahan `.title` bila warna diam sudah brand #0A4E78 (mis. breadcrumb DAK): sapu ke #1C6EA4,
+ *                tanpa tebal (aman untuk elipsis lineClamp).
  * - `.cta`     : label tautan aksi; wajib `data-text` = teks yang sama. Salinan tebal tak terlihat
  *                (::after, visibility hidden → tidak dibaca pembaca layar) mencadangkan lebar versi
  *                tebal, jadi chevron tidak bergeser saat label menebal.
@@ -32,6 +34,11 @@
 /* Judul kartu/baris: warna diam ikut komponen → blue-button (colors.ts). */
 .title {
   --reveal-to: #0a4e78;
+}
+
+/* Warna diam sudah brand (= target .title): sapu ke biru CTA. Harus setelah .title (spesifisitas sama). */
+.titleBrand {
+  --reveal-to: #1c6ea4;
 }
 
 /* Label aksi: diam brand (dari komponen) → #1C6EA4 (biru atas gradasi footer; lebih terang dari brand,
