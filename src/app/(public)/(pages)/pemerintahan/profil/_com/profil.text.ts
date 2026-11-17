@@ -21,6 +21,10 @@ export const PROFIL_TEXT = {
     mapTitle: 'Peta wilayah Desa Darmasaba',
     officeMapTitle: 'Peta lokasi Kantor Perbekel Darmasaba',
     officeCaption: 'Lokasi Kantor Perbekel Darmasaba',
+    petaFileAlt: 'Peta wilayah Desa Darmasaba',
+    petaFileOpen: 'Buka peta wilayah ukuran penuh di tab baru',
+    petaPdf: 'Lihat peta wilayah (PDF)',
+    petaPdfMeta: (ukuran: string | null) => (ukuran ? `PDF · ${ukuran}` : 'PDF'),
   },
   lambang: { title: 'Lambang Desa', loading: 'Memuat lambang desa…', empty: 'Keterangan lambang desa belum tersedia.' },
   maskot: {

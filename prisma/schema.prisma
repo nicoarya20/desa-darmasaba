@@ -69,6 +69,7 @@ model FileStorage {
   PengumumanImage                Pengumuman[]               @relation("PengumumanImage")
   PengumumanImages               Pengumuman[]               @relation("PengumumanImages")
   PengumumanDokumen              Pengumuman[]               @relation("PengumumanDokumen")
+  WilayahDesaPetaFile            WilayahDesa[]              @relation("WilayahDesaPetaFile")
   PotensiDesa                    PotensiDesa[]
   Posyandu                       Posyandu[]
   StrukturPPID                   StrukturPPID[]
@@ -718,6 +719,9 @@ model WilayahDesa {
   keterangan   String?   @db.Text
   // URL embed peta (hanya https), dirender sebagai iframe di halaman publik.
   petaEmbedUrl String?
+  // File peta (gambar/PDF) di FileStorage, ditampilkan di atas peta embed. Opsional.
+  petaFileId   String?
+  petaFile     FileStorage? @relation("WilayahDesaPetaFile", fields: [petaFileId], references: [id])
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?

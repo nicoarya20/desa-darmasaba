@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { PengumumanFile } from "./pengumuman-lampiran";
 
 /** ID tetap baris singleton WilayahDesa (upsert atomik, tak mungkin ada baris ganda). */
 export const WILAYAH_DESA_ID = "wilayah-desa";
@@ -6,6 +7,33 @@ export const WILAYAH_DESA_ID = "wilayah-desa";
 export const BATAS_MAX_LENGTH = 255;
 export const KETERANGAN_MAX_LENGTH = 2000;
 export const PETA_URL_MAX_LENGTH = 2048;
+
+/** Mime file peta yang diterima API (gambar diunggah sebagai WebP; non-PDF lain disimpan ter-gzip). */
+export const PETA_FILE_MIME_GAMBAR = ["image/jpeg", "image/png", "image/webp"] as const;
+export const PETA_FILE_MIME_PDF = "application/pdf";
+
+/** File peta dalam respons API (bentuk sama dengan lampiran Pengumuman). */
+export type WilayahPetaFile = PengumumanFile;
+
+export type JenisFilePeta = "gambar" | "pdf";
+
+/** Jenis tampilan file peta dari mime; null = mime tidak diizinkan. */
+export function jenisFilePeta(mimeType: string | null | undefined): JenisFilePeta | null {
+  if (mimeType === PETA_FILE_MIME_PDF) return "pdf";
+  if ((PETA_FILE_MIME_GAMBAR as readonly (string | null | undefined)[]).includes(mimeType)) return "gambar";
+  return null;
+}
+
+/** Cocokkan baris FileStorage aktif (hasil query; null = tidak ada) dengan aturan file peta. */
+export function periksaFilePeta(
+  row: { mimeType: string } | null,
+): { ok: true } | { ok: false; message: string } {
+  if (!row) return { ok: false, message: "File peta tidak ditemukan atau sudah dihapus" };
+  if (!jenisFilePeta(row.mimeType)) {
+    return { ok: false, message: "File peta harus berupa gambar (JPG, PNG, WebP) atau PDF" };
+  }
+  return { ok: true };
+}
 
 /** True jika `value` URL https absolut tanpa kredensial (aman dipakai sebagai src iframe). */
 export function isHttpsUrl(value: string): boolean {
@@ -58,6 +86,12 @@ export const wilayahDesaSchema = z.object({
     (value) => value === null || isHttpsUrl(value),
     "URL peta harus diawali https:// dan berupa URL yang valid",
   ),
+  /** undefined = tidak diubah; null/"" = hapus file peta; string = id FileStorage. */
+  petaFileId: z
+    .string({ invalid_type_error: "File peta tidak valid" })
+    .trim()
+    .nullish()
+    .transform((value) => (value === undefined ? undefined : value || null)),
 });
 
 export type WilayahDesaInput = z.output<typeof wilayahDesaSchema>;

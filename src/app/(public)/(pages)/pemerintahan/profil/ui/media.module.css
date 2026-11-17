@@ -76,6 +76,73 @@
   text-align: center;
 }
 
+/* File peta dari CMS (gambar/PDF), tampil di atas peta embed. */
+.petaFile {
+  width: 100%;
+  max-width: var(--ppid-measure);
+  margin: 32px 0 0;
+}
+
+.petaFile + .map {
+  margin-top: 24px;
+}
+
+.petaFileLink {
+  display: block;
+  border-radius: 20px;
+}
+
+.petaFileLink:focus-visible,
+.petaPdf:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.petaFileImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  background: #e8edf4;
+}
+
+.petaPdf {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 20px;
+  border: 0;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.7);
+  color: var(--brand);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.petaPdfIcon {
+  flex-shrink: 0;
+}
+
+.petaPdfText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.petaPdfLabel {
+  font-size: 17px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.petaPdfMeta {
+  color: var(--p-muted);
+  font-size: 14px;
+}
+
 /* --- Galeri maskot --- */
 .gallery {
   display: grid;
@@ -128,6 +195,15 @@
   .mapFrame {
     height: 300px;
     border-radius: 16px;
+  }
+
+  .petaFileLink,
+  .petaFileImage {
+    border-radius: 16px;
+  }
+
+  .petaPdf {
+    padding: 14px 16px;
   }
 
   .gallery {

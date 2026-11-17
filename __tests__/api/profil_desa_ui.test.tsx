@@ -139,6 +139,44 @@ describe('Profil Desa — Letak & Batas Wilayah', () => {
     expect(html).toContain('title="Peta wilayah Desa Darmasaba"');
     expect(html).not.toContain('<figcaption');
   });
+
+  const petaFile = (mimeType: string, link: string, size: number | null) => ({
+    id: 'f', link, realName: 'peta', mimeType, size,
+  });
+
+  it('file peta gambar + embed → gambar (lazy, buka tab baru) lalu peta embed', () => {
+    set('wilayahDesa', {
+      batasUtara: 'A', batasSelatan: 'B', batasTimur: 'C', batasBarat: 'D', luasWilayah: 1, keterangan: null,
+      petaEmbedUrl: 'https://maps.example.test/embed', // test-only
+      petaFile: petaFile('image/webp', '/api/img/peta.webp', 1000),
+    });
+    const html = render(<WilayahDesa />);
+    expect(html).toContain('data-wilayah-peta-file="gambar"');
+    expect(html).toMatch(/<a [^>]*href="\/api\/img\/peta\.webp"[^>]*target="_blank"/);
+    expect(html).toMatch(/<img [^>]*alt="Peta wilayah Desa Darmasaba"[^>]*loading="lazy"|<img [^>]*loading="lazy"[^>]*alt="Peta wilayah Desa Darmasaba"/);
+    expect(html.indexOf('data-wilayah-peta-file')).toBeLessThan(html.indexOf('<iframe'));
+    expect(html).toContain('src="https://maps.example.test/embed"');
+  });
+
+  it('file peta PDF tanpa embed → tombol PDF + ukuran, peta Kantor Perbekel tetap tampil', () => {
+    set('wilayahDesa', {
+      batasUtara: 'A', batasSelatan: 'B', batasTimur: 'C', batasBarat: 'D', luasWilayah: 1, keterangan: null,
+      petaEmbedUrl: null, petaFile: petaFile('application/pdf', '/api/fileStorage/findUnique/p', 2 * 1024 ** 2),
+    });
+    const html = render(<WilayahDesa />);
+    expect(html).toContain('data-wilayah-peta-file="pdf"');
+    expect(html).toContain('Lihat peta wilayah (PDF)');
+    expect(html).toMatch(/PDF · 2(,0)? MB/);
+    expect(html).toContain(`src="${KANTOR_MAP_EMBED_URL.replace(/&/g, '&amp;')}"`);
+  });
+
+  it('file peta berjenis lain → diabaikan', () => {
+    set('wilayahDesa', {
+      batasUtara: 'A', batasSelatan: 'B', batasTimur: 'C', batasBarat: 'D', luasWilayah: 1, keterangan: null,
+      petaEmbedUrl: null, petaFile: petaFile('application/gzip', '/x', 1),
+    });
+    expect(render(<WilayahDesa />)).not.toContain('data-wilayah-peta-file');
+  });
 });
 
 describe('Profil Desa — Maskot', () => {

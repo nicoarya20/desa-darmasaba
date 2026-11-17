@@ -19,6 +19,7 @@ const WilayahDesa = new Elysia({
         luasWilayah: t.Optional(t.Unknown()),
         keterangan: t.Optional(t.Unknown()),
         petaEmbedUrl: t.Optional(t.Unknown()),
+        petaFileId: t.Optional(t.Unknown()),
       },
       { additionalProperties: true },
     ),

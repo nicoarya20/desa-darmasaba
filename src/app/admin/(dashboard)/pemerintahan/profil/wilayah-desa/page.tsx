@@ -26,6 +26,8 @@ import { IconAlertCircle } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useSnapshot } from 'valtio';
+import { PetaFileField } from './_com/PetaFileField';
+import { usePetaFile } from './_lib/usePetaFile';
 
 const state = stateProfileDesa.wilayahDesa;
 const EMPTY_FORM = toWilayahFormValues(null);
@@ -37,6 +39,8 @@ function Page() {
   const [form, setForm] = useState<WilayahDesaFormValues>(EMPTY_FORM);
   const [original, setOriginal] = useState<WilayahDesaFormValues>(EMPTY_FORM);
   const [ready, setReady] = useState(false);
+  const peta = usePetaFile();
+  const muatPeta = peta.muat;
 
   useEffect(() => {
     let active = true;
@@ -45,12 +49,13 @@ function Page() {
       const initial = toWilayahFormValues(data);
       setForm(initial);
       setOriginal(initial);
+      muatPeta(data?.petaFile ?? null);
       setReady(true);
     });
     return () => {
       active = false;
     };
-  }, []);
+  }, [muatPeta]);
 
   const setField = <K extends keyof WilayahDesaFormValues>(
     key: K,
@@ -58,15 +63,21 @@ function Page() {
   ) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const isValid = REQUIRED_KEYS.every((key) => form[key].trim() !== '');
-  const submitting = snap.update.loading;
+  const submitting = snap.update.loading || peta.mengunggah;
 
   const handleSubmit = async () => {
-    const success = await state.update.submit(form);
-    if (success) setOriginal(form);
+    const unggah = await peta.unggah();
+    if (!unggah.ok) return;
+    const success = await state.update.submit(form, unggah.petaFileId);
+    if (success) {
+      setOriginal(form);
+      peta.muat(state.findUnique.data?.petaFile ?? null);
+    }
   };
 
   const handleCancel = () => {
     setForm(original);
+    peta.reset();
     toast.info('Form dikembalikan ke data awal');
   };
 
@@ -134,6 +145,8 @@ function Page() {
               onChange={(e) => setField('keterangan', e.currentTarget.value)}
             />
 
+            <PetaFileField api={peta} disabled={submitting} />
+
             <TextInput
               label="URL Peta (Embed)"
               description="Isi hanya alamat src dari kode embed peta, harus diawali https://"
@@ -143,7 +156,7 @@ function Page() {
             />
 
             <Group justify="right">
-              <Button variant="outline" color="gray" radius="md" size="md" onClick={handleCancel}>
+              <Button variant="outline" color="gray" radius="md" size="md" onClick={handleCancel} disabled={submitting}>
                 Batal
               </Button>
               <Button
