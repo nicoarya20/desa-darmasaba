@@ -1,6 +1,7 @@
 'use client'
 import colors from '@/con/colors';
 import {
+  Alert,
   Box,
   Button,
   Group,
@@ -14,44 +15,43 @@ import {
   Title,
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-import { IconArrowBack, IconMapPin } from '@tabler/icons-react';
-import dynamic from 'next/dynamic';
+import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import TitikPetaInput from '../../../../_com/konten-bersama/titik-peta.input';
+import { koordinatDariTeks } from '../../../../_com/konten-bersama/titik-peta.logic';
+import { useAlamatTitik } from '../../../../_com/konten-bersama/use-alamat-titik';
 import cctvState from '../../../../_state/keamanan/cctv';
-
-const DEFAULT_CENTER = { lat: -8.5712, lng: 115.1923 };
-
-const LeafletMapEdit = dynamic(
-  () => import('../../../../_com/leafletMapEdit'),
-  { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
-);
+import { statusMuatEdit } from './edit-cctv.logic';
 
 function EditCctv() {
   const router = useRouter();
   const state = useProxy(cctvState, { sync: true }); // sync: cegah caret jump di controlled input
-  const params = useParams();
+  const id = useParams()?.id as string;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [dimuatUntuk, setDimuatUntuk] = useState<string | null>(null);
+  const alamatTitik = useAlamatTitik(() => cctvState.edit.form, state.edit.form.nama);
 
-  if (!loaded) {
-    setLoaded(true);
-    cctvState.edit.load(params?.id as string);
-  }
+  useEffect(() => {
+    setDimuatUntuk(id);
+    void cctvState.edit.load(id);
+  }, [id]);
+
+  const status = statusMuatEdit({
+    dimulai: dimuatUntuk === id,
+    memuat: state.edit.memuat,
+    idTermuat: state.edit.id,
+    idHalaman: id,
+  });
 
   const isFormValid = () => {
     const f = state.edit.form;
     return f.kode.trim() !== '' && f.nama.trim() !== '' && f.lokasi.trim() !== '';
   };
 
-  const mapCenter = {
-    lat: state.edit.form.latitude ? Number(state.edit.form.latitude) : DEFAULT_CENTER.lat,
-    lng: state.edit.form.longitude ? Number(state.edit.form.longitude) : DEFAULT_CENTER.lng,
-  };
-
-  const hasCoord = !!state.edit.form.latitude && !!state.edit.form.longitude;
+  const koordinat = koordinatDariTeks(state.edit.form.latitude, state.edit.form.longitude);
 
   const handleMapChange = (pos: { lat: number; lng: number }) => {
     cctvState.edit.form.latitude = String(pos.lat);
@@ -59,11 +59,11 @@ function EditCctv() {
   };
 
   const handleSubmit = async () => {
+    if (status !== 'siap') return;
     try {
       setIsSubmitting(true);
-      cctvState.edit.id = params?.id as string;
       await cctvState.edit.update();
-      router.push(`/admin/keamanan/cctv/${params?.id}`);
+      router.push(`/admin/keamanan/cctv/${id}`);
     } catch (error) {
       console.error('Gagal update CCTV:', error);
       toast.error('Gagal memperbarui CCTV');
@@ -72,10 +72,26 @@ function EditCctv() {
     }
   };
 
-  if (state.edit.loading && !state.edit.form.kode) {
+  if (status === 'memuat') {
     return (
       <Stack py={10}>
         <Skeleton height={500} radius="md" />
+      </Stack>
+    );
+  }
+
+  if (status === 'gagal') {
+    return (
+      <Stack p="md" gap="sm" maw={560}>
+        <Alert color="red">Data CCTV tidak ditemukan atau gagal dimuat.</Alert>
+        <Group>
+          <Button variant="outline" color="gray" radius="md" onClick={() => router.push('/admin/keamanan/cctv')}>
+            Kembali ke daftar CCTV
+          </Button>
+          <Button radius="md" onClick={() => void cctvState.edit.load(id)}>
+            Coba lagi
+          </Button>
+        </Group>
       </Stack>
     );
   }
@@ -111,6 +127,7 @@ function EditCctv() {
             placeholder="Contoh: Balai Desa"
             value={state.edit.form.nama}
             onChange={(e) => { cctvState.edit.form.nama = e.currentTarget.value; }}
+            description={alamatTitik.deskripsiNama}
             required
           />
 
@@ -122,26 +139,12 @@ function EditCctv() {
             required
           />
 
-          <Box>
-            <Group mb={6} gap={6}>
-              <Text fw="bold" fz="sm">Titik Lokasi di Peta</Text>
-              <Text fz="xs" c="dimmed">(klik pada peta untuk memindahkan posisi)</Text>
-            </Group>
-            <Box style={{ height: 300, borderRadius: 8, overflow: 'hidden', border: '1px solid #e0e0e0' }}>
-              <LeafletMapEdit
-                initialPosition={mapCenter}
-                onChange={handleMapChange}
-              />
-            </Box>
-            {hasCoord && (
-              <Group mt={6} gap={4}>
-                <IconMapPin size={14} color="green" />
-                <Text fz="xs" c="green">
-                  Posisi: {Number(state.edit.form.latitude).toFixed(6)}, {Number(state.edit.form.longitude).toFixed(6)}
-                </Text>
-              </Group>
-            )}
-          </Box>
+          <TitikPetaInput
+            koordinat={koordinat}
+            onKoordinatChange={handleMapChange}
+            alamat={state.edit.form.lokasi}
+            onAlamatTitik={alamatTitik.onAlamatTitik}
+          />
 
           <Select
             label={<Text fw="bold" fz="sm">Status</Text>}

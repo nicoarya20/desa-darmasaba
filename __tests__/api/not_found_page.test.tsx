@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Halaman 404 situs (src/app/not-found.tsx): pola apple.com — judul + kolom cari di dalam navbar/footer
-// publik, tanpa angka 404 atau tautan tambahan; menu tersembunyi dari DB ikut diterapkan.
+// Halaman 404 situs (src/app/not-found.tsx): pola apple.com — judul + kolom cari + tautan Peta Informasi di dalam
+// navbar/footer publik, tanpa angka 404; menu tersembunyi dari DB ikut diterapkan.
 import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
@@ -8,6 +8,10 @@ import { MantineProvider } from '@mantine/core';
 const db = vi.hoisted(() => ({ overrides: {} as Record<string, boolean> }));
 
 vi.mock('next/server', () => ({ connection: async () => undefined }));
+// Link view-transition butuh provider root layout; di test cukup <a> biasa.
+vi.mock('next-view-transitions', () => ({
+  Link: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+}));
 vi.mock('@/lib/menu-visibility.server', () => ({ getMenuVisibilityOverrides: async () => db.overrides }));
 // Navbar/footer sudah dites di tempat lain; shell diganti penanda supaya pembungkusnya bisa dicek.
 vi.mock('@/app/(public)/_com/DarmasabaShell', () => ({
@@ -41,10 +45,22 @@ describe('NotFoundContent', () => {
     expect(html).toContain('data-with-left-section="true"');
   });
 
-  it('tanpa angka 404, tombol, atau tautan tambahan (mis. Peta Informasi)', () => {
+  it('di bawah kolom cari: satu tautan "Atau lihat Peta Informasi" ke /peta-informasi (pola apple "Or see our site map ›")', () => {
+    expect(NOT_FOUND_TEXT.sitemapLabel).toBe('Atau lihat Peta Informasi');
+    const anchors = html.match(/<a\b[^>]*>/g) ?? [];
+    expect(anchors).toHaveLength(1);
+    expect(anchors[0]).toContain('href="/peta-informasi"');
+    expect(anchors[0]).not.toContain('target=');
+    // Label dibungkus span sapuan warna (link-reveal .cta, wajib data-text) + chevron ikon tersembunyi.
+    expect(html).toMatch(/<a\b[^>]*>\s*<span[^>]*data-text="Atau lihat Peta Informasi"[^>]*>Atau lihat Peta Informasi<\/span>\s*<svg[^>]*aria-hidden="true"/);
+    // Urutan: judul → kolom cari → tautan.
+    expect(html.indexOf('<input')).toBeLessThan(html.indexOf('href="/peta-informasi"'));
+    expect(html).not.toContain('›');
+  });
+
+  it('tanpa angka 404 atau tombol', () => {
     expect(html).not.toMatch(/\b404\b/);
-    expect(html).not.toMatch(/<a\b|<button\b/);
-    expect(html).not.toContain('Peta Informasi');
+    expect(html).not.toMatch(/<button\b/);
   });
 });
 

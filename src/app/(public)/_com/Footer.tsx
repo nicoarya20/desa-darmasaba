@@ -6,10 +6,10 @@ import dynamic from 'next/dynamic';
 import { useRef, useState } from 'react';
 import { KONTAK_BUPATI } from '@/con/kontak-bupati';
 import { LAYANAN_DESA } from '@/con/layanan-desa';
-import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInformasi';
 import { toast } from 'react-toastify';
 import { FooterKontakBupati } from './FooterKontakBupati';
 import { FooterKontakDesa } from './FooterKontakDesa';
+import { FooterLegal } from './FooterLegal';
 
 // Footer tampil di semua halaman publik: modal (editor tiptap + dropzone) dimuat
 // terpisah & baru dipasang saat pertama dibuka, supaya tidak membebani bundle
@@ -60,10 +60,6 @@ const tautanPenting: FooterLink[] = [
   {
     title: "Transparansi",
     link: "/ppid/daftar-informasi-publik",
-  },
-  {
-    title: "Peta Informasi",
-    link: PETA_INFORMASI_HREF,
   },
 ]
 
@@ -260,7 +256,7 @@ function Footer() {
 
               <Divider color="white" opacity={0.2} />
 
-              <Text fz="xs" c="#F3F2EC">© {new Date().getFullYear()} Desa Darmasaba. Hak cipta dilindungi.</Text>
+              <FooterLegal />
             </Stack>
           </Container>
         </Box>

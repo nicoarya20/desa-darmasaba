@@ -2,6 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import perpustakaanDigitalState from '@/app/admin/(dashboard)/_state/pendidikan/perpustakaan-digital';
 import colors from '@/con/colors';
+import { htmlToPlainText } from '@/lib/rich-text';
 import {
   Badge,
   Box,
@@ -180,11 +181,10 @@ function DetailDataPeminjaman() {
                 <Text fz="lg" fw="bold">
                   Catatan
                 </Text>
-                <Text
-                  fz="md"
-                  c="dimmed"
-                  dangerouslySetInnerHTML={{ __html: data.catatan || '-' }}
-                />
+                {/* Teks polos: catatan dulu dikirim warga anonim lewat form publik, jadi isinya tidak dipercaya (XSS). */}
+                <Text fz="md" c="dimmed" style={{ whiteSpace: 'pre-line', wordBreak: 'break-word' }}>
+                  {htmlToPlainText(data.catatan) || '-'}
+                </Text>
               </Box>
 
               <Group gap="sm" mt="sm">

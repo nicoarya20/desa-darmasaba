@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import colors from '@/con/colors';
-import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import { IconBook2, IconCategory, IconUser } from '@tabler/icons-react';
+import { Alert, Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
+import { IconArchive, IconBook2, IconCategory, IconUser, IconWorldWww } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -10,24 +10,36 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Tab arsip: data katalog & peminjaman lama tidak tampil di website publik lagi (perpustakaan pindah ke website
+  // eksternal), tetap bisa dilihat sampai desa memutuskan dihapus. docs/decisions/2026-11-17-perpustakaan-link-eksternal.md
   const tabs = [
     {
-      label: "Data Perpustakaan",
+      label: "Website Perpustakaan",
+      value: "website",
+      href: "/admin/pendidikan/perpustakaan-digital/website",
+      icon: <IconWorldWww size={18} stroke={1.8} />,
+      arsip: false,
+    },
+    {
+      label: "Arsip Buku",
       value: "data-perpustakaan",
       href: "/admin/pendidikan/perpustakaan-digital/data-perpustakaan",
-      icon: <IconBook2 size={18} stroke={1.8} />
+      icon: <IconBook2 size={18} stroke={1.8} />,
+      arsip: true,
     },
     {
-      label: "Kategori Buku",
+      label: "Arsip Kategori",
       value: "kategori-buku",
       href: "/admin/pendidikan/perpustakaan-digital/kategori-buku",
-      icon: <IconCategory size={18} stroke={1.8} />
+      icon: <IconCategory size={18} stroke={1.8} />,
+      arsip: true,
     },
     {
-      label: "Peminjam",
+      label: "Arsip Peminjam",
       value: "peminjam",
       href: "/admin/pendidikan/perpustakaan-digital/peminjam",
-      icon: <IconUser size={18} stroke={1.8} />
+      icon: <IconUser size={18} stroke={1.8} />,
+      arsip: true,
     },
   ];
 
@@ -144,6 +156,12 @@ function LayoutTabs({ children }: { children: React.ReactNode }) {
               boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
             }}
           >
+            {tab.arsip ? (
+              <Alert color="gray" variant="light" radius="md" mb="md" icon={<IconArchive size={18} />} title="Arsip">
+                Data ini tidak tampil di website publik. Halaman Perpustakaan Digital kini menautkan website perpustakaan
+                desa (atur di tab Website Perpustakaan).
+              </Alert>
+            ) : null}
             {children}
           </TabsPanel>
         ))}

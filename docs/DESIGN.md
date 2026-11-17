@@ -4,6 +4,66 @@ Dokumen ini mencatat UI/UX conventions, design tokens, komponen, dan pola yang d
 
 ---
 
+## 0. Membuat Halaman Publik Baru (mulai di sini)
+
+Ringkasan untuk developer/AI yang menambah halaman situs publik supaya seragam dengan halaman yang sudah dirombak. Detail tiap pola ada di bagian yang dirujuk; catatan per halaman di §5 adalah riwayat, bukan bacaan wajib.
+
+### 0.1 Pilih kerangka sesuai jenis halaman
+
+| Jenis halaman | Kerangka | Contoh yang bisa disalin |
+|---|---|---|
+| Daftar teks (berita, kegiatan, program) + paginasi | `.section` `kabar.module.css` + `KABAR_BRAND_VARS` + `KabarListHeader` + `KabarListPagination` (`_com/kabar-list/`) | `(pages)/pemerintahan/kegiatan-desa/` (§5 Kegiatan Desa) |
+| Detail artikel/entri | kolom 860px `_com/kabar-list/kabar-detail.module.css`, foto utama `.photo` | `(pages)/pemerintahan/kegiatan-desa/_com/detail/KegiatanDetail.tsx` |
+| Statistik satu dimensi (jumlah per kategori) | `.section` Kabar + `KabarListHeader searchable={false}` + `StatBarsPanel` (`_com/stat-bars/`) | `(pages)/ekonomi/demografi-pekerjaan/` (§5 Modul batang statistik) |
+| Anggaran/tabel rupiah berhirarki | komponen APBDes (`_com/main-page/apbdes/`, `ApbdesRows`) | `/apbdes`, PADesa (§5 APBDes) |
+| Teks program dari CMS (judul + deskripsi HTML) | `ProgramInfoBody` + `.tokens` (`(pages)/pendidikan/_com/program-info/`) | `(pages)/lingkungan/edukasi-lingkungan/` (§5 Edukasi Lingkungan) |
+| Halaman di menu Pendidikan | `page-frame` 1200px (`(pages)/pendidikan/_com/page-frame/`) | §5 Kerangka halaman Pendidikan |
+
+Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) memakai kerangka Kabar, bukan `page-frame`. Jangan menulis padding/max-width halaman sendiri.
+
+### 0.2 Susunan file per halaman
+
+```
+(pages)/<menu>/<halaman>/
+  page.tsx                  // tipis: render komponen dari _com
+  _com/<Halaman>Page.tsx    // kerangka + keadaan (memuat/kosong/galat/isi)
+  _com/<halaman>.source.ts  // ApiFetch langsung; galat dilempar berkonteks
+  _com/<halaman>.logic.ts   // fungsi murni (normalisasi, ringkasan, urutan)
+  _com/<halaman>.text.ts    // semua teks UI
+  _com/<halaman>.meta.ts    // ikon/warna (bila perlu)
+  _com/<halaman>.module.css // hanya gaya khas halaman
+```
+
+- Data dimuat sekali lewat `useLoadOnce(load, "data X (Nama Halaman)")` (`_com/load-once/`), **bukan** state admin `admin/(dashboard)/_state`.
+- Batas ukuran file mengikuti aturan project (komponen ≤150 baris, logic ≤200, file apa pun ≤500). Pecah komponen sebelum melewati batas.
+- Test: `__tests__/api/<menu>_<halaman>_{logic,ui}.test.ts(x)`. Test UI memakai `// @vitest-environment node` + `renderToStaticMarkup` (jsdom tidak dipakai di repo ini). Contoh: `ekonomi_demografi_pekerjaan_ui.test.tsx`.
+
+### 0.3 Token yang wajib dipakai
+
+- **Jarak**: `--edge-gutter` (tepi kiri/kanan), `--section-gap` (antar-section beranda, isi terakhir → footer), `--block-gap` (antar-bagian di dalam halaman). Lihat §4. Jangan angka literal 56/64/100px.
+- **`--gutter`**: wadah pemakai `KabarListHeader` wajib set `--gutter: var(--edge-gutter)`, kalau tidak rel pil di ponsel melebar.
+- **Warna**: brand `blue-button` `#0A4E78`, tinta `#1d1d1f`, abu teks `#6e6e73`/`#515154`, panel/ubin `#f5f5f7` radius 18px tanpa border/bayangan, garis `#d2d2d7` (§2.1).
+- **Tipografi**: `h1` 48px (≤734px 32) brand rata kiri + satu kalimat pengantar 19px abu (maks 640px); judul bagian `h2` 28px (ponsel 24), jarak judul → isi 24px (ponsel 20).
+- **Breakpoint CSS**: 1068px (tablet) dan 734px (ponsel).
+
+### 0.4 Aturan tetap (keputusan user)
+
+1. **Hover tautan = sapuan warna**, bukan garis bawah. Pakai `link-reveal` (`.trigger` + `.title`/`.cta`/`.chevron`); `<Anchor>` wajib `underline="never"`. Dijaga test `__tests__/api/no_hover_underline_guard.test.ts` (gagal bila dilanggar). Lihat §5 Modul sapuan warna tautan.
+2. **Tautan kembali di halaman detail** = teks "‹ Nama Daftar" (`.back` dari `detail-umkm.module.css`) + `.chevronBack`, bukan tombol ikon panah.
+3. **Keadaan selalu dibedakan**: memuat = kerangka berdenyut `aria-busy`; kosong = kotak `#f5f5f7` satu kalimat ("Belum ada …"); galat = kalimat berbeda (`role="alert"`). Jangan tampilkan grafik kosong, "0 orang", atau "Rp 0" untuk data yang belum diisi; tulis "Belum diisi".
+4. **Teks UI**: Bahasa Indonesia, tanpa em dash (—), tanpa emoji (ikon dari `@tabler/icons-react`).
+5. **Alamat induk menu** (`/keamanan`, `/ekonomi`, dst.) sengaja 404; jangan buat halaman induk. Submenu yang disembunyikan (`hidden: true` di `src/con/navbar-list-menu.ts`) juga 404.
+6. **Gerak**: hormati `prefers-reduced-motion`; hover hanya di `(hover: hover) and (pointer: fine)`. Tulis `backdrop-filter` tanpa `-webkit-` manual (Lightning CSS).
+7. **Mobile**: tidak boleh ada geser horizontal halaman; baris pil/kartu yang geser harus di dalam relnya sendiri.
+
+### 0.5 Mendaftarkan halaman
+
+- Menu navbar: `src/con/navbar-list-menu.ts` (§7). Halaman di luar navbar yang perlu muncul di pencarian: `src/con/search-extra-pages.ts`.
+- Hasil cari global yang membuka detail: helper href di `_com/searchUrl.tsx`.
+- Setelah halaman jadi, tambahkan catatan singkatnya di §5 (rute, folder, test) supaya dokumen ini tetap sinkron.
+
+---
+
 ## 1. Tech Stack UI
 
 | Paket | Versi | Kegunaan |
@@ -356,6 +416,8 @@ Stack bg="linear-gradient(180deg, #1C6EA4, #124170)"
 ```
 
 Isi grup "Layanan Desa" diambil dari `LAYANAN_DESA` (`src/con/layanan-desa.ts`), sama dengan section Layanan Masyarakat beranda.
+
+**Baris legal** (paling bawah, `src/app/(public)/_com/FooterLegal.tsx` + `footer-legal.module.css`, pola apple.com `.ac-gf-footer-legal`): teks hak cipta lalu `<ul>` tautan dari `FOOTER_LEGAL_LINKS` (sekarang: Peta Informasi), 12px `#F3F2EC`, jarak 30px; pemisah "|" = garis 1×10px `rgb(243 242 236 / 50%)` lewat `::after` di antara butir (tidak ada di markup, tak dibaca pembaca layar). ≤734px tautan turun ke bawah hak cipta (jarak 8px). Tambah tautan legal baru di array itu, bukan di grup "Tautan Penting". Test: `__tests__/api/footer_legal.test.tsx`.
 
 ### Potensi Desa (`/pemerintahan/potensi`)
 
@@ -763,19 +825,23 @@ Kerangka Pendidikan (`page-frame`, isi 1200px, kepala `PpidHeader` rata kiri); k
 - **State**: memuat = kerangka ubin `aria-busy`; galat = pesan + "Coba lagi"; kosong = pesan.
 - **Alamat lama**: `/pendidikan/beasiswa-desa/pelajari-lebih-lanjut` → 308 ke `/pendidikan/beasiswa-desa#syarat` (`scroll-margin-top: 72px`).
 
-### Perpustakaan Digital (`/pendidikan/perpustakaan-digital/{semua|kategori}[/{id}]`)
-Katalog gaya UMKM/TIDAL + detail gaya produk UMKM + modal pinjam. Folder `(pages)/pendidikan/perpustakaan-digital/`: `layout.tsx` (server, `PerpusDataProvider`: katalog dimuat SEKALI untuk daftar + rel buku lain), `semua/page.tsx` & `[kategoriBuku]/page.tsx` → `_com/PerpusKatalog`, `[kategoriBuku]/[id]/page.tsx` → `_com/detail/BukuDetail`. Data lewat sumber sendiri (`_com/perpus.source.ts`, `_lib/peminjaman.source.ts`); state admin `_state/pendidikan/perpustakaan-digital` tidak dipakai di publik. Test: `__tests__/api/perpus_katalog_logic.test.ts`, `perpus_adapter_source.test.ts`, `perpus_katalog_ui.test.tsx`, `perpus_detail_ui.test.tsx`, `peminjaman-form.test.ts`, `notelp_perpus.test.ts`.
-- **Kerangka Pendidikan** (`page-frame`, isi 1200px) untuk katalog dan detail. `--gutter` WAJIB ada di leluhur (disediakan `.frame`) karena rel pil `KabarListHeader` di ≤734px melebar ke tepi memakai `--gutter` leluhur (tanpa itu pil tidak terpotong → tata letak ponsel melebar ±1270px dan diperkecil).
-- **Kepala**: `KabarListHeader` (kembali, h1 "Perpustakaan Digital", pengantar, kolom cari `?search=`, pil "Semua" + kategori yang punya buku, urut nama). Slug kategori = nama huruf kecil spasi→"-" (sama dengan tautan lama); bentuk lama ter-encode (`/Anak%20Dan%20Remaja`) tetap diterima; slug tak dikenal tetap jadi pil aktif terakhir.
-- **Baris alat**: h2 21px "n buku" (+ "dari m" abu saat mencari) | Urutkan (Select gaya katalog UMKM, `?urut=judul`; Terbaru bawaan tidak ditulis ke URL), hanya bila > 1 buku.
-- **Grid** `repeat(auto-fill, minmax(168px, 1fr))` jarak 40/28px; ≤734px 2 kolom 28/16px. Kartu = SATU tautan ke detail: sampul 2:3 radius kecil (`#f5f5f7` + ikon buku bila tanpa sampul, `loading="lazy"`), judul h3 maks 2 baris, kategori 12px huruf besar abu. Tanpa deskripsi, tanpa tombol pinjam.
-- **Keadaan**: memuat 12 kartu kerangka (`aria-busy`); galat = `KatalogEmpty` + Coba lagi (`role="alert"`); kosong = "Belum ada buku"; cari kosong = pesan + "Hapus kata kunci"; kategori kosong = "Belum ada buku di kategori X". Tanpa paginasi (muat sekali ≤ 100, lihat MITIGASI).
-- **Detail**: kerangka `page-frame` (bukan `.page/.inner` 1120 detail UMKM); kembali "‹ Perpustakaan Digital" (`detail-umkm.module.css` `.back`), grid sampul ≤320px (sticky) | info jarak 56px: kategori (tautan ke daftarnya, 12px brand huruf besar) → h1 40px (34 @1068, 28 @734) → deskripsi HTML tersanitasi (h2 "Tentang buku ini" sr-only) → tombol pil 48px brand "Pinjam buku ini" → panel `#f5f5f7` radius 18 "Cara meminjam" 3 langkah (isi formulir; petugas menghubungi; ambil + kembalikan ≤ 4 hari). ≤734px bertumpuk, sampul di atas.
-- **Rel "Buku lain di kategori ini"**: kartu yang sama di rel geser (`useRailScroll`, panah bulat desktop), lebar kartu 176px (136px ponsel), maks 12, terbaru dulu; tidak dirender bila data belum siap/galat/0 buku.
-- **Tidak ditemukan/nonaktif**: `KatalogEmpty` "Buku tidak ditemukan"; galat: + Coba lagi.
-- **Modal pinjam**: Mantine Modal radius 18 (layar penuh ≤734px). Kepala buku (sampul kecil, kategori, judul) di ubin `#f5f5f7`. Isian: Nama (3–100), Nomor WhatsApp/telepon (prefix "+62", digit saja), Alamat (5–200), Tanggal ambil (`DateInput` locale id, hari ini s.d. +14 hari WITA, di bawahnya "Kembalikan paling lambat {tanggal} (4 hari)."), Catatan opsional Textarea maks 500 + penghitung. Galat tampil setelah blur atau tekan Kirim. Catatan privasi di ubin abu. Aksi Batal (default) | Kirim permintaan (brand). Sukses: ikon centang hijau, "Permintaan terkirim", nomor +62, `<dl>` Tanggal ambil | Batas kembali dalam dua ubin, tombol Selesai.
-- **Payload**: tanggal disimpan 12.00 WITA (`YYYY-MM-DDT04:00:00.000Z`) supaya tanggal sama di WIB/WITA/WIT; `batasKembali` = ambil + 4 hari; tanpa `tanggalKembali`; catatan di-escape ke HTML (MITIGASI perpus-catatan).
-- **MITIGASI SEMENTARA**: `perpus-katalog` (saring/cari/urut di klien, batas 100 + console.warn), `perpus-detail` (buku nonaktif dianggap tidak ditemukan di klien), `perpus-catatan` (escape karena admin merender catatan sebagai HTML). Semua menunjuk docs/BACKEND-TODO.md.
+### Perpustakaan Digital (`/pendidikan/perpustakaan-digital`)
+Halaman **penghubung** ke website perpustakaan desa (Pustaka Ananta Loka) — katalog, detail buku, dan modal pinjam sudah
+dihapus; URL lama dialihkan permanen ke halaman ini (`next.config.ts`). Alasan: `docs/decisions/2026-11-17-perpustakaan-link-eksternal.md`.
+Memakai bahasa desain Beasiswa Desa (kepala dua kolom, ubin `#f5f5f7`, panel penutup). Folder `(pages)/pendidikan/perpustakaan-digital/`:
+`page.tsx` (server, metadata) → `_com/PerpusPenghubung` (`PerpusPenghubungBody` diekspor untuk test) → `PerpusHero`
+(+ `PerpusIlustrasi`, `PerpusLink`), `PerpusBagian` (`PerpusFitur`, `PerpusLangkah`), `PerpusPenutup`; gaya `perpus-{page,hero,bagian,aksi}.module.css`;
+teks `perpus.text.ts`, id/warna `perpus.meta.ts`; data `perpus-website.{logic,source}.ts` + `use-perpus-website.ts` (state admin tidak dipakai di publik).
+Test: `__tests__/api/perpus_penghubung_ui.test.tsx`, `perpus_penghubung_routes.test.ts`.
+- **Kerangka**: kerangka Pendidikan (`page-frame`), jarak antarbagian `--section-gap` (100/72). Urutan: Kepala → Yang tersedia → Cara membaca → Penutup.
+- **Kepala** (grid 2 kolom, rata atas, gap 64/40px; ≤734px satu kolom, ilustrasi di bawah teks): `BackButton` → chip nama platform (pil `blue-button-1`, ikon buku, 15px/600, dari pengaturan admin) → `h1` "Perpustakaan Digital" brand 48/32px → pengantar 19/17px abu = **deskripsi dari admin** (cadangan `T.lead` saat memuat/galat) → tombol pil 48px brand "Kunjungi Website Perpustakaan" (+ ikon keluar) dan pil sekunder `#f5f5f7` "Cara membaca" (→ `#cara-membaca`) → keterangan 15px "Membuka {host} di tab baru." Tombol keluar `target="_blank" rel="noopener noreferrer"` + `<span class=srOnly>(membuka tab baru)</span>`. ≤734px tombol selebar layar.
+- **Ilustrasi** (`aria-hidden`, murni CSS, bukan tangkapan layar supaya tidak basi): bidang gradasi `blue-button-1` → `blue-button-2` radius 18, rasio 599:413 (≤734px 4:3), berisi jendela browser putih (tiga titik, bilah alamat berisi **host asli**, dua garis teks) di atas rak 5 buku warna skala `blue-button` dengan pita penanda `orange` di buku ke-4. Buku melayang 6px bergantian (`lift` 5s, jeda 0,6s) dan **diam bila `prefers-reduced-motion`**.
+- **Yang tersedia** (`h2` 32/24px + pengantar 17px): 3 ubin `#f5f5f7` radius 18 padding 28/24px, ikon Tabler 24px dalam lingkaran 48px `blue-button-1` (jam, cari, bintang), `h3` 21px, teks 17px abu; grid 3 kolom, 1 kolom ≤734px (gap 20/16/12).
+- **Cara membaca** (`id="cara-membaca"`, `scroll-margin-top: 72px`): 3 ubin yang sama dengan lingkaran 36px brand berisi **01–03** (tabular-nums) menggantikan ikon. Tanpa tanggal/angka koleksi statis; langkah tidak menyebut tombol karena bagian ini tetap tampil saat tautan belum tersedia.
+- **Penutup**: panel gradasi `#1c6ea4 → #124170` (135°, gradasi footer) radius 18 padding 48×40 (ponsel 32×24), `h2` putih 32/24px, teks `blue-button-1` (≈4,8:1 di atas `#1c6ea4`, AA untuk 17px), pil **putih** teks brand (hover `blue-button-1`, cincin fokus putih), ikon buku 220px putih 10% sebagai hiasan di kanan bawah (`aria-hidden`, terpotong `overflow: hidden`). **Hanya dirender bila tautan tersedia.**
+- **Keadaan**: memuat = kerangka pil `role="status" aria-busy` berlabel di slot tombol; galat = kotak `#f5f5f7` `role="alert"`; belum diatur = kotak yang sama berisi "Tautan website perpustakaan belum tersedia." Ketiganya tanpa tombol dan tanpa penutup; bagian Yang tersedia & Cara membaca (statis) tetap tampil.
+- **Tombol terisi, bukan tautan teks**: tidak memakai sapuan `link-reveal`, tanpa `text-decoration`; hover hanya mengganti warna latar (pointer halus saja).
+- **Teks**: `perpus.text.ts` merangkum fitur website perpustakaan (jam akses, cari judul/penulis/ISBN, favorit & ulasan, login untuk membaca) hasil pengecekan 2026-11-17 — tinjau bila website perpustakaan berubah. Nama platform, deskripsi, dan URL dari admin (Pendidikan › Perpustakaan Digital › tab **Website Perpustakaan**), bukan hardcode.
 
 ### Modul sapuan warna tautan (`(public)/_com/link-reveal/`)
 
@@ -1231,11 +1297,16 @@ Tata letak aplikasi gaya TIDAL, **bertema terang mengikuti situs** (user menolak
 
 ### Peta Informasi (`/peta-informasi`)
 
-Folder `(tambahan)/peta-informasi/`: `page.tsx` tipis → `_com/PetaInformasi.tsx` (H1, `TextInput` berlabel "Saring halaman", ringkasan `aria-live`, `SimpleGrid` 1/2/3 kolom) → `_com/PetaInformasiGroupCard.tsx` (kartu per menu utama: H2 + `<ul>/<li>` `Anchor component={Link}`). Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, saring lewat `searchMenu` tanpa API. Pintu masuk: footer "Tautan Penting", entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Dites di `__tests__/api/peta_informasi.test.ts`.
+Gaya apple.com/sitemap (keputusan user 2026-11-17; nama tetap "Peta Informasi"). Folder `(tambahan)/peta-informasi/`: `page.tsx` (server, `metadata` dari `_com/peta-informasi.text.ts`) → `_com/PetaInformasi.tsx` (client: `useMenuVisibility().searchMenus` → `flattenMenu` → `groupPetaInformasi`) → `_com/PetaInformasiView.tsx` (tanpa hook) + `_com/peta-informasi.module.css`. Data dari `_lib/petaInformasi.ts` atas config yang sama dengan pencarian (`DEFAULT_SEARCH_MENUS` = navbar lalu `search-extra-pages.ts`): grup senama digabung, href ganda & halaman peta sendiri dibuang, submenu tersembunyi tidak tampil.
+
+- **Kepala**: `h1` 21px/600 tinta `#1d1d1f` rata kiri, tinggi 52px (ponsel 48, h1 19px), garis bawah 1px `#d2d2d7` selebar isi. Tanpa kalimat pengantar, kolom saring, hitungan, tombol kembali, atau kartu (sengaja, mengikuti apple).
+- **Isi**: lebar 980px di tengah (≤1068px 692px, ponsel 100% − 2 × `--edge-gutter`), jarak kepala → isi `--block-gap`. `nav aria-labelledby` judul → `<ul>` kelompok di CSS multi-column 3 kolom (celah 17px; ≤734px 1 kolom), `break-inside: avoid`. Tiap kelompok: `h2` 17px/600 (lh 25, tinggi 32) + `<ul aria-labelledby>` tautan 17px/400 brand `#0a4e78`, baris 32px; jarak antar-kelompok 26px.
+- **Tautan**: `Link` next-view-transitions + `link-reveal` (`.trigger` + `.cta data-text`), tanpa `Anchor`.
+- **Pintu masuk**: tautan di bawah kolom cari halaman 404, baris legal footer, entri pencarian "Peta Informasi (Semua Halaman)", dan tautan "Buka Peta Informasi" di keadaan "Tidak ada hasil". Test: `__tests__/api/peta_informasi.test.ts`, `__tests__/api/peta_informasi_ui.test.tsx`.
 
 ### Halaman 404 (`src/app/not-found.tsx`)
 
-Pola apple.com: satu kalimat besar "Halaman yang Anda cari tidak ditemukan." (h1 56px/700, mobile ≤734px 36px, `text-wrap: balance`, warna `#1d1d1f`) lalu kolom cari lebar (maks 560px, `GlobalSearch` dengan `inputProps` size `xl`, radius 12px, ikon kaca pembesar kiri, border `#d2d2d7` → brand `#0a4e78` saat fokus). Tanpa angka 404, ilustrasi, tombol, atau tautan tambahan (keputusan user). Latar putih, padding 104/168px (mobile 72/112px).
+Pola apple.com: satu kalimat besar "Halaman yang Anda cari tidak ditemukan." (h1 56px/700, mobile ≤734px 36px, `text-wrap: balance`, warna `#1d1d1f`) lalu kolom cari lebar (maks 560px, `GlobalSearch` dengan `inputProps` size `xl`, radius 12px, ikon kaca pembesar kiri, border `#d2d2d7` → brand `#0a4e78` saat fokus). Di bawah kolom cari (jarak 24px) satu tautan "Atau lihat Peta Informasi" + chevron (pola apple "Or see our site map ›"), 17px brand, `link-reveal` CTA (keputusan user 2026-11-17, menggantikan keputusan lama tanpa tautan). Tanpa angka 404, ilustrasi, atau tombol. Latar putih, padding 104/168px (mobile 72/112px).
 - Satu file untuk seluruh situs: URL tak dikenal, `notFound()` di halaman, submenu tersembunyi (`MenuVisibilityGuard`), dan URL admin tak dikenal. Karena dirender di luar layout publik, file ini memasang sendiri `MenuVisibilityProvider` + `DarmasabaShell` (navbar, footer).
 - Metadata: judul tab "Halaman tidak ditemukan", `robots` noindex (menimpa "index, follow" root layout).
 - Submenu tersembunyi: `notFound()` dilempar komponen client, jadi isi 404 dirender setelah hidrasi (status tetap 404).
@@ -1276,7 +1347,7 @@ Halaman panjang di atas `PpidPage` (h1 "Profil Desa" + pengantar, satu tombol ke
 
 - **Urutan**: Sejarah → Visi Misi → Letak & Batas Wilayah → Lambang → Maskot → Profil Perbekel → Struktur Perangkat Desa → Moto → Perbekel dari Masa ke Masa; jarak antarsection 56px (mobile 40).
 - **Kartu section** = kartu terang terpusat Visi Misi PPID (`--vm-card`, radius 32px, bayangan lembut, muncul sekali): lambang/ikon opsional 140px → `h2` 36px/700 brand (mobile 26) rata tengah → isi. Teks CMS di kolom baca `--p-measure: 46rem`, 19px/1.65, **rata kiri** (bukan justify); daftar CMS jadi baris bergaris dengan titik/angka brand.
-- **Visi Misi**: `VisiMisiContent` tanpa moto (label "Visi Desa"/"Misi Desa"). **Wilayah**: `<dl>` 4 arah + luas + keterangan, lalu peta CMS (`petaEmbedUrl`); bila kosong, peta Kantor Perbekel berketerangan (dulu peta tanpa judul di puncak halaman). **Maskot**: galeri `auto-fit minmax(200px, 1fr)` foto 4:3 berketerangan.
+- **Visi Misi**: `VisiMisiContent` tanpa moto (label "Visi Desa"/"Misi Desa"). **Wilayah**: `<dl>` 4 arah + luas + keterangan, lalu file peta CMS opsional (`petaFile`: gambar `<figure>` lazy → klik tab baru, atau PDF → tombol + `PengumumanPdfModal`; `ui/wilayahPetaFile.tsx`), lalu peta CMS (`petaEmbedUrl`); bila embed kosong, peta Kantor Perbekel berketerangan (dulu peta tanpa judul di puncak halaman). ADR `docs/decisions/2026-11-17-wilayah-peta-file.md`. **Maskot**: galeri `auto-fit minmax(200px, 1fr)` foto 4:3 berketerangan.
 - **Profil Perbekel** = pola Profil PPID: ≥75em dua kolom, kiri kartu foto + pita nama brand (sticky), kanan blok Biodata / Pengalaman / Pengalaman Organisasi / Program Kerja Unggulan (h3 + ikon; blok kosong disembunyikan). Nama Perbekel masih konstanta di `profil.meta.ts` — model `ProfilPerbekel` belum punya kolom nama.
 - **Moto SIGAP**: `<ol>` 5 nilai, tiap huruf (tile brand 64px, `aria-hidden`) berdampingan dengan judul + keterangan; 5 kolom di desktop, baris di ≤1068px; kalimat komitmen dengan **SIGAP** brand.
 - **Perbekel dari Masa ke Masa**: judul tanpa kartu (`ProfilHeading`, bukan teks gradasi) + grid kartu potret 4:5 (nama, wilayah, pil periode), 3/2/1 kolom, maks `--ppid-measure`.

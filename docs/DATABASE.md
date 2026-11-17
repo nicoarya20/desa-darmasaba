@@ -29,6 +29,20 @@ All uploaded files reference the `FileStorage` Prisma model. **MinIO is the prim
 
 Seafile was the previous storage backend and has been fully migrated to MinIO (`prisma/migrate-seafile-to-minio.ts`). `WIBU_UPLOAD_DIR` (local disk) and Seafile (`src/lib/seafile-auth-service.ts`, `SEAFILE_*` env vars) are both leftovers — still declared in `.env.example` but not referenced by any active upload/read/delete path. Don't rely on either for new file-handling code; use MinIO.
 
+## Perpustakaan Digital: pengaturan & tabel arsip
+`PerpustakaanConfig` (migrasi `20261117180000_perpustakaan_config`, additive) menyimpan **satu baris aktif**
+(`namaPlatform`, `deskripsi`, `websiteUrl`) untuk halaman penghubung `/pendidikan/perpustakaan-digital`. Pola sama dengan
+`BeasiswaConfig`: baca `findFirst({ where: { isActive: true }, orderBy: { createdAt: 'desc' } })`, tulis = update baris itu
+atau create bila belum ada. Migrasi mengisi baris awal (Pustaka Ananta Loka) hanya bila belum ada baris aktif, jadi aman
+dijalankan ulang. `GET .../pengaturan/find` publik, `PUT .../pengaturan/update` wajib admin (`guardAdmin`); validasi URL
+https tanpa kredensial di `src/lib/perpustakaan-website.ts` (dipakai klien & server).
+
+`DataPerpustakaan`, `KategoriBuku`, dan `PeminjamanBuku` kini **arsip**: tidak dipakai halaman publik maupun pencarian
+global, tapi sengaja belum dihapus karena `PeminjamanBuku` berisi data pribadi warga (nama, telepon, alamat) yang mungkin
+masih dibutuhkan desa. Admin-nya tetap ada dengan label "Arsip …". Penghapusan tabel = fase terpisah, lihat
+`docs/decisions/2026-11-17-perpustakaan-link-eksternal.md`. `POST .../peminjamanbuku/create` bukan lagi anggota
+`PUBLIC_POST_PATHS` (warga anonim tidak bisa menulis ke tabel ini).
+
 ## Log Audit & Log Login (Developer Console)
 Migrasi `20261116170000_audit_log_login_log` (additive). Keduanya hanya dibaca role 0 lewat `GET /api/developer/audit-log` / `login-log` (halaman `/dev/log/audit`, `/dev/log/login`). Tidak ada endpoint ubah/hapus.
 - **`AuditLog`** = jejak aksi admin, **append-only, tanpa retensi**. Tulis hanya lewat `audit()` di `src/lib/audit.ts`, **setelah** mutasi sukses, dengan aktor dari hasil guard (bukan body). `action` wajib anggota `AUDIT_ACTIONS` (daftar tertutup; aksi baru = tambah di sana + label di halaman Log Audit, test akan merah bila lupa). `actorEmail`/`actorRoleId` adalah snapshot saat aksi; `actorId` jadi null bila user dihapus (`onDelete: SetNull`). `meta` lewat `sanitizeAuditMeta` (string ≤500, kedalaman 3, ≤20 item) dan **tidak boleh** memuat PII warga, isi form/percakapan, nilai env, atau API key — catat nama field / id saja. Gagal tulis = `console.warn`, tidak membatalkan aksi. Tanpa IP/UA.

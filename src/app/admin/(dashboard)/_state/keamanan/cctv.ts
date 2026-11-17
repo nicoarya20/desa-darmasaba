@@ -46,6 +46,8 @@ const defaultForm: FormData = {
   lastActive: new Date().toISOString(),
 };
 
+let urutanMuatEdit = 0;
+
 const cctvState = proxy({
   create: {
     form: { ...defaultForm },
@@ -168,22 +170,34 @@ const cctvState = proxy({
     id: "",
     form: { ...defaultForm },
     loading: false,
+    memuat: false,
     async load(id: string) {
       if (!id) return null;
-      const data = await cctvState.findUnique.load(id);
-      if (data) {
-        cctvState.edit.id = id;
-        cctvState.edit.form = {
-          kode: (data as any).kode ?? "",
-          nama: (data as any).nama ?? "",
-          lokasi: (data as any).lokasi ?? "",
-          latitude: (data as any).latitude != null ? String((data as any).latitude) : "",
-          longitude: (data as any).longitude != null ? String((data as any).longitude) : "",
-          status: (data as any).status ?? "Online",
-          lastActive: (data as any).lastActive ?? new Date().toISOString(),
-        };
+      const urutan = ++urutanMuatEdit;
+      // Kosongkan dulu agar data CCTV sebelumnya tidak tampil / tersimpan ke id ini.
+      cctvState.edit.id = "";
+      cctvState.edit.form = { ...defaultForm };
+      cctvState.edit.memuat = true;
+      try {
+        const data = await cctvState.findUnique.load(id);
+        // Respons basi: load lain sudah dimulai, jangan timpa.
+        if (urutan !== urutanMuatEdit) return null;
+        if (data) {
+          cctvState.edit.id = id;
+          cctvState.edit.form = {
+            kode: (data as any).kode ?? "",
+            nama: (data as any).nama ?? "",
+            lokasi: (data as any).lokasi ?? "",
+            latitude: (data as any).latitude != null ? String((data as any).latitude) : "",
+            longitude: (data as any).longitude != null ? String((data as any).longitude) : "",
+            status: (data as any).status ?? "Online",
+            lastActive: (data as any).lastActive ?? new Date().toISOString(),
+          };
+        }
+        return data;
+      } finally {
+        if (urutan === urutanMuatEdit) cctvState.edit.memuat = false;
       }
-      return data;
     },
     async update() {
       const cek = templateForm.safeParse(cctvState.edit.form);

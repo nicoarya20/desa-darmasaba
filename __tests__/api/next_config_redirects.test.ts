@@ -28,6 +28,7 @@ describe('next.config redirects — daftar lengkap', () => {
       ['/inovasi/info-teknologi-tepat-guna', '/inovasi/inovasi-teknologi-desa?kategori=tepat-guna'],
       ['/admin/inovasi/desa-digital-smart-village/:path*', '/admin/inovasi/inovasi-teknologi-desa/:path*'],
       ['/admin/inovasi/info-teknologi-tepat-guna/:path*', '/admin/inovasi/inovasi-teknologi-desa/:path*'],
+      ['/pendidikan/perpustakaan-digital/:path+', '/pendidikan/perpustakaan-digital'],
       ['/admin/desa', '/admin/pemerintahan'],
       ['/admin/desa/:path*', '/admin/pemerintahan/:path*'],
       ['/admin/pemerintahan/penghargaan', '/admin/landing-page/prestasi-desa/list-prestasi-desa'],

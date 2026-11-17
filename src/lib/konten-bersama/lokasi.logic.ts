@@ -2,7 +2,7 @@ import { z } from "zod";
 import { isHttpUrl, urlHttpSchema } from "./tautan.validation";
 
 /** Titik awal peta admin saat lokasi belum dipilih (sekitar Desa Darmasaba, Badung). */
-export const PUSAT_PETA_DEFAULT = { lat: -8.65, lng: 115.2 } as const;
+export const PUSAT_PETA_DEFAULT = { lat: -8.5712, lng: 115.1923 } as const;
 
 export type Koordinat = { lat: number; lng: number };
 
@@ -10,6 +10,46 @@ export type Koordinat = { lat: number; lng: number };
 export const lintangSchema = z.number({ invalid_type_error: "Lintang harus berupa angka" }).finite().min(-90).max(90);
 /** Bujur (derajat) valid. */
 export const bujurSchema = z.number({ invalid_type_error: "Bujur harus berupa angka" }).finite().min(-180).max(180);
+
+const ANGKA = "-?\\d+(?:\\.\\d+)?";
+const RE_PASANGAN = new RegExp(`^(${ANGKA})(\\s*,\\s*|\\s+)(${ANGKA})$`);
+const RE_URL_PIN = new RegExp(`!3d(${ANGKA})!4d(${ANGKA})`);
+const RE_URL_AT = new RegExp(`@(${ANGKA}),(${ANGKA})(?:[,/?]|$)`);
+
+function koordinatValid(lat: number, lng: number): Koordinat | null {
+  return lintangSchema.safeParse(lat).success && bujurSchema.safeParse(lng).success ? { lat, lng } : null;
+}
+
+function parsePasangan(teks: string): Koordinat | null {
+  const m = RE_PASANGAN.exec(teks.trim());
+  if (!m) return null;
+  const [, lat, pemisah, lng] = m;
+  // "-8,57" tanpa spasi bisa berarti koma desimal: wajib titik desimal di kedua angka.
+  if (pemisah === "," && !(lat.includes(".") && lng.includes("."))) return null;
+  return koordinatValid(Number(lat), Number(lng));
+}
+
+function parseUrlGoogleMaps(teks: string): Koordinat | null {
+  if (!isLinkGoogleMaps(teks)) return null;
+  const url = new URL(teks);
+  const pin = RE_URL_PIN.exec(url.href);
+  if (pin) return koordinatValid(Number(pin[1]), Number(pin[2]));
+  for (const kunci of ["q", "query"]) {
+    const nilai = url.searchParams.get(kunci);
+    if (nilai) return parsePasangan(nilai);
+  }
+  const at = RE_URL_AT.exec(url.href);
+  return at ? koordinatValid(Number(at[1]), Number(at[2])) : null;
+}
+
+/**
+ * Koordinat dari teks tempelan admin: pasangan `"lat, lng"` / `"lat lng"` (titik desimal) atau URL Google Maps
+ * berisi `!3dlat!4dlng`, `q=`/`query=lat,lng`, atau `@lat,lng`. Koma desimal & di luar rentang → null.
+ */
+export function parseKoordinatTeks(teks: string): Koordinat | null {
+  const t = teks.trim();
+  return parsePasangan(t) ?? parseUrlGoogleMaps(t);
+}
 
 /** True bila lat & lng sama-sama terisi atau sama-sama kosong (titik setengah tidak bermakna). */
 export function koordinatBerpasangan({ lat, lng }: { lat?: number | null; lng?: number | null }): boolean {

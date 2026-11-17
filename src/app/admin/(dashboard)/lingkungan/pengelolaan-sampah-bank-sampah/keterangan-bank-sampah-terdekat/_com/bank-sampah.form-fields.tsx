@@ -50,6 +50,7 @@ export default function BankSampahFormFields({ value, onChange, baganBaru, onBag
       <LokasiInput
         koordinat={value.koordinat}
         onKoordinatChange={(koordinat) => onChange({ koordinat })}
+        alamat={value.alamat}
         linkMaps={value.linkMaps}
         onLinkMapsChange={(linkMaps) => onChange({ linkMaps })}
         linkError={cekLink.success ? null : cekLink.error.issues[0]?.message}

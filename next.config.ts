@@ -39,6 +39,9 @@ const nextConfig: NextConfig = {
       { source: '/inovasi/info-teknologi-tepat-guna', destination: '/inovasi/inovasi-teknologi-desa?kategori=tepat-guna', permanent: true },
       { source: '/admin/inovasi/desa-digital-smart-village/:path*', destination: '/admin/inovasi/inovasi-teknologi-desa/:path*', permanent: true },
       { source: '/admin/inovasi/info-teknologi-tepat-guna/:path*', destination: '/admin/inovasi/inovasi-teknologi-desa/:path*', permanent: true },
+      // Katalog & form pinjam diganti halaman penghubung ke website perpustakaan desa (Pustaka Ananta Loka);
+      // tautan lama /semua, /{kategori}, /{kategori}/{id} tetap sampai. docs/decisions/2026-11-17-perpustakaan-link-eksternal.md
+      { source: '/pendidikan/perpustakaan-digital/:path+', destination: '/pendidikan/perpustakaan-digital', permanent: true },
       { source: '/admin/desa', destination: '/admin/pemerintahan', permanent: true },
       { source: '/admin/desa/:path*', destination: '/admin/pemerintahan/:path*', permanent: true },
       { source: '/admin/pemerintahan/penghargaan', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },

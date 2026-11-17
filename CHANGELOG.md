@@ -1,5 +1,50 @@
 # Changelog
 
+## [0.1.303] - 2026-11-17
+### Changed
+- **Perpustakaan Digital kini menautkan website perpustakaan desa.** Desa sudah punya perpustakaan digital sendiri (Pustaka Ananta Loka), jadi halaman `/pendidikan/perpustakaan-digital` tidak lagi menampilkan katalog buku. Gantinya halaman bergaya sama dengan Beasiswa Desa: kepala berisi nama dan deskripsi perpustakaan, tombol "Kunjungi Website Perpustakaan" (terbuka di tab baru) dan ilustrasi rak buku, lalu bagian "Yang tersedia di perpustakaan", "Cara membaca" bernomor, dan ajakan penutup. Tautan katalog lama yang sudah dibagikan warga tetap sampai ke halaman ini, tidak jadi halaman error.
+- **Admin bisa mengganti alamat website perpustakaan sendiri** dari Pendidikan › Perpustakaan Digital › tab "Website Perpustakaan" (nama platform, deskripsi, dan alamat), tanpa perlu menunggu deploy. Alamat wajib diawali `https://`.
+- **Tab Data Perpustakaan, Kategori Buku, dan Peminjam jadi arsip**, diberi nama "Arsip …" beserta keterangan bahwa isinya tidak tampil di website publik. Datanya tetap utuh dan bisa diperiksa; belum ada yang dihapus.
+- Hasil pencarian di website tidak lagi memuat judul buku dari katalog lama, dan asisten Jenna mengarahkan pengunjung ke halaman perpustakaan yang baru.
+
+### Removed
+- **Formulir pinjam buku di website dihentikan.** Peminjaman kini mengikuti ketentuan di website perpustakaan desa, jadi warga tidak lagi mengisi data pribadi (nama, nomor telepon, alamat) untuk pinjam buku di website ini.
+
+### Fixed
+- **Celah keamanan pada catatan peminjaman ditutup.** Catatan peminjam dulu bisa dikirim siapa pun tanpa login dan ditampilkan apa adanya di halaman admin, sehingga berpotensi menjalankan skrip berbahaya di sesi admin. Jalur kirim tanpa login sudah ditutup dan catatan sekarang ditampilkan sebagai teks biasa, termasuk untuk data lama.
+
+## [0.1.302] - 2026-11-17
+### Added
+- **sitemap.xml dan robots.txt** untuk mesin pencari. Sitemap memuat beranda dan semua halaman menu yang sedang tampil (68 halaman); halaman yang disembunyikan lewat Pengaturan > Visibilitas Menu otomatis tidak ikut. robots.txt menutup halaman admin, API, dan login dari mesin pencari. Halaman detail (berita, pengumuman, dll.) belum dimasukkan. Catatan: alamat di dalamnya masih mengikuti alamat situs bawaan (stg) sampai domain produksi diatur lewat env.
+- **Halaman tidak ditemukan (404)** kini punya tautan **"Atau lihat Peta Informasi"** di bawah kolom cari.
+- **Baris paling bawah footer** kini berisi hak cipta lalu tautan berpemisah "|" seperti footer apple.com, dimulai dengan **Peta Informasi**.
+
+### Changed
+- **Peta Informasi** (`/peta-informasi`) ditata ulang mengikuti gaya peta situs apple.com: judul kecil bergaris bawah, lalu tiap menu tampil sebagai subjudul dengan daftar tautannya dalam tiga kolom (satu kolom di ponsel). Kolom saring, hitungan halaman, dan kartu dihapus.
+- Tautan Peta Informasi di footer dipindah dari grup "Tautan Penting" ke baris paling bawah.
+
+## [0.1.301] - 2026-11-17
+### Added
+- **Peta wilayah bisa diunggah sebagai file** di admin Pemerintahan > Profil > Letak & Batas Wilayah, lewat field baru **File Peta Wilayah**. File bisa berupa gambar (JPG, PNG, WebP, maks 5 MB) atau PDF (maks 10 MB), dan bisa dilihat, diganti, atau dihapus sebelum menekan **Simpan**.
+  - Di halaman publik Pemerintahan > Profil, file peta tampil di bagian Letak & Batas Wilayah, di atas peta embed. Gambar bisa diklik untuk dibuka ukuran penuh; PDF dibuka lewat tombol **Lihat peta wilayah (PDF)**.
+  - Peta embed tetap tampil seperti sebelumnya. Bila URL embed kosong, peta Kantor Perbekel tetap tampil.
+  - Butuh migrasi database `20261117173000_wilayah_peta_file` (menambah kolom opsional; data lama tidak berubah).
+
+## [0.1.300] - 2026-11-17
+### Added
+- **Titik peta tidak harus diklik manual lagi**. Ini berlaku di form CCTV (tambah dan edit), Bank Sampah, dan Lembaga Pendidikan.
+  - Pilih cara mengisi lewat dua tab: **Cari alamat** atau **Lintang & bujur**. Peta tetap tampil di bawahnya, dan isian tidak hilang saat berpindah tab. Form yang sudah punya titik langsung membuka tab Lintang & bujur.
+  - Tombol **"Cari di peta"** mencari koordinat dari alamat yang sudah diisi di form. Satu hasil langsung dipakai; beberapa hasil ditampilkan sebagai pilihan. Data pencarian berasal dari OpenStreetMap.
+  - Kolom **Lintang** dan **Bujur** bisa diketik, ditempel langsung dari Google Maps (klik kanan titik, lalu salin, mis. `-8.571234, 115.192345`), atau diisi dari link Google Maps yang memuat koordinat.
+  - Peta ikut bergeser ke titik baru. Klik peta tetap bisa dipakai untuk merapikan posisi.
+  - Bila tempat yang dicari belum ada di OpenStreetMap (mis. "Kantor Desa Darmasaba"), peta diarahkan ke wilayah Desa Darmasaba agar titiknya bisa langsung diklik, dengan tombol **Isi lintang & bujur** untuk pindah ke tab koordinat. Titik dan Lokasi tidak diubah.
+- **Form CCTV: Lokasi terisi otomatis dari titik peta**. Setelah peta diklik atau lintang/bujur diisi, kolom Lokasi terisi alamat titik itu, mis. "Jalan Tugu Pahlawan, Sibangkaja, Abiansemal". Lokasi yang sudah diketik atau diubah admin tidak ditimpa.
+  - Bila titiknya tepat di tempat yang punya nama di OpenStreetMap, di bawah Nama/Deskripsi muncul "Saran dari peta" dengan tombol **Pakai**. Nama tidak pernah diisi otomatis.
+
+### Fixed
+- Peta di form lokasi (CCTV, Bank Sampah, Lembaga Pendidikan) kini terbuka di Desa Darmasaba. Sebelumnya Bank Sampah dan Lembaga Pendidikan terbuka di sekitar Denpasar.
+- Halaman edit CCTV kini menampilkan tampilan memuat sampai data CCTV tersebut selesai dimuat. Sebelumnya form bisa sempat menampilkan data CCTV yang dibuka sebelumnya, dan bila data gagal dimuat, menekan **Simpan** dapat menimpa CCTV ini dengan data CCTV lain. Bila data tidak ditemukan atau gagal dimuat, kini muncul pesan dengan tombol **Coba lagi** dan **Kembali ke daftar CCTV**, tanpa form.
+
 ## [0.1.299] - 2026-11-17
 ### Added
 - **Submenu baru Inovasi › Program Inovasi** (`/inovasi/program-inovasi`): daftar semua program inovasi desa berupa ubin logo, dengan data yang sama seperti rel "Program Inovasi Desa" di beranda. Submenu ini bisa disembunyikan atau ditampilkan dari Pengaturan › Visibilitas Menu.

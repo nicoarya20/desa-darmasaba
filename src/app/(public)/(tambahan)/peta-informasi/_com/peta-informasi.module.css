@@ -1,0 +1,112 @@
+/*
+ * Peta Informasi gaya apple.com/sitemap (diukur 2026-11-17).
+ * Lebar isi 980px (tablet 692px, ponsel 100% - 2 × --edge-gutter), judul 21px/600 bergaris bawah
+ * #d2d2d7 selebar isi, lalu kelompok (subjudul + tautan) mengalir turun di 3 kolom CSS multi-column.
+ * Baris 17px / line-height 25px + padding bawah 7px = 32px; jarak antar-kelompok 26px.
+ */
+.page {
+  --ink: #1d1d1f;
+  --line: #d2d2d7;
+  --brand: #0a4e78;
+  background: #fff;
+  color: var(--ink);
+  padding-bottom: var(--section-gap);
+}
+
+.inner {
+  width: 980px;
+  max-width: calc(100% - 2 * var(--edge-gutter));
+  margin-inline: auto;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  border-bottom: 1px solid var(--line);
+}
+
+.title {
+  margin: 0;
+  font-size: 21px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0.011em;
+  color: var(--ink);
+}
+
+.nav {
+  margin-top: var(--block-gap);
+}
+
+.groups,
+.links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.groups {
+  column-count: 3;
+  column-gap: 17px;
+}
+
+/* Satu kelompok tidak terbelah ke kolom berikutnya. */
+.group {
+  break-inside: avoid;
+  padding-bottom: 26px;
+}
+
+.groupTitle {
+  margin: 0;
+  padding-bottom: 7px;
+  font-size: 17px;
+  line-height: 25px;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  color: var(--ink);
+}
+
+.item {
+  padding: 0 40px 7px 0;
+  font-size: 17px;
+  line-height: 25px;
+  letter-spacing: -0.022em;
+}
+
+.link {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+@media (max-width: 1068px) {
+  .inner {
+    width: 692px;
+  }
+
+  .item {
+    padding-right: 17px;
+  }
+}
+
+@media (max-width: 734px) {
+  .inner {
+    width: auto;
+  }
+
+  .head {
+    min-height: 48px;
+  }
+
+  .title {
+    font-size: 19px;
+  }
+
+  .groups {
+    column-count: 1;
+  }
+
+  .item {
+    padding-right: 0;
+  }
+}

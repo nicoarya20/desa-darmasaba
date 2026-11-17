@@ -67,6 +67,20 @@ Setelah deploy, Jenna tetap tersembunyi sampai diatur developer (role 0):
 2. `/dev/jenna/batas`: `dailyTokensGlobal` > 0 (0 = Jenna tidak aktif untuk publik) dan retensi **30** hari (bawaan 90).
 3. `/dev/jenna`: aktifkan.
 
+## Operator: pencarian lokasi peta (Nominatim)
+
+Tombol "Cari di peta" di form admin memanggil `GET /api/geocode/search`. Server meneruskannya ke `https://nominatim.openstreetmap.org/search`. Pengisian alamat dari titik (koordinat → alamat) memanggil `GET /api/geocode/reverse?lat=&lng=` → `https://nominatim.openstreetmap.org/reverse`; batas di bawah dipakai bersama kedua endpoint, cache reverse terpisah (24 jam, maks 200 titik, kunci dibulatkan ~1 m).
+
+- **Container perlu akses HTTPS keluar** ke `nominatim.openstreetmap.org`. Tanpa akses itu, pencarian membalas 502 "Layanan pencarian lokasi sedang tidak tersedia". Isian lintang/bujur dan klik peta tetap berfungsi.
+- **Tidak ada env baru.** User-Agent dibentuk dari `package.json`: `desa-darmasaba-admin/<versi> (geocoding)`.
+- **Kebijakan pemakaian Nominatim** dijaga di memori proses:
+  - maksimal 1 panggilan per ~1,1 detik untuk semua admin;
+  - 20 pencarian per menit per admin;
+  - cache 24 jam, maksimal 200 kueri.
+  
+  Semua batas ini reset saat restart. Bila ada lebih dari satu instance, batasnya berlaku per instance. Tidak dipakai untuk autocomplete.
+- **Atribusi**: hasil pencarian menampilkan "Sumber: OpenStreetMap", dan tile peta sudah memakai OSM.
+
 ## Operator: backfill ukuran berkas (`FileStorage.size`)
 
 Migrasi `20261109150000_add_file_storage_size` menambah kolom `FileStorage.size` (byte, nullable). Upload baru langsung mengisinya; baris lama tetap `NULL` sampai backfill dijalankan **sekali** setelah migrasi, dari container/host yang punya `DATABASE_URL` + env MinIO yang sama dengan aplikasi:

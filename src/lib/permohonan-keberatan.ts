@@ -1,9 +1,10 @@
 // Aturan field "alasan keberatan" pada Permohonan Keberatan Informasi Publik —
 // fungsi & konstanta murni (tanpa I/O), dipakai bersama oleh form publik (klien)
 // dan endpoint create (server) supaya batasnya tunggal.
-import { richTextLength } from "@/app/(public)/(pages)/pendidikan/perpustakaan-digital/_lib/peminjamanForm";
-
-export { richTextLength };
+/** Panjang teks murni dari konten rich-text (tag HTML dibuang, dipangkas). */
+export function richTextLength(html?: string): number {
+  return (html || "").replace(/<[^>]*>/g, "").trim().length;
+}
 
 /** Batas panjang teks murni alasan keberatan (tag HTML editor tidak dihitung). */
 export const ALASAN_KEBERATAN_MAX_LENGTH = 2000;
