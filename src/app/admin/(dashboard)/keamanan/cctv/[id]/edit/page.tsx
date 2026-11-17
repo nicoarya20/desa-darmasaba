@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import TitikPetaInput from '../../../../_com/konten-bersama/titik-peta.input';
 import { koordinatDariTeks } from '../../../../_com/konten-bersama/titik-peta.logic';
+import { useAlamatTitik } from '../../../../_com/konten-bersama/use-alamat-titik';
 import cctvState from '../../../../_state/keamanan/cctv';
 
 function EditCctv() {
@@ -29,6 +30,7 @@ function EditCctv() {
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const alamatTitik = useAlamatTitik(() => cctvState.edit.form, state.edit.form.nama);
 
   if (!loaded) {
     setLoaded(true);
@@ -100,6 +102,7 @@ function EditCctv() {
             placeholder="Contoh: Balai Desa"
             value={state.edit.form.nama}
             onChange={(e) => { cctvState.edit.form.nama = e.currentTarget.value; }}
+            description={alamatTitik.deskripsiNama}
             required
           />
 
@@ -115,6 +118,7 @@ function EditCctv() {
             koordinat={koordinat}
             onKoordinatChange={handleMapChange}
             alamat={state.edit.form.lokasi}
+            onAlamatTitik={alamatTitik.onAlamatTitik}
           />
 
           <Select

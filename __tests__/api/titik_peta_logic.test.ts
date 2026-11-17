@@ -1,16 +1,21 @@
 // @vitest-environment node
-// Input titik peta admin: tempel koordinat/URL Google Maps, cari alamat (GET /api/geocode/search), validasi lintang/bujur.
+// Input titik peta admin: tempel koordinat/URL Google Maps, cari alamat (GET /api/geocode/search), alamat dari titik
+// (GET /api/geocode/reverse), validasi lintang/bujur, isi otomatis Lokasi.
 import { describe, expect, it, vi } from "vitest";
 import { parseKoordinatTeks } from "@/lib/konten-bersama/lokasi.logic";
 import {
+  bolehIsiLokasiOtomatis,
+  cariAlamatTitik,
   cariTitikAlamat,
   cekSumbuTeks,
   koordinatDariTeks,
   kueriCariValid,
+  petakanResponsAlamat,
   petakanResponsCari,
   PESAN_CARI_GAGAL,
   PESAN_TERLALU_SERING,
   PESAN_TIDAK_DITEMUKAN,
+  saranNamaTampil,
 } from "@/app/admin/(dashboard)/_com/konten-bersama/titik-peta.logic";
 
 describe("parseKoordinatTeks", () => {
@@ -147,5 +152,81 @@ describe("cekSumbuTeks & koordinatDariTeks", () => {
     expect(koordinatDariTeks("", "")).toBeNull();
     expect(koordinatDariTeks("-8.57", "")).toBeNull();
     expect(koordinatDariTeks("abc", "115")).toBeNull();
+  });
+});
+
+describe("petakanResponsAlamat", () => {
+  it("200 dengan/tanpa nama → alamat (+ nama), teks dirapikan", () => {
+    expect(petakanResponsAlamat(200, { success: true, data: { alamat: " Jl. Raya Darmasaba ", nama: " Balai Desa " } })).toEqual({
+      ok: true,
+      alamat: "Jl. Raya Darmasaba",
+      nama: "Balai Desa",
+    });
+    expect(petakanResponsAlamat(200, { success: true, data: { alamat: "Jl. Raya Darmasaba", nama: null } })).toEqual({
+      ok: true,
+      alamat: "Jl. Raya Darmasaba",
+      nama: null,
+    });
+    expect(petakanResponsAlamat(200, { success: true, data: { alamat: "Jl. A", nama: "  " } })).toEqual({ ok: true, alamat: "Jl. A", nama: null });
+  });
+
+  it("data null, alamat kosong, 429, 502, body bukan objek → { ok: false }", () => {
+    expect(petakanResponsAlamat(200, { success: true, data: null })).toEqual({ ok: false });
+    expect(petakanResponsAlamat(200, { success: true, data: { alamat: " ", nama: "X" } })).toEqual({ ok: false });
+    expect(petakanResponsAlamat(429, { success: false, message: "Terlalu sering" })).toEqual({ ok: false });
+    expect(petakanResponsAlamat(502, { success: false, message: "Layanan peta tidak merespons" })).toEqual({ ok: false });
+    expect(petakanResponsAlamat(200, null)).toEqual({ ok: false });
+    expect(petakanResponsAlamat(200, { success: false, data: { alamat: "Jl. A", nama: null } })).toEqual({ ok: false });
+  });
+});
+
+describe("cariAlamatTitik", () => {
+  it("memanggil endpoint reverse dengan lat/lng dan memetakan respons", async () => {
+    const fetcher = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ success: true, data: { alamat: "Jl. A", nama: "Pura Desa" } }), { status: 200 }),
+    );
+    await expect(cariAlamatTitik({ lat: -8.5712, lng: 115.1923 }, fetcher)).resolves.toEqual({ ok: true, alamat: "Jl. A", nama: "Pura Desa" });
+    expect(fetcher).toHaveBeenCalledWith("/api/geocode/reverse?lat=-8.5712&lng=115.1923", { credentials: "same-origin" });
+  });
+
+  it("body bukan JSON, 429, galat jaringan → { ok: false } (hanya console.warn)", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const html = vi.fn().mockResolvedValue(new Response("<html>Bad Gateway</html>", { status: 502 }));
+    await expect(cariAlamatTitik({ lat: -8.57, lng: 115.19 }, html)).resolves.toEqual({ ok: false });
+    const limit = vi.fn().mockResolvedValue(new Response("{}", { status: 429, headers: { "Retry-After": "30" } }));
+    await expect(cariAlamatTitik({ lat: -8.57, lng: 115.19 }, limit)).resolves.toEqual({ ok: false });
+    const putus = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+    await expect(cariAlamatTitik({ lat: -8.57, lng: 115.19 }, putus)).resolves.toEqual({ ok: false });
+    expect(warn).toHaveBeenCalledTimes(3);
+    warn.mockRestore();
+  });
+});
+
+describe("bolehIsiLokasiOtomatis", () => {
+  it("kosong → boleh", () => {
+    expect(bolehIsiLokasiOtomatis("", null)).toBe(true);
+    expect(bolehIsiLokasiOtomatis("   ", "Jl. A")).toBe(true);
+  });
+
+  it("masih sama dengan isian otomatis terakhir → boleh; sudah diubah admin → tidak", () => {
+    expect(bolehIsiLokasiOtomatis("Jl. A", "Jl. A")).toBe(true);
+    expect(bolehIsiLokasiOtomatis("Jl. A No. 5", "Jl. A")).toBe(false);
+  });
+
+  it("terisi tanpa isian otomatis di sesi ini (mis. dari DB saat edit) → tidak", () => {
+    expect(bolehIsiLokasiOtomatis("Jl. Raya Darmasaba No. 1", null)).toBe(false);
+  });
+});
+
+describe("saranNamaTampil", () => {
+  it("tampil bila ada dan beda dengan Nama", () => {
+    expect(saranNamaTampil("Balai Desa Darmasaba", "")).toBe("Balai Desa Darmasaba");
+    expect(saranNamaTampil("Balai Desa Darmasaba", "Pos Kamling")).toBe("Balai Desa Darmasaba");
+  });
+
+  it("tanpa saran atau sudah sama (abaikan huruf besar/kecil & spasi) → null", () => {
+    expect(saranNamaTampil(null, "")).toBeNull();
+    expect(saranNamaTampil("  ", "")).toBeNull();
+    expect(saranNamaTampil("Balai Desa", " balai desa ")).toBeNull();
   });
 });

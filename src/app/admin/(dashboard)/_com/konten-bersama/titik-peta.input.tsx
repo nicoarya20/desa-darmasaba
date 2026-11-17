@@ -4,8 +4,16 @@ import { parseKoordinatTeks, PUSAT_PETA_DEFAULT, type Koordinat } from '@/lib/ko
 import { Box, Button, Group, Paper, SimpleGrid, Stack, Text, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
-import { cariTitikAlamat, cekSumbuTeks, kueriCariValid, type HasilGeocode } from './titik-peta.logic';
+import { useEffect, useRef, useState } from 'react';
+import {
+  cariAlamatTitik,
+  cariTitikAlamat,
+  cekSumbuTeks,
+  JEDA_CARI_ALAMAT_MS,
+  kueriCariValid,
+  type AlamatTitik,
+  type HasilGeocode,
+} from './titik-peta.logic';
 
 const LeafletMapEdit = dynamic(() => import('@/app/admin/(dashboard)/_com/leafletMapEdit'), { ssr: false });
 
@@ -16,13 +24,15 @@ type Props = {
   alamat?: string;
   /** Bila diisi, titik bisa dikosongkan. */
   onKoordinatHapus?: () => void;
+  /** Bila diisi, alamat titik dicari setelah klik peta atau isian lintang-bujur (bukan nilai awal/hasil cari/hapus). */
+  onAlamatTitik?: (hasil: AlamatTitik) => void;
 };
 
 const formatSumbu = (n: number) => String(Number(n.toFixed(6)));
 const kunciKoordinat = (k: Koordinat | null) => (k ? `${k.lat},${k.lng}` : '');
 
 /** Titik lokasi (semua domain): cari dari alamat, isi/tempel lintang-bujur, atau klik peta. */
-export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, onKoordinatHapus }: Props) {
+export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, onKoordinatHapus, onAlamatTitik }: Props) {
   const [kueriManual, setKueriManual] = useState<string | null>(null);
   const [memuat, setMemuat] = useState(false);
   const [pesanCari, setPesanCari] = useState<string | null>(null);
@@ -33,6 +43,20 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
   const [teksLng, setTeksLng] = useState(koordinat ? formatSumbu(koordinat.lng) : '');
   const [errorLat, setErrorLat] = useState<string | null>(null);
   const [errorLng, setErrorLng] = useState<string | null>(null);
+
+  const [mencariAlamat, setMencariAlamat] = useState(false);
+  const cariAlamat = useRef<{ timer: ReturnType<typeof setTimeout> | null; urutan: number }>({ timer: null, urutan: 0 });
+  const koordinatTerkini = useRef(koordinat);
+  useEffect(() => {
+    koordinatTerkini.current = koordinat;
+  });
+  useEffect(() => {
+    const c = cariAlamat.current;
+    return () => {
+      if (c.timer) clearTimeout(c.timer);
+      c.urutan++;
+    };
+  }, []);
 
   // Titik berubah dari luar (klik peta, hasil cari, reset) → samakan kolom, kecuali isian sudah bernilai sama
   // (agar ketikan seperti "-8." tidak ditimpa saat admin mengetik).
@@ -55,7 +79,38 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
   const bisaCari = kueriCariValid(kueri) && !memuat;
   const hasilTerpakai = terpilih && koordinat && terpilih.lat === koordinat.lat && terpilih.lng === koordinat.lng ? terpilih : null;
 
+  function batalkanCariAlamat() {
+    const c = cariAlamat.current;
+    if (c.timer) clearTimeout(c.timer);
+    c.timer = null;
+    c.urutan++;
+    setMencariAlamat(false);
+  }
+
+  // Hanya respons untuk titik terakhir yang dipakai; titik yang sudah pindah lewat jalur lain (cari/hapus) diabaikan.
+  function jadwalkanCariAlamat(k: Koordinat) {
+    if (!onAlamatTitik || (koordinat && koordinat.lat === k.lat && koordinat.lng === k.lng)) return;
+    batalkanCariAlamat();
+    const c = cariAlamat.current;
+    const urutan = c.urutan;
+    c.timer = setTimeout(async () => {
+      c.timer = null;
+      setMencariAlamat(true);
+      const hasil = await cariAlamatTitik(k);
+      if (urutan !== c.urutan) return;
+      setMencariAlamat(false);
+      const kini = koordinatTerkini.current;
+      if (hasil.ok && kini && kini.lat === k.lat && kini.lng === k.lng) onAlamatTitik({ alamat: hasil.alamat, nama: hasil.nama });
+    }, JEDA_CARI_ALAMAT_MS);
+  }
+
+  function ubahKoordinatManual(k: Koordinat) {
+    jadwalkanCariAlamat(k);
+    onKoordinatChange(k);
+  }
+
   function pakaiHasil(hasil: HasilGeocode) {
+    batalkanCariAlamat();
     setPilihan([]);
     setTerpilih(hasil);
     onKoordinatChange({ lat: hasil.lat, lng: hasil.lng });
@@ -80,7 +135,7 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
       setTeksLng(formatSumbu(pasangan.lng));
       setErrorLat(null);
       setErrorLng(null);
-      onKoordinatChange(pasangan);
+      ubahKoordinatManual(pasangan);
       return;
     }
     const lat = sumbu === 'lintang' ? teks : teksLat;
@@ -94,7 +149,7 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
       setTeksLng(teks);
       setErrorLng(cekLng.error);
     }
-    if (cekLat.nilai !== null && cekLng.nilai !== null) onKoordinatChange({ lat: cekLat.nilai, lng: cekLng.nilai });
+    if (cekLat.nilai !== null && cekLng.nilai !== null) ubahKoordinatManual({ lat: cekLat.nilai, lng: cekLng.nilai });
   }
 
   return (
@@ -176,7 +231,7 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
       </Text>
 
       <Box mt="sm" style={{ height: 300, width: '100%', borderRadius: 8, overflow: 'hidden', border: '1px solid #e0e0e0' }}>
-        <LeafletMapEdit initialPosition={koordinat ?? PUSAT_PETA_DEFAULT} onChange={onKoordinatChange} />
+        <LeafletMapEdit initialPosition={koordinat ?? PUSAT_PETA_DEFAULT} onChange={ubahKoordinatManual} />
       </Box>
       {koordinat && (
         <Group gap="xs" mt={4}>
@@ -184,10 +239,19 @@ export default function TitikPetaInput({ koordinat, onKoordinatChange, alamat, o
             Lokasi dipilih: {koordinat.lat.toFixed(6)}, {koordinat.lng.toFixed(6)}
           </Text>
           {onKoordinatHapus && (
-            <Button variant="subtle" color="red" size="compact-xs" onClick={onKoordinatHapus}>
+            <Button
+              variant="subtle"
+              color="red"
+              size="compact-xs"
+              onClick={() => {
+                batalkanCariAlamat();
+                onKoordinatHapus();
+              }}
+            >
               Hapus titik
             </Button>
           )}
+          {mencariAlamat && <Text fz="xs" c="dimmed">Mencari alamat titik…</Text>}
         </Group>
       )}
     </Box>

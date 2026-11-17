@@ -69,7 +69,7 @@ Setelah deploy, Jenna tetap tersembunyi sampai diatur developer (role 0):
 
 ## Operator: pencarian lokasi peta (Nominatim)
 
-Tombol "Cari di peta" di form admin memanggil `GET /api/geocode/search`. Server meneruskannya ke `https://nominatim.openstreetmap.org/search`.
+Tombol "Cari di peta" di form admin memanggil `GET /api/geocode/search`. Server meneruskannya ke `https://nominatim.openstreetmap.org/search`. Pengisian alamat dari titik (koordinat → alamat) memanggil `GET /api/geocode/reverse?lat=&lng=` → `https://nominatim.openstreetmap.org/reverse`; batas di bawah dipakai bersama kedua endpoint, cache reverse terpisah (24 jam, maks 200 titik, kunci dibulatkan ~1 m).
 
 - **Container perlu akses HTTPS keluar** ke `nominatim.openstreetmap.org`. Tanpa akses itu, pencarian membalas 502 "Layanan pencarian lokasi sedang tidak tersedia". Isian lintang/bujur dan klik peta tetap berfungsi.
 - **Tidak ada env baru.** User-Agent dibentuk dari `package.json`: `desa-darmasaba-admin/<versi> (geocoding)`.

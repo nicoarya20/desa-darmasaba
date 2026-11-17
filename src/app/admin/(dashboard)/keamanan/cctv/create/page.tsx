@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import TitikPetaInput from '../../../_com/konten-bersama/titik-peta.input';
 import { koordinatDariTeks } from '../../../_com/konten-bersama/titik-peta.logic';
+import { useAlamatTitik } from '../../../_com/konten-bersama/use-alamat-titik';
 import cctvState from '../../../_state/keamanan/cctv';
 
 function CreateCctv() {
@@ -29,6 +30,7 @@ function CreateCctv() {
   // Naik saat reset → TitikPetaInput dipasang ulang (kolom cari & pilihan ikut kosong).
   const [resetKe, setResetKe] = useState(0);
   const koordinat = koordinatDariTeks(state.create.form.latitude, state.create.form.longitude);
+  const alamatTitik = useAlamatTitik(() => cctvState.create.form, state.create.form.nama);
 
   const isFormValid = () => {
     const f = state.create.form;
@@ -47,6 +49,7 @@ function CreateCctv() {
 
   const handleReset = () => {
     cctvState.create.resetForm();
+    alamatTitik.bersihkan();
     setResetKe((n) => n + 1);
   };
 
@@ -95,6 +98,7 @@ function CreateCctv() {
             placeholder="Contoh: Balai Desa"
             value={state.create.form.nama}
             onChange={(e) => { cctvState.create.form.nama = e.currentTarget.value; }}
+            description={alamatTitik.deskripsiNama}
             required
           />
 
@@ -112,6 +116,7 @@ function CreateCctv() {
             onKoordinatChange={handleKoordinat}
             alamat={state.create.form.lokasi}
             onKoordinatHapus={hapusKoordinat}
+            onAlamatTitik={alamatTitik.onAlamatTitik}
           />
 
           <Select

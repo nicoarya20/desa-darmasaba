@@ -48,6 +48,50 @@ export async function cariTitikAlamat(
   return petakanResponsCari(res.status, body);
 }
 
+export type AlamatTitik = { alamat: string; nama: string | null };
+export type HasilAlamatTitik = ({ ok: true } & AlamatTitik) | { ok: false };
+
+export const JEDA_CARI_ALAMAT_MS = 800;
+
+/** Respons `GET /api/geocode/reverse` → alamat (+ nama tempat bila ada). Tidak ditemukan/galat → `{ ok: false }` tanpa pesan. */
+export function petakanResponsAlamat(status: number, body: unknown): HasilAlamatTitik {
+  const b = (body && typeof body === 'object' ? body : {}) as { success?: unknown; data?: unknown };
+  if (status !== 200 || b.success !== true || !b.data || typeof b.data !== 'object') return { ok: false };
+  const { alamat, nama } = b.data as Record<string, unknown>;
+  if (typeof alamat !== 'string' || !alamat.trim()) return { ok: false };
+  return { ok: true, alamat: alamat.trim(), nama: typeof nama === 'string' && nama.trim() ? nama.trim() : null };
+}
+
+/** Alamat dari titik peta lewat endpoint admin. Fitur bantuan: kegagalan hanya dicatat, tidak ditampilkan. */
+export async function cariAlamatTitik(
+  k: Koordinat,
+  fetcher: (url: string, init?: RequestInit) => Promise<Response> = fetch,
+): Promise<HasilAlamatTitik> {
+  let res: Response;
+  try {
+    res = await fetcher(`/api/geocode/reverse?${new URLSearchParams({ lat: String(k.lat), lng: String(k.lng) })}`, {
+      credentials: 'same-origin',
+    });
+  } catch (error) {
+    console.warn('Gagal mencari alamat titik peta:', error);
+    return { ok: false };
+  }
+  const body: unknown = await res.json().catch(() => null);
+  if (res.status !== 200) console.warn(`Pencarian alamat titik peta gagal (HTTP ${res.status})`);
+  return petakanResponsAlamat(res.status, body);
+}
+
+/** Lokasi boleh diisi otomatis bila kosong, atau masih sama dengan isian otomatis terakhir (belum diubah admin). */
+export function bolehIsiLokasiOtomatis(lokasiSekarang: string, isianOtomatisTerakhir: string | null): boolean {
+  return lokasiSekarang.trim() === '' || (isianOtomatisTerakhir !== null && lokasiSekarang === isianOtomatisTerakhir);
+}
+
+/** Saran nama dari peta yang layak ditampilkan: ada dan belum sama dengan isian Nama. */
+export function saranNamaTampil(saran: string | null, namaSekarang: string): string | null {
+  if (!saran?.trim()) return null;
+  return saran.trim().toLowerCase() === namaSekarang.trim().toLowerCase() ? null : saran;
+}
+
 const RE_ANGKA_KETIK = /^-?\d+(?:\.\d*)?$/;
 
 export type CekSatuSumbu = { nilai: number | null; error: string | null };
