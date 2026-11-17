@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.294] - 2026-11-17
+### Changed
+- **Lima halaman Kependudukan kini menjadi satu Dashboard Kependudukan**: ringkasan, penduduk per banjar, kelompok umur, agama, dan dinamika penduduk dalam satu halaman bergaya menu Ekonomi. Deretan pil di bawah navbar menempel saat digulir dan menandai bagian yang sedang dibaca.
+- **Ringkasan di atas**: total penduduk, kepala keluarga, rata-rata jiwa per keluarga, dan pertumbuhan bersih, masing-masing dengan tahun datanya. Tiap bagian memakai tahun data terbarunya sendiri dan menuliskannya di kepala bagian.
+- **Angka terbaca tanpa mengarahkan kursor**: per banjar, umur, dan agama memakai daftar batang mendatar (termasuk di ponsel, tanpa tabel yang harus digeser). Dinamika penduduk tampil sebagai neraca Bertambah dan Berkurang beserta perubahan bersihnya, dengan riwayat per tahun yang bisa dibuka.
+- Menu Kependudukan di navbar tetap lima butir; tiap butir dan alamat lama (mis. `/kependudukan/distribusi-agama`) kini langsung membuka bagian yang sesuai di dashboard. Menyembunyikan "Distribusi Agama" di pengaturan menu admin ikut menyembunyikan bagian Agama.
+- Bila kelompok umur cukup lengkap, ditampilkan juga jumlah usia produktif dan rasio ketergantungan.
+
+### Fixed
+- Data per Banjar tidak lagi kehilangan banjar (sebelumnya hanya 10 banjar pertama yang tampil, total 8.409 dari 10.254 jiwa).
+- Distribusi Umur dan Distribusi Agama tidak lagi mencampur data beberapa tahun sekaligus (kelompok "65+" sempat muncul dua kali); nama agama tampil rapi, bukan kode seperti "KRISTEN_PROTESTAN".
+- Kelompok umur yang tumpang tindih tidak lagi menghasilkan total dan persen yang menyesatkan; halaman memberi catatan sebagai gantinya.
+- Angka "Kelahiran Tahun Ini" yang bertentangan dengan data dinamika penduduk dihapus; jumlah keluarga miskin yang belum diisi tidak lagi tampil sebagai 0.
+- Pesan gagal memuat kini berbeda dari pesan data kosong, dan tiap bagian bisa dimuat ulang sendiri.
+
 ## [0.1.293] - 2026-11-17
 ### Changed
 - **Nama Perbekel di beranda kini selalu satu baris**, sepanjang apa pun gelarnya. Kartu nama melebar dulu sampai selebar foto; bila masih kurang, ukuran huruf nama mengecil seperlunya, di semua ukuran layar.
