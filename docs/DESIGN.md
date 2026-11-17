@@ -42,7 +42,7 @@ Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) me
 
 - **Jarak**: `--edge-gutter` (tepi kiri/kanan), `--section-gap` (antar-section beranda, isi terakhir → footer), `--block-gap` (antar-bagian di dalam halaman). Lihat §4. Jangan angka literal 56/64/100px.
 - **`--gutter`**: wadah pemakai `KabarListHeader` wajib set `--gutter: var(--edge-gutter)`, kalau tidak rel pil di ponsel melebar.
-- **Warna**: brand `blue-button` `#0A4E78`, tinta `#1d1d1f`, abu teks `#6e6e73`/`#515154`, panel/ubin `#f5f5f7` radius 18px tanpa border/bayangan, garis `#d2d2d7` (§2.1).
+- **Warna**: pakai token `--c-*` dari `src/app/theme-tokens.css` (§2.5), bukan hex literal, supaya halaman ikut tema gelap: brand `--c-brand` (teks/judul/tautan) dan `--c-brand-fill` + `--c-on-brand` (tombol isi), tinta `--c-ink`, abu teks `--c-muted`/`--c-ink-2`, panel/ubin `--c-tile` radius 18px tanpa border/bayangan, garis `--c-line-strong`. Token lokal modul jadi alias (`.section { --ink: var(--c-ink); }`). Nilai lokal yang berbeda dari token: pertahankan literal terangnya + override `@mixin dark { … }`.
 - **Tipografi**: `h1` 48px (≤734px 32) brand rata kiri + satu kalimat pengantar 19px abu (maks 640px); judul bagian `h2` 28px (ponsel 24), jarak judul → isi 24px (ponsel 20).
 - **Breakpoint CSS**: 1068px (tablet) dan 734px (ponsel).
 
@@ -89,7 +89,7 @@ Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) me
 
 ## 2. Color Tokens
 
-File sumber: `src/con/colors.ts`, `src/utils/themeTokens.ts`
+File sumber: `src/app/theme-tokens.css` (situs publik, terang/gelap, §2.5), `src/con/colors.ts` (palet lama; dipakai admin, jangan diubah nilainya), `src/utils/themeTokens.ts` (admin)
 
 ### 2.1 Palette Utama (Public Site)
 
@@ -148,6 +148,51 @@ boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)'
 ```
 
 Gradient ini dipakai di button "Simpan" hampir semua halaman Create/Edit admin.
+
+---
+
+### 2.5 Token Warna Situs Publik (terang/gelap)
+
+File: `src/app/theme-tokens.css` (diimpor `globals.css`). Terang di `:root` = **persis** nilai literal lama (tema terang identik piksel); gelap (palet "Malam Netral", gaya apple.com) di `:root[data-mantine-color-scheme="dark"]`. Dijaga `__tests__/api/theme_tokens_contrast.test.ts` (nilai terang terkunci, set token terang = gelap, kontras WCAG). Jangan ubah nilai tanpa memperbarui test itu.
+
+| Token | Terang | Gelap | Pakai untuk |
+|---|---|---|---|
+| `--c-page` | `#f4f5f6` | `#161617` | Latar dasar shell & beranda (= `colors.grey[1]`) |
+| `--c-bg` / `--c-bg-alt` | `#fff` / `#f5f5f7` | `#000` / `#161617` | Latar section / section selang |
+| `--c-tile` / `--c-tile-alt` | `#f5f5f7` / `#fff` | `#1d1d1f` / `#2a2a2c` | Panel/ubin / ubin di atas bg-alt, kartu putih |
+| `--c-ink` / `--c-ink-2` | `#1d1d1f` / `#515154` | `#f5f5f7` / `#c7c7cc` | Teks utama / teks isi |
+| `--c-muted` / `--c-subtle` | `#6e6e73` / `#86868b` | `#a1a1a6` / `#98989d` | Teks kedua / ketiga |
+| `--c-line` / `--c-line-strong` | `rgba(0,0,0,.08)` / `#d2d2d7` | `rgba(255,255,255,.14)` / `#424245` | Garis |
+| `--c-placeholder` | `#e8e8ed` | `#2c2c2e` | Kerangka memuat, foto kosong |
+| `--c-brand` (+ `-hover`) | `#0a4e78` | `#6cb4e4` | Teks, judul, tautan |
+| `--c-brand-fill` (+ `-hover`), `--c-on-brand` | `#0a4e78`, `#fff` | `#1c6ea4`, `#fff` | Latar tombol isi + teksnya |
+| `--c-brand-tint` | `#e5f2fa` | `#13283a` | Latar ringan/hover |
+| `--c-hero-bg`, `--c-footer-from/to` | `#d1d9e8`, `#1c6ea4`/`#124170` | `#0e1620`, `#0f3354`/`#081a2c` | Hero, gradasi footer |
+| `--c-chart-1/2/3` | `#0a4e78`/`#2f91cc`/`#8ac1e3` | `#6cb4e4`/`#2f91cc`/`#cfe6f5` | Seri grafik (JS: string `"var(--c-chart-n)"`) |
+| `--c-open` / `--c-closed` | `#1f9d55` / `#d9363e` | `#30d158` / `#ff453a` | Status buka/tutup |
+
+`--brand` dipisah dua: teks pakai `--c-brand` (gelap: biru terang), tombol isi pakai `--c-brand-fill` (gelap: biru tua, teks putih 5,5:1). Brand `#0A4E78` di atas hitam hanya 2,4:1.
+
+**Mekanisme**: color scheme Mantine. `ColorSchemeScript` memasang `data-mantine-color-scheme` di `<html>` dari localStorage `mantine-color-scheme-value` sebelum paint (tanpa kedip); `color-scheme` native (scrollbar, kontrol form) sudah diikat Mantine. `defaultColorScheme` tetap `"light"` sampai semua menu selesai digelapkan (rencana: `"auto"` saat rilis). `MantineProvider` akar dibungkus `src/app/_com/SiteMantineProvider.tsx`; `<meta name="theme-color">` ikut skema (`#ffffff`/`#000000`).
+
+**Admin selalu terang**: atribut di `<html>` berlaku global, jadi rute di luar situs publik (`LIGHT_ONLY_PATH_PREFIXES` di `src/lib/color-scheme-scope.ts`: `/admin`, `/dev`, `/login`, dst.) dipaksa `light`: skrip `<head>` setelah `ColorSchemeScript` (sebelum paint), `forceColorScheme` per rute, dan pengelola skema yang mengembalikan `light` di rute itu. Pilihan pengunjung di localStorage tidak ditimpa; pindah dari admin ke situs publik memulihkannya. Folder rute baru di `src/app` di luar `(public)` wajib masuk daftar itu (dijaga `__tests__/api/theme_toggle.test.tsx`). Admin memakai dark mode sendiri (`src/state/darkModeStore.ts`, §2.3).
+
+**Tombol tema** (`_com/NavbarThemeToggle.tsx`, logika `_com/theme-toggle.logic.ts`): **saat ini hanya dirender di development** (`THEME_TOGGLE_VISIBLE` = `NODE_ENV === "development"`, keputusan user 2026-11-17: menu lain belum gelap, jadi pengunjung tidak boleh menyalakannya). Build produksi tidak merender tombol sama sekali dan navbar terang identik dengan sebelum tema gelap (padding rapat 2px ikut hanya bila tombol ada). Dibuka untuk publik di plan-dark-theme Fase 4. Ikon bulan (di terang) / matahari (di gelap) di navbar, **tepat kanan tombol baca suara**, desktop & mobile. Lingkaran 30px seperti tombol baca suara. Ikon dan label ("Aktifkan tema gelap"/"Aktifkan tema terang") dipilih CSS lewat kelas global Mantine `mantine-dark-hidden`/`mantine-light-hidden`, bukan state React, jadi HTML server = client. Klik → `setColorScheme` dari atribut `<html>` saat itu.
+
+**Menulis gaya gelap**:
+- Pakai token: `color: var(--c-ink)`; komponen Mantine menerima `c="var(--c-brand)"`, `bg="var(--c-page)"`, `color="var(--c-brand-fill)"` (hover filled otomatis `color-mix`).
+- Nilai tanpa token (kaca navbar, dsb.): literal terang + `@mixin dark { … }` (postcss-preset-mantine, keluaran `[data-mantine-color-scheme="dark"] .x`).
+- Inline style/`*_BRAND_VARS` JS mengalahkan CSS: pindahkan ke modul CSS/token, jangan tambah override `!important`.
+- Komponen Mantine (Input, Popover, Menu, Modal, Paper, Pagination, `c="dimmed"`, dsb.) sudah memakai palet A di mode gelap: `src/app/_com/site-css-variables-resolver.ts` membungkus `v8CssVariablesResolver` dan memetakan shade `dark-0..9` ke token (teks `dark-0` = `--c-ink`, dimmed `dark-2` = `--c-muted`, placeholder `dark-3` = `--c-subtle`, garis `dark-4` = `--c-line-strong`, hover `dark-5` = `--c-tile-alt`, latar input/popover `dark-6` = `--c-tile`, body/modal/paper `dark-7` = `--c-bg-alt`, `dark-8/9` = `--c-bg`). Hanya bagian gelap resolver: terang identik. Jangan override per komponen untuk hal yang sudah ikut palet ini. Tooltip Mantine gelap tetap terbalik (latar terang); tooltip navbar memakai kelas `.tooltip` (`navbar.module.css`: `--c-tile-alt` + `--c-ink`).
+- `c="dark"` di komponen publik = `dark-4` di mode gelap (tinta gelap di latar gelap): ganti ke `c="var(--c-ink)"` saat menggelapkan halaman itu.
+- Section beranda meng-alias variabel lokal ke token (`.section { --ink: var(--c-ink); … }`). Nilai lokal yang beda dari token: `light-dark(terang lama, gelap)`.
+- Teks/ikon brand = `--c-brand`. Tombol pil isi (`.ctaLink`/`.ctaButton`/`.cta`/`.download`) memakai `--c-brand-fill` + `--c-on-brand` + `--c-brand-fill-hover` langsung (bukan alias `.section`), karena kelasnya juga dipakai di luar `.section`.
+- Warna grafik dari JS = string `"var(--c-chart-n)"`.
+- Logo/ikon pihak ketiga di tema gelap diberi pelat `#f5f5f7` (rel Program Inovasi, overlay Program Inovasi, ikon sosmed hero).
+- Komponen yang menerima warna lewat prop Mantine membaca `var()` yang dipasang kelas pembungkus: Jenna `--jenna-*` di `.body`, FixedPlayerBar `--player-fab`.
+- **Pulau terang** (sengaja tetap terang di tema gelap sampai Fase 2): `/desa-anti-korupsi/detail` & `/desa-anti-korupsi/program/[id]` (`antikorupsi-detail.module.css` `.page` + `ANTIKORUPSI_BRAND_VARS`), `/ppid/indeks-kepuasan-masyarakat` (`.surface` ikm mengunci `--c-tile`/`--c-chart-*` ke nilai terang).
+
+**Pratinjau**: klik tombol tema di navbar, atau di konsol/ego-browser `localStorage.setItem("mantine-color-scheme-value","dark")` lalu muat ulang (`"light"` untuk kembali). localStorage dipakai bersama semua tab localhost:3000. Cek di 1440px, 1920×1080 @2x, dan 390px; kontras teks ≥ 4,5, ikon/garis grafik ≥ 3.
 
 ---
 
@@ -234,7 +279,7 @@ Stack (gap=0, bg=grey[1])
 
 Gaya apple.com. File: `_com/NavbarMainMenu.tsx` (bar), `_com/NavbarFlyout.tsx` (panel), `_com/useNavbarFlyout.ts` (state & interaksi), `_com/navbar.module.css` (gaya + animasi, variabel warna di `.root`), `_com/navbar-menu.logic.ts` (helper murni, dites di `__tests__/api/navbar_menu_logic.test.ts`). State terbuka di `stateNav.openMenuId` / `stateNav.isSearch`.
 
-- **Bar**: tinggi 44px, `rgba(251,251,253,0.8)` + `backdrop-filter: saturate(180%) blur(20px)`, isi max-width 1100px. Di 992–1099px padding item 5px & gap 6px (bukan 8px) supaya 12 menu + ikon cari + baca suara (+ admin) muat tanpa ikon terjepit. Menu aktif = teks biru brand 600. Jangan bungkus navbar dengan elemen ber-`backdrop-filter`/`filter`: induk seperti itu membuat overlay blur di dalamnya tidak bisa mem-blur halaman.
+- **Bar**: tinggi 44px, `rgba(251,251,253,0.8)` (gelap `rgba(22,22,23,0.8)`, flyout `#161617`) + `backdrop-filter: saturate(180%) blur(20px)`, isi max-width 1100px. Di 992–1099px padding item 5px & gap 6px (bukan 8px), tombol ikon baca suara/tema 2px bila tombol tema dirender (§2.5: dev saja sampai Fase 4), supaya 12 menu + ikon cari + baca suara + tema (+ admin) muat tanpa ikon terjepit. Menu aktif = teks biru brand 600. Jangan bungkus navbar dengan elemen ber-`backdrop-filter`/`filter`: induk seperti itu membuat overlay blur di dalamnya tidak bisa mem-blur halaman.
 - **Flyout**: hover menu (jeda 100ms) → latar `#fbfbfd` mengembang dari bawah bar (transisi `clip-path` 320ms `cubic-bezier(0.32,0.72,0,1)`, tinggi mengikuti isi yang diukur `ResizeObserver`, jadi pindah menu ikut retarget). Isi: label kecil abu + link 22px/600 dalam satu kolom (bila melebihi tinggi layar, panel bisa di-scroll).
 - **Reveal teks**: `opacity` + `translateY(-8px)` 300ms `cubic-bezier(0.23,1,0.32,1)`, stagger 30ms per baris.
 - **Blur halaman**: overlay `fixed` `backdrop-filter: blur(18px)` + tint, fade `opacity`. Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual: Lightning CSS (Turbopack) menggabungkan keduanya jadi hanya versi `-webkit-` yang diabaikan Chrome.
@@ -254,7 +299,7 @@ Tombol ikon kursi roda di navbar, **kanan ikon cari** (desktop) dan **kiri burge
 
 Gaya apple.com. File: `_com/NavbarMobile.tsx` + `_com/navbar-mobile.module.css` (variabel warna/kurva dipakai bersama dari `.root` di `navbar.module.css`). State buka di `stateNav.mobileOpen`.
 
-- **Bar**: tinggi 48px, kaca sama dengan desktop, logo kiri, tombol baca suara + `Burger` kanan.
+- **Bar**: tinggi 48px, kaca sama dengan desktop, logo kiri, tombol baca suara + tema (§2.5, dev saja sampai Fase 4) + `Burger` kanan.
 - **Panel**: kaca penuh layar `rgba(251,251,253,0.82)` + `backdrop-filter: saturate(180%) blur(20px)` (halaman ter-blur), membuka dari bawah bar lewat `clip-path` 320ms. Scroll halaman dikunci selama terbuka.
 - **Drill-down**: awalnya hanya menu utama (24px/600 + chevron). Tap menu → submenu masuk dari kanan dengan tombol "Kembali"; kembali → menu utama masuk dari kiri. Reveal bertahap 25ms per baris.
 - **Tutup**: burger, Escape, klik link, atau route berganti. Panel `inert` saat tertutup.
@@ -275,6 +320,7 @@ Layar pertama beranda: menjawab "ini situs siapa" sebelum yang lain. Folder: `_c
 - **Tablet ≤1068px**: rel program melebar penuh di bawah teks dan foto (kolom kiri terlalu sempit untuk 4 ubin); foto `clamp(300px, 42vw, 460px)`.
 - **Mobile ≤734px**: satu kolom (teks → foto 320px → program); rel program sampai tepi layar (ubin 132px, ubin berikutnya mengintip), tanpa tombol panah. Pita latar hanya di belakang foto: SVG jadi item grid di sel `profile`, dilebarkan 1600/1100 kali lebar layar dan digeser ke kiri sehingga yang tampil potongan kanan gambar (x 500–1600) — turun dari kiri atas foto lalu keluar tepi kanan, tidak menyentuh teks. Jarak ikon media sosial → foto 16px.
 - **Loading**: placeholder berdenyut seukuran foto, pil status, dan 4 ubin (tanpa denyut saat reduced motion).
+- **Tema gelap**: warna pita `--ribbon-1..11` lokal di `.section` landing (`light-dark`; emas & merah sama di kedua tema), path `fill="var(--ribbon-N)"`. Ubin hero gelap `#1a2532` (nilai lokal). Ikon sosmed & logo ubin program di atas pelat `#f5f5f7` (§2.5).
 
 #### Overlay detail Program Inovasi (`/?program={id}`)
 
@@ -288,6 +334,7 @@ Klik ubin rel hero membuka overlay ini agar pengunjung tetap di beranda; halaman
 - **Dokumentasi**: `h3` 24px (ponsel 21) + grid 3 kolom (ponsel 2), foto 4:3 radius 14px. Klik → **tampilan besar di dalam overlay yang sama** (bukan modal bertumpuk; detail tetap ter-mount + `inert` sehingga posisi gulir tidak hilang): "‹ Kembali" kiri atas, penghitung "2 / 7", foto `contain` di panggung `#f5f5f7`, tombol ‹ › bulat 44px (ponsel 40) berhenti di ujung, geser sentuh ≥48px, panah keyboard. Esc di tampilan besar = kembali ke detail (fokus balik ke foto asal), Esc berikutnya menutup. Tanpa foto → bagian tidak dirender.
 - **Keadaan**: dari ubin (preview) nama/logo/deskripsi tampil seketika; galeri kerangka berdenyut sebanyak `_count.images` (maks 6, 0 → tanpa kerangka) sampai findUnique selesai. Tautan langsung → kerangka `aria-busy`. Tidak ditemukan/galat tanpa preview → kotak `#f5f5f7` satu kalimat. Galat dengan preview → detail tetap, kotak "Dokumentasi belum bisa dimuat." hanya bila `_count.images > 0`.
 - **Data**: findMany rel tidak membawa `images`, jadi overlay memuat `GET /api/landingpage/programinovasi/:id` sendiri (ApiFetch, bukan state admin); respons untuk id lama dibuang, hasil lama dikosongkan saat dibuka lagi; `isActive === false` dianggap tidak ditemukan.
+- **Tema gelap**: logo program di atas pelat `#f5f5f7` (§2.5).
 
 ### Galeri Layanan & Potensi Desa (Beranda)
 
@@ -329,6 +376,7 @@ Gaya bersih apple.com. Folder: `_com/main-page/apbdes/` — `index.tsx` (section
 - **Gerak**: konten fade + naik 6px 280ms tiap ganti tahun (`key=tahun`); progress bar transisi lebar 600ms. `prefers-reduced-motion`: keduanya mati. Loading = skeleton (bukan overlay).
 - **CTA**: pill "Lihat semua data APBDes" → `/apbdes`, di bawah section.
 - **Halaman detail** `(tambahan)/apbdes/page.tsx`: memakai `ApbdesBody` (`components/ApbdesBody.tsx`) + hook `use-apbdes-data.ts` yang sama dengan beranda, `variant="full"` (beranda `"compact"`). Bedanya: `BackButton` di atas, judul `h1`, accordion terbuka semua sejak awal, kolom kelima **Lebih/(Kurang)** = anggaran − realisasi gabungan (desktop 72 | uraian | 200 | 160 | 160px; tablet 56/140/140/140; mobile baris ke-4 di bawah realisasi), dan panel dokumen (`components/ApbdesDocument.tsx`: judul + tombol "Unduh dokumen", tanpa gambar) yang hanya muncul bila tahun terpilih punya `file`.
+- **Tema gelap**: aksen per tipe lewat `--apbdes-{pendapatan,belanja,pembiayaan}-{accent,tint}` dan warna grafik `--apbdes-chart-pagu`/`--apbdes-chart-realisasi`, dipasang di `.section`/`.card`/`.panel`. Pagu gelap = `--c-chart-2` (bukan `chart-3`) supaya urutan visual pagu < realisasi tetap.
 
 ### Prestasi dan Penghargaan Desa (Beranda & halaman gabungan)
 
@@ -356,6 +404,7 @@ Daftar indikator per kategori, tiap indikator berisi surat (PDF). Folder `(tamba
 - **Bentuk**: latar putih, isi max-width 1100px, kepala rata kiri (pola Potensi): tombol kembali, `h1` 48px (tablet 40, mobile 32) warna brand, pengantar abu 19px (17). Pil kategori sentence case + angka jumlah (`#f5f5f7` → aktif latar brand, `aria-pressed`); mobile ≤734px pil satu baris digeser horizontal dan pil aktif digeser ke tengah. Di bawahnya `h2` nama kategori 28px (mobile 24) + "x dari y dokumen tersedia" abu kanan, lalu satu panel `#f5f5f7` radius 18px: baris nomor brand tabular | teks 17px | aksi dokumen, antarbaris garis tipis. Mobile: aksi pindah ke bawah teks.
 - **Dokumen**: sumber = relasi opsional `DesaAntiKorupsi.file` (admin: edit indikator → unggah dokumen; tersimpan di MinIO, link `/api/fileStorage/findUnique/...` dilayani inline). Ada file dengan link aman (relatif `/…` atau http(s); `documentHref`) → **seluruh baris tautan** `target="_blank"` ke file, pil putih "Buka PDF ↗" (ikon PDF; jenis lain → ekstensi, mis. "Buka DOCX") yang jadi brand saat hover. Tanpa file → baris bukan tautan, pil abu ikon jam + "Dokumen belum tersedia" — tempat ini terisi sendiri begitu admin mengunggah surat.
 - **Loading / kosong**: 5 baris placeholder berdenyut (tanpa denyut saat reduced motion); data kosong → "Belum ada indikator desa anti korupsi."; kategori tanpa butir → "Belum ada indikator untuk kategori ini.".
+- **Tema gelap**: pulau terang sampai Fase 2 (`antikorupsi-detail.module.css` `.page` + `ANTIKORUPSI_BRAND_VARS`, §2.5).
 
 ### Desa Anti Korupsi — halaman utama (`/desa-anti-korupsi`)
 
@@ -374,6 +423,7 @@ Kerangka sama dengan halaman detail (`.page`/`.inner` dari `antikorupsi-detail.m
 - **Folder tunggal**: tanpa `?folder=` dan hanya satu folder berisi dokumen (folder kosong tidak dihitung) → folder itu langsung dibuka (`folderTunggalBerisi`), bukan crumb terakhir, dan Kembali tetap ke tab kategori.
 - **Folder terbuka** (`FolderAktif`): baris chip `FolderChips` (hanya bila >1 folder; `aria-current`, `?urut=` ikut), "Unduh folder (ZIP)" tidak dirender bila folder kosong, daftar dokumen dalam panel `#f5f5f7` yang sama; empty state dengan subteks + tombol "Kembali".
 - Test: `__tests__/api/desa_anti_korupsi_program_tampilan.test.tsx`, `__tests__/api/desa_anti_korupsi_program_navigasi.test.tsx`.
+- **Tema gelap**: pulau terang sampai Fase 2, sama dengan halaman detail (§2.5).
 
 ### SDGs Desa (Beranda)
 
@@ -865,6 +915,7 @@ Pengganti garis bawah hover di tautan yang bentuknya sudah jelas bisa diklik (ka
   - *Popup peta Leaflet* (Bank Sampah "Petunjuk arah ›", dirender React lewat react-leaflet `<Popup>`): `<a>` `.trigger` + `.cta` + span "›" `.chevron`; tautan `inline-flex` + `align-self: flex-start`. Selektor dua kelas `.popup .popupArah` tetap perlu untuk mengalahkan warna `.leaflet-container a`.
   - *Label abu kecil di sel sempit* (Kalender "+n lainnya"): `.title` (warna saja, tanpa tebal) supaya lebar sel grid tetap.
 - **Aksesibilitas**: reduced motion → warna langsung tanpa sapuan; `forced-colors: active` → gradasi dibuang, teks warna sistem + garis bawah saat hover/fokus; teks terseleksi fill-nya dikembalikan.
+- **Tema gelap**: `.title` `--reveal-to: var(--c-brand)`; `.titleBrand`/`.cta` `light-dark(#1c6ea4, var(--c-brand-hover))`.
 - **Jangan** dipakai untuk tautan di dalam teks kaya (`.content a`, Jenna markdown): di sana garis bawah permanen tetap (WCAG 1.4.1). Tulis properti tanpa prefiks (Lightning CSS Next 16 yang menambahkan).
 - **Catatan font**: font situs (`San Francisco`, `font.otf`) hanya 1 ketebalan, jadi "tebal" = tebal sintetis (lebar huruf sama, tidak beranimasi). Cadangan lebar tetap dipasang untuk font cadangan sistem.
 - **Garis bawah permanen yang disengaja** (bukan efek hover, jadi bukan pelanggaran aturan tetap): teks kaya/Jenna, dan tautan alamat Google Maps detail Lowongan (`.placeLink`, menebal saat hover; tautan berdiri sendiri di antara teks alamat).
@@ -1381,6 +1432,7 @@ Halaman ini **tidak punya grafik/form sendiri**: `page.tsx` hanya merangkai kera
 
 - **Kepala**: judul + satu kalimat pengantar; tombol "Ajukan Responden" di slot `aside` (kanan; ≤1068px di bawah pengantar, rata kiri).
 - **Token**: kelas `kepuasan.module.css` membaca `--ink`, `--muted`, `--tile`, `--radius` yang di beranda dipasang oleh `.section`. Di sini `.surface` memasangnya, dengan `--tile: #fff` karena latar halaman PPID `#D1D9E8` (di beranda tile `#f5f5f7` di atas putih).
+- **Tema gelap**: pulau terang sampai Fase 2: `.surface` mengunci `--c-tile`/`--c-chart-*` ke nilai terang (§2.5).
 - **Isi**: kartu "Responden per bulan" (total responden sebagai angka utama) lalu tiga donat 3 kolom (mobile bertumpuk) — persis susunan beranda, selebar kolom halaman.
 
 ---
