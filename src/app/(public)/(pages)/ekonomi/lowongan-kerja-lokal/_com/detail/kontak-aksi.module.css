@@ -32,13 +32,14 @@
 }
 
 .button[data-tone='fill'] {
-  background: var(--brand);
-  color: #fff;
+  border-color: var(--c-brand-fill);
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .button[data-tone='line'] {
   border-color: var(--line);
-  background: #fff;
+  background: var(--c-bg);
   color: var(--ink);
 }
 
@@ -90,6 +91,12 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 200ms ease, transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 300ms;
+
+  /* Kaca gelap senada navbar (navbar.module.css); garis tipis token agar tepi tetap terbaca di latar hitam. */
+  @mixin dark {
+    border-color: var(--c-line);
+    background: rgba(22, 22, 23, 0.86);
+  }
 }
 
 .bar[data-visible='true'] {
@@ -119,7 +126,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .button[data-tone='fill']:hover {
-    background: color-mix(in srgb, var(--brand) 86%, #000);
+    background: color-mix(in srgb, var(--c-brand-fill) 86%, #000);
   }
 
   .button[data-tone='line']:hover {

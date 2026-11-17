@@ -1,5 +1,3 @@
-import colors from "@/con/colors";
-
 /** Konstanta modul Pengangguran (dipakai 2 rute: Jumlah Pengangguran & Usia Kerja yang Menganggur). */
 
 /**
@@ -13,10 +11,10 @@ export const SEBARAN_FETCH_LIMIT = 50;
 export const JUMLAH_PENGANGGURAN_HREF = "/ekonomi/jumlah-pengangguran";
 export const USIA_KERJA_MENGANGGUR_HREF = "/ekonomi/jumlah-penduduk-usia-kerja-yang-menganggur";
 
-/** Dua seri grafik: terdidik = brand, tidak terdidik = turunan brand (sama dengan segmen ke-2 stat-bars) (bertumpuk, jadi tinggi batang = jumlah). */
+/** Dua seri grafik (token tema, terang = #0a4e78 / #2f91cc): terdidik = brand, tidak terdidik = turunan brand (sama dengan segmen ke-2 stat-bars) (bertumpuk, jadi tinggi batang = jumlah). */
 export const SERI_WARNA = {
-  terdidik: colors["blue-button"],
-  tidakTerdidik: colors["blue-button-5"],
+  terdidik: "var(--c-chart-1)",
+  tidakTerdidik: "var(--c-chart-2)",
 } as const;
 
 /** Kolom model `GrafikMenganggurBerdasarkanUsia`, urut kelompok usia. */

@@ -4,7 +4,7 @@
  * Variabel warna diwarisi dari `.page` (katalog-layout.module.css); drawer di-portal ke body → nilai cadangan.
  */
 .panel {
-  color: var(--ink, #1d1d1f);
+  color: var(--c-ink);
 }
 
 .title {
@@ -19,7 +19,7 @@
 
 /* ---------- Grup akordeon ---------- */
 .group {
-  border-bottom: 1px solid var(--line, #d2d2d7);
+  border-bottom: 1px solid var(--c-line-strong);
 }
 
 .groupHead {
@@ -39,7 +39,7 @@
 }
 
 .groupHead:focus-visible {
-  outline: 2px solid var(--brand, #0a4e78);
+  outline: 2px solid var(--c-brand);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -57,8 +57,8 @@
   height: 20px;
   padding: 0 6px;
   border-radius: 980px;
-  background: var(--brand, #0a4e78);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -88,7 +88,7 @@
 }
 
 .option[data-disabled] {
-  color: var(--subtle, #86868b);
+  color: var(--c-subtle);
   cursor: not-allowed;
 }
 
@@ -97,12 +97,12 @@
   width: 18px;
   height: 18px;
   margin: 0;
-  accent-color: var(--brand, #0a4e78);
+  accent-color: var(--c-brand);
   cursor: inherit;
 }
 
 .checkbox:focus-visible {
-  outline: 2px solid var(--brand, #0a4e78);
+  outline: 2px solid var(--c-brand);
   outline-offset: 2px;
 }
 
@@ -113,7 +113,7 @@
 }
 
 .optionCount {
-  color: var(--muted, #6e6e73);
+  color: var(--c-muted);
   font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
@@ -123,7 +123,7 @@
   padding: 4px 0;
   border: 0;
   background: none;
-  color: var(--brand, #0a4e78);
+  color: var(--c-brand);
   font: inherit;
   font-size: 15px;
   font-weight: 500;
@@ -131,7 +131,7 @@
 }
 
 .more:focus-visible {
-  outline: 2px solid var(--brand, #0a4e78);
+  outline: 2px solid var(--c-brand);
   outline-offset: 2px;
 }
 
@@ -147,23 +147,23 @@
   align-items: stretch;
   height: 44px;
   overflow: hidden;
-  border: 1px solid var(--line, #d2d2d7);
+  border: 1px solid var(--c-line-strong);
   border-radius: 10px;
-  background: #fff;
+  background: transparent;
   transition: border-color 200ms ease;
 }
 
 .priceField:focus-within {
-  border-color: var(--brand, #0a4e78);
+  border-color: var(--c-brand);
 }
 
 .pricePrefix {
   display: grid;
   place-items: center;
   padding: 0 12px;
-  border-right: 1px solid var(--line, #d2d2d7);
-  background: var(--tile, #f5f5f7);
-  color: var(--muted, #6e6e73);
+  border-right: 1px solid var(--c-line-strong);
+  background: var(--c-tile);
+  color: var(--c-muted);
   font-size: 15px;
   font-weight: 600;
 }
@@ -174,7 +174,7 @@
   padding: 0 12px;
   border: 0;
   background: none;
-  color: var(--ink, #1d1d1f);
+  color: var(--c-ink);
   font: inherit;
   font-size: 16px; /* ≥16px: iOS tidak memperbesar halaman saat fokus */
   font-variant-numeric: tabular-nums;
@@ -185,7 +185,7 @@
 }
 
 .priceInput::placeholder {
-  color: var(--subtle, #86868b);
+  color: var(--c-subtle);
 }
 
 /* ---------- Kerangka memuat ---------- */
@@ -193,7 +193,7 @@
   height: 22px;
   margin: 18px 0;
   border-radius: 6px;
-  background: var(--tile, #f5f5f7);
+  background: var(--c-tile);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
@@ -217,7 +217,7 @@
 
 .drawerTitle {
   margin: 0;
-  color: #1d1d1f;
+  color: var(--c-ink);
   font-size: 20px;
   font-weight: 600;
 }
@@ -246,15 +246,16 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
-  border-top: 1px solid #d2d2d7;
-  background: #fff;
+  border-top: 1px solid var(--c-line-strong);
+  /* = latar Drawer Mantine (terang #fff, gelap --c-bg-alt lewat resolver) agar kaki menyatu dengan lembar. */
+  background: var(--mantine-color-body);
 }
 
 .drawerClear {
   padding: 8px 4px;
   border: 0;
   background: none;
-  color: var(--brand, #0a4e78);
+  color: var(--c-brand);
   font: inherit;
   font-size: 15px;
   font-weight: 500;
@@ -266,8 +267,8 @@
   padding: 0 22px;
   border: 0;
   border-radius: 980px;
-  background: var(--brand, #0a4e78);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font: inherit;
   font-size: 15px;
   font-weight: 600;
@@ -276,7 +277,7 @@
 
 .drawerClear:focus-visible,
 .drawerApply:focus-visible {
-  outline: 2px solid var(--brand, #0a4e78);
+  outline: 2px solid var(--c-brand);
   outline-offset: 2px;
 }
 

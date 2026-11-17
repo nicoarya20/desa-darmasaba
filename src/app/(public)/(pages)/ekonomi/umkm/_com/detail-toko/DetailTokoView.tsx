@@ -3,7 +3,6 @@ import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import p from '../detail-umkm/detail-umkm.module.css';
-import { KATALOG_BRAND_VARS } from '../katalog/katalog-filter.meta';
 import { emptyParams, katalogHref } from '../katalog/katalog-params.logic';
 import { DETAIL_TOKO_TEXT as T } from './detail-toko.text';
 import { DetailTokoStatus } from './DetailTokoStatus';
@@ -22,7 +21,7 @@ export function DetailTokoView({ id }: { id: string }) {
   const { state, reload } = useDetailToko(id);
 
   return (
-    <div className={p.page} style={KATALOG_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <div className={p.page} aria-busy={state.status === 'loading' || undefined}>
       <div className={p.inner}>
         <Link href={BACK_HREF} className={`${p.back} ${r.trigger}`}>
           <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden="true" />

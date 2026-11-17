@@ -1,3 +1,4 @@
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Image } from '@mantine/core';
 import { IconMapPin, IconShoppingBag, IconUser } from '@tabler/icons-react';
 import { inisialNama } from '../detail-umkm/detail-umkm.logic';
@@ -50,7 +51,7 @@ export function TokoHeader({ toko }: { toko: DetailToko }) {
             </li>
           )}
         </ul>
-        {toko.deskripsiHtml && <div className={s.deskripsi} dangerouslySetInnerHTML={{ __html: toko.deskripsiHtml }} />}
+        {toko.deskripsiHtml && <div className={`${s.deskripsi} ${rt.root}`} dangerouslySetInnerHTML={{ __html: toko.deskripsiHtml }} />}
         <div className={s.cta}>
           <HubungiPenjualButton kontak={toko.kontak} umkmNama={toko.nama} />
         </div>

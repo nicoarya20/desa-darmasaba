@@ -5,13 +5,13 @@
  */
 .section {
   margin-top: 72px;
-  color: var(--ink, #1d1d1f);
+  color: var(--c-ink);
 }
 
 .title {
   margin: 0;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--line, #d2d2d7);
+  border-bottom: 1px solid var(--c-line-strong);
   font-size: 28px;
   font-weight: 700;
   line-height: 1.2;
@@ -39,7 +39,7 @@
 }
 
 .scoreStar {
-  color: var(--ink, #1d1d1f);
+  color: var(--c-ink);
 }
 
 .scoreValue {
@@ -51,7 +51,7 @@
 
 .count {
   margin: 8px 0 0;
-  color: var(--muted, #6e6e73);
+  color: var(--c-muted);
   font-size: 17px;
 }
 
@@ -65,10 +65,10 @@
   min-height: 44px;
   margin-top: 20px;
   padding: 10px 24px;
-  border: 1px solid var(--ink, #1d1d1f);
+  border: 1px solid var(--c-ink);
   border-radius: 980px;
-  background: #fff;
-  color: var(--ink, #1d1d1f);
+  background: var(--c-bg);
+  color: var(--c-ink);
   font: inherit;
   font-size: 15px;
   font-weight: 600;
@@ -76,14 +76,14 @@
 }
 
 .write:disabled {
-  border-color: var(--line, #d2d2d7);
-  color: var(--muted, #6e6e73);
+  border-color: var(--c-line-strong);
+  color: var(--c-muted);
   cursor: not-allowed;
 }
 
 .note {
   margin: 8px 0 0;
-  color: var(--muted, #6e6e73);
+  color: var(--c-muted);
   font-size: 13px;
 }
 
@@ -117,18 +117,18 @@
   height: 8px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
 }
 
 .fill {
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: inherit;
-  background: var(--ink, #1d1d1f);
+  background: var(--c-ink);
 }
 
 .rowCount {
-  color: var(--muted, #6e6e73);
+  color: var(--c-muted);
   text-align: right;
 }
 
