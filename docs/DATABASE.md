@@ -11,7 +11,8 @@
 ### Batch 1 Lomba (2026-11-18): kolom & tabel aditif
 
 Seluruhnya nullable/tabel baru (baris lama tetap valid, tanpa backfill), migrasi idempoten `20261118100000`–`20261118120000`:
-- `DasarHukumPPID.fileId`, `DaftarInformasiPublik.fileId` → `FileStorage` (PDF opsional, `ON DELETE SET NULL`); tabel baru `ProfilLembagaPPID` (profil lembaga PPID; `ProfilePPID` perorangan tidak diubah).
+- `DaftarInformasiPublik.fileId` → `FileStorage` (PDF opsional per baris, `ON DELETE SET NULL`); tabel baru `ProfilLembagaPPID` (profil lembaga PPID; `ProfilePPID` perorangan tidak diubah).
+- Dasar Hukum PPID adalah singleton (id `'1'`), jadi PDF-nya disimpan di tabel baru `DokumenDasarHukumPPID` (migrasi `20261118130000`): daftar **flat** (judul, urutan, `fileId`, `ON DELETE CASCADE`), banyak dokumen, publik bisa melihat dan mengunduh. Kolom `DasarHukumPPID.fileId` dari migrasi `20261118100000` dibuang di migrasi itu (PDF yang sudah menempel dipindah dulu); migrasi `20261118100000` sengaja tidak diedit karena sudah terpasang di DB lokal.
 - `PengaduanMasyarakat.status|tanggapan|tanggapanAt`: `status` NULL dibaca **BARU** lewat satu helper (`src/lib/pengaduan-status.ts`); nilai: BARU, DIPROSES, SELESAI, DITOLAK. `GET .../pengaduanmasyarakat/rekap` publik hanya agregat + tanggapan admin (tanpa data pelapor); `find-many`/`/:id` tetap admin-only.
 - `PelayananSuratKeterangan.sopFileId`, `PelayananTelunjukSaktiDesa.sopFileId` → `FileStorage` (PDF SOP opsional).
 - Tabel baru `LaporanPendudukBulanan` (banjar, tahun, bulan, L/P): terpisah dari `DataBanjar` yang dipakai dashboard publik. Duplikat aktif dicegah di API (tanpa unique index karena soft delete).
