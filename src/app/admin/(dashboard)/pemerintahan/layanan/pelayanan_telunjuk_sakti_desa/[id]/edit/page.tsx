@@ -2,6 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
+import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
+import { uploadPdfFile } from '@/app/admin/_com/upload/pdf-upload';
 import colors from '@/con/colors';
 import { toWaktuBiayaForm, validateWaktuBiayaForm } from '@/lib/pelayanan-waktu-biaya';
 import {
@@ -25,6 +27,8 @@ function EditPelayananTelunjukSakti() {
   const router = useRouter();
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sopFile, setSopFile] = useState<File | null>(null);
+  const [currentSop, setCurrentSop] = useState<{ link: string; realName: string } | null>(null);
 
   // Check if form is valid
   const isFormValid = () => {
@@ -60,6 +64,7 @@ function EditPelayananTelunjukSakti() {
       try {
         const data = await stateTelunjukDesa.edit.load(id);
         if (data) {
+          if (data.sopFile) setCurrentSop({ link: data.sopFile.link, realName: data.sopFile.realName });
           setFormData({
             name: data.name ?? '',
             deskripsi: data.deskripsi ?? '',
@@ -98,6 +103,7 @@ function EditPelayananTelunjukSakti() {
       estimasiWaktu: originalData.estimasiWaktu,
       biaya: originalData.biaya,
     });
+    setSopFile(null);
     toast.info("Form dikembalikan ke data awal");
   };
 
@@ -130,6 +136,12 @@ function EditPelayananTelunjukSakti() {
         ...stateTelunjukDesa.edit.form,
         ...formData,
       };
+      // Upload PDF SOP baru bila dipilih; tanpa pilihan, sopFileId lama (dimuat edit.load) tetap dikirim.
+      if (sopFile) {
+        const sopId = await uploadPdfFile(sopFile);
+        if (!sopId) return;
+        stateTelunjukDesa.edit.form.sopFileId = sopId;
+      }
       await stateTelunjukDesa.edit.update();
       toast.success('Pelayanan telunjuk sakti berhasil diperbarui!');
       router.push('/admin/pemerintahan/layanan/pelayanan_telunjuk_sakti_desa');
@@ -193,6 +205,15 @@ function EditPelayananTelunjukSakti() {
             biaya={formData.biaya}
             onEstimasiWaktuChange={(v) => handleChange('estimasiWaktu', v)}
             onBiayaChange={(v) => handleChange('biaya', v)}
+          />
+
+          {/* SOP layanan (PDF, opsional) */}
+          <PdfDropzoneField
+            label="SOP / Petunjuk (PDF)"
+            description='Opsional. Ditampilkan sebagai tautan "Unduh SOP (PDF)" di halaman layanan.'
+            file={sopFile}
+            onChange={setSopFile}
+            currentFile={currentSop}
           />
 
           {/* Tombol Simpan */}

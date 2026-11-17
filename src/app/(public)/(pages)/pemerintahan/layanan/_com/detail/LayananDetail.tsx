@@ -6,6 +6,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import BackButton from '../BackButto';
+import { SopLink } from '../SopLink';
 import { LAYANAN_BRAND_VARS, LAYANAN_LIST_HREF } from '../layanan.meta';
 import page from '../layanan.module.css';
 import { AjukanPermohonanModal } from './AjukanPermohonanModal';
@@ -61,6 +62,7 @@ export function LayananDetailBody({ data, onAjukan }: { data: LayananDetailData;
         <div className={s.actions}>
           {ajukan}
           <LayananWaktuBiayaBadge estimasiWaktu={data.estimasiWaktu} biaya={data.biaya} />
+          {data.sopFile ? <SopLink file={data.sopFile} /> : null}
         </div>
       </header>
 

@@ -87,6 +87,8 @@ model FileStorage {
   MenuTipsKeamanan               MenuTipsKeamanan[]
   PelayananSuratKeteranganImage  PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage")
   PelayananSuratKeteranganImage2 PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage2")
+  PelayananSuratKeteranganSop    PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganSop")
+  PelayananTelunjukSaktiDesaSop  PelayananTelunjukSaktiDesa[] @relation("PelayananTelunjukSaktiDesaSop")
   PasarDesa                      PasarDesa[]
   PegawaiBumDes                  PegawaiBumDes[]
   InovasiTeknologiDesa           InovasiTeknologiDesa[]
@@ -931,6 +933,9 @@ model PelayananSuratKeterangan {
   image2Id         String?
   estimasiWaktu    String?
   biaya            Int?
+  // SOP / petunjuk layanan berupa PDF (Juknis lomba 3.1). Opsional; hapus berkas → SetNull, layanan tetap tampil.
+  sopFile          FileStorage?       @relation("PelayananSuratKeteranganSop", fields: [sopFileId], references: [id], onDelete: SetNull)
+  sopFileId        String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   deletedAt        DateTime           @default(now())
@@ -939,16 +944,19 @@ model PelayananSuratKeterangan {
 }
 
 model PelayananTelunjukSaktiDesa {
-  id            String   @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String
-  deskripsi     String   @db.Text
+  deskripsi     String       @db.Text
   link          String
   estimasiWaktu String?
   biaya         Int?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  deletedAt     DateTime @default(now())
-  isActive      Boolean  @default(true)
+  // SOP / petunjuk layanan berupa PDF (Juknis lomba 3.1). Opsional; hapus berkas → SetNull, layanan tetap tampil.
+  sopFile       FileStorage? @relation("PelayananTelunjukSaktiDesaSop", fields: [sopFileId], references: [id], onDelete: SetNull)
+  sopFileId     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  deletedAt     DateTime     @default(now())
+  isActive      Boolean      @default(true)
 }
 
 model PelayananPerizinanBerusaha {
@@ -2209,6 +2217,12 @@ model PengaduanMasyarakat {
   deskripsiPengaduan String         @db.Text
   jenisPengaduan     JenisPengaduan @relation(fields: [jenisPengaduanId], references: [id])
   jenisPengaduanId   String
+  // Tindak lanjut pengaduan (Juknis lomba 3.3). Nullable agar baris lama valid tanpa backfill:
+  // status null dibaca sebagai BARU lewat `resolvePengaduanStatus` (src/lib/pengaduan-status.ts).
+  status             String?
+  // Tanggapan admin, teks polos; tampil publik di rekap tindak lanjut — jangan memuat data pelapor.
+  tanggapan          String?        @db.Text
+  tanggapanAt        DateTime?
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
   deletedAt          DateTime       @default(now())
