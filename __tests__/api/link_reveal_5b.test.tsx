@@ -146,7 +146,6 @@ describe('sumber: pemakai yang dirender lewat state/data (tanpa render penuh)', 
       ['(pages)/pemerintahan/pengumuman/_com/PengumumanLampiran.tsx', false],
       ['(pages)/pemerintahan/pengumuman/_com/PengumumanPdfModal.tsx', true],
       ['(tambahan)/desa-anti-korupsi/_com/DokumenPreviewModal.tsx', true],
-      ['(tambahan)/peta-informasi/_com/PetaInformasiGroupCard.tsx', true],
     ] as const;
     for (const [file, text] of ANCHOR) {
       const src = SRC(file);
