@@ -2,18 +2,22 @@ import { Image } from "@mantine/core";
 import s from "./landing.module.css";
 import { LANDING_TEXT } from "./landing.text";
 import type { PejabatItem } from "./use-landing-data";
+import { useFitText } from "./use-fit-text";
 
-/** Foto Perbekel dengan kartu jabatan + nama; tanpa foto hanya kartu namanya yang tampil. */
+/** Foto Perbekel dengan kartu jabatan + nama (selalu satu baris); tanpa foto hanya kartu namanya yang tampil. */
 export function HeroProfile({ data }: { data: PejabatItem }) {
   const photo = data.image?.link;
+  const { frameRef, textRef } = useFitText<HTMLElement, HTMLSpanElement>(data.name);
   return (
-    <figure className={photo ? s.profile : `${s.profile} ${s.profileNoPhoto}`}>
+    <figure ref={frameRef} className={photo ? s.profile : `${s.profile} ${s.profileNoPhoto}`}>
       {photo && (
         <Image className={s.photo} src={photo} alt={data.name || LANDING_TEXT.profilePhotoAlt} fit="contain" />
       )}
       <figcaption className={s.nameCard}>
         <span className={s.position}>{data.position || LANDING_TEXT.profileFallbackPosition}</span>
-        <span className={s.name}>{data.name}</span>
+        <span ref={textRef} className={s.name}>
+          {data.name}
+        </span>
       </figcaption>
     </figure>
   );
