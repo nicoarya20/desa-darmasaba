@@ -94,10 +94,13 @@ describe('CSS jatah 86: garis bawah hover sudah diganti sapuan warna', () => {
     expect(hoverUnderlineSelectors(rel)).toEqual([]);
   });
 
-  it('pengecualian yang disengaja: hanya popup peta Leaflet yang masih bergaris bawah', () => {
-    expect(hoverUnderlineSelectors('lingkungan/pengelolaan-sampah-bank-sampah/_com/lokasi.module.css')).toEqual([
-      '.popup .popupArah:hover',
-    ]);
+  it('popup peta Leaflet Bank Sampah: "Petunjuk arah" tanpa garis bawah hover, pakai .cta + "›" .chevron', () => {
+    expect(hoverUnderlineSelectors('lingkungan/pengelolaan-sampah-bank-sampah/_com/lokasi.module.css')).toEqual([]);
+    // Popup dirender React (react-leaflet <Popup>); LokasiMap butuh Leaflet/DOM, jadi markup dicek dari sumber.
+    const src = readFileSync(path.join(PAGES, 'lingkungan/pengelolaan-sampah-bank-sampah/_com/LokasiMap.tsx'), 'utf8');
+    expect(src).toMatch(
+      /<a\s+className=\{`\$\{x\.popupArah\} \$\{r\.trigger\}`\}[^>]*>\s*<span className=\{r\.cta\} data-text=\{T\.petunjukArah\}>\s*\{T\.petunjukArah\}\s*<\/span>\s*<span className=\{r\.chevron\} aria-hidden>\s*›\s*<\/span>\s*<\/a>/,
+    );
   });
 
   it('tautan kembali (Daftar Informasi Publik [id], detail lembaga) tidak lagi bergaris bawah saat hover', () => {

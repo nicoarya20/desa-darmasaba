@@ -156,6 +156,19 @@ describe('sumber: pemakai yang dirender lewat state/data (tanpa render penuh)', 
       if (text) expect(src, file).toContain('<span className={r.cta} data-text=');
     }
   });
+
+  it('ProgramBreadcrumb DAK: tautan = .trigger + span inline .title .titleBrand (tanpa tebal; elipsis lineClamp tetap)', () => {
+    const src = SRC('(tambahan)/desa-anti-korupsi/_com/ProgramBreadcrumb.tsx');
+    expect(src).toMatch(
+      /<Anchor[^>]*className=\{r\.trigger\}[^>]*underline="never"[^>]*lineClamp=\{1\}[^>]*>[\s\S]*?<span className=\{`\$\{r\.title\} \$\{r\.titleBrand\}`\}>\{c\.label\}<\/span>\s*<\/Anchor>/,
+    );
+    // Item terakhir (halaman aktif) tetap Text biasa tanpa sapuan.
+    expect(src).toMatch(/<Text key=\{i\} fz="sm" c="dimmed" lineClamp=\{1\} maw=\{260\} title=\{c\.label\} aria-current="page">\s*\{c\.label\}\s*<\/Text>/);
+    // Warna diam breadcrumb = brand #0A4E78 = target .title → varian .titleBrand menyapu ke #1C6EA4, dideklarasikan sesudah .title.
+    const css = SRC('_com/link-reveal/link-reveal.module.css').replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(css).toMatch(/\.titleBrand \{\s*--reveal-to: #1c6ea4;\s*\}/);
+    expect(css.indexOf('.titleBrand {')).toBeGreaterThan(css.indexOf('.title {'));
+  });
 });
 
 describe('CSS 5b: tidak ada lagi garis bawah saat :hover', () => {
