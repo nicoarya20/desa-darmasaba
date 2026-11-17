@@ -112,14 +112,19 @@ describe('KegiatanDetail prop list (pemakai lain, mis. Gotong Royong)', () => {
     detailState.current = { status: 'ready', data: data() };
     const html = render(<KegiatanDetailPage id="k1" />);
     expect(html).toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
-    expect(html).not.toContain(`class="${back.back}"`);
+    expect(html).not.toContain(`class="${back.back} ${r.trigger}"`);
     expect(html).toContain('href="/pemerintahan/kegiatan-desa/lingkungan"');
   });
 
   it('dengan list: tautan teks "‹ label" ke daftar, tanpa tombol ikon, kategori teks biasa', () => {
     detailState.current = { status: 'ready', data: data() };
     const html = render(<KegiatanDetailPage id="k1" list={list} />);
-    expect(html).toMatch(new RegExp(`<a href="/lingkungan/gotong-royong" class="${back.back}"><svg[^]*?</svg>Gotong Royong</a>`));
+    // Tautan kembali = sapuan .cta; chevron kiri (.chevronBack) bergeser ke kiri saat hover.
+    expect(html).toMatch(
+      new RegExp(
+        `<a href="/lingkungan/gotong-royong" class="${back.back} ${r.trigger}"><svg[^>]*class="[^"]*\\b${r.chevronBack}\\b[^]*?</svg><span class="${r.cta}" data-text="Gotong Royong">Gotong Royong</span></a>`,
+      ),
+    );
     expect(html).not.toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
     expect(html).toContain(`<span class="${d.kategori}">Lingkungan</span>`);
     expect(html).not.toContain('/pemerintahan/kegiatan-desa');

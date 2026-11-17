@@ -94,14 +94,15 @@ describe('CSS jatah 86: garis bawah hover sudah diganti sapuan warna', () => {
     expect(hoverUnderlineSelectors(rel)).toEqual([]);
   });
 
-  it('pengecualian yang disengaja: hanya popup peta Leaflet dan tautan kembali yang masih bergaris bawah', () => {
+  it('pengecualian yang disengaja: hanya popup peta Leaflet yang masih bergaris bawah', () => {
     expect(hoverUnderlineSelectors('lingkungan/pengelolaan-sampah-bank-sampah/_com/lokasi.module.css')).toEqual([
       '.popup .popupArah:hover',
     ]);
-    expect(hoverUnderlineSelectors('ppid/daftar-informasi-publik/_com/daftar.module.css')).toEqual(['.backLink:hover']);
-    expect(hoverUnderlineSelectors('pendidikan/info-sekolah/_com/lembaga-detail/lembaga-detail.module.css')).toEqual([
-      '.backLink:hover',
-    ]);
+  });
+
+  it('tautan kembali (Daftar Informasi Publik [id], detail lembaga) tidak lagi bergaris bawah saat hover', () => {
+    expect(hoverUnderlineSelectors('ppid/daftar-informasi-publik/_com/daftar.module.css')).toEqual([]);
+    expect(hoverUnderlineSelectors('pendidikan/info-sekolah/_com/lembaga-detail/lembaga-detail.module.css')).toEqual([]);
   });
 });
 

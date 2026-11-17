@@ -11,7 +11,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+  useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }),
 }));
+vi.mock('next/dynamic', () => ({ default: () => () => <div data-testid="peta" /> }));
 
 import { KontakRow } from '@/app/(public)/_com/kontak-darurat/KontakRow';
 import k from '@/app/(public)/_com/kontak-darurat/kontak-darurat.module.css';
@@ -23,6 +25,9 @@ import { ANTIKORUPSI_TEXT } from '@/app/(public)/_com/main-page/desaantikorupsi/
 import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import { ProgramTiles } from '@/app/(public)/_com/program-tiles/ProgramTiles';
 import pt from '@/app/(public)/_com/program-tiles/program-tiles.module.css';
+import { LembagaDetailBody } from '@/app/(public)/(pages)/pendidikan/info-sekolah/_com/lembaga-detail/LembagaDetailPage';
+import ld from '@/app/(public)/(pages)/pendidikan/info-sekolah/_com/lembaga-detail/lembaga-detail.module.css';
+import { LEMBAGA_DETAIL_TEXT as LDT } from '@/app/(public)/(pages)/pendidikan/info-sekolah/_com/lembaga-detail/lembaga-detail.text';
 import { PosyanduRow } from '@/app/(public)/(pages)/kesehatan/posyandu/_com/PosyanduRow';
 import pr from '@/app/(public)/(pages)/kesehatan/posyandu/_com/posyandu-rows.module.css';
 import { PengumumanRows } from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/PengumumanRows';
@@ -179,5 +184,56 @@ describe('CSS 5b: tidak ada lagi garis bawah saat :hover', () => {
     const css = SRC('_com/main-page/desaantikorupsi/desaantikorupsi.module.css');
     expect(css).not.toContain('.groupLink:hover');
     expect(css).toMatch(/\.groupArrow \{\s*display: inline-block;/);
+  });
+});
+
+describe('Tautan kembali "‹ …": sapuan .cta, chevron kiri .chevronBack bergeser ke KIRI', () => {
+  // Pemakai `.back` (detail-umkm.module.css) + `.detailLink` PPID [id] (`.backLink` dihapus: kelas tanpa aturan = `undefined`). Teks & ikon tetap; hanya efek hover yang berubah.
+  const BACK = [
+    '(pages)/ekonomi/umkm/_com/detail-produk/DetailProdukView.tsx',
+    '(pages)/ekonomi/umkm/_com/detail-toko/DetailTokoView.tsx',
+    '(pages)/ekonomi/kesejahteraan-masyarakat/_com/detail/KesejahteraanDetail.tsx',
+    '(pages)/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/_com/detail/PengurusDetail.tsx',
+    '(pages)/pendidikan/perpustakaan-digital/_com/detail/BukuDetail.tsx',
+    '(pages)/lingkungan/program-penghijauan/_com/detail/PenghijauanDetail.tsx',
+    '(pages)/pemerintahan/kegiatan-desa/_com/detail/KegiatanDetail.tsx',
+    '(pages)/inovasi/program-kreatif-desa/_com/detail/ProgramKreatifDetail.tsx',
+    '(pages)/ppid/daftar-informasi-publik/[id]/page.tsx',
+  ];
+
+  it.each(BACK)('%s: <Link> kembali = .trigger, IconChevronLeft .chevronBack, label .cta', (file) => {
+    const src = SRC(file);
+    expect(src).not.toMatch(/className=\{\w+\.back\}/);
+    expect(src).toMatch(
+      /<Link[^>]*className=\{`[^`]*\.(back|detailLink)\} \$\{r\.trigger\}`\}>\s*<IconChevronLeft className=\{r\.chevronBack\}[^>]*\/>\s*<span className=\{r\.cta\} data-text=\{([^}]+)\}>\s*\{\2\}\s*<\/span>\s*<\/Link>/,
+    );
+  });
+
+  it('detail lembaga tidak ditemukan: "Ke daftar sekolah" = .trigger + .cta (tanpa chevron, sama seperti sebelumnya)', () => {
+    const html = render(<LembagaDetailBody state={{ status: 'ready', data: null }} onRetry={() => {}} />);
+    expect(html).toContain(`href="/pendidikan/info-sekolah#lembaga" class="${ld.backLink} ${r.trigger}">${cta(LDT.backToList)}</a>`);
+  });
+
+  it('CSS: tanpa garis bawah :hover di ketiga file tautan kembali', () => {
+    for (const file of [
+      '(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css',
+      '(pages)/ppid/daftar-informasi-publik/_com/daftar.module.css',
+      '(pages)/pendidikan/info-sekolah/_com/lembaga-detail/lembaga-detail.module.css',
+    ]) {
+      const css = SRC(file).replace(/\/\*[\s\S]*?\*\//g, '');
+      const bad = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(([, sel, body]) => sel.includes(':hover') && /underline/.test(body));
+      expect(bad.map(([, sel]) => sel.trim()), file).toEqual([]);
+    }
+    // `.backLink` PPID hanya berisi aturan hover; sesudah dihapus kelasnya tak diekspor → jangan dirujuk (class="undefined").
+    expect(SRC('(pages)/ppid/daftar-informasi-publik/_com/daftar.module.css')).not.toContain('.backLink');
+    expect(SRC('(pages)/ppid/daftar-informasi-publik/[id]/page.tsx')).not.toContain('s.backLink');
+  });
+
+  it('modul: .chevronBack geser -3px saat hover & fokus, ikut transisi dan reduced motion seperti .chevron', () => {
+    const css = SRC('_com/link-reveal/link-reveal.module.css').replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(css).toMatch(/\.chevron,\s*\.chevronBack \{[^}]*transition: transform/);
+    expect(css).toMatch(/\.trigger:focus-visible \.chevronBack \{\s*transform: translateX\(-3px\);/);
+    expect(css).toMatch(/@media \(hover: hover\) and \(pointer: fine\) \{[^@]*\.trigger:hover \.chevronBack \{\s*transform: translateX\(-3px\);/);
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{[^@]*\.chevronBack[^@]*transition: none;/);
   });
 });

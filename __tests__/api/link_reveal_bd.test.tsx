@@ -71,9 +71,10 @@ describe('KesejahteraanDetail tidak ditemukan', () => {
     expect(html.match(chevronSvg)).toHaveLength(1);
   });
 
-  it('tautan kembali "‹ …" sengaja tidak memakai sapuan (pola tautan kembali, ditunda)', () => {
-    expect(html).toContain(`class="${back.back}"`);
-    expect(html).not.toContain(`class="${back.back} ${r.trigger}"`);
+  it('tautan kembali "‹ …" = .trigger + .cta, chevron kiri .chevronBack (geser ke kiri)', () => {
+    expect(html).toMatch(
+      new RegExp(`class="${back.back} ${r.trigger}"><svg[^>]*class="[^"]*\\b${r.chevronBack}\\b[^]*?</svg>${cta(KD.kembali)}</a>`),
+    );
   });
 });
 

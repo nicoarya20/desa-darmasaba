@@ -36,6 +36,7 @@ import { ProdukInfo } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-prod
 import { DETAIL_PRODUK_TEXT as T } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/detail-produk.text';
 import g from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/galeri.module.css';
 import inf from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/info.module.css';
+import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -179,7 +180,13 @@ describe('DetailProdukView', () => {
   it.each(['loading', 'notFound', 'error'] as const)('%s: hanya tautan kembali + status, tanpa Ulasan', (status) => {
     h.state = { status };
     const html = render(<DetailProdukView id="prd-1" />);
-    expect(html).toContain(T.backToList);
+    // Tautan kembali = sapuan warna: <a .back .trigger> + chevron kiri `.chevronBack` + label `.cta`.
+    const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    expect(html).toMatch(
+      new RegExp(
+        `<a href="/ekonomi/umkm" class="${esc(`${back.back} ${r.trigger}`)}"><svg[^>]*class="[^"]*\\b${esc(r.chevronBack)}\\b[^"]*"[^>]*>[\\s\\S]*?</svg><span class="${esc(r.cta)}" data-text="${T.backToList}">${T.backToList}</span></a>`,
+      ),
+    );
     expect(html).not.toContain('id="ulasan"');
     expect(h.serupa).toEqual([]);
   });
