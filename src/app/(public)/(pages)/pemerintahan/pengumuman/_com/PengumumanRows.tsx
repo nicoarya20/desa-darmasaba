@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Image } from '@mantine/core';
 import { formatTanggalKabar, type KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import { IconChevronRight, IconFileText } from '@tabler/icons-react';
@@ -48,11 +49,13 @@ export function PengumumanRows({ items, loading, placeholderRows, showKategori, 
     <ul className={s.panel}>
       {items.map((item) => (
         <li key={item.id}>
-          <Link href={item.href} className={s.row}>
+          <Link href={item.href} className={`${s.row} ${r.trigger}`}>
             <Thumb url={item.imageUrl} />
             <span className={s.body}>
               {showKategori && item.kategori ? <span className={s.kategori}>{item.kategori}</span> : null}
-              <span className={s.title}>{item.title}</span>
+              <span className={s.title}>
+                <span className={r.title}>{item.title}</span>
+              </span>
             </span>
             <time className={s.date} dateTime={new Date(item.createdAt).toISOString()}>
               {formatTanggalKabar(item.createdAt)}
