@@ -77,7 +77,7 @@ model FileStorage {
   Pelapor                        Pelapor[]
   ProfileDesaImage               ProfileDesaImage[]
   ProfilePPID                    ProfilePPID[]
-  DasarHukumPPID                 DasarHukumPPID[]
+  DokumenDasarHukumPPID          DokumenDasarHukumPPID[]
   DaftarInformasiPublik          DaftarInformasiPublik[]
   ProfilLembagaPPID              ProfilLembagaPPID[]
   ProfilPerbekel                 ProfilPerbekel[]
@@ -546,13 +546,30 @@ model DasarHukumPPID {
   id        String       @id @default(cuid())
   judul     String       @db.Text
   content   String       @db.Text
-  // Lomba 2.5: berkas PDF peraturan (opsional) agar pengunjung bisa mengunduh dokumen aslinya; baris lama tetap valid tanpa berkas.
-  file      FileStorage? @relation(fields: [fileId], references: [id], onDelete: SetNull)
-  fileId    String?
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   deletedAt DateTime?
   isActive  Boolean      @default(true)
+}
+
+// Lomba 2.5: PDF peraturan desa/perbekel, SK, dan SOP yang bisa dilihat & diunduh pengunjung. DasarHukumPPID adalah
+// singleton (satu teks), jadi satu kolom fileId di sana hanya muat 1 PDF; di sini satu baris = satu dokumen.
+// Daftar FLAT tanpa folder (keputusan user); folder bisa ditambah kemudian lewat kolom folderId nullable tanpa
+// mengubah baris yang ada.
+model DokumenDasarHukumPPID {
+  id        String      @id @default(cuid())
+  judul     String
+  urutan    Int         @default(0)
+  // CASCADE: /api/fileStorage/delete menghapus berkas permanen; RESTRICT akan membuatnya gagal.
+  file      FileStorage @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean     @default(true)
+
+  @@index([isActive, urutan])
+  @@index([fileId])
 }
 
 // ========================================= PROFILE PPID ========================================= //
