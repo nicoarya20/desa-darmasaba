@@ -12,13 +12,15 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import { DokumentasiUploader } from '../../_com/DokumentasiUploader';
 import { LogoDropzone } from '../../_com/LogoDropzone';
+import { UrutanInput } from '../../_com/UrutanInput';
 import { useProgramInovasiMedia, type MediaAwal } from '../../_lib/useProgramInovasiMedia';
 
-type DataAwal = { name: string; description: string; media: MediaAwal };
+type DataAwal = { name: string; description: string; urutan: number | null; media: MediaAwal };
 
 const DATA_KOSONG: DataAwal = {
   name: '',
   description: '',
+  urutan: null,
   media: { imageId: null, imageUrl: null, images: [] },
 };
 
@@ -28,7 +30,11 @@ function EditProgramInovasi() {
   const params = useParams();
   const media = useProgramInovasiMedia();
 
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [formData, setFormData] = useState<{ name: string; description: string; urutan: number | null }>({
+    name: '',
+    description: '',
+    urutan: null,
+  });
   const [originalData, setOriginalData] = useState<DataAwal>(DATA_KOSONG);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,7 +42,7 @@ function EditProgramInovasi() {
   const isFormValid = () => formData.name?.trim() !== '' && formData.description?.trim() !== '';
 
   const terapkan = (data: DataAwal) => {
-    setFormData({ name: data.name, description: data.description });
+    setFormData({ name: data.name, description: data.description, urutan: data.urutan });
     media.muat(data.media);
   };
 
@@ -50,6 +56,7 @@ function EditProgramInovasi() {
       const awal: DataAwal = {
         name: data.name || '',
         description: data.description || '',
+        urutan: data.urutan ?? null,
         media: {
           imageId: data.imageId ?? null,
           imageUrl: data.image?.link ?? null,
@@ -78,6 +85,7 @@ function EditProgramInovasi() {
         description: formData.description,
         imageId,
         imageIds,
+        urutan: formData.urutan,
       };
 
       const berhasil = await stateProgramInovasi.update.update();
@@ -120,6 +128,11 @@ function EditProgramInovasi() {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
+          />
+
+          <UrutanInput
+            value={formData.urutan}
+            onChange={(urutan) => setFormData((prev) => ({ ...prev, urutan }))}
           />
 
           <Box>

@@ -26,7 +26,7 @@ const file = (id: string, link: string) => ({
 });
 const base = {
   id: 'p1', name: 'GALAH MELAH', description: '<p>Gerakan <strong>sadar</strong> sampah.</p><script>alert(1)</script>',
-  imageId: 'logo', link: '-', createdAt: new Date(0), updatedAt: new Date(0), deletedAt: null, isActive: true,
+  imageId: 'logo', link: '-', urutan: null, createdAt: new Date(0), updatedAt: new Date(0), deletedAt: null, isActive: true,
 };
 const preview = (count?: number) =>
   ({ ...base, image: file('logo', '/api/img/logo'), ...(count === undefined ? {} : { _count: { images: count } }) }) as ProgramInovasiItem;
