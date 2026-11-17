@@ -1,4 +1,5 @@
 import Link from "next/link";
+import r from "../../link-reveal/link-reveal.module.css";
 import { AntiKorupsiItem } from "./AntiKorupsiItem";
 import type { AntiKorupsiGroup, AntiKorupsiIndicator } from "./desaantikorupsi.logic";
 import { ANTIKORUPSI_LIMIT } from "./desaantikorupsi.meta";
@@ -25,10 +26,17 @@ function GroupTitle({ group, headingId, href }: { group: AntiKorupsiGroup; headi
   }
   return (
     <h3 className={s.groupTitle}>
-      <Link href={href} className={s.groupLink}>
-        <span id={headingId}>{group.name}</span>
+      <Link href={href} className={`${s.groupLink} ${r.trigger}`}>
+        <span id={headingId}>
+          <span className={r.title}>{group.name}</span>
+        </span>
         <span className={s.groupHint}>
-          {ANTIKORUPSI_TEXT.lihatDokumen} <span aria-hidden>→</span>
+          <span className={r.cta} data-text={ANTIKORUPSI_TEXT.lihatDokumen}>
+            {ANTIKORUPSI_TEXT.lihatDokumen}
+          </span>{" "}
+          <span className={`${s.groupArrow} ${r.chevron}`} aria-hidden>
+            →
+          </span>
         </span>
       </Link>
     </h3>

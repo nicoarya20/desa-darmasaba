@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { initialsOf } from '@/app/(public)/_com/struktur-organisasi/struktur-person.logic';
 import {
   IconArrowRight,
@@ -32,8 +33,8 @@ export function LowonganCard({ lowongan }: { lowongan: Lowongan }) {
         </div>
         <div className={s.headText}>
           <h3 className={s.title}>
-            <Link href={lowonganHref(lowongan.id)} className={s.link}>
-              {lowongan.posisi}
+            <Link href={lowonganHref(lowongan.id)} className={`${s.link} ${r.trigger}`}>
+              <span className={r.title}>{lowongan.posisi}</span>
             </Link>
           </h3>
           {lowongan.pemberiKerja && <p className={s.employer}>{lowongan.pemberiKerja}</p>}

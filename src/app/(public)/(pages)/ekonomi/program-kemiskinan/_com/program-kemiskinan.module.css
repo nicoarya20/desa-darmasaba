@@ -9,7 +9,7 @@
   gap: var(--block-gap);
 }
 
-/* Judul baris = tautan utama ke detail program; warna judul tetap, garis bawah saat hover. */
+/* Judul baris = tautan utama ke detail program; warna judul tetap, sapuan warna saat hover (_com/link-reveal). */
 .titleLink {
   color: inherit;
   text-decoration: none;
@@ -31,14 +31,6 @@
   font-size: 17px;
   line-height: 1.47;
   text-decoration: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .titleLink:hover,
-  .aksi:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
 }
 
 /* Dua ubin berdampingan di desktop; bertumpuk mulai tablet (teks ubin tidak terjepit). */

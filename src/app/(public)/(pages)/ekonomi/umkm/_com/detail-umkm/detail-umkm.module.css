@@ -36,13 +36,6 @@
   border-radius: 4px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .back:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
 @media (max-width: 734px) {
   .page {
     padding-top: 24px;

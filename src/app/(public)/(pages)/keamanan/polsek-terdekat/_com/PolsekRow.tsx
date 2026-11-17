@@ -3,6 +3,7 @@ import { IconClock, IconExternalLink, IconMap2, IconShieldCheck } from '@tabler/
 import { KontakActions } from '@/app/(public)/_com/kontak-darurat/KontakActions';
 import k from '@/app/(public)/_com/kontak-darurat/kontak-darurat.module.css';
 import { phoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { directionsHref, filledText, formatJarak, jamInfo, mapEmbedSrc, parseJarakKm, type PolsekTerdekat } from './polsek.logic';
 import { POLSEK_MAP_SECTION_ID } from './polsek.meta';
 import s from './polsek.module.css';
@@ -70,14 +71,16 @@ export function PolsekRow({ item, nearest, onMap, onShowOnMap }: Props) {
             {hasMap ? (
               <button
                 type="button"
-                className={s.mapLink}
+                className={`${s.mapLink} ${r.trigger}`}
                 aria-controls={POLSEK_MAP_SECTION_ID}
                 aria-pressed={onMap}
                 aria-label={T.showOnMapLabel(item.nama)}
                 onClick={() => onShowOnMap(item.id)}
               >
                 <IconMap2 size={17} stroke={1.75} aria-hidden />
-                {T.showOnMap}
+                <span className={r.cta} data-text={T.showOnMap}>
+                  {T.showOnMap}
+                </span>
               </button>
             ) : null}
           </div>

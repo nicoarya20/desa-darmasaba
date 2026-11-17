@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import colors from '@/con/colors';
 import { Anchor, Breadcrumbs, Text } from '@mantine/core';
 import Link from 'next/link';
@@ -22,8 +23,20 @@ export function ProgramBreadcrumb({ programId, programName, kategori, folderName
     <Breadcrumbs separator="›" separatorMargin={6} style={{ flexWrap: 'wrap', rowGap: 4 }}>
       {crumbs.map((c, i) =>
         c.href ? (
-          <Anchor key={i} component={Link} href={c.href} fz="sm" c={colors['blue-button']} lineClamp={1} maw={260} title={c.label}>
-            {c.label}
+          <Anchor
+            key={i}
+            component={Link}
+            href={c.href}
+            className={r.trigger}
+            underline="never"
+            fz="sm"
+            c={colors['blue-button']}
+            lineClamp={1}
+            maw={260}
+            title={c.label}
+          >
+            {/* Span inline di dalam kotak lineClamp: elipsis "…" tetap digambar Anchor (warna diam). */}
+            <span className={`${r.title} ${r.titleBrand}`}>{c.label}</span>
           </Anchor>
         ) : (
           <Text key={i} fz="sm" c="dimmed" lineClamp={1} maw={260} title={c.label} aria-current="page">

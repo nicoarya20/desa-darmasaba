@@ -1,6 +1,7 @@
 /*
  * Kolom info detail produk UMKM (merek, nama, rating, harga, CTA, panel Cara memesan & Penjual).
  * Token warna dari akar halaman (../detail-umkm/detail-umkm.module.css). Breakpoint apple.com: ≤734px (mobile).
+ * Sapuan warna tautan saat hover: _com/link-reveal.
  */
 .info {
   display: flex;
@@ -232,16 +233,6 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .brand:hover,
-  .rating:hover,
-  .sellerName:hover,
-  .sellerLink:hover {
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
 }
 
 @media (max-width: 734px) {

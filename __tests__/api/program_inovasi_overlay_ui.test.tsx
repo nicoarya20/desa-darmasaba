@@ -13,6 +13,9 @@ const detailState = vi.hoisted(() => ({ current: null as DetailState | null }));
 vi.mock('@/app/(public)/_com/main-page/landing-page/program-overlay/use-program-detail', () => ({
   useProgramDetail: () => detailState.current,
 }));
+vi.mock('next-view-transitions', () => ({
+  Link: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+}));
 
 import type { ProgramInovasiItem } from '@/app/(public)/_com/main-page/landing-page/HeroPrograms';
 import { ProgramInovasiOverlay } from '@/app/(public)/_com/main-page/landing-page/program-overlay/ProgramInovasiOverlay';
@@ -26,7 +29,7 @@ const file = (id: string, link: string) => ({
 });
 const base = {
   id: 'p1', name: 'GALAH MELAH', description: '<p>Gerakan <strong>sadar</strong> sampah.</p><script>alert(1)</script>',
-  imageId: 'logo', link: '-', createdAt: new Date(0), updatedAt: new Date(0), deletedAt: null, isActive: true,
+  imageId: 'logo', link: '-', urutan: null, createdAt: new Date(0), updatedAt: new Date(0), deletedAt: null, isActive: true,
 };
 const preview = (count?: number) =>
   ({ ...base, image: file('logo', '/api/img/logo'), ...(count === undefined ? {} : { _count: { images: count } }) }) as ProgramInovasiItem;
@@ -71,6 +74,15 @@ describe('ProgramInovasiOverlay', () => {
     expect(html).toContain('aria-busy="true"');
     expect(html.match(/thumbSkeleton/g)).toHaveLength(2);
     expect(html).toMatch(/--overlay-filter:\s*blur\(/);
+  });
+
+  it('detail menautkan halaman lengkap /inovasi/program-inovasi/{id} di bawah nama', () => {
+    const html = overlay({ preview: preview(0) });
+    expect(html).toMatch(new RegExp(`<a href="/inovasi/program-inovasi/p1"[^>]*><span[^>]*data-text="${T.fullPage}"[^>]*>${T.fullPage}</span><svg`));
+  });
+
+  it('kerangka (belum ada data) → tanpa tautan halaman lengkap', () => {
+    expect(overlay()).not.toContain(T.fullPage);
   });
 
   it('preview dengan _count 0 → tanpa bagian Dokumentasi sama sekali', () => {

@@ -173,14 +173,6 @@
   outline-offset: 3px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .kategori:hover,
-  .emptyLink:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .bar {
     animation: none;

@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import colors from '@/con/colors';
 import { Anchor, Box, Group, Paper, Text, Title } from '@mantine/core';
 import { Link } from 'next-view-transitions';
@@ -22,8 +23,18 @@ export default function PetaInformasiGroupCard({ group }: { group: PetaInformasi
       <Box component="ul" style={listStyle}>
         {group.pages.map((page) => (
           <Box component="li" key={page.href} py={6} style={{ borderTop: `1px solid ${colors.grey[1]}` }}>
-            <Anchor component={Link} href={page.href} c={colors['blue-button']} fz={{ base: 'sm', md: 'md' }} fw={500}>
-              {page.label}
+            <Anchor
+              component={Link}
+              href={page.href}
+              c={colors['blue-button']}
+              fz={{ base: 'sm', md: 'md' }}
+              fw={500}
+              underline="never"
+              className={r.trigger}
+            >
+              <span className={r.cta} data-text={page.label}>
+                {page.label}
+              </span>
             </Anchor>
           </Box>
         ))}

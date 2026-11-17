@@ -67,6 +67,16 @@ describe('merge default config + override → menu efektif', () => {
     expect(navbarHrefs(effectiveMenuVisibility({ [DATA_KESEHATAN]: true }).searchMenus)).toContain(grafik);
   });
 
+  it('halaman tambahan ber-#anchor ikut tersembunyi bersama halamannya (hash diabaikan saat mencocokkan)', () => {
+    const DASHBOARD = '/kependudukan/dashboard';
+    const sections = ['banjar', 'umur', 'agama', 'dinamika'].map((a) => `${DASHBOARD}#${a}`);
+    const shown = navbarHrefs(effectiveMenuVisibility({}).searchMenus);
+    for (const href of sections) expect(shown, href).toContain(href);
+    const hidden = navbarHrefs(effectiveMenuVisibility({ [DASHBOARD]: false }).searchMenus);
+    expect(hidden).not.toContain(DASHBOARD);
+    for (const href of sections) expect(hidden, href).not.toContain(href);
+  });
+
   it('Peta Informasi memakai menu efektif yang dioper', () => {
     const { searchMenus } = effectiveMenuVisibility({ [CCTV]: false, [PUSKESMAS]: true });
     const hrefs = petaInformasiGroups('', searchMenus).flatMap((g) => g.pages.map((p) => p.href));

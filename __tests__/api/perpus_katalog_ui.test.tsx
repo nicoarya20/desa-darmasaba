@@ -33,6 +33,7 @@ import { PerpusKatalog } from '@/app/(public)/(pages)/pendidikan/perpustakaan-di
 import { PERPUS_SKELETON_COUNT } from '@/app/(public)/(pages)/pendidikan/perpustakaan-digital/_com/perpus.meta';
 import { PERPUS_TEXT as T } from '@/app/(public)/(pages)/pendidikan/perpustakaan-digital/_com/perpus.text';
 import c from '@/app/(public)/(pages)/pendidikan/perpustakaan-digital/_com/buku-card.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import k from '@/app/(public)/(pages)/pendidikan/perpustakaan-digital/_com/perpus-katalog.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -82,7 +83,8 @@ describe('BukuCard', () => {
     expect(count(html, '<a ')).toBe(1);
     expect(count(html, '<button')).toBe(0);
     expect(html).toMatch(/^<a [^>]*href="\/pendidikan\/perpustakaan-digital\/anak-dan-remaja\/a"/);
-    expect(html).toContain(`<h3 class="${c.title}">Dongeng Bali</h3>`);
+    expect(html).toMatch(new RegExp(`^<a [^>]*class="${c.card} ${r.trigger}"`));
+    expect(html).toContain(`<h3 class="${c.title}"><span class="${r.title}">Dongeng Bali</span></h3>`);
     expect(text(html)).toBe('Dongeng Bali Anak Dan Remaja');
     expect(html).toMatch(/<img [^>]*src="https:\/\/cdn.example.test\/a.jpg"[^>]*alt="Dongeng Bali"|<img [^>]*alt="Dongeng Bali"[^>]*src=/);
     expect(html).toContain('loading="lazy"');

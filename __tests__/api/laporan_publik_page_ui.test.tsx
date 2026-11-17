@@ -26,6 +26,7 @@ import { LaporanForm } from '@/app/(public)/(pages)/keamanan/laporan-publik/_com
 import { LaporanListBody } from '@/app/(public)/(pages)/keamanan/laporan-publik/_com/LaporanPublikPage';
 import st from '@/app/(public)/(pages)/keamanan/laporan-publik/_com/laporan-status.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
@@ -113,7 +114,9 @@ describe('LaporanDetailView', () => {
   it('kepala: kategori → daftar, status, judul h1 di kolom 860px', () => {
     const html = detail({ status: 'ready', data: pohon });
     expect(html).toContain(`class="${d.wrap}"`);
-    expect(html).toContain(`<a href="/keamanan/laporan-publik" class="${d.kategori}">Laporan Publik</a>`);
+    expect(html).toContain(
+      `<a href="/keamanan/laporan-publik" class="${d.kategori} ${r.trigger}"><span class="${r.cta}" data-text="Laporan Publik">Laporan Publik</span></a>`,
+    );
     expect(html).toContain(`<h1 class="${d.title}">Pohon Tumbang Menutupi Akses Jalan Desa</h1>`);
     expect(html).toContain('Selasa, 7 Juli 2026, 14.05');
     expect(html).toContain('Jl. Melati no.5, Banjar Teba');

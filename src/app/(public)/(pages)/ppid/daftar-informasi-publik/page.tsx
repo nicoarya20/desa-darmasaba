@@ -1,5 +1,6 @@
 'use client'
 
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import colors from '@/con/colors';
 import { DOKUMEN_PERENCANAAN_PUBLIC_HREF } from '@/lib/dokumen-perencanaan';
@@ -59,9 +60,11 @@ function Page() {
       <div className={s.body}>
         <p className={s.note}>
           {DAFTAR_TEXT.perencanaanNote}
-          <Link href={DOKUMEN_PERENCANAAN_PUBLIC_HREF} className={s.noteLink}>
-            {DAFTAR_TEXT.perencanaanLink}
-            <IconChevronRight size={16} stroke={2} aria-hidden />
+          <Link href={DOKUMEN_PERENCANAAN_PUBLIC_HREF} className={`${s.noteLink} ${r.trigger}`}>
+            <span className={r.cta} data-text={DAFTAR_TEXT.perencanaanLink}>
+              {DAFTAR_TEXT.perencanaanLink}
+            </span>
+            <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
           </Link>
         </p>
 

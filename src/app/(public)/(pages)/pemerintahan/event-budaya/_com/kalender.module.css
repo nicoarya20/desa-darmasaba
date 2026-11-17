@@ -374,11 +374,6 @@ button.dayNum {
   .event:hover {
     filter: brightness(0.96) saturate(1.1);
   }
-
-  .more:hover {
-    color: var(--brand);
-    text-decoration: underline;
-  }
 }
 
 /* ---------- Tablet ---------- */

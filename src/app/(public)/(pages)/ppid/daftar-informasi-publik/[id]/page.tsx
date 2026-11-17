@@ -1,5 +1,6 @@
 'use client';
 
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import { Skeleton } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
@@ -61,9 +62,11 @@ export default function DetailInformasiPublikUser() {
     content = (
       <div className={s.notFound} role="status">
         <p className={s.notFoundTitle}>{DAFTAR_TEXT.notFound}</p>
-        <Link href={DAFTAR_LIST_HREF} className={s.detailLink}>
-          <IconChevronLeft size={16} stroke={2} aria-hidden />
-          {DAFTAR_TEXT.backToList}
+        <Link href={DAFTAR_LIST_HREF} className={`${s.detailLink} ${r.trigger}`}>
+          <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
+          <span className={r.cta} data-text={DAFTAR_TEXT.backToList}>
+            {DAFTAR_TEXT.backToList}
+          </span>
         </Link>
       </div>
     );

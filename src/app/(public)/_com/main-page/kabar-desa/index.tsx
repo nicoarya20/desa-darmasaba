@@ -1,6 +1,7 @@
 "use client";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
+import r from "../../link-reveal/link-reveal.module.css";
 import { KabarBerita } from "./KabarBerita";
 import { KabarPengumuman } from "./KabarPengumuman";
 import { BERITA_LIST_HREF, KABAR_BRAND_VARS } from "./kabar.meta";
@@ -22,9 +23,11 @@ function KabarDesa() {
           {KABAR_TEXT.title}
         </h2>
         {berita.length > 0 ? (
-          <Link href={BERITA_LIST_HREF} className={s.allLink}>
-            {KABAR_TEXT.beritaAll}
-            <IconChevronRight size={18} stroke={2} aria-hidden />
+          <Link href={BERITA_LIST_HREF} className={`${s.allLink} ${r.trigger}`}>
+            <span className={r.cta} data-text={KABAR_TEXT.beritaAll}>
+              {KABAR_TEXT.beritaAll}
+            </span>
+            <IconChevronRight className={r.chevron} size={18} stroke={2} aria-hidden />
           </Link>
         ) : null}
       </header>

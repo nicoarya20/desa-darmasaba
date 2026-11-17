@@ -19,6 +19,7 @@ import { emptyParams, type LowonganParams } from '@/app/(public)/(pages)/ekonomi
 import { buildLowonganView } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan-view.logic';
 import type { Lowongan } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan.types';
 import l from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan-layout.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { LowonganBody } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/LowonganBody';
 import { LowonganToolbar } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/LowonganToolbar';
 
@@ -124,7 +125,7 @@ describe('FilterPanel', () => {
     expect(html).toContain('aria-label="Hapus filter Di dalam desa"');
     expect(html).toMatch(new RegExp(`class="${f.chip}"><svg[^>]*tabler-icon-map-pin`));
     expect(html).toContain('aria-label="Hapus filter Minimal Rp2 juta"');
-    expect(html).toMatch(new RegExp(`class="${f.clearAll}">Hapus semua</button>`));
+    expect(html).toContain(`class="${f.clearAll} ${r.trigger}"><span class="${r.cta}" data-text="Hapus semua">Hapus semua</span></button>`);
   });
 
   it('lokasi kerja: pilihan berjumlah 0 disembunyikan (satu pilihan tersisa tetap tampil), kecuali sedang terpilih', () => {
@@ -205,7 +206,7 @@ describe('FilterDrawer', () => {
     expect(html).toContain('aria-label="Tutup filter"');
     expect(html).not.toContain(f.cardHead);
     expect(text(html)).toContain('Pilihan Anda');
-    expect(html).toMatch(new RegExp(`class="${f.drawerClear}">Hapus semua</button>`));
+    expect(html).toContain(`class="${f.drawerClear} ${r.trigger}"><span class="${r.cta}" data-text="Hapus semua">Hapus semua</span></button>`);
     expect(html).toMatch(new RegExp(`class="${f.drawerApply}">Tampilkan 2 lowongan</button>`));
   });
 

@@ -97,6 +97,7 @@ function ListProgramInovasi({ search }: { search: string }) {
     withColumnBorders={false} striped verticalSpacing="sm">
             <TableThead>
               <TableTr>
+                <TableTh w={90}>Urutan</TableTh>
                 <TableTh>Nama Program</TableTh>
                 <TableTh>Deskripsi</TableTh>
                 <TableTh>Dokumentasi</TableTh>
@@ -106,7 +107,7 @@ function ListProgramInovasi({ search }: { search: string }) {
             <TableTbody>
               {filteredData.length === 0 ? (
                 <TableTr>
-                  <TableTd colSpan={4}>
+                  <TableTd colSpan={5}>
                     <Center py={20}>
                       <Text c="dimmed">Belum ada data program inovasi</Text>
                     </Center>
@@ -115,6 +116,9 @@ function ListProgramInovasi({ search }: { search: string }) {
               ) : (
                 filteredData.map((item) => (
                   <TableTr key={item.id}>
+                    <TableTd>
+                      <Text fz="sm">{item.urutan ?? '-'}</Text>
+                    </TableTd>
                     <TableTd>
                       <Text fw={500}>{item.name}</Text>
                     </TableTd>

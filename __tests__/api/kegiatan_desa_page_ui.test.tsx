@@ -24,6 +24,7 @@ import { BACK_BUTTON_LABEL } from '@/app/(public)/(pages)/pemerintahan/layanan/_
 import type { KegiatanDetail } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/kegiatan-detail.source';
 import s from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/kegiatan-detail.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { KATEGORI_PEMBANGUNAN_ID } from '@/lib/kegiatan-pembangunan';
 
 const render = (node: React.ReactElement) =>
@@ -47,7 +48,9 @@ const data = (over: Partial<KegiatanDetail> = {}): KegiatanDetail => ({
 describe('KegiatanDetailBody', () => {
   it('kategori (tautan ke daftar kategori) · tanggal WITA, judul h1, ringkasan, lokasi & partisipan', () => {
     const html = render(<KegiatanDetailBody data={data()} />);
-    expect(html).toContain(`href="/pemerintahan/kegiatan-desa/lingkungan" class="${d.kategori}">Lingkungan</a>`);
+    expect(html).toContain(
+      `href="/pemerintahan/kegiatan-desa/lingkungan" class="${d.kategori} ${r.trigger}"><span class="${r.cta}" data-text="Lingkungan">Lingkungan</span></a>`,
+    );
     expect(html).toContain('Kamis, 26 Mei 2022');
     expect(html).toContain(`<h1 class="${d.title}">Gotong Royong dan Rapat Rutin TP PKK Desa Darmasaba</h1>`);
     expect(html).toContain(`class="${s.lead}">Gotong royong bersama TP PKK di Pura Dalem Kangin.</p>`);
@@ -109,14 +112,19 @@ describe('KegiatanDetail prop list (pemakai lain, mis. Gotong Royong)', () => {
     detailState.current = { status: 'ready', data: data() };
     const html = render(<KegiatanDetailPage id="k1" />);
     expect(html).toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
-    expect(html).not.toContain(`class="${back.back}"`);
+    expect(html).not.toContain(`class="${back.back} ${r.trigger}"`);
     expect(html).toContain('href="/pemerintahan/kegiatan-desa/lingkungan"');
   });
 
   it('dengan list: tautan teks "‹ label" ke daftar, tanpa tombol ikon, kategori teks biasa', () => {
     detailState.current = { status: 'ready', data: data() };
     const html = render(<KegiatanDetailPage id="k1" list={list} />);
-    expect(html).toMatch(new RegExp(`<a href="/lingkungan/gotong-royong" class="${back.back}"><svg[^]*?</svg>Gotong Royong</a>`));
+    // Tautan kembali = sapuan .cta; chevron kiri (.chevronBack) bergeser ke kiri saat hover.
+    expect(html).toMatch(
+      new RegExp(
+        `<a href="/lingkungan/gotong-royong" class="${back.back} ${r.trigger}"><svg[^>]*class="[^"]*\\b${r.chevronBack}\\b[^]*?</svg><span class="${r.cta}" data-text="Gotong Royong">Gotong Royong</span></a>`,
+      ),
+    );
     expect(html).not.toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
     expect(html).toContain(`<span class="${d.kategori}">Lingkungan</span>`);
     expect(html).not.toContain('/pemerintahan/kegiatan-desa');
@@ -124,7 +132,7 @@ describe('KegiatanDetail prop list (pemakai lain, mis. Gotong Royong)', () => {
 
   it('tidak ditemukan: "Lihat semua kegiatan" menuju list.href bila ada, daftar Kegiatan Desa bila tidak', () => {
     detailState.current = { status: 'notfound' };
-    expect(render(<KegiatanDetailPage id="x" list={list} />)).toContain(`href="/lingkungan/gotong-royong" class="${d.emptyLink}"`);
-    expect(render(<KegiatanDetailPage id="x" />)).toContain(`href="/pemerintahan/kegiatan-desa/semua" class="${d.emptyLink}"`);
+    expect(render(<KegiatanDetailPage id="x" list={list} />)).toContain(`href="/lingkungan/gotong-royong" class="${d.emptyLink} ${r.trigger}"`);
+    expect(render(<KegiatanDetailPage id="x" />)).toContain(`href="/pemerintahan/kegiatan-desa/semua" class="${d.emptyLink} ${r.trigger}"`);
   });
 });

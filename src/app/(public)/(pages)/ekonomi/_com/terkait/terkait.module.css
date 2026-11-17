@@ -1,6 +1,7 @@
 /*
  * Ubin tautan silang menu Ekonomi (diangkat dari Kesejahteraan Masyarakat tanpa perubahan tampilan). Variabel warna
  * (--brand, --muted, --tile, --radius) dari kabar.module.css wadah. Breakpoint apple.com: ≤734px (mobile).
+ * Sapuan warna aksi saat hover ubin: _com/link-reveal.
  */
 .terkait {
   display: grid;
@@ -56,13 +57,6 @@
   margin-top: 4px;
   color: var(--brand);
   font-size: 17px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .terkait:hover .aksi {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
 }
 
 /* ---------- Mobile ---------- */

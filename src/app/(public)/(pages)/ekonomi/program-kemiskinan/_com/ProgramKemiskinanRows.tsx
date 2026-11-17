@@ -2,6 +2,7 @@ import rows from '@/app/(public)/(pages)/lingkungan/data-lingkungan-desa/_com/da
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { paginate } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import { IconChevronRight } from '@tabler/icons-react';
@@ -66,13 +67,15 @@ export function ProgramKemiskinanRow({ item }: { item: ProgramKemiskinan }) {
           </span>
         ) : null}
         <h3 className={rows.title}>
-          <Link href={item.href} className={s.titleLink}>
-            {item.title}
+          <Link href={item.href} className={`${s.titleLink} ${r.trigger}`}>
+            <span className={r.title}>{item.title}</span>
           </Link>
         </h3>
-        <Link href={item.href} className={s.aksi} tabIndex={-1} aria-hidden>
-          {PROGRAM_KARTU_TEXT.lihatPenerima}
-          <IconChevronRight size={16} stroke={2} />
+        <Link href={item.href} className={`${s.aksi} ${r.trigger}`} tabIndex={-1} aria-hidden>
+          <span className={r.cta} data-text={PROGRAM_KARTU_TEXT.lihatPenerima}>
+            {PROGRAM_KARTU_TEXT.lihatPenerima}
+          </span>
+          <IconChevronRight className={r.chevron} size={16} stroke={2} />
         </Link>
       </div>
       {item.html ? <div className={rows.prose} dangerouslySetInnerHTML={{ __html: item.html }} /> : null}

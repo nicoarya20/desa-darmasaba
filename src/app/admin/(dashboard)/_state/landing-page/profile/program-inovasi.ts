@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
-import { MAX_GAMBAR_DOKUMENTASI } from "@/lib/program-inovasi";
+import { MAX_GAMBAR_DOKUMENTASI, URUTAN_MAX, URUTAN_MIN } from "@/lib/program-inovasi";
 import { getServerMessage } from "@/utils/api-message";
 import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 
-/** Validasi form admin: logo opsional, link tidak lagi diisi, galeri dibatasi. */
+/** Validasi form admin: logo opsional, link tidak lagi diisi, galeri dibatasi, urutan opsional. */
 export const templateProgramInovasi = z.object({
   name: z.string().min(1, "Nama minimal 1 karakter"),
   description: z.string().min(1, "Deskripsi minimal 1 karakter"),
@@ -15,6 +15,13 @@ export const templateProgramInovasi = z.object({
   imageIds: z
     .array(z.string())
     .max(MAX_GAMBAR_DOKUMENTASI, `Maksimal ${MAX_GAMBAR_DOKUMENTASI} gambar dokumentasi`)
+    .optional(),
+  urutan: z
+    .number()
+    .int("Urutan harus bilangan bulat")
+    .min(URUTAN_MIN, `Urutan minimal ${URUTAN_MIN}`)
+    .max(URUTAN_MAX, `Urutan maksimal ${URUTAN_MAX}`)
+    .nullable()
     .optional(),
 });
 
@@ -24,6 +31,8 @@ export type ProgramInovasiForm = {
   description: string;
   imageId: string | null;
   imageIds: string[];
+  /** Urutan tampil (1 = paling depan); null = urut abjad di belakang yang bernomor. */
+  urutan: number | null;
 };
 
 /** Form kosong (dipakai create & reset). */
@@ -32,6 +41,7 @@ export const emptyProgramInovasiForm = (): ProgramInovasiForm => ({
   description: "",
   imageId: null,
   imageIds: [],
+  urutan: null,
 });
 
 const programInovasi = proxy({
@@ -44,6 +54,7 @@ const programInovasi = proxy({
         description: programInovasi.create.form.description || "",
         imageId: programInovasi.create.form.imageId || null,
         imageIds: [...programInovasi.create.form.imageIds],
+        urutan: programInovasi.create.form.urutan ?? null,
       };
 
       const cek = templateProgramInovasi.safeParse(formData);
@@ -210,6 +221,7 @@ const programInovasi = proxy({
             description: data.description,
             imageId: data.imageId ?? null,
             imageIds: (data.images ?? []).map((img: { id: string }) => img.id),
+            urutan: data.urutan ?? null,
           };
           return data;
         } else {
@@ -250,6 +262,7 @@ const programInovasi = proxy({
           description: this.form.description,
           imageId: this.form.imageId || null,
           imageIds: [...this.form.imageIds],
+          urutan: this.form.urutan ?? null,
         });
 
         if (res.data?.success) {

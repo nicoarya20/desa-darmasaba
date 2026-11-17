@@ -17,6 +17,7 @@ import { toKegiatanList } from '@/app/(public)/(pages)/kesehatan/program-kesehat
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -55,7 +56,7 @@ describe('ProgramKesehatanBody', () => {
     expect(html).not.toContain('Gizi Baik');
     expect(html).not.toContain('86%');
     expect(html).not.toContain('Capaian kesehatan');
-    expect(html).toContain(`<h3 class="${kabar.featuredTitle}">Kegiatan 1</h3>`);
+    expect(html).toContain(`<h3 class="${kabar.featuredTitle}"><span class="${r.title}">Kegiatan 1</span></h3>`);
   });
 
   it('tanpa label penulis palsu, tanpa gradasi/justify lama', () => {
@@ -68,9 +69,9 @@ describe('ProgramKesehatanBody', () => {
   it('7 kegiatan per halaman: halaman 2 dari 9 kegiatan berisi 2 terakhir + paginasi', () => {
     const items = Array.from({ length: 9 }, (_, i) => kegiatan(i + 1));
     const html = body(ready(items), '', 2);
-    expect(html).toContain('>Kegiatan 8</h3>');
-    expect(html).toContain('>Kegiatan 9</h3>');
-    expect(html).not.toContain('>Kegiatan 7</h3>');
+    expect(html).toContain(`<span class="${r.title}">Kegiatan 8</span></h3>`);
+    expect(html).toContain(`<span class="${r.title}">Kegiatan 9</span></h3>`);
+    expect(html).not.toContain(`<span class="${r.title}">Kegiatan 7</span></h3>`);
     expect(html).toContain('aria-label="Halaman daftar program kesehatan"');
   });
 

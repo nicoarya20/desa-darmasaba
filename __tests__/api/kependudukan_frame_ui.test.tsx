@@ -31,8 +31,7 @@ const BANJAR = [
 ];
 const DINAMIKA = [{ id: 'd', tahun: 2025, kelahiran: 52, kematian: 21, masuk: 18, keluar: 12 }];
 const ready = (rows: unknown[]): DatasetSlice => toDatasetSlice({ status: 'ready', rows }, noop);
-const NOW = new Date('2026-11-17T03:00:00Z');
-const hero = (banjar: DatasetSlice, dinamika: DatasetSlice) => render(<KependudukanHero banjar={banjar} dinamika={dinamika} now={NOW} />);
+const hero = (banjar: DatasetSlice, dinamika: DatasetSlice) => render(<KependudukanHero banjar={banjar} dinamika={dinamika} />);
 
 describe('KependudukanHero', () => {
   it('section #ringkasan berjudul (sr-only) dengan 4 kartu bertahun', () => {

@@ -4,6 +4,7 @@
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup (hover/klik diverifikasi manual).
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { AntiKorupsiGroups } from '@/app/(public)/_com/main-page/desaantikorupsi/AntiKorupsiGroups';
 import {
   groupByKategori,
@@ -67,6 +68,6 @@ describe('AntiKorupsiGroups — dengan itemHref & kategoriHref', () => {
 
   it('section tetap berlabel nama kategori (id pindah ke span di dalam tautan)', () => {
     expect(html).toContain('aria-labelledby="antikorupsi-kategori-k1"');
-    expect(html).toContain('<span id="antikorupsi-kategori-k1">Penguatan tata laksana</span>');
+    expect(html).toContain(`<span id="antikorupsi-kategori-k1"><span class="${r.title}">Penguatan tata laksana</span></span>`);
   });
 });

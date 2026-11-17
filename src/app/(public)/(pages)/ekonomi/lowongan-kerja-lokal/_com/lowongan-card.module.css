@@ -54,11 +54,11 @@
   overflow-wrap: anywhere;
 }
 
-/* Tautan judul diperluas ke seluruh kartu; -1px agar cincin fokus ikut menutup garis kartu. */
+/* Tautan judul diperluas ke seluruh kartu (hover kartu = hover tautan → sapuan judul, _com/link-reveal);
+   -1px agar cincin fokus ikut menutup garis kartu. */
 .link {
   color: inherit;
   text-decoration: none;
-  text-underline-offset: 3px;
 }
 
 .link::after {
@@ -177,10 +177,6 @@
   .card:hover {
     border-color: #86868b;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-  }
-
-  .card:hover .link {
-    text-decoration: underline;
   }
 
   .card:hover .cta {

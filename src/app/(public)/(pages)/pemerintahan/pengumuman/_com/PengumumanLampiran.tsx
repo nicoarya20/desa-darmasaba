@@ -17,7 +17,7 @@ type Props = {
 export function PengumumanGambarUtama({ image, judul }: { image?: PengumumanFile | null; judul: string }) {
   if (!image?.link) return null;
   return (
-    <Anchor href={image.link} target="_blank" rel="noopener noreferrer" aria-label="Lihat gambar ukuran penuh" data-pengumuman-gambar-utama>
+    <Anchor href={image.link} target="_blank" rel="noopener noreferrer" underline="never" aria-label="Lihat gambar ukuran penuh" data-pengumuman-gambar-utama>
       <Image src={image.link} alt={judul} radius="md" fit="contain" mah={{ base: 420, md: 640 }} w="100%" loading="lazy" />
     </Anchor>
   );

@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Collapse } from '@mantine/core';
 import { IconMinus, IconPlus } from '@tabler/icons-react';
 import { useId, useState, type ReactNode } from 'react';
@@ -79,6 +80,7 @@ export function SaringCheckList({ options, selected, onToggle, collapsible = fal
   const visible = limited
     ? options.filter((o, i) => i < TOKO_FACET_VISIBLE || selected.includes(o.id))
     : options;
+  const moreLabel = showAll ? T.lebihSedikit : T.lihatSemua(options.length);
   return (
     <>
       <ul className={s.options}>
@@ -94,8 +96,10 @@ export function SaringCheckList({ options, selected, onToggle, collapsible = fal
         ))}
       </ul>
       {canCollapse ? (
-        <button type="button" className={s.more} onClick={() => setShowAll((v) => !v)}>
-          {showAll ? T.lebihSedikit : T.lihatSemua(options.length)}
+        <button type="button" className={`${s.more} ${r.trigger}`} onClick={() => setShowAll((v) => !v)}>
+          <span className={r.cta} data-text={moreLabel}>
+            {moreLabel}
+          </span>
         </button>
       ) : null}
     </>

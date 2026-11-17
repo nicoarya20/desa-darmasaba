@@ -6,24 +6,24 @@ import { IconArrowsExchange } from '@tabler/icons-react';
 import type { DatasetSlice } from '../data/kependudukan-data.types';
 import { DinamikaLegend, DinamikaNeraca } from './DinamikaNeraca';
 import { DinamikaRiwayat } from './DinamikaRiwayat';
-import { isTahunBerjalan, parseDinamikaRows, ringkasDinamika } from './dinamika.logic';
+import { parseDinamikaRows, ringkasDinamika } from './dinamika.logic';
 import s from './dinamika.module.css';
 import { DINAMIKA_TEXT as T } from './dinamika.text';
 
 /**
  * Section `#dinamika` Dashboard Kependudukan: neraca tahun terbaru (bertambah = lahir + masuk vs berkurang = mati + keluar)
- * + perubahan bersih, lalu riwayat semua tahun di balik disclosure. Galat ≠ kosong. `now` hanya untuk test.
+ * + perubahan bersih, lalu riwayat semua tahun di balik disclosure. Galat ≠ kosong.
  */
-export function DinamikaSection({ data, now = new Date() }: { data: DatasetSlice; now?: Date }) {
+export function DinamikaSection({ data }: { data: DatasetSlice }) {
   return (
     <section id={T.anchor} aria-labelledby={T.titleId} className={s.section}>
-      <DinamikaBody data={data} now={now} />
+      <DinamikaBody data={data} />
     </section>
   );
 }
 
 /** Isi section; judul `h2#dinamika-title` ada di semua keadaan (muat, galat, kosong, siap). */
-function DinamikaBody({ data, now }: { data: DatasetSlice; now: Date }) {
+function DinamikaBody({ data }: { data: DatasetSlice }) {
   if (data.status === 'loading') {
     return <StatBarsSkeleton title={T.title} titleId={T.titleId} label={T.loading} rows={2} />;
   }
@@ -36,7 +36,6 @@ function DinamikaBody({ data, now }: { data: DatasetSlice; now: Date }) {
   }
   const riwayat = parseDinamikaRows(data.allRows);
   const r = ringkasDinamika(latest);
-  const meta = isTahunBerjalan(latest.tahun, now) ? `${T.dataTahun(latest.tahun)} · ${T.berjalan}` : T.dataTahun(latest.tahun);
   return (
     <div className={sb.panel} style={STAT_BARS_VARS}>
       <div className={sb.head}>
@@ -45,7 +44,7 @@ function DinamikaBody({ data, now }: { data: DatasetSlice; now: Date }) {
             {T.title}
           </h2>
           <p className={sb.caption}>{T.caption}</p>
-          <p className={s.meta}>{meta}</p>
+          <p className={s.meta}>{T.dataTahun(latest.tahun)}</p>
           <DinamikaLegend />
         </div>
         <p className={sb.total}>

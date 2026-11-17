@@ -1,5 +1,6 @@
 'use client';
 import f from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import frame from '../../../_com/page-frame/page-frame.module.css';
@@ -27,9 +28,11 @@ export function BukuDetail({ id }: { id: string }) {
       aria-busy={state.status === 'loading' || undefined}
     >
       <div className={frame.inner}>
-        <Link href={perpusListHref(SEMUA_SLUG)} className={f.back}>
-          <IconChevronLeft size={16} stroke={2} aria-hidden="true" />
-          {T.kembali}
+        <Link href={perpusListHref(SEMUA_SLUG)} className={`${f.back} ${r.trigger}`}>
+          <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden="true" />
+          <span className={r.cta} data-text={T.kembali}>
+            {T.kembali}
+          </span>
         </Link>
         {state.status === 'ready' ? (
           <BukuDetailBody buku={state.data} />

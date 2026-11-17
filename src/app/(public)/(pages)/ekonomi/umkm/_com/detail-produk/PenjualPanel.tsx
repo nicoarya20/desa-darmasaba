@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconMapPin } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { inisialNama } from '../detail-umkm/detail-umkm.logic';
@@ -26,8 +27,8 @@ export function PenjualPanel({ penjual, alamat }: Props) {
           {inisialNama(penjual.nama)}
         </span>
         <div className={s.sellerBody}>
-          <Link href={tokoHref(penjual.id)} className={s.sellerName}>
-            {penjual.nama}
+          <Link href={tokoHref(penjual.id)} className={`${s.sellerName} ${r.trigger}`}>
+            <span className={r.title}>{penjual.nama}</span>
           </Link>
           {penjual.pemilik && <p className={s.sellerMeta}>{T.pemilik(penjual.pemilik)}</p>}
           {alamat && (
@@ -38,8 +39,10 @@ export function PenjualPanel({ penjual, alamat }: Props) {
           )}
         </div>
       </div>
-      <Link href={katalogHref({ ...emptyParams('produk'), toko: [penjual.id] })} className={s.sellerLink}>
-        {T.lihatProdukToko}
+      <Link href={katalogHref({ ...emptyParams('produk'), toko: [penjual.id] })} className={`${s.sellerLink} ${r.trigger}`}>
+        <span className={r.cta} data-text={T.lihatProdukToko}>
+          {T.lihatProdukToko}
+        </span>
       </Link>
     </section>
   );

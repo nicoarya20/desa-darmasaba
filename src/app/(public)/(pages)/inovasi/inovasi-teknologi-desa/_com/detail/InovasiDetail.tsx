@@ -3,6 +3,7 @@ import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackBut
 import { KabarDetailPlaceholder } from '@/app/(public)/_com/kabar-list/KabarDetailPlaceholder';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import { useKabarDetail } from '@/app/(public)/_com/kabar-list/use-kabar-detail';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { inovasiKategoriLabel, isInovasiKategori } from '@/lib/inovasi-teknologi/kategori';
@@ -27,9 +28,11 @@ export function InovasiDetail({ id }: { id: string }) {
         {state.status === 'notfound' || state.status === 'error' ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
-            <Link href={inovasiListHref()} className={d.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={inovasiListHref()} className={`${d.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}
@@ -48,8 +51,10 @@ export function InovasiDetailBody({ data }: { data: InovasiApiItem }) {
       <header className={d.head}>
         <p className={d.meta}>
           {label && isInovasiKategori(data.kategori) ? (
-            <Link href={inovasiListHref({ kategori: data.kategori })} className={d.kategori}>
-              {label}
+            <Link href={inovasiListHref({ kategori: data.kategori })} className={`${d.kategori} ${r.trigger}`}>
+              <span className={r.cta} data-text={label}>
+                {label}
+              </span>
             </Link>
           ) : null}
           <time dateTime={dibuat.toISOString()}>{formatTanggalTerbit(dibuat)}</time>

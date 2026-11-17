@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { InovasiFormCard } from '../../_com/InovasiFormCard';
 import { AJUKAN_IDE_TEXT as T } from './ajukan-ide.text';
 import s from './ajukan-ide.module.css';
@@ -7,8 +8,13 @@ export function IdeThanks({ onAgain }: { onAgain: () => void }) {
   return (
     <InovasiFormCard title={T.thanksTitle} lead={T.thanksText} focusTitle>
       <div>
-        <button type="button" className={s.again} onClick={onAgain}>
-          {T.again} <span aria-hidden>›</span>
+        <button type="button" className={`${s.again} ${r.trigger}`} onClick={onAgain}>
+          <span className={r.cta} data-text={T.again}>
+            {T.again}
+          </span>
+          <span className={r.chevron} aria-hidden>
+            ›
+          </span>
         </button>
       </div>
     </InovasiFormCard>

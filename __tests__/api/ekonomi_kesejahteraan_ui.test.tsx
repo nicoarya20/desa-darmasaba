@@ -18,8 +18,10 @@ import {
   toKesejahteraanItem,
 } from '@/app/(public)/(pages)/ekonomi/kesejahteraan-masyarakat/_com/kesejahteraan.logic';
 import s from '@/app/(public)/(pages)/ekonomi/kesejahteraan-masyarakat/_com/kesejahteraan.module.css';
+import sd from '@/app/(public)/(pages)/ekonomi/kesejahteraan-masyarakat/_com/detail/kesejahteraan-detail.module.css';
 import terkait from '@/app/(public)/(pages)/ekonomi/_com/terkait/terkait.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -42,8 +44,9 @@ const identity = (html: string) => html;
 describe('KesejahteraanBody', () => {
   it('sorotan tanpa foto = ubin teks saja (tanpa gambar/placeholder), seluruh ubin tautan detail', () => {
     const html = body(ready([api(1), api(2)]));
-    expect(html).toContain(`<a href="/ekonomi/kesejahteraan-masyarakat/kesmas-1" class="${s.plain}">`);
-    expect(html).toContain(`<h2 class="${kabar.featuredTitle}">Program 1</h2>`);
+    expect(html).toContain(`<a href="/ekonomi/kesejahteraan-masyarakat/kesmas-1" class="${s.plain} ${r.trigger}">`);
+    expect(html).toContain(`<span class="${r.cta}" data-text="Baca selengkapnya">Baca selengkapnya</span>`);
+    expect(html).toContain(`<h2 class="${kabar.featuredTitle}"><span class="${r.title}">Program 1</span></h2>`);
     expect(html).toContain(`<span class="${s.label}">Terbaru</span>`);
     expect(html).toContain('Ringkasan &amp; bantuan 1');
     expect(html).not.toContain('placeholderx');
@@ -52,15 +55,18 @@ describe('KesejahteraanBody', () => {
 
   it('sorotan berfoto = kartu utama Kabar', () => {
     const html = body(ready([api(1, { image: { link: '/api/img/a.webp' } }), api(2)]));
-    expect(html).toContain(`class="${kabar.featured}"`);
+    expect(html).toContain(`class="${kabar.featured} ${r.trigger}"`);
+    expect(html).toContain(`<h2 class="${kabar.featuredTitle}"><span class="${r.title}">Program 1</span></h2>`);
+    expect(html).toContain(`<span class="${s.more}" aria-hidden="true"><span class="${r.cta}" data-text="Baca selengkapnya">`);
+    expect(html).toMatch(new RegExp(`<svg[^>]*class="[^"]*\\b${r.chevron}\\b`));
     expect(html).toContain('src="/api/img/a.webp"');
   });
 
   it('kartu Kabar tanpa tanggal; sorotan tidak menggandakan kartu pertama', () => {
     const html = body(ready([api(1), api(2), api(3)]));
     expect(html).toContain(`class="${kabar.rail} ${kabar.railGrid}"`);
-    expect(html).toContain(`<h3 class="${kabar.cardTitle}">Program 2</h3>`);
-    expect(html).not.toContain(`<h3 class="${kabar.cardTitle}">Program 1</h3>`);
+    expect(html).toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 2</span></h3>`);
+    expect(html).not.toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Program 1</span></h3>`);
     expect(html.match(/>Program 1</g)).toHaveLength(1);
     expect(html).toContain('>Program lainnya</h2>');
     expect(html).toContain(kabar.photoFallback);
@@ -71,8 +77,8 @@ describe('KesejahteraanBody', () => {
     const html = body(ready([api(1), api(2, { judul: 'Bedah Rumah' })]), 'bedah');
     expect(html).not.toContain(kabar.featuredTitle);
     expect(html).toContain('>Hasil pencarian</h2>');
-    expect(html).toContain('>Bedah Rumah</h3>');
-    expect(html).not.toContain('>Program 1</h3>');
+    expect(html).toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Bedah Rumah</span></h3>`);
+    expect(html).not.toContain('>Program 1</span></h3>');
   });
 
   it('paginasi hanya bila > 1 halaman', () => {
@@ -104,9 +110,9 @@ describe('ProgramKemiskinanLink', () => {
   it('ubin tautan silang ke /ekonomi/program-kemiskinan', () => {
     const html = render(<ProgramKemiskinanLink />);
     expect(html).toContain('aria-label="Halaman terkait"');
-    expect(html).toContain(`<a href="/ekonomi/program-kemiskinan" class="${terkait.terkait}">`);
+    expect(html).toContain(`<a href="/ekonomi/program-kemiskinan" class="${terkait.terkait} ${r.trigger}">`);
     expect(html).toContain('>Program Pengentasan Kemiskinan</h2>');
-    expect(html).toContain('>Lihat program<');
+    expect(html).toContain(`<span class="${r.cta}" data-text="Lihat program">Lihat program</span>`);
   });
 });
 
@@ -115,7 +121,9 @@ describe('KesejahteraanDetailBody', () => {
 
   it('kategori = tautan daftar, h1, pengantar, isi; tanpa tanggal', () => {
     const html = render(<KesejahteraanDetailBody detail={detail()} />);
-    expect(html).toContain(`<a href="/ekonomi/kesejahteraan-masyarakat" class="${d.kategori}">Kesejahteraan Masyarakat</a>`);
+    expect(html).toContain(
+      `<a href="/ekonomi/kesejahteraan-masyarakat" class="${d.kategori} ${r.trigger}"><span class="${r.cta}" data-text="Kesejahteraan Masyarakat">Kesejahteraan Masyarakat</span></a>`,
+    );
     expect(html).toContain(`<h1 class="${d.title}">Program 1</h1>`);
     expect(html).toContain('<p>Ringkasan &amp; bantuan 1</p>');
     expect(html).toContain(`<div class="${d.content}"><p>Isi 1</p></div>`);
@@ -130,7 +138,9 @@ describe('KesejahteraanDetailBody', () => {
 
     const other = render(<KesejahteraanDetailBody detail={detail({ linkVideo: 'https://example.com/v.mp4' })} />);
     expect(other).not.toContain('<iframe');
-    expect(other).toContain('href="https://example.com/v.mp4" target="_blank" rel="noopener noreferrer"');
+    expect(other).toContain(
+      `href="https://example.com/v.mp4" target="_blank" rel="noopener noreferrer" class="${sd.videoLink} ${r.trigger}"><span class="${r.cta}" data-text="Buka video di tab baru">Buka video di tab baru</span><svg`,
+    );
   });
 
   it('foto & galeri dirender bila ada; tanpa keduanya bagian tidak dirender', () => {

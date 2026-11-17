@@ -5,7 +5,6 @@ export const DINAMIKA_TEXT = {
   title: 'Dinamika Penduduk',
   caption: 'Perubahan jumlah warga karena kelahiran, kematian, dan perpindahan.',
   dataTahun: (tahun: number) => `Data ${tahun}`,
-  berjalan: 'tahun berjalan, angka masih bisa bertambah',
   bersihLabel: 'Perubahan bersih',
   orang: 'orang',
   bertambah: 'Bertambah',

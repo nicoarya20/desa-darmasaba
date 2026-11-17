@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.1.299] - 2026-11-17
+### Added
+- **Submenu baru Inovasi › Program Inovasi** (`/inovasi/program-inovasi`): daftar semua program inovasi desa berupa ubin logo, dengan data yang sama seperti rel "Program Inovasi Desa" di beranda. Submenu ini bisa disembunyikan atau ditampilkan dari Pengaturan › Visibilitas Menu.
+- **Halaman detail tiap program** (`/inovasi/program-inovasi/{id}`) yang bisa ditemukan mesin pencari dan dibagikan: judul dan cuplikan program serta logonya tampil saat tautan dibagikan. Judul bagian seperti Tujuan, Sasaran, dan Ruang Lingkup tampil sebagai judul. Program yang dinonaktifkan admin menampilkan halaman tidak ditemukan.
+- **Urutan tampil program inovasi**: form tambah/edit Program Inovasi di admin punya isian "Urutan tampil (opsional)". Angka 1 tampil paling depan di beranda dan halaman Program Inovasi; yang dikosongkan tetap urut abjad setelah yang bernomor. Daftar admin menampilkan kolom Urutan.
+
+### Changed
+- Overlay detail program di beranda kini punya tautan "Lihat halaman lengkap".
+- Tautan lama `/program-inovasi/{id}` kini membuka halaman detail baru, bukan overlay beranda.
+
+### Fixed
+- Jumlah halaman di daftar Program Inovasi admin kini benar saat mencari (sebelumnya dihitung dari semua program).
+
+## [0.1.298] - 2026-11-17
+### Changed
+- **Efek hover tautan kini berupa sapuan warna, bukan garis bawah**, di seluruh situs publik kecuali footer. Judul kartu dan baris (berita, pengumuman, produk UMKM, lowongan, dan lainnya) berubah warna dari kiri ke kanan menjadi biru `#0A4E78`. Tautan aksi seperti "Semua pengumuman ›" dan "Lihat layanan surat ›" menyapu ke biru `#1C6EA4`, menebal, dan chevron-nya bergeser sedikit ke kanan tanpa menggeser teks di sekitarnya.
+- Tautan kembali "‹ …" di halaman detail memakai sapuan yang sama dengan chevron bergeser ke kiri; breadcrumb program Anti Korupsi dan tautan "Petunjuk arah" di peta Bank Sampah ikut berubah.
+- Saat menavigasi dengan keyboard (Tab), sapuan juga berjalan dan garis fokus tetap terlihat. Pengguna yang mengaktifkan "kurangi gerak" melihat warna berubah langsung tanpa animasi; mode kontras tinggi tetap memakai garis bawah.
+- Tautan di dalam isi berita dan jawaban Jenna tetap bergaris bawah supaya mudah dibedakan dari teks biasa.
+
+## [0.1.297] - 2026-11-17
+### Changed
+- Kartu "Pertumbuhan bersih" di Dashboard Kependudukan cukup menulis tahun datanya, tanpa keterangan "tahun berjalan" (seragam dengan bagian Dinamika Penduduk).
+
+## [0.1.296] - 2026-11-17
+### Added
+- Cari global kini menemukan bagian Dashboard Kependudukan: ketik "banjar", "umur", "agama", "dinamika", atau "kelahiran" untuk langsung membuka bagian yang sesuai. Keempat bagian juga tampil di Peta Informasi.
+
+### Changed
+- Bagian Dinamika Penduduk cukup menulis tahun datanya ("Data 2026"), tanpa keterangan "tahun berjalan".
+
+### Fixed
+- Halaman tambahan di cari global dan Peta Informasi yang menaut ke bagian halaman (alamat ber-`#`) kini ikut tersembunyi bila halamannya disembunyikan admin.
+
 ## [0.1.295] - 2026-11-17
 ### Added
 - **Footer kini menampilkan kontak resmi kantor desa**: Kantor Perbekel Desa Darmasaba, Jl. Raya Darmasaba – Lukluk (80352), telepon (0361) 8441518 (bisa diklik untuk menelepon), dan email ddarmasaba@gmail.com (bisa diklik untuk mengirim email), beserta nama pengelola website. Nama tim redaksi akan ditambahkan setelah SK Tim Pengelola Website diterima dari desa.

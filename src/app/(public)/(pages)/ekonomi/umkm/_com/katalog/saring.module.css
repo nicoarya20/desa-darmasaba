@@ -280,13 +280,6 @@
   outline-offset: 2px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .more:hover,
-  .drawerClear:hover {
-    text-decoration: underline;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .skeletonRow {
     animation: none;

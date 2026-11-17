@@ -108,6 +108,17 @@ describe('Peta Informasi pada config nyata (navbar + search-extra-pages)', () =>
     expect(desa.indexOf('/pemerintahan/profil')).toBeLessThan(desa.indexOf('/pemerintahan/galery/video'));
   });
 
+  it('"Kependudukan" navbar (Dashboard) digabung dengan empat section dashboard dari halaman tambahan', () => {
+    expect(groups.filter((g) => g.name === 'Kependudukan')).toHaveLength(1);
+    expect(groups.find((g) => g.name === 'Kependudukan')!.pages.map((p) => [p.label, p.href])).toEqual([
+      ['Dashboard Kependudukan', '/kependudukan/dashboard'],
+      ['Penduduk per Banjar', '/kependudukan/dashboard#banjar'],
+      ['Kelompok Umur (Usia)', '/kependudukan/dashboard#umur'],
+      ['Agama Penduduk', '/kependudukan/dashboard#agama'],
+      ['Dinamika Penduduk (Kelahiran, Kematian, Pindah)', '/kependudukan/dashboard#dinamika'],
+    ]);
+  });
+
   it('saring "apbdes" hanya menampilkan APBDes di grup Transparansi', () => {
     expect(petaInformasiGroups('apbdes')).toEqual([
       { name: 'Transparansi', pages: [expect.objectContaining({ label: 'APBDes', href: '/apbdes' })] },
@@ -138,7 +149,7 @@ describe('route & pintu masuk Peta Informasi', () => {
     expect(card).toMatch(/<Title[^>]*order=\{2\}/);
     expect(card).toMatch(/component="ul"[\s\S]*component="li"/);
     expect(card).toMatch(/import \{ Link \} from 'next-view-transitions'/);
-    expect(card).toMatch(/component=\{Link\} href=\{page\.href\}/);
+    expect(card).toMatch(/<Anchor\s+component=\{Link\}\s+href=\{page\.href\}/);
   });
 
   it('search-extra-pages memuat entri Peta Informasi yang bisa dicari', () => {
@@ -157,8 +168,10 @@ describe('route & pintu masuk Peta Informasi', () => {
   it('dropdown pencarian: keadaan "Tidak ada hasil" punya tautan "Buka Peta Informasi"', () => {
     const src = read(GLOBAL_SEARCH);
     const empty = src.slice(src.indexOf('Tidak ada hasil'));
+    // Label dibungkus span sapuan warna (`r.cta`, pengganti garis bawah hover); teksnya konstanta di file yang sama.
     expect(empty.slice(0, empty.indexOf('</Stack>'))).toMatch(
-      /<Anchor href=\{PETA_INFORMASI_HREF\}[^\n]*handleSelectMenu\(e, PETA_INFORMASI_HREF\)\}>\s*Buka Peta Informasi\s*<\/Anchor>/,
+      /<Anchor\s+href=\{PETA_INFORMASI_HREF\}[\s\S]*?underline="never"[\s\S]*?onClick=\{\(e\) => handleSelectMenu\(e, PETA_INFORMASI_HREF\)\}\s*>\s*<span className=\{r\.cta\} data-text=\{PETA_INFORMASI_LABEL\}>\s*\{PETA_INFORMASI_LABEL\}\s*<\/span>\s*<\/Anchor>/,
     );
+    expect(src).toContain("const PETA_INFORMASI_LABEL = 'Buka Peta Informasi';");
   });
 });

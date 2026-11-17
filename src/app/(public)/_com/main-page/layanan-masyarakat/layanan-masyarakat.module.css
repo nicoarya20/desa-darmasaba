@@ -98,15 +98,11 @@
   color: var(--brand);
 }
 
+/* Hover label aksi = sapuan warna + tebal dari _com/link-reveal (bukan garis bawah). */
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  }
-
-  .card:hover .cardCta {
-    color: var(--brand-hover);
-    text-decoration: underline;
   }
 }
 
@@ -219,8 +215,9 @@
     color: #aeaeb2;
   }
 
-  /* Chevron menggantikan label aksi; nama tautan tetap judul + deskripsi. */
-  .ctaLabel {
+  /* Chevron menggantikan label aksi; nama tautan tetap judul + deskripsi.
+     Selektor 2 kelas supaya menang atas `display` label dari link-reveal.module.css apa pun urutan muatnya. */
+  .cardCta .ctaLabel {
     display: none;
   }
 }
