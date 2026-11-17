@@ -357,6 +357,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Seed lokal DataBanjar (`prisma/data/kependudukan/data-banjar/data-banjar.json`): nama + angka rekaan (4.200) ≠ stg (10.254, 12 banjar).
   - Form admin Distribusi Agama: opsi `KRISTEN` umum berdampingan dengan Protestan/Katolik.
   - Admin Data Banjar `page.tsx:291`: Pagination `load(newPage, 10, search)` membuang filter tahun.
+  - Navbar Kependudukan kini satu butir (revisi user 2026-11-17): override `MenuVisibility` untuk 4 href lama (`/kependudukan/{data-per-banjar,dinamika-penduduk,distribusi-agama,distribusi-umur}`) kini diabaikan `toOverrides`, dan tidak bisa dihapus lewat admin karena `menu_visibility/update.ts:14` menolak `menuKey` tak dikenal. stg: 0 baris (dicek 2026-11-17); prod belum dicek. Usul: cek prod, hapus baris yatim lewat migrasi data/skrip bila ada.
 
 ## Jenna publik (tindak lanjut)
 
