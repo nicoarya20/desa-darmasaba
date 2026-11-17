@@ -10,6 +10,7 @@ import searchMenu, {
   previewMenuResults,
 } from '@/app/(public)/_com/searchMenu';
 import { visibleMenu } from '@/app/(public)/_com/navbar-menu.logic';
+import { kependudukanSectionHref } from '@/app/(public)/(pages)/kependudukan/_com/frame/kependudukan.meta';
 import type { MenuItem } from '../../types/menu-item';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
@@ -216,6 +217,36 @@ describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
 
   it('halaman tambahan tidak ikut bila menus dioper sendiri (hanya navbar)', () => {
     expect(searchMenu('apbdes', navbarListMenu)).toEqual([]);
+  });
+});
+
+describe('section Dashboard Kependudukan di pencarian (grup tambahan x6)', () => {
+  it('href literal di src/con sama dengan kependudukanSectionHref (src/con tak boleh impor folder halaman)', () => {
+    const group = searchExtraPages.find((g) => g.id === 'x6')!;
+    expect(group.name).toBe('Kependudukan');
+    expect((group.children ?? []).map((c) => c.href)).toEqual(
+      (['banjar', 'umur', 'agama', 'dinamika'] as const).map((key) => kependudukanSectionHref(key)),
+    );
+  });
+
+  it.each([
+    ['banjar', 'Penduduk per Banjar', '/kependudukan/dashboard#banjar'],
+    ['umur', 'Kelompok Umur (Usia)', '/kependudukan/dashboard#umur'],
+    ['agama', 'Agama Penduduk', '/kependudukan/dashboard#agama'],
+    ['dinamika', 'Dinamika Penduduk (Kelahiran, Kematian, Pindah)', '/kependudukan/dashboard#dinamika'],
+    ['kelahiran', 'Dinamika Penduduk (Kelahiran, Kematian, Pindah)', '/kependudukan/dashboard#dinamika'],
+  ])('default searchMenu("%s") → hasil pertama %s', (q, label, href) => {
+    expect(searchMenu(q)[0]).toMatchObject({ label, parent: 'Kependudukan', href });
+  });
+
+  it('"kependudukan" menemukan Dashboard (navbar) lalu keempat section', () => {
+    expect(searchMenu('kependudukan').map((r) => r.href)).toEqual([
+      '/kependudukan/dashboard',
+      '/kependudukan/dashboard#banjar',
+      '/kependudukan/dashboard#umur',
+      '/kependudukan/dashboard#agama',
+      '/kependudukan/dashboard#dinamika',
+    ]);
   });
 });
 

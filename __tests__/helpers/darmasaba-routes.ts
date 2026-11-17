@@ -12,9 +12,9 @@ export function publicRoutes(): string[][] {
   );
 }
 
-/** Cocokkan URL ke route nyata. Segmen dinamik `[x]` match apa saja, kecuali placeholder `[sub]`. */
+/** Cocokkan URL (tanpa `?query`/`#hash`) ke route nyata. Segmen dinamik `[x]` match apa saja, kecuali placeholder `[sub]`. */
 export function matchesRealPage(url: string, routes: string[][]): boolean {
-  const segs = url.split('?')[0].split('/').filter(Boolean);
+  const segs = url.split(/[?#]/)[0].split('/').filter(Boolean);
   return routes.some(
     (route) =>
       route.length === segs.length &&

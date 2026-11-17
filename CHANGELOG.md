@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.296] - 2026-11-17
+### Added
+- Cari global kini menemukan bagian Dashboard Kependudukan: ketik "banjar", "umur", "agama", "dinamika", atau "kelahiran" untuk langsung membuka bagian yang sesuai. Keempat bagian juga tampil di Peta Informasi.
+
+### Changed
+- Bagian Dinamika Penduduk cukup menulis tahun datanya ("Data 2026"), tanpa keterangan "tahun berjalan".
+
+### Fixed
+- Halaman tambahan di cari global dan Peta Informasi yang menaut ke bagian halaman (alamat ber-`#`) kini ikut tersembunyi bila halamannya disembunyikan admin.
+
 ## [0.1.295] - 2026-11-17
 ### Added
 - **Footer kini menampilkan kontak resmi kantor desa**: Kantor Perbekel Desa Darmasaba, Jl. Raya Darmasaba – Lukluk (80352), telepon (0361) 8441518 (bisa diklik untuk menelepon), dan email ddarmasaba@gmail.com (bisa diklik untuk mengirim email), beserta nama pengelola website. Nama tim redaksi akan ditambahkan setelah SK Tim Pengelola Website diterima dari desa.
