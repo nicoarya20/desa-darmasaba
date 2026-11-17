@@ -225,21 +225,22 @@ describe('Detail posyandu', () => {
 });
 
 describe('Kerangka halaman', () => {
-  it('judul, 4 tab, dan ringkasan memuat sebagai tab bawaan', () => {
+  it('judul + tab Ringkasan & Data Posyandu; tab Balita/Ibu Hamil dan kartu statistik disembunyikan', () => {
     nav.tab = null;
     const html = render(<PosyanduPage />);
     const out = text(html);
     expect(html).toContain('<h1');
     expect(out).toContain(T.pageTitle);
-    for (const label of [T.tabRingkasan, T.tabPosyanduShort, T.tabBalita, T.tabIbuHamil]) expect(out).toContain(label);
-    expect(html).toContain(`aria-label="${T.statsLoading}"`);
+    for (const label of [T.tabRingkasan, T.tabPosyanduShort]) expect(out).toContain(label);
+    for (const label of [T.tabBalita, T.tabIbuHamil]) expect(out).not.toContain(label);
+    expect(html).not.toContain(`aria-label="${T.statsLoading}"`);
   });
 
-  it('?tab=balita membuka panel balita per banjar (memuat)', () => {
+  it('?tab=balita (tersembunyi) jatuh ke Ringkasan, panel balita tidak dirender', () => {
     nav.tab = 'balita';
     const html = render(<PosyanduPage />);
-    expect(text(html)).toContain(T.balitaTitle);
-    expect(html).toContain(`aria-label="${T.banjarLoading}"`);
+    expect(text(html)).not.toContain(T.balitaTitle);
+    expect(html).toContain(`aria-label="${T.profilLoading}"`);
   });
 
   it('?tab=posyandu membuka direktori', () => {

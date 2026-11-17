@@ -12,6 +12,19 @@ export type PosyanduTab = (typeof POSYANDU_TABS)[number];
 export const DEFAULT_TAB: PosyanduTab = "ringkasan";
 
 /**
+ * Tab yang DISEMBUNYIKAN sementara (2026-11-17, persiapan Lomba Website Desa 2027): data balita & ibu hamil
+ * di prod hanya data contoh dan desa belum memberi rekap resmi Puskesmas (juknis: tanpa data fiktif).
+ * Kosongkan array + set `RINGKASAN_STATISTIK_TAMPIL` true setelah rekap resmi masuk.
+ */
+export const POSYANDU_TABS_TERSEMBUNYI: readonly PosyanduTab[] = ["balita", "ibu-hamil"];
+
+/** Kartu angka gabungan (ibu hamil, balita, stunting, imunisasi, gizi, pemeriksaan) di tab Ringkasan; lihat catatan di atas. */
+export const RINGKASAN_STATISTIK_TAMPIL = false;
+
+/** Tab yang tampil, sesuai urutan `POSYANDU_TABS`. */
+export const POSYANDU_TABS_TAMPIL: readonly PosyanduTab[] = POSYANDU_TABS.filter((t) => !POSYANDU_TABS_TERSEMBUNYI.includes(t));
+
+/**
  * Ambang privasi persentase: persen banjar dengan balita di bawah ambang tidak ditampilkan, karena
  * persen dari 1-2 anak bisa menunjuk ke anak tertentu. Hitungan (jumlah orang) selalu tampil apa adanya.
  */
