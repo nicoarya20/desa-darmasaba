@@ -39,7 +39,7 @@ const TAHUN = new Date().getFullYear();
 // test-only: isian rekaan
 const body = { banjar: 'Banjar Contoh', tahun: TAHUN, bulan: 3, lakiLaki: 120, perempuan: 130 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Context Elysia tiruan minimal
-const ctx = (o: { params?: object; query?: object; body?: unknown } = {}): any => ({ params: {}, query: {}, set: {}, ...o });
+const ctx = (o: { params?: object; query?: object; body?: unknown; set?: { status?: number } } = {}): any => ({ params: {}, query: {}, set: {}, ...o });
 const asRole = (roleId: string) =>
   requireAuthMock.mockResolvedValue({ authenticated: true, user: { id: `u-${roleId}`, roleId, isActive: true } });
 

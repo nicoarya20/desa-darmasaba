@@ -25,8 +25,13 @@ const LIST_PAGE_SIZE = 10;
 /** Jumlah baris Data Banjar yang diminta untuk saran nama banjar (nama sama per tahun dideduplikasi). */
 const BANJAR_SUGGESTION_LIMIT = 100;
 
-type ApiError = { value?: { message?: string } } | null | undefined;
-const errorMessage = (error: ApiError) => error?.value?.message;
+// `value` bertipe unknown pada rute GET (tipe error Elysia berupa union), jadi pesan dibaca dengan penyempitan tipe.
+type ApiError = { value?: unknown } | null | undefined;
+const errorMessage = (error: ApiError): string | undefined => {
+  const value = error?.value;
+  if (typeof value !== "object" || value === null || !("message" in value)) return undefined;
+  return typeof value.message === "string" ? value.message : undefined;
+};
 
 type ApiBody<T> = { success?: boolean; message?: string; data?: T; totalPages?: number; total?: number } | null;
 /** Bentuk body respons yang longgar: union tipe Eden (sukses/galat) tak bisa dipersempit lewat alias kondisi. */
