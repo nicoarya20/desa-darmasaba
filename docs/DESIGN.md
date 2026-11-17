@@ -794,13 +794,13 @@ Pengganti garis bawah hover di tautan yang bentuknya sudah jelas bisa diklik (ka
   - *Halaman detail* (`kabar-detail`, `layanan-detail`): tautan `.kategori` = `.cta` tanpa chevron, `.emptyLink` "Lihat semua …" = `.cta` + `.chevron`; `span.kategori` yang bukan tautan tidak diberi kelas.
   - *Chevron teks* ("›", "→"): transform tidak berlaku di span inline. Bungkus `<span className={r.chevron} aria-hidden>` lalu jadikan pemicunya `inline-flex; align-items: baseline; gap: 4px`, atau beri span itu kelas lokal `display: inline-block` bila induknya tak boleh berubah tata letak (DAK "Lihat dokumen →").
   - *Ikon yang bukan chevron kanan tidak diberi `.chevron`* (labelnya tetap `.cta`): panah tautan luar (`IconArrowUpRight`/`IconExternalLink`, geser horizontal tak cocok untuk panah diagonal), ikon di kiri label, dan chevron buka-tutup yang sudah ber-`rotate` (`translateX` dari `.chevron` akan menimpanya).
+  - *Tautan kembali "‹ …"* (`detail-umkm` `.back` dan semua pemakainya, Daftar Informasi Publik `[id]` `.detailLink`, detail lembaga `.backLink`): `.trigger` + label `.cta`; chevron KIRI diberi `.chevronBack` yang bergeser 3px ke **kiri** (arah tujuan tautan), ikut fokus dan reduced motion seperti `.chevron`. Chevron teks "‹" → span `.chevronBack` + `display: inline-block`. Bentuk tautan kembali (teks, ikon) belum diseragamkan; hanya efek hovernya.
   - *Label abu kecil di sel sempit* (Kalender "+n lainnya"): `.title` (warna saja, tanpa tebal) supaya lebar sel grid tetap.
 - **Aksesibilitas**: reduced motion → warna langsung tanpa sapuan; `forced-colors: active` → gradasi dibuang, teks warna sistem + garis bawah saat hover/fokus; teks terseleksi fill-nya dikembalikan.
 - **Jangan** dipakai untuk tautan di dalam teks kaya (`.content a`, Jenna markdown): di sana garis bawah permanen tetap (WCAG 1.4.1). Tulis properti tanpa prefiks (Lightning CSS Next 16 yang menambahkan).
 - **Catatan font**: font situs (`San Francisco`, `font.otf`) hanya 1 ketebalan, jadi "tebal" = tebal sintetis (lebar huruf sama, tidak beranimasi). Cadangan lebar tetap dipasang untuk font cadangan sistem.
 - **Garis bawah permanen yang disengaja** (bukan efek hover, jadi bukan pelanggaran aturan tetap): teks kaya/Jenna, dan tautan alamat Google Maps detail Lowongan (`.placeLink`, menebal saat hover; tautan berdiri sendiri di antara teks alamat).
 - **Masih bergaris bawah hover, menunggu keputusan user** (jangan disalin ke tempat lain):
-  - Tautan kembali "‹ …": `lembaga-detail` `.backLink`, Daftar Informasi Publik `[id]` `.backLink`, `detail-umkm` `.back` (menunggu keputusan seragam tautan kembali).
   - `ProgramBreadcrumb` DAK (`Anchor` `lineClamp={1}`): `.cta` inline-flex merusak elipsis, dan `.title` tak terlihat karena warna diamnya sudah `#0A4E78`.
   - Tautan "Petunjuk arah" di popup peta Leaflet Bank Sampah.
 
