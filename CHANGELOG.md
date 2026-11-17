@@ -13,6 +13,7 @@
 
 ### Fixed
 - Peta di form lokasi (CCTV, Bank Sampah, Lembaga Pendidikan) kini terbuka di Desa Darmasaba. Sebelumnya Bank Sampah dan Lembaga Pendidikan terbuka di sekitar Denpasar.
+- Halaman edit CCTV kini menampilkan tampilan memuat sampai data CCTV tersebut selesai dimuat. Sebelumnya form bisa sempat menampilkan data CCTV yang dibuka sebelumnya, dan bila data gagal dimuat, menekan **Simpan** dapat menimpa CCTV ini dengan data CCTV lain. Bila data tidak ditemukan atau gagal dimuat, kini muncul pesan dengan tombol **Coba lagi** dan **Kembali ke daftar CCTV**, tanpa form.
 
 ## [0.1.297] - 2026-11-17
 ### Changed

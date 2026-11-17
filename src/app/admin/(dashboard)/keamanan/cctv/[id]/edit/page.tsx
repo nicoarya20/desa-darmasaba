@@ -1,6 +1,7 @@
 'use client'
 import colors from '@/con/colors';
 import {
+  Alert,
   Box,
   Button,
   Group,
@@ -16,26 +17,34 @@ import {
 import { DateTimePicker } from '@mantine/dates';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import TitikPetaInput from '../../../../_com/konten-bersama/titik-peta.input';
 import { koordinatDariTeks } from '../../../../_com/konten-bersama/titik-peta.logic';
 import { useAlamatTitik } from '../../../../_com/konten-bersama/use-alamat-titik';
 import cctvState from '../../../../_state/keamanan/cctv';
+import { statusMuatEdit } from './edit-cctv.logic';
 
 function EditCctv() {
   const router = useRouter();
   const state = useProxy(cctvState, { sync: true }); // sync: cegah caret jump di controlled input
-  const params = useParams();
+  const id = useParams()?.id as string;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [dimuatUntuk, setDimuatUntuk] = useState<string | null>(null);
   const alamatTitik = useAlamatTitik(() => cctvState.edit.form, state.edit.form.nama);
 
-  if (!loaded) {
-    setLoaded(true);
-    cctvState.edit.load(params?.id as string);
-  }
+  useEffect(() => {
+    setDimuatUntuk(id);
+    void cctvState.edit.load(id);
+  }, [id]);
+
+  const status = statusMuatEdit({
+    dimulai: dimuatUntuk === id,
+    memuat: state.edit.memuat,
+    idTermuat: state.edit.id,
+    idHalaman: id,
+  });
 
   const isFormValid = () => {
     const f = state.edit.form;
@@ -50,11 +59,11 @@ function EditCctv() {
   };
 
   const handleSubmit = async () => {
+    if (status !== 'siap') return;
     try {
       setIsSubmitting(true);
-      cctvState.edit.id = params?.id as string;
       await cctvState.edit.update();
-      router.push(`/admin/keamanan/cctv/${params?.id}`);
+      router.push(`/admin/keamanan/cctv/${id}`);
     } catch (error) {
       console.error('Gagal update CCTV:', error);
       toast.error('Gagal memperbarui CCTV');
@@ -63,10 +72,26 @@ function EditCctv() {
     }
   };
 
-  if (state.edit.loading && !state.edit.form.kode) {
+  if (status === 'memuat') {
     return (
       <Stack py={10}>
         <Skeleton height={500} radius="md" />
+      </Stack>
+    );
+  }
+
+  if (status === 'gagal') {
+    return (
+      <Stack p="md" gap="sm" maw={560}>
+        <Alert color="red">Data CCTV tidak ditemukan atau gagal dimuat.</Alert>
+        <Group>
+          <Button variant="outline" color="gray" radius="md" onClick={() => router.push('/admin/keamanan/cctv')}>
+            Kembali ke daftar CCTV
+          </Button>
+          <Button radius="md" onClick={() => void cctvState.edit.load(id)}>
+            Coba lagi
+          </Button>
+        </Group>
       </Stack>
     );
   }
@@ -115,8 +140,6 @@ function EditCctv() {
           />
 
           <TitikPetaInput
-            // Form tampil sebelum data termuat → pasang ulang saat data masuk agar mode awal ikut titik tersimpan.
-            key={state.edit.id || 'baru'}
             koordinat={koordinat}
             onKoordinatChange={handleMapChange}
             alamat={state.edit.form.lokasi}
