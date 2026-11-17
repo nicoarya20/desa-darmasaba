@@ -1,7 +1,7 @@
 'use client'
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import colors from '@/con/colors';
 import { BarChart as MantineBarChart } from '@mantine/charts';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
 import { Box, Center, ColorSwatch, Flex, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
@@ -86,7 +86,7 @@ function Page() {
   }
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
+    <Stack pos="relative" className={t.tema} bg="var(--c-hero-bg)" py="xl" gap="22">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
@@ -95,7 +95,7 @@ function Page() {
       <Title
         order={1}
         ta="center"
-        c={colors['blue-button']}
+        c="var(--c-brand)"
         fw="bold"
         lh={1.2}
       >
@@ -106,7 +106,7 @@ function Page() {
         <Stack gap="lg">
           {/* Bar Chart Kematian Kelahiran */}
           <Box>
-            <Paper p="xl" bg={colors['white-trans-1']}>
+            <Paper p="xl" bg="var(--kt-glass)">
               <Box pb={30}>
                 <Title order={2} mb="md" ta="center">
                   Data Kematian dan Kelahiran
