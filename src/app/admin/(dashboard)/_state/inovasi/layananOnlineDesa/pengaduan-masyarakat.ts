@@ -84,7 +84,9 @@ const pengaduanMasyarakat = proxy({
     search: "",
     /** Saring daftar per status; null = semua. Dipakai ulang oleh paginasi lewat `load`. */
     status: null as PengaduanStatus | null,
-    load: async (page = 1, limit = 10, search = "", status: PengaduanStatus | null = pengaduanMasyarakat.findMany.status) => {
+    load: async (page = 1, limit = 10, search = "", statusBaru?: PengaduanStatus | null) => {
+      // Tanpa argumen status (mis. paginasi dari halaman lain) saringan terakhir dipertahankan.
+      const status = statusBaru === undefined ? pengaduanMasyarakat.findMany.status : statusBaru;
       pengaduanMasyarakat.findMany.loading = true;
       pengaduanMasyarakat.findMany.page = page;
       pengaduanMasyarakat.findMany.search = search;
