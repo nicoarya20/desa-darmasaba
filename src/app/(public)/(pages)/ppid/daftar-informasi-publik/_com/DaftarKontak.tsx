@@ -1,8 +1,8 @@
-import { IconBrandWhatsapp, IconMail } from '@tabler/icons-react';
+import { IconMail, IconPhone } from '@tabler/icons-react';
 import s from './daftar.module.css';
 import { DAFTAR_TEXT } from './daftar.text';
 
-/** Kontak PPID di bawah daftar: email dan WhatsApp, langsung di atas latar halaman (tanpa kartu). */
+/** Kontak PPID di bawah daftar: email dan telepon kantor desa, langsung di atas latar halaman (tanpa kartu). */
 export function DaftarKontak() {
   return (
     <section className={s.kontak} aria-labelledby="kontak-ppid-title">
@@ -14,9 +14,9 @@ export function DaftarKontak() {
         </span>
       </p>
       <p className={s.kontakRow}>
-        <IconBrandWhatsapp size={18} stroke={1.5} aria-hidden />
+        <IconPhone size={18} stroke={1.5} aria-hidden />
         <span>
-          {DAFTAR_TEXT.kontakWhatsappLabel} <span className={s.kontakValue}>{DAFTAR_TEXT.kontakWhatsapp}</span>
+          {DAFTAR_TEXT.kontakTeleponLabel} <span className={s.kontakValue}>{DAFTAR_TEXT.kontakTelepon}</span>
         </span>
       </p>
     </section>
