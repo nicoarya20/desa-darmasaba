@@ -16,7 +16,7 @@ export default function StrukturPengurusView({ bagan, pengurus, namaPemilik }: P
   return (
     <Stack gap="md" data-testid="struktur-pengurus-view">
       {bagan && (
-        <Anchor href={bagan.link} target="_blank" rel="noopener noreferrer" aria-label="Buka bagan struktur ukuran penuh">
+        <Anchor href={bagan.link} target="_blank" rel="noopener noreferrer" underline="never" aria-label="Buka bagan struktur ukuran penuh">
           <Image src={bagan.link} alt={`Bagan struktur organisasi ${namaPemilik}`} radius="md" fit="contain" mah={420} />
         </Anchor>
       )}

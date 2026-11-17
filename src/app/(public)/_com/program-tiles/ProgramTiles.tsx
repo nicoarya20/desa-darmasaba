@@ -2,6 +2,7 @@ import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconMapper, type IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
+import r from '../link-reveal/link-reveal.module.css';
 import s from './program-tiles.module.css';
 
 /** Satu ubin program: judul, ringkasan (boleh kosong), kunci ikon `IconMapper` (kosong → tanpa ikon), tautan detail. */
@@ -28,17 +29,21 @@ export function ProgramTiles({ items, label, moreLabel }: TilesProps) {
     <ul className={s.tiles} aria-label={label}>
       {items.map((item) => (
         <li key={item.id}>
-          <Link href={item.href} className={s.tile}>
+          <Link href={item.href} className={`${s.tile} ${r.trigger}`}>
             {item.icon ? (
               <span className={s.icon} aria-hidden>
                 <IconMapper name={item.icon as IconKey} size={32} color="currentColor" />
               </span>
             ) : null}
-            <h3 className={s.title}>{item.title}</h3>
+            <h3 className={s.title}>
+              <span className={r.title}>{item.title}</span>
+            </h3>
             {item.summary ? <span className={s.summary}>{item.summary}</span> : null}
             <span className={s.more} aria-hidden>
-              {moreLabel}
-              <IconChevronRight size={16} stroke={2} />
+              <span className={r.cta} data-text={moreLabel}>
+                {moreLabel}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} />
             </span>
           </Link>
         </li>

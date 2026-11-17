@@ -1,5 +1,6 @@
 'use client';
 
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import searchState, { debouncedFetch } from '@/app/api/[[...slugs]]/_lib/search/searchState';
 import { Anchor, Box, Center, Loader, Popover, Stack, Text, TextInput, type TextInputProps } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
@@ -11,6 +12,9 @@ import searchMenu, { previewMenuResults } from './searchMenu';
 import getDetailUrl, { isSearchResultHidden, normalizeSearchType } from './searchUrl';
 import { useMenuVisibility } from './MenuVisibilityContext';
 import { PETA_INFORMASI_HREF } from '../(tambahan)/peta-informasi/_lib/petaInformasi';
+
+/** Label jalan keluar saat pencarian buntu (juga `data-text` sapuan warna). */
+const PETA_INFORMASI_LABEL = 'Buka Peta Informasi';
 
 type SearchResultItem = (typeof searchState.results)[number];
 
@@ -225,8 +229,16 @@ export default function GlobalSearch({ inputProps }: { inputProps?: GlobalSearch
             <Stack align="center" gap={4} py="md">
               <Text fz="sm">Tidak ada hasil</Text>
               {/* Jalan keluar saat buntu: daftar semua halaman website */}
-              <Anchor href={PETA_INFORMASI_HREF} fz="xs" onClick={(e) => handleSelectMenu(e, PETA_INFORMASI_HREF)}>
-                Buka Peta Informasi
+              <Anchor
+                href={PETA_INFORMASI_HREF}
+                fz="xs"
+                underline="never"
+                className={r.trigger}
+                onClick={(e) => handleSelectMenu(e, PETA_INFORMASI_HREF)}
+              >
+                <span className={r.cta} data-text={PETA_INFORMASI_LABEL}>
+                  {PETA_INFORMASI_LABEL}
+                </span>
               </Anchor>
             </Stack>
           )}
