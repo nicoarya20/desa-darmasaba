@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import { parseWaktuBiaya } from "@/lib/pelayanan-waktu-biaya";
 import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import { parseSopFileId } from "../sop-file";
 
 type FormUpdate = Prisma.PelayananSuratKeteranganGetPayload<{
     select: {
@@ -12,6 +13,7 @@ type FormUpdate = Prisma.PelayananSuratKeteranganGetPayload<{
         image2Id: true;
         estimasiWaktu: true;
         biaya: true;
+        sopFileId: true;
     };
 }>;
 export default async function updatePelayananSuratKeterangan(context: Context) {
@@ -37,11 +39,17 @@ export default async function updatePelayananSuratKeterangan(context: Context) {
             return Response.json({ success: false, message: waktuBiaya.message }, { status: 400 });
         }
 
+        const sop = await parseSopFileId(body.sopFileId);
+        if (!sop.ok) {
+            return Response.json({ success: false, message: sop.message }, { status: 400 });
+        }
+
         const existing = await prisma.pelayananSuratKeterangan.findUnique({
             where: { id },
             include: {
                 image: true,
                 image2: true,
+                sopFile: true,
             }
         });
 
@@ -65,6 +73,7 @@ export default async function updatePelayananSuratKeterangan(context: Context) {
                 imageId,
                 image2Id,
                 ...waktuBiaya.data,
+                ...sop.data,
             },
         })
 
@@ -80,6 +89,11 @@ export default async function updatePelayananSuratKeterangan(context: Context) {
             if (oldImage) {
                 await removeStoredFile(oldImage, "PelayananSuratKeterangan");
             }
+        }
+
+        // Berkas SOP lama dibuang hanya bila diganti/dihapus lewat body ini (sopFileId tidak dikirim = tidak diubah).
+        if (existing.sopFile && sop.data.sopFileId !== undefined && existing.sopFileId !== sop.data.sopFileId) {
+            await removeStoredFile(existing.sopFile, "PelayananSuratKeterangan");
         }
 
         return new Response(JSON.stringify({

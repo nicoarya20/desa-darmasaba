@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { SOP_FILE_SELECT } from "../sop-file";
 
 export default async function pelayananTelunjukSaktiDesaFindMany(
   context: Context
@@ -26,6 +27,7 @@ export default async function pelayananTelunjukSaktiDesaFindMany(
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
+        include: { sopFile: { select: SOP_FILE_SELECT } },
       }),
       prisma.pelayananTelunjukSaktiDesa.count({ where }),
     ]);
