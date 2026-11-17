@@ -7,52 +7,54 @@ import {
   Loader,
   Paper,
   Select,
-  Skeleton,
   Stack,
   Text,
   TextInput,
   Title,
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-import { IconArrowBack, IconMapPin } from '@tabler/icons-react';
-import dynamic from 'next/dynamic';
+import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import TitikPetaInput from '../../../_com/konten-bersama/titik-peta.input';
+import { koordinatDariTeks } from '../../../_com/konten-bersama/titik-peta.logic';
 import cctvState from '../../../_state/keamanan/cctv';
-
-// Darmasaba default center
-const DEFAULT_CENTER = { lat: -8.5712, lng: 115.1923 };
-
-const LeafletMap = dynamic(
-  () => import('../../../_com/leafletMapCreate'),
-  { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
-);
 
 function CreateCctv() {
   const router = useRouter();
   const state = useProxy(cctvState, { sync: true }); // sync: cegah caret jump di controlled input
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [markerSet, setMarkerSet] = useState(false);
+  // Naik saat reset → TitikPetaInput dipasang ulang (kolom cari & pilihan ikut kosong).
+  const [resetKe, setResetKe] = useState(0);
+  const koordinat = koordinatDariTeks(state.create.form.latitude, state.create.form.longitude);
 
   const isFormValid = () => {
     const f = state.create.form;
     return f.kode.trim() !== '' && f.nama.trim() !== '' && f.lokasi.trim() !== '';
   };
 
-  const handleMapSelect = (pos: { lat: number; lng: number }) => {
+  const handleKoordinat = (pos: { lat: number; lng: number }) => {
     cctvState.create.form.latitude = String(pos.lat);
     cctvState.create.form.longitude = String(pos.lng);
-    setMarkerSet(true);
+  };
+
+  const hapusKoordinat = () => {
+    cctvState.create.form.latitude = '';
+    cctvState.create.form.longitude = '';
+  };
+
+  const handleReset = () => {
+    cctvState.create.resetForm();
+    setResetKe((n) => n + 1);
   };
 
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
       await cctvState.create.create();
-      cctvState.create.resetForm();
-      setMarkerSet(false);
+      handleReset();
       router.push('/admin/keamanan/cctv');
     } catch (error) {
       console.error('Gagal menambahkan CCTV:', error);
@@ -104,26 +106,13 @@ function CreateCctv() {
             required
           />
 
-          <Box>
-            <Group mb={6} gap={6}>
-              <Text fw="bold" fz="sm">Titik Lokasi di Peta</Text>
-              <Text fz="xs" c="dimmed">(klik pada peta untuk menentukan posisi)</Text>
-            </Group>
-            <Box style={{ height: 300, borderRadius: 8, overflow: 'hidden', border: '1px solid #e0e0e0' }}>
-              <LeafletMap
-                defaultCenter={DEFAULT_CENTER}
-                onSelect={handleMapSelect}
-              />
-            </Box>
-            {markerSet && (
-              <Group mt={6} gap={4}>
-                <IconMapPin size={14} color="green" />
-                <Text fz="xs" c="green">
-                  Posisi dipilih: {Number(state.create.form.latitude).toFixed(6)}, {Number(state.create.form.longitude).toFixed(6)}
-                </Text>
-              </Group>
-            )}
-          </Box>
+          <TitikPetaInput
+            key={resetKe}
+            koordinat={koordinat}
+            onKoordinatChange={handleKoordinat}
+            alamat={state.create.form.lokasi}
+            onKoordinatHapus={hapusKoordinat}
+          />
 
           <Select
             label={<Text fw="bold" fz="sm">Status</Text>}
@@ -149,7 +138,7 @@ function CreateCctv() {
               variant="outline"
               color="gray"
               radius="md"
-              onClick={() => { cctvState.create.resetForm(); setMarkerSet(false); }}
+              onClick={handleReset}
             >
               Reset
             </Button>

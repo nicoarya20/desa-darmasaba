@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.298] - 2026-11-17
+### Added
+- **Titik peta tidak harus diklik manual lagi**. Ini berlaku di form CCTV (tambah dan edit), Bank Sampah, dan Lembaga Pendidikan.
+  - Tombol **"Cari di peta"** mencari koordinat dari alamat yang sudah diisi di form. Satu hasil langsung dipakai; beberapa hasil ditampilkan sebagai pilihan. Data pencarian berasal dari OpenStreetMap.
+  - Kolom **Lintang** dan **Bujur** bisa diketik, ditempel langsung dari Google Maps (klik kanan titik, lalu salin, mis. `-8.571234, 115.192345`), atau diisi dari link Google Maps yang memuat koordinat.
+  - Peta ikut bergeser ke titik baru. Klik peta tetap bisa dipakai untuk merapikan posisi.
+
+### Fixed
+- Peta di form lokasi (CCTV, Bank Sampah, Lembaga Pendidikan) kini terbuka di Desa Darmasaba. Sebelumnya Bank Sampah dan Lembaga Pendidikan terbuka di sekitar Denpasar.
+
 ## [0.1.297] - 2026-11-17
 ### Changed
 - Kartu "Pertumbuhan bersih" di Dashboard Kependudukan cukup menulis tahun datanya, tanpa keterangan "tahun berjalan" (seragam dengan bagian Dinamika Penduduk).

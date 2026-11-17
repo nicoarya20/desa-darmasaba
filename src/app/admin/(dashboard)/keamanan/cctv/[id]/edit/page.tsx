@@ -14,20 +14,14 @@ import {
   Title,
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-import { IconArrowBack, IconMapPin } from '@tabler/icons-react';
-import dynamic from 'next/dynamic';
+import { IconArrowBack } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import TitikPetaInput from '../../../../_com/konten-bersama/titik-peta.input';
+import { koordinatDariTeks } from '../../../../_com/konten-bersama/titik-peta.logic';
 import cctvState from '../../../../_state/keamanan/cctv';
-
-const DEFAULT_CENTER = { lat: -8.5712, lng: 115.1923 };
-
-const LeafletMapEdit = dynamic(
-  () => import('../../../../_com/leafletMapEdit'),
-  { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
-);
 
 function EditCctv() {
   const router = useRouter();
@@ -46,12 +40,7 @@ function EditCctv() {
     return f.kode.trim() !== '' && f.nama.trim() !== '' && f.lokasi.trim() !== '';
   };
 
-  const mapCenter = {
-    lat: state.edit.form.latitude ? Number(state.edit.form.latitude) : DEFAULT_CENTER.lat,
-    lng: state.edit.form.longitude ? Number(state.edit.form.longitude) : DEFAULT_CENTER.lng,
-  };
-
-  const hasCoord = !!state.edit.form.latitude && !!state.edit.form.longitude;
+  const koordinat = koordinatDariTeks(state.edit.form.latitude, state.edit.form.longitude);
 
   const handleMapChange = (pos: { lat: number; lng: number }) => {
     cctvState.edit.form.latitude = String(pos.lat);
@@ -122,26 +111,11 @@ function EditCctv() {
             required
           />
 
-          <Box>
-            <Group mb={6} gap={6}>
-              <Text fw="bold" fz="sm">Titik Lokasi di Peta</Text>
-              <Text fz="xs" c="dimmed">(klik pada peta untuk memindahkan posisi)</Text>
-            </Group>
-            <Box style={{ height: 300, borderRadius: 8, overflow: 'hidden', border: '1px solid #e0e0e0' }}>
-              <LeafletMapEdit
-                initialPosition={mapCenter}
-                onChange={handleMapChange}
-              />
-            </Box>
-            {hasCoord && (
-              <Group mt={6} gap={4}>
-                <IconMapPin size={14} color="green" />
-                <Text fz="xs" c="green">
-                  Posisi: {Number(state.edit.form.latitude).toFixed(6)}, {Number(state.edit.form.longitude).toFixed(6)}
-                </Text>
-              </Group>
-            )}
-          </Box>
+          <TitikPetaInput
+            koordinat={koordinat}
+            onKoordinatChange={handleMapChange}
+            alamat={state.edit.form.lokasi}
+          />
 
           <Select
             label={<Text fw="bold" fz="sm">Status</Text>}

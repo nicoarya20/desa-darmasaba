@@ -1,18 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import { useState, useEffect, useRef, type RefObject } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L, { LeafletMouseEvent } from 'leaflet';
 
+type Posisi = { lat: number; lng: number };
+
 type Props = {
-  initialPosition: { lat: number; lng: number };
-  onChange: (pos: { lat: number; lng: number }) => void;
+  initialPosition: Posisi;
+  onChange: (pos: Posisi) => void;
 };
+
+/** Geser peta saat posisi diubah dari luar (cari/ketik koordinat); posisi hasil klik admin sendiri dilewati. */
+function IkutiPosisi({ lat, lng, posisiKlik }: Posisi & { posisiKlik: RefObject<Posisi | null> }) {
+  const map = useMap();
+  useEffect(() => {
+    const klik = posisiKlik.current;
+    posisiKlik.current = null;
+    if (klik && klik.lat === lat && klik.lng === lng) return;
+    map.setView([lat, lng], map.getZoom());
+  }, [map, lat, lng, posisiKlik]);
+  return null;
+}
 
 export default function LeafletMapEdit({ initialPosition, onChange }: Props) {
   const [markerPos, setMarkerPos] = useState(initialPosition);
+  const posisiKlik = useRef<Posisi | null>(null);
+  const { lat, lng } = initialPosition;
 
   // ✅ Pastikan icon config cuma jalan di client
   useEffect(() => {
@@ -30,13 +46,14 @@ export default function LeafletMapEdit({ initialPosition, onChange }: Props) {
   }, []);
 
   useEffect(() => {
-    setMarkerPos(initialPosition);
-  }, [initialPosition]);
+    setMarkerPos({ lat, lng });
+  }, [lat, lng]);
 
   function LocationMarker() {
     useMapEvents({
       click(e: LeafletMouseEvent) {
         const { lat, lng } = e.latlng;
+        posisiKlik.current = { lat, lng };
         setMarkerPos({ lat, lng });
         onChange({ lat, lng });
       },
@@ -57,6 +74,7 @@ export default function LeafletMapEdit({ initialPosition, onChange }: Props) {
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
       <LocationMarker />
+      <IkutiPosisi lat={lat} lng={lng} posisiKlik={posisiKlik} />
     </MapContainer>
   );
 }
