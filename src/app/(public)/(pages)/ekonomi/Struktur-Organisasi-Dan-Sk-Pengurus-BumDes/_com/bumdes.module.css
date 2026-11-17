@@ -304,11 +304,6 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .docLink:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
   .foto:hover .fotoImg {
     opacity: 0.9;
   }

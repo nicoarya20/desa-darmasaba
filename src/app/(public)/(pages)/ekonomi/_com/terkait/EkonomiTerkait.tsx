@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import type { ReactNode } from 'react';
@@ -25,7 +26,7 @@ type Props = {
 export function EkonomiTerkait({ href, icon, title, text, aksi, label = TERKAIT_LABEL_DEFAULT }: Props) {
   return (
     <aside aria-label={label}>
-      <Link href={href} className={s.terkait}>
+      <Link href={href} className={`${s.terkait} ${r.trigger}`}>
         <span className={s.icon} aria-hidden>
           {icon}
         </span>
@@ -34,8 +35,10 @@ export function EkonomiTerkait({ href, icon, title, text, aksi, label = TERKAIT_
           <span className={s.text}>{text}</span>
         </span>
         <span className={s.aksi} aria-hidden>
-          {aksi}
-          <IconChevronRight size={16} stroke={2} />
+          <span className={r.cta} data-text={aksi}>
+            {aksi}
+          </span>
+          <IconChevronRight className={r.chevron} size={16} stroke={2} />
         </span>
       </Link>
     </aside>

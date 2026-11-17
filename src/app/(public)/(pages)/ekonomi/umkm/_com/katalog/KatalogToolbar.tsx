@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconAdjustmentsHorizontal, IconX } from '@tabler/icons-react';
 import type { FilterChip } from './katalog-filter.logic';
 import type { KatalogTab, KatalogUrut } from './katalog-filter.meta';
@@ -53,8 +54,10 @@ export function KatalogToolbar({ tab, count, urut, onUrut, chips, activeCount, o
             </li>
           ))}
           <li>
-            <button type="button" className={s.clearAll} onClick={onClearAll}>
-              {T.hapusSemua}
+            <button type="button" className={`${s.clearAll} ${r.trigger}`} onClick={onClearAll}>
+              <span className={r.cta} data-text={T.hapusSemua}>
+                {T.hapusSemua}
+              </span>
             </button>
           </li>
         </ul>

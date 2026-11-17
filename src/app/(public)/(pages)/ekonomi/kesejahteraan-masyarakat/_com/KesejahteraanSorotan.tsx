@@ -22,15 +22,17 @@ export function KesejahteraanSorotan({ item }: { item: KesejahteraanItem }) {
       </h2>
       {item.summary ? <span className={kabar.featuredSummary}>{item.summary}</span> : null}
       <span className={s.more} aria-hidden>
-        {T.selengkapnya}
-        <IconChevronRight size={16} stroke={2} />
+        <span className={r.cta} data-text={T.selengkapnya}>
+          {T.selengkapnya}
+        </span>
+        <IconChevronRight className={r.chevron} size={16} stroke={2} />
       </span>
     </>
   );
 
   if (!item.imageUrl) {
     return (
-      <Link href={item.href} className={s.plain}>
+      <Link href={item.href} className={`${s.plain} ${r.trigger}`}>
         <span className={s.plainBody}>{text}</span>
       </Link>
     );

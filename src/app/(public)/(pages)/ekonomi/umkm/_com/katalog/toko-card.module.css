@@ -1,6 +1,6 @@
 /*
  * Kartu UMKM (toko) katalog: pola sama dengan kartu produk (tanpa latar/border/radius).
- * Foto & zoom hover ada di katalog-media.module.css. Brand dari --brand di akar halaman.
+ * Foto & zoom hover ada di katalog-media.module.css; sapuan warna nama saat hover: _com/link-reveal. Brand dari --brand di akar halaman.
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
 .card {
@@ -80,13 +80,6 @@
   color: #6e6e73;
   font-size: 13px;
   font-variant-numeric: tabular-nums;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .card:hover .name {
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
 }
 
 @media (max-width: 734px) {

@@ -259,11 +259,6 @@
     background: var(--tile);
     color: var(--ink);
   }
-
-  .clearAll:hover,
-  .drawerClear:hover {
-    text-decoration: underline;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

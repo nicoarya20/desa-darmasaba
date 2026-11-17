@@ -202,10 +202,6 @@
   .saringPill:hover {
     background: #e8e8ed;
   }
-
-  .clearAll:hover {
-    text-decoration: underline;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
