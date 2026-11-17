@@ -10,6 +10,7 @@ import { AntiKorupsiUtama } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_c
 import { buildAntiKorupsiUtamaView } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/antikorupsi-utama.logic';
 import type { AntiKorupsiApiItem } from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
 import { ANTIKORUPSI_LIMIT } from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.meta';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 // test-only: 8 indikator (> batas beranda 6) berbentuk item ringkas desaAntikorupsi.findMany.
 const item = (id: string, name: string, kategoriId: string, kategori: string, jumlahDokumen?: number): AntiKorupsiApiItem => ({
@@ -81,7 +82,9 @@ describe('AntiKorupsiUtama — render', () => {
 
   it('nama kategori bertaut ke detail?kategori= dengan petunjuk "Lihat dokumen"', () => {
     expect(html).toContain('href="/desa-anti-korupsi/detail?kategori=KEARIFAN%20LOKAL"');
-    expect(html.match(/Lihat dokumen/g)).toHaveLength(5);
+    // Satu label sapuan `.cta` per kategori; `data-text` (cadangan lebar tebal) adalah atribut, jadi teks terbaca tetap sekali.
+    expect(html.split(`<span class="${r.cta}" data-text="Lihat dokumen">Lihat dokumen</span>`)).toHaveLength(5 + 1);
+    expect(html.replace(/<[^>]*>/g, ' ').match(/Lihat dokumen/g)).toHaveLength(5);
   });
 
   it('badge jumlah dokumen & teks redup untuk 0 dokumen', () => {

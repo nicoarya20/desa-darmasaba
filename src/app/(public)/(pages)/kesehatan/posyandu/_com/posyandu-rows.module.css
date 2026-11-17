@@ -257,11 +257,6 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .row:hover .name {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
   .call:hover {
     background: #e8e8ed;
   }

@@ -6,6 +6,7 @@ import { BANK_SAMPAH_TEXT as T } from './bank-sampah.text';
 import x from './lokasi.module.css';
 import { scrollRowIntoList } from '@/app/(public)/_com/map-list/list-scroll';
 import type { MapSelection } from '@/app/(public)/_com/map-list/map-focus';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 type Props = {
   items: readonly Lokasi[];
@@ -73,20 +74,29 @@ export function LokasiRow({ item, selected, onPick, onDetail }: RowProps) {
         <div className={x.pick}>{info}</div>
       )}
       <div className={x.aksi}>
-        <button type="button" className={`${x.arah} ${x.detail}`} onClick={() => onDetail(item)} aria-label={T.detailLabel(item.name)}>
-          {T.detail}
-          <IconChevronRight size={16} stroke={2} aria-hidden />
+        <button
+          type="button"
+          className={`${x.arah} ${x.detail} ${r.trigger}`}
+          onClick={() => onDetail(item)}
+          aria-label={T.detailLabel(item.name)}
+        >
+          <span className={r.cta} data-text={T.detail}>
+            {T.detail}
+          </span>
+          <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
         </button>
         {item.petunjukArah ? (
           <a
-            className={x.arah}
+            className={`${x.arah} ${r.trigger}`}
             href={item.petunjukArah}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={T.petunjukArahLabel(item.name)}
           >
-            {T.petunjukArah}
-            <IconChevronRight size={16} stroke={2} aria-hidden />
+            <span className={r.cta} data-text={T.petunjukArah}>
+              {T.petunjukArah}
+            </span>
+            <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
           </a>
         ) : null}
       </div>

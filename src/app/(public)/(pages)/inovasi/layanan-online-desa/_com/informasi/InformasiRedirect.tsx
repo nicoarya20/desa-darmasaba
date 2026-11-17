@@ -1,5 +1,6 @@
 'use client';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { Link } from 'next-view-transitions';
 import { useRouter } from 'next/navigation';
@@ -42,8 +43,13 @@ export function InformasiRedirectNotice({ kind }: { kind: InformasiKind }) {
     <div className={kabar.section} style={KABAR_BRAND_VARS}>
       <div className={s.notice} role="status" aria-busy="true">
         <p className={s.opening}>{text.opening}</p>
-        <Link href={informasiListHref(kind)} className={s.link}>
-          {text.list} ›
+        <Link href={informasiListHref(kind)} className={`${s.link} ${r.trigger}`}>
+          <span className={r.cta} data-text={text.list}>
+            {text.list}
+          </span>
+          <span className={r.chevron} aria-hidden>
+            ›
+          </span>
         </Link>
       </div>
     </div>

@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconBook2 } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { useState } from 'react';
@@ -23,8 +24,10 @@ export function BukuDetailBody({ buku }: { buku: Buku }) {
         </div>
         <div className={s.info}>
           {buku.kategori && (
-            <Link href={perpusListHref(buku.kategori.slug)} className={s.kategori}>
-              {buku.kategori.nama}
+            <Link href={perpusListHref(buku.kategori.slug)} className={`${s.kategori} ${r.trigger}`}>
+              <span className={r.cta} data-text={buku.kategori.nama}>
+                {buku.kategori.nama}
+              </span>
             </Link>
           )}
           <h1 className={s.title}>{buku.judul}</h1>

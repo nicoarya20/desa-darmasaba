@@ -72,18 +72,6 @@
   overflow: hidden;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  a:hover .more {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .plain:hover h2 {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
   .block {

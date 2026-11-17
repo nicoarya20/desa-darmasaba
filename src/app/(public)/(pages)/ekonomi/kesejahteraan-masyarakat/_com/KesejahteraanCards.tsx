@@ -1,4 +1,5 @@
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Image } from '@mantine/core';
 import { IconHeartHandshake } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -24,12 +25,14 @@ export function KesejahteraanCards({ items }: { items: readonly KesejahteraanIte
     <ul className={`${kabar.rail} ${kabar.railGrid}`} aria-label={T.cardsLabel}>
       {items.map((item) => (
         <li key={item.id}>
-          <Link href={item.href} className={kabar.card}>
+          <Link href={item.href} className={`${kabar.card} ${r.trigger}`}>
             <span className={kabar.cardPhoto}>
               <KesejahteraanPhoto url={item.imageUrl} />
             </span>
             <span className={kabar.cardBody}>
-              <h3 className={kabar.cardTitle}>{item.title}</h3>
+              <h3 className={kabar.cardTitle}>
+                <span className={r.title}>{item.title}</span>
+              </h3>
               {item.summary ? <span className={s.cardSummary}>{item.summary}</span> : null}
             </span>
           </Link>

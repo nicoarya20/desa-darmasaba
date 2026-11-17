@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconBuildingStore, IconMapPin, IconUser } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { alamatTampil, fotoSrc, tokoHref } from './katalog-card.logic';
@@ -13,7 +14,7 @@ export function TokoCard({ toko, jumlahProduk }: Props) {
   const pemilik = toko.pemilik.trim();
 
   return (
-    <Link href={tokoHref(toko.id)} className={s.card}>
+    <Link href={tokoHref(toko.id)} className={`${s.card} ${r.trigger}`}>
       <KatalogMedia
         src={fotoSrc(toko.imageUrl)}
         alt={toko.nama}
@@ -21,7 +22,9 @@ export function TokoCard({ toko, jumlahProduk }: Props) {
       />
       <div className={s.body}>
         {toko.kategori && <p className={s.kategori}>{toko.kategori.nama}</p>}
-        <h3 className={s.name}>{toko.nama}</h3>
+        <h3 className={s.name}>
+          <span className={r.title}>{toko.nama}</span>
+        </h3>
         {pemilik && (
           <p className={s.pemilik}>
             <IconUser size={14} stroke={1.75} aria-hidden="true" />

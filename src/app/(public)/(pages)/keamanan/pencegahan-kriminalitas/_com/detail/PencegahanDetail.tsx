@@ -1,6 +1,7 @@
 'use client';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { htmlToText } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
@@ -26,9 +27,11 @@ export function PencegahanDetail({ id }: { id: string }) {
         {state.status === 'notfound' || state.status === 'error' ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
-            <Link href={pencegahanListHref()} className={d.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={pencegahanListHref()} className={`${d.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}
@@ -48,8 +51,10 @@ export function PencegahanDetailBody({ data }: { data: PencegahanApiItem }) {
     <>
       <header className={d.head}>
         <p className={d.meta}>
-          <Link href={pencegahanListHref()} className={d.kategori}>
-            {T.kategori}
+          <Link href={pencegahanListHref()} className={`${d.kategori} ${r.trigger}`}>
+            <span className={r.cta} data-text={T.kategori}>
+              {T.kategori}
+            </span>
           </Link>
           <time dateTime={dibuat.toISOString()}>{formatTanggalTerbit(dibuat)}</time>
         </p>
@@ -59,8 +64,10 @@ export function PencegahanDetailBody({ data }: { data: PencegahanApiItem }) {
 
       {videoId ? <VideoFacade videoId={videoId} title={data.judul} /> : null}
       {videoHref ? (
-        <a href={videoHref} target="_blank" rel="noopener noreferrer" className={s.videoLink}>
-          {T.bukaVideo}
+        <a href={videoHref} target="_blank" rel="noopener noreferrer" className={`${s.videoLink} ${r.trigger}`}>
+          <span className={r.cta} data-text={T.bukaVideo}>
+            {T.bukaVideo}
+          </span>
           <IconArrowUpRight size={16} stroke={2} aria-hidden />
         </a>
       ) : null}

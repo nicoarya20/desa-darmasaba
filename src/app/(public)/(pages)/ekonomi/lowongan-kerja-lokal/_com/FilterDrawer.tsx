@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Drawer } from '@mantine/core';
 import { FilterPanel } from './FilterPanel';
 import type { FilterChip, LowonganFacets } from './lowongan-filter.logic';
@@ -36,8 +37,10 @@ export function FilterDrawer({ opened, onClose, params, facets, chips, update, s
         <FilterPanel params={params} facets={facets} chips={chips} update={update} onClearAll={onClearAll} bare />
       </div>
       <div className={s.drawerFooter}>
-        <button type="button" className={s.drawerClear} onClick={onClearAll}>
-          {T.hapusSemua}
+        <button type="button" className={`${s.drawerClear} ${r.trigger}`} onClick={onClearAll}>
+          <span className={r.cta} data-text={T.hapusSemua}>
+            {T.hapusSemua}
+          </span>
         </button>
         <button type="button" className={s.drawerApply} onClick={onClose}>
           {T.tampilkan(shown)}

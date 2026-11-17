@@ -11,6 +11,7 @@ vi.mock('next-view-transitions', () => ({
 import { PengumumanDokumenRows } from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/detail/PengumumanDokumenRows';
 import { PengumumanRows } from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/PengumumanRows';
 import s from '@/app/(public)/(pages)/pemerintahan/pengumuman/_com/pengumuman-list.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 
 const render = (node: React.ReactElement) =>
@@ -36,7 +37,9 @@ const rows = (props: Partial<React.ComponentProps<typeof PengumumanRows>>) =>
 describe('PengumumanRows', () => {
   it('satu tautan per pengumuman; thumbnail bila ada gambar, ikon dokumen bila tidak', () => {
     const html = rows({ items: [item('a', '/api/img/a.webp'), item('b')] });
-    expect(count(html, `class="${s.row}"`)).toBe(2);
+    expect(count(html, `class="${s.row} ${r.trigger}"`)).toBe(2);
+    // judul dibungkus span sapuan warna (pengganti garis bawah hover)
+    expect(count(html, `<span class="${s.title}"><span class="${r.title}">`)).toBe(2);
     expect(html).toContain('href="/pemerintahan/pengumuman/Lelang%20%26%20Pengadaan/a"');
     expect(html).toContain('src="/api/img/a.webp"');
     expect(count(html, s.thumbFallback)).toBe(1);

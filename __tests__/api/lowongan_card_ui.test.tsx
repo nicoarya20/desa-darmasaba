@@ -15,6 +15,7 @@ import { LOWONGAN_CARD_TEXT as T } from '@/app/(public)/(pages)/ekonomi/lowongan
 import type { Lowongan } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan.types';
 import c from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan-card.module.css';
 import l from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan-list.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 const render = (node: ReactElement) => renderToStaticMarkup(node);
 const text = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -41,7 +42,9 @@ describe('LowonganCard', () => {
     expect(html.startsWith('<article')).toBe(true);
     expect(count(html, '<a ')).toBe(1);
     expect(count(html, '<button')).toBe(0);
-    expect(html).toMatch(/<h3 [^>]*><a [^>]*href="\/ekonomi\/lowongan-kerja-lokal\/l1"[^>]*>Barista<\/a><\/h3>/);
+    expect(html).toContain(
+      `<h3 class="${c.title}"><a href="/ekonomi/lowongan-kerja-lokal/l1" class="${c.link} ${r.trigger}"><span class="${r.title}">Barista</span></a></h3>`,
+    );
     expect(html).not.toContain('<h2');
   });
 

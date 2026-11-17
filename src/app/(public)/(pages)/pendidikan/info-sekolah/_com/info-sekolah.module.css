@@ -114,8 +114,11 @@
   color: var(--muted);
 }
 
-/* Inline (bukan flex): di ubin sempit teks boleh terlipat, chevron tetap menempel di kata terakhir. */
+/* Label `.cta` + chevron (sapuan warna, _com/link-reveal): flex menjaga panah tetap di samping label. */
 .cardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   align-self: flex-start;
   margin-top: auto;
   padding-top: 16px;
@@ -124,17 +127,6 @@
   line-height: 1.35;
   font-weight: 500;
   text-decoration: none;
-}
-
-.cardLink svg {
-  /* globals.css menjadikan svg block; di sini panah harus ikut baris teks. */
-  display: inline-block;
-  margin-left: 2px;
-  vertical-align: -3px;
-}
-
-.nowrap {
-  white-space: nowrap;
 }
 
 .cardLink:focus-visible {
@@ -332,10 +324,6 @@
 @media (hover: hover) and (pointer: fine) {
   .retry:hover {
     background: #e8e8ed;
-  }
-
-  .cardLink:hover {
-    text-decoration: underline;
   }
 }
 

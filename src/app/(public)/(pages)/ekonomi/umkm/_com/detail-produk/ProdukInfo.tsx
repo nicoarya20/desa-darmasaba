@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { UMKM_PESANAN_TERCATAT } from '@/lib/umkm-pesanan';
 import { IconStar } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -31,8 +32,8 @@ export function ProdukInfo({ produk, onTercatat }: Props) {
       {(penjual || kategori) && (
         <p className={s.brandRow}>
           {penjual && (
-            <Link href={tokoHref(penjual.id)} className={s.brand}>
-              {penjual.nama}
+            <Link href={tokoHref(penjual.id)} className={`${s.brand} ${r.trigger}`}>
+              <span className={r.title}>{penjual.nama}</span>
             </Link>
           )}
           {penjual && kategori && <span aria-hidden="true"> · </span>}
@@ -42,9 +43,9 @@ export function ProdukInfo({ produk, onTercatat }: Props) {
       {produk.isUnggulan && <span className={s.label}>{T.unggulan}</span>}
       <h1 className={s.title}>{produk.nama}</h1>
       {/* TODO(umkm-rating): rating belum punya sumber data — docs/BACKEND-TODO.md P3 */}
-      <a href="#ulasan" className={s.rating}>
+      <a href="#ulasan" className={`${s.rating} ${r.trigger}`}>
         <IconStar size={16} stroke={1.75} aria-hidden="true" />
-        <span>{T.ratingKosong}</span>
+        <span className={r.title}>{T.ratingKosong}</span>
       </a>
       <p className={s.price}>
         <span className={s.amount}>{harga}</span>

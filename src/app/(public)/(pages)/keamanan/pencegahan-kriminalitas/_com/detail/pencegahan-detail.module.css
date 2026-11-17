@@ -26,13 +26,6 @@
   outline-offset: 3px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .videoLink:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
 @media (max-width: 734px) {
   .lead {
     font-size: 19px;

@@ -1,4 +1,5 @@
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Image } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -16,24 +17,28 @@ export function KesejahteraanSorotan({ item }: { item: KesejahteraanItem }) {
       <span className={kabar.meta}>
         <span className={s.label}>{T.sorotan}</span>
       </span>
-      <h2 className={kabar.featuredTitle}>{item.title}</h2>
+      <h2 className={kabar.featuredTitle}>
+        <span className={r.title}>{item.title}</span>
+      </h2>
       {item.summary ? <span className={kabar.featuredSummary}>{item.summary}</span> : null}
       <span className={s.more} aria-hidden>
-        {T.selengkapnya}
-        <IconChevronRight size={16} stroke={2} />
+        <span className={r.cta} data-text={T.selengkapnya}>
+          {T.selengkapnya}
+        </span>
+        <IconChevronRight className={r.chevron} size={16} stroke={2} />
       </span>
     </>
   );
 
   if (!item.imageUrl) {
     return (
-      <Link href={item.href} className={s.plain}>
+      <Link href={item.href} className={`${s.plain} ${r.trigger}`}>
         <span className={s.plainBody}>{text}</span>
       </Link>
     );
   }
   return (
-    <Link href={item.href} className={kabar.featured}>
+    <Link href={item.href} className={`${kabar.featured} ${r.trigger}`}>
       <span className={kabar.featuredPhoto}>
         <Image src={item.imageUrl} alt="" className={kabar.photoImg} decoding="async" />
       </span>

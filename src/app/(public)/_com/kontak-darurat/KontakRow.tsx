@@ -3,6 +3,7 @@ import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import type { ReactNode } from 'react';
 import { KontakActions } from './KontakActions';
+import r from '../link-reveal/link-reveal.module.css';
 import s from './kontak-darurat.module.css';
 import type { PhoneInfo } from './kontak-phone.logic';
 
@@ -36,8 +37,8 @@ export function KontakRow({ name, phone, icon, photo, description, href, linkLab
       <div className={s.body}>
         <Name className={s.name}>
           {href ? (
-            <Link href={href} className={s.nameLink} aria-label={linkLabel}>
-              {name}
+            <Link href={href} className={`${s.nameLink} ${r.trigger}`} aria-label={linkLabel}>
+              <span className={r.title}>{name}</span>
               <IconChevronRight className={s.nameChevron} size={16} stroke={2} aria-hidden />
             </Link>
           ) : (

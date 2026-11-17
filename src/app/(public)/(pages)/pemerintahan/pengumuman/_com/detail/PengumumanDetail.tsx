@@ -2,6 +2,7 @@
 import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import type { PengumumanDetail as Detail } from '@/lib/pengumuman-lampiran';
 import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
@@ -28,9 +29,11 @@ export function PengumumanDetail({ id }: { id: string }) {
         {state.status === 'notfound' || state.status === 'error' ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
-            <Link href={pengumumanListHref('')} className={d.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={pengumumanListHref('')} className={`${d.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}
@@ -50,8 +53,10 @@ function DetailBody({ data }: { data: Detail }) {
       <header className={d.head}>
         <p className={d.meta}>
           {kategori ? (
-            <Link href={pengumumanListHref(kategori)} className={d.kategori}>
-              {kategori}
+            <Link href={pengumumanListHref(kategori)} className={`${d.kategori} ${r.trigger}`}>
+              <span className={r.cta} data-text={kategori}>
+                {kategori}
+              </span>
             </Link>
           ) : null}
           <time dateTime={tanggal.toISOString()}>{formatTanggalTerbit(tanggal)}</time>

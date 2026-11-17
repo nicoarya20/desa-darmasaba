@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { KatalogEmpty } from '../../../umkm/_com/katalog/KatalogEmpty';
@@ -34,9 +35,11 @@ export function DetailStatus({ status, onRetry }: Props) {
       ) : (
         <KatalogEmpty title={T.errorTitle} description={T.errorDesc} actionLabel={T.retry} onAction={onRetry} />
       )}
-      <Link href={LOWONGAN_BASE_HREF} className={st.statusLink}>
-        {T.lihatSemua}
-        <IconChevronRight size={16} stroke={2} aria-hidden="true" />
+      <Link href={LOWONGAN_BASE_HREF} className={`${st.statusLink} ${r.trigger}`}>
+        <span className={r.cta} data-text={T.lihatSemua}>
+          {T.lihatSemua}
+        </span>
+        <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden="true" />
       </Link>
     </div>
   );

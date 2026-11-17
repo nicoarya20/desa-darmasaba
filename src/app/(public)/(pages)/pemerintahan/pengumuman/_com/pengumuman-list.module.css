@@ -124,13 +124,6 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .row:hover .title {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .rowPlaceholder .thumb,
   .bar {

@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconPhoto, IconStar } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { fotoSrc, hargaParts, produkHref } from './katalog-card.logic';
@@ -14,7 +15,7 @@ export function ProdukCard({ produk }: { produk: KatalogProduk }) {
   const { harga, satuan } = hargaParts(produk);
 
   return (
-    <Link href={produkHref(produk.id)} className={s.card}>
+    <Link href={produkHref(produk.id)} className={`${s.card} ${r.trigger}`}>
       <KatalogMedia
         src={fotoSrc(produk.imageUrl)}
         alt={produk.nama}
@@ -27,7 +28,9 @@ export function ProdukCard({ produk }: { produk: KatalogProduk }) {
           <span className={s.amount}>{harga}</span>
           {satuan && <span className={s.unit}>{satuan}</span>}
         </p>
-        <h3 className={s.name}>{produk.nama}</h3>
+        <h3 className={s.name}>
+          <span className={r.title}>{produk.nama}</span>
+        </h3>
         {produk.umkm && <p className={s.brand}>{produk.umkm.nama}</p>}
         {/* TODO(umkm-rating): rating belum punya sumber data — docs/BACKEND-TODO.md P3 */}
         <p className={s.rating}>

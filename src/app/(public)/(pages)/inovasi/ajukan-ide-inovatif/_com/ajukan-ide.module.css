@@ -74,19 +74,17 @@
   list-style: none;
 }
 
+/* Label `.cta` + "›" `.chevron` (sapuan warna, _com/link-reveal); flex agar chevron bisa digeser. */
 .link,
 .again {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
   color: var(--brand);
   font-size: 15px;
   line-height: 1.5;
   font-weight: 500;
   text-decoration: none;
-}
-
-.link:hover,
-.again:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 /* ---------- Formulir ---------- */

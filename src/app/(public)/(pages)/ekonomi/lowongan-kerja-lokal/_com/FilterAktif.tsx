@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconX } from '@tabler/icons-react';
 import { FILTER_GROUP_ICON } from './FilterGroup';
 import type { FilterChip } from './lowongan-filter.logic';
@@ -31,8 +32,10 @@ export function FilterChips({ chips, onApply, onClearAll }: Props) {
         );
       })}
       <li>
-        <button type="button" className={s.clearAll} onClick={onClearAll}>
-          {T.hapusSemua}
+        <button type="button" className={`${s.clearAll} ${r.trigger}`} onClick={onClearAll}>
+          <span className={r.cta} data-text={T.hapusSemua}>
+            {T.hapusSemua}
+          </span>
         </button>
       </li>
     </ul>

@@ -21,6 +21,7 @@ import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import s from '@/app/(public)/_com/program-tiles/program-tiles.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -40,11 +41,11 @@ const body = (state: LoadState<Penghijauan[]>, search = '', page = 1) =>
 describe('PenghijauanBody', () => {
   it('ubin = tautan detail: ikon garis, nama h3, judul abu, "Selengkapnya"; judul bagian hanya untuk pembaca layar', () => {
     const html = body(ready([api(1), api(2)]));
-    expect(html).toContain(`<a href="/lingkungan/program-penghijauan/ph1" class="${s.tile}">`);
+    expect(html).toContain(`<a href="/lingkungan/program-penghijauan/ph1" class="${s.tile} ${r.trigger}">`);
     expect(html).toContain(`<span class="${s.icon}" aria-hidden="true"><svg`);
-    expect(html).toContain(`<h3 class="${s.title}">Program 1</h3>`);
+    expect(html).toContain(`<h3 class="${s.title}"><span class="${r.title}">Program 1</span></h3>`);
     expect(html).toContain(`<span class="${s.summary}">Judul program 1</span>`);
-    expect(html).toContain('Selengkapnya');
+    expect(html).toContain(`<span class="${r.cta}" data-text="Selengkapnya">Selengkapnya</span>`);
     expect(html).toContain('aria-label="Daftar program penghijauan"');
     expect(html).not.toContain('Manfaat Program');
     expect(html).not.toContain('<img');
@@ -53,7 +54,7 @@ describe('PenghijauanBody', () => {
   it('ikon tak dikenal ("icon-test") → ubin tanpa ikon (bukan tanda tanya)', () => {
     const html = body(ready([api(1, 'icon-test')]));
     expect(html).not.toContain(s.icon);
-    expect(html).toContain(`<h3 class="${s.title}">Program 1</h3>`);
+    expect(html).toContain(`<h3 class="${s.title}"><span class="${r.title}">Program 1</span></h3>`);
   });
 
   it('cari di klien (?search=) menyaring ubin', () => {
@@ -66,8 +67,8 @@ describe('PenghijauanBody', () => {
     const list = Array.from({ length: 10 }, (_, i) => api(i + 1));
     expect(body(ready(list))).toContain('aria-label="Halaman daftar program penghijauan"');
     const page2 = body(ready(list), '', 2);
-    expect(page2).toContain(`<h3 class="${s.title}">Program 10</h3>`);
-    expect(page2).not.toContain(`<h3 class="${s.title}">Program 9</h3>`);
+    expect(page2).toContain(`<h3 class="${s.title}"><span class="${r.title}">Program 10</span></h3>`);
+    expect(page2).not.toContain(`<h3 class="${s.title}"><span class="${r.title}">Program 9</span></h3>`);
     expect(body(ready([api(1)]))).not.toContain('Halaman daftar program penghijauan');
   });
 

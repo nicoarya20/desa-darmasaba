@@ -35,6 +35,9 @@ import { ProdukGaleri } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-pr
 import { ProdukInfo } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/ProdukInfo';
 import { DETAIL_PRODUK_TEXT as T } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/detail-produk.text';
 import g from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/galeri.module.css';
+import inf from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-produk/info.module.css';
+import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -92,10 +95,10 @@ describe('ProdukInfo', () => {
 
   it('merek (tautan toko) · kategori, h1 nama, rating ke #ulasan, harga + satuan', () => {
     const html = info();
-    expect(html).toMatch(/<a href="\/ekonomi\/umkm\/u1"[^>]*>Warung Bu Made<\/a>/);
+    expect(html).toContain(`<a href="/ekonomi/umkm/u1" class="${inf.brand} ${r.trigger}"><span class="${r.title}">Warung Bu Made</span></a>`);
     expect(text(html)).toContain('Warung Bu Made · Makanan');
     expect(html).toMatch(/<h1[^>]*>Keripik Pisang<\/h1>/);
-    expect(html).toMatch(/<a href="#ulasan"[^>]*>[\s\S]*?Belum ada ulasan/);
+    expect(html).toMatch(new RegExp(`<a href="#ulasan" class="${inf.rating} ${r.trigger}">[\\s\\S]*?<span class="${r.title}">Belum ada ulasan</span>`));
     expect(text(html)).toContain('Rp15.000 / bungkus');
   });
 
@@ -123,7 +126,10 @@ describe('ProdukInfo', () => {
     expect(html).toMatch(/aria-hidden="true">WB<\/span>/);
     expect(text(html)).toContain('Pemilik: Made Sari');
     expect(html).toContain('Br. Gede, Darmasaba');
-    expect(html).toMatch(/<a href="\/ekonomi\/umkm\?toko=u1"[^>]*>Lihat semua produk toko ini<\/a>/);
+    expect(html).toContain(`<a href="/ekonomi/umkm/u1" class="${inf.sellerName} ${r.trigger}"><span class="${r.title}">Warung Bu Made</span></a>`);
+    expect(html).toContain(
+      `<a href="/ekonomi/umkm?toko=u1" class="${inf.sellerLink} ${r.trigger}"><span class="${r.cta}" data-text="${T.lihatProdukToko}">${T.lihatProdukToko}</span></a>`,
+    );
   });
 
   it('tanpa penjual: tanpa panel Penjual & merek; tombol WA disabled; tanpa alamat bila null', () => {
@@ -174,7 +180,13 @@ describe('DetailProdukView', () => {
   it.each(['loading', 'notFound', 'error'] as const)('%s: hanya tautan kembali + status, tanpa Ulasan', (status) => {
     h.state = { status };
     const html = render(<DetailProdukView id="prd-1" />);
-    expect(html).toContain(T.backToList);
+    // Tautan kembali = sapuan warna: <a .back .trigger> + chevron kiri `.chevronBack` + label `.cta`.
+    const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    expect(html).toMatch(
+      new RegExp(
+        `<a href="/ekonomi/umkm" class="${esc(`${back.back} ${r.trigger}`)}"><svg[^>]*class="[^"]*\\b${esc(r.chevronBack)}\\b[^"]*"[^>]*>[\\s\\S]*?</svg><span class="${esc(r.cta)}" data-text="${T.backToList}">${T.backToList}</span></a>`,
+      ),
+    );
     expect(html).not.toContain('id="ulasan"');
     expect(h.serupa).toEqual([]);
   });

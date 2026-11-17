@@ -34,6 +34,8 @@ import {
 } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/detail/kontak-bar.logic';
 import { LOWONGAN_DETAIL_TEXT as T } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/detail/lowongan-detail.text';
 import c from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan-card.module.css';
+import st from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/detail/detail-status.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { LOWONGAN_CARD_TEXT as C } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/lowongan-card.text';
 
 const render = (node: ReactElement) =>
@@ -221,7 +223,10 @@ describe('LowonganDetail: status', () => {
   it('tidak ditemukan (termasuk nonaktif/terhapus) → pesan + tautan ke daftar, tanpa Coba lagi', () => {
     const html = render(<DetailStatus status="notFound" onRetry={() => undefined} />);
     expect(text(html)).toContain(`${T.notFoundTitle} ${T.notFoundDesc}`);
-    expect(html).toMatch(new RegExp(`href="/ekonomi/lowongan-kerja-lokal"[^>]*>${T.lihatSemua}`));
+    expect(html).toContain(
+      `<a href="/ekonomi/lowongan-kerja-lokal" class="${st.statusLink} ${r.trigger}"><span class="${r.cta}" data-text="${T.lihatSemua}">${T.lihatSemua}</span><svg`,
+    );
+    expect(html).toMatch(new RegExp(`<svg[^>]*class="[^"]*\\b${r.chevron}\\b`));
     expect(html).not.toContain('<button');
     expect(html).not.toContain('role="alert"');
   });

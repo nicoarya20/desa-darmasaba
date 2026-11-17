@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { warnaKategoriEvent } from '@/lib/agenda-desa';
 import { KALENDER_LAJUR_MAKS, varWarnaKategori } from './agenda.meta';
 import { AGENDA_TEXT } from './agenda.text';
@@ -126,11 +127,11 @@ export function KalenderBulan({ bulan, items, hariIni, bali, tampilRerainan, onB
                 <button
                   key={`lain-${minggu[kolom]}`}
                   type="button"
-                  className={s.more}
+                  className={`${s.more} ${r.trigger}`}
                   style={{ gridColumn: kolom + 1, gridRow: KALENDER_LAJUR_MAKS + BARIS_LAJUR_PERTAMA }}
                   onClick={() => bukaHari(minggu[kolom])}
                 >
-                  {AGENDA_TEXT.kalender.lainnya(n)}
+                  <span className={r.title}>{AGENDA_TEXT.kalender.lainnya(n)}</span>
                 </button>
               ) : null,
             )}

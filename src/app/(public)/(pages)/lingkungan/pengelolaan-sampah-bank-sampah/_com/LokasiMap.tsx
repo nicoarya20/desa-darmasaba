@@ -1,6 +1,7 @@
 'use client';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { FocusOnSelect, type MapSelection } from '@/app/(public)/_com/map-list/map-focus';
 import { useMemo, useRef } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
@@ -80,8 +81,19 @@ function LokasiPopup({ item }: { item: MappedLokasi }) {
       <span className={x.popupName}>{item.name}</span>
       {item.alamat ? <span className={x.popupAlamat}>{item.alamat}</span> : null}
       {item.petunjukArah ? (
-        <a className={x.popupArah} href={item.petunjukArah} target="_blank" rel="noopener noreferrer" aria-label={T.petunjukArahLabel(item.name)}>
-          {T.petunjukArah} ›
+        <a
+          className={`${x.popupArah} ${r.trigger}`}
+          href={item.petunjukArah}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={T.petunjukArahLabel(item.name)}
+        >
+          <span className={r.cta} data-text={T.petunjukArah}>
+            {T.petunjukArah}
+          </span>
+          <span className={r.chevron} aria-hidden>
+            ›
+          </span>
         </a>
       ) : null}
     </span>

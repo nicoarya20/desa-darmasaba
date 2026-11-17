@@ -1,5 +1,6 @@
 'use client';
 import detail from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Image } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -32,9 +33,11 @@ export function KontakDaruratDetailView({ state, onRetry }: { state: KontakDetai
         {state.status === 'notfound' ? (
           <div className={page.empty}>
             <p className={detail.emptyText}>{T.notFound}</p>
-            <Link href={KONTAK_LIST_HREF} className={detail.emptyLink}>
-              {T.backToList}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <Link href={KONTAK_LIST_HREF} className={`${detail.emptyLink} ${r.trigger}`}>
+              <span className={r.cta} data-text={T.backToList}>
+                {T.backToList}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </Link>
           </div>
         ) : null}
@@ -57,8 +60,10 @@ export function KontakDetailBody({ data }: { data: KontakDarurat }) {
   return (
     <>
       <header className={detail.head}>
-        <Link href={KONTAK_LIST_HREF} className={detail.kategori}>
-          {T.title}
+        <Link href={KONTAK_LIST_HREF} className={`${detail.kategori} ${r.trigger}`}>
+          <span className={r.cta} data-text={T.title}>
+            {T.title}
+          </span>
         </Link>
         <h1 className={detail.title}>{data.name}</h1>
       </header>

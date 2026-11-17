@@ -25,6 +25,8 @@ import { DetailTokoStatus } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detai
 import { TokoHeader } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-toko/TokoHeader';
 import { DETAIL_TOKO_TEXT as T } from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-toko/detail-toko.text';
 import hs from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-toko/toko-header.module.css';
+import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { HUBUNGI_PENJUAL_LABEL } from '@/app/(public)/(pages)/ekonomi/umkm/_com/HubungiPenjualButton';
 import { buildHubungiPenjualMessage, WA_PENJUAL_TIDAK_VALID } from '@/app/(public)/(pages)/ekonomi/umkm/_lib/pesanan';
 
@@ -142,7 +144,14 @@ describe('DetailTokoView via halaman [id]', () => {
     h.state = { status: 'loading' };
     const html = render(<DetailTokoPage />);
     expect(h.ids).toEqual(['umkm-3']);
-    expect(html).toMatch(/<a href="\/ekonomi\/umkm\?tab=toko"[^>]*>[\s\S]*?Katalog UMKM<\/a>/);
+    // Tautan kembali = sapuan warna: <a .back .trigger> + chevron kiri `.chevronBack` + label `.cta` (data-text = cadangan lebar tebal).
+    const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    expect(html).toMatch(
+      new RegExp(
+        `<a href="/ekonomi/umkm\\?tab=toko" class="${esc(`${back.back} ${r.trigger}`)}"><svg[^>]*class="[^"]*\\b${esc(r.chevronBack)}\\b[^"]*"[^>]*>[\\s\\S]*?</svg><span class="${esc(r.cta)}" data-text="${T.backToList}">${T.backToList}</span></a>`,
+      ),
+    );
+    expect(T.backToList).toBe('Katalog UMKM');
     expect(html).toContain('aria-busy="true"');
   });
 

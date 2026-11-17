@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronRight } from '@tabler/icons-react';
 import type { DokumenBumdes as Dokumen } from './bumdes.logic';
 import s from './bumdes.module.css';
@@ -24,9 +25,11 @@ export function DokumenBumdes({ items }: { items: readonly Dokumen[] }) {
               <p className={s.docTitle}>{doc.judul}</p>
               {doc.keterangan ? <p className={s.docNote}>{doc.keterangan}</p> : null}
             </div>
-            <a href={doc.href} target="_blank" rel="noopener noreferrer" className={s.docLink} aria-label={T.unduhLabel(doc.judul)}>
-              {T.unduh}
-              <IconChevronRight size={16} stroke={2} aria-hidden />
+            <a href={doc.href} target="_blank" rel="noopener noreferrer" className={`${s.docLink} ${r.trigger}`} aria-label={T.unduhLabel(doc.judul)}>
+              <span className={r.cta} data-text={T.unduh}>
+                {T.unduh}
+              </span>
+              <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
             </a>
           </li>
         ))}

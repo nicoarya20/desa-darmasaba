@@ -75,14 +75,6 @@
   outline-offset: 3px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .tile:hover .title,
-  .tile:hover .more {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
 /* ---------- Tablet ---------- */
 @media (max-width: 1068px) {
   .tiles {

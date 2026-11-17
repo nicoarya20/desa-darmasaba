@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import { IconArrowUpRight, IconFileDescription } from '@tabler/icons-react';
@@ -41,12 +42,14 @@ function PelayananTelunjukSaktiDesa() {
         <ul className={s.panel} aria-label={T.listLabel}>
           {items.map((item) => (
             <li key={item.id}>
-              <a className={s.row} href={externalHref(item.link)} target="_blank" rel="noopener noreferrer">
+              <a className={`${s.row} ${r.trigger}`} href={externalHref(item.link)} target="_blank" rel="noopener noreferrer">
                 <span className={s.rowIcon} aria-hidden>
                   <IconFileDescription size={22} stroke={1.6} />
                 </span>
                 <span className={s.rowBody}>
-                  <span className={s.rowTitle}>{item.name}</span>
+                  <span className={s.rowTitle}>
+                    <span className={r.title}>{item.name}</span>
+                  </span>
                   {item.deskripsi ? <span className={s.rowLink}>{item.deskripsi}</span> : null}
                   <LayananWaktuBiayaBadge estimasiWaktu={item.estimasiWaktu} biaya={item.biaya} />
                 </span>

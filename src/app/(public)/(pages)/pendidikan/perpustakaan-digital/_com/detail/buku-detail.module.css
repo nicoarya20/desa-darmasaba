@@ -164,11 +164,6 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .kategori:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
   .cta:hover {
     opacity: 0.88;
   }

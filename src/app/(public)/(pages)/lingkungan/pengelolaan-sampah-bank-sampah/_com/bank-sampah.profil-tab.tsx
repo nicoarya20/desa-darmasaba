@@ -2,6 +2,7 @@ import KontakLink from '@/app/(public)/_com/konten-bersama/kontak.link'
 import TombolGoogleMaps from '@/app/(public)/_com/konten-bersama/lokasi.tombol'
 import MediaSosialLinks from '@/app/(public)/_com/konten-bersama/media-sosial.links'
 import KontenKosong from '@/app/(public)/_com/konten-bersama/konten-kosong'
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css'
 import type { BankSampahDetail } from '@/lib/bank-sampah/bank-sampah.types'
 import { Anchor, Box, Group, List, Stack, Text } from '@mantine/core'
 import { Link } from 'next-view-transitions'
@@ -45,7 +46,9 @@ export default function BankSampahProfilTab({ data }: { data: BankSampahDetail }
           <List size="sm" spacing={4}>
             {data.programInovasi.map((p) => (
               <List.Item key={p.id}>
-                <Anchor component={Link} href={linkProgramInovasi(p.id)} fz="sm">{p.name}</Anchor>
+                <Anchor component={Link} href={linkProgramInovasi(p.id)} fz="sm" underline="never" className={r.trigger}>
+                  <span className={r.cta} data-text={p.name}>{p.name}</span>
+                </Anchor>
               </List.Item>
             ))}
           </List>

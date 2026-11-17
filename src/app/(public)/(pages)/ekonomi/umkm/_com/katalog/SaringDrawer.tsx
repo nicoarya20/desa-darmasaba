@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Drawer } from '@mantine/core';
 import type { ProdukFacets, TokoFacets } from './katalog-filter.logic';
 import { KATALOG_BRAND_VARS, type KatalogTab } from './katalog-filter.meta';
@@ -36,8 +37,10 @@ export function SaringDrawer({ opened, onClose, tab, params, facets, update, sho
         <SaringPanel params={params} facets={facets} update={update} />
       </div>
       <div className={s.drawerFooter}>
-        <button type="button" className={s.drawerClear} onClick={onClearAll}>
-          {T.hapusSemua}
+        <button type="button" className={`${s.drawerClear} ${r.trigger}`} onClick={onClearAll}>
+          <span className={r.cta} data-text={T.hapusSemua}>
+            {T.hapusSemua}
+          </span>
         </button>
         <button type="button" className={s.drawerApply} onClick={onClose}>
           {T.tampilkan(shown, T.noun[tab])}

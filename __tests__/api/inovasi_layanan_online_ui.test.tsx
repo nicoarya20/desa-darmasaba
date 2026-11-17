@@ -25,6 +25,8 @@ import { LayananOnlineTiles } from '@/app/(public)/(pages)/inovasi/layanan-onlin
 import { JenisLayananSection } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/JenisLayananSection';
 import { AdministrasiForm, AdministrasiSent } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/AdministrasiForm';
 import f from '@/app/(public)/(pages)/inovasi/_com/inovasi-form.module.css';
+import lo from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/layanan-online.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { EMPTY_ADMINISTRASI, validateAdministrasi } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/administrasi.logic';
 import { ADMINISTRASI_TEXT as AT } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/administrasi.text';
 import type { JenisLayananState } from '@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/use-jenis-layanan';
@@ -66,9 +68,13 @@ describe('LayananOnlineTiles', () => {
     const html = render(<LayananOnlineTiles onPengaduan={() => {}} />);
     expect(html).toContain(`aria-label="${T.listLabel}"`);
     expect(html.match(/<li /g)).toHaveLength(3);
-    for (const title of [T.administrasi.title, T.pengaduan.title, T.informasi.title]) expect(html).toContain(`>${title}</h2>`);
+    // Ubin aksi tunggal: judul ikut disapu (span .title); ubin aksi ganda: judul polos.
+    for (const title of [T.administrasi.title, T.pengaduan.title]) {
+      expect(html).toContain(`<h2 class="${lo.title}"><span class="${r.title}">${title}</span></h2>`);
+    }
+    expect(html).toContain(`<h2 class="${lo.title}">${T.informasi.title}</h2>`);
     expect(html).toContain('href="/inovasi/layanan-online-desa/administrasi-online"');
-    expect(html).toMatch(new RegExp(`<button type="button"[^>]*>${T.pengaduan.action}`));
+    expect(html).toMatch(new RegExp(`<button type="button"[^>]*><span class="${r.cta}" data-text="${T.pengaduan.action}">${T.pengaduan.action}</span>`));
     expect(html).toContain('href="/pemerintahan/berita/semua"');
     expect(html).toContain('href="/pemerintahan/pengumuman"');
     // Tidak ada lagi tautan ke Informasi Desa lama.

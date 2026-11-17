@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.298] - 2026-11-17
+### Changed
+- **Efek hover tautan kini berupa sapuan warna, bukan garis bawah**, di seluruh situs publik kecuali footer. Judul kartu dan baris (berita, pengumuman, produk UMKM, lowongan, dan lainnya) berubah warna dari kiri ke kanan menjadi biru `#0A4E78`. Tautan aksi seperti "Semua pengumuman ›" dan "Lihat layanan surat ›" menyapu ke biru `#1C6EA4`, menebal, dan chevron-nya bergeser sedikit ke kanan tanpa menggeser teks di sekitarnya.
+- Tautan kembali "‹ …" di halaman detail memakai sapuan yang sama dengan chevron bergeser ke kiri; breadcrumb program Anti Korupsi dan tautan "Petunjuk arah" di peta Bank Sampah ikut berubah.
+- Saat menavigasi dengan keyboard (Tab), sapuan juga berjalan dan garis fokus tetap terlihat. Pengguna yang mengaktifkan "kurangi gerak" melihat warna berubah langsung tanpa animasi; mode kontras tinggi tetap memakai garis bawah.
+- Tautan di dalam isi berita dan jawaban Jenna tetap bergaris bawah supaya mudah dibedakan dari teks biasa.
+
 ## [0.1.297] - 2026-11-17
 ### Changed
 - Kartu "Pertumbuhan bersih" di Dashboard Kependudukan cukup menulis tahun datanya, tanpa keterangan "tahun berjalan" (seragam dengan bagian Dinamika Penduduk).

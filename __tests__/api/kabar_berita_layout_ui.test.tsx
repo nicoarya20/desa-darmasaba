@@ -11,6 +11,7 @@ vi.mock('next-view-transitions', () => ({
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
 import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import s from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 
 // test-only: entri berita siap tampil.
 const item = (id: string): KabarItem => ({
@@ -38,7 +39,7 @@ describe('KabarBerita layout', () => {
     const items = ['a', 'b', 'c', 'd'].map(item);
     const html = render(<KabarBerita items={items} loading={false} layout="grid" />);
     expect(html).toContain(`class="${s.rail} ${s.railGrid}"`);
-    expect(html).toContain(`class="${s.featuredTitle}">Berita a</h3>`);
+    expect(html).toContain(`class="${s.featuredTitle}"><span class="${r.title}">Berita a</span></h3>`);
     expect(count(html, `class="${s.cardTitle}"`)).toBe(3);
   });
 

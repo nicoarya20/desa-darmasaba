@@ -1,4 +1,5 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import f from '../detail-umkm/detail-umkm.module.css';
@@ -24,9 +25,11 @@ export function DetailProdukView({ id }: { id: string }) {
   return (
     <div className={f.page} style={KATALOG_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
       <div className={f.inner}>
-        <Link href={KATALOG_BASE_HREF} className={f.back}>
-          <IconChevronLeft size={16} stroke={2} aria-hidden="true" />
-          {T.backToList}
+        <Link href={KATALOG_BASE_HREF} className={`${f.back} ${r.trigger}`}>
+          <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden="true" />
+          <span className={r.cta} data-text={T.backToList}>
+            {T.backToList}
+          </span>
         </Link>
         {state.status === 'ready' ? (
           <DetailBody produk={state.data} onReload={reload} />

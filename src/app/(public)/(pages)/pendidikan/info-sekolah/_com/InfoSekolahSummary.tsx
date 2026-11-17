@@ -1,3 +1,4 @@
+import r from "@/app/(public)/_com/link-reveal/link-reveal.module.css";
 import apb from "@/app/(public)/_com/main-page/apbdes/apbdes.module.css";
 import { IconChalkboard, IconChevronRight, IconSchool, IconUsersGroup, type Icon } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
@@ -11,9 +12,6 @@ import { INFO_SEKOLAH_TEXT as T } from "./info-sekolah.text";
 export function InfoSekolahSummary({ ringkasan }: { ringkasan: InfoSekolahRingkasan }) {
   const { groups } = ringkasan;
   const sebaran = groups.map((g) => `${g.nama} ${g.lembaga.length}`).join(", ");
-  const cut = T.pengajarLink.lastIndexOf(" ") + 1;
-  const linkHead = T.pengajarLink.slice(0, cut);
-  const linkTail = T.pengajarLink.slice(cut);
 
   return (
     <div className={s.summary}>
@@ -42,13 +40,11 @@ export function InfoSekolahSummary({ ringkasan }: { ringkasan: InfoSekolahRingka
       <SummaryCard icon={IconChalkboard} label={T.pengajarLabel}>
         <Amount value={ringkasan.totalPengajar} unit={T.pengajarUnit} />
         <p className={s.foot}>{T.pengajarNote}</p>
-        <Link href={PENGAJAR_PATH} className={s.cardLink}>
-          {linkHead}
-          {/* Kata terakhir + panah tak boleh terpisah baris (svg inline membuka titik patah). */}
-          <span className={s.nowrap}>
-            {linkTail}
-            <IconChevronRight size={16} stroke={2} aria-hidden />
+        <Link href={PENGAJAR_PATH} className={`${s.cardLink} ${r.trigger}`}>
+          <span className={r.cta} data-text={T.pengajarLink}>
+            {T.pengajarLink}
           </span>
+          <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
         </Link>
       </SummaryCard>
     </div>

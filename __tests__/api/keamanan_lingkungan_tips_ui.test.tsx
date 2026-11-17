@@ -19,6 +19,7 @@ import ts from '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan
 import { TIPS_KEAMANAN_TEXT } from '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan.text';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -53,8 +54,8 @@ const klBody = (state: Parameters<typeof KeamananLingkunganBody>[0]['state'], se
 describe('KeamananLingkunganBody', () => {
   it('kartu gaya Kegiatan Desa: 1 utama + kartu kecil bertautan detail, tanpa tombol Detail/justify lama', () => {
     const html = klBody(klState([entri(1), entri(2), entri(3)]));
-    expect(html).toContain(`<h3 class="${kabar.featuredTitle}">Kegiatan keamanan 1</h3>`);
-    expect(html).toContain(`<h3 class="${kabar.cardTitle}">Kegiatan keamanan 2</h3>`);
+    expect(html).toContain(`<h3 class="${kabar.featuredTitle}"><span class="${r.title}">Kegiatan keamanan 1</span></h3>`);
+    expect(html).toContain(`<h3 class="${kabar.cardTitle}"><span class="${r.title}">Kegiatan keamanan 2</span></h3>`);
     expect(html).toContain('href="/keamanan/keamanan-lingkungan-pecalang-patwal/kl3"');
     expect(html).toContain('Isi kegiatan 1');
     expect(html).not.toContain('>Detail<');

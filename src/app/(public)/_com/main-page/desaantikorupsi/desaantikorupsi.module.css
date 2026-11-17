@@ -204,7 +204,6 @@
   border-radius: 6px;
   color: inherit;
   text-decoration: none;
-  transition: color 200ms ease;
 }
 
 .groupLink:focus-visible {
@@ -219,14 +218,18 @@
   color: var(--brand);
 }
 
+/* Panah teks (span sebaris): transform geser chevron sapuan warna butuh inline-block. */
+.groupArrow {
+  display: inline-block;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .itemLink:hover {
     background: #fff;
   }
 
   .itemLink:hover .itemLinkText,
-  .itemLink:hover .chevron,
-  .groupLink:hover {
+  .itemLink:hover .chevron {
     color: var(--brand);
   }
 
@@ -236,10 +239,6 @@
 
   .itemLink:hover .badge {
     background: var(--tile);
-  }
-
-  .groupLink:hover .groupHint {
-    text-decoration: underline;
   }
 }
 
@@ -327,8 +326,7 @@
   }
 
   .itemLink,
-  .chevron,
-  .groupLink {
+  .chevron {
     transition: none;
   }
 }

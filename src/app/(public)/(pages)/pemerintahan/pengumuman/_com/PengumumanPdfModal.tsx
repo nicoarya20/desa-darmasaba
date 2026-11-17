@@ -1,6 +1,10 @@
 'use client';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import type { PengumumanFile } from '@/lib/pengumuman-lampiran';
 import { Anchor, Box, Modal } from '@mantine/core';
+
+/** Label tautan buka PDF di tab baru (juga `data-text` sapuan warna). */
+const BUKA_TAB_BARU = 'Buka di tab baru';
 
 /** Modal pratinjau satu lampiran PDF (iframe) + tautan buka di tab baru; tertutup bila `file` null. */
 export function PengumumanPdfModal({ file, onClose }: { file: PengumumanFile | null; onClose: () => void }) {
@@ -11,8 +15,19 @@ export function PengumumanPdfModal({ file, onClose }: { file: PengumumanFile | n
           <Box style={{ border: '1px solid #e0e0e0', borderRadius: 8, overflow: 'hidden', height: '70vh' }}>
             <iframe src={file.link} title={file.realName} width="100%" height="100%" style={{ border: 'none' }} />
           </Box>
-          <Anchor href={file.link} target="_blank" rel="noopener noreferrer" fz="sm" mt="xs" display="inline-block">
-            Buka di tab baru
+          <Anchor
+            href={file.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            fz="sm"
+            mt="xs"
+            display="inline-block"
+            underline="never"
+            className={r.trigger}
+          >
+            <span className={r.cta} data-text={BUKA_TAB_BARU}>
+              {BUKA_TAB_BARU}
+            </span>
           </Anchor>
         </>
       )}
