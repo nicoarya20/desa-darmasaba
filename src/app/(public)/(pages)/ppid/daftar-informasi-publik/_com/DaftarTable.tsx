@@ -1,3 +1,4 @@
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { htmlToPlainText } from '@/lib/rich-text';
 import { Skeleton } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
@@ -44,11 +45,13 @@ export function DaftarTable({ items, page, busy = false }: Props) {
               <td className={s.aksi}>
                 <Link
                   href={daftarDetailHref(item.id)}
-                  className={s.detailLink}
+                  className={`${s.detailLink} ${r.trigger}`}
                   aria-label={DAFTAR_TEXT.detailLabel(item.jenisInformasi)}
                 >
-                  {DAFTAR_TEXT.detail}
-                  <IconChevronRight size={16} stroke={2} aria-hidden />
+                  <span className={r.cta} data-text={DAFTAR_TEXT.detail}>
+                    {DAFTAR_TEXT.detail}
+                  </span>
+                  <IconChevronRight className={r.chevron} size={16} stroke={2} aria-hidden />
                 </Link>
               </td>
             </tr>

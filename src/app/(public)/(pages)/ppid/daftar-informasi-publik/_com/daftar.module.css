@@ -142,9 +142,9 @@
   white-space: nowrap;
 }
 
+/* Tautan kembali "‹ Kembali ke daftar" (detail tak ditemukan) di luar pola sapuan warna: garis bawah dipertahankan. */
 @media (hover: hover) and (pointer: fine) {
-  .noteLink:hover,
-  .detailLink:hover {
+  .backLink:hover {
     text-decoration: underline;
   }
 }

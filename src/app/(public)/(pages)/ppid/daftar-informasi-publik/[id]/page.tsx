@@ -61,7 +61,7 @@ export default function DetailInformasiPublikUser() {
     content = (
       <div className={s.notFound} role="status">
         <p className={s.notFoundTitle}>{DAFTAR_TEXT.notFound}</p>
-        <Link href={DAFTAR_LIST_HREF} className={s.detailLink}>
+        <Link href={DAFTAR_LIST_HREF} className={`${s.detailLink} ${s.backLink}`}>
           <IconChevronLeft size={16} stroke={2} aria-hidden />
           {DAFTAR_TEXT.backToList}
         </Link>
