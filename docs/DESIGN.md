@@ -766,19 +766,20 @@ Kerangka Pendidikan (`page-frame`, isi 1200px, kepala `PpidHeader` rata kiri); k
 ### Perpustakaan Digital (`/pendidikan/perpustakaan-digital`)
 Halaman **penghubung** ke website perpustakaan desa (Pustaka Ananta Loka) — katalog, detail buku, dan modal pinjam sudah
 dihapus; URL lama dialihkan permanen ke halaman ini (`next.config.ts`). Alasan: `docs/decisions/2026-11-17-perpustakaan-link-eksternal.md`.
-Folder `(pages)/pendidikan/perpustakaan-digital/`: `page.tsx` → `_com/PerpusPenghubung` (`PerpusPenghubungPanel` diekspor untuk test),
-data lewat `_com/perpus-website.source.ts` + `use-perpus-website.ts` (state admin tidak dipakai di publik).
+Memakai bahasa desain Beasiswa Desa (kepala dua kolom, ubin `#f5f5f7`, panel penutup). Folder `(pages)/pendidikan/perpustakaan-digital/`:
+`page.tsx` (server, metadata) → `_com/PerpusPenghubung` (`PerpusPenghubungBody` diekspor untuk test) → `PerpusHero`
+(+ `PerpusIlustrasi`, `PerpusLink`), `PerpusBagian` (`PerpusFitur`, `PerpusLangkah`), `PerpusPenutup`; gaya `perpus-{page,hero,bagian,aksi}.module.css`;
+teks `perpus.text.ts`, id/warna `perpus.meta.ts`; data `perpus-website.{logic,source}.ts` + `use-perpus-website.ts` (state admin tidak dipakai di publik).
 Test: `__tests__/api/perpus_penghubung_ui.test.tsx`, `perpus_penghubung_routes.test.ts`.
-- **Kerangka Pendidikan** (`page-frame`, isi 1200px), `BackButton`, lalu kepala `PpidHeader` (h1 "Perpustakaan Digital" + pengantar).
-- **Panel** `#f5f5f7` radius 18, maks 46rem: ikon buku brand 40px → label kecil huruf besar abu → h2 nama platform 32px brand
-  (≤734px 26) → deskripsi 19px (≤734px 17, `white-space: pre-line`) → tombol pil 48px brand "Kunjungi Website Perpustakaan"
-  (`target="_blank" rel="noopener noreferrer"`, hover `#1c6ea4`) → keterangan 14px "Membuka {host} di tab baru."
-  yang terhubung ke tombol lewat `aria-describedby`. ≤734px tombol selebar panel.
-- **Keadaan**: memuat = panel kerangka `role="status" aria-busy` (label dibacakan pembaca layar); galat = pesan `role="alert"`;
-  belum diatur admin = "Tautan website perpustakaan belum tersedia." Ketiganya **tanpa** tombol.
-- **Tombol terisi, bukan tautan teks**: tidak memakai sapuan `link-reveal` dan tidak ada garis bawah hover (lihat aturan di bawah).
-- **Teks & pengaturan**: `_com/perpus.text.ts` untuk teks tetap; nama platform, deskripsi, dan URL dari admin
-  (Pendidikan › Perpustakaan Digital › tab **Website Perpustakaan**), bukan hardcode.
+- **Kerangka**: kerangka Pendidikan (`page-frame`), jarak antarbagian `--section-gap` (100/72). Urutan: Kepala → Yang tersedia → Cara membaca → Penutup.
+- **Kepala** (grid 2 kolom, rata atas, gap 64/40px; ≤734px satu kolom, ilustrasi di bawah teks): `BackButton` → chip nama platform (pil `blue-button-1`, ikon buku, 15px/600, dari pengaturan admin) → `h1` "Perpustakaan Digital" brand 48/32px → pengantar 19/17px abu = **deskripsi dari admin** (cadangan `T.lead` saat memuat/galat) → tombol pil 48px brand "Kunjungi Website Perpustakaan" (+ ikon keluar) dan pil sekunder `#f5f5f7` "Cara membaca" (→ `#cara-membaca`) → keterangan 15px "Membuka {host} di tab baru." Tombol keluar `target="_blank" rel="noopener noreferrer"` + `<span class=srOnly>(membuka tab baru)</span>`. ≤734px tombol selebar layar.
+- **Ilustrasi** (`aria-hidden`, murni CSS, bukan tangkapan layar supaya tidak basi): bidang gradasi `blue-button-1` → `blue-button-2` radius 18, rasio 599:413 (≤734px 4:3), berisi jendela browser putih (tiga titik, bilah alamat berisi **host asli**, dua garis teks) di atas rak 5 buku warna skala `blue-button` dengan pita penanda `orange` di buku ke-4. Buku melayang 6px bergantian (`lift` 5s, jeda 0,6s) dan **diam bila `prefers-reduced-motion`**.
+- **Yang tersedia** (`h2` 32/24px + pengantar 17px): 3 ubin `#f5f5f7` radius 18 padding 28/24px, ikon Tabler 24px dalam lingkaran 48px `blue-button-1` (jam, cari, bintang), `h3` 21px, teks 17px abu; grid 3 kolom, 1 kolom ≤734px (gap 20/16/12).
+- **Cara membaca** (`id="cara-membaca"`, `scroll-margin-top: 72px`): 3 ubin yang sama dengan lingkaran 36px brand berisi **01–03** (tabular-nums) menggantikan ikon. Tanpa tanggal/angka koleksi statis; langkah tidak menyebut tombol karena bagian ini tetap tampil saat tautan belum tersedia.
+- **Penutup**: panel gradasi `#1c6ea4 → #124170` (135°, gradasi footer) radius 18 padding 48×40 (ponsel 32×24), `h2` putih 32/24px, teks `blue-button-1` (≈4,8:1 di atas `#1c6ea4`, AA untuk 17px), pil **putih** teks brand (hover `blue-button-1`, cincin fokus putih), ikon buku 220px putih 10% sebagai hiasan di kanan bawah (`aria-hidden`, terpotong `overflow: hidden`). **Hanya dirender bila tautan tersedia.**
+- **Keadaan**: memuat = kerangka pil `role="status" aria-busy` berlabel di slot tombol; galat = kotak `#f5f5f7` `role="alert"`; belum diatur = kotak yang sama berisi "Tautan website perpustakaan belum tersedia." Ketiganya tanpa tombol dan tanpa penutup; bagian Yang tersedia & Cara membaca (statis) tetap tampil.
+- **Tombol terisi, bukan tautan teks**: tidak memakai sapuan `link-reveal`, tanpa `text-decoration`; hover hanya mengganti warna latar (pointer halus saja).
+- **Teks**: `perpus.text.ts` merangkum fitur website perpustakaan (jam akses, cari judul/penulis/ISBN, favorit & ulasan, login untuk membaca) hasil pengecekan 2026-11-17 — tinjau bila website perpustakaan berubah. Nama platform, deskripsi, dan URL dari admin (Pendidikan › Perpustakaan Digital › tab **Website Perpustakaan**), bukan hardcode.
 
 ### Modul sapuan warna tautan (`(public)/_com/link-reveal/`)
 

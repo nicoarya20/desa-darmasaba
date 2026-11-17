@@ -2,7 +2,7 @@
 
 ## [0.1.300] - 2026-11-17
 ### Changed
-- **Perpustakaan Digital kini menautkan website perpustakaan desa.** Desa sudah punya perpustakaan digital sendiri (Pustaka Ananta Loka), jadi halaman `/pendidikan/perpustakaan-digital` tidak lagi menampilkan katalog buku, melainkan profil singkat perpustakaan beserta tombol "Kunjungi Website Perpustakaan" yang terbuka di tab baru. Tautan katalog lama yang sudah dibagikan warga tetap sampai ke halaman ini, tidak jadi halaman error.
+- **Perpustakaan Digital kini menautkan website perpustakaan desa.** Desa sudah punya perpustakaan digital sendiri (Pustaka Ananta Loka), jadi halaman `/pendidikan/perpustakaan-digital` tidak lagi menampilkan katalog buku. Gantinya halaman bergaya sama dengan Beasiswa Desa: kepala berisi nama dan deskripsi perpustakaan, tombol "Kunjungi Website Perpustakaan" (terbuka di tab baru) dan ilustrasi rak buku, lalu bagian "Yang tersedia di perpustakaan", "Cara membaca" bernomor, dan ajakan penutup. Tautan katalog lama yang sudah dibagikan warga tetap sampai ke halaman ini, tidak jadi halaman error.
 - **Admin bisa mengganti alamat website perpustakaan sendiri** dari Pendidikan › Perpustakaan Digital › tab "Website Perpustakaan" (nama platform, deskripsi, dan alamat), tanpa perlu menunggu deploy. Alamat wajib diawali `https://`.
 - **Tab Data Perpustakaan, Kategori Buku, dan Peminjam jadi arsip**, diberi nama "Arsip …" beserta keterangan bahwa isinya tidak tampil di website publik. Datanya tetap utuh dan bisa diperiksa; belum ada yang dihapus.
 - Hasil pencarian di website tidak lagi memuat judul buku dari katalog lama, dan asisten Jenna mengarahkan pengunjung ke halaman perpustakaan yang baru.
