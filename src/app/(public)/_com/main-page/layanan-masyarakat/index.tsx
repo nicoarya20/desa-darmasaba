@@ -5,7 +5,6 @@ import { useDisclosure } from "@mantine/hooks";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { LayananCard } from "./LayananCard";
-import { LAYANAN_BRAND_VARS } from "./layanan-masyarakat.meta";
 import s from "./layanan-masyarakat.module.css";
 import { LAYANAN_MASYARAKAT_TEXT } from "./layanan-masyarakat.text";
 
@@ -23,7 +22,7 @@ function LayananMasyarakat() {
   };
 
   return (
-    <section className={s.section} style={LAYANAN_BRAND_VARS} aria-label={LAYANAN_MASYARAKAT_TEXT.ariaLabel}>
+    <section className={s.section} aria-label={LAYANAN_MASYARAKAT_TEXT.ariaLabel}>
       <div className={s.inner}>
         <ul className={s.grid}>
           {LAYANAN_DESA.map((item) => (

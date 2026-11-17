@@ -11,6 +11,9 @@
 @import "react-simple-toasts/dist/style.css";
 @import "react-simple-toasts/dist/theme/dark.css";
 
+/* Token warna terang/gelap situs publik (--c-*), lihat theme-tokens.css */
+@import "./theme-tokens.css";
+
 /* ===================================
    2. FONT FACE - OPTIMIZED
    =================================== */
@@ -49,6 +52,17 @@ body {
                Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tema gelap situs publik (area admin/akun selalu terang, src/lib/color-scheme-scope.ts):
+   latar body (terlihat saat overscroll) & toast react-toastify ikut token. Terang tidak berubah. */
+:root[data-mantine-color-scheme="dark"] {
+  --toastify-color-light: var(--c-tile-alt);
+  --toastify-text-color-light: var(--c-ink-2);
+}
+
+:root[data-mantine-color-scheme="dark"] body {
+  background-color: var(--c-bg);
 }
 
 /* ===================================

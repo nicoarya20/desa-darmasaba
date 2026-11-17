@@ -2,20 +2,25 @@
  * Overlay detail Program Inovasi (Modal Mantine di atas beranda yang di-blur): bilah atas tetap berisi ×,
  * isi scroll di dalam (kepala logo + label + nama, deskripsi, galeri Dokumentasi). Tampilan besar foto (lapisan
  * di atas detail) ada di program-overlay-photo.module.css. Desktop: kartu 880px. Ponsel ≤734px: lembar penuh.
- * Variabel --brand/--brand-hover dari ProgramInovasiOverlay (BRAND_VARS). Breakpoint apple.com: ≤1068px, ≤734px.
+ * Warna = alias token --c-* (theme-tokens.css); modal di portal, jadi variabelnya dipasang di kotak dialog ini.
+ * Gelap: kotak #1d1d1f (--c-tile), ubin di dalamnya satu tingkat lebih terang. Breakpoint apple.com: ≤1068px, ≤734px.
  */
 .content {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --tile: #f5f5f7;
-  --line: rgba(0, 0, 0, 0.08);
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --brand: var(--c-brand);
+  --brand-hover: var(--c-brand-hover);
+  --surface: light-dark(var(--c-bg), var(--c-tile));
+  --tile: light-dark(var(--c-tile), var(--c-tile-alt));
+  --tile-hover: light-dark(#e8e8ed, #3a3a3c);
+  --line: var(--c-line);
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   /* Prop radius Modal.Root hanya mengenai Modal.Header; kotak dialog (Paper) memakai radius bawaan 4px. */
   border-radius: 28px;
-  background: #fff;
+  background: var(--surface);
   color: var(--ink);
 }
 
@@ -83,7 +88,9 @@
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 24px;
-  background: #fff;
+  /* Pelat logo tetap terang di tema gelap (logo umumnya gelap di atas transparan); #D9E1EA sama dengan pelat
+     ubin program di hero (programs.module.css), tidak silau. */
+  background: light-dark(#fff, #d9e1ea);
 }
 
 .logo {
@@ -218,7 +225,7 @@
   padding: 16px 20px;
   border-radius: 18px;
   background: var(--tile);
-  color: #424245;
+  color: light-dark(#424245, var(--c-ink-2));
   font-size: 17px;
   line-height: 1.5;
 }
@@ -273,7 +280,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .close:hover {
-    background: #e8e8ed;
+    background: var(--tile-hover);
   }
 
   .thumb:hover .thumbImg {

@@ -1,4 +1,3 @@
-import colors from "@/con/colors";
 import { Box, Button, Group, Loader, ScrollArea, Stack, Text } from "@mantine/core";
 import { IconMicrophone, IconRefresh } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
@@ -36,12 +35,12 @@ function ErrorBubble({ message, isLast, sending, onRetry }: { message: Snapshot<
   const secondsLeft = useSecondsLeft(message.retryAt);
   const retryable = isLast && RETRYABLE_CODES.has(message.errorCode ?? "");
   return (
-    <Box className={classes.bubbleAssistant} style={{ borderColor: "var(--mantine-color-red-3)", background: "var(--mantine-color-red-0)" }}>
-      <Text fz="sm" c="red.9">
+    <Box className={classes.bubbleAssistant} style={{ borderColor: "var(--jenna-error-line)", background: "var(--jenna-error-bg)" }}>
+      <Text fz="sm" c="var(--jenna-error-ink)">
         {message.text}
       </Text>
       {secondsLeft > 0 && (
-        <Text fz="xs" c="gray.7" mt={4}>
+        <Text fz="xs" c="var(--jenna-text-3)" mt={4}>
           Silakan coba lagi dalam {secondsLeft} detik.
         </Text>
       )}
@@ -66,8 +65,8 @@ function AssistantBubble({ message, assistantName, statusText }: { message: Snap
   if (message.status === "streaming" && !message.text) {
     return (
       <Group gap="xs" className={classes.bubbleAssistant} role="status" wrap="nowrap">
-        <Loader size="xs" type="dots" color={colors["blue-button"]} />
-        <Text fz="sm" c="gray.7">
+        <Loader size="xs" type="dots" color="var(--c-brand)" />
+        <Text fz="sm" c="var(--jenna-text-3)">
           {statusText ?? `${assistantName} sedang menyiapkan jawaban…`}
         </Text>
       </Group>
@@ -79,13 +78,13 @@ function AssistantBubble({ message, assistantName, statusText }: { message: Snap
       {message.text && <JennaMarkdown text={message.text} />}
       {message.status === "streaming" && <span className={classes.caret} aria-hidden="true" />}
       {stopped && (
-        <Text fz="xs" c="gray.7" mt={message.text ? 4 : 0}>
+        <Text fz="xs" c="var(--jenna-text-3)" mt={message.text ? 4 : 0}>
           Dihentikan sebelum selesai.
         </Text>
       )}
       {message.status === "done" && !!message.sources?.length && (
         <Box mt={6}>
-          <Text fz="xs" fw={600} c="gray.7">
+          <Text fz="xs" fw={600} c="var(--jenna-text-3)">
             Sumber
           </Text>
           <Stack component="ul" gap={2} m={0} pl="md">
@@ -132,7 +131,7 @@ export function JennaMessages({ messages, assistantName, sending, statusText, on
       </div>
       {messages.length === 0 ? (
         <Stack gap="md" p="md" justify="flex-end" style={{ flex: 1 }}>
-          <Text fz="sm" c="gray.8">
+          <Text fz="sm" c="var(--jenna-text-2)">
             {JENNA_DISCLAIMER}
           </Text>
           <Group gap="xs">
@@ -142,8 +141,8 @@ export function JennaMessages({ messages, assistantName, sending, statusText, on
                 size="xs"
                 radius="xl"
                 variant="outline"
-                color={colors["blue-button"]}
-                bg="white"
+                color="var(--c-brand)"
+                bg="var(--jenna-surface)"
                 disabled={sending}
                 onClick={() => onSuggest(s)}
               >

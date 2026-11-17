@@ -3,7 +3,6 @@
 import { IconChevronRight } from '@tabler/icons-react'
 import Link from 'next/link'
 
-import { APBDES_BRAND_VARS } from './apbdes.meta'
 import s from './apbdes.module.css'
 import { APBDES_TEXT } from './apbdes.text'
 import { ApbdesBody } from './components/ApbdesBody'
@@ -16,7 +15,7 @@ function Apbdes() {
   const data = useApbdesData()
 
   return (
-    <section className={s.section} style={APBDES_BRAND_VARS} aria-labelledby="apbdes-title">
+    <section className={s.section} aria-labelledby="apbdes-title">
       <div className={s.inner}>
         <header className={s.header}>
           <h2 id="apbdes-title" className={s.title}>

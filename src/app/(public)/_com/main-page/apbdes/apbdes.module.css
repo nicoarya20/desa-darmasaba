@@ -1,17 +1,19 @@
 /*
  * Section APBDes beranda — gaya bersih ala apple.com (sejalan navbar/footer/galeri):
  * latar putih, kartu #f5f5f7 tanpa border/bayangan, angka besar, warna aksen per kategori
- * lewat variabel --accent/--tint (diset inline dari apbdes.meta.ts).
+ * lewat variabel --accent/--tint (diset inline dari apbdes.meta.ts, nilainya var(--apbdes-<tipe>-*) di bawah).
+ * Warna = alias token --c-* (theme-tokens.css). --brand = teks/judul; tombol isi pakai --c-brand-fill.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
  */
 .section {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #86868b;
-  --tile: #f5f5f7;
-  --line: rgba(0, 0, 0, 0.08);
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --subtle: var(--c-subtle);
+  --tile: var(--c-tile);
+  --line: var(--c-line);
+  --brand: var(--c-brand);
   --radius: 18px;
-  background: #fff;
+  background: var(--c-bg);
   padding: var(--section-pad-y) 16px;
   color: var(--ink);
 }
@@ -85,6 +87,24 @@
     opacity: 0;
     transform: translateY(6px);
   }
+}
+
+/* Warna aksen per kategori (accentVars di apbdes.meta.ts). Dipasang di .section, .card, dan .panel karena halaman
+   lain memakai .card/.panel tanpa .section. Gelap: aksen dinaikkan ke tingkat 4, tint jadi transparan di atas ubin. */
+.section,
+.card,
+.panel {
+  --apbdes-pendapatan-accent: light-dark(var(--mantine-color-teal-7), var(--mantine-color-teal-4));
+  --apbdes-pendapatan-tint: light-dark(var(--mantine-color-teal-0), rgb(32 201 151 / 16%));
+  --apbdes-belanja-accent: var(--c-brand);
+  --apbdes-belanja-tint: var(--c-brand-tint);
+  --apbdes-pembiayaan-accent: light-dark(var(--mantine-color-orange-7), var(--mantine-color-orange-4));
+  --apbdes-pembiayaan-tint: light-dark(var(--mantine-color-orange-0), rgb(253 126 20 / 18%));
+  /* Grafik pagu vs realisasi (ApbdesChart): realisasi = seri utama, pagu = biru lebih redup (urutan sama dengan terang).
+     Gelap: #4A7598 khusus grafik ini (bukan token), karena --c-chart-3 gelap justru paling terang dan --c-chart-2
+     (#2F91CC) cuma 1,5:1 terhadap realisasi #6CB4E4. #4A7598 = 3,4:1 di ubin #1D1D1F, 2,2:1 terhadap realisasi. */
+  --apbdes-chart-pagu: light-dark(var(--c-chart-3), #4a7598);
+  --apbdes-chart-realisasi: var(--c-chart-1);
 }
 
 /* ---------- Ringkasan ---------- */
@@ -223,8 +243,8 @@
   gap: 4px;
   padding: 12px 22px;
   border-radius: 980px;
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font-size: 17px;
   font-weight: 500;
   text-decoration: none;
@@ -238,7 +258,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .ctaLink:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 }
 

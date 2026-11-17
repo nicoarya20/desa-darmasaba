@@ -5,7 +5,6 @@ import Kepuasan from "@/app/(public)/_com/main-page/kepuasan";
 import LandingPage from "@/app/(public)/_com/main-page/landing-page";
 import LayananMasyarakat from "@/app/(public)/_com/main-page/layanan-masyarakat";
 import LayananPotensi from "@/app/(public)/_com/main-page/layanan-potensi";
-import colors from "@/con/colors";
 import SDGS from "./_com/main-page/sdgs";
 
 import { Box, Stack } from "@mantine/core";
@@ -19,7 +18,7 @@ export default function Page() {
   return (
     <Box>
       <GateSplash />
-      <Stack bg={colors.grey[1]} gap={0}>
+      <Stack bg="var(--c-page)" gap={0}>
         <LandingPage />
         <KabarDesa />
         <Apbdes />

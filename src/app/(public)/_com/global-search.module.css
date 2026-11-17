@@ -1,0 +1,56 @@
+/*
+ * Dropdown pencarian global (globalSearch.tsx + SearchResultRow + SearchShowMoreButton).
+ * Terang = nilai inline lama; gelap = token --c-* (src/app/theme-tokens.css).
+ */
+.dropdown {
+  max-height: 350px;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px solid #eee;
+
+  /* Teks & "dimmed" gelap sudah ikut palet A lewat siteCssVariablesResolver. */
+  @mixin dark {
+    background-color: var(--c-tile);
+    border-color: var(--c-line);
+  }
+}
+
+.row {
+  border-bottom: 1px solid #f1f1f1;
+  cursor: pointer;
+  background: white;
+  transition: background 0.2s;
+
+  @mixin dark {
+    border-bottom-color: var(--c-line);
+    background: var(--c-tile);
+  }
+}
+
+.row[data-navigating="true"] {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.showMore {
+  border-bottom: 1px solid #f4f5f6;
+  transition: background 0.2s;
+
+  @mixin dark {
+    border-bottom-color: var(--c-line);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:not([data-navigating="true"]):hover {
+    background: #f9f9f9;
+
+    @mixin dark {
+      background: var(--c-tile-alt);
+    }
+  }
+
+  .showMore:hover {
+    background: var(--c-brand-tint);
+  }
+}

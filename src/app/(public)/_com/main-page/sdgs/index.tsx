@@ -2,7 +2,7 @@
 import { IconChevronRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { SdgsCards, SdgsCardsSkeleton } from "./SdgsCards";
-import { SDGS_BRAND_VARS, SDGS_DETAIL_HREF } from "./sdgs.meta";
+import { SDGS_DETAIL_HREF } from "./sdgs.meta";
 import s from "./sdgs.module.css";
 import { SDGS_TEXT } from "./sdgs.text";
 import { useSdgsData } from "./use-sdgs-data";
@@ -15,7 +15,7 @@ function SDGS() {
   const empty = !loading && items.length === 0;
 
   return (
-    <section className={s.section} style={SDGS_BRAND_VARS} aria-labelledby={TITLE_ID}>
+    <section className={s.section} aria-labelledby={TITLE_ID}>
       <div className={s.inner}>
         <header className={s.header}>
           <h2 id={TITLE_ID} className={s.title}>

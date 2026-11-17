@@ -18,6 +18,7 @@ import {
 import {
   JENIS_KELAMIN,
   KELOMPOK_UMUR,
+  MONTHLY_BAR_COLOR,
   RATING,
   RATING_FALLBACK_COLOR,
   ratingColor,
@@ -191,9 +192,13 @@ describe('warna rating (meta)', () => {
     expect(ratingColor('')).toBe(RATING_FALLBACK_COLOR);
   });
 
-  it('jenis kelamin & umur tetap palet biru brand', () => {
-    expect(JENIS_KELAMIN.map((c) => c.color)).toEqual(['#0A4E78', '#8AC1E3']);
-    expect(KELOMPOK_UMUR.map((c) => c.color)).toEqual(['#0A4E78', '#2F91CC', '#8AC1E3']);
+  it('jenis kelamin & umur tetap palet biru brand, lewat token grafik yang ikut tema', () => {
+    expect(JENIS_KELAMIN.map((c) => c.color)).toEqual(['var(--c-chart-1)', 'var(--c-chart-3)']);
+    expect(KELOMPOK_UMUR.map((c) => c.color)).toEqual(['var(--c-chart-1)', 'var(--c-chart-2)', 'var(--c-chart-3)']);
+  });
+
+  it('batang bulanan memakai token grafik pertama (bukan hex tetap)', () => {
+    expect(MONTHLY_BAR_COLOR).toBe('var(--c-chart-1)');
   });
 
   it('summarizeKepuasan membawa warna rating ke slice', () => {

@@ -1,7 +1,6 @@
 "use client";
 import stateLayananDesa from "@/app/admin/(dashboard)/_state/desa/layananDesa";
 import potensiDesaState from "@/app/admin/(dashboard)/_state/desa/potensi";
-import colors from "@/con/colors";
 import { useDocumentVisibility, useReducedMotion } from "@mantine/hooks";
 import _ from "lodash";
 import { useCallback, useEffect, useMemo, useState, type FocusEvent } from "react";
@@ -91,12 +90,12 @@ function LayananPotensi() {
 
   return (
     <section className={s.section} aria-roledescription="carousel" aria-labelledby="layanan-potensi-title">
-      <h2 id="layanan-potensi-title" className={s.title} style={{ color: colors["blue-button"] }}>
+      <h2 id="layanan-potensi-title" className={s.title}>
         {GALLERY_TEXT.title}
       </h2>
 
       {isEmpty ? (
-        <p style={{ textAlign: "center", color: "#6e6e73", margin: 0 }}>{GALLERY_TEXT.empty}</p>
+        <p style={{ textAlign: "center", color: "var(--c-muted)", margin: 0 }}>{GALLERY_TEXT.empty}</p>
       ) : (
         <>
           <div className={s.rows} onFocus={onRowsFocus} onBlur={onRowsBlur}>

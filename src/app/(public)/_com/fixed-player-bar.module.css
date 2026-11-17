@@ -1,0 +1,23 @@
+/*
+ * Warna FixedPlayerBar yang ikut tema. Prop Mantine `color`/`style` menulis inline style, jadi nilai yang
+ * berbeda per tema dipasang lewat kelas: terang = nilai lama, gelap = token theme-tokens.css.
+ */
+
+/* Ikon musik mengambang (pemain diminimalkan): Button membaca --player-fab lewat prop color. */
+.fab {
+  --player-fab: #0b4f78;
+
+  @mixin dark {
+    --player-fab: var(--c-brand-fill);
+  }
+}
+
+/* Bar bawah: Paper tetap putih di terang; di gelap ubin palet A, garis atas tipis terang. */
+.bar {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+  @mixin dark {
+    border-top-color: var(--c-line);
+    background: var(--c-tile);
+  }
+}

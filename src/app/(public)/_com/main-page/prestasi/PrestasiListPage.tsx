@@ -1,13 +1,12 @@
 "use client";
 import BackButton from "@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto";
-import colors from "@/con/colors";
 import { Pagination, TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import { PrestasiGrid } from "./PrestasiGrid";
 import { countPages } from "./prestasi.logic";
-import { PRESTASI_BRAND_VARS, PRESTASI_PAGE_SIZE } from "./prestasi.meta";
+import { PRESTASI_PAGE_SIZE } from "./prestasi.meta";
 import grid from "./prestasi.module.css";
 import s from "./prestasi.page.module.css";
 import { PRESTASI_TEXT } from "./prestasi.text";
@@ -33,7 +32,7 @@ export function PrestasiListPage() {
   else if (!loading && items.length === 0) message = query ? PRESTASI_TEXT.notFound(query) : PRESTASI_TEXT.empty;
 
   return (
-    <section className={`${grid.section} ${s.page}`} style={PRESTASI_BRAND_VARS} aria-labelledby="prestasi-page-title">
+    <section className={`${grid.section} ${s.page}`} aria-labelledby="prestasi-page-title">
       <div className={s.head}>
         <BackButton />
         <div className={s.intro}>
@@ -69,7 +68,7 @@ export function PrestasiListPage() {
 
       {pages > 1 ? (
         <div className={s.pagination}>
-          <Pagination value={page} onChange={onPage} total={pages} color={colors["blue-button"]} radius="xl" />
+          <Pagination value={page} onChange={onPage} total={pages} color="var(--c-brand-fill)" radius="xl" />
         </div>
       ) : null}
     </section>

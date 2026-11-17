@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.304] - 2026-11-17
+### Added
+- **Tema gelap untuk beranda (tahap persiapan, belum bisa dinyalakan pengunjung).** Seluruh beranda kini punya versi gelap bergaya "Malam Netral": latar hitam, panel abu gelap, judul biru terang, footer navy, pita hero yang diredupkan, serta navbar, pencarian, pemutar musik, dan asisten Jenna yang ikut gelap. Tombol matahari/bulan untuk menggantinya baru muncul di lingkungan pengembangan; tombol dibuka untuk warga setelah semua menu selesai dibuat gelap, supaya tidak ada halaman yang tampil setengah gelap. Tampilan terang yang dilihat warga sekarang tidak berubah.
+
+### Changed
+- Halaman admin dan akun (login, registrasi, profil) selalu tampil terang, apa pun pilihan tema di browser.
+
 ## [0.1.303] - 2026-11-17
 ### Changed
 - **Perpustakaan Digital kini menautkan website perpustakaan desa.** Desa sudah punya perpustakaan digital sendiri (Pustaka Ananta Loka), jadi halaman `/pendidikan/perpustakaan-digital` tidak lagi menampilkan katalog buku. Gantinya halaman bergaya sama dengan Beasiswa Desa: kepala berisi nama dan deskripsi perpustakaan, tombol "Kunjungi Website Perpustakaan" (terbuka di tab baru) dan ilustrasi rak buku, lalu bagian "Yang tersedia di perpustakaan", "Cara membaca" bernomor, dan ajakan penutup. Tautan katalog lama yang sudah dibagikan warga tetap sampai ke halaman ini, tidak jadi halaman error.
