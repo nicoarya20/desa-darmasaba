@@ -48,6 +48,8 @@ export const desaMenu: NavItem = {
     { id: "desa.gallery", name: "Gallery", path: "/admin/pemerintahan/gallery/foto", basePath: "/admin/pemerintahan/gallery" },
     { id: "desa.layanan", name: "Layanan", path: "/admin/pemerintahan/layanan/pelayanan_surat_keterangan", basePath: "/admin/pemerintahan/layanan" },
     { id: "desa.kegiatan-desa", name: "Kegiatan Desa", path: "/admin/pemerintahan/kegiatan-desa/list-kegiatan-desa", basePath: "/admin/pemerintahan/kegiatan-desa" },
+    // Dulu tab di Kegiatan Desa; rute lama dialihkan di next.config.ts, akses lama dipindah migrasi 20261118120000_lomba_laporan_penduduk_bulanan.
+    { id: "desa.dokumen-perencanaan", name: "Dokumen Perencanaan", path: "/admin/pemerintahan/dokumen-perencanaan", basePath: "/admin/pemerintahan/dokumen-perencanaan" },
     { id: "desa.event-budaya", name: "Agenda & Kalender Desa", path: "/admin/pemerintahan/event-budaya", basePath: "/admin/pemerintahan/event-budaya" },
     { id: "desa.banjar", name: "Banjar", path: "/admin/pemerintahan/banjar", basePath: "/admin/pemerintahan/banjar" },
     { id: "desa.struktur-perangkat-desa", name: "Struktur Perangkat Desa", path: "/admin/pemerintahan/struktur-perangkat-desa/pegawai", basePath: "/admin/pemerintahan/struktur-perangkat-desa" },

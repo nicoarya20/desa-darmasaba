@@ -38,9 +38,9 @@ import { IconEdit, IconExternalLink, IconPlus, IconSearch, IconTrash } from '@ta
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import HeaderSearch from '../../../_com/header';
+import HeaderSearch from '../../_com/header';
 
-const BASE_PATH = '/admin/pemerintahan/kegiatan-desa/dokumen-perencanaan';
+const BASE_PATH = '/admin/pemerintahan/dokumen-perencanaan';
 const FILTER_ALL = 'semua';
 const filterOptions = [
   { value: FILTER_ALL, label: 'Semua' },

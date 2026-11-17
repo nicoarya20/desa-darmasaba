@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import DokumenPerencanaanForm from '../_com/DokumenPerencanaanForm';
 
-const LIST_PATH = '/admin/pemerintahan/kegiatan-desa/dokumen-perencanaan';
+const LIST_PATH = '/admin/pemerintahan/dokumen-perencanaan';
 
 /** Admin: tambah dokumen perencanaan baru. */
 export default function CreateDokumenPerencanaan() {

@@ -13,13 +13,9 @@ import {
   type JenisDokumen,
   type JenisMusyawarah,
 } from '@/lib/dokumen-perencanaan';
-import { Button, Group, NumberInput, Paper, Select, Stack, Text, TextInput, Textarea } from '@mantine/core';
-import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone';
-import { IconFile, IconUpload, IconX } from '@tabler/icons-react';
+import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
+import { Button, Group, NumberInput, Paper, Select, Stack, TextInput, Textarea } from '@mantine/core';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
-
-const MAX_PDF_SIZE_MB = 10;
 
 const jenisOptions = JENIS_DOKUMEN.map((v) => ({ value: v, label: JENIS_DOKUMEN_LABEL[v] }));
 const musyawarahOptions = JENIS_MUSYAWARAH.map((v) => ({ value: v, label: JENIS_MUSYAWARAH_LABEL[v] }));
@@ -119,37 +115,7 @@ export default function DokumenPerencanaanForm({ form, loading, submitLabel, cur
           onChange={(e) => (form.ringkasan = e.currentTarget.value)}
         />
 
-        <Stack gap={6}>
-          <Text fw="bold" fz="sm">Berkas PDF (Opsional)</Text>
-          {currentFile && !pdf && (
-            <Text fz="sm" c="dimmed">
-              Berkas saat ini: <a href={currentFile.link} target="_blank" rel="noreferrer">{currentFile.realName}</a>. Pilih berkas baru untuk menggantinya.
-            </Text>
-          )}
-          <Dropzone
-            onDrop={(files) => setPdf(files[0] ?? null)}
-            onReject={() => toast.error(`Berkas harus PDF dengan ukuran maksimal ${MAX_PDF_SIZE_MB} MB`)}
-            accept={PDF_MIME_TYPE}
-            maxSize={MAX_PDF_SIZE_MB * 1024 ** 2}
-            multiple={false}
-            radius="md"
-            p="lg"
-          >
-            <Group justify="center" gap="md" mih={90}>
-              <Dropzone.Accept><IconUpload size={36} color="var(--mantine-color-blue-6)" stroke={1.5} /></Dropzone.Accept>
-              <Dropzone.Reject><IconX size={36} color="var(--mantine-color-red-6)" stroke={1.5} /></Dropzone.Reject>
-              <Dropzone.Idle><IconFile size={36} color="#868e96" stroke={1.5} /></Dropzone.Idle>
-              <Text size="sm" ta="center">
-                {pdf ? pdf.name : 'Seret PDF atau klik untuk memilih'}
-              </Text>
-            </Group>
-          </Dropzone>
-          {pdf && (
-            <Button variant="subtle" color="red" size="compact-sm" w="fit-content" onClick={() => setPdf(null)}>
-              Batalkan pilihan berkas
-            </Button>
-          )}
-        </Stack>
+        <PdfDropzoneField label="Berkas PDF (Opsional)" file={pdf} onChange={setPdf} currentFile={currentFile} />
 
         <Group justify="flex-end">
           <Button bg={colors['blue-button']} loading={loading} onClick={() => onSubmit(pdf)}>
