@@ -13,6 +13,9 @@ const detailState = vi.hoisted(() => ({ current: null as DetailState | null }));
 vi.mock('@/app/(public)/_com/main-page/landing-page/program-overlay/use-program-detail', () => ({
   useProgramDetail: () => detailState.current,
 }));
+vi.mock('next-view-transitions', () => ({
+  Link: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+}));
 
 import type { ProgramInovasiItem } from '@/app/(public)/_com/main-page/landing-page/HeroPrograms';
 import { ProgramInovasiOverlay } from '@/app/(public)/_com/main-page/landing-page/program-overlay/ProgramInovasiOverlay';
@@ -71,6 +74,15 @@ describe('ProgramInovasiOverlay', () => {
     expect(html).toContain('aria-busy="true"');
     expect(html.match(/thumbSkeleton/g)).toHaveLength(2);
     expect(html).toMatch(/--overlay-filter:\s*blur\(/);
+  });
+
+  it('detail menautkan halaman lengkap /inovasi/program-inovasi/{id} di bawah nama', () => {
+    const html = overlay({ preview: preview(0) });
+    expect(html).toMatch(new RegExp(`<a href="/inovasi/program-inovasi/p1"[^>]*>${T.fullPage}<svg`));
+  });
+
+  it('kerangka (belum ada data) → tanpa tautan halaman lengkap', () => {
+    expect(overlay()).not.toContain(T.fullPage);
   });
 
   it('preview dengan _count 0 → tanpa bagian Dokumentasi sama sekali', () => {
