@@ -9,7 +9,7 @@ import type { DatasetSlice } from '@/app/(public)/(pages)/kependudukan/_com/data
 import { KependudukanHero } from '@/app/(public)/(pages)/kependudukan/_com/frame/KependudukanHero';
 import { KependudukanTerkait } from '@/app/(public)/(pages)/kependudukan/_com/frame/KependudukanTerkait';
 import { SectionNav } from '@/app/(public)/(pages)/kependudukan/_com/frame/SectionNav';
-import { navSections } from '@/app/(public)/(pages)/kependudukan/_com/frame/section-nav.logic';
+import { NAV_SECTIONS } from '@/app/(public)/(pages)/kependudukan/_com/frame/section-nav.logic';
 
 vi.mock('next-view-transitions', () => ({
   Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => (
@@ -66,18 +66,12 @@ describe('KependudukanHero', () => {
 
 describe('SectionNav', () => {
   it('pil = tautan anchor; pil pertama aktif saat render awal', () => {
-    const html = render(<SectionNav sections={navSections(false)} />);
+    const html = render(<SectionNav sections={NAV_SECTIONS} />);
     expect(html).toContain('aria-label="Bagian Dashboard Kependudukan"');
     const hrefs = [...html.matchAll(/href="(#[a-z]+)"/g)].map((m) => m[1]);
     expect(hrefs).toEqual(['#ringkasan', '#banjar', '#umur', '#agama', '#dinamika']);
     expect(html.match(/aria-current="location"/g)).toHaveLength(1);
     expect(html).toMatch(/href="#ringkasan"[^>]*aria-current="location"/);
-  });
-
-  it('Agama disembunyikan admin → tanpa pil Agama', () => {
-    const html = render(<SectionNav sections={navSections(true)} />);
-    expect(html).not.toContain('#agama');
-    expect(text(html)).not.toContain('Agama');
   });
 });
 

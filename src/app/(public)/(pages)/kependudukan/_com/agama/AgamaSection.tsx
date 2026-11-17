@@ -16,7 +16,7 @@ const SKELETON_ROWS = 6;
  * Section Agama: batang horizontal per agama untuk tahun terbaru dataset (jumlah + persen angka asli, warna brand
  * tunggal), urut terbanyak dengan "Lainnya" di akhir. Judul `h2` ada di semua keadaan (tujuan `#agama`).
  * Galat ≠ kosong: galat = ubin + "Coba lagi"; kosong = ubin "belum diisi".
- * Visibilitas (saklar admin) diputuskan pemakai lewat `isAgamaHidden`, bukan di sini.
+ * Selalu dirender: navbar Kependudukan kini satu butir (Dashboard), jadi tidak ada saklar visibilitas khusus Agama.
  */
 export function AgamaSection({ data }: { data: DatasetSlice }) {
   return (

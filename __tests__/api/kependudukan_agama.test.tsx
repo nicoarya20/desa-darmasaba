@@ -1,19 +1,16 @@
 // @vitest-environment node
 // Dashboard Kependudukan, section Agama: parser baris API, label enum manusiawi, urutan, persen angka asli,
-// saklar visibilitas admin, dan markup tiap keadaan (jsdom rusak di repo ini → renderToStaticMarkup).
+// dan markup tiap keadaan (jsdom rusak di repo ini → renderToStaticMarkup).
 import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { effectiveMenuVisibility, isKnownMenuKey } from '@/app/(public)/_com/menu-visibility.logic';
 import { summarizeStatBars } from '@/app/(public)/_com/stat-bars/stat-bars.logic';
 import type { DatasetSlice } from '@/app/(public)/(pages)/kependudukan/_com/data/kependudukan-data.types';
 import { AgamaSection } from '@/app/(public)/(pages)/kependudukan/_com/agama/AgamaSection';
 import {
-  AGAMA_MENU_KEY,
   agamaLabel,
   compareAgama,
   formatAgamaShare,
-  isAgamaHidden,
   parseAgamaRows,
   toAgamaStatItems,
 } from '@/app/(public)/(pages)/kependudukan/_com/agama/agama.logic';
@@ -82,18 +79,6 @@ describe('urutan & persen', () => {
     expect(formatAgamaShare((2 / 4215) * 100)).toBe('0,05%');
     expect(formatAgamaShare(0)).toBe('0%');
     expect(formatAgamaShare(100)).toBe('100%');
-  });
-});
-
-describe('isAgamaHidden', () => {
-  it('menuKey = href submenu navbar yang dikenal', () => {
-    expect(AGAMA_MENU_KEY).toBe('/kependudukan/distribusi-agama');
-    expect(isKnownMenuKey(AGAMA_MENU_KEY)).toBe(true);
-  });
-  it('tersembunyi hanya bila admin mematikan submenu Distribusi Agama', () => {
-    expect(isAgamaHidden(effectiveMenuVisibility({}).hiddenHrefs)).toBe(false);
-    expect(isAgamaHidden(effectiveMenuVisibility({ [AGAMA_MENU_KEY]: false }).hiddenHrefs)).toBe(true);
-    expect(isAgamaHidden(['/kependudukan/distribusi-umur'])).toBe(false);
   });
 });
 

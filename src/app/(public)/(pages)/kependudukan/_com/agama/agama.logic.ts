@@ -1,16 +1,4 @@
-import { isPathHidden } from '@/app/(public)/_com/menu-visibility.logic';
 import { compareStatValueDesc, parseJumlah, type StatBarItem } from '@/app/(public)/_com/stat-bars/stat-bars.logic';
-
-/**
- * Href submenu "Distribusi Agama" di navbar = kunci visibilitas admin. URL lama ini tetap dipakai sebagai menuKey
- * walau halamannya kini redirect ke `/kependudukan/dashboard#agama`.
- */
-export const AGAMA_MENU_KEY = '/kependudukan/distribusi-agama';
-
-/** True bila admin menyembunyikan submenu Distribusi Agama (atau induknya): section + pil Agama tidak dirender. */
-export function isAgamaHidden(hiddenHrefs: readonly string[]): boolean {
-  return isPathHidden(AGAMA_MENU_KEY, hiddenHrefs);
-}
 
 /** Kode "lain-lain" yang selalu ditaruh paling akhir, berapa pun jumlahnya. */
 const KODE_LAINNYA = 'LAINNYA';

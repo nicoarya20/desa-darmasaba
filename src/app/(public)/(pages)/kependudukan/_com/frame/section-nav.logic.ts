@@ -6,17 +6,14 @@ export type NavSection = { anchor: string; label: string };
 
 const T = KEPENDUDUKAN_TEXT.nav;
 
-/** Urutan pil = urutan section di halaman; Agama tidak ada bila submenunya disembunyikan admin. */
-export function navSections(agamaHidden: boolean): NavSection[] {
-  const all: (NavSection & { agama?: true })[] = [
-    { anchor: RINGKASAN_ANCHOR, label: T.ringkasan },
-    { anchor: SECTION_ANCHOR.banjar, label: T.banjar },
-    { anchor: SECTION_ANCHOR.umur, label: T.umur },
-    { anchor: SECTION_ANCHOR.agama, label: T.agama, agama: true },
-    { anchor: SECTION_ANCHOR.dinamika, label: T.dinamika },
-  ];
-  return all.filter((s) => !(agamaHidden && s.agama)).map(({ anchor, label }) => ({ anchor, label }));
-}
+/** Pil rel navigasi; urutan = urutan section di halaman. */
+export const NAV_SECTIONS: readonly NavSection[] = [
+  { anchor: RINGKASAN_ANCHOR, label: T.ringkasan },
+  { anchor: SECTION_ANCHOR.banjar, label: T.banjar },
+  { anchor: SECTION_ANCHOR.umur, label: T.umur },
+  { anchor: SECTION_ANCHOR.agama, label: T.agama },
+  { anchor: SECTION_ANCHOR.dinamika, label: T.dinamika },
+];
 
 /** Posisi atas section relatif viewport (px), urut sesuai halaman. */
 export type SectionTop = { anchor: string; top: number };

@@ -2,7 +2,7 @@ import { MISKIN_KETERANGAN, MISKIN_LABEL } from "@/lib/data-banjar";
 
 /** Label UI section Penduduk per Banjar (Dashboard Kependudukan). */
 export const BANJAR_TEXT = {
-  /** Anchor section; navbar & redirect rute lama `/kependudukan/data-per-banjar` menuju `#banjar`. */
+  /** Anchor section; pil rel dashboard & redirect rute lama `/kependudukan/data-per-banjar` menuju `#banjar`. */
   anchor: "banjar",
   title: "Penduduk per banjar",
   caption: (tahun: number, banjar: number) => `Data ${tahun} · ${banjar} banjar, terbanyak di atas`,

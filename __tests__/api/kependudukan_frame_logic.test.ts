@@ -1,6 +1,8 @@
 // @vitest-environment node
 // Kerangka Dashboard Kependudukan: pilih tahun terbaru per dataset, rel pil + scroll-spy, kartu hero, redirect 4 rute lama.
 import { describe, expect, it, vi } from 'vitest';
+import { isKnownMenuKey } from '@/app/(public)/_com/menu-visibility.logic';
+import navbarListMenu from '@/con/navbar-list-menu';
 import { AGAMA_ANCHOR } from '@/app/(public)/(pages)/kependudukan/_com/agama/AgamaSection';
 import { BANJAR_TEXT } from '@/app/(public)/(pages)/kependudukan/_com/banjar/banjar.text';
 import {
@@ -13,7 +15,7 @@ import type { DatasetSlice } from '@/app/(public)/(pages)/kependudukan/_com/data
 import { DINAMIKA_TEXT } from '@/app/(public)/(pages)/kependudukan/_com/dinamika/dinamika.text';
 import { heroCards } from '@/app/(public)/(pages)/kependudukan/_com/frame/kependudukan-hero.logic';
 import { kependudukanSectionHref, SECTION_ANCHOR } from '@/app/(public)/(pages)/kependudukan/_com/frame/kependudukan.meta';
-import { hashAnchor, navSections, pickActiveAnchor } from '@/app/(public)/(pages)/kependudukan/_com/frame/section-nav.logic';
+import { hashAnchor, NAV_SECTIONS, pickActiveAnchor } from '@/app/(public)/(pages)/kependudukan/_com/frame/section-nav.logic';
 import { UMUR_ANCHOR } from '@/app/(public)/(pages)/kependudukan/_com/umur/UmurSection';
 import BanjarRedirect from '@/app/(public)/(pages)/kependudukan/data-per-banjar/page';
 import DinamikaRedirect from '@/app/(public)/(pages)/kependudukan/dinamika-penduduk/page';
@@ -94,10 +96,9 @@ describe('rel pil + scroll-spy', () => {
     expect(SECTION_ANCHOR.dinamika).toBe(DINAMIKA_TEXT.anchor);
   });
 
-  it('urutan pil = urutan halaman; Agama hilang bila disembunyikan admin', () => {
-    expect(navSections(false).map((s) => s.anchor)).toEqual(['ringkasan', 'banjar', 'umur', 'agama', 'dinamika']);
-    expect(navSections(true).map((s) => s.anchor)).toEqual(['ringkasan', 'banjar', 'umur', 'dinamika']);
-    expect(navSections(false).map((s) => s.label)).toEqual(['Ringkasan', 'Per Banjar', 'Umur', 'Agama', 'Dinamika']);
+  it('urutan pil = urutan halaman, Agama selalu ada', () => {
+    expect(NAV_SECTIONS.map((s) => s.anchor)).toEqual(['ringkasan', 'banjar', 'umur', 'agama', 'dinamika']);
+    expect(NAV_SECTIONS.map((s) => s.label)).toEqual(['Ringkasan', 'Per Banjar', 'Umur', 'Agama', 'Dinamika']);
   });
 
   const tops = [
@@ -118,10 +119,11 @@ describe('rel pil + scroll-spy', () => {
   });
 
   it('hash dikenali hanya bila section-nya tampil', () => {
-    expect(hashAnchor('#umur', navSections(false))).toBe('umur');
-    expect(hashAnchor('#agama', navSections(true))).toBeNull();
-    expect(hashAnchor('', navSections(false))).toBeNull();
-    expect(hashAnchor('#lain', navSections(false))).toBeNull();
+    expect(hashAnchor('#umur', NAV_SECTIONS)).toBe('umur');
+    expect(hashAnchor('#agama', NAV_SECTIONS)).toBe('agama');
+    expect(hashAnchor('#agama', NAV_SECTIONS.filter((s) => s.anchor !== 'agama'))).toBeNull();
+    expect(hashAnchor('', NAV_SECTIONS)).toBeNull();
+    expect(hashAnchor('#lain', NAV_SECTIONS)).toBeNull();
   });
 });
 
@@ -176,5 +178,19 @@ describe('redirect rute lama → anchor dashboard', () => {
 
   it('kependudukanSectionHref selalu di bawah /kependudukan/dashboard', () => {
     expect(kependudukanSectionHref('umur')).toBe('/kependudukan/dashboard#umur');
+  });
+});
+
+describe('navbar Kependudukan satu butir', () => {
+  const OLD = ['/kependudukan/data-per-banjar', '/kependudukan/dinamika-penduduk', '/kependudukan/distribusi-agama', '/kependudukan/distribusi-umur'];
+
+  it('hanya "Dashboard Kependudukan" → /kependudukan/dashboard', () => {
+    const menu = navbarListMenu.find((m) => m.name === 'Kependudukan');
+    expect(menu?.children?.map((c) => [c.name, c.href])).toEqual([['Dashboard Kependudukan', '/kependudukan/dashboard']]);
+  });
+
+  it('URL lama bukan lagi kunci visibilitas (override DB lama diabaikan)', () => {
+    expect(isKnownMenuKey('/kependudukan/dashboard')).toBe(true);
+    for (const href of OLD) expect(isKnownMenuKey(href), href).toBe(false);
   });
 });

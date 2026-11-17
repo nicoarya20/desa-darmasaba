@@ -2,8 +2,8 @@ import { permanentRedirect } from 'next/navigation';
 import { kependudukanSectionHref } from '../_com/frame/kependudukan.meta';
 
 /**
- * Alamat lama "Data per Banjar" (href navbar 8.2, tetap dipakai sebagai menuKey visibilitas): isinya kini section
- * #banjar di Dashboard Kependudukan → alihkan permanen.
+ * Alamat lama "Data per Banjar" (dulu submenu navbar, kini dihapus): isinya section #banjar di Dashboard Kependudukan.
+ * Dipertahankan sebagai pengalihan permanen untuk bookmark dan hasil mesin pencari.
  */
 export default function Page() {
   permanentRedirect(kependudukanSectionHref('banjar'));

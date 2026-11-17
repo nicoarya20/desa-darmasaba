@@ -2,8 +2,8 @@ import { permanentRedirect } from 'next/navigation';
 import { kependudukanSectionHref } from '../_com/frame/kependudukan.meta';
 
 /**
- * Alamat lama "Distribusi Agama" (href navbar 8.4, tetap dipakai sebagai menuKey visibilitas): isinya kini section
- * #agama di Dashboard Kependudukan → alihkan permanen.
+ * Alamat lama "Distribusi Agama" (dulu submenu navbar, kini dihapus): isinya section #agama di Dashboard Kependudukan.
+ * Dipertahankan sebagai pengalihan permanen untuk bookmark dan hasil mesin pencari.
  */
 export default function Page() {
   permanentRedirect(kependudukanSectionHref('agama'));
