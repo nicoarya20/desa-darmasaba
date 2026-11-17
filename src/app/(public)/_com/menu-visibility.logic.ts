@@ -82,10 +82,13 @@ export function isPathHidden(pathname: string, hiddenHrefs: readonly string[]): 
 export function effectiveMenuVisibility(overrides: MenuVisibilityOverrides): EffectiveMenuVisibility {
   const hiddenHrefs = hiddenMenuHrefs(overrides);
   const navbar = applyMenuOverrides(navbarListMenu, overrides);
-  // Halaman tambahan pencarian di bawah href tersembunyi ikut dibuang (halamannya 404).
+  // Halaman tambahan pencarian di bawah href tersembunyi ikut dibuang (halamannya 404). Bagian `?…`/`#…` diabaikan:
+  // `/kependudukan/dashboard#agama` adalah halaman `/kependudukan/dashboard`, jadi ikut tersembunyi bersamanya.
   const extras = searchExtraPages.map((group) => ({
     ...group,
-    children: (group.children ?? []).filter((page) => !page.href || !isPathHidden(page.href, hiddenHrefs)),
+    children: (group.children ?? []).filter(
+      (page) => !page.href || !isPathHidden(page.href.split(/[?#]/, 1)[0], hiddenHrefs),
+    ),
   }));
   return {
     navbarMenu: visibleMenu(navbar),
