@@ -7,6 +7,7 @@ import { useShallowEffect } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
+import { pendudukMiskinTerbaru, urutkanPerTahun } from './_com/penduduk-miskin.logic';
 
 function Page() {
   type JPMGrafik = {
@@ -23,13 +24,15 @@ function Page() {
 
   useEffect(() => {
     if (state.findMany.data) {
-      setChartData(state.findMany.data.map((item) => ({
+      setChartData(urutkanPerTahun(state.findMany.data.map((item) => ({
         id: item.id,
         year: Number(item.year),
         totalPoorPopulation: Number(item.totalPoorPopulation),
-      })));
+      }))));
     }
   }, [state.findMany.data]);
+
+  const terbaru = pendudukMiskinTerbaru(chartData);
 
   if (!state.findMany.data) {
     return (
@@ -59,10 +62,10 @@ function Page() {
         <Stack gap={'lg'} justify='center'>
           <Paper p={'xl'}>
             <Title order={3} fw={'normal'} lh={1.1}>
-              Jumlah Data Penduduk Miskin
+              {terbaru ? `Jumlah Penduduk Miskin Tahun ${terbaru.year}` : 'Jumlah Penduduk Miskin'}
             </Title>
             <Title order={2} fw={"bold"} lh={1.1}>
-              {state.findMany.data?.reduce((sum, item) => sum + (Number(item.totalPoorPopulation) || 0), 0).toLocaleString()} Orang
+              {terbaru ? `${terbaru.total.toLocaleString('id-ID')} Orang` : 'Belum ada data'}
             </Title>
           </Paper>
           <Paper p={'xl'}>
