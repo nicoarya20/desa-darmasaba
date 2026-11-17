@@ -271,7 +271,7 @@ button.pick:focus-visible {
     background: rgba(0, 0, 0, 0.04);
   }
 
-  .arah:hover,
+  /* Popup peta Leaflet sengaja tetap garis bawah (di luar pola judul/CTA sapuan warna; lihat MIND/PLAN/link-hover-reveal.md). */
   .popup .popupArah:hover {
     text-decoration: underline;
     text-underline-offset: 3px;
