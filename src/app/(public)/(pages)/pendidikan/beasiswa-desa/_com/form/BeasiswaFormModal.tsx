@@ -1,5 +1,4 @@
 'use client';
-import colors from '@/con/colors';
 import { Modal } from '@mantine/core';
 import { toast } from 'react-toastify';
 import s from './beasiswa-form.module.css';
@@ -39,7 +38,7 @@ export function BeasiswaFormModal({ opened, onClose }: Props) {
       classNames={{ title: s.modalTitle, header: s.modalHeader }}
       overlayProps={{ backgroundOpacity: 0.4, blur: 8 }}
     >
-      <BeasiswaFormContent api={api} onCancel={onClose} onSubmit={submit} brandColor={colors['blue-button']} />
+      <BeasiswaFormContent api={api} onCancel={onClose} onSubmit={submit} brandColor="var(--c-brand-fill)" />
     </Modal>
   );
 }

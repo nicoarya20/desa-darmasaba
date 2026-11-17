@@ -1,5 +1,6 @@
 /*
- * Tombol pil Perpustakaan Digital (kepala + penutup): terisi brand, sekunder #f5f5f7, dan terang di atas gradasi.
+ * Tombol pil Perpustakaan Digital (kepala + penutup): terisi --c-brand-fill, sekunder --c-tile, dan terang di atas
+ * gradasi (gelap: pelat #d9e1ea, nilai pelat terang di tema gelap, putih terlalu silau; teks biru tua tetap).
  * Tombol terisi, bukan tautan teks, jadi tanpa sapuan link-reveal dan tanpa garis bawah hover.
  */
 .pill,
@@ -24,18 +25,18 @@
 }
 
 .pill {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .pillSecondary {
-  background: #f5f5f7;
+  background: var(--c-tile);
   color: var(--brand);
 }
 
 .pillLight {
-  background: #fff;
-  color: var(--brand);
+  background: light-dark(#fff, #d9e1ea);
+  color: #0a4e78;
 }
 
 .pill:focus-visible,
@@ -52,21 +53,21 @@
 
 @media (hover: hover) and (pointer: fine) {
   .pill:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 
   .pillSecondary:hover {
-    background: #e8e8ed;
+    background: var(--c-placeholder);
   }
 
   .pillLight:hover {
-    background: var(--brand-tint);
+    background: light-dark(#e5f2fa, #c3cfdc);
   }
 }
 
 .note {
   margin: 0;
-  color: #6e6e73;
+  color: var(--c-muted);
   font-size: 15px;
   line-height: 1.4;
   overflow-wrap: anywhere;

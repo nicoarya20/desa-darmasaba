@@ -3,7 +3,7 @@ import { IconSchool } from "@tabler/icons-react";
 import s from "./info-sekolah.module.css";
 import { INFO_SEKOLAH_TEXT as T } from "./info-sekolah.text";
 
-/** Pesan galat + tombol "Coba lagi" di ubin #f5f5f7. */
+/** Pesan galat + tombol "Coba lagi" di ubin --c-tile. */
 export function InfoSekolahNotice({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div className={s.empty} role="alert">
@@ -17,7 +17,7 @@ export function InfoSekolahNotice({ message, onRetry }: { message: string; onRet
 
 type EmptyProps = { title?: string; message: string; action?: { label: string; onClick: () => void } };
 
-/** Ubin #f5f5f7 berisi satu pesan; `title` + ikon untuk "belum ada data" halaman, `action` = satu tombol pil. */
+/** Ubin --c-tile berisi satu pesan; `title` + ikon untuk "belum ada data" halaman, `action` = satu tombol pil. */
 export function InfoSekolahEmpty({ title, message, action }: EmptyProps) {
   return (
     <div className={s.empty} role="status">

@@ -1,9 +1,13 @@
 /*
  * Akar halaman Perpustakaan Digital — kerangka (latar putih, tepi, lebar 1200, jarak atas/bawah) dari
  * pendidikan/_com/page-frame; di sini hanya warna dasar dan jarak antarbagian (--section-gap: 100/72px).
+ * Warna = alias token --c-* (ikut tema); --accent (pita penanda buku ilustrasi) oranye sama di dua tema.
  */
 .page {
-  color: #1d1d1f;
+  --brand: var(--c-brand);
+  --brand-tint: var(--c-brand-tint);
+  --accent: #fcae00;
+  color: var(--c-ink);
   min-height: 70vh;
 }
 

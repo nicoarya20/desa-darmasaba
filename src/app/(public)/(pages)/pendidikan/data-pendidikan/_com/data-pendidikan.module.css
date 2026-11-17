@@ -1,14 +1,16 @@
 /*
  * Halaman Data Pendidikan: kerangka bersama Pendidikan (page-frame: tepi, lebar 1200, jarak nav/footer), kepala
  * PpidHeader rata kiri, tanggal pembaruan. Panel batang + ubin kosong/galat dari modul bersama
- * `_com/stat-bars`; --brand dari DATA_PENDIDIKAN_BRAND_VARS.
+ * `_com/stat-bars`. Warna = alias token --c-* (ikut tema); --brand/--brand-hover dibaca panel stat-bars.
  */
 
 /* Warna teks halaman. .section APBDes tidak dipakai karena membawa lebar 1100, tepi 16px, dan kepala rata
    tengah (beda dari halaman Pendidikan lain). */
 .page {
-  --ink: #1d1d1f;
-  --subtle: #86868b;
+  --brand: var(--c-brand);
+  --brand-hover: var(--c-brand-hover);
+  --ink: var(--c-ink);
+  --subtle: var(--c-subtle);
   color: var(--ink);
 }
 
