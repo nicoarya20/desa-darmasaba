@@ -5,8 +5,11 @@
 - **Lima halaman Kependudukan kini menjadi satu Dashboard Kependudukan**: ringkasan, penduduk per banjar, kelompok umur, agama, dan dinamika penduduk dalam satu halaman bergaya menu Ekonomi. Deretan pil di bawah navbar menempel saat digulir dan menandai bagian yang sedang dibaca.
 - **Ringkasan di atas**: total penduduk, kepala keluarga, rata-rata jiwa per keluarga, dan pertumbuhan bersih, masing-masing dengan tahun datanya. Tiap bagian memakai tahun data terbarunya sendiri dan menuliskannya di kepala bagian.
 - **Angka terbaca tanpa mengarahkan kursor**: per banjar, umur, dan agama memakai daftar batang mendatar (termasuk di ponsel, tanpa tabel yang harus digeser). Dinamika penduduk tampil sebagai neraca Bertambah dan Berkurang beserta perubahan bersihnya, dengan riwayat per tahun yang bisa dibuka.
-- Menu Kependudukan di navbar tetap lima butir; tiap butir dan alamat lama (mis. `/kependudukan/distribusi-agama`) kini langsung membuka bagian yang sesuai di dashboard. Menyembunyikan "Distribusi Agama" di pengaturan menu admin ikut menyembunyikan bagian Agama.
+- Menu Kependudukan di navbar kini satu butir, "Dashboard Kependudukan". Alamat lama (mis. `/kependudukan/distribusi-agama`) tetap berfungsi dan langsung membuka bagian yang sesuai di dashboard.
 - Bila kelompok umur cukup lengkap, ditampilkan juga jumlah usia produktif dan rasio ketergantungan.
+
+### Removed
+- Submenu Data Per Banjar, Dinamika Penduduk, Distribusi Agama, dan Distribusi Umur, beserta saklar sembunyikan "Distribusi Agama" di pengaturan menu admin (isinya kini ada di Dashboard Kependudukan).
 
 ### Fixed
 - Data per Banjar tidak lagi kehilangan banjar (sebelumnya hanya 10 banjar pertama yang tampil, total 8.409 dari 10.254 jiwa).

@@ -1162,8 +1162,8 @@ Satu halaman pengganti lima halaman lama (Dashboard, Data Per Banjar, Dinamika P
 - **Data**: 4 `GET /api/kependudukan/{databanjar,distribusiumur,distribusiagama,dinamikapenduduk}/find-many?page=1&limit=100`, masing-masing sekali (bukan state admin, **bukan** `/dashboard/summary`). Tiap dataset memilih **tahun terbarunya sendiri** dan menuliskannya di kepala section; tidak ada pemilih tahun global. Memuat semua tahun dengan limit 100 = MITIGASI SEMENTARA(kependudukan-limit) karena belum ada endpoint daftar tahun tersedia; `console.warn` bila `total` > baris termuat. Slice per dataset `loading | error | ready` + `retry()`; galat ≠ kosong. Section mem-parse baris mentahnya sendiri (baris tak valid dibuang, angka tak terbaca → "Belum diisi", tidak ikut total).
 - **Hero Ringkasan** (`#ringkasan`, h2 tersembunyi): 4 kartu `--tile` (grid `1.35fr 1fr 1fr 1fr`, ≤1068px dan ponsel 2×2): Total penduduk ("{n} banjar · Data {tahun}"), Kepala keluarga, Rata-rata per keluarga (jiwa/KK 1 desimal), Pertumbuhan bersih (lahir + datang − meninggal − pindah, bertanda, "(tahun berjalan)" bila tahun ini). Hanya angka turunan aman; "Kelahiran Tahun Ini" (model Kesehatan), keluarga miskin, dan migrasi tidak tampil. Kosong → "Belum diisi"; galat → "Gagal dimuat" (coba lagi ada di section, ikut memperbarui hero).
 - **Rel pil** (`nav`): sticky di bawah navbar (`top` 44px, <62em 48px), latar putih 92% + `backdrop-filter`; pil 36px `--tile`, aktif `--brand` (`aria-current="location"`); ponsel geser samping, pil aktif digeser masuk pandangan. Klik → `scrollIntoView` (halus, `auto` saat reduced motion) + `history.replaceState`. **Scroll-spy**: garis baca = tepi bawah rel + 40px, diukur di event `scroll`/`resize`. Section memakai `scroll-margin-top: var(--kependudukan-scroll-margin)` 128px (≤734px 120px). Buka `#anchor` langsung → gulir sekali setelah semua dataset selesai dimuat.
-- **Rute lama & navbar**: `data-per-banjar`, `distribusi-umur`, `distribusi-agama`, `dinamika-penduduk` → `permanentRedirect` (308) ke `/kependudukan/dashboard#{banjar|umur|agama|dinamika}`. Navbar tetap 5 butir dengan **href lama** karena href submenu = kunci visibilitas menu. Jenna: `href` → `#anchor`, `menuHref` tetap URL lama.
-- **Agama ikut visibilitas**: submenu "Distribusi Agama" disembunyikan admin → section + pil Agama tidak dirender (`isAgamaHidden`). Tiga submenu lain bila disembunyikan hanya hilang dari navbar.
+- **Rute lama & navbar**: menu Kependudukan di navbar hanya satu butir, "Dashboard Kependudukan" (`/kependudukan/dashboard`); 4 submenu lama dihapus (revisi user 2026-11-17). Rute lama `data-per-banjar`, `distribusi-umur`, `distribusi-agama`, `dinamika-penduduk` tetap ada sebagai `permanentRedirect` (308) ke `/kependudukan/dashboard#{banjar|umur|agama|dinamika}` untuk bookmark dan mesin pencari. URL lama bukan lagi kunci visibilitas (override DB lamanya diabaikan `isKnownMenuKey`). Jenna: `href` → `#anchor`, `menuHref` → `/kependudukan/dashboard`.
+- **Semua section selalu tampil**: tidak ada saklar visibilitas per section; menyembunyikan butir "Dashboard Kependudukan" menyembunyikan seluruh halaman.
 - **Terkait**: 3 ubin `EkonomiTerkait` (Penduduk Miskin, Demografi Pekerjaan, Data Pendidikan), disaring visibilitas. Hutang: impor lintas menu `ekonomi/_com/terkait`; pindahkan ke `(public)/_com` bila dipakai menu ketiga.
 
 #### Per Banjar (`#banjar`)
@@ -1364,7 +1364,7 @@ File: `src/con/navbar-list-menu.ts`
 | 5 | Ekonomi | 11 (termasuk Kesejahteraan Masyarakat) |
 | 6 | Inovasi | 6 |
 | 7 | Lingkungan | 6 |
-| 8 | Kependudukan | 5 |
+| 8 | Kependudukan | 1 (Dashboard Kependudukan, satu halaman) |
 | 9 | Pendidikan | 7 |
 | 10 | Musik | 1 |
 

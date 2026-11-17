@@ -17,3 +17,8 @@ Lima halaman publik Kependudukan (Dashboard, Data Per Banjar, Dinamika Penduduk,
 - Menyembunyikan "Distribusi Agama" di admin menyembunyikan section + pil Agama. Rute lamanya tetap redirect (redirect server terjadi sebelum guard 404 client), jadi tautan lama mendarat di puncak dashboard, bukan 404. Menyembunyikan 3 submenu lain hanya menghapus butir navbar; section-nya tetap tampil.
 - Ketidakcocokan total antar-dataset (isian admin) kini terlihat berdampingan; Umur & Agama memberi catatan kaki sumber.
 - Mitigasi limit 100 + pilih tahun di klien bertahan sampai backend menyediakan daftar tahun tersedia (BACKEND-TODO P2).
+
+## Revisi (2026-11-17, keputusan user)
+- Navbar Kependudukan cukup **satu butir** "Dashboard Kependudukan"; submenu Data Per Banjar, Dinamika Penduduk, Distribusi Agama, Distribusi Umur dihapus dari `navbar-list-menu.ts`. Menggantikan butir "Navbar tetap 5 butir ber-href lama" di atas.
+- Akibatnya URL lama bukan lagi kunci visibilitas: saklar "Distribusi Agama" hilang, section + pil Agama **selalu** tampil (`isAgamaHidden` dihapus). Menggantikan butir "Section Agama ikut visibilitas" dan butir pertama Akibat.
+- Redirect 308 rute lama tetap (bookmark/mesin pencari). Sumber Jenna Kependudukan memakai `menuHref: /kependudukan/dashboard`.
