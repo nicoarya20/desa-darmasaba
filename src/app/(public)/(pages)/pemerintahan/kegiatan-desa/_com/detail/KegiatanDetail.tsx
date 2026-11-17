@@ -4,6 +4,7 @@ import { kategoriSlug, SEMUA_SLUG } from '@/app/(public)/_com/kabar-list/kabar-l
 import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { isKegiatanPembangunan } from '@/lib/kegiatan-pembangunan';
+import { hasPartisipan } from '@/lib/kegiatan-partisipan';
 import { formatTanggalTerbit } from '@/lib/tanggal-terbit';
 import { Image } from '@mantine/core';
 import { IconChevronLeft, IconChevronRight, IconMapPin, IconUsers } from '@tabler/icons-react';
@@ -21,7 +22,7 @@ import { useKegiatanDetail } from './use-kegiatan-detail';
 export type KegiatanDetailList = { label: string; href: string };
 
 /**
- * Halaman detail kegiatan: kategori · tanggal, judul, ringkasan, lokasi & partisipan, foto, progres pembangunan, isi.
+ * Halaman detail kegiatan: kategori · tanggal, judul, ringkasan, lokasi & partisipan (bila > 0), foto, progres pembangunan, isi.
  * `list` (opsional) → tautan teks "‹ {label}" ke `href` menggantikan tombol ikon kembali, tautan "Lihat semua" menuju
  * `href`, dan kategori tidak menaut ke daftar Kegiatan Desa. Tanpa `list` = tampilan Kegiatan Desa.
  */
@@ -61,6 +62,8 @@ export function KegiatanDetailBody({ data, linkKategori = true }: { data: Detail
   const tanggal = new Date(data.tanggal);
   const lokasi = data.lokasi?.trim();
   const ringkasan = data.deskripsiSingkat?.trim();
+  // Partisipan opsional: 0 = tidak dicatat → tidak ditampilkan.
+  const partisipan = hasPartisipan(data.partisipan) ? data.partisipan : null;
 
   return (
     <>
@@ -76,18 +79,22 @@ export function KegiatanDetailBody({ data, linkKategori = true }: { data: Detail
         </p>
         <h1 className={d.title}>{data.judul}</h1>
         {ringkasan ? <p className={s.lead}>{ringkasan}</p> : null}
-        <ul className={s.facts} aria-label={T.infoLabel}>
-          {lokasi ? (
-            <li className={s.fact}>
-              <IconMapPin className={s.factIcon} size={18} stroke={1.75} aria-hidden />
-              <span>{lokasi}</span>
-            </li>
-          ) : null}
-          <li className={s.fact}>
-            <IconUsers className={s.factIcon} size={18} stroke={1.75} aria-hidden />
-            <span>{T.partisipan(data.partisipan ?? 0)}</span>
-          </li>
-        </ul>
+        {lokasi || partisipan ? (
+          <ul className={s.facts} aria-label={T.infoLabel}>
+            {lokasi ? (
+              <li className={s.fact}>
+                <IconMapPin className={s.factIcon} size={18} stroke={1.75} aria-hidden />
+                <span>{lokasi}</span>
+              </li>
+            ) : null}
+            {partisipan ? (
+              <li className={s.fact}>
+                <IconUsers className={s.factIcon} size={18} stroke={1.75} aria-hidden />
+                <span>{T.partisipan(partisipan)}</span>
+              </li>
+            ) : null}
+          </ul>
+        ) : null}
       </header>
 
       {data.image?.link ? (

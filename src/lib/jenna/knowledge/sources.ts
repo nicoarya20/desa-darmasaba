@@ -4,10 +4,15 @@ import { programOverlayHref } from "@/app/(public)/_com/main-page/landing-page/p
 import { detailHref } from "@/app/(public)/_com/main-page/kabar-desa/kabar.logic";
 import { BERITA_BASE_HREF, PENGUMUMAN_BASE_HREF } from "@/app/(public)/_com/main-page/kabar-desa/kabar.meta";
 import { kegiatanDetailHref } from "@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic";
+import { inovasiDetailHref } from "@/app/(public)/(pages)/inovasi/inovasi-teknologi-desa/_com/inovasi.logic";
+import { INOVASI_TEKNOLOGI_HREF } from "@/app/(public)/(pages)/inovasi/inovasi-teknologi-desa/_com/inovasi.meta";
 import { LAYANAN_LIST_HREF, layananDetailHref } from "@/app/(public)/(pages)/pemerintahan/layanan/_com/layanan.meta";
 import { programHref } from "@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-folder";
 import { getSosmedHref } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
+import { inovasiKategoriLabel } from "@/lib/inovasi-teknologi/kategori";
 import { jadwalToText } from "@/lib/jadwal-pelayanan";
+import { LABEL_PUSTU } from "@/lib/pustu/pustu.label";
+import { bacaJadwal, bacaLayananUnggulan } from "@/lib/pustu/pustu.validation";
 import { htmlToKnowledgeText } from "./html";
 
 // Registry allowlist pengetahuan Jenna — DEFAULT DENY: hanya model + field di sini yang boleh
@@ -358,18 +363,21 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSource[] = [
     searchFields: ["nama"], href: "/keamanan/polsek-terdekat", menuHref: "/keamanan/polsek-terdekat",
   }),
   defineSource({
-    key: "puskesmas", domain: "kesehatan", tier: "B", label: "Puskesmas", model: "Puskesmas",
+    key: "puskesmas", domain: "kesehatan", tier: "B", label: LABEL_PUSTU, model: "Puskesmas",
     where: ACTIVE,
     select: {
-      id: true, name: true, alamat: true,
-      jam: { select: { workDays: true, weekDays: true, holiday: true } },
+      id: true, name: true, alamat: true, layananUnggulan: true, tarifBpjs: true, tarifUmum: true,
+      jam: { select: { jadwal: true } },
       kontak: { select: { kontakPuskesmas: true, kontakUGD: true, email: true } },
     },
     fields: [
       ["Nama", get("name")], ["Alamat", get("alamat")],
-      ["Jam hari kerja", rel("jam", "workDays")], ["Jam akhir pekan", rel("jam", "weekDays")], ["Hari libur", rel("jam", "holiday")],
-      ["Telepon", rel("kontak", "kontakPuskesmas")], ["UGD", rel("kontak", "kontakUGD")], ["Email", rel("kontak", "email")],
+      ["Jam operasional", (row) => bacaJadwal((row.jam as KnowledgeRow | null)?.jadwal).map((j) => `${j.hari} ${j.jam}`).join("; ")],
+      ["Layanan unggulan", (row) => bacaLayananUnggulan(row.layananUnggulan).map((l) => l.judul).join(", ")],
+      ["Tarif BPJS", html("tarifBpjs")], ["Tarif umum", html("tarifUmum")],
+      ["Telepon", rel("kontak", "kontakPuskesmas")], ["Kontak darurat/ambulans", rel("kontak", "kontakUGD")], ["Email", rel("kontak", "email")],
     ],
+    cellMax: 300,
     searchFields: ["name"],
     href: (row) => `/kesehatan/puskesmas/${idOf(row)}`, menuHref: "/kesehatan/puskesmas",
   }),
@@ -445,12 +453,12 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSource[] = [
     searchFields: ["name", "description"], href: (row) => programOverlayHref(String(row?.id ?? "")), menuHref: "/",
   }),
   defineSource({
-    key: "desa_digital", domain: "inovasi", tier: "C", label: "Desa Digital / Smart Village", model: "DesaDigital",
-    where: ACTIVE, select: { id: true, name: true, deskripsi: true, createdAt: true },
-    orderBy: [{ createdAt: "desc" }], take: 10, dateField: "createdAt",
-    fields: [["Nama", get("name")], ["Deskripsi", html("deskripsi")]],
-    searchFields: ["name", "deskripsi"],
-    href: (row) => `/inovasi/desa-digital-smart-village/${idOf(row)}`, menuHref: "/inovasi/desa-digital-smart-village",
+    // Gabungan Desa Digital / Smart Village + Teknologi Tepat Guna; kategori dibaca agar keduanya bisa dibedakan.
+    key: "inovasi_teknologi_desa", domain: "inovasi", tier: "C", label: "Inovasi Teknologi Desa", model: "InovasiTeknologiDesa",
+    where: ACTIVE, select: { id: true, name: true, kategori: true, deskripsi: true, createdAt: true },
+    orderBy: [{ createdAt: "desc" }], take: 15, dateField: "createdAt",
+    fields: [["Nama", get("name")], ["Kategori", (row) => inovasiKategoriLabel(row.kategori)], ["Deskripsi", html("deskripsi")]],
+    searchFields: ["name", "deskripsi"], href: (row) => inovasiDetailHref(String(row.id ?? "")), menuHref: INOVASI_TEKNOLOGI_HREF,
   }),
   defineSource({
     key: "program_kreatif", domain: "inovasi", tier: "C", label: "Program Kreatif Desa", model: "ProgramKreatif",

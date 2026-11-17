@@ -7,44 +7,46 @@ import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerit
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { kegiatanListHref } from './kegiatan-list.logic';
-import { loadKegiatanPage } from './kegiatan-list.source';
 import { KEGIATAN_PAGE_LIMIT } from './kegiatan.meta';
-import { KEGIATAN_TEXT } from './kegiatan.text';
+import { KEGIATAN_DESA_SCOPE, type KegiatanScope } from './kegiatan-scope';
 import { useKegiatanKategori } from './use-kegiatan-kategori';
 
 const TITLE_ID = 'kegiatan-list-title';
 
-/** Daftar kegiatan satu halaman (kategori dari URL, `?search`, `?page`): kartu utama + kartu kecil gaya Berita, lalu paginasi. */
-export function KegiatanList() {
+/**
+ * Daftar kegiatan satu halaman (kategori dari URL bila cakupan memakai pil, `?search`, `?page`): kartu utama +
+ * kartu kecil gaya Berita, lalu paginasi.
+ */
+export function KegiatanList({ scope = KEGIATAN_DESA_SCOPE }: { scope?: KegiatanScope }) {
   const router = useTransitionRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const names = useKegiatanKategori();
+  const { text } = scope;
 
   const slug = activeSlug(pathname);
-  const kategori = slug === SEMUA_SLUG ? '' : slug;
+  const kategori = scope.withKategori && slug !== SEMUA_SLUG ? slug : '';
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
   const { items, totalPages, loading, failed } = useKabarPage(
-    loadKegiatanPage,
+    scope.load,
     { page, limit: KEGIATAN_PAGE_LIMIT, search, kategori },
     'kegiatan desa',
   );
 
   const empty = !loading && items.length === 0;
   const emptyText = failed
-    ? KEGIATAN_TEXT.error
+    ? text.error
     : search
-      ? KEGIATAN_TEXT.emptySearch(search)
+      ? text.emptySearch(search)
       : kategori
-        ? KEGIATAN_TEXT.emptyKategori(kategoriLabel(kategori, names))
-        : KEGIATAN_TEXT.empty;
+        ? text.emptyKategori(kategoriLabel(kategori, names))
+        : text.empty;
 
   return (
     <section aria-labelledby={TITLE_ID}>
       <h2 id={TITLE_ID} className={s.srOnly}>
-        {KEGIATAN_TEXT.listLabel}
+        {text.listLabel}
       </h2>
       {empty ? (
         <p className={kabar.empty}>{emptyText}</p>
@@ -54,16 +56,16 @@ export function KegiatanList() {
           loading={loading}
           layout="grid"
           placeholderCards={KEGIATAN_PAGE_LIMIT - 1}
-          listLabel={KEGIATAN_TEXT.cardsLabel}
-          loadingLabel={KEGIATAN_TEXT.loading}
+          listLabel={text.cardsLabel}
+          loadingLabel={text.loading}
         />
       )}
       {!empty ? (
         <KabarListPagination
           total={totalPages}
           value={page}
-          label={KEGIATAN_TEXT.paginationLabel}
-          onChange={(next) => router.push(kegiatanListHref(slug, { search, page: next }))}
+          label={text.paginationLabel}
+          onChange={(next) => router.push(scope.listHref(slug, { search, page: next }))}
         />
       ) : null}
     </section>

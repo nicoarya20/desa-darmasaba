@@ -5,13 +5,14 @@ import administrasiOnlineFindUnique from "./findUnique";
 import administrasiOnlineDelete from "./del";
 import administrasiOnlineCreate from "./create";
 import { t } from "elysia";
+import { guardDataPribadi } from "../../../_data-pribadi/guard";
 
 const AdministrasiOnline = new Elysia({
   prefix: "/administrasionline",
   tags: ["Inovasi/Layanan Online Desa/Administrasi Online"],
 })
-  .get("/find-many", administrasiOnlineFindMany)
-  .get("/:id", administrasiOnlineFindUnique)
+  .get("/find-many", administrasiOnlineFindMany, { beforeHandle: guardDataPribadi })
+  .get("/:id", administrasiOnlineFindUnique, { beforeHandle: guardDataPribadi })
   .delete("/del/:id", administrasiOnlineDelete)
   .post("/create", administrasiOnlineCreate, {
     body: t.Object({

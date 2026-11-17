@@ -63,7 +63,7 @@ describe('BankSampahSteps', () => {
 
 describe('LokasiRow', () => {
   it('berkoordinat + peta: tombol pilih + tautan petunjuk arah tab baru di luar tombol', () => {
-    const html = renderToStaticMarkup(<LokasiRow item={tps()} selected={false} onPick={() => {}} />);
+    const html = renderToStaticMarkup(<LokasiRow item={tps()} selected={false} onPick={() => {}} onDetail={() => {}} />);
     expect(html).toContain('<button type="button"');
     expect(html).toContain('aria-pressed="false"');
     expect(html).toContain('href="https://www.google.com/maps/dir/?api=1&amp;destination=-8.568,115.204"');
@@ -71,17 +71,26 @@ describe('LokasiRow', () => {
     expect(html.indexOf('</button>')).toBeLessThan(html.indexOf('<a '));
   });
 
-  it('tanpa koordinat & tautan: bukan tombol, label "belum ada titik", tanpa tautan', () => {
+  it('tombol "Lihat detail" (modal) terpisah dari tombol pilih, sebelum tautan petunjuk arah', () => {
+    const html = renderToStaticMarkup(<LokasiRow item={tps()} selected={false} onPick={() => {}} onDetail={() => {}} />);
+    expect(html).toContain(`aria-label="${T.detailLabel('TPS3R Pudak Mesari')}"`);
+    expect(html).toContain(T.detail);
+    expect(html.split('<button').length - 1).toBe(2);
+    expect(html.indexOf(T.detail)).toBeLessThan(html.indexOf('<a '));
+  });
+
+  it('tanpa koordinat & tautan: baris bukan tombol pilih, label "belum ada titik", tanpa tautan; detail tetap ada', () => {
     const html = renderToStaticMarkup(
-      <LokasiRow item={tps({ lat: null, lng: null, linkPetunjukArah: '' })} selected={false} onPick={() => {}} />,
+      <LokasiRow item={tps({ lat: null, lng: null, linkPetunjukArah: '' })} selected={false} onPick={() => {}} onDetail={() => {}} />,
     );
-    expect(html).not.toContain('<button');
+    expect(html).not.toContain('aria-pressed');
     expect(html).not.toContain('<a ');
     expect(html).toContain(T.notOnMap);
+    expect(html).toContain(`aria-label="${T.detailLabel('TPS3R Pudak Mesari')}"`);
   });
 
   it('terpilih → kelas sorot + aria-pressed', () => {
-    const html = renderToStaticMarkup(<LokasiRow item={tps()} selected onPick={() => {}} />);
+    const html = renderToStaticMarkup(<LokasiRow item={tps()} selected onPick={() => {}} onDetail={() => {}} />);
     expect(html).toContain(x.rowSelected);
     expect(html).toContain('aria-pressed="true"');
   });
@@ -105,7 +114,8 @@ describe('LokasiBankSampah', () => {
     expect(html).not.toContain('data-testid="peta"');
     expect(html).not.toContain(T.lokasiLead);
     expect(html).toContain(x.noMap);
-    expect(html).not.toContain('<button');
+    // Tanpa peta: baris bukan tombol pilih (hanya tombol "Lihat detail").
+    expect(html).not.toContain('aria-pressed');
   });
 
   it('memuat = kerangka aria-busy; kosong & galat = kotak satu kalimat', () => {

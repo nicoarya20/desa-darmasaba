@@ -377,8 +377,7 @@ desa-darmasaba/
 | Sub-modul | Fungsi |
 |-----------|--------|
 | `ajukan-ide-inovatif` | Form pengajuan ide inovatif |
-| `desa-digital-smart-village` | Program desa digital |
-| `info-teknologi-tepat-guna` | Info teknologi tepat guna |
+| `inovasi-teknologi-desa` | Desa digital + teknologi tepat guna (satu menu, berkategori) |
 | `kolaborasi-inovasi` | Kolaborasi inovasi |
 | `layanan-online-desa` | Layanan online desa |
 | `program-kreatif-desa` | Program kreatif desa |
@@ -530,8 +529,8 @@ model AppMenu {
 
 #### Modul Inovasi
 - `ProgramInovasi` - Program inovasi
-- `DesaDigital` - Desa digital
-- `InfoTekno` - Info teknologi
+- `InovasiTeknologiDesa` (tabel `DesaDigital`) - Desa digital + teknologi tepat guna (`kategori`)
+- `InfoTekno` - Cadangan data lama, tidak dipakai kode (lihat `docs/debt/2026-11-16-drop-info-tekno.md`)
 - `KolaborasiInovasi` + `MitraKolaborasi` - Kolaborasi
 - `LayananOnlineDesa` - Layanan online
 - `ProgramKreatifDesa` - Program kreatif

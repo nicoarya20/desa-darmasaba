@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Gotong Royong publik: gabung kategori Lingkungan + Kebersihan dari tabel kegiatan desa, URL daftar/detail, cari klien.
+// Gotong Royong publik: kegiatan desa berkategori tetap Gotong Royong (disaring per id), URL daftar/detail, cari klien.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const loadKegiatanPage = vi.hoisted(() => vi.fn());
@@ -8,14 +8,11 @@ import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.l
 import {
   gotongRoyongDetailHref,
   gotongRoyongListHref,
-  isGotongRoyongKategori,
   searchGotongRoyong,
   toGotongRoyongItems,
 } from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.logic';
-import {
-  GOTONG_ROYONG_KATEGORI,
-  GOTONG_ROYONG_KATEGORI_LIMIT,
-} from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.meta';
+import { GOTONG_ROYONG_LIMIT } from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.meta';
+import { KATEGORI_GOTONG_ROYONG_ID } from '@/lib/kegiatan-gotong-royong';
 import { loadGotongRoyongList } from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.source';
 
 // test-only: kartu hasil toKegiatanItem (href masih milik Kegiatan Desa).
@@ -38,38 +35,26 @@ describe('URL Gotong Royong', () => {
     expect(gotongRoyongListHref({ search: ' pura ', page: 2 })).toBe('/lingkungan/gotong-royong?search=pura&page=2');
   });
 
-  it('detail: kategori huruf kecil; kategori kosong/undefined → segmen "lingkungan", bukan "undefined"', () => {
-    expect(gotongRoyongDetailHref('Kebersihan', 'k1')).toBe('/lingkungan/gotong-royong/kebersihan/k1');
-    expect(gotongRoyongDetailHref(undefined, 'k2')).toBe('/lingkungan/gotong-royong/lingkungan/k2');
-    expect(gotongRoyongDetailHref('  ', 7)).toBe('/lingkungan/gotong-royong/lingkungan/7');
-  });
-});
-
-describe('isGotongRoyongKategori', () => {
-  it('hanya Lingkungan & Kebersihan, persis tanpa beda huruf besar', () => {
-    expect(isGotongRoyongKategori('Lingkungan')).toBe(true);
-    expect(isGotongRoyongKategori(' kebersihan ')).toBe(true);
-    expect(isGotongRoyongKategori('Lingkungan Hidup')).toBe(false);
-    expect(isGotongRoyongKategori('Sosial')).toBe(false);
-    expect(isGotongRoyongKategori(undefined)).toBe(false);
+  it('detail: kategori huruf kecil (ter-encode); kategori kosong/undefined → segmen "gotong-royong", bukan "undefined"', () => {
+    expect(gotongRoyongDetailHref('Gotong Royong', 'k1')).toBe('/lingkungan/gotong-royong/gotong%20royong/k1');
+    expect(gotongRoyongDetailHref(undefined, 'k2')).toBe('/lingkungan/gotong-royong/gotong-royong/k2');
+    expect(gotongRoyongDetailHref('  ', 7)).toBe('/lingkungan/gotong-royong/gotong-royong/7');
   });
 });
 
 describe('toGotongRoyongItems', () => {
-  it('saring kategori lain, buang duplikat id, tanggal terbaru dulu, href ke detail Gotong Royong', () => {
+  it('buang duplikat id, tanggal terbaru dulu, href ke detail Gotong Royong (filter kategori sudah di API)', () => {
     const items = toGotongRoyongItems([
-      item('a', 'Lingkungan', '2022-05-26'),
-      item('b', 'Kebersihan', '2024-01-28'),
-      item('c', 'Lingkungan Hidup', '2025-01-01'),
-      item('a', 'Lingkungan', '2022-05-26'),
+      item('a', 'Gotong Royong', '2022-05-26'),
+      item('b', 'Gotong Royong', '2024-01-28'),
+      item('a', 'Gotong Royong', '2022-05-26'),
       item('d', undefined, '2026-01-01'),
-      item('e', 'Lingkungan', '2023-11-17'),
     ]);
-    expect(items.map((i) => i.id)).toEqual(['b', 'e', 'a']);
+    expect(items.map((i) => i.id)).toEqual(['d', 'b', 'a']);
     expect(items.map((i) => i.href)).toEqual([
-      '/lingkungan/gotong-royong/kebersihan/b',
-      '/lingkungan/gotong-royong/lingkungan/e',
-      '/lingkungan/gotong-royong/lingkungan/a',
+      '/lingkungan/gotong-royong/gotong-royong/d',
+      '/lingkungan/gotong-royong/gotong%20royong/b',
+      '/lingkungan/gotong-royong/gotong%20royong/a',
     ]);
   });
 });
@@ -90,23 +75,16 @@ describe('searchGotongRoyong', () => {
 });
 
 describe('loadGotongRoyongList', () => {
-  it('satu panggilan per kategori (limit per kategori, tanpa cari), hasil digabung', async () => {
-    loadKegiatanPage.mockImplementation(async ({ kategori }: { kategori: string }) => ({
-      items: kategori === 'Lingkungan' ? [item('a', 'Lingkungan', '2022-05-26')] : [item('b', 'Kebersihan', '2024-01-28')],
-      totalPages: 1,
-    }));
+  it('satu panggilan dengan id kategori tetap (tanpa nama kategori & cari), hasil dipetakan ke detail Gotong Royong', async () => {
+    loadKegiatanPage.mockResolvedValue({ items: [item('a', 'Gotong Royong', '2022-05-26')], totalPages: 1 });
     const items = await loadGotongRoyongList();
-    expect(loadKegiatanPage.mock.calls.map(([q]) => q)).toEqual(
-      GOTONG_ROYONG_KATEGORI.map((kategori) => ({ page: 1, limit: GOTONG_ROYONG_KATEGORI_LIMIT, search: '', kategori })),
-    );
-    expect(items.map((i) => i.id)).toEqual(['b', 'a']);
+    expect(loadKegiatanPage).toHaveBeenCalledTimes(1);
+    expect(loadKegiatanPage).toHaveBeenCalledWith({ page: 1, limit: GOTONG_ROYONG_LIMIT, search: '', kategori: '' }, KATEGORI_GOTONG_ROYONG_ID);
+    expect(items.map((i) => i.href)).toEqual(['/lingkungan/gotong-royong/gotong%20royong/a']);
   });
 
-  it('galat salah satu kategori → Error berkonteks nama kategori', async () => {
-    loadKegiatanPage.mockImplementation(async ({ kategori }: { kategori: string }) => {
-      if (kategori === 'Kebersihan') throw new Error('kegiatan desa gagal (HTTP 500)');
-      return { items: [], totalPages: 1 };
-    });
-    await expect(loadGotongRoyongList()).rejects.toThrow('Gotong royong kategori Kebersihan gagal dimuat: kegiatan desa gagal (HTTP 500)');
+  it('galat API → Error berkonteks', async () => {
+    loadKegiatanPage.mockRejectedValue(new Error('kegiatan desa gagal (HTTP 500)'));
+    await expect(loadGotongRoyongList()).rejects.toThrow('Kegiatan Gotong Royong gagal dimuat: kegiatan desa gagal (HTTP 500)');
   });
 });

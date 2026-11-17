@@ -42,7 +42,7 @@ const ajukanIdeInovatifState = proxy({
           ajukanIdeInovatifState.create.form
         );
         if (res.status === 200) {
-          ajukanIdeInovatifState.findMany.load();
+          // Tidak memuat ulang daftar: create() dipanggil form publik warga, daftar ide admin-only.
           return toast.success("Ajukan Ide Inovatif berhasil di kirim");
         }
         console.log(res);

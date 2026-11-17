@@ -1,0 +1,32 @@
+import { LABEL_KONTAK_DARURAT, LABEL_PUSTU, LABEL_PUSTU_SINGKAT } from "@/lib/pustu/pustu.label";
+
+/** Teks halaman publik PUSTU (daftar + detail). */
+export const PUSTU_TEXT = {
+  judul: LABEL_PUSTU,
+  pengantar: `Informasi layanan, jam operasional, tarif, dan kontak ${LABEL_PUSTU_SINGKAT} di Desa Darmasaba.`,
+  cariPlaceholder: `Cari nama atau alamat ${LABEL_PUSTU_SINGKAT}...`,
+  cariLabel: `Cari ${LABEL_PUSTU_SINGKAT}`,
+  kosong: `Belum ada data ${LABEL_PUSTU_SINGKAT}.`,
+  kosongCari: "Tidak ada data yang cocok dengan kata kunci tersebut.",
+  gagal: `Data ${LABEL_PUSTU_SINGKAT} gagal dimuat. Muat ulang halaman untuk mencoba lagi.`,
+  lihatDetail: "Lihat detail",
+  memuat: `Memuat data ${LABEL_PUSTU_SINGKAT}`,
+  detailTidakDitemukan: `${LABEL_PUSTU_SINGKAT} tidak ditemukan atau sudah tidak aktif.`,
+  detailGagal: `Detail ${LABEL_PUSTU_SINGKAT} gagal dimuat. Muat ulang halaman untuk mencoba lagi.`,
+  kembaliKeDaftar: `Lihat semua ${LABEL_PUSTU_SINGKAT}`,
+  alamat: "Alamat",
+  jam: "Jam Operasional",
+  kontak: "Kontak",
+  telepon: "Telepon",
+  email: "Email",
+  mediaSosial: "Media Sosial",
+  darurat: LABEL_KONTAK_DARURAT,
+  layanan: "Layanan Unggulan",
+  prosedur: "Prosedur Pendaftaran",
+  tarif: "Tarif Layanan",
+  tarifBpjs: "Pasien JKN / BPJS Kesehatan / KIS",
+  tarifUmum: "Pasien Umum (Non-BPJS)",
+  struktur: "Struktur Organisasi",
+  galeri: `Galeri ${LABEL_PUSTU_SINGKAT}`,
+  fotoLabel: (nama: string) => `Buka foto ${nama} ukuran penuh`,
+} as const;

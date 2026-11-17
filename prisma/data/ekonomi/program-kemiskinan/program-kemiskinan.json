@@ -1,10 +1,11 @@
 [
   {
     "id": "c2760e40-f770-11f0-89ff-719f813f71b3",
-    "nama": "BLT-DD (Bantuan Langsung Tunai Dana Desa)",
+    "nama": "BLT Desa (Bantuan Langsung Tunai Dana Desa)",
     "icon": "bantuan",
-    "deskripsi": "<p>Program pemberian Bantuan Langsung Tunai yang dibiayai dari Dana Desa untuk meringankan beban ekonomi keluarga miskin/prasejahtera di Desa Darmasaba.</p>",
-    "tahun": 2023
+    "deskripsi": "<p>Bantuan Langsung Tunai yang dibiayai dari Dana Desa untuk meringankan beban ekonomi keluarga miskin/prasejahtera di Desa Darmasaba. Penerima ditetapkan melalui musyawarah desa setiap tahun.</p>",
+    "tahun": 2023,
+    "slug": "blt-desa"
   },
   {
     "id": "c7f0f2e0-f770-11f0-89ff-719f813f71b3",
@@ -19,5 +20,19 @@
     "icon": "ekonomi",
     "deskripsi": "<p>Program peningkatan keterampilan usaha mikro kecil (IKM) termasuk pelatihan branding, pengemasan, dan promosi digital untuk memperkuat ekonomi rumah tangga melalui pemasaran online.</p>",
     "tahun": 2025
+  },
+  {
+    "id": "5f1d0b7a-c3a1-4e0e-9a51-6b2f6f2a1c01",
+    "slug": "pkh",
+    "nama": "PKH (Program Keluarga Harapan)",
+    "icon": "bantuan",
+    "deskripsi": "<p>Program bantuan sosial bersyarat dari Kementerian Sosial bagi keluarga miskin dan rentan yang terdaftar di data terpadu kesejahteraan sosial, dengan komponen kesehatan (ibu hamil, anak usia dini), pendidikan (anak sekolah), dan kesejahteraan sosial (lansia, penyandang disabilitas).</p>"
+  },
+  {
+    "id": "5f1d0b7a-c3a1-4e0e-9a51-6b2f6f2a1c02",
+    "slug": "cpp",
+    "nama": "CPP (Cadangan Pangan Pemerintah)",
+    "icon": "bantuan",
+    "deskripsi": "<p>Penyaluran bantuan pangan dari Cadangan Pangan Pemerintah (mis. beras) kepada keluarga penerima manfaat untuk menjaga ketersediaan pangan dan meringankan pengeluaran rumah tangga.</p>"
   }
 ]

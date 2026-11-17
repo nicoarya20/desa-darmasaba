@@ -57,7 +57,7 @@ describe('responden.create.create — status submit', () => {
     expect(toastSuccess).not.toHaveBeenCalled();
   });
 
-  it('sukses (200) → true, payload = form apa adanya, toast.success, daftar dimuat ulang', async () => {
+  it('sukses (200) → true, payload = form apa adanya, toast.success, daftar admin-only tidak dimuat', async () => {
     let body: unknown;
     server.use(
       http.post(CREATE_URL, async ({ request }) => {
@@ -69,7 +69,7 @@ describe('responden.create.create — status submit', () => {
     await expect(responden.create.create()).resolves.toBe(true);
     expect(body).toEqual(validForm);
     expect(toastSuccess).toHaveBeenCalledWith('Responden berhasil ditambahkan');
-    expect(loadSpy).toHaveBeenCalledTimes(1);
+    expect(loadSpy).not.toHaveBeenCalled();
     expect(responden.create.loading).toBe(false);
   });
 

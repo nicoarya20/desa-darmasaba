@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
+import { alamatPosyanduSchema } from "@/lib/posyandu/posyandu-konten.validation";
+import { validationFailure } from "../../_struktur-organisasi/http";
 
 type FormCreate = {
     name: string;
@@ -9,9 +10,13 @@ type FormCreate = {
     imageId: string;
     jadwalPelayanan: string;
     banjarId?: string;
+    alamat?: string | null;
 };
+/** POST (admin): tambah posyandu banjar; `alamat` opsional (kosong → null). */
 export default async function posyanduCreate(context: Context) {
     const body = context.body as FormCreate;
+    const alamat = alamatPosyanduSchema.safeParse(body.alamat);
+    if (!alamat.success) return validationFailure(context, alamat.error);
 
     await prisma.posyandu.create({
         data: {
@@ -21,6 +26,7 @@ export default async function posyanduCreate(context: Context) {
             imageId: body.imageId,
             jadwalPelayanan: body.jadwalPelayanan,
             banjarId: body.banjarId || null,
+            alamat: alamat.data ?? null,
         }
     })
     return {

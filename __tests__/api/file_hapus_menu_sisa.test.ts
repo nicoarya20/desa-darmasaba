@@ -11,7 +11,6 @@ const { prismaMock, removeStoredFileMock } = vi.hoisted(() => {
       pengumuman: delegate(),
       artikelKesehatan: delegate(),
       dataPerpustakaan: delegate(),
-      kegiatanDesa: delegate(),
       mediaSosial: delegate(),
       prestasiDesa: delegate(),
       programInovasi: delegate(),
@@ -36,8 +35,6 @@ import artikelKesehatanDelete from "@/app/api/[[...slugs]]/_lib/kesehatan/data_k
 import artikelKesehatanUpdate from "@/app/api/[[...slugs]]/_lib/kesehatan/data_kesehatan_warga/artikel_kesehatan/updt";
 import dataPerpustakaanDelete from "@/app/api/[[...slugs]]/_lib/pendidikan/perpustakaan-digital/data-perpustakaan/del";
 import dataPerpustakaanUpdate from "@/app/api/[[...slugs]]/_lib/pendidikan/perpustakaan-digital/data-perpustakaan/updt";
-import kegiatanDesaDelete from "@/app/api/[[...slugs]]/_lib/lingkungan/gotong-royong/del";
-import kegiatanDesaUpdate from "@/app/api/[[...slugs]]/_lib/lingkungan/gotong-royong/updt";
 import mediaSosialDelete from "@/app/api/[[...slugs]]/_lib/landing_page/profile/media-sosial/del";
 import mediaSosialUpdate from "@/app/api/[[...slugs]]/_lib/landing_page/profile/media-sosial/updt";
 import prestasiDesaDelete from "@/app/api/[[...slugs]]/_lib/landing_page/prestasi-desa/del";
@@ -82,7 +79,6 @@ describe("removeReleasedFiles", () => {
 // Handler hapus dengan satu relasi gambar: `delete` mengembalikan baris (berisi imageId) yang dihapus.
 const hapusSederhana: [string, Handler, Delegate][] = [
   ["DataPerpustakaan", dataPerpustakaanDelete, prismaMock.dataPerpustakaan],
-  ["KegiatanDesa", kegiatanDesaDelete, prismaMock.kegiatanDesa],
   ["MediaSosial", mediaSosialDelete, prismaMock.mediaSosial],
   ["PrestasiDesa", prestasiDesaDelete, prismaMock.prestasiDesa],
   ["SdgsDesa", sdgsDesaDelete, prismaMock.sdgsDesa],
@@ -171,7 +167,6 @@ describe("hapus record → berkas dihapus permanen setelah delete sukses", () =>
 // Handler update satu gambar: [pemilik, handler, delegate, body valid minimal, update gagal melempar?]
 const ubahSederhana: [string, Handler, Delegate, Record<string, unknown>, boolean][] = [
   ["DataPerpustakaan", dataPerpustakaanUpdate, prismaMock.dataPerpustakaan, { judul: "Buku" }, true],
-  ["KegiatanDesa", kegiatanDesaUpdate, prismaMock.kegiatanDesa, { judul: "Kerja bakti" }, false],
   ["MediaSosial", mediaSosialUpdate, prismaMock.mediaSosial, { name: "Instagram", iconUrl: "https://ig" }, false],
   ["PrestasiDesa", prestasiDesaUpdate, prismaMock.prestasiDesa, { name: "Juara" }, false],
   ["SdgsDesa", sdgsDesaUpdate, prismaMock.sdgsDesa, { name: "SDG 1" }, false],

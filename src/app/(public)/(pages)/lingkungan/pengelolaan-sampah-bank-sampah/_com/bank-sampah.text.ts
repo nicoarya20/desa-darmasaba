@@ -25,4 +25,6 @@ export const BANK_SAMPAH_TEXT = {
   notOnMap: "Belum ada titik di peta",
   petunjukArah: "Petunjuk arah",
   petunjukArahLabel: (name: string) => `Petunjuk arah ke ${name} (tab baru)`,
+  detail: "Lihat detail",
+  detailLabel: (name: string) => `Lihat detail ${name}: profil, struktur, dan dokumentasi`,
 } as const;

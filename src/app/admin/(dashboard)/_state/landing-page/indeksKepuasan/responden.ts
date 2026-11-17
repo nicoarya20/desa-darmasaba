@@ -42,7 +42,7 @@ const responden = proxy({
         );
         if (res.status === 200) {
           toast.success("Responden berhasil ditambahkan");
-          await responden.findMany.load();
+          // Tidak memuat ulang daftar: create() dipanggil form publik, daftar responden admin-only.
           return true;
         } else {
           toast.error(getServerMessage(res) ?? "Gagal tambah responden");

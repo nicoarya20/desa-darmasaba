@@ -10,6 +10,7 @@ import s from './bank-sampah.module.css';
 import { BANK_SAMPAH_TEXT as T } from './bank-sampah.text';
 import x from './lokasi.module.css';
 import { LokasiList } from './LokasiList';
+import BankSampahDetailModal from './bank-sampah.detail-modal';
 import { revealMap } from '@/app/(public)/_com/map-list/list-scroll';
 import type { MapSelection } from '@/app/(public)/_com/map-list/map-focus';
 
@@ -47,12 +48,14 @@ export function LokasiBankSampah({ state }: { state: LoadState<Lokasi[]> }) {
 }
 
 /**
- * Daftar + peta. Pilih baris → peta terbang ke titik dan membuka popup; klik penanda → baris tersorot.
+ * Daftar + peta. Pilih baris → peta terbang ke titik dan membuka popup; klik penanda → baris tersorot;
+ * "Lihat detail" → modal bertab Profil / Struktur / Dokumentasi.
  * Kata kunci menyaring daftar dan penanda sekaligus. Tanpa satu pun koordinat → peta tidak dirender, daftar selebar penuh.
  */
 function LokasiExplorer({ items, mapped }: { items: readonly Lokasi[]; mapped: boolean }) {
   const [query, setQuery] = useState('');
   const [selection, setSelection] = useState<MapSelection | null>(null);
+  const [detail, setDetail] = useState<Lokasi | null>(null);
   const counter = useRef(0);
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +86,7 @@ function LokasiExplorer({ items, mapped }: { items: readonly Lokasi[]; mapped: b
         {shown.length === 0 ? (
           <p className={x.noMatch}>{T.lokasiNoMatch(query.trim())}</p>
         ) : (
-          <LokasiList items={shown} selection={active} onPick={mapped ? pickFromList : null} />
+          <LokasiList items={shown} selection={active} onPick={mapped ? pickFromList : null} onDetail={setDetail} />
         )}
       </div>
       {mapped ? (
@@ -91,6 +94,8 @@ function LokasiExplorer({ items, mapped }: { items: readonly Lokasi[]; mapped: b
           <LokasiMap items={markers} selection={active} onSelect={(id) => select(id, 'map')} />
         </div>
       ) : null}
+      {/* Modal (Mantine) hanya dipasang saat dibuka: detail di-fetch per buka, tanpa beban di render awal. */}
+      {detail ? <BankSampahDetailModal id={detail.id} nama={detail.name} onClose={() => setDetail(null)} /> : null}
     </div>
   );
 }

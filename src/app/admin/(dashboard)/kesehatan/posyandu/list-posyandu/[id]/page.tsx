@@ -2,7 +2,7 @@
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import posyandustate from '@/app/admin/(dashboard)/_state/kesehatan/posyandu/posyandu';
 import colors from '@/con/colors';
-import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, SimpleGrid, Skeleton, Stack, Text } from '@mantine/core';
 import JadwalPelayananView from '@/components/JadwalPelayananView';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -89,6 +89,11 @@ function DetailPosyandu() {
               </Box>
 
               <Box>
+                <Text fz="lg" fw="bold">Alamat</Text>
+                <Text fz="md" c="dimmed">{data.alamat || '-'}</Text>
+              </Box>
+
+              <Box>
                 <Text fz="lg" fw="bold">Nomor Posyandu</Text>
                 <Text fz="md" c="dimmed">{data.nomor || '-'}</Text>
               </Box>
@@ -130,6 +135,19 @@ function DetailPosyandu() {
                 )}
               </Stack>
 
+
+              <Stack gap={3}>
+                <Text fz="lg" fw="bold">Galeri Foto Lokasi &amp; Kader</Text>
+                {data.fotoKegiatan?.length ? (
+                  <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="xs">
+                    {data.fotoKegiatan.map((f) => (
+                      <Image key={f.id} src={f.image.link} alt={f.keterangan ?? data.name} h={110} radius="md" fit="cover" loading="lazy" />
+                    ))}
+                  </SimpleGrid>
+                ) : (
+                  <Text fz="sm" c="dimmed">Belum ada foto galeri (tambahkan dari halaman edit)</Text>
+                )}
+              </Stack>
 
               {/* Aksi */}
               <Group gap="sm">

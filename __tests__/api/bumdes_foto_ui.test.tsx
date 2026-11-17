@@ -4,7 +4,7 @@ import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import GaleriFotoBumdes from '@/app/(public)/(pages)/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/_com/GaleriFotoBumdes';
-import GaleriFotoAdminGrid from '@/app/admin/(dashboard)/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/_lib/GaleriFotoAdminGrid';
+import GaleriFotoAdminGrid from '@/app/admin/(dashboard)/_com/konten-bersama/galeri-foto.admin-grid';
 import type { FotoProfilBumdesData } from '@/app/admin/(dashboard)/_state/ekonomi/bumdes/foto-profil';
 
 const render = (node: React.ReactElement) =>

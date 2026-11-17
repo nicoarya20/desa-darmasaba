@@ -40,7 +40,7 @@ const prismaMock = vi.hoisted(() => ({
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
 
 import kategoriPengumumanDelete from "@/app/api/[[...slugs]]/_lib/desa/pengumuman/kategori-pengumuman/del";
-import kategoriKegiatanDelete from "@/app/api/[[...slugs]]/_lib/lingkungan/gotong-royong/kategori-kegiatan/del";
+import kategoriKegiatanDelete from "@/app/api/[[...slugs]]/_lib/desa/kegiatan-desa/kategori-kegiatan/del";
 import pendaftaranJadwalKegiatanDelete from "@/app/api/[[...slugs]]/_lib/kesehatan/data_kesehatan_warga/jadwal_kegiatan/pendaftaran/del";
 import kelahiranDelete from "@/app/api/[[...slugs]]/_lib/kesehatan/data_kesehatan_warga/persentase_kelahiran_kematian/kelahiran/del";
 import kematianDelete from "@/app/api/[[...slugs]]/_lib/kesehatan/data_kesehatan_warga/persentase_kelahiran_kematian/kematian/del";
@@ -161,9 +161,10 @@ describe.each(cases)(
       parent.update.mockResolvedValue({ id: "p1" });
       const { body } = await unwrap(await handler(ctx("p1")));
       expect(body.success).toBe(true);
+      // objectContaining: kategori kegiatan desa juga mengisi deletedAt saat soft-delete.
       expect(parent.update).toHaveBeenCalledWith({
         where: { id: "p1" },
-        data: { isActive: false },
+        data: expect.objectContaining({ isActive: false }),
       });
       expect(parent.delete).not.toHaveBeenCalled();
     });

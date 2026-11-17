@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Galat jaringan saat "Tambah" di admin Info Sekolah wajib tercatat sebagai console.error berkonteks (bukan
-// console.log tanpa keterangan) dan tetap memberi toast gagal ke admin.
+// console.log tanpa keterangan) dan tetap memberi toast gagal ke admin. Lembaga kini disimpan lewat
+// `lembagaPendidikan.simpan` (form detail sekolah) — diuji di lembaga_detail_admin.test.tsx.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
@@ -21,7 +22,6 @@ afterEach(() => vi.clearAllMocks());
 describe('create() state Info Sekolah saat API gagal', () => {
   it.each([
     ['jenjangPendidikan', { nama: 'SD' }, 'Gagal menambahkan jenjang pendidikan:'],
-    ['lembagaPendidikan', { nama: 'SD No. 8', jenjangId: 'j1' }, 'Gagal menambahkan lembaga pendidikan:'],
     ['siswa', { nama: 'Budi', lembagaId: 'l1' }, 'Gagal menambahkan siswa:'],
     ['pengajar', { nama: 'Bu Ani', lembagaId: 'l1' }, 'Gagal menambahkan pengajar:'],
   ] as const)('%s → console.error berkonteks + toast gagal', async (key, form, message) => {

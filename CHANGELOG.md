@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.291] - 2026-11-17
+## [0.1.292] - 2026-11-17
 ### Changed
 - **Sembilan halaman menu Ekonomi dirombak ke gaya Kabar Desa** (judul rata kiri, satu kalimat pengantar, tepi dan jarak sama dengan menu Lingkungan): BUMDes, PADesa, Jumlah Pengangguran, Penduduk Usia Kerja yang Menganggur, Jumlah Penduduk Miskin, Program Pengentasan Kemiskinan, Sektor Unggulan Desa, Demografi Pekerjaan, dan Kesejahteraan Masyarakat.
 - **Tempat data disediakan**: bagian yang belum diisi admin tampil sebagai kotak satu kalimat ("… akan tampil di sini"), bukan grafik kosong, "0 Orang", atau "Rp 0". Begitu admin mengisi data lewat CMS, data langsung tampil. Pesan gagal memuat kini berbeda dari pesan data kosong.
@@ -10,6 +10,7 @@
 - **Sektor Unggulan Desa** menampilkan peringkat sektor dengan angka apa adanya (tanpa satuan "Ton" yang keliru) dan tautan ke Potensi Desa.
 - **Kesejahteraan Masyarakat**: sorotan program terbaru tidak lagi mengulang kartu pertama, deskripsi program tampil di halaman detail, video baru dimuat setelah tombol putar diklik, dan ada galeri foto.
 - Halaman Penduduk Miskin, Program Pengentasan Kemiskinan, dan Kesejahteraan Masyarakat saling menaut lewat ubin "halaman terkait".
+- **Program Pengentasan Kemiskinan** tampil sebagai daftar baris; judul tiap program menaut ke halaman detail penerima bantuan per tahun.
 
 ### Fixed
 - Jumlah Pengangguran kini menampilkan data tahun terbaru (sebelumnya data 2026 tidak pernah tampil), dan kartu ringkasan menunjukkan bulan terbaru beserta perubahannya, bukan total setahun yang menghitung orang yang sama berulang.
@@ -19,6 +20,27 @@
 - Program Pengentasan Kemiskinan: ganti halaman tidak lagi memicu dua permintaan yang saling balap; grafik "Statistik Kemiskinan Masyarakat" yang angkanya bertentangan dengan data penduduk miskin disembunyikan sampai artinya jelas.
 - Halaman yang menampilkan lebih dari 10 data (Demografi Pekerjaan, Sektor Unggulan, Penduduk Miskin) tidak lagi diam-diam membuang data terlama.
 - Kesejahteraan Masyarakat tidak lagi memuat gambar pengganti yang rusak (404).
+
+## [0.1.291] - 2026-11-17
+### Security
+- **Data pribadi warga tidak lagi bisa diambil tanpa login.** Daftar dan detail Ibu Hamil, Balita, kiriman Pengaduan Masyarakat, Administrasi Online, Ajukan Permohonan Surat, Siswa, Pendaftar Beasiswa, Peminjaman Buku, Permohonan & Keberatan Informasi PPID, Responden IKM, Ide Inovatif, dan Pendaftaran Jadwal Kegiatan kini hanya bisa dibuka admin. Sebelumnya NIK, nomor HP, dan alamat warga bisa diunduh siapa pun lewat API publik.
+- Formulir publik (pengaduan, administrasi online, permohonan, dll.) tetap bisa dipakai warga; setelah dikirim, sistem tidak lagi menampilkan kembali data pribadi pengirim.
+- Grafik Indeks Kepuasan Masyarakat di halaman publik kini memakai ringkasan tanpa nama responden.
+- Pencarian global tidak lagi menampilkan nama siswa, responden IKM, maupun pemohon informasi PPID.
+
+### Added
+- **Bank Sampah: detail dalam modal.** Tiap lokasi di bagian "Lokasi Bank Sampah" kini punya tombol "Lihat detail" yang membuka modal dengan tab Profil (deskripsi, alamat, kontak, media sosial, inovasi TPS yang terhubung ke Program Inovasi), Struktur (foto bagan + daftar pengurus), dan Dokumentasi (galeri foto kegiatan). Memilih lokasi tetap menampilkan titiknya di peta, dan "Petunjuk arah" tetap membuka Google Maps. Admin mengisi semua field ini di form Bank Sampah; pengurus dan galeri diisi di halaman edit.
+- **Info Sekolah: detail lembaga.** Tiap sekolah/lembaga kini punya deskripsi, alamat, kontak, media sosial, foto sekolah, titik peta + link Google Maps, struktur organisasi (opsional), dan galeri foto kegiatan, dengan halaman detail publik `/pendidikan/info-sekolah/lembaga/[id]`. Bagian yang kosong tidak ditampilkan.
+- **Program Pengentasan Kemiskinan: penerima per tahun.** Program (PKH, CPP, BLT Desa) punya halaman detail dengan jumlah penerima per tahun, rekap per alamat, dan daftar penerima (hanya nama + alamat). Admin menambah penerima satu per satu atau impor CSV (hanya kolom nama dan alamat yang disimpan; kolom lain seperti NIK dan tanggal lahir diabaikan). Halaman daftar penerima tidak diindeks mesin pencari.
+- **Posyandu: profil dan klaster.** Tab admin baru "Profil & Klaster" untuk deskripsi umum Posyandu dan kegiatan klaster Balita, Remaja, dan Lansia (beserta jam pelayanan). Posyandu per banjar kini punya alamat dan galeri foto (lokasi dan kader). Halaman publik menampilkan deskripsi, kartu tiga klaster, dan daftar posyandu per banjar.
+
+### Changed
+- **Puskesmas menjadi PUSTU (Puskesmas Pembantu)** di menu, judul halaman, dan pencarian. Isinya kini memuat jam operasional per rentang hari, kontak + kontak darurat/ambulans, media sosial, layanan unggulan, prosedur pendaftaran, tarif BPJS dan non-BPJS, struktur organisasi, dan galeri. Facebook yang sudah tersimpan dipindah ke daftar media sosial. URL halaman tidak berubah.
+- **Desa Digital / Smart Village dan Info Teknologi Tepat Guna digabung menjadi "Inovasi Teknologi Desa"** dengan kategori Desa Digital dan Teknologi Tepat Guna. Data lama dari kedua menu dipindah ke menu gabungan, dan URL lama otomatis dialihkan ke `/inovasi/inovasi-teknologi-desa`. Admin yang sebelumnya punya akses ke Info Teknologi Tepat Guna otomatis mendapat akses ke menu gabungan. Tampilan sorotan Desa Digital dan kartu baca-langsung Teknologi Tepat Guna dari versi 0.1.283 diganti daftar kartu gabungan dengan pilihan kategori.
+- **Gotong Royong menjadi kategori di Kegiatan Desa.** Kegiatan gotong royong kini diinput lewat menu Kegiatan Desa dengan kategori "Gotong Royong"; menu admin Lingkungan › Gotong Royong yang menduplikasi data yang sama dihapus. Halaman publik Gotong Royong (`/lingkungan/gotong-royong`, tampilan dari 0.1.285) kini hanya menampilkan kegiatan berkategori Gotong Royong, bukan lagi Lingkungan + Kebersihan. Admin yang punya akses Gotong Royong atau seluruh menu Lingkungan otomatis mendapat akses Kegiatan Desa. **Perlu tindakan admin:** kegiatan lama tidak dipindah otomatis, jadi halaman Gotong Royong kosong sampai kategori kegiatannya diubah ke "Gotong Royong".
+- Jumlah partisipan di Kegiatan Desa kini opsional. Bila kosong, jumlah partisipan tidak ditampilkan di halaman publik (sebelumnya tampil "0").
+- Menu **UMKM** berganti nama menjadi **UMKM & Pasar Desa** di navbar publik dan sidebar admin.
+- Admin UMKM kembali menampilkan tab **Produk** dan **Kategori Produk**. Tab Dashboard dan Penjualan tetap disembunyikan, dan pemesanan lewat website tetap nonaktif (pembeli menghubungi penjual lewat WhatsApp).
 
 ## [0.1.290] - 2026-11-16
 ### Changed

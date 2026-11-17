@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
 import { fotoProfilReorderSchema } from "@/lib/bumdes-foto-profil";
-import { cekUrutanIds, urutanDariIndex } from "@/lib/bumdes-foto-urutan";
+import { cekUrutanIds, urutanDariIndex } from "@/lib/konten-bersama/urutan.logic";
 import { validationFailure } from "../../http";
 import { FOTO_AKTIF_WHERE } from "./query";
 

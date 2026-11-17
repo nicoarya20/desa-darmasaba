@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { BANK_SAMPAH_DETAIL_INCLUDE, keDetail } from "./bank-sampah.data";
 
+/** GET (publik): detail bank sampah beserta bagan, pengurus, galeri kegiatan, dan inovasi terkait. */
 export default async function keteranganBankSampahTerdekatFindUnique(context: Context) {
     const { id } = context.params as { id: string };
 
@@ -15,6 +17,7 @@ export default async function keteranganBankSampahTerdekatFindUnique(context: Co
     try {
         const keteranganBankSampahTerdekat = await prisma.keteranganBankSampahTerdekat.findUnique({
             where: { id },
+            include: BANK_SAMPAH_DETAIL_INCLUDE,
         });
 
         if (!keteranganBankSampahTerdekat) {
@@ -26,7 +29,7 @@ export default async function keteranganBankSampahTerdekatFindUnique(context: Co
 
         return {
             success: true,
-            data: keteranganBankSampahTerdekat,
+            data: keDetail(keteranganBankSampahTerdekat),
         };
     } catch (error: any) {
         console.error("Error findUnique keterangan bank sampah terdekat:", error);

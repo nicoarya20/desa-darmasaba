@@ -5,6 +5,7 @@ import jenisInformasiFindMany from "./jenisInformasi";
 import memperolehInformasiFindMany from "./memperolehInformasi";
 import salinanInformasiFindMany from "./salinanInformasi";
 import permohonanInformasiPublikFindUnique from "./findUnique";
+import { guardDataPribadi } from "../../_data-pribadi/guard";
 
 const PermohonanInformasiPublik = new Elysia({
     prefix: "/permohonaninformasipublik",
@@ -13,11 +14,15 @@ const PermohonanInformasiPublik = new Elysia({
     .get("/jenisInformasi/find-many", jenisInformasiFindMany)
     .get("/memperolehInformasi/find-many", memperolehInformasiFindMany)
     .get("/salinanInformasi/find-many", salinanInformasiFindMany)
-    .get("/:id", async (context) => {
-        const response = await permohonanInformasiPublikFindUnique(context);
-        return response;
-    })
-    .get("/find-many", permohonanInformasiPublikFindMany)
+    .get(
+        "/:id",
+        async (context) => {
+            const response = await permohonanInformasiPublikFindUnique(context);
+            return response;
+        },
+        { beforeHandle: guardDataPribadi }
+    )
+    .get("/find-many", permohonanInformasiPublikFindMany, { beforeHandle: guardDataPribadi })
     .post("/create", permohonanInformasiPublikCreate, {
         body: t.Object({
             name: t.String(),

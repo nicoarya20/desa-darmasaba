@@ -9,16 +9,18 @@ import {
   STATUS_PEMBANGUNAN,
   SUMBER_DANA_MAX_LENGTH,
 } from "@/lib/kegiatan-pembangunan";
+import { partisipanSchema } from "@/lib/kegiatan-partisipan";
 
 // ========================================= SCHEMAS ========================================= //
 
-const templateForm = z.object({
+/** Skema form create/edit Kegiatan Desa admin (partisipan opsional, kosong → 0). */
+export const templateForm = z.object({
   judul: z.string().min(3, "Judul minimal 3 karakter"),
   deskripsiSingkat: z.string().min(3, "Deskripsi singkat minimal 3 karakter"),
   deskripsiLengkap: z.string().min(3, "Deskripsi lengkap minimal 3 karakter"),
   tanggal: z.string().nonempty("Tanggal harus diisi"),
   lokasi: z.string().min(3, "Lokasi minimal 3 karakter"),
-  partisipan: z.number().optional().default(0),
+  partisipan: partisipanSchema,
   kategoriKegiatanId: z.string().nonempty("Kategori kegiatan harus dipilih"),
   imageId: z.string().optional(),
   // Khusus kategori Pembangunan — null = belum diisi

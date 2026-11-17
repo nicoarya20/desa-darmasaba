@@ -178,6 +178,27 @@ button.pick:focus-visible {
   text-decoration: none;
 }
 
+.aksi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0 var(--row-pad-x) 14px;
+}
+
+.aksi .arah {
+  margin: 0;
+}
+
+/* Tombol "Lihat detail" bergaya sama dengan tautan "Petunjuk arah". */
+.detail {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
 .arah:focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;

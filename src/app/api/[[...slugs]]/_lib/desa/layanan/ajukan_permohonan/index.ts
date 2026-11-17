@@ -4,13 +4,14 @@ import findManyAjukanPermohonan from "./findMany";
 import findUniqueAjukanPermohonan from "./findUnique";
 import updateAjukanPermohonan from "./updt";
 import deleteAjukanPermohonan from "./del";
+import { guardDataPribadi } from "../../../_data-pribadi/guard";
 
 
 const AjukanPermohonan = new Elysia({
     prefix: "ajukanpermohonan",
     tags: ["Desa/Layanan/AjukanPermohonan"],
 })
-.get("/findMany", findManyAjukanPermohonan)
+.get("/findMany", findManyAjukanPermohonan, { beforeHandle: guardDataPribadi })
 .post("/create", createAjukanPermohonan, {
     body: t.Object({
         nama: t.String(),
@@ -20,7 +21,7 @@ const AjukanPermohonan = new Elysia({
         kategoriId: t.String(),
     })
 })
-.get("/:id", findUniqueAjukanPermohonan)
+.get("/:id", findUniqueAjukanPermohonan, { beforeHandle: guardDataPribadi })
 .put("/:id", updateAjukanPermohonan, {
     body: t.Object({
         nama: t.String(),

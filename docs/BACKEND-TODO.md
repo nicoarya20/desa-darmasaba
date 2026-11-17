@@ -36,13 +36,15 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Batas kiriman non-admin 5 per 10 menit per alamat (429 + `Retry-After`).
   - Sisa (di luar butir ini): user login role 5 masih bisa `PUT`/`DELETE` laporan karena guard global tidak cek role admin (T19 di `docs/penilaian-lomba-website-desa-2027.md`); tanpa captcha.
 
-- [ ] **API publik Balita & Ibu Hamil mengirim data pribadi**
-  - Lokasi: `src/app/api/[[...slugs]]/_lib/kesehatan/balita/find-many.ts` (mencari & mengembalikan `nik`, `alamat`, dst.), begitu juga `ibu-hamil`.
-  - Dampak: NIK/alamat/HP orang tua bisa diambil siapa pun lewat API. Halaman publik Posyandu sudah tidak memakainya (pakai agregat `ringkasankesehatan/stats`), tapi endpoint tetap terbuka.
-  - Usul: wajibkan auth admin untuk find-many/find-unique balita & ibu hamil.
+- [x] **API publik Balita & Ibu Hamil mengirim data pribadi** — selesai 2026-11-17 (`fix/lomba1117-a-data-pribadi`), keputusan di `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`:
+  - `GET /api/kesehatan/{balita,ibuhamil}/find-many` & `/:id` kini lewat `guardDataPribadi` (`_lib/_data-pribadi/guard.ts`): 401 tanpa sesi, 403 bukan admin (role 0-4). Halaman publik Posyandu tetap memakai agregat `ringkasankesehatan/stats` (tetap publik). Test: `__tests__/api/data_pribadi_admin_only.test.ts`.
+
+- [x] **API publik kiriman Pengaduan Masyarakat & Administrasi Online mengirim data pribadi** (terverifikasi prod 2026-11-17: NIK & HP pelapor, nama/alamat/telepon pemohon) — selesai 2026-11-17, keputusan yang sama:
+  - `GET .../layananonlinedesa/{pengaduanmasyarakat,administrasionline}/find-many` & `/:id` admin-only (guard yang sama). Master data `jenispengaduan/*` & `jenislayanan/*` tetap publik (dipakai form warga).
+  - `POST .../create` (publik) kini membalas `data: { id }` saja, tidak lagi menggemakan NIK/HP/alamat; `create()` state tidak lagi memuat ulang daftar kiriman setelah submit warga.
 
 - [ ] **Detail mengabaikan `isActive`**
-  - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`), `lingkungan/program-penghijauan/findUnique.ts` (terverifikasi 2026-11-16: `findUnique({ where: { id } })`, padahal find-many menyaring `isActive: true`; `datalingkungandesa/:id` dilaporkan sama, belum dipakai halaman publik).
+  - Lokasi: `laporan-publik/findUnique.ts` (terverifikasi: `where: { id }`), `keamanan-lingkungan/findUnique.ts` (terverifikasi), `ekonomi/lowongan-kerja/findUnique.ts` (terverifikasi 2026-11-14: `where: { id }`), `lingkungan/program-penghijauan/findUnique.ts` (terverifikasi 2026-11-16: `findUnique({ where: { id } })`, padahal find-many menyaring `isActive: true`; `datalingkungandesa/:id` dilaporkan sama, belum dipakai halaman publik), `kesehatan/puskesmas/findUnique.ts` (PUSTU, terverifikasi 2026-11-16: `where: { id }`; dipakai juga form edit admin, jadi perlu parameter khusus admin bila disaring).
   - Dampak: entri yang dinonaktifkan admin tetap bisa dibuka lewat URL detail (frontend publik kini menganggapnya "tidak ditemukan", tapi API tetap mengirim data).
   - Usul: `where: { id, isActive: true }` untuk endpoint publik.
   - Lowongan Kerja, tambahan (terverifikasi 2026-11-14): `deletedAt` tidak bisa dipakai sebagai penanda hapus. Schema `LowonganPekerjaan.deletedAt DateTime @default(now())` (tidak nullable), jadi selalu terisi saat dibuat (stg: 7/7 lowongan `deletedAt` = `createdAt`), dan `del.ts` melakukan hard delete (`prisma.lowonganPekerjaan.delete`). Halaman detail publik baru (`_com/detail/lowongan-detail.adapter.logic.ts`, `isLowonganTampil`, MITIGASI SEMENTARA(lowongan-detail)) hanya menyaring `isActive` dan sengaja mengabaikan `deletedAt`. Usul: bila ingin soft delete, ubah jadi `deletedAt DateTime?` (migrasi set `NULL` untuk baris yang ada), `del.ts` mengisi `deletedAt`, lalu findMany/findUnique menyaring `deletedAt: null`.
@@ -81,27 +83,42 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: tidak ada lapis kedua bila ada XSS (mis. butir Laporan Publik di atas; jawaban Jenna sudah dirender tanpa HTML mentah).
   - Usul: CSP dasar (mulai `Content-Security-Policy-Report-Only`), plus `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors`.
 
-- [ ] **Pendidikan: daftar pendaftar beasiswa & peminjam buku terbuka tanpa login** (terverifikasi 2026-11-15, rombak menu Pendidikan)
-  - Lokasi: `GET /api/pendidikan/beasiswa/beasiswapendaftar/findMany` & `/:id`, `GET /api/pendidikan/perpustakaandigital/peminjamanbuku/findMany` & `/:id`. `ADMIN_ONLY_GET_PATHS` di `src/app/api/[[...slugs]]/route.ts:100` hanya berisi user/role/fileStorage/imgs/developer, jadi semua GET pendidikan publik.
-  - Dampak: stg (dicek sesi bf tanpa login, hanya nama field & total): 45 pendaftar beasiswa dengan NIK, no HP, alamat KTP/domisili, tanggal lahir, penghasilan, nama orang tua. Peminjam buku: nama, telepon, alamat, bisa dicari. Bila prod memakai kode yang sama, prod ikut terbuka.
-  - Tambahan: `create()` di `_state/pendidikan/beasiswa-desa.ts` dan `_state/.../peminjaman-buku.ts` memanggil `findMany.load()` setelah sukses, jadi browser warga anonim ikut mengambil daftar itu. Halaman publik baru tidak memakai `create()` state lagi.
-  - Usul: wajibkan auth admin untuk GET kedua resource; hapus `findMany.load()` setelah create di state.
+- [x] **Pendidikan: daftar pendaftar beasiswa & peminjam buku terbuka tanpa login** (terverifikasi stg 2026-11-15; prod 2026-11-17: 44 pendaftar dengan NIK + nomor HP) — selesai 2026-11-17 (`fix/lomba1117-a-data-pribadi`), keputusan di `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`:
+  - `GET /api/pendidikan/beasiswa/beasiswapendaftar/findMany` & `/:id`, `GET /api/pendidikan/perpustakaandigital/peminjamanbuku/findMany` & `/:id` kini lewat `guardDataPribadi` (401 tanpa sesi, 403 bukan admin). `ringkasan/stats`, `keunggulanprogram/*`, dan katalog `dataperpustakaan/*` tetap publik.
+  - `POST .../create` keduanya membalas `data: { id }` saja; `create()` di `_state/pendidikan/beasiswaDesa/beasiswa-pendaftar.ts` & `_state/.../peminjaman-buku.ts` tidak lagi memanggil `findMany.load()`.
+
+- [x] **PPID, IKM, Ide Inovatif & Pendaftaran Jadwal Kesehatan: GET publik kiriman warga memuat data pribadi** (temuan kode + W-B prod 2026-11-17) — selesai 2026-11-17, keputusan di `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`:
+  - `GET /api/ppid/permohonaninformasipublik/{find-many,:id}` (nama, NIK, telepon, alamat, email), `/api/ppid/permohonankeberataninformasipublik/{find-many,:id}` (nama, email, telepon), `/api/landingpage/responden/{findMany,:id}` (nama responden), `/api/inovasi/ajukanideinovatif/{find-many,:id}` (nama, alamat), `/api/kesehatan/pendaftaran-jadwal-kegiatan/{find-many,:id}` (nama anak & orang tua, alamat) kini lewat `guardDataPribadi`. Opsi form PPID (`jenisInformasi`/`memperolehInformasi`/`salinanInformasi`) tetap publik.
+  - Grafik IKM publik (beranda & `/ppid/indeks-kepuasan-masyarakat`) pindah ke `GET /api/landingpage/responden/ringkasan` (publik, hanya tanggal + nama kategori, tanpa id/nama, maks 1000) lewat `main-page/kepuasan/kepuasan.source.ts`.
+  - `POST .../create` kelimanya membalas `data: { id }` saja; form publik ide inovatif & pendaftaran jadwal tidak lagi memuat daftar (saat mount / setelah submit).
+
+- [x] **Permohonan surat (Ajukan Permohonan): GET publik memuat nama, NIK, alamat, nomor KK** (temuan kode 2026-11-17) — selesai 2026-11-17, keputusan yang sama:
+  - `GET /api/desa/ajukanpermohonan/findMany` & `/:id` lewat `guardDataPribadi`; `POST .../create` (publik) membalas `data: { id }`; `create()` state tidak lagi memuat ulang daftar.
 
 - [ ] **Pendidikan: XSS tersimpan lewat catatan peminjaman buku** (terverifikasi 2026-11-15)
   - Lokasi: `POST /api/pendidikan/perpustakaandigital/peminjamanbuku/create` (publik, `PUBLIC_POST_PATHS` di `src/lib/auth-policy.ts:158`) menyimpan `catatan` apa adanya tanpa validasi; admin `src/app/admin/(dashboard)/pendidikan/perpustakaan-digital/peminjam/[id]/page.tsx:186` merendernya lewat `dangerouslySetInnerHTML`.
   - Dampak: penyerang anonim cukup POST langsung untuk menjalankan skrip di sesi admin. Mengganti editor di form publik tidak menutup celah.
   - Usul: simpan teks polos / `sanitizeRichTextForStorage`, render teks polos di admin; validasi server (panjang, telepon, bukuId aktif, tanggal) + batas kiriman seperti Laporan Publik.
 
-- [ ] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64)
-  - Lokasi: `GET /api/pendidikan/infosekolahpaud/siswa/find-many` tanpa auth, mengirim nama siswa + sekolahnya.
-  - Usul: auth admin, publik hanya agregat (`/api/pendidikan/ringkasan/stats`), pola Balita/Ibu Hamil.
-  - Pencarian global ikut membuka nama siswa (terverifikasi 2026-11-15): `src/app/api/[[...slugs]]/_lib/search/findMany.ts` tipe `siswa` (baris ±1287 & ±2346, `...siswa.map(... type: "siswa")`), ditaut `src/app/(public)/_com/searchUrl.tsx:88` ke `/siswa` (kini 308 ke halaman utama, tapi nama sudah tampil di hasil cari). Halaman publik Info Sekolah sejak rombak Pendidikan tidak lagi menampilkan nama siswa. Usul: buang tipe `siswa` dari pencarian publik.
+- [x] **Pendidikan: nama siswa (anak di bawah umur) publik** (dilaporkan sesi 64) — selesai 2026-11-17:
+  - [x] `GET /api/pendidikan/infosekolahpaud/siswa/find-many` & `/:id` kini admin-only (`guardDataPribadi`, lihat `docs/decisions/2026-11-17-api-data-pribadi-admin-only.md`); publik hanya agregat `/api/pendidikan/ringkasan/stats`. Pengajar sengaja tetap publik (hanya nama + lembaga, dipakai direktori pengajar Info Sekolah).
+  - [x] Pencarian global (`_lib/search/findMany.ts`): tipe `siswa` dibuang dari cabang `type=` dan pencarian semua modul, beserta URL-nya di `searchUrl.tsx`. Sekalian dibuang tipe data pribadi lain yang ikut terindeks (T20): `responden` (IKM), `permohonaninformasipublik` (bisa dicari lewat NIK), `permohonaninformasikeberatanpublik`. Pendaftar beasiswa, peminjam buku, ibu hamil, balita, pengaduan, dan administrasi online tidak pernah terindeks. Test: `__tests__/api/search_tanpa_data_pribadi.test.ts`.
   - Kecil: total siswa/pengajar publik = jumlah `perJenjang`, bukan `stats.jumlahPengajar` (beda bila ada lembaga nonaktif).
 
 - [ ] **Pendidikan: form daftar beasiswa kemungkinan 401 untuk warga anonim** (terverifikasi statis 2026-11-15, belum diuji POST)
   - Lokasi: `/api/pendidikan/beasiswa/beasiswapendaftar/create` tidak ada di `PUBLIC_POST_PATHS` (`src/lib/auth-policy.ts`), guard `route.ts:113-122` → 401.
   - Tambahan: `nik @unique` padahal berisi NIK orang tua (kakak-adik tidak bisa mendaftar, 409); validasi server hanya tipe.
   - Usul: whitelist + rate limit + validasi server (NIK 16 digit, dst.), meniru Laporan Publik; tinjau `@unique` nik.
+
+- [ ] **Program Kemiskinan: create/update/hapus program hanya dijaga "sudah login"** (terverifikasi 2026-11-16, sesi penerima program kemiskinan)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/program-kemiskinan/{create,updt,del}.ts` tanpa cek role; guard global `route.ts` hanya memastikan sesi. Endpoint penerima baru (`penerima/*`) sudah memakai `guardAdmin` (role 0–4).
+  - Dampak: user login role 5 bisa menghapus program, dan sejak 2026-11-16 penghapusan program ikut menghapus seluruh penerimanya (FK cascade).
+  - Usul: pasang `guardAdmin` (`_lib/landing_page/desa-anti-korupsi/admin-guard.ts`) di ketiga handler; pertimbangkan soft delete program.
+
+- [ ] **`/api/upl-csv` & `/api/upl-csv-single` mencetak isi berkas CSV ke log** (terverifikasi 2026-11-16)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/upl-csv.ts`, `upl-csv-single.ts` (`console.log` isi teks berkas), dipakai halaman uji `src/app/admin/csv/page.tsx` (`UploadCsv`). Tidak menyimpan apa pun.
+  - Dampak: bila dipakai untuk berkas data warga (mis. BNBA bantuan), NIK/nama masuk log server (Rule 12). Impor penerima Program Kemiskinan sengaja tidak memakainya.
+  - Usul: hapus route + halaman `admin/csv` bila hanya sisa uji coba, atau buang log isinya.
 
 - [ ] **Inovasi: daftar kiriman Administrasi Online & Pengaduan Masyarakat terbaca tanpa login** (terverifikasi statis 2026-11-16, rombak Inovasi v0.1.283)
   - Lokasi: `GET /api/inovasi/layananonlinedesa/administrasionline/find-many` dan `GET /api/inovasi/layananonlinedesa/pengaduanmasyarakat/find-many`, juga `/:id` masing-masing. Guard `src/app/api/[[...slugs]]/route.ts:100` hanya memasukkan `/api/user`, `/api/role`, `/api/fileStorage`, `/api/imgs`, `/api/developer` ke `ADMIN_ONLY_GET_PATHS`.
@@ -115,7 +132,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Frontend publik baru sudah meng-escape `alamat` dan mengirim `deskripsi` sebagai `<p>` ter-escape, tapi itu tidak melindungi dari POST langsung.
   - Usul: pola Laporan Publik: `sanitizeRichText` (`src/lib/rich-text.ts`) di halaman admin (`alamat` cukup teks polos), dan `sanitizeRichTextForStorage` di create.
 
-- [ ] **Struktur organisasi: API publik mengirim alamat rumah, email, telepon & tanggal masuk pengurus** (terverifikasi 2026-11-17, rombak Ekonomi v0.1.291)
+- [ ] **Struktur organisasi: API publik mengirim alamat rumah, email, telepon & tanggal masuk pengurus** (terverifikasi 2026-11-17, rombak Ekonomi v0.1.292)
   - Lokasi: `PEGAWAI_SELECT` di `src/app/api/[[...slugs]]/_lib/_struktur-organisasi/http.ts:59-74` (`tanggalMasuk`, `email`, `telepon`, `alamat`), dipakai find-many & `/:id` pegawai **BUMDes, PPID, dan Perangkat Desa**.
   - Dampak: siapa pun bisa membaca data pribadi pengurus/perangkat lewat API, walau halaman publik tidak menampilkannya (detail BUMDes kini hanya foto, nama, gelar, jabatan; PPID/Perangkat menampilkan email/telepon).
   - Usul: select publik terpisah (`id`, `namaLengkap`, `gelarAkademik`, `image`, `posisi`, `isActive`); field pribadi hanya untuk rute admin. Putuskan dengan user apakah email/telepon kantor perangkat memang ingin publik.
@@ -183,6 +200,10 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Beasiswa: `ringkasan/stats.jumlahPenerima` = jumlah semua pendaftar (belum ada status seleksi); `BeasiswaConfig` tanpa periode/jadwal pendaftaran (frontend terpaksa tanpa tanggal).
   - Data Pendidikan: `findMany` count `total` mengabaikan filter search.
 
+- [ ] **Daftar Program Kemiskinan publik: deskripsi tanpa sanitasi & grafik statistik hanya dari halaman aktif** (terverifikasi 2026-11-16)
+  - Lokasi: `src/app/(public)/(pages)/ekonomi/program-kemiskinan/page.tsx` merender `deskripsi` lewat `dangerouslySetInnerHTML` tanpa `sanitizeRichText` (halaman detail baru sudah menyaring), memuat `limit=2` per halaman, dan grafik "Statistik Kemiskinan" dibangun dari program di halaman itu saja (statistik program di halaman lain tidak ikut).
+  - Usul: endpoint statistik tersendiri (semua `StatistikKemiskinan` urut tahun) + sanitasi deskripsi; `create/updt` program menyimpan lewat `sanitizeRichTextForStorage`.
+
 - [ ] **Inovasi (2026-11-16, dilaporkan sesi rombak v0.1.283)**
   - Kolaborasi: filter `year` di `inovasi/kolaborasi-inovasi/findMany.ts` menyaring `createdAt`, padahal model punya `tahun Int` (stg: entri `tahun` 2025 dibuat 2026-04-14 → muncul di `year=2026`); nilai non-angka (`year:2025` dari halaman lama) → `parseInt` NaN → `Invalid Date`. Usul: `where.tahun = Number(year)` bila bilangan bulat, 400 bila tidak. Frontend kini memuat sekali (limit 100) dan menyaring `tahun` di klien.
   - Program Kreatif `GET /:id`: id tak ada → HTTP 200 + `success:false`; galat Prisma juga 200 + `error.message` mentah ke klien. Frontend memetakan "tidak ditemukan" dari isi pesan (`isNotFoundMessage` di `program-kreatif.logic.ts`, MITIGASI SEMENTARA). Usul: 404 / 500 tanpa membocorkan pesan, lalu hapus pemetaan.
@@ -202,7 +223,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Usul: `findFirst({ where: { id, isActive: true } })`; tidak ditemukan → `set.status = 404; return { success: false, message: "Program inovasi tidak ditemukan" }`.
   - Info: stg belum mengirim `images` di findUnique (fitur galeri dokumentasi belum ter-deploy); galeri overlay muncul otomatis begitu terkirim.
 
-- [ ] **Ekonomi: find-many memakai limit bawaan 10 & urutan yang memotong data terbaru** (terverifikasi 2026-11-17, rombak Ekonomi v0.1.291)
+- [ ] **Ekonomi: find-many memakai limit bawaan 10 & urutan yang memotong data terbaru** (terverifikasi 2026-11-17, rombak Ekonomi v0.1.292)
   - Lokasi: `jumlah-pengangguran/detail-data-pengangguran/findMany.ts:31,37` (`orderBy year asc` + take limit, lalu diurut ulang per bulan saja → tahun terbaru tak pernah termuat, paginasi rusak); demografi-pekerjaan, sektor-unggulan-desa, jumlah-penduduk-miskin, kesejahteraan-masyarakat (tanpa offset) memakai limit bawaan 10.
   - Mitigasi frontend (MITIGASI SEMENTARA): halaman publik meminta limit eksplisit (100, pengangguran 120) dan mengurutkan di klien, `console.warn` bila `total` > termuat.
   - Usul: `orderBy` terbaru dulu (tahun desc, bulan desc), paginasi konsisten, batas limit wajar.
@@ -215,6 +236,19 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - APBDes: `APBDesItem.totalRealisasi`/`persentase` tidak ikut diperbarui saat realisasi berubah (lokal 2025 pos 4.1 = 0 padahal `realisasiItems` Rp 132 jt). Publik menghitung dari `realisasiItems`.
 
 ## P3. Schema & form admin
+
+- [ ] **Posyandu: telepon wajib di form admin, padahal data desa tidak punya nomor per posyandu** (terverifikasi 2026-11-16, sesi konten Posyandu)
+  - Lokasi: `_state/kesehatan/posyandu/posyandu.ts` (`templateForm.nomor` min 1), `_state/kesehatan/posyandu/posyandu.form.ts` (`cekFormPosyandu`), schema `Posyandu.nomor String` (NOT NULL).
+  - Dampak: admin harus mengisi nomor rekaan untuk 12 posyandu banjar dari dokumen desa (yang hanya berisi nama, alamat, foto).
+  - Usul: jadikan nomor opsional di form & state (kolom tetap NOT NULL, simpan ""; halaman publik sudah menampilkan "Nomor belum diisi").
+
+- [ ] **Posyandu find-many mengirim baris `FileStorage` lengkap ke publik** (terverifikasi 2026-11-16: `kesehatan/posyandu/find-many.ts` `include: { image: true }`)
+  - Dampak: `path`, `realName`, `mimeType` berkas ikut terkirim di direktori publik (bukan data pribadi, tapi detail server).
+  - Usul: `image: { select: { id: true, name: true, link: true } }` (pola `IMAGE_SELECT`); cek pemakai admin `findMany.data` dulu.
+
+- [ ] **Ganti gambar Kegiatan Desa tidak menghapus berkas lama** (terverifikasi 2026-11-16: `desa/kegiatan-desa/updt.ts` tanpa `removeReleasedFiles`)
+  - Konteks: API Lingkungan → Gotong Royong (dihapus 2026-11-16, `docs/decisions/2026-11-16-gotong-royong-kategori-kegiatan.md`) dulu menghapus permanen gambar lama saat diganti; jalur Kegiatan Desa yang kini satu-satunya tidak. Dampak: berkas yatim menumpuk di MinIO.
+  - Usul: ikuti pola menu lain di `docs/decisions/2026-11-12-sampah.md` (ambil `imageId` sebelum update, panggil `removeReleasedFiles("KegiatanDesa", [lama])` setelah update sukses bila berubah). Hapus kegiatan tetap soft delete (gambar dipertahankan).
 
 - [ ] **Rating produk UMKM tidak punya sumber data** (terverifikasi, 2026-11-13)
   - Lokasi: `PasarDesa.rating Float @default(0)` di `prisma/schema.prisma`. Tidak ada input di form admin produk dan tidak ada model ulasan. Nilai di stg (4,2–4,6) berasal dari seed, bukan penilaian warga.
@@ -274,7 +308,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 - [ ] **`deletedAt DateTime @default(now())` di banyak model** (118 kolom di schema)
   - Semua baris tercatat "terhapus" sejak dibuat; filter memakai `isActive`. Tidak berdampak ke tampilan, tapi menyesatkan. Usul: `DateTime?` tanpa default (migration hati-hati).
 
-- [ ] **Pendidikan (2026-11-15)**: `DataPendidikan.jumlah` String (usul Int + NumberInput, + kolom tahun/keterangan); `Lembaga` hanya nama + jenjang (tanpa alamat/NPSN/status/kontak); buku perpustakaan tanpa penulis/tahun/ketersediaan; Bimbingan Belajar tanpa field terstruktur tempat/jadwal/kontak/cara daftar; editor admin program (Link/Highlight/TextAlign/heading) melebihi allowlist sanitasi publik.
+- [ ] **Pendidikan (2026-11-15)**: `DataPendidikan.jumlah` String (usul Int + NumberInput, + kolom tahun/keterangan); ~~`Lembaga` hanya nama + jenjang~~ (selesai 2026-11-16: deskripsi, alamat, kontak, medsos, titik + link Google Maps, foto sekolah, bagan, pengurus, foto kegiatan — `docs/KONTEN-BERSAMA.md`; NPSN/status sekolah belum ada); buku perpustakaan tanpa penulis/tahun/ketersediaan; Bimbingan Belajar tanpa field terstruktur tempat/jadwal/kontak/cara daftar; editor admin program (Link/Highlight/TextAlign/heading) melebihi allowlist sanitasi publik.
 
 - [ ] **Inovasi (2026-11-16)**
   - find-many Desa Digital & Program Kreatif tanpa `offset`/`skip`: publik memuat sekali `limit=100` lalu paginasi di klien (`console.warn` bila lebih). Kolaborasi sama (limit 100).
@@ -293,7 +327,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Data Lingkungan: `jumlah` String bebas (stg "1 paket kegiatan", "100"); halaman lama menambah "±", kini tampil apa adanya. Bila desa ingin angka sorotan, perlu kolom angka + satuan terpisah. Cari find-many: Penghijauan hanya `name` + `judul`, Data Lingkungan `name` + `deskripsi` (publik mencari di klien, tidak terdampak).
   - Kategori kegiatan: "Sosial" tercatat dua kali di `kategorikegiatan` (stg).
 
-- [ ] **Ekonomi: schema & form admin** (rombak Ekonomi v0.1.291, 2026-11-17; dilaporkan sesi pekerja, cek ulang sebelum dikerjakan)
+- [ ] **Ekonomi: schema & form admin** (rombak Ekonomi v0.1.292, 2026-11-17; dilaporkan sesi pekerja, cek ulang sebelum dikerjakan)
   - Kemiskinan: `StatistikKemiskinan.tahun @unique` global (`prisma/schema.prisma:1814`, terverifikasi) → dua program tidak bisa punya data di tahun sama; `program-kemiskinan/del.ts:7-12` meninggalkan statistik yatim yang mengunci tahun itu selamanya (tanpa try/catch); `updt.ts` program + statistik tidak dalam transaksi; label form "Ikon Program Kreatif Desa" (create:128, edit:208). Arti angka statistik (20/30/20) belum jelas, publik menyembunyikannya sampai jelas.
   - Pengangguran: `year` tanpa validasi rentang (stg ada 9999); `percentageChange` 0 vs null & tidak dihitung ulang (publik menghitung sendiri); update duplikat bulan+tahun membalas 200 (create 409); model sebaran usia/pendidikan berkolom String tanpa periode/tahun, tanpa jenjang "Tidak sekolah"/SMK.
   - Demografi Pekerjaan: hapus permanen (`del.ts:27`) padahal ada `isActive`; zod `min(1)` menolak 0; `t.Number` tanpa batas → 500; tanpa kolom tahun/sumber data.

@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import { SORT_BY_JENJANG } from "@/lib/jenjang-pendidikan-urutan";
 import { jenjangSegmentFilters, paginateSegments } from "../jenjang-sort";
+import { LEMBAGA_LIST_OMIT } from "./lembaga.data";
 
 async function lembagaPendidikanFindMany(context: Context) {
   try {
@@ -62,6 +63,8 @@ async function lembagaPendidikanFindMany(context: Context) {
         include: {
           jenjangPendidikan: true,
         },
+        // Daftar tetap ringan: deskripsi panjang & media sosial hanya di find-unique.
+        omit: LEMBAGA_LIST_OMIT,
         skip: pageSkip,
         take,
         orderBy: { nama: 'asc' },

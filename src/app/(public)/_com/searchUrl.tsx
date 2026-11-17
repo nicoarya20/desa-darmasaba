@@ -1,10 +1,10 @@
 import { getSosmedHref } from '@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed';
-import { desaDigitalDetailHref } from '@/app/(public)/(pages)/inovasi/desa-digital-smart-village/_com/desa-digital.logic';
 import { programKreatifDetailHref } from '@/app/(public)/(pages)/inovasi/program-kreatif-desa/_com/program-kreatif.logic';
 import { programOverlayHref } from '@/app/(public)/_com/main-page/landing-page/program-param.logic';
-import { gotongRoyongDetailHref } from '@/app/(public)/(pages)/lingkungan/gotong-royong/_com/gotong-royong.logic';
 import { penghijauanDetailHref } from '@/app/(public)/(pages)/lingkungan/program-penghijauan/_com/penghijauan.logic';
 import { isPathHidden } from './menu-visibility.logic';
+import { kegiatanDetailHref } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan-list.logic';
+import { lembagaDetailHref } from '@/app/(public)/(pages)/pendidikan/info-sekolah/_com/info-sekolah.logic';
 
 type SearchItem = { type?: string; id: string | number;[key: string]: unknown };
 
@@ -72,17 +72,17 @@ const getDetailUrl = (item: SearchItem) => {
     programKemiskinan: () => '/ekonomi/program-kemiskinan',
     sektorUnggulanDesa: () => '/ekonomi/sektor-unggulan-desa',
     demografiPekerjaan: () => '/ekonomi/demografi-pekerjaan',
-    desaDigital: (id) => desaDigitalDetailHref(String(id)),
+    // Gabungan Desa Digital + Info Teknologi Tepat Guna (satu tabel, berkategori).
+    inovasiTeknologiDesa: (id) => `/inovasi/inovasi-teknologi-desa/${id}`,
     programKreatif: (id) => programKreatifDetailHref(String(id)),
     kolaborasiInovasi: () => '/inovasi/kolaborasi-inovasi',
     mitraKolaborasi: () => '/inovasi/kolaborasi-inovasi',
-    infoTekno: () => '/inovasi/info-teknologi-tepat-guna',
     pengelolaanSampah: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
     keteranganBankSampahTerdekat: () => '/lingkungan/pengelolaan-sampah-bank-sampah',
     programPenghijauan: (id) => penghijauanDetailHref(String(id)),
     dataLingkunganDesa: () => '/lingkungan/data-lingkungan-desa',
-    // Kategori kosong (cari global belum menyertakan kategori) → segmen cadangan, bukan "undefined".
-    gotongRoyong: (id, kategori) => gotongRoyongDetailHref(kategori, id),
+    // Tipe lama `gotongRoyong` berisi SEMUA Kegiatan Desa (nama tipe dipertahankan) → detail Kegiatan Desa.
+    gotongRoyong: (id, kategori) => kegiatanDetailHref(kategori, String(id)),
     tujuanEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
     materiEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
     contohEdukasiLingkungan: () => '/lingkungan/edukasi-lingkungan',
@@ -90,8 +90,7 @@ const getDetailUrl = (item: SearchItem) => {
     bentukKonservasiBerdasarkanAdat: () => '/lingkungan/konservasi-adat-bali',
     nilaiKonservasiAdat: () => '/lingkungan/konservasi-adat-bali',
     jenjangPendidikan: () => '/pendidikan/info-sekolah',
-    lembaga: () => '/pendidikan/info-sekolah/lembaga',
-    siswa: () => '/pendidikan/info-sekolah/siswa',
+    lembaga: (id) => lembagaDetailHref(String(id)),
     pengajar: () => '/pendidikan/info-sekolah/pengajar',
     keunggulanProgram: () => '/pendidikan/beasiswa-desa',
     tujuanProgram: () => '/pendidikan/program-pendidikan-anak',

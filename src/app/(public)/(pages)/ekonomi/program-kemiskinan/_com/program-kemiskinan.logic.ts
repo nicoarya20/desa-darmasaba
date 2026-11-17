@@ -12,6 +12,8 @@ import { PROGRAM_KEMISKINAN_TEXT as T } from "./program-kemiskinan.text";
 export type ProgramKemiskinanApiItem = {
   id: string;
   nama: string;
+  /** Penanda URL detail (unik, opsional); kosong → detail dibuka lewat id. */
+  slug?: string | null;
   /** HTML editor admin. */
   deskripsi?: string | null;
   /** Kunci ikon `IconMapper` (admin `_com/iconMap`). */
@@ -22,6 +24,8 @@ export type ProgramKemiskinanApiItem = {
 export type ProgramKemiskinan = {
   id: string;
   title: string;
+  /** Halaman detail publik (deskripsi + penerima per tahun), lihat `programHref`. */
+  href: string;
   /** HTML deskripsi yang sudah disaring. */
   html?: string;
   /** Hanya kunci ikon yang dikenal; kunci tak dikenal → baris tanpa ikon (bukan tanda tanya). */
@@ -41,6 +45,7 @@ export function toProgramKemiskinan(
   return {
     id: item.id,
     title,
+    href: programHref(item),
     html: html || undefined,
     icon: isIconKey(icon) ? icon : undefined,
     searchText: [title, plain].filter(Boolean).join(" ").toLowerCase(),
@@ -51,6 +56,11 @@ export function toProgramKemiskinan(
 export function filterProgramKemiskinan(items: readonly ProgramKemiskinan[], search: string): ProgramKemiskinan[] {
   const words = search.trim().toLowerCase().split(/\s+/).filter(Boolean);
   return items.filter((item) => words.every((word) => item.searchText.includes(word)));
+}
+
+/** URL detail publik program: slug bila ada, selain itu id. */
+export function programHref(p: { id: string; slug?: string | null }): string {
+  return `${PROGRAM_KEMISKINAN_BASE_HREF}/${encodeURIComponent(p.slug?.trim() || p.id)}`;
 }
 
 /** URL daftar; `search` kosong dan halaman 1 tidak ditulis ke query. */

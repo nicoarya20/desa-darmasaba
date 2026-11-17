@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Logika murni urutan galeri foto Profil BUMDes + skema body.
 import { describe, it, expect } from "vitest";
-import { cekUrutanIds, urutanDariIndex, urutanFotoBaru } from "@/lib/bumdes-foto-urutan";
+import { cekUrutanIds, urutanDariIndex, urutanBaru as urutanFotoBaru } from "@/lib/konten-bersama/urutan.logic";
 import { MAX_KETERANGAN_FOTO, fotoProfilCreateSchema, fotoProfilReorderSchema } from "@/lib/bumdes-foto-profil";
 
 describe("urutanFotoBaru", () => {

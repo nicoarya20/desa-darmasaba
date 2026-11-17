@@ -4,7 +4,7 @@ import stateBumdes from '@/app/admin/(dashboard)/_state/ekonomi/bumdes/bumdes';
 import { Box, Button, Group, NumberInput, Paper, Skeleton, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BumdesImageField from '../_lib/BumdesImageField';
+import GambarField from '@/app/admin/(dashboard)/_com/konten-bersama/gambar.field';
 import GaleriFotoBumdesAdmin from '../_lib/GaleriFotoBumdesAdmin';
 
 /** Admin: form ubah profil BUMDes (singleton, disimpan lewat upsert) + galeri foto di bawahnya. */
@@ -38,7 +38,7 @@ function ProfilBumdesAdmin() {
       )}
       <Paper withBorder bg={colors['white-1']} p="lg" radius="md" shadow="sm" w={{ base: '100%', md: '70%' }}>
         <Stack gap="md">
-          <BumdesImageField
+          <GambarField
             label="Foto / Logo BUMDes"
             currentUrl={profil.data?.image?.link ?? null}
             file={file}

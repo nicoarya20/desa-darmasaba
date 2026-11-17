@@ -16,16 +16,14 @@ vi.mock('react-toastify', () => ({
 }));
 
 import programKreatifState from '@/app/admin/(dashboard)/_state/inovasi/program-kreatif';
-import desaDigitalState from '@/app/admin/(dashboard)/_state/inovasi/desa-digital';
-import infoTeknoState from '@/app/admin/(dashboard)/_state/inovasi/info-tekno';
+import inovasiTeknologiState from '@/app/admin/(dashboard)/_state/inovasi/inovasi-teknologi-desa';
 import kolaborasiInovasiState from '@/app/admin/(dashboard)/_state/inovasi/kolaborasi-inovasi';
 
 const BASE = 'http://localhost:3000';
 
 const cases = [
   { path: 'programkreatif', del: programKreatifState.delete, find: programKreatifState.findMany },
-  { path: 'desadigital', del: desaDigitalState.delete, find: desaDigitalState.findMany },
-  { path: 'infotekno', del: infoTeknoState.delete, find: infoTeknoState.findMany },
+  { path: 'inovasiteknologi', del: inovasiTeknologiState.delete, find: inovasiTeknologiState.findMany },
   { path: 'kolaborasiinovasi', del: kolaborasiInovasiState.delete, find: kolaborasiInovasiState.findMany },
 ];
 

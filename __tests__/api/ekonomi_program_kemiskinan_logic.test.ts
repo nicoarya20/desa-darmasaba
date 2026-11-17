@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   filterProgramKemiskinan,
   programKemiskinanEmptyMessage,
+  programHref,
   programKemiskinanListHref,
   toProgramKemiskinan,
   type ProgramKemiskinanApiItem,
@@ -20,6 +21,7 @@ describe('toProgramKemiskinan', () => {
     expect(program({ nama: '  Bantuan Langsung Tunai ' })).toEqual({
       id: 'pk1',
       title: 'Bantuan Langsung Tunai',
+      href: '/ekonomi/program-kemiskinan/pk1',
       html: '<p>Bantuan tunai bulanan</p>',
       icon: 'ekonomi',
       searchText: 'bantuan langsung tunai bantuan tunai bulanan',
@@ -61,6 +63,21 @@ describe('filterProgramKemiskinan', () => {
 
   it('cari kosong → semua', () => {
     expect(filterProgramKemiskinan(items, '   ')).toHaveLength(2);
+  });
+});
+
+describe('tautan detail', () => {
+  it('programHref: slug bila ada, id bila slug kosong/spasi, segmen di-encode', () => {
+    expect(programHref({ id: 'pk1', slug: 'blt-desa' })).toBe('/ekonomi/program-kemiskinan/blt-desa');
+    expect(programHref({ id: 'pk1', slug: null })).toBe('/ekonomi/program-kemiskinan/pk1');
+    expect(programHref({ id: 'pk1', slug: '  ' })).toBe('/ekonomi/program-kemiskinan/pk1');
+    expect(programHref({ id: 'pk1' })).toBe('/ekonomi/program-kemiskinan/pk1');
+    expect(programHref({ id: 'a b' })).toBe('/ekonomi/program-kemiskinan/a%20b');
+  });
+
+  it('toProgramKemiskinan membawa href dari slug find-many, fallback id', () => {
+    expect(program({ slug: 'pkh' }).href).toBe('/ekonomi/program-kemiskinan/pkh');
+    expect(program({ slug: null }).href).toBe('/ekonomi/program-kemiskinan/pk1');
   });
 });
 

@@ -12,10 +12,12 @@ type Props = {
   selection: MapSelection | null;
   /** `null` = halaman tanpa peta: baris bukan tombol. */
   onPick: ((id: string) => void) | null;
+  /** Buka modal detail (profil, struktur, dokumentasi) untuk satu lokasi. */
+  onDetail: (item: Lokasi) => void;
 };
 
 /** Daftar lokasi bergaris; titik terpilih dari peta disorot dan digulir ke tampilan di dalam daftar yang bergulir. */
-export function LokasiList({ items, selection, onPick }: Props) {
+export function LokasiList({ items, selection, onPick, onDetail }: Props) {
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -27,20 +29,25 @@ export function LokasiList({ items, selection, onPick }: Props) {
     <ul ref={listRef} className={x.rows} aria-label={T.listLabel}>
       {items.map((item) => (
         <li key={item.id} data-lokasi-id={item.id}>
-          <LokasiRow item={item} selected={selection?.id === item.id} onPick={onPick} />
+          <LokasiRow item={item} selected={selection?.id === item.id} onPick={onPick} onDetail={onDetail} />
         </li>
       ))}
     </ul>
   );
 }
 
-type RowProps = { item: Lokasi; selected: boolean; onPick: ((id: string) => void) | null };
+type RowProps = {
+  item: Lokasi;
+  selected: boolean;
+  onPick: ((id: string) => void) | null;
+  onDetail: (item: Lokasi) => void;
+};
 
 /**
- * Satu baris: nama + alamat (tombol "tampilkan di peta" bila berkoordinat dan peta ada), lalu "Petunjuk arah ›"
- * di luar tombol (tautan tidak boleh bersarang di tombol).
+ * Satu baris: nama + alamat (tombol "tampilkan di peta" bila berkoordinat dan peta ada), lalu aksi "Lihat detail ›"
+ * (modal) dan "Petunjuk arah ›" di luar tombol pilih (tombol/tautan tidak boleh bersarang).
  */
-export function LokasiRow({ item, selected, onPick }: RowProps) {
+export function LokasiRow({ item, selected, onPick, onDetail }: RowProps) {
   const mapped = hasCoords(item);
   const info = (
     <>
@@ -65,18 +72,24 @@ export function LokasiRow({ item, selected, onPick }: RowProps) {
       ) : (
         <div className={x.pick}>{info}</div>
       )}
-      {item.petunjukArah ? (
-        <a
-          className={x.arah}
-          href={item.petunjukArah}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={T.petunjukArahLabel(item.name)}
-        >
-          {T.petunjukArah}
+      <div className={x.aksi}>
+        <button type="button" className={`${x.arah} ${x.detail}`} onClick={() => onDetail(item)} aria-label={T.detailLabel(item.name)}>
+          {T.detail}
           <IconChevronRight size={16} stroke={2} aria-hidden />
-        </a>
-      ) : null}
+        </button>
+        {item.petunjukArah ? (
+          <a
+            className={x.arah}
+            href={item.petunjukArah}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={T.petunjukArahLabel(item.name)}
+          >
+            {T.petunjukArah}
+            <IconChevronRight size={16} stroke={2} aria-hidden />
+          </a>
+        ) : null}
+      </div>
     </div>
   );
 }

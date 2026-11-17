@@ -37,9 +37,8 @@ describe('outOfRangePage', () => {
   });
 });
 
-describe('pemakai: halaman Info TTG & Tips Keamanan mengalihkan lewat router.replace', () => {
+describe('pemakai: halaman Tips Keamanan mengalihkan lewat router.replace', () => {
   const pages = [
-    ['src/app/(public)/(pages)/inovasi/info-teknologi-tepat-guna/_com/InfoTtgPage.tsx', 'infoTtgListHref'],
     ['src/app/(public)/(pages)/keamanan/tips-keamanan/_com/TipsKeamananPage.tsx', 'tipsKeamananListHref'],
   ] as const;
 

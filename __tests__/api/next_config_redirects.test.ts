@@ -22,6 +22,12 @@ describe('next.config redirects — daftar lengkap', () => {
       // Info Sekolah: tabel per jenjang → filter ?jenjang= (detail: info_sekolah_redirects.test.ts).
       ['/pendidikan/info-sekolah/semua/:tabel(lembaga|siswa|pengajar)', '/pendidikan/info-sekolah/:tabel'],
       ['/pendidikan/info-sekolah/:jenjang/:tabel(lembaga|siswa|pengajar)', '/pendidikan/info-sekolah/:tabel?jenjang=:jenjang'],
+      // Desa Digital + Info Teknologi Tepat Guna → Inovasi Teknologi Desa (detail: inovasi_teknologi_routes.test.ts).
+      ['/inovasi/desa-digital-smart-village', '/inovasi/inovasi-teknologi-desa?kategori=digital'],
+      ['/inovasi/desa-digital-smart-village/:id', '/inovasi/inovasi-teknologi-desa/:id'],
+      ['/inovasi/info-teknologi-tepat-guna', '/inovasi/inovasi-teknologi-desa?kategori=tepat-guna'],
+      ['/admin/inovasi/desa-digital-smart-village/:path*', '/admin/inovasi/inovasi-teknologi-desa/:path*'],
+      ['/admin/inovasi/info-teknologi-tepat-guna/:path*', '/admin/inovasi/inovasi-teknologi-desa/:path*'],
       ['/admin/desa', '/admin/pemerintahan'],
       ['/admin/desa/:path*', '/admin/pemerintahan/:path*'],
       ['/admin/pemerintahan/penghargaan', '/admin/landing-page/prestasi-desa/list-prestasi-desa'],
