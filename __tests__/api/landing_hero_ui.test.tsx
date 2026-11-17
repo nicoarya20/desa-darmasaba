@@ -30,6 +30,7 @@ import {
   ribbonScale,
 } from '@/app/(public)/_com/main-page/landing-page/ribbons.logic';
 import { LANDING_TEXT } from '@/app/(public)/_com/main-page/landing-page/landing.text';
+import { fitTextScale } from '@/app/(public)/_com/main-page/landing-page/fit-text.logic';
 import type { PejabatItem, SosmedItem } from '@/app/(public)/_com/main-page/landing-page/use-landing-data';
 
 const render = (node: React.ReactElement) =>
@@ -138,6 +139,24 @@ describe('HeroProfile', () => {
     expect(html).not.toContain('<img');
     expect(html).not.toContain('Belum ada foto');
     expect(html).toContain('Nama Perbekel Uji');
+  });
+});
+
+describe('fit-text.logic — nama Perbekel satu baris', () => {
+  it('teks yang sudah muat tidak diubah (dan tidak diperbesar)', () => {
+    expect(fitTextScale(400, 300)).toBe(1);
+    expect(fitTextScale(400, 400)).toBe(1);
+  });
+
+  it('teks kepanjangan diperkecil sebanding, sedikit di bawah batas agar tidak terpotong', () => {
+    const scale = fitTextScale(300, 600);
+    expect(scale).toBeLessThan(0.5);
+    expect(scale).toBeGreaterThan(0.49);
+    expect(600 * scale).toBeLessThanOrEqual(300);
+  });
+
+  it('belum terukur (lebar 0, mis. tersembunyi): biarkan ukuran CSS', () => {
+    expect(fitTextScale(0, 500)).toBe(1);
   });
 });
 

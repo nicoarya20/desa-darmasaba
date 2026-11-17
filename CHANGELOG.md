@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.293] - 2026-11-17
+### Changed
+- **Nama Perbekel di beranda kini selalu satu baris**, sepanjang apa pun gelarnya. Kartu nama melebar dulu sampai selebar foto; bila masih kurang, ukuran huruf nama mengecil seperlunya, di semua ukuran layar.
+
 ## [0.1.292] - 2026-11-17
 ### Changed
 - **Sembilan halaman menu Ekonomi dirombak ke gaya Kabar Desa** (judul rata kiri, satu kalimat pengantar, tepi dan jarak sama dengan menu Lingkungan): BUMDes, PADesa, Jumlah Pengangguran, Penduduk Usia Kerja yang Menganggur, Jumlah Penduduk Miskin, Program Pengentasan Kemiskinan, Sektor Unggulan Desa, Demografi Pekerjaan, dan Kesejahteraan Masyarakat.
