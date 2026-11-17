@@ -1,4 +1,3 @@
-import colors from "@/con/colors";
 import { APBDES_BRAND_VARS } from "@/app/(public)/_com/main-page/apbdes/apbdes.meta";
 import type { CSSProperties } from "react";
 
@@ -8,5 +7,5 @@ import type { CSSProperties } from "react";
  */
 export const DATA_PENDIDIKAN_LIMIT = 100;
 
-/** Variabel warna halaman: brand APBDes + tint brand untuk lingkaran ikon ubin kosong. */
-export const DATA_PENDIDIKAN_BRAND_VARS = { ...APBDES_BRAND_VARS, "--brand-tint": colors["blue-button-1"] } as CSSProperties;
+/** Variabel warna halaman: brand APBDes (tint ubin kosong kini dari STAT_BARS_VARS modul stat-bars). */
+export const DATA_PENDIDIKAN_BRAND_VARS = APBDES_BRAND_VARS as CSSProperties;

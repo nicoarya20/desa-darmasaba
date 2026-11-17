@@ -155,7 +155,7 @@ describe('Struktur PPID — halaman', () => {
 });
 
 describe('Struktur PPID — tanpa data', () => {
-  const empty = { loading: false, tree: [], visible: [], search: '', setSearch: vi.fn(), query: '', reload: vi.fn() } as StrukturData;
+  const empty = { loading: false, failed: false, tree: [], visible: [], search: '', setSearch: vi.fn(), query: '', reload: vi.fn() } as StrukturData;
   const html = render(
     <StrukturBody data={empty} label={LABEL} emptyHint={STRUKTUR_PPID_TEXT.emptyHint} hrefFor={strukturDetailHref} />,
   );

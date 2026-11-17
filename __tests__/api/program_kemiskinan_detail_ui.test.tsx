@@ -17,7 +17,7 @@ import { DaftarPenerimaView } from '@/app/(public)/(pages)/ekonomi/program-kemis
 import { ProgramDetailBody } from '@/app/(public)/(pages)/ekonomi/program-kemiskinan/_com/detail/ProgramDetailBody';
 import { ProgramKemiskinanDetail } from '@/app/(public)/(pages)/ekonomi/program-kemiskinan/_com/detail/ProgramKemiskinanDetail';
 import { RekapAlamatView } from '@/app/(public)/(pages)/ekonomi/program-kemiskinan/_com/detail/RekapAlamatView';
-import { programHref } from '@/app/(public)/(pages)/ekonomi/program-kemiskinan/_com/program-kemiskinan.source';
+import { programHref } from '@/app/(public)/(pages)/ekonomi/program-kemiskinan/_com/program-kemiskinan.logic';
 import { PROGRAM_DETAIL_TEXT as T } from '@/app/(public)/(pages)/ekonomi/program-kemiskinan/_com/program-kemiskinan.text';
 import type { ProgramPublik } from '@/app/(public)/(pages)/ekonomi/program-kemiskinan/_com/program-kemiskinan.types';
 

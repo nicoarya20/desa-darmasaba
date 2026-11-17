@@ -132,6 +132,15 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Frontend publik baru sudah meng-escape `alamat` dan mengirim `deskripsi` sebagai `<p>` ter-escape, tapi itu tidak melindungi dari POST langsung.
   - Usul: pola Laporan Publik: `sanitizeRichText` (`src/lib/rich-text.ts`) di halaman admin (`alamat` cukup teks polos), dan `sanitizeRichTextForStorage` di create.
 
+- [ ] **Struktur organisasi: API publik mengirim alamat rumah, email, telepon & tanggal masuk pengurus** (terverifikasi 2026-11-17, rombak Ekonomi v0.1.292)
+  - Lokasi: `PEGAWAI_SELECT` di `src/app/api/[[...slugs]]/_lib/_struktur-organisasi/http.ts:59-74` (`tanggalMasuk`, `email`, `telepon`, `alamat`), dipakai find-many & `/:id` pegawai **BUMDes, PPID, dan Perangkat Desa**.
+  - Dampak: siapa pun bisa membaca data pribadi pengurus/perangkat lewat API, walau halaman publik tidak menampilkannya (detail BUMDes kini hanya foto, nama, gelar, jabatan; PPID/Perangkat menampilkan email/telepon).
+  - Usul: select publik terpisah (`id`, `namaLengkap`, `gelarAkademik`, `image`, `posisi`, `isActive`); field pribadi hanya untuk rute admin. Putuskan dengan user apakah email/telepon kantor perangkat memang ingin publik.
+- [ ] **Ekonomi: HTML dari admin disimpan tanpa sanitasi & `linkVideo` tanpa validasi** (terverifikasi 2026-11-17: tidak ada `sanitize` di `_lib/ekonomi/`)
+  - Lokasi: create/updt `sektor-unggulan-desa` (`description`), `kesejahteraan-masyarakat` (`deskripsi`, `content`, `linkVideo`), `program-kemiskinan` (`deskripsi`).
+  - Halaman publik baru menyaring di klien (`sanitizeRichText`) dan video lewat `VideoFacade` (iframe hanya setelah klik, YouTube/Vimeo saja), tapi halaman admin dan konsumen API lain tidak terlindungi.
+  - Usul: `sanitizeRichTextForStorage` (`src/lib/rich-text-server.ts`) di create/updt; validasi `linkVideo` hanya URL https YouTube/Vimeo.
+
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
@@ -213,6 +222,18 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Id tidak ditemukan → `throw new Error` → HTTP 500, bukan 404 / `success:false`. Overlay tidak bisa membedakan "tidak ditemukan" dari galat server, jadi memakai satu kalimat netral.
   - Usul: `findFirst({ where: { id, isActive: true } })`; tidak ditemukan → `set.status = 404; return { success: false, message: "Program inovasi tidak ditemukan" }`.
   - Info: stg belum mengirim `images` di findUnique (fitur galeri dokumentasi belum ter-deploy); galeri overlay muncul otomatis begitu terkirim.
+
+- [ ] **Ekonomi: find-many memakai limit bawaan 10 & urutan yang memotong data terbaru** (terverifikasi 2026-11-17, rombak Ekonomi v0.1.292)
+  - Lokasi: `jumlah-pengangguran/detail-data-pengangguran/findMany.ts:31,37` (`orderBy year asc` + take limit, lalu diurut ulang per bulan saja → tahun terbaru tak pernah termuat, paginasi rusak); demografi-pekerjaan, sektor-unggulan-desa, jumlah-penduduk-miskin, kesejahteraan-masyarakat (tanpa offset) memakai limit bawaan 10.
+  - Mitigasi frontend (MITIGASI SEMENTARA): halaman publik meminta limit eksplisit (100, pengangguran 120) dan mengurutkan di klien, `console.warn` bila `total` > termuat.
+  - Usul: `orderBy` terbaru dulu (tahun desc, bulan desc), paginasi konsisten, batas limit wajar.
+- [ ] **Ekonomi: detail & daftar publik mengabaikan `isActive`** (dilaporkan sesi 85/fc/f0)
+  - Lokasi: `_struktur-organisasi/pegawai.read.ts:58` (detail pegawai; frontend BUMDes menganggap nonaktif "tidak ditemukan", MITIGASI SEMENTARA), `bumdes/unit-usaha/findUnique.ts:10`, `kesejahteraan-masyarakat/find-by-id.ts:29`, `program-kemiskinan` findUnique; demografi-pekerjaan search tanpa `isActive`.
+  - Usul: `where: { id, isActive: true, deletedAt: null }` untuk rute publik.
+- [ ] **PADesa: menu admin terpisah tidak dipakai publik lagi** (keputusan user 2026-11-16)
+  - Halaman `/ekonomi/PADesa-pendapatan-asli-desa` kini membaca APBDes pos `4.1` (`/api/landingpage/apbdes/findMany`). Model `ApbDesa`/`Pendapatan`/`Belanja`/`Pembiayaan` + menu admin PADesa jadi duplikat.
+  - Usul: pensiunkan menu admin PADesa (atau arahkan ke APBDes). Bila dipertahankan: `apbdesa/findMany.ts:14-18` search memakai field yang tidak ada (`success:false`, cari admin rusak); komentar "tahun unik → 409" tanpa `@@unique` di schema; `value Int` tidak muat Rp 21,4 M; MultiSelect form hanya memuat 10 item.
+  - APBDes: `APBDesItem.totalRealisasi`/`persentase` tidak ikut diperbarui saat realisasi berubah (lokal 2025 pos 4.1 = 0 padahal `realisasiItems` Rp 132 jt). Publik menghitung dari `realisasiItems`.
 
 ## P3. Schema & form admin
 
@@ -306,6 +327,14 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Data Lingkungan: `jumlah` String bebas (stg "1 paket kegiatan", "100"); halaman lama menambah "±", kini tampil apa adanya. Bila desa ingin angka sorotan, perlu kolom angka + satuan terpisah. Cari find-many: Penghijauan hanya `name` + `judul`, Data Lingkungan `name` + `deskripsi` (publik mencari di klien, tidak terdampak).
   - Kategori kegiatan: "Sosial" tercatat dua kali di `kategorikegiatan` (stg).
 
+- [ ] **Ekonomi: schema & form admin** (rombak Ekonomi v0.1.292, 2026-11-17; dilaporkan sesi pekerja, cek ulang sebelum dikerjakan)
+  - Kemiskinan: `StatistikKemiskinan.tahun @unique` global (`prisma/schema.prisma:1814`, terverifikasi) → dua program tidak bisa punya data di tahun sama; `program-kemiskinan/del.ts:7-12` meninggalkan statistik yatim yang mengunci tahun itu selamanya (tanpa try/catch); `updt.ts` program + statistik tidak dalam transaksi; label form "Ikon Program Kreatif Desa" (create:128, edit:208). Arti angka statistik (20/30/20) belum jelas, publik menyembunyikannya sampai jelas.
+  - Pengangguran: `year` tanpa validasi rentang (stg ada 9999); `percentageChange` 0 vs null & tidak dihitung ulang (publik menghitung sendiri); update duplikat bulan+tahun membalas 200 (create 409); model sebaran usia/pendidikan berkolom String tanpa periode/tahun, tanpa jenjang "Tidak sekolah"/SMK.
+  - Demografi Pekerjaan: hapus permanen (`del.ts:27`) padahal ada `isActive`; zod `min(1)` menolak 0; `t.Number` tanpa batas → 500; tanpa kolom tahun/sumber data.
+  - Sektor Unggulan: zod `value min(1)` menolak 0 & desimal; label form "Jumlah" ambigu (tanpa satuan/arti); `formatSektorValue`/`resolveChartUnit`/`LEGACY_CHART_UNIT` (`src/lib/sektor-unggulan.ts`) kini hanya dipakai test & seed.
+  - Kesejahteraan: `del.ts` membalas `{status:404}` dengan HTTP 200; `deletedAt @default(now())` padahal hapus permanen; form admin mewajibkan `imageId` padahal schema opsional; belum masuk cari global (`search/findMany.ts`).
+  - BUMDes: belum ada model/endpoint dokumen (SK pengurus, Perdes, AD/ART, laporan). Publik sudah menyiapkan `DokumenBumdes` (tersembunyi selama kosong); isi `loadDokumen` di `bumdes.source.ts` dengan bentuk `{ id, judul, keterangan, href }` (`TODO(bumdes-dokumen)`).
+
 ## Jenna publik (tindak lanjut)
 
 Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
@@ -333,3 +362,4 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - Pendidikan (2026-11-15): Non Formal bagian ke-3 berjudul "Tempat Kegiatan" (seharusnya "Jenis Program yang Diselenggarakan"; seed `jenis-program-yang-diselenggarakan.json` + stg); `pengajar.json` = salinan `siswa.json` (dummy); Data Pendidikan stg "SD" ganda (874 & 90); judul buku ganda "Seni Berpikir Kritis"; seeder non formal mencetak log "fasilitas bimbingan belajar desa seeded".
 - Inovasi (stg 2026-11-16): logo "BRI Peduli" berlatar hampir putih (bukan transparan) sehingga tampak kotak samar di dinding mitra; unggah PNG/WebP transparan. Kolaborasi berisi entri uji "Forum Inovasi Desa (Tes)".
 - Lingkungan (stg 2026-11-16): langkah Bank Sampah ke-6 "Pilih sampah sesai jenisnya (Tes )" (id `cmrbohsmq0000nr0rjvdv3gqa`) adalah data uji; Data Lingkungan berisi entri uji "Test QA Data Lingkungan" (ikon `icon-test`); judul Konservasi "Filosofi Tri Hita Karuna" seharusnya "Karana".
+- Ekonomi (stg 2026-11-16): Pengangguran ada tahun 9999 (kartu "bulan terbaru" jadi "Februari 9999") dan 2021; Penduduk Miskin 2026 = 5 orang (turun dari 390, tampak data uji); Demografi Pekerjaan berisi "Test QA Pekerjaan"; PADesa "tes" 950 jt + "Penanggulangan Bencana…" ganda; hierarki jabatan BUMDes janggal (Direktur/Bendahara/Sekretaris/Pengawas di bawah Penasihat, Penasihat & Kepala Unit tanpa induk) dan 0 pengurus; Kesejahteraan 6 program tanpa foto/galeri/video; usia kerja menganggur 2 baris sebaran tanpa periode.

@@ -1,8 +1,8 @@
 // @vitest-environment node
-// Profil pegawai dari bagan struktur (PPID, Perangkat Desa, BUMDes): satu komponen generik, baris kosong disembunyikan,
+// Profil pegawai dari bagan struktur (PPID, Perangkat Desa; BUMDes kini profil sendiri): satu komponen generik, baris kosong disembunyikan,
 // avatar inisial saat tanpa foto; Alamat & Tanggal Masuk tidak lagi ditampilkan (keputusan coordinator, ADR fleksibel). jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup
 // (effect tidak jalan, jadi komponen penampung hanya teruji di keadaan memuat).
-import type { ReactElement } from 'react';
+import type { AnchorHTMLAttributes, ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
 import { describe, expect, it, vi } from 'vitest';
@@ -11,8 +11,10 @@ const ppid = vi.hoisted(() => ({
   pegawai: { findUnique: { load: vi.fn(async (): Promise<unknown> => null) } },
 }));
 vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid', () => ({ default: ppid }));
-vi.mock('@/app/admin/(dashboard)/_state/ekonomi/struktur-organisasi', () => ({ default: ppid }));
-vi.mock('next-view-transitions', () => ({ useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }) }));
+vi.mock('next-view-transitions', () => ({
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+  useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }),
+}));
 vi.mock('next/navigation', () => ({ useParams: () => ({ id: 'p1' }) }));
 
 import { StrukturDetail } from '@/app/(public)/_com/struktur-organisasi/StrukturDetail';
@@ -104,10 +106,10 @@ describe('StrukturDetail & halaman pembungkus', () => {
     expect(html).toContain('role="status" aria-label="Memuat profil pegawai…"');
   });
 
-  it('halaman PPID, Perangkat Desa & BUMDes memakai komponen yang sama', () => {
+  it('halaman PPID & Perangkat Desa memakai komponen yang sama; BUMDes punya profil sendiri (kerangka Kabar)', () => {
     expect(render(<PpidDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
     expect(render(<PerangkatDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
-    expect(render(<BumdesDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
+    expect(render(<BumdesDetailPage />)).toContain('aria-label="Memuat profil pengurus BUMDes"');
   });
 
   it('pemuat PPID memanggil findUnique.load(id) dan mengembalikan hasilnya (null = tidak ditemukan)', async () => {

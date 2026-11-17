@@ -1,0 +1,334 @@
+/*
+ * Modul Pengangguran (Jumlah Pengangguran + Usia Kerja yang Menganggur) di atas kerangka Kabar (`.section`
+ * kabar.module.css + kepala kabar-list). Variabel warna (--brand, --ink, --muted, --tile, --radius) dari kabar.module.css.
+ * Kartu & panel gaya APBDes/Monev: #f5f5f7, radius 18, tanpa border/bayangan. Breakpoint apple.com: ≤1068px, ≤734px.
+ */
+.stack {
+  --rule: #d2d2d7;
+  display: flex;
+  flex-direction: column;
+  /* 64px, ≤734px 48px: token globals.css */
+  gap: var(--block-gap);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.blockHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.caption {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.43;
+}
+
+/* ---------- Ringkasan bulan terbaru (3 kartu, grid Monev 1.35fr | 1fr | 1fr) ---------- */
+.summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.cardLabel {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.33;
+  font-weight: 600;
+}
+
+.cardValue {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.card:first-child .cardValue {
+  color: var(--brand);
+}
+
+.unit {
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.cardNote {
+  margin: auto 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.43;
+}
+
+.cardNote svg {
+  flex: none;
+}
+
+.swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+/* ---------- Grafik + rincian ---------- */
+.panel {
+  min-width: 0;
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.yearRail {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.yearRail::-webkit-scrollbar {
+  display: none;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: right;
+  font-size: 17px;
+  line-height: 1.29;
+}
+
+.table th:first-child,
+.table td:first-child {
+  text-align: left;
+}
+
+/* Kolom angka selebar tetap supaya tidak merenggang di 1920; sisa lebar milik kolom bulan. */
+.table thead th:not(:first-child) {
+  width: 160px;
+}
+
+.table thead th {
+  padding-top: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.table tbody th {
+  font-weight: 600;
+}
+
+.change {
+  color: var(--muted);
+}
+
+/* ---------- Tautan silang (pil putih gaya Monev "Buka Realisasi APBDes ›") ---------- */
+.crossLink {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 20px;
+  border-radius: 980px;
+  border: 1px solid var(--rule);
+  color: var(--brand);
+  font-size: 17px;
+  text-decoration: none;
+}
+
+.crossLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .crossLink:hover {
+    background: var(--tile);
+  }
+}
+
+/* ---------- Memuat ---------- */
+.placeholder {
+  border-radius: var(--radius);
+  background: var(--tile);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.placeholderCard {
+  min-height: 168px;
+}
+
+.placeholderPanel {
+  min-height: 360px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .placeholder {
+    animation: none;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .cardValue {
+    font-size: 32px;
+  }
+
+  .card,
+  .panel {
+    padding: 24px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .block {
+    gap: 20px;
+  }
+
+  .blockTitle {
+    font-size: 24px;
+    line-height: 1.17;
+  }
+
+  /* Kartu pertama selebar penuh, dua kartu porsi berdampingan (bukan 1+1+1). */
+  .summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .summary > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .card,
+  .panel {
+    padding: 20px;
+  }
+
+  .cardValue {
+    font-size: 28px;
+  }
+
+  .card:first-child .cardValue {
+    font-size: 40px;
+  }
+
+  .unit {
+    font-size: 15px;
+  }
+
+  .crossLink {
+    padding: 10px 16px;
+    font-size: 15px;
+  }
+
+  /* Rincian: header kolom disembunyikan, tiap bulan dua baris (bulan + jumlah, lalu rincian & perubahan). */
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .table tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .table th,
+  .table td {
+    padding: 0;
+    border: 0;
+  }
+
+  /* Baris 1: bulan (kiri) + jumlah (kanan) memenuhi lebar, jadi rincian berlabel turun ke baris 2 secara alami. */
+  .table tbody th {
+    flex: 1 0 50%;
+  }
+
+  .table tbody td:not([data-label]) {
+    flex: 1 0 calc(50% - 16px);
+    font-weight: 600;
+  }
+
+  .table td[data-label] {
+    text-align: left;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .table td[data-label]::before {
+    content: attr(data-label) ' ';
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

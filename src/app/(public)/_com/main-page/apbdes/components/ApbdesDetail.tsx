@@ -50,40 +50,53 @@ export function ApbdesDetail({ categories, variant = "compact" }: Props) {
                 </span>
               </Accordion.Control>
               <Accordion.Panel>
-                <div className={d.rowHead} aria-hidden>
-                  <span />
-                  <span>{APBDES_TEXT.colUraian}</span>
-                  <span>{APBDES_TEXT.colRealisasi}</span>
-                  <span>{APBDES_TEXT.colAnggaran}</span>
-                  {full ? <span>{APBDES_TEXT.colSelisih}</span> : null}
-                </div>
-                <ul className={d.rows}>
-                  {c.rows.map((r) => (
-                    <li
-                      key={r.id}
-                      className={d.row}
-                      data-parent={r.hasChildren || undefined}
-                      style={{ "--depth": r.depth } as CSSProperties}
-                    >
-                      <span className={d.kode}>{r.kode}</span>
-                      <span className={d.uraian}>{r.uraian}</span>
-                      <RowProgress row={r} />
-                      <span className={d.pagu}>{formatRupiah(r.anggaran)}</span>
-                      {full ? (
-                        <span className={d.selisih}>
-                          <span className={d.cellLabel}>{APBDES_TEXT.colSelisih} </span>
-                          {formatRupiah(r.selisih)}
-                        </span>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
+                <ApbdesRows rows={c.rows} full={full} />
               </Accordion.Panel>
             </Accordion.Item>
           );
         })}
       </Accordion>
     </div>
+  );
+}
+
+/**
+ * Header kolom + baris pos rincian (kode, uraian berindentasi, realisasi, anggaran, opsional Lebih/(Kurang)).
+ * Diekspor untuk halaman lain yang menampilkan sebagian pos APBDes (mis. Pendapatan Asli Desa); kolom kelima
+ * hanya selebar grid bila leluhurnya ber-`data-variant="full"`.
+ */
+export function ApbdesRows({ rows, full = false }: { rows: readonly DetailRow[]; full?: boolean }) {
+  return (
+    <>
+      <div className={d.rowHead} aria-hidden>
+        <span />
+        <span>{APBDES_TEXT.colUraian}</span>
+        <span>{APBDES_TEXT.colRealisasi}</span>
+        <span>{APBDES_TEXT.colAnggaran}</span>
+        {full ? <span>{APBDES_TEXT.colSelisih}</span> : null}
+      </div>
+      <ul className={d.rows}>
+        {rows.map((r) => (
+          <li
+            key={r.id}
+            className={d.row}
+            data-parent={r.hasChildren || undefined}
+            style={{ "--depth": r.depth } as CSSProperties}
+          >
+            <span className={d.kode}>{r.kode}</span>
+            <span className={d.uraian}>{r.uraian}</span>
+            <RowProgress row={r} />
+            <span className={d.pagu}>{formatRupiah(r.anggaran)}</span>
+            {full ? (
+              <span className={d.selisih}>
+                <span className={d.cellLabel}>{APBDES_TEXT.colSelisih} </span>
+                {formatRupiah(r.selisih)}
+              </span>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 

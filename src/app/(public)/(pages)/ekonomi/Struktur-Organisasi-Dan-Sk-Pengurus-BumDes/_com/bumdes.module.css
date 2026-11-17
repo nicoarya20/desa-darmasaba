@@ -1,0 +1,366 @@
+/*
+ * Halaman BUMDes di atas kerangka Kabar (`.section` kabar.module.css + kepala kabar-list): jarak antar-bagian,
+ * judul bagian, profil (pola bagian bergaris program-info), galeri, ubin unit usaha, bagan pengurus, dokumen.
+ * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line, --radius) dari kabar.module.css.
+ * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  /* 64px, ≤734px 48px: token globals.css */
+  gap: var(--block-gap);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.blockTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* Kerangka memuat profil: satu blok berdenyut setinggi bagian profil. */
+.profilPlaceholder {
+  border-radius: var(--radius);
+}
+
+/* ---------- Profil: kiri logo + nama, kanan deskripsi, fakta, kontak ---------- */
+.profilHead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+}
+
+.profilName {
+  overflow-wrap: anywhere;
+}
+
+.logo {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  object-fit: contain;
+}
+
+.profilBody {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.paragraphs p {
+  margin: 0 0 0.8em;
+}
+
+.paragraphs p:last-child {
+  margin-bottom: 0;
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border-top: 1px solid var(--pi-rule);
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: 24px 120px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--pi-rule);
+  font-size: 17px;
+  line-height: 1.47;
+}
+
+/* Ikon garis brand sejajar baris pertama (SVG 20px di baris 25px). */
+.factIcon {
+  align-self: start;
+  display: flex;
+  padding-top: 2px;
+  color: var(--brand);
+}
+
+.fact dt {
+  color: var(--muted);
+}
+
+.fact dd {
+  margin: 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Galeri foto ---------- */
+.galeri {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* Blok berjarak 24px; +12 = jarak bagian program-info (36px). */
+  margin-top: 12px;
+}
+
+.galeriTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.19;
+  font-weight: 600;
+}
+
+.fotoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.foto {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: zoom-in;
+}
+
+.fotoFrame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--tile);
+}
+
+.fotoImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fotoCaption {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.43;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.foto:focus-visible {
+  outline: none;
+}
+
+.foto:focus-visible .fotoFrame {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* Prop radius Modal.Root tidak mengenai kotak dialog (Mantine 9): sudut dipasang di classNames.content. */
+.modalContent {
+  border-radius: var(--radius);
+}
+
+.modalImg {
+  display: block;
+  width: 100%;
+  max-height: 75vh;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+/* Judul modal = keterangan foto (boleh beberapa baris). */
+.modalTitle {
+  font-weight: 600;
+  white-space: pre-line;
+}
+
+/* ---------- Unit usaha: ubin program-tiles tanpa tautan ---------- */
+.unitImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  background: #e8e8ed;
+  object-fit: cover;
+}
+
+/* Deskripsi penuh (tidak ada halaman detail unit); ganti baris admin dipertahankan. */
+.unitDesc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Struktur pengurus ---------- */
+.search {
+  width: 100%;
+  max-width: 420px;
+}
+
+.emptyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.emptyBox p {
+  margin: 0;
+}
+
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 980px;
+  background: var(--brand);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retry:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* ---------- SK & Dokumen: baris bergaris + "Unduh" ---------- */
+.docs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid #d2d2d7;
+}
+
+.doc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid #d2d2d7;
+}
+
+.docTitle {
+  margin: 0;
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.32;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.docNote {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.docLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  color: var(--brand);
+  font-size: 17px;
+  text-decoration: none;
+}
+
+.docLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .docLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .foto:hover .fotoImg {
+    opacity: 0.9;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .fotoGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 734px) {
+  .block {
+    gap: 20px;
+  }
+
+  .blockTitle {
+    font-size: 24px;
+  }
+
+  .logo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .profilBody {
+    gap: 24px;
+  }
+
+  .fact {
+    grid-template-columns: 24px minmax(0, 1fr);
+    font-size: 16px;
+  }
+
+  /* Label di atas nilai, keduanya di kolom kanan ikon. */
+  .fact dd {
+    grid-column: 2;
+  }
+
+  .galeri {
+    margin-top: 8px;
+  }
+
+  .fotoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .doc {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

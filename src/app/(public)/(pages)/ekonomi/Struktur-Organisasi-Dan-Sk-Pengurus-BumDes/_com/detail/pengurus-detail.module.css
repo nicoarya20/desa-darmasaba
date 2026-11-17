@@ -1,0 +1,73 @@
+/*
+ * Profil pengurus BUMDes di atas kerangka artikel bersama (kabar-list/kabar-detail.module.css): foto bundar atau
+ * inisial di samping kategori, nama, jabatan. Variabel warna (--brand, --muted, --tile) dari kabar.module.css.
+ * Breakpoint: ≤734px (mobile).
+ */
+.person {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.photo {
+  flex-shrink: 0;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: var(--tile);
+  object-fit: cover;
+}
+
+.initials {
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.jabatan {
+  margin: 0;
+  color: var(--muted);
+  font-size: 21px;
+  line-height: 1.43;
+  overflow-wrap: anywhere;
+}
+
+/* Kolom kategori + nama + jabatan (dan bar kerangka memuat) mengisi sisa baris. */
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Kerangka memuat: lingkaran foto berdenyut di samping baris kategori/judul. */
+.photoPlaceholder {
+  min-height: 0;
+  border-radius: 50%;
+}
+
+@media (max-width: 734px) {
+  .person {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .text {
+    align-self: stretch;
+  }
+
+  .photo {
+    width: 120px;
+    height: 120px;
+  }
+
+  .initials {
+    font-size: 36px;
+  }
+
+  .jabatan {
+    font-size: 19px;
+  }
+}
