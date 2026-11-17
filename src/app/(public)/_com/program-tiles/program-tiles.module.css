@@ -1,5 +1,5 @@
 /*
- * Ubin program tanpa foto (Program Kreatif Desa, Program Penghijauan) di atas kerangka Kabar (`.section`
+ * Ubin program tanpa foto (Program Kreatif Desa, Program Penghijauan; Program Inovasi dengan logo) di atas kerangka Kabar (`.section`
  * kabar.module.css + kepala kabar-list). Seluruh ubin = tautan detail. Variabel warna (--brand, --ink, --muted,
  * --tile, --radius) dari kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
  */
@@ -38,6 +38,23 @@
 
 .icon svg {
   stroke-width: 1.5;
+}
+
+/* Kotak logo putih (Program Inovasi): logo utuh di tengah, rasio tetap agar baris ubin rata. */
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 8px;
+  padding: 16px;
+  border-radius: calc(var(--radius) - 8px);
+  background: #fff;
+}
+
+.logoImg {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .title {

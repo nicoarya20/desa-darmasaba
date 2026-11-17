@@ -1,0 +1,79 @@
+/*
+ * Detail Program Inovasi — bagian khusus di atas kerangka artikel bersama (kabar-list/kabar-detail.module.css):
+ * kotak logo dan gaya judul bagian/daftar/garis dari editor admin (Tujuan, Sasaran, Ruang Lingkup).
+ * Variabel warna (--ink, --muted, --line, --radius) dari kabar.module.css. Breakpoint: ≤734px (mobile).
+ */
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  aspect-ratio: 16 / 10;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  /* Putih: kebanyakan logo program berlatar putih. */
+  background: #fff;
+}
+
+.logoImg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.content h2,
+.content h3,
+.content h4 {
+  margin: 1.6em 0 0.5em;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.content hr {
+  margin: 1.6em 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.content hr + h2,
+.content hr + h3,
+.content hr + h4 {
+  margin-top: 0.8em;
+}
+
+.content ul,
+.content ol {
+  margin: 0 0 1em;
+  padding-left: 1.25em;
+}
+
+.content li > p {
+  margin: 0 0 0.35em;
+}
+
+.content blockquote {
+  margin: 0 0 1em;
+  padding-left: 16px;
+  border-left: 3px solid var(--line);
+  color: var(--muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 19px;
+}
+
+@media (max-width: 734px) {
+  .logo {
+    width: 180px;
+  }
+
+  .content h2,
+  .content h3,
+  .content h4 {
+    font-size: 21px;
+  }
+}

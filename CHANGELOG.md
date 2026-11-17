@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.299] - 2026-11-17
+### Added
+- **Submenu baru Inovasi › Program Inovasi** (`/inovasi/program-inovasi`): daftar semua program inovasi desa berupa ubin logo, dengan data yang sama seperti rel "Program Inovasi Desa" di beranda. Submenu ini bisa disembunyikan atau ditampilkan dari Pengaturan › Visibilitas Menu.
+- **Halaman detail tiap program** (`/inovasi/program-inovasi/{id}`) yang bisa ditemukan mesin pencari dan dibagikan: judul dan cuplikan program serta logonya tampil saat tautan dibagikan. Judul bagian seperti Tujuan, Sasaran, dan Ruang Lingkup tampil sebagai judul. Program yang dinonaktifkan admin menampilkan halaman tidak ditemukan.
+- **Urutan tampil program inovasi**: form tambah/edit Program Inovasi di admin punya isian "Urutan tampil (opsional)". Angka 1 tampil paling depan di beranda dan halaman Program Inovasi; yang dikosongkan tetap urut abjad setelah yang bernomor. Daftar admin menampilkan kolom Urutan.
+
+### Changed
+- Overlay detail program di beranda kini punya tautan "Lihat halaman lengkap".
+- Tautan lama `/program-inovasi/{id}` kini membuka halaman detail baru, bukan overlay beranda.
+
+### Fixed
+- Jumlah halaman di daftar Program Inovasi admin kini benar saat mencari (sebelumnya dihitung dari semua program).
+
 ## [0.1.298] - 2026-11-17
 ### Changed
 - **Efek hover tautan kini berupa sapuan warna, bukan garis bawah**, di seluruh situs publik kecuali footer. Judul kartu dan baris (berita, pengumuman, produk UMKM, lowongan, dan lainnya) berubah warna dari kiri ke kanan menjadi biru `#0A4E78`. Tautan aksi seperti "Semua pengumuman ›" dan "Lihat layanan surat ›" menyapu ke biru `#1C6EA4`, menebal, dan chevron-nya bergeser sedikit ke kanan tanpa menggeser teks di sekitarnya.

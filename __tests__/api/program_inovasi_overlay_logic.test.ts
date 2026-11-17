@@ -39,6 +39,7 @@ const base = {
   description: '<p>Asuhan anak.</p>',
   imageId: 'logo',
   link: '-',
+  urutan: null,
   createdAt: new Date(0),
   updatedAt: new Date(0),
   deletedAt: null,

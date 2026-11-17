@@ -161,6 +161,8 @@ model ProgramInovasi {
   image       FileStorage? @relation(fields: [imageId], references: [id])
   imageId     String?
   link        String?      @db.VarChar(255)
+  // Urutan tampil (rel beranda + halaman Inovasi): angka kecil di depan, kosong di belakang lalu abjad.
+  urutan      Int?
   // Galeri dokumentasi kegiatan program (bukti pelaksanaan), terpisah dari logo/cover `image`.
   images      FileStorage[] @relation("ProgramInovasiImages")
   // Bank sampah / TPS yang menjalankan program ini (tab Profil modal bank sampah publik).

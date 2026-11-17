@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
+import { PROGRAM_INOVASI_ORDER_BY } from "@/lib/program-inovasi";
 import { Context } from "elysia";
 
 async function programInovasiFindMany(context: Context) {
@@ -30,11 +31,10 @@ async function programInovasiFindMany(context: Context) {
         },
         skip,
         take: limit,
-        orderBy: { name: "asc" }, // opsional, kalau mau urut berdasarkan waktu
+        orderBy: PROGRAM_INOVASI_ORDER_BY,
       }),
-      prisma.programInovasi.count({
-        where: { isActive: true },
-      }),
+      // Total ikut filter pencarian agar totalPages sesuai hasil yang dicari.
+      prisma.programInovasi.count({ where }),
     ]);
 
     return {
