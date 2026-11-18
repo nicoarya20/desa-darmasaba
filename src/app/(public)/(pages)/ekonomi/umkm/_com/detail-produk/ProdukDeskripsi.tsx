@@ -1,3 +1,4 @@
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { DETAIL_PRODUK_TEXT as T } from './detail-produk.text';
 import s from './detail-produk.module.css';
 
@@ -11,7 +12,7 @@ export function ProdukDeskripsi({ html }: { html: string }) {
         {T.deskripsi}
       </h2>
       {html ? (
-        <div className={s.deskripsiBody} dangerouslySetInnerHTML={{ __html: html }} />
+        <div className={`${s.deskripsiBody} ${rt.root}`} dangerouslySetInnerHTML={{ __html: html }} />
       ) : (
         <p className={s.deskripsiKosong}>{T.deskripsiKosong}</p>
       )}

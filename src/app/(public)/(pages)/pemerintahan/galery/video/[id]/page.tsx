@@ -1,7 +1,8 @@
 'use client';
 
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
-import colors from '@/con/colors';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
+import g from '../../_lib/galery.module.css';
 import {
   ActionIcon,
   Alert,
@@ -66,14 +67,14 @@ export default function DetailVideoUser() {
 
   if (!data) {
     return (
-      <Box py="xl" px={{ base: 'md', md: 'lg' }}>
+      <Box py="xl" px={{ base: 'md', md: 'lg' }} className={g.vars}>
         <Alert
           icon={<IconInfoCircle size={20} />}
           title="Video tidak ditemukan"
           color="red"
           radius="md"
         >
-          <Text fz={{ base: 'sm', md: 'md' }} c="red.9">
+          <Text fz={{ base: 'sm', md: 'md' }} c="var(--galery-alert-red)">
             Video yang Anda cari tidak tersedia.
           </Text>
         </Alert>
@@ -92,10 +93,10 @@ export default function DetailVideoUser() {
   const embedUrl = data.linkVideo ? convertToEmbedUrl(data.linkVideo) : null;
 
   return (
-    <Box py="xl" px={{ base: 'md', md: 100 }}>
+    <Box py="xl" px={{ base: 'md', md: 100 }} className={g.vars}>
       {/* Tombol Kembali */}
       <Box>
-        <ActionIcon bg={colors["blue-button"]} onClick={() => router.push('/pemerintahan/galery/video')}>
+        <ActionIcon bg="var(--c-brand-fill)" onClick={() => router.push('/pemerintahan/galery/video')}>
           <IconArrowLeft />
         </ActionIcon>
       </Box>
@@ -104,7 +105,7 @@ export default function DetailVideoUser() {
       <Title
         order={1}
         ta="center"
-        c={colors['blue-button']}
+        c="var(--c-brand)"
         mb="lg"
         lh={{ base: 1.2, md: 1.25 }}
       >
@@ -116,7 +117,7 @@ export default function DetailVideoUser() {
         shadow="sm"
         radius="md"
         p={{ base: 'md', md: 'xl' }}
-        bg={colors['white-1']}
+        bg="var(--galery-surface)"
       >
         <Stack gap="lg">
           {/* Video */}
@@ -149,7 +150,7 @@ export default function DetailVideoUser() {
               title="Gagal memuat video"
               radius="md"
             >
-              <Text fz={{ base: 'xs', md: 'sm' }} c="orange.9">
+              <Text fz={{ base: 'xs', md: 'sm' }} c="var(--galery-alert-orange)">
                 Mohon maaf, video tidak dapat diputar.
               </Text>
             </Alert>
@@ -190,11 +191,12 @@ export default function DetailVideoUser() {
 
           {/* Deskripsi */}
           {data.deskripsi && (
-            <Paper p="md" bg="gray.0" radius="md">
+            <Paper p="md" bg="var(--galery-surface-2)" radius="md">
               <Text
                 fz={{ base: 'sm', md: 'md' }}
-                c="dark"
+                c="var(--c-ink)"
                 ta={"justify"}
+                className={rt.root}
                 dangerouslySetInnerHTML={{ __html: data.deskripsi }}
                 style={{
                   wordBreak: 'break-word',

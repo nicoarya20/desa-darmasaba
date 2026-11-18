@@ -179,6 +179,6 @@ describe('Tata letak permohonan — CSS', () => {
   it('tanpa gradasi, tanpa rata tengah/justify, dan satu-satunya latar berwarna adalah kartu putih', () => {
     expect(css).not.toMatch(/gradient|text-align:\s*(center|justify)/);
     const backgrounds = [...css.matchAll(/background:\s*([^;]+);/g)].map((m) => m[1]);
-    expect(backgrounds).toEqual(['var(--permohonan-line)', '#fff']);
+    expect(backgrounds).toEqual(['var(--permohonan-line)', 'var(--permohonan-card)']);
   });
 });

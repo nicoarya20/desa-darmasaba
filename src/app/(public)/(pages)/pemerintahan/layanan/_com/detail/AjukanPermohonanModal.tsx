@@ -1,6 +1,5 @@
 'use client';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
-import colors from '@/con/colors';
 import { Button, Modal, Select, Stack, TextInput } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -206,8 +205,8 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
             mt="xs"
             size="md"
             radius="xl"
-            // Modal dirender di portal (di luar akar halaman), jadi variabel --brand tidak terwarisi.
-            bg={isFormValid() ? colors['blue-button'] : undefined}
+            // Modal dirender di portal (di luar akar halaman): pakai token global, bukan variabel --brand halaman.
+            bg={isFormValid() ? 'var(--c-brand-fill)' : undefined}
             onClick={handleSubmit}
             disabled={!isFormValid()}
             // Selama create() berjalan tombol terkunci (spinner) agar permohonan tidak terkirim ganda.

@@ -1,18 +1,23 @@
 /*
  * Info Sekolah — kerangka bersama Pendidikan (page-frame: tepi, lebar 1200, jarak nav/footer) + ubin & panel gaya
  * APBDes/Monev (apbdes.module.css: .card, .panel, …). Kepala = PpidHeader (rata kiri) seperti halaman Pendidikan lain.
- * --brand/--brand-tint dari INFO_SEKOLAH_BRAND_VARS; --accent per jenjang diset inline (jenjangAccent).
+ * Warna = alias token --c-* di .page (ikut tema); --accent per jenjang diset inline (jenjangAccent).
  * Breakpoint apple.com: ≤1068px dan ≤734px.
  */
 
 /* Variabel warna yang dibaca .card/.panel APBDes. Kenapa di sini: .section APBDes tidak dipakai lagi karena
    membawa lebar 1100, tepi 16px, dan kepala rata tengah (beda dari halaman Pendidikan lain). Dipakai juga /pengajar. */
 .page {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #6e6e73;
-  --tile: #f5f5f7;
-  --line: rgba(0, 0, 0, 0.08);
+  --brand: var(--c-brand);
+  --brand-tint: var(--c-brand-tint);
+  /* Ikon ubin ringkasan (.icon APBDes): aksen + latar brand, sama dengan kategori belanja APBDes. */
+  --accent: var(--c-brand);
+  --tint: var(--c-brand-tint);
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --subtle: var(--c-subtle);
+  --tile: var(--c-tile);
+  --line: var(--c-line);
   --radius: 18px;
   color: var(--ink);
 }
@@ -180,14 +185,14 @@
   font-weight: 600;
 }
 
-/* Pil putih + titik warna: tint pucat tidak terbaca di atas #f5f5f7 (pola pil status Monev). */
+/* Pil --c-tile-alt (terang putih) + titik warna: tint pucat tidak terbaca di atas ubin (pola pil status Monev). */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 3px 10px;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -216,7 +221,7 @@
   min-height: 56px;
   padding: 10px 16px;
   border-radius: 14px;
-  background: #fff;
+  background: var(--c-tile-alt);
   font-size: 16px;
   font-weight: 500;
   line-height: 1.3;
@@ -303,7 +308,7 @@
   padding: 8px 18px;
   border: 0;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
   font: inherit;
   font-size: 15px;
@@ -323,7 +328,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .retry:hover {
-    background: #e8e8ed;
+    background: var(--c-placeholder);
   }
 }
 

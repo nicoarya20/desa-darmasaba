@@ -1,5 +1,4 @@
 'use client';
-import colors from '@/con/colors';
 import { Button } from '@mantine/core';
 import { IconFileZip } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -21,7 +20,7 @@ export function UnduhZipButton({ programId, folder, label, disabled }: Props) {
   return (
     <Button
       variant="light"
-      color={colors['blue-button']}
+      color="var(--c-brand)"
       size="xs"
       radius="xl"
       leftSection={<IconFileZip size={16} />}

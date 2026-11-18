@@ -2,7 +2,7 @@
 // Resolver variabel CSS Mantine situs: shade gelap palet A tanpa mengubah tema terang.
 import { createTheme, mergeMantineTheme, DEFAULT_THEME, v8CssVariablesResolver } from '@mantine/core';
 import { describe, expect, it } from 'vitest';
-import { DARK_SHADE_TOKENS, siteCssVariablesResolver } from '@/app/_com/site-css-variables-resolver';
+import { DARK_ERROR_COLOR, DARK_SEMANTIC_TOKENS, DARK_SHADE_TOKENS, siteCssVariablesResolver } from '@/app/_com/site-css-variables-resolver';
 
 const theme = mergeMantineTheme(DEFAULT_THEME, createTheme({ primaryColor: 'blue' })); // test-only
 
@@ -15,13 +15,20 @@ describe('siteCssVariablesResolver', () => {
     expect(site.variables).toEqual(base.variables);
   });
 
-  it('bagian gelap = v8 + 10 shade dark dipetakan ke token --c-*', () => {
+  it('bagian gelap = v8 + 10 shade dark dipetakan ke token --c-* + warna galat gelap', () => {
     expect(Object.keys(DARK_SHADE_TOKENS)).toEqual(
       Array.from({ length: 10 }, (_, i) => `--mantine-color-dark-${i}`),
     );
-    expect(site.dark).toEqual({ ...base.dark, ...DARK_SHADE_TOKENS });
+    expect(site.dark).toEqual({ ...base.dark, ...DARK_SHADE_TOKENS, ...DARK_SEMANTIC_TOKENS });
     expect(site.dark['--mantine-color-dark-6']).toBe('var(--c-tile)');
     expect(site.dark['--mantine-color-dark-7']).toBe('var(--c-bg-alt)');
+  });
+
+  it('galat gelap (teks galat + tanda wajib *) = #ff6961; terang tetap bawaan v8', () => {
+    expect(Object.keys(DARK_SEMANTIC_TOKENS)).toEqual(['--mantine-color-error']);
+    expect(site.dark['--mantine-color-error']).toBe(DARK_ERROR_COLOR);
+    expect(base.dark['--mantine-color-error']).toBe('var(--mantine-color-red-8)');
+    expect(site.light['--mantine-color-error']).toBe(base.light['--mantine-color-error']);
   });
 
   it('variabel semantik gelap v8 tetap merujuk shade (ikut terpetakan)', () => {

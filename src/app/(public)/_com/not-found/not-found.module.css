@@ -5,16 +5,16 @@
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
 .section {
-  --ink: #1d1d1f;
-  --subtle: #6e6e73;
-  --line: #d2d2d7;
-  --brand: #0a4e78;
+  --ink: var(--c-ink);
+  --subtle: var(--c-subtle);
+  --line: var(--c-line-strong);
+  --brand: var(--c-brand);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 56px;
   padding: 104px var(--edge-gutter) 168px;
-  background: #fff;
+  background: var(--c-bg);
   color: var(--ink);
   text-align: center;
 }

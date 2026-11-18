@@ -1,15 +1,16 @@
 /*
  * Kerangka bersama halaman detail UMKM publik (detail produk & detail toko): latar putih selebar layar + gutter,
- * isi 1120px di tengah, tautan kembali, dan token warna yang diwarisi komponen di dalamnya. `--brand` dipasang
- * inline (KATALOG_BRAND_VARS). Breakpoint ikut katalog-layout.module.css: ≤734px (mobile).
+ * isi 1120px di tengah, tautan kembali, dan token warna (alias --c-*, terang/gelap) yang
+ * diwarisi komponen di dalamnya. Breakpoint ikut katalog-layout.module.css: ≤734px (mobile).
  */
 .page {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #6e6e73;
-  --tile: #f5f5f7;
-  --line: #d2d2d7;
-  background: #fff;
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --subtle: var(--c-subtle);
+  --tile: var(--c-tile);
+  --line: var(--c-line-strong);
+  --brand: var(--c-brand);
+  background: var(--c-bg);
   color: var(--ink);
   padding: 40px var(--edge-gutter) 96px;
 }

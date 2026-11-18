@@ -1,5 +1,4 @@
 'use client'
-import colors from '@/con/colors'
 import type { FotoGaleriItem } from '@/lib/konten-bersama/konten-bersama.types'
 import { Box, Image, Modal, SimpleGrid, Text, Title, UnstyledButton } from '@mantine/core'
 import { useState } from 'react'
@@ -32,7 +31,7 @@ export default function GaleriFoto({ foto, namaPemilik, judul = 'Galeri Foto', a
   return (
     <Box component="section" aria-label={ariaLabel} data-testid={testId}>
       {judul && (
-        <Title order={4} c={colors['blue-button']} fz={{ base: 18, md: 20 }} mb="sm">
+        <Title order={4} c="var(--c-brand)" fz={{ base: 18, md: 20 }} mb="sm">
           {judul}
         </Title>
       )}

@@ -1,5 +1,4 @@
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import colors from '@/con/colors';
 import { Anchor, Breadcrumbs, Text } from '@mantine/core';
 import Link from 'next/link';
 import { toSentenceCase } from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
@@ -30,7 +29,7 @@ export function ProgramBreadcrumb({ programId, programName, kategori, folderName
             className={r.trigger}
             underline="never"
             fz="sm"
-            c={colors['blue-button']}
+            c="var(--c-brand)"
             lineClamp={1}
             maw={260}
             title={c.label}

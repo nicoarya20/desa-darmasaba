@@ -10,7 +10,8 @@ export function hashSeed(seed: string): number {
 
 /**
  * Nada gradasi terang sampul cadangan (lagu/artis tanpa sampul): biru brand + pastel netral.
- * Nada tergelap tiap pasangan cukup terang sehingga ikon/inisial `--m-muted` (#515154) kontras ≥ 3:1 (dicek di test).
+ * Nada tergelap tiap pasangan cukup terang sehingga ikon/inisial `--m-on-cover` (#515154, sama di dua tema)
+ * kontras ≥ 3:1 (dicek di test).
  */
 export const COVER_TONES = [
   ['#e5f2fa', '#b8daef'],

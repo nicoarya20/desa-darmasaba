@@ -7,7 +7,6 @@ import {
   nextColorScheme,
   THEME_LABEL_TO_DARK,
   THEME_LABEL_TO_LIGHT,
-  THEME_TOGGLE_VISIBLE,
 } from "./theme-toggle.logic";
 
 // Kelas global Mantine: disembunyikan (display:none, ikut hilang dari pembaca layar) per skema aktif.
@@ -24,16 +23,8 @@ function ThemeLabel() {
   );
 }
 
-/**
- * Tombol navbar (desktop & mobile) matahari/bulan untuk mengganti tema terang/gelap situs publik.
- * Belum tampil di produksi (THEME_TOGGLE_VISIBLE, sampai plan-dark-theme Fase 4): tidak dirender,
- * jadi tidak ada ruang kosong di navbar.
- */
+/** Tombol navbar (desktop & mobile) matahari/bulan untuk mengganti tema terang/gelap situs publik. */
 export function NavbarThemeToggle() {
-  return THEME_TOGGLE_VISIBLE ? <ThemeToggleButton /> : null;
-}
-
-function ThemeToggleButton() {
   const { setColorScheme } = useMantineColorScheme();
   const toggle = () =>
     setColorScheme(nextColorScheme(document.documentElement.getAttribute("data-mantine-color-scheme")));

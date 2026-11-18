@@ -25,6 +25,7 @@ import type { KegiatanDetail } from '@/app/(public)/(pages)/pemerintahan/kegiata
 import s from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/detail/kegiatan-detail.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { KATEGORI_PEMBANGUNAN_ID } from '@/lib/kegiatan-pembangunan';
 
 const render = (node: React.ReactElement) =>
@@ -61,7 +62,9 @@ describe('KegiatanDetailBody', () => {
   it('foto utama menaut ke ukuran penuh; isi HTML dirender tanpa justify', () => {
     const html = render(<KegiatanDetailBody data={data()} />);
     expect(html).toContain('href="/api/img/k1.webp" target="_blank"');
-    expect(html).toContain(`class="${d.content}"><p>Pada tanggal 26 Mei 2022`);
+    // Wadah isi CMS boleh membawa kelas tambahan; penetral rich text (dark theme) wajib terpasang.
+    const content = html.match(/class="([^"]*)"><p>Pada tanggal 26 Mei 2022/);
+    expect(content?.[1].split(' ')).toEqual(expect.arrayContaining([d.content, rt.root]));
     expect(html).not.toContain('justify');
   });
 

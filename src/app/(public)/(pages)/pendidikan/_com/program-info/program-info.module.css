@@ -3,16 +3,17 @@
  * Kerangka (latar putih, tepi, lebar isi 1200, jarak atas/bawah) dari _com/page-frame; di sini hanya token dan
  * tata letak isi. Bagian berlabel bergaris tanpa kartu (pola Dasar Hukum PPID): judul kiri | isi kanan.
  * Variabel --pi-* dibaca juga oleh bagian khas tiap halaman (panel Lokasi & Jadwal, daftar Jenis Program);
- * --brand dipasang ProgramInfoPage. Breakpoint mengikuti apple.com: ≤734px (mobile).
+ * --brand (token --c-brand) dipasang di .page; kerangka `.tokens` memakai --brand dari wadahnya.
+ * Breakpoint mengikuti apple.com: ≤734px (mobile).
  * Kerangka lain (Kabar menu Lingkungan) memakai ProgramInfoBody + kelas `.tokens` (token saja, tanpa min-height) dan
  * boleh mengganti kolom bagian lewat `--pi-cols`.
  */
 .page,
 .tokens {
-  --pi-ink: #1d1d1f;
-  --pi-muted: #515154;
-  --pi-rule: #d2d2d7;
-  --pi-tile: #f5f5f7;
+  --pi-ink: var(--c-ink);
+  --pi-muted: var(--c-ink-2);
+  --pi-rule: var(--c-line-strong);
+  --pi-tile: var(--c-tile);
   /* Panjang baris teks ±70 karakter (= --p-measure Profil Desa); lebar bagian = lebar .inner kerangka. */
   --pi-read: 46rem;
   --pi-text: 19px;
@@ -21,6 +22,7 @@
 }
 
 .page {
+  --brand: var(--c-brand);
   min-height: 70vh;
 }
 

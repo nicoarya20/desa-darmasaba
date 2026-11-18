@@ -204,7 +204,7 @@
   aspect-ratio: 16 / 10;
   margin-bottom: 8px;
   border-radius: 12px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   object-fit: cover;
 }
 
@@ -243,8 +243,8 @@
   padding: 0 18px;
   border: 0;
   border-radius: 980px;
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font: inherit;
   font-size: 15px;
   font-weight: 600;
@@ -261,7 +261,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid #d2d2d7;
+  border-top: 1px solid var(--c-line-strong);
 }
 
 .doc {
@@ -270,7 +270,7 @@
   justify-content: space-between;
   gap: 16px 24px;
   padding: 20px 0;
-  border-bottom: 1px solid #d2d2d7;
+  border-bottom: 1px solid var(--c-line-strong);
 }
 
 .docTitle {

@@ -6,7 +6,6 @@ import { ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { Box } from '@mantine/core';
 import BackButton from '../layanan/_com/BackButto';
-import colors from '@/con/colors';
 const BeritaShell = dynamic(
   () => import('./_com/BeritaShell'),
   { ssr: false }
@@ -30,7 +29,7 @@ export default function BeritaLayoutClient({
   if (isDetailPage) {
     // Tampilkan tanpa tab menu
     return (
-      <Box bg={colors.Bg}>
+      <Box bg="var(--c-hero-bg)">
         <Box pt={33} px={{ base: 'md', md: 100 }}>
           <BackButton />
         </Box>

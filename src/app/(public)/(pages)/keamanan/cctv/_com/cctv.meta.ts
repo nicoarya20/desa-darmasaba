@@ -1,5 +1,3 @@
-import colors from "@/con/colors";
-import { APBDES_BRAND_VARS } from "@/app/(public)/_com/main-page/apbdes/apbdes.meta";
 import type { CSSProperties } from "react";
 
 /** Konstanta halaman CCTV Keamanan Desa: batas muat, ambang cari, zona waktu, zoom peta, warna status. */
@@ -25,11 +23,14 @@ export type CctvStatusKey = "online" | "offline" | "unknown";
 
 type StatusMeta = { accent: string; tint: string };
 
-/** Warna status: penanda peta, titik di daftar, legenda, dan ubin ringkasan memakai nilai yang sama. */
+/**
+ * Warna status: penanda peta, titik di daftar, legenda, dan ubin ringkasan memakai `accent` yang sama (palet Mantine
+ * tetap di dua tema; peta & popup Leaflet tetap terang). `tint` (lingkaran ikon ubin) ikut tema lewat `.page` cctv.module.css.
+ */
 export const STATUS_META: Record<CctvStatusKey, StatusMeta> = {
-  online: { accent: "var(--mantine-color-green-8)", tint: "var(--mantine-color-green-0)" },
-  offline: { accent: "var(--mantine-color-red-8)", tint: "var(--mantine-color-red-0)" },
-  unknown: { accent: "var(--mantine-color-gray-5)", tint: "var(--mantine-color-gray-1)" },
+  online: { accent: "var(--mantine-color-green-8)", tint: "var(--cctv-tint-online)" },
+  offline: { accent: "var(--mantine-color-red-8)", tint: "var(--cctv-tint-offline)" },
+  unknown: { accent: "var(--mantine-color-gray-5)", tint: "var(--cctv-tint-unknown)" },
 };
 
 /** Variabel CSS `--accent`/`--tint` untuk elemen bertema status. */
@@ -40,6 +41,3 @@ export function statusVars(key: CctvStatusKey): CSSProperties {
 
 /** Variabel `--accent`/`--tint` kartu ringkasan berwarna brand. */
 export const BRAND_ACCENT_VARS = { "--accent": "var(--brand)", "--tint": "var(--brand-tint)" } as CSSProperties;
-
-/** Variabel warna halaman: brand APBDes + tint brand untuk lingkaran ikon. */
-export const CCTV_BRAND_VARS = { ...APBDES_BRAND_VARS, "--brand-tint": colors["blue-button-1"] } as CSSProperties;

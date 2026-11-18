@@ -4,8 +4,8 @@ import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-um
 import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Image } from '@mantine/core';
 import { IconArrowUpRight, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -23,7 +23,7 @@ export function KesejahteraanDetail({ id }: { id: string }) {
   const detail = useMemo(() => (data ? toKesejahteraanDetail(data) : null), [data]);
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         <Link href={kesejahteraanListHref()} className={`${back.back} ${r.trigger}`}>
           <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
@@ -65,7 +65,7 @@ export function KesejahteraanDetailBody({ detail }: { detail: Detail }) {
           </Link>
         </p>
         <h1 className={d.title}>{detail.title}</h1>
-        {detail.leadHtml ? <div className={s.lead} dangerouslySetInnerHTML={{ __html: detail.leadHtml }} /> : null}
+        {detail.leadHtml ? <div className={`${s.lead} ${rt.root}`} dangerouslySetInnerHTML={{ __html: detail.leadHtml }} /> : null}
       </header>
 
       {detail.imageUrl ? (
@@ -86,7 +86,7 @@ export function KesejahteraanDetailBody({ detail }: { detail: Detail }) {
         </a>
       ) : null}
 
-      {detail.html ? <div className={d.content} dangerouslySetInnerHTML={{ __html: detail.html }} /> : null}
+      {detail.html ? <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: detail.html }} /> : null}
 
       {detail.galeri.length > 0 ? (
         <section className={s.block} aria-label={T.galeri}>

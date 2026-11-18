@@ -92,7 +92,7 @@
   overflow: hidden;
   aspect-ratio: 16 / 9;
   /* Sama dengan latar foto Kabar: tidak ada garis hitam di tepi ubin "Video tidak tersedia" saat dibulatkan subpiksel. */
-  background: #e8e8ed;
+  background: var(--c-placeholder);
 }
 
 .videoButton {
@@ -134,10 +134,10 @@
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.55); /* tema-tetap: lencana play di atas thumbnail video */
   /* Hanya properti standar: Lightning CSS menambah prefix sendiri (lihat catatan navbar/globals.css). */
   backdrop-filter: blur(12px) saturate(180%);
-  color: #fff;
+  color: #fff; /* tema-tetap: ikon di atas lencana play gelap */
   transform: translate(-50%, -50%);
   transition: transform 200ms ease, background-color 200ms ease;
 }
@@ -161,7 +161,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   color: var(--subtle);
   font-size: 15px;
 }
@@ -184,8 +184,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.6); /* tema-tetap: lencana play di atas thumbnail video */
+  color: #fff; /* tema-tetap: ikon di atas lencana play gelap */
 }
 
 .cardPlay svg {

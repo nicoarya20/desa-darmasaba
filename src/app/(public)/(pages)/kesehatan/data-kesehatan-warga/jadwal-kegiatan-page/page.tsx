@@ -1,6 +1,6 @@
 'use client'
 import jadwalkegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
-import colors from '@/con/colors';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
 import { Box, Button, Card, Divider, Group, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconChevronRight, IconClockHour4, IconMapPin } from '@tabler/icons-react';
@@ -24,13 +24,13 @@ function JadwalKegiatanPage() {
   }
 
   return (
-    <Box>
-      <Paper bg={colors['white-trans-1']} p="xl" radius="xl" shadow="md" h="auto" mih="100vh">
+    <Box className={t.tema}>
+      <Paper bg="var(--kt-glass)" p="xl" radius="xl" shadow="md" h="auto" mih="100vh">
         <Stack gap="lg">
-          <Title ta="center" order={1} c={colors['blue-button']} fw={700}>
+          <Title ta="center" order={1} c="var(--c-brand)" fw={700}>
             Jadwal Kegiatan Warga
           </Title>
-          <Divider size="sm" color={colors['blue-button']} />
+          <Divider size="sm" color="var(--c-brand)" />
           {state.findMany.data.length === 0 ? (
             <Box py="xl" ta="center">
               <Text fz={{ base: 'sm', sm: 'md' }} c="dimmed">
@@ -49,10 +49,10 @@ function JadwalKegiatanPage() {
               >
                 <Stack gap="sm">
                   <Group justify="space-between" wrap="nowrap">
-                    <Title order={2} c={colors['blue-button']} fw={700} fz={{ base: 'md', sm: 'xl' }}>
+                    <Title order={2} c="var(--c-brand)" fw={700} fz={{ base: 'md', sm: 'xl' }}>
                       {item.informasijadwalkegiatan.name}
                     </Title>
-                    <Text fw={600} fz={{ base: 'xs', sm: 'sm' }} c={colors['blue-button']} lh="1.4">
+                    <Text fw={600} fz={{ base: 'xs', sm: 'sm' }} c="var(--c-brand)" lh="1.4">
                       {new Date(item.informasijadwalkegiatan.tanggal).toLocaleDateString('id-ID', {
                         day: '2-digit',
                         month: 'long',
@@ -79,7 +79,7 @@ function JadwalKegiatanPage() {
 
                   <Group justify="flex-start">
                     <Button
-                      bg={colors['blue-button']}
+                      bg="var(--c-brand-fill)"
                       radius="lg"
                       size="sm"
                       rightSection={<IconChevronRight size={18} />}

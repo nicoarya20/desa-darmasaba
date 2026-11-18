@@ -3,17 +3,23 @@
  * bilah alat, kalender bulan desktop, kalender ringkas + daftar ponsel.
  * Senada halaman Pengumuman/Layanan: latar putih, tepi --edge-gutter, kepala dari kabar-list.module.css.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
+ * Warna = alias token --c-* (theme-tokens.css); nilai khusus halaman ini light-dark(terang, gelap).
+ * Blok acara gelap: latar & tinta diturunkan dari --ev (color-mix), karena --ev-bg/--ev-ink = shade
+ * Mantine 0/9 yang tidak ikut tema.
  */
 .page {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #6e6e73;
-  --tile: #f5f5f7;
-  --line: rgba(0, 0, 0, 0.08);
-  --sunday: #c8102e;
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --subtle: var(--c-subtle);
+  --tile: var(--c-tile);
+  --line: var(--c-line);
+  --brand: var(--c-brand);
+  --sunday: light-dark(#c8102e, #ff453a);
+  /* Angka tanggal di luar bulan: terang sengaja pudar; gelap tetap ≥ 4,5:1. */
+  --day-outside: light-dark(#c7c7cc, #7c7c80);
   --gutter: var(--edge-gutter);
   padding: var(--section-pad-y) var(--gutter) 120px;
-  background: #fff;
+  background: var(--c-bg);
   color: var(--ink);
 }
 
@@ -43,7 +49,7 @@
 .panel {
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: #fff;
+  background: var(--c-bg);
   overflow: hidden;
 }
 
@@ -59,9 +65,9 @@
 .todayBtn {
   height: 36px;
   padding: 0 16px;
-  border: 1px solid #d2d2d7;
+  border: 1px solid var(--c-line-strong);
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-bg);
   color: var(--ink);
   font: inherit;
   font-size: 15px;
@@ -207,11 +213,11 @@
 }
 
 .day[data-luar] {
-  background: #fafafc;
+  background: light-dark(#fafafc, #0e0e0f);
 }
 
 .day[data-hari-ini] {
-  background: #f3f8fc;
+  background: light-dark(#f3f8fc, #0c1a26);
 }
 
 .dayHead {
@@ -249,13 +255,13 @@ button.dayNum {
 }
 
 .day[data-luar] .dayNum {
-  color: #c7c7cc;
+  color: var(--day-outside);
   font-weight: 500;
 }
 
 .day[data-hari-ini] .dayNum {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 /* Blok acara: latar pucat + garis tebal warna kategori di kiri (Outlook). */
@@ -274,6 +280,11 @@ button.dayNum {
   border-radius: 6px;
   background: var(--ev-bg);
   color: var(--ev-ink);
+
+  @mixin dark {
+    background: color-mix(in srgb, var(--ev) 24%, var(--c-bg));
+    color: color-mix(in srgb, var(--ev) 40%, var(--c-ink));
+  }
   font: inherit;
   font-size: 13px;
   line-height: 17px;
@@ -368,11 +379,15 @@ button.dayNum {
   }
 
   .day[data-hari-ini] button.dayNum:hover {
-    background: var(--brand);
+    background: var(--c-brand-fill);
   }
 
   .event:hover {
     filter: brightness(0.96) saturate(1.1);
+
+    @mixin dark {
+      filter: brightness(1.2);
+    }
   }
 }
 

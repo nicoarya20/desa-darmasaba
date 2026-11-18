@@ -2,7 +2,7 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { BUMDES_VARS } from './bumdes.meta';
+import { STRUKTUR_VARS } from '@/app/(public)/_com/struktur-organisasi/struktur.meta';
 import s from './bumdes.module.css';
 import { loadDokumen, loadGaleri, loadProfil, loadUnitUsaha } from './bumdes.source';
 import { BUMDES_TEXT as T } from './bumdes.text';
@@ -26,7 +26,7 @@ export function BumdesPage() {
   const dokumen = useLoadOnce(loadDokumen, 'SK & dokumen (BUMDes)');
 
   return (
-    <div className={kabar.section} style={BUMDES_VARS}>
+    <div className={kabar.section} style={STRUKTUR_VARS}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

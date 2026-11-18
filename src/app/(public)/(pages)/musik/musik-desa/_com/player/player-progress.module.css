@@ -12,7 +12,7 @@
   min-width: 36px;
   font-size: 13px;
   line-height: 1;
-  color: var(--m-muted, #515154);
+  color: var(--m-muted);
   font-variant-numeric: tabular-nums;
 }
 
@@ -44,13 +44,13 @@
   right: 0;
   z-index: 2;
   height: 2px;
-  background: var(--m-track, rgba(0, 0, 0, 0.12));
+  background: var(--m-track);
 }
 
 .lineFill {
   display: block;
   height: 100%;
-  background: var(--m-ink, #1d1d1f);
+  background: var(--m-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {

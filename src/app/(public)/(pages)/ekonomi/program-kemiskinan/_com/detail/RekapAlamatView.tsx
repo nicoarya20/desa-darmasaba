@@ -1,4 +1,3 @@
-import colors from '@/con/colors';
 import { Group, Progress, Stack, Text, Title } from '@mantine/core';
 import { PROGRAM_DETAIL_TEXT as T } from '../program-kemiskinan.text';
 import type { RekapPublik } from '../program-kemiskinan.types';
@@ -9,7 +8,7 @@ export function RekapAlamatView({ rekap }: { rekap: RekapPublik }) {
   const maks = Math.max(1, ...baris.map((b) => b.jumlah));
   return (
     <Stack gap="xs">
-      <Title order={3} fz="lg" c={colors['blue-button']}>
+      <Title order={3} fz="lg" c="var(--c-brand)">
         {T.rekapJudul}
       </Title>
       <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 8 }}>

@@ -1,4 +1,3 @@
-import colors from '@/con/colors';
 import { Button, Stack, Text } from '@mantine/core';
 import { LAYANAN_DETAIL_TEXT as T } from './layanan-detail.text';
 
@@ -23,8 +22,8 @@ export function PermohonanTersimpan({ waHref, onClose }: Props) {
           rel="noopener noreferrer"
           size="md"
           radius="xl"
-          // Modal dirender di portal (di luar akar halaman), jadi variabel --brand tidak terwarisi.
-          bg={colors['blue-button']}
+          // Modal dirender di portal (di luar akar halaman): pakai token global, bukan variabel --brand halaman.
+          bg="var(--c-brand-fill)"
         >
           {T.lanjutWa}
         </Button>

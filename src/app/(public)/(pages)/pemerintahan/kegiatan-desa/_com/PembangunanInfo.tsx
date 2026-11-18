@@ -38,11 +38,11 @@ export default function PembangunanInfo({
       </Group>
       <Progress value={progres} color={color} size="md" radius="xl" aria-label={`Progres pembangunan ${progres} persen`} />
       <Text fz="xs" c="dimmed">
-        Anggaran: <Text component="span" fz="xs" fw={600} c="dark">{formatRupiah(item.anggaran)}</Text>
+        Anggaran: <Text component="span" fz="xs" fw={600} c="var(--c-ink)">{formatRupiah(item.anggaran)}</Text>
       </Text>
       {showSumberDana && item.sumberDana && (
         <Text fz="xs" c="dimmed">
-          Sumber dana: <Text component="span" fz="xs" fw={600} c="dark">{item.sumberDana}</Text>
+          Sumber dana: <Text component="span" fz="xs" fw={600} c="var(--c-ink)">{item.sumberDana}</Text>
         </Text>
       )}
     </Stack>

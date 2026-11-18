@@ -7,7 +7,7 @@ import { useState } from "react";
 import { BalitaPanel } from "./BalitaPanel";
 import { IbuHamilPanel } from "./IbuHamilPanel";
 import { parseTab, posyanduTabHref } from "./posyandu.logic";
-import { POSYANDU_BRAND_VARS, POSYANDU_TABS_TAMPIL, RINGKASAN_STATISTIK_TAMPIL, type PosyanduTab } from "./posyandu.meta";
+import { POSYANDU_TABS_TAMPIL, RINGKASAN_STATISTIK_TAMPIL, type PosyanduTab } from "./posyandu.meta";
 import s from "./posyandu.module.css";
 import { loadPosyanduList, loadProfilPosyandu, loadStats } from "./posyandu.source";
 import { POSYANDU_TEXT as T } from "./posyandu.text";
@@ -42,7 +42,7 @@ export function PosyanduPage() {
   const onTabChange = (next: PosyanduTab) => router.replace(posyanduTabHref(next), { scroll: false });
 
   return (
-    <section className={`${apb.section} ${apb.page}`} style={POSYANDU_BRAND_VARS} aria-labelledby={TITLE_ID}>
+    <section className={`${apb.section} ${apb.page}`} aria-labelledby={TITLE_ID}>
       <div className={apb.inner}>
         <div className={apb.back}>
           <BackButton />

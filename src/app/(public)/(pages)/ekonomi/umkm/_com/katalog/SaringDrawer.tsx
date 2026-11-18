@@ -2,7 +2,7 @@
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Drawer } from '@mantine/core';
 import type { ProdukFacets, TokoFacets } from './katalog-filter.logic';
-import { KATALOG_BRAND_VARS, type KatalogTab } from './katalog-filter.meta';
+import { type KatalogTab } from './katalog-filter.meta';
 import { KATALOG_FILTER_TEXT as T } from './katalog-filter.text';
 import type { KatalogParams } from './katalog-params.logic';
 import { SaringPanel, type KatalogUpdate } from './SaringPanel';
@@ -29,7 +29,7 @@ export function SaringDrawer({ opened, onClose, tab, params, facets, update, sho
       position="bottom"
       size="auto"
       title={T.saring}
-      style={KATALOG_BRAND_VARS}
+     
       closeButtonProps={{ 'aria-label': T.tutup }}
       classNames={{ content: s.drawer, header: s.drawerHeader, title: s.drawerTitle, body: s.drawerBody }}
     >

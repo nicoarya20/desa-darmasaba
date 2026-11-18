@@ -2,7 +2,6 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { Suspense } from 'react';
 import { KatalogBody } from './_com/katalog/KatalogBody';
-import { KATALOG_BRAND_VARS } from './_com/katalog/katalog-filter.meta';
 import { KATALOG_FILTER_TEXT as T } from './_com/katalog/katalog-filter.text';
 import s from './_com/katalog/katalog-layout.module.css';
 import { switchTab } from './_com/katalog/katalog-params.logic';
@@ -19,7 +18,7 @@ function KatalogPage() {
   const { state, retry } = useKatalogData();
 
   return (
-    <div className={s.page} style={KATALOG_BRAND_VARS}>
+    <div className={s.page}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

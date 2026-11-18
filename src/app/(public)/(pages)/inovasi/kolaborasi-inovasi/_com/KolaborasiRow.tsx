@@ -1,5 +1,6 @@
 'use client';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useId, useState } from 'react';
 import type { Kolaborasi } from './kolaborasi.logic';
@@ -29,7 +30,7 @@ export function KolaborasiRow({ item }: { item: Kolaborasi }) {
         {item.html ? (
           <div
             id={bodyId}
-            className={collapsed ? `${s.prose} ${s.clamped}` : s.prose}
+            className={collapsed ? `${s.prose} ${s.clamped} ${rt.root}` : `${s.prose} ${rt.root}`}
             dangerouslySetInnerHTML={{ __html: item.html }}
           />
         ) : null}

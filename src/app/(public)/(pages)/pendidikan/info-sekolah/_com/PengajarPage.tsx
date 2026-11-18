@@ -3,7 +3,6 @@ import { KabarListHeader } from "@/app/(public)/_com/kabar-list/KabarListHeader"
 import { useLazyLoad } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import frame from "../../_com/page-frame/page-frame.module.css";
 import { jenjangTabs, PENGAJAR_PATH, type InfoSekolahQuery } from "./info-sekolah.logic";
-import { INFO_SEKOLAH_BRAND_VARS } from "./info-sekolah.meta";
 import { loadJenjangNames, loadPengajarPage } from "./info-sekolah.source";
 import s from "./info-sekolah.module.css";
 import { INFO_SEKOLAH_TEXT as T } from "./info-sekolah.text";
@@ -20,7 +19,7 @@ export function PengajarPage() {
 
   // --gutter untuk rel pil KabarListHeader di ponsel datang dari frame (= --edge-gutter).
   return (
-    <div className={`${frame.frame} ${s.page}`} style={INFO_SEKOLAH_BRAND_VARS}>
+    <div className={`${frame.frame} ${s.page}`}>
       <div className={frame.inner}>
         <KabarListHeader
           title={T.pengajarTitle}

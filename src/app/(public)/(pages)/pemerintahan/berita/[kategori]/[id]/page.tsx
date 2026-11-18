@@ -2,7 +2,8 @@
 'use client'
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import { BeritaTanggal } from '../../_com/BeritaTanggal';
-import colors from '@/con/colors';
+import d from '../../_com/berita-detail.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import {
   Box,
   Center,
@@ -83,13 +84,13 @@ function Page() {
   const data = state.findUnique.data as unknown as BeritaDetail;
 
   return (
-    <Stack pos="relative" bg={colors.Bg} pb="xl" gap="xs" px={{ base: 'md', md: 0 }}>
+    <Stack pos="relative" bg="var(--c-hero-bg)" pb="xl" gap="xs" px={{ base: 'md', md: 0 }}>
       <Container w={{ base: '100%', md: '60%' }}>
         <Box pb={20}>
           {/* Kategori Badge */}
           {data.kategoriBerita?.name && (
             <Badge
-              color={colors['blue-button']}
+              color="var(--c-brand)"
               variant="light"
               size="lg"
               mb="md"
@@ -103,7 +104,7 @@ function Page() {
           <Title
             order={1}
             ta="center"
-            c={colors['blue-button']}
+            c="var(--c-brand)"
             fw="bold"
             lh={{ base: 1.2, md: 1.25 }}
             mb="md"
@@ -130,7 +131,7 @@ function Page() {
 
         {/* Content */}
         <Box mt="xl">
-          <Title order={3} c={colors['blue-button']} mb="md">
+          <Title order={3} c="var(--c-brand)" mb="md">
             Deskripsi Berita
           </Title>
           <Text
@@ -140,6 +141,7 @@ function Page() {
             lh={{ base: 1.6, md: 1.7 }}
             ta="justify"
             c="dimmed"
+            className={rt.root}
             style={{
               wordBreak: 'break-word',
               whiteSpace: 'normal',
@@ -154,10 +156,10 @@ function Page() {
         {data.images && data.images.length > 0 && (
           <Box mt="xl">
             <Group gap="xs" mb="md">
-              <Title order={3} c={colors['blue-button']}>
+              <Title order={3} c="var(--c-brand)">
                 Galeri Foto
               </Title>
-              <Badge color={colors['blue-button']} variant="light">
+              <Badge color="var(--c-brand)" variant="light">
                 {data.images.length}
               </Badge>
             </Group>
@@ -184,21 +186,17 @@ function Page() {
         {data.linkVideo && (
           <Box mt="xl">
             <Group gap="xs" mb="md">
-              <Title order={3} c={colors['blue-button']}>
+              <Title order={3} c="var(--c-brand)">
                 Video
               </Title>
-              <IconVideo size={24} color={colors['blue-button']} />
+              <IconVideo size={24} color="var(--c-brand)" />
             </Group>
             <AspectRatio ratio={16 / 9} mah={500}>
               <iframe
                 src={data.linkVideo}
                 title="YouTube Video"
                 allowFullScreen
-                style={{
-                  borderRadius: 12,
-                  border: '1px solid #e0e0e0',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                }}
+                className={d.video}
               />
             </AspectRatio>
           </Box>

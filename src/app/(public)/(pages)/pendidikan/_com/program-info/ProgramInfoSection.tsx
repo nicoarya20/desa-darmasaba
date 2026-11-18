@@ -1,3 +1,4 @@
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import type { ReactNode } from 'react';
 import type { ProgramInfoEntry } from './program-info.logic';
 import { toProgramInfoContent } from './program-info.logic';
@@ -29,6 +30,6 @@ function SectionBody({ section }: { section: ProgramInfoSectionView }) {
   const content = toProgramInfoContent(section.html);
   if (content.kind === 'list') return <ProgramInfoList items={content.items} />;
   // HTML sudah disaring sanitizeRichText (hanya tag teks dasar, tanpa atribut).
-  if (content.kind === 'html') return <div className={s.prose} dangerouslySetInnerHTML={{ __html: content.html }} />;
+  if (content.kind === 'html') return <div className={`${s.prose} ${rt.root}`} dangerouslySetInnerHTML={{ __html: content.html }} />;
   return <p className={s.note}>{T.sectionEmpty(section.title)}</p>;
 }

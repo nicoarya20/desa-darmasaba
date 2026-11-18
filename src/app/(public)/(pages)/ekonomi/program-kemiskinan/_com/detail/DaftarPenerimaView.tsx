@@ -1,4 +1,3 @@
-import colors from '@/con/colors';
 import { Center, Pagination, Stack, Table, Text, TextInput, Title } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { PENERIMA_PUBLIK_LIMIT } from '../program-kemiskinan.source';
@@ -18,7 +17,7 @@ type Props = {
 export function DaftarPenerimaView({ state, cari, onCari, onHalaman, onRetry }: Props) {
   return (
     <Stack gap="sm">
-      <Title order={3} fz="lg" c={colors['blue-button']}>
+      <Title order={3} fz="lg" c="var(--c-brand)">
         {T.daftarJudul}
       </Title>
       <TextInput

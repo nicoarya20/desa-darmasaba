@@ -1,0 +1,18 @@
+/*
+ * Galeri foto & video (gaya lama, komponen Mantine): variabel warna tema yang dibaca prop `bg`/`c` Mantine
+ * (`bg="var(--galery-card)"`). Nilai tanpa token = light-dark(terang lama, gelap); terang identik.
+ * Pasang `.vars` di akar halaman (kerangka tab galeri dan detail video).
+ */
+.vars {
+  /* Pita tab (BG-trans) dan kartu kaca (white-trans-1) di atas --c-hero-bg. */
+  --galery-band: light-dark(#b1c5f2, #13283a);
+  --galery-card: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.06));
+  /* Kartu detail video (white-1) dan panel deskripsi (gray.0). */
+  --galery-surface: light-dark(#fbfbfc, var(--c-tile));
+  --galery-surface-2: light-dark(var(--mantine-color-gray-0), var(--c-tile-alt));
+  /* Latar foto kosong (gray.1). */
+  --galery-photo-empty: light-dark(var(--mantine-color-gray-1), var(--c-placeholder));
+  /* Teks peringatan di Alert: shade 9 Mantine tidak ikut tema, di gelap pakai shade terang. */
+  --galery-alert-red: light-dark(var(--mantine-color-red-9), var(--mantine-color-red-3));
+  --galery-alert-orange: light-dark(var(--mantine-color-orange-9), var(--mantine-color-orange-3));
+}

@@ -3,7 +3,6 @@ import type { LoadState } from '@/app/(public)/_com/lazy-load/use-lazy-load';
 import { useDisclosure } from '@mantine/hooks';
 import frame from '../../_com/page-frame/page-frame.module.css';
 import type { Keunggulan, Ringkasan } from './beasiswa.logic';
-import { BEASISWA_BRAND_VARS } from './beasiswa.meta';
 import s from './beasiswa.module.css';
 import { BeasiswaHero } from './BeasiswaHero';
 import { BeasiswaKeunggulan } from './BeasiswaKeunggulan';
@@ -42,7 +41,7 @@ type BodyProps = {
 /** Isi halaman tanpa efek muat (dipakai `BeasiswaPage` dan test markup). */
 export function BeasiswaPageBody(props: BodyProps) {
   return (
-    <div className={`${frame.frame} ${s.page}`} style={BEASISWA_BRAND_VARS}>
+    <div className={`${frame.frame} ${s.page}`}>
       <div className={`${frame.inner} ${s.inner}`}>
         <BeasiswaHero onDaftar={props.onDaftar} />
         <BeasiswaRingkasan state={props.ringkasan} onRetry={props.onRetryRingkasan} />

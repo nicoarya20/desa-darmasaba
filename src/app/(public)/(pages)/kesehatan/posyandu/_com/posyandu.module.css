@@ -1,7 +1,7 @@
 /*
  * Halaman Posyandu — kerangka gaya halaman APBDes/Monev (apbdes.module.css: .section, .card, .panel, …).
  * File ini hanya menambah bagian khusus Posyandu; variabel warna (--ink, --muted, --subtle, --tile, --line,
- * --radius, --brand, --brand-tint) diwarisi dari .section APBDes + POSYANDU_BRAND_VARS.
+ * --radius, --brand) diwarisi dari .section APBDes (alias token --c-*, jadi ikut tema gelap).
  * Breakpoint apple.com: ≤1068px dan ≤734px.
  */
 .body {
@@ -30,7 +30,7 @@
 }
 
 .segRoot {
-  background: rgba(0, 0, 0, 0.06);
+  background: light-dark(rgba(0, 0, 0, 0.06), rgb(255 255 255 / 10%));
 }
 
 .wideOnly {
@@ -140,9 +140,9 @@
   color: var(--muted);
 }
 
-/* Kolom cari Layanan berlatar --tile; di dalam panel #f5f5f7 latarnya dijadikan putih agar terlihat. */
+/* Kolom cari Layanan berlatar --tile; di dalam panel --c-tile latarnya dinaikkan satu tingkat (--c-tile-alt) agar terlihat. */
 .searchOnTile {
-  --tile: #fff;
+  --tile: var(--c-tile-alt);
   flex: 0 1 320px;
   min-width: 240px;
 }
@@ -170,7 +170,7 @@
   padding: 8px 18px;
   border: 0;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
   font: inherit;
   font-size: 15px;
@@ -202,7 +202,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .retry:hover {
-    background: #e8e8ed;
+    background: light-dark(#e8e8ed, #3a3a3c);
   }
 }
 

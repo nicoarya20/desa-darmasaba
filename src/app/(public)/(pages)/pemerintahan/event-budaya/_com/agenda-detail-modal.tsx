@@ -1,5 +1,4 @@
 'use client';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import { labelKategoriEvent, warnaKategoriEvent } from '@/lib/agenda-desa';
 import { Modal } from '@mantine/core';
 import { IconCalendarEvent, IconMapPin } from '@tabler/icons-react';
@@ -38,7 +37,6 @@ export function AgendaDetailModal({
       centered
       radius={18}
       size={560}
-      styles={{ content: KABAR_BRAND_VARS }}
       classNames={{ content: s.modalContent, title: s.modalTitle, header: s.modalHeader, body: s.modalBody }}
     >
       {detail?.items.map((item) => (

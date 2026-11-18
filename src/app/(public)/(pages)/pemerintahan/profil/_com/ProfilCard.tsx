@@ -1,5 +1,6 @@
 import { Image, Skeleton } from '@mantine/core';
 import { useId, type ReactNode } from 'react';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import s from './profil.module.css';
 
 type CardProps = {
@@ -36,7 +37,8 @@ export function ProfilHeading({ id, title, lead, aside }: HeadingProps) {
 
 /** HTML dari editor admin dalam kolom baca. */
 export function ProfilProse({ html, className }: { html: string; className?: string }) {
-  return <div className={className ? `${s.prose} ${className}` : s.prose} dangerouslySetInnerHTML={{ __html: html }} />;
+  const cls = `${s.prose} ${rt.root}`;
+  return <div className={className ? `${cls} ${className}` : cls} dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 /** Satu kalimat keadaan kosong di dalam kartu. */

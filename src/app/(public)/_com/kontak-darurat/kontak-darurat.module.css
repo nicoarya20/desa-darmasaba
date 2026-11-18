@@ -2,7 +2,7 @@
  * Daftar kontak darurat "call-first" (dipakai Kesehatan & Keamanan): panel #f5f5f7 radius 18px berisi baris
  * bergaris pemisah (pola panel Pengumuman), tiap baris menampilkan nomor besar + tombol Telepon/WhatsApp tanpa
  * harus membuka detail. Kerangka/kepala halaman dari layanan.module.css (variabel --ink, --muted, --subtle,
- * --tile, --line, --radius); --brand dari KONTAK_BRAND_VARS. Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
+ * --tile, --line, --radius); --brand dari KONTAK_BRAND_VARS; tombol isi & latar putih dari token --c-* (tema gelap). Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
  * Thumbnail berukuran tetap (bukan aspect-ratio) supaya tinggi baris tidak bergantung pada resolusi Safari lama.
  */
 .panel {
@@ -30,7 +30,7 @@
   width: 72px;
   height: 72px;
   border-radius: 10px;
-  background: #fff;
+  background: var(--c-tile-alt);
   object-fit: cover;
 }
 
@@ -151,14 +151,15 @@
   flex-shrink: 0;
 }
 
+/* Tombol isi: token fill (gelap #1c6ea4), bukan --brand yang di gelap jadi biru terang untuk teks. */
 .btnCall {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .btnWa {
   border-color: var(--line);
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--ink);
 }
 
@@ -184,7 +185,7 @@
   padding: 0 20px;
   border: 1px solid var(--line);
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--ink);
   font: inherit;
   font-size: 15px;
@@ -194,7 +195,7 @@
 
 /* ---------- Kerangka memuat ---------- */
 .pulse {
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
@@ -236,12 +237,12 @@
 
 @media (hover: hover) and (pointer: fine) {
   .btnCall:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 
   .btnWa:hover,
   .retry:hover {
-    border-color: rgba(0, 0, 0, 0.2);
+    border-color: light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.3));
   }
 }
 

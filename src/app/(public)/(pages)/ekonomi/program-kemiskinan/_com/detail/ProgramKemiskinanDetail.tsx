@@ -1,5 +1,4 @@
 'use client';
-import colors from '@/con/colors';
 import { Box, Stack } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -16,11 +15,11 @@ export function ProgramKemiskinanDetail({ programKey }: { programKey: string }) 
   const [tahun, setTahun] = useState<number | null>(null);
 
   return (
-    <Stack bg={colors.Bg} py="xl" px={{ base: 'md', md: 100 }} gap="lg" aria-busy={state.status === 'loading' || undefined}>
+    <Stack bg="var(--c-hero-bg)" py="xl" px={{ base: 'md', md: 100 }} gap="lg" aria-busy={state.status === 'loading' || undefined}>
       <Box>
         <Link
           href="/ekonomi/program-kemiskinan"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: colors['blue-button'] }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--c-brand)' }}
         >
           <IconChevronLeft size={16} aria-hidden="true" />
           {T.kembali}

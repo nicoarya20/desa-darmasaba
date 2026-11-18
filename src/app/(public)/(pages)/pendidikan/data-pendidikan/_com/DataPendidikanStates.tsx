@@ -7,7 +7,7 @@ export function DataPendidikanEmpty() {
   return <StatBarsEmpty icon={<IconSchool size={24} stroke={1.75} />} title={T.emptyTitle} body={T.emptyBody} />;
 }
 
-/** Galat muat + tombol "Coba lagi" di ubin #f5f5f7. */
+/** Galat muat + tombol "Coba lagi" di ubin --c-tile. */
 export function DataPendidikanNotice({ onRetry }: { onRetry: () => void }) {
   return <StatBarsError message={T.failed} onRetry={onRetry} retryLabel={T.retry} />;
 }

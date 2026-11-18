@@ -1,7 +1,7 @@
 /*
  * Kerangka halaman detail lowongan (`/ekonomi/lowongan-kerja-lokal/[id]`) gaya Welcome to the Jungle: tombol kembali,
  * satu kartu putih bergaris (kepala, isi, penutup), keadaan memuat/kosong. Latar, gutter, dan token warna (--ink,
- * --muted, --subtle, --tile, --line) dari `.page` lowongan-layout.module.css; `--brand` inline (LOWONGAN_BRAND_VARS).
+ * --muted, --subtle, --tile, --line, --brand; alias --c-*) dari `.page` lowongan-layout.module.css.
  * Isi section: detail-section.module.css. Memuat/kosong: detail-status.module.css. Tombol & bilah kontak: kontak-aksi.module.css.
  * Breakpoint apple.com: ≤1068px (tablet), ≤734px (mobile: tanpa bingkai kartu).
  */
@@ -19,7 +19,7 @@
   padding: 56px clamp(24px, 9vw, 110px) 64px;
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: #fff;
+  background: var(--c-bg);
 }
 
 /* ---------- Kepala ---------- */

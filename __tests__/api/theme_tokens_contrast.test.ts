@@ -6,6 +6,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { DARK_ERROR_COLOR } from '@/app/_com/site-css-variables-resolver';
 
 const CSS_PATH = path.resolve(__dirname, '../../src/app/theme-tokens.css');
 const DARK_SELECTOR = ':root[data-mantine-color-scheme="dark"]';
@@ -52,7 +53,6 @@ const CHART_SURFACES = ['c-bg', 'c-bg-alt', 'c-tile', 'c-tile-alt'];
 
 /** Pasangan di tema TERANG yang di bawah ambang: nilai lama yang tidak boleh diubah (identik piksel). */
 const LIGHT_EXCEPTIONS = new Set([
-  ...SURFACES.map((bg) => `c-subtle@${bg}`), // #86868b: teks ketiga (keterangan kecil), sudah dipakai sejak lama
   ...CHART_SURFACES.map((bg) => `c-chart-3@${bg}`), // #8ac1e3: tint seri ketiga, dekoratif
 ]);
 
@@ -66,7 +66,9 @@ const LEGACY_LIGHT: Tokens = {
   'c-ink': '#1d1d1f',
   'c-ink-2': '#515154',
   'c-muted': '#6e6e73',
-  'c-subtle': '#86868b',
+  // Satu-satunya pengecualian "identik piksel" (perbaikan kontras juknis lomba 5.7; perlu persetujuan pemilik tema gelap): #86868b lama hanya
+  // 3,3:1 di atas ubin, #6e6e73 = 4,66:1 (AA). Tema gelap tidak berubah.
+  'c-subtle': '#6e6e73',
   'c-line': 'rgba(0, 0, 0, 0.08)',
   'c-line-strong': '#d2d2d7',
   'c-placeholder': '#e8e8ed',
@@ -84,6 +86,7 @@ const LEGACY_LIGHT: Tokens = {
   'c-chart-3': '#8ac1e3',
   'c-open': '#1f9d55',
   'c-closed': '#d9363e',
+  'c-focus': '#0071e3',
 };
 
 function failingPairs(tokens: Tokens, exceptions: Set<string>) {
@@ -98,6 +101,7 @@ function failingPairs(tokens: Tokens, exceptions: Set<string>) {
   check('c-on-brand', 'c-brand-fill-hover', 4.5);
   check('c-brand', 'c-brand-tint', 4.5);
   for (const fg of CHART) for (const bg of CHART_SURFACES) check(fg, bg, 3);
+  for (const bg of SURFACES) check('c-focus', bg, 3); // WCAG 1.4.11: cincin fokus ≥ 3 di semua latar
   return fails;
 }
 
@@ -130,6 +134,12 @@ describe('theme-tokens.css: kontras WCAG', () => {
       const [fg, bg] = pair.split('@');
       const min = fg.startsWith('c-chart') ? 3 : 4.5;
       expect(contrast(light[fg], light[bg]), pair).toBeLessThan(min);
+    }
+  });
+
+  it('tema gelap: merah galat Mantine (resolver) ≥ 4,5 di semua latar gelap', () => {
+    for (const bg of SURFACES) {
+      expect(contrast(DARK_ERROR_COLOR, dark[bg]), `galat di ${bg}`).toBeGreaterThanOrEqual(4.5);
     }
   });
 

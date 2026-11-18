@@ -80,10 +80,11 @@ const LATAR_GELAP = ['#000000', '#1d1d1f', '#2a2a2c'];
 describe('token teks muted "--subtle" / "--sb-subtle" di CSS publik', () => {
   const definisi = [
     ...cssPublik(PUBLIC_DIR).flatMap((file) =>
-      [...readFileSync(file, 'utf8').matchAll(/^\s*(--(?:sb-)?subtle):\s*(#[0-9a-fA-F]{6});/gm)].map((m) => ({
+      [...readFileSync(file, 'utf8').matchAll(/^\s*(--(?:sb-)?subtle):\s*(#[0-9a-fA-F]{6}|var\(--c-subtle\));/gm)].map((m) => ({
         file: file.slice(PUBLIC_DIR.length + 1),
         nama: m[1],
-        warna: m[2],
+        // var(--c-subtle) = token bersama; nilai terangnya dicek dari sumber token di bawah.
+        warna: m[2].startsWith('var(') ? subtleTerang : m[2],
       })),
     ),
     // Modul beranda memakai var(--c-subtle) sejak tema gelap, jadi nilai terangnya dicek dari sumber token.
@@ -108,11 +109,11 @@ describe('token teks muted "--subtle" / "--sb-subtle" di CSS publik', () => {
     expect(gagal).toEqual([]);
   });
 
-  it('teks literal kartu produk UMKM (rating) tidak lagi memakai #86868b', () => {
+  it('teks rating kartu produk UMKM memakai token --c-subtle (bukan #86868b literal)', () => {
     const css = readFileSync(join(PUBLIC_DIR, '(pages)/ekonomi/umkm/_com/katalog/produk-card.module.css'), 'utf8');
     const rating = css.match(/\.rating\s*\{[^}]*\}/)?.[0] ?? '';
-    expect(rating).toContain('color: #6e6e73');
-    expect(rasioKontras('#6e6e73', LATAR_PUBLIK.putih)).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
+    expect(rating).toContain('color: var(--c-subtle)');
+    expect(rasioKontras(subtleTerang, LATAR_PUBLIK.putih)).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
   });
 });
 
@@ -156,11 +157,34 @@ function resolveMantine(nilai: string): string {
   return nilai;
 }
 
+const APBDES_CSS = readFileSync(join(PUBLIC_DIR, '_com/main-page/apbdes/apbdes.module.css'), 'utf8');
+
+/** Nilai TERANG sebuah token: `var(--apbdes-*)` → argumen pertama `light-dark(a, b)`; `var(--c-brand)` → blok terang theme-tokens. */
+function resolveTokenTerang(nilai: string): string {
+  const ref = nilai.match(/^var\((--[a-z0-9-]+)\)$/);
+  if (!ref || ref[1].startsWith('--mantine-')) return resolveMantine(nilai);
+  const nama = ref[1];
+  const decl = APBDES_CSS.match(new RegExp(`${nama}:\\s*([^;]+);`))?.[1] ?? TOKENS_CSS.match(new RegExp(`${nama}:\\s*([^;]+);`))?.[1];
+  if (!decl) throw new Error(`Token tidak ditemukan: ${nama}`);
+  const ld = decl.match(/^light-dark\(([\s\S]+)\)$/);
+  if (!ld) return resolveTokenTerang(decl.trim());
+  // Pisah argumen pertama di koma tingkat-atas (abaikan koma di dalam var()/rgb()).
+  let depth = 0;
+  let i = 0;
+  for (; i < ld[1].length; i++) {
+    const c = ld[1][i];
+    if (c === '(') depth++;
+    else if (c === ')') depth--;
+    else if (c === ',' && depth === 0) break;
+  }
+  return resolveTokenTerang(ld[1].slice(0, i).trim());
+}
+
 describe('Posyandu: teks aksen kartu profil (ACCENT["--accent-text"])', () => {
   it.each(Object.keys(ACCENT) as (keyof typeof ACCENT)[])('%s ≥4,5:1 di atas --tint dan #f5f5f7', (nama) => {
     const gaya = ACCENT[nama] as Record<string, string>;
-    const teks = resolveMantine(gaya['--accent-text']);
-    expect(rasioKontras(teks, resolveMantine(gaya['--tint']))).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
+    const teks = resolveTokenTerang(gaya['--accent-text']);
+    expect(rasioKontras(teks, resolveTokenTerang(gaya['--tint']))).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
     expect(rasioKontras(teks, LATAR_PUBLIK.ubin)).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
   });
 

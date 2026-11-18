@@ -44,7 +44,7 @@
   padding: 18px 20px 20px 24px;
   border: 0;
   border-radius: 16px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--ink);
   font: inherit;
   text-align: left;
@@ -83,11 +83,11 @@
 }
 
 .sorotanHitung[data-nada="berlangsung"] {
-  color: #17763a;
+  color: light-dark(#17763a, #30d158);
 }
 
 .sorotanHitung[data-nada="segera"] {
-  color: #a04800;
+  color: light-dark(#a04800, #ffb340);
 }
 
 .sorotanUtama {
@@ -105,6 +105,10 @@
 
 .sorotanKategori {
   color: var(--ev-ink);
+
+  @mixin dark {
+    color: color-mix(in srgb, var(--ev) 40%, var(--c-ink));
+  }
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -163,7 +167,7 @@
   padding: 5px 0 6px;
   border-top: 3px solid var(--ev);
   border-radius: 10px;
-  background: #fff;
+  background: var(--c-tile-alt);
 }
 
 .rowMonth {
@@ -211,7 +215,7 @@
   gap: 6px;
   padding: 28px 20px;
   border-radius: 16px;
-  background: #fff;
+  background: var(--c-tile-alt);
   text-align: center;
 }
 
@@ -223,7 +227,7 @@
   height: 52px;
   margin-bottom: 6px;
   border-radius: 50%;
-  background: #e5f2fa;
+  background: var(--c-brand-tint);
   color: var(--brand);
 }
 
@@ -243,7 +247,7 @@
 
 .skeleton {
   border-radius: 16px;
-  background: #fff;
+  background: var(--c-tile-alt);
   animation: denyut 1.4s ease-in-out infinite;
 }
 

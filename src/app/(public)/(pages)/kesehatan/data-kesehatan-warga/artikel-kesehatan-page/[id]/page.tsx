@@ -1,7 +1,8 @@
 'use client'
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
-import colors from '@/con/colors';
 import { Box, Divider, Flex, Group, Image, List, ListItem, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconAlertCircle, IconCalendar, IconInfoCircle } from '@tabler/icons-react';
@@ -28,7 +29,7 @@ function Page() {
   }
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl">
+    <Stack pos="relative" className={t.tema} bg="var(--c-hero-bg)" py="xl" gap="xl">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
@@ -36,8 +37,8 @@ function Page() {
       <Box px={{ base: 'md', md: 100 }}>
         <Stack gap="lg">
           <Paper radius="xl" shadow="md" withBorder>
-            <Box style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} bg={colors['blue-button']}>
-              <Title order={1} p="md" c={colors['white-1']} fw="bold">
+            <Box style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} bg="var(--c-brand-fill)">
+              <Title order={1} p="md" c="var(--kt-on-fill)" fw="bold">
                 {state.findUnique.data.title || 'Detail Artikel Kesehatan'}
               </Title>
             </Box>
@@ -63,7 +64,7 @@ function Page() {
             <Box p="lg">
               <Stack gap="lg">
                 <Group gap="xs">
-                  <IconCalendar size={18} color={colors['blue-button']} />
+                  <IconCalendar size={18} color="var(--c-brand)" />
                   <Text fz={{ base: 'xs', md: 'sm' }} lh={1.5}>
                     {new Date(state.findUnique.data.createdAt).toLocaleDateString('id-ID', {
                       year: 'numeric',
@@ -78,7 +79,7 @@ function Page() {
                     <Title order={2} fw="bold">Pendahuluan</Title>
                     <Divider my="xs" />
                     <Box pl={20}>
-                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} ta="justify" dangerouslySetInnerHTML={{ __html: state.findUnique.data.introduction?.content }} />
+                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} ta="justify" className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.introduction?.content }} />
                     </Box>
                   </Box>
 
@@ -86,7 +87,7 @@ function Page() {
                     <Title order={2} fw="bold">{state.findUnique.data.symptom?.title}</Title>
                     <Divider my="xs" />
                     <Box pl={20}>
-                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.symptom?.content }} />
+                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.symptom?.content }} />
                     </Box>
                   </Box>
 
@@ -94,7 +95,7 @@ function Page() {
                     <Title order={2} fw="bold">{state.findUnique.data.prevention?.title}</Title>
                     <Divider my="xs" />
                     <Box pl={20}>
-                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.prevention?.content }} />
+                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.prevention?.content }} />
                     </Box>
                   </Box>
 
@@ -102,7 +103,7 @@ function Page() {
                     <Title order={2} fw="bold">{state.findUnique.data.firstaid?.title}</Title>
                     <Divider my="xs" />
                     <Box pl={20}>
-                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.firstaid?.content }} />
+                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} ta="justify" style={{ wordBreak: "break-word", whiteSpace: "normal" }} className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.firstaid?.content }} />
                     </Box>
                   </Box>
 
@@ -124,12 +125,12 @@ function Page() {
                             <TableTr>
                               <TableTd>
                                 <Box pl={20}>
-                                  <Text fz={{ base: 'xs', md: 'sm' }} lh={1.6} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.mitos }} />
+                                  <Text fz={{ base: 'xs', md: 'sm' }} lh={1.6} style={{ wordBreak: "break-word", whiteSpace: "normal" }} className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.mitos }} />
                                 </Box>
                               </TableTd>
                               <TableTd>
                                 <Box pl={20}>
-                                  <Text fz={{ base: 'xs', md: 'sm' }} lh={1.6} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.fakta }} />
+                                  <Text fz={{ base: 'xs', md: 'sm' }} lh={1.6} style={{ wordBreak: "break-word", whiteSpace: "normal" }} className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.mythvsfact.fakta }} />
                                 </Box>
                               </TableTd>
                             </TableTr>
@@ -151,20 +152,20 @@ function Page() {
                       <Text fz={{ base: 'sm', md: 'md' }} lh={1.5}>Segera bawa penderita ke fasilitas kesehatan jika mengalami:</Text>
                     </Flex>
                     <Box pl={20}>
-                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} dangerouslySetInnerHTML={{ __html: state.findUnique.data.doctorsign.content }} />
+                      <Text fz={{ base: 'sm', md: 'md' }} lh={1.6} className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.doctorsign.content }} />
                     </Box>
                   </Box>
 
                   <Box>
-                    <Paper p="lg" radius="md" bg={colors['blue-button-trans']} withBorder>
+                    <Paper p="lg" radius="md" bg="var(--kt-info)" withBorder>
                       <Group gap="xs" mb="sm">
-                        <IconInfoCircle size={20} color={colors['white-1']} />
-                        <Title order={3} c={colors['white-1']} fw="bold">Informasi Lebih Lanjut</Title>
+                        <IconInfoCircle size={20} color="var(--kt-on-fill)" />
+                        <Title order={3} c="var(--kt-on-fill)" fw="bold">Informasi Lebih Lanjut</Title>
                       </Group>
                       <Stack gap={4}>
-                        <Text fz={{ base: 'xs', md: 'sm' }} c={colors['white-1']}>Hotline DBD: <b>(0361) 123456</b></Text>
-                        <Text fz={{ base: 'xs', md: 'sm' }} c={colors['white-1']}>WhatsApp Center: <b>081234567890</b></Text>
-                        <Text fz={{ base: 'xs', md: 'sm' }} c={colors['white-1']}>Email: <b>p2p@dinkes.badungkab.go.id</b></Text>
+                        <Text fz={{ base: 'xs', md: 'sm' }} c="var(--kt-on-fill)">Hotline DBD: <b>(0361) 123456</b></Text>
+                        <Text fz={{ base: 'xs', md: 'sm' }} c="var(--kt-on-fill)">WhatsApp Center: <b>081234567890</b></Text>
+                        <Text fz={{ base: 'xs', md: 'sm' }} c="var(--kt-on-fill)">Email: <b>p2p@dinkes.badungkab.go.id</b></Text>
                       </Stack>
                     </Paper>
                   </Box>

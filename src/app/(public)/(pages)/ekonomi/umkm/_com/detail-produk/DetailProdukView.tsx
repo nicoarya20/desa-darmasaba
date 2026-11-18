@@ -3,7 +3,7 @@ import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import f from '../detail-umkm/detail-umkm.module.css';
-import { KATALOG_BASE_HREF, KATALOG_BRAND_VARS } from '../katalog/katalog-filter.meta';
+import { KATALOG_BASE_HREF } from '../katalog/katalog-filter.meta';
 import s from './detail-produk.module.css';
 import { DETAIL_PRODUK_TEXT as T } from './detail-produk.text';
 import type { DetailProduk } from './detail-produk.types';
@@ -23,7 +23,7 @@ export function DetailProdukView({ id }: { id: string }) {
   const { state, reload } = useDetailProduk(id);
 
   return (
-    <div className={f.page} style={KATALOG_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <div className={f.page} aria-busy={state.status === 'loading' || undefined}>
       <div className={f.inner}>
         <Link href={KATALOG_BASE_HREF} className={`${f.back} ${r.trigger}`}>
           <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden="true" />

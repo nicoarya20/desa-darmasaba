@@ -1,0 +1,10 @@
+/* Halaman "Permohonan Berhasil Dikirim": warna kartu sukses & kartu isi, dibaca prop `bg`/`c` Mantine
+   (inline style selalu menang atas CSS Paper/Text Mantine). Terang = nilai lama (identik piksel);
+   gelap lewat light-dark (postcss-preset-mantine). */
+.root {
+  /* Kartu sukses: hijau muda + teks hijau tua di terang; hijau redup + teks hijau terang di gelap (±8:1). */
+  --sukses-bg: light-dark(#def0d8, #14301c);
+  --sukses-ink: light-dark(#3c7745, #8fd19e);
+  /* Kartu isi semi-transparan di atas latar halaman (--c-hero-bg). */
+  --isi-bg: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.06));
+}

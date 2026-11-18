@@ -2,7 +2,7 @@
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { formatTanggalTerbit } from '@/lib/tanggal-terbit';
 import { Image } from '@mantine/core';
@@ -17,7 +17,7 @@ export function KeamananLingkunganDetail({ id }: { id: string }) {
   const state = useKeamananLingkunganDetail(id);
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         <BackButton />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
@@ -60,7 +60,7 @@ export function KeamananLingkunganDetailBody({ data }: { data: KeamananLingkunga
       ) : null}
 
       {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
-      {hasHtmlContent(data.deskripsi) ? <div className={d.content} dangerouslySetInnerHTML={{ __html: data.deskripsi }} /> : null}
+      {hasHtmlContent(data.deskripsi) ? <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.deskripsi }} /> : null}
     </>
   );
 }

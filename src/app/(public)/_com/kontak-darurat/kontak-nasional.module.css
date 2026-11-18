@@ -5,8 +5,9 @@
  * Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
  */
 .grid {
-  --emergency: #d70015;
-  --emergency-tint: #fde8ea;
+  /* Gelap: merah sistem gelap (= --c-closed) di tint merah tua, ikon 4,6:1. */
+  --emergency: light-dark(#d70015, #ff453a);
+  --emergency-tint: light-dark(#fde8ea, #3a1517);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;

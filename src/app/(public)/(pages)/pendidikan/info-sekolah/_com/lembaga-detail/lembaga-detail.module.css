@@ -1,6 +1,6 @@
 /*
  * Detail sekolah (Info Sekolah › lembaga). Token warna (--ink, --muted, --tile, --line, --radius, --brand) dari
- * .page info-sekolah.module.css + INFO_SEKOLAH_BRAND_VARS. Breakpoint apple.com: ≤1068px dan ≤734px.
+ * .page info-sekolah.module.css (alias token --c-*). Breakpoint apple.com: ≤1068px dan ≤734px.
  */
 .content {
   display: flex;

@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.306] - 2026-11-18
+### Added
+- **Tema gelap kini bisa dinyalakan warga.** Tombol matahari/bulan di navbar (desktop dan ponsel, di kanan tombol baca suara) kini tampil untuk semua pengunjung. Pengunjung yang belum pernah memilih otomatis mengikuti pengaturan perangkatnya: perangkat bermode gelap langsung melihat situs gelap, perangkat bermode terang tetap terang. Pilihan lewat tombol disimpan di browser dan dipakai pada kunjungan berikutnya. Halaman admin dan akun tetap selalu terang.
+
+### Changed
+- Warna bilah browser di ponsel (bagian atas layar) mengikuti tema yang sedang tampil, termasuk setelah berpindah halaman.
+- Garis fokus keyboard (saat menavigasi dengan Tab) di galeri, prestasi, struktur organisasi, potensi desa, dan Desa Anti Korupsi lebih terang di tema gelap; di tema terang tidak berubah.
+
+## [0.1.305] - 2026-11-18
+### Added
+- **Tema gelap kini mencakup semua menu situs publik (masih tahap persiapan, belum bisa dinyalakan pengunjung).** Setelah beranda, versi gelap "Malam Netral" kini ada di Pemerintahan, PPID, Kesehatan, Keamanan, Ekonomi (termasuk katalog UMKM dan Lowongan Kerja), Inovasi, Lingkungan, Kependudukan, Pendidikan, Musik Desa, Desa Anti Korupsi, halaman APBDes, Prestasi, SDGs, permohonan informasi, Peta Informasi, dan halaman 404. Teks, tombol, grafik, kartu, bagan struktur organisasi, dan kontak darurat ikut menyesuaikan dan tetap terbaca (kontras teks memenuhi standar WCAG AA). Tombol matahari/bulan masih hanya muncul di lingkungan pengembangan sampai tema gelap dibuka untuk warga. Tampilan terang yang dilihat warga sekarang tidak berubah.
+- Isi tulisan dari admin (berita, pengumuman, profil, program, dan halaman detail lain) ikut terbaca di tema gelap, termasuk bila admin memberi warna teks atau latar di editor.
+
+### Changed
+- Peta (lokasi CCTV, Bank Sampah, sekolah, Google Maps) sengaja tetap terang di tema gelap; kotak info di dalam peta ikut terang supaya tetap terbaca.
+
+### Fixed
+- Tanda wajib (*) dan pesan galat di formulir lebih terang di tema gelap sehingga terbaca.
+- Tombol "Kirim Permohonan" PPID yang belum aktif kini terbaca di tema gelap.
+
 ## [0.1.304] - 2026-11-17
 ### Added
 - **Tema gelap untuk beranda (tahap persiapan, belum bisa dinyalakan pengunjung).** Seluruh beranda kini punya versi gelap bergaya "Malam Netral": latar hitam, panel abu gelap, judul biru terang, footer navy, pita hero yang diredupkan, serta navbar, pencarian, pemutar musik, dan asisten Jenna yang ikut gelap. Tombol matahari/bulan untuk menggantinya baru muncul di lingkungan pengembangan; tombol dibuka untuk warga setelah semua menu selesai dibuat gelap, supaya tidak ada halaman yang tampil setengah gelap. Tampilan terang yang dilihat warga sekarang tidak berubah.

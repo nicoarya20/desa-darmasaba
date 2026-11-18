@@ -2,7 +2,6 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
 import apb from '@/app/(public)/_com/main-page/apbdes/apbdes.module.css';
-import { APBDES_BRAND_VARS } from '@/app/(public)/_com/main-page/apbdes/apbdes.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -22,7 +21,7 @@ export function PadesaPage() {
   const state = useLoadOnce(loadPadesa, 'APBDes pos 4.1 (Pendapatan Asli Desa)');
 
   return (
-    <div className={kabar.section} style={APBDES_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

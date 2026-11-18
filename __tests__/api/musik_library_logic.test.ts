@@ -266,7 +266,6 @@ describe('palet', () => {
 // Penjaga kontras CSS pustaka (audit WCAG putaran 2): dibaca dari berkas sumber, bukan dari browser.
 describe('CSS pustaka: kontras teks', () => {
   const dir = path.join(process.cwd(), 'src/app/(public)/(pages)/musik/musik-desa/_com/library');
-  const cssFiles = readdirSync(dir).filter((f) => f.endsWith('.module.css'));
   const css = (f: string) => readFileSync(path.join(dir, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
   /** Aturan paling dalam: [selektor, isi]; @media luar ikut terlewati karena kurung kurawalnya. */
   const rules = (src: string) =>
@@ -306,10 +305,28 @@ describe('CSS pustaka: kontras teks', () => {
     expect(mobile.at(-1)).toBe('auto'); // ≤734px kolom mengikuti isi, judul yang mengalah
   });
 
-  it('nilai cadangan --m-muted/--m-subtle ≥ 4.5:1 di putih dan #f5f5f7', () => {
-    const fallbacks = cssFiles.flatMap((f) => [...css(f).matchAll(/var\(--m-(?:muted|subtle),\s*(#[0-9a-f]{6})\)/gi)].map((m) => m[1]));
-    expect(fallbacks.length).toBeGreaterThan(0);
-    for (const hex of new Set(fallbacks)) {
+  it('token --m-* dibaca tanpa nilai cadangan di library/ & player/ (semua pemakai di dalam .app/.tokens)', () => {
+    const playerDir = path.join(dir, '../player');
+    const sources = [
+      ...readdirSync(dir).filter((f) => /\.(css|tsx?)$/.test(f)).map((f) => readFileSync(path.join(dir, f), 'utf8')),
+      ...readdirSync(playerDir).filter((f) => /\.(css|tsx?)$/.test(f)).map((f) => readFileSync(path.join(playerDir, f), 'utf8')),
+    ].join('\n');
+    expect(sources).not.toMatch(/var\(--m-(?:muted|subtle|ink|accent|bg|surface|elev|line|hover|active|solid|on-solid|track),/);
+  });
+
+  it('teks sekunder terang --m-muted/--m-subtle ≥ 4.5:1 di putih dan #f5f5f7 (nilai dari token situs)', () => {
+    const appCss = readFileSync(path.join(dir, '../app/musik-app.module.css'), 'utf8');
+    const themeCss = readFileSync(path.resolve(__dirname, '../../src/app/theme-tokens.css'), 'utf8');
+    const lightRoot = themeCss.match(/:root\s*\{([^}]*)\}/)?.[1] ?? '';
+    const lightValue = (token: string) => {
+      const alias = appCss.match(new RegExp(`${token}:\\s*var\\((--c-[a-z0-9-]+)\\);`))?.[1];
+      expect(alias, `${token} = alias token situs`).toBeDefined();
+      const hex = lightRoot.match(new RegExp(`${alias}:\\s*(#[0-9a-f]{6});`, 'i'))?.[1];
+      expect(hex, `${alias} terang di theme-tokens.css`).toBeDefined();
+      return hex as string;
+    };
+    for (const token of ['--m-muted', '--m-subtle']) {
+      const hex = lightValue(token);
       expect(contrast(hex, '#ffffff')).toBeGreaterThanOrEqual(4.5);
       expect(contrast(hex, '#f5f5f7')).toBeGreaterThanOrEqual(4.5);
     }
