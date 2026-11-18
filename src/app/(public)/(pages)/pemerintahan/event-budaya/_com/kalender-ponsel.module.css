@@ -164,8 +164,11 @@ button.miniDay {
   cursor: pointer;
 }
 
+/* Acara lewat: redup lewat latar & garis yang dipucatkan, BUKAN opacity (opacity menurunkan kontras teks di bawah 4,5:1). */
 .card[data-lewat] {
-  opacity: 0.6;
+  border-left-color: color-mix(in srgb, var(--ev) 55%, #fff);
+  background: color-mix(in srgb, var(--ev-bg) 60%, #fff);
+  color: var(--muted);
 }
 
 .cardKategori {
