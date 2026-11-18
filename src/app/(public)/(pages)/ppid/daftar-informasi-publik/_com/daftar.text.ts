@@ -19,6 +19,7 @@ export const DAFTAR_TEXT = {
   },
   detail: 'Detail',
   detailLabel: (jenis: string) => `Detail ${jenis}`,
+  aksiLabel: (jenis: string) => `Aksi untuk ${jenis}`,
   empty: 'Tidak ada informasi publik yang ditemukan.',
   paginationLabel: 'Halaman daftar informasi publik',
   kontakTitle: 'Kontak PPID',

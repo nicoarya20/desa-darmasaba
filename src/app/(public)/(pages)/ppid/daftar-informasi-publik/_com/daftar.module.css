@@ -109,7 +109,7 @@
 }
 
 .colAksi {
-  width: 128px;
+  width: 212px;
 }
 
 .table tbody .no {
@@ -194,12 +194,20 @@
   font-weight: 600;
 }
 
-/* Sel aksi: "Detail" lalu "Unduh PDF" (bila ada berkas) bertumpuk, rata kiri. */
-.aksiStack {
+/* Sel aksi: "Detail" lalu "Unduh PDF" (bila ada berkas) sejajar satu baris, seperti "Lihat"/"Unduh" di Dasar Hukum.
+   Kolom sempit → tautan turun ke baris berikutnya (rata kiri), bukan terpotong. Ukuran huruf Detail disamakan
+   dengan PpidFileLink (15px); .detailLink juga dipakai tautan kembali di halaman detail, jadi diatur di sini saja. */
+.aksiRow {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 20px;
+  min-height: 24px;
+}
+
+.aksiRow .detailLink {
+  font-size: 15px;
+  line-height: 1.4;
 }
 
 /* ---------- Detail ---------- */
@@ -268,6 +276,10 @@
     width: 150px;
   }
 
+  .colAksi {
+    width: 150px;
+  }
+
   .table tbody .tanggal {
     white-space: normal;
   }
@@ -333,9 +345,20 @@
     font-size: 15px;
   }
 
+  /* Aksi jadi kaki kartu bergaris tipis; target sentuh 44px. */
   .table tbody .aksi {
     order: 4;
     margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid var(--line);
+  }
+
+  .aksiRow {
+    gap: 0 24px;
+  }
+
+  .aksiRow a {
+    min-height: 44px;
   }
 
   .pagination {
