@@ -38,7 +38,7 @@ export function bersihkanTeks(raw: unknown): string {
 }
 
 /** Seperti `bersihkanTeks` tetapi menjaga pemisah paragraf: tiap baris dirapikan, baris kosong dibuang, digabung "\n". */
-function bersihkanParagraf(raw: unknown): string {
+export function bersihkanParagraf(raw: unknown): string {
   if (typeof raw !== "string") return "";
   return raw
     .replace(KARAKTER_BUANG, "")

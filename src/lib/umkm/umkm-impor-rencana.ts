@@ -1,16 +1,15 @@
 // Rencana impor UMKM — fungsi murni: dari baris impor + kategori aktif + UMKM yang sudah ada menjadi daftar
 // yang akan ditambah/diperbarui/dilewati beserta galat & peringatan per baris. Tanpa akses DB, jadi dipakai
 // sama oleh dry-run dan impor sungguhan di server. Nomor baris = urutan di `rows` + 1.
+import { cariKategori, petaKategori, type KategoriAktif } from "./impor-kategori";
 import {
   deskripsiKeHtml,
   kunciUmkm,
-  normalNama,
   peringatanKontak,
   validasiBarisUmkm,
   type ModeImporUmkm,
 } from "./umkm-impor.rules";
 
-export type KategoriAktif = { id: string; nama: string };
 export type UmkmAda = { id: string; nama: string; pemilik: string };
 export type BarisPesan = { baris: number; alasan: string };
 
@@ -40,11 +39,7 @@ export function susunRencanaImpor(opts: {
   kategori: readonly KategoriAktif[];
   ada: readonly UmkmAda[];
 }): RencanaImpor {
-  const kategoriPerNama = new Map<string, string[]>();
-  for (const k of opts.kategori) {
-    const kunci = normalNama(k.nama);
-    kategoriPerNama.set(kunci, [...(kategoriPerNama.get(kunci) ?? []), k.id]);
-  }
+  const kategoriPerNama = petaKategori(opts.kategori);
   const adaPerKunci = new Map<string, string>();
   for (const u of opts.ada) {
     const kunci = kunciUmkm(u.nama, u.pemilik);
@@ -72,21 +67,16 @@ export function susunRencanaImpor(opts: {
       return;
     }
 
-    const kandidat = kategoriPerNama.get(normalNama(r.kategori)) ?? [];
-    if (kandidat.length === 0) {
-      return tolak(baris, `Kategori "${r.kategori}" tidak dikenal. Buat dulu di tab Kategori Produk atau perbaiki penulisannya`);
-    }
-    if (kandidat.length > 1) {
-      return tolak(baris, `Kategori "${r.kategori}" ambigu: ada ${kandidat.length} kategori aktif dengan nama yang sama`);
-    }
+    const kategori = cariKategori(kategoriPerNama, r.kategori);
+    if (!kategori.ok) return tolak(baris, kategori.alasan);
 
     const opsional = {
       ...(r.deskripsi && { deskripsi: deskripsiKeHtml(r.deskripsi) }),
       ...(r.alamat && { alamat: r.alamat }),
       ...(r.kontak && { kontak: r.kontak }),
     };
-    if (idAda !== undefined) rencana.perbarui.push({ id: idAda, data: { kategoriId: kandidat[0], ...opsional } });
-    else rencana.tambah.push({ nama: r.nama, pemilik: r.pemilik, kategoriId: kandidat[0], ...opsional });
+    if (idAda !== undefined) rencana.perbarui.push({ id: idAda, data: { kategoriId: kategori.value, ...opsional } });
+    else rencana.tambah.push({ nama: r.nama, pemilik: r.pemilik, kategoriId: kategori.value, ...opsional });
 
     const peringatan = peringatanKontak(r.kontak);
     if (peringatan) rencana.peringatan.push({ baris, alasan: peringatan });

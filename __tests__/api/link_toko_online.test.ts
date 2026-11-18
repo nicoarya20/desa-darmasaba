@@ -18,6 +18,8 @@ const prismaMock = vi.hoisted(() => ({
   $transaction: vi.fn(),
 }));
 vi.mock('@/lib/prisma', () => ({ default: prismaMock }));
+// produk/index kini memuat admin-guard (impor CSV) → api-auth → env; tes ini tidak memakai auth.
+vi.mock('@/lib/api-auth', () => ({ requireAuth: vi.fn() }));
 
 import ProdukUmkm from '@/app/api/[[...slugs]]/_lib/ekonomi/umkm/produk';
 import {

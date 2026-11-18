@@ -368,6 +368,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: impor CSV (`POST /api/ekonomi/umkm/import`) mencegah duplikat dengan membaca lalu menulis dalam satu transaksi, tetapi tanpa unique index dua impor/penambahan bersamaan tetap bisa membuat duplikat (nama + pemilik sama). Lewat API `create`, duplikat dan nilai panjang/format apa pun juga lolos.
   - Usul: bersihkan duplikat yang ada di admin, lalu migrasi unique parsial `(lower(trim(nama)), lower(trim(pemilik))) WHERE "deletedAt" IS NULL` (butuh SQL manual, Prisma belum mendukung); pakai aturan di `src/lib/umkm/umkm-impor.rules.ts` (batas panjang, `bersihkanTeks`) juga di `create.ts`/`updt.ts`.
 
+- [ ] **Produk UMKM: tidak ada unique index `(umkmId, nama)` dan create/update tanpa validasi server** (ditemukan saat impor CSV Produk 2026-11-18, `docs/decisions/2026-11-18-umkm-import-csv.md` bagian Impor Produk):
+  - Lokasi: model `PasarDesa` di `prisma/schema.prisma` (tanpa unique index untuk `(umkmId, nama)`); `_lib/ekonomi/umkm/produk/create.ts` menyimpan `nama`/`harga`/`stok`/`deskripsi` apa adanya (tanpa trim, batas panjang, atau batas atas harga/stok) dan tidak mengecek bahwa `umkmId`/`kategoriId` milik UMKM/kategori yang masih aktif dan belum dihapus (FK hanya menolak id yang tidak ada). `updt.ts` perlu diperiksa dengan pola yang sama.
+  - Dampak: impor CSV Produk (`POST /api/ekonomi/umkm/produk/import`) mencegah duplikat dengan baca-lalu-tulis dalam satu transaksi, tetapi dua impor/penambahan bersamaan tetap bisa membuat produk kembar. Lewat API `create`, produk bisa dibuat untuk UMKM nonaktif/terhapus atau kategori nonaktif, dan nilai panjang/harga berapa pun lolos.
+  - Usul: bersihkan duplikat yang ada, lalu migrasi unique parsial `(umkmId, lower(trim(nama))) WHERE "deletedAt" IS NULL` (SQL manual); di `create.ts`/`updt.ts` pakai aturan `src/lib/umkm/produk-impor.rules.ts` (batas panjang, harga/stok) dan cek UMKM/kategori aktif seperti impor.
+
 ## Jenna publik (tindak lanjut)
 
 Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.

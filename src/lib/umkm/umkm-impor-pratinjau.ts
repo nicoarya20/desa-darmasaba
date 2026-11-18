@@ -1,9 +1,14 @@
-// Jembatan browser ↔ API impor UMKM: bentuk body (tanpa nomor baris berkas) dan pemetaan hasil dry-run server
-// (nomor = urutan baris yang dikirim + 1) kembali ke nomor baris berkas CSV. Fungsi murni.
-import type { BarisUmkm, BarisUmkmDitolak, HasilCsvUmkm } from "./umkm-impor-csv";
+// Jembatan browser ↔ API impor (UMKM dan Produk): bentuk body (tanpa nomor baris berkas) dan pemetaan hasil dry-run
+// server (nomor = urutan baris yang dikirim + 1) kembali ke nomor baris berkas CSV. Fungsi murni.
+import type { BarisDitolak } from "@/lib/csv/parse-impor";
+import type { BarisUmkm } from "./umkm-impor-csv";
+import type { BarisProduk } from "./produk-impor-csv";
 import type { ModeImporUmkm } from "./umkm-impor.rules";
 
-/** Data `data` dari respons dry-run `POST /api/ekonomi/umkm/import`. */
+/** Hasil parsing berkas yang dibutuhkan pratinjau (sama untuk UMKM dan Produk). */
+export type HasilBerkas = { rows: readonly { baris: number }[]; ditolak: readonly BarisDitolak[]; galat?: string | null };
+
+/** Data `data` dari respons dry-run `POST /api/ekonomi/umkm/import` dan `/umkm/produk/import`. */
 export type RespDryRun = {
   ditambah: number;
   diperbarui: number;
@@ -12,6 +17,8 @@ export type RespDryRun = {
   totalGalat: number;
   peringatan: { baris: number; alasan: string }[];
   totalPeringatan: number;
+  /** Hanya impor Produk (mode perbarui): jumlah produk yang daftar link tokonya diganti seluruhnya. */
+  linkDiganti?: number;
 };
 
 /** Pratinjau gabungan: galat/peringatan memakai nomor baris berkas; galat berkas (ditolak di browser) ikut dihitung. */
@@ -19,10 +26,11 @@ export type Pratinjau = {
   ditambah: number;
   diperbarui: number;
   dilewati: number;
-  galat: BarisUmkmDitolak[];
+  galat: BarisDitolak[];
   totalGalat: number;
-  peringatan: BarisUmkmDitolak[];
+  peringatan: BarisDitolak[];
   totalPeringatan: number;
+  linkDiganti?: number;
 };
 
 /** Body request: hanya enam kolom UMKM; `baris` (nomor berkas) tidak ikut terkirim. */
@@ -34,9 +42,29 @@ export function bodyImporUmkm(rows: readonly BarisUmkm[], mode: ModeImporUmkm, d
   };
 }
 
+/** Body request impor Produk: hanya kolom yang dikenal; `baris` (nomor berkas) tidak ikut terkirim. */
+export function bodyImporProduk(rows: readonly BarisProduk[], mode: ModeImporUmkm, dryRun: boolean) {
+  return {
+    mode,
+    dryRun,
+    rows: rows.map(({ nama, umkm, kategori, harga, pemilik, stok, satuan, deskripsi, unggulan, link }) => ({
+      nama,
+      umkm,
+      kategori,
+      harga,
+      pemilik,
+      stok,
+      satuan,
+      deskripsi,
+      unggulan,
+      link,
+    })),
+  };
+}
+
 /** Petakan nomor baris server (indeks + 1) ke nomor baris berkas, lalu gabungkan dengan baris yang sudah ditolak di browser. */
-export function gabungPratinjau(hasil: HasilCsvUmkm, resp: RespDryRun): Pratinjau {
-  const keBerkas = (p: { baris: number; alasan: string }): BarisUmkmDitolak => ({
+export function gabungPratinjau(hasil: HasilBerkas, resp: RespDryRun): Pratinjau {
+  const keBerkas = (p: { baris: number; alasan: string }): BarisDitolak => ({
     baris: hasil.rows[p.baris - 1]?.baris ?? p.baris,
     alasan: p.alasan,
   });
@@ -49,16 +77,17 @@ export function gabungPratinjau(hasil: HasilCsvUmkm, resp: RespDryRun): Pratinja
     totalGalat: hasil.ditolak.length + resp.totalGalat,
     peringatan: resp.peringatan.map(keBerkas),
     totalPeringatan: resp.totalPeringatan,
+    ...(resp.linkDiganti !== undefined && { linkDiganti: resp.linkDiganti }),
   };
 }
 
 /** Pratinjau bila semua baris ditolak di browser (tidak ada yang dikirim ke server). */
-export function pratinjauTanpaServer(hasil: HasilCsvUmkm): Pratinjau {
+export function pratinjauTanpaServer(hasil: HasilBerkas): Pratinjau {
   return {
     ditambah: 0,
     diperbarui: 0,
     dilewati: 0,
-    galat: hasil.ditolak,
+    galat: [...hasil.ditolak],
     totalGalat: hasil.ditolak.length,
     peringatan: [],
     totalPeringatan: 0,
