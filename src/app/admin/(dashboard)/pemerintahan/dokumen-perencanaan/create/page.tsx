@@ -7,6 +7,7 @@ import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import DokumenPerencanaanForm from '../_com/DokumenPerencanaanForm';
+import { DOKUMEN_ADMIN_TEXT } from '../_com/dokumen-perencanaan.text';
 
 const LIST_PATH = '/admin/pemerintahan/dokumen-perencanaan';
 
@@ -42,6 +43,7 @@ export default function CreateDokumenPerencanaan() {
       <DokumenPerencanaanForm
         form={state.create.form}
         loading={state.create.loading}
+        title={DOKUMEN_ADMIN_TEXT.createTitle}
         submitLabel="Simpan"
         onSubmit={handleSubmit}
       />

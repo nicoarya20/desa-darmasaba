@@ -39,22 +39,23 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../_com/header';
+import { DOKUMEN_ADMIN_TEXT } from './_com/dokumen-perencanaan.text';
 
 const BASE_PATH = '/admin/pemerintahan/dokumen-perencanaan';
 const FILTER_ALL = 'semua';
 const filterOptions = [
-  { value: FILTER_ALL, label: 'Semua' },
+  { value: FILTER_ALL, label: DOKUMEN_ADMIN_TEXT.filterAll },
   ...JENIS_DOKUMEN.map((v) => ({ value: v, label: JENIS_DOKUMEN_LABEL[v] })),
 ];
 
-/** Admin: daftar Dokumen Perencanaan (RPJM/RKP/Berita Acara) dengan filter jenis, cari, edit, hapus. */
+/** Admin: daftar dokumen Arah Kebijakan Pembangunan Desa (5 jenis) dengan filter jenis, cari, edit, hapus. */
 export default function DokumenPerencanaanAdmin() {
   const [search, setSearch] = useState('');
   return (
     <Box>
       <HeaderSearch
-        title="Dokumen Perencanaan"
-        placeholder="Cari judul atau nomor Perdes..."
+        title={DOKUMEN_ADMIN_TEXT.pageTitle}
+        placeholder={DOKUMEN_ADMIN_TEXT.searchPlaceholder}
         searchIcon={<IconSearch size={20} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -91,7 +92,7 @@ function DokumenList({ search }: { search: string }) {
     <Box py="md">
       <Paper withBorder bg={colors['white-1']} p="lg" shadow="md" radius="md">
         <Group justify="space-between" mb="md">
-          <Title order={4}>Daftar Dokumen Perencanaan</Title>
+          <Title order={4}>{DOKUMEN_ADMIN_TEXT.listTitle}</Title>
           <Button
             leftSection={<IconPlus size={18} />}
             color="blue"
@@ -110,7 +111,7 @@ function DokumenList({ search }: { search: string }) {
           <Skeleton height={400} radius="md" />
         ) : data.length === 0 ? (
           <Center py="xl">
-            <Text c="dimmed" fz="sm">Belum ada dokumen perencanaan{jenis ? ' untuk jenis ini' : ''}.</Text>
+            <Text c="dimmed" fz="sm">{jenis ? DOKUMEN_ADMIN_TEXT.emptyJenis : DOKUMEN_ADMIN_TEXT.emptyAll}</Text>
           </Center>
         ) : (
           <Box style={{ overflowX: 'auto' }}>
