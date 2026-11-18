@@ -124,11 +124,12 @@ export function parseProdukHukumInput(raw: Record<string, unknown>): ProdukHukum
   if (!nomor.ok) return nomor;
   const tahun = parseTahun(raw.tahun);
   if (!tahun.ok) return tahun;
-  if (!isKategoriProdukHukum(raw.kategori)) return { ok: false, message: PESAN_PRODUK_HUKUM.kategoriTidakValid };
+  const kategori = raw.kategori;
+  if (!isKategoriProdukHukum(kategori)) return { ok: false, message: PESAN_PRODUK_HUKUM.kategoriTidakValid };
   const fileId = parseFileId(raw.fileId);
   if (!fileId.ok) return fileId;
   return {
     ok: true,
-    data: { judul: judul.judul, nomor: nomor.nomor, tahun: tahun.tahun, kategori: raw.kategori, fileId: fileId.fileId },
+    data: { judul: judul.judul, nomor: nomor.nomor, tahun: tahun.tahun, kategori, fileId: fileId.fileId },
   };
 }
