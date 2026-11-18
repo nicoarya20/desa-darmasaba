@@ -1872,6 +1872,22 @@ Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual — Lightning
 - **Aksesibilitas & failsafe:** klik/tap/Escape melewati; "kurangi animasi" → fade saja; tanpa JS splash pudar sendiri setelah ±6 dtk.
 - Dijaga test `__tests__/api/gate_splash.test.ts`.
 
+### Transisi tema Candi Bentar
+
+`src/app/(public)/_com/theme-transition/`: tombol tema navbar memutar adegan Candi Bentar selama 5 dtk, lalu halaman tampil dalam tema baru.
+
+- **Alur 4 tahap** (angka ms di `theme-gate.timeline.ts`):
+  1. Pilar kiri dan tembok masuk dari tepi kiri, pilar kanan dari kanan. Belum ada latar, jadi halaman lama terlihat di sekitar pilar.
+  2. Pilar berhenti di komposisi splash (celah tetap ada). Langit, air, pantulan, dan cahaya celah memudar masuk sampai menutup layar.
+  3. Tema halaman ditukar di balik latar yang sudah opak, jadi pergantian warna halaman tidak pernah terlihat. Logo tampil di celah.
+  4. Keluar dengan menembus celah persis splash pembuka (zoom adegan tipis, gerbang membesar ke luar, cahaya akhir, pudar).
+- **Adegan = tema tujuan**, bukan tema halaman: ke terang memakai `data-scene="day"` (identik splash), ke gelap memakai `"night"` (langit biru malam, cahaya bulan perak di celah, bulan kecil, bintang tipis, cahaya akhir gelap kebiruan yang berakhir di hitam). Karena itu warnanya literal tetap dengan penanda penjaga warna per deklarasi (§2.5), bukan token `--c-*`.
+- **Modul:** `theme-gate-scene.module.css` (seni: token warna + bulan/bintang) · `theme-gate.module.css` (geometri, hanya memakai `var(--tt-*)`) · `theme-gate.timeline.ts` → `theme-gate.player.ts` → `ThemeGateTransition.tsx` · state `src/state/state-theme-transition.ts` · dipicu `NavbarThemeToggle.tsx`. Siluet memakai ulang `_com/splash/gate-splash.path.ts`.
+- **Kontrak token** (didefinisikan di `.scene[data-scene="day"|"night"]`): gradien `--tt-sky`, `--tt-glow`, `--tt-halo`, `--tt-water`, `--tt-flash`; warna `--tt-pillar`, `--tt-rim`, `--tt-ripple-light`, `--tt-brand-sub`, `--tt-brand-name`; `--tt-brand-shadow`; angka `--tt-rim-opacity`, `--tt-rim-opacity-enter` (rim lebih tegas selama tahap 1 karena hero gelap berwarna navy menelan pilar siang), `--tt-reflection-opacity`, `--tt-moon-opacity`, `--tt-stars-opacity`. Kelas `scene` dipasang di elemen yang sama dengan `--horizon` dan `--zoom-y` (dipakai `--tt-sky`/`--tt-flash`). Seni bulan/bintang ada di `::before`, jadi player bebas memudarkan elemennya. Token baru harus disepakati modul seni dan modul geometri sekaligus.
+- **Batas performa:** sama dengan splash. Tanpa `filter: blur`/`mix-blend-mode` pada layer selayar penuh dan tanpa zoom besar, karena di monitor 4K eksternal (@2x) tekstur layer melebihi memori GPU. Bintang = dua ubin SVG data-uri dalam satu `background-image`, bulan = `radial-gradient`, bukan ratusan elemen.
+- **Reduced motion:** `prefers-reduced-motion` → tema ditukar langsung tanpa overlay.
+- Dijaga test `__tests__/api/theme_gate_scene.test.ts` (token lengkap di dua adegan, siang = nilai splash, malam berakhir gelap) dan `__tests__/api/theme_gate_transition.test.ts` (timeline).
+
 ### Framer Motion Patterns
 
 ```ts

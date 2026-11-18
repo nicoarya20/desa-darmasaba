@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.314] - 2026-11-19
+### Changed
+- **Foto website disimpan lebih lama di HP dan komputer pengunjung.** Foto yang tampil di website kini boleh disimpan di perangkat pengunjung hingga setahun, karena nama berkas foto selalu unik dan tidak pernah ditimpa. Kunjungan kedua dan seterusnya jadi lebih cepat dan hemat kuota. Di Cloudflare foto hanya disimpan sehari, supaya foto yang dihapus admin tidak bertahan lama. Gambar pengganti ("tidak ada gambar", saat foto gagal dibaca) tidak pernah disimpan, sehingga galat sesaat tidak menempel berjam-jam. Berkas non-foto (PDF, audio) tidak berubah. Setelah rilis, cek apakah masa simpan setahun benar-benar sampai ke browser; bila Cloudflare menimpanya dengan setelan 4 jam, ada satu pengaturan "Browser Cache TTL" di dashboard Cloudflare yang perlu disesuaikan.
+
+### Fixed
+- **Beranda tidak lagi "melompat" saat digulir cepat dengan sinyal lambat.** Ada dua penyebab. Pertama, kotak grafik APBDes dan Survei Kepuasan sempat mengecil selama kode grafiknya diunduh lalu membesar lagi; kini tinggi kotak dipertahankan. Kedua, kerangka pemuatan (tampilan abu-abu sebelum data tiba) jauh lebih pendek dari isi akhirnya, sehingga data yang datang terlambat mendorong bagian di bawahnya; kini tinggi kerangka APBDes (termasuk keterangan tahun) dan Kepuasan (termasuk tombol ajakan) sama dengan isi akhirnya di desktop, tablet, dan ponsel. Tampilan akhir tidak berubah. Halaman detail APBDes tidak diubah.
+
+## [0.1.313] - 2026-11-18
+### Added
+- **Animasi Candi Bentar saat mengganti tema terang/gelap.** Menekan tombol matahari/bulan di navbar (desktop dan ponsel) kini memutar adegan sekitar 5 detik: pilar kiri dan kanan Candi Bentar meluncur masuk dari tepi layar, lalu langit dan air muncul di belakangnya, tema halaman berganti di balik adegan, dan kamera menembus celah gerbang seperti layar pembuka beranda. Ke tema gelap tampil adegan malam (langit malam, cahaya bulan, bintang); ke tema terang tampil adegan siang seperti layar pembuka. Pergantian warna halaman tidak pernah terlihat setengah jalan, juga di perangkat lambat. Pengunjung yang mengaktifkan "kurangi gerakan" di perangkatnya tetap mendapat pergantian tema langsung tanpa animasi.
+
 ## [0.1.312] - 2026-11-18
 ### Fixed
 - **Beranda tidak lagi "melompat" saat grafik muncul.** Pada rilis 0.1.310, grafik APBDes dan Survei Kepuasan baru dimuat saat digulir mendekat, tetapi ruang yang disiapkan lebih pendek dari grafik aslinya (terutama di ponsel, selisih sekitar 930 px), sehingga tombol dan bagian di bawahnya terdorong turun saat grafik muncul. Kini ruang cadangan sama dengan tinggi aslinya di desktop, tablet, dan ponsel; grafik mulai dipasang jauh sebelum terlihat; dan kode grafik diunduh begitu pengunjung mulai menggulir atau menyentuh layar. Tampilan akhir grafik tidak berubah, dan beranda tetap ringan saat pertama dibuka.
