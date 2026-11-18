@@ -150,6 +150,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
 
 ## P2. Kontrak API yang membuat frontend memakai mitigasi
 
+- [ ] **`/api/img/:name` membalas `public/no-image.jpg` dengan status 200 bila berkas tidak ada di MinIO** (terverifikasi 2026-11-18 di localhost, stg, prod)
+  - Lokasi: `src/app/api/[[...slugs]]/_lib/img.ts` (cabang `catch` dan ekstensi tak dikenal). Contoh: logo Program Inovasi Bicara Darmasaba `ubna9N6r7RgVWN5plO5mq-mobile.webp` → `200 image/jpeg 1624 B`.
+  - Dampak: frontend tidak bisa membedakan gambar asli dari cadangan; `onError` tidak terpicu, jadi pengganti (inisial/ikon) tidak pernah tampil dan pengunjung melihat gambar bertuliskan "No image" (Program Inovasi, Tips Keamanan, sampul Musik).
+  - Usul: balas `404` (boleh tetap mengirim gambar cadangan sebagai body, atau tanpa body) dan jangan di-cache. Frontend Program Inovasi sudah menampilkan inisial nama saat logo gagal dimuat (keputusan user: tanpa deteksi gambar cadangan di frontend). Cek pemakai lain `/api/img` yang mengandalkan status 200 sebelum mengubah.
+
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
   - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/umkm/produk/findMany.ts` + `_where.ts`. Hanya mendukung `search`, `umkmId`, `kategoriId` (satu nilai), dan `unggulan`. Urutan tetap `createdAt desc`, dan tidak ada jumlah produk per kategori/toko.
   - Mitigasi frontend (MITIGASI SEMENTARA): halaman `/ekonomi/umkm` (rombak gaya katalog, v0.1.264) memuat maks 100 produk sekaligus (`KATALOG_LIST_LIMIT`), lalu menyaring (kategori & toko banyak pilihan, rentang harga, unggulan), mengurutkan, dan menghitung di klien. Ada `console.warn` bila total > 100. Data stg 2026-11-13: 7 produk.
@@ -388,3 +393,4 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - Lingkungan (stg 2026-11-16): langkah Bank Sampah ke-6 "Pilih sampah sesai jenisnya (Tes )" (id `cmrbohsmq0000nr0rjvdv3gqa`) adalah data uji; Data Lingkungan berisi entri uji "Test QA Data Lingkungan" (ikon `icon-test`); judul Konservasi "Filosofi Tri Hita Karuna" seharusnya "Karana".
 - Ekonomi (stg 2026-11-16): Pengangguran ada tahun 9999 (kartu "bulan terbaru" jadi "Februari 9999") dan 2021; Penduduk Miskin 2026 = 5 orang (turun dari 390, tampak data uji); Demografi Pekerjaan berisi "Test QA Pekerjaan"; PADesa "tes" 950 jt + "Penanggulangan Bencana…" ganda; hierarki jabatan BUMDes janggal (Direktur/Bendahara/Sekretaris/Pengawas di bawah Penasihat, Penasihat & Kepala Unit tanpa induk) dan 0 pengurus; Kesejahteraan 6 program tanpa foto/galeri/video; usia kerja menganggur 2 baris sebaran tanpa periode.
 - Kependudukan (stg 2026-11-17): Distribusi Agama = data seed (id `cmk-agama-00x`, total 4.215 ≈ 41% dari total banjar 10.254) + satu baris "LAINNYA 10" tahun 2020 (tampak uji coba); Dinamika Penduduk 100% seed (id `cmk-dinamika-00x`, termasuk 2026); Distribusi Umur 2026 mencampur kelompok seed & form admin. Hanya Data per Banjar yang tampak isian asli.
+- Program Inovasi (2026-11-18): berkas logo 4 program hilang di MinIO (stg & prod): Bicara Darmasaba, Davest, PDKT, Sajjana Dharma Raksaka. Unggah ulang di admin Landing Page › Profil › Program Inovasi (PNG/WebP transparan). Isian `urutan` semua masih kosong (urut abjad).
