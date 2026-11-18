@@ -18,7 +18,7 @@ const SektorUnggulanDesa = new Elysia({
     body: t.Object({
       name: t.String(),
       description: t.String(),
-      value: t.Number(),
+      value: t.Optional(t.Nullable(t.Number())),
       satuan: t.Optional(t.Nullable(t.String())),
       periode: t.Optional(t.Nullable(t.String())),
     }),
@@ -30,7 +30,7 @@ const SektorUnggulanDesa = new Elysia({
     body: t.Object({
       name: t.String(),
       description: t.String(),
-      value: t.Number(),
+      value: t.Optional(t.Nullable(t.Number())),
       satuan: t.Optional(t.Nullable(t.String())),
       periode: t.Optional(t.Nullable(t.String())),
     }),

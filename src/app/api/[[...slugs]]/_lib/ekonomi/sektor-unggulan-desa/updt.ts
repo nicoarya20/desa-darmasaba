@@ -13,10 +13,11 @@ export default async function sektorUnggulanDesaUpdate(context: Context) {
         }
     }
 
+    // value opsional: tidak dikirim = tidak diubah; null = dikosongkan; angka = diisi
     const {name, description, value} = context.body as {
         name: string;
         description: string;
-        value: number;
+        value?: number | null;
     }
 
     // satuan/periode opsional: tidak dikirim = tidak diubah; null/"" = dikosongkan

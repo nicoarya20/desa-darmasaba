@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.306] - 2026-11-18
+### Changed
+- **Kolom "Jumlah" di Sektor Unggulan Desa kini tidak wajib.** Admin bisa menyimpan sektor unggulan (tambah maupun ubah) tanpa mengisi angka; kolom dibiarkan kosong dan tidak lagi otomatis terisi 0. Sektor tanpa angka tetap tampil di halaman publik, hanya tanpa nilainya.
+- Kolom "Jumlah" kini menerima angka 0 dan angka desimal (sebelumnya angka di bawah 1 ditolak).
+
 ## [0.1.305] - 2026-11-18
 ### Added
 - **Kegiatan Desa kategori Pembangunan kini bisa punya dokumentasi foto.** Di form tambah dan ubah kegiatan, saat kategori "Pembangunan" dipilih muncul bagian "Dokumentasi Pembangunan" berisi **Foto Sebelum** dan **Foto Sesudah**, masing-masing bisa diisi sampai 5 foto. Semuanya opsional: kegiatan tetap bisa disimpan tanpa foto. Foto berformat JPG, PNG, atau WebP, maksimal 5 MB per foto.

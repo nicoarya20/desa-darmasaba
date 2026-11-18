@@ -7,6 +7,7 @@ import {
   Button,
   Group,
   Loader,
+  NumberInput,
   Paper,
   Stack,
   Text,
@@ -20,13 +21,15 @@ import { useProxy } from 'valtio/utils';
 import CreateEditor from '../../../_com/createEditor';
 import grafikSektorUnggulan from '../../../_state/ekonomi/sektor-unggulan-desa';
 import { toast } from 'react-toastify';
-import { PERIODE_MAX_LENGTH, SATUAN_MAX_LENGTH } from '@/lib/sektor-unggulan';
+import { parseSektorValueInput, PERIODE_MAX_LENGTH, SATUAN_MAX_LENGTH } from '@/lib/sektor-unggulan';
 
 function CreateSektorUnggulanDesa() {
   const stateGrafik = useProxy(grafikSektorUnggulan, { sync: true }); // sync: cegah caret jump di controlled input
   const [chartData, setChartData] = useState<any[]>([]);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Teks mentah NumberInput (mis. "1.") — dipisah dari form.value agar desimal bisa diketik
+  const [valueInput, setValueInput] = useState<number | string>(stateGrafik.create.form.value ?? '');
 
   // Helper function to check if HTML content is empty
   const isHtmlEmpty = (html: string) => {
@@ -39,9 +42,7 @@ function CreateSektorUnggulanDesa() {
   const isFormValid = () => {
     return (
       stateGrafik.create.form.name?.trim() !== '' &&
-      !isHtmlEmpty(stateGrafik.create.form.description) &&
-      stateGrafik.create.form.value !== null &&
-      stateGrafik.create.form.value >= 0
+      !isHtmlEmpty(stateGrafik.create.form.description)
     );
   };
 
@@ -49,10 +50,11 @@ function CreateSektorUnggulanDesa() {
     stateGrafik.create.form = {
       name: '',
       description: '',
-      value: 0,
+      value: null,
       satuan: '',
       periode: '',
     };
+    setValueInput('');
   };
 
   const handleSubmit = async () => {
@@ -125,15 +127,17 @@ function CreateSektorUnggulanDesa() {
             />
           </Box>
 
-          <TextInput
+          <NumberInput
             label="Jumlah"
-            type="number"
+            description="Opsional. Kosongkan bila sektor ini belum punya angka."
             placeholder="Masukkan jumlah"
-            value={stateGrafik.create.form.value}
-            onChange={(e) => {
-              stateGrafik.create.form.value = Number(e.currentTarget.value);
+            min={0}
+            allowNegative={false}
+            value={valueInput}
+            onChange={(val) => {
+              setValueInput(val);
+              stateGrafik.create.form.value = parseSektorValueInput(val);
             }}
-            required
           />
 
           <TextInput
