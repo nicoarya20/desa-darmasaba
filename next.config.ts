@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 // Wajib di src/lib: image Docker (runner) hanya menyalin src/lib + next.config.*, bukan src/con. `next start` memuat
 // next.config.ts saat runtime, jadi impor dari luar src/lib membuat container mati (stg 0.1.307: MODULE_NOT_FOUND).
 import { SECURITY_HEADERS } from "./src/lib/security-headers";
+import { ROOT_STATIC_FILE_SOURCE, STATIC_CACHE_HEADERS } from "./src/lib/static-cache-headers";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@elysiajs/static', 'elysia'],
@@ -57,15 +58,9 @@ const nextConfig: NextConfig = {
     return [
       // Header keamanan untuk semua route; daftar & alasan nilai di src/lib/security-headers.ts.
       { source: '/:path*', headers: SECURITY_HEADERS },
-      {
-        source: '/assets/:path*', // Path ke folder gambar
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=3600, stale-while-revalidate=600', // Cache selama 1 jam, validasi ulang setelah 10 menit
-          },
-        ],
-      },
+      // Berkas statis public/: /assets/* dan berkas di akar. Masa cache & risikonya di src/lib/static-cache-headers.ts.
+      { source: '/assets/:path*', headers: STATIC_CACHE_HEADERS },
+      { source: ROOT_STATIC_FILE_SOURCE, headers: STATIC_CACHE_HEADERS },
     ];
   },
 };

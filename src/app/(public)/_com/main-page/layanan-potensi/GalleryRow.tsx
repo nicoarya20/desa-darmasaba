@@ -1,7 +1,9 @@
 "use client";
 import { Image } from "@mantine/core";
 import { Link } from "next-view-transitions";
+import { responsiveImageProps } from "../../responsive-image.logic";
 import { useRef, useState, type FocusEvent, type MouseEvent, type PointerEvent } from "react";
+import { galleryImageLoading, GALLERY_IMAGE_SIZES } from "./gallery-image.logic";
 import { buildLoopTrack, DRAG_CLICK_TOLERANCE_PX, loopStart, realIndex, swipeStep } from "./gallery.logic";
 import s from "./gallery.module.css";
 import type { LoopCarousel } from "./use-loop-carousel";
@@ -15,6 +17,8 @@ type Props = {
   items: GalleryItem[];
   carousel: LoopCarousel;
   ctaLabel: string;
+  /** Section sudah mendekati layar: foto kartu di sekitar kartu aktif boleh dimuat lebih awal (selebihnya lazy). */
+  preloadImages: boolean;
   /** User menggeser baris ini (sentuh/trackpad) sejauh `delta` kartu; induk menggeser SEMUA baris. */
   onStep: (delta: number) => void;
 };
@@ -27,7 +31,7 @@ function trackTransform(index: number, dragX: number) {
 }
 
 /** Satu baris galeri loop: kartu aktif di tengah, geser jari (sentuh) atau dua jari (trackpad). */
-export function GalleryRow({ label, variant, items, carousel, ctaLabel, onStep }: Props) {
+export function GalleryRow({ label, variant, items, carousel, ctaLabel, preloadImages, onStep }: Props) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
@@ -113,7 +117,14 @@ export function GalleryRow({ label, variant, items, carousel, ctaLabel, onStep }
                   onFocus={(e) => onCardFocus(e, i)}
                 >
                   {item.imageUrl ? (
-                    <Image src={item.imageUrl} alt="" className={s.image} loading="eager" draggable={false} />
+                    <Image
+                      alt=""
+                      className={s.image}
+                      {...responsiveImageProps(item.imageUrl, GALLERY_IMAGE_SIZES[variant])}
+                      loading={galleryImageLoading(i, carousel.index, variant, preloadImages)}
+                      decoding="async"
+                      draggable={false}
+                    />
                   ) : null}
                   <span className={s.shade} />
                   <span className={s.caption}>

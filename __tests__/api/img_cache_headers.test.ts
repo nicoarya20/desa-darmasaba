@@ -63,6 +63,26 @@ describe('img(): header Cache-Control', () => {
     expect(res.headers.get('Cache-Control')).toBe(IMAGE_CACHE_CONTROL);
   });
 
+  it('?size= lebih besar dari sumber TIDAK memperbesar gambar (hanya mengecilkan)', async () => {
+    const lebarAsli = 16;
+    const sumber = await sharp({ create: { width: lebarAsli, height: lebarAsli, channels: 3, background: '#2a78d6' } }).webp().toBuffer();
+
+    minioMock.getObject.mockResolvedValue(Readable.from([sumber]));
+    const besar = Buffer.from(await (await img({ name: 'abc123-desktop.webp', ROOT, size: 1280 })).arrayBuffer());
+    expect((await sharp(besar).metadata()).width).toBe(lebarAsli);
+
+    minioMock.getObject.mockResolvedValue(Readable.from([sumber]));
+    const kecil = Buffer.from(await (await img({ name: 'abc123-desktop.webp', ROOT, size: 8 })).arrayBuffer());
+    expect((await sharp(kecil).metadata()).width).toBe(8);
+  });
+
+  it('?size= + ?format=jpeg juga tidak memperbesar', async () => {
+    const sumber = await sharp({ create: { width: 16, height: 16, channels: 3, background: '#eb6834' } }).webp().toBuffer();
+    minioMock.getObject.mockResolvedValue(Readable.from([sumber]));
+    const res = await img({ name: 'abc123-desktop.webp', ROOT, size: 1280, format: 'jpeg' });
+    expect((await sharp(Buffer.from(await res.arrayBuffer())).metadata()).width).toBe(16);
+  });
+
   it('galat MinIO → gambar cadangan, no-store (tidak boleh tersimpan lama)', async () => {
     minioMock.getObject.mockRejectedValue(new Error('minio down'));
     const err = vi.spyOn(console, 'error').mockImplementation(() => undefined);
