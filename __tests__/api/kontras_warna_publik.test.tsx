@@ -4,8 +4,11 @@ import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { MantineProvider } from '@mantine/core';
+import { DEFAULT_THEME, MantineProvider } from '@mantine/core';
 import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
+import { ACCENT } from '@/app/(public)/(pages)/kesehatan/posyandu/_com/posyandu.meta';
+import { varWarnaKategori } from '@/app/(public)/(pages)/pemerintahan/event-budaya/_com/agenda.meta';
+import { KATEGORI_EVENT_COLOR } from '@/lib/agenda-desa';
 
 const AA_TEKS_NORMAL = 4.5;
 const PUBLIC_DIR = join(process.cwd(), 'src/app/(public)');
@@ -121,5 +124,55 @@ describe('LayananWaktuBiayaBadge (halaman Layanan)', () => {
 
   it('memakai biru brand, bukan biru bawaan Mantine #228be6', () => {
     expect(variabel('--badge-color').toLowerCase()).toBe('#0a4e78');
+  });
+});
+
+/** Memecah nilai CSS hasil `var(--mantine-color-<warna>-<shade>)` / `color-mix(...)` / hex menjadi hex opak. */
+function resolveMantine(nilai: string): string {
+  const mix = nilai.match(/^color-mix\(in srgb,\s*(.+?),\s*#000\s+(\d+)%\)$/);
+  if (mix) {
+    const [r, g, b] = parseWarna(resolveMantine(mix[1]));
+    const sisa = 1 - Number(mix[2]) / 100;
+    const hex = (v: number) => Math.round(v * sisa).toString(16).padStart(2, '0');
+    return `#${hex(r)}${hex(g)}${hex(b)}`;
+  }
+  const v = nilai.match(/^var\(--mantine-color-([a-z]+)-(\d)\)$/);
+  if (v) return DEFAULT_THEME.colors[v[1]][Number(v[2])];
+  return nilai;
+}
+
+describe('Posyandu: teks aksen kartu profil (ACCENT["--accent-text"])', () => {
+  it.each(Object.keys(ACCENT) as (keyof typeof ACCENT)[])('%s ≥4,5:1 di atas --tint dan #f5f5f7', (nama) => {
+    const gaya = ACCENT[nama] as Record<string, string>;
+    const teks = resolveMantine(gaya['--accent-text']);
+    expect(rasioKontras(teks, resolveMantine(gaya['--tint']))).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
+    expect(rasioKontras(teks, LATAR_PUBLIK.ubin)).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
+  });
+
+  it('aksen lama teal-7/oranye-7 memang gagal (audit prod 2,8–2,9:1) sehingga varian teks diperlukan', () => {
+    expect(rasioKontras('#0ca678', '#e6fcf5')).toBeLessThan(AA_TEKS_NORMAL);
+    expect(rasioKontras('#f76707', '#fff4e6')).toBeLessThan(AA_TEKS_NORMAL);
+  });
+});
+
+describe('Agenda: tinta teks kategori acara (--ev-ink) di atas --ev-bg', () => {
+  it.each(Object.entries(KATEGORI_EVENT_COLOR))('%s (%s) ≥4,5:1 di --ev-bg, putih, dan #f5f5f7', (_kategori, warna) => {
+    const gaya = varWarnaKategori(warna) as Record<string, string>;
+    const ink = resolveMantine(gaya['--ev-ink']);
+    for (const latar of [resolveMantine(gaya['--ev-bg']), LATAR_PUBLIK.putih, LATAR_PUBLIK.ubin]) {
+      expect(rasioKontras(ink, latar)).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
+    }
+  });
+});
+
+describe('Agenda ponsel: acara lewat tidak diredupkan dengan opacity', () => {
+  it('.card[data-lewat] tanpa opacity (opacity menurunkan kontras teks)', () => {
+    const css = readFileSync(
+      join(PUBLIC_DIR, '(pages)/pemerintahan/event-budaya/_com/kalender-ponsel.module.css'),
+      'utf8',
+    );
+    const blok = css.match(/\.card\[data-lewat\]\s*\{[^}]*\}/)?.[0] ?? '';
+    expect(blok).not.toBe('');
+    expect(blok).not.toMatch(/opacity/);
   });
 });
