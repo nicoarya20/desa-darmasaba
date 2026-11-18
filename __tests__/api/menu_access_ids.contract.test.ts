@@ -45,6 +45,8 @@ const EXPECTED_IDS: Record<string, string[]> = {
     'desa.event-budaya',
     'desa.banjar',
     'desa.struktur-perangkat-desa',
+    // 2026-11-18: menu baru Produk Hukum (aditif, tanpa data-migration: pemegang ID submenu dicentang manual di Menu Access).
+    'desa.produk-hukum',
   ],
   'Kesehatan': [
     'kesehatan.posyandu',
