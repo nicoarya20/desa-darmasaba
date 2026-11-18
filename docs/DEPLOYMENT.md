@@ -95,7 +95,7 @@ bun run backfill:file-size   # = bun run prisma/backfill-file-size.ts
 
 ## Header keamanan HTTP
 
-Aplikasi memasang 6 header keamanan (nosniff, X-Frame-Options SAMEORIGIN, Referrer-Policy, Permissions-Policy, HSTS `max-age=15552000`, CSP longgar) di respons semua route lewat `headers()` di `next.config.ts`; daftar dan alasan tiap nilai ada di `src/con/security-headers.ts`. CSP sengaja hanya `frame-ancestors/object-src/base-uri` (tanpa `script-src`/`img-src`/`frame-src`) karena situs memuat iframe Google Maps & YouTube, tile OpenStreetMap, gambar MinIO, dan HTML rich-text admin. Perubahan header wajib dites di stg dulu (Jenna voice, modal PDF, peta, video) sebelum prod.
+Aplikasi memasang 6 header keamanan (nosniff, X-Frame-Options SAMEORIGIN, Referrer-Policy, Permissions-Policy, HSTS `max-age=15552000`, CSP longgar) di respons semua route lewat `headers()` di `next.config.ts`; daftar dan alasan tiap nilai ada di `src/lib/security-headers.ts`. CSP sengaja hanya `frame-ancestors/object-src/base-uri` (tanpa `script-src`/`img-src`/`frame-src`) karena situs memuat iframe Google Maps & YouTube, tile OpenStreetMap, gambar MinIO, dan HTML rich-text admin. Perubahan header wajib dites di stg dulu (Jenna voice, modal PDF, peta, video) sebelum prod.
 
 ## Docker
 
