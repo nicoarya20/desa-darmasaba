@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.316] - 2026-11-19
+### Fixed
+- **Bagian atas beranda (foto Perbekel, kartu nama, daftar program) tidak lagi bergeser sendiri saat font selesai dimuat.** Di HP dengan sinyal lambat, font khusus website baru selesai diunduh setelah sekitar 6 detik. Pada saat itu tampilan berganti dari font bawaan ke font website dan menggeser bagian bawah blok hero sekitar 64 piksel, sehingga halaman terlihat "melompat" (nilai pergeseran 0,16 di PageSpeed mobile, di atas batas baik 0,1). Kini font tidak lagi diganti setelah halaman tampil.
+- **Yang berubah bagi pengunjung:** pada kunjungan pertama dengan sinyal lambat, huruf memakai font bawaan perangkat. Font website tetap diunduh di latar dan dipakai pada halaman atau kunjungan berikutnya (berkasnya disimpan 30 hari di perangkat sejak rilis 0.1.315). Pada perangkat Apple font bawaan hampir sama dengan font website, jadi perbedaannya nyaris tak terlihat.
+
 ## [0.1.315] - 2026-11-19
 ### Changed
 - **Font, ikon, dan gambar statis website disimpan lebih lama di perangkat pengunjung (30 hari).** Berkas seperti font utama, logo/ikon desa, dan gambar tetap di folder aset sebelumnya hanya disimpan 1–4 jam, sehingga setiap kunjungan ulang mengunduhnya lagi. Kini kunjungan kedua dan seterusnya lebih cepat dan hemat kuota. Catatan operator: karena nama berkasnya tetap, bila sebuah berkas statis diganti isinya, ganti juga namanya agar pengunjung langsung melihat versi baru.
