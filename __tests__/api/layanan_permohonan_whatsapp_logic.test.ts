@@ -1,0 +1,67 @@
+// @vitest-environment node
+// URL WhatsApp tindak lanjut permohonan surat keterangan: nomor petugas, encoding, dan privasi (tanpa NIK/KK/alamat).
+import { buildPermohonanWaMessage, buildPermohonanWaUrl } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/permohonan-whatsapp.logic';
+import { PETUGAS_LAYANAN_WA } from '@/con/layanan-whatsapp';
+import { describe, expect, it } from 'vitest';
+
+// searchParams.get sudah men-decode; decodeURIComponent kedua akan merusak teks yang memuat "%".
+const decodeText = (url: string) => new URL(url).searchParams.get('text') ?? '';
+
+describe('buildPermohonanWaUrl', () => {
+  it('menuju nomor petugas ternormalisasi 6289674970658 dengan pesan ter-encode', () => {
+    const url = buildPermohonanWaUrl({ nama: 'Made Wirawan', kategoriNama: 'Surat Keterangan Kelakuan Baik' });
+    expect(url).toBe(
+      'https://wa.me/6289674970658?text=' +
+        encodeURIComponent('Halo, saya Made Wirawan ingin mengajukan Surat Keterangan Kelakuan Baik melalui website Desa Darmasaba.'),
+    );
+    expect(url).not.toMatch(/\s/);
+  });
+
+  it('nomor petugas di konfigurasi adalah +62 896-7497-0658 dan labelnya bukan Jenna', () => {
+    expect(PETUGAS_LAYANAN_WA.nomor).toBe('+62 896-7497-0658');
+    expect(PETUGAS_LAYANAN_WA.label).toBe('Petugas Layanan Desa');
+  });
+
+  it('NIK, nomor KK, dan alamat yang ikut di input tidak masuk ke URL maupun pesan', () => {
+    const input = {
+      nama: 'Ni Luh Sari',
+      kategoriNama: 'Surat Keterangan Domisili',
+      nik: '5103010101010001',
+      nomorKk: '5103010101010002',
+      alamat: 'Jl. Raya Darmasaba No. 9',
+    };
+    const url = buildPermohonanWaUrl(input) as string;
+    const text = decodeText(url);
+    for (const rahasia of [input.nik, input.nomorKk, input.alamat, 'Raya Darmasaba']) {
+      expect(url).not.toContain(rahasia);
+      expect(text).not.toContain(rahasia);
+    }
+    expect(text).toContain('Ni Luh Sari');
+  });
+
+  it('karakter khusus pada nama & kategori di-encode dan kembali utuh saat di-decode', () => {
+    const nama = "I Wayan O'Brien & Putra #1 100%?";
+    const kategori = 'Surat Keterangan Usaha (SKU) / Izin';
+    const url = buildPermohonanWaUrl({ nama, kategoriNama: kategori }) as string;
+    // Hanya satu parameter query: '&', '#', '?' dari input tidak boleh membelah URL.
+    expect(new URL(url).searchParams.getAll('text')).toHaveLength(1);
+    expect(new URL(url).hash).toBe('');
+    expect(decodeText(url)).toBe(buildPermohonanWaMessage({ nama, kategoriNama: kategori }));
+    expect(decodeText(url)).toContain(nama);
+    expect(decodeText(url)).toContain(kategori);
+  });
+
+  it('spasi/baris baru beruntun dirapikan dan bagian terlalu panjang dipotong', () => {
+    expect(buildPermohonanWaMessage({ nama: '  Made \n\t Wirawan  ', kategoriNama: 'Surat\nDomisili' })).toBe(
+      'Halo, saya Made Wirawan ingin mengajukan Surat Domisili melalui website Desa Darmasaba.',
+    );
+    const panjang = buildPermohonanWaMessage({ nama: 'A'.repeat(5000), kategoriNama: 'B'.repeat(5000) });
+    expect(panjang.length).toBeLessThan(300);
+  });
+
+  it('kategori kosong memakai "surat keterangan" agar kalimat tetap utuh', () => {
+    expect(buildPermohonanWaMessage({ nama: 'Made', kategoriNama: undefined })).toBe(
+      'Halo, saya Made ingin mengajukan surat keterangan melalui website Desa Darmasaba.',
+    );
+  });
+});
