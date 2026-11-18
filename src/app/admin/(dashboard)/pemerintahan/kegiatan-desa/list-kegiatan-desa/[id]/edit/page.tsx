@@ -308,7 +308,8 @@ function EditKegiatanDesa() {
           </Box>
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>Gambar (Opsional)</Text>
+            <Text fw="bold" fz="sm">Gambar Sampul (Opsional)</Text>
+            <Text fz="xs" c="dimmed" mb={6}>Tampil sebagai gambar utama di daftar dan detail kegiatan.</Text>
             <Dropzone
               onDrop={(files) => {
                 const f = files[0];

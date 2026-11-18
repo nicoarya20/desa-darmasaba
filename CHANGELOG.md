@@ -6,6 +6,7 @@
 - **Halaman detail kegiatan menampilkan "Dokumentasi Pembangunan"** bila ada minimal satu foto: foto sebelum dan sesudah berdampingan (bertumpuk di ponsel), lalu galeri progres. Tanpa foto, bagian ini tidak muncul.
 
 ### Changed
+- Input gambar lama di form Kegiatan Desa kini berlabel **"Gambar Sampul (Opsional)"** beserta keterangan bahwa gambar itu tampil sebagai gambar utama di daftar dan detail kegiatan, supaya tidak tertukar dengan foto dokumentasi Pembangunan.
 - Foto yang diganti atau dihapus dari kegiatan Pembangunan ikut dibersihkan dari penyimpanan setelah data berhasil disimpan. Memindahkan kegiatan ke kategori selain Pembangunan mengosongkan foto dokumentasinya.
 
 ## [0.1.304] - 2026-11-17
