@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { SECURITY_HEADERS } from "./src/con/security-headers";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@elysiajs/static', 'elysia'],
@@ -50,6 +51,8 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // Header keamanan untuk semua route; daftar & alasan nilai di src/con/security-headers.ts.
+      { source: '/:path*', headers: SECURITY_HEADERS },
       {
         source: '/assets/:path*', // Path ke folder gambar
         headers: [
