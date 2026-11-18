@@ -57,6 +57,13 @@
   margin-top: 8px;
 }
 
+.waInfo {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.47;
+}
+
 .cta {
   display: inline-flex;
   align-items: center;

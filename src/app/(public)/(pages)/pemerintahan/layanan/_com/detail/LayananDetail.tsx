@@ -62,6 +62,7 @@ export function LayananDetailBody({ data, onAjukan }: { data: LayananDetailData;
           {ajukan}
           <LayananWaktuBiayaBadge estimasiWaktu={data.estimasiWaktu} biaya={data.biaya} />
         </div>
+        <p className={s.waInfo}>{T.waInfo}</p>
       </header>
 
       {/* Persyaratan & alur dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
@@ -79,6 +80,7 @@ export function LayananDetailBody({ data, onAjukan }: { data: LayananDetailData;
         <div className={s.closingText}>
           <h2 className={s.closingTitle}>{T.closingTitle}</h2>
           <p>{T.closingText}</p>
+          <p>{T.waInfo}</p>
         </div>
         {ajukan}
       </section>
