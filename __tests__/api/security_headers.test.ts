@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { SECURITY_HEADERS } from '../../src/con/security-headers';
+import { SECURITY_HEADERS } from '../../src/lib/security-headers';
 
 const headerValue = (key: string) => SECURITY_HEADERS.find((h) => h.key === key)?.value;
 
