@@ -149,6 +149,10 @@ boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)'
 
 Gradient ini dipakai di button "Simpan" hampir semua halaman Create/Edit admin.
 
+### 2.5 Kontras Teks Halaman Publik (juknis lomba 5.7)
+
+Teks halaman publik wajib ≥4,5:1 (teks besar ≥3:1) terhadap latarnya. Token teks sekunder modul publik: `--muted #6e6e73` dan `--subtle #6e6e73` (`--sb-subtle` di stat-bars) = 5,1:1 di putih, 4,7:1 di `#f5f5f7`. `#86868b` (abu lama, 3,6:1 / 3,3:1) **jangan dipakai untuk teks**; boleh hanya untuk ikon/dekorasi (≥3:1). Di latar lebih gelap dari `#f5f5f7` pakai `--ink`/`#515154`. Badge Mantine pada halaman publik memakai biru brand (`colors['blue-button']`), bukan `blue` bawaan (`#228be6` hanya 3,2:1 di latar badge). Dijaga `__tests__/api/kontras_warna_publik.test.tsx`.
+
 ---
 
 ## 3. Tipografi
