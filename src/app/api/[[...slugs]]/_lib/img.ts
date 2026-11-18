@@ -68,7 +68,7 @@ async function img({
 
     if (convertToJpeg) {
       let pipeline = sharp(buffer);
-      if (size) pipeline = pipeline.resize(size);
+      if (size) pipeline = pipeline.resize({ width: size, withoutEnlargement: true });
       const metadata = await pipeline.metadata();
       if (metadata.hasAlpha) {
         output = await pipeline.png().toBuffer();
@@ -78,7 +78,9 @@ async function img({
         responseContentType = "image/jpeg";
       }
     } else if (size) {
-      output = await sharp(buffer).resize(size).toBuffer();
+      // withoutEnlargement: `?size=` hanya mengecilkan. Tanpa ini sumber kecil diperbesar (berkas lebih besar, bukan
+      // lebih hemat) dan lebar sangat besar bisa dipakai membebani CPU/memori origin.
+      output = await sharp(buffer).resize({ width: size, withoutEnlargement: true }).toBuffer();
     } else {
       output = buffer;
     }
