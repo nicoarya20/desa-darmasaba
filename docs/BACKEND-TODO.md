@@ -264,6 +264,10 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Konteks: API Lingkungan → Gotong Royong (dihapus 2026-11-16, `docs/decisions/2026-11-16-gotong-royong-kategori-kegiatan.md`) dulu menghapus permanen gambar lama saat diganti; jalur Kegiatan Desa yang kini satu-satunya tidak. Dampak: berkas yatim menumpuk di MinIO.
   - Usul: ikuti pola menu lain di `docs/decisions/2026-11-12-sampah.md` (ambil `imageId` sebelum update, panggil `removeReleasedFiles("KegiatanDesa", [lama])` setelah update sukses bila berubah). Hapus kegiatan tetap soft delete (gambar dipertahankan).
 
+- [ ] **PUT Kegiatan Desa menghapus gambar bila `imageId` tidak dikirim** (terverifikasi 2026-11-18: `desa/kegiatan-desa/updt.ts` `imageId: body.imageId || null`)
+  - Dampak: klien lain/skrip yang PUT tanpa `imageId` diam-diam mengosongkan gambar (field foto Pembangunan baru sengaja memakai semantik undefined = tidak diubah, `docs/decisions/2026-11-18-kegiatan-pembangunan-foto.md`). Form admin selalu mengirim `imageId`, jadi belum terlihat.
+  - Usul: `imageId: body.imageId === undefined ? undefined : body.imageId || null` (undefined = tidak diubah). Gabungkan dengan butir pembersihan berkas lama di bawah; pola `removeReleasedFiles` kini sudah ada di handler yang sama untuk foto Pembangunan.
+
 - [ ] **Rating produk UMKM tidak punya sumber data** (terverifikasi, 2026-11-13)
   - Lokasi: `PasarDesa.rating Float @default(0)` di `prisma/schema.prisma`. Tidak ada input di form admin produk dan tidak ada model ulasan. Nilai di stg (4,2–4,6) berasal dari seed, bukan penilaian warga.
   - Frontend: kartu katalog `/ekonomi/umkm` menampilkan slot rating "Belum ada ulasan" dan **sengaja tidak membaca `rating`** (keputusan user 2026-11-13).

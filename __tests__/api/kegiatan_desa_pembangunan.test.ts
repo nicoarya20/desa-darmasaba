@@ -11,10 +11,17 @@ const prismaMock = vi.hoisted(() => ({
     count: vi.fn(),
     groupBy: vi.fn(),
     aggregate: vi.fn(),
+    findUnique: vi.fn(),
   },
+  kegiatanDesaFoto: { deleteMany: vi.fn(), createMany: vi.fn() },
+  fileStorage: { findMany: vi.fn() },
+  $transaction: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma", () => ({ default: prismaMock }));
+vi.mock("@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles", () => ({
+  default: vi.fn(),
+}));
 
 import kegiatanDesaCreate from "@/app/api/[[...slugs]]/_lib/desa/kegiatan-desa/create";
 import kegiatanDesaFindMany from "@/app/api/[[...slugs]]/_lib/desa/kegiatan-desa/find-many";
@@ -49,6 +56,8 @@ beforeEach(() => {
   vi.clearAllMocks();
   prismaMock.kegiatanDesa.create.mockResolvedValue({ id: "k1" });
   prismaMock.kegiatanDesa.update.mockResolvedValue({ id: "k1" });
+  prismaMock.kegiatanDesa.findUnique.mockResolvedValue({ fotoSebelumId: null, fotoSesudahId: null, fotoProgres: [] });
+  prismaMock.$transaction.mockImplementation(async (fn: (tx: typeof prismaMock) => unknown) => fn(prismaMock));
 });
 
 describe("parsePembangunanInput", () => {

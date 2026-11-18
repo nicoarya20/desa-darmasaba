@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.305] - 2026-11-18
+### Added
+- **Kegiatan Desa kategori Pembangunan kini bisa punya dokumentasi foto.** Di form tambah dan ubah kegiatan, saat kategori "Pembangunan" dipilih muncul bagian "Dokumentasi Pembangunan" berisi **Foto Sebelum**, **Foto Sesudah**, dan **Galeri Progres** (sampai 10 foto). Semuanya opsional: kegiatan tetap bisa disimpan tanpa foto. Foto berformat JPG, PNG, atau WebP, maksimal 5 MB per foto.
+- **Halaman detail kegiatan menampilkan "Dokumentasi Pembangunan"** bila ada minimal satu foto: foto sebelum dan sesudah berdampingan (bertumpuk di ponsel), lalu galeri progres. Tanpa foto, bagian ini tidak muncul.
+
+### Changed
+- Foto yang diganti atau dihapus dari kegiatan Pembangunan ikut dibersihkan dari penyimpanan setelah data berhasil disimpan. Memindahkan kegiatan ke kategori selain Pembangunan mengosongkan foto dokumentasinya.
+
 ## [0.1.304] - 2026-11-17
 ### Added
 - **Tema gelap untuk beranda (tahap persiapan, belum bisa dinyalakan pengunjung).** Seluruh beranda kini punya versi gelap bergaya "Malam Netral": latar hitam, panel abu gelap, judul biru terang, footer navy, pita hero yang diredupkan, serta navbar, pencarian, pemutar musik, dan asisten Jenna yang ikut gelap. Tombol matahari/bulan untuk menggantinya baru muncul di lingkungan pengembangan; tombol dibuka untuk warga setelah semua menu selesai dibuat gelap, supaya tidak ada halaman yang tampil setengah gelap. Tampilan terang yang dilihat warga sekarang tidak berubah.

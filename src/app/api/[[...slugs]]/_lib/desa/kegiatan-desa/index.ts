@@ -15,6 +15,14 @@ const pembangunanBody = {
   sumberDana: t.Optional(t.Union([t.String(), t.Null()])),
 };
 
+// Dokumentasi foto Pembangunan — opsional (aditif). Undefined = tidak diubah; null/"" = hapus (foto tunggal);
+// array = set final galeri (maks 10, divalidasi di parseFotoPembangunanInput).
+const fotoPembangunanBody = {
+  fotoSebelumId: t.Optional(t.Union([t.String(), t.Null()])),
+  fotoSesudahId: t.Optional(t.Union([t.String(), t.Null()])),
+  fotoProgresIds: t.Optional(t.Array(t.String())),
+};
+
 const KegiatanDesa = new Elysia({ prefix: "/kegiatandesa", tags: ["Desa/Kegiatan Desa"] })
   .get("/find-many", kegiatanDesaFindMany)
   .get("/monev", kegiatanDesaMonev)
@@ -30,6 +38,7 @@ const KegiatanDesa = new Elysia({ prefix: "/kegiatandesa", tags: ["Desa/Kegiatan
       kategoriKegiatanId: t.String(),
       imageId: t.Optional(t.String()),
       ...pembangunanBody,
+      ...fotoPembangunanBody,
     }),
   })
   .put("/:id", kegiatanDesaUpdate, {
@@ -43,6 +52,7 @@ const KegiatanDesa = new Elysia({ prefix: "/kegiatandesa", tags: ["Desa/Kegiatan
       kategoriKegiatanId: t.String(),
       imageId: t.Optional(t.String()),
       ...pembangunanBody,
+      ...fotoPembangunanBody,
     }),
   })
   .delete("/del/:id", kegiatanDesaDelete);

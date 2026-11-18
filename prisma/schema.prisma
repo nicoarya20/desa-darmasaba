@@ -93,6 +93,9 @@ model FileStorage {
   InfoTekno                      InfoTekno[]
   PengaduanMasyarakat            PengaduanMasyarakat[]
   KegiatanDesa                   KegiatanDesa[]
+  KegiatanDesaFotoSebelum        KegiatanDesa[]             @relation("KegiatanDesaFotoSebelum")
+  KegiatanDesaFotoSesudah        KegiatanDesa[]             @relation("KegiatanDesaFotoSesudah")
+  KegiatanDesaFoto               KegiatanDesaFoto[]
   DokumenPerencanaan             DokumenPerencanaan[]
   ProgramInovasi                 ProgramInovasi[]
   ProgramInovasiImages           ProgramInovasi[]           @relation("ProgramInovasiImages")
@@ -2343,7 +2346,27 @@ model KegiatanDesa {
   statusPembangunan String? // "rencana" | "berjalan" | "selesai" — divalidasi di API
   sumberDana        String?
 
+  // Dokumentasi Pembangunan (opsional): foto sebelum/sesudah + galeri progres berurutan. Hanya untuk kategori Pembangunan
+  fotoSebelum   FileStorage?       @relation("KegiatanDesaFotoSebelum", fields: [fotoSebelumId], references: [id], onDelete: SetNull)
+  fotoSebelumId String?
+  fotoSesudah   FileStorage?       @relation("KegiatanDesaFotoSesudah", fields: [fotoSesudahId], references: [id], onDelete: SetNull)
+  fotoSesudahId String?
+  fotoProgres   KegiatanDesaFoto[]
+
   @@index([kategoriKegiatanId])
+}
+
+// Galeri foto progres Kegiatan Desa kategori Pembangunan (maks 10, `urutan` = urutan tampil); ikut terhapus bersama kegiatan/berkas.
+model KegiatanDesaFoto {
+  id             String      @id @default(cuid())
+  kegiatanDesa   KegiatanDesa @relation(fields: [kegiatanDesaId], references: [id], onDelete: Cascade)
+  kegiatanDesaId String
+  file           FileStorage @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId         String
+  urutan         Int         @default(0)
+  createdAt      DateTime    @default(now())
+
+  @@index([kegiatanDesaId, urutan])
 }
 
 // Dokumen perencanaan desa: RPJM (periode 6/8 tahun), RKP (per tahun), dan berita acara musyawarah.
