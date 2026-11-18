@@ -37,11 +37,11 @@
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: 12px 48px;
   padding: 32px 0;
-  border-top: 1px solid var(--rule, #d2d2d7);
+  border-top: 1px solid var(--rule);
 }
 
 .row:last-child {
-  border-bottom: 1px solid var(--rule, #d2d2d7);
+  border-bottom: 1px solid var(--rule);
 }
 
 .head,

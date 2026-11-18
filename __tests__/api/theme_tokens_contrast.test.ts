@@ -85,6 +85,7 @@ const LEGACY_LIGHT: Tokens = {
   'c-chart-3': '#8ac1e3',
   'c-open': '#1f9d55',
   'c-closed': '#d9363e',
+  'c-focus': '#0071e3',
 };
 
 function failingPairs(tokens: Tokens, exceptions: Set<string>) {
@@ -99,6 +100,7 @@ function failingPairs(tokens: Tokens, exceptions: Set<string>) {
   check('c-on-brand', 'c-brand-fill-hover', 4.5);
   check('c-brand', 'c-brand-tint', 4.5);
   for (const fg of CHART) for (const bg of CHART_SURFACES) check(fg, bg, 3);
+  for (const bg of SURFACES) check('c-focus', bg, 3); // WCAG 1.4.11: cincin fokus ≥ 3 di semua latar
   return fails;
 }
 

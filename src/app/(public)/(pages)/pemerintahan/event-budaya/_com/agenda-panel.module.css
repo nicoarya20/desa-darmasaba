@@ -88,7 +88,7 @@ button.legendItem {
   height: 18px;
   border-radius: 5px;
   background: var(--ev);
-  color: #fff;
+  color: #fff; /* tema-tetap: angka di atas warna kategori agenda */
 }
 
 .legendDot {
@@ -203,7 +203,7 @@ button.legendItem {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--sunday, #c8102e);
+  background: var(--sunday, #c8102e); /* tema-tetap: cadangan bila di luar .page kalender, token aslinya light-dark */
 }
 
 .yearMonth {

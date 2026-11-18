@@ -13,7 +13,7 @@
 
 .grid {
   /* Tinta di atas foto (latar media & badge putih): sengaja sama di kedua tema. */
-  --ink: #1d1d1f;
+  --ink: #1d1d1f; /* tema-tetap: latar media kartu, bukan teks */
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -68,7 +68,7 @@
   left: 20px;
   padding: 6px 14px;
   border-radius: 980px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.92); /* tema-tetap: lencana di atas foto */
   color: var(--ink);
   font-size: 13px;
   line-height: 1.3;
@@ -81,7 +81,7 @@
   right: 24px;
   bottom: 22px;
   margin: 0;
-  color: #fff;
+  color: #fff; /* tema-tetap: judul di atas foto + scrim */
   font-size: 24px;
   line-height: 1.17;
   font-weight: 600;
@@ -137,7 +137,7 @@
 }
 
 .detailButton:focus-visible {
-  outline: 3px solid #0071e3;
+  outline: 3px solid var(--c-focus);
   outline-offset: 2px;
 }
 

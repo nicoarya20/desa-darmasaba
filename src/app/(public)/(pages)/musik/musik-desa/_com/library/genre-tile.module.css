@@ -7,7 +7,7 @@
   padding: 14px 16px;
   border-radius: 8px;
   overflow: hidden;
-  color: #fff;
+  color: #fff; /* tema-tetap: teks di atas ubin genre berwarna */
   text-decoration: none;
   transition: filter 200ms ease;
 }

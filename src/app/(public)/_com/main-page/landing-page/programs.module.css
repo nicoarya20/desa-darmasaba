@@ -177,7 +177,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #a1a1a6;
+  color: #a1a1a6; /* tema-tetap: ikon cadangan logo, abu netral */
 }
 
 .tileName {

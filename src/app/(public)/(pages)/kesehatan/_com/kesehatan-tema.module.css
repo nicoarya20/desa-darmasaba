@@ -11,7 +11,7 @@
   /* colors['white-1']: panel detail. */
   --kt-panel: light-dark(#fbfbfc, var(--c-tile));
   /* colors['white-1'] sebagai teks/ikon di atas kepala biru & kotak info (sama di dua tema). */
-  --kt-on-fill: #fbfbfc;
+  --kt-on-fill: #fbfbfc; /* tema-tetap: teks/ikon di atas kepala biru dan kotak info */
   /* colors['blue-button-trans']: kotak info berteks putih. Gelap: --c-brand-fill (teks putih 5,5:1). */
   --kt-info: light-dark(#628ec6, var(--c-brand-fill));
   /* Gradasi kartu Fasilitas Kesehatan. */

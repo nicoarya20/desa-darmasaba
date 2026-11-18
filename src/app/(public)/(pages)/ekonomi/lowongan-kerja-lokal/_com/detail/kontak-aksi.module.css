@@ -126,7 +126,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .button[data-tone='fill']:hover {
-    background: color-mix(in srgb, var(--c-brand-fill) 86%, #000);
+    background: color-mix(in srgb, var(--c-brand-fill) 86%, #000); /* tema-tetap: hover menggelapkan token isi, arah sama di dua tema */
   }
 
   .button[data-tone='line']:hover {
