@@ -88,7 +88,7 @@
 }
 
 .option[data-disabled] {
-  color: var(--subtle, #86868b);
+  color: var(--subtle, #6e6e73);
   cursor: not-allowed;
 }
 
@@ -185,7 +185,7 @@
 }
 
 .priceInput::placeholder {
-  color: var(--subtle, #86868b);
+  color: var(--subtle, #6e6e73);
 }
 
 /* ---------- Kerangka memuat ---------- */

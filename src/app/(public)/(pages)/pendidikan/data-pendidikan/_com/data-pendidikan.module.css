@@ -8,7 +8,7 @@
    tengah (beda dari halaman Pendidikan lain). */
 .page {
   --ink: #1d1d1f;
-  --subtle: #86868b;
+  --subtle: #6e6e73;
   color: var(--ink);
 }
 
