@@ -57,11 +57,11 @@
 
 .mapFill {
   /*
-   * Pulau terang: tile OpenStreetMap tetap terang di tema gelap (keputusan tile menunggu user), jadi penanda dan popup
-   * putih Leaflet ikut terang. --brand/--ink/--muted dikunci ke nilai terang token sebagai nilai polos (= nilai lama,
+   * Pulau terang: tile OpenStreetMap tetap terang di tema gelap (keputusan user 2026-11-18, final), jadi penanda
+   * dan popup putih Leaflet ikut terang. --brand/--ink/--muted dikunci ke nilai terang token sebagai nilai polos (= nilai lama,
    * terang identik). light-dark() di repo ini diubah postcss-preset-mantine menjadi blok [data-mantine-color-scheme=dark],
    * jadi color-scheme di bawah TIDAK mengubahnya (hanya kontrol native, mis. scrollbar popup); yang memakai light-dark()
-   * di dalam peta dikunci terpisah (lihat `.popup .popupArah > [data-text]`). Bila tile kelak digelapkan, pulau ini dibuang.
+   * di dalam peta dikunci terpisah (lihat `.popup .popupArah > [data-text]`).
    */
   color-scheme: light;
   --brand: #0a4e78;

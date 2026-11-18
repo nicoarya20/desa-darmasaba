@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Tema gelap Fase 2: menu Keamanan (12 rute) membaca token --c-* (theme-tokens.css).
 // Nilai terang dipertahankan lewat light-dark(terang, gelap) atau alias token bernilai terang sama, jadi tema terang identik.
-// Peta (tile OSM CCTV, iframe Google Maps Polsek) sengaja tetap terang sampai user memilih varian tile gelap.
+// Peta (tile OSM CCTV, iframe Google Maps Polsek) tetap terang: keputusan final user 2026-11-18.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -111,7 +111,7 @@ describe('CCTV: UI ikut tema, peta tetap pulau terang', () => {
     expect(decl(blockOf(explorer, '.popupLokasi'), 'color')).toBe('var(--muted)');
   });
 
-  it('tile peta tidak diganti (keputusan tile gelap menunggu user)', () => {
+  it('tile peta tidak diganti (peta tetap terang, keputusan final user)', () => {
     expect(KEAMANAN('cctv/_com/CctvMapSection.tsx')).toContain('url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"');
   });
 });

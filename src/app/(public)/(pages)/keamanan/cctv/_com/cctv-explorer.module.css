@@ -2,7 +2,7 @@
  * Panel peta + daftar CCTV (di dalam .panel APBDes). Desktop: peta | daftar bergulir setinggi peta.
  * ≤1068px: peta di atas, daftar penuh di bawahnya. Variabel warna diwarisi dari .section APBDes.
  * Tema gelap: peta (tile OSM), penanda, dan popup Leaflet (latar putih bawaan) sengaja tetap terang lewat "pulau
- * terang" .map (pola lokasi.module.css Bank Sampah). Varian tile gelap menunggu keputusan user.
+ * terang" .map (pola lokasi.module.css Bank Sampah). Peta tetap terang = keputusan final user (2026-11-18).
  */
 .head {
   display: flex;
@@ -81,7 +81,7 @@
    * --brand/--ink/--muted dikunci ke nilai terang token (= nilai lama, terang identik). Catatan: light-dark() di
    * proyek ini diubah postcss-preset-mantine menjadi aturan [data-mantine-color-scheme], jadi color-scheme: light di
    * sini hanya mengunci kontrol native, bukan light-dark(); jangan pakai light-dark() di dalam pulau ini.
-   * Bila tile kelak digelapkan, pulau ini dibuang.
+   * Peta tetap terang adalah keputusan final user (2026-11-18), jadi pulau ini permanen.
    */
   color-scheme: light;
   --brand: #0a4e78;

@@ -88,7 +88,7 @@ describe('Lokasi Bank Sampah: daftar ikut tema, peta pulau terang', () => {
     );
   });
 
-  it('tile peta tidak diubah (keputusan user ditunggu)', () => {
+  it('tile peta tetap OSM terang (keputusan user 2026-11-18, final)', () => {
     expect(SRC('pengelolaan-sampah-bank-sampah/_com/LokasiMap.tsx')).toContain(
       'url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"',
     );
