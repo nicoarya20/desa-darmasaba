@@ -4,7 +4,11 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
-  /** Kelas CSS yang memberi kotak cadangan setinggi isi aslinya (lihat lazy-chart.module.css) sebelum isi dimuat. */
+  /**
+   * Kelas CSS yang memberi kotak setinggi isi aslinya (lihat lazy-chart.module.css). TIDAK dilepas setelah isi
+   * terpasang: komponen `dynamic()` tidak menampilkan apa pun selama kodenya diunduh, dan tanpa tinggi minimum kotak
+   * runtuh lalu mengembang lagi (dua pergeseran besar, CLS 0,5-0,8 saat gulir cepat dengan cache dingin).
+   */
   placeholderClassName: string;
   /** Isi mulai dimuat sebelum benar-benar terlihat, supaya pergeseran akibat pemasangan terjadi di luar layar. */
   rootMargin?: string;
@@ -39,7 +43,7 @@ export function MountWhenNear({ children, placeholderClassName, rootMargin = MOU
   }, [near, rootMargin]);
 
   return (
-    <div ref={boxRef} className={near ? undefined : placeholderClassName}>
+    <div ref={boxRef} className={placeholderClassName}>
       {near ? children : null}
     </div>
   );

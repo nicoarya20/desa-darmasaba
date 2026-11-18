@@ -18,7 +18,7 @@ type Props = {
 export function ApbdesBody({ data, variant }: Props) {
   const { list, year, current, categories, updated, hasItems } = data;
 
-  if (list === null) return <ApbdesSkeleton />;
+  if (list === null) return <ApbdesSkeleton variant={variant} />;
   if (year === null) return <p className={s.empty}>{APBDES_TEXT.emptyAll}</p>;
 
   return (

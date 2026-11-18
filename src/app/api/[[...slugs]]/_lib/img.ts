@@ -3,6 +3,18 @@ import fs from "fs/promises";
 import sharp from "sharp";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
 
+/**
+ * Cache gambar yang berhasil dibaca. Nama berkas selalu unik (`nanoid()` di semua jalur unggah) dan tidak pernah
+ * ditimpa, jadi isinya tak berubah: browser boleh menyimpan setahun (`immutable`). Cloudflare (tepi) sengaja hanya
+ * sehari (`s-maxage`) supaya gambar yang dihapus admin tidak bertahan lama di tepi. Juknis lomba 5.4: audit
+ * "cache lifetimes" menandai 1,4-1,8 MB gambar yang masa cache-nya hanya 1-4 jam. Jawaban cadangan (no-image) TIDAK
+ * memakai ini: bisa muncul karena galat MinIO sesaat, jadi tak boleh tersimpan lama.
+ */
+export const IMAGE_CACHE_CONTROL = "public, max-age=31536000, s-maxage=86400, immutable";
+
+/** Jawaban cadangan (no-image): tidak disimpan di Cloudflare maupun browser, agar galat sesaat tak menempel berjam-jam. */
+export const IMAGE_FALLBACK_CACHE_CONTROL = "no-store";
+
 const MIME_MAP: Record<string, string> = {
   ".webp": "image/webp",
   ".jpg": "image/jpeg",
@@ -30,7 +42,7 @@ async function img({
     console.warn(`Ekstensi file tidak didukung: ${ext}`);
     const buffer = await fs.readFile(noImage);
     return new Response(new Uint8Array(buffer), {
-      headers: { "Content-Type": "image/jpeg" },
+      headers: { "Content-Type": "image/jpeg", "Cache-Control": IMAGE_FALLBACK_CACHE_CONTROL },
     });
   }
 
@@ -73,7 +85,7 @@ async function img({
 
     return new Response(new Uint8Array(output), {
       headers: {
-        "Cache-Control": "public, max-age=3600, stale-while-revalidate=600",
+        "Cache-Control": IMAGE_CACHE_CONTROL,
         "Content-Type": responseContentType,
       },
     });
@@ -81,7 +93,7 @@ async function img({
     console.error(`Gagal mengambil file dari MinIO: ${name}`, error);
     const buffer = await fs.readFile(noImage);
     return new Response(new Uint8Array(buffer), {
-      headers: { "Content-Type": "image/jpeg" },
+      headers: { "Content-Type": "image/jpeg", "Cache-Control": IMAGE_FALLBACK_CACHE_CONTROL },
     });
   }
 }
