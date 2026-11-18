@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Halaman Monev & Pembangunan gaya APBDes: keadaan kosong (tanpa "Rp 0"/0%), ringkasan berisi,
-// baris kegiatan, tautan APBDes, dan dokumen perencanaan.
+// baris kegiatan, tautan APBDes, dan kartu tautan ke Arah Kebijakan Pembangunan Desa (dokumen perencanaan pindah ke sana).
 // jsdom rusak di repo ini → markup diuji via renderToStaticMarkup; efek (fetch) tidak jalan di server,
 // jadi data diisi langsung ke state valtio sebelum render.
 import { MantineProvider } from '@mantine/core';
@@ -14,14 +14,12 @@ vi.mock('next-view-transitions', () => ({
 }));
 
 import stateDokumenPerencanaanPublik from '@/app/admin/(dashboard)/_state/desa/dokumenPerencanaanPublik';
-import type { DokumenPerencanaanItem } from '@/app/admin/(dashboard)/_state/desa/dokumenPerencanaan';
 import stateMonevPembangunan, { type MonevKegiatan } from '@/app/admin/(dashboard)/_state/desa/monevPembangunan';
 import Page from '@/app/(public)/(pages)/pemerintahan/monev-pembangunan/page';
-import { DokumenList } from '@/app/(public)/(pages)/pemerintahan/monev-pembangunan/_com/DokumenPerencanaanSection';
 import { MonevKegiatanPanel } from '@/app/(public)/(pages)/pemerintahan/monev-pembangunan/_com/MonevKegiatanPanel';
 import { MonevSummary } from '@/app/(public)/(pages)/pemerintahan/monev-pembangunan/_com/MonevSummary';
 import { MONEV_TEXT } from '@/app/(public)/(pages)/pemerintahan/monev-pembangunan/_com/monev.text';
-import { DOKUMEN_PERENCANAAN_SECTION_ID, type RkpRef } from '@/lib/dokumen-perencanaan';
+import { DOKUMEN_PERENCANAAN_PUBLIC_HREF, type RkpRef } from '@/lib/dokumen-perencanaan';
 import type { MonevSummary as MonevSummaryData } from '@/lib/kegiatan-pembangunan';
 
 const render = (node: React.ReactElement) =>
@@ -54,22 +52,6 @@ const kegiatan = (id: string, extra: Partial<MonevKegiatan> = {}): MonevKegiatan
   image: null,
   ...extra,
 });
-// test-only: dokumen berbentuk respons find-many.
-const dokumen = (id: string, extra: Partial<DokumenPerencanaanItem> = {}): DokumenPerencanaanItem => ({
-  id,
-  jenis: 'RPJM',
-  judul: `Dokumen ${id}`,
-  tahun: null,
-  tahunMulai: 2021,
-  tahunSelesai: 2027,
-  nomorPerdes: null,
-  ringkasan: null,
-  jenisMusyawarah: null,
-  fileId: null,
-  file: null,
-  ...extra,
-});
-
 const panelProps = {
   loading: false,
   failed: false,
@@ -83,7 +65,7 @@ const panelProps = {
 
 beforeEach(() => {
   Object.assign(stateMonevPembangunan, { data: [], summary: null, totalPages: 1, loading: false, failed: false });
-  Object.assign(stateDokumenPerencanaanPublik, { data: [], totalPages: 1, loading: false, failed: false, rkpDocs: [] });
+  stateDokumenPerencanaanPublik.rkpDocs = [];
 });
 
 describe('Halaman — keadaan kosong (data stg)', () => {
@@ -99,14 +81,14 @@ describe('Halaman — keadaan kosong (data stg)', () => {
     expect(html).not.toContain(MONEV_TEXT.filterLabel);
   });
 
-  it('tautan realisasi APBDes dan dokumen perencanaan tetap tampil', () => {
+  it('tautan realisasi APBDes dan kartu tautan Arah Kebijakan tetap tampil', () => {
     stateMonevPembangunan.summary = EMPTY_SUMMARY;
     const html = render(<Page />);
 
     expect(html).toContain('href="/apbdes"');
     expect(html).toContain(MONEV_TEXT.apbdesCta);
-    expect(html).toContain(`id="${DOKUMEN_PERENCANAAN_SECTION_ID}"`);
-    expect(html).toContain(MONEV_TEXT.docEmpty('RPJM'));
+    expect(html).toContain(`href="${DOKUMEN_PERENCANAAN_PUBLIC_HREF}"`);
+    expect(html).toContain(MONEV_TEXT.arahCta);
   });
 
   it('sebelum data datang → kerangka, bukan pesan kosong', () => {
@@ -208,30 +190,42 @@ describe('MonevKegiatanPanel', () => {
   });
 });
 
-describe('DokumenList', () => {
-  it('kosong → pesan per jenis', () => {
-    const html = render(<DokumenList jenis="RKP" items={[]} loading={false} failed={false} onRetry={() => {}} />);
-    expect(html).toContain(MONEV_TEXT.docEmpty('RKP'));
+describe('dokumen perencanaan pindah ke Arah Kebijakan Pembangunan Desa', () => {
+  const RKP_PDF = 'https://cdn.test/rkp-2026.pdf'; // test-only
+  const arahCard = (html: string) => html.slice(html.indexOf(MONEV_TEXT.arahTitle) - 200, html.indexOf(MONEV_TEXT.arahCta) + 200);
+
+  it('kartu tautan menunjuk halaman baru, memuat nama halaman, dan tampil juga saat data terisi', () => {
+    for (const summary of [EMPTY_SUMMARY, FILLED_SUMMARY]) {
+      stateMonevPembangunan.summary = summary;
+      const html = render(<Page />);
+      expect(html).toContain('href="/pemerintahan/arah-kebijakan-pembangunan-desa"');
+      expect(text(arahCard(html))).toContain('RPJM, RKP, APBDes, dan pelaporan realisasinya ada di Arah Kebijakan Pembangunan Desa');
+      expect(text(html)).toContain(MONEV_TEXT.arahCta);
+    }
   });
 
-  it('berisi → periode, judul, nomor Perdes, Lihat PDF + Unduh; tanpa file → keterangan', () => {
-    const items = [
-      dokumen('d1', {
-        nomorPerdes: '4 Tahun 2021',
-        ringkasan: 'Ringkasan RPJM',
-        file: { id: 'f1', link: 'https://cdn.test/rpjm.pdf', realName: 'rpjm.pdf' },
-      }),
-      dokumen('d2', { jenis: 'BERITA_ACARA_MUSYAWARAH', tahun: 2026, tahunMulai: null, tahunSelesai: null, jenisMusyawarah: 'MUSRENBANGDES' }),
-    ];
-    const html = render(<DokumenList jenis="RPJM" items={items} loading={false} failed={false} onRetry={() => {}} />);
-    const t = text(html);
+  it('bagian Dokumen Perencanaan lama hilang: tanpa anchor, tab, baris dokumen, atau tombol Lihat PDF', () => {
+    stateMonevPembangunan.summary = FILLED_SUMMARY;
+    stateMonevPembangunan.data = [kegiatan('k1')];
+    const html = render(<Page />);
 
-    expect(t).toContain('2021 - 2027');
-    expect(t).toContain('Dokumen d1');
-    expect(t).toContain('Nomor Perdes: 4 Tahun 2021');
-    expect(html).toContain('href="https://cdn.test/rpjm.pdf"');
-    expect(html).toContain('download="rpjm.pdf"');
-    expect(t).toContain('2026 · Musrenbang Desa');
-    expect(t).toContain(MONEV_TEXT.docNoFile);
+    expect(html).not.toContain('id="dokumen-perencanaan"');
+    expect(html).not.toContain('Jenis dokumen perencanaan');
+    expect(html).not.toContain('Halaman dokumen perencanaan');
+    expect(html).not.toContain('Berkas PDF belum tersedia');
+    expect(text(html)).not.toContain('Lihat PDF');
+    expect(text(html)).not.toContain('Nomor Perdes');
+    expect(html).not.toContain('Berita Acara');
+  });
+
+  it('kartu kegiatan di halaman tetap berlabel "Bersumber dari RKP Desa {tahun}" dengan tautan PDF dari state RKP', () => {
+    stateMonevPembangunan.summary = FILLED_SUMMARY;
+    stateMonevPembangunan.data = [kegiatan('k1', { tanggal: '2026-03-10' }), kegiatan('k2', { tanggal: '2024-05-01' })];
+    stateDokumenPerencanaanPublik.rkpDocs = [{ id: 'r26', judul: 'RKP 2026', tahun: 2026, file: { id: 'f1', link: RKP_PDF, realName: 'rkp-2026.pdf' } }];
+    const html = render(<Page />);
+
+    expect(text(html)).toContain('Bersumber dari RKP Desa 2026');
+    expect(html).toContain(`href="${RKP_PDF}"`);
+    expect(text(html)).not.toContain('Bersumber dari RKP Desa 2024');
   });
 });

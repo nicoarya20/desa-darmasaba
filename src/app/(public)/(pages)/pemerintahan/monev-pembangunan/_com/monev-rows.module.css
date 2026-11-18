@@ -1,5 +1,5 @@
 /*
- * Baris daftar kegiatan & dokumen perencanaan halaman Monev (di dalam .panel APBDes).
+ * Baris daftar kegiatan halaman Monev (di dalam .panel APBDes).
  * Variabel warna diwarisi dari .section APBDes; --accent/--tint per status diset inline (monev.meta.ts).
  * Breakpoint apple.com: ≤1068px dan ≤734px.
  */
@@ -193,124 +193,6 @@
   white-space: nowrap;
 }
 
-/* ---------- Dokumen perencanaan ---------- */
-.docPanel {
-  scroll-margin-top: 80px;
-}
-
-.docRow {
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) auto;
-  column-gap: 20px;
-  align-items: start;
-  padding: 16px 0;
-  border-top: 1px solid var(--line);
-}
-
-.docIcon {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  background: #fff;
-  color: var(--brand);
-}
-
-.docMain {
-  min-width: 0;
-}
-
-.docMeta {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--brand);
-}
-
-.docTitle {
-  margin: 4px 0 0;
-  font-size: 17px;
-  line-height: 1.35;
-  font-weight: 600;
-}
-
-.docNomor {
-  margin: 4px 0 0;
-  font-size: 14px;
-  color: var(--subtle);
-}
-
-.docRingkasan {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  margin: 8px 0 0;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--muted);
-}
-
-.docActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.docNoFile {
-  margin: 0;
-  font-size: 14px;
-  color: var(--subtle);
-  white-space: nowrap;
-}
-
-.pillButton,
-.pillPrimary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 980px;
-  font-size: 15px;
-  font-weight: 500;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background-color 200ms ease;
-}
-
-.pillButton {
-  background: #fff;
-  color: var(--brand);
-}
-
-.pillPrimary {
-  background: var(--brand);
-  color: #fff;
-}
-
-.pillButton:focus-visible,
-.pillPrimary:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .pillPrimary:hover {
-    background: var(--brand-hover);
-  }
-
-  .pillButton:hover {
-    background: var(--brand-tint);
-  }
-}
-
-.wideOnly {
-  display: inline;
-}
-
 /* ---------- Tablet ---------- */
 @media (max-width: 1068px) {
   .row,
@@ -357,24 +239,5 @@
     overflow: visible;
     clip-path: none;
     color: var(--muted);
-  }
-
-  .docRow {
-    grid-template-columns: 40px minmax(0, 1fr);
-    column-gap: 12px;
-    row-gap: 12px;
-  }
-
-  .docIcon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .docActions {
-    grid-column: 2;
-  }
-
-  .wideOnly {
-    display: none;
   }
 }

@@ -152,25 +152,25 @@
   outline-offset: 2px;
 }
 
-/* ---------- Tautan APBDes ---------- */
-.apbdes {
+/* ---------- Kartu tautan (APBDes, Arah Kebijakan) ---------- */
+.linkCard {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-.apbdesText {
+.linkCardText {
   flex: 1;
   min-width: 0;
 }
 
-.apbdesTitle {
+.linkCardTitle {
   margin: 0;
   font-size: 19px;
   font-weight: 600;
 }
 
-.apbdesBody {
+.linkCardBody {
   margin: 4px 0 0;
   font-size: 15px;
   color: var(--muted);
@@ -260,7 +260,7 @@
     font-size: 15px;
   }
 
-  .apbdes {
+  .linkCard {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;

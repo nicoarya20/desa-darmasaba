@@ -2,10 +2,6 @@
 import type { DokumenPerencanaanForm as FormValues } from '@/app/admin/(dashboard)/_state/desa/dokumenPerencanaan';
 import colors from '@/con/colors';
 import {
-  JENIS_DOKUMEN,
-  JENIS_DOKUMEN_LABEL,
-  JENIS_MUSYAWARAH,
-  JENIS_MUSYAWARAH_LABEL,
   NOMOR_PERDES_MAX_LENGTH,
   RINGKASAN_MAX_LENGTH,
   TAHUN_MAX,
@@ -14,11 +10,16 @@ import {
   type JenisMusyawarah,
 } from '@/lib/dokumen-perencanaan';
 import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
-import { Button, Group, NumberInput, Paper, Select, Stack, TextInput, Textarea } from '@mantine/core';
+import { Button, Group, NumberInput, Paper, Select, Stack, TextInput, Textarea, Title } from '@mantine/core';
 import { useState } from 'react';
-
-const jenisOptions = JENIS_DOKUMEN.map((v) => ({ value: v, label: JENIS_DOKUMEN_LABEL[v] }));
-const musyawarahOptions = JENIS_MUSYAWARAH.map((v) => ({ value: v, label: JENIS_MUSYAWARAH_LABEL[v] }));
+import {
+  DOKUMEN_ADMIN_TEXT,
+  JENIS_OPTIONS,
+  JUDUL_PLACEHOLDER,
+  MUSYAWARAH_OPTIONS,
+  RINGKASAN_HINT,
+  TAHUN_HINT,
+} from './dokumen-perencanaan.text';
 
 const toYear = (v: string | number): number | null => (typeof v === 'number' ? v : null);
 
@@ -27,26 +28,36 @@ type Props = {
   loading: boolean;
   submitLabel: string;
   currentFile?: { link: string; realName: string } | null;
+  /** Judul formulir; bawaan nama halaman. */
+  title?: string;
   onSubmit: (pdf: File | null) => void;
 };
 
-/** Form dokumen perencanaan: field tahun/periode/musyawarah muncul sesuai jenis, plus unggah PDF. */
-export default function DokumenPerencanaanForm({ form, loading, submitLabel, currentFile, onSubmit }: Props) {
+/** Form dokumen Arah Kebijakan Pembangunan Desa: field tahun/periode/musyawarah muncul sesuai jenis, plus unggah PDF. */
+export default function DokumenPerencanaanForm({
+  form,
+  loading,
+  submitLabel,
+  currentFile,
+  title = DOKUMEN_ADMIN_TEXT.pageTitle,
+  onSubmit,
+}: Props) {
   const [pdf, setPdf] = useState<File | null>(null);
 
   return (
     <Paper withBorder bg={colors['white-1']} p="lg" radius="md" shadow="sm" w={{ base: '100%', md: '70%' }}>
       <Stack gap="md">
+        <Title order={4}>{title}</Title>
         <Select
           label="Jenis Dokumen"
-          data={jenisOptions}
+          data={JENIS_OPTIONS}
           value={form.jenis}
           allowDeselect={false}
           onChange={(v) => { if (v) form.jenis = v as JenisDokumen; }}
         />
         <TextInput
           label="Judul"
-          placeholder="Judul dokumen"
+          placeholder={JUDUL_PLACEHOLDER[form.jenis]}
           value={form.judul}
           onChange={(e) => (form.judul = e.currentTarget.value)}
           required
@@ -77,6 +88,7 @@ export default function DokumenPerencanaanForm({ form, loading, submitLabel, cur
         ) : (
           <NumberInput
             label="Tahun"
+            description={TAHUN_HINT[form.jenis]}
             min={TAHUN_MIN}
             max={TAHUN_MAX}
             allowDecimal={false}
@@ -90,7 +102,7 @@ export default function DokumenPerencanaanForm({ form, loading, submitLabel, cur
           <Select
             label="Jenis Musyawarah"
             placeholder="Pilih jenis musyawarah"
-            data={musyawarahOptions}
+            data={MUSYAWARAH_OPTIONS}
             value={form.jenisMusyawarah}
             onChange={(v) => (form.jenisMusyawarah = v as JenisMusyawarah | null)}
             required
@@ -106,7 +118,7 @@ export default function DokumenPerencanaanForm({ form, loading, submitLabel, cur
         />
         <Textarea
           label="Ringkasan"
-          description="Opsional"
+          description={RINGKASAN_HINT[form.jenis] ?? DOKUMEN_ADMIN_TEXT.ringkasanDefault}
           autosize
           minRows={3}
           maxRows={8}
@@ -115,7 +127,7 @@ export default function DokumenPerencanaanForm({ form, loading, submitLabel, cur
           onChange={(e) => (form.ringkasan = e.currentTarget.value)}
         />
 
-        <PdfDropzoneField label="Berkas PDF (Opsional)" file={pdf} onChange={setPdf} currentFile={currentFile} />
+        <PdfDropzoneField label={DOKUMEN_ADMIN_TEXT.berkasHint} file={pdf} onChange={setPdf} currentFile={currentFile} />
 
         <Group justify="flex-end">
           <Button bg={colors['blue-button']} loading={loading} onClick={() => onSubmit(pdf)}>

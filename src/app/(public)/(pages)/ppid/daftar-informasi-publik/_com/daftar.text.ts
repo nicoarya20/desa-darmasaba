@@ -6,7 +6,7 @@ export const DAFTAR_TEXT = {
   lead: 'Daftar Informasi Publik Desa Darmasaba adalah kumpulan data yang dapat diakses oleh masyarakat sesuai dengan ketentuan peraturan yang berlaku.',
   searchLabel: 'Pencarian informasi publik',
   searchPlaceholder: 'Cari informasi publik...',
-  perencanaanNote: 'Dokumen RPJM Desa, RKP Desa, dan berita acara musyawarah tersedia di Monev & Pembangunan.',
+  perencanaanNote: 'Dokumen RPJM Desa, RKP Desa, APBDes, dan pelaporan realisasinya tersedia di Arah Kebijakan Pembangunan Desa.',
   perencanaanLink: 'Dokumen Perencanaan',
   tableCaption: 'Daftar informasi publik Desa Darmasaba',
   loading: 'Memuat daftar informasi publik',

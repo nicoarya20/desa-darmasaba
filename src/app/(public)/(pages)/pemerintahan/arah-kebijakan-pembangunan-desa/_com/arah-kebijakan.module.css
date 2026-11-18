@@ -1,0 +1,297 @@
+/*
+ * Halaman Arah Kebijakan Pembangunan Desa: kerangka .section/.panel dipinjam dari APBDes (apbdes.module.css),
+ * variabel warna (--ink, --muted, --subtle, --line, --brand) diwarisi dari sana. Breakpoint apple.com: 1068px & 734px.
+ */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.segScroll {
+  align-self: center;
+  max-width: 100%;
+}
+
+.segRoot {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.panelLead {
+  margin: -12px 0 20px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* ---------- Tabel ---------- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.table th {
+  padding: 0 12px 8px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--subtle);
+}
+
+.table td {
+  padding: 16px 12px;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.table th:first-child,
+.table td:first-child {
+  padding-left: 0;
+}
+
+.table th:last-child,
+.table td:last-child {
+  padding-right: 0;
+}
+
+.colNo {
+  width: 56px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.colTahun {
+  width: 120px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.colFile {
+  width: 230px;
+}
+
+.colAksi {
+  width: 200px;
+}
+
+.cellNama {
+  min-width: 0;
+}
+
+.judul {
+  display: block;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--subtle);
+}
+
+.ringkasan {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.fileName {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.fileName svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--brand);
+}
+
+.none {
+  font-size: 14px;
+  color: var(--subtle);
+}
+
+.aksi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 980px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 200ms ease;
+}
+
+.btnLight {
+  background: #fff;
+  color: var(--brand);
+}
+
+.btnPrimary {
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btnPrimary:hover {
+    background: var(--brand-hover);
+  }
+
+  .btnLight:hover {
+    background: var(--brand-tint);
+  }
+}
+
+/* ---------- Memuat / kosong / galat ---------- */
+.skeleton {
+  display: grid;
+  gap: 12px;
+}
+
+.notice {
+  margin: 0;
+  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.notice > p {
+  margin: 0;
+}
+
+.retry {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 980px;
+  background: #fff;
+  color: var(--brand);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.retry:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1068px) {
+  .colFile {
+    width: 170px;
+  }
+
+  .colAksi {
+    width: 190px;
+  }
+}
+
+/* ---------- Mobile: tiap baris menjadi kartu bertumpuk ---------- */
+@media (max-width: 734px) {
+  .body {
+    gap: 12px;
+  }
+
+  .panelLead {
+    margin-top: -8px;
+    margin-bottom: 16px;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: auto;
+  }
+
+  /* Kepala kolom disembunyikan secara visual; setiap sel membawa labelnya sendiri lewat data-label. */
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .table tr {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .table tbody tr:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .table td,
+  .table td:first-child,
+  .table td:last-child {
+    padding: 0;
+    border: 0;
+    width: auto;
+  }
+
+  .table td + td {
+    margin-top: 8px;
+  }
+
+  .table td.colNo {
+    display: none;
+  }
+
+  .table td[data-label]::before {
+    content: attr(data-label) ": ";
+    color: var(--subtle);
+  }
+
+  .colFile .fileName {
+    display: inline-flex;
+    vertical-align: top;
+  }
+
+  .judul {
+    font-size: 16px;
+  }
+
+  .aksi {
+    margin-top: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}
