@@ -42,7 +42,7 @@ Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) me
 
 - **Jarak**: `--edge-gutter` (tepi kiri/kanan), `--section-gap` (antar-section beranda, isi terakhir → footer), `--block-gap` (antar-bagian di dalam halaman). Lihat §4. Jangan angka literal 56/64/100px.
 - **`--gutter`**: wadah pemakai `KabarListHeader` wajib set `--gutter: var(--edge-gutter)`, kalau tidak rel pil di ponsel melebar.
-- **Warna (WAJIB untuk halaman baru)**: situs publik punya tombol tema dan default mengikuti OS (§2.5), jadi setiap halaman baru langsung tampil gelap bagi sebagian pengunjung. Warna hanya lewat token `--c-*` dari `src/app/theme-tokens.css` (§2.5), bukan hex literal: brand `--c-brand` (teks/judul/tautan) dan `--c-brand-fill` + `--c-on-brand` (tombol isi), tinta `--c-ink`, abu teks `--c-muted`/`--c-ink-2`, panel/ubin `--c-tile` radius 18px tanpa border/bayangan, garis `--c-line-strong`. Token lokal modul jadi alias (`.section { --ink: var(--c-ink); }`). Nilai lokal yang berbeda dari token: `light-dark(terang = literal lama, gelap)` atau `@mixin dark { … }`; nilai terang tidak boleh berubah. Elemen `dangerouslySetInnerHTML` wajib memasang `rt.root` di elemen itu sendiri (§2.5 "Penetral rich text CMS", dijaga test). Aturan lengkap: §2.5 "Menulis gaya gelap". Cek halaman di kedua tema sebelum selesai (§2.5 "Pratinjau").
+- **Warna (WAJIB untuk halaman baru)**: situs publik punya tombol tema dan default mengikuti OS (§2.5), jadi setiap halaman baru langsung tampil gelap bagi sebagian pengunjung. Warna hanya lewat token `--c-*` dari `src/app/theme-tokens.css` (§2.5), bukan hex literal: brand `--c-brand` (teks/judul/tautan) dan `--c-brand-fill` + `--c-on-brand` (tombol isi), tinta `--c-ink`, abu teks `--c-muted`/`--c-ink-2`, panel/ubin `--c-tile` radius 18px tanpa border/bayangan, garis `--c-line-strong`. Token lokal modul jadi alias (`.section { --ink: var(--c-ink); }`). Nilai lokal yang berbeda dari token: `light-dark(terang = literal lama, gelap)` atau `@mixin dark { … }`; nilai terang tidak boleh berubah. Literal warna di CSS publik yang tidak ikut tema ditolak test (§2.5 "Penjaga warna literal"). Elemen `dangerouslySetInnerHTML` wajib memasang `rt.root` di elemen itu sendiri (§2.5 "Penetral rich text CMS", dijaga test). Aturan lengkap: §2.5 "Menulis gaya gelap". Cek halaman di kedua tema sebelum selesai (§2.5 "Pratinjau").
 - **Tipografi**: `h1` 48px (≤734px 32) brand rata kiri + satu kalimat pengantar 19px abu (maks 640px); judul bagian `h2` 28px (ponsel 24), jarak judul → isi 24px (ponsel 20).
 - **Breakpoint CSS**: 1068px (tablet) dan 734px (ponsel).
 
@@ -55,6 +55,7 @@ Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) me
 5. **Alamat induk menu** (`/keamanan`, `/ekonomi`, dst.) sengaja 404; jangan buat halaman induk. Submenu yang disembunyikan (`hidden: true` di `src/con/navbar-list-menu.ts`) juga 404.
 6. **Gerak**: hormati `prefers-reduced-motion`; hover hanya di `(hover: hover) and (pointer: fine)`. Tulis `backdrop-filter` tanpa `-webkit-` manual (Lightning CSS).
 7. **Mobile**: tidak boleh ada geser horizontal halaman; baris pil/kartu yang geser harus di dalam relnya sendiri.
+8. **Warna ikut tema**: CSS di `src/app/(public)` tanpa warna literal yang tidak ikut tema; pakai token `--c-*`, `light-dark()`, `@mixin dark`, atau penanda `/* tema-tetap: <alasan> */`. Dijaga test `__tests__/api/no_hardcoded_color_guard.test.ts` (gagal bila dilanggar). Lihat §2.5 "Penjaga warna literal".
 
 ### 0.5 Mendaftarkan halaman
 
@@ -170,6 +171,7 @@ File: `src/app/theme-tokens.css` (diimpor `globals.css`). Terang di `:root` = **
 | `--c-hero-bg`, `--c-footer-from/to` | `#d1d9e8`, `#1c6ea4`/`#124170` | `#0e1620`, `#0f3354`/`#081a2c` | Hero, gradasi footer |
 | `--c-chart-1/2/3` | `#0a4e78`/`#2f91cc`/`#8ac1e3` | `#6cb4e4`/`#2f91cc`/`#cfe6f5` | Seri grafik (JS: string `"var(--c-chart-n)"`) |
 | `--c-open` / `--c-closed` | `#1f9d55` / `#d9363e` | `#30d158` / `#ff453a` | Status buka/tutup |
+| `--c-focus` | `#0071e3` | `#0a84ff` | Cincin fokus (`:focus-visible`), ≥ 3:1 di semua permukaan |
 
 `--brand` dipisah dua: teks pakai `--c-brand` (gelap: biru terang), tombol isi pakai `--c-brand-fill` (gelap: biru tua, teks putih 5,5:1). Brand `#0A4E78` di atas hitam hanya 2,4:1.
 
@@ -211,6 +213,35 @@ import rt from "@/app/(public)/_com/rich-text/rich-text.module.css";
 
 <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: html }} />
 ```
+
+#### Penjaga warna literal
+
+CSS di `src/app/(public)` tidak boleh memakai warna literal (hex, `rgb`/`rgba`, `hsl`, warna bernama) yang tidak ikut tema. `__tests__/api/no_hardcoded_color_guard.test.ts` memindai semua `*.css` di sana.
+
+**Lolos otomatis**:
+- (R1) literal di dalam `light-dark()`;
+- (R2) literal di blok gelap (`@mixin dark`, `[data-mantine-color-scheme=dark]`, `prefers-color-scheme: dark`);
+- (R3) literal terang yang selektor + properti-nya (shorthand ↔ longhand warna, custom property persis) ditimpa di blok gelap dalam file yang sama;
+- (R4) `mask-*`;
+- (R5) semua literal di `box-shadow`/`text-shadow`/`drop-shadow()`, serta hitam alfa di dalam `*-gradient()` (scrim di atas media).
+
+Isi `url()` dan komentar diabaikan.
+
+**Tidak otomatis** (ganti dengan token/`light-dark()`, atau beri penanda): `color-mix()` dengan `#fff`/`#000`, fallback `var(--x, literal)`, dan hitam alfa polos sebagai latar.
+
+**Penanda `tema-tetap`**: warna yang memang sama di dua tema (teks putih di atas foto/video/gradasi brand, label/penanda data, cincin fokus putih di atas media) diberi `/* tema-tetap: <alasan> */` tepat setelah `;` di baris yang sama. Alasan wajib diisi; penanda yang tidak lagi melekat ke literal (basi) membuat test merah.
+
+```css
+.caption {
+  color: #fff; /* tema-tetap: teks di atas foto */
+}
+```
+
+**Pengecualian per file/selektor** maksimal 3, masing-masing beralasan (daftar `EXCEPTIONS` di test): pulau terang peta CCTV dan Bank Sampah, serta splash Candi Bentar. Menambah pengecualian file/selektor butuh keputusan user.
+
+Cincin fokus memakai token `--c-focus` (terang `#0071e3`, gelap `#0a84ff`).
+
+**Di luar cakupan**: warna di TS/TSX (±99 literal di 31 file, hutang tercatat).
 
 **Pratinjau**: klik tombol tema di navbar, atau di konsol/ego-browser `localStorage.setItem("mantine-color-scheme-value","dark")` lalu muat ulang (`"light"` untuk kembali, `localStorage.removeItem(...)` untuk "auto"). Uji default "auto" tanpa menyentuh localStorage bersama: CDP `Emulation.setEmulatedMedia` dengan `prefers-color-scheme` `dark`/`light`. localStorage dipakai bersama semua tab localhost:3000. Cek di 1440px, 1920×1080 @2x, dan 390px; kontras teks ≥ 4,5, ikon/garis grafik ≥ 3.
 
