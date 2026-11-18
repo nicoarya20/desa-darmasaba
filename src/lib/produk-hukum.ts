@@ -42,6 +42,19 @@ export const PESAN_PRODUK_HUKUM = {
   fileIdTipe: "fileId harus berupa teks",
 } as const;
 
+/** Berkas PDF produk hukum seperti dikirim API (tanpa path internal). */
+export type ProdukHukumFileRef = { id: string; link: string; realName: string };
+
+/** Satu produk hukum seperti dikirim API daftar/detail (`file` null = belum ada PDF). */
+export type ProdukHukumRecord = {
+  id: string;
+  judul: string;
+  nomor: string | null;
+  tahun: number | null;
+  kategori: string;
+  file: ProdukHukumFileRef | null;
+};
+
 /** Kolom produk hukum yang siap disimpan (tanpa berkas; berkas ditangani terpisah lewat `fileId`). */
 export type ProdukHukumFields = {
   judul: string;

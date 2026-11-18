@@ -1,21 +1,19 @@
 import { uploadPdfFile } from "@/app/admin/_com/upload/pdf-upload";
 import ApiFetch from "@/lib/api-fetch";
-import { parseProdukHukumInput, type KategoriProdukHukum } from "@/lib/produk-hukum";
+import {
+  parseProdukHukumInput,
+  type KategoriProdukHukum,
+  type ProdukHukumFileRef,
+  type ProdukHukumRecord,
+} from "@/lib/produk-hukum";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 
 /** Berkas PDF produk hukum dari API (tanpa path internal). */
-export type ProdukHukumFile = { id: string; link: string; realName: string };
+export type ProdukHukumFile = ProdukHukumFileRef;
 
 /** Satu produk hukum dari API (`file` null = belum ada PDF). */
-export type ProdukHukumItem = {
-  id: string;
-  judul: string;
-  nomor: string | null;
-  tahun: number | null;
-  kategori: string;
-  file: ProdukHukumFile | null;
-};
+export type ProdukHukumItem = ProdukHukumRecord;
 
 /** Isi form create/edit. `fileId`: undefined = berkas tidak diubah, string = berkas baru hasil unggah. */
 export type ProdukHukumFormValues = {

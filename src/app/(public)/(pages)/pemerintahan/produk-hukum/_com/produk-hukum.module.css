@@ -1,0 +1,215 @@
+/*
+ * Halaman publik Produk Hukum (Pemerintahan): tabel No · Nama · Tahun · Kategori · File. Variabel warna (--brand, --ink,
+ * --muted, --line, --tile, --radius) diwarisi dari `.section` Kabar Desa yang membungkus halaman. Garis tipis antarbaris,
+ * tanpa kartu/bayangan. Tautan file memakai sapuan warna link-reveal (.trigger + .cta), bukan garis bawah.
+ * Breakpoint mengikuti DESIGN.md: ≤734px (ponsel).
+ */
+.tableWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--ink);
+}
+
+.head th {
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+
+.cell {
+  padding: 20px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 16px;
+  line-height: 1.45;
+  vertical-align: top;
+}
+
+.colNo {
+  width: 56px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.colTahun {
+  width: 96px;
+  font-variant-numeric: tabular-nums;
+}
+
+.colKategori {
+  width: 220px;
+}
+
+.colFile {
+  width: 190px;
+}
+
+.nama {
+  min-width: 0;
+}
+
+.judul {
+  display: block;
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.nomor {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Tautan berkas ---------- */
+.fileLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.fileLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brand);
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.fileLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.fileEmpty {
+  color: var(--subtle);
+  font-size: 15px;
+}
+
+/* ---------- Memuat ---------- */
+.skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton {
+  min-height: 72px;
+  border-radius: var(--radius);
+  background: var(--tile);
+  animation: produkHukumPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes produkHukumPulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* ---------- Ponsel: baris jadi blok bertumpuk, tanpa geser horizontal ---------- */
+@media (max-width: 734px) {
+  .head {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .table,
+  .table tbody {
+    display: block;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 32px auto minmax(0, 1fr);
+    grid-template-areas:
+      'no nama nama'
+      '. tahun kategori'
+      '. file file';
+    gap: 8px 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cell {
+    padding: 0;
+    border-bottom: 0;
+    width: auto;
+  }
+
+  .colNo {
+    grid-area: no;
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .nama {
+    grid-area: nama;
+  }
+
+  .judul {
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .colTahun {
+    grid-area: tahun;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .colTahun::before {
+    content: attr(data-label) ' ';
+  }
+
+  .colKategori {
+    grid-area: kategori;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .colFile {
+    grid-area: file;
+  }
+}
