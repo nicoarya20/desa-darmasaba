@@ -19,12 +19,13 @@ import {
   Text
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconPlus, IconSearch, IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconSearch, IconEdit, IconTrash, IconUpload } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import umkmState from '../../../_state/ekonomi/umkm/umkm';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
+import { UmkmImportModal } from './_com/UmkmImportModal';
 
 function DataUmkm() {
   const router = useRouter();
@@ -34,6 +35,7 @@ function DataUmkm() {
 
   const [modalHapus, setModalHapus] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [modalImpor, setModalImpor] = useState(false);
 
   useShallowEffect(() => {
     state.load(state.page, 10, debouncedSearch);
@@ -78,13 +80,18 @@ function DataUmkm() {
     <Stack gap="lg">
       <Group justify="space-between">
         <Title order={3}>Data UMKM</Title>
-        <Button 
-          leftSection={<IconPlus size={18} />} 
-          color="blue"
-          onClick={() => router.push('/admin/ekonomi/umkm/data-umkm/create')}
-        >
-          Tambah UMKM
-        </Button>
+        <Group gap="xs">
+          <Button variant="light" leftSection={<IconUpload size={18} />} onClick={() => setModalImpor(true)}>
+            Impor CSV
+          </Button>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            color="blue"
+            onClick={() => router.push('/admin/ekonomi/umkm/data-umkm/create')}
+          >
+            Tambah UMKM
+          </Button>
+        </Group>
       </Group>
 
       <Paper withBorder p="md" radius="md">
@@ -171,6 +178,8 @@ function DataUmkm() {
           />
         </Center>
       </Paper>
+
+      <UmkmImportModal opened={modalImpor} onClose={() => setModalImpor(false)} />
 
       <ModalKonfirmasiHapus
         opened={modalHapus}

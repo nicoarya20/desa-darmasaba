@@ -363,6 +363,16 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Admin Data Banjar `page.tsx:291`: Pagination `load(newPage, 10, search)` membuang filter tahun.
   - Navbar Kependudukan kini satu butir (revisi user 2026-11-17): override `MenuVisibility` untuk 4 href lama (`/kependudukan/{data-per-banjar,dinamika-penduduk,distribusi-agama,distribusi-umur}`) kini diabaikan `toOverrides`, dan tidak bisa dihapus lewat admin karena `menu_visibility/update.ts:14` menolak `menuKey` tak dikenal. stg: 0 baris (dicek 2026-11-17); prod belum dicek. Usul: cek prod, hapus baris yatim lewat migrasi data/skrip bila ada.
 
+- [ ] **UMKM: tidak ada unique index `(nama, pemilik)` dan create/update tanpa validasi server** (ditemukan saat impor CSV UMKM 2026-11-18, `docs/decisions/2026-11-18-umkm-import-csv.md`):
+  - Lokasi: model `Umkm` di `prisma/schema.prisma` (tanpa `@@unique`/`@@index` selain PK); `_lib/ekonomi/umkm/create.ts` & `updt.ts` menyimpan body apa adanya (tanpa trim, batas panjang, atau cek format `kontak`; batas 13 digit hanya di form admin).
+  - Dampak: impor CSV (`POST /api/ekonomi/umkm/import`) mencegah duplikat dengan membaca lalu menulis dalam satu transaksi, tetapi tanpa unique index dua impor/penambahan bersamaan tetap bisa membuat duplikat (nama + pemilik sama). Lewat API `create`, duplikat dan nilai panjang/format apa pun juga lolos.
+  - Usul: bersihkan duplikat yang ada di admin, lalu migrasi unique parsial `(lower(trim(nama)), lower(trim(pemilik))) WHERE "deletedAt" IS NULL` (butuh SQL manual, Prisma belum mendukung); pakai aturan di `src/lib/umkm/umkm-impor.rules.ts` (batas panjang, `bersihkanTeks`) juga di `create.ts`/`updt.ts`.
+
+- [ ] **Produk UMKM: tidak ada unique index `(umkmId, nama)` dan create/update tanpa validasi server** (ditemukan saat impor CSV Produk 2026-11-18, `docs/decisions/2026-11-18-umkm-import-csv.md` bagian Impor Produk):
+  - Lokasi: model `PasarDesa` di `prisma/schema.prisma` (tanpa unique index untuk `(umkmId, nama)`); `_lib/ekonomi/umkm/produk/create.ts` menyimpan `nama`/`harga`/`stok`/`deskripsi` apa adanya (tanpa trim, batas panjang, atau batas atas harga/stok) dan tidak mengecek bahwa `umkmId`/`kategoriId` milik UMKM/kategori yang masih aktif dan belum dihapus (FK hanya menolak id yang tidak ada). `updt.ts` perlu diperiksa dengan pola yang sama.
+  - Dampak: impor CSV Produk (`POST /api/ekonomi/umkm/produk/import`) mencegah duplikat dengan baca-lalu-tulis dalam satu transaksi, tetapi dua impor/penambahan bersamaan tetap bisa membuat produk kembar. Lewat API `create`, produk bisa dibuat untuk UMKM nonaktif/terhapus atau kategori nonaktif, dan nilai panjang/harga berapa pun lolos.
+  - Usul: bersihkan duplikat yang ada, lalu migrasi unique parsial `(umkmId, lower(trim(nama))) WHERE "deletedAt" IS NULL` (SQL manual); di `create.ts`/`updt.ts` pakai aturan `src/lib/umkm/produk-impor.rules.ts` (batas panjang, harga/stok) dan cek UMKM/kategori aktif seperti impor.
+
 ## Jenna publik (tindak lanjut)
 
 Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
