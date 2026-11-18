@@ -58,6 +58,17 @@ export function parseSatuanPeriodeInput(body: Record<string, unknown>): SektorPa
 }
 
 /**
+ * Normalisasi isian "Jumlah" form admin (NumberInput Mantine melaporkan number atau string, termasuk
+ * "" dan "1." saat mengetik) ke nilai simpanan: angka, atau null bila kosong/tidak valid (bukan 0).
+ */
+export function parseSektorValueInput(raw: number | string | null | undefined): number | null {
+  if (raw === null || raw === undefined) return null;
+  if (typeof raw === "string" && raw.trim() === "") return null;
+  const n = typeof raw === "number" ? raw : Number(raw);
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
  * Teks "{value} {satuan} • {periode}" untuk tampilan publik. Mengembalikan null bila
  * satuan atau nilai kosong, sehingga tampilan lama (tanpa angka) tidak berubah.
  */
