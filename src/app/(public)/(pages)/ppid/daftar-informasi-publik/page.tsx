@@ -2,7 +2,6 @@
 
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
-import colors from '@/con/colors';
 import { DOKUMEN_PERENCANAAN_PUBLIC_HREF } from '@/lib/dokumen-perencanaan';
 import { Pagination, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
@@ -78,7 +77,7 @@ function Page() {
               total={totalPages}
               radius="xl"
               size="md"
-              color={colors['blue-button']}
+              color="var(--c-brand-fill)"
               aria-label={DAFTAR_TEXT.paginationLabel}
             />
           </div>

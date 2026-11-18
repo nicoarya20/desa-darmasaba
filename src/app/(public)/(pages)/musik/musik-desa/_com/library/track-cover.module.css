@@ -15,7 +15,7 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  color: var(--m-muted, #515154);
+  color: var(--m-on-cover); /* tetap di dua tema: di atas gradasi pastel */
 }
 
 .img {

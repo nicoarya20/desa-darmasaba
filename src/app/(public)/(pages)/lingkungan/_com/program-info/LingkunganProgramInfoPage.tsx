@@ -1,6 +1,5 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import pi from '../../../pendidikan/_com/program-info/program-info.module.css';
 import { ProgramInfoBody } from '../../../pendidikan/_com/program-info/ProgramInfoBody';
@@ -24,7 +23,7 @@ type Props = {
  */
 export function LingkunganProgramInfoPage({ title, lead, sections }: Props) {
   return (
-    <div className={`${kabar.section} ${pi.tokens} ${s.page}`} style={KABAR_BRAND_VARS}>
+    <div className={`${kabar.section} ${pi.tokens} ${s.page}`}>
       <KabarListHeader
         title={title}
         lead={lead}

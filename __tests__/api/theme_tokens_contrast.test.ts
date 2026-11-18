@@ -6,6 +6,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { DARK_ERROR_COLOR } from '@/app/_com/site-css-variables-resolver';
 
 const CSS_PATH = path.resolve(__dirname, '../../src/app/theme-tokens.css');
 const DARK_SELECTOR = ':root[data-mantine-color-scheme="dark"]';
@@ -130,6 +131,12 @@ describe('theme-tokens.css: kontras WCAG', () => {
       const [fg, bg] = pair.split('@');
       const min = fg.startsWith('c-chart') ? 3 : 4.5;
       expect(contrast(light[fg], light[bg]), pair).toBeLessThan(min);
+    }
+  });
+
+  it('tema gelap: merah galat Mantine (resolver) ≥ 4,5 di semua latar gelap', () => {
+    for (const bg of SURFACES) {
+      expect(contrast(DARK_ERROR_COLOR, dark[bg]), `galat di ${bg}`).toBeGreaterThanOrEqual(4.5);
     }
   });
 

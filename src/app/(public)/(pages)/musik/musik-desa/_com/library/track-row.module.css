@@ -27,7 +27,7 @@
 }
 
 .row:focus-visible {
-  outline: 2px solid var(--m-accent, #0a4e78);
+  outline: 2px solid var(--m-accent);
   outline-offset: 2px;
 }
 
@@ -46,15 +46,15 @@
   min-width: 0;
   font-size: 16px;
   font-weight: 600;
-  color: var(--m-ink, #1d1d1f);
+  color: var(--m-ink);
 }
 
 .row[data-playable='false'] .title {
-  color: var(--m-muted, #515154);
+  color: var(--m-muted);
 }
 
 .row[data-active='true'] .title {
-  color: var(--m-accent, #0a4e78);
+  color: var(--m-accent);
 }
 
 .titleText,
@@ -66,23 +66,23 @@
 
 .artist {
   font-size: 15px;
-  color: var(--m-muted, #515154);
+  color: var(--m-muted);
 }
 
 .row[data-playable='false'] .artist {
-  color: var(--m-subtle, #6e6e73);
+  color: var(--m-subtle);
 }
 
 .meta {
   flex: none;
   font-size: 14px;
   font-variant-numeric: tabular-nums;
-  color: var(--m-subtle, #6e6e73);
+  color: var(--m-subtle);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .row:hover {
-    background: var(--m-hover, rgba(0, 0, 0, 0.05));
+    background: var(--m-hover);
   }
 }
 

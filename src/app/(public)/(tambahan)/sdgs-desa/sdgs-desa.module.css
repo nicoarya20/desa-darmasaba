@@ -1,0 +1,16 @@
+/*
+ * Warna halaman /sdgs-desa. Halaman memakai props Mantine (inline), jadi warna dibaca lewat variabel di wadah ini.
+ * Terang = literal lama (identik piksel); gelap = token palet A (theme-tokens.css).
+ * Pelat logo SDGs (pihak ketiga) di gelap #d9e1ea, sama dengan pelat logo beranda.
+ */
+.page {
+  --sdgs-goal-title: #2e2e2e;
+  --sdgs-chart-bg: #fbfbfc;
+  --sdgs-plate: linear-gradient(145deg, #f8f9fa, #fff);
+
+  @mixin dark {
+    --sdgs-goal-title: var(--c-ink);
+    --sdgs-chart-bg: var(--c-bg-alt);
+    --sdgs-plate: #d9e1ea;
+  }
+}

@@ -8,7 +8,6 @@ import { useProxy } from 'valtio/utils';
 import BackButton from '../layanan/_com/BackButto';
 import DokumenPerencanaanSection from './_com/DokumenPerencanaanSection';
 import { FILTER_ALL, isMonevEmpty, statusQuery } from './_com/monev.logic';
-import { MONEV_BRAND_VARS } from './_com/monev.meta';
 import s from './_com/monev.module.css';
 import { MONEV_TEXT } from './_com/monev.text';
 import { MonevApbdesLink } from './_com/MonevApbdesLink';
@@ -35,7 +34,7 @@ function Page() {
   const empty = summary ? isMonevEmpty(summary) : false;
 
   return (
-    <section className={`${apb.section} ${apb.page}`} style={MONEV_BRAND_VARS} aria-labelledby="monev-page-title">
+    <section className={`${apb.section} ${apb.page} ${s.page}`} aria-labelledby="monev-page-title">
       <div className={apb.inner}>
         <div className={apb.back}>
           <BackButton />

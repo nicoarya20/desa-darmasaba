@@ -3,8 +3,8 @@
  * memakai .panel stat-bars.module.css. --brand dari wadah pemakai, --stat-tint dari STAT_BARS_VARS.
  */
 .empty {
-  --sb-ink: #1d1d1f;
-  --sb-muted: #6e6e73;
+  --sb-ink: var(--c-ink);
+  --sb-muted: var(--c-muted);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,7 +12,7 @@
   padding: 48px 24px;
   text-align: center;
   color: var(--sb-ink);
-  background: #f5f5f7;
+  background: var(--c-tile);
   border-radius: 18px;
 }
 
@@ -45,7 +45,7 @@
   padding: 8px 18px;
   border: 0;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
   font: inherit;
   font-size: 15px;
@@ -60,7 +60,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .retry:hover {
-    background: #e8e8ed;
+    background: var(--c-placeholder);
   }
 }
 

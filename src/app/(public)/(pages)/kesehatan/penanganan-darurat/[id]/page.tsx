@@ -1,6 +1,7 @@
 'use client';
 import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penanganan-darurat/penangananDarurat';
-import colors from '@/con/colors';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Box, Center, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
@@ -28,7 +29,7 @@ function DetailPenangananDaruratUser() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={20}>
+    <Box className={t.tema} py={20}>
       {/* Tombol Back */}
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
@@ -39,7 +40,7 @@ function DetailPenangananDaruratUser() {
         <Paper
           withBorder
           w={'100%'}
-          bg={colors['white-1']}
+          bg="var(--kt-panel)"
           p="xl"
           radius="lg"
           shadow="sm"
@@ -49,7 +50,7 @@ function DetailPenangananDaruratUser() {
               ta={"center"}
               order={1}
               fw={700}
-              c={colors['blue-button']}
+              c="var(--c-brand)"
               style={{ wordBreak: 'break-word' }}
             >
               {data.name || 'Penanganan Darurat'}
@@ -71,7 +72,7 @@ function DetailPenangananDaruratUser() {
             <Box >
               <Text
                 ta="justify"
-                dangerouslySetInnerHTML={{ __html: data.deskripsi }}
+                className={rt.root} dangerouslySetInnerHTML={{ __html: data.deskripsi }}
                 style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
               />
             </Box>

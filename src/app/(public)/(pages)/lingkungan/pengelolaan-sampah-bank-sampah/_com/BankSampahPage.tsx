@@ -1,7 +1,6 @@
 'use client';
 import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { BankSampahSteps } from './BankSampahSteps';
 import { loadLangkah, loadLokasi } from './bank-sampah.source';
@@ -21,7 +20,7 @@ export function BankSampahPage() {
   const lokasi = useLoadOnce(loadLokasi, 'lokasi Bank Sampah (Pengelolaan Sampah)');
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

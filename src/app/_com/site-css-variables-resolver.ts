@@ -20,8 +20,20 @@ export const DARK_SHADE_TOKENS = {
   "--mantine-color-dark-9": "var(--c-bg)",
 } as const;
 
-/** v8CssVariablesResolver (warna varian v8 selama migrasi Mantine 9) + shade gelap palet A. */
+/**
+ * Merah galat gelap (teks galat input + tanda wajib `*` label): bawaan v8 gelap = red-8 #e03131, hanya 3,73:1 di
+ * --c-tile dan 3,17:1 di --c-tile-alt. #ff6961 (dipakai juga Pustu/beasiswa/laporan) ≥ 5,08:1 di semua latar gelap;
+ * --c-closed #ff453a tidak dipakai karena 4,20:1 di --c-tile-alt. Terang tetap bawaan (red-6).
+ */
+export const DARK_ERROR_COLOR = "#ff6961";
+
+/** Variabel semantik gelap di luar shade dark-*: saat ini hanya warna galat. */
+export const DARK_SEMANTIC_TOKENS = {
+  "--mantine-color-error": DARK_ERROR_COLOR,
+} as const;
+
+/** v8CssVariablesResolver (warna varian v8 selama migrasi Mantine 9) + shade gelap palet A + galat gelap. */
 export const siteCssVariablesResolver: CSSVariablesResolver = (theme) => {
   const base = v8CssVariablesResolver(theme);
-  return { ...base, dark: { ...base.dark, ...DARK_SHADE_TOKENS } };
+  return { ...base, dark: { ...base.dark, ...DARK_SHADE_TOKENS, ...DARK_SEMANTIC_TOKENS } };
 };

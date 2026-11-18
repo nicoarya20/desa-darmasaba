@@ -2,7 +2,6 @@
 'use client';
 
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
-import colors from '@/con/colors';
 import {
   AspectRatio,
   Box,
@@ -20,6 +19,7 @@ import {
 import { IconPhoto } from '@tabler/icons-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 
 // Rasio tampilan thumbnail galeri: semua foto dipotong (cover) ke rasio yang
 // sama agar kartu seragam apa pun orientasi foto aslinya.
@@ -63,7 +63,7 @@ function FotoCard({ item }: { item: any }) {
         onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
         onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
       >
-        <AspectRatio ratio={FOTO_ASPECT_RATIO} bg="gray.1">
+        <AspectRatio ratio={FOTO_ASPECT_RATIO} bg="var(--galery-photo-empty)">
           {item.imageGalleryFoto?.link ? (
             <Image
               src={item.imageGalleryFoto.link}
@@ -88,6 +88,7 @@ function FotoCard({ item }: { item: any }) {
               fz={{ base: 'xs', md: 'sm' }}
               c="dimmed"
               lineClamp={2}
+              className={rt.root}
               dangerouslySetInnerHTML={{ __html: item.deskripsi }}
               lh={{ base: '1.4', md: '1.5' }}
             />
@@ -120,6 +121,7 @@ function FotoCard({ item }: { item: any }) {
               component="div"
               fz={{ base: 'sm', md: 'md' }}
               style={{ wordBreak: 'break-word' }}
+              className={rt.root}
               dangerouslySetInnerHTML={{ __html: item.deskripsi }}
             />
           )}
@@ -137,7 +139,7 @@ export default function GaleriFotoUser() {
   return (
     <Box py="xl" px={{ base: 'md', md: 'lg' }}>
       {/* Header */}
-      <Title order={2} c={colors['blue-button']} mb="lg" ta="center">
+      <Title order={2} c="var(--c-brand)" mb="lg" ta="center">
         Galeri Foto Desa Darmasaba
       </Title>
 

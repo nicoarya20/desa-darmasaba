@@ -1,5 +1,4 @@
 'use client';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { Link } from 'next-view-transitions';
@@ -40,7 +39,7 @@ export function InformasiRedirect({ kind, id }: { kind: InformasiKind; id: strin
 export function InformasiRedirectNotice({ kind }: { kind: InformasiKind }) {
   const text = TEXT[kind];
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <div className={s.notice} role="status" aria-busy="true">
         <p className={s.opening}>{text.opening}</p>
         <Link href={informasiListHref(kind)} className={`${s.link} ${r.trigger}`}>

@@ -26,6 +26,7 @@ import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import ScrollToTopButton from '@/app/(public)/_com/scrollToTopButton';
 import classes from './profil-ppid.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 
 function Page() {
   const allList = useProxy(stateProfilePPID);
@@ -37,7 +38,7 @@ function Page() {
   // LOADING SKELETON
   if (allList.profile.loading)
     return (
-      <Stack bg={colors.Bg} py="xl" gap="22">
+      <Stack bg="var(--c-hero-bg)" className={classes.page} py="xl" gap="22">
         <Box px={{ base: 'md', md: 100 }}>
           <Skeleton h={40} />
         </Box>
@@ -45,7 +46,7 @@ function Page() {
           <Skeleton h={80} />
         </Box>
         <Box px={{ base: 'md', md: 100 }}>
-          <Paper p="xl" bg={colors['white-trans-1']}>
+          <Paper p="xl" bg="var(--profil-kaca)">
             {Array.from({ length: 8 }).map((_, i) => (
               <Skeleton key={i} h={40} mb="sm" />
             ))}
@@ -57,9 +58,9 @@ function Page() {
   // ERROR HANDLING
   if (allList.profile.error)
     return (
-      <Stack bg={colors.Bg} py="xl" gap="22" justify="center" align="center">
+      <Stack bg="var(--c-hero-bg)" className={classes.page} py="xl" gap="22" justify="center" align="center">
         <Box px={{ base: 'md', md: 100 }}>
-          <Paper p="xl" bg={colors['white-trans-1']} radius="lg" shadow="xl">
+          <Paper p="xl" bg="var(--profil-kaca)" radius="lg" shadow="xl">
             {allList.profile.error === "Belum ada data profil PPID yang aktif" ? (
               <>
                 <Title order={3} ta="center" c={"orange"} fw={700}>
@@ -86,9 +87,9 @@ function Page() {
   // NO DATA HANDLING
   if (!allList.profile.data)
     return (
-      <Stack bg={colors.Bg} py="xl" gap="22" justify="center" align="center">
+      <Stack bg="var(--c-hero-bg)" className={classes.page} py="xl" gap="22" justify="center" align="center">
         <Box px={{ base: 'md', md: 100 }}>
-          <Paper p="xl" bg={colors['white-trans-1']} radius="lg" shadow="xl">
+          <Paper p="xl" bg="var(--profil-kaca)" radius="lg" shadow="xl">
             <Title order={3} ta="center" c={"orange"} fw={700}>
               Data Profile PPID Belum Tersedia
             </Title>
@@ -104,7 +105,7 @@ function Page() {
 
   return (
     <Box>
-      <Stack pos="relative" bg={colors.Bg} py="xl" gap="22">
+      <Stack pos="relative" bg="var(--c-hero-bg)" className={classes.page} py="xl" gap="22">
         {/* Back Button */}
         <Box px={{ base: 'md', md: 100 }}>
           <BackButton />
@@ -115,7 +116,7 @@ function Page() {
           <Title
             order={1}
             ta="center"
-            c={colors['blue-button']}
+            c="var(--c-brand)"
             fz={{ base: '2rem', md: '2.7rem', lg: '3.2rem', xl: '3.6rem' }}
             lh={{ base: 1.1, md: 1.1 }}
             fw={900}
@@ -126,7 +127,7 @@ function Page() {
 
         {dataArray.map((item) => (
           <Box key={item.id} px={{ base: 'md', md: 100 }}>
-            <Paper p="xl" bg={colors['white-trans-1']} radius="lg" shadow="xl">
+            <Paper p="xl" bg="var(--profil-kaca)" radius="lg" shadow="xl">
               {/* LOGO & TITLE */}
               <Box px={{ base: 'md', md: 100 }}>
                 <Center>
@@ -158,7 +159,7 @@ function Page() {
                 <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
                   {/* FOTO + NAMA — sticky di layout 2 kolom agar kolom kanan yang panjang tak menyisakan ruang kosong */}
                   <Box px={{ base: 0, md: 50 }} className={classes.photoColumn}>
-                    <Paper bg={colors['white-trans-1']} radius="xl" shadow="md" withBorder>
+                    <Paper bg="var(--profil-kaca)" radius="xl" shadow="md" withBorder>
                       <Stack gap={0}>
                         <Image
                           pt={{ base: 0, md: 100 }}
@@ -175,7 +176,7 @@ function Page() {
                         />
 
                         <Paper
-                          bg={colors['blue-button']}
+                          bg="var(--c-brand-fill)"
                           px="lg"
                           radius="0 0 var(--mantine-radius-xl) var(--mantine-radius-xl)"
                           className="glass3"
@@ -213,6 +214,7 @@ function Page() {
                             fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
                             lh={1.6}
                             ta="left"
+                            className={rt.root}
                             dangerouslySetInnerHTML={{ __html: item.biodata }}
                             style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                           />
@@ -234,6 +236,7 @@ function Page() {
                               fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
                               lh={1.6}
                               ta="left"
+                              className={rt.root}
                               dangerouslySetInnerHTML={{ __html: item.riwayat }}
                               style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                             />
@@ -256,6 +259,7 @@ function Page() {
                               fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
                               lh={1.6}
                               ta="left"
+                              className={rt.root}
                               dangerouslySetInnerHTML={{ __html: item.pengalaman }}
                               style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                             />
@@ -278,6 +282,7 @@ function Page() {
                               fz={{ base: '1rem', md: '1.1rem', lg: '1.2rem' }}
                               lh={1.6}
                               ta="left"
+                              className={rt.root}
                               dangerouslySetInnerHTML={{ __html: item.unggulan }}
                               style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
                             />

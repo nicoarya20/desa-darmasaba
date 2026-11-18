@@ -1,6 +1,7 @@
 import apb from "@/app/(public)/_com/main-page/apbdes/apbdes.module.css";
 import type { LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import d from "@/app/(public)/_com/kabar-list/kabar-detail.module.css";
+import rt from "@/app/(public)/_com/rich-text/rich-text.module.css";
 import type { KlasterPosyanduItem, ProfilPosyanduData } from "@/lib/posyandu/posyandu-konten.types";
 import { LABEL_SASARAN_KLASTER, type SasaranKlaster } from "@/lib/posyandu/posyandu-konten.validation";
 import { htmlToPlainText } from "@/lib/rich-text";
@@ -38,11 +39,11 @@ export function ProfilPosyanduContent({ data }: { data: ProfilPosyanduData }) {
             {T.profilTitle}
           </h2>
           {/* Teks kaya dari admin, dibersihkan (allowlist tag) saat disimpan di API. */}
-          {deskripsi ? <div className={`${d.content} ${p.richText}`} dangerouslySetInnerHTML={{ __html: deskripsi }} /> : null}
+          {deskripsi ? <div className={`${d.content} ${p.richText} ${rt.root}`} dangerouslySetInnerHTML={{ __html: deskripsi }} /> : null}
           {fungsi ? (
             <>
               <h3 className={p.subTitle}>{T.fungsiTitle}</h3>
-              <div className={`${d.content} ${p.richText}`} dangerouslySetInnerHTML={{ __html: fungsi }} />
+              <div className={`${d.content} ${p.richText} ${rt.root}`} dangerouslySetInnerHTML={{ __html: fungsi }} />
             </>
           ) : null}
         </section>

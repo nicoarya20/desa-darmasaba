@@ -2,8 +2,8 @@
 import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { penghijauanListHref, toPenghijauanDetail, type PenghijauanDetail } from '../penghijauan.logic';
@@ -16,7 +16,7 @@ export function PenghijauanDetailView({ id }: { id: string }) {
   const state = usePenghijauanDetail(id);
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         <Link href={penghijauanListHref()} className={`${back.back} ${r.trigger}`}>
           <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
@@ -55,7 +55,7 @@ export function PenghijauanDetailBody({ detail }: { detail: PenghijauanDetail })
       </header>
 
       {/* HTML editor admin, sudah disaring sanitizeRichText di toPenghijauanDetail. */}
-      {detail.html ? <div className={d.content} dangerouslySetInnerHTML={{ __html: detail.html }} /> : null}
+      {detail.html ? <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: detail.html }} /> : null}
     </>
   );
 }

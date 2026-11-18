@@ -10,9 +10,9 @@ import { PLAYER_TEXT } from './player.text';
 import s from './player-progress.module.css';
 
 // Warna trek lewat variabel inline: aturan Mantine `[data-mantine-color-scheme] .slider` lebih spesifik dari kelas modul.
-export const SLIDER_VARS = { '--slider-track-bg': 'var(--m-track, rgba(0, 0, 0, 0.12))' } as CSSProperties;
-/** Isi slider = tinta (gaya TIDAL versi terang). */
-export const SLIDER_FILL = 'var(--m-ink, #1d1d1f)';
+export const SLIDER_VARS = { '--slider-track-bg': 'var(--m-track)' } as CSSProperties;
+/** Isi slider = tinta (gaya TIDAL; gelap: tinta putih di rel putih 20%). */
+export const SLIDER_FILL = 'var(--m-ink)';
 
 /** Waktu berjalan · slider posisi · durasi. Seret = pratinjau, lepas = pindah posisi audio. */
 export function PlayerProgress() {

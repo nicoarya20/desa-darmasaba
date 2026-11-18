@@ -1,6 +1,6 @@
 'use client'
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
-import colors from '@/con/colors';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
 import { Badge, Box, Button, Card, Divider, Group, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconChevronRight, IconClock, IconMapPin } from '@tabler/icons-react';
@@ -24,25 +24,25 @@ function FasilitasKesehatanPage() {
   }
 
   return (
-    <Box>
-      <Paper bg={colors['white-trans-1']} p="xl" radius="xl" shadow="md" h="100%">
+    <Box className={t.tema}>
+      <Paper bg="var(--kt-glass)" p="xl" radius="xl" shadow="md" h="100%">
         <Stack gap="lg">
           <Title
             order={1}
             ta="center"
             fw={700}
-            c={colors['blue-button']}
+            c="var(--c-brand)"
             style={{ lineHeight: '1.2' }}
           >
             Fasilitas Kesehatan
           </Title>
-          <Divider size="sm" color={colors['blue-button']} />
+          <Divider size="sm" color="var(--c-brand)" />
           <Stack gap="lg">
             {state.findMany.data.length === 0 ? (
               <Box py="xl" ta="center">
                 <Text
                   fz={{ base: 'sm', sm: 'md' }}
-                  c={colors['blue-button']}
+                  c="var(--c-brand)"
                   lh={{ base: '1.5', sm: '1.6' }}
                 >
                   Belum ada fasilitas kesehatan yang tersedia
@@ -57,7 +57,7 @@ function FasilitasKesehatanPage() {
                   shadow="sm"
                   p="lg"
                   style={{
-                    background: 'linear-gradient(135deg, #fdfdfd, #f7faff)',
+                    background: 'linear-gradient(135deg, var(--kt-card-from), var(--kt-card-to))',
                     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
@@ -74,7 +74,7 @@ function FasilitasKesehatanPage() {
                       <Title
                         order={3}
                         fw={700}
-                        c={colors['blue-button']}
+                        c="var(--c-brand)"
                         fz={{ base: 'sm', sm: 'md' }}
                         lh={{ base: '1.3', sm: '1.3' }}
                       >
@@ -106,7 +106,7 @@ function FasilitasKesehatanPage() {
                     </Group>
                     <Group justify="flex-start">
                       <Button
-                        bg={colors['blue-button']}
+                        bg="var(--c-brand-fill)"
                         radius="lg"
                         size="sm"
                         rightSection={<IconChevronRight size={18} />}

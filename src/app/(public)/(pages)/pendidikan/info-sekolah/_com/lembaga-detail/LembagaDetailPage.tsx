@@ -9,7 +9,7 @@ import frame from "../../../_com/page-frame/page-frame.module.css";
 import { PpidHeader } from "../../../../ppid/_com/PpidHeader";
 import { InfoSekolahEmpty, InfoSekolahNotice, InfoSekolahSkeleton } from "../InfoSekolahStates";
 import { INFO_SEKOLAH_PATH, LEMBAGA_ANCHOR } from "../info-sekolah.logic";
-import { INFO_SEKOLAH_BRAND_VARS, namaPanjangJenjang } from "../info-sekolah.meta";
+import { namaPanjangJenjang } from "../info-sekolah.meta";
 import s from "../info-sekolah.module.css";
 import { loadLembagaDetail } from "../info-sekolah.source";
 import LembagaDetailContent from "./LembagaDetailContent";
@@ -21,7 +21,7 @@ export function LembagaDetailPage({ id }: { id: string }) {
   const load = useCallback(() => loadLembagaDetail(id), [id]);
   const { state, retry } = useLazyLoad(load, true, `detail lembaga ${id}`);
   return (
-    <section className={`${frame.frame} ${s.page}`} style={INFO_SEKOLAH_BRAND_VARS} aria-label={T.pageLabel}>
+    <section className={`${frame.frame} ${s.page}`} aria-label={T.pageLabel}>
       <div className={frame.inner}>
         <div className={s.back}>
           <BackButton />

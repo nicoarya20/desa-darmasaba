@@ -1,7 +1,6 @@
 'use client';
 import korupsiState from '@/app/admin/(dashboard)/_state/landing-page/desa-anti-korupsi';
 import { toSentenceCase } from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
-import { ANTIKORUPSI_BRAND_VARS } from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.meta';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useState } from 'react';
@@ -55,7 +54,7 @@ function AntiKorupsiDetailContent() {
   };
 
   return (
-    <div className={s.page} style={ANTIKORUPSI_BRAND_VARS}>
+    <div className={s.page}>
       <div className={s.inner}>
         <BackButton />
 

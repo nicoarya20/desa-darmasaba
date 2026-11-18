@@ -1,13 +1,13 @@
 'use client';
 import detail from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Image } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import BackButton from '../../../../pemerintahan/layanan/_com/BackButto';
 import page from '../../../../pemerintahan/layanan/_com/layanan.module.css';
 import { KontakActions } from '@/app/(public)/_com/kontak-darurat/KontakActions';
-import { KONTAK_BRAND_VARS } from '@/app/(public)/_com/kontak-darurat/kontak-darurat.meta';
 import list from '@/app/(public)/_com/kontak-darurat/kontak-darurat.module.css';
 import { phoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic';
 import type { KontakDarurat } from '../kontak-darurat.logic';
@@ -25,7 +25,7 @@ export function KontakDaruratDetail({ id }: { id: string }) {
 /** Tampilan detail untuk satu keadaan muat (dipisah dari hook agar bisa dirender di test). */
 export function KontakDaruratDetailView({ state, onRetry }: { state: KontakDetailState; onRetry: () => void }) {
   return (
-    <div className={page.page} style={KONTAK_BRAND_VARS}>
+    <div className={page.page}>
       <article className={detail.wrap} aria-busy={state.status === 'loading' || undefined}>
         <BackButton />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
@@ -74,7 +74,7 @@ export function KontakDetailBody({ data }: { data: KontakDarurat }) {
 
       {/* Deskripsi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
       {data.deskripsi ? (
-        <div className={detail.content} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
+        <div className={`${detail.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
       ) : null}
 
       {photo ? (

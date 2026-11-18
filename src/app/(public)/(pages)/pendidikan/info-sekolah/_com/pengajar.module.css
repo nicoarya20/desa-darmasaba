@@ -1,6 +1,6 @@
 /*
- * Daftar pengajar Info Sekolah — kepala KabarListHeader + baris di panel #f5f5f7 (pola baris Monev/Posyandu).
- * Variabel warna diwarisi dari .page (info-sekolah.module.css) + INFO_SEKOLAH_BRAND_VARS; --gutter rel pil ponsel
+ * Daftar pengajar Info Sekolah — kepala KabarListHeader + baris di panel --c-tile (pola baris Monev/Posyandu).
+ * Variabel warna diwarisi dari .page (info-sekolah.module.css, alias token --c-*); --gutter rel pil ponsel
  * dari page-frame. Breakpoint apple.com: ≤734px.
  */
 
@@ -43,7 +43,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
 }
 
@@ -67,14 +67,14 @@
   overflow-wrap: anywhere;
 }
 
-/* Pil putih + titik warna jenjang (sama dengan direktori per jenjang). */
+/* Pil --c-tile-alt (terang putih) + titik warna jenjang (sama dengan direktori per jenjang). */
 .jenjang {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;

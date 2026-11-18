@@ -2,7 +2,6 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { useLoadOnce, type LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import { formatTanggal } from '@/app/(public)/_com/main-page/apbdes/apbdes.logic';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { StatBarsPanel } from '@/app/(public)/_com/stat-bars/StatBarsPanel';
 import { StatBarsEmpty, StatBarsError, StatBarsSkeleton } from '@/app/(public)/_com/stat-bars/StatBarsStates';
@@ -21,7 +20,7 @@ const noop = () => {};
 export function DemografiPekerjaanPage() {
   const state = useLoadOnce(loadDemografiPekerjaan, 'data demografi pekerjaan (Demografi Pekerjaan)');
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

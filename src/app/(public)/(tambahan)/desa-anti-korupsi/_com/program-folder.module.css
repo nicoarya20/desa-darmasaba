@@ -1,6 +1,6 @@
 /* Halaman program publik Desa Anti Korupsi — senada halaman detail (`antikorupsi-detail.module.css`):
    latar putih, isi 1100px, panel #f5f5f7 radius 18px berisi baris dipisah garis tipis.
-   Warna brand dari `@/con/colors` lewat CSS variable (--folder-brand, --folder-brand-soft). */
+   Warna = token global theme-tokens.css (terang = nilai lama `@/con/colors`), ikut tema gelap. */
 
 /* ---------- Kepala ---------- */
 .kepala {
@@ -14,7 +14,7 @@
 .judul {
   max-width: 880px;
   margin: 0;
-  color: var(--folder-brand);
+  color: var(--c-brand);
   font-size: 32px;
   line-height: 1.2;
   font-weight: 700;
@@ -25,7 +25,7 @@
 
 .deskripsi {
   max-width: 680px;
-  color: #6e6e73;
+  color: var(--c-muted);
   font-size: 17px;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -55,11 +55,11 @@
   overflow: hidden;
   list-style: none;
   border-radius: 18px;
-  background: #f5f5f7;
+  background: var(--c-tile);
 }
 
 .panel > li + li {
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--c-line);
 }
 
 .baris {
@@ -73,11 +73,11 @@
 }
 
 .baris:hover {
-  background: rgba(0, 0, 0, 0.035);
+  background: light-dark(rgba(0, 0, 0, 0.035), rgba(255, 255, 255, 0.05));
 }
 
 .baris:focus-visible {
-  outline: 2px solid var(--folder-brand);
+  outline: 2px solid var(--c-brand);
   outline-offset: -2px;
 }
 
@@ -94,8 +94,8 @@
   height: 44px;
   flex-shrink: 0;
   border-radius: 12px;
-  background: var(--folder-brand-soft);
-  color: var(--folder-brand);
+  background: var(--c-brand-tint);
+  color: var(--c-brand);
 }
 
 .isi {
@@ -111,7 +111,7 @@
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
-  color: var(--folder-brand);
+  color: var(--c-brand);
 }
 
 /* ---------- Chip pindah folder ---------- */
@@ -122,8 +122,16 @@
 }
 
 .chip:focus-visible {
-  outline: 2px solid var(--folder-brand);
+  outline: 2px solid var(--c-brand);
   outline-offset: 2px;
+}
+
+/* Bingkai iframe pratinjau PDF (modal). */
+.pratinjau {
+  height: 70vh;
+  overflow: hidden;
+  border: 1px solid light-dark(#e0e0e0, var(--c-line-strong));
+  border-radius: 8px;
 }
 
 @media (prefers-reduced-motion: reduce) {

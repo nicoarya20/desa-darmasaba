@@ -1,6 +1,5 @@
 'use client';
-import colors from '@/con/colors';
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
 import { PpidHeader } from '../../../ppid/_com/PpidHeader';
 import frame from '../page-frame/page-frame.module.css';
@@ -9,8 +8,6 @@ import { ProgramInfoBody } from './ProgramInfoBody';
 import type { ProgramInfoSectionView } from './ProgramInfoSection';
 
 export type { ProgramInfoSectionView } from './ProgramInfoSection';
-
-const BRAND_VARS = { '--brand': colors['blue-button'] } as CSSProperties;
 
 type Props = {
   /** h1 = nama menu. */
@@ -28,7 +25,7 @@ type Props = {
  */
 export function ProgramInfoPage({ title, lead, sections, before }: Props) {
   return (
-    <div className={`${frame.frame} ${s.page}`} style={BRAND_VARS}>
+    <div className={`${frame.frame} ${s.page}`}>
       <div className={`${frame.inner} ${s.layout}`}>
         <BackButton />
         <PpidHeader title={title} lead={lead} />

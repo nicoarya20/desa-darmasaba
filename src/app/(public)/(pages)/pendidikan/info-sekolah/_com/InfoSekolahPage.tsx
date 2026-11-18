@@ -7,7 +7,6 @@ import { PpidHeader } from "../../../ppid/_com/PpidHeader";
 import { InfoSekolahSummary } from "./InfoSekolahSummary";
 import { InfoSekolahEmpty, InfoSekolahNotice, InfoSekolahSkeleton } from "./InfoSekolahStates";
 import { LEMBAGA_ANCHOR, type InfoSekolahRingkasan } from "./info-sekolah.logic";
-import { INFO_SEKOLAH_BRAND_VARS } from "./info-sekolah.meta";
 import s from "./info-sekolah.module.css";
 import { loadInfoSekolah } from "./info-sekolah.source";
 import { INFO_SEKOLAH_TEXT as T } from "./info-sekolah.text";
@@ -19,7 +18,7 @@ export function InfoSekolahPage() {
   useScrollToAnchorWhenReady(state.status === "ready");
 
   return (
-    <section className={`${frame.frame} ${s.page}`} style={INFO_SEKOLAH_BRAND_VARS} aria-label={T.pageTitle}>
+    <section className={`${frame.frame} ${s.page}`} aria-label={T.pageTitle}>
       <div className={frame.inner}>
         <div className={s.back}>
           <BackButton />

@@ -98,7 +98,7 @@
   padding: 0 16px;
   border: 0;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--ink);
   font: inherit;
   font-size: 14px;
@@ -110,8 +110,8 @@
 }
 
 .btnPrimary {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .btn:focus-visible,
@@ -122,7 +122,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .btn:not(.btnPrimary):hover {
-    background: #e8e8ed;
+    background: light-dark(#e8e8ed, #3a3a3c);
   }
 
   .btnPrimary:hover {
@@ -153,4 +153,12 @@
   .dokumenActions {
     grid-column: 2;
   }
+}
+
+/* Bingkai iframe pratinjau PDF (PengumumanPdfModal, di portal): garis terang = nilai lama, gelap = token. */
+.pdfFrame {
+  height: 70vh;
+  overflow: hidden;
+  border: 1px solid light-dark(#e0e0e0, var(--c-line-strong));
+  border-radius: 8px;
 }

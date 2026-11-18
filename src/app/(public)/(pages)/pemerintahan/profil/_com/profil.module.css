@@ -1,9 +1,14 @@
 /* Halaman Profil Desa: kartu terang terpusat (keluarga kartu Visi Misi PPID) untuk section teks,
-   judul section h2 rata tengah, dan teks CMS rata kiri di kolom baca ±70 karakter. */
+   judul section h2 rata tengah, dan teks CMS rata kiri di kolom baca ±70 karakter.
+   Warna = token --c-*; nilai tanpa token light-dark(terang lama, gelap). Kartu kaca gelap = putih 6% di atas
+   --c-hero-bg (latar PpidPage). --brand & --vm-card diset di sini (bukan inline) agar ikut tema. */
 .sections {
-  --p-text: #1d1d1f;
-  --p-muted: #515154;
-  --p-rule: #b1bdd1;
+  --brand: var(--c-brand);
+  --vm-card: light-dark(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.06));
+  --card-edge: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.08));
+  --p-text: var(--c-ink);
+  --p-muted: var(--c-ink-2);
+  --p-rule: light-dark(#b1bdd1, rgb(255 255 255 / 0.16));
   /* Panjang baris baca (±70 karakter) — sama dengan --vm-measure kartu Visi Misi. */
   --p-measure: 46rem;
   display: flex;
@@ -16,7 +21,7 @@
   flex-direction: column;
   align-items: center;
   padding: 56px 48px 64px;
-  border: 1px solid rgb(255 255 255 / 0.7);
+  border: 1px solid var(--card-edge);
   border-radius: 32px;
   background: var(--vm-card);
   box-shadow: 0 16px 40px rgb(10 78 120 / 0.1);

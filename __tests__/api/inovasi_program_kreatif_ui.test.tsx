@@ -17,6 +17,7 @@ import s from '@/app/(public)/_com/program-tiles/program-tiles.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -79,7 +80,8 @@ describe('ProgramKreatifDetailBody', () => {
     expect(html).toContain(`<span class="${d.kategori}">Program Kreatif Desa</span>`);
     expect(html).toContain(`<h1 class="${d.title}">Program 1</h1>`);
     expect(html).toContain(`<p class="${ds.lead}">Ringkasan program 1</p>`);
-    expect(html).toContain(`<div class="${d.content}"><p>Isi program 1</p></div>`);
+    // Isi CMS dibungkus penetral tema rt.root (dark theme).
+    expect(html).toContain(`<div class="${d.content} ${rt.root}"><p>Isi program 1</p></div>`);
     for (const label of ['Deskripsi Singkat', '>Deskripsi<']) expect(html).not.toContain(label);
   });
 

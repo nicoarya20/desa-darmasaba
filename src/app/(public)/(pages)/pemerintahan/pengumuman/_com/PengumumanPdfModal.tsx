@@ -2,6 +2,7 @@
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import type { PengumumanFile } from '@/lib/pengumuman-lampiran';
 import { Anchor, Box, Modal } from '@mantine/core';
+import d from './detail/pengumuman-detail.module.css';
 
 /** Label tautan buka PDF di tab baru (juga `data-text` sapuan warna). */
 const BUKA_TAB_BARU = 'Buka di tab baru';
@@ -12,7 +13,7 @@ export function PengumumanPdfModal({ file, onClose }: { file: PengumumanFile | n
     <Modal opened={file !== null} onClose={onClose} size="xl" centered title={file?.realName}>
       {file && (
         <>
-          <Box style={{ border: '1px solid #e0e0e0', borderRadius: 8, overflow: 'hidden', height: '70vh' }}>
+          <Box className={d.pdfFrame}>
             <iframe src={file.link} title={file.realName} width="100%" height="100%" style={{ border: 'none' }} />
           </Box>
           <Anchor

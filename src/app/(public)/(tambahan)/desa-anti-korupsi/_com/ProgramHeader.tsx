@@ -1,4 +1,4 @@
-import colors from '@/con/colors';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import type { DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
 import { ActionIcon, Badge, Box } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
@@ -28,7 +28,7 @@ export function ProgramHeader({ detail, folderName, kembali }: Props) {
       <ActionIcon
         component={Link}
         href={kembali.href}
-        bg={colors['blue-button']}
+        bg="var(--c-brand-fill)"
         aria-label={kembali.label}
         title={kembali.label}
         data-testid="program-kembali"
@@ -40,7 +40,7 @@ export function ProgramHeader({ detail, folderName, kembali }: Props) {
         {nomor && (
           <Badge
             variant="light"
-            color={colors['blue-button']}
+            color="var(--c-brand)"
             radius="xl"
             size="lg"
             style={{ fontVariantNumeric: 'tabular-nums' }}
@@ -52,7 +52,7 @@ export function ProgramHeader({ detail, folderName, kembali }: Props) {
         <h1 className={classes.judul}>{judul}</h1>
         {tampilDeskripsi && (
           <Box
-            className={classes.deskripsi}
+            className={`${classes.deskripsi} ${rt.root}`}
             data-testid="deskripsi-program"
             dangerouslySetInnerHTML={{ __html: detail.deskripsi }}
           />

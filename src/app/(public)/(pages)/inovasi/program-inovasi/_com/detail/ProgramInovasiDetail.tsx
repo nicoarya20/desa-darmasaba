@@ -2,7 +2,7 @@ import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-um
 import { DokumentasiGaleri, type GambarDokumentasi } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { Image } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
@@ -25,7 +25,7 @@ export type ProgramInovasiDetailView = {
  */
 export function ProgramInovasiDetail({ data }: { data: ProgramInovasiDetailView }) {
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS}>
+    <article className={kabar.section}>
       <div className={d.wrap}>
         <Link href={programInovasiListHref()} className={`${back.back} ${r.trigger}`}>
           <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
@@ -47,7 +47,7 @@ export function ProgramInovasiDetail({ data }: { data: ProgramInovasiDetailView 
         </header>
 
         {data.html ? (
-          <div className={`${d.content} ${s.content}`} dangerouslySetInnerHTML={{ __html: data.html }} />
+          <div className={`${d.content} ${s.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.html }} />
         ) : (
           <p className={s.empty}>{T.emptyDescription}</p>
         )}

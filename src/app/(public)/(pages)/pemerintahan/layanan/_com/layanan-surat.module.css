@@ -85,7 +85,7 @@
 .placeholder {
   display: block;
   aspect-ratio: 4 / 3;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   animation: pulse 1.4s ease-in-out infinite;
 }
 

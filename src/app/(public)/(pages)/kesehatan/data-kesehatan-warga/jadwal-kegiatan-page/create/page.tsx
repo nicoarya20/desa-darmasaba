@@ -1,6 +1,5 @@
 'use client'
 import pendaftaranJadwalKegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/pendafataranJadwalKegiatan';
-import colors from '@/con/colors';
 import { Button, Divider, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
 
@@ -98,7 +97,7 @@ function CreatePendaftaran() {
             input: { fontSize: '16px', lineHeight: 1.5 },
           }}
         />
-        <Button size="md" radius="lg" bg={colors['blue-button']} onClick={handleSubmit}>
+        <Button size="md" radius="lg" bg="var(--c-brand-fill)" onClick={handleSubmit}>
           <Text fz={{ base: 'sm', md: 'md' }} fw={600} c="white">
             Daftar Sekarang
           </Text>

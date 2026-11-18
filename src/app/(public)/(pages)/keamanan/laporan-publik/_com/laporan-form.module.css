@@ -1,14 +1,15 @@
 /*
  * Modal Tambah Laporan — kartu putih radius 18px (Mantine Modal), isian satu kolom ukuran md, catatan privasi
- * di panel #f5f5f7, tombol pil (Batal putih, Kirim brand) rata kanan; mobile tombol bertumpuk selebar modal.
- * Modal dirender di portal (di luar `.section`); warna brand tombol Kirim lewat prop `color` Mantine.
+ * di panel --c-tile, tombol pil (Batal putih, Kirim brand) rata kanan; mobile tombol bertumpuk selebar modal.
+ * Modal dirender di portal (di luar `.section`), jadi warna memakai token --c-* langsung (ikut tema); tombol Kirim
+ * lewat prop `color` Mantine = var(--c-brand-fill).
  */
 .modalHeader {
   padding-bottom: 8px;
 }
 
 .modalTitle {
-  color: #1d1d1f;
+  color: var(--c-ink);
   font-size: 24px;
   line-height: 1.17;
   font-weight: 700;
@@ -24,8 +25,8 @@
   margin: 0;
   padding: 12px 16px;
   border-radius: 12px;
-  background: #f5f5f7;
-  color: #6e6e73;
+  background: var(--c-tile);
+  color: var(--c-muted);
   font-size: 14px;
   line-height: 1.45;
 }

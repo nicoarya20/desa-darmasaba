@@ -2,8 +2,11 @@ import { IconLock } from '@tabler/icons-react';
 import type { CSSProperties } from 'react';
 import s from './perpus-hero.module.css';
 
-/** Warna sampul per buku (nama variabel CSS `--c`), urut kiri → kanan; tinggi diatur di CSS. */
-const SAMPUL = ['var(--brand)', '#2f91cc', '#8ac1e3', 'var(--brand-hover)', '#5da9d8'] as const;
+/**
+ * Warna sampul per buku (nama variabel CSS `--c`), urut kiri → kanan; tinggi diatur di CSS. Biru tua = token isi
+ * (terang #0a4e78/#083f61 seperti dulu; gelap #1c6ea4/#165a87, bukan --brand teks yang di gelap jadi biru muda).
+ */
+const SAMPUL = ['var(--c-brand-fill)', '#2f91cc', '#8ac1e3', 'var(--c-brand-fill-hover)', '#5da9d8'] as const;
 
 /**
  * Ilustrasi dekoratif kepala halaman: jendela browser bergambar rak buku. Digambar dengan CSS (bukan tangkapan

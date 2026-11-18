@@ -1,6 +1,7 @@
 'use client'
 import infoWabahPenyakit from '@/app/admin/(dashboard)/_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
-import colors from '@/con/colors';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import {
   Badge,
   Box,
@@ -47,7 +48,7 @@ function Page() {
   }
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="lg">
+    <Stack pos="relative" className={t.tema} bg="var(--c-hero-bg)" py="xl" gap="lg">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
@@ -56,7 +57,7 @@ function Page() {
         <GridCol span={{ base: 12, md: 8 }}>
           <Title
             order={1}
-            c={colors['blue-button']}
+            c="var(--c-brand)"
             fw="bold"
             lh={{ base: 1.2, md: 1.2 }}
           >
@@ -88,7 +89,7 @@ function Page() {
         {data.length === 0 ? (
           <Center py="6xl">
             <Stack align="center" gap="sm">
-              <IconInfoCircle size={50} color={colors['blue-button']} />
+              <IconInfoCircle size={50} color="var(--c-brand)" />
               <Title order={2} fz={{ base: 'md', md: 'lg' }} fw={500}>
                 Tidak ada data yang cocok dengan pencarian Anda.
               </Title>
@@ -103,7 +104,7 @@ function Page() {
                 shadow="md"
                 p="lg"
                 withBorder
-                bg={colors['white-trans-1']}
+                bg="var(--kt-glass)"
                 style={{
                   transition: 'transform 200ms ease, box-shadow 200ms ease',
                   display: 'flex',
@@ -138,7 +139,7 @@ function Page() {
                   <Group justify="space-between" mt="sm">
                     <Title
                       order={3}
-                      c={colors['blue-button']}
+                      c="var(--c-brand)"
                       fw={700}
                       fz={{ base: 'sm', md: 'lg' }}
                     >
@@ -170,7 +171,7 @@ function Page() {
                       fz={{ base: 'xs', md: 'sm' }}
                       lh={{ base: 1.5, md: 1.5 }}
                       lineClamp={3}
-                      dangerouslySetInnerHTML={{ __html: v.deskripsiSingkat }}
+                      className={rt.root} dangerouslySetInnerHTML={{ __html: v.deskripsiSingkat }}
                       style={{ flexGrow: 1 }}
                     />
 

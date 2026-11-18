@@ -1,6 +1,5 @@
 import { PERMOHONAN_FIELD } from '@/app/(public)/(pages)/ppid/_com/permohonan.meta';
 import { InovasiFormActions, InovasiFormCard } from '@/app/(public)/(pages)/inovasi/_com/InovasiFormCard';
-import colors from '@/con/colors';
 import { Button, Select, TextInput } from '@mantine/core';
 import { useEffect, useId, useRef, type FormEvent, type RefObject } from 'react';
 import { flushSync } from 'react-dom';
@@ -118,7 +117,7 @@ export function AdministrasiForm({ values, errors, status, jenis, onField, onSub
           </p>
         ) : null}
         <InovasiFormActions>
-          <Button ref={submitRef} type="submit" size={PERMOHONAN_FIELD.size} radius={PERMOHONAN_FIELD.radius} color={colors['blue-button']} loading={sending}>
+          <Button ref={submitRef} type="submit" size={PERMOHONAN_FIELD.size} radius={PERMOHONAN_FIELD.radius} color="var(--c-brand-fill)" loading={sending}>
             {T.submit}
           </Button>
         </InovasiFormActions>

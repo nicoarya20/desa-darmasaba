@@ -2,7 +2,6 @@
 import { PermohonanLayout } from '@/app/(public)/(pages)/ppid/_com/PermohonanLayout';
 import { PermohonanSteps } from '@/app/(public)/(pages)/ppid/_com/PermohonanSteps';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import formStyles from '@/app/(public)/(pages)/inovasi/_com/inovasi-form.module.css';
 import { useEffect, useRef } from 'react';
@@ -39,7 +38,7 @@ export function AdministrasiPage() {
   };
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

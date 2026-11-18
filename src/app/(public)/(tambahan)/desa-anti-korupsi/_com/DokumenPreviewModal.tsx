@@ -2,6 +2,7 @@
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { Anchor, Box, Modal } from '@mantine/core';
+import classes from './program-folder.module.css';
 
 /** Label tautan buka PDF di tab baru (juga `data-text` sapuan warna). */
 const BUKA_TAB_BARU = 'Buka di tab baru';
@@ -14,7 +15,7 @@ export function DokumenPreviewModal({ dokumen, onClose }: Props) {
     <Modal opened={dokumen !== null} onClose={onClose} size="xl" title={dokumen?.judul} centered>
       {dokumen && (
         <>
-          <Box style={{ border: '1px solid #e0e0e0', borderRadius: 8, overflow: 'hidden', height: '70vh' }}>
+          <Box className={classes.pratinjau}>
             <iframe src={dokumen.file.link} title={dokumen.judul} width="100%" height="100%" style={{ border: 'none' }} />
           </Box>
           <Anchor

@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
-import colors from '@/con/colors';
 import { Box, Stack, Text } from '@mantine/core';
 import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -16,7 +15,7 @@ import {
   type PotensiFilter,
   type PotensiItem,
 } from './_com/potensi.logic';
-import { POTENSI_BRAND_VARS } from './_com/potensi.meta';
+import g from './_com/potensi.module.css';
 import { POTENSI_TEXT } from './_com/potensi.text';
 
 function Page() {
@@ -55,7 +54,7 @@ function Page() {
   const visible = useMemo(() => filterPotensi(items, filter), [items, filter])
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap={48} style={POTENSI_BRAND_VARS}>
+    <Stack pos="relative" bg="var(--c-hero-bg)" py="xl" gap={48} className={g.page}>
       <Box px={{ base: "md", md: 100 }}>
         <BackButton />
       </Box>

@@ -99,8 +99,8 @@
   gap: 6px;
   padding: 11px 22px;
   border-radius: 980px;
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font-size: 17px;
   font-weight: 500;
   text-decoration: none;
@@ -147,7 +147,7 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
 }
 
@@ -182,7 +182,7 @@
   height: 56px;
   margin: 18px 0;
   border-radius: 12px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
@@ -201,7 +201,7 @@
   display: block;
   height: 180px;
   border-radius: var(--radius);
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
@@ -213,7 +213,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .cta:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 }
 

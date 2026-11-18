@@ -92,7 +92,7 @@
   overflow: hidden;
   aspect-ratio: 16 / 9;
   /* Sama dengan latar foto Kabar: tidak ada garis hitam di tepi ubin "Video tidak tersedia" saat dibulatkan subpiksel. */
-  background: #e8e8ed;
+  background: var(--c-placeholder);
 }
 
 .videoButton {
@@ -161,7 +161,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   color: var(--subtle);
   font-size: 15px;
 }

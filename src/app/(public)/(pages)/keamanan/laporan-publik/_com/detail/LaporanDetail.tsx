@@ -1,7 +1,6 @@
 'use client';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconCalendarEvent, IconChevronRight, IconMapPin } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -23,7 +22,7 @@ export function LaporanDetail({ id }: { id: string }) {
 /** Tampilan detail untuk satu keadaan muat (diekspor untuk test). */
 export function LaporanDetailView({ state, onRetry }: { state: LaporanDetailState; onRetry: () => void }) {
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         <BackButton />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}

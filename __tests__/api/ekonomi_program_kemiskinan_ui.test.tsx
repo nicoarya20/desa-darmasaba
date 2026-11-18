@@ -27,6 +27,7 @@ import {
 } from '@/app/(public)/(pages)/ekonomi/program-kemiskinan/_com/program-kemiskinan.text';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -50,7 +51,9 @@ describe('ProgramKemiskinanRows', () => {
     expect(html).toContain(
       `<h3 class="${rows.title}"><a href="/ekonomi/program-kemiskinan/pk1" class="${pk.titleLink} ${r.trigger}"><span class="${r.title}">Program 1</span></a></h3>`,
     );
-    expect(html).toContain(`<div class="${rows.prose}"><p>Deskripsi program 1</p></div>`);
+    // Wadah deskripsi boleh memuat kelas tambahan; wajib rows.prose + penetral rich text rt.root (dark theme).
+    const prose = html.match(/<div class="([^"]*)"><p>Deskripsi program 1<\/p><\/div>/);
+    expect(prose?.[1].split(' ')).toEqual(expect.arrayContaining([rows.prose, rt.root]));
     expect(text(html)).not.toContain('Statistik Kemiskinan');
   });
 

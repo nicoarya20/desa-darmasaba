@@ -2,7 +2,6 @@
 import frame from '../../_com/page-frame/page-frame.module.css';
 import s from './perpus-page.module.css';
 import type { PerpusWebsiteState } from './perpus-website.logic';
-import { PERPUS_BRAND_VARS } from './perpus.meta';
 import { PerpusFitur, PerpusLangkah } from './PerpusBagian';
 import { PerpusHero } from './PerpusHero';
 import { PerpusPenutup } from './PerpusPenutup';
@@ -12,7 +11,7 @@ import { usePerpusWebsite } from './use-perpus-website';
 export function PerpusPenghubungBody({ state }: { state: PerpusWebsiteState }) {
   const href = state.status === 'ready' ? state.data?.websiteUrl : undefined;
   return (
-    <div className={`${frame.frame} ${s.page}`} style={PERPUS_BRAND_VARS}>
+    <div className={`${frame.frame} ${s.page}`}>
       <div className={`${frame.inner} ${s.inner}`}>
         <PerpusHero state={state} />
         <PerpusFitur />

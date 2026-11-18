@@ -1,6 +1,3 @@
-import colors from '@/con/colors';
-import type { CSSProperties } from 'react';
-
 /** Konstanta halaman daftar lowongan publik (`/ekonomi/lowongan-kerja-lokal`): batas muat, pilihan filter, urutan. */
 
 /**
@@ -39,8 +36,3 @@ export const FILTER_SKELETON_ROWS = 4;
 
 /** Lebar tempat panel kiri diganti pil Filter + drawer (sama dengan breakpoint CSS 1068px). */
 export const LOWONGAN_DRAWER_QUERY = '(max-width: 1068px)';
-
-/** Variabel warna brand untuk akar halaman lowongan (panel Filter, pil terpilih, fokus, kartu). */
-export const LOWONGAN_BRAND_VARS = {
-  '--brand': colors['blue-button'],
-} as CSSProperties;

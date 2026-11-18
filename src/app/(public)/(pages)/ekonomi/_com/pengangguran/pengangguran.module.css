@@ -1,10 +1,10 @@
 /*
  * Modul Pengangguran (Jumlah Pengangguran + Usia Kerja yang Menganggur) di atas kerangka Kabar (`.section`
  * kabar.module.css + kepala kabar-list). Variabel warna (--brand, --ink, --muted, --tile, --radius) dari kabar.module.css.
- * Kartu & panel gaya APBDes/Monev: #f5f5f7, radius 18, tanpa border/bayangan. Breakpoint apple.com: ≤1068px, ≤734px.
+ * Kartu & panel gaya APBDes/Monev: ubin --c-tile, radius 18, tanpa border/bayangan. Breakpoint apple.com: ≤1068px, ≤734px.
  */
 .stack {
-  --rule: #d2d2d7;
+  --rule: var(--c-line-strong);
   display: flex;
   flex-direction: column;
   /* 64px, ≤734px 48px: token globals.css */
