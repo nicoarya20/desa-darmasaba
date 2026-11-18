@@ -2,6 +2,7 @@
 
 import { Tooltip, useMantineColorScheme, VisuallyHidden } from "@mantine/core";
 import { IconMoon, IconSun } from "@tabler/icons-react";
+import { requestThemeTransition } from "@/state/state-theme-transition";
 import s from "./navbar.module.css";
 import {
   nextColorScheme,
@@ -13,6 +14,7 @@ import {
 // Ikon & label dipilih CSS, bukan state React, jadi HTML server = client (tanpa hydration mismatch).
 const ON_LIGHT = "mantine-dark-hidden";
 const ON_DARK = "mantine-light-hidden";
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 function ThemeLabel() {
   return (
@@ -26,8 +28,13 @@ function ThemeLabel() {
 /** Tombol navbar (desktop & mobile) matahari/bulan untuk mengganti tema terang/gelap situs publik. */
 export function NavbarThemeToggle() {
   const { setColorScheme } = useMantineColorScheme();
-  const toggle = () =>
-    setColorScheme(nextColorScheme(document.documentElement.getAttribute("data-mantine-color-scheme")));
+  // Tema ditukar overlay transisi Candi Bentar di balik langitnya (ThemeGateTransition); langsung ditukar di sini
+  // hanya bila kurangi gerak aktif atau overlay belum siap. Klik selama transisi berjalan diabaikan.
+  const toggle = () => {
+    const target = nextColorScheme(document.documentElement.getAttribute("data-mantine-color-scheme"));
+    const reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY).matches;
+    if (requestThemeTransition(target, { reducedMotion }) === "direct") setColorScheme(target);
+  };
 
   return (
     <Tooltip label={<ThemeLabel />} position="bottom" withArrow classNames={{ tooltip: s.tooltip }}>
