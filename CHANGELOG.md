@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.312] - 2026-11-18
+### Fixed
+- **Beranda tidak lagi "melompat" saat grafik muncul.** Pada rilis 0.1.310, grafik APBDes dan Survei Kepuasan baru dimuat saat digulir mendekat, tetapi ruang yang disiapkan lebih pendek dari grafik aslinya (terutama di ponsel, selisih sekitar 930 px), sehingga tombol dan bagian di bawahnya terdorong turun saat grafik muncul. Kini ruang cadangan sama dengan tinggi aslinya di desktop, tablet, dan ponsel; grafik mulai dipasang jauh sebelum terlihat; dan kode grafik diunduh begitu pengunjung mulai menggulir atau menyentuh layar. Tampilan akhir grafik tidak berubah, dan beranda tetap ringan saat pertama dibuka.
+
 ## [0.1.311] - 2026-11-18
 ### Changed
 - **Program Inovasi tampil rapi dan terbaca di tema gelap.** Di beranda (rel "Program Inovasi Desa") dan di halaman Inovasi › Program Inovasi, ubin program ber-logo kini berupa kartu terang penuh saat tema gelap, sehingga logo berlatar transparan (mis. Galah Melah, Inovasi Desa Darmasaba) tetap jelas tanpa kotak di dalam kotak. Tampilan tema terang tidak berubah.
