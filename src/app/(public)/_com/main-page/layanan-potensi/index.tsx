@@ -2,11 +2,12 @@
 import stateLayananDesa from "@/app/admin/(dashboard)/_state/desa/layananDesa";
 import potensiDesaState from "@/app/admin/(dashboard)/_state/desa/potensi";
 import { useDocumentVisibility, useReducedMotion } from "@mantine/hooks";
-import _ from "lodash";
+import startCase from "lodash/startCase";
 import { useCallback, useEffect, useMemo, useState, type FocusEvent } from "react";
 import { useSnapshot } from "valtio";
 import { GalleryControls } from "./GalleryControls";
 import { GalleryRow, type GalleryItem } from "./GalleryRow";
+import { useNearViewport } from "./use-near-viewport";
 import s from "./gallery.module.css";
 import { GALLERY_TEXT } from "./gallery.text";
 import { useLoopCarousel } from "./use-loop-carousel";
@@ -34,7 +35,7 @@ function LayananPotensi() {
   }, []);
 
   const layanan = useMemo(
-    () => toItems(layananSnap.data as ApiItem[] | null, "/pemerintahan/layanan", _.startCase),
+    () => toItems(layananSnap.data as ApiItem[] | null, "/pemerintahan/layanan", startCase),
     [layananSnap.data],
   );
   const potensi = useMemo(
@@ -44,6 +45,7 @@ function LayananPotensi() {
   const layananLoading = layananSnap.data === null;
   const potensiLoading = potensiSnap.data === null;
 
+  const [sectionRef, nearViewport] = useNearViewport<HTMLElement>();
   const reducedMotion = useReducedMotion() ?? false;
   const visibility = useDocumentVisibility();
   const feature = useLoopCarousel(layanan.length, reducedMotion);
@@ -89,7 +91,7 @@ function LayananPotensi() {
   const isEmpty = !layananLoading && !potensiLoading && layanan.length === 0 && potensi.length === 0;
 
   return (
-    <section className={s.section} aria-roledescription="carousel" aria-labelledby="layanan-potensi-title">
+    <section ref={sectionRef} className={s.section} aria-roledescription="carousel" aria-labelledby="layanan-potensi-title">
       <h2 id="layanan-potensi-title" className={s.title}>
         {GALLERY_TEXT.title}
       </h2>
@@ -106,6 +108,7 @@ function LayananPotensi() {
                 items={layanan}
                 carousel={feature}
                 ctaLabel={GALLERY_TEXT.ctaLayanan}
+                preloadImages={nearViewport}
                 onStep={stepAll}
               />
             ) : null}
@@ -116,6 +119,7 @@ function LayananPotensi() {
                 items={potensi}
                 carousel={tile}
                 ctaLabel={GALLERY_TEXT.ctaPotensi}
+                preloadImages={nearViewport}
                 onStep={stepAll}
               />
             ) : null}

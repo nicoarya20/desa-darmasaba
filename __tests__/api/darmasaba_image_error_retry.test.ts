@@ -15,7 +15,12 @@ import {
 
 class FakeHTMLImageElement {
   src = "";
+  /** Meniru atribut srcset (gambar responsif); null = tak ada. */
+  srcset: string | null = null;
   dataset: Record<string, string> = {};
+  removeAttribute(name: string) {
+    if (name === "srcset") this.srcset = null;
+  }
 }
 
 // `as any` di seluruh file ini murni untuk monkey-patch globalThis.HTMLImageElement
@@ -80,6 +85,19 @@ describe("handleImageLoadError", () => {
     expect(url.searchParams.get("_retry")).toBe("1");
   });
 
+  it("gambar responsif: retry melepas srcset supaya src ber-_retry tidak dikalahkan kandidat srcset", () => {
+    const img = new FakeHTMLImageElement();
+    img.src = "https://example.com/api/img/foo-desktop.webp";
+    img.srcset = "/api/img/foo-desktop.webp?size=480 480w";
+    let capturedRetryFn: (() => void) | null = null;
+
+    handleImageLoadError(makeErrorEvent(img), (fn) => (capturedRetryFn = fn), () => true);
+    capturedRetryFn!();
+
+    expect(img.srcset).toBeNull();
+    expect(new URL(img.src).searchParams.get("_retry")).toBe("1");
+  });
+
   it("delay retry kedua & ketiga mengikuti urutan IMAGE_RETRY_DELAYS_MS", () => {
     const img = new FakeHTMLImageElement();
     img.src = "https://example.com/api/img/foo-mobile.webp";
@@ -130,6 +148,17 @@ describe("handleImageLoadError", () => {
     const url = new URL(img.src);
     expect(url.origin + url.pathname).toBe("https://example.com/api/img/foo-mobile.webp");
     expect(url.searchParams.get("format")).toBe("jpeg");
+  });
+
+  it("gambar responsif di browser tanpa WebP: srcset dilepas agar fallback ?format=jpeg benar-benar dipakai", () => {
+    const img = new FakeHTMLImageElement();
+    img.src = "https://example.com/api/img/foo-desktop.webp";
+    img.srcset = "/api/img/foo-desktop.webp?size=480 480w, /api/img/foo-desktop.webp?size=768 768w";
+
+    handleImageLoadError(makeErrorEvent(img), vi.fn(), () => false);
+
+    expect(img.srcset).toBeNull();
+    expect(new URL(img.src).searchParams.get("format")).toBe("jpeg");
   });
 
   it("fallback WebP hanya dipicu sekali per gambar — error kedua lanjut ke jalur retry normal", () => {

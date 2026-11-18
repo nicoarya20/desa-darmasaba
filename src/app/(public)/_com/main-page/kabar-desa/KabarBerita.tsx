@@ -3,6 +3,7 @@ import { IconNews } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
 import { imageLoadingAttrs } from "../../image-loading.logic";
 import r from "../../link-reveal/link-reveal.module.css";
+import { responsiveImageProps } from "../../responsive-image.logic";
 import { formatTanggalKabar, splitFeatured, type KabarItem } from "./kabar.logic";
 import { KABAR_BERITA_LIMIT } from "./kabar.meta";
 import s from "./kabar.module.css";
@@ -17,8 +18,19 @@ function Meta({ item }: { item: KabarItem }) {
   );
 }
 
+/**
+ * `sizes` foto per breakpoint (kabar.module.css; 734px/1068px = breakpoint ponsel/tablet). Foto `object-fit: cover`
+ * pada kotak 16:10 dari foto 16:9 diskalakan mengikuti TINGGI kotak, jadi lebar yang dibutuhkan ±11% di atas lebar
+ * kotak; angka kartu sudah memasukkannya agar browser tidak memilih berkas yang terlalu kecil (buram).
+ */
+const PHOTO_SIZES = {
+  featured: "(max-width: 734px) 100vw, 60vw",
+  rail: "(max-width: 734px) 87vw, 38vw",
+  grid: "(max-width: 734px) 111vw, (max-width: 1068px) 56vw, 38vw",
+} as const;
+
 /** `aboveFold`: foto kandidat LCP (berita utama halaman daftar) diunduh langsung, bukan lazy. */
-function Photo({ url, aboveFold = false }: { url?: string; aboveFold?: boolean }) {
+function Photo({ url, sizes, aboveFold = false }: { url?: string; sizes: string; aboveFold?: boolean }) {
   if (!url) {
     return (
       <span className={s.photoFallback} aria-hidden>
@@ -26,7 +38,15 @@ function Photo({ url, aboveFold = false }: { url?: string; aboveFold?: boolean }
       </span>
     );
   }
-  return <Image src={url} alt="" className={s.photoImg} {...imageLoadingAttrs(aboveFold)} decoding="async" />;
+  return (
+    <Image
+      alt=""
+      className={s.photoImg}
+      {...responsiveImageProps(url, sizes)}
+      {...imageLoadingAttrs(aboveFold)}
+      decoding="async"
+    />
+  );
 }
 
 type Props = {
@@ -77,7 +97,7 @@ export function KabarBerita({
     <div className={s.berita}>
       <Link href={featured.href} className={`${s.featured} ${r.trigger}`}>
         <span className={s.featuredPhoto}>
-          <Photo url={featured.imageUrl} aboveFold={layout === "grid"} />
+          <Photo url={featured.imageUrl} sizes={PHOTO_SIZES.featured} aboveFold={layout === "grid"} />
         </span>
         <span className={s.featuredBody}>
           <Meta item={featured} />
@@ -94,7 +114,7 @@ export function KabarBerita({
             <li key={item.id}>
               <Link href={item.href} className={`${s.card} ${r.trigger}`}>
                 <span className={s.cardPhoto}>
-                  <Photo url={item.imageUrl} />
+                  <Photo url={item.imageUrl} sizes={PHOTO_SIZES[layout]} />
                 </span>
                 <span className={s.cardBody}>
                   <Meta item={item} />
