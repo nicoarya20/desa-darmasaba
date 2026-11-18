@@ -22,14 +22,7 @@
   src: url('/assets/fonts/font.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
-  /*
-   * optional (bukan swap): saat font.otf (±126 KB) selesai diunduh di sinyal lambat (±6 dtk), swap mengganti font
-   * cadangan dan mengubah ukuran teks hero sehingga blok di bawahnya bergeser ±64px (CLS 0,16 di PageSpeed mobile;
-   * terbukti: posisi pita hero 342→400px tepat saat document.fonts.status jadi "loaded"). Dengan optional tidak ada
-   * pergantian setelah tampil. Kunjungan pertama di jaringan lambat memakai font cadangan sistem; font tetap
-   * diunduh di latar dan dipakai di halaman/kunjungan berikutnya (cache 30 hari, lihat static-cache-headers.ts).
-   */
-  font-display: optional;
+  font-display: swap; /* ✅ TAMBAHKAN INI - Penting untuk PageSpeed! */
 }
 
 /* ===================================

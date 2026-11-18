@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.317] - 2026-11-19
+### Fixed
+- **Bagian atas beranda tidak lagi "melompat" saat data media sosial dan profil Perbekel tiba.** Penyebab sebenarnya ditemukan lewat pengukuran rapat: deretan ikon media sosial (Instagram, TikTok, YouTube, dan lainnya) tidak menyisakan ruang selama datanya dimuat, lalu muncul dan mendorong foto Perbekel, kartu nama, dan daftar program ke bawah sekitar 64 piksel; selain itu kerangka pemuatan foto Perbekel tidak menyertakan kartu nama sehingga tinggi bagian atas bertambah saat data tiba. Kini ruang untuk keduanya disisakan sejak awal dengan ukuran yang sama seperti tampilan akhirnya. Tampilan akhir tidak berubah. (Nilai pergeseran 0,16 di PageSpeed mobile sebelumnya di atas batas baik 0,1.)
+- **Pembatalan perubahan font 0.1.316.** Pada rilis 0.1.316 pergeseran tadi diduga berasal dari pergantian font, sehingga font diubah agar tidak diganti setelah tampil. Pengukuran ulang membuktikan dugaan itu salah (nilai pergeseran tidak berubah), jadi pengaturan font dikembalikan seperti semula agar tampilan huruf tidak berbeda di kunjungan pertama tanpa manfaat.
+
 ## [0.1.316] - 2026-11-19
 ### Fixed
 - **Bagian atas beranda (foto Perbekel, kartu nama, daftar program) tidak lagi bergeser sendiri saat font selesai dimuat.** Di HP dengan sinyal lambat, font khusus website baru selesai diunduh setelah sekitar 6 detik. Pada saat itu tampilan berganti dari font bawaan ke font website dan menggeser bagian bawah blok hero sekitar 64 piksel, sehingga halaman terlihat "melompat" (nilai pergeseran 0,16 di PageSpeed mobile, di atas batas baik 0,1). Kini font tidak lagi diganti setelah halaman tampil.

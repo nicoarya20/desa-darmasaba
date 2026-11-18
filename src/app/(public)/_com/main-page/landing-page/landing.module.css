@@ -253,6 +253,32 @@
   align-self: center;
 }
 
+/*
+ * Ruang cadangan hero selama data dimuat (juknis lomba 5.4, CLS). Ukuran = isi akhirnya, diukur di stg 0.1.316:
+ * ikon media sosial 44px + margin 20px (sama dengan .sosmed); kartu nama 84px di desktop (>=1069px) dan ±74px di
+ * tablet/ponsel (71-74px) dengan margin atas -32px (sama dengan .nameCard).
+ */
+.sosmedPlaceholder {
+  height: 44px;
+  margin: 20px 0 0;
+}
+
+.nameCardSkeleton {
+  position: relative;
+  width: min(100%, 460px);
+  height: 74px;
+  margin-top: -32px;
+  border-radius: 18px;
+  background: var(--skeleton);
+}
+
+@media (min-width: 1069px) {
+  .nameCardSkeleton {
+    height: 84px;
+  }
+}
+
+
 .profileNoPhoto .nameCard {
   margin-top: 0;
 }
