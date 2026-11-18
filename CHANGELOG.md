@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.315] - 2026-11-19
+### Changed
+- **Font, ikon, dan gambar statis website disimpan lebih lama di perangkat pengunjung (30 hari).** Berkas seperti font utama, logo/ikon desa, dan gambar tetap di folder aset sebelumnya hanya disimpan 1–4 jam, sehingga setiap kunjungan ulang mengunduhnya lagi. Kini kunjungan kedua dan seterusnya lebih cepat dan hemat kuota. Catatan operator: karena nama berkasnya tetap, bila sebuah berkas statis diganti isinya, ganti juga namanya agar pengunjung langsung melihat versi baru.
+- **Beranda tidak lagi mengunduh semua foto galeri sekaligus.** Foto Galeri Layanan & Potensi, yang letaknya jauh di bawah, baru diunduh saat pengunjung menggulir mendekat; foto di sekitar kartu yang sedang tampil tetap disiapkan lebih awal supaya geseran carousel tidak menampilkan kotak kosong. Foto galeri, Kabar Desa, dan Prestasi juga kini ditawarkan dalam beberapa ukuran (480, 768, dan 1280 piksel) sehingga HP menerima foto yang lebih kecil dari foto komputer. Tampilan tidak berubah.
+- **Beranda sedikit lebih ringan:** satu pustaka (lodash) yang tadinya dimuat utuh kini hanya memuat bagian yang dipakai (perkiraan ±23 KB lebih kecil, belum diukur di browser).
+
+### Fixed
+- **Permintaan ukuran foto tidak lagi memperbesar foto kecil.** Parameter ukuran pada alamat foto kini hanya mengecilkan: foto yang aslinya lebih kecil dari ukuran yang diminta dikirim apa adanya (sebelumnya diperbesar sehingga berkasnya malah lebih besar). Ini juga mencegah permintaan ukuran sangat besar membebani server.
+- Browser lama yang meminta ulang foto dalam format cadangan (JPEG) tidak lagi mendapat daftar ukuran WebP bersamanya.
+
 ## [0.1.314] - 2026-11-19
 ### Changed
 - **Foto website disimpan lebih lama di HP dan komputer pengunjung.** Foto yang tampil di website kini boleh disimpan di perangkat pengunjung hingga setahun, karena nama berkas foto selalu unik dan tidak pernah ditimpa. Kunjungan kedua dan seterusnya jadi lebih cepat dan hemat kuota. Di Cloudflare foto hanya disimpan sehari, supaya foto yang dihapus admin tidak bertahan lama. Gambar pengganti ("tidak ada gambar", saat foto gagal dibaca) tidak pernah disimpan, sehingga galat sesaat tidak menempel berjam-jam. Berkas non-foto (PDF, audio) tidak berubah. Setelah rilis, cek apakah masa simpan setahun benar-benar sampai ke browser; bila Cloudflare menimpanya dengan setelan 4 jam, ada satu pengaturan "Browser Cache TTL" di dashboard Cloudflare yang perlu disesuaikan.
