@@ -98,7 +98,7 @@ function Page() {
           <Title order={1} fz={{ base: '2.4rem', md: '3.4rem' }} fw={800} ta="center" style={{ letterSpacing: '-0.02em' }}>
             SDGs Desa
           </Title>
-          <Text ta="center" c="dimmed" fz="lg">
+          <Text ta="center" c="gray.7" fz="lg">
             Pembangunan berkelanjutan yang inklusif, adil, dan berdaya saing di tingkat desa
           </Text>
         </Stack>

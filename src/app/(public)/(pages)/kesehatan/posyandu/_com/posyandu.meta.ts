@@ -36,11 +36,15 @@ export const POSYANDU_LIST_LIMIT = 100;
 /** Permintaan statistik per banjar yang berjalan bersamaan (tiap permintaan = 7 query DB). */
 export const BANJAR_STATS_CONCURRENCY = 4;
 
-/** Variabel `--accent`/`--tint` per kartu ringkasan (warna netral, bukan penilaian baik/buruk). */
+/**
+ * Variabel `--accent`/`--tint` per kartu ringkasan (warna netral, bukan penilaian baik/buruk).
+ * `--accent-text` = varian lebih gelap untuk TEKS di atas `--tint`/#f5f5f7 (WCAG AA ≥4,5:1); `--accent` tetap
+ * untuk ikon & dekorasi. Oranye teks `#c2410c` (bukan orange-9 Mantine #d9480f, hanya 4,0:1).
+ */
 export const ACCENT = {
-  brand: { "--accent": colors["blue-button"], "--tint": colors["blue-button-1"] } as CSSProperties,
-  teal: { "--accent": "var(--mantine-color-teal-7)", "--tint": "var(--mantine-color-teal-0)" } as CSSProperties,
-  orange: { "--accent": "var(--mantine-color-orange-7)", "--tint": "var(--mantine-color-orange-0)" } as CSSProperties,
+  brand: { "--accent": colors["blue-button"], "--accent-text": colors["blue-button"], "--tint": colors["blue-button-1"] } as CSSProperties,
+  teal: { "--accent": "var(--mantine-color-teal-7)", "--accent-text": "var(--mantine-color-teal-9)", "--tint": "var(--mantine-color-teal-0)" } as CSSProperties,
+  orange: { "--accent": "var(--mantine-color-orange-7)", "--accent-text": "#c2410c", "--tint": "var(--mantine-color-orange-0)" } as CSSProperties,
 };
 
 /** Variabel warna halaman: brand APBDes + tint brand. */

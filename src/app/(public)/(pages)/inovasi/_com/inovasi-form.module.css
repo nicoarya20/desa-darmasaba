@@ -30,6 +30,8 @@
   padding: 32px;
   border-radius: 18px;
   background: #f5f5f7;
+  /* Keterangan isian Mantine (penghitung karakter) memakai `dimmed` #868e96 = 3,05:1 di ubin #f5f5f7; #6e6e73 = 4,7:1. */
+  --mantine-color-dimmed: #6e6e73;
 }
 
 .head {

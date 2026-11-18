@@ -222,7 +222,7 @@ button.legendItem {
 .modalContent {
   --ink: #1d1d1f;
   --muted: #6e6e73;
-  --subtle: #86868b;
+  --subtle: #6e6e73;
   --line: rgba(0, 0, 0, 0.08);
 }
 
