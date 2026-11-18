@@ -42,7 +42,7 @@ Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) me
 
 - **Jarak**: `--edge-gutter` (tepi kiri/kanan), `--section-gap` (antar-section beranda, isi terakhir → footer), `--block-gap` (antar-bagian di dalam halaman). Lihat §4. Jangan angka literal 56/64/100px.
 - **`--gutter`**: wadah pemakai `KabarListHeader` wajib set `--gutter: var(--edge-gutter)`, kalau tidak rel pil di ponsel melebar.
-- **Warna**: pakai token `--c-*` dari `src/app/theme-tokens.css` (§2.5), bukan hex literal, supaya halaman ikut tema gelap: brand `--c-brand` (teks/judul/tautan) dan `--c-brand-fill` + `--c-on-brand` (tombol isi), tinta `--c-ink`, abu teks `--c-muted`/`--c-ink-2`, panel/ubin `--c-tile` radius 18px tanpa border/bayangan, garis `--c-line-strong`. Token lokal modul jadi alias (`.section { --ink: var(--c-ink); }`). Nilai lokal yang berbeda dari token: `light-dark(terang = literal lama, gelap)` atau `@mixin dark { … }`; nilai terang tidak boleh berubah. Wadah `dangerouslySetInnerHTML` wajib memasang `rt.root` (penetral rich text). Aturan lengkap: §2.5 "Menulis gaya gelap".
+- **Warna (WAJIB untuk halaman baru)**: situs publik punya tombol tema dan default mengikuti OS (§2.5), jadi setiap halaman baru langsung tampil gelap bagi sebagian pengunjung. Warna hanya lewat token `--c-*` dari `src/app/theme-tokens.css` (§2.5), bukan hex literal: brand `--c-brand` (teks/judul/tautan) dan `--c-brand-fill` + `--c-on-brand` (tombol isi), tinta `--c-ink`, abu teks `--c-muted`/`--c-ink-2`, panel/ubin `--c-tile` radius 18px tanpa border/bayangan, garis `--c-line-strong`. Token lokal modul jadi alias (`.section { --ink: var(--c-ink); }`). Nilai lokal yang berbeda dari token: `light-dark(terang = literal lama, gelap)` atau `@mixin dark { … }`; nilai terang tidak boleh berubah. Literal warna di CSS publik yang tidak ikut tema ditolak test (§2.5 "Penjaga warna literal"). Elemen `dangerouslySetInnerHTML` wajib memasang `rt.root` di elemen itu sendiri (§2.5 "Penetral rich text CMS", dijaga test). Aturan lengkap: §2.5 "Menulis gaya gelap". Cek halaman di kedua tema sebelum selesai (§2.5 "Pratinjau").
 - **Tipografi**: `h1` 48px (≤734px 32) brand rata kiri + satu kalimat pengantar 19px abu (maks 640px); judul bagian `h2` 28px (ponsel 24), jarak judul → isi 24px (ponsel 20).
 - **Breakpoint CSS**: 1068px (tablet) dan 734px (ponsel).
 
@@ -55,6 +55,7 @@ Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) me
 5. **Alamat induk menu** (`/keamanan`, `/ekonomi`, dst.) sengaja 404; jangan buat halaman induk. Submenu yang disembunyikan (`hidden: true` di `src/con/navbar-list-menu.ts`) juga 404.
 6. **Gerak**: hormati `prefers-reduced-motion`; hover hanya di `(hover: hover) and (pointer: fine)`. Tulis `backdrop-filter` tanpa `-webkit-` manual (Lightning CSS).
 7. **Mobile**: tidak boleh ada geser horizontal halaman; baris pil/kartu yang geser harus di dalam relnya sendiri.
+8. **Warna ikut tema**: CSS di `src/app/(public)` tanpa warna literal yang tidak ikut tema; pakai token `--c-*`, `light-dark()`, `@mixin dark`, atau penanda `/* tema-tetap: <alasan> */`. Dijaga test `__tests__/api/no_hardcoded_color_guard.test.ts` (gagal bila dilanggar). Lihat §2.5 "Penjaga warna literal".
 
 ### 0.5 Mendaftarkan halaman
 
@@ -170,14 +171,17 @@ File: `src/app/theme-tokens.css` (diimpor `globals.css`). Terang di `:root` = **
 | `--c-hero-bg`, `--c-footer-from/to` | `#d1d9e8`, `#1c6ea4`/`#124170` | `#0e1620`, `#0f3354`/`#081a2c` | Hero, gradasi footer |
 | `--c-chart-1/2/3` | `#0a4e78`/`#2f91cc`/`#8ac1e3` | `#6cb4e4`/`#2f91cc`/`#cfe6f5` | Seri grafik (JS: string `"var(--c-chart-n)"`) |
 | `--c-open` / `--c-closed` | `#1f9d55` / `#d9363e` | `#30d158` / `#ff453a` | Status buka/tutup |
+| `--c-focus` | `#0071e3` | `#0a84ff` | Cincin fokus (`:focus-visible`), ≥ 3:1 di semua permukaan |
 
 `--brand` dipisah dua: teks pakai `--c-brand` (gelap: biru terang), tombol isi pakai `--c-brand-fill` (gelap: biru tua, teks putih 5,5:1). Brand `#0A4E78` di atas hitam hanya 2,4:1.
 
-**Mekanisme**: color scheme Mantine. `ColorSchemeScript` memasang `data-mantine-color-scheme` di `<html>` dari localStorage `mantine-color-scheme-value` sebelum paint (tanpa kedip); `color-scheme` native (scrollbar, kontrol form) sudah diikat Mantine. `defaultColorScheme` tetap `"light"` sampai semua menu selesai digelapkan (rencana: `"auto"` saat rilis). `MantineProvider` akar dibungkus `src/app/_com/SiteMantineProvider.tsx`; `<meta name="theme-color">` ikut skema (`#ffffff`/`#000000`).
+**Mekanisme**: color scheme Mantine. `ColorSchemeScript` memasang `data-mantine-color-scheme` di `<html>` dari localStorage `mantine-color-scheme-value` sebelum paint (tanpa kedip); `color-scheme` native (scrollbar, kontrol form) sudah diikat Mantine. **Default `"auto"`** (`DEFAULT_COLOR_SCHEME` di `src/lib/color-scheme-scope.ts`, satu sumber untuk `ColorSchemeScript`, `MantineProvider` akar, dan pemulihan admin → publik; dibuka 2026-11-18, plan-dark-theme Fase 4): pengunjung yang belum memilih mengikuti `prefers-color-scheme` OS, termasuk saat OS berganti ketika halaman terbuka. Atribut `<html>` selalu berisi hasil resolusi (`light`/`dark`), tidak pernah `auto`, jadi CSS dan JS cukup membaca atribut itu. `MantineProvider` akar dibungkus `src/app/_com/SiteMantineProvider.tsx`.
+
+**`<meta name="theme-color">`** (`#ffffff`/`#000000`, `THEME_COLOR`): `viewport.themeColor` di `layout.tsx` memancarkan dua meta ber-media (`THEME_COLOR_VIEWPORT`), jadi warna bilah browser sudah benar sebelum hidrasi untuk pengunjung "auto". Setelah hidrasi `syncThemeColorMeta` menyamakan kedua meta dengan atribut `<html>` (pilihan tersimpan menang atas OS; admin terang), juga setiap kali Next mengganti simpul meta saat navigasi client. Kompromi yang diterima: sebelum hidrasi, pengunjung yang pilihannya beda dari OS (dan admin di OS gelap) melihat warna bilah OS sebentar; halamannya sendiri sudah benar sejak paint pertama. Jangan menulis `"theme-color"` statis di `metadata.other`.
 
 **Admin selalu terang**: atribut di `<html>` berlaku global, jadi rute di luar situs publik (`LIGHT_ONLY_PATH_PREFIXES` di `src/lib/color-scheme-scope.ts`: `/admin`, `/dev`, `/login`, dst.) dipaksa `light`: skrip `<head>` setelah `ColorSchemeScript` (sebelum paint), `forceColorScheme` per rute, dan pengelola skema yang mengembalikan `light` di rute itu. Pilihan pengunjung di localStorage tidak ditimpa; pindah dari admin ke situs publik memulihkannya. Folder rute baru di `src/app` di luar `(public)` wajib masuk daftar itu (dijaga `__tests__/api/theme_toggle.test.tsx`). Admin memakai dark mode sendiri (`src/state/darkModeStore.ts`, §2.3).
 
-**Tombol tema** (`_com/NavbarThemeToggle.tsx`, logika `_com/theme-toggle.logic.ts`): **saat ini hanya dirender di development** (`THEME_TOGGLE_VISIBLE` = `NODE_ENV === "development"`, keputusan user 2026-11-17: menu lain belum gelap, jadi pengunjung tidak boleh menyalakannya). Build produksi tidak merender tombol sama sekali dan navbar terang identik dengan sebelum tema gelap (padding rapat 2px ikut hanya bila tombol ada). Dibuka untuk publik di plan-dark-theme Fase 4. Ikon bulan (di terang) / matahari (di gelap) di navbar, **tepat kanan tombol baca suara**, desktop & mobile. Lingkaran 30px seperti tombol baca suara. Ikon dan label ("Aktifkan tema gelap"/"Aktifkan tema terang") dipilih CSS lewat kelas global Mantine `mantine-dark-hidden`/`mantine-light-hidden`, bukan state React, jadi HTML server = client. Klik → `setColorScheme` dari atribut `<html>` saat itu.
+**Tombol tema** (`_com/NavbarThemeToggle.tsx`, logika `_com/theme-toggle.logic.ts`): **tampil untuk publik di semua build** sejak plan-dark-theme Fase 4 (2026-11-18), tanpa cabang khusus `NODE_ENV` (dijaga `__tests__/api/theme_toggle.test.tsx`). Ikon bulan (di terang) / matahari (di gelap) di navbar, **tepat kanan tombol baca suara**, desktop & mobile. Lingkaran 30px seperti tombol baca suara. Ikon dan label ("Aktifkan tema gelap"/"Aktifkan tema terang") dipilih CSS lewat kelas global Mantine `mantine-dark-hidden`/`mantine-light-hidden`, bukan state React, jadi HTML server = client. Klik → `setColorScheme(nextColorScheme(atribut <html>))`: karena atribut sudah hasil resolusi, klik pertama saat OS gelap (skema "auto") menghasilkan terang. Tombol dua keadaan (terang/gelap): setelah diklik, pilihan tersimpan eksplisit di localStorage dan menang atas OS; tidak ada pilihan "ikuti sistem" di UI (kembali ke auto = hapus kunci localStorage).
 
 **Menulis gaya gelap**:
 - Pakai token: `color: var(--c-ink)`; komponen Mantine menerima `c="var(--c-brand)"`, `bg="var(--c-page)"`, `color="var(--c-brand-fill)"` (hover filled otomatis `color-mix`).
@@ -190,11 +194,56 @@ File: `src/app/theme-tokens.css` (diimpor `globals.css`). Terang di `:root` = **
 - Teks/ikon brand = `--c-brand`. **Semua tombol/pil isi** memakai `--c-brand-fill` + `--c-on-brand` (+ `--c-brand-fill-hover`) langsung, bukan alias `--brand` (di gelap biru terang, teks putih di atasnya gagal kontras): pil CSS (`.ctaLink`/`.ctaButton`/`.cta`/`.download`), pil kategori & paginasi aktif (`kabar-list`), tombol Telepon kontak darurat, dan Button Mantine (`bg="var(--c-brand-fill)"` / `color="var(--c-brand-fill)"`).
 - Warna grafik dari JS = string `"var(--c-chart-n)"` (juga segmen `STAT_BARS_VARS`), bukan hex `colors['blue-button-*']`.
 - Logo/ikon pihak ketiga di tema gelap diberi pelat `#d9e1ea` (= pita putih gelap; `#f5f5f7` terlalu silau di hero gelap), ditulis `light-dark(#fff, #d9e1ea)`: rel & overlay Program Inovasi, ikon sosmed hero, kotak logo `program-tiles`. Pil nama kartu struktur organisasi memakai pelat yang sama dengan teks `#0a4e78`.
-- **Rich text CMS**: setiap wadah `dangerouslySetInnerHTML` di situs publik wajib memasang `rt.root` dari `(public)/_com/rich-text/rich-text.module.css` bersama kelas tipografinya (`` className={`${d.content} ${rt.root}`} ``). Hanya aktif di gelap (terang tak disentuh): `color` inline (tempelan Word/Docs) → warisan wadah, tautan berwarna → `--c-brand`, latar inline/`bgcolor` → transparan, `<mark>` → `#5c4b00` berteks `--c-ink`. Dijaga `__tests__/api/rich_text_neutralizer.test.ts`.
+- **Rich text CMS**: wajib `rt.root`, lihat "Penetral rich text CMS" di bawah.
 - Komponen yang menerima warna lewat prop Mantine membaca `var()` yang dipasang kelas pembungkus: Jenna `--jenna-*` di `.body`, FixedPlayerBar `--player-fab`.
-- **Pulau terang** (sengaja tetap terang di tema gelap sampai Fase 2): `/desa-anti-korupsi/detail` & `/desa-anti-korupsi/program/[id]` (`antikorupsi-detail.module.css` `.page` + `ANTIKORUPSI_BRAND_VARS`), `/ppid/indeks-kepuasan-masyarakat` (`.surface` ikm mengunci `--c-tile`/`--c-chart-*` ke nilai terang). **Peta Leaflet** dengan popup/daftar bertinta token (tile OSM tetap terang di tema gelap: keputusan final user 2026-11-18, tanpa filter/varian tile gelap): wadah peta `color-scheme: light` + alias lokal `--brand`/`--ink`/`--muted` bernilai terang token (contoh `lingkungan/pengelolaan-sampah-bank-sampah/_com/lokasi.module.css` `.mapFill`). Peta tanpa popup (`_com/konten-bersama/lokasi.peta.tsx`) tidak perlu: kontrol & atribusi Leaflet sudah berwarna literal terang.
+- **Pulau terang (final)**: semua menu publik sudah ikut tema gelap (plan-dark-theme Fase 2/3; DAK detail/program dan PPID IKM bukan pulau terang lagi, `ANTIKORUPSI_BRAND_VARS`/`KEPUASAN_BRAND_VARS` sudah dihapus). Yang tersisa hanya **peta Leaflet ber-popup**: CCTV (`keamanan/cctv/_com/cctv-explorer.module.css` `.map`) dan Bank Sampah (`lingkungan/pengelolaan-sampah-bank-sampah/_com/lokasi.module.css` `.mapFill`). Tile OSM tetap terang di tema gelap, tanpa filter/varian tile gelap (keputusan final user 2026-11-18), jadi wadah peta memasang `color-scheme: light` + alias lokal `--brand`/`--ink`/`--muted` berisi **nilai polos** terang token. Jangan pakai `light-dark()` di dalam pulau: di repo ini itu transform postcss-preset-mantine menjadi aturan `[data-mantine-color-scheme]`, bukan fungsi native, sehingga `color-scheme: light` tidak menahannya. Peta tanpa popup (`_com/konten-bersama/lokasi.peta.tsx`) dan iframe Google Maps (Polsek Terdekat, Profil wilayah, dsb.) dibiarkan apa adanya: kontrol/atribusi sudah berwarna terang milik penyedia.
+- **Splash Candi Bentar** (`_com/splash/gate-splash.module.css`) memakai warna yang sama di kedua tema, termasuk akhir cahaya krem yang memudar ke beranda gelap saat OS gelap (keputusan user 2026-11-18: "warna loading screen jangan diganti" untuk rilis ini). Kilat terang di akhir splash saat OS gelap adalah hutang yang diketahui; varian gelap = task terpisah nanti (plan-dark-theme "Task terpisah"), jangan dikerjakan di luar task itu.
 
-**Pratinjau**: klik tombol tema di navbar, atau di konsol/ego-browser `localStorage.setItem("mantine-color-scheme-value","dark")` lalu muat ulang (`"light"` untuk kembali). localStorage dipakai bersama semua tab localhost:3000. Cek di 1440px, 1920×1080 @2x, dan 390px; kontras teks ≥ 4,5, ikon/garis grafik ≥ 3.
+#### Penetral rich text CMS
+
+HTML dari CMS (editor admin, tempelan Word/Google Docs) membawa warna inline (teks hitam, latar putih) yang tidak terbaca di tema gelap. Penetralnya `rt.root` dari `src/app/(public)/_com/rich-text/rich-text.module.css`, hanya aktif di gelap (terang tidak disentuh): `color` inline → warisan wadah, tautan berwarna → `--c-brand`, latar inline/`bgcolor` → transparan, `<mark>` → `#5c4b00` berteks `--c-ink`. Perilaku CSS-nya dijaga `__tests__/api/rich_text_neutralizer.test.ts`.
+
+**Aturan** (dijaga `__tests__/api/rich_text_root_guard.test.ts`, membaca semua `*.tsx` di `src/app/(public)`):
+- Setiap elemen di `src/app/(public)` yang merender HTML dari CMS lewat `dangerouslySetInnerHTML` wajib memasang `rt.root` di `className` **elemen itu sendiri**, bersama kelas tipografinya: `` className={`${d.content} ${rt.root}`} `` atau `className={rt.root}` di `Text`/`Box` Mantine. Memasangnya di wadah induk tidak dihitung.
+- Diterima: `cx()`/`clsx()`, ternary, template literal, dan `const` lokal di file yang sama yang berisi `rt.root`. Tidak diterima: alias lintas file dan `className` lewat `{...props}`.
+- Satu-satunya pengecualian berdasarkan tag: `<script>` dan `<style>` (JSON-LD, skrip head), karena isinya kode milik kita, bukan HTML CMS. Tidak ada daftar pengecualian per file; menambahnya butuh keputusan user (dan dicatat di sini).
+
+```tsx
+import rt from "@/app/(public)/_com/rich-text/rich-text.module.css";
+
+<div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: html }} />
+```
+
+#### Penjaga warna literal
+
+CSS di `src/app/(public)` tidak boleh memakai warna literal (hex, `rgb`/`rgba`, `hsl`, warna bernama) yang tidak ikut tema. `__tests__/api/no_hardcoded_color_guard.test.ts` memindai semua `*.css` di sana.
+
+**Lolos otomatis**:
+- (R1) literal di dalam `light-dark()`;
+- (R2) literal di blok gelap (`@mixin dark`, `[data-mantine-color-scheme=dark]`, `prefers-color-scheme: dark`);
+- (R3) literal terang yang selektor + properti-nya (shorthand ↔ longhand warna, custom property persis) ditimpa di blok gelap dalam file yang sama;
+- (R4) `mask-*`;
+- (R5) semua literal di `box-shadow`/`text-shadow`/`drop-shadow()`, serta hitam alfa di dalam `*-gradient()` (scrim di atas media).
+
+Isi `url()` dan komentar diabaikan.
+
+**Tidak otomatis** (ganti dengan token/`light-dark()`, atau beri penanda): `color-mix()` dengan `#fff`/`#000`, fallback `var(--x, literal)`, dan hitam alfa polos sebagai latar.
+
+**Penanda `tema-tetap`**: warna yang memang sama di dua tema (teks putih di atas foto/video/gradasi brand, label/penanda data, cincin fokus putih di atas media) diberi `/* tema-tetap: <alasan> */` tepat setelah `;` di baris yang sama. Alasan wajib diisi; penanda yang tidak lagi melekat ke literal (basi) membuat test merah.
+
+```css
+.caption {
+  color: #fff; /* tema-tetap: teks di atas foto */
+}
+```
+
+**Pengecualian per file/selektor** maksimal 3, masing-masing beralasan (daftar `EXCEPTIONS` di test): pulau terang peta CCTV dan Bank Sampah, serta splash Candi Bentar. Menambah pengecualian file/selektor butuh keputusan user.
+
+Cincin fokus memakai token `--c-focus` (terang `#0071e3`, gelap `#0a84ff`).
+
+**Di luar cakupan**: warna di TS/TSX (±99 literal di 31 file, hutang tercatat).
+
+**Pratinjau**: klik tombol tema di navbar, atau di konsol/ego-browser `localStorage.setItem("mantine-color-scheme-value","dark")` lalu muat ulang (`"light"` untuk kembali, `localStorage.removeItem(...)` untuk "auto"). Uji default "auto" tanpa menyentuh localStorage bersama: CDP `Emulation.setEmulatedMedia` dengan `prefers-color-scheme` `dark`/`light`. localStorage dipakai bersama semua tab localhost:3000. Cek di 1440px, 1920×1080 @2x, dan 390px; kontras teks ≥ 4,5, ikon/garis grafik ≥ 3.
 
 ---
 
@@ -1787,7 +1836,7 @@ const statePosyandu = proxy({
 File: `src/utils/themeTokens.ts`, `src/state/darkModeStore.ts`
 
 - State: `useDarkMode()` hook dari `src/state/darkModeStore.ts`
-- Diterapkan via `themeTokens(isDark)` + props/style inline di komponen admin (mis. `src/app/admin/layout.tsx`). Color scheme Mantine sendiri tidak di-switch: satu-satunya `MantineProvider` aktif ada di `src/app/layout.tsx` (`defaultColorScheme="light"`).
+- Diterapkan via `themeTokens(isDark)` + props/style inline di komponen admin (mis. `src/app/admin/layout.tsx`). Color scheme Mantine sendiri tidak di-switch di admin: satu-satunya `MantineProvider` aktif adalah `SiteMantineProvider` (`src/app/_com/SiteMantineProvider.tsx`, dipasang di `src/app/layout.tsx`), yang memaksa `light` di rute admin/akun (`forceColorScheme` + skrip `<head>`, §2.5 "Admin selalu terang") walau default situs publik `"auto"`.
 - `src/components/admin/AdminThemeProvider.tsx` (pakai `forceColorScheme`) **tidak dipakai** (0 importer) dan tidak punya compat look Mantine 9 — jangan dipasang tanpa menyamakan theme-nya dengan `layout.tsx` (lihat `docs/decisions/2026-11-04-mantine-9-upgrade.md` §6).
 - Semua komponen admin konsumsi `themeTokens(isDark)` untuk styling inline
 - ⚠️ `src/styles/dark-mode-table.css` (hover tabel `[data-mantine-color-scheme="dark"] tr:hover`) **tidak aktif**: hanya di-import oleh `AdminThemeProvider.tsx` yang tidak dipakai, dan color scheme Mantine tidak pernah `dark`. Kandidat poles tampilan.

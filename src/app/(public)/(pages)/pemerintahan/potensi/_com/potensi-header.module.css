@@ -63,7 +63,7 @@
 }
 
 .chip:focus-visible {
-  outline: 3px solid #0071e3;
+  outline: 3px solid var(--c-focus);
   outline-offset: 2px;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .chip[aria-pressed="true"] .count {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.2); /* tema-tetap: angka di atas pil aktif berisi brand */
 }
 
 @media (hover: hover) and (pointer: fine) {

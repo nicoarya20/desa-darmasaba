@@ -6,7 +6,7 @@
 .page {
   --brand: var(--c-brand);
   --brand-tint: var(--c-brand-tint);
-  --accent: #fcae00;
+  --accent: #fcae00; /* tema-tetap: aksen kuning Perpustakaan (warna halaman) */
   color: var(--c-ink);
   min-height: 70vh;
 }

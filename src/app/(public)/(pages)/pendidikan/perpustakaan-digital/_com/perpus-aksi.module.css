@@ -36,7 +36,7 @@
 
 .pillLight {
   background: light-dark(#fff, #d9e1ea);
-  color: #0a4e78;
+  color: #0a4e78; /* tema-tetap: teks brand di pil terang/pelat, 6,6:1 di gelap */
 }
 
 .pill:focus-visible,
@@ -47,7 +47,7 @@
 
 /* Di atas gradasi biru cincin brand tak terlihat → cincin putih. */
 .pillLight:focus-visible {
-  outline: 3px solid #fff;
+  outline: 3px solid #fff; /* tema-tetap: cincin fokus putih di atas gradasi biru */
   outline-offset: 3px;
 }
 

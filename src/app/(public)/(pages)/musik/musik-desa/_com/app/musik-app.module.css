@@ -29,7 +29,7 @@
   --m-track: rgba(0, 0, 0, 0.12);
   /* Ikon/inisial di atas gradasi pastel sampul cadangan (musik-palette.ts COVER_TONES): gradasinya sama di
      dua tema, jadi warnanya tetap (bukan --m-muted, yang di gelap jadi terang dan hilang di atas pastel). */
-  --m-on-cover: #515154;
+  --m-on-cover: #515154; /* tema-tetap: teks di atas sampul pastel (keputusan user) */
   --m-bar-h: 88px; /* tinggi NowPlayingBar */
   /* Ruang yang dipakai bar di bawah layar: 0 sampai lagu pertama dipilih (NowPlayingBar belum
      dirender), lalu tinggi bar + safe-area bawah (iPhone). Diatur lewat data-bar di .app. */

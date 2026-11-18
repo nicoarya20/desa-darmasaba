@@ -1,4 +1,4 @@
-import { isLightOnlyPath } from "@/lib/color-scheme-scope";
+import { DEFAULT_COLOR_SCHEME, isLightOnlyPath } from "@/lib/color-scheme-scope";
 import { localStorageColorSchemeManager, type MantineColorSchemeManager } from "@mantine/core";
 
 const storageManager = localStorageColorSchemeManager();
@@ -16,5 +16,8 @@ export const siteColorSchemeManager: MantineColorSchemeManager = {
       : storageManager.get(defaultValue),
 };
 
-/** Pilihan skema yang tersimpan (tanpa memandang rute); dipakai untuk memulihkan saat keluar dari admin. */
-export const readStoredColorScheme = () => storageManager.get("light");
+/**
+ * Pilihan skema yang tersimpan (tanpa memandang rute); dipakai untuk memulihkan saat keluar dari admin.
+ * Belum pernah memilih → DEFAULT_COLOR_SCHEME ("auto", ikuti OS), sama dengan pemuatan pertama di publik.
+ */
+export const readStoredColorScheme = () => storageManager.get(DEFAULT_COLOR_SCHEME);

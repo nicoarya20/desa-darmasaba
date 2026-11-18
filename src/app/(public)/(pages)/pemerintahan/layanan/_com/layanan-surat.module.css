@@ -17,8 +17,8 @@
   display: block;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: #1d1d1f;
-  color: #fff;
+  background: #1d1d1f; /* tema-tetap: latar kartu foto sebelum gambar dimuat */
+  color: #fff; /* tema-tetap: teks di atas foto + scrim */
   text-decoration: none;
 }
 
@@ -75,8 +75,8 @@
   flex: none;
   padding: 8px 18px;
   border-radius: 980px;
-  background: #fff;
-  color: #1d1d1f;
+  background: #fff; /* tema-tetap: pil di atas foto */
+  color: #1d1d1f; /* tema-tetap: teks pil di atas foto */
   font-size: 15px;
   font-weight: 500;
   white-space: nowrap;

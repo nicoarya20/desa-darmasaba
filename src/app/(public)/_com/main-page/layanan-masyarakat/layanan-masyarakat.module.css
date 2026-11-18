@@ -223,7 +223,7 @@
 
   .cardCta {
     grid-area: cta;
-    color: #aeaeb2;
+    color: #aeaeb2; /* tema-tetap: chevron abu netral gaya iOS */
   }
 
   /* Chevron menggantikan label aksi; nama tautan tetap judul + deskripsi.

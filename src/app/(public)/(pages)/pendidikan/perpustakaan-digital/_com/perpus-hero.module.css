@@ -214,7 +214,7 @@
   position: absolute;
   inset: 0 auto 0 8%;
   width: 14%;
-  background: rgb(255 255 255 / 22%);
+  background: rgb(255 255 255 / 22%); /* tema-tetap: ilustrasi buku di atas gradasi biru */
 }
 
 .book::after {
@@ -224,8 +224,8 @@
   right: 16%;
   top: 22%;
   height: 22%;
-  border-top: 3px solid rgb(255 255 255 / 55%);
-  border-bottom: 3px solid rgb(255 255 255 / 35%);
+  border-top: 3px solid rgb(255 255 255 / 55%); /* tema-tetap: ilustrasi buku di atas gradasi biru */
+  border-bottom: 3px solid rgb(255 255 255 / 35%); /* tema-tetap: ilustrasi buku di atas gradasi biru */
   border-radius: 2px;
 }
 
