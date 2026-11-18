@@ -2,9 +2,8 @@
 import { Modal } from "@mantine/core";
 import { useMediaQuery, useReducedMotion } from "@mantine/hooks";
 import { IconX } from "@tabler/icons-react";
-import { useRef, useState, type CSSProperties } from "react";
+import { useRef, useState } from "react";
 import { programInovasiDetailHref } from "@/app/(public)/(pages)/inovasi/program-inovasi/_com/program-inovasi.logic";
-import colors from "@/con/colors";
 import type { ProgramInovasiItem } from "../HeroPrograms";
 import { overlayView } from "./program-overlay.logic";
 import s from "./program-overlay.module.css";
@@ -18,8 +17,6 @@ type Props = { programId: string | null; preview?: ProgramInovasiItem; onClose: 
 
 /** Lebar ponsel (apple.com ≤734px): overlay jadi lembar layar penuh yang naik dari bawah. */
 const SHEET_QUERY = "(max-width: 734px)";
-/** Modal di portal (di luar akar beranda), jadi variabel warna brand dipasang di kotak dialog. */
-const BRAND_VARS = { "--brand": colors["blue-button"], "--brand-hover": colors["blue-button-6"] } as CSSProperties;
 
 /**
  * Overlay detail Program Inovasi di beranda (`/?program={id}`, `programId` null = tertutup) di atas latar blur.
@@ -58,7 +55,6 @@ export function ProgramInovasiOverlay({ programId, preview, onClose }: Props) {
       <Modal.Overlay backgroundOpacity={0.45} blur={10} />
       <Modal.Content
         ref={contentRef}
-        style={BRAND_VARS}
         data-viewing={viewing || undefined}
         aria-label={view.kind === "detail" ? undefined : T.eyebrow}
       >

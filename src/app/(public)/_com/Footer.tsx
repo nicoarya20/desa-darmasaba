@@ -129,7 +129,8 @@ function Footer() {
 
 
   return (
-    <Stack bg="linear-gradient(180deg, #1C6EA4, #124170)" c="white">
+    // Gradasi dari token (terang biru #1c6ea4 → #124170, gelap navy #0f3354 → #081a2c); teks krem tetap.
+    <Stack bg="linear-gradient(180deg, var(--c-footer-from), var(--c-footer-to))" c="white">
       {/*
         Ritme vertikal ala footer apple.com: satu Stack gap="xl" (32px) memisahkan semua blok
         (termasuk kiri-kanan setiap Divider), dan gap="xs" (10px) untuk isi di dalam blok.

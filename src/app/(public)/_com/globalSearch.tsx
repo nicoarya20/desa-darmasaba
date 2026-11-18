@@ -6,6 +6,7 @@ import { Anchor, Box, Center, Loader, Popover, Stack, Text, TextInput, type Text
 import { IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
+import s from './global-search.module.css';
 import SearchResultRow from './SearchResultRow';
 import SearchShowMoreButton from './SearchShowMoreButton';
 import searchMenu, { previewMenuResults } from './searchMenu';
@@ -177,15 +178,7 @@ export default function GlobalSearch({ inputProps }: { inputProps?: GlobalSearch
           />
         </Popover.Target>
 
-        <Popover.Dropdown
-          p={0}
-          style={{
-            maxHeight: 350,
-            overflowY: 'auto',
-            backgroundColor: '#fff',
-            border: '1px solid #eee',
-          }}
-        >
+        <Popover.Dropdown p={0} className={s.dropdown}>
           {menuResults.length > 0 && (
             <>
               <SectionLabel>Halaman</SectionLabel>

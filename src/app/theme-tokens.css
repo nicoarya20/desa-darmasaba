@@ -1,0 +1,67 @@
+/* ===================================
+   TOKEN WARNA SITUS PUBLIK (terang + gelap)
+   ===================================
+   Sumber tunggal warna semantik situs publik (docs/DESIGN.md §2.5).
+   Terang di :root = nilai literal yang dipakai situs sebelum dark theme (tema terang wajib
+   identik piksel). Gelap aktif saat <html data-mantine-color-scheme="dark">, atribut yang
+   dipasang ColorSchemeScript sebelum paint lalu diganti lewat useMantineColorScheme().
+   `color-scheme` (scrollbar & kontrol native) sudah diikat Mantine ke --mantine-color-scheme.
+   Modul CSS memakainya sebagai alias: `.section { --ink: var(--c-ink); }`.
+   Jangan ubah nilai tanpa memperbarui __tests__/api/theme_tokens_contrast.test.ts. */
+:root {
+  --c-page: #f4f5f6; /* latar dasar shell & beranda (= colors.grey[1]) */
+  --c-bg: #fff;
+  --c-bg-alt: #f5f5f7;
+  --c-tile: #f5f5f7;
+  --c-tile-alt: #fff;
+  --c-ink: #1d1d1f;
+  --c-ink-2: #515154;
+  --c-muted: #6e6e73;
+  --c-subtle: #6e6e73; /* 4,7:1 di atas #f5f5f7 (WCAG AA, juknis 5.7); sebelumnya #86868b hanya 3,3:1 */
+  --c-line: rgba(0, 0, 0, 0.08);
+  --c-line-strong: #d2d2d7;
+  --c-placeholder: #e8e8ed;
+  --c-brand: #0a4e78;
+  --c-brand-hover: #083f61;
+  --c-brand-fill: #0a4e78;
+  --c-brand-fill-hover: #083f61;
+  --c-on-brand: #fff;
+  --c-brand-tint: #e5f2fa;
+  --c-hero-bg: #d1d9e8;
+  --c-footer-from: #1c6ea4;
+  --c-footer-to: #124170;
+  --c-chart-1: #0a4e78;
+  --c-chart-2: #2f91cc;
+  --c-chart-3: #8ac1e3;
+  --c-open: #1f9d55;
+  --c-closed: #d9363e;
+}
+
+:root[data-mantine-color-scheme="dark"] {
+  --c-page: #161617;
+  --c-bg: #000;
+  --c-bg-alt: #161617;
+  --c-tile: #1d1d1f;
+  --c-tile-alt: #2a2a2c;
+  --c-ink: #f5f5f7;
+  --c-ink-2: #c7c7cc;
+  --c-muted: #a1a1a6;
+  --c-subtle: #98989d;
+  --c-line: rgba(255, 255, 255, 0.14);
+  --c-line-strong: #424245;
+  --c-placeholder: #2c2c2e;
+  --c-brand: #6cb4e4;
+  --c-brand-hover: #8ac1e3;
+  --c-brand-fill: #1c6ea4;
+  --c-brand-fill-hover: #165a87;
+  --c-on-brand: #fff;
+  --c-brand-tint: #13283a;
+  --c-hero-bg: #0e1620;
+  --c-footer-from: #0f3354;
+  --c-footer-to: #081a2c;
+  --c-chart-1: #6cb4e4;
+  --c-chart-2: #2f91cc;
+  --c-chart-3: #cfe6f5;
+  --c-open: #30d158;
+  --c-closed: #ff453a;
+}

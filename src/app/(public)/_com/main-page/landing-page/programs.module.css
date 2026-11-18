@@ -2,7 +2,8 @@
  * Rel program inovasi di kiri bawah hero. 4 ubin terlihat penuh, ubin ke-5 mengintip sebagai petunjuk;
  * sisanya digeser dengan scroll bawaan browser (scroll-snap) — seret, trackpad, atau tombol panah.
  * Tanpa putar otomatis: galeri Layanan & Potensi di bawahnya sudah bergerak sendiri.
- * Variabel --gutter, --ink, --muted, --brand, --tile diwarisi dari .section (landing.module.css).
+ * Variabel --gutter, --ink, --muted, --brand, --tile, --skeleton, --shadow-tint diwarisi dari .section (landing.module.css).
+ * Tema gelap (keputusan user): ubin gelap, logo tetap terbaca lewat pelat terang di belakang logo.
  */
 
 /* Terdaftar sebagai <length> supaya lebar gradasi tepi bisa bertransisi (tanpa ini berganti seketika). */
@@ -137,7 +138,7 @@
 }
 
 .tileSkeleton {
-  background: rgb(255 255 255 / 55%);
+  background: light-dark(rgb(255 255 255 / 55%), rgb(255 255 255 / 8%));
 }
 
 .tile {
@@ -159,6 +160,17 @@
   flex: none;
   width: 100%;
   height: 72px;
+}
+
+/* Logo program umumnya gelap/berwarna di atas transparan: di tema gelap diberi pelat terang agar tetap terbaca.
+   Tema terang tanpa pelat (ubin sudah putih), jadi tampilannya tidak berubah. Pelat gelap #D9E1EA (= pita putih
+   gelap --ribbon-9), bukan #F5F5F7 yang paling silau di hero gelap. */
+.tile .tileLogo {
+  @mixin dark {
+    padding: 6px;
+    border-radius: 10px;
+    background: #d9e1ea;
+  }
 }
 
 .tileLogoEmpty {
@@ -190,7 +202,7 @@
 @media (hover: hover) {
   .tile:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgb(6 47 73 / 12%);
+    box-shadow: 0 6px 18px light-dark(rgb(6 47 73 / 12%), rgb(0 0 0 / 45%));
   }
 }
 
@@ -204,7 +216,7 @@
   margin-top: -6px;
   overflow: hidden;
   border-radius: 2px;
-  background: rgb(10 78 120 / 14%);
+  background: light-dark(rgb(10 78 120 / 14%), rgb(255 255 255 / 14%));
 }
 
 .thumb {

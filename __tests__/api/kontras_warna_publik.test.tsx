@@ -72,17 +72,32 @@ describe('fungsi rasioKontras', () => {
   });
 });
 
+// Token bersama tema terang/gelap: blok pertama = terang, blok kedua = gelap (src/app/theme-tokens.css).
+const TOKENS_CSS = readFileSync(join(process.cwd(), 'src/app/theme-tokens.css'), 'utf8');
+const [subtleTerang, subtleGelap] = [...TOKENS_CSS.matchAll(/^\s*--c-subtle:\s*(#[0-9a-fA-F]{6})/gm)].map((m) => m[1]);
+const LATAR_GELAP = ['#000000', '#1d1d1f', '#2a2a2c'];
+
 describe('token teks muted "--subtle" / "--sb-subtle" di CSS publik', () => {
-  const definisi = cssPublik(PUBLIC_DIR).flatMap((file) =>
-    [...readFileSync(file, 'utf8').matchAll(/^\s*(--(?:sb-)?subtle):\s*(#[0-9a-fA-F]{6});/gm)].map((m) => ({
-      file: file.slice(PUBLIC_DIR.length + 1),
-      nama: m[1],
-      warna: m[2],
-    })),
-  );
+  const definisi = [
+    ...cssPublik(PUBLIC_DIR).flatMap((file) =>
+      [...readFileSync(file, 'utf8').matchAll(/^\s*(--(?:sb-)?subtle):\s*(#[0-9a-fA-F]{6});/gm)].map((m) => ({
+        file: file.slice(PUBLIC_DIR.length + 1),
+        nama: m[1],
+        warna: m[2],
+      })),
+    ),
+    // Modul beranda memakai var(--c-subtle) sejak tema gelap, jadi nilai terangnya dicek dari sumber token.
+    { file: '../theme-tokens.css', nama: '--c-subtle (terang)', warna: subtleTerang },
+  ];
 
   it('menemukan definisi token (pemindaian tidak kosong)', () => {
-    expect(definisi.length).toBeGreaterThanOrEqual(15);
+    expect(subtleTerang).toBeDefined();
+    expect(subtleGelap).toBeDefined();
+    expect(definisi.length).toBeGreaterThanOrEqual(10);
+  });
+
+  it.each(LATAR_GELAP)('--c-subtle tema gelap ≥4,5:1 di latar %s', (latar) => {
+    expect(rasioKontras(subtleGelap, latar)).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
   });
 
   it.each(Object.entries(LATAR_PUBLIK))('semua definisi ≥4,5:1 di latar %s', (_nama, latar) => {

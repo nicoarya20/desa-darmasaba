@@ -3,8 +3,8 @@ import { donutSlices, donutStrokeWidth, formatShare, sumValues, type ChartSlice 
 import s from "../kepuasan.module.css";
 import { KEPUASAN_TEXT } from "../kepuasan.text";
 
-// Pemisah antar-irisan senada latar kartu (--tile), bukan putih, agar donat tampak datar.
-const TILE = "#f5f5f7";
+// Pemisah antar-irisan senada latar kartu beranda (--c-tile, ikut tema), bukan putih, agar donat tampak datar.
+const TILE = "var(--c-tile)";
 
 type Props = { title: string; slices: readonly ChartSlice[] };
 

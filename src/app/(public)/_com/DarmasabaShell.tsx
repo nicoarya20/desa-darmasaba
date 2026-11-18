@@ -1,6 +1,5 @@
 "use client";
 
-import colors from "@/con/colors";
 import { Box, Space, Stack } from "@mantine/core";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
@@ -31,7 +30,7 @@ export function DarmasabaShell({ children }: { children: React.ReactNode }) {
     // sendiri (NowPlayingBar) menggantikan FixedPlayerBar. Ruang bar diurus MusikApp (--m-bar-space).
     const isMusikApp = isMusikAppPath(usePathname());
     return (
-            <Stack gap={0} bg={colors.grey[1]}>
+            <Stack gap={0} bg="var(--c-page)">
                 <ImageErrorRetry />
                 <Navbar />
                 <Space h={NAV_SPACER_HEIGHT} />

@@ -1,5 +1,4 @@
 import indeksKepuasanState from "@/app/admin/(dashboard)/_state/landing-page/indeks-kepuasan";
-import colors from "@/con/colors";
 import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useProxy } from "valtio/utils";
@@ -112,7 +111,7 @@ export function RespondenFormModal({ opened, onClose }: Props) {
           withAsterisk
           error={fieldError("kelompokUmurId")}
         />
-        <Button mt="xs" radius="xl" color={colors["blue-button"]} onClick={handleSubmit} loading={state.create.loading}>
+        <Button mt="xs" radius="xl" color="var(--c-brand-fill)" onClick={handleSubmit} loading={state.create.loading}>
           {T.submit}
         </Button>
       </Stack>

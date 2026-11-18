@@ -3,15 +3,11 @@ import "./globals.css"; // Sisanya import di globals.css
 
 import LoadDataFirstClient from "@/app/(public)/_com/LoadDataFirstClient";
 import { GATE_SPLASH_HEAD_SCRIPT } from "@/app/(public)/_com/splash/gate-splash.session";
+import { SiteMantineProvider } from "@/app/_com/SiteMantineProvider";
 import { MusicProvider } from "@/app/context/MusicContext";
+import { COLOR_SCHEME_SCOPE_HEAD_SCRIPT } from "@/lib/color-scheme-scope";
 import { SITE_URL } from "@/lib/site-url";
-import {
-  ColorSchemeScript,
-  MantineProvider,
-  createTheme,
-  mantineHtmlProps,
-  v8CssVariablesResolver,
-} from "@mantine/core";
+import { ColorSchemeScript, createTheme, mantineHtmlProps } from "@mantine/core";
 import { Metadata, Viewport } from "next";
 import { ViewTransitions } from "next-view-transitions";
 import { ToastContainer } from "react-toastify";
@@ -114,19 +110,17 @@ export default function RootLayout({
     <html lang="id" {...mantineHtmlProps}>
       <head>
         <meta charSet="utf-8" />
+        {/* Tema gelap hanya untuk situs publik; default tetap "light" sampai semua menu siap (docs/DESIGN.md §2.5). */}
         <ColorSchemeScript defaultColorScheme="light" />
+        {/* Wajib tepat setelah ColorSchemeScript: admin/akun dipaksa terang sebelum paint (src/lib/color-scheme-scope.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: COLOR_SCHEME_SCOPE_HEAD_SCRIPT }} />
         {/* Putuskan splash beranda sebelum paint (lihat gate-splash.session.ts); di root layout agar tak dirender ulang saat navigasi. */}
         <script dangerouslySetInnerHTML={{ __html: GATE_SPLASH_HEAD_SCRIPT }} />
       </head>
       <body>
         <ViewTransitions>
           <MusicProvider>
-            {/* v8CssVariablesResolver: pertahankan warna varian light/outline v8 selama migrasi Mantine 9 */}
-            <MantineProvider
-              theme={theme}
-              defaultColorScheme="light"
-              cssVariablesResolver={v8CssVariablesResolver}
-            >
+            <SiteMantineProvider theme={theme}>
               {children}
               <LoadDataFirstClient />
               <ToastContainer
@@ -134,7 +128,7 @@ export default function RootLayout({
                 hideProgressBar
                 style={{ zIndex: 9999 }}
               />
-            </MantineProvider>
+            </SiteMantineProvider>
           </MusicProvider>
         </ViewTransitions>
       </body>

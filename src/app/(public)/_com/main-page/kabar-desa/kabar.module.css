@@ -3,17 +3,21 @@
  * dengan jarak tepi 24px, kartu #f5f5f7 tanpa border/bayangan. Berita = foto bersudut lancip (1 utama + 3 kecil),
  * pengumuman = daftar teks (gaya di kabar.pengumuman.module.css).
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ * Warna = alias token --c-* (theme-tokens.css), termasuk --brand (teks/judul/tautan). Modul ini juga dipakai
+ * halaman daftar/detail di banyak menu (kerangka Kabar), jadi semuanya ikut tema lewat alias ini.
  */
 .section {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #6e6e73;
-  --tile: #f5f5f7;
-  --line: rgba(0, 0, 0, 0.08);
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --subtle: var(--c-subtle);
+  --tile: var(--c-tile);
+  --line: var(--c-line);
+  --brand: var(--c-brand);
+  --placeholder: var(--c-placeholder);
   --radius: 18px;
   /* Jarak tepi kiri/kanan (token globals.css, sama dengan hero); isi sengaja selebar layar (tanpa max-width). */
   --gutter: var(--edge-gutter);
-  background: #fff;
+  background: var(--c-bg);
   padding: var(--section-pad-y) var(--gutter);
   color: var(--ink);
 }
@@ -90,7 +94,7 @@
   position: relative;
   display: block;
   overflow: hidden;
-  background: #e8e8ed;
+  background: var(--placeholder);
 }
 
 .featuredPhoto {

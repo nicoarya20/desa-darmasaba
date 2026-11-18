@@ -10,6 +10,7 @@ import { useSnapshot } from "valtio";
 import { MenuItem } from "../../../../types/menu-item";
 import { isMenuActive, isPathActive } from "./navbar-menu.logic";
 import { NavbarSpeechToggle } from "./NavbarSpeechToggle";
+import { NavbarThemeToggle } from "./NavbarThemeToggle";
 import m from "./navbar-mobile.module.css";
 import d from "./navbar.module.css";
 
@@ -83,6 +84,7 @@ export function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
         </Link>
         <div className={m.actions}>
           <NavbarSpeechToggle />
+          <NavbarThemeToggle />
           <Burger
             opened={mobileOpen}
             onClick={() => (stateNav.mobileOpen = !stateNav.mobileOpen)}

@@ -1,6 +1,7 @@
 /*
  * Daftar Pengumuman di section Kabar Desa — panel #f5f5f7 berisi baris teks bergaris pemisah
- * (judul · tanggal · chevron). Variabel warna (--tile, --line, --brand, …) diwarisi dari .section kabar.module.css.
+ * (judul · tanggal · chevron). Variabel warna (--tile, --line, --brand, --placeholder, …) diwarisi dari .section
+ * kabar.module.css.
  */
 .pengumuman {
   padding: 28px 32px 12px;
@@ -84,7 +85,7 @@
   height: 22px;
   margin: 16px 0;
   border-radius: 6px;
-  background: #e8e8ed;
+  background: var(--placeholder);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
