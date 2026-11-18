@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Juknis lomba 5.4: grafik beranda (recharts lewat @mantine/charts) ada di bawah lipatan, jadi kodenya dimuat tunda
-// (saat mendekati layar) agar JavaScript awal lebih ringan (TBT beranda 790 ms di audit Lighthouse stg).
+// (saat mendekati layar) agar JavaScript awal lebih ringan (TBT beranda 790 → 260 ms di Lighthouse stg).
 // jsdom rusak di repo ini → markup diuji via renderToStaticMarkup; IntersectionObserver tidak ada di server, jadi
 // yang teruji adalah keadaan awal (placeholder) dan penjaga impor; perilaku "muncul saat mendekati layar" tidak teruji.
 import { MantineProvider } from '@mantine/core';
@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import { MountWhenNear } from '@/app/(public)/_com/lazy-chart/MountWhenNear';
+import { MOUNT_ROOT_MARGIN, MountWhenNear } from '@/app/(public)/_com/lazy-chart/MountWhenNear';
 import { LazyApbdesChart } from '@/app/(public)/_com/main-page/apbdes/components/ApbdesChart.lazy';
 import { LazyKepuasanCharts } from '@/app/(public)/_com/main-page/kepuasan/components/KepuasanCharts.lazy';
 
@@ -19,29 +19,34 @@ const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
 
 describe('MountWhenNear: keadaan awal (server)', () => {
-  it('menampilkan kotak cadangan setinggi minHeight dan belum memasang isi', () => {
+  it('menampilkan kotak cadangan ber-kelas yang diberikan dan belum memasang isi', () => {
     const html = render(
-      <MountWhenNear minHeight={321}>
+      <MountWhenNear placeholderClassName="kelas-cadangan">
         <p>ISI-GRAFIK</p>
       </MountWhenNear>,
     );
-    expect(html).toContain('min-height:321px');
+    expect(html).toContain('class="kelas-cadangan"');
     expect(html).not.toContain('ISI-GRAFIK');
+  });
+
+  it('jarak pasang cukup jauh (≥1000px) agar pergeseran terjadi di luar layar', () => {
+    const px = Number(MOUNT_ROOT_MARGIN.match(/^(\d+)px/)?.[1]);
+    expect(px).toBeGreaterThanOrEqual(1000);
   });
 });
 
 describe('versi tunda grafik beranda', () => {
-  it('LazyApbdesChart: hanya kotak cadangan, tanpa judul/SVG grafik', () => {
+  it('LazyApbdesChart: hanya kotak cadangan ber-kelas apbdes, tanpa judul/SVG grafik', () => {
     const html = render(<LazyApbdesChart categories={[]} tahun={2026} />);
-    expect(html).toContain('min-height:360px');
+    expect(html).toMatch(/class="[^"]*apbdes[^"]*"/);
     expect(html).not.toContain('<svg');
     expect(html).not.toContain('recharts');
   });
 
-  it('LazyKepuasanCharts: hanya kotak cadangan, tanpa kartu komposisi', () => {
+  it('LazyKepuasanCharts: hanya kotak cadangan ber-kelas kepuasan, tanpa kartu komposisi', () => {
     const summary = { monthly: [], jenisKelamin: [], rating: [], kelompokUmur: [] } as never;
     const html = render(<LazyKepuasanCharts summary={summary} total={0} />);
-    expect(html).toContain('min-height:640px');
+    expect(html).toMatch(/class="[^"]*kepuasan[^"]*"/);
     expect(html).not.toContain('<svg');
   });
 });
@@ -62,12 +67,12 @@ describe('penjaga: beranda tidak mengimpor grafik secara langsung', () => {
   });
 
   it.each(['apbdes/components/ApbdesChart.lazy.tsx', 'kepuasan/components/KepuasanCharts.lazy.tsx'])(
-    '%s memuat grafik lewat dynamic() ssr:false dan MountWhenNear',
+    '%s memuat grafik lewat dynamic() ssr:false, MountWhenNear, dan unduhan awal pada interaksi pertama',
     (rel) => {
       const src = read(rel);
-      expect(src).toMatch(/dynamic\(\s*\(\)\s*=>\s*import\(/);
-      expect(src).toContain('ssr: false');
+      expect(src).toMatch(/dynamic\(\s*load\w*,\s*\{\s*ssr:\s*false/);
       expect(src).toContain('MountWhenNear');
+      expect(src).toContain('runOnFirstInteraction');
     },
   );
 });
