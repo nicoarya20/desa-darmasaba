@@ -1,0 +1,24 @@
+/*
+ * Tinggi kerangka pemuatan Kepuasan = tinggi isi akhirnya, supaya bagian di bawahnya tidak melompat saat data tiba.
+ * Diukur di stg 0.1.312 pada 2026-11-18 (jendela 1440/900/390px): panel grafik bulanan dan kartu donat. Tinggi total
+ * dijaga `min-height` kotak (lazy-chart.module.css); angka di sini hanya mengisi kerangka. Breakpoint sama dengan
+ * kepuasan.module.css (1068px dan 734px).
+ */
+.sizes {
+  --sk-monthly: 426px;
+  --sk-card: 406px;
+}
+
+@media (max-width: 1068px) {
+  .sizes {
+    --sk-monthly: 409px;
+    --sk-card: 398px;
+  }
+}
+
+@media (max-width: 734px) {
+  .sizes {
+    --sk-monthly: 467px;
+    --sk-card: 356px;
+  }
+}
