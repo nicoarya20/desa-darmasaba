@@ -198,6 +198,7 @@ function Page() {
           <div className={s.actions}>
             <Tooltip label="Pastikan semua data sudah diisi dengan benar">
               <Button
+                className={s.submit}
                 onClick={submit}
                 size="md"
                 radius="xl"

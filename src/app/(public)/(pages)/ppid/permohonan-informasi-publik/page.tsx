@@ -252,6 +252,7 @@ function Page() {
 
           <div className={s.actions}>
             <Button
+              className={s.submit}
               size="md"
               radius="xl"
               bg="var(--c-brand-fill)"

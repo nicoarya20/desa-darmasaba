@@ -133,3 +133,13 @@ describe('Dashboard Kependudukan mengikuti token tema', () => {
     expect(KEP('frame/hero.module.css')).not.toContain('#e8e8ed');
   });
 });
+
+describe('tombol Kirim permohonan nonaktif terbaca di gelap', () => {
+  it('kelas .submit hanya menimpa warna teks nonaktif di gelap (terang = bawaan Mantine)', () => {
+    const css = PPID('_com/permohonan.module.css');
+    expect(css).toMatch(/\.submit:is\(:disabled, \[data-disabled\]\) \{\s*@mixin dark \{\s*color: rgb\(255 255 255 \/ 70%\);\s*\}\s*\}/);
+    for (const rel of ['permohonan-informasi-publik/page.tsx', 'permohonan-keberatan-informasi-publik/page.tsx']) {
+      expect(PPID(rel), rel).toContain('className={s.submit}');
+    }
+  });
+});

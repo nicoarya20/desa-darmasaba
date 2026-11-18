@@ -116,6 +116,15 @@
   padding-top: 4px;
 }
 
+/* Tombol Kirim tetap berlatar --c-brand-fill saat nonaktif (prop bg). Teks nonaktif bawaan Mantine gelap (#98989d)
+   cuma 1,9:1 di atas isi brand gelap #1c6ea4, padahal terang (#adb5bd di #0a4e78) ±4,2:1. Gelap: putih 70% = 3,6:1,
+   tetap beda jelas dari aktif (putih penuh 5,4:1). Terang tidak disentuh (bawaan Mantine). */
+.submit:is(:disabled, [data-disabled]) {
+  @mixin dark {
+    color: rgb(255 255 255 / 70%);
+  }
+}
+
 /* Area tulis editor alasan: cukup tinggi untuk beberapa kalimat sebelum mulai mengetik. */
 .editor :global(.tiptap) {
   min-height: 120px;
