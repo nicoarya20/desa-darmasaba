@@ -1,6 +1,6 @@
 "use client";
 
-import { isLightOnlyPath, THEME_COLOR } from "@/lib/color-scheme-scope";
+import { DEFAULT_COLOR_SCHEME, isLightOnlyPath, syncThemeColorMeta } from "@/lib/color-scheme-scope";
 import {
   MantineProvider,
   useMantineColorScheme,
@@ -13,7 +13,8 @@ import { siteCssVariablesResolver } from "./site-css-variables-resolver";
 
 /**
  * MantineProvider akar dengan tema gelap terbatas situs publik: di rute selalu-terang (admin, akun,
- * konsol developer) skema dipaksa "light"; di luar itu mengikuti pilihan pengunjung (localStorage).
+ * konsol developer) skema dipaksa "light"; di luar itu mengikuti pilihan pengunjung (localStorage), atau OS
+ * bila belum pernah memilih (DEFAULT_COLOR_SCHEME "auto").
  */
 export function SiteMantineProvider({
   theme,
@@ -27,7 +28,7 @@ export function SiteMantineProvider({
     // v8CssVariablesResolver (dibungkus): warna varian v8 + shade gelap palet A, lihat resolver
     <MantineProvider
       theme={theme}
-      defaultColorScheme="light"
+      defaultColorScheme={DEFAULT_COLOR_SCHEME}
       colorSchemeManager={siteColorSchemeManager}
       forceColorScheme={lightOnly ? "light" : undefined}
       cssVariablesResolver={siteCssVariablesResolver}
@@ -43,7 +44,8 @@ function ColorSchemeRouteSync({ lightOnly }: { lightOnly: boolean }) {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   // Halaman pertama di admin membuat state Mantine "light"; saat pindah ke situs publik,
-  // pulihkan pilihan tersimpan pengunjung (mis. gelap) alih-alih membawa "light" dari admin.
+  // pulihkan pilihan tersimpan pengunjung (mis. gelap; belum memilih = "auto" → ikuti OS) alih-alih
+  // membawa "light" dari admin.
   // Hanya pada peralihan admin → publik: tanpa localStorage (mode privat) tombol tema tetap jalan.
   const wasLightOnly = useRef(lightOnly);
   useEffect(() => {
@@ -56,16 +58,13 @@ function ColorSchemeRouteSync({ lightOnly }: { lightOnly: boolean }) {
 
   // <meta name="theme-color"> mengikuti atribut <html>, siapa pun yang mengubahnya (tombol, rute, tab lain).
   useEffect(() => {
-    const root = document.documentElement;
-    const apply = () => {
-      const scheme = root.getAttribute("data-mantine-color-scheme") === "dark" ? "dark" : "light";
-      document
-        .querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
-        .forEach((meta) => meta.setAttribute("content", THEME_COLOR[scheme]));
-    };
+    const apply = () => syncThemeColorMeta(document);
     apply();
     const observer = new MutationObserver(apply);
-    observer.observe(root, { attributes: true, attributeFilter: ["data-mantine-color-scheme"] });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mantine-color-scheme"] });
+    // Navigasi client: Next mengganti <meta theme-color> dengan simpul baru bernilai bawaan (per media),
+    // jadi pilihan tersimpan yang beda dari OS harus diterapkan ulang.
+    observer.observe(document.head, { childList: true });
     return () => observer.disconnect();
   }, []);
 

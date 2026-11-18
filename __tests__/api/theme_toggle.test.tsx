@@ -1,22 +1,26 @@
 // @vitest-environment node
 // Tombol tema terang/gelap navbar + cakupan tema gelap (admin/akun selalu terang).
 // jsdom rusak → renderToStaticMarkup; klik & pergantian tema diverifikasi manual di browser.
-// Tombol hanya dirender saat NODE_ENV development (THEME_TOGGLE_VISIBLE, sampai Fase 4).
-import { readdirSync, statSync } from 'node:fs';
+// Fase 4: tombol tampil untuk publik di semua build; skema bawaan "auto" (ikuti OS) bila belum memilih.
+import { readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ColorSchemeScript } from '@mantine/core';
 import {
-  isThemeToggleVisible,
   nextColorScheme,
   THEME_LABEL_TO_DARK,
   THEME_LABEL_TO_LIGHT,
 } from '@/app/(public)/_com/theme-toggle.logic';
-import { siteColorSchemeManager } from '@/app/_com/site-color-scheme';
+import { readStoredColorScheme, siteColorSchemeManager } from '@/app/_com/site-color-scheme';
 import {
   COLOR_SCHEME_SCOPE_HEAD_SCRIPT,
+  DEFAULT_COLOR_SCHEME,
   isLightOnlyPath,
   LIGHT_ONLY_PATH_PREFIXES,
+  syncThemeColorMeta,
+  THEME_COLOR,
+  THEME_COLOR_VIEWPORT,
 } from '@/lib/color-scheme-scope';
 
 const APP_DIR = path.resolve(__dirname, '../../src/app');
@@ -28,8 +32,8 @@ const NON_PAGE_DIRS = new Set([
 ]);
 
 /**
- * Render tombol dengan NODE_ENV tertentu. THEME_TOGGLE_VISIBLE dibaca saat modul dimuat, jadi modul
- * dimuat ulang; MantineProvider ikut dimuat ulang agar konteksnya sama dengan milik komponen.
+ * Render tombol dengan NODE_ENV tertentu. Modul dimuat ulang supaya gating berbasis env yang dibaca saat
+ * modul dimuat pun ikut tertangkap; MantineProvider ikut dimuat ulang agar konteksnya sama dengan komponen.
  */
 const render = async (scheme: 'light' | 'dark', nodeEnv = 'development') => {
   vi.stubEnv('NODE_ENV', nodeEnv);
@@ -49,6 +53,11 @@ describe('nextColorScheme', () => {
     expect(nextColorScheme('dark')).toBe('light');
   });
 
+  it('skema "auto": atribut sudah hasil resolusi OS → OS gelap, klik pertama ke terang', () => {
+    // ColorSchemeScript/MantineProvider tidak pernah menulis "auto" ke atribut, hanya light/dark
+    expect(nextColorScheme('dark')).toBe('light');
+  });
+
   it('atribut kosong/tak dikenal dianggap terang → berikutnya gelap', () => {
     expect(nextColorScheme(null)).toBe('dark');
     expect(nextColorScheme(undefined)).toBe('dark');
@@ -56,32 +65,30 @@ describe('nextColorScheme', () => {
   });
 });
 
-describe('tombol tema hanya di development (sampai plan-dark-theme Fase 4)', () => {
+describe('tombol tema tampil untuk publik (plan-dark-theme Fase 4)', () => {
   afterEach(() => {
     vi.unstubAllEnvs();
   });
 
-  it('isThemeToggleVisible: hanya "development"', () => {
-    expect(isThemeToggleVisible('development')).toBe(true);
-    expect(isThemeToggleVisible('production')).toBe(false);
-    expect(isThemeToggleVisible('test')).toBe(false);
-    expect(isThemeToggleVisible(undefined)).toBe(false);
-  });
-
-  it('build produksi: tombol tidak dirender sama sekali (tanpa ruang kosong di navbar)', async () => {
-    for (const scheme of ['light', 'dark'] as const) {
-      // keluaran yang tersisa hanya <style> variabel CSS milik MantineProvider
-      const html = (await render(scheme, 'production')).replace(/<style[\s\S]*?<\/style>/g, '');
-      expect(html).toBe('');
+  it('dirender di build produksi maupun development, di kedua skema', async () => {
+    for (const nodeEnv of ['production', 'development', 'test']) {
+      for (const scheme of ['light', 'dark'] as const) {
+        const html = await render(scheme, nodeEnv);
+        expect(html).toContain('<button');
+        expect(html).toContain(THEME_LABEL_TO_DARK);
+      }
     }
   });
 
-  it('development: tombol dirender', async () => {
-    expect(await render('light', 'development')).toContain('<button');
+  it('HTML produksi = development (tanpa cabang khusus env)', async () => {
+    const button = (html: string) => html.match(/<button[\s\S]*<\/button>/)?.[0];
+    const dev = button(await render('light', 'development'));
+    expect(dev).toBeTruthy();
+    expect(button(await render('light', 'production'))).toBe(dev);
   });
 });
 
-describe('NavbarThemeToggle (development)', () => {
+describe('NavbarThemeToggle', () => {
   afterEach(() => {
     vi.unstubAllEnvs();
   });
@@ -163,7 +170,7 @@ describe('COLOR_SCHEME_SCOPE_HEAD_SCRIPT', () => {
 
 describe('siteColorSchemeManager.get', () => {
   const g = globalThis as { window?: unknown };
-  const stubWindow = (pathname: string, stored: string) => {
+  const stubWindow = (pathname: string, stored: string | null) => {
     // test-only: window minimal untuk localStorageColorSchemeManager Mantine
     g.window = { location: { pathname }, localStorage: { getItem: () => stored } };
   };
@@ -184,5 +191,151 @@ describe('siteColorSchemeManager.get', () => {
 
   it('tanpa window (render server) → nilai default', () => {
     expect(siteColorSchemeManager.get('light')).toBe('light');
+  });
+});
+
+describe('skema bawaan "auto" (ikuti OS bila belum memilih)', () => {
+  const g = globalThis as { window?: unknown };
+  const stubStorage = (pathname: string, stored: string | null) => {
+    // test-only: window minimal untuk localStorageColorSchemeManager Mantine
+    g.window = { location: { pathname }, localStorage: { getItem: () => stored } };
+  };
+
+  afterEach(() => {
+    delete g.window;
+  });
+
+  it('DEFAULT_COLOR_SCHEME = "auto"', () => {
+    expect(DEFAULT_COLOR_SCHEME).toBe('auto');
+  });
+
+  it('layout akar & MantineProvider memakai DEFAULT_COLOR_SCHEME, bukan literal "light"', () => {
+    const layout = readFileSync(path.join(APP_DIR, 'layout.tsx'), 'utf8');
+    const provider = readFileSync(path.join(APP_DIR, '_com/SiteMantineProvider.tsx'), 'utf8');
+    expect(layout).toContain('<ColorSchemeScript defaultColorScheme={DEFAULT_COLOR_SCHEME} />');
+    expect(provider).toContain('defaultColorScheme={DEFAULT_COLOR_SCHEME}');
+    expect(`${layout}\n${provider}`).not.toMatch(/defaultColorScheme="(light|dark)"/);
+  });
+
+  it('pemulihan admin → publik: belum memilih → "auto"; pilihan tersimpan tetap utuh', () => {
+    stubStorage('/admin', null);
+    expect(readStoredColorScheme()).toBe('auto');
+    stubStorage('/admin', 'garbage');
+    expect(readStoredColorScheme()).toBe('auto');
+    stubStorage('/admin', 'dark');
+    expect(readStoredColorScheme()).toBe('dark');
+    stubStorage('/admin', 'light');
+    expect(readStoredColorScheme()).toBe('light');
+  });
+
+  it('pemuatan pertama di publik tanpa pilihan → "auto"; admin tetap "light"', () => {
+    stubStorage('/', null);
+    expect(siteColorSchemeManager.get(DEFAULT_COLOR_SCHEME)).toBe('auto');
+    stubStorage('/admin/berita', null);
+    expect(siteColorSchemeManager.get(DEFAULT_COLOR_SCHEME)).toBe('light');
+  });
+});
+
+describe('<head>: ColorSchemeScript "auto" lalu COLOR_SCHEME_SCOPE_HEAD_SCRIPT', () => {
+  const mantineScript = renderToStaticMarkup(
+    <ColorSchemeScript defaultColorScheme={DEFAULT_COLOR_SCHEME} />,
+  ).match(/<script[^>]*>([\s\S]*)<\/script>/)?.[1];
+
+  /** Jalankan kedua skrip <head> berurutan seperti di layout; kembalikan atribut akhir <html>. */
+  const runHead = (pathname: string, osDark: boolean, stored: string | null) => {
+    const attrs: Record<string, string> = {};
+    // test-only: window/document/location tiruan untuk skrip inline <head>
+    const document = { documentElement: { setAttribute: (k: string, v: string) => (attrs[k] = v) } };
+    const window = {
+      localStorage: { getItem: () => stored },
+      matchMedia: (q: string) => ({ matches: q === '(prefers-color-scheme: dark)' && osDark }),
+    };
+    new Function('window', 'document', mantineScript!)(window, document);
+    new Function('location', 'document', COLOR_SCHEME_SCOPE_HEAD_SCRIPT)({ pathname }, document);
+    return attrs['data-mantine-color-scheme'];
+  };
+
+  it('skrip Mantine terbaca dari render', () => {
+    expect(mantineScript).toContain('prefers-color-scheme: dark');
+  });
+
+  it('publik tanpa pilihan ikut OS', () => {
+    expect(runHead('/', true, null)).toBe('dark');
+    expect(runHead('/', false, null)).toBe('light');
+  });
+
+  it('pilihan tersimpan menang atas OS', () => {
+    expect(runHead('/', true, 'light')).toBe('light');
+    expect(runHead('/', false, 'dark')).toBe('dark');
+  });
+
+  it('admin/akun tetap terang sebelum paint walau OS gelap (dan walau tersimpan gelap)', () => {
+    expect(runHead('/admin', true, null)).toBe('light');
+    expect(runHead('/login', true, 'dark')).toBe('light');
+  });
+
+  it('di layout, skrip cakupan dipasang SETELAH ColorSchemeScript', () => {
+    const layout = readFileSync(path.join(APP_DIR, 'layout.tsx'), 'utf8');
+    const scheme = layout.indexOf('<ColorSchemeScript');
+    const scope = layout.indexOf('__html: COLOR_SCHEME_SCOPE_HEAD_SCRIPT');
+    expect(scheme).toBeGreaterThan(-1);
+    expect(scope).toBeGreaterThan(scheme);
+  });
+});
+
+describe('THEME_COLOR_VIEWPORT (<meta name="theme-color"> sebelum hidrasi)', () => {
+  it('satu warna per prefers-color-scheme, sesuai THEME_COLOR', () => {
+    expect(THEME_COLOR_VIEWPORT).toEqual([
+      { media: '(prefers-color-scheme: light)', color: THEME_COLOR.light },
+      { media: '(prefers-color-scheme: dark)', color: THEME_COLOR.dark },
+    ]);
+  });
+
+  it('layout memakainya di viewport, tanpa theme-color statis di metadata.other', () => {
+    const layout = readFileSync(path.join(APP_DIR, 'layout.tsx'), 'utf8');
+    expect(layout).toContain('themeColor: THEME_COLOR_VIEWPORT');
+    expect(layout).not.toMatch(/"theme-color":/);
+  });
+});
+
+describe('syncThemeColorMeta (setelah hidrasi & tiap navigasi client)', () => {
+  /** test-only: dokumen tiruan dengan dua meta ber-media seperti keluaran viewport.themeColor. */
+  const fakeDoc = (scheme: string | null) => {
+    const writes: string[] = [];
+    const metas = THEME_COLOR_VIEWPORT.map(({ color }) => {
+      let content = color;
+      return {
+        getAttribute: () => content,
+        setAttribute: (_: string, v: string) => {
+          writes.push(v);
+          content = v;
+        },
+      };
+    });
+    const doc = {
+      documentElement: { getAttribute: () => scheme },
+      querySelectorAll: () => metas,
+    } as unknown as Parameters<typeof syncThemeColorMeta>[0];
+    return { doc, writes, contents: () => metas.map((m) => m.getAttribute()) };
+  };
+
+  it('pilihan terang di OS gelap → kedua meta putih (meta ber-media gelap ditimpa)', () => {
+    const { doc, contents } = fakeDoc('light');
+    syncThemeColorMeta(doc);
+    expect(contents()).toEqual([THEME_COLOR.light, THEME_COLOR.light]);
+  });
+
+  it('skema gelap → kedua meta hitam', () => {
+    const { doc, contents } = fakeDoc('dark');
+    syncThemeColorMeta(doc);
+    expect(contents()).toEqual([THEME_COLOR.dark, THEME_COLOR.dark]);
+  });
+
+  it('hanya menulis meta yang berbeda (tanpa mutasi berulang untuk observer)', () => {
+    const { doc, writes } = fakeDoc('dark');
+    syncThemeColorMeta(doc);
+    expect(writes).toEqual([THEME_COLOR.dark]);
+    syncThemeColorMeta(doc);
+    expect(writes).toEqual([THEME_COLOR.dark]);
   });
 });
