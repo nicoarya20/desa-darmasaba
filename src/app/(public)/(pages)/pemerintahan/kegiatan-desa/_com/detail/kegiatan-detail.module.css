@@ -59,6 +59,38 @@
   background: var(--tile);
 }
 
+/* ---------- Dokumentasi pembangunan (kolom Sebelum/Sesudah) ---------- */
+.pair,
+.pairSingle {
+  display: grid;
+  gap: 16px;
+}
+
+.pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Hanya satu kelompok berisi foto: satu kolom penuh, tanpa slot kosong. */
+.pairSingle {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.pairItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+
+.pairLabel {
+  margin: 0;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.24;
+  font-weight: 600;
+}
+
 /* ---------- Mobile ---------- */
 @media (max-width: 734px) {
   .lead {
@@ -72,5 +104,9 @@
 
   .panel {
     padding: 16px;
+  }
+
+  .pair {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

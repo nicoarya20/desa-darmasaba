@@ -14,6 +14,7 @@ import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-um
 import BackButton from '../../../layanan/_com/BackButto';
 import { kegiatanListHref } from '../kegiatan-list.logic';
 import PembangunanInfo from '../PembangunanInfo';
+import DokumentasiPembangunan from './DokumentasiPembangunan';
 import type { KegiatanDetail as Detail } from './kegiatan-detail.source';
 import s from './kegiatan-detail.module.css';
 import { KEGIATAN_DETAIL_TEXT as T } from './kegiatan-detail.text';
@@ -119,6 +120,14 @@ export function KegiatanDetailBody({ data, linkKategori = true }: { data: Detail
             <PembangunanInfo item={data} showSumberDana />
           </div>
         </section>
+      ) : null}
+
+      {isKegiatanPembangunan(data) ? (
+        <DokumentasiPembangunan
+          judul={data.judul}
+          fotoSebelum={data.fotoSebelum}
+          fotoSesudah={data.fotoSesudah}
+        />
       ) : null}
 
       {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}

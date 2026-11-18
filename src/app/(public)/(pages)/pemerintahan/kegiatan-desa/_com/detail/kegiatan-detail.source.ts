@@ -1,3 +1,4 @@
+import type { FotoPublik } from "@/lib/kegiatan-pembangunan-foto";
 import type { PembangunanInfoItem } from "../PembangunanInfo";
 
 /** Bentuk respons detail kegiatan (`GET /api/desa/kegiatandesa/:id`) yang dipakai halaman publik. */
@@ -12,6 +13,9 @@ export type KegiatanDetail = PembangunanInfoItem & {
   image?: { link?: string | null } | null;
   kategoriKegiatanId?: string | null;
   kategoriKegiatan?: { nama?: string | null } | null;
+  // Dokumentasi Pembangunan (opsional; hilang pada API lama atau kegiatan tanpa foto)
+  fotoSebelum?: FotoPublik[] | null;
+  fotoSesudah?: FotoPublik[] | null;
 };
 
 type DetailBody = { success?: boolean; message?: string; data?: KegiatanDetail | null } | null;

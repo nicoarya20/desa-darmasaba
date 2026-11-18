@@ -93,6 +93,7 @@ model FileStorage {
   InfoTekno                      InfoTekno[]
   PengaduanMasyarakat            PengaduanMasyarakat[]
   KegiatanDesa                   KegiatanDesa[]
+  KegiatanDesaFoto               KegiatanDesaFoto[]
   DokumenPerencanaan             DokumenPerencanaan[]
   ProgramInovasi                 ProgramInovasi[]
   ProgramInovasiImages           ProgramInovasi[]           @relation("ProgramInovasiImages")
@@ -2343,7 +2344,27 @@ model KegiatanDesa {
   statusPembangunan String? // "rencana" | "berjalan" | "selesai" — divalidasi di API
   sumberDana        String?
 
+  // Dokumentasi Pembangunan (opsional): foto sebelum & sesudah (maks 5 per jenis). Hanya untuk kategori Pembangunan.
+  // Satu relasi untuk kedua jenis: Prisma tidak bisa memfilter relasi bernama ganda pada FK yang sama, dan satu include
+  // + urutan (jenis, urutan) cukup untuk memecahnya di lib.
+  foto KegiatanDesaFoto[]
+
   @@index([kategoriKegiatanId])
+}
+
+// Foto dokumentasi Kegiatan Desa kategori Pembangunan. `jenis` = "sebelum" | "sesudah" (divalidasi di
+// src/lib/kegiatan-pembangunan-foto.ts), `urutan` = urutan tampil per jenis; ikut terhapus bersama kegiatan/berkas.
+model KegiatanDesaFoto {
+  id             String       @id @default(cuid())
+  kegiatanDesa   KegiatanDesa @relation(fields: [kegiatanDesaId], references: [id], onDelete: Cascade)
+  kegiatanDesaId String
+  file           FileStorage  @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId         String
+  jenis          String
+  urutan         Int          @default(0)
+  createdAt      DateTime     @default(now())
+
+  @@index([kegiatanDesaId, jenis, urutan])
 }
 
 // Dokumen perencanaan desa: RPJM (periode 6/8 tahun), RKP (per tahun), dan berita acara musyawarah.

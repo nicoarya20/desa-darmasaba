@@ -28,6 +28,9 @@ export const templateForm = z.object({
   progres: z.number().int().min(PROGRES_MIN).max(PROGRES_MAX).nullable().optional(),
   statusPembangunan: z.enum(STATUS_PEMBANGUNAN).nullable().optional(),
   sumberDana: z.string().max(SUMBER_DANA_MAX_LENGTH).nullable().optional(),
+  // Foto Pembangunan (opsional): undefined = tidak diubah, array = set final per jenis (maks 5)
+  fotoSebelumIds: z.array(z.string()).optional(),
+  fotoSesudahIds: z.array(z.string()).optional(),
 });
 
 const defaultForm = {
@@ -43,6 +46,8 @@ const defaultForm = {
   progres: null as number | null,
   statusPembangunan: null as string | null,
   sumberDana: null as string | null,
+  fotoSebelumIds: undefined as string[] | undefined,
+  fotoSesudahIds: undefined as string[] | undefined,
 };
 
 const templateKategori = z.object({
@@ -213,6 +218,8 @@ const kegiatan = proxy({
             progres: data.progres ?? null,
             statusPembangunan: data.statusPembangunan ?? null,
             sumberDana: data.sumberDana ?? null,
+            fotoSebelumIds: undefined,
+            fotoSesudahIds: undefined,
           };
           return data;
         }
