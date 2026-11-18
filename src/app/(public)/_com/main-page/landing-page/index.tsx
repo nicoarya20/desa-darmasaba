@@ -4,7 +4,7 @@ import { Image } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { Suspense } from "react";
 import { useProxy } from "valtio/utils";
-import { HeroSosmed, HeroStatus } from "./HeroInfo";
+import { HeroSosmed, HeroSosmedPlaceholder, HeroStatus } from "./HeroInfo";
 import { HeroProfile, HeroProfileSkeleton } from "./HeroProfile";
 import { HeroRibbons } from "./HeroRibbons";
 import { HeroPrograms, type ProgramInovasiItem } from "./HeroPrograms";
@@ -50,7 +50,7 @@ function LandingPage() {
         </h1>
 
         <HeroStatus status={workStatus} />
-        {!loadingSosmed && <HeroSosmed data={socialMedia} />}
+        {loadingSosmed ? <HeroSosmedPlaceholder /> : <HeroSosmed data={socialMedia} />}
       </div>
 
       {loadingProfile ? <HeroProfileSkeleton /> : profile && <HeroProfile data={profile} />}
