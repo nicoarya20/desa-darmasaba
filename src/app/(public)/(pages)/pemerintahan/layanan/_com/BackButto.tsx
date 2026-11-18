@@ -1,6 +1,5 @@
 'use client'
 
-import colors from "@/con/colors";
 import { ActionIcon } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useTransitionRouter } from 'next-view-transitions';
@@ -13,7 +12,7 @@ export default function BackButton() {
     const router = useTransitionRouter()
     return (
         <ActionIcon
-            bg={colors["blue-button"]}
+            bg="var(--c-brand-fill)"
             onClick={() => router.back()}
             aria-label={BACK_BUTTON_LABEL}
             title={BACK_BUTTON_LABEL}

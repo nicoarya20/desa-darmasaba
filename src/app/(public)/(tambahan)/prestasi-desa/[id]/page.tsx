@@ -3,7 +3,7 @@
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import { PrestasiJuara } from '@/app/(public)/_com/main-page/prestasi/PrestasiJuara';
-import colors from '@/con/colors';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { ActionIcon, Box, Container, Divider, Flex, Image, Skeleton, Stack, Text } from '@mantine/core';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
 import { useParams, usePathname } from 'next/navigation';
@@ -49,7 +49,7 @@ function Page() {
   }
 
   return (
-    <Stack pos={"relative"} bg={colors.Bg} py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+    <Stack pos={"relative"} bg="var(--c-hero-bg)" py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
       <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }}>
         {state.findUnique.data && (
@@ -58,7 +58,7 @@ function Page() {
               <Text 
                 ta={"center"} 
                 fz={{ base: "1.6rem", md: "2rem", lg: "2.25rem" }} 
-                c={colors["blue-button"]} 
+                c="var(--c-brand)"
                 fw={"bold"}
               >
                 {state.findUnique.data.name}
@@ -78,7 +78,7 @@ function Page() {
               />
             )}
             <Box mt="md">
-              <Text style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsi || '' }} />
+              <Text className={rt.root} style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsi || '' }} />
               <Text mt="md" c="dimmed" size="sm">
                 Dibuat pada: {new Date(state.findUnique.data.createdAt).toLocaleDateString('id-ID')}
               </Text>
@@ -87,7 +87,7 @@ function Page() {
         )}
       </Container>
       <Box px={{ base: "md", md: 100 }}>
-        <Divider color={colors["blue-button"]} />
+        <Divider color="var(--c-brand-fill)" />
         <Flex justify={"space-between"} py={20}>
           <Text fz="md">
             Dibuat pada: {state.findUnique.data?.createdAt ? new Date(state.findUnique.data.createdAt).toLocaleDateString('id-ID', {
@@ -100,48 +100,52 @@ function Page() {
             <Flex gap={"lg"}>
               <ActionIcon 
                 variant="transparent" 
+                c="var(--c-brand)"
                 component="a"
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${baseUrl}${pathname}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Facebook"
               >
-                <IconBrandFacebook color={colors["blue-button"]} size={30} />
+                <IconBrandFacebook size={30} />
               </ActionIcon>
               <ActionIcon 
                 variant="transparent"
+                c="var(--c-brand)"
                 component="a"
                 href={`https://www.instagram.com/?url=${encodeURIComponent(`${baseUrl}${pathname}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Instagram"
               >
-                <IconBrandInstagram color={colors["blue-button"]} size={30} />
+                <IconBrandInstagram size={30} />
               </ActionIcon>
               <ActionIcon 
                 variant="transparent"
+                c="var(--c-brand)"
                 component="a"
                 href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`${baseUrl}${pathname}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Twitter"
               >
-                <IconBrandTwitter color={colors["blue-button"]} size={30} />
+                <IconBrandTwitter size={30} />
               </ActionIcon>
               <ActionIcon 
                 variant="transparent"
+                c="var(--c-brand)"
                 component="a"
                 href={`https://wa.me/?text=${encodeURIComponent(`${baseUrl}${pathname}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on WhatsApp"
               >
-                <IconBrandWhatsapp color={colors["blue-button"]} size={30} />
+                <IconBrandWhatsapp size={30} />
               </ActionIcon>
             </Flex>
           </Box>
         </Flex>
-        <Divider color={colors["blue-button"]} pb={50} />
+        <Divider color="var(--c-brand-fill)" pb={50} />
       </Box>
     </Stack>
   );

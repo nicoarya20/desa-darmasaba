@@ -7,7 +7,7 @@ import k from '@/app/(public)/_com/kontak-darurat/kontak-darurat.module.css';
 import { PolsekMapPanel } from './PolsekMapPanel';
 import { PolsekRow } from './PolsekRow';
 import { mapEmbedSrc, parseJarakKm, pickMapPolsek, sortByJarak } from './polsek.logic';
-import { POLSEK_BRAND_VARS } from './polsek.meta';
+import s from './polsek.module.css';
 import { POLSEK_TEXT as T } from './polsek.text';
 import { usePolsekList, type PolsekListState } from './use-polsek';
 
@@ -37,7 +37,7 @@ export function PolsekTerdekatView({ state, onRetry }: { state: PolsekListState;
   }, []);
 
   return (
-    <div className={page.page} style={POLSEK_BRAND_VARS}>
+    <div className={`${page.page} ${s.page}`}>
       <header className={page.header}>
         <BackButton />
         <div className={page.intro}>

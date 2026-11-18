@@ -1,6 +1,7 @@
 'use client'
 import artikelKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/artikelKesehatan';
-import colors from '@/con/colors';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Box, Button, Card, Divider, Group, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconCalendar, IconChevronRight } from '@tabler/icons-react';
@@ -24,13 +25,13 @@ function ArtikelKesehatanPage() {
   }
 
   return (
-    <Box>
-      <Paper p="xl" bg={colors['white-trans-1']} radius="xl" shadow="md">
+    <Box className={t.tema}>
+      <Paper p="xl" bg="var(--kt-glass)" radius="xl" shadow="md">
         <Stack gap="lg">
-          <Title ta="center" order={1} c={colors['blue-button']}>
+          <Title ta="center" order={1} c="var(--c-brand)">
             Artikel Kesehatan
           </Title>
-          <Divider size="sm" color={colors['blue-button']} />
+          <Divider size="sm" color="var(--c-brand)" />
           {state.findMany.data.length === 0 ? (
             <Box py="xl" ta="center">
               <Text fz={{ base: 'sm', sm: 'md' }} c="dimmed">
@@ -60,7 +61,7 @@ function ArtikelKesehatanPage() {
                   />
                 </Card.Section>
                 <Stack gap="xs" mt="md">
-                  <Title order={3} c={colors['blue-button']}>
+                  <Title order={3} c="var(--c-brand)">
                     {item.title}
                   </Title>
                   <Group gap="xs">
@@ -74,11 +75,11 @@ function ArtikelKesehatanPage() {
                     lh={{ base: 'sm', sm: 'md' }}
                     lineClamp={3}
                     style={{ wordBreak: 'break-word' }}
-                    dangerouslySetInnerHTML={{ __html: item.content }}
+                    className={rt.root} dangerouslySetInnerHTML={{ __html: item.content }}
                   />
                   <Group justify="flex-start">
                     <Button
-                      bg={colors['blue-button']}
+                      bg="var(--c-brand-fill)"
                       radius="lg"
                       size="sm"
                       rightSection={<IconChevronRight size={18} />}

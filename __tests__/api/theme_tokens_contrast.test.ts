@@ -6,6 +6,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { DARK_ERROR_COLOR } from '@/app/_com/site-css-variables-resolver';
 
 const CSS_PATH = path.resolve(__dirname, '../../src/app/theme-tokens.css');
 const DARK_SELECTOR = ':root[data-mantine-color-scheme="dark"]';
@@ -84,6 +85,7 @@ const LEGACY_LIGHT: Tokens = {
   'c-chart-3': '#8ac1e3',
   'c-open': '#1f9d55',
   'c-closed': '#d9363e',
+  'c-focus': '#0071e3',
 };
 
 function failingPairs(tokens: Tokens, exceptions: Set<string>) {
@@ -98,6 +100,7 @@ function failingPairs(tokens: Tokens, exceptions: Set<string>) {
   check('c-on-brand', 'c-brand-fill-hover', 4.5);
   check('c-brand', 'c-brand-tint', 4.5);
   for (const fg of CHART) for (const bg of CHART_SURFACES) check(fg, bg, 3);
+  for (const bg of SURFACES) check('c-focus', bg, 3); // WCAG 1.4.11: cincin fokus ≥ 3 di semua latar
   return fails;
 }
 
@@ -130,6 +133,12 @@ describe('theme-tokens.css: kontras WCAG', () => {
       const [fg, bg] = pair.split('@');
       const min = fg.startsWith('c-chart') ? 3 : 4.5;
       expect(contrast(light[fg], light[bg]), pair).toBeLessThan(min);
+    }
+  });
+
+  it('tema gelap: merah galat Mantine (resolver) ≥ 4,5 di semua latar gelap', () => {
+    for (const bg of SURFACES) {
+      expect(contrast(DARK_ERROR_COLOR, dark[bg]), `galat di ${bg}`).toBeGreaterThanOrEqual(4.5);
     }
   });
 

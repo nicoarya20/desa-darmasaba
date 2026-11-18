@@ -1,3 +1,4 @@
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import rows from '../../../lingkungan/data-lingkungan-desa/_com/data-lingkungan.module.css';
 import type { SektorSummary } from './sektor-unggulan.logic';
 import s from './sektor-unggulan.module.css';
@@ -25,7 +26,7 @@ export function SektorDetails({ summary }: { summary: SektorSummary }) {
               {row.figure ? <p className={rows.amount}>{row.figure}</p> : null}
             </div>
             {/* html sudah disaring sanitizeRichText di toSektor. */}
-            <div className={rows.prose} dangerouslySetInnerHTML={{ __html: row.html ?? '' }} />
+            <div className={`${rows.prose} ${rt.root}`} dangerouslySetInnerHTML={{ __html: row.html ?? '' }} />
           </li>
         ))}
       </ul>

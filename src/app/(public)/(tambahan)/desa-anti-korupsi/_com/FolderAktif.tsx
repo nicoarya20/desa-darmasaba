@@ -1,5 +1,4 @@
 'use client';
-import colors from '@/con/colors';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import type { FolderGroupView } from '@/lib/desa-anti-korupsi-view';
 import { Button, Group, Stack, Text } from '@mantine/core';
@@ -30,7 +29,7 @@ export function FolderAktif({ programId, folder, groups, urut, backHref, onPrevi
       {groups.length > 1 && <FolderChips programId={programId} groups={groups} activeKey={folder.key} urut={urut} />}
       <Group justify="space-between" gap="xs">
         <Group gap="xs" wrap="nowrap" miw={0}>
-          <IconFolderOpen size={22} color={colors['blue-button']} style={{ flexShrink: 0 }} />
+          <IconFolderOpen size={22} color="var(--c-brand)" style={{ flexShrink: 0 }} />
           <Text fw={600} truncate data-testid="folder-aktif">
             {folder.nama}
           </Text>
@@ -50,7 +49,7 @@ export function FolderAktif({ programId, folder, groups, urut, backHref, onPrevi
               href={backHref}
               scroll={false}
               variant="light"
-              color={colors['blue-button']}
+              color="var(--c-brand)"
               radius="xl"
               size="xs"
               leftSection={<IconArrowLeft size={14} />}

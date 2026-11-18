@@ -2,8 +2,14 @@
  * Polsek Terdekat: baris "call-first" di panel Kontak Darurat (.panel, .btn, kerangka dari kontak-darurat.module.css;
  * nomor + Telepon = KontakActions) dengan ubin jarak di kiri, lalu satu peta untuk polsek terpilih.
  * Kerangka & kepala halaman dari layanan.module.css (--ink, --muted, --subtle, --tile, --line, --radius);
- * --brand/--brand-tint dari POLSEK_BRAND_VARS. Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
+ * --brand dari .page layanan (alias --c-brand); --brand-tint dari .page di bawah. Peta (iframe Google Maps) tetap
+ * terang di tema gelap. Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
  */
+
+/* Dipasang bersama .page layanan.module.css di akar halaman. */
+.page {
+  --brand-tint: var(--c-brand-tint);
+}
 
 /* ---------- Baris ---------- */
 .row {
@@ -25,7 +31,7 @@
   height: 88px;
   margin: 0;
   border-radius: 14px;
-  background: #fff;
+  background: var(--c-tile-alt);
 }
 
 .distanceValue {
@@ -95,7 +101,7 @@
 }
 
 .open24 {
-  color: #1d7a34;
+  color: light-dark(#1d7a34, #30d158);
   font-weight: 600;
 }
 
@@ -103,7 +109,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #30a14e;
+  background: light-dark(#30a14e, #30d158);
 }
 
 .address {
@@ -166,8 +172,8 @@
 }
 
 .pick[aria-pressed='true'] {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .mapLayout {
@@ -279,7 +285,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .pick:not([aria-pressed='true']):hover {
-    background: #e8e8ed;
+    background: light-dark(#e8e8ed, #3a3a3c);
   }
 }
 

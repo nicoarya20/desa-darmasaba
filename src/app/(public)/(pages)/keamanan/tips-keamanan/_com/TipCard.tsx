@@ -1,3 +1,4 @@
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Image } from '@mantine/core';
 import type { Tip } from './tips-keamanan.logic';
 import s from './tips-keamanan.module.css';
@@ -22,7 +23,7 @@ export function TipCard({ tip }: { tip: Tip }) {
       {hasBody ? (
         <div className={s.body}>
           {tip.imageUrl ? title : null}
-          {tip.html ? <div className={s.content} dangerouslySetInnerHTML={{ __html: tip.html }} /> : null}
+          {tip.html ? <div className={`${s.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: tip.html }} /> : null}
         </div>
       ) : null}
     </li>

@@ -37,16 +37,17 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
 }
 
+/* Ubin darurat: merah muda terang; gelap = merah --c-closed redup + ikon merah terang (kontras ikon >= 3:1). */
 .tileDarurat {
-  background: #fde8ea;
+  background: light-dark(#fde8ea, rgb(255 69 58 / 16%));
 }
 
 .tileDarurat .tileIcon {
-  color: #d70015;
+  color: light-dark(#d70015, #ff6961);
 }
 
 .tileText {

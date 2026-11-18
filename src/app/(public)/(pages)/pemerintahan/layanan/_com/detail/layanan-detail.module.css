@@ -63,8 +63,8 @@
   padding: 11px 22px;
   border: 0;
   border-radius: 980px;
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font: inherit;
   font-size: 17px;
   font-weight: 500;
@@ -174,7 +174,7 @@
   font-size: 24px;
   line-height: 1.17;
   font-weight: 700;
-  color: #1d1d1f;
+  color: var(--c-ink);
 }
 
 /* ---------- Tidak ditemukan ---------- */
@@ -201,7 +201,7 @@
 .bar {
   display: block;
   border-radius: 8px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
@@ -235,7 +235,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .cta:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 }
 

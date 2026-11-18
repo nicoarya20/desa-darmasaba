@@ -1,11 +1,7 @@
 'use client';
 import { KontakRow, KontakRowPlaceholder } from '@/app/(public)/_com/kontak-darurat/KontakRow';
 import { NationalEmergency } from '@/app/(public)/_com/kontak-darurat/NationalEmergency';
-import {
-  KONTAK_BRAND_VARS,
-  KONTAK_SEARCH_THRESHOLD,
-  type NationalEmergencyEntry,
-} from '@/app/(public)/_com/kontak-darurat/kontak-darurat.meta';
+import { KONTAK_SEARCH_THRESHOLD, type NationalEmergencyEntry } from '@/app/(public)/_com/kontak-darurat/kontak-darurat.meta';
 import s from '@/app/(public)/_com/kontak-darurat/kontak-darurat.module.css';
 import { phoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic';
 import { IconAmbulance, IconFirstAidKit, IconSos } from '@tabler/icons-react';
@@ -49,7 +45,7 @@ export function KontakDaruratView({ state, onRetry }: { state: KontakListState; 
   });
 
   return (
-    <div className={page.page} style={KONTAK_BRAND_VARS}>
+    <div className={page.page}>
       <header className={page.header}>
         <BackButton />
         <div className={page.intro}>

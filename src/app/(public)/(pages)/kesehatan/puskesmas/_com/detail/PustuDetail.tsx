@@ -2,7 +2,6 @@
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import pustuState from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/pustu.state';
 import { IconChevronRight } from '@tabler/icons-react';
@@ -27,7 +26,7 @@ export default function PustuDetail() {
   const memuat = !siap && !snap.gagal;
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={memuat || undefined}>
+    <article className={kabar.section} aria-busy={memuat || undefined}>
       <div className={d.wrap}>
         <BackButton />
         {memuat ? (

@@ -2,8 +2,8 @@
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { htmlToText } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { formatTanggalTerbit } from '@/lib/tanggal-terbit';
 import { IconArrowUpRight, IconChevronRight } from '@tabler/icons-react';
@@ -19,7 +19,7 @@ export function PencegahanDetail({ id }: { id: string }) {
   const state = usePencegahanDetail(id);
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         <BackButton />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
@@ -73,7 +73,7 @@ export function PencegahanDetailBody({ data }: { data: PencegahanApiItem }) {
       ) : null}
 
       {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
-      {data.deskripsi ? <div className={d.content} dangerouslySetInnerHTML={{ __html: data.deskripsi }} /> : null}
+      {data.deskripsi ? <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.deskripsi }} /> : null}
     </>
   );
 }

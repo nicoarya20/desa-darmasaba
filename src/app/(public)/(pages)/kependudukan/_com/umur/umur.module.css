@@ -1,6 +1,6 @@
 /*
  * Section Kelompok Umur: ubin angka turunan di bawah panel stat-bars (usia produktif, rasio ketergantungan).
- * Bentuk ubin = panel stat-bars (#f5f5f7, radius 18). Breakpoint apple.com ≤734px.
+ * Bentuk ubin = panel stat-bars (--c-tile, radius 18), warna token --c-* (ikut tema). Breakpoint apple.com ≤734px.
  */
 .section {
   display: flex;
@@ -23,14 +23,14 @@
   gap: 6px;
   padding: 24px 28px;
   border-radius: 18px;
-  background: #f5f5f7;
-  color: #1d1d1f;
+  background: var(--c-tile);
+  color: var(--c-ink);
 }
 
 .tileLabel {
   font-size: 14px;
   line-height: 1.4;
-  color: #6e6e73;
+  color: var(--c-muted);
 }
 
 .tileValue {
@@ -46,13 +46,13 @@
   font-size: 17px;
   font-weight: 600;
   letter-spacing: 0;
-  color: #6e6e73;
+  color: var(--c-muted);
 }
 
 .tileHint {
   font-size: 14px;
   line-height: 1.45;
-  color: #6e6e73;
+  color: var(--c-muted);
 }
 
 @media (max-width: 734px) {

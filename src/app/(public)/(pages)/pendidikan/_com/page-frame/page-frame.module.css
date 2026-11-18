@@ -1,5 +1,5 @@
 /*
- * Kerangka bersama semua halaman menu Pendidikan: latar putih, tepi kiri-kanan --edge-gutter,
+ * Kerangka bersama semua halaman menu Pendidikan: latar --c-bg (terang putih), tepi kiri-kanan --edge-gutter,
  * tombol kembali 40px (ponsel 24px) di bawah nav, isi terakhir → footer = --section-gap.
  * Kenapa: tiap halaman dulu memakai lebar isi (1100/1200/1280/penuh) & padding sendiri,
  * sehingga tepi kiri dan jarak atas-bawah berbeda antarhalaman. Lebar 1200 = --ppid-measure.
@@ -8,7 +8,7 @@
  */
 .frame {
   --gutter: var(--edge-gutter);
-  background: #fff;
+  background: var(--c-bg);
   padding: 40px var(--gutter) var(--section-gap);
 }
 

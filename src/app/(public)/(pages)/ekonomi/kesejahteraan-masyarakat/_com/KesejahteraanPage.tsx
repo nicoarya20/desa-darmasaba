@@ -3,7 +3,6 @@ import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader'
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import { useLoadOnce, type LoadState } from '@/app/(public)/_com/load-once/use-load-once';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
@@ -37,7 +36,7 @@ export function KesejahteraanPage() {
   const total = state.status === 'ready' ? state.data.length : null;
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

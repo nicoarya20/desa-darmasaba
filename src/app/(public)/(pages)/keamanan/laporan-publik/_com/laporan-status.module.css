@@ -1,6 +1,7 @@
 /*
  * Label status laporan (daftar & detail): pil berisi titik warna + teks. Makna dibawa teks ("Selesai",
  * "Dalam proses", "Gagal", "Baru"); warna hanya penguat. Kontras teks ≥ 4.5:1 di atas latar tintanya.
+ * Gelap: tint = warna status transparan di atas ubin, teks = varian terang sistem (pola tileDarurat Pustu).
  */
 .status {
   display: inline-flex;
@@ -24,26 +25,26 @@
 }
 
 .selesai {
-  background: #e6f4ea;
-  color: #19733a;
+  background: light-dark(#e6f4ea, rgb(48 209 88 / 16%));
+  color: light-dark(#19733a, #30d158);
 }
 
 .proses {
-  background: #fdf1dc;
-  color: #8f5100;
+  background: light-dark(#fdf1dc, rgb(255 159 10 / 16%));
+  color: light-dark(#8f5100, #ffb340);
 }
 
 .gagal {
-  background: #fde8ea;
-  color: #c4001a;
+  background: light-dark(#fde8ea, rgb(255 69 58 / 16%));
+  color: light-dark(#c4001a, #ff6961);
 }
 
 .baru {
-  background: #e6eef6;
+  background: light-dark(#e6eef6, var(--c-brand-tint));
   color: var(--brand);
 }
 
 .lain {
-  background: #ececf0;
-  color: #6e6e73;
+  background: light-dark(#ececf0, rgb(255 255 255 / 10%));
+  color: light-dark(#6e6e73, var(--c-muted));
 }

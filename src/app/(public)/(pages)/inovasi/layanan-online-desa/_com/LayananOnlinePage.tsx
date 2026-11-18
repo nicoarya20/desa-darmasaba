@@ -1,7 +1,7 @@
 'use client';
 import PengaduanMasyarakatModal from '@/app/(public)/_com/pengaduan/PengaduanMasyarakatModal';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
-import { BERITA_LIST_HREF, KABAR_BRAND_VARS, PENGUMUMAN_BASE_HREF } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import { BERITA_LIST_HREF, PENGUMUMAN_BASE_HREF } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconFileCheck, IconMessageCircleQuestion, IconNews } from '@tabler/icons-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -31,7 +31,7 @@ export function LayananOnlinePage() {
   };
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

@@ -1,6 +1,7 @@
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import GaleriFoto from '@/app/(public)/_com/konten-bersama/galeri-foto.grid';
 import StrukturPengurusView from '@/app/(public)/_com/konten-bersama/struktur-pengurus.view';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import type { PustuDetail } from '@/lib/pustu/pustu.types';
 import { sanitizeRichText } from '@/lib/rich-text';
 import { Image } from '@mantine/core';
@@ -55,7 +56,7 @@ export default function PustuDetailBody({ data }: { data: PustuDetail }) {
       ) : null}
       {prosedur ? (
         <Blok id="pustu-blok-prosedur" judul={T.prosedur}>
-          <div className={d.content} dangerouslySetInnerHTML={{ __html: prosedur }} />
+          <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: prosedur }} />
         </Blok>
       ) : null}
       {tarifBpjs || tarifUmum ? (

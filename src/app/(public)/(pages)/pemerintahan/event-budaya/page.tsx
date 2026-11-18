@@ -1,6 +1,5 @@
 'use client';
 import kabarList from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import type { KategoriEvent } from '@/lib/agenda-desa';
 import { useMemo, useState } from 'react';
@@ -45,7 +44,7 @@ function AgendaKalenderDesaPage() {
   };
 
   return (
-    <div className={s.page} style={KABAR_BRAND_VARS}>
+    <div className={s.page}>
       <header className={kabarList.header}>
         <BackButton />
         <div className={kabarList.intro}>

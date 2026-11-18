@@ -121,8 +121,7 @@
   padding: 0 4px;
 }
 
-/* ≤1099px: ikon tema menambah 1 butir; rapatkan tombol ikon agar ikon admin (bila ada) tetap muat.
-   Hanya bila tombol tema dirender (belum di produksi, THEME_TOGGLE_VISIBLE): tanpa itu ukuran lama. */
+/* ≤1099px: ikon tema menambah 1 butir; rapatkan tombol ikon agar ikon admin (bila ada) tetap muat. */
 @media (max-width: 1099.98px) {
   .speechToggle:has(+ .iconToggle),
   .iconToggle {

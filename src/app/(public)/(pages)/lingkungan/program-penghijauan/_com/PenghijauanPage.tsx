@@ -4,7 +4,6 @@ import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPag
 import { listSearchable, paginate, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { useLoadOnce, type LoadState } from '@/app/(public)/_com/load-once/use-load-once';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { ProgramTiles, ProgramTilesPlaceholder } from '@/app/(public)/_com/program-tiles/ProgramTiles';
 import { useTransitionRouter } from 'next-view-transitions';
@@ -30,7 +29,7 @@ export function PenghijauanPage() {
   const total = state.status === 'ready' ? state.data.length : null;
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

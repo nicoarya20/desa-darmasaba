@@ -1,14 +1,16 @@
 /*
  * Halaman Beasiswa Desa — kerangka (latar putih, tepi, lebar 1200, jarak atas/bawah) dari
  * pendidikan/_com/page-frame; di sini hanya warna, jarak antarbagian (--section-gap) dan isi.
- * Ubin #f5f5f7 radius 18px tanpa border/bayangan (kartu APBDes, langkah OSS).
+ * Ubin --c-tile radius 18px tanpa border/bayangan (kartu APBDes, langkah OSS).
+ * Warna = alias token --c-* (theme-tokens.css), jadi ikut tema; tombol isi memakai --c-brand-fill.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet), ≤734px (mobile).
  */
 .page {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #86868b;
-  --tile: #f5f5f7;
+  --brand: var(--c-brand);
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --subtle: var(--c-subtle);
+  --tile: var(--c-tile);
   --radius: 18px;
   color: var(--ink);
 }
@@ -78,8 +80,8 @@
 }
 
 .pill {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .pillSecondary {
@@ -96,11 +98,11 @@
 
 @media (hover: hover) and (pointer: fine) {
   .pill:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 
   .pillSecondary:hover {
-    background: #e8e8ed;
+    background: var(--c-placeholder);
   }
 }
 
@@ -110,7 +112,7 @@
   height: auto;
   aspect-ratio: 599 / 413;
   border-radius: var(--radius);
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   object-fit: cover;
 }
 
@@ -267,7 +269,7 @@
   padding: 0 18px;
   border: 0;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
   font: inherit;
   font-size: 15px;

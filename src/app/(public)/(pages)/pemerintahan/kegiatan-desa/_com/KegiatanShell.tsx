@@ -1,5 +1,4 @@
 'use client';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import type { ReactNode } from 'react';
 import { KegiatanHeader } from './KegiatanHeader';
@@ -17,7 +16,7 @@ export default function KegiatanShell({
   scope?: KegiatanScope;
 }) {
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KegiatanHeader scope={scope} />
       {children}
     </div>

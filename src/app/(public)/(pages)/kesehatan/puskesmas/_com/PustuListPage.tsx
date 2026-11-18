@@ -1,6 +1,5 @@
 'use client';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import pustuState from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/pustu.state';
 import type { PustuRingkas } from '@/lib/pustu/pustu.types';
@@ -53,7 +52,7 @@ export default function PustuListPage() {
 
   const data = pustuState.findMany.data;
   return (
-    <section className={kabar.section} style={KABAR_BRAND_VARS}>
+    <section className={kabar.section}>
       <div className={s.block}>
         <BackButton />
         <header className={s.listHead}>

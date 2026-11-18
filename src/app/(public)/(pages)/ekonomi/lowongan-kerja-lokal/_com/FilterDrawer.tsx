@@ -3,7 +3,6 @@ import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { Drawer } from '@mantine/core';
 import { FilterPanel } from './FilterPanel';
 import type { FilterChip, LowonganFacets } from './lowongan-filter.logic';
-import { LOWONGAN_BRAND_VARS } from './lowongan-filter.meta';
 import { LOWONGAN_FILTER_TEXT as T } from './lowongan-filter.text';
 import type { LowonganParams, LowonganUpdate } from './lowongan-params.logic';
 import s from './filter.module.css';
@@ -29,7 +28,7 @@ export function FilterDrawer({ opened, onClose, params, facets, chips, update, s
       position="bottom"
       size="auto"
       title={T.filter}
-      style={LOWONGAN_BRAND_VARS}
+     
       closeButtonProps={{ 'aria-label': T.tutup }}
       classNames={{ content: s.drawer, header: s.drawerHeader, title: s.drawerTitle, body: s.drawerBody }}
     >

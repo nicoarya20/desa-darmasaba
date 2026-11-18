@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import grafikkepuasan from "@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/grafikKepuasan";
-import colors from "@/con/colors";
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
 import { Box, Center, Paper, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { useMediaQuery, useShallowEffect } from "@mantine/hooks";
 import { useEffect, useState } from "react";
@@ -90,10 +90,10 @@ function GrafikPenyakit() {
 
 
   return (
-    <Box>
+    <Box className={t.tema}>
       {!mounted && !chartData ? (
         <Box style={{ width: '100%', minWidth: 300, height: 400, minHeight: 300 }}>
-          <Paper bg={colors['white-1']} p={'md'}>
+          <Paper bg="var(--kt-panel)" p={'md'}>
             <Center>
               <Title pb={10} order={2}>Penderita Penyakit</Title>
               <Text c='dimmed'>Belum ada data untuk ditampilkan dalam grafik</Text>
@@ -102,23 +102,23 @@ function GrafikPenyakit() {
         </Box>
       ) : (
         <Box style={{ width: '100%', minWidth: 300, height: 420, minHeight: 300 }}>
-          <Paper bg={colors["white-trans-1"]} p={'md'}>
+          <Paper bg="var(--kt-glass)" p={'md'}>
             <Title pb={10} order={2}>Penderita Penyakit</Title>
             {mounted && diseaseChartData.length > 0 && (
               <Center>
                 <BarChart width={isMobile ? 450 : isTablet ? 500 : 550} height={350} data={diseaseChartData} >
                   <XAxis
                     dataKey="name"
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: 'var(--kt-tick)' }}
                     interval={0}
                     angle={-45}
                     textAnchor="end"
                     height={70}
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis tick={{ fill: 'var(--kt-tick)' }} />
+                  <Tooltip contentStyle={{ background: 'var(--kt-tooltip-bg)', borderColor: 'var(--kt-tooltip-line)' }} />
                   <Legend />
-                  <Bar dataKey="count" fill={colors['blue-button']} name="Jumlah Penderita" />
+                  <Bar dataKey="count" fill="var(--c-chart-1)" name="Jumlah Penderita" />
                 </BarChart>
               </Center>
             )}

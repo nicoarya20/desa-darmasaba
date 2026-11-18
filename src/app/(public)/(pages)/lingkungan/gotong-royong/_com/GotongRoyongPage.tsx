@@ -5,7 +5,6 @@ import { listSearchable, paginate, parsePage } from '@/app/(public)/_com/kabar-l
 import { useLoadOnce, type LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { KEGIATAN_PAGE_LIMIT } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan.meta';
@@ -30,7 +29,7 @@ export function GotongRoyongPage() {
   const total = state.status === 'ready' ? state.data.length : null;
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

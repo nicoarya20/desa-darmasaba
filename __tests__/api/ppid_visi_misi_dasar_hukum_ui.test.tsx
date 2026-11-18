@@ -150,7 +150,7 @@ describe('Dasar Hukum PPID', () => {
 
 describe('Gaya Visi dan Misi PPID (visi-misi.module.css)', () => {
   it('kartu terang terpusat: latar dari --vm-card, sudut bulat, bayangan lembut', () => {
-    expect(visiMisiCss).toMatch(/\.card\s*\{[^}]*align-items:\s*center;[^}]*border-radius:\s*32px;[^}]*background:\s*var\(--vm-card\);[^}]*box-shadow:/);
+    expect(visiMisiCss).toMatch(/\.card\s*\{[^}]*align-items:\s*center;[^}]*border-radius:\s*32px;[^}]*background:\s*var\(--vm-card[,)][^}]*box-shadow:/);
   });
 
   it('judul dan kalimat pendek rata tengah; butir misi rata kiri di kolom baca terpusat', () => {
@@ -168,7 +168,7 @@ describe('Gaya Visi dan Misi PPID (visi-misi.module.css)', () => {
   });
 
   it('lencana angka misi bulat berlatar brand', () => {
-    expect(visiMisiCss).toMatch(/\.misiNumber\s*\{[^}]*border-radius:\s*50%;[^}]*background:\s*var\(--brand\)/);
+    expect(visiMisiCss).toMatch(/\.misiNumber\s*\{[^}]*border-radius:\s*50%;[^}]*background:\s*var\(--c-brand-fill\)/);
   });
 
   it('≤734px: kartu, lambang, dan huruf mengecil', () => {

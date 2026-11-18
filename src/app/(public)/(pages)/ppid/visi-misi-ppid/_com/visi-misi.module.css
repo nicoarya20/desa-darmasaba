@@ -2,17 +2,18 @@
    dengan pemisah berornamen. Judul dan kalimat pendek rata tengah; butir misi rata kiri
    di kolom terpusat supaya tetap mudah dibaca. */
 .card {
-  --vm-text: #1d1d1f;
-  --vm-rule: #b1bdd1;
+  --vm-text: var(--c-ink);
+  --vm-rule: light-dark(#b1bdd1, rgb(255 255 255 / 0.16));
   /* Panjang baris baca di dalam kartu (±70 karakter), bukan lebar isi halaman. */
   --vm-measure: 46rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 64px 48px 72px;
-  border: 1px solid rgb(255 255 255 / 0.7);
+  border: 1px solid light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.08));
   border-radius: 32px;
-  background: var(--vm-card);
+  /* Kaca: putih 50% di terang, putih 6% di gelap (sama dengan kartu Profil Desa). Pemakai boleh menimpa --vm-card. */
+  background: var(--vm-card, light-dark(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.06)));
   box-shadow: 0 16px 40px rgb(10 78 120 / 0.1);
   animation: rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -140,8 +141,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font-size: 16px;
   line-height: 1;
   font-weight: 700;

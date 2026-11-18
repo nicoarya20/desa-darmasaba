@@ -1,7 +1,8 @@
 'use client'
 import jadwalkegiatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/jadwalKegiatan';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
-import colors from '@/con/colors';
 import {
   Box,
   Button,
@@ -41,7 +42,7 @@ function Page() {
   }
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="lg">
+    <Stack pos="relative" className={t.tema} bg="var(--c-hero-bg)" py="xl" gap="lg">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
@@ -50,12 +51,12 @@ function Page() {
           <Paper radius="xl" shadow="md">
             <Box
               style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-              bg={colors['blue-button']}
+              bg="var(--c-brand-fill)"
             >
               <Title
                 p="md"
                 order={1}
-                c={colors['white-1']}
+                c="var(--kt-on-fill)"
                 fw="bold"
                 ta={{ base: 'center', md: 'left' }}
               >
@@ -100,7 +101,7 @@ function Page() {
                     <Text
                       ta="justify"
                       style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                      dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }}
+                      className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.deskripsijadwalkegiatan.deskripsi }}
                     />
                   </Box>
                 </Stack>
@@ -112,7 +113,7 @@ function Page() {
                     <Text
                       ta="justify"
                       style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                      dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }}
+                      className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.layananjadwalkegiatan.content }}
                     />
                   </Box>
                 </Stack>
@@ -124,7 +125,7 @@ function Page() {
                     <Text
                       ta="justify"
                       style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                      dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }}
+                      className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.syaratketentuanjadwalkegiatan.content }}
                     />
                   </Box>
                 </Stack>
@@ -136,7 +137,7 @@ function Page() {
                     <Text
                       ta="justify"
                       style={{ wordBreak: "break-word", whiteSpace: "normal" }}
-                      dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }}
+                      className={rt.root} dangerouslySetInnerHTML={{ __html: state.findUnique.data.dokumenjadwalkegiatan.content }}
                     />
                   </Box>
                 </Stack>
@@ -153,23 +154,23 @@ function Page() {
                   <CreatePendaftaran />
                 </Modal>
 
-                <Paper p="lg" radius="md" bg={colors['blue-button-trans']} shadow="sm">
+                <Paper p="lg" radius="md" bg="var(--kt-info)" shadow="sm">
                   <Stack gap="xs">
-                    <Title order={3} c={colors['white-1']} fw="bold">Informasi Kontak</Title>
+                    <Title order={3} c="var(--kt-on-fill)" fw="bold">Informasi Kontak</Title>
                     <Group gap="xs" justify="flex-start">
                       <IconUser size={18} color="white" />
-                      <Text c={colors['white-1']}>
+                      <Text c="var(--kt-on-fill)">
                         Penanggung Jawab:&nbsp;
-                        <Text span fw="bold" c={colors['white-1']}>Bidan Komang Ayu</Text>
+                        <Text span fw="bold" c="var(--kt-on-fill)">Bidan Komang Ayu</Text>
                       </Text>
                     </Group>
                     <Group gap="xs">
                       <IconPhone size={18} color="white" />
-                      <Text c={colors['white-1']}>081234567890</Text>
+                      <Text c="var(--kt-on-fill)">081234567890</Text>
                     </Group>
                     <Group gap="xs">
                       <IconMail size={18} color="white" />
-                      <Text c={colors['white-1']}>puskesmasabiansemal3@gmail.com</Text>
+                      <Text c="var(--kt-on-fill)">puskesmasabiansemal3@gmail.com</Text>
                     </Group>
                   </Stack>
                 </Paper>

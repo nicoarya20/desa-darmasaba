@@ -52,7 +52,8 @@
   place-items: center;
   aspect-ratio: 3 / 2;
   border-radius: var(--radius, 18px);
-  background: var(--tile);
+  /* Gelap: pelat logo pihak ketiga #d9e1ea (logo di-multiply, di ubin gelap jadi hitam). */
+  background: light-dark(var(--tile), #d9e1ea);
   overflow: hidden;
 }
 
@@ -66,7 +67,7 @@
 }
 
 .noLogo {
-  color: var(--subtle);
+  color: light-dark(var(--subtle), #6e6e73);
 }
 
 .name {

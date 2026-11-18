@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.307] - 2026-11-18
+## [0.1.309] - 2026-11-18
 ### Added
 - **Impor data UMKM lewat CSV.** Di admin Ekonomi > UMKM & Pasar Desa > Data UMKM ada tombol "Impor CSV". Admin bisa mengunduh template, memilih berkas (maks 2 MB, 1000 baris), lalu melihat pratinjau jumlah yang akan ditambah, diperbarui, atau dilewati beserta daftar baris bermasalah sebelum mengimpor. Kolom wajib: nama, pemilik, kategori; opsional: deskripsi, alamat, kontak. Kategori dicocokkan berdasarkan nama dan harus sudah ada.
 - **Impor produk UMKM lewat CSV.** Di tab Produk ada tombol "Impor CSV" dengan alur yang sama (template, pratinjau, impor semua-atau-tidak-sama-sekali). Kolom wajib: nama, umkm, kategori, harga; opsional: pemilik (untuk UMKM bernama sama), stok, satuan, deskripsi, unggulan, dan **link toko online** per platform (Shopee, Tokopedia, TikTok Shop, Blibli, Lazada, lainnya; harus https, maksimal 5 per produk). Harga diterima sebagai "15000", "15.000", atau "Rp 15.000"; desimal dan notasi ilmiah Excel ditolak. UMKM dan kategori harus sudah ada. Pada mode perbarui, link toko online yang diisi menggantikan seluruh daftar link produk itu.
@@ -9,12 +9,12 @@
 ### Changed
 - Pembaca CSV dipindah ke modul bersama (`src/lib/csv/parse-csv.ts`) dan dipakai juga oleh impor Penerima Program Kemiskinan, UMKM, dan Produk; perilakunya tidak berubah.
 
-## [0.1.306] - 2026-11-18
+## [0.1.308] - 2026-11-18
 ### Changed
 - **Kolom "Jumlah" di Sektor Unggulan Desa kini tidak wajib.** Admin bisa menyimpan sektor unggulan (tambah maupun ubah) tanpa mengisi angka; kolom dibiarkan kosong dan tidak lagi otomatis terisi 0. Sektor tanpa angka tetap tampil di halaman publik, hanya tanpa nilainya.
 - Kolom "Jumlah" kini menerima angka 0 dan angka desimal (sebelumnya angka di bawah 1 ditolak).
 
-## [0.1.305] - 2026-11-18
+## [0.1.307] - 2026-11-18
 ### Added
 - **Kegiatan Desa kategori Pembangunan kini bisa punya dokumentasi foto.** Di form tambah dan ubah kegiatan, saat kategori "Pembangunan" dipilih muncul bagian "Dokumentasi Pembangunan" berisi **Foto Sebelum** dan **Foto Sesudah**, masing-masing bisa diisi sampai 5 foto. Semuanya opsional: kegiatan tetap bisa disimpan tanpa foto. Foto berformat JPG, PNG, atau WebP, maksimal 5 MB per foto.
 - **Halaman detail kegiatan menampilkan "Dokumentasi Pembangunan"** bila ada minimal satu foto: kolom Sebelum dan Sesudah berdampingan (bertumpuk di ponsel). Kelompok yang kosong tidak ditampilkan, dan tanpa foto sama sekali bagian ini tidak muncul.
@@ -22,6 +22,25 @@
 ### Changed
 - Input gambar lama di form Kegiatan Desa kini berlabel **"Gambar Sampul (Opsional)"** beserta keterangan bahwa gambar itu tampil sebagai gambar utama di daftar dan detail kegiatan, supaya tidak tertukar dengan foto dokumentasi Pembangunan.
 - Foto yang diganti atau dihapus dari kegiatan Pembangunan ikut dibersihkan dari penyimpanan setelah data berhasil disimpan. Memindahkan kegiatan ke kategori selain Pembangunan mengosongkan foto dokumentasinya.
+## [0.1.306] - 2026-11-18
+### Added
+- **Tema gelap kini bisa dinyalakan warga.** Tombol matahari/bulan di navbar (desktop dan ponsel, di kanan tombol baca suara) kini tampil untuk semua pengunjung. Pengunjung yang belum pernah memilih otomatis mengikuti pengaturan perangkatnya: perangkat bermode gelap langsung melihat situs gelap, perangkat bermode terang tetap terang. Pilihan lewat tombol disimpan di browser dan dipakai pada kunjungan berikutnya. Halaman admin dan akun tetap selalu terang.
+
+### Changed
+- Warna bilah browser di ponsel (bagian atas layar) mengikuti tema yang sedang tampil, termasuk setelah berpindah halaman.
+- Garis fokus keyboard (saat menavigasi dengan Tab) di galeri, prestasi, struktur organisasi, potensi desa, dan Desa Anti Korupsi lebih terang di tema gelap; di tema terang tidak berubah.
+
+## [0.1.305] - 2026-11-18
+### Added
+- **Tema gelap kini mencakup semua menu situs publik (masih tahap persiapan, belum bisa dinyalakan pengunjung).** Setelah beranda, versi gelap "Malam Netral" kini ada di Pemerintahan, PPID, Kesehatan, Keamanan, Ekonomi (termasuk katalog UMKM dan Lowongan Kerja), Inovasi, Lingkungan, Kependudukan, Pendidikan, Musik Desa, Desa Anti Korupsi, halaman APBDes, Prestasi, SDGs, permohonan informasi, Peta Informasi, dan halaman 404. Teks, tombol, grafik, kartu, bagan struktur organisasi, dan kontak darurat ikut menyesuaikan dan tetap terbaca (kontras teks memenuhi standar WCAG AA). Tombol matahari/bulan masih hanya muncul di lingkungan pengembangan sampai tema gelap dibuka untuk warga. Tampilan terang yang dilihat warga sekarang tidak berubah.
+- Isi tulisan dari admin (berita, pengumuman, profil, program, dan halaman detail lain) ikut terbaca di tema gelap, termasuk bila admin memberi warna teks atau latar di editor.
+
+### Changed
+- Peta (lokasi CCTV, Bank Sampah, sekolah, Google Maps) sengaja tetap terang di tema gelap; kotak info di dalam peta ikut terang supaya tetap terbaca.
+
+### Fixed
+- Tanda wajib (*) dan pesan galat di formulir lebih terang di tema gelap sehingga terbaca.
+- Tombol "Kirim Permohonan" PPID yang belum aktif kini terbaca di tema gelap.
 
 ## [0.1.304] - 2026-11-17
 ### Added

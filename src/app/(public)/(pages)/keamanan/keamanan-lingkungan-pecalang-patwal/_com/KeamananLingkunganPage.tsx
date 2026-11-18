@@ -5,7 +5,6 @@ import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { useKabarPage, type KabarPageState } from '@/app/(public)/_com/kabar-list/use-kabar-page';
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
@@ -32,7 +31,7 @@ export function KeamananLingkunganPage() {
   );
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

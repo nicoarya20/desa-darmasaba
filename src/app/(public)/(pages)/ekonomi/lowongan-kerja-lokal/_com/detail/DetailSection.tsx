@@ -1,3 +1,4 @@
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import type { Icon } from '@tabler/icons-react';
 import s from './detail-section.module.css';
 import type { RichText } from './lowongan-detail.types';
@@ -22,7 +23,7 @@ export function DetailSection({ title, icon: SectionIcon, body }: Props) {
 /** HTML sudah disanitasi adapter (`toRichText` → sanitizeRichText); teks polos dirender React per paragraf. */
 function RichTextBody({ body }: { body: RichText }) {
   if (body.kind === 'html') {
-    return <div className={s.rich} dangerouslySetInnerHTML={{ __html: body.html }} />;
+    return <div className={`${s.rich} ${rt.root}`} dangerouslySetInnerHTML={{ __html: body.html }} />;
   }
   return (
     <div className={s.rich}>

@@ -1,5 +1,5 @@
 import { IconKey, IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
-import colors from '@/con/colors';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { sanitizeRichText } from '@/lib/rich-text';
 import { Box, Group, Paper, SegmentedControl, Stack, Text, Title } from '@mantine/core';
 import { PROGRAM_DETAIL_TEXT as T } from '../program-kemiskinan.text';
@@ -19,16 +19,16 @@ export function ProgramDetailBody({ program, tahun, onPilihTahun }: Props) {
   return (
     <Stack gap="lg">
       <Group gap="sm" wrap="nowrap" align="center">
-        {program.icon && <IconMapper name={program.icon as IconKey} size={36} color={colors['blue-button']} />}
-        <Title order={1} c={colors['blue-button']} fz={{ base: 26, md: 34 }}>
+        {program.icon && <IconMapper name={program.icon as IconKey} size={36} color="var(--c-brand)" />}
+        <Title order={1} c="var(--c-brand)" fz={{ base: 26, md: 34 }}>
           {program.nama}
         </Title>
       </Group>
-      {deskripsi && <Box fz={{ base: 'sm', md: 'md' }} lh={1.6} dangerouslySetInnerHTML={{ __html: deskripsi }} />}
+      {deskripsi && <Box className={rt.root} fz={{ base: 'sm', md: 'md' }} lh={1.6} dangerouslySetInnerHTML={{ __html: deskripsi }} />}
 
       <Paper p={{ base: 'md', md: 'xl' }} radius="md">
         <Stack gap="md">
-          <Title order={2} fz="xl" c={colors['blue-button']}>
+          <Title order={2} fz="xl" c="var(--c-brand)">
             {T.penerimaJudul}
           </Title>
           <Text fz="sm" c="dimmed">

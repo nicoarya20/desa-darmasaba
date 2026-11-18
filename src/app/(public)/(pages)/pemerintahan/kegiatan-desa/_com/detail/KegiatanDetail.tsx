@@ -2,7 +2,7 @@
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import { kategoriSlug, SEMUA_SLUG } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { isKegiatanPembangunan } from '@/lib/kegiatan-pembangunan';
 import { hasPartisipan } from '@/lib/kegiatan-partisipan';
@@ -32,7 +32,7 @@ export function KegiatanDetail({ id, list }: { id: string; list?: KegiatanDetail
   const state = useKegiatanDetail(id);
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         {list ? (
           <Link href={list.href} className={`${back.back} ${r.trigger}`}>
@@ -132,7 +132,7 @@ export function KegiatanDetailBody({ data, linkKategori = true }: { data: Detail
 
       {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
       {data.deskripsiLengkap ? (
-        <div className={d.content} dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap }} />
+        <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap }} />
       ) : null}
     </>
   );

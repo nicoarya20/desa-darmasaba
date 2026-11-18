@@ -2,6 +2,7 @@ import { Image, Modal } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
 import r from "@/app/(public)/_com/link-reveal/link-reveal.module.css";
+import rt from "@/app/(public)/_com/rich-text/rich-text.module.css";
 import { sanitizeRichText } from "@/lib/rich-text";
 import l from "../landing.module.css";
 import type { GalleryView, ProgramHead } from "./program-overlay.logic";
@@ -43,7 +44,7 @@ export function ProgramOverlayDetail({ head, gallery, onOpenPhoto, detailHref }:
         </div>
       </header>
       {description ? (
-        <div className={s.richText} dangerouslySetInnerHTML={{ __html: description }} />
+        <div className={`${s.richText} ${rt.root}`} dangerouslySetInnerHTML={{ __html: description }} />
       ) : (
         <p className={`${s.richText} ${s.muted}`}>{T.emptyDescription}</p>
       )}

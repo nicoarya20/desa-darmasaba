@@ -1,7 +1,6 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { useLoadOnce, type LoadState } from '@/app/(public)/_com/load-once/use-load-once';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { latestUpdate } from '@/app/(public)/_com/stat-bars/stat-bars.logic';
 import { PengangguranSummary } from './PengangguranSummary';
@@ -24,7 +23,7 @@ export function JumlahPengangguranPage() {
   const state = useLoadOnce(loadPengangguranBulanan, 'data bulanan (Jumlah Pengangguran)');
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.jumlah.title}
         lead={T.jumlah.lead}

@@ -1,6 +1,3 @@
-import colors from '@/con/colors';
-import type { CSSProperties } from 'react';
-
 /** Konstanta halaman katalog UMKM publik (`/ekonomi/umkm`): batas muat, tab, urutan, rute. */
 
 /**
@@ -28,8 +25,3 @@ export const TOKO_FACET_VISIBLE = 5;
 
 /** Lebar tempat panel kiri diganti tombol Saring + drawer (sama dengan breakpoint CSS 1068px). */
 export const KATALOG_DRAWER_QUERY = '(max-width: 1068px)';
-
-/** Variabel warna brand untuk akar halaman katalog (judul, tab, fokus, kartu). */
-export const KATALOG_BRAND_VARS = {
-  '--brand': colors['blue-button'],
-} as CSSProperties;

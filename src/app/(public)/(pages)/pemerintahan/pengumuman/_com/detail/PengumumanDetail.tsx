@@ -1,8 +1,8 @@
 'use client';
 import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import type { PengumumanDetail as Detail } from '@/lib/pengumuman-lampiran';
 import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal';
@@ -21,7 +21,7 @@ export function PengumumanDetail({ id }: { id: string }) {
   const state = usePengumumanDetail(id);
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         <BackButton />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
@@ -73,7 +73,7 @@ function DetailBody({ data }: { data: Detail }) {
       ) : null}
 
       {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
-      <div className={d.content} dangerouslySetInnerHTML={{ __html: data.content }} />
+      <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.content }} />
 
       {galeri.length > 0 ? (
         <section className={s.block} aria-label={T.galeri}>

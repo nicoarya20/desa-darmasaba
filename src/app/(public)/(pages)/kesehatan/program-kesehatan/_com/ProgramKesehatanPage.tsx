@@ -3,7 +3,6 @@ import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader'
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { paginate, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
@@ -28,7 +27,7 @@ export function ProgramKesehatanPage() {
   const state = useProgramKesehatan(search);
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

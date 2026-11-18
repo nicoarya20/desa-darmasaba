@@ -1,7 +1,6 @@
 'use client'
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import layananonlineDesa from '@/app/admin/(dashboard)/_state/inovasi/layanan-online-desa';
-import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import { Box, Button, Center, Group, Image, Modal, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
@@ -329,7 +328,7 @@ function PengaduanMasyarakatModal({ opened, onClose }: PengaduanMasyarakatModalP
           </Box>
 
           <Button 
-            bg={colors['blue-button']} 
+            bg="var(--c-brand-fill)" 
             onClick={handleSubmit}
             disabled={!isFormValid()}
           >

@@ -1,5 +1,4 @@
 'use client';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import type { ReactNode } from 'react';
 import { BeritaHeader } from './BeritaHeader';
@@ -10,7 +9,7 @@ import { BeritaHeader } from './BeritaHeader';
  */
 export default function BeritaShell({ children }: { children: ReactNode }) {
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <BeritaHeader />
       {children}
     </div>

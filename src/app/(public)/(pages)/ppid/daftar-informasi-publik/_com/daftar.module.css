@@ -1,12 +1,13 @@
 /*
  * Daftar Informasi Publik — isi langsung di atas latar halaman; kartu putih hanya untuk tabel.
  * Breakpoint mengikuti kepala halaman PPID: ≤1068px (tablet) dan ≤734px (mobile).
- * `--brand` disediakan kerangka halaman (`ppid/_com/PpidPage.tsx`).
+ * `--brand` disediakan kerangka halaman (`ppid/_com/PpidPage.tsx`). Warna = token --c-*; kartu putih → --c-tile gelap.
  */
 .body {
-  --ink: #1d1d1f;
-  --muted: #515154;
-  --line: #e8e8ed;
+  --ink: var(--c-ink);
+  --muted: var(--c-ink-2);
+  --line: var(--c-placeholder);
+  --card: light-dark(#fff, var(--c-tile));
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -50,7 +51,7 @@
 
 /* ---------- Tabel ---------- */
 .tableCard {
-  background: #fff;
+  background: var(--card);
   border-radius: 18px;
   padding: 8px 28px;
   transition: opacity 150ms ease;
@@ -291,7 +292,7 @@
     flex-direction: column;
     gap: 8px;
     padding: 20px;
-    background: #fff;
+    background: var(--card);
     border-radius: 18px;
   }
 
