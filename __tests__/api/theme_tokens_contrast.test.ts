@@ -53,6 +53,7 @@ const CHART_SURFACES = ['c-bg', 'c-bg-alt', 'c-tile', 'c-tile-alt'];
 
 /** Pasangan di tema TERANG yang di bawah ambang: nilai lama yang tidak boleh diubah (identik piksel). */
 const LIGHT_EXCEPTIONS = new Set([
+  ...SURFACES.map((bg) => `c-subtle@${bg}`), // #86868b: teks ketiga (keterangan kecil), sudah dipakai sejak lama
   ...CHART_SURFACES.map((bg) => `c-chart-3@${bg}`), // #8ac1e3: tint seri ketiga, dekoratif
 ]);
 
@@ -66,9 +67,7 @@ const LEGACY_LIGHT: Tokens = {
   'c-ink': '#1d1d1f',
   'c-ink-2': '#515154',
   'c-muted': '#6e6e73',
-  // Satu-satunya pengecualian "identik piksel" (perbaikan kontras juknis lomba 5.7; perlu persetujuan pemilik tema gelap): #86868b lama hanya
-  // 3,3:1 di atas ubin, #6e6e73 = 4,66:1 (AA). Tema gelap tidak berubah.
-  'c-subtle': '#6e6e73',
+  'c-subtle': '#86868b',
   'c-line': 'rgba(0, 0, 0, 0.08)',
   'c-line-strong': '#d2d2d7',
   'c-placeholder': '#e8e8ed',

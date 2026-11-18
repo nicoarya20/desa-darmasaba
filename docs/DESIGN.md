@@ -42,7 +42,7 @@ Halaman baru di menu lain (Ekonomi, Inovasi, Lingkungan, Keamanan, Kesehatan) me
 
 - **Jarak**: `--edge-gutter` (tepi kiri/kanan), `--section-gap` (antar-section beranda, isi terakhir → footer), `--block-gap` (antar-bagian di dalam halaman). Lihat §4. Jangan angka literal 56/64/100px.
 - **`--gutter`**: wadah pemakai `KabarListHeader` wajib set `--gutter: var(--edge-gutter)`, kalau tidak rel pil di ponsel melebar.
-- **Warna (WAJIB untuk halaman baru)**: situs publik punya tombol tema dan default mengikuti OS (§2.5), jadi setiap halaman baru langsung tampil gelap bagi sebagian pengunjung. Warna hanya lewat token `--c-*` dari `src/app/theme-tokens.css` (§2.5), bukan hex literal: brand `--c-brand` (teks/judul/tautan) dan `--c-brand-fill` + `--c-on-brand` (tombol isi), tinta `--c-ink`, abu teks `--c-muted`/`--c-ink-2`, panel/ubin `--c-tile` radius 18px tanpa border/bayangan, garis `--c-line-strong`. Token lokal modul jadi alias (`.section { --ink: var(--c-ink); }`). Nilai lokal yang berbeda dari token: `light-dark(terang = literal lama, gelap)` atau `@mixin dark { … }`; nilai terang tidak boleh berubah. Literal warna di CSS publik yang tidak ikut tema ditolak test (§2.5 "Penjaga warna literal"). Elemen `dangerouslySetInnerHTML` wajib memasang `rt.root` di elemen itu sendiri (§2.5 "Penetral rich text CMS", dijaga test). Aturan lengkap: §2.5 "Menulis gaya gelap". Cek halaman di kedua tema sebelum selesai (§2.5 "Pratinjau"). Satu-satunya pengecualian aturan "nilai terang tidak boleh berubah": `--c-subtle` terang `#86868b` → `#6e6e73` (4,66:1 di atas ubin, WCAG AA, juknis lomba 5.7).
+- **Warna (WAJIB untuk halaman baru)**: situs publik punya tombol tema dan default mengikuti OS (§2.5), jadi setiap halaman baru langsung tampil gelap bagi sebagian pengunjung. Warna hanya lewat token `--c-*` dari `src/app/theme-tokens.css` (§2.5), bukan hex literal: brand `--c-brand` (teks/judul/tautan) dan `--c-brand-fill` + `--c-on-brand` (tombol isi), tinta `--c-ink`, abu teks `--c-muted`/`--c-ink-2`, panel/ubin `--c-tile` radius 18px tanpa border/bayangan, garis `--c-line-strong`. Token lokal modul jadi alias (`.section { --ink: var(--c-ink); }`). Nilai lokal yang berbeda dari token: `light-dark(terang = literal lama, gelap)` atau `@mixin dark { … }`; nilai terang tidak boleh berubah. Literal warna di CSS publik yang tidak ikut tema ditolak test (§2.5 "Penjaga warna literal"). Elemen `dangerouslySetInnerHTML` wajib memasang `rt.root` di elemen itu sendiri (§2.5 "Penetral rich text CMS", dijaga test). Aturan lengkap: §2.5 "Menulis gaya gelap". Cek halaman di kedua tema sebelum selesai (§2.5 "Pratinjau").
 - **Tipografi**: `h1` 48px (≤734px 32) brand rata kiri + satu kalimat pengantar 19px abu (maks 640px); judul bagian `h2` 28px (ponsel 24), jarak judul → isi 24px (ponsel 20).
 - **Breakpoint CSS**: 1068px (tablet) dan 734px (ponsel).
 
@@ -150,12 +150,6 @@ boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)'
 
 Gradient ini dipakai di button "Simpan" hampir semua halaman Create/Edit admin.
 
-### 2.5 Kontras Teks Halaman Publik (juknis lomba 5.7)
-
-Teks halaman publik wajib ≥4,5:1 (teks besar ≥3:1) terhadap latarnya. Token teks sekunder modul publik: `--muted #6e6e73` dan `--subtle #6e6e73` (`--sb-subtle` di stat-bars) = 5,1:1 di putih, 4,7:1 di `#f5f5f7`. `#86868b` (abu lama, 3,6:1 / 3,3:1) **jangan dipakai untuk teks**; boleh hanya untuk ikon/dekorasi (≥3:1). Di latar lebih gelap dari `#f5f5f7` pakai `--ink`/`#515154`. Badge Mantine pada halaman publik memakai biru brand (`colors['blue-button']`), bukan `blue` bawaan (`#228be6` hanya 3,2:1 di latar badge). Dijaga `__tests__/api/kontras_warna_publik.test.tsx`.
-
----
-
 ### 2.5 Token Warna Situs Publik (terang/gelap)
 
 File: `src/app/theme-tokens.css` (diimpor `globals.css`). Terang di `:root` = **persis** nilai literal lama (tema terang identik piksel); gelap (palet "Malam Netral", gaya apple.com) di `:root[data-mantine-color-scheme="dark"]`. Dijaga `__tests__/api/theme_tokens_contrast.test.ts` (nilai terang terkunci, set token terang = gelap, kontras WCAG). Jangan ubah nilai tanpa memperbarui test itu.
@@ -249,6 +243,10 @@ Cincin fokus memakai token `--c-focus` (terang `#0071e3`, gelap `#0a84ff`).
 
 **Pratinjau**: klik tombol tema di navbar, atau di konsol/ego-browser `localStorage.setItem("mantine-color-scheme-value","dark")` lalu muat ulang (`"light"` untuk kembali, `localStorage.removeItem(...)` untuk "auto"). Uji default "auto" tanpa menyentuh localStorage bersama: CDP `Emulation.setEmulatedMedia` dengan `prefers-color-scheme` `dark`/`light`. localStorage dipakai bersama semua tab localhost:3000. Cek di 1440px, 1920×1080 @2x, dan 390px; kontras teks ≥ 4,5, ikon/garis grafik ≥ 3.
 
+
+### 2.6 Kontras Teks Halaman Publik (juknis lomba 5.7)
+
+Teks halaman publik wajib ≥4,5:1 (teks besar ≥3:1) terhadap latarnya. Teks sekunder memakai `--c-muted` (`#6e6e73`, 5,1:1 di putih, 4,7:1 di `#f5f5f7`) atau `--c-ink-2`. **Pengecualian yang diketahui:** `--c-subtle` terang `#86868b` hanya 3,6:1 di putih dan 3,3:1 di `#f5f5f7` (gagal AA); nilainya terkunci oleh aturan tema (§2.5, nilai terang tidak boleh berubah) dan tercatat di `LIGHT_EXCEPTIONS` test token, jadi pakai untuk ikon/dekorasi saja, bukan teks penting baru. Di latar lebih gelap dari `#f5f5f7` pakai `--c-ink`/`--c-ink-2`. Badge Mantine pada halaman publik memakai biru brand (`var(--c-brand-fill)`), bukan `blue` bawaan (`#228be6` hanya 3,2:1 di latar badge). Dijaga `__tests__/api/kontras_warna_publik.test.tsx`.
 ---
 
 ## 3. Tipografi

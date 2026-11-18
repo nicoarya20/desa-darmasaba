@@ -80,21 +80,18 @@ const LATAR_GELAP = ['#000000', '#1d1d1f', '#2a2a2c'];
 describe('token teks muted "--subtle" / "--sb-subtle" di CSS publik', () => {
   const definisi = [
     ...cssPublik(PUBLIC_DIR).flatMap((file) =>
-      [...readFileSync(file, 'utf8').matchAll(/^\s*(--(?:sb-)?subtle):\s*(#[0-9a-fA-F]{6}|var\(--c-subtle\));/gm)].map((m) => ({
+      [...readFileSync(file, 'utf8').matchAll(/^\s*(--(?:sb-)?subtle):\s*(#[0-9a-fA-F]{6});/gm)].map((m) => ({
         file: file.slice(PUBLIC_DIR.length + 1),
         nama: m[1],
-        // var(--c-subtle) = token bersama; nilai terangnya dicek dari sumber token di bawah.
-        warna: m[2].startsWith('var(') ? subtleTerang : m[2],
+        warna: m[2],
       })),
     ),
-    // Modul beranda memakai var(--c-subtle) sejak tema gelap, jadi nilai terangnya dicek dari sumber token.
-    { file: '../theme-tokens.css', nama: '--c-subtle (terang)', warna: subtleTerang },
   ];
 
-  it('menemukan definisi token (pemindaian tidak kosong)', () => {
+  it('token bersama --c-subtle terbaca untuk kedua tema', () => {
+    // Modul publik kini hanya alias var(--c-subtle); pemindaian literal di bawah menjaga agar tak ada definisi hex baru yang gagal AA.
     expect(subtleTerang).toBeDefined();
     expect(subtleGelap).toBeDefined();
-    expect(definisi.length).toBeGreaterThanOrEqual(10);
   });
 
   it.each(LATAR_GELAP)('--c-subtle tema gelap ≥4,5:1 di latar %s', (latar) => {
@@ -109,11 +106,11 @@ describe('token teks muted "--subtle" / "--sb-subtle" di CSS publik', () => {
     expect(gagal).toEqual([]);
   });
 
-  it('teks rating kartu produk UMKM memakai token --c-subtle (bukan #86868b literal)', () => {
-    const css = readFileSync(join(PUBLIC_DIR, '(pages)/ekonomi/umkm/_com/katalog/produk-card.module.css'), 'utf8');
-    const rating = css.match(/\.rating\s*\{[^}]*\}/)?.[0] ?? '';
-    expect(rating).toContain('color: var(--c-subtle)');
-    expect(rasioKontras(subtleTerang, LATAR_PUBLIK.putih)).toBeGreaterThanOrEqual(AA_TEKS_NORMAL);
+  it('--c-subtle terang adalah pengecualian yang diketahui: terkunci aturan tema (nilai terang tidak boleh berubah)', () => {
+    // Jangan dijadikan assertion lulus-AA: #86868b memang 3,3-3,6:1. Test ini gagal bila nilainya berubah tanpa disengaja
+    // (ubah bersama theme_tokens_contrast.test.ts dan DESIGN.md §2.6, setelah disetujui pemilik tema gelap).
+    expect(subtleTerang).toBe('#86868b');
+    expect(rasioKontras(subtleTerang, LATAR_PUBLIK.ubin)).toBeLessThan(AA_TEKS_NORMAL);
   });
 });
 

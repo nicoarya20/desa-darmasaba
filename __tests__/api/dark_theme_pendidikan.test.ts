@@ -147,8 +147,7 @@ describe('variabel lokal = alias token --c-*', () => {
       '--c-ink': '#1d1d1f',
       '--c-ink-2': '#515154',
       '--c-muted': '#6e6e73',
-      // Sengaja beda dari literal lama: kontras AA teks keterangan (juknis lomba 5.7). Lihat theme_tokens_contrast.test.ts.
-      '--c-subtle': '#6e6e73',
+      '--c-subtle': '#86868b',
       '--c-tile': '#f5f5f7',
       '--c-tile-alt': '#fff',
       '--c-placeholder': '#e8e8ed',
