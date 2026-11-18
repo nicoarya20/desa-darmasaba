@@ -2,7 +2,7 @@
 import stateLayananDesa from "@/app/admin/(dashboard)/_state/desa/layananDesa";
 import potensiDesaState from "@/app/admin/(dashboard)/_state/desa/potensi";
 import { useDocumentVisibility, useReducedMotion } from "@mantine/hooks";
-import _ from "lodash";
+import startCase from "lodash/startCase";
 import { useCallback, useEffect, useMemo, useState, type FocusEvent } from "react";
 import { useSnapshot } from "valtio";
 import { GalleryControls } from "./GalleryControls";
@@ -34,7 +34,7 @@ function LayananPotensi() {
   }, []);
 
   const layanan = useMemo(
-    () => toItems(layananSnap.data as ApiItem[] | null, "/pemerintahan/layanan", _.startCase),
+    () => toItems(layananSnap.data as ApiItem[] | null, "/pemerintahan/layanan", startCase),
     [layananSnap.data],
   );
   const potensi = useMemo(
