@@ -6,16 +6,16 @@ import { buildRkpIndex } from '@/lib/dokumen-perencanaan';
 import { useEffect, useMemo, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../layanan/_com/BackButto';
-import DokumenPerencanaanSection from './_com/DokumenPerencanaanSection';
 import { FILTER_ALL, isMonevEmpty, statusQuery } from './_com/monev.logic';
 import s from './_com/monev.module.css';
 import { MONEV_TEXT } from './_com/monev.text';
 import { MonevApbdesLink } from './_com/MonevApbdesLink';
+import { MonevArahLink } from './_com/MonevArahLink';
 import { MonevKegiatanPanel } from './_com/MonevKegiatanPanel';
 import { MonevEmpty, MonevNotice, MonevSummarySkeleton } from './_com/MonevStates';
 import { MonevSummary } from './_com/MonevSummary';
 
-/** Halaman publik Monev & Pembangunan (gaya APBDes): ringkasan, tautan realisasi APBDes, daftar progres, dokumen perencanaan. */
+/** Halaman publik Monev & Pembangunan (gaya APBDes): ringkasan, tautan realisasi APBDes, daftar progres, tautan ke dokumen perencanaan. */
 function Page() {
   const state = useProxy(stateMonevPembangunan);
   const [filter, setFilter] = useState(FILTER_ALL);
@@ -72,7 +72,7 @@ function Page() {
             />
           ) : null}
 
-          <DokumenPerencanaanSection />
+          <MonevArahLink />
         </div>
       </div>
     </section>

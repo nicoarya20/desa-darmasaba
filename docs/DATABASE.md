@@ -8,6 +8,21 @@
 - Seeders are **create-only by default**: every seeder imports `prisma` from `prisma/seed-prisma.ts` (never `@/lib/prisma` directly — a test enforces this), which turns each `upsert` into "create if the id is missing, otherwise leave the row untouched". Seed data is only a starting point; admins edit it via CMS, and re-running the seed (done manually inside the STG container) must not overwrite those edits. Run with `SEED_OVERWRITE=true` to deliberately overwrite existing rows with the JSON (e.g. when fixing sample data locally); `seed.ts` prints which mode is active. Consequence: fixing a typo in seed JSON does not reach a DB that already has the row — edit it in the admin instead.
 - Rows whose `id` was removed from the seed JSON stay in the DB (shows up as duplicate content). When replacing seed data with new ids, list the old rows in a sibling `<name>.retired.json` (`{ keterangan, data: [{ id, judul|nama, deskripsi? }] }`) and call `retireSeedRows()` from `prisma/retire-seed-rows.ts` in that seeder. It deletes only rows whose id **and** title/name **and** description still match the old seed (admin-edited rows survive) and skips rows still referenced by FK. Never sync-delete "everything not in JSON" — that would wipe admin-created data.
 
+### Batch 1 Lomba (2026-11-18): kolom & tabel aditif
+
+Seluruhnya nullable/tabel baru (baris lama tetap valid, tanpa backfill), migrasi idempoten `20261118100000`–`20261118120000`:
+- `DaftarInformasiPublik.fileId` → `FileStorage` (PDF opsional per baris, `ON DELETE SET NULL`); tabel baru `ProfilLembagaPPID` (profil lembaga PPID; `ProfilePPID` perorangan tidak diubah).
+- Dasar Hukum PPID adalah singleton (id `'1'`), jadi PDF-nya disimpan di tabel baru `DokumenDasarHukumPPID` (migrasi `20261118130000`): daftar **flat** (judul, urutan, `fileId`, `ON DELETE CASCADE`), banyak dokumen, publik bisa melihat dan mengunduh. Kolom `DasarHukumPPID.fileId` dari migrasi `20261118100000` dibuang di migrasi itu (PDF yang sudah menempel dipindah dulu); migrasi `20261118100000` sengaja tidak diedit karena sudah terpasang di DB lokal.
+- `PengaduanMasyarakat.status|tanggapan|tanggapanAt`: `status` NULL dibaca **BARU** lewat satu helper (`src/lib/pengaduan-status.ts`); nilai: BARU, DIPROSES, SELESAI, DITOLAK. `GET .../pengaduanmasyarakat/rekap` publik hanya agregat + tanggapan admin (tanpa data pelapor); `find-many`/`/:id` tetap admin-only.
+- `PelayananSuratKeterangan.sopFileId`, `PelayananTelunjukSaktiDesa.sopFileId` → `FileStorage` (PDF SOP opsional).
+- Tabel baru `LaporanPendudukBulanan` (banjar, tahun, bulan, L/P): terpisah dari `DataBanjar` yang dipakai dashboard publik. Duplikat aktif dicegah di API (tanpa unique index karena soft delete).
+- Menu admin Dokumen Perencanaan pindah ke Pemerintahan (`desa.dokumen-perencanaan`); migrasi memberi ID baru ke pemegang `desa.kegiatan-desa` di `UserMenuAccess`, rute lama redirect permanen.
+
+### Batch 2 Lomba (2026-11-18): Arah Kebijakan & Produk Hukum
+
+- `DokumenPerencanaan.jenis` (teks) kini menerima `APBDES` dan `PELAPORAN_APBDES` selain `RPJM`, `RKP`, `BERITA_ACARA_MUSYAWARAH`; tanpa migrasi. Halaman publik `/pemerintahan/arah-kebijakan-pembangunan-desa` menampilkan 4 kategori (tab Berita Acara hanya bila ada dokumen). Halaman/editor `/apbdes` tidak berubah.
+- Tabel baru `ProdukHukum` (migrasi `20261118140000_lomba_produk_hukum`): judul, nomor, tahun, `kategori` (teks: PERDES, PERATURAN_PERBEKEL, SK_PERBEKEL, LAINNYA), urutan, `fileId` opsional (`ON DELETE SET NULL`). Menu admin `desa.produk-hukum` (ID baru; pemegang ID submenu dicentang manual di Menu Access, tanpa data-migration); label menu `desa.dokumen-perencanaan` diganti jadi "Arah Kebijakan Pembangunan Desa", ID tetap.
+
 ## Authentication Flow
 Auth was rewritten to **Better Auth with Google OAuth only** (no more phone OTP). Flow:
 1. User signs in with Google → Better Auth (`src/lib/auth.ts`) creates a session, stored in Postgres (`Session`, `Account`, `Verification`, `RateLimit` models — Better Auth's own schema, not custom).

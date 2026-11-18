@@ -39,7 +39,7 @@ export function MonevSummarySkeleton() {
   );
 }
 
-/** Placeholder baris daftar (kegiatan / dokumen). */
+/** Placeholder baris daftar kegiatan. */
 export function RowsSkeleton({ count, label }: { count: number; label: string }) {
   return (
     <div role="status" aria-label={label} style={{ display: "grid", gap: 12 }}>

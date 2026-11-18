@@ -7,6 +7,7 @@ import {
   Group,
   Pagination,
   Paper,
+  Select,
   Skeleton,
   Stack,
   Table,
@@ -25,6 +26,8 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import HeaderSearch from '../../../_com/header';
 import layananonlineDesa from '../../../_state/inovasi/layanan-online-desa';
+import { parsePengaduanStatus, type PengaduanStatus } from '@/lib/pengaduan-status';
+import { PENGADUAN_STATUS_OPTIONS, PengaduanStatusBadge } from './_com/PengaduanStatusBadge';
 
 function PengaduanMasyarakat() {
   const [search, setSearch] = useState("");
@@ -46,6 +49,7 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
   const listState = useProxy(layananonlineDesa.pengaduanMasyarakat);
   const router = useRouter();
   const [debouncedSearch] = useDebouncedValue(search, 1000);
+  const [statusFilter, setStatusFilter] = useState<PengaduanStatus | null>(null);
   const {
     data,
     page,
@@ -55,8 +59,8 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
   } = listState.findMany;
 
   useShallowEffect(() => {
-    load(page, 10, debouncedSearch);
-  }, [page, debouncedSearch]);
+    load(page, 10, debouncedSearch, statusFilter);
+  }, [page, debouncedSearch, statusFilter]);
 
   const filteredData = data || [];
 
@@ -76,6 +80,19 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
           <Title order={4} lh={1.2}>
             Daftar Pengaduan Masyarakat
           </Title>
+          <Select
+            aria-label="Saring status pengaduan"
+            placeholder="Semua status"
+            data={PENGADUAN_STATUS_OPTIONS}
+            value={statusFilter}
+            onChange={(value) => {
+              // Kembali ke halaman 1 supaya efek di atas memuat hasil saringan dari awal (satu pemuatan).
+              listState.findMany.page = 1;
+              setStatusFilter(parsePengaduanStatus(value));
+            }}
+            clearable
+            w={{ base: '100%', md: 200 }}
+          />
         </Group>
 
         {/* Desktop Table */}
@@ -90,14 +107,17 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
           >
             <TableThead>
               <TableTr>
-                <TableTh style={{ width: '25%' }}>
+                <TableTh style={{ width: '22%' }}>
                   <Text fz="sm" fw={600} lh={1.4}>Nama</Text>
                 </TableTh>
-                <TableTh style={{ width: '25%' }}>
+                <TableTh style={{ width: '22%' }}>
                   <Text fz="sm" fw={600} lh={1.4}>Email</Text>
                 </TableTh>
-                <TableTh style={{ width: '20%' }}>
+                <TableTh style={{ width: '18%' }}>
                   <Text fz="sm" fw={600} lh={1.4}>Nomor Telepon</Text>
+                </TableTh>
+                <TableTh style={{ width: '13%' }}>
+                  <Text fz="sm" fw={600} lh={1.4}>Status</Text>
                 </TableTh>
                 <TableTh style={{ width: '15%' }}>
                   <Text fz="sm" fw={600} lh={1.4}>Aksi</Text>
@@ -124,6 +144,9 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
                       </Text>
                     </TableTd>
                     <TableTd>
+                      <PengaduanStatusBadge status={item.status} />
+                    </TableTd>
+                    <TableTd>
                       <Button
                         size="xs"
                         radius="md"
@@ -141,7 +164,7 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
                 ))
               ) : (
                 <TableTr>
-                  <TableTd colSpan={4}>
+                  <TableTd colSpan={5}>
                     <Center py={{ base: 'sm', md: 'lg' }}>
                       <Text c="dimmed" fz="sm" lh={1.4}>
                         Tidak ada data pengaduan yang cocok
@@ -172,6 +195,10 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
                     <Box>
                       <Text fz="sm" fw={600} lh={1.4}>Nomor Telepon</Text>
                       <Text fz="sm" c="dimmed" fw={500} lh={1.45}>{item.nomorTelepon}</Text>
+                    </Box>
+                    <Box>
+                      <Text fz="sm" fw={600} lh={1.4}>Status</Text>
+                      <PengaduanStatusBadge status={item.status} />
                     </Box>
                     <Box>
                       <Button
@@ -207,7 +234,7 @@ function ListPengaduanMasyarakat({ search }: { search: string }) {
         <Pagination
           value={page}
           onChange={(newPage) => {
-            load(newPage, 10);
+            load(newPage, 10, debouncedSearch, statusFilter);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           total={totalPages}

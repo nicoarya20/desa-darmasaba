@@ -7,6 +7,7 @@ import pelayananSuratKeteranganDelete from "./del";
 import pelayananSuratKeteranganFindManyAll from "./findManyAll";
 import { t } from "elysia";
 import { waktuBiayaBodySchema } from "../waktu-biaya.schema";
+import { sopFileBodySchema } from "../sop-file.schema";
 
 const PelayananSuratKeterangan = new Elysia({ prefix: "/pelayanansuratketerangan", tags: ["Desa/Layanan/Pelayanan Surat Keterangan"] })
 .get("/find-many", pelayananSuratKeteranganFindMany)
@@ -22,6 +23,7 @@ const PelayananSuratKeterangan = new Elysia({ prefix: "/pelayanansuratketerangan
         imageId: t.String(),
         image2Id: t.String(),
         ...waktuBiayaBodySchema,
+        ...sopFileBodySchema,
     }),
 })
 .delete("/del/:id", pelayananSuratKeteranganDelete)
@@ -36,6 +38,7 @@ const PelayananSuratKeterangan = new Elysia({ prefix: "/pelayanansuratketerangan
         imageId: t.String(),
         image2Id: t.String(),
         ...waktuBiayaBodySchema,
+        ...sopFileBodySchema,
     }),
 })
 export default PelayananSuratKeterangan;

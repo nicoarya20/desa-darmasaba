@@ -5,6 +5,7 @@ import pelayananTelunjukSaktiDesaCreate from "./create";
 import pelayananTelunjukSaktiDesaDelete from "./del";
 import pelayananTelunjukSaktiDesaFindMany from "./find-many";
 import { waktuBiayaBodySchema } from "../waktu-biaya.schema";
+import { sopFileBodySchema } from "../sop-file.schema";
 
 const pelayananTelunjukSaktiDesa = new Elysia({ prefix: "/pelayanantelunjuksaktidesa", tags: ["Desa/Layanan/Pelayanan Telunjuk Sakti Desa"] })
 .get("/find-many", pelayananTelunjukSaktiDesaFindMany)
@@ -22,6 +23,7 @@ const pelayananTelunjukSaktiDesa = new Elysia({ prefix: "/pelayanantelunjuksakti
         deskripsi: t.String(),
         link: t.String(),
         ...waktuBiayaBodySchema,
+        ...sopFileBodySchema,
     }),
 })
 .post("/create", pelayananTelunjukSaktiDesaCreate, {
@@ -30,6 +32,7 @@ const pelayananTelunjukSaktiDesa = new Elysia({ prefix: "/pelayanantelunjuksakti
         deskripsi: t.String(),
         link: t.String(),
         ...waktuBiayaBodySchema,
+        ...sopFileBodySchema,
     }),
 })
 .delete("/:id", pelayananTelunjukSaktiDesaDelete)

@@ -58,10 +58,10 @@ beforeEach(() => {
 });
 
 describe("parseDokumenPerencanaanInput — validasi per jenis", () => {
-  it("menolak jenis di luar RPJM|RKP|BERITA_ACARA_MUSYAWARAH", () => {
-    const r = parseDokumenPerencanaanInput({ ...rkpBody, jenis: "APBDES" });
+  it("menolak jenis di luar daftar resmi dan menyebut jenis yang valid", () => {
+    const r = parseDokumenPerencanaanInput({ ...rkpBody, jenis: "LAINNYA_ASING" });
     expect(r.ok).toBe(false);
-    if (!r.ok) expect(r.message).toContain("RPJM, RKP, BERITA_ACARA_MUSYAWARAH");
+    if (!r.ok) expect(r.message).toContain("RPJM, RKP, APBDES, PELAPORAN_APBDES, BERITA_ACARA_MUSYAWARAH");
   });
 
   it("menolak judul kosong atau terlalu pendek", () => {

@@ -82,6 +82,16 @@ const navbarListMenu = [
                 href: "/pemerintahan/layanan"
             },
             {
+                id: "2.11",
+                name: "Arah Kebijakan Pembangunan Desa",
+                href: "/pemerintahan/arah-kebijakan-pembangunan-desa"
+            },
+            {
+                id: "2.12",
+                name: "Produk Hukum",
+                href: "/pemerintahan/produk-hukum"
+            },
+            {
                 id: "2.7",
                 name: "Prestasi dan Penghargaan",
                 href: "/prestasi-desa"

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import stateDasarHukumPPID from '../../_state/ppid/dasar_hukum/dasarHukum';
 import DOMPurify from 'dompurify';
+import { DokumenDasarHukumPreview } from './_com/DokumenDasarHukumPreview';
 
 function Page() {
   const router = useRouter();
@@ -87,6 +88,8 @@ function Page() {
                 textAlign: 'justify',
               }}
             />
+
+            <DokumenDasarHukumPreview />
           </Box>
         </Paper>
       </Stack>

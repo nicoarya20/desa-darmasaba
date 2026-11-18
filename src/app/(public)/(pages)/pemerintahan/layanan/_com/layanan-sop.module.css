@@ -1,0 +1,17 @@
+/* Tautan "Unduh SOP (PDF)" layanan. Warna --brand diwarisi dari `.page` (layanan.module.css); hover memakai sapuan link-reveal. */
+.sop {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brand);
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.sop:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 6px;
+}

@@ -17,7 +17,7 @@ import type { SampahPanelItem } from '@/app/admin/(dashboard)/_com/sampah/sampah
 import apbdes from '@/app/admin/(dashboard)/_state/landing-page/apbdes';
 import DetailAPBDes from '@/app/admin/(dashboard)/landing-page/apbdes/[id]/page';
 import GaleriFotoBumdesAdmin from '@/app/admin/(dashboard)/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/_lib/GaleriFotoBumdesAdmin';
-import DokumenPerencanaanAdmin from '@/app/admin/(dashboard)/pemerintahan/kegiatan-desa/dokumen-perencanaan/page';
+import DokumenPerencanaanAdmin from '@/app/admin/(dashboard)/pemerintahan/dokumen-perencanaan/page';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');

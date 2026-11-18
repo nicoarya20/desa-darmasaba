@@ -24,6 +24,8 @@ const suratKeteranganForm = {
   image2Id: "",
   estimasiWaktu: "",
   biaya: "",
+  // Id FileStorage PDF SOP (opsional); "" = tanpa SOP.
+  sopFileId: "",
 };
 
 const suratKeterangan = proxy({
@@ -134,6 +136,7 @@ const suratKeterangan = proxy({
       include: {
         image: true;
         image2: true;
+        sopFile: { select: { id: true; link: true; realName: true } };
       };
     }> | null,
     async load(id: string) {
@@ -213,6 +216,7 @@ const suratKeterangan = proxy({
             deskripsi: data.deskripsi,
             imageId: data.imageId || "",
             image2Id: data.image2Id || "",
+            sopFileId: data.sopFileId || "",
             ...toWaktuBiayaForm(data),
           };
           return data;
@@ -253,6 +257,7 @@ const suratKeterangan = proxy({
               deskripsi: this.form.deskripsi,
               imageId: this.form.imageId,
               image2Id: this.form.image2Id,
+              sopFileId: this.form.sopFileId || null,
               ...toWaktuBiayaPayload(this.form),
             }),
           }

@@ -17,6 +17,7 @@ const pelayananSuratKeteranganDelete = async (context: Context) => {
         include: {
             image: true,
             image2: true,
+            sopFile: true,
         },
     });
 
@@ -38,6 +39,10 @@ const pelayananSuratKeteranganDelete = async (context: Context) => {
 
     if (pelayananSuratKeterangan.image2) {
         await removeStoredFile(pelayananSuratKeterangan.image2, "PelayananSuratKeterangan");
+    }
+
+    if (pelayananSuratKeterangan.sopFile) {
+        await removeStoredFile(pelayananSuratKeterangan.sopFile, "PelayananSuratKeterangan");
     }
 
     return {

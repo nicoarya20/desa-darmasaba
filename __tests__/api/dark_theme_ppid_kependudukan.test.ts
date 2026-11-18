@@ -22,11 +22,14 @@ const RULE = 'light-dark(#b1bdd1, rgb(255 255 255 / 0.16))';
 const GLASS = 'light-dark(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.06))';
 
 /** Isi kaya CMS yang wajib memakai penetral rich-text (`rt.root`). */
+// Markup rich text Dasar Hukum, Profil PPID dan detail Daftar Informasi dipecah ke komponen (Batch 1 lomba, 2026-11-18),
+// jadi aturannya dicek di komponen tempat dangerouslySetInnerHTML berada.
 const RICH_TEXT_FILES = [
-  'dasar-hukum/page.tsx',
+  'dasar-hukum/_com/DasarHukumSection.tsx',
   'visi-misi-ppid/_com/VisiMisiContent.tsx',
-  'profil-ppid/page.tsx',
-  'daftar-informasi-publik/[id]/page.tsx',
+  'profil-ppid/_com/ProfilPerorangan.tsx',
+  'profil-ppid/_com/ProfilLembagaSection.tsx',
+  'daftar-informasi-publik/_com/DaftarDetail.tsx',
 ];
 
 describe('PPID mengikuti token tema', () => {
@@ -104,7 +107,15 @@ describe('PPID mengikuti token tema', () => {
   it('Profil PPID: latar --c-hero-bg dan kartu kaca --profil-kaca', () => {
     const page = PPID('profil-ppid/page.tsx');
     expect(page.match(/bg="var\(--c-hero-bg\)" className=\{classes\.page\}/g)).toHaveLength(4);
-    expect(page.match(/bg="var\(--profil-kaca\)"/g)).toHaveLength(5);
+    // 3 kartu di halaman + 2 di kartu perorangan + 1 di kartu profil lembaga (komponen hasil pemecahan Batch 1).
+    const kaca = (src: string) => src.match(/bg="var\(--profil-kaca\)"/g)?.length ?? 0;
+    expect(kaca(page)).toBe(3);
+    expect(kaca(PPID('profil-ppid/_com/ProfilPerorangan.tsx'))).toBe(2);
+    expect(kaca(PPID('profil-ppid/_com/ProfilLembagaSection.tsx'))).toBe(1);
+    for (const rel of ['profil-ppid/_com/ProfilPerorangan.tsx', 'profil-ppid/_com/ProfilLembagaSection.tsx']) {
+      expect(PPID(rel), rel).not.toContain("colors['white-trans-1']");
+      expect(PPID(rel), rel).not.toContain("colors['blue-button']");
+    }
     expect(decl(blockOf(PPID('profil-ppid/profil-ppid.module.css'), '.page'), '--profil-kaca')).toBe(GLASS);
   });
 });

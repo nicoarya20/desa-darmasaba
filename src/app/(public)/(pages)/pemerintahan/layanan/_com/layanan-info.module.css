@@ -177,6 +177,11 @@
   color: var(--subtle);
 }
 
+/* Tautan SOP di bawah baris, sejajar dengan teks baris (lebar ikon 48px + jarak 20px). */
+.rowSop {
+  padding: 0 0 16px 68px;
+}
+
 .rowPlaceholder {
   display: block;
   height: 56px;
@@ -258,6 +263,10 @@
     width: 40px;
     height: 40px;
     border-radius: 10px;
+  }
+
+  .rowSop {
+    padding-left: 54px;
   }
 
   .card {

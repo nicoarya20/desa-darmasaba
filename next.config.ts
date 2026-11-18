@@ -49,6 +49,8 @@ const nextConfig: NextConfig = {
       { source: '/admin/desa/:path*', destination: '/admin/pemerintahan/:path*', permanent: true },
       { source: '/admin/pemerintahan/penghargaan', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
       { source: '/admin/pemerintahan/penghargaan/:path*', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
+      // Dokumen Perencanaan pindah dari tab Kegiatan Desa jadi submenu sendiri di Pemerintahan; bookmark lama tetap sampai.
+      { source: '/admin/pemerintahan/kegiatan-desa/dokumen-perencanaan/:path*', destination: '/admin/pemerintahan/dokumen-perencanaan/:path*', permanent: true },
     ];
   },
   async headers() {

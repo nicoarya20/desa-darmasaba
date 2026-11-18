@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { SOP_FILE_SELECT } from "../sop-file";
 
 export default async function pelayananSuratKeteranganFindManyAll() {
   try {
@@ -8,6 +9,7 @@ export default async function pelayananSuratKeteranganFindManyAll() {
       include: {
         image: true,
         image2: true,
+        sopFile: { select: SOP_FILE_SELECT },
       },
     });
 

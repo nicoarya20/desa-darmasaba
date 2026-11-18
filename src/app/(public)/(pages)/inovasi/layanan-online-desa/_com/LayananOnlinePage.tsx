@@ -7,6 +7,7 @@ import { IconFileCheck, IconMessageCircleQuestion, IconNews } from '@tabler/icon
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { LayananTile } from './LayananTile';
+import { PengaduanRekapSection } from './rekap/PengaduanRekapSection';
 import { isPengaduanRequested } from './layanan-online.logic';
 import { ADMINISTRASI_ONLINE_HREF, LAYANAN_ONLINE_HREF, LAYANAN_PARAM } from './layanan-online.meta';
 import s from './layanan-online.module.css';
@@ -45,6 +46,7 @@ export function LayananOnlinePage() {
         searchable={false}
       />
       <LayananOnlineTiles onPengaduan={() => setPengaduanOpen(true)} />
+      <PengaduanRekapSection />
       <PengaduanMasyarakatModal opened={pengaduanOpen} onClose={closePengaduan} />
     </div>
   );

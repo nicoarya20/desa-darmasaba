@@ -69,6 +69,7 @@ describe('state admin — payload create/update', () => {
       image2Id: 'img-2',
       estimasiWaktu: ' 1 hari kerja ',
       biaya: '0',
+      sopFileId: '',
     };
     await suratKeterangan.edit.update();
     expect(putBody()).toMatchObject({ estimasiWaktu: '1 hari kerja', biaya: 0 });
@@ -83,6 +84,7 @@ describe('state admin — payload create/update', () => {
       image2Id: 'img-2',
       estimasiWaktu: '',
       biaya: '',
+      sopFileId: '',
     };
     await suratKeterangan.edit.update();
     const body = putBody();
@@ -99,6 +101,7 @@ describe('state admin — payload create/update', () => {
       image2Id: 'img-2',
       estimasiWaktu: '',
       biaya: '999999999',
+      sopFileId: '',
     };
     await suratKeterangan.edit.update();
     expect(fetchMock).not.toHaveBeenCalled();
@@ -112,6 +115,7 @@ describe('state admin — payload create/update', () => {
       link: 'https://contoh.test/akta',
       estimasiWaktu: '5 hari kerja',
       biaya: '15000',
+      sopFileId: '',
     };
     await pelayananTelunjukSaktiDesa.edit.update();
     expect(putBody()).toMatchObject({ estimasiWaktu: '5 hari kerja', biaya: 15000 });
