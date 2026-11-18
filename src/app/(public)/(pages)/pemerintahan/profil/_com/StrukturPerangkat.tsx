@@ -14,7 +14,7 @@ export function StrukturPerangkatSection() {
   return (
     <section aria-labelledby={id}>
       <ProfilHeading id={id} title={T.title} lead={T.lead} aside={<StrukturSearch data={data} />} />
-      <StrukturBody data={data} label={T.chartLabel} emptyHint={T.emptyHint} hrefFor={strukturPerangkatHref} />
+      <StrukturBody data={data} label={T.chartLabel} emptyHint={T.emptyHint} hrefFor={strukturPerangkatHref} layout="tiers" />
     </section>
   );
 }
