@@ -74,7 +74,7 @@ function classNameExpr(tag: string): string | null {
   const at = /\sclassName\s*=\s*/.exec(topLevel(tag));
   if (!at) return null;
   const from = at.index + at[0].length;
-  if (tag[from] !== '{') return tag.slice(from).match(/^(["'])(.*?)\1/s)?.[2] ?? '';
+  if (tag[from] !== '{') return tag.slice(from).match(/^(["'])([\s\S]*?)\1/)?.[2] ?? '';
   let depth = 0;
   for (let i = from; i < tag.length; i++) {
     if (tag[i] === '{') depth++;
