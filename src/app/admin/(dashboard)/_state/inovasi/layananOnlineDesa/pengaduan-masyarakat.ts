@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
+import type { PengaduanStatus } from "@/lib/pengaduan-status";
 
 const templatePengaduanMasyarakatForm = z.object({
   name: z.string().min(1, "Nama minimal 1 karakter"),
@@ -81,14 +82,20 @@ const pengaduanMasyarakat = proxy({
     totalPages: 1,
     loading: false,
     search: "",
-    load: async (page = 1, limit = 10, search = "") => {
+    /** Saring daftar per status; null = semua. Dipakai ulang oleh paginasi lewat `load`. */
+    status: null as PengaduanStatus | null,
+    load: async (page = 1, limit = 10, search = "", statusBaru?: PengaduanStatus | null) => {
+      // Tanpa argumen status (mis. paginasi dari halaman lain) saringan terakhir dipertahankan.
+      const status = statusBaru === undefined ? pengaduanMasyarakat.findMany.status : statusBaru;
       pengaduanMasyarakat.findMany.loading = true;
       pengaduanMasyarakat.findMany.page = page;
       pengaduanMasyarakat.findMany.search = search;
+      pengaduanMasyarakat.findMany.status = status;
 
       try {
         const query: any = { page, limit };
         if (search) query.search = search;
+        if (status) query.status = status;
 
         const res =
           await ApiFetch.api.inovasi.layananonlinedesa.pengaduanmasyarakat[
@@ -136,6 +143,37 @@ const pengaduanMasyarakat = proxy({
       } catch (error) {
         console.error("Error fetching pengaduan masyarakat:", error);
         pengaduanMasyarakat.findUnique.data = null;
+      }
+    },
+  },
+  update: {
+    loading: false,
+    /** Simpan status + tanggapan (PUT admin-only); muat ulang detail bila sukses. */
+    async save(id: string, form: { status: PengaduanStatus; tanggapan: string }) {
+      try {
+        pengaduanMasyarakat.update.loading = true;
+        const res = await fetch(
+          `/api/inovasi/layananonlinedesa/pengaduanmasyarakat/updt/${id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(form),
+          }
+        );
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok || !result.success) {
+          toast.error(result.message || "Gagal menyimpan tanggapan pengaduan");
+          return false;
+        }
+        toast.success(result.message || "Tanggapan pengaduan tersimpan");
+        await pengaduanMasyarakat.findUnique.load(id);
+        return true;
+      } catch (error) {
+        console.error("Gagal menyimpan tanggapan pengaduan:", error);
+        toast.error("Terjadi kesalahan saat menyimpan tanggapan pengaduan");
+        return false;
+      } finally {
+        pengaduanMasyarakat.update.loading = false;
       }
     },
   },

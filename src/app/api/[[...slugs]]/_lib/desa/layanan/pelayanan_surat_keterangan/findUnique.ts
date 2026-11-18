@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { SOP_FILE_SELECT } from "../sop-file";
 
 export default async function pelayananSuratKeteranganFindUnique(request: Request){
     const url = new URL(request.url);
@@ -25,6 +26,7 @@ export default async function pelayananSuratKeteranganFindUnique(request: Reques
             include: {
                 image: true,
                 image2: true,
+                sopFile: { select: SOP_FILE_SELECT },
             },
         });
 

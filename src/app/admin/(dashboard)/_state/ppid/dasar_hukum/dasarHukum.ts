@@ -21,13 +21,6 @@ const stateDasarHukumPPID = proxy({
   findById: {
     data: null as DasarHukumForm | null,
     loading: false,
-    initialize() {
-      stateDasarHukumPPID.findById.data = {
-        id: '',
-        judul: '',
-        content: '',
-      } as DasarHukumForm;
-    },
     async load(id: string) {
       try {
         stateDasarHukumPPID.findById.loading = true;

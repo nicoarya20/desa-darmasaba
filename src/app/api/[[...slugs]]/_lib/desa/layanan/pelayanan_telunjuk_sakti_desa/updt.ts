@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import { parseWaktuBiaya } from "@/lib/pelayanan-waktu-biaya";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import { parseSopFileId } from "../sop-file";
 
 type FormUpdate = Prisma.PelayananTelunjukSaktiDesaGetPayload<{
     select: {
@@ -10,6 +12,7 @@ type FormUpdate = Prisma.PelayananTelunjukSaktiDesaGetPayload<{
         link: true;
         estimasiWaktu: true;
         biaya: true;
+        sopFileId: true;
     };
 }>;
 export default async function pelayananTelunjukSaktiDesaUpdate(context: Context) {
@@ -36,6 +39,15 @@ export default async function pelayananTelunjukSaktiDesaUpdate(context: Context)
             return Response.json({ success: false, message: waktuBiaya.message }, { status: 400 });
         }
 
+        const sop = await parseSopFileId(body.sopFileId);
+        if (!sop.ok) {
+            return Response.json({ success: false, message: sop.message }, { status: 400 });
+        }
+        // Berkas SOP lama hanya perlu dibaca bila body mengubah/menghapus SOP.
+        const lama = sop.data.sopFileId === undefined
+            ? null
+            : await prisma.pelayananTelunjukSaktiDesa.findUnique({ where: { id }, select: { sopFile: true } });
+
         const data = await prisma.pelayananTelunjukSaktiDesa.update({
             where: { id },
             data: {
@@ -43,6 +55,7 @@ export default async function pelayananTelunjukSaktiDesaUpdate(context: Context)
                 deskripsi,
                 link,
                 ...waktuBiaya.data,
+                ...sop.data,
             },
         });
 
@@ -65,8 +78,13 @@ export default async function pelayananTelunjukSaktiDesaUpdate(context: Context)
                 deskripsi,
                 link,
                 ...waktuBiaya.data,
+                ...sop.data,
             },
         });
+
+        if (lama?.sopFile && lama.sopFile.id !== sop.data.sopFileId) {
+            await removeStoredFile(lama.sopFile, "PelayananTelunjukSaktiDesa");
+        }
 
         return new Response(JSON.stringify({
             success: true,

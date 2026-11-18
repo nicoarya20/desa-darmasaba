@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '../../../_com/modalKonfirmasiHapus';
 import daftarInformasiPublik from '../../../_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
+import { BerkasLink } from '../_com/BerkasLink';
 
 function DetailDaftarInformasiPublik() {
   const [modalHapus, setModalHapus] = useState(false)
@@ -90,6 +91,11 @@ function DetailDaftarInformasiPublik() {
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Berkas PDF</Text>
+                <BerkasLink file={data.file} />
               </Box>
 
               <Group gap="sm" mt="md">

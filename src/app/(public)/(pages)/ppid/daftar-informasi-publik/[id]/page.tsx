@@ -1,7 +1,6 @@
 'use client';
 
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import { Skeleton } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
@@ -10,7 +9,8 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { PpidPage } from '../../_com/PpidPage';
-import { DAFTAR_LIST_HREF, formatTanggal } from '../_com/daftar.logic';
+import { DaftarDetail } from '../_com/DaftarDetail';
+import { DAFTAR_LIST_HREF } from '../_com/daftar.logic';
 import s from '../_com/daftar.module.css';
 import { DAFTAR_TEXT } from '../_com/daftar.text';
 
@@ -40,25 +40,7 @@ export default function DetailInformasiPublikUser() {
 
   let content;
   if (data) {
-    content = (
-      <dl className={s.detail}>
-        <div>
-          <dt className={s.detailTerm}>{DAFTAR_TEXT.columns.jenis}</dt>
-          <dd className={`${s.detailValue} ${s.detailJenis}`}>{data.jenisInformasi || DAFTAR_TEXT.emptyValue}</dd>
-        </div>
-        <div>
-          <dt className={s.detailTerm}>{DAFTAR_TEXT.columns.tanggal}</dt>
-          <dd className={s.detailValue}>{formatTanggal(data.tanggal, DAFTAR_TEXT.emptyValue)}</dd>
-        </div>
-        <div>
-          <dt className={s.detailTerm}>{DAFTAR_TEXT.columns.deskripsi}</dt>
-          <dd
-            className={`${s.detailValue} ${rt.root}`}
-            dangerouslySetInnerHTML={{ __html: data.deskripsi || DAFTAR_TEXT.emptyValue }}
-          />
-        </div>
-      </dl>
-    );
+    content = <DaftarDetail data={data} />;
   } else if (loadedId === id) {
     content = (
       <div className={s.notFound} role="status">

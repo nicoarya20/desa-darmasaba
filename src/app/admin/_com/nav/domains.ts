@@ -48,9 +48,14 @@ export const desaMenu: NavItem = {
     { id: "desa.gallery", name: "Gallery", path: "/admin/pemerintahan/gallery/foto", basePath: "/admin/pemerintahan/gallery" },
     { id: "desa.layanan", name: "Layanan", path: "/admin/pemerintahan/layanan/pelayanan_surat_keterangan", basePath: "/admin/pemerintahan/layanan" },
     { id: "desa.kegiatan-desa", name: "Kegiatan Desa", path: "/admin/pemerintahan/kegiatan-desa/list-kegiatan-desa", basePath: "/admin/pemerintahan/kegiatan-desa" },
+    // Dulu tab di Kegiatan Desa; rute lama dialihkan di next.config.ts, akses lama dipindah migrasi 20261118120000_lomba_laporan_penduduk_bulanan.
+    // Label diganti 2026-11-18 (permintaan TIM BIP); ID menu TIDAK berubah karena tersimpan di UserMenuAccess.
+    { id: "desa.dokumen-perencanaan", name: "Arah Kebijakan Pembangunan Desa", path: "/admin/pemerintahan/dokumen-perencanaan", basePath: "/admin/pemerintahan/dokumen-perencanaan" },
     { id: "desa.event-budaya", name: "Agenda & Kalender Desa", path: "/admin/pemerintahan/event-budaya", basePath: "/admin/pemerintahan/event-budaya" },
     { id: "desa.banjar", name: "Banjar", path: "/admin/pemerintahan/banjar", basePath: "/admin/pemerintahan/banjar" },
     { id: "desa.struktur-perangkat-desa", name: "Struktur Perangkat Desa", path: "/admin/pemerintahan/struktur-perangkat-desa/pegawai", basePath: "/admin/pemerintahan/struktur-perangkat-desa" },
+    // Menu baru (aditif): section "Desa" sudah mencakup semua submenu, user dengan ID submenu per-menu perlu dicentang di Menu Access.
+    { id: "desa.produk-hukum", name: "Produk Hukum", path: "/admin/pemerintahan/produk-hukum", basePath: "/admin/pemerintahan/produk-hukum" },
   ],
 }
 
@@ -155,6 +160,7 @@ export const kependudukanMenu: NavItem = {
     { id: "kependudukan.distribusi-agama", name: "Distribusi Agama", path: "/admin/kependudukan/distribusi-agama", basePath: "/admin/kependudukan/distribusi-agama" },
     { id: "kependudukan.distribusi-umur", name: "Distribusi Umur", path: "/admin/kependudukan/distribusi-umur", basePath: "/admin/kependudukan/distribusi-umur" },
     { id: "kependudukan.data-banjar", name: "Data Banjar", path: "/admin/kependudukan/data-banjar", basePath: "/admin/kependudukan/data-banjar" },
+    { id: "kependudukan.laporan-bulanan", name: "Laporan Bulanan", path: "/admin/kependudukan/laporan-bulanan", basePath: "/admin/kependudukan/laporan-bulanan" },
     { id: "kependudukan.migrasi-penduduk", name: "Migrasi Penduduk", path: "/admin/kependudukan/migrasi-penduduk", basePath: "/admin/kependudukan/migrasi-penduduk" },
     { id: "kependudukan.dinamika-penduduk", name: "Dinamika Penduduk", path: "/admin/kependudukan/dinamika-penduduk", basePath: "/admin/kependudukan/dinamika-penduduk" },
   ],
