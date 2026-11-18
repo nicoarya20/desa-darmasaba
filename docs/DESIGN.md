@@ -508,7 +508,7 @@ Halaman "Agenda & Kalender Desa" (route lama tetap dipakai), senada kepala Berit
 
 Gaya halaman detail APBDes. Kerangka `.section`/`.page`/`.inner`/`.header`/`.card`/`.panel` dipinjam dari `_com/main-page/apbdes/apbdes.module.css` bersama `APBDES_BRAND_VARS` (`apbdes.meta.ts`) dan format angka dari `apbdes.logic.ts` (`formatRupiah`, `formatRupiahCompact`, `formatPercent`, `barWidth`). Paginasinya `KabarListPagination` (`_com/kabar-list/`). Folder `(pages)/pemerintahan/monev-pembangunan/`:
 - `page.tsx`: memuat data via state `monevPembangunan` dan menyusun bagian halaman.
-- Komponen `_com/`: `MonevSummary.tsx` (3 kartu), `MonevApbdesLink.tsx`, `MonevKegiatanPanel.tsx` + `MonevKegiatanRow.tsx`, `DokumenPerencanaanSection.tsx` (+ `DokumenList`) + `DokumenPerencanaanRow.tsx`, `MonevStates.tsx` (ubin kosong, galat + coba lagi, kerangka).
+- Komponen `_com/`: `MonevSummary.tsx` (3 kartu), `MonevApbdesLink.tsx`, `MonevKegiatanPanel.tsx` + `MonevKegiatanRow.tsx`, `MonevArahLink.tsx` (kartu tautan ke Arah Kebijakan Pembangunan Desa, memakai kartu bersama `MonevLinkCard.tsx`; bagian dokumen perencanaan dipindah ke `/pemerintahan/arah-kebijakan-pembangunan-desa`), `MonevStates.tsx` (ubin kosong, galat + coba lagi, kerangka).
 - Pendukung `_com/`: `monev.logic.ts` (`isMonevEmpty`, `statusSegments`, `kegiatanStatus`/`kegiatanProgres`/`kegiatanMeta`, `FILTER_OPTIONS`, `statusQuery`), `monev.meta.ts` (warna status, `APBDES_HREF`, `MONEV_BRAND_VARS`), `monev.text.ts`.
 - CSS: `monev.module.css` (ringkasan, kosong, panel APBDes, kepala panel), `monev-rows.module.css` (baris kegiatan & dokumen).
 - Test: `__tests__/api/monev_page_logic.test.ts`, `__tests__/api/monev_page_ui.test.tsx`.

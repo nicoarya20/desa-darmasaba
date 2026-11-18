@@ -18,6 +18,11 @@ Seluruhnya nullable/tabel baru (baris lama tetap valid, tanpa backfill), migrasi
 - Tabel baru `LaporanPendudukBulanan` (banjar, tahun, bulan, L/P): terpisah dari `DataBanjar` yang dipakai dashboard publik. Duplikat aktif dicegah di API (tanpa unique index karena soft delete).
 - Menu admin Dokumen Perencanaan pindah ke Pemerintahan (`desa.dokumen-perencanaan`); migrasi memberi ID baru ke pemegang `desa.kegiatan-desa` di `UserMenuAccess`, rute lama redirect permanen.
 
+### Batch 2 Lomba (2026-11-18): Arah Kebijakan & Produk Hukum
+
+- `DokumenPerencanaan.jenis` (teks) kini menerima `APBDES` dan `PELAPORAN_APBDES` selain `RPJM`, `RKP`, `BERITA_ACARA_MUSYAWARAH`; tanpa migrasi. Halaman publik `/pemerintahan/arah-kebijakan-pembangunan-desa` menampilkan 4 kategori (tab Berita Acara hanya bila ada dokumen). Halaman/editor `/apbdes` tidak berubah.
+- Tabel baru `ProdukHukum` (migrasi `20261118140000_lomba_produk_hukum`): judul, nomor, tahun, `kategori` (teks: PERDES, PERATURAN_PERBEKEL, SK_PERBEKEL, LAINNYA), urutan, `fileId` opsional (`ON DELETE SET NULL`). Menu admin `desa.produk-hukum` (ID baru; pemegang ID submenu dicentang manual di Menu Access, tanpa data-migration); label menu `desa.dokumen-perencanaan` diganti jadi "Arah Kebijakan Pembangunan Desa", ID tetap.
+
 ## Authentication Flow
 Auth was rewritten to **Better Auth with Google OAuth only** (no more phone OTP). Flow:
 1. User signs in with Google → Better Auth (`src/lib/auth.ts`) creates a session, stored in Postgres (`Session`, `Account`, `Verification`, `RateLimit` models — Better Auth's own schema, not custom).
