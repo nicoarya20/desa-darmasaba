@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.308] - 2026-11-18
+### Fixed
+- **Website staging gagal naik setelah rilis 0.1.307.** Aplikasi mati saat dijalankan di server karena berkas pengaturan header keamanan tidak ikut terbawa ke image Docker, sehingga alamat staging hanya menampilkan "Unknown subdomain". Berkas itu dipindah ke lokasi yang ikut dibawa image, dan ada pemeriksaan otomatis baru agar kesalahan serupa terdeteksi sebelum rilis. Isi rilis 0.1.307 (header keamanan, kontras warna, kecepatan halaman, alur WhatsApp permohonan) tidak berubah. Versi 0.1.307 tidak pernah berjalan di server dan tidak perlu dipakai.
+
 ## [0.1.307] - 2026-11-18
 ### Added
 - **Setelah warga mengajukan permohonan surat keterangan, mereka diarahkan ke WhatsApp petugas layanan.** Data permohonan tetap tersimpan seperti biasa; lalu layar "Permohonan tersimpan" menampilkan tombol "Lanjutkan ke WhatsApp" yang membuka percakapan dengan Petugas Layanan Desa berisi pesan awal (nama dan jenis surat saja, tanpa NIK, nomor KK, atau alamat). Halaman detail layanan juga menjelaskan bahwa tindak lanjut dilakukan lewat WhatsApp petugas. Nomor petugas saat ini tetap di kode (`src/con/layanan-whatsapp.ts`), belum bisa diubah dari admin, dan permohonan belum punya nomor referensi: petugas mencocokkan lewat nama dan jenis surat.
