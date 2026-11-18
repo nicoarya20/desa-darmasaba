@@ -1,4 +1,5 @@
 import { withListQuery } from "@/app/(public)/_com/kabar-list/kabar-list.logic";
+import { programInitials } from "@/app/(public)/_com/program-tiles/program-initials.logic";
 import type { ProgramTileItem } from "@/app/(public)/_com/program-tiles/ProgramTiles";
 import { htmlToPlainText } from "@/lib/rich-text";
 import { PROGRAM_INOVASI_BASE_HREF, PROGRAM_INOVASI_META_DESCRIPTION_MAX } from "./program-inovasi.meta";
@@ -22,13 +23,18 @@ export function programInovasiListHref(opts: { search?: string; page?: number } 
   return withListQuery(PROGRAM_INOVASI_BASE_HREF, opts);
 }
 
-/** Item API → ubin: judul, cuplikan teks polos deskripsi (dipotong 3 baris oleh CSS), logo, tautan detail. */
+/**
+ * Item API → ubin: judul, cuplikan teks polos deskripsi (dipotong oleh CSS), logo, inisial nama (pengganti logo yang
+ * tidak ada / gagal dimuat, jadi setiap program tampil sebagai ubin ber-logo), tautan detail.
+ */
 export function toProgramInovasiTile(item: ProgramInovasiApiItem): ProgramTileItem {
+  const title = item.name.trim();
   return {
     id: item.id,
-    title: item.name.trim(),
+    title,
     summary: htmlToPlainText(item.description),
     logo: item.image?.link?.trim() || undefined,
+    initials: programInitials(title),
     href: programInovasiDetailHref(item.id),
   };
 }

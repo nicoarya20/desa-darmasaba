@@ -4,18 +4,24 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
-  /** Tinggi cadangan (px) sebelum isi dimuat, mendekati tinggi aslinya agar halaman tidak melompat. */
-  minHeight: number;
-  /** Isi mulai dimuat sebelum benar-benar terlihat, supaya tidak ada ruang kosong saat pengunjung menggulir. */
+  /** Kelas CSS yang memberi kotak cadangan setinggi isi aslinya (lihat lazy-chart.module.css) sebelum isi dimuat. */
+  placeholderClassName: string;
+  /** Isi mulai dimuat sebelum benar-benar terlihat, supaya pergeseran akibat pemasangan terjadi di luar layar. */
   rootMargin?: string;
 };
+
+/**
+ * Jarak mulai memasang isi dari tepi layar. Cukup jauh agar saat grafik terpasang (dan tingginya menyesuaikan),
+ * konten yang terdorong masih di luar layar: pergeseran di luar layar tidak dihitung CLS.
+ */
+export const MOUNT_ROOT_MARGIN = "1200px 0px";
 
 /**
  * Memasang `children` hanya setelah kotak ini mendekati layar (sekali, lalu tetap). Dipakai untuk grafik di bawah lipatan:
  * kode grafik (recharts) baru diunduh saat dibutuhkan sehingga JavaScript awal beranda lebih ringan (TBT, juknis lomba 5.4).
  * Bergantung pada IntersectionObserver (semua browser modern); tanpa itu efeknya tidak jalan dan isi tidak muncul.
  */
-export function MountWhenNear({ children, minHeight, rootMargin = "400px 0px" }: Props) {
+export function MountWhenNear({ children, placeholderClassName, rootMargin = MOUNT_ROOT_MARGIN }: Props) {
   const boxRef = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
 
@@ -33,7 +39,7 @@ export function MountWhenNear({ children, minHeight, rootMargin = "400px 0px" }:
   }, [near, rootMargin]);
 
   return (
-    <div ref={boxRef} style={near ? undefined : { minHeight }}>
+    <div ref={boxRef} className={near ? undefined : placeholderClassName}>
       {near ? children : null}
     </div>
   );

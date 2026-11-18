@@ -1,7 +1,8 @@
 import { Image } from "@mantine/core";
 import { Prisma } from "@prisma/client";
-import { IconChevronLeft, IconChevronRight, IconPhotoOff } from "@tabler/icons-react";
-import type { CSSProperties, MouseEvent } from "react";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { useState, type CSSProperties, type MouseEvent } from "react";
+import { programInitials } from "../../program-tiles/program-initials.logic";
 import s from "./landing.module.css";
 import { LANDING_TEXT } from "./landing.text";
 import { isPlainLeftClick, programOverlayHref } from "./program-param.logic";
@@ -23,6 +24,10 @@ type HeroProgramsProps = {
 /** Rel program inovasi di kiri bawah hero: 4 ubin terlihat, sisanya digeser (seret, trackpad, atau panah). */
 export function HeroPrograms({ items, loading, onOpen }: HeroProgramsProps) {
   const { railRef, thumbRef, state, step } = useRailScroll(loading ? 0 : items.length);
+  // Id program yang logonya gagal dimuat (onError): ubinnya beralih ke inisial nama.
+  const [brokenLogos, setBrokenLogos] = useState<ReadonlySet<string>>(() => new Set());
+  const markLogoBroken = (id: string) =>
+    setBrokenLogos((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
 
   const handleTileClick = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
     if (!isPlainLeftClick(event)) return;
@@ -86,11 +91,18 @@ export function HeroPrograms({ items, loading, onOpen }: HeroProgramsProps) {
                   title={item.name}
                   onClick={(event) => handleTileClick(event, item.id)}
                 >
-                  {item.image?.link ? (
-                    <Image className={p.tileLogo} src={item.image.link} alt="" loading="lazy" fit="contain" />
+                  {item.image?.link && !brokenLogos.has(item.id) ? (
+                    <Image
+                      className={p.tileLogo}
+                      src={item.image.link}
+                      alt=""
+                      loading="lazy"
+                      fit="contain"
+                      onError={() => markLogoBroken(item.id)}
+                    />
                   ) : (
-                    <span className={p.tileLogoEmpty} aria-hidden>
-                      <IconPhotoOff size={28} stroke={1.5} />
+                    <span className={p.tileInitials} aria-hidden>
+                      {programInitials(item.name)}
                     </span>
                   )}
                   <span className={p.tileName}>{item.name}</span>

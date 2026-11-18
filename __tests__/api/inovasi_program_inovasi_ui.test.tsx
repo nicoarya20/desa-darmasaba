@@ -31,9 +31,9 @@ const body = (state: Parameters<typeof ProgramInovasiBody>[0]['state'], search =
   render(<ProgramInovasiBody state={state} search={search} page={page} onPage={() => {}} />);
 
 describe('ProgramInovasiBody', () => {
-  it('ubin = tautan detail dengan kotak logo, judul h3, ringkasan, "Selengkapnya"', () => {
+  it('ubin = tautan detail varian ber-logo dengan kotak logo, judul h3, ringkasan, "Selengkapnya"', () => {
     const html = body(ready([api('davest', 'Davest')]));
-    expect(html).toContain(`<a href="/inovasi/program-inovasi/davest" class="${s.tile} ${r.trigger}">`);
+    expect(html).toContain(`<a href="/inovasi/program-inovasi/davest" class="${s.tile} ${s.tileLogo} ${r.trigger}">`);
     expect(html).toContain(`<span class="${s.logo}">`);
     expect(html).toContain('src="/api/img/davest"');
     expect(html).toMatch(/<h3[^>]*><span[^>]*>Davest<\/span><\/h3>/);
@@ -46,8 +46,12 @@ describe('ProgramInovasiBody', () => {
     expect(html.indexOf('>Davest<')).toBeLessThan(html.indexOf('>Bares<'));
   });
 
-  it('tanpa logo → tanpa kotak logo', () => {
-    expect(body(ready([api('gm', 'GM', null)]))).not.toContain(`class="${s.logo}"`);
+  it('tanpa logo → pelat berisi inisial (aria-hidden, tanpa img), ubin tetap varian ber-logo', () => {
+    const html = body(ready([api('gm', 'GM', null), api('bd', 'Bicara Darmasaba', null)]));
+    expect(html).toContain(`class="${s.tile} ${s.tileLogo} ${r.trigger}"`);
+    expect(html).toContain(`<span class="${s.logo}"><span class="${s.initials}" aria-hidden="true">GM</span></span>`);
+    expect(html).toContain(`<span class="${s.initials}" aria-hidden="true">BD</span>`);
+    expect(html).not.toContain('<img');
   });
 
   it('memuat → ubin kerangka; kosong, cari kosong, dan galat → pesan', () => {

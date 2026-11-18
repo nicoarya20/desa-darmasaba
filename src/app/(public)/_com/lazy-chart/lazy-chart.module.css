@@ -1,0 +1,35 @@
+/*
+ * Tinggi cadangan kotak grafik beranda sebelum kodenya dimuat (MountWhenNear). Harus sama dengan tinggi grafik asli:
+ * selisih membuat konten di bawahnya melompat saat grafik terpasang (CLS 0,29 pada kunjungan pertama dengan cache dingin,
+ * stg 0.1.310). Diukur di stg 0.1.310 pada 2026-11-18; tinggi konstan di dalam tiap rentang lebar, breakpoint sama
+ * dengan apbdes.module.css / kepuasan.module.css (1068px dan 734px). Ukur ulang bila isi panel berubah.
+ */
+.apbdes {
+  min-height: 418px;
+}
+
+.kepuasan {
+  min-height: 852px;
+}
+
+@media (max-width: 1068px) {
+  .apbdes {
+    min-height: 410px;
+  }
+
+  .kepuasan {
+    /* Variasi 827-920px menurut lebar (teks kartu donat membungkus); 850 = tengah rentang. */
+    min-height: 850px;
+  }
+}
+
+@media (max-width: 734px) {
+  .apbdes {
+    min-height: 398px;
+  }
+
+  .kepuasan {
+    /* Kartu donat bertumpuk satu kolom. */
+    min-height: 1573px;
+  }
+}
