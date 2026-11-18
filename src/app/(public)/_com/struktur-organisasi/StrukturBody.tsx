@@ -1,7 +1,7 @@
 import colors from '@/con/colors'
 import { Button, Stack, Text, TextInput } from '@mantine/core'
 import { IconRefresh, IconSearch } from '@tabler/icons-react'
-import { StrukturChart, StrukturChartSkeleton } from './StrukturChart'
+import { StrukturChart, StrukturChartSkeleton, type StrukturLayout } from './StrukturChart'
 import { STRUKTUR_TEXT } from './struktur.text'
 import type { StrukturData } from './use-struktur-data'
 
@@ -28,10 +28,12 @@ type Props = {
   /** Kalimat kedua saat belum ada pegawai aktif (konteks halaman). */
   emptyHint: string
   hrefFor: (pegawaiId: string) => string
+  /** Tata letak bagan (lihat `StrukturChart`); bawaan pohon. */
+  layout?: StrukturLayout
 }
 
 /** Isi bagan sesuai keadaan: kerangka saat memuat, kosong + muat ulang, tidak ada yang cocok, atau bagan. */
-export function StrukturBody({ data, label, emptyHint, hrefFor }: Props) {
+export function StrukturBody({ data, label, emptyHint, hrefFor, layout }: Props) {
   if (data.loading) return <StrukturChartSkeleton />
   if (data.tree.length === 0) {
     return (
@@ -51,5 +53,5 @@ export function StrukturBody({ data, label, emptyHint, hrefFor }: Props) {
       </Text>
     )
   }
-  return <StrukturChart roots={data.visible} label={label} hrefFor={hrefFor} />
+  return <StrukturChart roots={data.visible} label={label} hrefFor={hrefFor} layout={layout} />
 }

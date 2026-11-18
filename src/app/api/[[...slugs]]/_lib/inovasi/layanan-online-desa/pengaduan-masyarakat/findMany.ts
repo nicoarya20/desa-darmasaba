@@ -1,7 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
+import { PENGADUAN_STATUS, PENGADUAN_STATUS_DEFAULT, parsePengaduanStatus, type PengaduanStatus } from "@/lib/pengaduan-status";
+
+/** Filter kolom status; BARU juga mencakup baris lama yang statusnya null (dibaca BARU, tanpa backfill). */
+function statusWhere(status: PengaduanStatus): Prisma.PengaduanMasyarakatWhereInput {
+  return status === PENGADUAN_STATUS_DEFAULT ? { OR: [{ status: null }, { status }] } : { status };
+}
 
 async function pengaduanMasyarakatFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
@@ -9,8 +15,16 @@ async function pengaduanMasyarakatFindMany(context: Context) {
   const search = (context.query.search as string) || '';
   const skip = (page - 1) * limit;
 
+  const statusParam = context.query.status as string | undefined;
+  const status = statusParam ? parsePengaduanStatus(statusParam) : null;
+  if (statusParam && !status) {
+    context.set.status = 400;
+    return { success: false, message: `Status tidak valid, gunakan salah satu dari: ${PENGADUAN_STATUS.join(", ")}` };
+  }
+
   // Buat where clause
-  const where: any = { isActive: true };
+  const where: Prisma.PengaduanMasyarakatWhereInput = { isActive: true };
+  if (status) where.AND = [statusWhere(status)];
 
   // Tambahkan pencarian (jika ada)
   if (search) {

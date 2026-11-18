@@ -1,10 +1,13 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import { rejectUnknownPpidFile } from "../ppid-file";
 
 type FormEdit = {
   jenisInformasi: string;
   deskripsi: string;
   tanggal: string;
+  fileId?: string | null;
 };
 
 export default async function daftarInformasiPublikEdit(context: Context) {
@@ -18,6 +21,9 @@ export default async function daftarInformasiPublikEdit(context: Context) {
   }
 
   const body = context.body as FormEdit;
+
+  const unknownFile = await rejectUnknownPpidFile(context.set, body.fileId);
+  if (unknownFile) return unknownFile;
 
   const existing = await prisma.daftarInformasiPublik.findUnique({
     where: {
@@ -38,8 +44,14 @@ export default async function daftarInformasiPublikEdit(context: Context) {
       jenisInformasi: body.jenisInformasi,
       deskripsi: body.deskripsi,
       tanggal: new Date(body.tanggal),
+      ...(body.fileId ? { fileId: body.fileId } : {}),
     },
   });
+
+  // Berkas lama dihapus permanen SETELAH relasi dipindah ke berkas baru (bukan sebelumnya: pola bug Maskot).
+  if (existing.fileId && body.fileId && existing.fileId !== body.fileId) {
+    await removeStoredFile({ id: existing.fileId }, "DaftarInformasiPublik");
+  }
 
   return {
     success: true,

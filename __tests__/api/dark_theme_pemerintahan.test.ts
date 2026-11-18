@@ -105,7 +105,8 @@ describe('tombol isi memakai --c-brand-fill + --c-on-brand', () => {
   const FILLED: [string, string][] = [
     ['layanan/_com/layanan-info.module.css', '.cta'],
     ['layanan/_com/detail/layanan-detail.module.css', '.cta'],
-    ['monev-pembangunan/_com/monev-rows.module.css', '.pillPrimary'],
+    // .pillPrimary di monev-rows.module.css dihapus bersama bagian Dokumen Perencanaan Monev (pindah ke Arah Kebijakan, 2026-11-18).
+    ['arah-kebijakan-pembangunan-desa/_com/arah-kebijakan.module.css', '.btnPrimary'],
     ['potensi/_com/potensi.module.css', '.detailButton'],
     ['pengumuman/_com/detail/pengumuman-detail.module.css', '.btnPrimary'],
     ['profil/ui/moto.module.css', '.letter'],

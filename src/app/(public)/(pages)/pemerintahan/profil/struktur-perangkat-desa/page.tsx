@@ -13,7 +13,7 @@ export default function Page() {
   const data = useStrukturData(strukturPerangkatSource)
   return (
     <PpidPage title={T.title} lead={T.lead} aside={<StrukturSearch data={data} />} style={STRUKTUR_VARS}>
-      <StrukturBody data={data} label={T.chartLabel} emptyHint={T.emptyHint} hrefFor={strukturPerangkatHref} />
+      <StrukturBody data={data} label={T.chartLabel} emptyHint={T.emptyHint} hrefFor={strukturPerangkatHref} layout="tiers" />
       <ScrollToTopButton />
     </PpidPage>
   )

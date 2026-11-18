@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { SOP_FILE_SELECT } from "../sop-file";
 
 export default async function pelayananSuratKeteranganFindMany(context: Context) {
   const page = Number(context.query.page) || 1;
@@ -29,6 +30,7 @@ export default async function pelayananSuratKeteranganFindMany(context: Context)
         include: {
           image: true,
           image2: true,
+          sopFile: { select: SOP_FILE_SELECT },
         },
       }),
       prisma.pelayananSuratKeterangan.count({ where }),

@@ -139,6 +139,71 @@
   line-height: 1;
 }
 
+/* Nama utuh (kartu akar bagan bertingkat): pil tidak dipotong, kartu memanjang mengikuti nama. */
+.card[data-full-name] {
+  height: auto;
+  min-height: var(--h);
+}
+
+.card[data-full-name] .name {
+  display: block;
+}
+
+/*
+ * Kartu ringkas bagan bertingkat (size="xs", Perangkat Desa): jabatan di atas, foto bulat kecil + pil nama di
+ * bawah. Tinggi mengikuti isi (nama panjang turun baris, tidak dipotong); lebar dari slot klaster
+ * (struktur-tiers.module.css). Baris foto + nama didorong ke bawah agar sejajar antarkartu sebaris.
+ */
+.card[data-size="xs"] {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  grid-template-areas:
+    "role role"
+    "photo name";
+  align-content: space-between;
+  gap: 10px 8px;
+  width: 100%;
+  height: auto;
+  padding: 12px;
+  border-radius: 14px;
+}
+
+.card[data-size="xs"] .cardText {
+  display: contents;
+}
+
+.card[data-size="xs"] .role {
+  grid-area: role;
+  font-size: 11.5px;
+}
+
+.card[data-size="xs"] .name {
+  display: block;
+  grid-area: name;
+  align-self: center;
+  padding: 4px 9px;
+  font-size: 12.5px;
+  overflow-wrap: break-word;
+}
+
+.card[data-size="xs"] .photo {
+  position: relative;
+  inset: auto;
+  grid-area: photo;
+  align-self: center;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border-radius: 50%;
+  mask-image: none;
+}
+
+.card[data-size="xs"] .initials {
+  width: 100%;
+  border-width: 1.5px;
+  font-size: 12px;
+}
+
 /* Jabatan yang belum punya pegawai: kotak redup bergaris putus, tanpa tautan. */
 .card[data-vacant] {
   background: rgba(255, 255, 255, 0.55);

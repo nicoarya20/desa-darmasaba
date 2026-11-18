@@ -9,6 +9,10 @@ import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import stateDasarHukumPPID from '../../../_state/ppid/dasar_hukum/dasarHukum';
 import { toast } from 'react-toastify';
+import { DokumenDasarHukumManager } from '../_com/DokumenDasarHukumManager';
+
+/** Baris tunggal dasar hukum PPID di CMS (sama dengan halaman pratinjau). */
+const DASAR_HUKUM_ID = '1';
 
 const PPIDTextEditor = dynamic(
   () => import('../../_com/PPIDTextEditor').then(mod => mod.PPIDTextEditor),
@@ -42,10 +46,10 @@ function EditDasarHukum() {
     );
   };
 
-  // Load data awal sekali
+  // Dibuka langsung lewat URL: state masih kosong, muat baris tunggal dari server (bukan form kosong ber-id '').
   useShallowEffect(() => {
     if (!dasarHukumState.findById.data) {
-      dasarHukumState.findById.initialize();
+      void dasarHukumState.findById.load(DASAR_HUKUM_ID);
     }
   }, []);
 
@@ -166,6 +170,9 @@ function EditDasarHukum() {
           </Group>
         </Stack>
       </Paper>
+
+      {/* Dokumen tersimpan langsung per aksi (tidak ikut tombol Simpan di atas). */}
+      <DokumenDasarHukumManager />
     </Box>
   );
 }

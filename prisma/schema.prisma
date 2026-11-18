@@ -77,6 +77,10 @@ model FileStorage {
   Pelapor                        Pelapor[]
   ProfileDesaImage               ProfileDesaImage[]
   ProfilePPID                    ProfilePPID[]
+  DokumenDasarHukumPPID          DokumenDasarHukumPPID[]
+  ProdukHukum                    ProdukHukum[]
+  DaftarInformasiPublik          DaftarInformasiPublik[]
+  ProfilLembagaPPID              ProfilLembagaPPID[]
   ProfilPerbekel                 ProfilPerbekel[]
   Puskesmas                      Puskesmas[]
   ProgramKesehatan               ProgramKesehatan[]
@@ -87,6 +91,8 @@ model FileStorage {
   MenuTipsKeamanan               MenuTipsKeamanan[]
   PelayananSuratKeteranganImage  PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage")
   PelayananSuratKeteranganImage2 PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganImage2")
+  PelayananSuratKeteranganSop    PelayananSuratKeterangan[] @relation("PelayananSuratKeteranganSop")
+  PelayananTelunjukSaktiDesaSop  PelayananTelunjukSaktiDesa[] @relation("PelayananTelunjukSaktiDesaSop")
   PasarDesa                      PasarDesa[]
   PegawaiBumDes                  PegawaiBumDes[]
   InovasiTeknologiDesa           InovasiTeknologiDesa[]
@@ -538,13 +544,33 @@ model VisiMisiPPID {
 
 // ========================================= DASAR HUKUM PPID ========================================= //
 model DasarHukumPPID {
-  id        String    @id @default(cuid())
-  judul     String    @db.Text
-  content   String    @db.Text
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String       @id @default(cuid())
+  judul     String       @db.Text
+  content   String       @db.Text
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   deletedAt DateTime?
-  isActive  Boolean   @default(true)
+  isActive  Boolean      @default(true)
+}
+
+// Lomba 2.5: PDF peraturan desa/perbekel, SK, dan SOP yang bisa dilihat & diunduh pengunjung. DasarHukumPPID adalah
+// singleton (satu teks), jadi satu kolom fileId di sana hanya muat 1 PDF; di sini satu baris = satu dokumen.
+// Daftar FLAT tanpa folder (keputusan user); folder bisa ditambah kemudian lewat kolom folderId nullable tanpa
+// mengubah baris yang ada.
+model DokumenDasarHukumPPID {
+  id        String      @id @default(cuid())
+  judul     String
+  urutan    Int         @default(0)
+  // CASCADE: /api/fileStorage/delete menghapus berkas permanen; RESTRICT akan membuatnya gagal.
+  file      FileStorage @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean     @default(true)
+
+  @@index([isActive, urutan])
+  @@index([fileId])
 }
 
 // ========================================= PROFILE PPID ========================================= //
@@ -566,14 +592,32 @@ model ProfilePPID {
 
 // ========================================= DAFTAR INFORMASI PUBLIK ========================================= //
 model DaftarInformasiPublik {
-  id             String    @id @default(cuid())
+  id             String       @id @default(cuid())
   jenisInformasi String
   deskripsi      String
-  tanggal        DateTime  @db.Date
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  tanggal        DateTime     @db.Date
+  // Lomba 2.5: berkas PDF per baris informasi (opsional); baris lama tetap valid tanpa berkas.
+  file           FileStorage? @relation(fields: [fileId], references: [id], onDelete: SetNull)
+  fileId         String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   deletedAt      DateTime?
-  isActive       Boolean   @default(true)
+  isActive       Boolean      @default(true)
+}
+
+// Lomba 2.5: profil lembaga PPID (deskripsi, tujuan, tugas & fungsi, gambar alur). Model baru dan terpisah dari
+// ProfilePPID (profil perorangan pimpinan) supaya data perorangan lama tidak tersentuh. Satu baris aktif (singleton).
+model ProfilLembagaPPID {
+  id           String       @id @default(cuid())
+  deskripsi    String?      @db.Text
+  tujuan       String?      @db.Text
+  tugasFungsi  String?      @db.Text
+  gambarAlur   FileStorage? @relation(fields: [gambarAlurId], references: [id], onDelete: SetNull)
+  gambarAlurId String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean      @default(true)
 }
 
 //=========================================PERMOHONAN INFORMASI PUBLIK========================= //
@@ -931,6 +975,9 @@ model PelayananSuratKeterangan {
   image2Id         String?
   estimasiWaktu    String?
   biaya            Int?
+  // SOP / petunjuk layanan berupa PDF (Juknis lomba 3.1). Opsional; hapus berkas → SetNull, layanan tetap tampil.
+  sopFile          FileStorage?       @relation("PelayananSuratKeteranganSop", fields: [sopFileId], references: [id], onDelete: SetNull)
+  sopFileId        String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   deletedAt        DateTime           @default(now())
@@ -939,16 +986,19 @@ model PelayananSuratKeterangan {
 }
 
 model PelayananTelunjukSaktiDesa {
-  id            String   @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String
-  deskripsi     String   @db.Text
+  deskripsi     String       @db.Text
   link          String
   estimasiWaktu String?
   biaya         Int?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  deletedAt     DateTime @default(now())
-  isActive      Boolean  @default(true)
+  // SOP / petunjuk layanan berupa PDF (Juknis lomba 3.1). Opsional; hapus berkas → SetNull, layanan tetap tampil.
+  sopFile       FileStorage? @relation("PelayananTelunjukSaktiDesaSop", fields: [sopFileId], references: [id], onDelete: SetNull)
+  sopFileId     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  deletedAt     DateTime     @default(now())
+  isActive      Boolean      @default(true)
 }
 
 model PelayananPerizinanBerusaha {
@@ -2209,6 +2259,12 @@ model PengaduanMasyarakat {
   deskripsiPengaduan String         @db.Text
   jenisPengaduan     JenisPengaduan @relation(fields: [jenisPengaduanId], references: [id])
   jenisPengaduanId   String
+  // Tindak lanjut pengaduan (Juknis lomba 3.3). Nullable agar baris lama valid tanpa backfill:
+  // status null dibaca sebagai BARU lewat `resolvePengaduanStatus` (src/lib/pengaduan-status.ts).
+  status             String?
+  // Tanggapan admin, teks polos; tampil publik di rekap tindak lanjut — jangan memuat data pelapor.
+  tanggapan          String?        @db.Text
+  tanggapanAt        DateTime?
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
   deletedAt          DateTime       @default(now())
@@ -2365,6 +2421,28 @@ model DokumenPerencanaan {
   isActive        Boolean      @default(true)
 
   @@index([jenis, tahun])
+}
+
+// Produk hukum desa (Perdes, Peraturan Perbekel, SK Perbekel, dll) untuk menu publik Pemerintahan > Produk Hukum.
+// Satu baris = satu produk hukum; PDF-nya opsional supaya entri bisa dicatat dulu sebelum berkasnya ada. Daftar FLAT
+// tanpa folder; pengelompokan lewat `kategori` (teks, divalidasi di API/src/lib/produk-hukum.ts, bukan enum Prisma
+// agar kategori baru tidak butuh migrasi). SetNull: /api/fileStorage/delete tidak boleh gagal atau menghapus entri.
+model ProdukHukum {
+  id        String       @id @default(cuid())
+  judul     String
+  nomor     String? // mis. "Nomor 9 Tahun 2021"
+  tahun     Int?
+  kategori  String // "PERDES" | "PERATURAN_PERBEKEL" | "SK_PERBEKEL" | "LAINNYA"
+  urutan    Int          @default(0) // pemutus seri bila tahun sama
+  file      FileStorage? @relation(fields: [fileId], references: [id], onDelete: SetNull)
+  fileId    String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean      @default(true)
+
+  @@index([isActive, kategori, urutan])
+  @@index([fileId])
 }
 
 model KategoriKegiatan {
@@ -3044,6 +3122,28 @@ model DataBanjar {
 
   @@index([tahun])
   @@index([isActive])
+}
+
+// ========================================= LAPORAN PENDUDUK BULANAN ========================================= //
+// Laporan SID per banjar per bulan (juknis lomba 1.3). Tabel BARU & terpisah: DataBanjar (snapshot tahunan)
+// tidak diubah supaya halaman publik Kependudukan dan summary dashboard tetap utuh.
+// `banjar` = teks nama banjar (sama seperti DataBanjar.nama), bukan FK, jadi laporan lama tetap utuh bila banjar diubah.
+// Tanpa unique (banjar, tahun, bulan): soft delete (deletedAt/isActive) membuat unique index memblokir input ulang,
+// jadi duplikat aktif dicegah di API.
+model LaporanPendudukBulanan {
+  id        String    @id @default(cuid())
+  banjar    String // Nama banjar
+  tahun     Int // Tahun laporan
+  bulan     Int // 1-12 (divalidasi di API)
+  lakiLaki  Int // Jumlah penduduk laki-laki
+  perempuan Int // Jumlah penduduk perempuan
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
+
+  @@index([tahun, bulan])
+  @@index([banjar])
 }
 
 // ========================================= DISTRIBUSI AGAMA ========================================= //

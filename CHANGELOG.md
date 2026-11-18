@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.310] - 2026-11-18
+### Changed
+- **Foto pada halaman Layanan tampil lebih cepat.** Foto tiga kartu pertama di daftar Surat Keterangan kini diunduh langsung dengan prioritas tinggi, tidak lagi menunggu halaman selesai ditata. Foto kartu berikutnya tetap dimuat saat digulir.
+- **Beranda lebih ringan saat pertama dibuka.** Grafik APBDes dan grafik Survei Kepuasan (batang dan donat) letaknya di bagian bawah beranda, jadi kodenya kini baru diunduh saat pengunjung menggulir mendekatinya, bukan di awal. Tampilan dan isi grafik tidak berubah. Dampaknya ke skor kecepatan di ponsel diperkirakan kecil; bagian terbesar (gambar utama yang baru ditemukan setelah JavaScript jalan, dan respons server) belum dikerjakan.
+
+## [0.1.309] - 2026-11-18
+### Changed
+- **Bagan Struktur Perangkat Desa kini tersusun seperti bagan resmi kantor desa dan tidak perlu digeser ke samping.** Di Profil Desa dan halaman Struktur Perangkat Desa, Perbekel ada di atas dengan satu garis tegak di tengah: Sekretaris Desa beserta tiga Kepala Urusan di kanan, tiga Kepala Seksi di kiri, lalu Kelian Banjar Dinas dan Kelian Banjar Adat per baris (tiga di kiri, tiga di kanan). Sebelumnya semua bawahan Perbekel berjajar dalam satu baris sangat panjang. Kartu dibuat lebih ringkas dan nama panjang tampil utuh. Susunan mengikuti tingkat jabatan yang diisi admin, jadi menyesuaikan sendiri bila jabatan berubah. Di laptop kecil dan tablet bagan memakai garis di kiri dengan tiga kartu sebaris; di ponsel satu kartu per baris seperti sebelumnya. Struktur PPID dan BUMDes tidak berubah.
+
 ## [0.1.308] - 2026-11-18
 ### Fixed
 - **Website staging gagal naik setelah rilis 0.1.307.** Aplikasi mati saat dijalankan di server karena berkas pengaturan header keamanan tidak ikut terbawa ke image Docker, sehingga alamat staging hanya menampilkan "Unknown subdomain". Berkas itu dipindah ke lokasi yang ikut dibawa image, dan ada pemeriksaan otomatis baru agar kesalahan serupa terdeteksi sebelum rilis. Isi rilis 0.1.307 (header keamanan, kontras warna, kecepatan halaman, alur WhatsApp permohonan) tidak berubah. Versi 0.1.307 tidak pernah berjalan di server dan tidak perlu dipakai.
