@@ -3,7 +3,6 @@ import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader'
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { listSearchable, paginate, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { ProgramTiles, ProgramTilesPlaceholder } from '@/app/(public)/_com/program-tiles/ProgramTiles';
 import { useTransitionRouter } from 'next-view-transitions';
@@ -29,7 +28,7 @@ export function ProgramKreatifPage() {
   const total = state.status === 'ready' ? state.items.length : null;
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

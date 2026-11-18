@@ -6,7 +6,6 @@ import { KepuasanCharts } from "./components/KepuasanCharts";
 import { KepuasanEmpty } from "./components/KepuasanEmpty";
 import { KepuasanSkeleton } from "./components/KepuasanSkeleton";
 import { RespondenFormModal } from "./components/RespondenFormModal";
-import { KEPUASAN_BRAND_VARS } from "./kepuasan.meta";
 import s from "./kepuasan.module.css";
 import { KEPUASAN_TEXT } from "./kepuasan.text";
 import { useKepuasanData } from "./use-kepuasan-data";
@@ -17,7 +16,7 @@ function Kepuasan() {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
-    <section className={s.section} style={KEPUASAN_BRAND_VARS} aria-labelledby="kepuasan-title">
+    <section className={s.section} aria-labelledby="kepuasan-title">
       <div className={s.inner}>
         <header className={s.header}>
           <h2 id="kepuasan-title" className={s.title}>

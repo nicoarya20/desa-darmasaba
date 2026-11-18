@@ -1,4 +1,5 @@
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { sanitizeRichText } from '@/lib/rich-text';
 import { formatTanggalWaktu, statusInfo, type LaporanPublik } from '../laporan.logic';
 import { LaporanStatus } from '../LaporanStatus';
@@ -53,7 +54,7 @@ export function LaporanLinimasa({ data, titleId }: { data: LaporanPublik; titleI
             </div>
             {step.html ? (
               // Disanitasi DOMPurify (tag teks dasar saja): kronologi berasal dari formulir publik tanpa moderasi.
-              <div className={`${d.content} ${s.stepContent}`} dangerouslySetInnerHTML={{ __html: step.html }} />
+              <div className={`${d.content} ${s.stepContent} ${rt.root}`} dangerouslySetInnerHTML={{ __html: step.html }} />
             ) : (
               <p className={s.stepEmpty}>{step.empty}</p>
             )}

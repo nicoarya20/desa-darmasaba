@@ -1,4 +1,3 @@
-import colors from "@/con/colors";
 import { Anchor, Code, List, Stack, Text } from "@mantine/core";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -9,14 +8,14 @@ export function JennaLink({ href, children }: { href: string; children: ReactNod
   const kind = classifyHref(href);
   if (kind === "internal") {
     return (
-      <Anchor component={Link} href={href} c={colors["blue-button"]} td="underline" inherit>
+      <Anchor component={Link} href={href} c="var(--c-brand)" td="underline" inherit>
         {children}
       </Anchor>
     );
   }
   if (kind === "external") {
     return (
-      <Anchor href={href} target="_blank" rel="noopener noreferrer" c={colors["blue-button"]} td="underline" inherit>
+      <Anchor href={href} target="_blank" rel="noopener noreferrer" c="var(--c-brand)" td="underline" inherit>
         {children}
       </Anchor>
     );

@@ -8,6 +8,7 @@ import { useSnapshot } from "valtio"
 import { MenuItem } from "../../../../types/menu-item"
 import { NavbarFlyout } from "./NavbarFlyout"
 import { NavbarSpeechToggle } from "./NavbarSpeechToggle"
+import { NavbarThemeToggle } from "./NavbarThemeToggle"
 import { isAdminRole, isMenuActive } from "./navbar-menu.logic"
 import s from "./navbar.module.css"
 import { SEARCH_VIEW_ID, useNavbarFlyout } from "./useNavbarFlyout"
@@ -32,7 +33,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
       >
         <nav className={s.bar} aria-label="Menu utama">
           <div className={s.barInner}>
-            <Tooltip label="Kembali ke Beranda" position="bottom" withArrow>
+            <Tooltip label="Kembali ke Beranda" position="bottom" withArrow classNames={{ tooltip: s.tooltip }}>
               <Link
                 href="/"
                 className={s.barItem}
@@ -72,7 +73,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
               ) : null,
             )}
 
-            <Tooltip label="Cari Konten" position="bottom" withArrow>
+            <Tooltip label="Cari Konten" position="bottom" withArrow classNames={{ tooltip: s.tooltip }}>
               <button
                 type="button"
                 className={s.barItem}
@@ -87,9 +88,10 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
             </Tooltip>
 
             <NavbarSpeechToggle />
+            <NavbarThemeToggle />
 
             {isAdminRole(user?.roleId) && (
-              <Tooltip label="Kembali ke Admin" position="bottom" withArrow>
+              <Tooltip label="Kembali ke Admin" position="bottom" withArrow classNames={{ tooltip: s.tooltip }}>
                 <Link href={ADMIN_HOME} className={s.barItem} aria-label="Kembali ke Admin">
                   <IconUserCog size={20} stroke={1.75} />
                 </Link>

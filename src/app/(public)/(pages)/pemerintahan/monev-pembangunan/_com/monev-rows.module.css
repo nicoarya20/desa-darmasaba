@@ -48,7 +48,7 @@
 .thumbFallback {
   display: grid;
   place-items: center;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--subtle);
 }
 
@@ -120,7 +120,7 @@
   gap: 6px;
   padding: 2px 10px 2px 8px;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--ink);
   font-size: 13px;
   font-weight: 600;
@@ -213,7 +213,7 @@
   width: 48px;
   height: 48px;
   border-radius: 10px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
 }
 
@@ -282,13 +282,13 @@
 }
 
 .pillButton {
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
 }
 
 .pillPrimary {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .pillButton:focus-visible,
@@ -299,7 +299,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .pillPrimary:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 
   .pillButton:hover {

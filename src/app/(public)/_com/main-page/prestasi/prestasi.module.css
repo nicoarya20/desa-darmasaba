@@ -3,16 +3,19 @@
  * (teks di tengah) lalu grid 2 kolom tile foto. Seluruh tile = tautan ke detail; judul di kiri bawah di atas
  * gradasi gelap. Tile & hero tanpa radius (senada galeri Layanan & Potensi).
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ * Warna: latar section/halaman = token --c-bg; tombol isi = --c-brand-fill (theme-tokens.css). --ink di sini adalah
+ * latar gelap media (hero video, kartu foto), bukan warna teks, jadi sama di kedua tema.
  */
 .section {
-  --ink: #1d1d1f;
+  --ink: #1d1d1f; /* tema-tetap: latar hero/kartu media, bukan teks */
+  --brand: var(--c-brand);
   --gap: 10px;
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   display: flex;
   flex-direction: column;
   gap: var(--gap);
   padding-bottom: var(--section-pad-y);
-  background: #fff;
+  background: var(--c-bg);
 }
 
 /* ---------- Hero ---------- */
@@ -26,7 +29,7 @@
   min-height: 720px;
   overflow: hidden;
   background: var(--ink);
-  color: #fff;
+  color: #fff; /* tema-tetap: teks di atas video + scrim */
 }
 
 .heroVideo {
@@ -68,7 +71,7 @@
   font-size: 21px;
   line-height: 1.38;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.92); /* tema-tetap: teks di atas video + scrim */
 }
 
 .cta {
@@ -77,8 +80,8 @@
   align-items: center;
   padding: 12px 24px;
   border-radius: 980px;
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font-size: 17px;
   font-weight: 500;
   text-decoration: none;
@@ -86,7 +89,7 @@
 }
 
 .cta:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid #fff; /* tema-tetap: cincin fokus putih di atas video */
   outline-offset: 3px;
 }
 
@@ -101,14 +104,14 @@
   height: 36px;
   border: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.18); /* tema-tetap: tombol video di atas video */
+  color: #fff; /* tema-tetap: ikon tombol video di atas video */
   cursor: pointer;
   transition: background-color 200ms ease;
 }
 
 .videoToggle:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid #fff; /* tema-tetap: cincin fokus putih di atas video */
   outline-offset: 2px;
 }
 
@@ -132,7 +135,7 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--ink);
-  color: #fff;
+  color: #fff; /* tema-tetap: teks di atas foto + scrim */
   text-decoration: none;
 }
 
@@ -141,7 +144,7 @@
 }
 
 .card:focus-visible {
-  outline: 3px solid #0071e3;
+  outline: 3px solid var(--c-focus);
   outline-offset: -3px;
 }
 
@@ -178,16 +181,16 @@
 
 .placeholder {
   aspect-ratio: 16 / 10;
-  background: #e3e3e6;
+  background: light-dark(#e3e3e6, var(--c-placeholder));
 }
 
 @media (hover: hover) and (pointer: fine) {
   .cta:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 
   .videoToggle:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.3); /* tema-tetap: tombol video di atas video */
   }
 
   .card:hover .cardImage {

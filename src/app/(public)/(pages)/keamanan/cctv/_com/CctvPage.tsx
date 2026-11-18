@@ -4,7 +4,6 @@ import { useLazyLoad } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import { useMemo } from "react";
 import BackButton from "../../../pemerintahan/layanan/_com/BackButto";
 import { summarizeCctv } from "./cctv.logic";
-import { CCTV_BRAND_VARS } from "./cctv.meta";
 import s from "./cctv.module.css";
 import { loadCctvList, type CctvItem } from "./cctv.source";
 import { CCTV_TEXT as T } from "./cctv.text";
@@ -19,7 +18,7 @@ export function CctvPage() {
   const { state, retry } = useLazyLoad(loadCctvList, true, "daftar CCTV");
 
   return (
-    <section className={`${apb.section} ${apb.page}`} style={CCTV_BRAND_VARS} aria-labelledby={TITLE_ID}>
+    <section className={`${apb.section} ${apb.page} ${s.page}`} aria-labelledby={TITLE_ID}>
       <div className={apb.inner}>
         <div className={apb.back}>
           <BackButton />

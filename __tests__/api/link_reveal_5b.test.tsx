@@ -163,9 +163,10 @@ describe('sumber: pemakai yang dirender lewat state/data (tanpa render penuh)', 
     );
     // Item terakhir (halaman aktif) tetap Text biasa tanpa sapuan.
     expect(src).toMatch(/<Text key=\{i\} fz="sm" c="dimmed" lineClamp=\{1\} maw=\{260\} title=\{c\.label\} aria-current="page">\s*\{c\.label\}\s*<\/Text>/);
-    // Warna diam breadcrumb = brand #0A4E78 = target .title → varian .titleBrand menyapu ke #1C6EA4, dideklarasikan sesudah .title.
+    // Warna diam breadcrumb = brand = target .title → varian .titleBrand menyapu ke #1C6EA4 (gelap: --c-ink),
+    // dideklarasikan sesudah .title.
     const css = SRC('_com/link-reveal/link-reveal.module.css').replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(css).toMatch(/\.titleBrand \{\s*--reveal-to: #1c6ea4;\s*\}/);
+    expect(css).toMatch(/\.titleBrand \{\s*--reveal-to: light-dark\(#1c6ea4, var\(--c-ink\)\);\s*\}/);
     expect(css.indexOf('.titleBrand {')).toBeGreaterThan(css.indexOf('.title {'));
   });
 });

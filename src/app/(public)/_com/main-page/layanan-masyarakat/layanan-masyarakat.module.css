@@ -5,12 +5,15 @@
  * kartu → batas pita (--section-pad-y, 50/36px) supaya kartu terbaca milik galeri, bukan melayang.
  * Galeri sudah memberi padding-bottom --section-pad-y + sisa baris kendali di bawah titik, jadi
  * section ini ditarik ke atas dengan margin negatif (padding-top 0; isi tidak menimpa tombol jeda).
- * Kartu putih radius 18px tanpa border, isi 1100px.
+ * Kartu putih radius 18px tanpa border, isi 1100px. Warna dari token global theme-tokens.css (terang = nilai
+ * lama); di tema gelap kartu = --c-tile-alt di atas pita beranda.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet 2×2) dan ≤734px (ponsel: daftar baris gaya iOS).
  */
 .section {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --brand: var(--c-brand);
+  --brand-tint: var(--c-brand-tint);
   --radius: 18px;
   /* Sisa baris kendali galeri di bawah titik slide: (.controls min-height 36px − .dotBar 6px) / 2,
      karena titik di tengah vertikal baris. Ikut berubah bila ukuran itu di gallery.module.css berubah. */
@@ -47,7 +50,7 @@
   padding: 28px;
   border: 0;
   border-radius: var(--radius);
-  background: #fff;
+  background: var(--c-tile-alt);
   color: inherit;
   font: inherit;
   text-align: left;
@@ -135,7 +138,7 @@
     gap: 0;
     overflow: hidden;
     border-radius: var(--radius);
-    background: #fff;
+    background: var(--c-tile-alt);
   }
 
   /* Baris: ikon | judul + deskripsi | chevron. Grid area supaya DOM kartu tetap sama di semua lebar. */
@@ -162,6 +165,10 @@
     left: 70px;
     height: 1px;
     background: #e8e8ed;
+
+    @mixin dark {
+      background: var(--c-line);
+    }
   }
 
   .card:hover {
@@ -171,6 +178,10 @@
 
   .card:active {
     background: #f2f2f7;
+
+    @mixin dark {
+      background: rgba(255, 255, 255, 0.08);
+    }
   }
 
   .card:focus-visible {
@@ -212,7 +223,7 @@
 
   .cardCta {
     grid-area: cta;
-    color: #aeaeb2;
+    color: #aeaeb2; /* tema-tetap: chevron abu netral gaya iOS */
   }
 
   /* Chevron menggantikan label aksi; nama tautan tetap judul + deskripsi.

@@ -1,7 +1,6 @@
 'use client'
 
 import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto'
-import { APBDES_BRAND_VARS } from '../../_com/main-page/apbdes/apbdes.meta'
 import s from '../../_com/main-page/apbdes/apbdes.module.css'
 import { APBDES_TEXT } from '../../_com/main-page/apbdes/apbdes.text'
 import { ApbdesBody } from '../../_com/main-page/apbdes/components/ApbdesBody'
@@ -12,7 +11,7 @@ function Page() {
   const data = useApbdesData()
 
   return (
-    <section className={`${s.section} ${s.page}`} style={APBDES_BRAND_VARS} aria-labelledby="apbdes-page-title">
+    <section className={`${s.section} ${s.page}`} aria-labelledby="apbdes-page-title">
       <div className={s.inner}>
         <div className={s.back}>
           <BackButton />

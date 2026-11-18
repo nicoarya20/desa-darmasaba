@@ -26,14 +26,14 @@
   width: 64px;
   height: 64px;
   border-radius: 10px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   object-fit: cover;
 }
 
 .thumbFallback {
   display: grid;
   place-items: center;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--subtle);
 }
 
@@ -119,7 +119,7 @@
   min-height: 40px;
   padding: 8px 16px;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
   font-size: 15px;
   font-weight: 500;
@@ -217,7 +217,7 @@
   gap: 8px;
   padding: 20px;
   border-radius: 14px;
-  background: #fff;
+  background: var(--c-tile-alt);
 }
 
 .tileTotal {
@@ -258,7 +258,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .call:hover {
-    background: #e8e8ed;
+    background: light-dark(#e8e8ed, #3a3a3c);
   }
 }
 

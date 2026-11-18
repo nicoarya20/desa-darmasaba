@@ -6,6 +6,10 @@
 .mobile {
   --m-bar-h: 48px;
   --m-panel-bg: rgba(251, 251, 253, 0.82);
+
+  @mixin dark {
+    --m-panel-bg: rgba(22, 22, 23, 0.86);
+  }
 }
 
 .bar {
@@ -26,7 +30,7 @@
   background: var(--flyout-bg);
 }
 
-/* Kanan bar: tombol mode baca suara + burger (selalu terlihat, tidak disembunyikan di panel). */
+/* Kanan bar: tombol mode baca suara + tema + burger (selalu terlihat, tidak disembunyikan di panel). */
 .actions {
   display: flex;
   align-items: center;

@@ -37,8 +37,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--m-solid, #1d1d1f);
-  color: var(--m-on-solid, #fff);
+  background: var(--m-solid);
+  color: var(--m-on-solid);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   opacity: 0;
   transform: translateY(6px);
@@ -55,7 +55,7 @@
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--m-accent, #0a4e78);
+  outline: 2px solid var(--m-accent);
   outline-offset: 4px;
   border-radius: 8px;
 }
@@ -70,16 +70,16 @@
 .title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--m-ink, #1d1d1f);
+  color: var(--m-ink);
 }
 
 .card[data-active='true'] .title {
-  color: var(--m-accent, #0a4e78);
+  color: var(--m-accent);
 }
 
 .artist {
   font-size: 15px;
-  color: var(--m-muted, #515154);
+  color: var(--m-muted);
 }
 
 @media (hover: hover) and (pointer: fine) {

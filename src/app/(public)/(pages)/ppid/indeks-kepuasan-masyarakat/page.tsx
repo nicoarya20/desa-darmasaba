@@ -5,7 +5,6 @@ import { KepuasanCharts } from "@/app/(public)/_com/main-page/kepuasan/component
 import { KepuasanEmpty } from "@/app/(public)/_com/main-page/kepuasan/components/KepuasanEmpty";
 import { KepuasanSkeleton } from "@/app/(public)/_com/main-page/kepuasan/components/KepuasanSkeleton";
 import { RespondenFormModal } from "@/app/(public)/_com/main-page/kepuasan/components/RespondenFormModal";
-import { KEPUASAN_BRAND_VARS } from "@/app/(public)/_com/main-page/kepuasan/kepuasan.meta";
 import { KEPUASAN_TEXT } from "@/app/(public)/_com/main-page/kepuasan/kepuasan.text";
 import { useKepuasanData } from "@/app/(public)/_com/main-page/kepuasan/use-kepuasan-data";
 import { useDisclosure } from "@mantine/hooks";
@@ -37,7 +36,7 @@ function Kepuasan() {
   }
 
   return (
-    <PpidPage title={KEPUASAN_TEXT.title} lead={IKM_TEXT.lead} aside={cta} style={KEPUASAN_BRAND_VARS}>
+    <PpidPage title={KEPUASAN_TEXT.title} lead={IKM_TEXT.lead} aside={cta}>
       <div className={s.surface}>{content}</div>
       <RespondenFormModal opened={opened} onClose={close} />
     </PpidPage>

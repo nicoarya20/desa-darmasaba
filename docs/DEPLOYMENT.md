@@ -93,6 +93,10 @@ bun run backfill:file-size   # = bun run prisma/backfill-file-size.ts
 - Idempoten — aman diulang; baris yang sudah terisi tidak disentuh.
 - Objek MinIO yang hilang/error dicatat (`gagal id=<id> (<kode>)`) lalu dilewati; exit code 1 bila ada yang gagal. Baris gagal tetap `NULL` (endpoint ZIP dokumen DAK fallback ke `statObject`).
 
+## Header keamanan HTTP
+
+Aplikasi memasang 6 header keamanan (nosniff, X-Frame-Options SAMEORIGIN, Referrer-Policy, Permissions-Policy, HSTS `max-age=15552000`, CSP longgar) di respons semua route lewat `headers()` di `next.config.ts`; daftar dan alasan tiap nilai ada di `src/con/security-headers.ts`. CSP sengaja hanya `frame-ancestors/object-src/base-uri` (tanpa `script-src`/`img-src`/`frame-src`) karena situs memuat iframe Google Maps & YouTube, tile OpenStreetMap, gambar MinIO, dan HTML rich-text admin. Perubahan header wajib dites di stg dulu (Jenna voice, modal PDF, peta, video) sebelum prod.
+
 ## Docker
 
 Multi-stage build: `oven/bun:1.4.4-debian` (pinned) → builder → runner. The Dockerfile uses `COPY --chmod`, which needs BuildKit (`docker buildx`; CI uses `docker/setup-buildx-action`). The legacy builder fails at the runner stage. `next build` uses Turbopack (Next 16 default) and needs roughly 2.5 GB RAM inside the build container. The runner creates a `nextjs` user (UID 1001), exposes port 3000, and mounts `/app/uploads` as a volume. Entrypoint runs migrations automatically (`bunx prisma migrate deploy`).

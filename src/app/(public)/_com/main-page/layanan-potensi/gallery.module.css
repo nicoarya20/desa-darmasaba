@@ -5,6 +5,8 @@
  * persen di `translate` dari border box-nya. Padding membuat keduanya beda acuan → kartu mengecil
  * dan tidak lagi di tengah. Tanpa padding keduanya = lebar viewport baris.
  * Kartu sengaja tanpa radius (permintaan user).
+ * Tema gelap: kartu foto, gradasi, dan pil putih tetap (di atas foto); yang ikut tema hanya judul,
+ * placeholder, titik progres, dan tombol jeda. Latar pita = latar beranda (page.tsx), bukan section ini.
  */
 .section {
   --ease: cubic-bezier(0.45, 0, 0.15, 1);
@@ -19,6 +21,7 @@
   line-height: 1.08;
   font-weight: 700;
   letter-spacing: -0.015em;
+  color: var(--c-brand);
 }
 
 .rows {
@@ -63,14 +66,14 @@
   aspect-ratio: var(--ratio);
   overflow: hidden;
   border-radius: 0;
-  background: #1d1d1f;
-  color: #fff;
+  background: #1d1d1f; /* tema-tetap: latar kartu foto sebelum gambar dimuat */
+  color: #fff; /* tema-tetap: teks di atas foto + scrim */
   text-decoration: none;
   -webkit-user-drag: none;
 }
 
 .card:focus-visible {
-  outline: 3px solid #0071e3;
+  outline: 3px solid var(--c-focus);
   outline-offset: -3px;
 }
 
@@ -113,8 +116,8 @@
   flex: none;
   padding: 10px 20px;
   border-radius: 980px;
-  background: #fff;
-  color: #1d1d1f;
+  background: #fff; /* tema-tetap: pil di atas foto */
+  color: #1d1d1f; /* tema-tetap: teks pil di atas foto */
   font-size: 17px;
   font-weight: 500;
   white-space: nowrap;
@@ -138,6 +141,10 @@
 
 .placeholder {
   background: #e3e3e6;
+
+  @mixin dark {
+    background: var(--c-placeholder);
+  }
 }
 
 /* Kontrol: 5 titik di tengah (titik aktif = progress bar), tombol jeda di kanan. */
@@ -182,7 +189,7 @@
   height: 6px;
   border-radius: 3px;
   overflow: hidden;
-  background: #86868b;
+  background: #86868b; /* tema-tetap: rel progres abu, isiannya ikut tema */
 }
 
 /* Progress: abu-abu di detik 0, terisi hitam linear selama --cycle-ms. */
@@ -191,6 +198,10 @@
   inset: 0;
   background: #1d1d1f;
   transform-origin: left center;
+
+  @mixin dark {
+    background: var(--c-ink);
+  }
   animation: dotProgress var(--cycle-ms) linear forwards;
 }
 
@@ -219,11 +230,16 @@
   background: rgba(0, 0, 0, 0.07);
   color: #1d1d1f;
   cursor: pointer;
+
+  @mixin dark {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--c-ink);
+  }
 }
 
 .dot:focus-visible,
 .pause:focus-visible {
-  outline: 2px solid #0071e3;
+  outline: 2px solid var(--c-focus);
   outline-offset: 2px;
 }
 

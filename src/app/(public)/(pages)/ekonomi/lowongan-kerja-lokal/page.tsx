@@ -1,7 +1,6 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { Suspense } from 'react';
-import { LOWONGAN_BRAND_VARS } from './_com/lowongan-filter.meta';
 import { LOWONGAN_FILTER_TEXT as T } from './_com/lowongan-filter.text';
 import s from './_com/lowongan-layout.module.css';
 import { LowonganBody } from './_com/LowonganBody';
@@ -17,7 +16,7 @@ function LowonganPage() {
   const { state, retry } = useLowonganData();
 
   return (
-    <div className={s.page} style={LOWONGAN_BRAND_VARS}>
+    <div className={s.page}>
       <div className={s.inner}>
         <KabarListHeader
           title={T.title}

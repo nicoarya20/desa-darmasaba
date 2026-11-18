@@ -3,7 +3,8 @@
  * kolom baca 860px di tengah: kepala (kategori · tanggal, judul), isi HTML dari editor admin, keadaan kosong/galat,
  * foto utama bersudut lancip (Kegiatan Desa, Posyandu, Program Kesehatan, Keamanan Lingkungan), dan kerangka memuat.
  * Bagian khusus tiap halaman (lampiran, info, angka) ada di modul halaman masing-masing.
- * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line, --radius) dari kabar.module.css.
+ * Variabel warna (--brand, --ink, --muted, --subtle, --tile, --line, --radius) dari kabar.module.css; latar foto &
+ * kerangka memuat dari token --c-placeholder. Isi HTML CMS: pasang juga rich-text.module.css `.root` (penetral gelap).
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
 .wrap {
@@ -92,7 +93,7 @@
 .photo {
   margin: 0;
   overflow: hidden;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
 }
 
 .photo a {
@@ -136,7 +137,7 @@
 .bar {
   display: block;
   border-radius: 8px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   animation: pulse 1.4s ease-in-out infinite;
 }
 

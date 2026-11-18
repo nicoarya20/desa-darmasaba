@@ -1,8 +1,6 @@
-import colors from "@/con/colors";
 import { STATUS_PEMBANGUNAN_COLOR, type StatusPembangunan } from "@/lib/kegiatan-pembangunan";
 import { IconCircleCheck, IconClipboardList, IconProgress, type Icon } from "@tabler/icons-react";
 import type { CSSProperties } from "react";
-import { APBDES_BRAND_VARS } from "@/app/(public)/_com/main-page/apbdes/apbdes.meta";
 
 /** Tautan ke halaman realisasi APBDes. */
 export const APBDES_HREF = "/apbdes";
@@ -46,10 +44,4 @@ export function statusVars(key: StatusKey): CSSProperties {
 export const BRAND_ACCENT_VARS = {
   "--accent": "var(--brand)",
   "--tint": "var(--brand-tint)",
-} as CSSProperties;
-
-/** Variabel warna halaman: brand APBDes + tint brand untuk lingkaran ikon. */
-export const MONEV_BRAND_VARS = {
-  ...APBDES_BRAND_VARS,
-  "--brand-tint": colors["blue-button-1"],
 } as CSSProperties;

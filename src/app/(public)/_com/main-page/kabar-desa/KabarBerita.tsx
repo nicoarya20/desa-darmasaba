@@ -1,6 +1,7 @@
 import { Image } from "@mantine/core";
 import { IconNews } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
+import { imageLoadingAttrs } from "../../image-loading.logic";
 import r from "../../link-reveal/link-reveal.module.css";
 import { formatTanggalKabar, splitFeatured, type KabarItem } from "./kabar.logic";
 import { KABAR_BERITA_LIMIT } from "./kabar.meta";
@@ -16,7 +17,8 @@ function Meta({ item }: { item: KabarItem }) {
   );
 }
 
-function Photo({ url }: { url?: string }) {
+/** `aboveFold`: foto kandidat LCP (berita utama halaman daftar) diunduh langsung, bukan lazy. */
+function Photo({ url, aboveFold = false }: { url?: string; aboveFold?: boolean }) {
   if (!url) {
     return (
       <span className={s.photoFallback} aria-hidden>
@@ -24,7 +26,7 @@ function Photo({ url }: { url?: string }) {
       </span>
     );
   }
-  return <Image src={url} alt="" className={s.photoImg} loading="lazy" decoding="async" />;
+  return <Image src={url} alt="" className={s.photoImg} {...imageLoadingAttrs(aboveFold)} decoding="async" />;
 }
 
 type Props = {
@@ -32,7 +34,8 @@ type Props = {
   loading: boolean;
   /**
    * `rail` (beranda): 3 kartu kecil, di ponsel jadi baris geser.
-   * `grid` (halaman daftar berita): kartu kecil membungkus ke baris baru, di ponsel bertumpuk.
+   * `grid` (halaman daftar berita): kartu kecil membungkus ke baris baru, di ponsel bertumpuk; berita utamanya
+   * ada di atas lipatan sehingga fotonya dimuat langsung (bukan lazy).
    */
   layout?: "rail" | "grid";
   /** Jumlah kerangka kartu kecil saat memuat. */
@@ -74,7 +77,7 @@ export function KabarBerita({
     <div className={s.berita}>
       <Link href={featured.href} className={`${s.featured} ${r.trigger}`}>
         <span className={s.featuredPhoto}>
-          <Photo url={featured.imageUrl} />
+          <Photo url={featured.imageUrl} aboveFold={layout === "grid"} />
         </span>
         <span className={s.featuredBody}>
           <Meta item={featured} />

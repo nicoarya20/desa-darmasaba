@@ -1,7 +1,6 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { PengangguranCrossLink } from './PengangguranStates';
 import { SebaranSection } from './SebaranSection';
@@ -22,7 +21,7 @@ export function UsiaKerjaMenganggurPage() {
   const pendidikan = useLoadOnce(loadSebaranPendidikan, 'sebaran pendidikan (Usia Kerja yang Menganggur)');
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.usia.title}
         lead={T.usia.lead}

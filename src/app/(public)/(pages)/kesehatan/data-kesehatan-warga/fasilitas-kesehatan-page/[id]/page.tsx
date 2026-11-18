@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import fasilitasKesehatanState from '@/app/admin/(dashboard)/_state/kesehatan/data_kesehatan_warga/fasilitasKesehatan';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
-import colors from '@/con/colors';
 import { ActionIcon, AspectRatio, Badge, Box, Button, Card, CopyButton, Divider, Grid, Group, Paper, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, ThemeIcon, Title, Tooltip } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconBrandWhatsapp, IconCheck, IconCopy, IconDeviceLandlinePhone, IconHeart, IconInfoCircle, IconMail, IconMapPin, IconMoodEmpty, IconSearch, IconUser } from '@tabler/icons-react';
@@ -65,7 +66,7 @@ function Page() {
 
   if (state.findUnique.loading || !data) {
     return (
-      <Stack bg={colors.Bg} mih="100vh" p="lg" gap="lg">
+      <Stack className={t.tema} bg="var(--c-hero-bg)" mih="100vh" p="lg" gap="lg">
         <Box px={{ base: 'md', md: 100 }}>
           <Skeleton h={32} w={220} />
         </Box>
@@ -90,7 +91,7 @@ function Page() {
   }
 
   return (
-    <Stack bg={colors.Bg} py="xl" gap="xl">
+    <Stack className={t.tema} bg="var(--c-hero-bg)" py="xl" gap="xl">
       <Box px={{ base: 'md', md: 100 }}>
         <Group justify="space-between">
           <Group gap="xs">
@@ -179,7 +180,7 @@ function Page() {
                       fz={{ base: 'sm', md: 'md' }}
                       lh={{ base: 1.6, md: 1.7 }}
                       style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                      dangerouslySetInnerHTML={{ __html: layananUnggulan }}
+                      className={rt.root} dangerouslySetInnerHTML={{ __html: layananUnggulan }}
                     />
                   </Box>
                 ) : (
@@ -285,7 +286,7 @@ function Page() {
                         fz={{ base: 'sm', md: 'md' }}
                         lh={{ base: 1.6, md: 1.7 }}
                         style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                        dangerouslySetInnerHTML={{ __html: fasilitasPendukungHtml }}
+                        className={rt.root} dangerouslySetInnerHTML={{ __html: fasilitasPendukungHtml }}
                       />
                     </Box>
                   ) : (
@@ -364,7 +365,7 @@ function Page() {
                   fz={{ base: 'sm', md: 'md' }}
                   lh={{ base: 1.6, md: 1.7 }}
                   style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
-                  dangerouslySetInnerHTML={{ __html: prosedur }}
+                  className={rt.root} dangerouslySetInnerHTML={{ __html: prosedur }}
                 />
               </Box>
             ) : (

@@ -16,20 +16,29 @@ const OUTER_EDGE = 154;
 const BASE_WIDTH = 180;
 const SAMPLES_PER_CURVE = 24;
 
-/** Dari tepi dalam (kanan-atas) ke luar. `share` = porsi lebar; total 1. Warna diambil dari seragam Perbekel. */
+/**
+ * Dari tepi dalam (kanan-atas) ke luar. `share` = porsi lebar; total 1. Warna (dari seragam Perbekel) bukan di sini:
+ * pita ke-n diisi `var(--ribbon-n)` yang terang/gelapnya dideklarasikan di landing.module.css, supaya ganti tema
+ * cukup lewat CSS (tanpa kedip atau hydration mismatch). Urutan & jumlah di sini harus sama dengan --ribbon-1..11.
+ */
 export const RIBBON_STRIPES = [
-  { color: "#062f49", share: 0.16 },
-  { color: "#0b3d5e", share: 0.04 },
-  { color: "#0a4e78", share: 0.2 },
-  { color: "#2f6f99", share: 0.03 },
-  { color: "#d4a72c", share: 0.03 },
-  { color: "#5f8db3", share: 0.09 },
-  { color: "#7fa6c6", share: 0.12 },
-  { color: "#a9c3da", share: 0.04 },
-  { color: "#ffffff", share: 0.17 },
-  { color: "#c8102e", share: 0.025 },
-  { color: "#bccbe0", share: 0.095 },
+  { share: 0.16 },
+  { share: 0.04 },
+  { share: 0.2 },
+  { share: 0.03 },
+  { share: 0.03 }, // emas
+  { share: 0.09 },
+  { share: 0.12 },
+  { share: 0.04 },
+  { share: 0.17 }, // putih
+  { share: 0.025 }, // merah
+  { share: 0.095 },
 ] as const;
+
+/** Nilai `fill` pita ke-`index` (0 = terdalam): variabel CSS --ribbon-1, --ribbon-2, … di landing.module.css. */
+export function ribbonFill(index: number): string {
+  return `var(--ribbon-${index + 1})`;
+}
 
 /** Lebar relatif sepanjang pita: 1.35× di pangkal (atas), 1× di belakang foto, 0.9× di ujung kanan. */
 export function ribbonScale(u: number): number {
@@ -69,7 +78,7 @@ function sampleCenterline() {
  * Satu path tertutup per pita. Tiap pita digambar dari tepi dalamnya sampai tepi luar seluruh berkas,
  * lalu ditimpa pita berikutnya — tanpa celah sehalus rambut di antara dua pita bersebelahan.
  */
-export function buildRibbonPaths(): { color: string; d: string }[] {
+export function buildRibbonPaths(): { fill: string; d: string }[] {
   const samples = sampleCenterline();
   const edge = (shareFromInner: number) =>
     samples.map(({ x, y, nx, ny, scale }) => {
@@ -79,9 +88,9 @@ export function buildRibbonPaths(): { color: string; d: string }[] {
   const outer = edge(1).reverse().join("L");
 
   let start = 0;
-  return RIBBON_STRIPES.map(({ color, share }) => {
+  return RIBBON_STRIPES.map(({ share }, index) => {
     const d = `M${edge(start).join("L")}L${outer}Z`;
     start += share;
-    return { color, d };
+    return { fill: ribbonFill(index), d };
   });
 }

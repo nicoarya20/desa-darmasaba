@@ -2,11 +2,11 @@ import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackBut
 import colors from '@/con/colors';
 import { Avatar, Box, Divider, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
 import type { ReactNode } from 'react';
+import s from './struktur-detail.module.css';
 import { detailRows, displayName, initialsOf, type StrukturDetailData } from './struktur-person.logic';
 import { STRUKTUR_DETAIL_TEXT as T } from './struktur.text';
 
 const AVATAR_SIZE = 160;
-const avatarBorder = { border: `2px solid ${colors['blue-button']}` };
 
 /** Kerangka halaman profil: tombol kembali lalu kartu putih terpusat. */
 export function StrukturDetailFrame({ children }: { children: ReactNode }) {
@@ -15,7 +15,7 @@ export function StrukturDetailFrame({ children }: { children: ReactNode }) {
       <Group mb="lg">
         <BackButton />
       </Group>
-      <Paper w={{ base: '100%', md: '70%' }} mx="auto" p="xl" radius="lg" shadow="sm" bg="white" style={{ border: '1px solid #eaeaea' }}>
+      <Paper w={{ base: '100%', md: '70%' }} mx="auto" p="xl" radius="lg" shadow="sm" className={s.paper}>
         {children}
       </Paper>
     </Box>
@@ -28,13 +28,13 @@ function DetailPhoto({ data }: { data: StrukturDetailData }) {
   if (link) {
     return (
       <Image src={link} alt={T.photoAlt(data.namaLengkap)} w={AVATAR_SIZE} h={AVATAR_SIZE} radius={AVATAR_SIZE}
-        fit="cover" fallbackSrc="/default-avatar.svg" style={avatarBorder} loading="lazy" />
+        fit="cover" fallbackSrc="/default-avatar.svg" className={s.ring} loading="lazy" />
     );
   }
   return (
-    <Avatar size={AVATAR_SIZE} radius={AVATAR_SIZE} color={colors['blue-button']} variant="light" style={avatarBorder}
+    <Avatar size={AVATAR_SIZE} radius={AVATAR_SIZE} color={colors['blue-button']} variant="light" className={s.ring}
       aria-hidden data-initials>
-      <Text component="span" fz={48} fw={700} c={colors['blue-button']}>{initialsOf(data.namaLengkap)}</Text>
+      <Text component="span" fz={48} fw={700} c="var(--c-brand)">{initialsOf(data.namaLengkap)}</Text>
     </Avatar>
   );
 }
@@ -48,7 +48,7 @@ export function StrukturDetailView({ data, infoTitle }: Props) {
       <Stack align="center" gap="md">
         <DetailPhoto data={data} />
         <Stack align="center" gap={4}>
-          <Title order={1} c={colors['blue-button']} fw={700} fz={{ base: 'xl', md: '28px' }} lh={1.2} ta="center">
+          <Title order={1} c="var(--c-brand)" fw={700} fz={{ base: 'xl', md: '28px' }} lh={1.2} ta="center">
             {displayName(data)}
           </Title>
           {data.posisi?.nama ? (
@@ -77,7 +77,7 @@ type RowProps = { label: string; children: ReactNode; color?: string };
 function InfoRow({ label, children, color }: RowProps) {
   return (
     <div>
-      <Text component="dt" fz={{ base: 'sm', md: 'md' }} fw={600} lh={1.3} c="dark">{label}</Text>
+      <Text component="dt" fz={{ base: 'sm', md: 'md' }} fw={600} lh={1.3} className={s.label}>{label}</Text>
       <Text component="dd" m={0} fz={{ base: 'sm', md: 'md' }} lh={1.5} c={color ?? 'dimmed'}
         style={{ overflowWrap: 'anywhere' }}>
         {children}

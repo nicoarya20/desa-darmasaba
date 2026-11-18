@@ -1,6 +1,4 @@
-import colors from "@/con/colors";
 import type { CSSProperties } from "react";
-import { APBDES_BRAND_VARS } from "@/app/(public)/_com/main-page/apbdes/apbdes.meta";
 
 /** Konstanta halaman Posyandu: rute, tab, ambang privasi, batas muat. */
 
@@ -36,15 +34,13 @@ export const POSYANDU_LIST_LIMIT = 100;
 /** Permintaan statistik per banjar yang berjalan bersamaan (tiap permintaan = 7 query DB). */
 export const BANJAR_STATS_CONCURRENCY = 4;
 
-/** Variabel `--accent`/`--tint` per kartu ringkasan (warna netral, bukan penilaian baik/buruk). */
+/**
+ * Variabel `--accent` (ikon/dekorasi), `--accent-text` (teks, ≥4,5:1) dan `--tint` per kartu ringkasan (warna netral, bukan penilaian baik/buruk).
+ * Memakai palet kategori APBDes (`--apbdes-*`, dideklarasikan light-dark di .section/.card apbdes.module.css), jadi
+ * ikut tema: brand = --c-brand/--c-brand-tint, teal & oranye = Mantine -7/-0 di terang, -4 + tint redup di gelap.
+ */
 export const ACCENT = {
-  brand: { "--accent": colors["blue-button"], "--tint": colors["blue-button-1"] } as CSSProperties,
-  teal: { "--accent": "var(--mantine-color-teal-7)", "--tint": "var(--mantine-color-teal-0)" } as CSSProperties,
-  orange: { "--accent": "var(--mantine-color-orange-7)", "--tint": "var(--mantine-color-orange-0)" } as CSSProperties,
+  brand: { "--accent": "var(--apbdes-belanja-accent)", "--accent-text": "var(--apbdes-belanja-text)", "--tint": "var(--apbdes-belanja-tint)" } as CSSProperties,
+  teal: { "--accent": "var(--apbdes-pendapatan-accent)", "--accent-text": "var(--apbdes-pendapatan-text)", "--tint": "var(--apbdes-pendapatan-tint)" } as CSSProperties,
+  orange: { "--accent": "var(--apbdes-pembiayaan-accent)", "--accent-text": "var(--apbdes-pembiayaan-text)", "--tint": "var(--apbdes-pembiayaan-tint)" } as CSSProperties,
 };
-
-/** Variabel warna halaman: brand APBDes + tint brand. */
-export const POSYANDU_BRAND_VARS = {
-  ...APBDES_BRAND_VARS,
-  "--brand-tint": colors["blue-button-1"],
-} as CSSProperties;

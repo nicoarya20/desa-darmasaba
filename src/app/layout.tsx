@@ -3,15 +3,15 @@ import "./globals.css"; // Sisanya import di globals.css
 
 import LoadDataFirstClient from "@/app/(public)/_com/LoadDataFirstClient";
 import { GATE_SPLASH_HEAD_SCRIPT } from "@/app/(public)/_com/splash/gate-splash.session";
+import { SiteMantineProvider } from "@/app/_com/SiteMantineProvider";
 import { MusicProvider } from "@/app/context/MusicContext";
-import { SITE_URL } from "@/lib/site-url";
 import {
-  ColorSchemeScript,
-  MantineProvider,
-  createTheme,
-  mantineHtmlProps,
-  v8CssVariablesResolver,
-} from "@mantine/core";
+  COLOR_SCHEME_SCOPE_HEAD_SCRIPT,
+  DEFAULT_COLOR_SCHEME,
+  THEME_COLOR_VIEWPORT,
+} from "@/lib/color-scheme-scope";
+import { SITE_URL } from "@/lib/site-url";
+import { ColorSchemeScript, createTheme, mantineHtmlProps } from "@mantine/core";
 import { Metadata, Viewport } from "next";
 import { ViewTransitions } from "next-view-transitions";
 import { ToastContainer } from "react-toastify";
@@ -21,6 +21,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  themeColor: THEME_COLOR_VIEWPORT,
 };
 
 
@@ -81,7 +82,6 @@ export const metadata: Metadata = {
   category: "government",
   other: {
     "msapplication-TileColor": "#ffffff",
-    "theme-color": "#ffffff",
   },
 };
 
@@ -114,19 +114,17 @@ export default function RootLayout({
     <html lang="id" {...mantineHtmlProps}>
       <head>
         <meta charSet="utf-8" />
-        <ColorSchemeScript defaultColorScheme="light" />
+        {/* Tema gelap hanya untuk situs publik; default "auto" = ikuti OS bila belum memilih (docs/DESIGN.md §2.5). */}
+        <ColorSchemeScript defaultColorScheme={DEFAULT_COLOR_SCHEME} />
+        {/* Wajib tepat setelah ColorSchemeScript: admin/akun dipaksa terang sebelum paint (src/lib/color-scheme-scope.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: COLOR_SCHEME_SCOPE_HEAD_SCRIPT }} />
         {/* Putuskan splash beranda sebelum paint (lihat gate-splash.session.ts); di root layout agar tak dirender ulang saat navigasi. */}
         <script dangerouslySetInnerHTML={{ __html: GATE_SPLASH_HEAD_SCRIPT }} />
       </head>
       <body>
         <ViewTransitions>
           <MusicProvider>
-            {/* v8CssVariablesResolver: pertahankan warna varian light/outline v8 selama migrasi Mantine 9 */}
-            <MantineProvider
-              theme={theme}
-              defaultColorScheme="light"
-              cssVariablesResolver={v8CssVariablesResolver}
-            >
+            <SiteMantineProvider theme={theme}>
               {children}
               <LoadDataFirstClient />
               <ToastContainer
@@ -134,7 +132,7 @@ export default function RootLayout({
                 hideProgressBar
                 style={{ zIndex: 9999 }}
               />
-            </MantineProvider>
+            </SiteMantineProvider>
           </MusicProvider>
         </ViewTransitions>
       </body>

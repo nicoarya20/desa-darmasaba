@@ -1,6 +1,7 @@
 'use client'
 import infoWabahPenyakit from '@/app/admin/(dashboard)/_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
-import colors from '@/con/colors';
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Box, Button, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack } from '@tabler/icons-react';
@@ -28,13 +29,13 @@ function DetailInfoWabahPenyakitUser() {
   const data = state.findUnique.data;
 
   return (
-    <Box py={10} px={{ base: 'md', md: 100 }}>
+    <Box className={t.tema} py={10} px={{ base: 'md', md: 100 }}>
       {/* Tombol Back */}
       <Box>
         <Button
           variant="subtle"
           onClick={() => router.back()}
-          leftSection={<IconArrowBack size={22} color={colors['blue-button']} />}
+          leftSection={<IconArrowBack size={22} color="var(--c-brand)" />}
           mb={15}
         >
           Kembali
@@ -45,7 +46,7 @@ function DetailInfoWabahPenyakitUser() {
       <Paper
         withBorder
         w="100%"
-        bg={colors['white-1']}
+        bg="var(--kt-panel)"
         p="lg"
         radius="md"
         shadow="sm"
@@ -55,7 +56,7 @@ function DetailInfoWabahPenyakitUser() {
           <Title
             order={1}
             fw="bold"
-            c={colors['blue-button']}
+            c="var(--c-brand)"
             ta="center"
           >
             {data.name || 'Kontak Darurat'}
@@ -83,9 +84,9 @@ function DetailInfoWabahPenyakitUser() {
               <Text
                 fz={{ base: 'sm', md: 'md' }}
                 lh={{ base: '1.5', md: '1.6' }}
-                c="dark"
+                c="var(--kt-ink-dark)"
                 ta="justify"
-                dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }}
+                className={rt.root} dangerouslySetInnerHTML={{ __html: data.deskripsiLengkap || '-' }}
                 style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               />
             </Box>

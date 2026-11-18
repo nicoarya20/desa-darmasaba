@@ -6,7 +6,6 @@ import { useMemo } from "react";
 import frame from "../../_com/page-frame/page-frame.module.css";
 import { PpidHeader } from "../../../ppid/_com/PpidHeader";
 import { summarizeDataPendidikan, type DataPendidikanSummary } from "./data-pendidikan.logic";
-import { DATA_PENDIDIKAN_BRAND_VARS } from "./data-pendidikan.meta";
 import s from "./data-pendidikan.module.css";
 import { loadDataPendidikan } from "./data-pendidikan.source";
 import { DATA_PENDIDIKAN_TEXT as T } from "./data-pendidikan.text";
@@ -19,7 +18,7 @@ export function DataPendidikanPage() {
   const summary = useMemo(() => (state.status === "ready" ? summarizeDataPendidikan(state.data) : null), [state]);
 
   return (
-    <section className={`${frame.frame} ${s.page}`} style={DATA_PENDIDIKAN_BRAND_VARS} aria-label={T.pageTitle}>
+    <section className={`${frame.frame} ${s.page}`} aria-label={T.pageTitle}>
       <div className={frame.inner}>
         <div className={s.back}>
           <BackButton />

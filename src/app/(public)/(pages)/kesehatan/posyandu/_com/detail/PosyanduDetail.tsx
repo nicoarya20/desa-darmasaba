@@ -2,8 +2,8 @@
 import BackButton from "@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto";
 import d from "@/app/(public)/_com/kabar-list/kabar-detail.module.css";
 import r from "@/app/(public)/_com/link-reveal/link-reveal.module.css";
-import { KABAR_BRAND_VARS } from "@/app/(public)/_com/main-page/kabar-desa/kabar.meta";
 import kabar from "@/app/(public)/_com/main-page/kabar-desa/kabar.module.css";
+import rt from "@/app/(public)/_com/rich-text/rich-text.module.css";
 import { jadwalToLines, jadwalToText } from "@/lib/jadwal-pelayanan";
 import { Image } from "@mantine/core";
 import GaleriFoto from "@/app/(public)/_com/konten-bersama/galeri-foto.grid";
@@ -21,7 +21,7 @@ export function PosyanduDetail({ id }: { id: string }) {
   const state = usePosyanduDetail(id);
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === "loading" || undefined}>
+    <article className={kabar.section} aria-busy={state.status === "loading" || undefined}>
       <div className={d.wrap}>
         <BackButton />
         {state.status === "loading" ? <DetailPlaceholder /> : null}
@@ -92,7 +92,7 @@ export function PosyanduDetailBody({ data }: { data: PosyanduItem }) {
             {T.tentang}
           </h2>
           {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
-          <div className={d.content} dangerouslySetInnerHTML={{ __html: deskripsi }} />
+          <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: deskripsi }} />
         </section>
       ) : null}
 

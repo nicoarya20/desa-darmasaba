@@ -1,4 +1,5 @@
 'use client';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
 import { IconArrowUpRight } from '@tabler/icons-react';
@@ -44,7 +45,7 @@ function PelayananPerizinanBerusaha() {
         <span className={s.cardPlaceholder} aria-hidden />
       ) : data?.deskripsi ? (
         // HTML dari editor admin (sumber tepercaya, pola sama dengan bagian lain halaman ini).
-        <div className={s.richText} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
+        <div className={`${s.richText} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.deskripsi }} />
       ) : (
         <p className={page.empty}>{T.empty}</p>
       )}

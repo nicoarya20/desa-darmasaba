@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import { PpidPage } from '../_com/PpidPage'
 import { PpidSectionsSkeleton } from '../_com/PpidSectionsSkeleton'
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css'
 import s from '../_com/ppid-sections.module.css'
 import { DasarHukumList } from './_com/DasarHukumList'
 import { parseDasarHukumItems } from './_com/dasar-hukum.logic'
@@ -32,11 +33,11 @@ export default function Page() {
     content = (
       <div className={s.sections}>
         <section className={s.section} aria-labelledby="ppid-dasar-hukum">
-          <h2 id="ppid-dasar-hukum" className={s.sectionLabel} dangerouslySetInnerHTML={{ __html: data.judul }} />
+          <h2 id="ppid-dasar-hukum" className={`${s.sectionLabel} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.judul }} />
           {items ? (
             <DasarHukumList items={items} />
           ) : (
-            <div className={s.body} dangerouslySetInnerHTML={{ __html: data.content }} />
+            <div className={`${s.body} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.content }} />
           )}
         </section>
       </div>

@@ -28,6 +28,7 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { useState } from 'react';
+import s from './fixed-player-bar.module.css';
 
 export default function FixedPlayerBar() {
   const {
@@ -88,7 +89,8 @@ export default function FixedPlayerBar() {
       <>
         {/* Floating Music Icon - Shows when player is minimized */}
         <Button
-          color="#0B4F78"
+          className={s.fab}
+          color="var(--player-fab)"
           variant="filled"
           size="md"
           mt="md"
@@ -134,10 +136,8 @@ export default function FixedPlayerBar() {
         right={0}
         p="sm"
         shadow="lg"
-        style={{
-          zIndex: 1,
-          borderTop: '1px solid rgba(0,0,0,0.1)',
-        }}
+        className={s.bar}
+        style={{ zIndex: 1 }}
       >
         <Flex align="center" gap="md" justify="space-between">
           {/* Song Info - Left */}

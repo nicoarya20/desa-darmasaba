@@ -19,6 +19,7 @@ import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -108,7 +109,9 @@ describe('ProgramDetailBody', () => {
     expect(html).toContain(`<h1 class="${d.title}">Kegiatan 3</h1>`);
     expect(html).toContain(`<p class="${ds.lead}">Ringkasan 3</p>`);
     expect(html).toContain('href="/api/img/k3.webp" target="_blank"');
-    expect(html).toContain(`class="${d.content}"><p>Isi kegiatan</p>`);
+    // Wadah isi HTML: kelas konten + penetral rich text (rt.root, dark theme); toleran kelas tambahan.
+    const isiClass = html.match(/class="([^"]+)"><p>Isi kegiatan<\/p>/)?.[1].split(' ');
+    expect(isiClass).toEqual(expect.arrayContaining([d.content, rt.root]));
     expect(html).not.toContain('data-program-indikator');
     expect(html).not.toContain('Admin Desa');
   });

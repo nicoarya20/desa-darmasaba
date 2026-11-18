@@ -2,7 +2,6 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
@@ -33,7 +32,7 @@ export function LaporanPublikPage() {
   const state = useLaporanList({ page, limit: LAPORAN_PAGE_LIMIT, search }, reloadToken);
 
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

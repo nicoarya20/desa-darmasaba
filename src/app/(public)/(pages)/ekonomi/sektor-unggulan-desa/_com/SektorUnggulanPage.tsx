@@ -1,7 +1,6 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { PotensiLink } from './PotensiLink';
 import { SektorUnggulanContent } from './SektorUnggulanContent';
@@ -18,7 +17,7 @@ const noSearch = () => {};
 export function SektorUnggulanPage() {
   const state = useLoadOnce(loadSektorUnggulan, 'sektor unggulan (Sektor Unggulan Desa)');
   return (
-    <div className={kabar.section} style={KABAR_BRAND_VARS}>
+    <div className={kabar.section}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

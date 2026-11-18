@@ -31,7 +31,7 @@
   width: 1px;
   height: 10px;
   margin-inline: 9px;
-  background: rgb(243 242 236 / 50%);
+  background: rgb(243 242 236 / 50%); /* tema-tetap: pemisah di atas footer bergradasi gelap (dua tema) */
 }
 
 @media (max-width: 734px) {

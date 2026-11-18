@@ -22,6 +22,7 @@ import sd from '@/app/(public)/(pages)/ekonomi/kesejahteraan-masyarakat/_com/det
 import terkait from '@/app/(public)/(pages)/ekonomi/_com/terkait/terkait.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 
 const render = (node: React.ReactElement) =>
@@ -126,7 +127,9 @@ describe('KesejahteraanDetailBody', () => {
     );
     expect(html).toContain(`<h1 class="${d.title}">Program 1</h1>`);
     expect(html).toContain('<p>Ringkasan &amp; bantuan 1</p>');
-    expect(html).toContain(`<div class="${d.content}"><p>Isi 1</p></div>`);
+    // Wadah isi boleh memuat kelas tambahan; wajib d.content + penetral rich text rt.root (dark theme).
+    const isi = html.match(/<div class="([^"]*)"><p>Isi 1<\/p><\/div>/);
+    expect(isi?.[1].split(' ')).toEqual(expect.arrayContaining([d.content, rt.root]));
     expect(html).not.toContain('<time');
     expect(html).not.toContain('Deskripsi Program');
   });

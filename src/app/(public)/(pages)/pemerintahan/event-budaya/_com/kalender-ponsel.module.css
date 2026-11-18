@@ -1,7 +1,8 @@
 /*
  * Kalender ringkas + daftar acara per hari untuk ponsel (≤734px; disembunyikan di layar lebih besar oleh
  * `.mobileOnly` di kalender.module.css). Variabel warna (--ink, --muted, --line, --brand, --sunday) dari `.page`;
- * warna kategori (--ev, --ev-bg, --ev-ink) dari style inline tiap acara.
+ * warna kategori (--ev, --ev-bg, --ev-ink) dari style inline tiap acara; di gelap latar & tinta kategori
+ * diturunkan dari --ev (sama dengan blok acara kalender.module.css).
  */
 .mini {
   padding: 8px 12px 12px;
@@ -64,12 +65,12 @@ button.miniDay {
 }
 
 .miniDay[data-luar] .miniNum {
-  color: #c7c7cc;
+  color: var(--day-outside);
 }
 
 .miniDay[data-hari-ini] .miniNum {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .miniDots {
@@ -137,8 +138,8 @@ button.miniDay {
 }
 
 .groupDate[data-hari-ini] .groupNum {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .groupItems {
@@ -159,17 +160,28 @@ button.miniDay {
   border-radius: 10px;
   background: var(--ev-bg);
   color: var(--ink);
+
+  @mixin dark {
+    background: color-mix(in srgb, var(--ev) 24%, var(--c-bg));
+  }
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
 
+/* Acara lewat: redup lewat latar & garis yang dipucatkan, BUKAN opacity (opacity menurunkan kontras teks di bawah 4,5:1). */
 .card[data-lewat] {
-  opacity: 0.6;
+  border-left-color: color-mix(in srgb, var(--ev) 55%, var(--c-bg));
+  background: color-mix(in srgb, var(--ev-bg) 60%, var(--c-bg));
+  color: var(--muted);
 }
 
 .cardKategori {
   color: var(--ev-ink);
+
+  @mixin dark {
+    color: color-mix(in srgb, var(--ev) 40%, var(--c-ink));
+  }
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.05em;

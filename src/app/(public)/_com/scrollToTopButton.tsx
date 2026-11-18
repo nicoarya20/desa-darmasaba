@@ -2,7 +2,6 @@
 import { useWindowScroll } from '@mantine/hooks';
 import { ActionIcon, Transition } from '@mantine/core';
 import { IconArrowUp } from '@tabler/icons-react';
-import colors from '@/con/colors';
 
 function ScrollToTopButton() {
   const [scroll, scrollTo] = useWindowScroll();
@@ -20,7 +19,7 @@ function ScrollToTopButton() {
           size="xl"
           radius="xl"
           variant="filled"
-          color={colors['blue-button']}
+          color="var(--c-brand-fill)" // terang = colors['blue-button']; gelap ikut token
           onClick={() => scrollTo({ y: 0 })}
           pos="fixed"
           bottom={24}

@@ -1,7 +1,7 @@
 /*
  * Rel pil Dashboard Kependudukan: sticky tepat di bawah navbar tetap (desktop 44px, bar ponsel 48px di bawah
  * breakpoint md Mantine 62em), selebar layar (keluar dari --gutter kerangka Kabar), pil gaya KabarListHeader.
- * Variabel warna (--brand, --ink, --tile) dari kabar.module.css.
+ * Variabel warna (--brand, --ink, --tile) dari kabar.module.css; kaca rel & pil aktif ikut tema (light-dark / token).
  */
 .rail {
   position: sticky;
@@ -10,9 +10,10 @@
   /* -12px: pil sejajar 28px di bawah kepala; isi 40px di bawah pil */
   margin: -12px calc(var(--gutter) * -1) 28px;
   padding: 12px var(--gutter);
-  background: rgba(255, 255, 255, 0.92);
+  /* Kaca di atas latar section (--c-bg): putih 92% terang, hitam 80% gelap. */
+  background: light-dark(rgba(255, 255, 255, 0.92), rgba(0, 0, 0, 0.8));
   backdrop-filter: saturate(180%) blur(20px);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 0 light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.1));
 }
 
 .list {
@@ -45,8 +46,8 @@
 }
 
 .pill[aria-current="location"] {
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
 }
 
 .pill:focus-visible {
@@ -56,7 +57,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .pill:not([aria-current="location"]):hover {
-    background: #e8e8ed;
+    background: var(--placeholder);
   }
 }
 

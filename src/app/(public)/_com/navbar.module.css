@@ -1,7 +1,8 @@
 /*
  * Navbar desktop gaya apple.com: bar tipis, flyout yang membuka smooth,
  * teks submenu reveal bertahap, dan konten halaman di-blur saat terbuka.
- * Warna tetap tema terang + biru brand (#0A4E78 = colors["blue-button"]).
+ * Warna terang = nilai lama; tema gelap lewat token --c-* (src/app/theme-tokens.css) dan
+ * `@mixin dark` (postcss-preset-mantine) untuk nilai kaca yang tidak punya token.
  *
  * PENTING: tulis `backdrop-filter` TANPA baris `-webkit-backdrop-filter`.
  * Lightning CSS (Turbopack, Next 16) menggabungkan keduanya menjadi hanya versi
@@ -13,12 +14,21 @@
   --nav-bg: rgba(251, 251, 253, 0.8);
   --flyout-bg: #fbfbfd;
   --nav-text: rgba(29, 29, 31, 0.8);
-  --nav-text-strong: #1d1d1f;
-  --nav-text-muted: #6e6e73;
-  --nav-accent: #0a4e78;
+  --nav-text-strong: var(--c-ink);
+  --nav-text-muted: var(--c-muted);
+  --nav-accent: var(--c-brand);
+  --nav-overlay: rgba(232, 236, 242, 0.35);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --flyout-duration: 320ms;
+
+  /* Kaca gelap gaya apple.com (#161617 = --c-bg-alt); teks/aksen ikut token di atas. */
+  @mixin dark {
+    --nav-bg: rgba(22, 22, 23, 0.8);
+    --flyout-bg: #161617;
+    --nav-text: rgba(245, 245, 247, 0.8);
+    --nav-overlay: rgba(0, 0, 0, 0.45);
+  }
 }
 
 /* ---------- Bar ---------- */
@@ -104,12 +114,23 @@
   border-radius: 50%;
 }
 
-/* Tombol mode baca suara: lingkaran ikon; saat aktif terisi biru brand agar statusnya terlihat. */
-.speechToggle {
+/* Tombol ikon navbar (mode baca suara, tema terang/gelap): lingkaran ikon.
+   Baca suara saat aktif terisi biru brand agar statusnya terlihat. */
+.speechToggle,
+.iconToggle {
   padding: 0 4px;
 }
 
-.speechIcon {
+/* ≤1099px: ikon tema menambah 1 butir; rapatkan tombol ikon agar ikon admin (bila ada) tetap muat. */
+@media (max-width: 1099.98px) {
+  .speechToggle:has(+ .iconToggle),
+  .iconToggle {
+    padding: 0 2px;
+  }
+}
+
+.speechIcon,
+.toggleIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -122,8 +143,17 @@
 }
 
 .speechToggle[aria-pressed="true"] .speechIcon {
-  background: var(--nav-accent);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
+}
+
+/* Tooltip ikon navbar (portal ke body, jadi kelasnya dipasang per Tooltip lewat classNames).
+   Terang = bawaan Mantine; gelap = ubin token, bukan tooltip terang bawaan Mantine. */
+.tooltip {
+  @mixin dark {
+    --tooltip-bg: var(--c-tile-alt);
+    --tooltip-color: var(--c-ink);
+  }
 }
 
 /* ---------- Flyout ---------- */
@@ -225,7 +255,7 @@
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: rgba(232, 236, 242, 0.35);
+  background: var(--nav-overlay);
   backdrop-filter: blur(18px);
   opacity: 0;
   visibility: hidden;

@@ -4,7 +4,7 @@ import { Link } from "next-view-transitions";
 import r from "../../link-reveal/link-reveal.module.css";
 import { KabarBerita } from "./KabarBerita";
 import { KabarPengumuman } from "./KabarPengumuman";
-import { BERITA_LIST_HREF, KABAR_BRAND_VARS } from "./kabar.meta";
+import { BERITA_LIST_HREF } from "./kabar.meta";
 import s from "./kabar.module.css";
 import { KABAR_TEXT } from "./kabar.text";
 import { useKabarData } from "./use-kabar-data";
@@ -17,7 +17,7 @@ function KabarDesa() {
   const empty = !loading && berita.length === 0 && pengumuman.length === 0;
 
   return (
-    <section className={s.section} style={KABAR_BRAND_VARS} aria-labelledby={TITLE_ID}>
+    <section className={s.section} aria-labelledby={TITLE_ID}>
       <header className={s.header}>
         <h2 id={TITLE_ID} className={s.title}>
           {KABAR_TEXT.title}

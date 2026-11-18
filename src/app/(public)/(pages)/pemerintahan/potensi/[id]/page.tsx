@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
-import colors from '@/con/colors';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Box, Center, Container, Image, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconMoodSad } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
@@ -61,14 +61,14 @@ function Page() {
   }
 
   return (
-    <Stack pos="relative" bg={colors.Bg} py="xl" gap="xl" px={{ base: 'md', md: 0 }}>
+    <Stack pos="relative" bg="var(--c-hero-bg)" py="xl" gap="xl" px={{ base: 'md', md: 0 }}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
       <Container w={{ base: '100%', md: '60%' }}>
         <Paper radius="2xl" shadow="lg" p="xl" withBorder>
           <Stack gap="lg" align="center">
-            <Title order={1} ta="center" c={colors['blue-button']} fw={800}>
+            <Title order={1} ta="center" c="var(--c-brand)" fw={800}>
               {state.findUnique.data?.name}
             </Title>
             <Text ta="center" fw={600} fz={{ base: 'md', md: 'lg' }} c="dimmed">
@@ -98,6 +98,7 @@ function Page() {
               fz={{ base: 'sm', md: 'md' }}
               ta="justify"
               lh={{ base: 1.6, md: 1.8 }}
+              className={rt.root}
               dangerouslySetInnerHTML={{
                 __html: state.findUnique.data?.content || 'Belum ada deskripsi untuk potensi desa ini.',
               }}

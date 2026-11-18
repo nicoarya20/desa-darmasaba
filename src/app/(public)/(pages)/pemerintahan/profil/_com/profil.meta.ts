@@ -1,4 +1,3 @@
-import colors from '@/con/colors';
 import type { CSSProperties } from 'react';
 import { STRUKTUR_VARS } from '@/app/(public)/_com/struktur-organisasi/struktur.meta';
 
@@ -30,5 +29,8 @@ export const KANTOR_MAP_EMBED_URL =
 export const strukturPerangkatHref = (pegawaiId: string) =>
   `/pemerintahan/profil/struktur-perangkat-desa/${pegawaiId}`;
 
-/** Variabel CSS halaman: latar kartu terang (dibaca kartu Profil & Visi Misi) + gradasi kartu bagan. */
-export const PROFIL_VARS = { '--vm-card': colors['white-trans-1'], ...STRUKTUR_VARS } as CSSProperties;
+/**
+ * Variabel CSS halaman: gradasi kartu bagan. Latar kartu (`--vm-card`) & brand ikut tema, jadi diset di
+ * `.sections` profil.module.css, bukan inline.
+ */
+export const PROFIL_VARS = { ...STRUKTUR_VARS } as CSSProperties;

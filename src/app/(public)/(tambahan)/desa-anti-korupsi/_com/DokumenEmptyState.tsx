@@ -22,13 +22,13 @@ export function DokumenEmptyState({ children, subteks, aksi }: Props) {
         w={64}
         h={64}
         mb={4}
-        bg={colors['blue-button-1']}
+        bg="var(--c-brand-tint)"
         style={{ borderRadius: '50%' }}
         aria-hidden
       >
         <IconInbox size={30} stroke={1.4} color={colors['blue-button-4']} />
       </Flex>
-      <Text fz="md" fw={600} c={colors['blue-button-7']} ta="center">
+      <Text fz="md" fw={600} c="var(--ak-tinta-judul)" ta="center">
         {children}
       </Text>
       {subteks && (

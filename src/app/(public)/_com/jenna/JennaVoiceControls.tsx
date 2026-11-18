@@ -1,4 +1,3 @@
-import colors from "@/con/colors";
 import { Box, Button, CloseButton, Group, Loader, Progress, Stack, Text } from "@mantine/core";
 import { IconMicrophone, IconPlayerStopFilled } from "@tabler/icons-react";
 import type { VoiceBeat, VoiceStatus } from "./voice/voice-logic";
@@ -15,10 +14,10 @@ export function JennaVoiceNotice({ text, onClose }: { text: string; onClose: () 
       wrap="nowrap"
       align="flex-start"
       role="status"
-      bg="var(--mantine-color-yellow-0)"
-      style={{ borderTop: `1px solid ${colors.grey[2]}` }}
+      bg="var(--jenna-notice)"
+      style={{ borderTop: "1px solid var(--jenna-line)" }}
     >
-      <Text fz="xs" c="gray.9" style={{ flex: 1 }}>
+      <Text fz="xs" c="var(--jenna-text-1)" style={{ flex: 1 }}>
         {text}
       </Text>
       <CloseButton size="sm" aria-label={VOICE_COPY.dismiss} onClick={onClose} />
@@ -43,17 +42,17 @@ export function JennaVoiceControls({ assistantName, status, transcript, micLevel
   const statusText = VOICE_COPY.status[status].replace("{name}", assistantName);
 
   return (
-    <Box p="sm" bg="white" style={{ borderTop: `1px solid ${colors.grey[2]}` }}>
+    <Box p="sm" bg="var(--jenna-surface)" style={{ borderTop: "1px solid var(--jenna-line)" }}>
       <Group gap="sm" wrap="nowrap" align="center">
         <IconMicrophone
           size={20}
-          color={status === "listening" ? colors["blue-button"] : "var(--mantine-color-gray-7)"}
+          color={status === "listening" ? "var(--c-brand)" : "var(--jenna-text-3)"}
           aria-hidden="true"
         />
         <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
           <Group gap={6} wrap="nowrap">
-            {status === "connecting" && <Loader size="xs" type="dots" color={colors["blue-button"]} aria-hidden="true" />}
-            <Text fz="sm" fw={600} c="gray.9" aria-live="polite" truncate>
+            {status === "connecting" && <Loader size="xs" type="dots" color="var(--c-brand)" aria-hidden="true" />}
+            <Text fz="sm" fw={600} c="var(--jenna-text-1)" aria-live="polite" truncate>
               {statusText}
             </Text>
           </Group>
@@ -61,12 +60,12 @@ export function JennaVoiceControls({ assistantName, status, transcript, micLevel
             value={micLevel * 100}
             size="xs"
             radius="xl"
-            color={colors["blue-button"]}
+            color="var(--c-brand)"
             aria-label={VOICE_COPY.micLevel}
             transitionDuration={80}
           />
           {live && (
-            <Text fz="xs" c="gray.7">
+            <Text fz="xs" c="var(--jenna-text-3)">
               {VOICE_COPY.sessionLeft.replace("{waktu}", formatClock(sessionSecondsLeft(live)))} ·{" "}
               {VOICE_COPY.todayLeft.replace("{menit}", formatMinutesLeft(live.remainingTodaySeconds))}
             </Text>
@@ -86,7 +85,7 @@ export function JennaVoiceControls({ assistantName, status, transcript, micLevel
         </Button>
       </Group>
       {transcript && (
-        <Text fz="xs" fs="italic" c="gray.7" mt={4} lineClamp={2}>
+        <Text fz="xs" fs="italic" c="var(--jenna-text-3)" mt={4} lineClamp={2}>
           {transcript}
         </Text>
       )}

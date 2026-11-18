@@ -4,7 +4,7 @@ import { KabarDetailPlaceholder } from '@/app/(public)/_com/kabar-list/KabarDeta
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import { useKabarDetail } from '@/app/(public)/_com/kabar-list/use-kabar-detail';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { inovasiKategoriLabel, isInovasiKategori } from '@/lib/inovasi-teknologi/kategori';
 import { formatTanggalTerbit } from '@/lib/tanggal-terbit';
@@ -20,7 +20,7 @@ export function InovasiDetail({ id }: { id: string }) {
   const state = useKabarDetail(id, loadInovasiDetail, 'inovasi teknologi desa');
 
   return (
-    <article className={kabar.section} style={KABAR_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
         <BackButton />
         {state.status === 'loading' ? <KabarDetailPlaceholder label={T.loading} /> : null}
@@ -71,7 +71,7 @@ export function InovasiDetailBody({ data }: { data: InovasiApiItem }) {
       ) : null}
 
       {/* Isi dari editor admin (HTML tepercaya), sama seperti halaman Desa Digital sebelumnya. */}
-      {data.deskripsi ? <div className={d.content} dangerouslySetInnerHTML={{ __html: data.deskripsi }} /> : null}
+      {data.deskripsi ? <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.deskripsi }} /> : null}
     </>
   );
 }

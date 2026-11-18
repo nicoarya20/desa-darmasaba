@@ -1,6 +1,5 @@
 'use client';
 import laporanPublikState from '@/app/admin/(dashboard)/_state/keamanan/laporan-publik';
-import colors from '@/con/colors';
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
 import { Button, Input, Modal, TextInput } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
@@ -121,7 +120,7 @@ export function LaporanForm({ opened, onClose, onSubmitted }: Props) {
           <Button variant="default" radius="xl" size="md" onClick={onClose}>
             {T.cancel}
           </Button>
-          <Button radius="xl" size="md" color={colors['blue-button']} loading={state.create.loading} onClick={submit}>
+          <Button radius="xl" size="md" color="var(--c-brand-fill)" loading={state.create.loading} onClick={submit}>
             {T.submit}
           </Button>
         </div>

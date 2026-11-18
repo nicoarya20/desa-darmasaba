@@ -9,7 +9,7 @@
 .thumb,
 .line {
   display: block;
-  background: var(--m-elev, #f0f0f2);
+  background: var(--m-elev);
   animation: pulse 1.4s ease-in-out infinite;
 }
 

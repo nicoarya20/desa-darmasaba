@@ -40,7 +40,8 @@
   stroke-width: 1.5;
 }
 
-/* Kotak logo putih (Program Inovasi): logo utuh di tengah, rasio tetap agar baris ubin rata. */
+/* Kotak logo putih (Program Inovasi): logo utuh di tengah, rasio tetap agar baris ubin rata.
+   Gelap: pelat logo pihak ketiga #d9e1ea (logo berlatar transparan dirancang untuk latar terang). */
 .logo {
   display: flex;
   align-items: center;
@@ -49,7 +50,7 @@
   margin-bottom: 8px;
   padding: 16px;
   border-radius: calc(var(--radius) - 8px);
-  background: #fff;
+  background: light-dark(#fff, #d9e1ea);
 }
 
 .logoImg {

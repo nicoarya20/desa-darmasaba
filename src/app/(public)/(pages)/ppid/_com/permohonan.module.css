@@ -4,9 +4,12 @@
  * Breakpoint 2 kolom ditulis literal 75em (= lg tema Mantine); $mantine-breakpoint-lg postcss bernilai 80em.
  */
 .layout {
-  --permohonan-ink: #1d1d1f;
-  --permohonan-muted: #515154;
-  --permohonan-line: #8ba8c1;
+  --permohonan-ink: var(--c-ink);
+  --permohonan-muted: var(--c-ink-2);
+  /* Garis penghubung nomor alur: biru-abu di terang, biru redup (pita hero gelap) di gelap. */
+  --permohonan-line: light-dark(#8ba8c1, #3d5a78);
+  /* Kartu formulir: putih di terang, ubin --c-tile di gelap. */
+  --permohonan-card: light-dark(#fff, var(--c-tile));
   /* Navbar desktop 44px + jarak 32px. */
   --permohonan-sticky-top: calc(44px + 32px);
   display: grid;
@@ -97,7 +100,7 @@
   gap: 20px;
   padding: 32px;
   border-radius: 18px;
-  background: #fff;
+  background: var(--permohonan-card);
 }
 
 .cardTitle {
@@ -111,6 +114,15 @@
 .actions {
   display: flex;
   padding-top: 4px;
+}
+
+/* Tombol Kirim tetap berlatar --c-brand-fill saat nonaktif (prop bg). Teks nonaktif bawaan Mantine gelap (#98989d)
+   cuma 1,9:1 di atas isi brand gelap #1c6ea4, padahal terang (#adb5bd di #0a4e78) ±4,2:1. Gelap: putih 70% = 3,6:1,
+   tetap beda jelas dari aktif (putih penuh 5,4:1). Terang tidak disentuh (bawaan Mantine). */
+.submit:is(:disabled, [data-disabled]) {
+  @mixin dark {
+    color: rgb(255 255 255 / 70%);
+  }
 }
 
 /* Area tulis editor alasan: cukup tinggi untuk beberapa kalimat sebelum mulai mengetik. */

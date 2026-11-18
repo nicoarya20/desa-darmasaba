@@ -27,7 +27,7 @@
 
 /* ---------- Alur bernomor: desktop rel horizontal (kolom = jumlah langkah, --steps) ---------- */
 .steps {
-  --rail: #d2d2d7;
+  --rail: var(--c-line-strong);
   display: grid;
   grid-template-columns: repeat(var(--steps, 5), minmax(0, 1fr));
   gap: 0 24px;

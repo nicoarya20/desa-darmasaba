@@ -1,6 +1,7 @@
 'use client'
 import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penanganan-darurat/penangananDarurat'
-import colors from '@/con/colors'
+import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import {
   Box,
   Button,
@@ -43,7 +44,7 @@ function Page() {
   }
 
   return (
-    <Stack bg={colors.Bg} py="xl" gap="xl" pos="relative">
+    <Stack className={t.tema} bg="var(--c-hero-bg)" py="xl" gap="xl" pos="relative">
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>
@@ -52,7 +53,7 @@ function Page() {
         <GridCol span={{ base: 12, md: 9 }}>
           <Title 
             order={1}
-            c={colors['blue-button']} 
+            c="var(--c-brand)" 
             fw={800} 
             lh={{ base: 1.3, md: 1.2 }}
           >
@@ -84,7 +85,7 @@ function Page() {
         {data.length === 0 ? (
           <Center py={100}>
             <Stack align="center" gap="xs">
-              <Title order={2} fw={600} c={colors['blue-button']}>
+              <Title order={2} fw={600} c="var(--c-brand)">
                 Tidak ada data ditemukan
               </Title>
               <Text fz={{ base: 'xs', md: 'sm' }}>
@@ -106,7 +107,7 @@ function Page() {
                 p="md"
                 shadow="sm"
                 withBorder
-                bg={colors['white-trans-1']}
+                bg="var(--kt-glass)"
                 style={{
                   transition: 'all 0.3s ease',
                   transform: 'translateY(0)',
@@ -141,7 +142,7 @@ function Page() {
                     <Title
                       order={3}
                       fw={700}
-                      c={colors['blue-button']}
+                      c="var(--c-brand)"
                       ta="center"
                       lineClamp={2}
                       fz={{ base: 'sm', md: 'lg' }}
@@ -154,7 +155,7 @@ function Page() {
                         fz={{ base: 'xs', md: 'md' }}
                         lh={{ base: 1.5, md: 1.5 }}
                         lineClamp={3}
-                        dangerouslySetInnerHTML={{ __html: v.deskripsi }}
+                        className={rt.root} dangerouslySetInnerHTML={{ __html: v.deskripsi }}
                         style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                       />
                     </Box>
@@ -163,7 +164,7 @@ function Page() {
                       size="md"
                       component="a"
                       href={`/kesehatan/penanganan-darurat/${v.id}`}
-                      bg={colors['blue-button']}
+                      bg="var(--c-brand-fill)"
                       c="white"
                     >
                       Lihat Detail
@@ -185,9 +186,9 @@ function Page() {
           radius="xl"
           styles={{
             control: {
-              border: `1px solid ${colors['blue-button']}`,
+              border: '1px solid var(--c-brand)',
               transition: 'all 0.3s ease',
-              '&:hover': { backgroundColor: colors['blue-button'], color: 'white' },
+              '&:hover': { backgroundColor: 'var(--c-brand-fill)', color: 'white' },
             },
           }}
         />

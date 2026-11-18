@@ -5,15 +5,33 @@
  * foto Perbekel besar di kanan setinggi hero. Tanpa gerak otomatis: situs pemerintah harus tenang.
  * Isi selebar layar dengan jarak tepi --edge-gutter (globals.css), sejajar tepi kiri-kanan Kabar Desa di bawahnya.
  * Breakpoint mengikuti section beranda lain: ≤1068px (tablet) dan ≤734px (mobile).
+ * Warna: alias token --c-* (theme-tokens.css). Nilai khusus hero yang beda dari token ditulis light-dark(terang, gelap)
+ * (postcss-preset-mantine), jadi tema terang tetap persis seperti sebelum dark theme.
  */
 .section {
-  --ink: #1d1d1f;
-  --muted: #4d5b6b;
-  --brand: #0a4e78;
-  --brand-dark: #062f49;
-  --tile: #fff;
-  --open: #1f9d55;
-  --closed: #d9363e;
+  --ink: var(--c-ink);
+  --muted: light-dark(#4d5b6b, var(--c-muted));
+  --brand: var(--c-brand);
+  --brand-dark: light-dark(#062f49, var(--c-ink));
+  /* Ubin di atas latar hero (logo, status, media sosial, program): putih di terang, biru malam di gelap. */
+  --tile: light-dark(#fff, #1a2532);
+  --open: var(--c-open);
+  --closed: var(--c-closed);
+  --skeleton: light-dark(rgb(255 255 255 / 45%), rgb(255 255 255 / 8%));
+  --shadow-tint: light-dark(rgb(6 47 73 / 10%), rgb(0 0 0 / 40%));
+  /* Pita latar (HeroRibbons, dalam → luar, urutan = RIBBON_STRIPES). Gelap: navy dalam diangkat agar tak hilang ke
+     latar, pita pucat luar jadi biru baja agar tak keperakan (varian B "Biru tegas", pilihan user), emas & merah tetap. */
+  --ribbon-1: light-dark(#062f49, #0d3a5a);
+  --ribbon-2: light-dark(#0b3d5e, #124a72);
+  --ribbon-3: light-dark(#0a4e78, #1a5f8f);
+  --ribbon-4: light-dark(#2f6f99, #2f78a8);
+  --ribbon-5: light-dark(#d4a72c, #d4a72c);
+  --ribbon-6: light-dark(#5f8db3, #3f6b92);
+  --ribbon-7: light-dark(#7fa6c6, #4f7194);
+  --ribbon-8: light-dark(#a9c3da, #3d5a78);
+  --ribbon-9: light-dark(#ffffff, #d9e1ea);
+  --ribbon-10: light-dark(#c8102e, #c8102e);
+  --ribbon-11: light-dark(#bccbe0, #2b4560);
   --gutter: var(--edge-gutter);
   /* Tinggi foto ikut lebar DAN tinggi layar, supaya seluruh hero tetap masuk layar pertama di laptop. */
   --photo-h: clamp(340px, min(38vw, 66vh), 700px);
@@ -26,7 +44,7 @@
   column-gap: 32px;
   position: relative;
   overflow: hidden;
-  background: #d1d9e8;
+  background: var(--c-hero-bg);
   padding: 28px var(--gutter) 44px;
   color: var(--ink);
 }
@@ -174,9 +192,11 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: var(--tile);
+  /* Ikon media sosial dari admin bisa hitam (TikTok): di tema gelap tetap di atas pelat terang, diredam ke
+     #D9E1EA (= pita putih gelap --ribbon-9) agar tidak silau. */
+  background: light-dark(var(--tile), #d9e1ea);
   border-radius: 50%;
-  color: var(--brand);
+  color: light-dark(var(--brand), #0a4e78);
   font-weight: 700;
   text-decoration: none;
   transition: transform 200ms ease;
@@ -208,7 +228,7 @@
 
 .photoSkeleton {
   border-radius: 24px;
-  background: rgb(255 255 255 / 45%);
+  background: var(--skeleton);
 }
 
 /* Lebar mengikuti nama: minimal 460px, melebar untuk nama panjang sampai selebar kolom foto;
@@ -223,9 +243,10 @@
   max-width: 100%;
   margin-top: -32px;
   padding: 14px 22px;
-  background: rgb(255 255 255 / 96%);
+  /* Gelap: solid (= --tile), potongan bawah foto (seragam putih) tembus lewat alpha di latar gelap. */
+  background: light-dark(rgb(255 255 255 / 96%), var(--tile));
   border-radius: 18px;
-  box-shadow: 0 4px 16px rgb(6 47 73 / 10%);
+  box-shadow: 0 4px 16px var(--shadow-tint);
 }
 
 .profileNoPhoto {

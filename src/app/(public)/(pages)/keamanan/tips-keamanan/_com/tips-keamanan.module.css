@@ -1,6 +1,6 @@
 /*
  * Tips Keamanan — ubin tips di atas kerangka Kabar (`.section` kabar.module.css + kepala kabar-list).
- * Ubin #f5f5f7 bersudut lancip senada kartu Keamanan Lingkungan; desktop 2 kolom (2fr foto/judul | 3fr isi),
+ * Ubin --tile bersudut lancip senada kartu Keamanan Lingkungan; desktop 2 kolom (2fr foto/judul | 3fr isi),
  * isi butir HTML dibaca langsung. Variabel warna (--brand, --ink, --muted, --tile) dari kabar.module.css.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
  */
@@ -42,7 +42,7 @@
   min-height: 320px;
   margin: 0;
   overflow: hidden;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
 }
 
 .photoImg {

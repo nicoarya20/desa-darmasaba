@@ -4,6 +4,7 @@ import { paginate } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { IconMapper } from '@/app/admin/(dashboard)/_com/iconMap';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -78,7 +79,7 @@ export function ProgramKemiskinanRow({ item }: { item: ProgramKemiskinan }) {
           <IconChevronRight className={r.chevron} size={16} stroke={2} />
         </Link>
       </div>
-      {item.html ? <div className={rows.prose} dangerouslySetInnerHTML={{ __html: item.html }} /> : null}
+      {item.html ? <div className={`${rows.prose} ${rt.root}`} dangerouslySetInnerHTML={{ __html: item.html }} /> : null}
     </li>
   );
 }

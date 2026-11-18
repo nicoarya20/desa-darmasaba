@@ -3,15 +3,19 @@
  * latar putih, satu panel #f5f5f7 radius 18px tanpa border/bayangan berisi grup per kategori
  * ala halaman spesifikasi apple.com (nama kategori kiri, butir bernomor kanan, garis tipis pemisah).
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ * Warna = alias token global theme-tokens.css (terang = nilai lama), dipakai beranda dan /desa-anti-korupsi
+ * (keduanya ikut tema gelap). Tombol isi pakai --c-brand-fill.
  */
 .section {
-  --ink: #1d1d1f;
-  --muted: #6e6e73;
-  --subtle: #86868b;
-  --tile: #f5f5f7;
-  --line: rgba(0, 0, 0, 0.08);
+  --ink: var(--c-ink);
+  --muted: var(--c-muted);
+  --subtle: var(--c-subtle);
+  --tile: var(--c-tile);
+  --line: var(--c-line);
+  --brand: var(--c-brand);
+  --brand-hover: var(--c-brand-hover);
   --radius: 18px;
-  background: #fff;
+  background: var(--c-bg);
   padding: var(--section-pad-y) 16px;
   color: var(--ink);
 }
@@ -182,7 +186,7 @@
 .badge {
   padding: 2px 10px;
   border-radius: 980px;
-  background: #fff;
+  background: var(--c-tile-alt);
   color: var(--brand);
   font-weight: 600;
 }
@@ -225,7 +229,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .itemLink:hover {
-    background: #fff;
+    background: var(--c-tile-alt);
   }
 
   .itemLink:hover .itemLinkText,
@@ -266,7 +270,7 @@
   height: 22px;
   margin: 20px 0;
   border-radius: 6px;
-  background: #e8e8ed;
+  background: var(--c-placeholder);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
@@ -301,8 +305,8 @@
   gap: 4px;
   padding: 12px 22px;
   border-radius: 980px;
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font-size: 17px;
   font-weight: 500;
   text-decoration: none;
@@ -316,7 +320,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .ctaLink:hover {
-    background: var(--brand-hover);
+    background: var(--c-brand-fill-hover);
   }
 }
 

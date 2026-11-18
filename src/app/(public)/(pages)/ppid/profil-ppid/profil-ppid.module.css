@@ -2,6 +2,11 @@
    Kartu foto ikut turun saat halaman di-scroll pada layout 2 kolom, sehingga
    kolom kanan (Biografi, Riwayat, Organisasi, Program — panjangnya tergantung isi
    CMS) tidak menyisakan ruang kosong di sisi mana pun. */
+/* Kerangka halaman (juga keadaan muat/galat): kartu kaca putih 50% terang, putih 6% gelap (keluarga kartu Profil Desa). */
+.page {
+  --profil-kaca: light-dark(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.06));
+}
+
 .photoColumn {
   /* 44px = tinggi navbar desktop (--nav-h di _com/navbar.module.css) + jarak 32px. */
   --profil-photo-sticky-top: calc(44px + 32px);

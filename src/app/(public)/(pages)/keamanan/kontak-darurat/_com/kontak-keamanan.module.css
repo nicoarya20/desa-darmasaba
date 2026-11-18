@@ -1,7 +1,7 @@
 /*
  * Kontak Darurat Keamanan: kelompok per kategori (judul berikon + panel baris dari modul bersama
  * _com/kontak-darurat/kontak-darurat.module.css). Variabel --ink/--tile/--brand dari layanan.module.css .page
- * dan KONTAK_BRAND_VARS. Breakpoint mengikuti apple.com: ≤734px (mobile).
+ * (alias token --c-*, ikut tema). Breakpoint mengikuti apple.com: ≤734px (mobile).
  */
 .groups {
   display: flex;

@@ -1,4 +1,5 @@
 import { waktuBiayaLabel, type WaktuBiayaValue } from '@/lib/pelayanan-waktu-biaya';
+import colors from '@/con/colors';
 import { Badge } from '@mantine/core';
 import { IconCash, IconClock } from '@tabler/icons-react';
 
@@ -16,7 +17,8 @@ function LayananWaktuBiayaBadge({ estimasiWaktu, biaya, onDark = false }: Layana
   return (
     <Badge
       variant={onDark ? 'white' : 'light'}
-      color={onDark ? 'dark' : 'blue'}
+      // Biru brand (bukan 'blue' bawaan Mantine #228be6 yang hanya 3,2:1 di latar badge) agar teks lulus WCAG AA.
+      color={onDark ? 'dark' : colors['blue-button']}
       size="lg"
       radius="xl"
       tt="none"

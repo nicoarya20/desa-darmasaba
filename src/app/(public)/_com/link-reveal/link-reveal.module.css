@@ -7,8 +7,9 @@
  * - `.trigger` : elemen yang di-hover/difokus (kartu, baris, atau tautan itu sendiri).
  * - `.title`   : span INLINE di dalam judul. Judul 2 baris disapu baris 1 lalu baris 2
  *                (box-decoration-break: slice = potongan baris dianggap satu pita).
- * - `.titleBrand` : tambahan `.title` bila warna diam sudah brand #0A4E78 (mis. breadcrumb DAK): sapu ke #1C6EA4,
- *                tanpa tebal (aman untuk elipsis lineClamp).
+ * - `.titleBrand` : tambahan `.title` bila warna diam sudah brand (mis. breadcrumb DAK): sapu ke biru yang lebih
+ *                terang (#1C6EA4 terang / --c-ink gelap), tanpa tebal (aman untuk elipsis lineClamp).
+ * Warna target ikut tema: terang = nilai lama (identik piksel), gelap lewat token (theme-tokens.css).
  * - `.cta`     : label tautan aksi; wajib `data-text` = teks yang sama. Salinan tebal tak terlihat
  *                (::after, visibility hidden → tidak dibaca pembaca layar) mencadangkan lebar versi
  *                tebal, jadi chevron tidak bergeser saat label menebal.
@@ -31,20 +32,22 @@
   transition: background-position var(--reveal-duration) var(--reveal-ease);
 }
 
-/* Judul kartu/baris: warna diam ikut komponen → blue-button (colors.ts). */
+/* Judul kartu/baris: warna diam ikut komponen → brand (#0A4E78 terang, #6CB4E4 gelap). */
 .title {
-  --reveal-to: #0a4e78;
+  --reveal-to: var(--c-brand);
 }
 
-/* Warna diam sudah brand (= target .title): sapu ke biru CTA. Harus setelah .title (spesifisitas sama). */
+/* Warna diam sudah brand (= target .title): sapu ke biru CTA. Harus setelah .title (spesifisitas sama).
+   Gelap: #1C6EA4 hanya ±3:1 di latar gelap, dan --c-brand-hover (#8AC1E3) cuma ±1,2:1 terhadap brand #6CB4E4
+   sehingga sapuan nyaris tak terlihat; pakai --c-ink (putih, ±2:1 terhadap brand) seperti .cta. */
 .titleBrand {
-  --reveal-to: #1c6ea4;
+  --reveal-to: light-dark(#1c6ea4, var(--c-ink));
 }
 
 /* Label aksi: diam brand (dari komponen) → #1C6EA4 (biru atas gradasi footer; lebih terang dari brand,
-   kontras ±5:1 di #f5f5f7) + tebal. */
+   kontras ±5:1 di #f5f5f7) + tebal. Gelap: --c-ink, alasan sama dengan .titleBrand (audit 2026-11-18). */
 .cta {
-  --reveal-to: #1c6ea4;
+  --reveal-to: light-dark(#1c6ea4, var(--c-ink));
   display: inline-flex;
   flex-direction: column;
   transition:

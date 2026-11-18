@@ -4,6 +4,7 @@ import { useId } from 'react';
 import { parsePlainListItems } from '../../_com/cms-list.logic';
 import shared from '../../_com/ppid-sections.module.css';
 import s from './visi-misi.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 
 /** Lambang desa di kepala kartu. */
 const LOGO_SRC = '/darmasaba-icon.png';
@@ -54,7 +55,7 @@ export function VisiMisiContent({ visi, misi, labels, moto }: Props) {
       <section className={s.section} aria-labelledby={`${id}-visi`}>
         {moto ? null : logo}
         <h2 id={`${id}-visi`} className={s.title}>{labels.visi}</h2>
-        <div className={s.visiText} dangerouslySetInnerHTML={{ __html: visi }} />
+        <div className={`${s.visiText} ${rt.root}`} dangerouslySetInnerHTML={{ __html: visi }} />
       </section>
 
       <Ornament />
@@ -73,7 +74,7 @@ export function VisiMisiContent({ visi, misi, labels, moto }: Props) {
           </ol>
         ) : (
           <div className={`${shared.sections} ${s.misiRich}`}>
-            <div className={shared.body} dangerouslySetInnerHTML={{ __html: misi }} />
+            <div className={`${shared.body} ${rt.root}`} dangerouslySetInnerHTML={{ __html: misi }} />
           </div>
         )}
       </section>

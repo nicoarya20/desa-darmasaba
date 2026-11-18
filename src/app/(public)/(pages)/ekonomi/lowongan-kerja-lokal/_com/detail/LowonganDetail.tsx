@@ -3,7 +3,6 @@ import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackBut
 import { IconBriefcase, IconUserSearch } from '@tabler/icons-react';
 import { useId, useState } from 'react';
 import l from '../lowongan-layout.module.css';
-import { LOWONGAN_BRAND_VARS } from '../lowongan-filter.meta';
 import { DetailHeader } from './DetailHeader';
 import { DetailSection } from './DetailSection';
 import { DetailStatus } from './DetailStatus';
@@ -24,7 +23,7 @@ export function LowonganDetail({ id }: { id: string }) {
   const { state, reload } = useLowonganDetail(id);
 
   return (
-    <div className={l.page} style={LOWONGAN_BRAND_VARS} aria-busy={state.status === 'loading' || undefined}>
+    <div className={l.page} aria-busy={state.status === 'loading' || undefined}>
       <div className={s.inner}>
         <div className={s.back}>
           <BackButton />

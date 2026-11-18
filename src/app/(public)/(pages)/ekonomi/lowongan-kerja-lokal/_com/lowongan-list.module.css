@@ -18,9 +18,9 @@
 /* ---------- Kerangka ---------- */
 .skeleton {
   padding: 28px;
-  border: 1px solid var(--line, #d2d2d7);
+  border: 1px solid var(--c-line-strong);
   border-radius: 20px;
-  background: #fff;
+  background: var(--c-bg);
 }
 
 .skeletonHead {
@@ -32,7 +32,7 @@
 .skeletonLogo,
 .skeletonLine,
 .skeletonPill {
-  background: var(--tile, #f5f5f7);
+  background: var(--c-tile);
   animation: pulse 1.4s ease-in-out infinite;
 }
 

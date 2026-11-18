@@ -2,7 +2,7 @@
 import { IconChevronRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { AntiKorupsiGroups } from "./AntiKorupsiGroups";
-import { ANTIKORUPSI_BRAND_VARS, ANTIKORUPSI_DETAIL_HREF } from "./desaantikorupsi.meta";
+import { ANTIKORUPSI_DETAIL_HREF } from "./desaantikorupsi.meta";
 import s from "./desaantikorupsi.module.css";
 import { ANTIKORUPSI_TEXT } from "./desaantikorupsi.text";
 import { useAntiKorupsiData } from "./use-antikorupsi-data";
@@ -15,7 +15,7 @@ function DesaAntiKorupsi() {
   const empty = !loading && groups.length === 0;
 
   return (
-    <section className={s.section} style={ANTIKORUPSI_BRAND_VARS} aria-labelledby={TITLE_ID}>
+    <section className={s.section} aria-labelledby={TITLE_ID}>
       <div className={s.inner}>
         <header className={s.header}>
           <h2 id={TITLE_ID} className={s.title}>

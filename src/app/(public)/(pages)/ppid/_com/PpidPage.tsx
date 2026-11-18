@@ -1,4 +1,3 @@
-import colors from '@/con/colors';
 import { Box, Stack, VisuallyHidden } from '@mantine/core';
 import type { CSSProperties, ReactNode } from 'react';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
@@ -10,8 +9,8 @@ import { PpidHeader } from './PpidHeader';
  */
 const PPID_MEASURE = '75rem';
 
-/** Variabel yang dibaca CSS module halaman PPID: warna brand dan lebar baca (`--ppid-measure`). */
-const PPID_VARS = { '--brand': colors['blue-button'], '--ppid-measure': PPID_MEASURE } as CSSProperties;
+/** Variabel yang dibaca CSS module halaman PPID: warna brand (token, ikut tema) dan lebar baca (`--ppid-measure`). */
+const PPID_VARS = { '--brand': 'var(--c-brand)', '--ppid-measure': PPID_MEASURE } as CSSProperties;
 
 type Props = {
   title: string;
@@ -29,7 +28,7 @@ type Props = {
 export function PpidPage({ title, lead, aside, headerHidden, style, children }: Props) {
   const header = <PpidHeader title={title} lead={lead} aside={aside} />;
   return (
-    <Stack bg={colors.Bg} py="xl" gap={48} mih="100vh" style={{ ...PPID_VARS, ...style }}>
+    <Stack bg="var(--c-hero-bg)" py="xl" gap={48} mih="100vh" style={{ ...PPID_VARS, ...style }}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>

@@ -1,4 +1,3 @@
-import colors from '@/con/colors';
 import { formatUkuran } from '@/lib/desa-anti-korupsi-sort';
 import type { FolderGroupView } from '@/lib/desa-anti-korupsi-view';
 import { Badge, Text } from '@mantine/core';
@@ -33,7 +32,7 @@ export function FolderList({ programId, groups, urut }: Props) {
                 <IconFolder size={24} stroke={1.6} />
               </span>
               <span className={classes.isi}>
-                <Text span fw={600} fz="md" lh={1.35} lineClamp={1} title={g.nama} c={colors['blue-button-7']}>
+                <Text span fw={600} fz="md" lh={1.35} lineClamp={1} title={g.nama} c="var(--ak-tinta-judul)">
                   {g.nama}
                 </Text>
                 <Text span fz="xs" c="dimmed">
@@ -43,11 +42,11 @@ export function FolderList({ programId, groups, urut }: Props) {
                   {tanggal && <span data-testid="tanggal-folder"> · Diperbarui {tanggal}</span>}
                 </Text>
                 {cuplikan.judul.length > 0 && (
-                  <Text span fz="xs" c="gray.7" lineClamp={1} data-testid="cuplikan-folder" title={cuplikan.judul.join(', ')}>
+                  <Text span fz="xs" c="var(--ak-cuplikan)" lineClamp={1} data-testid="cuplikan-folder" title={cuplikan.judul.join(', ')}>
                     {cuplikan.judul.join(' · ')}
                     {cuplikan.sisa > 0 && ' '}
                     {cuplikan.sisa > 0 && (
-                      <Text span fz="xs" c={colors['blue-button']} fw={500} data-testid="cuplikan-sisa">
+                      <Text span fz="xs" c="var(--c-brand)" fw={500} data-testid="cuplikan-sisa">
                         +{cuplikan.sisa} lainnya
                       </Text>
                     )}

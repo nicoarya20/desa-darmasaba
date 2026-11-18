@@ -24,8 +24,8 @@
   width: 64px;
   height: 64px;
   border-radius: 18px;
-  background: var(--brand);
-  color: #fff;
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
   font-size: 28px;
   line-height: 1;
   font-weight: 700;

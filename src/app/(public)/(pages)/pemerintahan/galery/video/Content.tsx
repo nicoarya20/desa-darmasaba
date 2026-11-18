@@ -1,7 +1,7 @@
 'use client';
 
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
-import colors from '@/con/colors';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import {
   Box,
   Button,
@@ -77,7 +77,7 @@ export default function VideoContent() {
               mb={50}
               p="md"
               radius={26}
-              bg={colors['white-trans-1']}
+              bg="var(--galery-card)"
               w="100%"
             >
               <Center>
@@ -109,7 +109,7 @@ export default function VideoContent() {
                 {/* Judul Video: Subsection (H3) */}
                 <Title
                   order={3}
-                  c="dark"
+                  c="var(--c-ink)"
                   ta="left"
                   lh={1.3}
                   style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
@@ -125,13 +125,13 @@ export default function VideoContent() {
                   style={{ wordBreak: 'break-word' }}
                   lineClamp={3}
                 >
-                  <span dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
+                  <span className={rt.root} dangerouslySetInnerHTML={{ __html: v.deskripsi }} />
                 </Text>
 
                 <Group justify="right">
                   <Button
                     onClick={() => router.push(`/pemerintahan/galery/video/${v.id}`)}
-                    bg={colors['blue-button']}
+                    bg="var(--c-brand-fill)"
                     fz={{ base: 'sm', md: 'md' }}
                   >
                     Detail

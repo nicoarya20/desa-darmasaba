@@ -1,12 +1,12 @@
-import colors from "@/con/colors";
 import { BarChart } from "@mantine/charts";
 import { APBDES_TEXT } from "../apbdes.text";
 import { formatRupiah, formatRupiahCompact, type CategorySummary } from "../apbdes.logic";
 import s from "../apbdes.module.css";
 
+/** Warna seri dari variabel --apbdes-chart-* (apbdes.module.css, turunan token grafik --c-chart-n), ikut tema. */
 const SERIES = [
-  { name: "pagu", label: APBDES_TEXT.pagu, color: colors["blue-button-3"] },
-  { name: "realisasi", label: APBDES_TEXT.realisasi, color: colors["blue-button"] },
+  { name: "pagu", label: APBDES_TEXT.pagu, color: "var(--apbdes-chart-pagu)" },
+  { name: "realisasi", label: APBDES_TEXT.realisasi, color: "var(--apbdes-chart-realisasi)" },
 ];
 
 /** Grafik batang pagu vs realisasi per kategori; sumbu ringkas (Jt/M/T), tooltip Rupiah penuh. */

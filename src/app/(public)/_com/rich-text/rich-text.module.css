@@ -1,0 +1,33 @@
+/*
+ * Penetral warna rich text CMS (HTML dari editor admin / tempelan Word & Google Docs) untuk tema gelap.
+ * Pasang `.root` di wadah `dangerouslySetInnerHTML` bersama kelas tipografi wadahnya:
+ *   <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html }} />
+ * Tema terang TIDAK disentuh (semua aturan di bawah @mixin dark), jadi warna inline tampil seperti sebelumnya.
+ * Di gelap: `color` inline → warisan wadah (wadah sudah memakai --c-ink/--c-muted), tautan → --c-brand,
+ * latar inline (`background-color`, `bgcolor`) → transparan, <mark> → sorotan redup.
+ * Selektor `color` sengaja tidak mencocokkan `background-color` / `border-color` (prefiks `-`).
+ * !important wajib: satu-satunya cara CSS mengalahkan atribut style inline.
+ */
+.root {
+  @mixin dark {
+    & :is([style^='color' i], [style*=';color' i], [style*='; color' i], font[color]) {
+      color: inherit !important;
+    }
+
+    & a:is([style^='color' i], [style*=';color' i], [style*='; color' i]) {
+      color: var(--c-brand) !important;
+    }
+
+    & :is([style*='background' i], [bgcolor]) {
+      background-color: transparent !important;
+    }
+
+    /* mark[style] menang atas dua aturan di atas (spesifisitas lebih tinggi, ditulis terakhir). */
+    & mark,
+    & mark[style] {
+      /* Amber redup: --c-ink di atasnya 7,8:1; kuning bawaan browser terlalu silau di latar hitam. */
+      background-color: #5c4b00 !important;
+      color: var(--c-ink) !important;
+    }
+  }
+}

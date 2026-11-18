@@ -9,4 +9,14 @@ export const LAYANAN_DETAIL_TEXT = {
   alurLabel: "Lihat gambar alur pelayanan ukuran penuh",
   closingTitle: "Sudah menyiapkan persyaratan?",
   closingText: "Ajukan permohonan secara online dengan mengisi formulir.",
+  waInfo: "Setelah formulir tersimpan, tindak lanjut dilakukan lewat WhatsApp Petugas Layanan Desa.",
+  tersimpanTitle: "Permohonan tersimpan",
+  tersimpanText:
+    "Permohonan Anda sudah kami terima. Lanjutkan lewat WhatsApp ke Petugas Layanan Desa untuk proses selanjutnya.",
+  lanjutWa: "Lanjutkan ke WhatsApp",
+  tutup: "Tutup",
+  waKategoriDefault: "surat keterangan",
+  /** Pesan awal WhatsApp: hanya nama & jenis surat, tanpa NIK/nomor KK/alamat (privasi warga). */
+  waPesan: (nama: string, kategori: string) =>
+    `Halo, saya ${nama} ingin mengajukan ${kategori} melalui website Desa Darmasaba.`,
 } as const;

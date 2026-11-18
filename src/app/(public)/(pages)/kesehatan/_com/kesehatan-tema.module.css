@@ -1,0 +1,26 @@
+/*
+ * Variabel warna halaman Kesehatan bergaya lama (komponen Mantine di atas latar biru `colors.Bg`): Data Kesehatan
+ * Warga (+ artikel, fasilitas, jadwal, grafik), Info Wabah Penyakit, Penanganan Darurat. Komponen Mantine menerimanya
+ * lewat prop, mis. `bg="var(--kt-glass)"`, karena prop warna Mantine = style inline yang mengalahkan CSS.
+ * Pasang `.tema` di elemen akar tiap halaman/komponen (komponen daftar Data Kesehatan Warga juga dirender sendiri
+ * sebagai rute). Terang = nilai `src/con/colors.ts` / bawaan lama (identik piksel); gelap = palet A (docs/DESIGN.md §2.5).
+ */
+.tema {
+  /* colors['white-trans-1']: panel kaca di atas latar biru. Gelap: putih tipis di atas --c-hero-bg. */
+  --kt-glass: light-dark(rgb(255 255 255 / 50%), rgb(255 255 255 / 6%));
+  /* colors['white-1']: panel detail. */
+  --kt-panel: light-dark(#fbfbfc, var(--c-tile));
+  /* colors['white-1'] sebagai teks/ikon di atas kepala biru & kotak info (sama di dua tema). */
+  --kt-on-fill: #fbfbfc; /* tema-tetap: teks/ikon di atas kepala biru dan kotak info */
+  /* colors['blue-button-trans']: kotak info berteks putih. Gelap: --c-brand-fill (teks putih 5,5:1). */
+  --kt-info: light-dark(#628ec6, var(--c-brand-fill));
+  /* Gradasi kartu Fasilitas Kesehatan. */
+  --kt-card-from: light-dark(#fdfdfd, var(--c-tile));
+  --kt-card-to: light-dark(#f7faff, var(--c-tile));
+  /* Pengganti c="dark": terang tetap dark-text Mantine; gelap dark-text = dark-4 (tinta gelap di latar gelap). */
+  --kt-ink-dark: light-dark(var(--mantine-color-dark-text), var(--c-ink));
+  /* Grafik recharts: tick bawaan #666, tooltip bawaan putih bergaris #ccc. */
+  --kt-tick: light-dark(#666, var(--c-muted));
+  --kt-tooltip-bg: light-dark(#fff, var(--c-tile-alt));
+  --kt-tooltip-line: light-dark(#ccc, var(--c-line-strong));
+}

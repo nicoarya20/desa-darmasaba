@@ -17,14 +17,17 @@ export const KALENDER_LAJUR_MAKS = 3;
 /** Titik kategori maksimal per hari di kalender ringkas ponsel. */
 export const KALENDER_TITIK_MAKS = 3;
 
+/** Porsi hitam (CSS `color-mix`) yang dicampur ke shade 9 Mantine untuk tinta teks acara. */
+export const EV_INK_HITAM = '25%';
+
 /**
  * Variabel warna satu acara dari warna Mantine kategorinya: garis tebal (`--ev`), latar pucat (`--ev-bg`),
- * dan tinta teks (`--ev-ink`) — pola blok acara Outlook.
+ * dan tinta teks (`--ev-ink`) — pola blok acara Outlook. Tinta = shade 9 Mantine + `EV_INK_HITAM` hitam: shade 9 mentah hanya 4,0:1 (oranye) dan 3,5:1 (lime) di latar pucat, di bawah WCAG AA 4,5:1.
  */
 export function varWarnaKategori(warna: string): CSSProperties {
   return {
     '--ev': `var(--mantine-color-${warna}-6)`,
     '--ev-bg': `var(--mantine-color-${warna}-0)`,
-    '--ev-ink': `var(--mantine-color-${warna}-9)`,
+    '--ev-ink': `color-mix(in srgb, var(--mantine-color-${warna}-9), #000 ${EV_INK_HITAM})`,
   } as CSSProperties;
 }

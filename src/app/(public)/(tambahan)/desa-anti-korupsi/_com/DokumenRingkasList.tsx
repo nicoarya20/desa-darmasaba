@@ -1,4 +1,3 @@
-import colors from '@/con/colors';
 import { isPdfMime, type DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { ActionIcon, Badge, Group, Paper, Stack, Text, Tooltip } from '@mantine/core';
 import {
@@ -30,8 +29,8 @@ type Props = { items: readonly DokumenRingkasItem[]; onPreview: (dokumen: Dokume
 /** Daftar dokumen ringkas: ikon tipe, judul, tipe/ukuran/tanggal unggah, aksi Pratinjau (khusus PDF) & Unduh. */
 export function DokumenRingkasList({ items, onPreview }: Props) {
   return (
-    // Panel senada daftar indikator halaman detail: #f5f5f7, radius 18px, tanpa border.
-    <Paper radius={18} p={0} bg="#f5f5f7">
+    // Panel senada daftar indikator halaman detail: --c-tile (#f5f5f7 terang), radius 18px, tanpa border.
+    <Paper radius={18} p={0} bg="var(--c-tile)">
       <Stack gap={0} component="ul" m={0} p={0} style={{ listStyle: 'none' }}>
         {items.map(({ dokumen: d, folderLabel }, index) => {
           const pdf = isPdfMime(d.file.mimeType);
@@ -47,10 +46,10 @@ export function DokumenRingkasList({ items, onPreview }: Props) {
               justify="space-between"
               px="md"
               py="sm"
-              style={index > 0 ? { borderTop: '1px solid rgba(0, 0, 0, 0.08)' } : undefined}
+              style={index > 0 ? { borderTop: '1px solid var(--c-line)' } : undefined}
             >
               <Group gap="sm" wrap="nowrap" miw={0} style={{ flex: 1 }}>
-                <Icon size={24} color={colors['blue-button']} style={{ flexShrink: 0 }} />
+                <Icon size={24} color="var(--c-brand)" style={{ flexShrink: 0 }} />
                 <Stack gap={2} miw={0}>
                   <Text fz="sm" fw={500} lineClamp={2} title={d.judul}>
                     {d.judul}
@@ -82,7 +81,7 @@ export function DokumenRingkasList({ items, onPreview }: Props) {
                   <Tooltip label="Pratinjau" withArrow>
                     <ActionIcon
                       variant="light"
-                      color={colors['blue-button']}
+                      color="var(--c-brand)"
                       radius="xl"
                       size="lg"
                       aria-label={`Pratinjau ${d.judul}`}
@@ -100,7 +99,7 @@ export function DokumenRingkasList({ items, onPreview }: Props) {
                     rel="noopener noreferrer"
                     download={pdf ? d.file.realName : undefined}
                     variant="filled"
-                    color={colors['blue-button']}
+                    color="var(--c-brand-fill)"
                     radius="xl"
                     size="lg"
                     aria-label={`Unduh ${d.judul}`}

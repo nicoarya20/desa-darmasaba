@@ -1,6 +1,5 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
-import { KABAR_BRAND_VARS } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useMenuVisibility } from '@/app/(public)/_com/MenuVisibilityContext';
 import { AgamaSection } from '../agama/AgamaSection';
@@ -31,7 +30,7 @@ export function KependudukanPage() {
   useHashScroll(NAV_SECTIONS, settled);
 
   return (
-    <div className={`${kabar.section} ${s.page}`} style={KABAR_BRAND_VARS}>
+    <div className={`${kabar.section} ${s.page}`}>
       <KabarListHeader
         title={T.title}
         lead={T.lead}

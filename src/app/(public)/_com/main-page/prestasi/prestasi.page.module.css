@@ -1,9 +1,10 @@
 /*
  * Halaman gabungan Prestasi dan Penghargaan Desa (/prestasi-desa): kepala halaman
  * (kembali, judul, subtext, cari) lalu grid tile yang sama dengan beranda + paginasi.
+ * Warna = token --c-* (theme-tokens.css); --brand (judul) dari .section prestasi.module.css.
  */
 .page {
-  background: #fff;
+  background: var(--c-bg);
   padding-bottom: 56px;
 }
 
@@ -37,7 +38,7 @@
   margin: 0;
   font-size: 19px;
   line-height: 1.42;
-  color: #6e6e73;
+  color: var(--c-muted);
 }
 
 .search {
@@ -50,7 +51,7 @@
   padding: 48px 16px;
   text-align: center;
   font-size: 17px;
-  color: #6e6e73;
+  color: var(--c-muted);
 }
 
 .pagination {
