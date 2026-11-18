@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { imageLoadingAttrs } from '@/app/(public)/_com/image-loading.logic';
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import colors from '@/con/colors';
 import {
@@ -38,7 +39,8 @@ function formatTanggal(value: string) {
 // Komponen kartu foto: klik kartu (termasuk deskripsi) membuka modal detail
 // berisi foto utuh dan deskripsi lengkap, karena di kartu deskripsi dipotong
 // (lineClamp) dan sebelumnya tidak ada handler klik sama sekali.
-function FotoCard({ item }: { item: any }) {
+// `aboveFold`: foto kartu pertama kandidat LCP, dimuat langsung (bukan lazy).
+function FotoCard({ item, aboveFold }: { item: any; aboveFold: boolean }) {
   const [opened, setOpened] = useState(false);
   const judul = item.name || 'Tanpa Judul';
   const open = () => setOpened(true);
@@ -69,7 +71,7 @@ function FotoCard({ item }: { item: any }) {
               src={item.imageGalleryFoto.link}
               alt={item.name || 'Foto Galeri'}
               fit="cover"
-              loading="lazy"
+              {...imageLoadingAttrs(aboveFold)}
             />
           ) : (
             <Center>
@@ -207,8 +209,8 @@ function FotoList() {
   return (
     <Stack mt="md" gap="xl">
       <Grid>
-        {data.map((item) => (
-          <FotoCard key={item.id} item={item} />
+        {data.map((item, index) => (
+          <FotoCard key={item.id} item={item} aboveFold={index === 0} />
         ))}
       </Grid>
 
