@@ -44,7 +44,7 @@ export function DaftarTable({ items, page, busy = false }: Props) {
               <td className={s.deskripsi}>{htmlToPlainText(item.deskripsi) || DAFTAR_TEXT.emptyValue}</td>
               <td className={s.tanggal}>{formatTanggal(item.tanggal, DAFTAR_TEXT.emptyValue)}</td>
               <td className={s.aksi}>
-                <div className={s.aksiStack}>
+                <div className={s.aksiRow} role="group" aria-label={DAFTAR_TEXT.aksiLabel(item.jenisInformasi)}>
                   <Link
                     href={daftarDetailHref(item.id)}
                     className={`${s.detailLink} ${r.trigger}`}
