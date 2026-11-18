@@ -63,6 +63,9 @@ export function handleImageLoadError(
     target.dataset.webpFallbackApplied = "1";
     const url = new URL(target.src);
     url.searchParams.set("format", "jpeg");
+    // srcset (gambar responsif, lihat responsive-image.logic.ts) mengalahkan src: tanpa ini browser lama tetap
+    // meminta kandidat WebP-nya.
+    target.removeAttribute("srcset");
     target.src = url.toString();
     return;
   }
@@ -84,6 +87,8 @@ export function handleImageLoadError(
     // /api/img/:name mengabaikan param yang tidak dikenal.
     const url = new URL(originalSrc);
     url.searchParams.set("_retry", String(nextAttempt));
+    // Lepas srcset agar kandidatnya tidak mengalahkan src ber-`_retry` (pemecah cache); sisa percobaan pakai src.
+    target.removeAttribute("srcset");
     target.src = url.toString();
   }, delay);
 }
