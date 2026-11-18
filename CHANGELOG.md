@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.313] - 2026-11-18
+### Added
+- **Animasi Candi Bentar saat mengganti tema terang/gelap.** Menekan tombol matahari/bulan di navbar (desktop dan ponsel) kini memutar adegan sekitar 5 detik: pilar kiri dan kanan Candi Bentar meluncur masuk dari tepi layar, lalu langit dan air muncul di belakangnya, tema halaman berganti di balik adegan, dan kamera menembus celah gerbang seperti layar pembuka beranda. Ke tema gelap tampil adegan malam (langit malam, cahaya bulan, bintang); ke tema terang tampil adegan siang seperti layar pembuka. Pergantian warna halaman tidak pernah terlihat setengah jalan, juga di perangkat lambat. Pengunjung yang mengaktifkan "kurangi gerakan" di perangkatnya tetap mendapat pergantian tema langsung tanpa animasi.
+
 ## [0.1.312] - 2026-11-18
 ### Fixed
 - **Beranda tidak lagi "melompat" saat grafik muncul.** Pada rilis 0.1.310, grafik APBDes dan Survei Kepuasan baru dimuat saat digulir mendekat, tetapi ruang yang disiapkan lebih pendek dari grafik aslinya (terutama di ponsel, selisih sekitar 930 px), sehingga tombol dan bagian di bawahnya terdorong turun saat grafik muncul. Kini ruang cadangan sama dengan tinggi aslinya di desktop, tablet, dan ponsel; grafik mulai dipasang jauh sebelum terlihat; dan kode grafik diunduh begitu pengunjung mulai menggulir atau menyentuh layar. Tampilan akhir grafik tidak berubah, dan beranda tetap ringan saat pertama dibuka.

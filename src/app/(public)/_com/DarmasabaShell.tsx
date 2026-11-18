@@ -23,6 +23,13 @@ const CONTENT_MIN_HEIGHT = {
 } as const;
 
 const JennaWidget = dynamic(() => import("./jenna/JennaWidget"), { ssr: false });
+/**
+ * Overlay transisi tema (siluet gerbang + koreografi) tak masuk bundle awal: chunk-nya dimuat begitu shell
+ * ter-hydrate (komponen selalu dirender), jadi siap sebelum klik tema pertama. Selama belum dimuat, tombol tema
+ * menukar tema langsung (state `ready` masih false). Loader sengaja polos seperti JennaWidget: membungkusnya
+ * dengan .catch() membuat transform next/dynamic gagal mengenali import → hydration mismatch.
+ */
+const ThemeGateTransition = dynamic(() => import("./theme-transition/ThemeGateTransition"), { ssr: false });
 
 /** Kerangka halaman publik (route group (public)): navbar, konten, footer, pemutar musik, dan asisten Jenna. */
 export function DarmasabaShell({ children }: { children: React.ReactNode }) {
@@ -43,6 +50,7 @@ export function DarmasabaShell({ children }: { children: React.ReactNode }) {
                     </>
                 )}
                 <JennaWidget />
+                <ThemeGateTransition />
             </Stack>
     )
 }
