@@ -35,12 +35,12 @@ export const POSYANDU_LIST_LIMIT = 100;
 export const BANJAR_STATS_CONCURRENCY = 4;
 
 /**
- * Variabel `--accent`/`--tint` per kartu ringkasan (warna netral, bukan penilaian baik/buruk).
+ * Variabel `--accent` (ikon/dekorasi), `--accent-text` (teks, ≥4,5:1) dan `--tint` per kartu ringkasan (warna netral, bukan penilaian baik/buruk).
  * Memakai palet kategori APBDes (`--apbdes-*`, dideklarasikan light-dark di .section/.card apbdes.module.css), jadi
  * ikut tema: brand = --c-brand/--c-brand-tint, teal & oranye = Mantine -7/-0 di terang, -4 + tint redup di gelap.
  */
 export const ACCENT = {
-  brand: { "--accent": "var(--apbdes-belanja-accent)", "--tint": "var(--apbdes-belanja-tint)" } as CSSProperties,
-  teal: { "--accent": "var(--apbdes-pendapatan-accent)", "--tint": "var(--apbdes-pendapatan-tint)" } as CSSProperties,
-  orange: { "--accent": "var(--apbdes-pembiayaan-accent)", "--tint": "var(--apbdes-pembiayaan-tint)" } as CSSProperties,
+  brand: { "--accent": "var(--apbdes-belanja-accent)", "--accent-text": "var(--apbdes-belanja-text)", "--tint": "var(--apbdes-belanja-tint)" } as CSSProperties,
+  teal: { "--accent": "var(--apbdes-pendapatan-accent)", "--accent-text": "var(--apbdes-pendapatan-text)", "--tint": "var(--apbdes-pendapatan-tint)" } as CSSProperties,
+  orange: { "--accent": "var(--apbdes-pembiayaan-accent)", "--accent-text": "var(--apbdes-pembiayaan-text)", "--tint": "var(--apbdes-pembiayaan-tint)" } as CSSProperties,
 };

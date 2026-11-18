@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import s from './layanan-detail.module.css';
 import { LAYANAN_DETAIL_TEXT as T } from './layanan-detail.text';
+import { buildPermohonanWaUrl } from './permohonan-whatsapp.logic';
+import { PermohonanTersimpan } from './PermohonanTersimpan';
 
 type Props = { opened: boolean; onClose: () => void };
 
@@ -19,6 +21,8 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
   // Tandai field yang sudah disentuh (blur) agar pesan error tidak langsung
   // merah saat modal pertama kali dibuka.
   const [touched, setTouched] = useState(UNTOUCHED);
+  // Tautan WhatsApp setelah simpan sukses; non-null = modal menampilkan keadaan sukses, bukan form.
+  const [tersimpan, setTersimpan] = useState<{ waHref: string | null } | null>(null);
 
   useEffect(() => {
     void stateLayananDesa.suratKeterangan.findManyAll.load();
@@ -90,17 +94,25 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
       toast.error('Kategori wajib dipilih');
       return;
     }
-    // Gagal (toast sudah tampil di create()) → biarkan modal terbuka berisi input warga agar bisa dikirim ulang.
+    // Salin nama & jenis surat sebelum await/reset; NIK/KK/alamat sengaja tidak ikut ke pesan WhatsApp.
+    const { nama, kategoriId } = f;
     const saved = await stateCreate.create.create();
+    // Gagal (toast sudah tampil di create()) → biarkan modal terbuka berisi input warga agar bisa dikirim ulang.
     if (!saved) return;
+    const kategoriNama = state.suratKeterangan.findManyAll.data?.find((item) => item.id === kategoriId)?.name;
+    setTersimpan({ waHref: buildPermohonanWaUrl({ nama, kategoriNama }) });
     resetForm();
+  };
+
+  const handleClose = () => {
+    setTersimpan(null);
     onClose();
   };
 
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={handleClose}
       title={T.ajukan}
       centered
       radius={24}
@@ -109,97 +121,101 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
       transitionProps={{ transition: 'pop', duration: 220 }}
       classNames={{ title: s.modalTitle }}
     >
-      <Stack gap="sm">
-        <TextInput
-          label="Nama"
-          placeholder="Masukkan nama"
-          withAsterisk
-          radius="md"
-          error={namaError}
-          value={stateCreate.create.form.nama || ''}
-          // Tolak angka saat mengetik — nama orang tidak memuat digit.
-          onChange={(val) => (stateCreate.create.form.nama = val.target.value.replace(/[0-9]/g, ''))}
-          onBlur={() => setTouched((t) => ({ ...t, nama: true }))}
-        />
-        <TextInput
-          inputMode="numeric"
-          maxLength={16}
-          label="NIK"
-          placeholder="Masukkan NIK"
-          withAsterisk
-          radius="md"
-          error={nikError}
-          value={stateCreate.create.form.nik || ''}
-          onChange={(val) => (stateCreate.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, 16))}
-          onBlur={() => setTouched((t) => ({ ...t, nik: true }))}
-        />
-        <TextInput
-          label="Alamat"
-          placeholder="Masukkan alamat"
-          withAsterisk
-          radius="md"
-          error={alamatError}
-          value={stateCreate.create.form.alamat || ''}
-          onChange={(val) => (stateCreate.create.form.alamat = val.target.value)}
-          onBlur={() => setTouched((t) => ({ ...t, alamat: true }))}
-        />
-        <TextInput
-          inputMode="numeric"
-          maxLength={16}
-          label="Nomor KK"
-          placeholder="Masukkan Nomor KK"
-          withAsterisk
-          radius="md"
-          error={nomorKkError}
-          value={stateCreate.create.form.nomorKk || ''}
-          onChange={(val) => (stateCreate.create.form.nomorKk = val.target.value.replace(/\D/g, '').slice(0, 16))}
-          onBlur={() => setTouched((t) => ({ ...t, nomorKk: true }))}
-        />
-        <Select
-          label="Kategori"
-          placeholder="Pilih kategori"
-          radius="md"
-          // Baca via snapshot `state` (bukan raw proxy `stateLayananDesa`) agar
-          // komponen re-render saat findManyAll.load() selesai async — kalau baca
-          // raw proxy, Select tak subscribe & tetap kosong bila modal dibuka
-          // sebelum fetch kelar (race intermiten, lebih sering muncul di STG).
-          data={state.suratKeterangan.findManyAll.data?.map((item) => ({
-            label: item.name,
-            value: item.id,
-          }))}
-          value={stateCreate.create.form.kategoriId || null}
-          error={kategoriError}
-          onChange={(val: string | null) => {
-            if (val) {
-              // Cari di findManyAll (sumber data dropdown), bukan findMany
-              // (list berpaginasi) — sebelumnya mismatch bikin item tak ketemu.
-              const selected = state.suratKeterangan.findManyAll.data?.find((item) => item.id === val);
-              if (selected) {
-                stateCreate.create.form.kategoriId = selected.id;
+      {tersimpan ? (
+        <PermohonanTersimpan waHref={tersimpan.waHref} onClose={handleClose} />
+      ) : (
+        <Stack gap="sm">
+          <TextInput
+            label="Nama"
+            placeholder="Masukkan nama"
+            withAsterisk
+            radius="md"
+            error={namaError}
+            value={stateCreate.create.form.nama || ''}
+            // Tolak angka saat mengetik — nama orang tidak memuat digit.
+            onChange={(val) => (stateCreate.create.form.nama = val.target.value.replace(/[0-9]/g, ''))}
+            onBlur={() => setTouched((t) => ({ ...t, nama: true }))}
+          />
+          <TextInput
+            inputMode="numeric"
+            maxLength={16}
+            label="NIK"
+            placeholder="Masukkan NIK"
+            withAsterisk
+            radius="md"
+            error={nikError}
+            value={stateCreate.create.form.nik || ''}
+            onChange={(val) => (stateCreate.create.form.nik = val.target.value.replace(/\D/g, '').slice(0, 16))}
+            onBlur={() => setTouched((t) => ({ ...t, nik: true }))}
+          />
+          <TextInput
+            label="Alamat"
+            placeholder="Masukkan alamat"
+            withAsterisk
+            radius="md"
+            error={alamatError}
+            value={stateCreate.create.form.alamat || ''}
+            onChange={(val) => (stateCreate.create.form.alamat = val.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, alamat: true }))}
+          />
+          <TextInput
+            inputMode="numeric"
+            maxLength={16}
+            label="Nomor KK"
+            placeholder="Masukkan Nomor KK"
+            withAsterisk
+            radius="md"
+            error={nomorKkError}
+            value={stateCreate.create.form.nomorKk || ''}
+            onChange={(val) => (stateCreate.create.form.nomorKk = val.target.value.replace(/\D/g, '').slice(0, 16))}
+            onBlur={() => setTouched((t) => ({ ...t, nomorKk: true }))}
+          />
+          <Select
+            label="Kategori"
+            placeholder="Pilih kategori"
+            radius="md"
+            // Baca via snapshot `state` (bukan raw proxy `stateLayananDesa`) agar
+            // komponen re-render saat findManyAll.load() selesai async — kalau baca
+            // raw proxy, Select tak subscribe & tetap kosong bila modal dibuka
+            // sebelum fetch kelar (race intermiten, lebih sering muncul di STG).
+            data={state.suratKeterangan.findManyAll.data?.map((item) => ({
+              label: item.name,
+              value: item.id,
+            }))}
+            value={stateCreate.create.form.kategoriId || null}
+            error={kategoriError}
+            onChange={(val: string | null) => {
+              if (val) {
+                // Cari di findManyAll (sumber data dropdown), bukan findMany
+                // (list berpaginasi) — sebelumnya mismatch bikin item tak ketemu.
+                const selected = state.suratKeterangan.findManyAll.data?.find((item) => item.id === val);
+                if (selected) {
+                  stateCreate.create.form.kategoriId = selected.id;
+                }
+              } else {
+                stateCreate.create.form.kategoriId = '';
               }
-            } else {
-              stateCreate.create.form.kategoriId = '';
-            }
-          }}
-          onBlur={() => setTouched((t) => ({ ...t, kategori: true }))}
-          clearable
-          nothingFoundMessage="Tidak ditemukan"
-          required
-        />
-        <Button
-          mt="xs"
-          size="md"
-          radius="xl"
-          // Modal dirender di portal (di luar akar halaman): pakai token global, bukan variabel --brand halaman.
-          bg={isFormValid() ? 'var(--c-brand-fill)' : undefined}
-          onClick={handleSubmit}
-          disabled={!isFormValid()}
-          // Selama create() berjalan tombol terkunci (spinner) agar permohonan tidak terkirim ganda.
-          loading={stateCreate.create.loading}
-        >
-          Simpan
-        </Button>
-      </Stack>
+            }}
+            onBlur={() => setTouched((t) => ({ ...t, kategori: true }))}
+            clearable
+            nothingFoundMessage="Tidak ditemukan"
+            required
+          />
+          <Button
+            mt="xs"
+            size="md"
+            radius="xl"
+            // Modal dirender di portal (di luar akar halaman): pakai token global, bukan variabel --brand halaman.
+            bg={isFormValid() ? 'var(--c-brand-fill)' : undefined}
+            onClick={handleSubmit}
+            disabled={!isFormValid()}
+            // Selama create() berjalan tombol terkunci (spinner) agar permohonan tidak terkirim ganda.
+            loading={stateCreate.create.loading}
+          >
+            Simpan
+          </Button>
+        </Stack>
+      )}
     </Modal>
   );
 }

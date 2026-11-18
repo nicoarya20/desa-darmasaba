@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.308] - 2026-11-18
+### Fixed
+- **Website staging gagal naik setelah rilis 0.1.307.** Aplikasi mati saat dijalankan di server karena berkas pengaturan header keamanan tidak ikut terbawa ke image Docker, sehingga alamat staging hanya menampilkan "Unknown subdomain". Berkas itu dipindah ke lokasi yang ikut dibawa image, dan ada pemeriksaan otomatis baru agar kesalahan serupa terdeteksi sebelum rilis. Isi rilis 0.1.307 (header keamanan, kontras warna, kecepatan halaman, alur WhatsApp permohonan) tidak berubah. Versi 0.1.307 tidak pernah berjalan di server dan tidak perlu dipakai.
+
+## [0.1.307] - 2026-11-18
+### Added
+- **Setelah warga mengajukan permohonan surat keterangan, mereka diarahkan ke WhatsApp petugas layanan.** Data permohonan tetap tersimpan seperti biasa; lalu layar "Permohonan tersimpan" menampilkan tombol "Lanjutkan ke WhatsApp" yang membuka percakapan dengan Petugas Layanan Desa berisi pesan awal (nama dan jenis surat saja, tanpa NIK, nomor KK, atau alamat). Halaman detail layanan juga menjelaskan bahwa tindak lanjut dilakukan lewat WhatsApp petugas. Nomor petugas saat ini tetap di kode (`src/con/layanan-whatsapp.ts`), belum bisa diubah dari admin, dan permohonan belum punya nomor referensi: petugas mencocokkan lewat nama dan jenis surat.
+- **Header keamanan pada semua halaman website:** `Strict-Transport-Security` (6 bulan, tanpa subdomain), `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy` (mikrofon hanya untuk situs sendiri, dipakai suara Jenna), dan `Content-Security-Policy` ringan (`frame-ancestors`, `object-src`, `base-uri`). CSP penuh sengaja belum dipasang karena situs memuat peta, video, dan gambar dari beberapa sumber. Setelah rilis ke staging, cek suara Jenna, pratinjau PDF, peta, dan video.
+
+### Changed
+- **Teks lebih mudah dibaca (kontras warna, WCAG AA).** Warna teks yang terlalu pucat digelapkan pada badge waktu dan biaya layanan, kartu ringkasan Posyandu, kartu agenda dan kategori acara (termasuk acara yang sudah lewat, kini dipucatkan lewat warna, bukan transparansi), teks pendukung formulir Inovasi dan SDGs. Warna di tema terang disesuaikan; nilai tema gelap tidak diubah kecuali kartu acara yang sudah lewat, yang kini mengikuti warna latar tema. Teks keterangan paling kecil bernilai `--c-subtle` di tema terang (`#86868b`, 3,3:1) sengaja dibiarkan karena aturan tema terang tidak boleh berubah; tercatat di `docs/DESIGN.md` bagian 2.6.
+- **Halaman terasa lebih cepat dan stabil saat dibuka.** Foto utama yang langsung terlihat (berita utama beranda, kartu galeri pertama, foto Perbekel) dimuat lebih dulu dengan prioritas tinggi. Footer tidak lagi sempat tampil lalu terdorong jauh ke bawah saat data halaman selesai dimuat, jadi halaman tidak "melompat". Halaman yang isinya pendek kini menaruh footer di dasar layar.
+
 ## [0.1.306] - 2026-11-18
 ### Added
 - **Tema gelap kini bisa dinyalakan warga.** Tombol matahari/bulan di navbar (desktop dan ponsel, di kanan tombol baca suara) kini tampil untuk semua pengunjung. Pengunjung yang belum pernah memilih otomatis mengikuti pengaturan perangkatnya: perangkat bermode gelap langsung melihat situs gelap, perangkat bermode terang tetap terang. Pilihan lewat tombol disimpan di browser dan dipakai pada kunjungan berikutnya. Halaman admin dan akun tetap selalu terang.

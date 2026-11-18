@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+// Wajib di src/lib: image Docker (runner) hanya menyalin src/lib + next.config.*, bukan src/con. `next start` memuat
+// next.config.ts saat runtime, jadi impor dari luar src/lib membuat container mati (stg 0.1.307: MODULE_NOT_FOUND).
+import { SECURITY_HEADERS } from "./src/lib/security-headers";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@elysiajs/static', 'elysia'],
@@ -50,6 +53,8 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // Header keamanan untuk semua route; daftar & alasan nilai di src/lib/security-headers.ts.
+      { source: '/:path*', headers: SECURITY_HEADERS },
       {
         source: '/assets/:path*', // Path ke folder gambar
         headers: [
