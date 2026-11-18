@@ -40,7 +40,7 @@ const render = (node: React.ReactElement) =>
 describe('navigasi admin: Dokumen Perencanaan di Pemerintahan', () => {
   it('item menu sendiri di domain Pemerintahan dengan path & basePath baru', () => {
     const item = desaMenu.children?.find((c) => c.id === NEW_ID);
-    expect(item).toEqual({ id: NEW_ID, name: 'Dokumen Perencanaan', path: NEW_PATH, basePath: NEW_PATH });
+    expect(item).toEqual({ id: NEW_ID, name: 'Arah Kebijakan Pembangunan Desa', path: NEW_PATH, basePath: NEW_PATH });
   });
 
   it('Kegiatan Desa tidak lagi mencakup path Dokumen Perencanaan (basePath tidak tumpang tindih)', () => {
