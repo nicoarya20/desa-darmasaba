@@ -127,7 +127,6 @@ export function KegiatanDetailBody({ data, linkKategori = true }: { data: Detail
           judul={data.judul}
           fotoSebelum={data.fotoSebelum}
           fotoSesudah={data.fotoSesudah}
-          fotoProgres={data.fotoProgres}
         />
       ) : null}
 

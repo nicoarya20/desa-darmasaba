@@ -15,12 +15,11 @@ const pembangunanBody = {
   sumberDana: t.Optional(t.Union([t.String(), t.Null()])),
 };
 
-// Dokumentasi foto Pembangunan — opsional (aditif). Undefined = tidak diubah; null/"" = hapus (foto tunggal);
-// array = set final galeri (maks 10, divalidasi di parseFotoPembangunanInput).
+// Dokumentasi foto Pembangunan — opsional (aditif). Undefined = tidak diubah; array = set final per jenis
+// (maks 5, divalidasi di parseFotoPembangunanInput).
 const fotoPembangunanBody = {
-  fotoSebelumId: t.Optional(t.Union([t.String(), t.Null()])),
-  fotoSesudahId: t.Optional(t.Union([t.String(), t.Null()])),
-  fotoProgresIds: t.Optional(t.Array(t.String())),
+  fotoSebelumIds: t.Optional(t.Array(t.String())),
+  fotoSesudahIds: t.Optional(t.Array(t.String())),
 };
 
 const KegiatanDesa = new Elysia({ prefix: "/kegiatandesa", tags: ["Desa/Kegiatan Desa"] })

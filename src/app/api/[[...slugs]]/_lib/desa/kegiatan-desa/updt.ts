@@ -6,13 +6,14 @@ import {
   resolvePembangunanData,
 } from "@/lib/kegiatan-pembangunan";
 import {
+  adaFotoLama,
   adaPerubahanFoto,
   bentukFotoRespons,
   FOTO_PEMBANGUNAN_INCLUDE,
   FOTO_PEMBANGUNAN_REF_SELECT,
   idBerkasFoto,
-  susunBarisGaleri,
-  susunDataFotoUpdate,
+  jenisDikirim,
+  susunBarisFoto,
 } from "@/lib/kegiatan-pembangunan-foto";
 import removeReleasedFiles from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
 import { validasiFotoPembangunan } from "./foto-check";
@@ -52,7 +53,6 @@ async function kegiatanDesaUpdate(context: Context) {
       kategoriKegiatanId: body.kategoriKegiatanId,
       imageId: body.imageId || null,
       ...pembangunan,
-      ...susunDataFotoUpdate(foto.data),
     };
     const args = {
       where: { id },
@@ -60,16 +60,16 @@ async function kegiatanDesaUpdate(context: Context) {
       include: { kategoriKegiatan: true, image: true, ...FOTO_PEMBANGUNAN_INCLUDE },
     };
 
-    // Galeri = set final: hapus baris lama + buat ulang + update kegiatan dalam satu transaksi.
-    // Tanpa galeri lama dan tanpa galeri baru tidak ada yang perlu diubah → update biasa.
-    const ids = foto.data.fotoProgresIds;
-    const adaGaleriLama = (sebelum?.fotoProgres.length ?? 0) > 0;
+    // Foto = set final per jenis yang dikirim: hapus baris lama jenis itu + buat ulang + update kegiatan dalam satu
+    // transaksi. Tanpa foto lama dan tanpa foto baru di jenis itu tidak ada yang perlu diubah → update biasa.
+    const jenis = jenisDikirim(foto.data);
+    const baris = susunBarisFoto(id, foto.data);
     const data =
-      ids === undefined || (ids.length === 0 && !adaGaleriLama)
+      baris.length === 0 && !adaFotoLama(sebelum, jenis)
         ? await prisma.kegiatanDesa.update(args)
         : await prisma.$transaction(async (tx) => {
-            await tx.kegiatanDesaFoto.deleteMany({ where: { kegiatanDesaId: id } });
-            if (ids.length > 0) await tx.kegiatanDesaFoto.createMany({ data: susunBarisGaleri(id, ids) });
+            await tx.kegiatanDesaFoto.deleteMany({ where: { kegiatanDesaId: id, jenis: { in: jenis } } });
+            if (baris.length > 0) await tx.kegiatanDesaFoto.createMany({ data: baris });
             return tx.kegiatanDesa.update(args);
           });
 

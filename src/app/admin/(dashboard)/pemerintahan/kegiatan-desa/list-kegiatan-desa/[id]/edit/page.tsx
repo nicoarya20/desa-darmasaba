@@ -50,9 +50,8 @@ interface KegiatanData {
   progres?: number | null;
   statusPembangunan?: string | null;
   sumberDana?: string | null;
-  fotoSebelum?: FotoPembangunanFile | null;
-  fotoSesudah?: FotoPembangunanFile | null;
-  fotoProgres?: FotoPembangunanFile[] | null;
+  fotoSebelum?: FotoPembangunanFile[] | null;
+  fotoSesudah?: FotoPembangunanFile[] | null;
 }
 
 function EditKegiatanDesa() {
@@ -159,9 +158,8 @@ function EditKegiatanDesa() {
 
       // Foto Pembangunan hanya diunggah & dikirim bila kategori Pembangunan (API mengosongkannya untuk kategori lain).
       const editForm = kegiatanState.kegiatan.edit.form;
-      editForm.fotoSebelumId = undefined;
-      editForm.fotoSesudahId = undefined;
-      editForm.fotoProgresIds = undefined;
+      editForm.fotoSebelumIds = undefined;
+      editForm.fotoSesudahIds = undefined;
       if (isPembangunan) {
         const hasil = await fotoPembangunan.unggah();
         if (!hasil.ok) return;

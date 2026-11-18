@@ -51,42 +51,47 @@ const detail = (over: Partial<KegiatanDetail> = {}): KegiatanDetail => ({
   ...over,
 });
 
+const banyak = (n: number, awalan: string) => Array.from({ length: n }, (_, i) => f(`${awalan}${i + 1}`));
+
 describe('DokumentasiPembangunan (publik)', () => {
   it('tanpa satu pun foto → tidak dirender', () => {
     expect(render(<DokumentasiPembangunan judul="X" />)).toBe('');
-    expect(render(<DokumentasiPembangunan judul="X" fotoSebelum={null} fotoSesudah={null} fotoProgres={[]} />)).toBe('');
+    expect(render(<DokumentasiPembangunan judul="X" fotoSebelum={null} fotoSesudah={[]} />)).toBe('');
   });
 
-  it('hanya satu foto → satu figure (.pairSingle), tanpa slot kosong dan tanpa galeri', () => {
-    const html = render(<DokumentasiPembangunan judul="Balai" fotoSesudah={f('s')} />);
+  it('satu kelompok saja (.pairSingle) → kelompok kosong tidak tampil, tanpa slot kosong', () => {
+    const html = render(<DokumentasiPembangunan judul="Balai" fotoSesudah={[f('s')]} />);
     expect(html).toContain('data-kegiatan-dokumentasi');
     expect(html).toContain(s.pairSingle);
     expect(html).toContain('data-dokumentasi-foto="sesudah"');
     expect(html).not.toContain('data-dokumentasi-foto="sebelum"');
-    expect(html).not.toContain('data-dokumentasi-progres');
-    expect(html).toContain('alt="Foto sesudah pembangunan Balai"');
+    expect(html).toContain('alt="Foto sesudah pembangunan Balai 1"');
     expect(html).toContain('loading="lazy"');
-    expect(html).toContain('href="/api/img/s.webp"');
+    expect(html).toContain('/api/img/s.webp');
+    expect(html).toContain('Sesudah');
+    expect(html).not.toContain('Galeri Progres');
   });
 
-  it('lengkap → sebelum lalu sesudah (.pair) + galeri progres dengan alt bermakna', () => {
+  it('satu foto di Sebelum saja → hanya kolom Sebelum', () => {
+    const html = render(<DokumentasiPembangunan judul="Balai" fotoSebelum={[f('b')]} fotoSesudah={null} />);
+    expect(html).toContain('data-dokumentasi-foto="sebelum"');
+    expect(html).not.toContain('data-dokumentasi-foto="sesudah"');
+  });
+
+  it('5 + 5 → dua kolom (.pair) berurutan Sebelum lalu Sesudah, 10 foto, alt bermakna per kelompok', () => {
     const html = render(
-      <DokumentasiPembangunan judul="Balai" fotoSebelum={f('b')} fotoSesudah={f('s')} fotoProgres={[f('g1'), f('g2')]} />,
+      <DokumentasiPembangunan judul="Balai" fotoSebelum={banyak(5, 'b')} fotoSesudah={banyak(5, 't')} />,
     );
     expect(html).toContain(`class="${s.pair}"`);
     expect(html.indexOf('data-dokumentasi-foto="sebelum"')).toBeLessThan(html.indexOf('data-dokumentasi-foto="sesudah"'));
-    expect(html).toContain('alt="Foto sebelum pembangunan Balai"');
-    expect(html).toContain('Galeri Progres');
-    expect(html).toContain('data-dokumentasi-progres');
-    expect(html).toContain('alt="Foto progres pembangunan Balai 1"');
-    expect(html).toContain('alt="Foto progres pembangunan Balai 2"');
+    for (let i = 1; i <= 5; i += 1) {
+      expect(html).toContain(`alt="Foto sebelum pembangunan Balai ${i}"`);
+      expect(html).toContain(`alt="Foto sesudah pembangunan Balai ${i}"`);
+    }
+    expect((html.match(/<img /g) ?? []).length).toBe(10);
     expect(html).toContain('Dokumentasi Pembangunan');
-  });
-
-  it('hanya galeri → tanpa blok pasangan', () => {
-    const html = render(<DokumentasiPembangunan judul="Balai" fotoProgres={[f('g1')]} />);
-    expect(html).toContain('data-dokumentasi-progres');
-    expect(html).not.toContain('data-dokumentasi-pasangan');
+    expect(html).toContain('>Sebelum<');
+    expect(html).toContain('>Sesudah<');
   });
 });
 
@@ -98,15 +103,15 @@ describe('KegiatanDetailBody — blok dokumentasi', () => {
   });
 
   it('Pembangunan dengan foto → blok muncul setelah panel progres', () => {
-    const html = render(<KegiatanDetailBody data={detail({ fotoSebelum: f('b'), fotoProgres: [f('g1')] })} />);
+    const html = render(<KegiatanDetailBody data={detail({ fotoSebelum: [f('b')] })} />);
     expect(html.indexOf('data-kegiatan-pembangunan')).toBeLessThan(html.indexOf('data-kegiatan-dokumentasi'));
-    expect(html).toContain('alt="Foto sebelum pembangunan Pembangunan Balai Banjar"');
+    expect(html).toContain('alt="Foto sebelum pembangunan Pembangunan Balai Banjar 1"');
   });
 
   it('kategori non-Pembangunan tidak merender blok walau data membawa foto', () => {
     const html = render(
       <KegiatanDetailBody
-        data={detail({ kategoriKegiatanId: 'katsosia000001', kategoriKegiatan: { nama: 'Sosial' }, fotoSebelum: f('b') })}
+        data={detail({ kategoriKegiatanId: 'katsosia000001', kategoriKegiatan: { nama: 'Sosial' }, fotoSebelum: [f('b')] })}
       />,
     );
     expect(html).not.toContain('data-kegiatan-dokumentasi');
@@ -119,12 +124,10 @@ const apiStub = (over: Partial<FotoPembangunanApi> = {}): FotoPembangunanApi =>
     foto: FOTO_KOSONG,
     error: null,
     mengunggah: false,
-    pilihSebelum: vi.fn(),
+    tambahSebelum: vi.fn(),
     hapusSebelum: vi.fn(),
-    pilihSesudah: vi.fn(),
+    tambahSesudah: vi.fn(),
     hapusSesudah: vi.fn(),
-    tambahGaleri: vi.fn(),
-    hapusGaleri: vi.fn(),
     muat: vi.fn(),
     reset: vi.fn(),
     unggah: vi.fn(),
@@ -134,14 +137,17 @@ const apiStub = (over: Partial<FotoPembangunanApi> = {}): FotoPembangunanApi =>
   }) as FotoPembangunanApi;
 
 describe('DokumentasiPembangunanFields (admin)', () => {
-  it('menampilkan subjudul opsional, petunjuk format, dua slot dan galeri maks 10', () => {
+  it('kosong: subjudul opsional, petunjuk, dua kelompok 0/5, tanpa galeri progres', () => {
     const html = render(<DokumentasiPembangunanFields api={apiStub()} />);
     expect(html).toContain('data-dokumentasi-pembangunan');
     expect(html).toContain('Dokumentasi Pembangunan (opsional)');
-    expect(html).toContain('Opsional. JPG/PNG/WebP, maks 5 MB per foto.');
+    expect(html).toContain('Opsional. Maks 5 foto, JPG/PNG/WebP, maks 5 MB per foto.');
     expect(html).toContain('Foto Sebelum');
     expect(html).toContain('Foto Sesudah');
-    expect(html).toContain('Galeri Progres');
+    expect((html.match(/0\/5 gambar/g) ?? []).length).toBe(2);
+    expect(html).not.toContain('Galeri Progres');
+    expect(html).not.toContain('Gambar Utama');
+    expect(html).not.toContain('data-galeri-thumb');
     expect(html).not.toContain('data-foto-mengunggah');
     expect(html).not.toContain('data-foto-error');
   });
@@ -154,11 +160,21 @@ describe('DokumentasiPembangunanFields (admin)', () => {
     expect(html).toContain('Gagal mengunggah foto &quot;a.png&quot;');
   });
 
-  it('menampilkan pratinjau foto tersimpan', () => {
-    const foto = fotoDariApi({ fotoSebelum: f('b'), fotoProgres: [f('g1')] });
+  it('satu foto tersimpan di Sebelum → satu thumbnail, 1/5 dan 0/5', () => {
+    const foto = fotoDariApi({ fotoSebelum: [f('b')] });
     const html = render(<DokumentasiPembangunanFields api={apiStub({ foto })} />);
     expect(html).toContain('/api/img/b.webp');
-    expect(html).toContain('/api/img/g1.webp');
+    expect(html).toContain('1/5 gambar');
+    expect(html).toContain('0/5 gambar');
+    expect((html.match(/data-galeri-thumb/g) ?? []).length).toBe(1);
+  });
+
+  it('5 + 5 foto → 10 thumbnail, 5/5 dan batas tercapai di kedua kelompok', () => {
+    const foto = fotoDariApi({ fotoSebelum: banyak(5, 'b'), fotoSesudah: banyak(5, 't') });
+    const html = render(<DokumentasiPembangunanFields api={apiStub({ foto })} />);
+    expect((html.match(/data-galeri-thumb/g) ?? []).length).toBe(10);
+    expect((html.match(/5\/5 gambar/g) ?? []).length).toBe(2);
+    expect((html.match(/Batas 5 gambar tercapai/g) ?? []).length).toBe(2);
   });
 });
 
@@ -179,14 +195,14 @@ describe('foto-pembangunan.logic', () => {
   it('fotoDariApi / adaFotoTersimpan / adaFotoDiForm tahan null & field hilang', () => {
     expect(fotoDariApi(null)).toBe(FOTO_KOSONG);
     expect(adaFotoTersimpan(null)).toBe(false);
-    expect(adaFotoTersimpan({ fotoProgres: [] })).toBe(false);
-    expect(adaFotoTersimpan({ fotoSesudah: f('s') })).toBe(true);
-    const state = fotoDariApi({ fotoSebelum: f('b'), fotoSesudah: null, fotoProgres: [f('g1'), f('g2')] });
-    expect(state.sebelum).toEqual({ id: 'b', file: null, preview: '/api/img/b.webp' });
-    expect(state.sesudah.id).toBeNull();
-    expect(state.galeri.map((g) => g.id)).toEqual(['g1', 'g2']);
+    expect(adaFotoTersimpan({ fotoSebelum: [] })).toBe(false);
+    expect(adaFotoTersimpan({ fotoSesudah: [f('s')] })).toBe(true);
+    const state = fotoDariApi({ fotoSebelum: [f('b1'), f('b2')], fotoSesudah: null });
+    expect(state.sebelum.map((g) => g.id)).toEqual(['b1', 'b2']);
+    expect(state.sebelum[0].preview).toBe('/api/img/b1.webp');
+    expect(state.sesudah).toEqual([]);
     expect(adaFotoDiForm(FOTO_KOSONG)).toBe(false);
-    expect(adaFotoDiForm({ ...FOTO_KOSONG, sesudah: { id: null, file: berkas('a.png'), preview: 'blob:a' } })).toBe(true);
+    expect(adaFotoDiForm({ sebelum: [], sesudah: [{ key: 'a', file: berkas('a.png'), preview: 'blob:a' }] })).toBe(true);
     expect(adaFotoDiForm(state)).toBe(true);
   });
 
@@ -196,44 +212,39 @@ describe('foto-pembangunan.logic', () => {
     expect(peringatanFotoNonPembangunan(false, true)).toContain('tidak akan diunggah');
   });
 
-  it('unggahFotoPembangunan: form kosong → body kosong tanpa upload', async () => {
+  it('unggahFotoPembangunan: form kosong → dua array kosong tanpa upload', async () => {
     const upload = vi.fn();
     const hasil = await unggahFotoPembangunan(FOTO_KOSONG, upload);
-    expect(hasil.body).toEqual({ fotoSebelumId: null, fotoSesudahId: null, fotoProgresIds: [] });
+    expect(hasil.body).toEqual({ fotoSebelumIds: [], fotoSesudahIds: [] });
     expect(upload).not.toHaveBeenCalled();
   });
 
-  it('unggah berurutan sebelum → sesudah → galeri, id tersimpan dipakai ulang, state mengganti file dengan id', async () => {
+  it('unggah berurutan sebelum → sesudah, id tersimpan dipakai ulang, state mengganti file dengan id', async () => {
     const urutan: string[] = [];
     const upload = vi.fn(async (file: File) => {
       urutan.push(file.name);
       return `id-${file.name}`;
     });
     const foto: FotoPembangunanState = {
-      sebelum: { id: null, file: berkas('sebelum.png'), preview: 'blob:1' },
-      sesudah: { id: 'lama', file: null, preview: '/api/img/lama.webp' },
-      galeri: [
-        { key: 'a', preview: 'blob:a', file: berkas('g-a.png') },
+      sebelum: [
+        { key: 'a', preview: 'blob:a', file: berkas('b-a.png') },
         { key: 'tersimpan', preview: '/api/img/t.webp', id: 't' },
-        { key: 'b', preview: 'blob:b', file: berkas('g-b.png') },
+      ],
+      sesudah: [
+        { key: 'c', preview: 'blob:c', file: berkas('s-c.png') },
+        { key: 'd', preview: 'blob:d', file: berkas('s-d.png') },
       ],
     };
     const { body, state } = await unggahFotoPembangunan(foto, upload);
-    expect(urutan).toEqual(['sebelum.png', 'g-a.png', 'g-b.png']);
-    expect(body).toEqual({
-      fotoSebelumId: 'id-sebelum.png',
-      fotoSesudahId: 'lama',
-      fotoProgresIds: ['id-g-a.png', 't', 'id-g-b.png'],
-    });
-    expect(state.sebelum).toEqual({ id: 'id-sebelum.png', file: null, preview: 'blob:1' });
-    expect(state.galeri.map((g) => g.id)).toEqual(['id-g-a.png', 't', 'id-g-b.png']);
-    expect(state.galeri.every((g) => !('file' in g) || g.file === undefined)).toBe(true);
+    expect(urutan).toEqual(['b-a.png', 's-c.png', 's-d.png']);
+    expect(body).toEqual({ fotoSebelumIds: ['id-b-a.png', 't'], fotoSesudahIds: ['id-s-c.png', 'id-s-d.png'] });
+    expect(state.sebelum.map((g) => g.id)).toEqual(['id-b-a.png', 't']);
+    expect(state.sesudah.map((g) => g.id)).toEqual(['id-s-c.png', 'id-s-d.png']);
+    expect(state.sebelum[0]).toEqual({ key: 'a', preview: 'blob:a', id: 'id-b-a.png' });
   });
 
   it('upload gagal → melempar error berpesan Indonesia (tidak diam-diam)', async () => {
-    const foto: FotoPembangunanState = { ...FOTO_KOSONG, sesudah: { id: null, file: berkas('x.png'), preview: 'blob:x' } };
-    await expect(unggahFotoPembangunan(foto, async () => null)).rejects.toThrow('Gagal mengunggah foto "x.png"');
-    const galeriGagal: FotoPembangunanState = { ...FOTO_KOSONG, galeri: [{ key: 'a', preview: 'blob:a', file: berkas('g.png') }] };
-    await expect(unggahFotoPembangunan(galeriGagal, async () => null)).rejects.toThrow('g.png');
+    const foto: FotoPembangunanState = { ...FOTO_KOSONG, sesudah: [{ key: 'x', preview: 'blob:x', file: berkas('x.png') }] };
+    await expect(unggahFotoPembangunan(foto, async () => null)).rejects.toThrow('x.png');
   });
 });

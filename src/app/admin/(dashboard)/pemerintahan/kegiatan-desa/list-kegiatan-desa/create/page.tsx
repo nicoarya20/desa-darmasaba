@@ -87,9 +87,8 @@ export default function CreateKegiatanDesa() {
 
       // Foto Pembangunan hanya diunggah & dikirim bila kategori Pembangunan (API mengosongkannya untuk kategori lain).
       const form = kegiatanState.kegiatan.create.form;
-      form.fotoSebelumId = undefined;
-      form.fotoSesudahId = undefined;
-      form.fotoProgresIds = undefined;
+      form.fotoSebelumIds = undefined;
+      form.fotoSesudahIds = undefined;
       if (isPembangunan) {
         const hasil = await fotoPembangunan.unggah();
         if (!hasil.ok) return;

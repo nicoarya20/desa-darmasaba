@@ -2,8 +2,8 @@
 
 ## [0.1.305] - 2026-11-18
 ### Added
-- **Kegiatan Desa kategori Pembangunan kini bisa punya dokumentasi foto.** Di form tambah dan ubah kegiatan, saat kategori "Pembangunan" dipilih muncul bagian "Dokumentasi Pembangunan" berisi **Foto Sebelum**, **Foto Sesudah**, dan **Galeri Progres** (sampai 10 foto). Semuanya opsional: kegiatan tetap bisa disimpan tanpa foto. Foto berformat JPG, PNG, atau WebP, maksimal 5 MB per foto.
-- **Halaman detail kegiatan menampilkan "Dokumentasi Pembangunan"** bila ada minimal satu foto: foto sebelum dan sesudah berdampingan (bertumpuk di ponsel), lalu galeri progres. Tanpa foto, bagian ini tidak muncul.
+- **Kegiatan Desa kategori Pembangunan kini bisa punya dokumentasi foto.** Di form tambah dan ubah kegiatan, saat kategori "Pembangunan" dipilih muncul bagian "Dokumentasi Pembangunan" berisi **Foto Sebelum** dan **Foto Sesudah**, masing-masing bisa diisi sampai 5 foto. Semuanya opsional: kegiatan tetap bisa disimpan tanpa foto. Foto berformat JPG, PNG, atau WebP, maksimal 5 MB per foto.
+- **Halaman detail kegiatan menampilkan "Dokumentasi Pembangunan"** bila ada minimal satu foto: kolom Sebelum dan Sesudah berdampingan (bertumpuk di ponsel). Kelompok yang kosong tidak ditampilkan, dan tanpa foto sama sekali bagian ini tidak muncul.
 
 ### Changed
 - Input gambar lama di form Kegiatan Desa kini berlabel **"Gambar Sampul (Opsional)"** beserta keterangan bahwa gambar itu tampil sebagai gambar utama di daftar dan detail kegiatan, supaya tidak tertukar dengan foto dokumentasi Pembangunan.

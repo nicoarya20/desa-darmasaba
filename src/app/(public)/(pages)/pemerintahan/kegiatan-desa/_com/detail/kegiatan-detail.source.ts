@@ -14,9 +14,8 @@ export type KegiatanDetail = PembangunanInfoItem & {
   kategoriKegiatanId?: string | null;
   kategoriKegiatan?: { nama?: string | null } | null;
   // Dokumentasi Pembangunan (opsional; hilang pada API lama atau kegiatan tanpa foto)
-  fotoSebelum?: FotoPublik | null;
-  fotoSesudah?: FotoPublik | null;
-  fotoProgres?: FotoPublik[] | null;
+  fotoSebelum?: FotoPublik[] | null;
+  fotoSesudah?: FotoPublik[] | null;
 };
 
 type DetailBody = { success?: boolean; message?: string; data?: KegiatanDetail | null } | null;

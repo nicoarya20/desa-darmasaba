@@ -6,30 +6,14 @@ import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { toast } from 'react-toastify';
 import { GAMBAR_ACCEPT, GAMBAR_MAX_BYTES } from '../_lib/lampiran.logic';
 
-type Props = {
-  preview: string | null;
-  onSelect: (file: File) => void;
-  onRemove: () => void;
-  /** Default "Gambar Utama (opsional)". */
-  label?: string;
-  /** Default "Preview gambar utama pengumuman". */
-  alt?: string;
-  disabled?: boolean;
-};
+type Props = { preview: string | null; onSelect: (file: File) => void; onRemove: () => void };
 
 /** Dropzone gambar/poster utama pengumuman (opsional, jadi thumbnail kartu) + preview & hapus. */
-export function GambarUtamaDropzone({
-  preview,
-  onSelect,
-  onRemove,
-  label = 'Gambar Utama (opsional)',
-  alt = 'Preview gambar utama pengumuman',
-  disabled = false,
-}: Props) {
+export function GambarUtamaDropzone({ preview, onSelect, onRemove }: Props) {
   return (
     <Box>
       <Text fw="bold" fz="sm" mb={6}>
-        {label}
+        Gambar Utama (opsional)
       </Text>
       <Dropzone
         onDrop={(files) => files[0] && onSelect(files[0])}
@@ -37,7 +21,6 @@ export function GambarUtamaDropzone({
         maxSize={GAMBAR_MAX_BYTES}
         accept={GAMBAR_ACCEPT}
         multiple={false}
-        disabled={disabled}
         radius="md"
         p="md"
       >
@@ -66,7 +49,7 @@ export function GambarUtamaDropzone({
         <Box mt="sm" pos="relative" style={{ textAlign: 'center' }} data-gambar-utama-preview>
           <Image
             src={preview}
-            alt={alt}
+            alt="Preview gambar utama pengumuman"
             radius="md"
             style={{ maxHeight: 220, objectFit: 'contain', border: '1px solid #ddd' }}
             loading="lazy"
@@ -79,8 +62,7 @@ export function GambarUtamaDropzone({
             pos="absolute"
             top={5}
             right={5}
-            aria-label={`Hapus ${label.replace(/ \(opsional\)$/, '').toLowerCase()}`}
-            disabled={disabled}
+            aria-label="Hapus gambar utama"
             onClick={onRemove}
           >
             <IconX size={14} />

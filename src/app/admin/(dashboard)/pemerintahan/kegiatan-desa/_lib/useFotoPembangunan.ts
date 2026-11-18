@@ -1,6 +1,6 @@
 'use client';
 import { unggahGambar } from '@/app/admin/(dashboard)/_state/konten-bersama/unggah-gambar';
-import { MAX_FOTO_PROGRES } from '@/lib/kegiatan-pembangunan-foto';
+import { MAX_FOTO_PER_JENIS, type JenisFoto } from '@/lib/kegiatan-pembangunan-foto';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
@@ -8,7 +8,6 @@ import {
   adaFotoTersimpan,
   FOTO_KOSONG,
   fotoDariApi,
-  GAMBAR_KOSONG,
   tambahTerbatas,
   unggahFotoPembangunan,
   type FotoPembangunanAwal,
@@ -41,31 +40,20 @@ export function useFotoPembangunan() {
     return () => urls.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
-  const pilih = (kunci: 'sebelum' | 'sesudah', file: File) => {
-    lepasPreview(foto[kunci].preview);
-    setError(null);
-    setFoto({ ...foto, [kunci]: { id: null, file, preview: buatPreview(file) } });
-  };
-
-  const hapus = (kunci: 'sebelum' | 'sesudah') => {
-    lepasPreview(foto[kunci].preview);
-    setFoto({ ...foto, [kunci]: GAMBAR_KOSONG });
-  };
-
-  const tambahGaleri = (files: File[]) => {
+  const tambah = (kunci: JenisFoto, files: File[]) => {
     const baru = files.map((file, i) => ({ key: `baru-${Date.now()}-${i}-${file.name}`, file, preview: buatPreview(file) }));
-    const hasil = tambahTerbatas(foto.galeri, baru, MAX_FOTO_PROGRES);
+    const hasil = tambahTerbatas(foto[kunci], baru, MAX_FOTO_PER_JENIS);
     hasil.ditolak.forEach((item) => lepasPreview(item.preview));
     if (hasil.ditolak.length > 0) {
-      toast.warn(`Maksimal ${MAX_FOTO_PROGRES} foto progres, ${hasil.ditolak.length} foto diabaikan`);
+      toast.warn(`Maksimal ${MAX_FOTO_PER_JENIS} foto ${kunci}, ${hasil.ditolak.length} foto diabaikan`);
     }
     setError(null);
-    setFoto({ ...foto, galeri: hasil.items });
+    setFoto({ ...foto, [kunci]: hasil.items });
   };
 
-  const hapusGaleri = (key: string) => {
-    lepasPreview(foto.galeri.find((item) => item.key === key)?.preview);
-    setFoto({ ...foto, galeri: foto.galeri.filter((item) => item.key !== key) });
+  const hapus = (kunci: JenisFoto, key: string) => {
+    lepasPreview(foto[kunci].find((item) => item.key === key)?.preview);
+    setFoto({ ...foto, [kunci]: foto[kunci].filter((item) => item.key !== key) });
   };
 
   /** Isi dari data tersimpan (load edit / Batal / Reset). */
@@ -102,12 +90,10 @@ export function useFotoPembangunan() {
     foto,
     error,
     mengunggah,
-    pilihSebelum: (file: File) => pilih('sebelum', file),
-    hapusSebelum: () => hapus('sebelum'),
-    pilihSesudah: (file: File) => pilih('sesudah', file),
-    hapusSesudah: () => hapus('sesudah'),
-    tambahGaleri,
-    hapusGaleri,
+    tambahSebelum: (files: File[]) => tambah('sebelum', files),
+    hapusSebelum: (key: string) => hapus('sebelum', key),
+    tambahSesudah: (files: File[]) => tambah('sesudah', files),
+    hapusSesudah: (key: string) => hapus('sesudah', key),
     muat,
     reset,
     unggah,

@@ -59,7 +59,7 @@
   background: var(--tile);
 }
 
-/* ---------- Dokumentasi pembangunan (sebelum/sesudah + galeri progres) ---------- */
+/* ---------- Dokumentasi pembangunan (kolom Sebelum/Sesudah) ---------- */
 .pair,
 .pairSingle {
   display: grid;
@@ -70,10 +70,9 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/* Hanya satu foto: satu kolom selebar setengah blok, tanpa slot kosong. */
+/* Hanya satu kelompok berisi foto: satu kolom penuh, tanpa slot kosong. */
 .pairSingle {
   grid-template-columns: minmax(0, 1fr);
-  max-width: 50%;
 }
 
 .pairItem {
@@ -85,29 +84,6 @@
 }
 
 .pairLabel {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.43;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.pairImg {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--radius);
-  background: var(--tile);
-}
-
-.progres {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.progresTitle {
   margin: 0;
   color: var(--ink);
   font-size: 17px;
@@ -132,9 +108,5 @@
 
   .pair {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .pairSingle {
-    max-width: none;
   }
 }

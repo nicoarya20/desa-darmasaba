@@ -56,7 +56,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   prismaMock.kegiatanDesa.create.mockResolvedValue({ id: "k1" });
   prismaMock.kegiatanDesa.update.mockResolvedValue({ id: "k1" });
-  prismaMock.kegiatanDesa.findUnique.mockResolvedValue({ fotoSebelumId: null, fotoSesudahId: null, fotoProgres: [] });
+  prismaMock.kegiatanDesa.findUnique.mockResolvedValue({ foto: [] });
   prismaMock.$transaction.mockImplementation(async (fn: (tx: typeof prismaMock) => unknown) => fn(prismaMock));
 });
 

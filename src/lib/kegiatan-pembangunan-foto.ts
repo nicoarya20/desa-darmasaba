@@ -1,5 +1,5 @@
 /**
- * Dokumentasi foto Kegiatan Desa kategori Pembangunan (foto sebelum, foto sesudah, galeri progres) —
+ * Dokumentasi foto Kegiatan Desa kategori Pembangunan (foto sebelum & foto sesudah, maks 5 per jenis) —
  * fungsi murni tanpa DB, dipakai handler create/update, form admin, dan halaman publik supaya batas,
  * pesan error, dan susunan tampil satu sumber.
  */
@@ -7,86 +7,86 @@ import type { Prisma } from "@prisma/client";
 import { PENGUMUMAN_FILE_SELECT, type PengumumanFile } from "./pengumuman-lampiran";
 import { KATEGORI_PEMBANGUNAN_ID } from "./kegiatan-pembangunan";
 
-/** Batas foto galeri progres per kegiatan. */
-export const MAX_FOTO_PROGRES = 10;
+/** Batas foto per jenis (sebelum / sesudah) per kegiatan. */
+export const MAX_FOTO_PER_JENIS = 5;
 /** Mime yang diterima (endpoint upload mengonversi gambar ke WebP; jenis lain disimpan ter-gzip). */
 export const FOTO_PEMBANGUNAN_MIME = ["image/jpeg", "image/png", "image/webp"] as const;
+
+/** Nilai kolom `KegiatanDesaFoto.jenis` (String di DB, divalidasi di sini). */
+export const JENIS_FOTO = ["sebelum", "sesudah"] as const;
+export type JenisFoto = (typeof JENIS_FOTO)[number];
 
 /** Berkas foto dalam respons API (bentuk sama dengan lampiran Pengumuman). */
 export type FotoPembangunanFile = PengumumanFile;
 
-/** Include foto di detail kegiatan; galeri terurut `urutan asc`. */
+/** Include foto di detail kegiatan; baris terurut (jenis, urutan asc) dan dipecah per jenis oleh `bentukFotoRespons`. */
 export const FOTO_PEMBANGUNAN_INCLUDE = {
-  fotoSebelum: { select: PENGUMUMAN_FILE_SELECT },
-  fotoSesudah: { select: PENGUMUMAN_FILE_SELECT },
-  fotoProgres: {
-    orderBy: { urutan: "asc" },
-    select: { fileId: true, file: { select: PENGUMUMAN_FILE_SELECT } },
+  foto: {
+    orderBy: [{ jenis: "asc" }, { urutan: "asc" }],
+    select: { jenis: true, fileId: true, file: { select: PENGUMUMAN_FILE_SELECT } },
   },
 } satisfies Prisma.KegiatanDesaInclude;
 
-/** Select ringan untuk mengambil rujukan berkas sebelum update (pembersihan berkas yang dilepas). */
+/** Select ringan untuk mengambil rujukan berkas sebelum update (jenis yang ada + pembersihan berkas yang dilepas). */
 export const FOTO_PEMBANGUNAN_REF_SELECT = {
-  fotoSebelumId: true,
-  fotoSesudahId: true,
-  fotoProgres: { select: { fileId: true } },
+  foto: { select: { jenis: true, fileId: true } },
 } satisfies Prisma.KegiatanDesaSelect;
 
-/** Foto yang sudah dinormalisasi; field undefined = tidak dikirim (tidak diubah). */
+/** Foto yang sudah dinormalisasi; field undefined = tidak dikirim (tidak diubah). Array = set final, urutan = urutan tampil. */
 export type FotoPembangunanInput = {
-  /** undefined = tidak diubah; null = hapus; string = id FileStorage. */
-  fotoSebelumId?: string | null;
-  fotoSesudahId?: string | null;
-  /** undefined = tidak diubah; array = set final, urutan = urutan tampil. */
-  fotoProgresIds?: string[];
+  fotoSebelumIds?: string[];
+  fotoSesudahIds?: string[];
 };
 
 export type FotoPembangunanParseResult =
   | { ok: true; data: FotoPembangunanInput }
   | { ok: false; message: string };
 
-const LABEL_SEBELUM = "Foto sebelum";
-const LABEL_SESUDAH = "Foto sesudah";
-const LABEL_PROGRES = "Foto progres";
+const FIELD: Record<JenisFoto, "fotoSebelumIds" | "fotoSesudahIds"> = {
+  sebelum: "fotoSebelumIds",
+  sesudah: "fotoSesudahIds",
+};
+const LABEL: Record<JenisFoto, string> = { sebelum: "Foto sebelum", sesudah: "Foto sesudah" };
 
-function parseIdTunggal(value: unknown, label: string): { ok: true; data: string | null | undefined } | { ok: false; message: string } {
+function parseKelompok(
+  value: unknown,
+  jenis: JenisFoto,
+): { ok: true; data: string[] | undefined } | { ok: false; message: string } {
   if (value === undefined) return { ok: true, data: undefined };
-  if (value === null) return { ok: true, data: null };
-  if (typeof value !== "string") return { ok: false, message: `${label} tidak valid` };
-  const trimmed = value.trim();
-  return { ok: true, data: trimmed === "" ? null : trimmed };
+  if (!Array.isArray(value) || value.some((id) => typeof id !== "string" || id.trim() === "")) {
+    return { ok: false, message: `${LABEL[jenis]} tidak valid` };
+  }
+  const ids = (value as string[]).map((id) => id.trim());
+  if (new Set(ids).size !== ids.length) {
+    return { ok: false, message: `${LABEL[jenis]} tidak boleh berisi foto yang sama lebih dari sekali` };
+  }
+  if (ids.length > MAX_FOTO_PER_JENIS) {
+    return {
+      ok: false,
+      message: `Maksimal ${MAX_FOTO_PER_JENIS} ${LABEL[jenis].toLowerCase()} per kegiatan (dikirim ${ids.length})`,
+    };
+  }
+  return { ok: true, data: ids };
 }
 
 /**
  * Validasi & normalisasi field foto dari body request.
- * undefined → dilewati (tidak diubah); null/"" → dihapus; string → id. Galeri: array id tanpa duplikat, maks 10.
+ * undefined → dilewati (tidak diubah); array → set final (maks 5 per jenis, tanpa duplikat, tanpa id yang sama
+ * di kedua kelompok bila keduanya dikirim).
  */
 export function parseFotoPembangunanInput(body: Record<string, unknown>): FotoPembangunanParseResult {
   const data: FotoPembangunanInput = {};
-
-  const sebelum = parseIdTunggal(body.fotoSebelumId, LABEL_SEBELUM);
-  if (!sebelum.ok) return sebelum;
-  if (sebelum.data !== undefined) data.fotoSebelumId = sebelum.data;
-
-  const sesudah = parseIdTunggal(body.fotoSesudahId, LABEL_SESUDAH);
-  if (!sesudah.ok) return sesudah;
-  if (sesudah.data !== undefined) data.fotoSesudahId = sesudah.data;
-
-  const progres = body.fotoProgresIds;
-  if (progres !== undefined) {
-    if (!Array.isArray(progres) || progres.some((id) => typeof id !== "string" || id.trim() === "")) {
-      return { ok: false, message: "Galeri foto progres tidak valid" };
-    }
-    const ids = (progres as string[]).map((id) => id.trim());
-    if (new Set(ids).size !== ids.length) {
-      return { ok: false, message: "Galeri foto progres tidak boleh berisi foto yang sama lebih dari sekali" };
-    }
-    if (ids.length > MAX_FOTO_PROGRES) {
-      return { ok: false, message: `Maksimal ${MAX_FOTO_PROGRES} foto progres per kegiatan (dikirim ${ids.length})` };
-    }
-    data.fotoProgresIds = ids;
+  for (const jenis of JENIS_FOTO) {
+    const hasil = parseKelompok(body[FIELD[jenis]], jenis);
+    if (!hasil.ok) return hasil;
+    if (hasil.data !== undefined) data[FIELD[jenis]] = hasil.data;
   }
-
+  if (data.fotoSebelumIds && data.fotoSesudahIds) {
+    const sesudah = new Set(data.fotoSesudahIds);
+    if (data.fotoSebelumIds.some((id) => sesudah.has(id))) {
+      return { ok: false, message: "Foto yang sama tidak boleh dipakai di foto sebelum dan foto sesudah" };
+    }
+  }
   return { ok: true, data };
 }
 
@@ -99,25 +99,22 @@ export function resolveFotoPembangunan(
   input: FotoPembangunanInput,
 ): FotoPembangunanInput {
   if (kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID) return input;
-  return { fotoSebelumId: null, fotoSesudahId: null, fotoProgresIds: [] };
+  return { fotoSebelumIds: [], fotoSesudahIds: [] };
+}
+
+/** Jenis yang dikirim (kelompok yang akan ditulis ulang). */
+export function jenisDikirim(input: FotoPembangunanInput): JenisFoto[] {
+  return JENIS_FOTO.filter((jenis) => input[FIELD[jenis]] !== undefined);
 }
 
 /** True bila ada field foto yang dikirim (sehingga berkas lama mungkin dilepas). */
 export function adaPerubahanFoto(input: FotoPembangunanInput): boolean {
-  return (
-    input.fotoSebelumId !== undefined ||
-    input.fotoSesudahId !== undefined ||
-    input.fotoProgresIds !== undefined
-  );
+  return jenisDikirim(input).length > 0;
 }
 
-/** Berkas yang dirujuk input beserta label pesan error-nya (id unik per peran). */
+/** Berkas yang dirujuk input beserta label pesan error-nya. */
 export function rujukanFoto(input: FotoPembangunanInput): { id: string; label: string }[] {
-  return [
-    ...(input.fotoSebelumId ? [{ id: input.fotoSebelumId, label: LABEL_SEBELUM }] : []),
-    ...(input.fotoSesudahId ? [{ id: input.fotoSesudahId, label: LABEL_SESUDAH }] : []),
-    ...(input.fotoProgresIds ?? []).map((id) => ({ id, label: LABEL_PROGRES })),
-  ];
+  return JENIS_FOTO.flatMap((jenis) => (input[FIELD[jenis]] ?? []).map((id) => ({ id, label: LABEL[jenis] })));
 }
 
 /**
@@ -139,91 +136,76 @@ export function periksaFotoPembangunan(
   return { ok: true };
 }
 
-/** Kolom scalar foto untuk `kegiatanDesa.update`: hanya field yang dikirim (galeri ditangani terpisah). */
-export function susunDataFotoUpdate(input: FotoPembangunanInput): {
-  fotoSebelumId?: string | null;
-  fotoSesudahId?: string | null;
-} {
-  return {
-    ...(input.fotoSebelumId !== undefined ? { fotoSebelumId: input.fotoSebelumId } : {}),
-    ...(input.fotoSesudahId !== undefined ? { fotoSesudahId: input.fotoSesudahId } : {}),
-  };
+type BarisFoto = { fileId: string; jenis: JenisFoto; urutan: number };
+
+/** Baris foto untuk kelompok yang dikirim (urutan = indeks per jenis). */
+function barisFoto(input: FotoPembangunanInput): BarisFoto[] {
+  return jenisDikirim(input).flatMap((jenis) =>
+    (input[FIELD[jenis]] ?? []).map((fileId, urutan) => ({ fileId, jenis, urutan })),
+  );
 }
 
-/** Data foto untuk `kegiatanDesa.create`: scalar + galeri nested (urutan = indeks). */
-export function susunDataFotoCreate(input: FotoPembangunanInput): {
-  fotoSebelumId: string | null;
-  fotoSesudahId: string | null;
-  fotoProgres?: { create: { fileId: string; urutan: number }[] };
-} {
-  const ids = input.fotoProgresIds ?? [];
-  return {
-    fotoSebelumId: input.fotoSebelumId ?? null,
-    fotoSesudahId: input.fotoSesudahId ?? null,
-    ...(ids.length > 0 ? { fotoProgres: { create: ids.map((fileId, urutan) => ({ fileId, urutan })) } } : {}),
-  };
+/** Baris `KegiatanDesaFoto` siap `createMany` untuk kegiatan yang sudah ada. */
+export function susunBarisFoto(
+  kegiatanDesaId: string,
+  input: FotoPembangunanInput,
+): (BarisFoto & { kegiatanDesaId: string })[] {
+  return barisFoto(input).map((baris) => ({ kegiatanDesaId, ...baris }));
 }
 
-/** Baris galeri untuk `kegiatanDesaFoto.createMany` (urutan = indeks). */
-export function susunBarisGaleri(kegiatanDesaId: string, ids: string[]): { kegiatanDesaId: string; fileId: string; urutan: number }[] {
-  return ids.map((fileId, urutan) => ({ kegiatanDesaId, fileId, urutan }));
+/** Data foto untuk `kegiatanDesa.create`: baris nested (kosong = tanpa relasi). */
+export function susunDataFotoCreate(input: FotoPembangunanInput): { foto?: { create: BarisFoto[] } } {
+  const rows = barisFoto(input);
+  return rows.length > 0 ? { foto: { create: rows } } : {};
 }
 
-type FotoRecord = {
-  fotoSebelumId?: string | null;
-  fotoSesudahId?: string | null;
-  fotoProgres?: { fileId: string }[] | null;
-};
+type RecordFoto = { foto?: { fileId: string }[] | null };
 
 /** Semua id berkas yang dirujuk record foto (untuk `removeReleasedFiles`). */
-export function idBerkasFoto(record: FotoRecord | null | undefined): string[] {
-  if (!record) return [];
-  return [
-    ...(record.fotoSebelumId ? [record.fotoSebelumId] : []),
-    ...(record.fotoSesudahId ? [record.fotoSesudahId] : []),
-    ...(record.fotoProgres ?? []).map((f) => f.fileId),
-  ];
+export function idBerkasFoto(record: RecordFoto | null | undefined): string[] {
+  return (record?.foto ?? []).map((f) => f.fileId);
 }
 
-/** Ratakan baris galeri `{ file }` hasil query menjadi daftar berkas (untuk respons API). */
-export function ratakanFotoProgres(
-  rows: { file: FotoPembangunanFile }[] | null | undefined,
-): FotoPembangunanFile[] {
-  return (rows ?? []).map((r) => r.file);
+/** Apakah record punya foto untuk salah satu jenis di `jenis` (menentukan perlu menulis ulang atau tidak). */
+export function adaFotoLama(
+  record: { foto?: { jenis: string }[] | null } | null | undefined,
+  jenis: JenisFoto[],
+): boolean {
+  return (record?.foto ?? []).some((f) => (jenis as string[]).includes(f.jenis));
 }
 
-/** Bentuk respons API foto: `fotoProgres` jadi `File[]` terurut. */
-export function bentukFotoRespons<T extends { fotoProgres?: { file: FotoPembangunanFile }[] | null }>(
+type BarisFotoRespons = { jenis: string; file: FotoPembangunanFile };
+
+/** Bentuk respons API foto: `foto` dipecah jadi `fotoSebelum` / `fotoSesudah` (File[] terurut). */
+export function bentukFotoRespons<T extends { foto?: BarisFotoRespons[] | null }>(
   record: T,
-): Omit<T, "fotoProgres"> & { fotoProgres: FotoPembangunanFile[] } {
-  return { ...record, fotoProgres: ratakanFotoProgres(record.fotoProgres) };
+): Omit<T, "foto"> & { fotoSebelum: FotoPembangunanFile[]; fotoSesudah: FotoPembangunanFile[] } {
+  const { foto, ...sisa } = record;
+  const rows = foto ?? [];
+  const per = (jenis: JenisFoto) => rows.filter((r) => r.jenis === jenis).map((r) => r.file);
+  return { ...sisa, fotoSebelum: per("sebelum"), fotoSesudah: per("sesudah") };
 }
 
 /** Foto publik minimal yang dibutuhkan tampilan. */
 export type FotoPublik = { id: string; link: string; realName?: string | null };
 
 export type SusunanFotoPublik = {
-  /** Pasangan sebelum/sesudah yang ada (satu saja bila hanya satu; urutan: sebelum lalu sesudah). */
-  pasangan: { kunci: "sebelum" | "sesudah"; file: FotoPublik }[];
-  galeri: FotoPublik[];
+  /** Kelompok yang punya foto (sebelum lalu sesudah); kelompok kosong tidak ada. */
+  kelompok: { kunci: JenisFoto; files: FotoPublik[] }[];
   adaFoto: boolean;
 };
 
 /** Susunan blok "Dokumentasi Pembangunan" publik; tolerant terhadap field hilang/null (API lama). */
 export function susunanFotoPublik(data: {
-  fotoSebelum?: FotoPublik | null;
-  fotoSesudah?: FotoPublik | null;
-  fotoProgres?: FotoPublik[] | null;
+  fotoSebelum?: FotoPublik[] | null;
+  fotoSesudah?: FotoPublik[] | null;
 }): SusunanFotoPublik {
-  const pasangan: SusunanFotoPublik["pasangan"] = [
-    ...(data.fotoSebelum?.link ? [{ kunci: "sebelum" as const, file: data.fotoSebelum }] : []),
-    ...(data.fotoSesudah?.link ? [{ kunci: "sesudah" as const, file: data.fotoSesudah }] : []),
-  ];
-  const galeri = (data.fotoProgres ?? []).filter((f) => !!f?.link);
-  return { pasangan, galeri, adaFoto: pasangan.length > 0 || galeri.length > 0 };
-}
-
-/** Sisa slot galeri progres di form admin (tidak pernah negatif). */
-export function sisaSlotFotoProgres(jumlah: number): number {
-  return Math.max(0, MAX_FOTO_PROGRES - jumlah);
+  const per = (kunci: JenisFoto, files: FotoPublik[] | null | undefined) => ({
+    kunci,
+    files: (files ?? []).filter((f) => !!f?.link),
+  });
+  const kelompok = [per("sebelum", data.fotoSebelum), per("sesudah", data.fotoSesudah)].filter(
+    (k) => k.files.length > 0,
+  );
+  return { kelompok, adaFoto: kelompok.length > 0 };
 }

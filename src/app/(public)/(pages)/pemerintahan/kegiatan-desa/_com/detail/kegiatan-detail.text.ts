@@ -9,12 +9,9 @@ export const KEGIATAN_DETAIL_TEXT = {
   fotoLabel: "Lihat foto ukuran penuh",
   pembangunan: "Progres Pembangunan",
   dokumentasi: "Dokumentasi Pembangunan",
-  progres: "Galeri Progres",
   labelFoto: { sebelum: "Sebelum", sesudah: "Sesudah" },
   altFoto: {
     sebelum: (judul: string) => `Foto sebelum pembangunan ${judul}`,
     sesudah: (judul: string) => `Foto sesudah pembangunan ${judul}`,
   },
-  altProgres: (judul: string) => `Foto progres pembangunan ${judul}`,
-  fotoLabelNamed: (label: string) => `Lihat foto ${label.toLowerCase()} ukuran penuh`,
 } as const;
