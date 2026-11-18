@@ -47,7 +47,7 @@ Tabel `sizes`: feature `(max-width: 734px) 220vw, (max-width: 1068px) 64vw, 49vw
 | Galeri tile, setelah dekat layar | 15 | 9 | 6 |
 | Kabar rail (beranda) / Prestasi / SDGs | 0 | 0 | semua (tak berubah) |
 
-Gambar eager non-hero di beranda saat dibuka: dari seluruh `<img>` galeri (30–50 per 2 baris pada N tipikal) menjadi 0. Foto `/api/img` yang dimuat sekarang memakai `?size=` (480–1280) bukan 1920.
+Gambar eager non-hero di beranda saat dibuka: dari seluruh `<img>` galeri (2 baris × (2·⌈4/N⌉+1)·N; jumlah N nyata tak diukur) menjadi 0. Foto `/api/img` yang dimuat sekarang memakai `?size=` (480–1280) bukan 1920.
 
 ## 4. Verifikasi
 - Test baru (vitest, env node): `responsive_image_logic` (17), `gallery_image_logic` (5), `responsive_images_components` (9, renderToStaticMarkup: Kabar rail/grid, Prestasi wide, GalleryRow, SDGs), + 2 test baru di `darmasaba_image_error_retry` — **semua lulus** (juga `image_loading_attrs` lama).
