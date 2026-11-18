@@ -10,7 +10,7 @@ import {
   type JenisMusyawarah,
 } from '@/lib/dokumen-perencanaan';
 import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
-import { Button, Group, NumberInput, Paper, Select, Stack, TextInput, Textarea, Title } from '@mantine/core';
+import { Button, Divider, Group, NumberInput, Paper, Select, SimpleGrid, Stack, TextInput, Textarea, Title } from '@mantine/core';
 import { useState } from 'react';
 import {
   DOKUMEN_ADMIN_TEXT,
@@ -22,6 +22,9 @@ import {
 } from './dokumen-perencanaan.text';
 
 const toYear = (v: string | number): number | null => (typeof v === 'number' ? v : null);
+
+// Isian tahun: tanpa panah naik-turun (mengetik lebih cepat dari mengeklik) dan hanya bilangan bulat.
+const TAHUN_INPUT_PROPS = { min: TAHUN_MIN, max: TAHUN_MAX, allowDecimal: false, hideControls: true } as const;
 
 type Props = {
   form: FormValues;
@@ -63,40 +66,44 @@ export default function DokumenPerencanaanForm({
           required
         />
 
-        {form.jenis === 'RPJM' ? (
-          <Group grow align="flex-start">
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
+          {form.jenis === 'RPJM' ? (
+            <>
+              <NumberInput
+                label="Tahun Mulai"
+                description={DOKUMEN_ADMIN_TEXT.tahunMulaiHint}
+                {...TAHUN_INPUT_PROPS}
+                value={form.tahunMulai ?? ''}
+                onChange={(v) => (form.tahunMulai = toYear(v))}
+                required
+              />
+              <NumberInput
+                label="Tahun Selesai"
+                description={DOKUMEN_ADMIN_TEXT.tahunSelesaiHint}
+                {...TAHUN_INPUT_PROPS}
+                value={form.tahunSelesai ?? ''}
+                onChange={(v) => (form.tahunSelesai = toYear(v))}
+                required
+              />
+            </>
+          ) : (
             <NumberInput
-              label="Tahun Mulai"
-              min={TAHUN_MIN}
-              max={TAHUN_MAX}
-              allowDecimal={false}
-              value={form.tahunMulai ?? ''}
-              onChange={(v) => (form.tahunMulai = toYear(v))}
+              label="Tahun"
+              description={TAHUN_HINT[form.jenis] ?? DOKUMEN_ADMIN_TEXT.tahunDefaultHint}
+              {...TAHUN_INPUT_PROPS}
+              value={form.tahun ?? ''}
+              onChange={(v) => (form.tahun = toYear(v))}
               required
             />
-            <NumberInput
-              label="Tahun Selesai"
-              description="Bebas, mengikuti masa jabatan (6 atau 8 tahun)"
-              min={TAHUN_MIN}
-              max={TAHUN_MAX}
-              allowDecimal={false}
-              value={form.tahunSelesai ?? ''}
-              onChange={(v) => (form.tahunSelesai = toYear(v))}
-              required
-            />
-          </Group>
-        ) : (
-          <NumberInput
-            label="Tahun"
-            description={TAHUN_HINT[form.jenis]}
-            min={TAHUN_MIN}
-            max={TAHUN_MAX}
-            allowDecimal={false}
-            value={form.tahun ?? ''}
-            onChange={(v) => (form.tahun = toYear(v))}
-            required
+          )}
+          <TextInput
+            label="Nomor Perdes"
+            description={DOKUMEN_ADMIN_TEXT.opsional}
+            maxLength={NOMOR_PERDES_MAX_LENGTH}
+            value={form.nomorPerdes}
+            onChange={(e) => (form.nomorPerdes = e.currentTarget.value)}
           />
-        )}
+        </SimpleGrid>
 
         {form.jenis === 'BERITA_ACARA_MUSYAWARAH' && (
           <Select
@@ -109,13 +116,6 @@ export default function DokumenPerencanaanForm({
           />
         )}
 
-        <TextInput
-          label="Nomor Perdes"
-          description="Opsional"
-          maxLength={NOMOR_PERDES_MAX_LENGTH}
-          value={form.nomorPerdes}
-          onChange={(e) => (form.nomorPerdes = e.currentTarget.value)}
-        />
         <Textarea
           label="Ringkasan"
           description={RINGKASAN_HINT[form.jenis] ?? DOKUMEN_ADMIN_TEXT.ringkasanDefault}
@@ -129,6 +129,7 @@ export default function DokumenPerencanaanForm({
 
         <PdfDropzoneField label={DOKUMEN_ADMIN_TEXT.berkasHint} file={pdf} onChange={setPdf} currentFile={currentFile} />
 
+        <Divider />
         <Group justify="flex-end">
           <Button bg={colors['blue-button']} loading={loading} onClick={() => onSubmit(pdf)}>
             {submitLabel}

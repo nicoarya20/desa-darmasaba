@@ -18,6 +18,10 @@ export const DOKUMEN_ADMIN_TEXT = {
   filterAll: 'Semua',
   ringkasanDefault: 'Opsional',
   berkasHint: 'Berkas PDF (Opsional)',
+  opsional: 'Opsional',
+  tahunMulaiHint: 'Tahun pertama periode',
+  tahunSelesaiHint: 'Bebas, mengikuti masa jabatan (6 atau 8 tahun)',
+  tahunDefaultHint: 'Tahun dokumen',
 } as const;
 
 /** Contoh judul per jenis (placeholder) supaya admin tahu pola penamaan yang dipakai di halaman publik. */

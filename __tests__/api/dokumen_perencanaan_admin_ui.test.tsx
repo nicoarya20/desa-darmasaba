@@ -74,6 +74,22 @@ describe('DokumenPerencanaanForm', () => {
     expect(t).not.toContain('Jenis Musyawarah');
   });
 
+  it('RPJM: kedua isian tahun sama-sama punya keterangan (sejajar) dan tanpa tombol panah naik-turun', () => {
+    const html = renderForm({ jenis: 'RPJM' });
+    const t = text(html);
+    expect(t).toContain(DOKUMEN_ADMIN_TEXT.tahunMulaiHint);
+    expect(t).toContain(DOKUMEN_ADMIN_TEXT.tahunSelesaiHint);
+    expect(html).not.toContain('mantine-NumberInput-controls');
+  });
+
+  it('Nomor Perdes berdampingan dengan tahun dalam satu grid dua kolom', () => {
+    const html = renderForm({ jenis: 'RKP' });
+    const grid = html.indexOf('mantine-SimpleGrid-root');
+    expect(grid).toBeGreaterThan(-1);
+    expect(html.indexOf('Nomor Perdes')).toBeGreaterThan(grid);
+    expect(html.indexOf('Ringkasan')).toBeGreaterThan(html.indexOf('Nomor Perdes'));
+  });
+
   it.each(['RKP', 'APBDES', 'PELAPORAN_APBDES'] as const)('%s menampilkan satu field Tahun saja', (jenis) => {
     const html = renderForm({ jenis, tahun: 2026 });
     const t = text(html);
