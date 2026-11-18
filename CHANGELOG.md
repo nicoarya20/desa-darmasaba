@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.311] - 2026-11-18
+### Changed
+- **Program Inovasi tampil rapi dan terbaca di tema gelap.** Di beranda (rel "Program Inovasi Desa") dan di halaman Inovasi › Program Inovasi, ubin program ber-logo kini berupa kartu terang penuh saat tema gelap, sehingga logo berlatar transparan (mis. Galah Melah, Inovasi Desa Darmasaba) tetap jelas tanpa kotak di dalam kotak. Tampilan tema terang tidak berubah.
+- **Kotak logo di halaman Program Inovasi kini sama tinggi**, jadi baris ubin rata walau ukuran gambar logo berbeda-beda.
+- **Halaman Program Inovasi di ponsel jauh lebih ringkas**: tiap program tampil sebagai satu baris (logo kecil di kiri, nama dan ringkasan di kanan), bukan kartu besar.
+- **Program tanpa logo, atau yang logonya gagal dimuat, menampilkan inisial namanya** (mis. "BD" untuk Bicara Darmasaba) alih-alih ikon foto kosong.
+
 ## [0.1.310] - 2026-11-18
 ### Changed
 - **Foto pada halaman Layanan tampil lebih cepat.** Foto tiga kartu pertama di daftar Surat Keterangan kini diunduh langsung dengan prioritas tinggi, tidak lagi menunggu halaman selesai ditata. Foto kartu berikutnya tetap dimuat saat digulir.
