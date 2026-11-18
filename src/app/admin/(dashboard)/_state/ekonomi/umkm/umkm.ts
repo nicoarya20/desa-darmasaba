@@ -4,7 +4,8 @@ import kategoriProduk from "./umkmState/kategori-produk";
 import penjualan from "./umkmState/penjualan";
 import produk from "./umkmState/produk";
 import umkm from "./umkmState/umkm";
+import imporUmkm from "./umkmState/umkm-impor";
 
-export const umkmState = proxy({ umkm, produk, penjualan, kategoriProduk, dashboard });
+export const umkmState = proxy({ umkm, imporUmkm, produk, penjualan, kategoriProduk, dashboard });
 
 export default umkmState;

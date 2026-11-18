@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.307] - 2026-11-18
+### Added
+- **Impor data UMKM lewat CSV.** Di admin Ekonomi > UMKM & Pasar Desa > Data UMKM ada tombol "Impor CSV". Admin bisa mengunduh template, memilih berkas (maks 2 MB, 1000 baris), lalu melihat pratinjau jumlah yang akan ditambah, diperbarui, atau dilewati beserta daftar baris bermasalah sebelum mengimpor. Kolom wajib: nama, pemilik, kategori; opsional: deskripsi, alamat, kontak. Kategori dicocokkan berdasarkan nama dan harus sudah ada.
+- Dua mode impor: **lewati** UMKM yang sudah ada (nama + pemilik sama) atau **perbarui** datanya (sel kosong tidak menimpa data lama). Impor berjalan semua-atau-tidak-sama-sekali: satu baris tidak valid membatalkan seluruh impor.
+
+### Changed
+- Pembaca CSV dipindah ke modul bersama (`src/lib/csv/parse-csv.ts`) dan dipakai juga oleh impor Penerima Program Kemiskinan; perilakunya tidak berubah.
+
 ## [0.1.306] - 2026-11-18
 ### Changed
 - **Kolom "Jumlah" di Sektor Unggulan Desa kini tidak wajib.** Admin bisa menyimpan sektor unggulan (tambah maupun ubah) tanpa mengisi angka; kolom dibiarkan kosong dan tidak lagi otomatis terisi 0. Sektor tanpa angka tetap tampil di halaman publik, hanya tanpa nilainya.
