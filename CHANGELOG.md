@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.330] - 2026-11-19
+### Changed
+- Lambang desa di animasi pembuka gerbang Candi Bentar dan di transisi ganti tema kini memakai berkas WebP 25 KB, menggantikan PNG 101 KB yang ikut dimuat di awal setiap halaman publik (sekitar 76 KB lebih ringan pada kunjungan pertama). Tampilan, ukuran, dan ketajaman lambang sama.
+
 ## [0.1.329] - 2026-11-19
 ### Changed
 - **Beranda lebih ringan dan cepat dimuat, terutama di ponsel.** Data bagian beranda di bawah layar (Kabar Desa, APBDes, Prestasi, Layanan & Potensi, Anti Korupsi, SDGs, Indeks Kepuasan) kini baru diambil saat pengunjung menggulir mendekatinya, sehingga foto Perbekel di bagian atas tidak lagi berebut jaringan dengan belasan permintaan sekaligus. Tampilan tiap bagian tidak berubah.
