@@ -29,7 +29,7 @@ export default function BeritaLayoutClient({
   if (isDetailPage) {
     // Tampilkan tanpa tab menu
     return (
-      <Box bg="var(--c-hero-bg)">
+      <Box bg="var(--c-bg)">
         <Box pt={33} px={{ base: 'md', md: 100 }}>
           <BackButton />
         </Box>

@@ -149,8 +149,9 @@ describe('Dasar Hukum PPID', () => {
 });
 
 describe('Gaya Visi dan Misi PPID (visi-misi.module.css)', () => {
-  it('kartu terang terpusat: latar dari --vm-card, sudut bulat, bayangan lembut', () => {
-    expect(visiMisiCss).toMatch(/\.card\s*\{[^}]*align-items:\s*center;[^}]*border-radius:\s*32px;[^}]*background:\s*var\(--vm-card[,)][^}]*box-shadow:/);
+  it('kartu ubin terpusat: latar dari --vm-card (cadangan --c-tile), sudut bulat, tanpa bayangan', () => {
+    expect(visiMisiCss).toMatch(/\.card\s*\{[^}]*align-items:\s*center;[^}]*border-radius:\s*32px;[^}]*background:\s*var\(--vm-card, var\(--c-tile\)\)/);
+    expect(visiMisiCss).not.toMatch(/\.card\s*\{[^}]*box-shadow:/);
   });
 
   it('judul dan kalimat pendek rata tengah; butir misi rata kiri di kolom baca terpusat', () => {

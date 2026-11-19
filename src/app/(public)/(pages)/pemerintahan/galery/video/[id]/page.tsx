@@ -67,7 +67,7 @@ export default function DetailVideoUser() {
 
   if (!data) {
     return (
-      <Box py="xl" px={{ base: 'md', md: 'lg' }} className={g.vars}>
+      <Box py="xl" px={{ base: 'md', md: 'lg' }} bg="var(--c-bg)" className={g.vars}>
         <Alert
           icon={<IconInfoCircle size={20} />}
           title="Video tidak ditemukan"
@@ -93,7 +93,7 @@ export default function DetailVideoUser() {
   const embedUrl = data.linkVideo ? convertToEmbedUrl(data.linkVideo) : null;
 
   return (
-    <Box py="xl" px={{ base: 'md', md: 100 }} className={g.vars}>
+    <Box py="xl" px={{ base: 'md', md: 100 }} bg="var(--c-bg)" className={g.vars}>
       {/* Tombol Kembali */}
       <Box>
         <ActionIcon bg="var(--c-brand-fill)" onClick={() => router.push('/pemerintahan/galery/video')}>

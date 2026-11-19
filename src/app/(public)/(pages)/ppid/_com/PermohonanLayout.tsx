@@ -15,7 +15,7 @@ export function PermohonanLayout({ aside, children }: LayoutProps) {
 
 type CardProps = { title: string; children: ReactNode };
 
-/** Kartu putih formulir permohonan: satu-satunya permukaan kartu di halaman, isian satu kolom selebar kartu. */
+/** Kartu ubin formulir permohonan: satu-satunya permukaan kartu di halaman, isian satu kolom selebar kartu. */
 export function PermohonanFormCard({ title, children }: CardProps) {
   return (
     <section className={s.card}>

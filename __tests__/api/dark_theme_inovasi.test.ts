@@ -107,10 +107,12 @@ describe('halaman (tambahan) APBDes / Prestasi / SDGs ikut token', () => {
     expect(SRC('app/(public)/(tambahan)/apbdes/page.tsx')).not.toContain('APBDES_BRAND_VARS');
   });
 
-  it('/prestasi-desa/[id] tanpa colors literal: latar hero, teks & garis brand bertoken', () => {
+  it('/prestasi-desa/[id] tanpa colors literal: latar halaman putih/hitam, teks & garis brand bertoken', () => {
     const src = SRC('app/(public)/(tambahan)/prestasi-desa/[id]/page.tsx');
     expect(src).not.toContain('@/con/colors');
-    expect(src).toContain('bg="var(--c-hero-bg)"');
+    // Latar = --c-bg seperti daftar /prestasi-desa (plan-latar-putih-ppid-pemerintahan.md), bukan --c-hero-bg.
+    expect(src).toContain('bg="var(--c-bg)"');
+    expect(src).not.toContain('--c-hero-bg');
     expect(src).toContain('c="var(--c-brand)"');
     expect(src).toContain('color="var(--c-brand-fill)"');
   });

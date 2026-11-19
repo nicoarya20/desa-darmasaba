@@ -102,6 +102,10 @@ describe('/permohonan/berhasil ikut tema', () => {
     const root = blockOf(SRC('app/(public)/(tambahan)/permohonan/berhasil/berhasil.module.css'), '.root');
     expect(decl(root, '--sukses-bg')).toBe('light-dark(#def0d8, #14301c)');
     expect(decl(root, '--sukses-ink')).toBe('light-dark(#3c7745, #8fd19e)');
+    // Latar putih/hitam seperti menu lain (plan-latar-putih-ppid-pemerintahan.md); kartu isi = ubin.
+    expect(page).toContain('bg="var(--c-bg)"');
+    expect(page).not.toContain('--c-hero-bg');
+    expect(decl(root, '--isi-bg')).toBe('var(--c-tile)');
   });
 });
 
@@ -113,20 +117,20 @@ describe('/ppid/indeks-kepuasan-masyarakat', () => {
     expect(page).not.toMatch(/style=\{/);
   });
 
-  it('.surface tidak lagi mengunci token grafik ke nilai terang; kartu putih terang, --c-tile gelap', () => {
+  it('.surface tidak lagi mengunci token grafik ke nilai terang; kartu ubin --c-tile seperti beranda', () => {
     const surface = blockOf(SRC('app/(public)/(pages)/ppid/indeks-kepuasan-masyarakat/_com/ikm.module.css'), '.surface');
     for (const token of ['--c-tile', '--c-chart-1', '--c-chart-2', '--c-chart-3', '--chart-text-color']) {
       expect(decl(surface, token)).toBeUndefined();
     }
     expect(decl(surface, '--ink')).toBe('var(--c-ink)');
     expect(decl(surface, '--muted')).toBe('var(--c-muted)');
-    expect(decl(surface, '--tile')).toBe('light-dark(#fff, var(--c-tile))');
+    expect(decl(surface, '--tile')).toBe('var(--c-tile)');
   });
 
-  it('kerangka PpidPage berlatar --c-hero-bg dan --brand dari token', () => {
+  it('kerangka PpidPage berlatar --c-bg dan --brand dari token', () => {
     const page = SRC('app/(public)/(pages)/ppid/_com/PpidPage.tsx');
     expect(page).not.toContain('@/con/colors');
-    expect(page).toContain('bg="var(--c-hero-bg)"');
+    expect(page).toContain('bg="var(--c-bg)"');
     expect(page).toContain("'--brand': 'var(--c-brand)'");
   });
 });

@@ -13,7 +13,7 @@
 .side {
   padding: 18px 20px;
   border-radius: 16px;
-  background: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.08));
+  background: var(--c-tile-alt);
 }
 
 .sideLabel {
@@ -114,7 +114,7 @@
   padding: 18px 20px;
   border: 0;
   border-radius: 16px;
-  background: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.08));
+  background: var(--c-tile-alt);
   color: var(--brand);
   font: inherit;
   text-align: left;
