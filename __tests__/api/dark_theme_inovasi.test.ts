@@ -127,7 +127,12 @@ describe('halaman (tambahan) APBDes / Prestasi / SDGs ikut token', () => {
     expect(decl(dark, '--sdgs-goal-title')).toBe('var(--c-ink)');
     expect(decl(dark, '--sdgs-chart-bg')).toBe('var(--c-bg-alt)');
     expect(decl(dark, '--sdgs-plate')).toBe('#d9e1ea');
+    // Subjudul: terang tetap gray.7 (#495057); gelap --c-muted karena gray.7 di latar hitam hanya 2,57:1.
+    expect(decl(page, '--sdgs-subtitle')).toBe('#495057');
+    expect(decl(dark, '--sdgs-subtitle')).toBe('var(--c-muted)');
     const src = SRC('app/(public)/(tambahan)/sdgs-desa/page.tsx');
+    expect(src).toContain('c="var(--sdgs-subtitle)"');
+    expect(src).not.toContain('c="gray.7"');
     expect(src).toContain('c="var(--c-brand)"');
     expect(src).toContain('var(--c-chart-1)');
   });
