@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.325] - 2026-11-19
+### Changed
+- **Jenna kini berupa chat bar di kanan bawah, menggantikan tombol bulat.** Bar menampilkan contoh pertanyaan yang bergantian. Saat diklik, bar memanjang dengan mulus dan menampilkan 3 pertanyaan cepat ("Jam pelayanan kantor desa?", "Apa syarat membuat surat keterangan?", "Agenda desa bulan ini?") serta catatan privasi di bawahnya. Pertanyaan cepat langsung terkirim saat diklik.
+- **Percakapan muncul sebagai panel kaca yang terbuka dari chat bar** setelah pesan dikirim. Di tema terang panelnya kaca buram gelap dengan teks putih; di tema gelap kaca buram terang yang diredupkan agar tidak menyilaukan. Pesan pengunjung tampil sebagai gelembung di kanan, jawaban Jenna sebagai teks biasa. Tombol panah di kepala panel mengecilkan percakapan, tombol putar memulai percakapan baru, dan tombol Escape juga menutup panel.
+- **Tombol "Kembali ke atas" kini berada di atas chat bar** dan menyingkir saat chat bar memanjang atau percakapan terbuka, sehingga tidak tertimpa.
+- Di ponsel, chat bar dan panel percakapan memenuhi lebar layar; panel percakapan hampir setinggi layar.
+
 ## [0.1.324] - 2026-11-19
 ### Fixed
 - **Subjudul halaman SDGs Desa kini terbaca jelas di tema gelap.** Kalimat "Pembangunan berkelanjutan yang inklusif, adil, dan berdaya saing di tingkat desa" sebelumnya berwarna abu tua di atas latar hitam sehingga nyaris tak terbaca (kontras 2,6:1, di bawah standar keterbacaan 4,5:1). Kini di tema gelap warnanya abu terang (kontras 8,2:1). Tema terang tidak berubah.
