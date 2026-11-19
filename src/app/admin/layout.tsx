@@ -290,7 +290,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   borderRadius: rem(10),
                   marginBottom: rem(4),
                   transition: "background 150ms ease",
-                  ...(mounted && { '--sidebar-indicator-color': tokens.colors.primary }),
+                  ...(mounted && { '--sidebar-indicator-color': isDark ? tokens.colors.text.link : tokens.colors.primary }),
                 }}
                 styles={{
                   root: {
@@ -298,7 +298,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       backgroundColor: mounted && isDark ? '#1E293B' : tokens.colors.bg.hover,
                     },
                     ...(mounted && isParentActive && isDark && {
-                      backgroundColor: 'rgba(59,130,246,0.25)',
+                      backgroundColor: 'rgba(96,165,250,0.14)',
                     }),
                   }
                 }}
@@ -336,7 +336,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         </Text>
                       }
                       classNames={{ root: navStyles.child }}
-                      style={mounted ? { '--sidebar-indicator-color': tokens.colors.primary } : undefined}
+                      style={mounted ? { '--sidebar-indicator-color': isDark ? tokens.colors.text.link : tokens.colors.primary } : undefined}
                       styles={{
                         root: {
                           borderRadius: rem(8),
@@ -347,7 +347,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             backgroundColor: mounted && isDark ? 'rgba(255, 255, 255, 0.05)' : tokens.colors.bg.hover,
                           },
                           ...(mounted && isChildActive && isDark && {
-                            backgroundColor: 'rgba(59,130,246,0.15)',
+                            backgroundColor: 'rgba(96,165,250,0.10)',
                           }),
                           ...(mounted && isChildActive && !isDark && {
                             backgroundColor: 'rgba(25, 113, 194, 0.1)',

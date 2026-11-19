@@ -35,4 +35,15 @@ describe('indikator aktif sidebar admin', () => {
     expect(LAYOUT).toContain('classNames={{ root: navStyles.parent }}');
     expect(LAYOUT).toContain('classNames={{ root: navStyles.child }}');
   });
+
+  it('warna indikator per tema: gelap = token link, terang = primary (induk & anak)', () => {
+    const expr = "'--sidebar-indicator-color': isDark ? tokens.colors.text.link : tokens.colors.primary";
+    expect(LAYOUT.split(expr)).toHaveLength(3);
+  });
+
+  it('latar aktif gelap dilembutkan selaras warna indikator', () => {
+    expect(LAYOUT).toContain("backgroundColor: 'rgba(96,165,250,0.14)'");
+    expect(LAYOUT).toContain("backgroundColor: 'rgba(96,165,250,0.10)'");
+    expect(LAYOUT).not.toContain('rgba(59,130,246');
+  });
 });
