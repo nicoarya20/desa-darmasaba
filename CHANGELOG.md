@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.323] - 2026-11-19
+### Fixed
+- **Subjudul halaman SDGs Desa kini terbaca jelas di tema gelap.** Kalimat "Pembangunan berkelanjutan yang inklusif, adil, dan berdaya saing di tingkat desa" sebelumnya berwarna abu tua di atas latar hitam sehingga nyaris tak terbaca (kontras 2,6:1, di bawah standar keterbacaan 4,5:1). Kini di tema gelap warnanya abu terang (kontras 8,2:1). Tema terang tidak berubah.
+
 ## [0.1.322] - 2026-11-19
 ### Fixed
 - **Pita abu kosong di atas footer tidak muncul lagi.** Di halaman yang isinya lebih pendek dari layar (misalnya PUSTU, Posyandu, halaman 404, dan banyak halaman detail), terutama di layar lebar atau saat presentasi, dulu terlihat pita abu kosong antara isi halaman dan footer. Kini sisa ruang itu ikut berlatar putih (hitam di tema gelap) seperti halaman di atasnya. Halaman SDGs Desa kini juga berlatar putih/hitam seperti menu lain. Beranda dan Musik tidak berubah.
