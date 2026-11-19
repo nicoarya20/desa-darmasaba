@@ -3,6 +3,8 @@
 import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
+import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
+import { uploadPdfFile } from '@/app/admin/_com/upload/pdf-upload';
 import colors from '@/con/colors';
 import { toWaktuBiayaForm, validateWaktuBiayaForm } from '@/lib/pelayanan-waktu-biaya';
 import ApiFetch from '@/lib/api-fetch';
@@ -151,6 +153,8 @@ function EditSuratKeterangan() {
   const [originalData, setOriginalData] = useState<FormData>(formData);
   const [file, setFile] = useState<File | null>(null);
   const [file2, setFile2] = useState<File | null>(null);
+  const [sopFile, setSopFile] = useState<File | null>(null);
+  const [currentSop, setCurrentSop] = useState<{ link: string; realName: string } | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewImage2, setPreviewImage2] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -196,6 +200,7 @@ function EditSuratKeterangan() {
 
         if (data.image?.link) setPreviewImage(data.image.link);
         if (data.image2?.link) setPreviewImage2(data.image2.link);
+        if (data.sopFile) setCurrentSop({ link: data.sopFile.link, realName: data.sopFile.realName });
       } catch (error) {
         console.error('Error loading surat:', error);
         toast.error('Gagal memuat data surat');
@@ -227,6 +232,7 @@ function EditSuratKeterangan() {
     setPreviewImage2(originalData.image2Url || null);
     setFile(null);
     setFile2(null);
+    setSopFile(null);
     toast.info('Form dikembalikan ke data awal');
   };
 
@@ -287,6 +293,13 @@ function EditSuratKeterangan() {
         originalState.edit.form.image2Id = uploadedId;
       }
 
+      // Upload PDF SOP baru bila dipilih; tanpa pilihan, sopFileId lama (dimuat edit.load) tetap dikirim.
+      if (sopFile) {
+        const sopId = await uploadPdfFile(sopFile);
+        if (!sopId) return;
+        originalState.edit.form.sopFileId = sopId;
+      }
+
       // Submit update
       await originalState.edit.update();
       toast.success('Surat berhasil diperbarui!');
@@ -297,7 +310,7 @@ function EditSuratKeterangan() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, file, file2, router, previewImage, originalData.imageId]);
+  }, [formData, file, file2, sopFile, router, previewImage, originalData.imageId]);
 
   // 📝 Form Field Handlers
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -373,6 +386,15 @@ function EditSuratKeterangan() {
             setFile={setFile2}
             preview={previewImage2}
             setPreview={setPreviewImage2}
+          />
+
+          {/* SOP layanan (PDF, opsional) */}
+          <PdfDropzoneField
+            label="SOP / Petunjuk (PDF)"
+            description='Opsional. Ditampilkan sebagai tautan "Unduh SOP (PDF)" di halaman layanan.'
+            file={sopFile}
+            onChange={setSopFile}
+            currentFile={currentSop}
           />
 
           {/* Action Buttons */}

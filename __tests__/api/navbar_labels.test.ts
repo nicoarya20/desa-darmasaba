@@ -50,8 +50,9 @@ describe('route admin grup Pemerintahan', () => {
 
   it('semua path menu diawali /admin/pemerintahan/ dan tidak ada yang masih di route lama "desa"', () => {
     // 10: menu Penghargaan (dulu Desa_7) dihapus — dikelola di Landing Page > Prestasi dan Penghargaan;
-    // Struktur Perangkat Desa (desa.struktur-perangkat-desa) ditambahkan.
-    expect(paths).toHaveLength(10);
+    // Struktur Perangkat Desa (desa.struktur-perangkat-desa) ditambahkan; Dokumen Perencanaan (desa.dokumen-perencanaan)
+    // keluar dari tab Kegiatan Desa jadi menu sendiri (2026-11-18); Produk Hukum (desa.produk-hukum) menu baru.
+    expect(paths).toHaveLength(12);
     expect(paths).not.toContain('/admin/pemerintahan/penghargaan');
     for (const p of paths) expect(p, p).toMatch(/^\/admin\/pemerintahan\//);
     expect(paths.filter((p) => /^\/admin\/desa(\/|$)/.test(p))).toEqual([]);
@@ -109,5 +110,30 @@ describe('label submenu "Program Pengentasan Kemiskinan"', () => {
       expect(src, file).toContain(LABEL);
       expect(src, file).not.toMatch(OLD_LABEL);
     }
+  });
+});
+
+// Permintaan TIM BIP (2026-11-18): dua submenu publik baru di Pemerintahan, tepat setelah Layanan; label admin diganti.
+describe('submenu Arah Kebijakan Pembangunan Desa & Produk Hukum', () => {
+  it('publik: dua entri berurutan tepat setelah Layanan, tampil secara default', async () => {
+    const { default: navbarListMenu } = await import('@/con/navbar-list-menu');
+    const pemerintahan = navbarListMenu.find((m) => m.name === 'Pemerintahan');
+    const names = (pemerintahan?.children ?? []).map((c) => c.name);
+    const i = names.indexOf('Layanan');
+    expect(names.slice(i + 1, i + 3)).toEqual(['Arah Kebijakan Pembangunan Desa', 'Produk Hukum']);
+    const baru = (pemerintahan?.children ?? []).slice(i + 1, i + 3);
+    expect(baru.map((c) => c.href)).toEqual([
+      '/pemerintahan/arah-kebijakan-pembangunan-desa',
+      '/pemerintahan/produk-hukum',
+    ]);
+    for (const c of baru) expect(c.hidden).not.toBe(true);
+  });
+
+  it('admin: ID menu lama dipertahankan walau labelnya diganti, Produk Hukum punya ID baru', () => {
+    const byId = new Map((desaMenu.children ?? []).map((c) => [c.id, c]));
+    expect(byId.get('desa.dokumen-perencanaan')?.name).toBe('Arah Kebijakan Pembangunan Desa');
+    expect(byId.get('desa.dokumen-perencanaan')?.path).toBe('/admin/pemerintahan/dokumen-perencanaan');
+    expect(byId.get('desa.produk-hukum')?.name).toBe('Produk Hukum');
+    expect(byId.get('desa.produk-hukum')?.basePath).toBe('/admin/pemerintahan/produk-hukum');
   });
 });

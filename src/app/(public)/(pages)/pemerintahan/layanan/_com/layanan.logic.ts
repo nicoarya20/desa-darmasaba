@@ -1,11 +1,15 @@
 /** Tipe & helper murni halaman daftar Layanan (tanpa React; dites di __tests__/api/layanan_page_logic.test.ts). */
 import type { WaktuBiayaValue } from "@/lib/pelayanan-waktu-biaya";
 
+/** Berkas SOP/petunjuk PDF di FileStorage (opsional per layanan); hanya `link` & nama yang dikirim API. */
+export type SopFile = { id: string; link: string; realName: string };
+
 /** Satu layanan surat keterangan dari `pelayanansuratketerangan/find-many`. */
 export type SuratKeteranganItem = WaktuBiayaValue & {
   id: string;
   name: string;
   image?: { link: string } | null;
+  sopFile?: SopFile | null;
 };
 
 /** Satu layanan Telunjuk Sakti Desa; `deskripsi` dipakai sebagai label tautan dokumen petunjuk. */
@@ -14,6 +18,7 @@ export type TelunjukSaktiItem = WaktuBiayaValue & {
   name: string;
   deskripsi: string;
   link: string;
+  sopFile?: SopFile | null;
 };
 
 /** Rekaman tunggal (Perizinan Berusaha, Penduduk Non-Permanen); `deskripsi` berupa HTML editor admin. */

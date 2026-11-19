@@ -19,6 +19,7 @@ import {
   type InformasiItem,
 } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.logic';
 import { DAFTAR_TEXT } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.text';
+import { PPID_FILE_TEXT } from '@/app/(public)/(pages)/ppid/_com/PpidFileLink';
 
 const render = (ui: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -74,6 +75,30 @@ describe('DaftarTable', () => {
     expect(html.match(/<a /g)).toHaveLength(ITEMS.length);
     expect(html).toContain('href="/ppid/daftar-informasi-publik/a1"');
     expect(html).toContain(`aria-label="${DAFTAR_TEXT.detailLabel('Penyelenggaraan Informasi Publik')}"`);
+  });
+
+  it('sel aksi = satu grup berlabel jenis; Detail mendahului Unduh PDF di grup yang sama', () => {
+    // test-only: berkas fiktif
+    const file = { link: '/api/fileStorage/findUnique/uji.pdf', realName: 'uji.pdf' };
+    const html = render(<DaftarTable items={[{ ...ITEMS[1], file }]} page={1} />);
+    const groups = html.match(/<div[^>]*role="group"[^>]*>[\s\S]*?<\/div>/g) ?? [];
+    expect(groups).toHaveLength(1);
+    const group = groups[0] ?? '';
+    expect(group).toContain(`aria-label="${DAFTAR_TEXT.aksiLabel(ITEMS[1]?.jenisInformasi ?? '')}"`);
+    const detailAt = group.indexOf(`>${DAFTAR_TEXT.detail}</span>`);
+    const unduhAt = group.indexOf(`>${PPID_FILE_TEXT.unduh}</span>`);
+    expect(detailAt).toBeGreaterThan(-1);
+    expect(unduhAt).toBeGreaterThan(detailAt);
+  });
+
+  it('baris tanpa berkas: grup aksi hanya memuat Detail', () => {
+    const html = render(<DaftarTable items={ITEMS} page={1} />);
+    const groups = html.match(/<div[^>]*role="group"[^>]*>[\s\S]*?<\/div>/g) ?? [];
+    expect(groups).toHaveLength(ITEMS.length);
+    for (const group of groups) {
+      expect(group.match(/<a /g)).toHaveLength(1);
+      expect(group).not.toContain(PPID_FILE_TEXT.unduh);
+    }
   });
 
   it('menandai sedang memuat tanpa membuang baris lama', () => {

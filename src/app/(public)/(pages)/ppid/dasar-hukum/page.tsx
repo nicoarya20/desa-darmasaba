@@ -1,45 +1,39 @@
 'use client'
 import stateDasarHukum from '@/app/admin/(dashboard)/_state/ppid/dasar_hukum/dasarHukum'
+import stateDokumen from '@/app/admin/(dashboard)/_state/ppid/dasar_hukum/dokumenDasarHukum'
 import { useShallowEffect } from '@mantine/hooks'
 import { useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import { PpidPage } from '../_com/PpidPage'
 import { PpidSectionsSkeleton } from '../_com/PpidSectionsSkeleton'
-import rt from '@/app/(public)/_com/rich-text/rich-text.module.css'
 import s from '../_com/ppid-sections.module.css'
-import { DasarHukumList } from './_com/DasarHukumList'
-import { parseDasarHukumItems } from './_com/dasar-hukum.logic'
+import { DasarHukumSection } from './_com/DasarHukumSection'
+import { DokumenDasarHukumSection } from './_com/DokumenDasarHukumSection'
 import { DASAR_HUKUM_TEXT } from './_com/dasar-hukum.text'
 
 /** Baris tunggal dasar hukum PPID di CMS. */
 const DASAR_HUKUM_ID = '1'
 
-/** Halaman publik Dasar Hukum PPID: subjudul dan daftar peraturan bernomor (isi dari CMS). */
+/** Halaman publik Dasar Hukum PPID: daftar peraturan bernomor (isi dari CMS) dan daftar dokumen PDF yang bisa dilihat/diunduh. */
 export default function Page() {
   const state = useProxy(stateDasarHukum)
+  const dokumen = useProxy(stateDokumen)
   const [loaded, setLoaded] = useState(false)
 
   useShallowEffect(() => {
-    // Loader menangkap galatnya sendiri (data tetap null) — finally hanya menandai selesai.
-    void state.findById.load(DASAR_HUKUM_ID).finally(() => setLoaded(true))
+    // Loader menangkap galatnya sendiri (data tetap null/kosong) — finally hanya menandai selesai.
+    void Promise.all([state.findById.load(DASAR_HUKUM_ID), dokumen.list.load()]).finally(() => setLoaded(true))
   }, [])
 
   const data = state.findById.data
+  const daftarDokumen = dokumen.list.data
 
   let content
-  if (data) {
-    // Isi yang bukan satu daftar teks polos (null) dirender apa adanya agar tidak ada yang hilang.
-    const items = parseDasarHukumItems(data.content)
+  if (data || daftarDokumen.length > 0) {
     content = (
       <div className={s.sections}>
-        <section className={s.section} aria-labelledby="ppid-dasar-hukum">
-          <h2 id="ppid-dasar-hukum" className={`${s.sectionLabel} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.judul }} />
-          {items ? (
-            <DasarHukumList items={items} />
-          ) : (
-            <div className={`${s.body} ${rt.root}`} dangerouslySetInnerHTML={{ __html: data.content }} />
-          )}
-        </section>
+        {data && <DasarHukumSection data={data} />}
+        <DokumenDasarHukumSection items={daftarDokumen} />
       </div>
     )
   } else if (loaded) {

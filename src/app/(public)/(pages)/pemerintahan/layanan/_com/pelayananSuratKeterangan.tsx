@@ -6,7 +6,7 @@ import { LayananSearch } from './LayananSearch';
 import { LayananSection } from './LayananSection';
 import { SuratKeteranganCard } from './SuratKeteranganCard';
 import { filterByName, type SuratKeteranganItem } from './layanan.logic';
-import { LAYANAN_LIST_LIMIT } from './layanan.meta';
+import { LAYANAN_ABOVE_FOLD_COUNT, LAYANAN_LIST_LIMIT } from './layanan.meta';
 import page from './layanan.module.css';
 import s from './layanan-surat.module.css';
 import { LAYANAN_TEXT } from './layanan.text';
@@ -50,9 +50,9 @@ function PelayananSuratKeterangan() {
         </p>
       ) : (
         <ul className={s.grid} aria-label={T.gridLabel}>
-          {visible.map((item) => (
+          {visible.map((item, index) => (
             <li key={item.id}>
-              <SuratKeteranganCard item={item} />
+              <SuratKeteranganCard item={item} aboveFold={index < LAYANAN_ABOVE_FOLD_COUNT} />
             </li>
           ))}
         </ul>

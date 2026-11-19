@@ -6,6 +6,7 @@ import GrafikBerdasarkanUmur from "./ikm/grafik_berdasarkan_umur";
 import PermohonanInformasiPublik from "./permohonan_informasi_publik";
 import PermohonanKeberatanInformasiPublik from "./permohonan_keberatan_informasi_publik";
 import ProfilePPID from "./profile_ppid";
+import ProfilLembagaPPID from "./profil_lembaga";
 import VisiMisiPPID from "./visi_misi_ppid/visi_misi_ppid";
 import DasarHukumPPID from "./dasar_hukum";
 import StrukturPPID from "./struktur_ppid";
@@ -16,6 +17,7 @@ import GrafikHasilKepuasanMasyarakat from "./ikm/grafik_hasil_kepuasan_masyaraka
 
 const PPID = new Elysia({ prefix: "/ppid", tags: ["PPID"] })
 .use(ProfilePPID)
+.use(ProfilLembagaPPID)
 .use(DaftarInformasiPublik)
 .use(GrafikHasilKepuasanMasyarakat)
 .use(GrafikBerdasarkanJenisKelamin)

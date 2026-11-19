@@ -1,0 +1,104 @@
+/*
+ * Seni adegan transisi tema Candi Bentar: HANYA warna (token --tt-*) dan layer seni bulan/bintang.
+ * Geometri (--horizon, --gap, --gate-h, --zoom-y, posisi elemen) milik theme-gate.module.css.
+ *
+ * Adegan = tema TUJUAN, bukan tema halaman: ke terang -> data-scene="day", ke gelap -> "night".
+ * Karena itu warnanya literal tetap (tiap deklarasi berpenanda penjaga warna), bukan token --c-* / light-dark().
+ * DAY identik dengan splash pembuka (_com/splash/gate-splash.module.css), dijaga
+ * __tests__/api/theme_gate_scene.test.ts. Dokumentasi: docs/DESIGN.md "Transisi tema Candi Bentar".
+ *
+ * Pemakaian token:
+ * - Kelas `scene` dipasang di root overlay yang SAMA dengan --horizon & --zoom-y (theme-gate.module.css):
+ *   --tt-sky & --tt-flash memakai var() itu dan custom property di-resolve di elemen deklarasinya.
+ * - Gradien (--tt-sky, --tt-glow, --tt-halo, --tt-water, --tt-flash) = background. Warna polos: --tt-pillar,
+ *   --tt-rim, --tt-ripple-light (warna riak; SVG riak sebagai mask-image), --tt-brand-sub, --tt-brand-name.
+ * - --tt-rim-opacity-enter: stroke-opacity rim selama pilar masuk di atas halaman lama (hero gelap berwarna
+ *   navy menelan pilar siang), turun ke --tt-rim-opacity saat latar opak.
+ * - `moon` & `stars`: seni di ::before (opacity token), sehingga player bebas memudarkan elemennya.
+ *
+ * Performa (monitor 4K eksternal @2x): tanpa filter blur / mix-blend-mode pada layer selayar penuh.
+ * Bintang = dua ubin SVG data-uri dalam satu background-image, bulan = radial-gradient.
+ */
+
+/* ================= SIANG (identik splash) ================= */
+.scene[data-scene="day"] {
+  --tt-sky: linear-gradient(180deg, #041F32 0%, #062F49 40%, #0A4E78 75%, #2F6F9C var(--horizon, 76%)); /* tema-tetap: langit adegan siang, dipilih dari tema tujuan */
+  --tt-glow: linear-gradient(180deg, rgba(10, 78, 120, 0) 0%, #2F6F9C 40%, #E3A961 74%, #FFE2AE 88%, #FFF8E8 100%); /* tema-tetap: cahaya fajar di celah gerbang */
+  --tt-halo: radial-gradient(closest-side, rgba(255, 214, 150, .3), rgba(255, 214, 150, 0)); /* tema-tetap: halo fajar di kaki celah */
+  --tt-pillar: #041F32; /* tema-tetap: siluet pilar adegan siang */
+  --tt-rim: #E2B54A; /* tema-tetap: garis tepi emas pilar */
+  --tt-rim-opacity: .55;
+  --tt-rim-opacity-enter: .9;
+  --tt-water: linear-gradient(180deg, #0B3A5A 0%, #041F32 100%); /* tema-tetap: air adegan siang */
+  --tt-reflection-opacity: .32;
+  --tt-ripple-light: rgba(255, 244, 214, .10); /* tema-tetap: kilau riak air siang */
+  --tt-brand-sub: rgba(255, 255, 255, .85); /* tema-tetap: teks brand di atas ilustrasi */
+  --tt-brand-name: #E2B54A; /* tema-tetap: nama desa emas */
+  --tt-brand-shadow: 0 2px 12px rgba(4, 31, 50, .6);
+  --tt-flash: radial-gradient(circle at 50% var(--zoom-y, 60%), #FFF8E8 0%, #FFF1D6 45%, #F5F7FA 100%); /* tema-tetap: cahaya akhir menuju halaman terang */
+  --tt-moon-opacity: 0;
+  --tt-stars-opacity: 0;
+}
+
+/* ================= MALAM ================= */
+.scene[data-scene="night"] {
+  --tt-sky: linear-gradient(180deg, #040A17 0%, #0A1934 40%, #132B52 75%, #21416D var(--horizon, 76%)); /* tema-tetap: langit biru malam, dipilih dari tema tujuan */
+  --tt-glow: linear-gradient(180deg, rgba(19, 43, 82, 0) 0%, #21416D 40%, #4A6898 70%, #9DB3D6 87%, #DCE6F5 100%); /* tema-tetap: cahaya bulan perak di celah */
+  --tt-halo: radial-gradient(closest-side, rgba(196, 214, 242, .24), rgba(196, 214, 242, 0)); /* tema-tetap: halo bulan di kaki celah */
+  --tt-pillar: #020711; /* tema-tetap: pilar lebih gelap dari langit agar siluet terbaca */
+  --tt-rim: #B4C6E2; /* tema-tetap: garis tepi perak cahaya bulan */
+  --tt-rim-opacity: .5;
+  --tt-rim-opacity-enter: .75;
+  --tt-water: linear-gradient(180deg, #0E2442 0%, #020711 100%); /* tema-tetap: air malam yang lebih dingin */
+  --tt-reflection-opacity: .26;
+  --tt-ripple-light: rgba(200, 218, 245, .12); /* tema-tetap: kilau riak air malam */
+  --tt-brand-sub: rgba(232, 239, 250, .85); /* tema-tetap: teks brand di atas ilustrasi */
+  --tt-brand-name: #E8C25E; /* tema-tetap: nama desa emas, sedikit lebih terang di malam */
+  --tt-brand-shadow: 0 2px 12px rgba(2, 7, 17, .75);
+  --tt-flash: radial-gradient(circle at 50% var(--zoom-y, 60%), #3A5582 0%, #13254A 38%, #050B18 75%, #000 100%); /* tema-tetap: cahaya akhir gelap kebiruan menuju halaman gelap */
+  --tt-moon-opacity: 1;
+  --tt-stars-opacity: .9;
+}
+
+/* ================= Bulan (di celah, di atas logo) ================= */
+.moon {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--gate-h) * 0.8);
+  width: calc(var(--gap) * 0.62);
+  aspect-ratio: 1;
+  transform: translate(-50%, 50%);
+  pointer-events: none;
+}
+/* Piringan bulan diameter 0.17 x celah dengan tepi kebiruan (bukan seperti lampu), lalu halo lembut. */
+.moon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: var(--tt-moon-opacity, 0);
+  background:
+    radial-gradient(circle calc(var(--gap) * 0.085) at 50% 50%, #FBFCFE 0%, #EAF0F8 55%, #C9D5E8 96%, rgba(201, 213, 232, 0) 100%),
+    radial-gradient(closest-side, rgba(220, 230, 245, .30) 34%, rgba(159, 180, 214, .12) 58%, rgba(159, 180, 214, 0) 100%); /* tema-tetap: bulan adegan malam */
+}
+
+/* ================= Bintang (tipis, halus, memudar ke horizon) ================= */
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.stars::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 70%;
+  opacity: var(--tt-stars-opacity, 0);
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='300'><g fill='%23E6EEFA'><circle cx='23' cy='31' r='.7' opacity='.7'/><circle cx='97' cy='12' r='.5' opacity='.5'/><circle cx='151' cy='64' r='.9' opacity='.8'/><circle cx='212' cy='22' r='.5' opacity='.45'/><circle cx='268' cy='91' r='.6' opacity='.6'/><circle cx='331' cy='40' r='1' opacity='.85'/><circle cx='392' cy='118' r='.5' opacity='.5'/><circle cx='58' cy='132' r='.6' opacity='.55'/><circle cx='129' cy='181' r='.5' opacity='.4'/><circle cx='187' cy='143' r='.8' opacity='.7'/><circle cx='246' cy='212' r='.5' opacity='.45'/><circle cx='305' cy='167' r='.6' opacity='.55'/><circle cx='371' cy='236' r='.7' opacity='.6'/><circle cx='15' cy='241' r='.5' opacity='.4'/><circle cx='88' cy='272' r='.8' opacity='.65'/><circle cx='164' cy='254' r='.5' opacity='.4'/><circle cx='279' cy='282' r='.5' opacity='.45'/></g></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='610' height='430'><g fill='%23F4F7FC'><circle cx='71' cy='88' r='1.1' opacity='.9'/><circle cx='243' cy='37' r='.6' opacity='.5'/><circle cx='402' cy='156' r='1.2' opacity='.85'/><circle cx='538' cy='72' r='.6' opacity='.55'/><circle cx='164' cy='301' r='.9' opacity='.7'/><circle cx='347' cy='366' r='.6' opacity='.5'/><circle cx='497' cy='274' r='.8' opacity='.65'/><circle cx='589' cy='391' r='.5' opacity='.4'/></g></svg>");
+  background-position: 0 0, 137px 61px;
+  /* Memudar mendekati horizon (udara tebal) dan tidak menumpuk di cahaya celah bawah. */
+  mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%);
+}

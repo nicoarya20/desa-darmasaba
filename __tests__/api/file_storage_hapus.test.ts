@@ -38,8 +38,15 @@ const FKS = [
   { tabel: "public.\"_BeritaImages\"", kolom: "\"B\"" },
 ];
 const dirujuk = (value: boolean) => prismaMock.$queryRawUnsafe.mockResolvedValue([{ dirujuk: value }]);
+// Sengaja TANPA context.headers: di Elysia field itu hanya terisi bila handler rute memakainya (lihat serveStoredFile).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- stub context Elysia minimal
-const ctx = (over: Record<string, unknown> = {}): any => ({ params: {}, query: {}, headers: {}, set: { headers: {} }, ...over });
+const ctx = (over: Record<string, unknown> = {}, headers: Record<string, string> = {}): any => ({
+  params: {},
+  query: {},
+  request: new Request("http://localhost/api/fileStorage/findUnique/x", { headers }),
+  set: { headers: {} },
+  ...over,
+});
 
 async function* stream(text: string) {
   yield Buffer.from(text);
@@ -165,6 +172,26 @@ describe("berkas tersimpan dilayani normal (tanpa filter Sampah)", () => {
     expect(String(await fileStorageFindUnique(c))).toBe("isi");
     expect(minioMock.getObject).toHaveBeenCalledWith("bucket-test", "document/a.pdf");
     expect(c.set.headers["Cache-Control"]).toContain("public");
+  });
+
+  it("findUnique/:name tanpa context.headers (seperti Elysia sungguhan) tetap melayani berkas, bukan 404", async () => {
+    prismaMock.fileStorage.findUnique.mockResolvedValueOnce({ name: "a.pdf", path: "document", mimeType: "application/pdf" });
+    minioMock.getObject.mockResolvedValueOnce(stream("pdf-utuh"));
+    const c = ctx({ params: { name: "a.pdf" } });
+    expect("headers" in c).toBe(false);
+    expect(String(await fileStorageFindUnique(c))).toBe("pdf-utuh");
+    expect(c.set.status).toBeUndefined();
+  });
+
+  it("findUnique/:name membaca header Range dari Request → 206 dengan Content-Range", async () => {
+    prismaMock.fileStorage.findUnique.mockResolvedValueOnce({ name: "a.mp3", path: "audio", mimeType: "audio/mpeg" });
+    minioMock.statObject.mockResolvedValueOnce({ size: 10 });
+    minioMock.getPartialObject.mockResolvedValueOnce(stream("abcd"));
+    const c = ctx({ params: { name: "a.mp3" } }, { range: "bytes=0-3" });
+    expect(String(await fileStorageFindUnique(c))).toBe("abcd");
+    expect(c.set.status).toBe(206);
+    expect(c.set.headers["Content-Range"]).toBe("bytes 0-3/10");
+    expect(minioMock.getPartialObject).toHaveBeenCalledWith("bucket-test", "audio/a.mp3", 0, 4);
   });
 
   it("findUnique/:name → 404 bila baris tidak ada, MinIO tidak dibaca", async () => {

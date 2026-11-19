@@ -33,6 +33,8 @@ describe('next.config redirects — daftar lengkap', () => {
       ['/admin/desa/:path*', '/admin/pemerintahan/:path*'],
       ['/admin/pemerintahan/penghargaan', '/admin/landing-page/prestasi-desa/list-prestasi-desa'],
       ['/admin/pemerintahan/penghargaan/:path*', '/admin/landing-page/prestasi-desa/list-prestasi-desa'],
+      // Dokumen Perencanaan: tab Kegiatan Desa → submenu Pemerintahan (detail: dokumen_perencanaan_menu.test.ts).
+      ['/admin/pemerintahan/kegiatan-desa/dokumen-perencanaan/:path*', '/admin/pemerintahan/dokumen-perencanaan/:path*'],
     ]);
     expect(redirects.every((r) => r.permanent === true)).toBe(true);
   });

@@ -1,27 +1,84 @@
 # Changelog
 
-## [0.1.309] - 2026-11-18
+## [0.1.318] - 2026-11-19
 ### Added
 - **Impor data UMKM lewat CSV.** Di admin Ekonomi > UMKM & Pasar Desa > Data UMKM ada tombol "Impor CSV". Admin bisa mengunduh template, memilih berkas (maks 2 MB, 1000 baris), lalu melihat pratinjau jumlah yang akan ditambah, diperbarui, atau dilewati beserta daftar baris bermasalah sebelum mengimpor. Kolom wajib: nama, pemilik, kategori; opsional: deskripsi, alamat, kontak. Kategori dicocokkan berdasarkan nama dan harus sudah ada.
 - **Impor produk UMKM lewat CSV.** Di tab Produk ada tombol "Impor CSV" dengan alur yang sama (template, pratinjau, impor semua-atau-tidak-sama-sekali). Kolom wajib: nama, umkm, kategori, harga; opsional: pemilik (untuk UMKM bernama sama), stok, satuan, deskripsi, unggulan, dan **link toko online** per platform (Shopee, Tokopedia, TikTok Shop, Blibli, Lazada, lainnya; harus https, maksimal 5 per produk). Harga diterima sebagai "15000", "15.000", atau "Rp 15.000"; desimal dan notasi ilmiah Excel ditolak. UMKM dan kategori harus sudah ada. Pada mode perbarui, link toko online yang diisi menggantikan seluruh daftar link produk itu.
 - Dua mode impor: **lewati** UMKM yang sudah ada (nama + pemilik sama) atau **perbarui** datanya (sel kosong tidak menimpa data lama). Impor berjalan semua-atau-tidak-sama-sekali: satu baris tidak valid membatalkan seluruh impor.
-
-### Changed
-- Pembaca CSV dipindah ke modul bersama (`src/lib/csv/parse-csv.ts`) dan dipakai juga oleh impor Penerima Program Kemiskinan, UMKM, dan Produk; perilakunya tidak berubah.
-
-## [0.1.308] - 2026-11-18
-### Changed
-- **Kolom "Jumlah" di Sektor Unggulan Desa kini tidak wajib.** Admin bisa menyimpan sektor unggulan (tambah maupun ubah) tanpa mengisi angka; kolom dibiarkan kosong dan tidak lagi otomatis terisi 0. Sektor tanpa angka tetap tampil di halaman publik, hanya tanpa nilainya.
-- Kolom "Jumlah" kini menerima angka 0 dan angka desimal (sebelumnya angka di bawah 1 ditolak).
-
-## [0.1.307] - 2026-11-18
-### Added
 - **Kegiatan Desa kategori Pembangunan kini bisa punya dokumentasi foto.** Di form tambah dan ubah kegiatan, saat kategori "Pembangunan" dipilih muncul bagian "Dokumentasi Pembangunan" berisi **Foto Sebelum** dan **Foto Sesudah**, masing-masing bisa diisi sampai 5 foto. Semuanya opsional: kegiatan tetap bisa disimpan tanpa foto. Foto berformat JPG, PNG, atau WebP, maksimal 5 MB per foto.
 - **Halaman detail kegiatan menampilkan "Dokumentasi Pembangunan"** bila ada minimal satu foto: kolom Sebelum dan Sesudah berdampingan (bertumpuk di ponsel). Kelompok yang kosong tidak ditampilkan, dan tanpa foto sama sekali bagian ini tidak muncul.
 
 ### Changed
+- Pembaca CSV dipindah ke modul bersama (`src/lib/csv/parse-csv.ts`) dan dipakai juga oleh impor Penerima Program Kemiskinan, UMKM, dan Produk; perilakunya tidak berubah.
+- **Kolom "Jumlah" di Sektor Unggulan Desa kini tidak wajib.** Admin bisa menyimpan sektor unggulan (tambah maupun ubah) tanpa mengisi angka; kolom dibiarkan kosong dan tidak lagi otomatis terisi 0. Sektor tanpa angka tetap tampil di halaman publik, hanya tanpa nilainya.
+- Kolom "Jumlah" kini menerima angka 0 dan angka desimal (sebelumnya angka di bawah 1 ditolak).
 - Input gambar lama di form Kegiatan Desa kini berlabel **"Gambar Sampul (Opsional)"** beserta keterangan bahwa gambar itu tampil sebagai gambar utama di daftar dan detail kegiatan, supaya tidak tertukar dengan foto dokumentasi Pembangunan.
 - Foto yang diganti atau dihapus dari kegiatan Pembangunan ikut dibersihkan dari penyimpanan setelah data berhasil disimpan. Memindahkan kegiatan ke kategori selain Pembangunan mengosongkan foto dokumentasinya.
+
+## [0.1.317] - 2026-11-19
+### Fixed
+- **Bagian atas beranda tidak lagi "melompat" saat data media sosial dan profil Perbekel tiba.** Penyebab sebenarnya ditemukan lewat pengukuran rapat: deretan ikon media sosial (Instagram, TikTok, YouTube, dan lainnya) tidak menyisakan ruang selama datanya dimuat, lalu muncul dan mendorong foto Perbekel, kartu nama, dan daftar program ke bawah sekitar 64 piksel; selain itu kerangka pemuatan foto Perbekel tidak menyertakan kartu nama sehingga tinggi bagian atas bertambah saat data tiba. Kini ruang untuk keduanya disisakan sejak awal dengan ukuran yang sama seperti tampilan akhirnya. Tampilan akhir tidak berubah. (Nilai pergeseran 0,16 di PageSpeed mobile sebelumnya di atas batas baik 0,1.)
+- **Pembatalan perubahan font 0.1.316.** Pada rilis 0.1.316 pergeseran tadi diduga berasal dari pergantian font, sehingga font diubah agar tidak diganti setelah tampil. Pengukuran ulang membuktikan dugaan itu salah (nilai pergeseran tidak berubah), jadi pengaturan font dikembalikan seperti semula agar tampilan huruf tidak berbeda di kunjungan pertama tanpa manfaat.
+
+## [0.1.316] - 2026-11-19
+### Fixed
+- **Bagian atas beranda (foto Perbekel, kartu nama, daftar program) tidak lagi bergeser sendiri saat font selesai dimuat.** Di HP dengan sinyal lambat, font khusus website baru selesai diunduh setelah sekitar 6 detik. Pada saat itu tampilan berganti dari font bawaan ke font website dan menggeser bagian bawah blok hero sekitar 64 piksel, sehingga halaman terlihat "melompat" (nilai pergeseran 0,16 di PageSpeed mobile, di atas batas baik 0,1). Kini font tidak lagi diganti setelah halaman tampil.
+- **Yang berubah bagi pengunjung:** pada kunjungan pertama dengan sinyal lambat, huruf memakai font bawaan perangkat. Font website tetap diunduh di latar dan dipakai pada halaman atau kunjungan berikutnya (berkasnya disimpan 30 hari di perangkat sejak rilis 0.1.315). Pada perangkat Apple font bawaan hampir sama dengan font website, jadi perbedaannya nyaris tak terlihat.
+
+## [0.1.315] - 2026-11-19
+### Changed
+- **Font, ikon, dan gambar statis website disimpan lebih lama di perangkat pengunjung (30 hari).** Berkas seperti font utama, logo/ikon desa, dan gambar tetap di folder aset sebelumnya hanya disimpan 1–4 jam, sehingga setiap kunjungan ulang mengunduhnya lagi. Kini kunjungan kedua dan seterusnya lebih cepat dan hemat kuota. Catatan operator: karena nama berkasnya tetap, bila sebuah berkas statis diganti isinya, ganti juga namanya agar pengunjung langsung melihat versi baru.
+- **Beranda tidak lagi mengunduh semua foto galeri sekaligus.** Foto Galeri Layanan & Potensi, yang letaknya jauh di bawah, baru diunduh saat pengunjung menggulir mendekat; foto di sekitar kartu yang sedang tampil tetap disiapkan lebih awal supaya geseran carousel tidak menampilkan kotak kosong. Foto galeri, Kabar Desa, dan Prestasi juga kini ditawarkan dalam beberapa ukuran (480, 768, dan 1280 piksel) sehingga HP menerima foto yang lebih kecil dari foto komputer. Tampilan tidak berubah.
+- **Beranda sedikit lebih ringan:** satu pustaka (lodash) yang tadinya dimuat utuh kini hanya memuat bagian yang dipakai (perkiraan ±23 KB lebih kecil, belum diukur di browser).
+
+### Fixed
+- **Permintaan ukuran foto tidak lagi memperbesar foto kecil.** Parameter ukuran pada alamat foto kini hanya mengecilkan: foto yang aslinya lebih kecil dari ukuran yang diminta dikirim apa adanya (sebelumnya diperbesar sehingga berkasnya malah lebih besar). Ini juga mencegah permintaan ukuran sangat besar membebani server.
+- Browser lama yang meminta ulang foto dalam format cadangan (JPEG) tidak lagi mendapat daftar ukuran WebP bersamanya.
+
+## [0.1.314] - 2026-11-19
+### Changed
+- **Foto website disimpan lebih lama di HP dan komputer pengunjung.** Foto yang tampil di website kini boleh disimpan di perangkat pengunjung hingga setahun, karena nama berkas foto selalu unik dan tidak pernah ditimpa. Kunjungan kedua dan seterusnya jadi lebih cepat dan hemat kuota. Di Cloudflare foto hanya disimpan sehari, supaya foto yang dihapus admin tidak bertahan lama. Gambar pengganti ("tidak ada gambar", saat foto gagal dibaca) tidak pernah disimpan, sehingga galat sesaat tidak menempel berjam-jam. Berkas non-foto (PDF, audio) tidak berubah. Setelah rilis, cek apakah masa simpan setahun benar-benar sampai ke browser; bila Cloudflare menimpanya dengan setelan 4 jam, ada satu pengaturan "Browser Cache TTL" di dashboard Cloudflare yang perlu disesuaikan.
+
+### Fixed
+- **Beranda tidak lagi "melompat" saat digulir cepat dengan sinyal lambat.** Ada dua penyebab. Pertama, kotak grafik APBDes dan Survei Kepuasan sempat mengecil selama kode grafiknya diunduh lalu membesar lagi; kini tinggi kotak dipertahankan. Kedua, kerangka pemuatan (tampilan abu-abu sebelum data tiba) jauh lebih pendek dari isi akhirnya, sehingga data yang datang terlambat mendorong bagian di bawahnya; kini tinggi kerangka APBDes (termasuk keterangan tahun) dan Kepuasan (termasuk tombol ajakan) sama dengan isi akhirnya di desktop, tablet, dan ponsel. Tampilan akhir tidak berubah. Halaman detail APBDes tidak diubah.
+
+## [0.1.313] - 2026-11-18
+### Added
+- **Animasi Candi Bentar saat mengganti tema terang/gelap.** Menekan tombol matahari/bulan di navbar (desktop dan ponsel) kini memutar adegan sekitar 5 detik: pilar kiri dan kanan Candi Bentar meluncur masuk dari tepi layar, lalu langit dan air muncul di belakangnya, tema halaman berganti di balik adegan, dan kamera menembus celah gerbang seperti layar pembuka beranda. Ke tema gelap tampil adegan malam (langit malam, cahaya bulan, bintang); ke tema terang tampil adegan siang seperti layar pembuka. Pergantian warna halaman tidak pernah terlihat setengah jalan, juga di perangkat lambat. Pengunjung yang mengaktifkan "kurangi gerakan" di perangkatnya tetap mendapat pergantian tema langsung tanpa animasi.
+
+## [0.1.312] - 2026-11-18
+### Fixed
+- **Beranda tidak lagi "melompat" saat grafik muncul.** Pada rilis 0.1.310, grafik APBDes dan Survei Kepuasan baru dimuat saat digulir mendekat, tetapi ruang yang disiapkan lebih pendek dari grafik aslinya (terutama di ponsel, selisih sekitar 930 px), sehingga tombol dan bagian di bawahnya terdorong turun saat grafik muncul. Kini ruang cadangan sama dengan tinggi aslinya di desktop, tablet, dan ponsel; grafik mulai dipasang jauh sebelum terlihat; dan kode grafik diunduh begitu pengunjung mulai menggulir atau menyentuh layar. Tampilan akhir grafik tidak berubah, dan beranda tetap ringan saat pertama dibuka.
+
+## [0.1.311] - 2026-11-18
+### Changed
+- **Program Inovasi tampil rapi dan terbaca di tema gelap.** Di beranda (rel "Program Inovasi Desa") dan di halaman Inovasi › Program Inovasi, ubin program ber-logo kini berupa kartu terang penuh saat tema gelap, sehingga logo berlatar transparan (mis. Galah Melah, Inovasi Desa Darmasaba) tetap jelas tanpa kotak di dalam kotak. Tampilan tema terang tidak berubah.
+- **Kotak logo di halaman Program Inovasi kini sama tinggi**, jadi baris ubin rata walau ukuran gambar logo berbeda-beda.
+- **Halaman Program Inovasi di ponsel jauh lebih ringkas**: tiap program tampil sebagai satu baris (logo kecil di kiri, nama dan ringkasan di kanan), bukan kartu besar.
+- **Program tanpa logo, atau yang logonya gagal dimuat, menampilkan inisial namanya** (mis. "BD" untuk Bicara Darmasaba) alih-alih ikon foto kosong.
+
+## [0.1.310] - 2026-11-18
+### Changed
+- **Foto pada halaman Layanan tampil lebih cepat.** Foto tiga kartu pertama di daftar Surat Keterangan kini diunduh langsung dengan prioritas tinggi, tidak lagi menunggu halaman selesai ditata. Foto kartu berikutnya tetap dimuat saat digulir.
+- **Beranda lebih ringan saat pertama dibuka.** Grafik APBDes dan grafik Survei Kepuasan (batang dan donat) letaknya di bagian bawah beranda, jadi kodenya kini baru diunduh saat pengunjung menggulir mendekatinya, bukan di awal. Tampilan dan isi grafik tidak berubah. Dampaknya ke skor kecepatan di ponsel diperkirakan kecil; bagian terbesar (gambar utama yang baru ditemukan setelah JavaScript jalan, dan respons server) belum dikerjakan.
+
+## [0.1.309] - 2026-11-18
+### Changed
+- **Bagan Struktur Perangkat Desa kini tersusun seperti bagan resmi kantor desa dan tidak perlu digeser ke samping.** Di Profil Desa dan halaman Struktur Perangkat Desa, Perbekel ada di atas dengan satu garis tegak di tengah: Sekretaris Desa beserta tiga Kepala Urusan di kanan, tiga Kepala Seksi di kiri, lalu Kelian Banjar Dinas dan Kelian Banjar Adat per baris (tiga di kiri, tiga di kanan). Sebelumnya semua bawahan Perbekel berjajar dalam satu baris sangat panjang. Kartu dibuat lebih ringkas dan nama panjang tampil utuh. Susunan mengikuti tingkat jabatan yang diisi admin, jadi menyesuaikan sendiri bila jabatan berubah. Di laptop kecil dan tablet bagan memakai garis di kiri dengan tiga kartu sebaris; di ponsel satu kartu per baris seperti sebelumnya. Struktur PPID dan BUMDes tidak berubah.
+
+## [0.1.308] - 2026-11-18
+### Fixed
+- **Website staging gagal naik setelah rilis 0.1.307.** Aplikasi mati saat dijalankan di server karena berkas pengaturan header keamanan tidak ikut terbawa ke image Docker, sehingga alamat staging hanya menampilkan "Unknown subdomain". Berkas itu dipindah ke lokasi yang ikut dibawa image, dan ada pemeriksaan otomatis baru agar kesalahan serupa terdeteksi sebelum rilis. Isi rilis 0.1.307 (header keamanan, kontras warna, kecepatan halaman, alur WhatsApp permohonan) tidak berubah. Versi 0.1.307 tidak pernah berjalan di server dan tidak perlu dipakai.
+
+## [0.1.307] - 2026-11-18
+### Added
+- **Setelah warga mengajukan permohonan surat keterangan, mereka diarahkan ke WhatsApp petugas layanan.** Data permohonan tetap tersimpan seperti biasa; lalu layar "Permohonan tersimpan" menampilkan tombol "Lanjutkan ke WhatsApp" yang membuka percakapan dengan Petugas Layanan Desa berisi pesan awal (nama dan jenis surat saja, tanpa NIK, nomor KK, atau alamat). Halaman detail layanan juga menjelaskan bahwa tindak lanjut dilakukan lewat WhatsApp petugas. Nomor petugas saat ini tetap di kode (`src/con/layanan-whatsapp.ts`), belum bisa diubah dari admin, dan permohonan belum punya nomor referensi: petugas mencocokkan lewat nama dan jenis surat.
+- **Header keamanan pada semua halaman website:** `Strict-Transport-Security` (6 bulan, tanpa subdomain), `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy` (mikrofon hanya untuk situs sendiri, dipakai suara Jenna), dan `Content-Security-Policy` ringan (`frame-ancestors`, `object-src`, `base-uri`). CSP penuh sengaja belum dipasang karena situs memuat peta, video, dan gambar dari beberapa sumber. Setelah rilis ke staging, cek suara Jenna, pratinjau PDF, peta, dan video.
+
+### Changed
+- **Teks lebih mudah dibaca (kontras warna, WCAG AA).** Warna teks yang terlalu pucat digelapkan pada badge waktu dan biaya layanan, kartu ringkasan Posyandu, kartu agenda dan kategori acara (termasuk acara yang sudah lewat, kini dipucatkan lewat warna, bukan transparansi), teks pendukung formulir Inovasi dan SDGs. Warna di tema terang disesuaikan; nilai tema gelap tidak diubah kecuali kartu acara yang sudah lewat, yang kini mengikuti warna latar tema. Teks keterangan paling kecil bernilai `--c-subtle` di tema terang (`#86868b`, 3,3:1) sengaja dibiarkan karena aturan tema terang tidak boleh berubah; tercatat di `docs/DESIGN.md` bagian 2.6.
+- **Halaman terasa lebih cepat dan stabil saat dibuka.** Foto utama yang langsung terlihat (berita utama beranda, kartu galeri pertama, foto Perbekel) dimuat lebih dulu dengan prioritas tinggi. Footer tidak lagi sempat tampil lalu terdorong jauh ke bawah saat data halaman selesai dimuat, jadi halaman tidak "melompat". Halaman yang isinya pendek kini menaruh footer di dasar layar.
+
 ## [0.1.306] - 2026-11-18
 ### Added
 - **Tema gelap kini bisa dinyalakan warga.** Tombol matahari/bulan di navbar (desktop dan ponsel, di kanan tombol baca suara) kini tampil untuk semua pengunjung. Pengunjung yang belum pernah memilih otomatis mengikuti pengaturan perangkatnya: perangkat bermode gelap langsung melihat situs gelap, perangkat bermode terang tetap terang. Pilihan lewat tombol disimpan di browser dan dipakai pada kunjungan berikutnya. Halaman admin dan akun tetap selalu terang.

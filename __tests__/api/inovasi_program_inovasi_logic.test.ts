@@ -44,16 +44,25 @@ describe('URL', () => {
 });
 
 describe('toProgramInovasiTile', () => {
-  it('judul dirapikan, ringkasan teks polos dari HTML, logo, tautan detail', () => {
+  it('judul dirapikan, ringkasan teks polos dari HTML, logo, inisial dari judul, tautan detail', () => {
     expect(
       toProgramInovasiTile({ id: 'p1', name: ' Davest ', description: '<p>Festival <strong>desa</strong></p>', image: { link: '/api/img/l' } }),
-    ).toEqual({ id: 'p1', title: 'Davest', summary: 'Festival desa', logo: '/api/img/l', href: '/inovasi/program-inovasi/p1' });
+    ).toEqual({
+      id: 'p1',
+      title: 'Davest',
+      summary: 'Festival desa',
+      logo: '/api/img/l',
+      initials: 'D',
+      href: '/inovasi/program-inovasi/p1',
+    });
   });
 
-  it('tanpa logo / logo kosong → logo undefined; deskripsi null → ringkasan kosong', () => {
+  it('tanpa logo / logo kosong → logo undefined tetapi inisial tetap ada; deskripsi null → ringkasan kosong', () => {
     const tile = toProgramInovasiTile({ id: 'p2', name: 'GM', description: null, image: { link: '  ' } });
     expect(tile.logo).toBeUndefined();
+    expect(tile.initials).toBe('GM');
     expect(tile.summary).toBe('');
+    expect(toProgramInovasiTile({ id: 'p3', name: 'Bicara Darmasaba', image: null }).initials).toBe('BD');
   });
 });
 

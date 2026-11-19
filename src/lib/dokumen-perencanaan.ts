@@ -1,15 +1,21 @@
-// Aturan Dokumen Perencanaan Desa (RPJM / RKP / Berita Acara Musyawarah) —
-// fungsi & konstanta murni, tanpa I/O, dipakai bersama oleh API (Elysia),
-// admin, dan halaman publik Monev & Pembangunan.
+// Aturan Dokumen Perencanaan Desa (RPJM / RKP / APBDes / Pelaporan realisasi APBDes /
+// Berita Acara Musyawarah) — fungsi & konstanta murni, tanpa I/O, dipakai bersama oleh API (Elysia),
+// admin, halaman publik "Arah Kebijakan Pembangunan Desa", dan Monev & Pembangunan.
 
-export const JENIS_DOKUMEN = ["RPJM", "RKP", "BERITA_ACARA_MUSYAWARAH"] as const;
+// Kolom `jenis` di DB berupa teks biasa, jadi jenis baru tidak butuh migrasi; nilai lama tetap valid.
+export const JENIS_DOKUMEN = ["RPJM", "RKP", "APBDES", "PELAPORAN_APBDES", "BERITA_ACARA_MUSYAWARAH"] as const;
 export type JenisDokumen = (typeof JENIS_DOKUMEN)[number];
 
 export const JENIS_DOKUMEN_LABEL: Record<JenisDokumen, string> = {
   RPJM: "RPJM Desa",
   RKP: "RKP Desa",
+  APBDES: "APBDes",
+  PELAPORAN_APBDES: "Pelaporan Realisasi APBDes",
   BERITA_ACARA_MUSYAWARAH: "Berita Acara Musyawarah",
 };
+
+/** Jenis yang cukup memakai satu `tahun` (selain RPJM berperiode dan berita acara bermusyawarah). */
+const JENIS_PER_TAHUN: readonly JenisDokumen[] = ["RKP", "APBDES", "PELAPORAN_APBDES"];
 
 export const JENIS_MUSYAWARAH = ["MUSDES", "MUSRENBANGDES", "MMD", "LAINNYA"] as const;
 export type JenisMusyawarah = (typeof JENIS_MUSYAWARAH)[number];
@@ -21,9 +27,8 @@ export const JENIS_MUSYAWARAH_LABEL: Record<JenisMusyawarah, string> = {
   LAINNYA: "Musyawarah lainnya",
 };
 
-/** Anchor section di halaman Monev & Pembangunan, dan tautan publik ke sana (dipakai PPID). */
-export const DOKUMEN_PERENCANAAN_SECTION_ID = "dokumen-perencanaan";
-export const DOKUMEN_PERENCANAAN_PUBLIC_HREF = `/pemerintahan/monev-pembangunan#${DOKUMEN_PERENCANAAN_SECTION_ID}`;
+/** Halaman publik "Arah Kebijakan Pembangunan Desa", tempat semua dokumen perencanaan & penganggaran (dipakai PPID & Monev). */
+export const DOKUMEN_PERENCANAAN_PUBLIC_HREF = "/pemerintahan/arah-kebijakan-pembangunan-desa";
 
 export const TAHUN_MIN = 2000;
 export const TAHUN_MAX = 2100;
@@ -105,7 +110,7 @@ function parsePeriode(
   if (!isTahunValid(body.tahun)) {
     return { ok: false, message: `Tahun wajib diisi (bilangan bulat ${rentang})` };
   }
-  if (jenis === "RKP") {
+  if (JENIS_PER_TAHUN.includes(jenis)) {
     return { ok: true, value: { ...kosong, tahun: body.tahun } };
   }
 
@@ -120,7 +125,7 @@ function parsePeriode(
 
 /**
  * Validasi & normalisasi body create/update dokumen perencanaan.
- * Field yang tidak relevan untuk jenisnya dikosongkan (mis. RKP tidak menyimpan tahunMulai).
+ * Field yang tidak relevan untuk jenisnya dikosongkan (mis. RKP/APBDes/Pelaporan tidak menyimpan tahunMulai).
  */
 export function parseDokumenPerencanaanInput(body: Record<string, unknown>): DokumenParseResult {
   if (!isJenisDokumen(body.jenis)) {

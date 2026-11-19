@@ -2,7 +2,7 @@
 
 import { useDisclosure } from "@mantine/hooks";
 import { CtaButton } from "./components/CtaButton";
-import { KepuasanCharts } from "./components/KepuasanCharts";
+import { LazyKepuasanCharts } from "./components/KepuasanCharts.lazy";
 import { KepuasanEmpty } from "./components/KepuasanEmpty";
 import { KepuasanSkeleton } from "./components/KepuasanSkeleton";
 import { RespondenFormModal } from "./components/RespondenFormModal";
@@ -31,7 +31,7 @@ function Kepuasan() {
           <KepuasanEmpty onCta={open} />
         ) : (
           <>
-            <KepuasanCharts summary={summary} total={total} />
+            <LazyKepuasanCharts summary={summary} total={total} />
             <div className={s.cta}>
               <CtaButton onClick={open} />
             </div>

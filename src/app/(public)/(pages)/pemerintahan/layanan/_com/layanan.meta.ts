@@ -1,6 +1,9 @@
 /** Banyak surat keterangan yang dimuat sekaligus (data ±11); semua tampil tanpa paginasi, cari di klien. */
 export const LAYANAN_LIST_LIMIT = 100;
 
+/** Kartu pertama yang kemungkinan terlihat tanpa menggulir (satu baris desktop); fotonya dimuat langsung, bukan lazy. */
+export const LAYANAN_ABOVE_FOLD_COUNT = 3;
+
 /** Id rekaman tunggal Perizinan Berusaha & Penduduk Non-Permanen (dibuat seed, diubah admin lewat id ini). */
 export const LAYANAN_SINGLETON_ID = "edit";
 

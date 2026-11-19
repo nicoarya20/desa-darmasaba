@@ -1,5 +1,3 @@
-import { JENIS_DOKUMEN_LABEL, type JenisDokumen } from "@/lib/dokumen-perencanaan";
-
 /** Label UI halaman publik Monev & Pembangunan. */
 export const MONEV_TEXT = {
   pageTitle: "Monev & Pembangunan",
@@ -40,17 +38,7 @@ export const MONEV_TEXT = {
   listFailed: "Daftar kegiatan belum dapat ditampilkan.",
   pagination: "Halaman daftar kegiatan",
 
-  docTitle: "Dokumen Perencanaan",
-  docLead: "RPJM Desa, RKP Desa, dan berita acara musyawarah sebagai dasar kegiatan pembangunan.",
-  docTabsLabel: "Jenis dokumen perencanaan",
-  docTabShort: { BERITA_ACARA_MUSYAWARAH: "Berita Acara" } as Partial<Record<JenisDokumen, string>>,
-  docEmpty: (jenis: JenisDokumen) =>
-    `Belum ada dokumen ${JENIS_DOKUMEN_LABEL[jenis]}. Dokumen akan tampil setelah ditambahkan oleh admin desa.`,
-  docFailed: "Dokumen perencanaan belum dapat ditampilkan.",
-  docLoading: "Memuat dokumen perencanaan",
-  docNomorPerdes: (v: string) => `Nomor Perdes: ${v}`,
-  docView: "Lihat PDF",
-  docDownload: "Unduh",
-  docNoFile: "Berkas PDF belum tersedia.",
-  docPagination: "Halaman dokumen perencanaan",
+  arahTitle: "Dokumen perencanaan dan penganggaran",
+  arahBody: "RPJM, RKP, APBDes, dan pelaporan realisasinya ada di Arah Kebijakan Pembangunan Desa.",
+  arahCta: "Buka Arah Kebijakan Pembangunan Desa",
 } as const;
