@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.322] - 2026-11-19
+### Fixed
+- **Pita abu kosong di atas footer tidak muncul lagi.** Di halaman yang isinya lebih pendek dari layar (misalnya PUSTU, Posyandu, halaman 404, dan banyak halaman detail), terutama di layar lebar atau saat presentasi, dulu terlihat pita abu kosong antara isi halaman dan footer. Kini sisa ruang itu ikut berlatar putih (hitam di tema gelap) seperti halaman di atasnya. Halaman SDGs Desa kini juga berlatar putih/hitam seperti menu lain. Beranda dan Musik tidak berubah.
+
 ## [0.1.321] - 2026-11-19
 ### Changed
 - **Halaman PUSTU (Puskesmas Pembantu) dirapikan agar sama dengan halaman lain di menu Kesehatan.** Di daftar, kolom cari kini di kanan judul dan jaraknya ke kartu sama dengan Program Kesehatan; kartu berfoto penuh di atas dan seluruh kartu bisa diklik. Tautan "Lihat detail" tidak lagi bergaris bawah, tetapi berubah warna saat disentuh kursor seperti tautan lain di situs. Di halaman detail, tombol panah kembali diganti tautan teks "‹ PUSTU", alamat email tidak lagi bergaris bawah, dan judul bagian (Layanan Unggulan, Prosedur, Tarif, Struktur, Galeri) berukuran sama dengan halaman detail lain.
