@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.328] - 2026-11-19
+### Changed
+- **Penanda menu aktif di sidebar admin kini berupa garis lurus berujung bulat di depan teks**, menggantikan border kiri yang ikut melengkung di sudut. Berlaku untuk menu induk (mis. "Ekonomi") dan submenu (mis. "UMKM & Pasar Desa"); latar item tetap membulat penuh dan teks tidak bergeser. Varian tema gelap (biru langit lembut `#60A5FA`, kontras 7:1) sudah disiapkan untuk nanti.
+- **Dashboard admin kini selalu tampil terang.** Pilihan tema gelap yang pernah tersimpan di browser (sebelumnya membuat sidebar dan header gelap sementara isi halaman tetap terang, tanpa tombol untuk kembali) tidak lagi dipakai, dan tema tidak bisa diubah sampai dark mode admin menyeluruh. Konsol pengembang (`/dev`) ikut terang.
+
 ## [0.1.327] - 2026-11-19
 ### Changed
 - Perapian internal gaya chat bar Jenna agar lebih mudah dirawat. Tampilan dan perilaku tidak berubah.
