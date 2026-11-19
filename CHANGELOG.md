@@ -3,7 +3,6 @@
 ## [0.1.325] - 2026-11-19
 ### Changed
 - **Penanda menu aktif di sidebar admin kini berupa garis lurus berujung bulat di depan teks**, menggantikan border kiri yang ikut melengkung di sudut. Berlaku untuk menu induk (mis. "Ekonomi") dan submenu (mis. "UMKM & Pasar Desa") di tema terang dan gelap; latar item tetap membulat penuh dan teks tidak bergeser. Di tema gelap garisnya memakai biru langit lembut (`#60A5FA`, kontras 7:1) dan latar item aktif dibuat lebih tipis agar nyaman di mata.
-- **Tombol ganti tema (terang/gelap) tampil lagi di header admin**, di sebelah tombol buka navigasi. Pilihan tema tersimpan di browser.
 
 ## [0.1.324] - 2026-11-19
 ### Fixed
