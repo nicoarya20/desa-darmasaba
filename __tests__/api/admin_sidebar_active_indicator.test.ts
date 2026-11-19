@@ -46,4 +46,9 @@ describe('indikator aktif sidebar admin', () => {
     expect(LAYOUT).toContain("backgroundColor: 'rgba(96,165,250,0.10)'");
     expect(LAYOUT).not.toContain('rgba(59,130,246');
   });
+
+  it('header memakai DarkModeToggle (tidak di dalam komentar)', () => {
+    const withoutComments = LAYOUT.replace(/\{\/\*[\s\S]*?\*\/\}/g, '').replace(/^\s*\/\/.*$/gm, '');
+    expect(withoutComments).toMatch(/<DarkModeToggle\b/);
+  });
 });
