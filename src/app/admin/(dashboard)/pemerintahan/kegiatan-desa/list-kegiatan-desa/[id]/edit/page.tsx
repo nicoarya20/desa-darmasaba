@@ -28,7 +28,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import DokumentasiPembangunanFields, { PeringatanFotoNonPembangunan } from '../../../_com/DokumentasiPembangunanFields';
 import PembangunanFields, { type PembangunanFormValues } from '../../../_com/PembangunanFields';
+import { useFotoPembangunan } from '../../../_lib/useFotoPembangunan';
+import type { FotoPembangunanFile } from '@/lib/kegiatan-pembangunan-foto';
 
 const isHtmlEmpty = (html: string) => html.replace(/<[^>]*>/g, '').trim() === '';
 
@@ -47,6 +50,8 @@ interface KegiatanData {
   progres?: number | null;
   statusPembangunan?: string | null;
   sumberDana?: string | null;
+  fotoSebelum?: FotoPembangunanFile[] | null;
+  fotoSesudah?: FotoPembangunanFile[] | null;
 }
 
 function EditKegiatanDesa() {
@@ -57,6 +62,8 @@ function EditKegiatanDesa() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fotoPembangunan = useFotoPembangunan();
+  const { muat: muatFoto } = fotoPembangunan;
 
   const emptyForm = {
     judul: '',
@@ -75,6 +82,8 @@ function EditKegiatanDesa() {
 
   const [formData, setFormData] = useState(emptyForm);
   const [originalData, setOriginalData] = useState({ ...emptyForm, imageUrl: '' });
+
+  const isPembangunan = formData.kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID;
 
   const isFormValid = () =>
     formData.judul.trim() !== '' &&
@@ -116,6 +125,7 @@ function EditKegiatanDesa() {
           setFormData(form);
           setOriginalData({ ...form, imageUrl: data.image?.link || '' });
           if (data.image?.link) setPreviewImage(data.image.link);
+          muatFoto(data);
         }
       } catch (error) {
         console.error('Error loading kegiatan:', error);
@@ -145,6 +155,16 @@ function EditKegiatanDesa() {
         ...kegiatanState.kegiatan.edit.form,
         ...formData,
       };
+
+      // Foto Pembangunan hanya diunggah & dikirim bila kategori Pembangunan (API mengosongkannya untuk kategori lain).
+      const editForm = kegiatanState.kegiatan.edit.form;
+      editForm.fotoSebelumIds = undefined;
+      editForm.fotoSesudahIds = undefined;
+      if (isPembangunan) {
+        const hasil = await fotoPembangunan.unggah();
+        if (!hasil.ok) return;
+        Object.assign(editForm, hasil.body);
+      }
 
       if (file) {
         const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
@@ -182,6 +202,7 @@ function EditKegiatanDesa() {
     });
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
+    fotoPembangunan.reset();
     toast.info('Form dikembalikan ke data awal');
   };
 
@@ -252,13 +273,18 @@ function EditKegiatanDesa() {
             allowDecimal={false}
           />
 
-          {formData.kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID && (
+          {isPembangunan && (
             <PembangunanFields
               values={formData}
               onChange={(patch: Partial<PembangunanFormValues>) =>
                 setFormData((prev) => ({ ...prev, ...patch }))
               }
             />
+          )}
+          {isPembangunan ? (
+            <DokumentasiPembangunanFields api={fotoPembangunan} />
+          ) : (
+            <PeringatanFotoNonPembangunan api={fotoPembangunan} />
           )}
 
           <Textarea
@@ -280,7 +306,8 @@ function EditKegiatanDesa() {
           </Box>
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>Gambar (Opsional)</Text>
+            <Text fw="bold" fz="sm">Gambar Sampul (Opsional)</Text>
+            <Text fz="xs" c="dimmed" mb={6}>Tampil sebagai gambar utama di daftar dan detail kegiatan.</Text>
             <Dropzone
               onDrop={(files) => {
                 const f = files[0];
@@ -343,10 +370,10 @@ function EditKegiatanDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
-              disabled={!isFormValid() || isSubmitting}
+              disabled={!isFormValid() || isSubmitting || fotoPembangunan.mengunggah}
               style={{
                 background:
-                  !isFormValid() || isSubmitting
+                  !isFormValid() || isSubmitting || fotoPembangunan.mengunggah
                     ? 'linear-gradient(135deg, #cccccc, #eeeeee)'
                     : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',

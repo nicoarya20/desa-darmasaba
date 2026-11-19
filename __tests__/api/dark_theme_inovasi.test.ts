@@ -107,10 +107,12 @@ describe('halaman (tambahan) APBDes / Prestasi / SDGs ikut token', () => {
     expect(SRC('app/(public)/(tambahan)/apbdes/page.tsx')).not.toContain('APBDES_BRAND_VARS');
   });
 
-  it('/prestasi-desa/[id] tanpa colors literal: latar hero, teks & garis brand bertoken', () => {
+  it('/prestasi-desa/[id] tanpa colors literal: latar halaman putih/hitam, teks & garis brand bertoken', () => {
     const src = SRC('app/(public)/(tambahan)/prestasi-desa/[id]/page.tsx');
     expect(src).not.toContain('@/con/colors');
-    expect(src).toContain('bg="var(--c-hero-bg)"');
+    // Latar = --c-bg seperti daftar /prestasi-desa (plan-latar-putih-ppid-pemerintahan.md), bukan --c-hero-bg.
+    expect(src).toContain('bg="var(--c-bg)"');
+    expect(src).not.toContain('--c-hero-bg');
     expect(src).toContain('c="var(--c-brand)"');
     expect(src).toContain('color="var(--c-brand-fill)"');
   });
@@ -125,7 +127,12 @@ describe('halaman (tambahan) APBDes / Prestasi / SDGs ikut token', () => {
     expect(decl(dark, '--sdgs-goal-title')).toBe('var(--c-ink)');
     expect(decl(dark, '--sdgs-chart-bg')).toBe('var(--c-bg-alt)');
     expect(decl(dark, '--sdgs-plate')).toBe('#d9e1ea');
+    // Subjudul: terang tetap gray.7 (#495057); gelap --c-muted karena gray.7 di latar hitam hanya 2,57:1.
+    expect(decl(page, '--sdgs-subtitle')).toBe('#495057');
+    expect(decl(dark, '--sdgs-subtitle')).toBe('var(--c-muted)');
     const src = SRC('app/(public)/(tambahan)/sdgs-desa/page.tsx');
+    expect(src).toContain('c="var(--sdgs-subtitle)"');
+    expect(src).not.toContain('c="gray.7"');
     expect(src).toContain('c="var(--c-brand)"');
     expect(src).toContain('var(--c-chart-1)');
   });

@@ -51,10 +51,10 @@ beforeEach(() => {
 });
 
 describe('timeline transisi tema', () => {
-  it('total tepat 5 detik (disetujui user) dan langkah terakhir = root pudar', () => {
-    expect(THEME_TRANSITION_TOTAL_MS).toBe(5000);
-    expect(Math.max(...steps.map(stepEndMs))).toBe(5000);
-    expect(stepEndMs(only('root'))).toBe(5000);
+  it('total tepat 3 detik (masukan rekan tim user) dan langkah terakhir = root pudar', () => {
+    expect(THEME_TRANSITION_TOTAL_MS).toBe(3000);
+    expect(Math.max(...steps.map(stepEndMs))).toBe(3000);
+    expect(stepEndMs(only('root'))).toBe(3000);
     expect(last(only('root'))).toEqual({ opacity: 0 });
   });
 
@@ -116,12 +116,12 @@ describe('timeline transisi tema', () => {
     expect(steps.filter((s) => s.holdUntilSwap).map((s) => s.part)).toEqual(['root']);
   });
 
-  it('pudar root: swap tepat waktu → jadwal identik (mulai 4533, total 5000)', () => {
+  it('pudar root: swap tepat waktu → jadwal identik (mulai 2720, total 3000)', () => {
     const root = only('root');
     const delay = startMs(root);
     const duration = Number(root.options.duration);
-    expect(delay).toBe(4533);
-    // Dilepas 2 frame setelah swap 2400: animasi dilanjutkan dari waktu berjalan, jadi tak ada pergeseran.
+    expect(delay).toBe(2720);
+    // Dilepas 2 frame setelah swap 1440: animasi dilanjutkan dari waktu berjalan, jadi tak ada pergeseran.
     const releasedAt = THEME_SWAP_MS + 33;
     const current = rootFadeResumeTime(releasedAt, delay);
     expect(current).toBe(releasedAt);

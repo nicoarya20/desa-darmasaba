@@ -27,7 +27,7 @@ export default async function sektorUnggulanDesaCreate(context: Context) {
             data: {
                 name: body.name,
                 description: body.description,
-                value: body.value,
+                value: body.value ?? null,
                 ...extra.data,
             },
             select: {

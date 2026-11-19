@@ -49,7 +49,7 @@ function Page() {
   }
 
   return (
-    <Stack pos={"relative"} bg="var(--c-hero-bg)" py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
+    <Stack pos={"relative"} bg="var(--c-bg)" py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
       <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
       <Container w={{ base: "100%", md: "50%" }}>
         {state.findUnique.data && (

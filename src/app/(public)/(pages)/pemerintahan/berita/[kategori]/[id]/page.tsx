@@ -84,7 +84,7 @@ function Page() {
   const data = state.findUnique.data as unknown as BeritaDetail;
 
   return (
-    <Stack pos="relative" bg="var(--c-hero-bg)" pb="xl" gap="xs" px={{ base: 'md', md: 0 }}>
+    <Stack pos="relative" pb="xl" gap="xs" px={{ base: 'md', md: 0 }}>
       <Container w={{ base: '100%', md: '60%' }}>
         <Box pb={20}>
           {/* Kategori Badge */}

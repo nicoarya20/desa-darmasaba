@@ -1,10 +1,10 @@
 'use client';
-import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
+import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import pustuState from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/pustu.state';
-import { IconChevronRight } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -12,7 +12,7 @@ import { useSnapshot } from 'valtio';
 import { PUSTU_TEXT as T } from '../pustu.text';
 import PustuDetailBody from './PustuDetailBody';
 
-/** Halaman detail PUSTU publik (kolom 860px): memuat data lalu merender isi, kerangka, atau pesan galat. */
+/** Halaman detail PUSTU publik (kolom 860px): tautan teks "‹ PUSTU" ke daftar, lalu isi, kerangka, atau pesan galat. */
 export default function PustuDetail() {
   const id = useParams()?.id as string;
   const snap = useSnapshot(pustuState.findUnique);
@@ -28,7 +28,12 @@ export default function PustuDetail() {
   return (
     <article className={kabar.section} aria-busy={memuat || undefined}>
       <div className={d.wrap}>
-        <BackButton />
+        <Link href="/kesehatan/puskesmas" className={`${back.back} ${r.trigger}`}>
+          <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
+          <span className={r.cta} data-text={T.kembali}>
+            {T.kembali}
+          </span>
+        </Link>
         {memuat ? (
           <div className={d.placeholder} aria-label={T.memuat}>
             <span className={`${d.bar} ${d.barMeta}`} />

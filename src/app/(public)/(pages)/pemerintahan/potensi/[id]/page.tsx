@@ -61,7 +61,7 @@ function Page() {
   }
 
   return (
-    <Stack pos="relative" bg="var(--c-hero-bg)" py="xl" gap="xl" px={{ base: 'md', md: 0 }}>
+    <Stack pos="relative" bg="var(--c-bg)" py="xl" gap="xl" px={{ base: 'md', md: 0 }}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>

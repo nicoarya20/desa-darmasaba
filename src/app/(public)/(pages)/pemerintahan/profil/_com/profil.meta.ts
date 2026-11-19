@@ -30,7 +30,7 @@ export const strukturPerangkatHref = (pegawaiId: string) =>
   `/pemerintahan/profil/struktur-perangkat-desa/${pegawaiId}`;
 
 /**
- * Variabel CSS halaman: gradasi kartu bagan. Latar kartu (`--vm-card`) & brand ikut tema, jadi diset di
+ * Variabel CSS halaman: gradasi kartu bagan. Brand ikut tema, jadi diset di
  * `.sections` profil.module.css, bukan inline.
  */
 export const PROFIL_VARS = { ...STRUKTUR_VARS } as CSSProperties;

@@ -1,7 +1,11 @@
 // Parser CSV impor penerima Program Kemiskinan — fungsi murni (jalan di browser untuk pratinjau).
 // Hanya kolom nama & alamat yang diambil; kolom lain (NIK, tanggal lahir, nomor KK, ...) dibuang
 // saat parsing sehingga tidak pernah ikut terkirim ke server.
+import { barisKosong, cariKolom, normalHeader, parseCsv } from "@/lib/csv/parse-csv";
 import { IMPOR_MAKS_BARIS, validasiPenerima, type PenerimaInput } from "./penerima.rules";
+
+// Parser CSV generik ada di @/lib/csv/parse-csv; diekspor ulang agar pemakai lama tetap jalan.
+export { parseCsv };
 
 /** Satu baris valid dari CSV beserta nomor barisnya di berkas (1 = header). */
 export type BarisPenerima = PenerimaInput & { baris: number };
@@ -11,63 +15,8 @@ export type BarisDitolak = { baris: number; alasan: string };
 /** Hasil parsing CSV penerima: baris valid, baris ditolak, dan galat berkas (header/ukuran) bila ada. */
 export type HasilCsvPenerima = { rows: BarisPenerima[]; ditolak: BarisDitolak[]; galat: string | null };
 
-// Header dinormalkan: huruf kecil, selain huruf/angka → spasi. "NAMA_PENERIMA" → "nama penerima".
 const ALIAS_NAMA = ["nama", "nama penerima", "nama kepala keluarga", "nama krt", "nama kpm"];
 const ALIAS_ALAMAT = ["alamat", "alamat penerima"];
-
-const normalHeader = (h: string) => h.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-
-/** Pemisah kolom baris pertama: ";" (ekspor Excel lokal Indonesia) bila lebih banyak dari ",". */
-function deteksiPemisah(teks: string): "," | ";" {
-  const barisPertama = teks.split(/\r?\n/, 1)[0] ?? "";
-  const hitung = (c: string) => barisPertama.split(c).length - 1;
-  return hitung(";") > hitung(",") ? ";" : ",";
-}
-
-/** Pecah teks CSV (RFC 4180: kutip ganda, "" di dalam kutip, CRLF) menjadi baris sel. */
-export function parseCsv(teks: string, pemisah: "," | ";" = deteksiPemisah(teks)): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let cell = "";
-  let dalamKutip = false;
-  const src = teks.replace(/^﻿/, "");
-  for (let i = 0; i < src.length; i++) {
-    const c = src[i];
-    if (dalamKutip) {
-      if (c === '"' && src[i + 1] === '"') {
-        cell += '"';
-        i++;
-      } else if (c === '"') dalamKutip = false;
-      else cell += c;
-    } else if (c === '"') dalamKutip = true;
-    else if (c === pemisah) {
-      row.push(cell);
-      cell = "";
-    } else if (c === "\n" || c === "\r") {
-      if (c === "\r" && src[i + 1] === "\n") i++;
-      row.push(cell);
-      rows.push(row);
-      row = [];
-      cell = "";
-    } else cell += c;
-  }
-  if (cell !== "" || row.length > 0) {
-    row.push(cell);
-    rows.push(row);
-  }
-  return rows;
-}
-
-/** Indeks kolom pertama yang header-nya cocok dengan alias (urutan alias = prioritas). */
-function cariKolom(headers: string[], alias: string[]): number {
-  for (const a of alias) {
-    const i = headers.indexOf(a);
-    if (i >= 0) return i;
-  }
-  return -1;
-}
-
-const barisKosong = (cells: string[]) => cells.every((c) => c.trim() === "");
 
 /**
  * Parse CSV penerima: baris pertama header (wajib memuat kolom `nama` dan `alamat`, alias umum BNBA

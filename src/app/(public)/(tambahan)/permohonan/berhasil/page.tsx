@@ -6,7 +6,7 @@ import s from './berhasil.module.css';
 function Page() {
     const router = useRouter();
     return (
-        <Stack pos={"relative"} bg="var(--c-hero-bg)" py={"xl"} gap={"22"} className={s.root}>
+        <Stack pos={"relative"} bg="var(--c-bg)" py={"xl"} gap={"22"} className={s.root}>
             <Box px={{ base: 'md', md: 100 }}>
                 <Stack h={'80vh'} justify='center'>
                     <Box>

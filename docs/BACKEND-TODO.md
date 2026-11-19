@@ -269,6 +269,10 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Konteks: API Lingkungan → Gotong Royong (dihapus 2026-11-16, `docs/decisions/2026-11-16-gotong-royong-kategori-kegiatan.md`) dulu menghapus permanen gambar lama saat diganti; jalur Kegiatan Desa yang kini satu-satunya tidak. Dampak: berkas yatim menumpuk di MinIO.
   - Usul: ikuti pola menu lain di `docs/decisions/2026-11-12-sampah.md` (ambil `imageId` sebelum update, panggil `removeReleasedFiles("KegiatanDesa", [lama])` setelah update sukses bila berubah). Hapus kegiatan tetap soft delete (gambar dipertahankan).
 
+- [ ] **PUT Kegiatan Desa menghapus gambar bila `imageId` tidak dikirim** (terverifikasi 2026-11-18: `desa/kegiatan-desa/updt.ts` `imageId: body.imageId || null`)
+  - Dampak: klien lain/skrip yang PUT tanpa `imageId` diam-diam mengosongkan gambar (field foto Pembangunan baru sengaja memakai semantik undefined = tidak diubah, `docs/decisions/2026-11-18-kegiatan-pembangunan-foto.md`). Form admin selalu mengirim `imageId`, jadi belum terlihat.
+  - Usul: `imageId: body.imageId === undefined ? undefined : body.imageId || null` (undefined = tidak diubah). Gabungkan dengan butir pembersihan berkas lama di bawah; pola `removeReleasedFiles` kini sudah ada di handler yang sama untuk foto Pembangunan.
+
 - [ ] **Rating produk UMKM tidak punya sumber data** (terverifikasi, 2026-11-13)
   - Lokasi: `PasarDesa.rating Float @default(0)` di `prisma/schema.prisma`. Tidak ada input di form admin produk dan tidak ada model ulasan. Nilai di stg (4,2–4,6) berasal dari seed, bukan penilaian warga.
   - Frontend: kartu katalog `/ekonomi/umkm` menampilkan slot rating "Belum ada ulasan" dan **sengaja tidak membaca `rating`** (keputusan user 2026-11-13).
@@ -350,7 +354,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Kemiskinan: `StatistikKemiskinan.tahun @unique` global (`prisma/schema.prisma:1814`, terverifikasi) → dua program tidak bisa punya data di tahun sama; `program-kemiskinan/del.ts:7-12` meninggalkan statistik yatim yang mengunci tahun itu selamanya (tanpa try/catch); `updt.ts` program + statistik tidak dalam transaksi; label form "Ikon Program Kreatif Desa" (create:128, edit:208). Arti angka statistik (20/30/20) belum jelas, publik menyembunyikannya sampai jelas.
   - Pengangguran: `year` tanpa validasi rentang (stg ada 9999); `percentageChange` 0 vs null & tidak dihitung ulang (publik menghitung sendiri); update duplikat bulan+tahun membalas 200 (create 409); model sebaran usia/pendidikan berkolom String tanpa periode/tahun, tanpa jenjang "Tidak sekolah"/SMK.
   - Demografi Pekerjaan: hapus permanen (`del.ts:27`) padahal ada `isActive`; zod `min(1)` menolak 0; `t.Number` tanpa batas → 500; tanpa kolom tahun/sumber data.
-  - Sektor Unggulan: zod `value min(1)` menolak 0 & desimal; label form "Jumlah" ambigu (tanpa satuan/arti); `formatSektorValue`/`resolveChartUnit`/`LEGACY_CHART_UNIT` (`src/lib/sektor-unggulan.ts`) kini hanya dipakai test & seed.
+  - Sektor Unggulan: ~~zod `value min(1)` menolak 0 & desimal~~ selesai 2026-11-18 (`fix/sektor-unggulan-jumlah-opsional`: "Jumlah" kini opsional — kosong = `null`, 0 & desimal sah; API `value` opsional/nullable, PUT tanpa `value` = tidak diubah); label form "Jumlah" ambigu (tanpa satuan/arti); `formatSektorValue`/`resolveChartUnit`/`LEGACY_CHART_UNIT` (`src/lib/sektor-unggulan.ts`) kini hanya dipakai test & seed.
   - Kesejahteraan: `del.ts` membalas `{status:404}` dengan HTTP 200; `deletedAt @default(now())` padahal hapus permanen; form admin mewajibkan `imageId` padahal schema opsional; belum masuk cari global (`search/findMany.ts`).
   - BUMDes: belum ada model/endpoint dokumen (SK pengurus, Perdes, AD/ART, laporan). Publik sudah menyiapkan `DokumenBumdes` (tersembunyi selama kosong); isi `loadDokumen` di `bumdes.source.ts` dengan bentuk `{ id, judul, keterangan, href }` (`TODO(bumdes-dokumen)`).
 
@@ -363,6 +367,16 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Form admin Distribusi Agama: opsi `KRISTEN` umum berdampingan dengan Protestan/Katolik.
   - Admin Data Banjar `page.tsx:291`: Pagination `load(newPage, 10, search)` membuang filter tahun.
   - Navbar Kependudukan kini satu butir (revisi user 2026-11-17): override `MenuVisibility` untuk 4 href lama (`/kependudukan/{data-per-banjar,dinamika-penduduk,distribusi-agama,distribusi-umur}`) kini diabaikan `toOverrides`, dan tidak bisa dihapus lewat admin karena `menu_visibility/update.ts:14` menolak `menuKey` tak dikenal. stg: 0 baris (dicek 2026-11-17); prod belum dicek. Usul: cek prod, hapus baris yatim lewat migrasi data/skrip bila ada.
+
+- [ ] **UMKM: tidak ada unique index `(nama, pemilik)` dan create/update tanpa validasi server** (ditemukan saat impor CSV UMKM 2026-11-18, `docs/decisions/2026-11-18-umkm-import-csv.md`):
+  - Lokasi: model `Umkm` di `prisma/schema.prisma` (tanpa `@@unique`/`@@index` selain PK); `_lib/ekonomi/umkm/create.ts` & `updt.ts` menyimpan body apa adanya (tanpa trim, batas panjang, atau cek format `kontak`; batas 13 digit hanya di form admin).
+  - Dampak: impor CSV (`POST /api/ekonomi/umkm/import`) mencegah duplikat dengan membaca lalu menulis dalam satu transaksi, tetapi tanpa unique index dua impor/penambahan bersamaan tetap bisa membuat duplikat (nama + pemilik sama). Lewat API `create`, duplikat dan nilai panjang/format apa pun juga lolos.
+  - Usul: bersihkan duplikat yang ada di admin, lalu migrasi unique parsial `(lower(trim(nama)), lower(trim(pemilik))) WHERE "deletedAt" IS NULL` (butuh SQL manual, Prisma belum mendukung); pakai aturan di `src/lib/umkm/umkm-impor.rules.ts` (batas panjang, `bersihkanTeks`) juga di `create.ts`/`updt.ts`.
+
+- [ ] **Produk UMKM: tidak ada unique index `(umkmId, nama)` dan create/update tanpa validasi server** (ditemukan saat impor CSV Produk 2026-11-18, `docs/decisions/2026-11-18-umkm-import-csv.md` bagian Impor Produk):
+  - Lokasi: model `PasarDesa` di `prisma/schema.prisma` (tanpa unique index untuk `(umkmId, nama)`); `_lib/ekonomi/umkm/produk/create.ts` menyimpan `nama`/`harga`/`stok`/`deskripsi` apa adanya (tanpa trim, batas panjang, atau batas atas harga/stok) dan tidak mengecek bahwa `umkmId`/`kategoriId` milik UMKM/kategori yang masih aktif dan belum dihapus (FK hanya menolak id yang tidak ada). `updt.ts` perlu diperiksa dengan pola yang sama.
+  - Dampak: impor CSV Produk (`POST /api/ekonomi/umkm/produk/import`) mencegah duplikat dengan baca-lalu-tulis dalam satu transaksi, tetapi dua impor/penambahan bersamaan tetap bisa membuat produk kembar. Lewat API `create`, produk bisa dibuat untuk UMKM nonaktif/terhapus atau kategori nonaktif, dan nilai panjang/harga berapa pun lolos.
+  - Usul: bersihkan duplikat yang ada, lalu migrasi unique parsial `(umkmId, lower(trim(nama))) WHERE "deletedAt" IS NULL` (SQL manual); di `create.ts`/`updt.ts` pakai aturan `src/lib/umkm/produk-impor.rules.ts` (batas panjang, harga/stok) dan cek UMKM/kategori aktif seperti impor.
 
 ## Jenna publik (tindak lanjut)
 

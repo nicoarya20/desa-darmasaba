@@ -18,8 +18,8 @@ const blockOf = (css: string, sel: string) => {
   return start < 0 ? '' : css.slice(start, css.indexOf('\n}', start));
 };
 
-const RULE = 'light-dark(#b1bdd1, rgb(255 255 255 / 0.16))';
-const GLASS = 'light-dark(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.06))';
+// Garis di atas latar putih: --c-line-strong (dulu #b1bdd1 untuk latar biru --c-hero-bg).
+const RULE = 'light-dark(var(--c-line-strong), rgb(255 255 255 / 0.16))';
 
 /** Isi kaya CMS yang wajib memakai penetral rich-text (`rt.root`). */
 // Markup rich text Dasar Hukum, Profil PPID dan detail Daftar Informasi dipecah ke komponen (Batch 1 lomba, 2026-11-18),
@@ -63,15 +63,15 @@ describe('PPID mengikuti token tema', () => {
     expect(decl(sections, '--ppid-rule')).toBe(RULE);
     expect(decl(sections, '--ppid-text')).toBe('var(--c-ink)');
     expect(decl(sections, '--ppid-muted')).toBe('var(--c-ink-2)');
-    expect(PPID('_com/ppid-sections.module.css')).not.toMatch(/#1d1d1f|#515154|solid #b1bdd1/);
+    expect(PPID('_com/ppid-sections.module.css')).not.toMatch(/#1d1d1f|#515154|#b1bdd1/);
   });
 
-  it('formulir permohonan: kartu putih menjadi ubin gelap, garis alur light-dark', () => {
+  it('formulir permohonan: kartu ubin --c-tile di atas latar putih/hitam, garis alur light-dark', () => {
     const css = PPID('_com/permohonan.module.css');
     expect(css).toContain('--permohonan-ink: var(--c-ink);');
     expect(css).toContain('--permohonan-muted: var(--c-ink-2);');
     expect(css).toContain('--permohonan-line: light-dark(#8ba8c1, #3d5a78);');
-    expect(css).toContain('--permohonan-card: light-dark(#fff, var(--c-tile));');
+    expect(css).toContain('--permohonan-card: var(--c-tile);');
     expect(blockOf(css, '.card')).toContain('background: var(--permohonan-card);');
   });
 
@@ -81,42 +81,48 @@ describe('PPID mengikuti token tema', () => {
     expect(PPID('permohonan-keberatan-informasi-publik/page.tsx')).toContain('bg="var(--c-brand-fill)"');
   });
 
-  it('daftar informasi publik: alias token, kartu tabel light-dark', () => {
+  it('daftar informasi publik: alias token, kartu tabel ubin --c-tile', () => {
     const css = PPID('daftar-informasi-publik/_com/daftar.module.css');
     const body = blockOf(css, '.body');
     expect(decl(body, '--ink')).toBe('var(--c-ink)');
     expect(decl(body, '--muted')).toBe('var(--c-ink-2)');
-    expect(decl(body, '--line')).toBe('var(--c-placeholder)');
-    expect(decl(body, '--card')).toBe('light-dark(#fff, var(--c-tile))');
+    expect(decl(body, '--line')).toBe('light-dark(var(--c-line-strong), var(--c-placeholder))');
+    expect(decl(body, '--card')).toBe('var(--c-tile)');
     expect(css).not.toMatch(/background:\s*#fff/);
     expect(PPID('daftar-informasi-publik/page.tsx')).toContain('color="var(--c-brand-fill)"');
   });
 
-  it('kartu Visi Misi: kaca light-dark sebagai cadangan --vm-card, nomor misi brand-fill', () => {
+  it('kartu Visi Misi: ubin --c-tile sebagai cadangan --vm-card, tanpa bayangan, nomor misi brand-fill', () => {
     const css = PPID('visi-misi-ppid/_com/visi-misi.module.css');
     const card = blockOf(css, '.card');
     expect(decl(card, '--vm-text')).toBe('var(--c-ink)');
     expect(decl(card, '--vm-rule')).toBe(RULE);
-    expect(card).toContain(`background: var(--vm-card, ${GLASS});`);
+    expect(card).toContain('background: var(--vm-card, var(--c-tile));');
+    expect(card).not.toMatch(/box-shadow|border:/);
     expect(blockOf(css, '.misiNumber')).toMatch(/background: var\(--c-brand-fill\);[\s\S]*color: var\(--c-on-brand\);/);
     const page = PPID('visi-misi-ppid/page.tsx');
     expect(page).not.toContain('CARD_VARS');
     expect(page).not.toMatch(/style=\{/);
   });
 
-  it('Profil PPID: latar --c-hero-bg dan kartu kaca --profil-kaca', () => {
+  it('Profil PPID: latar --c-bg, kartu ubin --c-tile tanpa bayangan, kartu foto --c-tile-alt', () => {
     const page = PPID('profil-ppid/page.tsx');
-    expect(page.match(/bg="var\(--c-hero-bg\)" className=\{classes\.page\}/g)).toHaveLength(4);
-    // 3 kartu di halaman + 2 di kartu perorangan + 1 di kartu profil lembaga (komponen hasil pemecahan Batch 1).
-    const kaca = (src: string) => src.match(/bg="var\(--profil-kaca\)"/g)?.length ?? 0;
-    expect(kaca(page)).toBe(3);
-    expect(kaca(PPID('profil-ppid/_com/ProfilPerorangan.tsx'))).toBe(2);
-    expect(kaca(PPID('profil-ppid/_com/ProfilLembagaSection.tsx'))).toBe(1);
-    for (const rel of ['profil-ppid/_com/ProfilPerorangan.tsx', 'profil-ppid/_com/ProfilLembagaSection.tsx']) {
-      expect(PPID(rel), rel).not.toContain("colors['white-trans-1']");
-      expect(PPID(rel), rel).not.toContain("colors['blue-button']");
+    const perorangan = PPID('profil-ppid/_com/ProfilPerorangan.tsx');
+    const lembaga = PPID('profil-ppid/_com/ProfilLembagaSection.tsx');
+    // 4 keadaan halaman (muat, galat, kosong, isi) berlatar putih/hitam seperti menu lain (plan-latar-putih-ppid-pemerintahan.md).
+    expect(page.match(/<Stack[^>]*bg="var\(--c-bg\)"/g)).toHaveLength(4);
+    // 3 kartu di halaman + 1 di kartu perorangan + 1 di kartu profil lembaga.
+    const tile = (src: string) => src.match(/bg="var\(--c-tile\)"/g)?.length ?? 0;
+    expect(tile(page)).toBe(3);
+    expect(tile(perorangan)).toBe(1);
+    expect(tile(lembaga)).toBe(1);
+    expect(perorangan).toContain('<Paper bg="var(--c-tile-alt)" radius="xl" shadow="md" withBorder>');
+    for (const [rel, src] of [['page', page], ['perorangan', perorangan], ['lembaga', lembaga]]) {
+      expect(src, rel).not.toMatch(/--c-hero-bg|--profil-kaca|shadow="xl"/);
+      expect(src, rel).not.toContain("colors['white-trans-1']");
+      expect(src, rel).not.toContain("colors['blue-button']");
     }
-    expect(decl(blockOf(PPID('profil-ppid/profil-ppid.module.css'), '.page'), '--profil-kaca')).toBe(GLASS);
+    expect(PPID('profil-ppid/profil-ppid.module.css')).not.toMatch(/\.page \{|--profil-kaca/);
   });
 });
 

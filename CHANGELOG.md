@@ -1,5 +1,63 @@
 # Changelog
 
+## [0.1.327] - 2026-11-19
+### Changed
+- Perapian internal gaya chat bar Jenna agar lebih mudah dirawat. Tampilan dan perilaku tidak berubah.
+
+## [0.1.326] - 2026-11-19
+### Changed
+- **Panel percakapan Jenna di tema gelap kini nyaman dipandang.** Sebelumnya panelnya berupa lempeng abu terang yang silau di atas halaman gelap. Kini kaca gelap berlapis kabut tipis dengan teks putih, serasi dengan chat bar di bawahnya, dan tetap mudah dibaca di atas foto maupun latar hitam. Tema terang tidak berubah.
+- **Animasi chat bar Jenna lebih santai.** Bar memanjang lebih pelan dan lembut, dan 3 pertanyaan cepat muncul satu per satu setelah bar hampir terbuka penuh, sehingga gerakannya tidak lagi terasa terburu-buru.
+
+### Fixed
+- Pertanyaan cepat Jenna tidak lagi berubah jadi putih tanpa terbaca saat disentuh kursor di atas halaman berlatar putih. Tombol "Kirim ulang" saat disentuh kursor kini tampak menebal, bukan memudar.
+
+## [0.1.325] - 2026-11-19
+### Changed
+- **Jenna kini berupa chat bar di kanan bawah, menggantikan tombol bulat.** Bar menampilkan contoh pertanyaan yang diketik bergantian. Saat diklik, bar memanjang dengan mulus tanpa berkedip dan menampilkan 3 pertanyaan cepat ("Jam pelayanan kantor desa?", "Apa syarat membuat surat keterangan?", "Agenda desa bulan ini?") serta catatan privasi di bawahnya. Pertanyaan cepat langsung terkirim saat diklik.
+- **Percakapan muncul sebagai panel kaca yang terbuka dari chat bar** setelah pesan dikirim. Di tema terang panelnya kaca buram gelap dengan teks putih; di tema gelap kaca buram terang yang diredupkan agar tidak menyilaukan. Pesan pengunjung tampil sebagai gelembung di kanan, jawaban Jenna sebagai teks biasa. Pesan tersusun dari atas panel. Tombol panah di kepala panel (atau Escape) menutup percakapan dan mengembalikan chat bar ke ukuran kecil; tombol putar memulai percakapan baru.
+- **Tombol "Kembali ke atas" kini berada di atas chat bar** dan menyingkir saat chat bar memanjang atau percakapan terbuka, sehingga tidak tertimpa.
+- Di ponsel, chat bar dan panel percakapan memenuhi lebar layar; panel percakapan hampir setinggi layar.
+
+## [0.1.324] - 2026-11-19
+### Fixed
+- **Subjudul halaman SDGs Desa kini terbaca jelas di tema gelap.** Kalimat "Pembangunan berkelanjutan yang inklusif, adil, dan berdaya saing di tingkat desa" sebelumnya berwarna abu tua di atas latar hitam sehingga nyaris tak terbaca (kontras 2,6:1, di bawah standar keterbacaan 4,5:1). Kini di tema gelap warnanya abu terang (kontras 8,2:1). Tema terang tidak berubah.
+
+## [0.1.323] - 2026-11-19
+### Added
+- **Impor data UMKM lewat CSV.** Di admin Ekonomi > UMKM & Pasar Desa > Data UMKM ada tombol "Impor CSV". Admin bisa mengunduh template, memilih berkas (maks 2 MB, 1000 baris), lalu melihat pratinjau jumlah yang akan ditambah, diperbarui, atau dilewati beserta daftar baris bermasalah sebelum mengimpor. Kolom wajib: nama, pemilik, kategori; opsional: deskripsi, alamat, kontak. Kategori dicocokkan berdasarkan nama dan harus sudah ada.
+- **Impor produk UMKM lewat CSV.** Di tab Produk ada tombol "Impor CSV" dengan alur yang sama (template, pratinjau, impor semua-atau-tidak-sama-sekali). Kolom wajib: nama, umkm, kategori, harga; opsional: pemilik (untuk UMKM bernama sama), stok, satuan, deskripsi, unggulan, dan **link toko online** per platform (Shopee, Tokopedia, TikTok Shop, Blibli, Lazada, lainnya; harus https, maksimal 5 per produk). Harga diterima sebagai "15000", "15.000", atau "Rp 15.000"; desimal dan notasi ilmiah Excel ditolak. UMKM dan kategori harus sudah ada. Pada mode perbarui, link toko online yang diisi menggantikan seluruh daftar link produk itu.
+- Dua mode impor: **lewati** UMKM yang sudah ada (nama + pemilik sama) atau **perbarui** datanya (sel kosong tidak menimpa data lama). Impor berjalan semua-atau-tidak-sama-sekali: satu baris tidak valid membatalkan seluruh impor.
+- **Kegiatan Desa kategori Pembangunan kini bisa punya dokumentasi foto.** Di form tambah dan ubah kegiatan, saat kategori "Pembangunan" dipilih muncul bagian "Dokumentasi Pembangunan" berisi **Foto Sebelum** dan **Foto Sesudah**, masing-masing bisa diisi sampai 5 foto. Semuanya opsional: kegiatan tetap bisa disimpan tanpa foto. Foto berformat JPG, PNG, atau WebP, maksimal 5 MB per foto.
+- **Halaman detail kegiatan menampilkan "Dokumentasi Pembangunan"** bila ada minimal satu foto: kolom Sebelum dan Sesudah berdampingan (bertumpuk di ponsel). Kelompok yang kosong tidak ditampilkan, dan tanpa foto sama sekali bagian ini tidak muncul.
+
+### Changed
+- Pembaca CSV dipindah ke modul bersama (`src/lib/csv/parse-csv.ts`) dan dipakai juga oleh impor Penerima Program Kemiskinan, UMKM, dan Produk; perilakunya tidak berubah.
+- **Kolom "Jumlah" di Sektor Unggulan Desa kini tidak wajib.** Admin bisa menyimpan sektor unggulan (tambah maupun ubah) tanpa mengisi angka; kolom dibiarkan kosong dan tidak lagi otomatis terisi 0. Sektor tanpa angka tetap tampil di halaman publik, hanya tanpa nilainya.
+- Kolom "Jumlah" kini menerima angka 0 dan angka desimal (sebelumnya angka di bawah 1 ditolak).
+- Input gambar lama di form Kegiatan Desa kini berlabel **"Gambar Sampul (Opsional)"** beserta keterangan bahwa gambar itu tampil sebagai gambar utama di daftar dan detail kegiatan, supaya tidak tertukar dengan foto dokumentasi Pembangunan.
+- Foto yang diganti atau dihapus dari kegiatan Pembangunan ikut dibersihkan dari penyimpanan setelah data berhasil disimpan. Memindahkan kegiatan ke kategori selain Pembangunan mengosongkan foto dokumentasinya.
+
+## [0.1.322] - 2026-11-19
+### Fixed
+- **Pita abu kosong di atas footer tidak muncul lagi.** Di halaman yang isinya lebih pendek dari layar (misalnya PUSTU, Posyandu, halaman 404, dan banyak halaman detail), terutama di layar lebar atau saat presentasi, dulu terlihat pita abu kosong antara isi halaman dan footer. Kini sisa ruang itu ikut berlatar putih (hitam di tema gelap) seperti halaman di atasnya. Halaman SDGs Desa kini juga berlatar putih/hitam seperti menu lain. Beranda dan Musik tidak berubah.
+
+## [0.1.321] - 2026-11-19
+### Changed
+- **Halaman PUSTU (Puskesmas Pembantu) dirapikan agar sama dengan halaman lain di menu Kesehatan.** Di daftar, kolom cari kini di kanan judul dan jaraknya ke kartu sama dengan Program Kesehatan; kartu berfoto penuh di atas dan seluruh kartu bisa diklik. Tautan "Lihat detail" tidak lagi bergaris bawah, tetapi berubah warna saat disentuh kursor seperti tautan lain di situs. Di halaman detail, tombol panah kembali diganti tautan teks "‹ PUSTU", alamat email tidak lagi bergaris bawah, dan judul bagian (Layanan Unggulan, Prosedur, Tarif, Struktur, Galeri) berukuran sama dengan halaman detail lain.
+
+## [0.1.320] - 2026-11-19
+### Changed
+- **Kursor tidak lagi berubah jadi tanda loading saat animasi ganti tema berjalan.** Selama adegan Candi Bentar (3 detik) kursor kini tetap panah biasa. Halaman tetap tidak bisa diklik sampai animasi selesai, sama seperti sebelumnya.
+
+## [0.1.319] - 2026-11-19
+### Changed
+- **Animasi Candi Bentar saat mengganti tema terang/gelap kini 3 detik (sebelumnya 5 detik).** Urutan adegan tetap sama (pilar masuk, langit dan air muncul, tema berganti di balik adegan, lalu menembus celah gerbang); semua tahap dipercepat sebanding sehingga pergantian tema terasa lebih sigap. Pergantian warna halaman tetap tidak pernah terlihat setengah jalan, juga di perangkat lambat.
+
+## [0.1.318] - 2026-11-19
+### Changed
+- **Halaman menu PPID dan Pemerintahan kini berlatar putih seperti menu lain.** Sebelumnya halaman PPID (Profil, Struktur, Visi Misi, Dasar Hukum, kedua formulir Permohonan, Daftar Informasi Publik, Indeks Kepuasan Masyarakat) serta Profil Desa, Struktur Perangkat Desa, Potensi, Galeri, detail Berita, detail Prestasi, dan halaman "permohonan berhasil" berlatar biru keabuan, sehingga terasa berbeda dari menu lain. Kartu yang dulu putih di atas latar biru kini berupa panel abu muda (seperti di Kabar Desa dan Kesehatan) agar tetap terlihat di atas putih; pita tab Galeri kini biru muda lembut. Pada tema gelap halaman-halaman ini berlatar hitam seperti menu lain. Tata letak dan isi tidak berubah.
+
 ## [0.1.317] - 2026-11-19
 ### Fixed
 - **Bagian atas beranda tidak lagi "melompat" saat data media sosial dan profil Perbekel tiba.** Penyebab sebenarnya ditemukan lewat pengukuran rapat: deretan ikon media sosial (Instagram, TikTok, YouTube, dan lainnya) tidak menyisakan ruang selama datanya dimuat, lalu muncul dan mendorong foto Perbekel, kartu nama, dan daftar program ke bawah sekitar 64 piksel; selain itu kerangka pemuatan foto Perbekel tidak menyertakan kartu nama sehingga tinggi bagian atas bertambah saat data tiba. Kini ruang untuk keduanya disisakan sejak awal dengan ukuran yang sama seperti tampilan akhirnya. Tampilan akhir tidak berubah. (Nilai pergeseran 0,16 di PageSpeed mobile sebelumnya di atas batas baik 0,1.)

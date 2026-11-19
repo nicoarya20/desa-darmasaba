@@ -1,13 +1,13 @@
 /*
  * Halaman PPID Indeks Kepuasan memakai ulang komponen grafik beranda (`main-page/kepuasan`).
- * Komponen itu membaca token di bawah, yang di beranda dipasang oleh `.section`; di sini kartunya
- * putih di terang karena berdiri langsung di atas latar halaman PPID (--c-hero-bg), bukan di atas section putih.
- * Gelap: kartu --c-tile (= warna pemisah irisan donat), grafik & sumbu ikut token global (--c-chart-n, dimmed).
+ * Komponen itu membaca token di bawah, yang di beranda dipasang oleh `.section`; latar halaman PPID kini var(--c-bg)
+ * (putih/hitam) seperti section beranda, jadi kartunya ubin --c-tile yang sama dengan beranda (kepuasan.module.css)
+ * (--tile juga warna pemisah irisan donat). Grafik & sumbu ikut token global (--c-chart-n, dimmed).
  */
 .surface {
   --ink: var(--c-ink);
   --muted: var(--c-muted);
-  --tile: light-dark(#fff, var(--c-tile));
+  --tile: var(--c-tile);
   --radius: 18px;
   color: var(--ink);
 }

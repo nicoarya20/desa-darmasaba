@@ -19,7 +19,7 @@ export function ProfilLembagaSection({ data }: { data: ProfilLembagaPublik }) {
   const gambar = data.gambarAlur?.link;
   return (
     <Box px={{ base: 'md', md: 100 }}>
-      <Paper component="section" aria-labelledby={TITLE_ID} p="xl" bg="var(--profil-kaca)" radius="lg" shadow="xl">
+      <Paper component="section" aria-labelledby={TITLE_ID} p="xl" bg="var(--c-tile)" radius="lg">
         <Stack gap="xl" px={{ base: 0, md: 50 }}>
           <Title
             id={TITLE_ID}

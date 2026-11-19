@@ -28,6 +28,7 @@ vi.mock('next-view-transitions', () => ({
   useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }),
 }));
 vi.mock('valtio/utils', () => ({ useProxy: <T,>(x: T) => x }));
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => ({ currentSong: null }) })); // test-only: ScrollToTopButton membaca useMusic, provider hanya ada di root layout
 vi.mock('@/app/admin/(dashboard)/_state/desa/profile', () => ({ default: h.profile }));
 vi.mock('@/app/admin/(dashboard)/_state/ppid/struktur_ppid', () => ({
   default: {
