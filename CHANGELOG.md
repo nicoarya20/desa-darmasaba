@@ -1,8 +1,8 @@
 # Changelog
 
 ## [0.1.325] - 2026-11-19
-### Fixed
-- **Garis penanda menu aktif di sidebar admin kini lurus.** Border kiri pada menu induk (mis. "Ekonomi") dan submenu (mis. "UMKM & Pasar Desa") tidak lagi melengkung di sudut atas dan bawah; sudut kiri item aktif dibuat siku, sudut kanan tetap membulat.
+### Changed
+- **Penanda menu aktif di sidebar admin kini berupa garis lurus berujung bulat di depan teks**, menggantikan border kiri yang ikut melengkung di sudut. Berlaku untuk menu induk (mis. "Ekonomi") dan submenu (mis. "UMKM & Pasar Desa") di tema terang dan gelap; latar item tetap membulat penuh dan teks tidak bergeser.
 
 ## [0.1.324] - 2026-11-19
 ### Fixed

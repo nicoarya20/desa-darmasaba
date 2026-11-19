@@ -35,6 +35,7 @@ import { useEffect, useState } from "react";
 import { getNavbar } from "./(dashboard)/user&role/_com/dynamicNavbar";
 import { adminGuardRedirect } from "./_com/nav/menu-access.guard";
 import { loadMenuAccess } from "./_com/nav/load-menu-access";
+import navStyles from "./_com/sidebar-nav.module.css";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { isDark } = useDarkMode();
@@ -284,13 +285,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     {v.name}
                   </Text>
                 }
+                classNames={{ root: navStyles.parent }}
                 style={{
-                  borderRadius: mounted && isParentActive ? `0 ${rem(10)} ${rem(10)} 0` : rem(10),
+                  borderRadius: rem(10),
                   marginBottom: rem(4),
                   transition: "background 150ms ease",
-                  ...(mounted && isParentActive && !isDark && {
-                    borderLeft: `3px solid ${tokens.colors.primary}`,
-                  }),
+                  ...(mounted && { '--sidebar-indicator-color': tokens.colors.primary }),
                 }}
                 styles={{
                   root: {
@@ -299,7 +299,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     },
                     ...(mounted && isParentActive && isDark && {
                       backgroundColor: 'rgba(59,130,246,0.25)',
-                      borderLeft: `3px solid ${tokens.colors.primary}`,
                     }),
                   }
                 }}
@@ -336,9 +335,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           {child.name}
                         </Text>
                       }
+                      classNames={{ root: navStyles.child }}
+                      style={mounted ? { '--sidebar-indicator-color': tokens.colors.primary } : undefined}
                       styles={{
                         root: {
-                          borderRadius: mounted && isChildActive ? `0 ${rem(8)} ${rem(8)} 0` : rem(8),
+                          borderRadius: rem(8),
                           marginBottom: rem(2),
                           transition: 'background 150ms ease',
                           padding: '6px 12px',
@@ -347,11 +348,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           },
                           ...(mounted && isChildActive && isDark && {
                             backgroundColor: 'rgba(59,130,246,0.15)',
-                            borderLeft: `2px solid ${tokens.colors.primary}`,
                           }),
                           ...(mounted && isChildActive && !isDark && {
                             backgroundColor: 'rgba(25, 113, 194, 0.1)',
-                            borderLeft: `2px solid ${tokens.colors.primary}`,
                           }),
                         }
                       }}
