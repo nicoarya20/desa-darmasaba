@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.319] - 2026-11-19
+### Changed
+- **Animasi Candi Bentar saat mengganti tema terang/gelap kini 3 detik (sebelumnya 5 detik).** Urutan adegan tetap sama (pilar masuk, langit dan air muncul, tema berganti di balik adegan, lalu menembus celah gerbang); semua tahap dipercepat sebanding sehingga pergantian tema terasa lebih sigap. Pergantian warna halaman tetap tidak pernah terlihat setengah jalan, juga di perangkat lambat.
+
 ## [0.1.318] - 2026-11-19
 ### Changed
 - **Halaman menu PPID dan Pemerintahan kini berlatar putih seperti menu lain.** Sebelumnya halaman PPID (Profil, Struktur, Visi Misi, Dasar Hukum, kedua formulir Permohonan, Daftar Informasi Publik, Indeks Kepuasan Masyarakat) serta Profil Desa, Struktur Perangkat Desa, Potensi, Galeri, detail Berita, detail Prestasi, dan halaman "permohonan berhasil" berlatar biru keabuan, sehingga terasa berbeda dari menu lain. Kartu yang dulu putih di atas latar biru kini berupa panel abu muda (seperti di Kabar Desa dan Kesehatan) agar tetap terlihat di atas putih; pita tab Galeri kini biru muda lembut. Pada tema gelap halaman-halaman ini berlatar hitam seperti menu lain. Tata letak dan isi tidak berubah.
