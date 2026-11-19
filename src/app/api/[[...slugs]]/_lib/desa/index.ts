@@ -20,6 +20,7 @@ import DokumenPerencanaan from "./dokumen-perencanaan";
 import StrukturPerangkatDesa from "./struktur-perangkat";
 import ProdukHukum from "./produk-hukum";
 import KontakDesa from "./kontak-desa";
+import IndeksDesa from "./indeks-desa";
 
 
 const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
@@ -44,6 +45,7 @@ const Desa = new Elysia({ prefix: "/desa", tags: ["Desa"] })
   .use(StrukturPerangkatDesa)
   .use(ProdukHukum)
   .use(KontakDesa)
+  .use(IndeksDesa)
 
 
 export default Desa;

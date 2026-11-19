@@ -113,6 +113,11 @@ const EXPECTED_IDS: Record<string, string[]> = {
     'kependudukan.migrasi-penduduk',
     'kependudukan.dinamika-penduduk',
   ],
+  // 2026-11-19: section baru Indeks Desa (temuan lomba T11; IDM Kemendesa). Murni penambahan ID, tidak ada ID lama yang
+  // berubah/dihapus, jadi snapshot diperbarui karena menu baru (bukan untuk menghijaukan regresi) dan tanpa migrasi data.
+  'Indeks Desa': [
+    'indeks-desa.idm',
+  ],
   'Musik': [],
   'User & Role': [
     'user-role.user',
