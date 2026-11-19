@@ -40,7 +40,18 @@
 }
 
 .dock {
-  --jb-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Tempo bar (setel di sini). Kurva lembut tapi tak mulai dari nol: frame pertama sudah bergerak ±6%
+     (tak terasa lag), separuh jarak ±100ms, sisanya melandai. --jb-dur dipilih per arah (state tujuan). */
+  --jb-ease: cubic-bezier(0.3, 0.4, 0.2, 1);
+  --jb-dur-expand: 440ms;
+  --jb-dur-collapse: 340ms;
+  --jb-dur: var(--jb-dur-collapse);
+  --jb-dur-chip: 420ms; /* quick chat naik */
+  --jb-chip-delay: 160ms; /* chip pertama menunggu bar ±setengah jalan */
+  --jb-chip-stagger: 80ms;
+  --jb-dur-fade-in: 300ms; /* hint, disclaimer, mikrofon */
+  --jb-dur-fade-out: 200ms;
+  --jb-fade-delay: 140ms;
   --jb-surface: #fff;
   --jb-line: rgba(0, 0, 0, 0.08);
   /* drop-shadow (bukan box-shadow): bayangan mengikuti bentuk kulit yang dipotong clip-path. */
@@ -90,7 +101,7 @@
 /* Setelah ukuran pertama terukur (JennaWidget) baru geser vertikal dianimasikan. */
 .dock[data-ready="true"] {
   transition:
-    transform 280ms var(--jb-ease),
+    transform var(--jb-dur) var(--jb-ease),
     bottom 200ms ease,
     opacity 200ms ease,
     visibility 0s linear 0s;
@@ -100,6 +111,7 @@
 .dock[data-mode="room"] {
   --jb-clip: 0px;
   --jb-drop: 0px;
+  --jb-dur: var(--jb-dur-expand);
   transform: none; /* bukan translateY(0): transform aktif menjadikan dock containing block bagi turunan fixed */
 }
 
@@ -150,15 +162,15 @@
   line-height: 1.35;
   text-align: left;
   cursor: pointer;
-  animation: jb-rise 320ms var(--jb-ease) both;
-  animation-delay: calc(var(--i, 0) * 45ms);
+  animation: jb-rise var(--jb-dur-chip) var(--jb-ease) both;
+  animation-delay: calc(var(--jb-chip-delay) + var(--i, 0) * var(--jb-chip-stagger));
   transition:
     transform 150ms ease,
     background-color 150ms ease;
 }
 
 .quickList .quick:hover {
-  background: var(--jenna-glass-hover, var(--jenna-glass-bg));
+  background: linear-gradient(var(--jenna-glass-hover), var(--jenna-glass-hover)), var(--jenna-glass-bg); /* lapis, bukan ganti kaca */
 }
 
 .quick:active {
@@ -197,7 +209,7 @@
   background: linear-gradient(var(--jb-line), var(--jb-line)), var(--jb-surface);
   clip-path: inset(0 0 0 var(--jb-clip) round 24px);
   pointer-events: auto; /* klik padding pil → fokus textarea (onMouseDown bar); clip-path ikut memotong area klik */
-  transition: clip-path 280ms var(--jb-ease);
+  transition: clip-path var(--jb-dur) var(--jb-ease);
 }
 
 .skin::before {
@@ -206,7 +218,7 @@
   inset: 0;
   background: var(--jb-surface);
   clip-path: inset(1px 1px 1px calc(var(--jb-clip) + 1px) round 23px);
-  transition: clip-path 280ms var(--jb-ease);
+  transition: clip-path var(--jb-dur) var(--jb-ease);
 }
 
 /* overflow memotong area klik field yang tergeser melewati tepi kanan saat idle; bukan leluhur room. */
@@ -242,7 +254,7 @@
   flex: 1;
   min-width: 0;
   transform: translateX(var(--jb-clip));
-  transition: transform 280ms var(--jb-ease);
+  transition: transform var(--jb-dur) var(--jb-ease);
 }
 
 /* Draf yang tertinggal saat idle: memudar sebelum tombol kirim (bagian kanan field tertutup). */
@@ -317,7 +329,7 @@
 }
 
 .mic {
-  animation: jb-fade 200ms ease both;
+  animation: jb-fade var(--jb-dur-fade-in) ease both;
 }
 
 @media (hover: hover) {
@@ -405,8 +417,8 @@
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity 160ms ease,
-    visibility 0s linear 160ms;
+    opacity var(--jb-dur-fade-out) ease,
+    visibility 0s linear var(--jb-dur-fade-out);
 }
 
 .dock[data-mode="expanded"] .disclaimer,
@@ -414,7 +426,7 @@
   opacity: 1;
   visibility: visible;
   transition:
-    opacity 220ms ease 60ms,
+    opacity var(--jb-dur-fade-in) ease var(--jb-fade-delay),
     visibility 0s;
 }
 
