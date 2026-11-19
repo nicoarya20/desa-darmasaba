@@ -3,19 +3,19 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { classifyHref, type JennaInline, parseJennaMarkdown } from "./jenna-markdown.logic";
 
-/** Link aman: path internal lewat `next/link`, `https:` di tab baru; selain itu hanya label. */
+/** Link aman: path internal lewat `next/link`, `https:` di tab baru; selain itu hanya label. Warna ink kaca room, garis bawah permanen. */
 export function JennaLink({ href, children }: { href: string; children: ReactNode }) {
   const kind = classifyHref(href);
   if (kind === "internal") {
     return (
-      <Anchor component={Link} href={href} c="var(--c-brand)" td="underline" inherit>
+      <Anchor component={Link} href={href} c="var(--jenna-glass-ink)" td="underline" inherit>
         {children}
       </Anchor>
     );
   }
   if (kind === "external") {
     return (
-      <Anchor href={href} target="_blank" rel="noopener noreferrer" c="var(--c-brand)" td="underline" inherit>
+      <Anchor href={href} target="_blank" rel="noopener noreferrer" c="var(--jenna-glass-ink)" td="underline" inherit>
         {children}
       </Anchor>
     );

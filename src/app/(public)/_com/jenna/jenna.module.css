@@ -1,84 +1,189 @@
-/* FAB di atas tombol scroll-to-top (fixed bottom 24, tinggi 44) dan di atas bar musik bila tampil
-   (bar ±70px desktop, ±96px mobile karena slider progres ikut di baris kedua). */
-.fab {
-  position: fixed;
-  right: 24px;
-  bottom: 92px;
-  z-index: 99;
-  transition: bottom 200ms ease;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
-
-.fab[data-player="true"] {
-  bottom: 120px;
-}
-
-@media (min-width: 48em) {
-  .fab[data-player="true"] {
-    bottom: 92px;
-  }
-}
-
-/* Panel desktop (mobile memakai Drawer). Tinggi dibatasi agar tidak menembus navbar 44px. */
-.panel {
-  --jenna-panel-bottom: 24px;
-  position: fixed;
-  right: 24px;
-  bottom: var(--jenna-panel-bottom);
-  z-index: 99;
-  width: 380px;
-  height: min(560px, calc(100dvh - 44px - 24px - var(--jenna-panel-bottom)));
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.panel[data-player="true"] {
-  --jenna-panel-bottom: 88px;
-}
-
-/* Warna panel sebagai variabel di .body (pembungkus isi Paper desktop dan Drawer ponsel): prop Mantine
-   `c`/`bg`/`color` menulis inline style, jadi komponen membaca var(--jenna-*) dan tema gelap cukup
-   menimpa variabelnya di sini. Terang = nilai lama (putih, colors.grey[2], gray.7–9 Mantine). */
-.body {
-  --jenna-surface: #fff;
-  --jenna-line: #cbcacd;
-  --jenna-text-1: var(--mantine-color-gray-9);
-  --jenna-text-2: var(--mantine-color-gray-8);
-  --jenna-text-3: var(--mantine-color-gray-7);
-  --jenna-danger: var(--mantine-color-red-8);
-  --jenna-notice: var(--mantine-color-yellow-0);
-  --jenna-error-bg: var(--mantine-color-red-0);
-  --jenna-error-line: var(--mantine-color-red-3);
-  --jenna-error-ink: var(--mantine-color-red-9);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  background: #f4f5f6;
+/* Material kaca Jenna (room + pil quick chat milik bar). Warna literal, bukan token --c-*: kaca
+   selalu kontras terhadap tema (terang = kaca GELAP teks putih, gelap = kaca TERANG REMANG teks gelap),
+   jadi --c-ink yang ikut tema tidak bisa dipakai. Kontras teks diukur di latar terburuk (kaca di atas
+   putih untuk tema terang, di atas hitam untuk tema gelap): terang ink 6,7:1 · ink-2 4,9:1;
+   gelap ink 6,8:1 · ink-2 5,5:1. Hanya `backdrop-filter` (Lightning CSS menambah prefix -webkit-). */
+.glass {
+  --jenna-glass-bg: rgba(28, 28, 30, 0.72);
+  --jenna-glass-ink: #fff;
+  --jenna-glass-ink-2: rgba(255, 255, 255, 0.78);
+  --jenna-glass-line: rgba(255, 255, 255, 0.16);
+  --jenna-glass-fill: rgba(0, 0, 0, 0.28); /* pil pesan pengunjung & chip, "lebih gelap" dari kaca */
+  --jenna-glass-hover: rgba(255, 255, 255, 0.12);
+  --jenna-glass-blur: blur(24px) saturate(180%);
+  background: var(--jenna-glass-bg);
+  backdrop-filter: var(--jenna-glass-blur);
+  color: var(--jenna-glass-ink);
 
   @mixin dark {
-    --jenna-surface: var(--c-tile);
-    --jenna-line: var(--c-line);
-    --jenna-text-1: var(--c-ink);
-    --jenna-text-2: var(--c-ink-2);
-    --jenna-text-3: var(--c-muted);
-    --jenna-danger: var(--mantine-color-red-4);
-    --jenna-notice: rgba(250, 176, 5, 0.14);
-    --jenna-error-bg: rgba(250, 82, 82, 0.12);
-    --jenna-error-line: rgba(250, 82, 82, 0.45);
-    --jenna-error-ink: var(--mantine-color-red-3);
-    background: var(--c-bg-alt);
+    --jenna-glass-bg: rgba(206, 206, 212, 0.8);
+    --jenna-glass-ink: #1d1d1f;
+    --jenna-glass-ink-2: rgba(0, 0, 0, 0.72);
+    --jenna-glass-line: rgba(0, 0, 0, 0.12);
+    --jenna-glass-fill: rgba(0, 0, 0, 0.1);
+    --jenna-glass-hover: rgba(0, 0, 0, 0.08);
   }
 }
 
-.bubbleUser {
+/* ROOM: panel percakapan yang terbuka dari chat bar. Diposisikan di dalam dock fixed milik bar
+   (JennaWidget): dock men-set --jenna-dock-w, --jenna-dock-bottom, dan --jenna-room-bottom (diukur JS:
+   dasar dock sampai tepi atas bar + celah 10px). Fallback = bar 1 baris + disclaimer. Tinggi tidak
+   menembus navbar 44px. Selalu ter-mount: saat tertutup `inert` + visibility hidden setelah animasi. */
+.room {
+  --jenna-room-radius: 28px;
+  /* Inline code markdown: latar chip kaca, bukan abu Mantine. */
+  --code-bg: var(--jenna-glass-fill);
+  position: absolute;
+  right: 0;
+  bottom: var(--jenna-room-bottom, 66px);
+  width: var(--jenna-dock-w, 560px);
+  height: min(560px, calc(100dvh - 44px - 12px - var(--jenna-dock-bottom, 24px) - var(--jenna-room-bottom, 66px)));
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--jenna-room-radius);
+  box-shadow:
+    inset 0 0 0 1px var(--jenna-glass-line),
+    0 18px 48px rgba(0, 0, 0, 0.22);
+  /* Tertutup = irisan setinggi bar di dasar (seolah room masih "di dalam" bar). Terbuka = inset negatif
+     supaya bayangan luar tidak ikut terpotong; sudut tetap dibulatkan border-radius. */
+  clip-path: inset(calc(100% - 48px) 0 0 0 round var(--jenna-room-radius));
+  opacity: 0;
+  transform: translateY(8px);
+  transform-origin: bottom center;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    clip-path 200ms cubic-bezier(0.4, 0, 1, 1),
+    opacity 200ms cubic-bezier(0.4, 0, 1, 1),
+    transform 200ms cubic-bezier(0.4, 0, 1, 1),
+    visibility 0s linear 200ms;
+}
+
+.room[data-open="true"] {
+  clip-path: inset(-48px -48px -72px -48px round calc(var(--jenna-room-radius) + 48px));
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    clip-path 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 200ms ease-out,
+    transform 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    visibility 0s;
+}
+
+/* Ponsel: hampir layar penuh di antara navbar dan bar. */
+@media (max-width: 47.99em) {
+  .room {
+    --jenna-room-radius: 24px;
+    height: calc(100dvh - 44px - 8px - var(--jenna-dock-bottom, 12px) - var(--jenna-room-bottom, 66px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room,
+  .room[data-open="true"] {
+    clip-path: none;
+    transform: none;
+  }
+  .room {
+    transition:
+      opacity 200ms ease,
+      visibility 0s linear 200ms;
+  }
+  .room[data-open="true"] {
+    transition:
+      opacity 200ms ease,
+      visibility 0s;
+  }
+}
+
+.roomHeader {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 12px 8px 18px;
+}
+
+.roomGlyph {
+  flex: none;
+  color: var(--jenna-glass-ink);
+}
+
+.roomTitles {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.roomTitle {
+  color: var(--jenna-glass-ink);
+}
+
+.roomSubtitle {
+  color: var(--jenna-glass-ink-2);
+}
+
+.roomIconBtn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--jenna-glass-ink);
+  transition: background-color 150ms ease;
+}
+
+@media (hover: hover) {
+  .roomIconBtn:hover:not(:disabled) {
+    background: var(--jenna-glass-hover);
+  }
+}
+
+.roomIconBtn:focus-visible {
+  outline: 2px solid var(--jenna-glass-ink);
+  outline-offset: 1px;
+}
+
+.roomIconBtn:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+/* Area gulir pesan (kolom flex agar daftar bisa menempel ke dasar): scrollbar tipis sewarna garis kaca; tepi atas memudar di bawah header. */
+.roomScroll {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--jenna-glass-line) transparent;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14px);
+}
+
+/* margin-top auto: percakapan pendek menempel ke dasar (dekat bar), bukan menggantung di bawah header. */
+.roomList {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 8px 18px 18px;
+}
+
+/* Pesan pengunjung: pil translusen lebih gelap dari kaca, rata kanan. */
+.msgUser {
   align-self: flex-end;
   max-width: 85%;
-  padding: 8px 12px;
-  border-radius: 12px 12px 4px 12px;
-  background: var(--c-brand-fill);
-  color: var(--c-on-brand);
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: var(--jenna-glass-fill);
+  color: var(--jenna-glass-ink);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -89,24 +194,73 @@
   opacity: 0.85;
 }
 
-.bubbleAssistant {
+/* Jawaban Jenna: teks polos tanpa kotak. Tautan/sumber panjang tanpa spasi dibungkus agar room
+   tidak pernah geser horizontal. */
+.msgAssistant {
   align-self: flex-start;
-  max-width: 92%;
-  padding: 8px 12px;
-  border-radius: 12px 12px 12px 4px;
-  background: #fff;
-  border: 1px solid #cbcacd;
-  color: #1a1b1e;
-
-  @mixin dark {
-    background: var(--c-tile-alt);
-    border-color: var(--c-line);
-    color: var(--c-ink);
-  }
-  /* Tautan/sumber panjang tanpa spasi (path, URL) dibungkus agar panel tidak pernah geser horizontal. */
+  max-width: 100%;
   min-width: 0;
+  color: var(--jenna-glass-ink);
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+.msgPending {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--jenna-glass-ink-2);
+}
+
+.msgMeta {
+  color: var(--jenna-glass-ink-2);
+}
+
+/* Galat: teks tetap ink kaca (kontras), ditandai rona merah + garis; terang 6,3:1, gelap 6,1:1. */
+.msgError {
+  align-self: flex-start;
+  max-width: 92%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(255, 69, 58, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 105, 97, 0.55);
+  color: var(--jenna-glass-ink);
+  overflow-wrap: anywhere;
+
+  @mixin dark {
+    background: rgba(255, 69, 58, 0.18);
+    box-shadow: inset 0 0 0 1px rgba(215, 0, 21, 0.45);
+  }
+}
+
+.msgRetry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--jenna-glass-fill);
+  color: var(--jenna-glass-ink);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  transition: background-color 150ms ease;
+}
+
+@media (hover: hover) {
+  .msgRetry:hover:not(:disabled) {
+    background: var(--jenna-glass-hover);
+  }
+}
+
+.msgRetry:focus-visible {
+  outline: 2px solid var(--jenna-glass-ink);
+  outline-offset: 1px;
+}
+
+.msgRetry:disabled {
+  cursor: default;
+  opacity: 0.5;
 }
 
 .caret {
@@ -128,9 +282,6 @@
 @media (prefers-reduced-motion: reduce) {
   .caret {
     animation: none;
-  }
-  .fab {
-    transition: none;
   }
 }
 
