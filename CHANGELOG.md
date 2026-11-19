@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.328] - 2026-11-19
+### Added
+- **Menu baru "Indeks Desa".** Halaman publik `/indeks-desa/idm` menampilkan Indeks Desa Membangun (IDM) Desa Darmasaba: skor dan status tahun terbaru, tiga dimensi (Ketahanan Sosial, Ekonomi, Lingkungan), dan riwayat per tahun. Admin mengisi data di menu admin baru "Indeks Desa" > "Indeks Desa Membangun". Selama data belum diisi, halaman menampilkan keterangan "data belum tersedia", tanpa angka contoh. Admin dengan akses menu terbatas perlu diberi akses menu baru ini lewat pengaturan akses menu.
+
+### Changed
+- **Kontak desa kini bisa diedit admin.** Tab baru "Kontak Desa" di Profile Desa (admin) mengatur nama kantor, alamat, telepon, dan email. Footer dan halaman PPID otomatis memakai data ini. Nilai awalnya sama dengan yang tampil sekarang, jadi tampilan publik tidak berubah.
+- Operator: ada 2 migrasi aditif (tabel baru `KontakDesa` dan `IndeksDesa`), dijalankan otomatis saat container naik. Data yang sudah ada tidak disentuh.
+
 ## [0.1.327] - 2026-11-19
 ### Changed
 - Perapian internal gaya chat bar Jenna agar lebih mudah dirawat. Tampilan dan perilaku tidak berubah.
