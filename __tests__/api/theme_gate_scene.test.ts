@@ -9,6 +9,7 @@ const ROOT = path.resolve(__dirname, '../..');
 const COM = path.join(ROOT, 'src/app/(public)/_com');
 const sceneCss = readFileSync(path.join(COM, 'theme-transition/theme-gate-scene.module.css'), 'utf8');
 const splashCss = readFileSync(path.join(COM, 'splash/gate-splash.module.css'), 'utf8');
+const gateCss = readFileSync(path.join(COM, 'theme-transition/theme-gate.module.css'), 'utf8');
 
 /** Kontrak token (README prototipe + task MIND/PLAN/task-theme-gate-transition.md). */
 const TOKENS = [
@@ -214,5 +215,11 @@ describe('theme-gate-scene: layer seni & batas performa', () => {
     expect(css).not.toMatch(/mix-blend-mode/);
     expect(css).not.toMatch(/light-dark\(/);
     expect(css).not.toMatch(/-webkit-/);
+  });
+});
+
+describe('theme-gate: overlay', () => {
+  it('kursor tetap panah biasa selama transisi, bukan tanda loading', () => {
+    expect(decls(block(gateCss, '.root')).get('cursor')).toBe('default');
   });
 });

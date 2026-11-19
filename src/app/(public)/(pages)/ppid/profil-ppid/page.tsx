@@ -6,7 +6,6 @@ import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import ScrollToTopButton from '@/app/(public)/_com/scrollToTopButton';
-import classes from './profil-ppid.module.css';
 import { ProfilLembagaSection } from './_com/ProfilLembagaSection';
 import { ProfilPerorangan } from './_com/ProfilPerorangan';
 import { hasProfilLembagaContent } from './_com/profil-ppid.logic';
@@ -26,7 +25,7 @@ function Page() {
   // LOADING SKELETON
   if (allList.profile.loading || lembagaState.find.loading)
     return (
-      <Stack bg="var(--c-hero-bg)" className={classes.page} py="xl" gap="22">
+      <Stack bg="var(--c-bg)" py="xl" gap="22">
         <Box px={{ base: 'md', md: 100 }}>
           <Skeleton h={40} />
         </Box>
@@ -34,7 +33,7 @@ function Page() {
           <Skeleton h={80} />
         </Box>
         <Box px={{ base: 'md', md: 100 }}>
-          <Paper p="xl" bg="var(--profil-kaca)">
+          <Paper p="xl" bg="var(--c-tile)">
             {Array.from({ length: 8 }).map((_, i) => (
               <Skeleton key={i} h={40} mb="sm" />
             ))}
@@ -46,9 +45,9 @@ function Page() {
   // ERROR HANDLING
   if (!lembaga && allList.profile.error)
     return (
-      <Stack bg="var(--c-hero-bg)" className={classes.page} py="xl" gap="22" justify="center" align="center">
+      <Stack bg="var(--c-bg)" py="xl" gap="22" justify="center" align="center">
         <Box px={{ base: 'md', md: 100 }}>
-          <Paper p="xl" bg="var(--profil-kaca)" radius="lg" shadow="xl">
+          <Paper p="xl" bg="var(--c-tile)" radius="lg">
             {allList.profile.error === "Belum ada data profil PPID yang aktif" ? (
               <>
                 <Title order={3} ta="center" c={"orange"} fw={700}>
@@ -75,9 +74,9 @@ function Page() {
   // NO DATA HANDLING
   if (!lembaga && !allList.profile.data)
     return (
-      <Stack bg="var(--c-hero-bg)" className={classes.page} py="xl" gap="22" justify="center" align="center">
+      <Stack bg="var(--c-bg)" py="xl" gap="22" justify="center" align="center">
         <Box px={{ base: 'md', md: 100 }}>
-          <Paper p="xl" bg="var(--profil-kaca)" radius="lg" shadow="xl">
+          <Paper p="xl" bg="var(--c-tile)" radius="lg">
             <Title order={3} ta="center" c={"orange"} fw={700}>
               Data Profile PPID Belum Tersedia
             </Title>
@@ -92,7 +91,7 @@ function Page() {
 
   return (
     <Box>
-      <Stack pos="relative" bg="var(--c-hero-bg)" className={classes.page} py="xl" gap="22">
+      <Stack pos="relative" bg="var(--c-bg)" py="xl" gap="22">
         {/* Back Button */}
         <Box px={{ base: 'md', md: 100 }}>
           <BackButton />

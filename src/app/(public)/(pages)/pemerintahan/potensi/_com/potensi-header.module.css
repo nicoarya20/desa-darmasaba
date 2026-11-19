@@ -1,6 +1,7 @@
 /*
  * Kepala halaman Potensi Desa: judul brand + pengantar rata kiri, lalu tombol pil saring dengan jumlah
- * (menggantikan kotak angka biru). Pil aktif = latar brand; nonaktif = putih transparan di atas latar halaman.
+ * (menggantikan kotak angka biru). Pil aktif = latar brand; nonaktif = ubin --c-tile
+ * di atas latar --c-bg (pola pil Kabar), hover --c-placeholder.
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
  * Warna = token --c-*; nilai tanpa token light-dark(terang lama, gelap). Pil aktif = --c-brand-fill.
  */
@@ -43,7 +44,7 @@
   padding: 8px 10px 8px 18px;
   border: 0;
   border-radius: 980px;
-  background: light-dark(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.1));
+  background: var(--c-tile);
   color: var(--c-ink);
   font: inherit;
   font-size: 15px;
@@ -83,7 +84,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .chip:not([aria-pressed="true"]):not(:disabled):hover {
-    background: light-dark(#fff, rgba(255, 255, 255, 0.18));
+    background: var(--c-placeholder);
   }
 }
 

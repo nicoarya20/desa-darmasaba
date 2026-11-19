@@ -156,7 +156,7 @@ File: `src/app/theme-tokens.css` (diimpor `globals.css`). Terang di `:root` = **
 
 | Token | Terang | Gelap | Pakai untuk |
 |---|---|---|---|
-| `--c-page` | `#f4f5f6` | `#161617` | Latar dasar shell & beranda (= `colors.grey[1]`) |
+| `--c-page` | `#f4f5f6` | `#161617` | Latar dasar shell & beranda (= `colors.grey[1]`); kotak konten shell sendiri berlatar `--c-bg` agar halaman pendek tak memperlihatkan pita abu di atas footer |
 | `--c-bg` / `--c-bg-alt` | `#fff` / `#f5f5f7` | `#000` / `#161617` | Latar section / section selang |
 | `--c-tile` / `--c-tile-alt` | `#f5f5f7` / `#fff` | `#1d1d1f` / `#2a2a2c` | Panel/ubin / ubin di atas bg-alt, kartu putih |
 | `--c-ink` / `--c-ink-2` | `#1d1d1f` / `#515154` | `#f5f5f7` / `#c7c7cc` | Teks utama / teks isi |
@@ -1108,7 +1108,7 @@ Pola Tips Keamanan (dibaca langsung, tanpa detail). Folder: `_com/InfoTtgPage.ts
 
 ### Formulir publik Inovasi (Ajukan Ide Inovatif, Administrasi Online)
 
-Dipakai bersama: `inovasi/_com/InovasiFormCard.tsx` (ubin `#f5f5f7` radius 18, judul h2 24/21px, `lead` opsional, `focusTitle` opsional untuk kartu terima kasih: judul tabIndex -1 difokus saat mount, kelas `.titleFocus` tanpa cincin) + `InovasiFormActions` + `inovasi-form.module.css`. `PermohonanFormCard` PPID berwarna putih sehingga tidak terlihat di latar putih Kabar.
+Dipakai bersama: `inovasi/_com/InovasiFormCard.tsx` (ubin `#f5f5f7` radius 18, judul h2 24/21px, `lead` opsional, `focusTitle` opsional untuk kartu terima kasih: judul tabIndex -1 difokus saat mount, kelas `.titleFocus` tanpa cincin) + `InovasiFormActions` + `inovasi-form.module.css`. (`PermohonanFormCard` PPID dulu putih sehingga tidak terlihat di latar putih Kabar; sejak PPID berlatar putih ia juga ubin `var(--c-tile)`, Inovasi tetap memakai kartunya sendiri.)
 - Kepala `KabarListHeader` `searchable={false}`, lalu `PermohonanLayout` + `PermohonanSteps` PPID diimpor apa adanya (kiri alur menempel ≥75em, kanan formulir).
 - **Selebar halaman**: pembungkus diberi `.fullWidth` (`inovasi-form.module.css`) yang menyetel `--ppid-measure: none` (melepas batas 75rem PPID tanpa mengubah PPID) sehingga tepi kanan kartu = `--edge-gutter` seperti halaman Inovasi lain. Kolom formulir tetap 7/12 tetapi maks 824px (isian 760px) agar tidak terlalu panjang di layar lebar; sisa lebar ke kolom kiri. Ukur: 1440 kiri 525 / kartu 735; 1920 kiri 904 / kartu 824.
 - **Kolom kiri**: antar-blok 40px (ponsel 32), judul blok 24/21px → isi 20px (blok catatan Musyawarah 17px tetap gaya catatan).
@@ -1441,6 +1441,7 @@ Satu file `(pages)/ppid/profil-ppid/page.tsx` + `profil-ppid.module.css`; data `
 
 - **Grid 2 kolom mulai `lg` (Mantine 75em = 1200px)**, 1 kolom di bawahnya. Kiri: kartu foto + nama. Kanan, berurutan: Biografi, Riwayat Karir, Pengalaman Organisasi, Program Unggulan — keempatnya satu kolom agar tinggi kedua kolom seimbang (sebelumnya Organisasi & Program selebar kartu di bawah grid sehingga ada ruang kosong di bawah Riwayat Karir). Isi keempat section ukuran huruf sama: 1rem / md 1.1rem / lg 1.2rem, **rata kiri** (bukan justify — di kolom ±400px dan ponsel justify melebarkan celah antarkata).
 - **Kartu foto sticky** (`top` = navbar desktop 44px + 32px) hanya di ≥75em — breakpoint ditulis literal, bukan `$mantine-breakpoint-lg` (80em di `postcss.config.js`), agar sama persis dengan breakpoint grid. Di 1 kolom sticky dimatikan karena akan menutupi teks di bawahnya.
+- **Permukaan**: latar halaman `var(--c-bg)` (juga keadaan muat/galat/kosong); kartu besar (profil lembaga, profil perorangan, kartu galat) ubin `var(--c-tile)` radius lg tanpa bayangan, pola ubin Kabar; kartu foto di dalamnya ubin terangkat `var(--c-tile-alt)` (`#fff` / gelap `#2a2a2c`) bergaris + bayangan md agar tetap terpisah dari kartu induk.
 
 ### Struktur Organisasi PPID (`/ppid/struktur-ppid`)
 
@@ -1475,7 +1476,7 @@ Dua halaman formulir dengan satu susunan: `PpidPage` → `PermohonanLayout` (alu
 
 - **Alur bernomor** (`PermohonanSteps`; props `title`, `steps: { title, desc }[]`): `h2` brand 24px (mobile 21) + `<ol>`; tiap langkah = lingkaran nomor bergaris brand 36px, judul `h3` 17px, keterangan abu 15px, dihubungkan rel tipis `#8ba8c1`. Langsung di atas latar halaman — menggantikan kotak-kotak navy; tanpa ikon per langkah.
 - **Tata letak**: ≥75em (lg tema, ditulis literal) 2 kolom 5fr/7fr gap 64px selebar `--ppid-measure` (1200px), alur **sticky** (`top` = navbar 44px + 32px) di kiri dan formulir di kanan. Di bawahnya bertumpuk, alur di atas; 735px–74.99em langkah jadi 2 kolom tanpa rel supaya formulir tidak terdorong jauh ke bawah.
-- **Kartu formulir** (`PermohonanFormCard`): satu-satunya kartu putih (radius 18px, padding 32px / mobile 20px), selebar kolom grid — selebar isi saat bertumpuk, isian **satu kolom**. Semua isian memakai `PERMOHONAN_FIELD` (`size="md" radius="md"`) sehingga input, dropdown, dan editor sama lebar — dropdown tidak lagi dibungkus `Group`. Tombol kirim pil brand di kiri, selebar kartu di mobile.
+- **Kartu formulir** (`PermohonanFormCard`): satu-satunya kartu, ubin `var(--c-tile)` (`#f5f5f7` / gelap `#1d1d1f`) di atas latar `var(--c-bg)`; isian Mantine berlatar sendiri sehingga tetap terbaca (radius 18px, padding 32px / mobile 20px), selebar kolom grid — selebar isi saat bertumpuk, isian **satu kolom**. Semua isian memakai `PERMOHONAN_FIELD` (`size="md" radius="md"`) sehingga input, dropdown, dan editor sama lebar — dropdown tidak lagi dibungkus `Group`. Tombol kirim pil brand di kiri, selebar kartu di mobile.
 - **Alasan keberatan**: tetap `PPIDTextEditor` (format HTML ke backend tidak berubah) dengan `toolbar="basic"` — hanya tebal, miring, daftar butir, daftar bernomor.
 - **Kontak PPID** (keberatan): `<dl>` Email / WhatsApp di bawah kartu formulir, langsung di atas latar.
 - Validasi, isi kiriman, dan notifikasi tidak diubah oleh desain ini.
@@ -1496,8 +1497,8 @@ Folder `(pages)/ppid/daftar-informasi-publik/`: `page.tsx` (daftar) dan `[id]/pa
 Halaman ini **tidak punya grafik/form sendiri**: `page.tsx` hanya merangkai kerangka `PpidPage` dengan modul section beranda `_com/main-page/kepuasan/` (`useKepuasanData`, `KepuasanCharts`, `KepuasanSkeleton`, `KepuasanEmpty`, `CtaButton`, `RespondenFormModal`, `KEPUASAN_BRAND_VARS`). Aturan grafik, warna seri, dan alur form ada di bagian Indeks Kepuasan beranda; perubahan di sana otomatis berlaku di sini. Lokal halaman: `_com/ikm.text.ts` (pengantar) dan `_com/ikm.module.css`.
 
 - **Kepala**: judul + satu kalimat pengantar; tombol "Ajukan Responden" di slot `aside` (kanan; ≤1068px di bawah pengantar, rata kiri).
-- **Token**: kelas `kepuasan.module.css` membaca `--ink`, `--muted`, `--tile`, `--radius` yang di beranda dipasang oleh `.section`. Di sini `.surface` memasangnya, dengan `--tile: #fff` karena latar halaman PPID `#D1D9E8` (di beranda tile `#f5f5f7` di atas putih).
-- **Tema gelap**: pulau terang sampai Fase 2: `.surface` mengunci `--c-tile`/`--c-chart-*` ke nilai terang (§2.5).
+- **Token**: kelas `kepuasan.module.css` membaca `--ink`, `--muted`, `--tile`, `--radius` yang di beranda dipasang oleh `.section`. Di sini `.surface` memasangnya dengan nilai yang sama dengan beranda: `--tile: var(--c-tile)`, karena latar halaman PPID kini `var(--c-bg)` (putih / gelap hitam) seperti section beranda.
+- **Tema gelap**: `.surface` tidak mengunci token; `--tile` (`--c-tile`) dan grafik (`--c-chart-*`) ikut tema (§2.5).
 - **Isi**: kartu "Responden per bulan" (total responden sebagai angka utama) lalu tiga donat 3 kolom (mobile bertumpuk) — persis susunan beranda, selebar kolom halaman.
 
 ---
@@ -1874,7 +1875,7 @@ Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual — Lightning
 
 ### Transisi tema Candi Bentar
 
-`src/app/(public)/_com/theme-transition/`: tombol tema navbar memutar adegan Candi Bentar selama 5 dtk, lalu halaman tampil dalam tema baru.
+`src/app/(public)/_com/theme-transition/`: tombol tema navbar memutar adegan Candi Bentar selama 3 dtk, lalu halaman tampil dalam tema baru.
 
 - **Alur 4 tahap** (angka ms di `theme-gate.timeline.ts`):
   1. Pilar kiri dan tembok masuk dari tepi kiri, pilar kanan dari kanan. Belum ada latar, jadi halaman lama terlihat di sekitar pilar.

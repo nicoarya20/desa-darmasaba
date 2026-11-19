@@ -54,7 +54,7 @@ function Page() {
   const visible = useMemo(() => filterPotensi(items, filter), [items, filter])
 
   return (
-    <Stack pos="relative" bg="var(--c-hero-bg)" py="xl" gap={48} className={g.page}>
+    <Stack pos="relative" bg="var(--c-bg)" py="xl" gap={48} className={g.page}>
       <Box px={{ base: "md", md: 100 }}>
         <BackButton />
       </Box>

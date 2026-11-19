@@ -28,7 +28,7 @@ type Props = {
 export function PpidPage({ title, lead, aside, headerHidden, style, children }: Props) {
   const header = <PpidHeader title={title} lead={lead} aside={aside} />;
   return (
-    <Stack bg="var(--c-hero-bg)" py="xl" gap={48} mih="100vh" style={{ ...PPID_VARS, ...style }}>
+    <Stack bg="var(--c-bg)" py="xl" gap={48} mih="100vh" style={{ ...PPID_VARS, ...style }}>
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
       </Box>

@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Halaman publik PUSTU: isi detail lengkap (info, jam, kontak darurat, medsos, layanan, prosedur, tarif BPJS vs
 // umum, struktur, galeri) dan minimal (bagian kosong disembunyikan), kartu daftar, form admin memuat field baru.
+// Tautan memakai sapuan warna link-reveal (tanpa garis bawah): kartu daftar, email, dan tautan kembali teks detail.
 // jsdom rusak di repo ini → renderToStaticMarkup; DOMPurify (butuh DOM) diganti sanitize-html dengan allowlist sama.
 import { MantineProvider } from '@mantine/core';
 import type { AnchorHTMLAttributes } from 'react';
@@ -19,7 +20,10 @@ vi.mock('dompurify', async () => {
 vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
 }));
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn(), back: vi.fn() }) }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), back: vi.fn() }),
+  useParams: () => ({ id: 'pu1' }),
+}));
 vi.mock('@/lib/api-fetch', () => ({ default: { api: {} } }));
 // Editor tiptap tidak bisa dirender di server tanpa DOM; cukup tandai posisinya.
 vi.mock('@/app/admin/(dashboard)/_com/createEditor', () => ({ default: () => <div data-testid="editor" /> }));
@@ -27,16 +31,23 @@ vi.mock('@/app/admin/(dashboard)/_com/createEditor', () => ({ default: () => <di
 import PustuFormFields from '@/app/admin/(dashboard)/kesehatan/puskesmas/_com/pustu.form-fields';
 import PustuKontenFields from '@/app/admin/(dashboard)/kesehatan/puskesmas/_com/pustu.konten-fields';
 import { FORM_PUSTU_KOSONG } from '@/app/admin/(dashboard)/_state/kesehatan/puskesmas/pustu.form';
+import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
+import PustuDetail from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/detail/PustuDetail';
 import PustuDetailBody from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/detail/PustuDetailBody';
+import { PUSTU_TEXT as T } from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/pustu.text';
+import s from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/pustu.module.css';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { PustuCard } from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/PustuListPage';
-import type { PustuDetail } from '@/lib/pustu/pustu.types';
+import type { PustuDetail as PustuDetailData } from '@/lib/pustu/pustu.types';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
 const noop = () => {};
+const esc = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // test-only: data rekaan.
-const minimal: PustuDetail = {
+const minimal: PustuDetailData = {
   id: 'pu1',
   name: 'PUSTU Contoh',
   alamat: 'Jl. Contoh No. 1, Banjar Contoh',
@@ -57,7 +68,7 @@ const minimal: PustuDetail = {
 };
 
 // test-only: data rekaan.
-const lengkap: PustuDetail = {
+const lengkap: PustuDetailData = {
   ...minimal,
   imageId: 'img1',
   image: { id: 'img1', link: '/api/img/gedung.jpg' },
@@ -106,6 +117,24 @@ describe('detail publik PUSTU', () => {
     expect(html).toContain('data-testid="galeri-pustu"');
   });
 
+  it('email = sapuan warna link-reveal (.trigger + .cta), bukan tautan bergaris bawah', () => {
+    const html = render(<PustuDetailBody data={lengkap} />);
+    expect(html).toContain(
+      `<a class="${s.emailLink} ${r.trigger}" href="mailto:pustu@contoh.id"><span class="${r.cta}" data-text="pustu@contoh.id">pustu@contoh.id</span></a>`,
+    );
+  });
+
+  it('tautan kembali = teks "‹ PUSTU" ke daftar (gaya detail UMKM), bukan tombol panah', () => {
+    const html = render(<PustuDetail />);
+    expect(html).toMatch(
+      new RegExp(
+        `<a href="/kesehatan/puskesmas" class="${esc(`${back.back} ${r.trigger}`)}"><svg[^>]*class="[^"]*\\b${esc(r.chevronBack)}\\b[^"]*"[^>]*>[\\s\\S]*?</svg><span class="${esc(r.cta)}" data-text="${T.kembali}">${T.kembali}</span></a>`,
+      ),
+    );
+    expect(T.kembali).toBe('PUSTU');
+    expect(html).not.toContain('Kembali ke halaman sebelumnya');
+  });
+
   it('minimal: hanya nama + alamat; bagian kosong (jam, kontak, layanan, prosedur, tarif, struktur, galeri) disembunyikan', () => {
     const html = render(<PustuDetailBody data={minimal} />);
     expect(html).toContain('PUSTU Contoh');
@@ -132,6 +161,26 @@ describe('kartu daftar PUSTU', () => {
     expect(html).toContain('Senin – Kamis: 08.00 – 14.00 WITA');
     expect(html).toContain('Telepon: 0361 000 111');
     expect(html).toContain('href="/kesehatan/puskesmas/pu1"');
+  });
+
+  it('seluruh kartu = satu tautan link-reveal gaya kartu Kabar: judul .title, "Lihat detail" .cta + chevron, tanpa panah teks', () => {
+    const html = render(<ul><PustuCard item={lengkap} /></ul>);
+    expect(html).toContain(`<a href="/kesehatan/puskesmas/pu1" class="${kabar.card} ${r.trigger}">`);
+    expect(html.match(/<a /g)).toHaveLength(1);
+    expect(html).toContain(`<span class="${r.title}">PUSTU Contoh</span>`);
+    expect(html).toMatch(
+      new RegExp(
+        `<span class="${esc(r.cta)}" data-text="${T.lihatDetail}">${T.lihatDetail}</span><svg[^>]*class="[^"]*\\b${esc(r.chevron)}\\b`,
+      ),
+    );
+    expect(html).not.toContain('→');
+    expect(html).toContain('/api/img/gedung.jpg');
+  });
+
+  it('tanpa foto → ikon pengganti di ubin foto, bukan gambar rusak', () => {
+    const html = render(<ul><PustuCard item={minimal} /></ul>);
+    expect(html).toContain(`<span class="${kabar.photoFallback}" aria-hidden="true">`);
+    expect(html).not.toContain('<img');
   });
 });
 

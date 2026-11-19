@@ -19,9 +19,9 @@
   max-width: 420px;
   margin: 0;
   overflow: hidden;
-  border: 1px solid light-dark(rgb(255 255 255 / 0.8), rgb(255 255 255 / 0.08));
   border-radius: 24px;
-  background: light-dark(#f5f7fb, var(--c-tile));
+  /* Ubin bertingkat di dalam kartu --c-tile. */
+  background: var(--c-tile-alt);
   box-shadow: 0 12px 32px rgb(10 78 120 / 0.14);
 }
 

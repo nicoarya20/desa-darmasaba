@@ -6,6 +6,8 @@ export const PUSTU_TEXT = {
   pengantar: `Informasi layanan, jam operasional, tarif, dan kontak ${LABEL_PUSTU_SINGKAT} di Desa Darmasaba.`,
   cariPlaceholder: `Cari nama atau alamat ${LABEL_PUSTU_SINGKAT}...`,
   cariLabel: `Cari ${LABEL_PUSTU_SINGKAT}`,
+  daftarLabel: `Daftar ${LABEL_PUSTU_SINGKAT}`,
+  paginasiLabel: `Halaman daftar ${LABEL_PUSTU_SINGKAT}`,
   kosong: `Belum ada data ${LABEL_PUSTU_SINGKAT}.`,
   kosongCari: "Tidak ada data yang cocok dengan kata kunci tersebut.",
   gagal: `Data ${LABEL_PUSTU_SINGKAT} gagal dimuat. Muat ulang halaman untuk mencoba lagi.`,
@@ -14,6 +16,8 @@ export const PUSTU_TEXT = {
   detailTidakDitemukan: `${LABEL_PUSTU_SINGKAT} tidak ditemukan atau sudah tidak aktif.`,
   detailGagal: `Detail ${LABEL_PUSTU_SINGKAT} gagal dimuat. Muat ulang halaman untuk mencoba lagi.`,
   kembaliKeDaftar: `Lihat semua ${LABEL_PUSTU_SINGKAT}`,
+  /** Tautan kembali teks di halaman detail ("‹ PUSTU"). */
+  kembali: LABEL_PUSTU_SINGKAT,
   alamat: "Alamat",
   jam: "Jam Operasional",
   kontak: "Kontak",
