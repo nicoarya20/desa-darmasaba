@@ -2,8 +2,8 @@
 
 ## [0.1.325] - 2026-11-19
 ### Changed
-- **Jenna kini berupa chat bar di kanan bawah, menggantikan tombol bulat.** Bar menampilkan contoh pertanyaan yang bergantian. Saat diklik, bar memanjang dengan mulus dan menampilkan 3 pertanyaan cepat ("Jam pelayanan kantor desa?", "Apa syarat membuat surat keterangan?", "Agenda desa bulan ini?") serta catatan privasi di bawahnya. Pertanyaan cepat langsung terkirim saat diklik.
-- **Percakapan muncul sebagai panel kaca yang terbuka dari chat bar** setelah pesan dikirim. Di tema terang panelnya kaca buram gelap dengan teks putih; di tema gelap kaca buram terang yang diredupkan agar tidak menyilaukan. Pesan pengunjung tampil sebagai gelembung di kanan, jawaban Jenna sebagai teks biasa. Tombol panah di kepala panel mengecilkan percakapan, tombol putar memulai percakapan baru, dan tombol Escape juga menutup panel.
+- **Jenna kini berupa chat bar di kanan bawah, menggantikan tombol bulat.** Bar menampilkan contoh pertanyaan yang diketik bergantian. Saat diklik, bar memanjang dengan mulus tanpa berkedip dan menampilkan 3 pertanyaan cepat ("Jam pelayanan kantor desa?", "Apa syarat membuat surat keterangan?", "Agenda desa bulan ini?") serta catatan privasi di bawahnya. Pertanyaan cepat langsung terkirim saat diklik.
+- **Percakapan muncul sebagai panel kaca yang terbuka dari chat bar** setelah pesan dikirim. Di tema terang panelnya kaca buram gelap dengan teks putih; di tema gelap kaca buram terang yang diredupkan agar tidak menyilaukan. Pesan pengunjung tampil sebagai gelembung di kanan, jawaban Jenna sebagai teks biasa. Pesan tersusun dari atas panel. Tombol panah di kepala panel (atau Escape) menutup percakapan dan mengembalikan chat bar ke ukuran kecil; tombol putar memulai percakapan baru.
 - **Tombol "Kembali ke atas" kini berada di atas chat bar** dan menyingkir saat chat bar memanjang atau percakapan terbuka, sehingga tidak tertimpa.
 - Di ponsel, chat bar dan panel percakapan memenuhi lebar layar; panel percakapan hampir setinggi layar.
 
