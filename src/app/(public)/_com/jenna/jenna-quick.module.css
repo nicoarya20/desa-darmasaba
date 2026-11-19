@@ -1,0 +1,65 @@
+/* Pil quick chat di atas chat bar yang memanjang (JennaQuickChats; latar kaca dari .glass jenna.module.css).
+   Tempo (--jb-dur-chip, --jb-chip-delay, --jb-chip-stagger, --jb-ease) diwarisi dari .dock jenna-bar.module.css.
+   Keyframes CSS module ter-scope per file, jadi jb-fade untuk reduced-motion disalin di sini. */
+
+.quickList {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  pointer-events: none; /* ruang kosong di samping pil tetap bisa diklik ke halaman */
+}
+
+.quick {
+  pointer-events: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 18px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  animation: jb-rise var(--jb-dur-chip) var(--jb-ease) both;
+  animation-delay: calc(var(--jb-chip-delay) + var(--i, 0) * var(--jb-chip-stagger));
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease;
+}
+
+.quickList .quick:hover {
+  background: linear-gradient(var(--jenna-glass-hover), var(--jenna-glass-hover)), var(--jenna-glass-bg); /* lapis, bukan ganti kaca */
+}
+
+.quick:active {
+  transform: scale(0.97);
+}
+
+.quick:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+@keyframes jb-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes jb-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick {
+    animation-name: jb-fade;
+  }
+}

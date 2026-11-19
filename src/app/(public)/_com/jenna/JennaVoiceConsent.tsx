@@ -1,7 +1,7 @@
 import { Button, Group, Stack, Text } from "@mantine/core";
 import { IconMicrophone } from "@tabler/icons-react";
 import { useId } from "react";
-import bar from "./jenna-bar.module.css";
+import voice from "./jenna-voice.module.css";
 import { VOICE_COPY } from "./voice/voice-copy";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 export function JennaVoiceConsent({ assistantName, onAccept, onDecline }: Props) {
   const titleId = useId();
   return (
-    <div className={bar.consent} role="region" aria-labelledby={titleId}>
+    <div className={voice.consent} role="region" aria-labelledby={titleId}>
       <Stack gap="xs">
         <Group gap="xs" wrap="nowrap">
           <IconMicrophone size={16} color="var(--c-brand)" aria-hidden="true" />

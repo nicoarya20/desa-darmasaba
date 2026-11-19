@@ -1,6 +1,6 @@
 import { Button, CloseButton, Loader, Progress, Stack, Text } from "@mantine/core";
 import { IconMicrophone, IconPlayerStopFilled } from "@tabler/icons-react";
-import bar from "./jenna-bar.module.css";
+import voice from "./jenna-voice.module.css";
 import type { VoiceBeat, VoiceStatus } from "./voice/voice-logic";
 import { VOICE_COPY } from "./voice/voice-copy";
 import { formatClock, formatMinutesLeft, projectBeat, sessionSecondsLeft } from "./voice/voice-logic";
@@ -8,7 +8,7 @@ import { formatClock, formatMinutesLeft, projectBeat, sessionSecondsLeft } from 
 /** Pesan sesi suara yang baru berakhir / gagal dimulai (teks server ditampilkan apa adanya), di puncak kartu bar. */
 export function JennaVoiceNotice({ text, onClose }: { text: string; onClose: () => void }) {
   return (
-    <div className={bar.notice} role="status">
+    <div className={voice.notice} role="status">
       <Text fz="xs" c="var(--jb-ink)" style={{ flex: 1, paddingTop: 3 }}>
         {text}
       </Text>
@@ -34,7 +34,7 @@ export function JennaVoiceControls({ assistantName, status, transcript, micLevel
   const statusText = VOICE_COPY.status[status].replace("{name}", assistantName);
 
   return (
-    <div className={bar.voiceRow}>
+    <div className={voice.voiceRow}>
       <IconMicrophone
         size={20}
         color={status === "listening" ? "var(--c-brand)" : "var(--jb-muted)"}

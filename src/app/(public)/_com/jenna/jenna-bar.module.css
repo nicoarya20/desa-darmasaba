@@ -1,5 +1,8 @@
 /* Chat bar Jenna (gaya Fin): dock fixed kanan bawah berisi room (JennaRoom, milik jenna.module.css),
    quick chat, kartu bar (notice/consent suara + composer atau kontrol suara), lalu disclaimer.
+   File ini: .dock + token --jb-* (diwarisi modul lain lewat cascade var), kartu bar, composer, mikrofon/kirim.
+   Modul terpisah: offset posisi jenna-dock-offset · quick chat jenna-quick · notice/consent/kontrol suara
+   jenna-voice · disclaimer jenna-disclaimer · scroll-to-top jenna-scroll-top · hiasan placeholder jenna-typing.
    Lebar dock = var --jenna-dock-w (dibaca room); --jenna-room-bottom & --jb-disc-h diukur JennaWidget
    (ResizeObserver, ditulis hanya saat berubah).
 
@@ -7,37 +10,6 @@
    lebih sempit murni visual: kulit pil dipotong clip-path dari kiri sebesar --jb-clip, isi field digeser
    translateX yang sama, dan dock turun translateY setinggi disclaimer. Menganimasikan `width` (versi lama)
    memicu layout tiap frame + ResizeObserver autosize Mantine Textarea (baca layout paksa) = frame jatuh. */
-
-/* Offset bersama dock & tombol scroll-to-top: naik di atas FixedPlayerBar (±70px desktop, ±96px ponsel)
-   atau NowPlayingBar aplikasi Musik (88px, 72px di ≤734px). data-player = ada lagu (bar mungkin tampil). */
-.dockOffset {
-  --jenna-dock-right: 24px;
-  --jenna-dock-bottom: 24px;
-}
-
-.dockOffset[data-player="true"] {
-  --jenna-dock-bottom: 88px;
-}
-
-@media (max-width: 47.99em) {
-  .dockOffset {
-    --jenna-dock-right: 12px;
-    --jenna-dock-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  }
-  .dockOffset[data-player="true"] {
-    --jenna-dock-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
-  }
-}
-
-.dockOffset[data-musik="true"][data-player="true"] {
-  --jenna-dock-bottom: 100px;
-}
-
-@media (max-width: 734px) {
-  .dockOffset[data-musik="true"][data-player="true"] {
-    --jenna-dock-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
-  }
-}
 
 .dock {
   /* Tempo bar (setel di sini). Kurva lembut tapi tak mulai dari nol: frame pertama sudah bergerak ±6%
@@ -135,51 +107,6 @@
     --jb-w-exp: calc(100vw - 24px);
     --jb-drop: var(--jb-disc-h, 44px);
   }
-}
-
-/* ---------- Quick chat ---------- */
-
-.quickList {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  margin: 0 0 10px;
-  padding: 0;
-  list-style: none;
-  pointer-events: none; /* ruang kosong di samping pil tetap bisa diklik ke halaman */
-}
-
-.quick {
-  pointer-events: auto;
-  max-width: 100%;
-  margin: 0;
-  padding: 9px 14px;
-  border: 0;
-  border-radius: 18px;
-  font: inherit;
-  font-size: 14px;
-  line-height: 1.35;
-  text-align: left;
-  cursor: pointer;
-  animation: jb-rise var(--jb-dur-chip) var(--jb-ease) both;
-  animation-delay: calc(var(--jb-chip-delay) + var(--i, 0) * var(--jb-chip-stagger));
-  transition:
-    transform 150ms ease,
-    background-color 150ms ease;
-}
-
-.quickList .quick:hover {
-  background: linear-gradient(var(--jenna-glass-hover), var(--jenna-glass-hover)), var(--jenna-glass-bg); /* lapis, bukan ganti kaca */
-}
-
-.quick:active {
-  transform: scale(0.97);
-}
-
-.quick:disabled {
-  cursor: default;
-  opacity: 0.6;
 }
 
 /* ---------- Kartu bar ---------- */
@@ -363,110 +290,6 @@
   color: var(--jb-surface);
 }
 
-/* ---------- Suara: notice, persetujuan, kontrol ---------- */
-
-.notice {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  padding: 8px 8px 8px 18px;
-  border-bottom: 1px solid var(--jb-line);
-  background: var(--jb-notice);
-  font-size: 12px;
-  line-height: 1.45;
-  cursor: auto;
-}
-
-.consent {
-  padding: 14px 16px 10px 18px;
-  border-bottom: 1px solid var(--jb-line);
-  cursor: auto;
-}
-
-.voiceRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 8px 8px 18px;
-  cursor: auto;
-}
-
-/* ---------- Disclaimer ---------- */
-
-/* Selalu ada di layout (tinggi tetap → tak ada layout per frame); saat idle dock turun setinggi ini
-   (translateY) sehingga disclaimer berada di bawah dasar pil. Opasitas dianimasikan di chip itu sendiri:
-   opacity < 1 pada pembungkus menjadikannya backdrop root dan blur chip baru "muncul" di akhir animasi. */
-.disclaimerWrap {
-  padding-top: 8px;
-  pointer-events: none;
-}
-
-/* Chip buram tipis: disclaimer berada di atas konten halaman apa pun (foto hero, peta). */
-.disclaimer {
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 3px 10px;
-  border-radius: 10px;
-  background: var(--jb-chip);
-  backdrop-filter: blur(12px);
-  color: var(--jb-muted);
-  font-size: 11px;
-  line-height: 15px;
-  text-align: center;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity var(--jb-dur-fade-out) ease,
-    visibility 0s linear var(--jb-dur-fade-out);
-}
-
-.dock[data-mode="expanded"] .disclaimer,
-.dock[data-mode="room"] .disclaimer {
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity var(--jb-dur-fade-in) ease var(--jb-fade-delay),
-    visibility 0s;
-}
-
-/* ---------- Tombol scroll-to-top di atas bar ---------- */
-
-.scrollTop {
-  position: fixed;
-  right: var(--jenna-dock-right);
-  bottom: calc(var(--jenna-dock-bottom) + 48px + 12px);
-  z-index: 99;
-  pointer-events: none;
-  transition: bottom 200ms ease;
-}
-
-.scrollTopButton {
-  pointer-events: auto;
-  transition:
-    opacity 200ms ease,
-    transform 240ms var(--jb-ease, ease),
-    visibility 0s linear 0s;
-}
-
-.scrollTopButton[data-hidden="true"] {
-  opacity: 0;
-  transform: translateY(8px) scale(0.9);
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity 160ms ease,
-    transform 200ms ease,
-    visibility 0s linear 200ms;
-}
-
-@keyframes jb-rise {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-}
-
 @keyframes jb-fade {
   from {
     opacity: 0;
@@ -475,20 +298,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .dock,
-  .dock[data-ready="true"],
-  .scrollTop {
+  .dock[data-ready="true"] {
     transition: opacity 200ms ease;
   }
   .skin,
   .skin::before,
   .field {
     transition: none;
-  }
-  .quick {
-    animation-name: jb-fade;
-  }
-  .scrollTopButton,
-  .scrollTopButton[data-hidden="true"] {
-    transform: none;
   }
 }

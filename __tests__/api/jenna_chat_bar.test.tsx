@@ -152,8 +152,9 @@ describe('JennaWidget (render statis)', () => {
     expect(honeypot).toContain('name="website"');
     expect(honeypot).toContain('tabindex="-1"');
     expect(honeypot).toMatch(/autocomplete="off"/i);
-    // Disclaimer selalu ter-render (dianimasikan), tapi disembunyikan dari pembaca layar saat idle.
-    expect(html).toMatch(new RegExp(`aria-hidden="true"><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
+    // Disclaimer selalu ter-render (dianimasikan), tapi disembunyikan dari pembaca layar saat idle;
+    // data-shown menggerakkan CSS chip (jenna-disclaimer.module.css).
+    expect(html).toMatch(new RegExp(`data-shown="false" aria-hidden="true"><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
   });
 
   it('expanded: 3 quick chat sebagai tombol, hiasan ketik berganti petunjuk, disclaimer terbaca', () => {
@@ -163,7 +164,7 @@ describe('JennaWidget (render statis)', () => {
     expect(dockMode(html)).toBe('expanded');
     expect(html).toContain('aria-label="Pertanyaan cepat"');
     for (const q of JENNA_QUICK_CHATS) expect(html).toMatch(new RegExp(`<button type="button"[^>]*>${esc(q)}</button>`));
-    expect(html).toMatch(new RegExp(`aria-hidden="false"><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
+    expect(html).toMatch(new RegExp(`data-shown="true" aria-hidden="false"><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
     expect(countOf(html, JENNA_QUICK_CHATS[0])).toBe(1); // hanya pil
     expect(html).toMatch(/typing[^"]*" aria-hidden="true" data-show="false">/);
     expect(html).toMatch(/hint[^"]*" aria-hidden="true" data-show="true">/);
@@ -179,6 +180,7 @@ describe('JennaWidget (render statis)', () => {
     ];
     const html = wrap(<JennaWidget />);
     expect(dockMode(html)).toBe('room');
+    expect(html).toMatch(new RegExp(`data-shown="true" aria-hidden="false"><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
     expect(html).not.toContain('aria-label="Pertanyaan cepat"');
     expect(html).toContain('Jam buka?');
   });
