@@ -1,37 +1,58 @@
-import { ActionIcon, Box, Button, Group, Text, Textarea } from "@mantine/core";
-import { IconMicrophone, IconPlayerStopFilled, IconSend } from "@tabler/icons-react";
-import { useState } from "react";
+import { Textarea } from "@mantine/core";
+import { IconArrowUp, IconMicrophone, IconPlayerStopFilled } from "@tabler/icons-react";
+import type { Ref } from "react";
 import classes from "./jenna.module.css";
+import bar from "./jenna-bar.module.css";
+import { JENNA_INPUT_PLACEHOLDER, showCounter } from "./jenna-bar.logic";
+import typing from "./jenna-typing.module.css";
+import { JennaTypingPlaceholder } from "./JennaTypingPlaceholder";
 
 interface Props {
+  draft: string;
+  onDraftChange: (value: string) => void;
   maxChars: number;
   sending: boolean;
-  /** Nilai honeypot `website`, dipegang induk agar ikut terkirim dari chip saran & kirim ulang. */
+  /** Bar diam (idle): contoh pertanyaan diketik bergantian; selain itu tampil petunjuk "Tanya Jenna…". */
+  rotate: boolean;
+  /** Nilai honeypot `website`, dipegang induk agar ikut terkirim dari quick chat & kirim ulang di room. */
   website: string;
   onWebsiteChange: (value: string) => void;
   onSend: (text: string) => void;
   onStop: () => void;
+  onFocus: () => void;
+  inputRef?: Ref<HTMLTextAreaElement>;
   /** Label tombol mikrofon; tombol hanya tampil bila `onVoice` ada. */
   voiceLabel?: string;
   onVoice?: () => void;
 }
 
-export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onSend, onStop, voiceLabel, onVoice }: Props) {
-  const [draft, setDraft] = useState("");
+/** Isi pil chat bar: textarea autosize 1-4 baris, mikrofon (opsional), tombol kirim/berhenti bulat. */
+export function JennaComposer({
+  draft,
+  onDraftChange,
+  maxChars,
+  sending,
+  rotate,
+  website,
+  onWebsiteChange,
+  onSend,
+  onStop,
+  onFocus,
+  inputRef,
+  voiceLabel,
+  onVoice,
+}: Props) {
   const empty = draft.trim() === "";
+  const blank = draft === "";
 
   const submit = () => {
     if (empty || sending) return;
     onSend(draft.trim());
-    setDraft("");
   };
 
   return (
-    <Box
-      component="form"
-      p="sm"
-      bg="var(--jenna-surface)"
-      style={{ borderTop: "1px solid var(--jenna-line)" }}
+    <form
+      className={bar.row}
       onSubmit={(e) => {
         e.preventDefault();
         submit();
@@ -51,19 +72,21 @@ export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onS
           />
         </label>
       </div>
-      <Group gap="xs" align="flex-end" wrap="nowrap">
+      <div className={bar.field} data-blank={blank}>
         <Textarea
-          flex={1}
+          ref={inputRef}
+          variant="unstyled"
+          classNames={{ input: bar.input }}
           autosize
           minRows={1}
-          maxRows={5}
-          radius="md"
-          maxLength={maxChars}
-          placeholder="Tulis pertanyaan Anda…"
+          maxRows={4}
+          maxLength={maxChars || undefined}
+          placeholder={JENNA_INPUT_PLACEHOLDER}
           aria-label="Pertanyaan untuk Jenna"
-          data-autofocus
+          enterKeyHint="send"
           value={draft}
-          onChange={(e) => setDraft(e.currentTarget.value)}
+          onFocus={onFocus}
+          onChange={(e) => onDraftChange(e.currentTarget.value)}
           onKeyDown={(e) => {
             // Enter kirim, Shift+Enter baris baru; Enter yang memilih kandidat IME diabaikan.
             if (e.key !== "Enter" || e.shiftKey || e.nativeEvent.isComposing) return;
@@ -71,50 +94,52 @@ export function JennaComposer({ maxChars, sending, website, onWebsiteChange, onS
             submit();
           }}
         />
-        {sending ? (
-          <Button
-            type="button"
-            variant="light"
-            color="red.8"
-            radius="md"
-            leftSection={<IconPlayerStopFilled size={14} />}
-            onClick={onStop}
-          >
-            Berhenti
-          </Button>
-        ) : (
-          <Group gap={6} wrap="nowrap">
-            {onVoice && (
-              <ActionIcon
-                type="button"
-                size={36}
-                radius="xl"
-                variant="light"
-                color="var(--c-brand)"
-                aria-label={voiceLabel}
-                title={voiceLabel}
-                onClick={onVoice}
-              >
-                <IconMicrophone size={18} />
-              </ActionIcon>
-            )}
-            <ActionIcon
-              type="submit"
-              size={36}
-              radius="xl"
-              variant="filled"
-              color="var(--c-brand-fill)"
-              aria-label="Kirim pertanyaan"
-              disabled={empty}
-            >
-              <IconSend size={18} />
-            </ActionIcon>
-          </Group>
+        {/* Placeholder asli selalu transparan (tetap dibaca pembaca layar); dua hiasan ini bergantian memudar. */}
+        {blank && <JennaTypingPlaceholder active={rotate} />}
+        {blank && (
+          <span className={typing.hint} aria-hidden="true" data-show={!rotate}>
+            {JENNA_INPUT_PLACEHOLDER}
+          </span>
         )}
-      </Group>
-      <Text fz="xs" c={draft.length >= maxChars ? "var(--jenna-danger)" : "var(--jenna-text-3)"} ta="right" mt={4}>
-        {draft.length}/{maxChars}
-      </Text>
-    </Box>
+      </div>
+      {showCounter(draft.length, maxChars) && (
+        <span className={bar.counter} data-full={draft.length >= maxChars}>
+          {draft.length}/{maxChars}
+        </span>
+      )}
+      {onVoice && !sending && (
+        <button
+          type="button"
+          className={`${bar.round} ${bar.mic}`}
+          aria-label={voiceLabel}
+          title={voiceLabel}
+          onClick={onVoice}
+        >
+          <IconMicrophone size={19} stroke={1.8} />
+        </button>
+      )}
+      {sending ? (
+        <button
+          type="button"
+          className={`${bar.round} ${bar.send}`}
+          data-stop="true"
+          aria-label="Hentikan jawaban"
+          title="Hentikan jawaban"
+          onClick={onStop}
+        >
+          <IconPlayerStopFilled size={14} />
+        </button>
+      ) : (
+        <button
+          type="submit"
+          className={`${bar.round} ${bar.send}`}
+          data-ready={!empty}
+          aria-label="Kirim pertanyaan"
+          disabled={empty}
+        >
+          <IconArrowUp size={18} stroke={2.2} />
+        </button>
+      )}
+    </form>
   );
 }

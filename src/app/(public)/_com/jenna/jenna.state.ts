@@ -244,7 +244,10 @@ function reset() {
 }
 
 const jennaState = proxy({
+  /** Room percakapan (panel kaca di atas chat bar) terbuka. */
   open: false,
+  /** Chat bar memanjang (fokus/klik, quick chat tampil); dibaca juga tombol scroll-to-top. */
+  barExpanded: false,
   status: "loading" as JennaWidgetStatus,
   assistantName: "",
   maxInputChars: 0,

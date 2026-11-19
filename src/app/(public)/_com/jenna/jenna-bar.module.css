@@ -1,0 +1,482 @@
+/* Chat bar Jenna (gaya Fin): dock fixed kanan bawah berisi room (JennaRoom, milik jenna.module.css),
+   quick chat, kartu bar (notice/consent suara + composer atau kontrol suara), lalu disclaimer.
+   Lebar dock = var --jenna-dock-w (dibaca room); --jenna-room-bottom & --jb-disc-h diukur JennaWidget
+   (ResizeObserver, ditulis hanya saat berubah).
+
+   Animasi idle ↔ expanded TANPA layout per frame: lebar dock tetap selebar mode memanjang. Pil idle yang
+   lebih sempit murni visual: kulit pil dipotong clip-path dari kiri sebesar --jb-clip, isi field digeser
+   translateX yang sama, dan dock turun translateY setinggi disclaimer. Menganimasikan `width` (versi lama)
+   memicu layout tiap frame + ResizeObserver autosize Mantine Textarea (baca layout paksa) = frame jatuh. */
+
+/* Offset bersama dock & tombol scroll-to-top: naik di atas FixedPlayerBar (±70px desktop, ±96px ponsel)
+   atau NowPlayingBar aplikasi Musik (88px, 72px di ≤734px). data-player = ada lagu (bar mungkin tampil). */
+.dockOffset {
+  --jenna-dock-right: 24px;
+  --jenna-dock-bottom: 24px;
+}
+
+.dockOffset[data-player="true"] {
+  --jenna-dock-bottom: 88px;
+}
+
+@media (max-width: 47.99em) {
+  .dockOffset {
+    --jenna-dock-right: 12px;
+    --jenna-dock-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  .dockOffset[data-player="true"] {
+    --jenna-dock-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.dockOffset[data-musik="true"][data-player="true"] {
+  --jenna-dock-bottom: 100px;
+}
+
+@media (max-width: 734px) {
+  .dockOffset[data-musik="true"][data-player="true"] {
+    --jenna-dock-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.dock {
+  --jb-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --jb-surface: #fff;
+  --jb-line: rgba(0, 0, 0, 0.08);
+  /* drop-shadow (bukan box-shadow): bayangan mengikuti bentuk kulit yang dipotong clip-path. */
+  --jb-shadow: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.06));
+  --jb-ink: var(--c-ink);
+  --jb-ink-2: var(--c-ink-2);
+  --jb-muted: var(--c-muted);
+  --jb-soft: #e8e8ed; /* tombol kirim kosong & hover mikrofon */
+  --jb-soft-ink: #6e6e73;
+  --jb-notice: #fff6db;
+  --jb-danger: #c92a2a;
+  --jb-chip: rgba(255, 255, 255, 0.82);
+  --jb-w-idle: 340px;
+  --jb-w-exp: min(560px, calc(100vw - 48px));
+  /* Selisih lebar idle → memanjang: porsi kiri yang disembunyikan saat idle. */
+  --jb-shift: calc(var(--jb-w-exp) - var(--jb-w-idle));
+  --jb-clip: var(--jb-shift);
+  --jb-drop: var(--jb-disc-h, 29px);
+  --jenna-dock-w: var(--jb-w-exp);
+  position: fixed;
+  right: var(--jenna-dock-right);
+  bottom: var(--jenna-dock-bottom);
+  z-index: 99;
+  width: var(--jb-w-exp);
+  display: flex;
+  flex-direction: column;
+  color: var(--jb-ink);
+  pointer-events: none; /* area dock di luar pil/chip tembus ke halaman; bagian interaktif menyalakan lagi */
+  transform: translateY(var(--jb-drop));
+  transition:
+    bottom 200ms ease,
+    opacity 200ms ease,
+    visibility 0s linear 0s;
+
+  @mixin dark {
+    --jb-surface: var(--c-tile-alt);
+    --jb-line: rgba(255, 255, 255, 0.12);
+    --jb-shadow: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.4));
+    --jb-soft: rgba(255, 255, 255, 0.12);
+    --jb-soft-ink: #a1a1a6;
+    --jb-notice: rgba(250, 176, 5, 0.14);
+    --jb-danger: #ff8787;
+    --jb-chip: rgba(28, 28, 30, 0.8);
+  }
+}
+
+/* Setelah ukuran pertama terukur (JennaWidget) baru geser vertikal dianimasikan. */
+.dock[data-ready="true"] {
+  transition:
+    transform 280ms var(--jb-ease),
+    bottom 200ms ease,
+    opacity 200ms ease,
+    visibility 0s linear 0s;
+}
+
+.dock[data-mode="expanded"],
+.dock[data-mode="room"] {
+  --jb-clip: 0px;
+  --jb-drop: 0px;
+  transform: none; /* bukan translateY(0): transform aktif menjadikan dock containing block bagi turunan fixed */
+}
+
+.dock:focus,
+.dock:focus-visible {
+  outline: none; /* fokus terprogram setelah perkecil/Escape (tabIndex -1), bukan tujuan Tab */
+}
+
+/* Menu ponsel terbuka: dock disembunyikan (inert dipasang komponen). */
+.dock[data-hidden="true"] {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 200ms ease,
+    visibility 0s linear 200ms;
+}
+
+@media (max-width: 47.99em) {
+  .dock {
+    --jb-w-idle: min(calc(100vw - 24px), 300px);
+    --jb-w-exp: calc(100vw - 24px);
+    --jb-drop: var(--jb-disc-h, 44px);
+  }
+}
+
+/* ---------- Quick chat ---------- */
+
+.quickList {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  pointer-events: none; /* ruang kosong di samping pil tetap bisa diklik ke halaman */
+}
+
+.quick {
+  pointer-events: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 18px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  animation: jb-rise 320ms var(--jb-ease) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease;
+}
+
+.quickList .quick:hover {
+  background: var(--jenna-glass-hover, var(--jenna-glass-bg));
+}
+
+.quick:active {
+  transform: scale(0.97);
+}
+
+.quick:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* ---------- Kartu bar ---------- */
+
+/* Kartu selebar dock; hanya kulit (terpotong clip-path) dan kontrol yang menangkap klik. */
+.bar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 48px;
+  cursor: text;
+}
+
+.skinWrap {
+  position: absolute;
+  inset: 0;
+  filter: var(--jb-shadow);
+  pointer-events: none;
+}
+
+/* Kulit pil: lapisan garis tepi (warna garis di atas permukaan) + ::before permukaan 1px ke dalam.
+   Keduanya dipotong clip-path dengan --jb-clip yang sama sehingga tepi kiri pil bergeser tanpa layout. */
+.skin {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(var(--jb-line), var(--jb-line)), var(--jb-surface);
+  clip-path: inset(0 0 0 var(--jb-clip) round 24px);
+  pointer-events: auto; /* klik padding pil → fokus textarea (onMouseDown bar); clip-path ikut memotong area klik */
+  transition: clip-path 280ms var(--jb-ease);
+}
+
+.skin::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--jb-surface);
+  clip-path: inset(1px 1px 1px calc(var(--jb-clip) + 1px) round 23px);
+  transition: clip-path 280ms var(--jb-ease);
+}
+
+/* overflow memotong area klik field yang tergeser melewati tepi kanan saat idle; bukan leluhur room. */
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1px; /* ruang garis tepi kulit */
+  overflow: hidden;
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+.content > * {
+  pointer-events: auto;
+}
+
+.content > .row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 5px 5px 5px 18px;
+  pointer-events: none;
+}
+
+.row > * {
+  pointer-events: auto;
+}
+
+/* Lebar field tetap (textarea tak berubah lebar → autosize diam); saat idle hanya digeser ke tepi kiri pil. */
+.field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  transform: translateX(var(--jb-clip));
+  transition: transform 280ms var(--jb-ease);
+}
+
+/* Draf yang tertinggal saat idle: memudar sebelum tombol kirim (bagian kanan field tertutup). */
+.dock[data-mode="idle"] .field[data-blank="false"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - var(--jb-shift) - 24px), transparent calc(100% - var(--jb-shift)));
+}
+
+.field .input {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 0;
+  border: 0;
+  background: transparent;
+  color: var(--jb-ink);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 22px;
+  resize: none;
+  outline: none;
+}
+
+/* Placeholder asli selalu transparan (tetap dibaca pembaca layar); yang terlihat = .typing / .hint. */
+.field .input::placeholder {
+  color: transparent;
+}
+
+@media (max-width: 47.99em) {
+  .field .input {
+    font-size: 16px; /* < 16px membuat iOS Safari memperbesar halaman saat fokus */
+  }
+}
+
+.counter {
+  align-self: center;
+  padding: 0 4px;
+  color: var(--jb-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.counter[data-full="true"] {
+  color: var(--jb-danger);
+}
+
+.round {
+  position: relative; /* di atas field yang ber-transform (konteks tumpuk) saat idle */
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--jb-ink-2);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.round:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+.round:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.mic {
+  animation: jb-fade 200ms ease both;
+}
+
+@media (hover: hover) {
+  .mic:hover {
+    background: var(--jb-soft);
+  }
+}
+
+.send {
+  background: var(--jb-soft);
+  color: var(--jb-soft-ink);
+}
+
+.send:disabled {
+  cursor: default;
+}
+
+.send[data-ready="true"] {
+  background: var(--c-brand-fill);
+  color: var(--c-on-brand);
+}
+
+@media (hover: hover) {
+  .send[data-ready="true"]:hover {
+    background: var(--c-brand-fill-hover);
+  }
+}
+
+.send[data-stop="true"] {
+  background: var(--jb-ink);
+  color: var(--jb-surface);
+}
+
+/* ---------- Suara: notice, persetujuan, kontrol ---------- */
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 8px 8px 8px 18px;
+  border-bottom: 1px solid var(--jb-line);
+  background: var(--jb-notice);
+  font-size: 12px;
+  line-height: 1.45;
+  cursor: auto;
+}
+
+.consent {
+  padding: 14px 16px 10px 18px;
+  border-bottom: 1px solid var(--jb-line);
+  cursor: auto;
+}
+
+.voiceRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 18px;
+  cursor: auto;
+}
+
+/* ---------- Disclaimer ---------- */
+
+/* Selalu ada di layout (tinggi tetap → tak ada layout per frame); saat idle dock turun setinggi ini
+   (translateY) sehingga disclaimer berada di bawah dasar pil. Opasitas dianimasikan di chip itu sendiri:
+   opacity < 1 pada pembungkus menjadikannya backdrop root dan blur chip baru "muncul" di akhir animasi. */
+.disclaimerWrap {
+  padding-top: 8px;
+  pointer-events: none;
+}
+
+/* Chip buram tipis: disclaimer berada di atas konten halaman apa pun (foto hero, peta). */
+.disclaimer {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 3px 10px;
+  border-radius: 10px;
+  background: var(--jb-chip);
+  backdrop-filter: blur(12px);
+  color: var(--jb-muted);
+  font-size: 11px;
+  line-height: 15px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 160ms ease,
+    visibility 0s linear 160ms;
+}
+
+.dock[data-mode="expanded"] .disclaimer,
+.dock[data-mode="room"] .disclaimer {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 220ms ease 60ms,
+    visibility 0s;
+}
+
+/* ---------- Tombol scroll-to-top di atas bar ---------- */
+
+.scrollTop {
+  position: fixed;
+  right: var(--jenna-dock-right);
+  bottom: calc(var(--jenna-dock-bottom) + 48px + 12px);
+  z-index: 99;
+  pointer-events: none;
+  transition: bottom 200ms ease;
+}
+
+.scrollTopButton {
+  pointer-events: auto;
+  transition:
+    opacity 200ms ease,
+    transform 240ms var(--jb-ease, ease),
+    visibility 0s linear 0s;
+}
+
+.scrollTopButton[data-hidden="true"] {
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 160ms ease,
+    transform 200ms ease,
+    visibility 0s linear 200ms;
+}
+
+@keyframes jb-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes jb-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock,
+  .dock[data-ready="true"],
+  .scrollTop {
+    transition: opacity 200ms ease;
+  }
+  .skin,
+  .skin::before,
+  .field {
+    transition: none;
+  }
+  .quick {
+    animation-name: jb-fade;
+  }
+  .scrollTopButton,
+  .scrollTopButton[data-hidden="true"] {
+    transform: none;
+  }
+}
