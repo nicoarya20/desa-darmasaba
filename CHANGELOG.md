@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.329] - 2026-11-19
+### Changed
+- **Beranda lebih ringan dan cepat dimuat, terutama di ponsel.** Data bagian beranda di bawah layar (Kabar Desa, APBDes, Prestasi, Layanan & Potensi, Anti Korupsi, SDGs, Indeks Kepuasan) kini baru diambil saat pengunjung menggulir mendekatinya, sehingga foto Perbekel di bagian atas tidak lagi berebut jaringan dengan belasan permintaan sekaligus. Tampilan tiap bagian tidak berubah.
+- Ikon media sosial dan logo Program Inovasi di beranda kini diunduh seukuran tampilnya, bukan berkas asli 720 sampai 1920 piksel (logo terbesar 216 KB menjadi sekitar 14 sampai 33 KB).
+- Lambang desa, logo Pudak, dan poster video Prestasi kini berformat WebP seukuran tampil. Lambang desa tidak lagi diunduh dua kali; total gambar ini di beranda turun dari 432 KB menjadi sekitar 200 KB.
+- Gaya (CSS) yang wajib dimuat sebelum halaman tampil kini lebih kecil di semua halaman publik: gaya animasi yang tidak terpakai dihapus, dan gaya editor teks, unggah berkas, kalender, grafik, dan notifikasi admin hanya dimuat di halaman yang memakainya.
+- Daftar lagu Musik Desa tidak lagi diunduh di setiap halaman, hanya saat aplikasi Musik dibuka. Lagu yang sedang diputar tetap berlanjut saat pindah halaman.
+
 ## [0.1.328] - 2026-11-19
 ### Changed
 - **Penanda menu aktif di sidebar admin kini berupa garis lurus berujung bulat di depan teks**, menggantikan border kiri yang ikut melengkung di sudut. Berlaku untuk menu induk (mis. "Ekonomi") dan submenu (mis. "UMKM & Pasar Desa"); latar item tetap membulat penuh dan teks tidak bergeser. Varian tema gelap (biru langit lembut `#60A5FA`, kontras 7:1) sudah disiapkan untuk nanti.
