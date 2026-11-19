@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
+import { bentukFotoRespons, FOTO_PEMBANGUNAN_INCLUDE } from "@/lib/kegiatan-pembangunan-foto";
 
 async function kegiatanDesaFindUnique(context: Context) {
   const { id } = context.params as { id: string };
@@ -14,6 +15,7 @@ async function kegiatanDesaFindUnique(context: Context) {
       include: {
         kategoriKegiatan: true,
         image: true,
+        ...FOTO_PEMBANGUNAN_INCLUDE,
       },
     });
 
@@ -24,7 +26,7 @@ async function kegiatanDesaFindUnique(context: Context) {
     return {
       success: true,
       message: "Berhasil ambil kegiatan desa",
-      data,
+      data: bentukFotoRespons(data),
     };
   } catch (e) {
     console.error("Error di kegiatanDesaFindUnique:", e);

@@ -6,16 +6,31 @@ import { IconPhotoPlus, IconUpload, IconX } from '@tabler/icons-react';
 import { toast } from 'react-toastify';
 import { GAMBAR_ACCEPT, GAMBAR_MAX_BYTES, type GaleriItem } from '../_lib/lampiran.logic';
 
-type Props = { items: GaleriItem[]; max: number; onAdd: (files: File[]) => void; onRemove: (key: string) => void };
+type Props = {
+  items: GaleriItem[];
+  max: number;
+  onAdd: (files: File[]) => void;
+  onRemove: (key: string) => void;
+  /** Default "Galeri Gambar (opsional)". */
+  label?: string;
+  disabled?: boolean;
+};
 
 /** Uploader galeri gambar tambahan pengumuman (opsional): dropzone, grid thumbnail, hapus per gambar. */
-export function GaleriGambarUploader({ items, max, onAdd, onRemove }: Props) {
+export function GaleriGambarUploader({
+  items,
+  max,
+  onAdd,
+  onRemove,
+  label = 'Galeri Gambar (opsional)',
+  disabled = false,
+}: Props) {
   const penuh = items.length >= max;
   return (
     <Box>
       <Group justify="space-between" mb={6}>
         <Text fw="bold" fz="sm">
-          Galeri Gambar (opsional)
+          {label}
         </Text>
         <Text fz="xs" c="dimmed">
           {items.length}/{max} gambar
@@ -27,7 +42,7 @@ export function GaleriGambarUploader({ items, max, onAdd, onRemove }: Props) {
         maxSize={GAMBAR_MAX_BYTES}
         accept={GAMBAR_ACCEPT}
         multiple
-        disabled={penuh}
+        disabled={penuh || disabled}
         radius="md"
         p="md"
       >
@@ -74,6 +89,7 @@ export function GaleriGambarUploader({ items, max, onAdd, onRemove }: Props) {
                 top={5}
                 right={5}
                 aria-label={`Hapus gambar galeri ${index + 1}`}
+                disabled={disabled}
                 onClick={() => onRemove(item.key)}
               >
                 <IconX size={14} />

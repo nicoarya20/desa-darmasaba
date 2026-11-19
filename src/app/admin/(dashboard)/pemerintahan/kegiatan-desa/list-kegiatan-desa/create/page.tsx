@@ -28,7 +28,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
+import DokumentasiPembangunanFields, { PeringatanFotoNonPembangunan } from '../../_com/DokumentasiPembangunanFields';
 import PembangunanFields from '../../_com/PembangunanFields';
+import { useFotoPembangunan } from '../../_lib/useFotoPembangunan';
 
 const isHtmlEmpty = (html: string) => html.replace(/<[^>]*>/g, '').trim() === '';
 
@@ -38,6 +40,8 @@ export default function CreateKegiatanDesa() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fotoPembangunan = useFotoPembangunan();
+  const isPembangunan = kegiatanState.kegiatan.create.form.kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID;
 
   useShallowEffect(() => {
     kegiatanState.kategoriKegiatan.findMany.load();
@@ -59,6 +63,7 @@ export default function CreateKegiatanDesa() {
     kegiatanState.kegiatan.create.resetForm();
     setPreviewImage(null);
     setFile(null);
+    fotoPembangunan.reset();
   };
 
   const handleSubmit = async () => {
@@ -78,6 +83,16 @@ export default function CreateKegiatanDesa() {
         const uploaded = res.data?.data;
         if (!uploaded?.id) return toast.error('Gagal mengunggah gambar');
         kegiatanState.kegiatan.create.form.imageId = uploaded.id;
+      }
+
+      // Foto Pembangunan hanya diunggah & dikirim bila kategori Pembangunan (API mengosongkannya untuk kategori lain).
+      const form = kegiatanState.kegiatan.create.form;
+      form.fotoSebelumIds = undefined;
+      form.fotoSesudahIds = undefined;
+      if (isPembangunan) {
+        const hasil = await fotoPembangunan.unggah();
+        if (!hasil.ok) return;
+        Object.assign(form, hasil.body);
       }
 
       const success = await kegiatanState.kegiatan.create.create();
@@ -162,11 +177,16 @@ export default function CreateKegiatanDesa() {
             allowDecimal={false}
           />
 
-          {kegiatanState.kegiatan.create.form.kategoriKegiatanId === KATEGORI_PEMBANGUNAN_ID && (
+          {isPembangunan && (
             <PembangunanFields
               values={kegiatanState.kegiatan.create.form}
               onChange={(patch) => Object.assign(kegiatanState.kegiatan.create.form, patch)}
             />
+          )}
+          {isPembangunan ? (
+            <DokumentasiPembangunanFields api={fotoPembangunan} />
+          ) : (
+            <PeringatanFotoNonPembangunan api={fotoPembangunan} />
           )}
 
           <Textarea
@@ -188,7 +208,8 @@ export default function CreateKegiatanDesa() {
           </Box>
 
           <Box>
-            <Text fw="bold" fz="sm" mb={6}>Gambar (Opsional)</Text>
+            <Text fw="bold" fz="sm">Gambar Sampul (Opsional)</Text>
+            <Text fz="xs" c="dimmed" mb={6}>Tampil sebagai gambar utama di daftar dan detail kegiatan.</Text>
             <Dropzone
               onDrop={(files) => {
                 const f = files[0];
@@ -250,10 +271,10 @@ export default function CreateKegiatanDesa() {
               onClick={handleSubmit}
               radius="md"
               size="md"
-              disabled={!isFormValid() || isSubmitting}
+              disabled={!isFormValid() || isSubmitting || fotoPembangunan.mengunggah}
               style={{
                 background:
-                  !isFormValid() || isSubmitting
+                  !isFormValid() || isSubmitting || fotoPembangunan.mengunggah
                     ? 'linear-gradient(135deg, #cccccc, #eeeeee)'
                     : `linear-gradient(135deg, ${colors['blue-button']}, #4facfe)`,
                 color: '#fff',

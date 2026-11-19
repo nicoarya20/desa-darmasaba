@@ -1,8 +1,23 @@
 # Changelog
 
-## [0.1.323] - 2026-11-19
+## [0.1.324] - 2026-11-19
 ### Fixed
 - **Subjudul halaman SDGs Desa kini terbaca jelas di tema gelap.** Kalimat "Pembangunan berkelanjutan yang inklusif, adil, dan berdaya saing di tingkat desa" sebelumnya berwarna abu tua di atas latar hitam sehingga nyaris tak terbaca (kontras 2,6:1, di bawah standar keterbacaan 4,5:1). Kini di tema gelap warnanya abu terang (kontras 8,2:1). Tema terang tidak berubah.
+
+## [0.1.323] - 2026-11-19
+### Added
+- **Impor data UMKM lewat CSV.** Di admin Ekonomi > UMKM & Pasar Desa > Data UMKM ada tombol "Impor CSV". Admin bisa mengunduh template, memilih berkas (maks 2 MB, 1000 baris), lalu melihat pratinjau jumlah yang akan ditambah, diperbarui, atau dilewati beserta daftar baris bermasalah sebelum mengimpor. Kolom wajib: nama, pemilik, kategori; opsional: deskripsi, alamat, kontak. Kategori dicocokkan berdasarkan nama dan harus sudah ada.
+- **Impor produk UMKM lewat CSV.** Di tab Produk ada tombol "Impor CSV" dengan alur yang sama (template, pratinjau, impor semua-atau-tidak-sama-sekali). Kolom wajib: nama, umkm, kategori, harga; opsional: pemilik (untuk UMKM bernama sama), stok, satuan, deskripsi, unggulan, dan **link toko online** per platform (Shopee, Tokopedia, TikTok Shop, Blibli, Lazada, lainnya; harus https, maksimal 5 per produk). Harga diterima sebagai "15000", "15.000", atau "Rp 15.000"; desimal dan notasi ilmiah Excel ditolak. UMKM dan kategori harus sudah ada. Pada mode perbarui, link toko online yang diisi menggantikan seluruh daftar link produk itu.
+- Dua mode impor: **lewati** UMKM yang sudah ada (nama + pemilik sama) atau **perbarui** datanya (sel kosong tidak menimpa data lama). Impor berjalan semua-atau-tidak-sama-sekali: satu baris tidak valid membatalkan seluruh impor.
+- **Kegiatan Desa kategori Pembangunan kini bisa punya dokumentasi foto.** Di form tambah dan ubah kegiatan, saat kategori "Pembangunan" dipilih muncul bagian "Dokumentasi Pembangunan" berisi **Foto Sebelum** dan **Foto Sesudah**, masing-masing bisa diisi sampai 5 foto. Semuanya opsional: kegiatan tetap bisa disimpan tanpa foto. Foto berformat JPG, PNG, atau WebP, maksimal 5 MB per foto.
+- **Halaman detail kegiatan menampilkan "Dokumentasi Pembangunan"** bila ada minimal satu foto: kolom Sebelum dan Sesudah berdampingan (bertumpuk di ponsel). Kelompok yang kosong tidak ditampilkan, dan tanpa foto sama sekali bagian ini tidak muncul.
+
+### Changed
+- Pembaca CSV dipindah ke modul bersama (`src/lib/csv/parse-csv.ts`) dan dipakai juga oleh impor Penerima Program Kemiskinan, UMKM, dan Produk; perilakunya tidak berubah.
+- **Kolom "Jumlah" di Sektor Unggulan Desa kini tidak wajib.** Admin bisa menyimpan sektor unggulan (tambah maupun ubah) tanpa mengisi angka; kolom dibiarkan kosong dan tidak lagi otomatis terisi 0. Sektor tanpa angka tetap tampil di halaman publik, hanya tanpa nilainya.
+- Kolom "Jumlah" kini menerima angka 0 dan angka desimal (sebelumnya angka di bawah 1 ditolak).
+- Input gambar lama di form Kegiatan Desa kini berlabel **"Gambar Sampul (Opsional)"** beserta keterangan bahwa gambar itu tampil sebagai gambar utama di daftar dan detail kegiatan, supaya tidak tertukar dengan foto dokumentasi Pembangunan.
+- Foto yang diganti atau dihapus dari kegiatan Pembangunan ikut dibersihkan dari penyimpanan setelah data berhasil disimpan. Memindahkan kegiatan ke kategori selain Pembangunan mengosongkan foto dokumentasinya.
 
 ## [0.1.322] - 2026-11-19
 ### Fixed

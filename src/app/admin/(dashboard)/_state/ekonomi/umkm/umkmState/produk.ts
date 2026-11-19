@@ -39,6 +39,7 @@ const produk = proxy({
     page: 1,
     totalPages: 1,
     loading: false,
+    search: "",
     async load(
       page = 1,
       limit = 10,
@@ -49,6 +50,7 @@ const produk = proxy({
     ) {
       this.loading = true;
       this.page = page;
+      this.search = search;
       try {
         const params = new URLSearchParams({
           page: page.toString(),
