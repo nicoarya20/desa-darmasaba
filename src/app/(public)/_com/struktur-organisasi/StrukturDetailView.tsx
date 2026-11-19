@@ -8,14 +8,14 @@ import { STRUKTUR_DETAIL_TEXT as T } from './struktur.text';
 
 const AVATAR_SIZE = 160;
 
-/** Kerangka halaman profil: tombol kembali lalu kartu putih terpusat. */
+/** Kerangka halaman profil: latar halaman, tombol kembali, lalu kartu ubin terpusat. */
 export function StrukturDetailFrame({ children }: { children: ReactNode }) {
   return (
-    <Box px={{ base: 'md', md: 100 }} py="xl">
+    <Box px={{ base: 'md', md: 100 }} py="xl" className={s.page}>
       <Group mb="lg">
         <BackButton />
       </Group>
-      <Paper w={{ base: '100%', md: '70%' }} mx="auto" p="xl" radius="lg" shadow="sm" className={s.paper}>
+      <Paper w={{ base: '100%', md: '70%' }} mx="auto" p="xl" radius="lg" className={s.paper}>
         {children}
       </Paper>
     </Box>

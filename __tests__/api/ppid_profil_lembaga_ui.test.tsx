@@ -17,6 +17,7 @@ const { sanitize, profilePPID, lembaga } = vi.hoisted(() => ({
 
 vi.mock('dompurify', () => ({ default: { sanitize } }));
 vi.mock('valtio/utils', () => ({ useProxy: <T,>(x: T) => x }));
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => ({ currentSong: null }) })); // test-only: ScrollToTopButton membaca useMusic, provider hanya ada di root layout
 vi.mock('next-view-transitions', () => ({ useTransitionRouter: () => ({ back: vi.fn() }) }));
 vi.mock('@/app/admin/(dashboard)/_state/ppid/profile_ppid/profile_PPID', () => ({ default: { profile: profilePPID } }));
 vi.mock('@/app/admin/(dashboard)/_state/ppid/profil_lembaga/profilLembaga', () => ({ default: { find: lembaga } }));

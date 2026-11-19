@@ -9,6 +9,7 @@ import {
   Button,
   Group,
   Loader,
+  NumberInput,
   Paper,
   Stack,
   Text,
@@ -20,7 +21,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
-import { PERIODE_MAX_LENGTH, SATUAN_MAX_LENGTH } from '@/lib/sektor-unggulan';
+import { parseSektorValueInput, PERIODE_MAX_LENGTH, SATUAN_MAX_LENGTH } from '@/lib/sektor-unggulan';
 
 function EditSektorUnggulanDesa() {
   const router = useRouter();
@@ -30,18 +31,27 @@ function EditSektorUnggulanDesa() {
   const id = params.id;
 
   // state lokal buat form
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    value: number | null;
+    satuan: string;
+    periode: string;
+  }>({
     name: '',
     description: '',
-    value: 0,
+    value: null,
     satuan: '',
     periode: '',
   });
 
-  const [originalData, setOriginalData] = useState({
+  // Teks mentah NumberInput (mis. "1.") — dipisah dari formData.value agar desimal bisa diketik
+  const [valueInput, setValueInput] = useState<number | string>('');
+
+  const [originalData, setOriginalData] = useState<typeof formData>({
     name: '',
     description: '',
-    value: 0,
+    value: null,
     satuan: '',
     periode: '',
   });
@@ -57,9 +67,7 @@ function EditSektorUnggulanDesa() {
   const isFormValid = () => {
     return (
       formData.name?.trim() !== '' &&
-      !isHtmlEmpty(formData.description) &&
-      formData.value !== null &&
-      formData.value >= 0
+      !isHtmlEmpty(formData.description)
     );
   };
 
@@ -74,14 +82,15 @@ function EditSektorUnggulanDesa() {
             setFormData({
               name: data.name || '',
               description: data.description || '',
-              value: data.value || 0,
+              value: data.value ?? null,
               satuan: data.satuan || '',
               periode: data.periode || '',
             });
+            setValueInput(data.value ?? '');
             setOriginalData({
               name: data.name || '',
               description: data.description || '',
-              value: data.value || 0,
+              value: data.value ?? null,
               satuan: data.satuan || '',
               periode: data.periode || '',
             });
@@ -95,10 +104,9 @@ function EditSektorUnggulanDesa() {
   }, [id]);
 
   const handleChange =
-    (field: keyof typeof formData) =>
+    (field: 'name' | 'satuan' | 'periode') =>
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = field === 'value' ? Number(e.currentTarget.value) : e.currentTarget.value;
-        setFormData((prev) => ({ ...prev, [field]: value }));
+        setFormData((prev) => ({ ...prev, [field]: e.currentTarget.value }));
       };
 
   const handleSubmit = async () => {
@@ -125,6 +133,7 @@ function EditSektorUnggulanDesa() {
       satuan: originalData.satuan,
       periode: originalData.periode,
     });
+    setValueInput(originalData.value ?? '');
     toast.info('Form dikembalikan ke data awal');
   };
 
@@ -171,13 +180,17 @@ function EditSektorUnggulanDesa() {
               }
             />
           </Box>
-          <TextInput
+          <NumberInput
             label="Jumlah"
-            type="number"
+            description="Opsional. Kosongkan bila sektor ini belum punya angka."
             placeholder="Masukkan jumlah"
-            value={formData.value}
-            onChange={handleChange('value')}
-            required
+            min={0}
+            allowNegative={false}
+            value={valueInput}
+            onChange={(val) => {
+              setValueInput(val);
+              setFormData((prev) => ({ ...prev, value: parseSektorValueInput(val) }));
+            }}
           />
           <TextInput
             label="Satuan"

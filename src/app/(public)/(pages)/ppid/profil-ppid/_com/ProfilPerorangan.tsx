@@ -12,7 +12,7 @@ type Props = { item: NonNullable<typeof stateProfilePPID.profile.data> };
 export function ProfilPerorangan({ item }: Props) {
   return (
     <Box px={{ base: 'md', md: 100 }}>
-      <Paper p="xl" bg="var(--profil-kaca)" radius="lg" shadow="xl">
+      <Paper p="xl" bg="var(--c-tile)" radius="lg">
         {/* LOGO & TITLE */}
         <Box px={{ base: 'md', md: 100 }}>
           <Center>
@@ -44,7 +44,7 @@ export function ProfilPerorangan({ item }: Props) {
           <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
             {/* FOTO + NAMA — sticky di layout 2 kolom agar kolom kanan yang panjang tak menyisakan ruang kosong */}
             <Box px={{ base: 0, md: 50 }} className={classes.photoColumn}>
-              <Paper bg="var(--profil-kaca)" radius="xl" shadow="md" withBorder>
+              <Paper bg="var(--c-tile-alt)" radius="xl" shadow="md" withBorder>
                 <Stack gap={0}>
                   <Image
                     pt={{ base: 0, md: 100 }}

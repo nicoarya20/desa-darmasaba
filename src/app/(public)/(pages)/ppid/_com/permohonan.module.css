@@ -1,6 +1,6 @@
 /*
  * Halaman permohonan PPID (permohonan informasi & keberatan): alur bernomor + kartu formulir.
- * Satu lapis permukaan: alur dan kontak langsung di atas latar halaman, hanya formulir yang berkartu putih.
+ * Satu lapis permukaan: alur dan kontak langsung di atas latar halaman (var(--c-bg) PpidPage), hanya formulir yang berkartu ubin.
  * Breakpoint 2 kolom ditulis literal 75em (= lg tema Mantine); $mantine-breakpoint-lg postcss bernilai 80em.
  */
 .layout {
@@ -8,8 +8,10 @@
   --permohonan-muted: var(--c-ink-2);
   /* Garis penghubung nomor alur: biru-abu di terang, biru redup (pita hero gelap) di gelap. */
   --permohonan-line: light-dark(#8ba8c1, #3d5a78);
-  /* Kartu formulir: putih di terang, ubin --c-tile di gelap. */
-  --permohonan-card: light-dark(#fff, var(--c-tile));
+  /* Kartu formulir: ubin --c-tile (#f5f5f7 / #1d1d1f) di atas latar putih/hitam, pola ubin Kabar; isian Mantine
+     tetap berlatar sendiri (putih terang, gelap bawaan) sehingga terbaca di atas ubin. Hanya dipakai PermohonanFormCard
+     PPID (Inovasi memakai InovasiFormCard sendiri). */
+  --permohonan-card: var(--c-tile);
   /* Navbar desktop 44px + jarak 32px. */
   --permohonan-sticky-top: calc(44px + 32px);
   display: grid;

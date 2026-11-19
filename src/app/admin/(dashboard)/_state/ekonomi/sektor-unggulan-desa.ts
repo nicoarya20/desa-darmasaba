@@ -7,10 +7,10 @@ import { proxy } from "valtio";
 import { z } from "zod";
 import { PERIODE_MAX_LENGTH, SATUAN_MAX_LENGTH } from "@/lib/sektor-unggulan";
 
-const templateGrafikSektorUnggulan = z.object({
+export const templateGrafikSektorUnggulan = z.object({
   name: z.string().min(2, "Nama harus diisi"),
   description: z.string().min(2, "Deskripsi harus diisi"),
-  value: z.number().min(1, "Nilai harus diisi"),
+  value: z.number().finite().nullable(),
   satuan: z.string().max(SATUAN_MAX_LENGTH, `Satuan maksimal ${SATUAN_MAX_LENGTH} karakter`).optional(),
   periode: z.string().max(PERIODE_MAX_LENGTH, `Periode maksimal ${PERIODE_MAX_LENGTH} karakter`).optional(),
 });
@@ -19,7 +19,7 @@ interface SektorUnggulanForm {
   id?: string;
   name: string;
   description: string;
-  value: number;
+  value: number | null;
   satuan?: string;
   periode?: string;
 }
@@ -27,7 +27,7 @@ interface SektorUnggulanForm {
 const defaultForm: SektorUnggulanForm = {
   name: "",
   description: "",
-  value: 0,
+  value: null,
   satuan: "",
   periode: "",
 };

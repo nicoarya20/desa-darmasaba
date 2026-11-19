@@ -11,6 +11,7 @@ vi.mock('next-view-transitions', () => ({
   useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn() }),
 }));
 vi.mock('valtio/utils', () => ({ useProxy: <T,>(x: T) => x }));
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => ({ currentSong: null }) })); // test-only: ScrollToTopButton membaca useMusic, provider hanya ada di root layout
 const ppid = vi.hoisted(() => ({
   pegawai: { findMany: { data: null, load: vi.fn(() => Promise.resolve()) } },
   posisi: { findManyAll: { data: null, load: vi.fn(() => Promise.resolve()) } },

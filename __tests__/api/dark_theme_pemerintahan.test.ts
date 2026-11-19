@@ -9,8 +9,6 @@ import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import colors from '@/con/colors';
-
 const ROOT = path.resolve(__dirname, '../../src/app/(public)/(pages)/pemerintahan');
 const READ = (rel: string) => readFileSync(path.join(ROOT, rel), 'utf8');
 /** Isi CSS tanpa komentar (komentar boleh menyebut hex/nama variabel). */
@@ -77,15 +75,8 @@ describe('sisi terang light-dark = nilai lama', () => {
   const CASES: [string, string, string, string, string][] = [
     ['event-budaya/_com/kalender.module.css', '.page', '--sunday', '#c8102e', '#ff453a'],
     ['event-budaya/_com/kalender.module.css', '.page', '--day-outside', '#c7c7cc', '#7c7c80'],
-    ['galery/_lib/galery.module.css', '.vars', '--galery-band', colors['BG-trans'].toLowerCase(), '#13283a'],
-    ['galery/_lib/galery.module.css', '.vars', '--galery-surface', colors['white-1'].toLowerCase(), 'var(--c-tile)'],
-    ['galery/_lib/galery.module.css', '.vars', '--galery-card', colors['white-trans-1'], 'rgba(255, 255, 255, 0.06)'],
-    ['profil/_com/profil.module.css', '.sections', '--vm-card', 'rgb(255 255 255 / 0.5)', 'rgb(255 255 255 / 0.06)'],
-    ['profil/_com/profil.module.css', '.sections', '--card-edge', 'rgb(255 255 255 / 0.7)', 'rgb(255 255 255 / 0.08)'],
-    ['profil/_com/profil.module.css', '.sections', '--p-rule', '#b1bdd1', 'rgb(255 255 255 / 0.16)'],
-    ['profil/ui/perbekel.module.css', '.photoCard', 'background', '#f5f7fb', 'var(--c-tile)'],
+    ['profil/_com/profil.module.css', '.sections', '--p-rule', 'var(--c-line-strong)', 'rgb(255 255 255 / 0.16)'],
     ['profil/ui/riwayat-perbekel.module.css', '.photo', 'background', '#dfe5ef', 'var(--c-placeholder)'],
-    ['potensi/_com/potensi.module.css', '.card', 'background', '#fff', 'var(--c-tile)'],
   ];
 
   it.each(CASES)('%s %s %s', (file, selector, prop, light, dark) => {
@@ -97,6 +88,83 @@ describe('sisi terang light-dark = nilai lama', () => {
     expect(sections).toContain('--brand: var(--c-brand);');
     expect(sections).toContain('--p-text: var(--c-ink);');
     expect(sections).toContain('--p-muted: var(--c-ink-2);');
+  });
+});
+
+describe('Profil Desa di atas latar halaman --c-bg (bukan --c-hero-bg): kartu = ubin', () => {
+  // Rencana: MIND/PLAN/plan-latar-putih-ppid-pemerintahan.md. Kartu putih semi-transparan hilang di atas putih.
+  // test-only: [file, selector, latar ubin].
+  const TILES: [string, string, string][] = [
+    ['profil/_com/profil.module.css', '.card', 'var(--c-tile)'],
+    ['profil/_com/profil.module.css', '.skeleton', 'var(--c-tile)'],
+    ['profil/ui/riwayat-perbekel.module.css', '.card', 'var(--c-tile)'],
+    // Ubin bertingkat di dalam kartu --c-tile.
+    ['profil/ui/media.module.css', '.side', 'var(--c-tile-alt)'],
+    ['profil/ui/media.module.css', '.petaPdf', 'var(--c-tile-alt)'],
+    ['profil/ui/perbekel.module.css', '.photoCard', 'var(--c-tile-alt)'],
+  ];
+
+  it.each(TILES)('%s %s', (file, selector, bg) => {
+    const body = block(CSS(file), selector);
+    expect(body).toContain(`background: ${bg};`);
+    expect(body).not.toContain('rgb(255 255 255');
+  });
+
+  it('kartu ubin tanpa garis tepi kaca & bayangan (pola ubin Kabar/Kesehatan)', () => {
+    for (const [file, selector] of [['profil/_com/profil.module.css', '.card'], ['profil/ui/riwayat-perbekel.module.css', '.card']]) {
+      const body = block(CSS(file), selector);
+      expect(body).not.toMatch(/\bborder:/);
+      expect(body).not.toContain('box-shadow');
+    }
+  });
+
+  it('.sections tidak menimpa --vm-card, kartu Visi Misi bersama memakai bawaannya (--c-tile)', () => {
+    expect(CSS('profil/_com/profil.module.css')).not.toMatch(/--vm-card|--card-edge/);
+  });
+});
+
+describe('Potensi, Galeri, detail Berita di atas latar halaman --c-bg (bukan --c-hero-bg)', () => {
+  // Rencana: MIND/PLAN/plan-latar-putih-ppid-pemerintahan.md. Permukaan putih / putih transparan hilang di atas putih.
+  // test-only: halaman yang dulu berlatar --c-hero-bg (atau tanpa latar sendiri = abu shell).
+  const PAGES = [
+    'potensi/page.tsx',
+    'potensi/[id]/page.tsx',
+    'galery/_lib/layoutTabs.tsx',
+    'galery/video/[id]/page.tsx',
+    'berita/layout.tsx',
+  ];
+
+  it.each(PAGES)('%s berlatar var(--c-bg)', (file) => {
+    const src = READ(file);
+    expect(src).toContain('bg="var(--c-bg)"');
+    expect(src).not.toContain('--c-hero-bg');
+  });
+
+  it('detail berita memakai latar layout (tanpa latar biru sendiri)', () => {
+    expect(READ('berita/[kategori]/[id]/page.tsx')).not.toContain('--c-hero-bg');
+  });
+
+  // test-only: [file, selector, properti, nilai token].
+  const SURFACES: [string, string, string, string][] = [
+    ['galery/_lib/galery.module.css', '.vars', '--galery-band', 'var(--c-brand-tint)'],
+    ['galery/_lib/galery.module.css', '.vars', '--galery-card', 'var(--c-tile)'],
+    ['galery/_lib/galery.module.css', '.vars', '--galery-surface', 'var(--c-tile)'],
+    ['galery/_lib/galery.module.css', '.vars', '--galery-surface-2', 'var(--c-tile-alt)'],
+    ['potensi/_com/potensi.module.css', '.card', 'background', 'var(--c-tile)'],
+    ['potensi/_com/potensi.module.css', '.placeholder', 'background', 'var(--c-tile)'],
+    ['potensi/_com/potensi-header.module.css', '.chip', 'background', 'var(--c-tile)'],
+  ];
+
+  it.each(SURFACES)('%s %s %s', (file, selector, prop, value) => {
+    expect(block(CSS(file), selector)).toContain(`${prop}: ${value};`);
+  });
+
+  it('kartu foto galeri memakai ubin --galery-card', () => {
+    expect(READ('galery/foto/page.tsx')).toContain('bg="var(--galery-card)"');
+  });
+
+  it('kartu Potensi tanpa bayangan diam (pola ubin Kabar); bayangan hanya saat hover', () => {
+    expect(block(CSS('potensi/_com/potensi.module.css'), '.card')).not.toMatch(/box-shadow\s*:/);
   });
 });
 

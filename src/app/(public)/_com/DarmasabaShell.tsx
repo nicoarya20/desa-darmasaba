@@ -41,8 +41,15 @@ export function DarmasabaShell({ children }: { children: React.ReactNode }) {
                 <ImageErrorRetry />
                 <Navbar />
                 <Space h={NAV_SPACER_HEIGHT} />
-                {/* Aplikasi Musik mengatur tingginya sendiri dan tanpa footer, jadi tidak diberi tinggi minimum. */}
-                <Box mih={isMusikApp ? undefined : CONTENT_MIN_HEIGHT}>{children}</Box>
+                {/*
+                  Aplikasi Musik mengatur tingginya sendiri dan tanpa footer, jadi tidak diberi tinggi minimum.
+                  Latar kotak konten = latar section (--c-bg), bukan --c-page shell: halaman yang lebih pendek dari
+                  tinggi minimum tidak lagi memperlihatkan pita abu kosong di atas footer. Beranda melukis --c-page
+                  sendiri di akarnya.
+                */}
+                <Box mih={isMusikApp ? undefined : CONTENT_MIN_HEIGHT} bg="var(--c-bg)">
+                    {children}
+                </Box>
                 {!isMusikApp && (
                     <>
                         <Footer />

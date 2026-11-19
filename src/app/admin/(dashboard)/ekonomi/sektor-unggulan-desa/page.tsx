@@ -93,7 +93,7 @@ function ListSektorUnggulanDesa({ search }: { search: string }) {
           id: item.id,
           name: item.name,
           description: item.description,
-          value: Number(item.value),
+          value: item.value,
         }))
       );
     }

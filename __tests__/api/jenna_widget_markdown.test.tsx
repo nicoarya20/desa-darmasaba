@@ -5,8 +5,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { classifyHref, parseJennaMarkdown } from '@/app/(public)/_com/jenna/jenna-markdown.logic';
 import { JennaMarkdown } from '@/app/(public)/_com/jenna/JennaMarkdown';
-import { JennaPanel } from '@/app/(public)/_com/jenna/JennaPanel';
-import { JENNA_DISCLAIMER, JENNA_SUGGESTIONS } from '@/app/(public)/_com/jenna/JennaMessages';
+import { JennaRoom } from '@/app/(public)/_com/jenna/JennaRoom';
+import { JENNA_DISCLAIMER, JENNA_QUICK_CHATS } from '@/app/(public)/_com/jenna/jenna-bar.logic';
 import jennaState from '@/app/(public)/_com/jenna/jenna.state';
 
 const render = (text: string) => renderToStaticMarkup(<MantineProvider><JennaMarkdown text={text} /></MantineProvider>);
@@ -89,30 +89,51 @@ describe('JennaMarkdown', () => {
   });
 });
 
-describe('JennaPanel (render statis)', () => {
-  const renderPanel = () =>
+describe('JennaRoom (render statis)', () => {
+  const renderRoom = (open = true) =>
     renderToStaticMarkup(
       <MantineProvider>
-        <JennaPanel title={<h2>Jenna</h2>} onClose={() => {}} getPageContext={() => ({ route: '/', title: 'Beranda' })} />
+        <JennaRoom open={open} onCollapse={() => {}} sendCtx={() => ({ pageContext: { route: '/', title: 'Beranda' } })} />
       </MantineProvider>,
     );
+  const buttonTag = (html: string, label: string) => new RegExp(`<button[^>]*aria-label="${label}"[^>]*>`).exec(html)?.[0] ?? '';
 
-  it('keadaan kosong: disclaimer, 4 chip saran, honeypot tersembunyi, penghitung karakter', () => {
+  it('header: judul ber-id sebagai nama region, subjudul, dua tombol berlabel; reset nonaktif saat kosong', () => {
     jennaState.reset();
-    jennaState.maxInputChars = 500;
-    const html = renderPanel();
-    expect(html).toContain(JENNA_DISCLAIMER);
-    expect(JENNA_SUGGESTIONS).toHaveLength(4);
-    for (const s of JENNA_SUGGESTIONS) expect(html).toContain(s);
-    const honeypot = /<div[^>]*aria-hidden="true"[^>]*><label>Website(<input[^>]*>)/.exec(html)?.[1] ?? '';
-    expect(honeypot).toContain('name="website"');
-    expect(honeypot).toContain('tabindex="-1"');
-    expect(honeypot).toMatch(/autocomplete="off"/i);
-    expect(html).toContain('0/500');
-    expect(html).toContain('Mulai baru');
+    jennaState.assistantName = 'Jenna';
+    const html = renderRoom();
+    const titleId = /<h2[^>]*id="([^"]+)"[^>]*>Jenna<\/h2>/.exec(html)?.[1];
+    expect(titleId).toBeTruthy();
+    expect(html).toContain(`aria-labelledby="${titleId}"`);
+    expect(html).toContain('Asisten Desa Darmasaba');
+    expect(buttonTag(html, 'Mulai percakapan baru')).toMatch(/disabled/);
+    const collapse = buttonTag(html, 'Perkecil percakapan');
+    expect(collapse).not.toBe('');
+    expect(collapse).not.toMatch(/disabled/);
   });
 
-  it('pesan: sumber sebagai link aman, error dengan tombol Kirim ulang + hitung mundur, aria-live', () => {
+  it('room tidak lagi memuat saran, disclaimer, maupun komposer', () => {
+    jennaState.reset();
+    const html = renderRoom();
+    expect(html).not.toContain(JENNA_DISCLAIMER);
+    for (const s of JENNA_QUICK_CHATS) expect(html).not.toContain(s);
+    expect(html).not.toContain('<textarea');
+    expect(html).not.toContain('name="website"');
+  });
+
+  it('terbuka vs tertutup: tertutup = inert + aria-hidden, terbuka tanpa keduanya', () => {
+    jennaState.reset();
+    const closed = /<section[^>]*>/.exec(renderRoom(false))?.[0] ?? '';
+    expect(closed).toContain('aria-hidden="true"');
+    expect(closed).toMatch(/\sinert(=""|\s|>)/);
+    expect(closed).toContain('data-open="false"');
+    const opened = /<section[^>]*>/.exec(renderRoom(true))?.[0] ?? '';
+    expect(opened).not.toMatch(/\sinert(=""|\s|>)/);
+    expect(opened).toContain('aria-hidden="false"');
+    expect(opened).toContain('data-open="true"');
+  });
+
+  it('pesan: tombol reset aktif, sumber sebagai link aman, error dengan Kirim ulang + hitung mundur, aria-live', () => {
     jennaState.messages = [
       { id: 'u1', role: 'user', text: 'Jam buka?', status: 'done' },
       {
@@ -125,17 +146,32 @@ describe('JennaPanel (render statis)', () => {
           { title: 'Jahat', url: 'javascript:alert(1)' },
         ],
       },
-      { id: 'u2', role: 'user', text: 'Lagi', status: 'done' },
+      { id: 'u2', role: 'user', text: 'Lagi', status: 'done', modality: 'voice' },
       { id: 'a2', role: 'assistant', text: 'Jenna sedang sibuk.', status: 'error', errorCode: 'busy', retryAt: Date.now() + 10_000 },
     ];
-    const html = renderPanel();
+    const html = renderRoom();
+    expect(buttonTag(html, 'Mulai percakapan baru')).not.toMatch(/disabled/);
+    expect(html).toContain('Jam buka?');
+    expect(html).toContain('<strong>08.00</strong>');
+    expect(html).toContain('aria-label="Diucapkan"');
     expect(html).toContain('Sumber');
     expect(html).toContain('href="/pemerintahan/profil"');
     expect(html).not.toContain('javascript:');
     expect(html).toContain('Jahat');
-    expect(html).toContain('Kirim ulang');
+    expect(html).toMatch(/<button[^>]*disabled[^>]*>.*Kirim ulang<\/button>/);
     expect(html).toMatch(/coba lagi dalam (9|10) detik/);
     expect(html).toMatch(/aria-live="polite"[^>]*>Jenna sedang sibuk\.</);
+    jennaState.reset();
+  });
+
+  it('jawaban sedang disiapkan: status memuat berperan status dengan teks server', () => {
+    jennaState.messages = [
+      { id: 'u1', role: 'user', text: 'Agenda?', status: 'done' },
+      { id: 'a1', role: 'assistant', text: '', status: 'streaming' },
+    ];
+    jennaState.statusText = 'Mencari agenda…';
+    const html = renderRoom();
+    expect(html).toMatch(/role="status"[^>]*>.*Mencari agenda…/);
     jennaState.reset();
   });
 });

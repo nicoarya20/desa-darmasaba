@@ -44,3 +44,25 @@ describe('DarmasabaShell — tinggi minimum konten', () => {
     expect(html).not.toContain('data-test="footer"');
   });
 });
+
+/** Atribut style div pembungkus langsung `<main data-test="konten">` (kotak konten shell). */
+const contentBoxStyle = (html: string) => html.match(/<div style="([^"]*)"[^>]*><main data-test="konten"/)?.[1] ?? null;
+
+describe('DarmasabaShell — latar kotak konten', () => {
+  beforeEach(() => {
+    pathname = '/kesehatan/puskesmas';
+  });
+
+  // Halaman yang lebih pendek dari tinggi minimum dulu memperlihatkan latar --c-page shell (abu) sebagai pita
+  // kosong di atas footer; kotak konten kini melukis latar section --c-bg sendiri.
+  it('kotak konten berlatar --c-bg, shell tetap --c-page', () => {
+    const html = render();
+    expect(contentBoxStyle(html)).toContain('background:var(--c-bg)');
+    expect(html).toMatch(/<div style="[^"]*background:var\(--c-page\)"[^>]*class="[^"]*mantine-Stack-root/);
+  });
+
+  it('aplikasi Musik Desa: kotak konten juga --c-bg (sama dengan --m-bg aplikasi)', () => {
+    pathname = '/musik/musik-desa/jelajahi';
+    expect(contentBoxStyle(render())).toContain('background:var(--c-bg)');
+  });
+});

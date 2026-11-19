@@ -1,11 +1,15 @@
 /*
- * Kartu profil pegawai (StrukturDetailView): terang = nilai lama (kartu putih, garis #eaeaea, label c="dark" Mantine);
- * gelap = token --c-* (theme-tokens.css). `c="dark"` Mantine di gelap = dark-4 (#424245, garis) sehingga label tak
- * terbaca, maka warna label dipindah ke kelas ini.
+ * Halaman profil pegawai (StrukturDetail/StrukturDetailView): latar halaman --c-bg seperti menu lain, kartu = ubin
+ * --c-tile tanpa garis tepi dan bayangan (pola ubin Kabar). `c="dark"` Mantine di gelap = dark-4 (#424245, garis)
+ * sehingga label tak terbaca, maka warna label dipindah ke kelas ini.
  */
+.page {
+  min-height: 100vh;
+  background: var(--c-bg);
+}
+
 .paper {
-  border: 1px solid light-dark(#eaeaea, var(--c-line));
-  background: light-dark(#fff, var(--c-tile));
+  background: var(--c-tile);
 }
 
 .ring {

@@ -18,8 +18,8 @@
  */
 import { EASE_OUT, EASE_PUSH, GATE_PUSH_SCALE, GATE_PUSH_SHIFT_VW, MAX_SCENE_SCALE, wallShiftPx, type GateMetrics, type GateStep } from "../splash/gate-splash.timeline";
 
-/** Durasi total transisi (disetujui user di prototipe, 2026-11-18). */
-export const THEME_TRANSITION_TOTAL_MS = 5000;
+/** Durasi total transisi: 5 dtk (2026-11-18) dipersingkat ke 3 dtk atas masukan rekan tim user (2026-11-19). */
+export const THEME_TRANSITION_TOTAL_MS = 3000;
 /** Total prototipe; semua waktu di bawah ditulis pada skala ini lalu diskalakan ke THEME_TRANSITION_TOTAL_MS. */
 const PROTOTYPE_TOTAL_MS = 3750;
 

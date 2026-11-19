@@ -1,6 +1,7 @@
 /*
  * PUSTU — bagian khusus di atas kerangka artikel kabar-detail.module.css (kolom 860px): ubin info
- * (alamat, jam, kontak, kontak darurat), kartu layanan unggulan, tarif BPJS vs umum, dan kartu daftar.
+ * (alamat, jam, kontak, kontak darurat), kartu layanan unggulan, dan tarif BPJS vs umum. Daftar memakai
+ * kepala kabar-list + kartu kecil Kabar (kabar.module.css .card); di sini hanya teks isi kartunya.
  * Variabel warna dari .section kabar.module.css. Breakpoint apple.com: ≤734px.
  */
 
@@ -81,9 +82,18 @@
   letter-spacing: 0.02em;
 }
 
+/* Sapuan warna link-reveal (.trigger + .cta), tanpa garis bawah; selebar teksnya saja, bukan selebar ubin. */
 .emailLink {
+  align-self: flex-start;
   color: var(--brand);
   font-size: 17px;
+  text-decoration: none;
+}
+
+.emailLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* ---------- Blok bagian ---------- */
@@ -93,11 +103,12 @@
   gap: 16px;
 }
 
+/* Sama dengan judul blok detail lain (Kegiatan Desa, Posyandu, Pengumuman): 24px tebal. */
 .blockTitle {
   margin: 0;
-  font-size: 28px;
-  line-height: 1.2;
-  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.17;
+  font-weight: 700;
   color: var(--ink);
 }
 
@@ -140,40 +151,17 @@
   letter-spacing: 0.02em;
 }
 
-/* ---------- Daftar ---------- */
-.listHead {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.listTitle {
-  margin: 0;
-  font-size: 48px;
-  line-height: 1.1;
-  font-weight: 700;
+/* ---------- Daftar: tautan aksi di dasar kartu (kartu sebaris sama tinggi → CTA sejajar) ---------- */
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 8px;
   color: var(--brand);
-}
-
-.listLead {
-  margin: 0;
-  font-size: 19px;
-  color: var(--muted);
-}
-
-.listPhoto {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 12px;
-}
-
-.listLink {
-  margin-top: 8px;
-  color: var(--brand);
-  font-weight: 600;
   font-size: 15px;
+  font-weight: 500;
 }
 
 @media (max-width: 734px) {
@@ -184,17 +172,5 @@
 
   .tile {
     padding: 18px;
-  }
-
-  .blockTitle {
-    font-size: 24px;
-  }
-
-  .listTitle {
-    font-size: 32px;
-  }
-
-  .listLead {
-    font-size: 17px;
   }
 }

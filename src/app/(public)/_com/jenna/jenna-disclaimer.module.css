@@ -1,0 +1,39 @@
+/* Disclaimer di bawah chat bar (JennaWidget). Token --jb-* (chip, muted, tempo fade) diwarisi dari .dock
+   jenna-bar.module.css; tinggi pembungkus diukur JennaWidget sebagai --jb-disc-h. */
+
+/* Selalu ada di layout (tinggi tetap → tak ada layout per frame); saat idle dock turun setinggi ini
+   (translateY) sehingga disclaimer berada di bawah dasar pil. Opasitas dianimasikan di chip itu sendiri:
+   opacity < 1 pada pembungkus menjadikannya backdrop root dan blur chip baru "muncul" di akhir animasi. */
+.disclaimerWrap {
+  padding-top: 8px;
+  pointer-events: none;
+}
+
+/* Chip buram tipis: disclaimer berada di atas konten halaman apa pun (foto hero, peta). */
+.disclaimer {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 3px 10px;
+  border-radius: 10px;
+  background: var(--jb-chip);
+  backdrop-filter: blur(12px);
+  color: var(--jb-muted);
+  font-size: 11px;
+  line-height: 15px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--jb-dur-fade-out) ease,
+    visibility 0s linear var(--jb-dur-fade-out);
+}
+
+/* data-shown dipasang JennaWidget (mode bukan idle); selektor lintas modul ke .dock tidak bisa (hash beda). */
+.disclaimerWrap[data-shown="true"] .disclaimer {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--jb-dur-fade-in) ease var(--jb-fade-delay),
+    visibility 0s;
+}

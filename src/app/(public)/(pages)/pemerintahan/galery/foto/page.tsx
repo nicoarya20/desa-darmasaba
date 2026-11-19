@@ -51,6 +51,7 @@ function FotoCard({ item, aboveFold }: { item: any; aboveFold: boolean }) {
         shadow="sm"
         radius="md"
         p={0}
+        bg="var(--galery-card)"
         role="button"
         tabIndex={0}
         aria-label={`Lihat detail foto ${judul}`}
