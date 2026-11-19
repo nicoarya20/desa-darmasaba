@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.318] - 2026-11-19
+### Changed
+- **Halaman menu PPID dan Pemerintahan kini berlatar putih seperti menu lain.** Sebelumnya halaman PPID (Profil, Struktur, Visi Misi, Dasar Hukum, kedua formulir Permohonan, Daftar Informasi Publik, Indeks Kepuasan Masyarakat) serta Profil Desa, Struktur Perangkat Desa, Potensi, Galeri, detail Berita, detail Prestasi, dan halaman "permohonan berhasil" berlatar biru keabuan, sehingga terasa berbeda dari menu lain. Kartu yang dulu putih di atas latar biru kini berupa panel abu muda (seperti di Kabar Desa dan Kesehatan) agar tetap terlihat di atas putih; pita tab Galeri kini biru muda lembut. Pada tema gelap halaman-halaman ini berlatar hitam seperti menu lain. Tata letak dan isi tidak berubah.
+
 ## [0.1.317] - 2026-11-19
 ### Fixed
 - **Bagian atas beranda tidak lagi "melompat" saat data media sosial dan profil Perbekel tiba.** Penyebab sebenarnya ditemukan lewat pengukuran rapat: deretan ikon media sosial (Instagram, TikTok, YouTube, dan lainnya) tidak menyisakan ruang selama datanya dimuat, lalu muncul dan mendorong foto Perbekel, kartu nama, dan daftar program ke bawah sekitar 64 piksel; selain itu kerangka pemuatan foto Perbekel tidak menyertakan kartu nama sehingga tinggi bagian atas bertambah saat data tiba. Kini ruang untuk keduanya disisakan sejak awal dengan ukuran yang sama seperti tampilan akhirnya. Tampilan akhir tidak berubah. (Nilai pergeseran 0,16 di PageSpeed mobile sebelumnya di atas batas baik 0,1.)
