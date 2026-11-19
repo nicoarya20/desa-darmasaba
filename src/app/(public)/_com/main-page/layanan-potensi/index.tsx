@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState, type FocusEvent } from "reac
 import { useSnapshot } from "valtio";
 import { GalleryControls } from "./GalleryControls";
 import { GalleryRow, type GalleryItem } from "./GalleryRow";
-import { useNearViewport } from "./use-near-viewport";
+import { FETCH_ROOT_MARGIN, useNearViewport } from "../../lazy-load/use-near-viewport";
 import s from "./gallery.module.css";
 import { GALLERY_TEXT } from "./gallery.text";
 import { useLoopCarousel } from "./use-loop-carousel";
@@ -27,12 +27,17 @@ function toItems(data: readonly ApiItem[] | null, base: string, format: (name: s
 function LayananPotensi() {
   const layananSnap = useSnapshot(stateLayananDesa.suratKeterangan.findMany);
   const potensiSnap = useSnapshot(potensiDesaState.potensiDesa.findMany);
+  // Dua pengamat terpisah: data diminta lebih awal (FETCH_ROOT_MARGIN, dua layar) daripada foto (600px), supaya
+  // daftar kartu sudah ada saat foto mulai dimuat. Pengamat data dipasang di judul karena `ref` foto memakai <section>.
+  const [titleRef, dataNear] = useNearViewport<HTMLHeadingElement>(FETCH_ROOT_MARGIN);
 
   useEffect(() => {
+    // Tunda sampai section mendekati layar: saat beranda dibuka jaringan diprioritaskan untuk hero (foto LCP).
+    if (!dataNear) return;
     // load() menangani error sendiri (data → [] + log), jadi tidak perlu catch di sini.
     void stateLayananDesa.suratKeterangan.findMany.load();
     void potensiDesaState.potensiDesa.findMany.load();
-  }, []);
+  }, [dataNear]);
 
   const layanan = useMemo(
     () => toItems(layananSnap.data as ApiItem[] | null, "/pemerintahan/layanan", startCase),
@@ -92,7 +97,7 @@ function LayananPotensi() {
 
   return (
     <section ref={sectionRef} className={s.section} aria-roledescription="carousel" aria-labelledby="layanan-potensi-title">
-      <h2 id="layanan-potensi-title" className={s.title}>
+      <h2 ref={titleRef} id="layanan-potensi-title" className={s.title}>
         {GALLERY_TEXT.title}
       </h2>
 

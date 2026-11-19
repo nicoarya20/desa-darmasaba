@@ -3,12 +3,26 @@ import { loadPrestasiPage, type PrestasiPage } from "./prestasi.source";
 
 type Result = PrestasiPage & { key: string; failed: boolean };
 
-/** Data gabungan prestasi + penghargaan per halaman; hasil lama tetap tampil selama halaman baru dimuat. */
-export function usePrestasiData({ page, pageSize, search = "" }: { page: number; pageSize: number; search?: string }) {
+/**
+ * Data gabungan prestasi + penghargaan per halaman; hasil lama tetap tampil selama halaman baru dimuat.
+ * `enabled` false menunda fetch (beranda: sampai section mendekati layar) dan `loading` tetap true.
+ */
+export function usePrestasiData({
+  page,
+  pageSize,
+  search = "",
+  enabled = true,
+}: {
+  page: number;
+  pageSize: number;
+  search?: string;
+  enabled?: boolean;
+}) {
   const key = `${page}|${pageSize}|${search}`;
   const [result, setResult] = useState<Result | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
     loadPrestasiPage({ page, pageSize, search }).then(
       (data) => {
@@ -22,7 +36,7 @@ export function usePrestasiData({ page, pageSize, search = "" }: { page: number;
     return () => {
       cancelled = true;
     };
-  }, [key, page, pageSize, search]);
+  }, [enabled, key, page, pageSize, search]);
 
   return {
     items: result?.items ?? [],

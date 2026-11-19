@@ -1,6 +1,7 @@
 "use client";
 
 import { useDisclosure } from "@mantine/hooks";
+import { FETCH_ROOT_MARGIN, useNearViewport } from "../../lazy-load/use-near-viewport";
 import { CtaButton } from "./components/CtaButton";
 import { LazyKepuasanCharts } from "./components/KepuasanCharts.lazy";
 import { KepuasanEmpty } from "./components/KepuasanEmpty";
@@ -12,11 +13,13 @@ import { useKepuasanData } from "./use-kepuasan-data";
 
 /** Section beranda: hasil survei kepuasan (grafik bulanan + komposisi) dan form "Ajukan Responden". */
 function Kepuasan() {
-  const { data, total, summary } = useKepuasanData();
+  // Fetch ditunda sampai section mendekati layar agar tidak berebut jaringan dengan foto hero (LCP).
+  const [sectionRef, near] = useNearViewport<HTMLElement>(FETCH_ROOT_MARGIN);
+  const { data, total, summary } = useKepuasanData(near);
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
-    <section className={s.section} aria-labelledby="kepuasan-title">
+    <section ref={sectionRef} className={s.section} aria-labelledby="kepuasan-title">
       <div className={s.inner}>
         <header className={s.header}>
           <h2 id="kepuasan-title" className={s.title}>
@@ -39,7 +42,9 @@ function Kepuasan() {
         )}
       </div>
 
-      <RespondenFormModal opened={opened} onClose={close} />
+      {/* Modal memuat 3 daftar opsi saat dipasang; ditunda bersama data section. Tombol pembukanya baru ada di dalam
+          section ini, jadi modal selalu terpasang sebelum bisa dibuka (opsi tetap siap saat dibuka seperti dulu). */}
+      {near ? <RespondenFormModal opened={opened} onClose={close} /> : null}
     </section>
   );
 }

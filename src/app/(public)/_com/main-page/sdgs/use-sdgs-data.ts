@@ -12,11 +12,12 @@ async function loadTopSdgs(): Promise<SdgsItem[]> {
   return pickTopSdgs(readSdgsList(await res.json()), SDGS_TOP_LIMIT);
 }
 
-/** Tujuan SDGs Desa berskor tertinggi untuk section beranda. */
-export function useSdgsData(): SdgsState {
+/** Tujuan SDGs Desa berskor tertinggi untuk section beranda; fetch dimulai saat `enabled` menyala (`loading` true sampai itu). */
+export function useSdgsData(enabled: boolean): SdgsState {
   const [state, setState] = useState<SdgsState>(INITIAL);
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
     loadTopSdgs().then(
       (items) => {
@@ -30,7 +31,7 @@ export function useSdgsData(): SdgsState {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [enabled]);
 
   return state;
 }

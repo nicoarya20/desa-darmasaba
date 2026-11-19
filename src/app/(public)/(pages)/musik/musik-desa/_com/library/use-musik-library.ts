@@ -4,7 +4,7 @@ import { deriveArtists, deriveGenres, playIntent, toTrack, withGenreLabels } fro
 import type { Track } from './musik.types';
 
 /**
- * Pustaka siap tampil dari `useMusic()` (mesin sudah memuat saat mount, jadi tidak fetch ulang di sini).
+ * Pustaka siap tampil dari `useMusic()` (diminta oleh MusikApp lewat `ensureMusikData()`, jadi tidak fetch di sini).
  * `currentId` = lagu yang sedang dipilih; `onPlay` = jeda/lanjut bila sama, putar bila beda; `onRetry` = muat ulang
  * setelah gagal (`loadError`).
  */
