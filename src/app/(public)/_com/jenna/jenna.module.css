@@ -1,8 +1,11 @@
-/* Material kaca Jenna (room + pil quick chat milik bar). Warna literal, bukan token --c-*: kaca
-   selalu kontras terhadap tema (terang = kaca GELAP teks putih, gelap = kaca TERANG REMANG teks gelap),
-   jadi --c-ink yang ikut tema tidak bisa dipakai. Kontras teks diukur di latar terburuk (kaca di atas
-   putih untuk tema terang, di atas hitam untuk tema gelap): terang ink 6,7:1 · ink-2 4,9:1;
-   gelap ink 6,8:1 · ink-2 5,5:1. Hanya `backdrop-filter` (Lightning CSS menambah prefix -webkit-). */
+/* Material kaca Jenna (room + pil quick chat milik bar). Warna literal, bukan token --c-*: kaca tidak
+   ikut --c-ink tema. Terang = kaca GELAP teks putih. Gelap = material gelap gaya Apple: kabut putih tipis
+   (gradien 12%) di atas kaca gelap 80%, teks putih. Kaca terang di tema gelap dulu menjadi lempeng abu
+   besar yang menyilaukan di atas halaman hitam (keluhan user 2026-11-19), jadi diganti varian A ini.
+   Kontras teks diukur di latar terburuk: terang (kaca di atas putih) ink 6,7:1 · ink-2 4,9:1;
+   gelap (di atas putih / hitam) ink 6,4:1 / 12,7:1 · ink-2 4,6:1 / 8,4:1 · teks di pil pengunjung
+   4,6:1 / 8,2:1. --jenna-glass-bg boleh berlapis (gradien + warna): semua pemakainya `background:`.
+   Hanya `backdrop-filter` (Lightning CSS menambah prefix -webkit-). */
 .glass {
   --jenna-glass-bg: rgba(28, 28, 30, 0.72);
   --jenna-glass-ink: #fff;
@@ -16,12 +19,12 @@
   color: var(--jenna-glass-ink);
 
   @mixin dark {
-    --jenna-glass-bg: rgba(206, 206, 212, 0.8);
-    --jenna-glass-ink: #1d1d1f;
-    --jenna-glass-ink-2: rgba(0, 0, 0, 0.72);
-    --jenna-glass-line: rgba(0, 0, 0, 0.12);
-    --jenna-glass-fill: rgba(0, 0, 0, 0.1);
-    --jenna-glass-hover: rgba(0, 0, 0, 0.08);
+    --jenna-glass-bg: linear-gradient(rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12)), rgba(28, 28, 30, 0.8);
+    --jenna-glass-ink: #fff;
+    --jenna-glass-ink-2: rgba(255, 255, 255, 0.78);
+    --jenna-glass-line: rgba(255, 255, 255, 0.14);
+    --jenna-glass-fill: rgba(255, 255, 255, 0.14); /* pil pengunjung "lebih terang" dari kaca gelap */
+    --jenna-glass-hover: rgba(255, 255, 255, 0.12);
   }
 }
 
@@ -213,21 +216,17 @@
   color: var(--jenna-glass-ink-2);
 }
 
-/* Galat: teks tetap ink kaca (kontras), ditandai rona merah + garis; terang 6,3:1, gelap 6,1:1. */
+/* Galat: teks tetap ink kaca (kontras), ditandai rona merah + garis. Kaca gelap di kedua tema, jadi satu
+   nilai: terang 6,3:1; gelap 6,0:1 (di atas putih) / 10,4:1 (di atas hitam). */
 .msgError {
   align-self: flex-start;
   max-width: 92%;
   padding: 10px 14px;
   border-radius: 18px;
-  background: rgba(255, 69, 58, 0.2);
+  background: rgba(255, 69, 58, 0.2); /* tema-tetap: rona galat di atas kaca gelap, kaca gelap di kedua tema */
   box-shadow: inset 0 0 0 1px rgba(255, 105, 97, 0.55);
   color: var(--jenna-glass-ink);
   overflow-wrap: anywhere;
-
-  @mixin dark {
-    background: rgba(255, 69, 58, 0.18);
-    box-shadow: inset 0 0 0 1px rgba(215, 0, 21, 0.45);
-  }
 }
 
 .msgRetry {
@@ -246,7 +245,8 @@
 
 @media (hover: hover) {
   .msgRetry:hover:not(:disabled) {
-    background: var(--jenna-glass-hover);
+    /* Hover dilapis di atas fill pil (bukan mengganti) supaya pil tetap sepekat normal + sedikit lebih terang. */
+    background: linear-gradient(var(--jenna-glass-hover), var(--jenna-glass-hover)), var(--jenna-glass-fill);
   }
 }
 
