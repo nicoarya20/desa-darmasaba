@@ -1,14 +1,5 @@
-// Kontak resmi kantor desa & identitas pengelola website: satu sumber untuk footer publik dan halaman PPID.
-// Sumber data: kop "Struktur Organisasi PPID Desa Darmasaba" (Drive desa, MENU_PPID, 16 Nov 2026).
-// Nomor WhatsApp layanan/PPID belum diberikan desa, jadi sengaja tidak dicantumkan (jangan isi nomor contoh).
-
-/** Kontak resmi Kantor Perbekel Desa Darmasaba. */
-export const KONTAK_DESA = {
-  namaKantor: 'Kantor Perbekel Desa Darmasaba',
-  alamat: 'Jl. Raya Darmasaba – Lukluk, Desa Darmasaba, Kec. Abiansemal, Kab. Badung, Bali 80352',
-  telepon: '(0361) 8441518',
-  email: 'ddarmasaba@gmail.com',
-} as const;
+// Identitas pengelola website untuk footer publik. Kontak resmi kantor desa (nama, alamat, telepon, email) bukan lagi
+// konstanta: diedit admin di Profil Desa > Kontak Desa dan dibaca dari API (src/lib/kontak-desa.ts).
 
 /** Satu anggota tim redaksi website (nama & jabatan saja, tanpa kontak pribadi). */
 export type AnggotaRedaksi = { nama: string; jabatan: string };

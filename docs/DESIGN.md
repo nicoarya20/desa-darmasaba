@@ -1505,6 +1505,14 @@ Halaman ini **tidak punya grafik/form sendiri**: `page.tsx` hanya merangkai kera
 
 ---
 
+### Indeks Desa Membangun (`/pemerintahan/indeks-desa`)
+
+Kerangka Kabar Desa: `.section` + `KabarListHeader` `tabs=[]` `searchable={false}`, lalu isi per keadaan (`IndeksDesaContent`, diekspor untuk test). Folder `(pages)/pemerintahan/indeks-desa/`: `page.tsx` → `_com/IndeksDesaPage.tsx`, `IndeksDesaRingkasan.tsx` (tahun terbaru + 3 kartu dimensi IKS/IKE/IKL), `IndeksDesaRiwayat.tsx` (tabel per tahun), `indeks-desa.{source,logic,text}.ts`, `indeks-desa.module.css`.
+- **Data**: satu `ApiFetch` `desa/indeksdesa/find-many?page=1&limit=100` lewat `useLoadOnce`; baris pertama = tahun terbaru (API mengurutkan tahun menurun). Tanpa pustaka grafik: batang skor = CSS murni (`--w` persen, `aria-hidden`; angka selalu tertulis di teks).
+- **Keadaan**: memuat = `StatBarsSkeleton`; galat = `StatBarsError` (`role="alert"`); tanpa data = `StatBarsEmpty` "Data Indeks Desa belum tersedia" (tanpa angka 0 atau tabel kosong).
+- **Angka**: skor tampil 4 desimal berkoma (`formatSkor`); status ditampilkan apa adanya dari admin (tidak dihitung dari skor). Ponsel (≤734px): baris riwayat jadi blok bertumpuk berlabel (`data-label`), tanpa geser horizontal.
+- Test: `__tests__/api/indeks_desa_{public_ui,menu}.test.ts(x)`.
+
 ## 6. Layout Admin (`/admin/`)
 
 File: `src/app/admin/layout.tsx`

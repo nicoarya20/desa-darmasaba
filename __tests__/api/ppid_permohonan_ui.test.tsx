@@ -27,6 +27,7 @@ vi.mock('@/app/admin/(dashboard)/_state/ppid/permohonan_keberatan_informasi_publ
   default: { create: { form: {}, create: vi.fn() } },
 }));
 
+import stateKontakDesa from '@/app/admin/(dashboard)/_state/desa/kontakDesa';
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
 import { PermohonanSteps } from '@/app/(public)/(pages)/ppid/_com/PermohonanSteps';
 import InformasiPage from '@/app/(public)/(pages)/ppid/permohonan-informasi-publik/page';
@@ -38,6 +39,19 @@ const css = readFileSync(
   path.join(process.cwd(), 'src/app/(public)/(pages)/ppid/_com/permohonan.module.css'),
   'utf8',
 );
+
+// test-only: kontak desa seperti dikirim API (kontak PPID dibaca dari state CMS, bukan konstanta kode).
+Object.assign(stateKontakDesa.findUnique, {
+  data: {
+    id: 'kontak-desa',
+    namaKantor: 'Kantor Perbekel Desa Darmasaba',
+    alamat: 'Jl. Raya Darmasaba – Lukluk, Desa Darmasaba, Kec. Abiansemal, Kab. Badung, Bali 80352',
+    telepon: '(0361) 8441518',
+    email: 'ddarmasaba@gmail.com',
+    updatedAt: '2026-11-19T00:00:00.000Z',
+  },
+  loaded: true,
+});
 
 const informasi = render(<InformasiPage />);
 const keberatan = render(<KeberatanPage />);

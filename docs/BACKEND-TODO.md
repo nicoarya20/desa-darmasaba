@@ -419,3 +419,9 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - [x] **Navbar publik: submenu Arah Kebijakan Pembangunan Desa & Produk Hukum** — selesai Batch 2 (2026-11-18, `feature/lomba-batch-2`): dua entri di `src/con/navbar-list-menu.ts` tepat setelah Layanan (tampil default). Dokumen perencanaan pindah dari Monev ke `/pemerintahan/arah-kebijakan-pembangunan-desa` (jenis RPJM, RKP, APBDES, PELAPORAN_APBDES; Berita Acara hanya bila ada dokumen); Monev menyisakan kartu tautan. `BERITA_ACARA_MUSYAWARAH` tetap sah di DB/admin (juknis tidak memintanya).
 
 - [ ] **Arah Kebijakan & Produk Hukum (Batch 2):** komentar `jenis` di `prisma/schema.prisma` (model `DokumenPerencanaan`) masih menyebut 3 nilai; `PUT /api/desa/produkhukum/reorder` ada tetapi belum punya UI admin (urutan hanya pemutus seri tahun sama); tab publik berlabel "RKPDes" sementara label lib/admin "RKP Desa"; link lama `/pemerintahan/monev-pembangunan#dokumen-perencanaan` kini hanya membuka puncak Monev.
+
+## Indeks Desa Membangun / IDM (2026-11-19, `feature/indeks-desa-idm`; temuan lomba T11)
+
+- [x] **Submenu "Indeks Desa" di menu Pemerintahan** — struktur selesai: tabel `IndeksDesa` (migrasi `20261119161000_indeks_desa`), API `/api/desa/indeksdesa`, admin `/admin/pemerintahan/indeks-desa`, halaman publik `/pemerintahan/indeks-desa`. Halaman publik menampilkan keadaan kosong sampai data diisi.
+- [ ] **Isi data IDM Desa Darmasaba** (skor IDM/IKS/IKE/IKL + status per tahun, dari dokumen Kemendesa lewat Google Drive pihak desa) lewat admin; setelah terisi, perbarui T11 di `docs/penilaian-lomba-website-desa-2027.md`. Tidak ada seed.
+- [ ] **Verifikasi tahun IDM terawal & jumlah desimal:** batas tahun 2015-2100 (`TAHUN_IDM_MIN`) dan tampilan skor 4 desimal (`SKOR_TAMPIL_DESIMAL`) diasumsikan dari praktik IDM Kemendesa, belum dicek ke dokumen resmi.

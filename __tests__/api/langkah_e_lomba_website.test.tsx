@@ -14,7 +14,19 @@ import {
   POSYANDU_TABS_TERSEMBUNYI,
   RINGKASAN_STATISTIK_TAMPIL,
 } from '@/app/(public)/(pages)/kesehatan/posyandu/_com/posyandu.meta';
-import { KONTAK_DESA, PENGELOLA_WEBSITE } from '@/con/kontak-desa';
+import stateKontakDesa from '@/app/admin/(dashboard)/_state/desa/kontakDesa';
+import { PENGELOLA_WEBSITE } from '@/con/kontak-desa';
+
+// test-only: kontak desa seperti dikirim API (sumber data footer & PPID kini state CMS, bukan konstanta kode).
+const KONTAK_DESA = {
+  id: 'kontak-desa',
+  namaKantor: 'Kantor Perbekel Desa Darmasaba',
+  alamat: 'Jl. Raya Darmasaba – Lukluk, Desa Darmasaba, Kec. Abiansemal, Kab. Badung, Bali 80352',
+  telepon: '(0361) 8441518',
+  email: 'ddarmasaba@gmail.com',
+  updatedAt: '2026-11-19T00:00:00.000Z',
+};
+Object.assign(stateKontakDesa.findUnique, { data: KONTAK_DESA, loaded: true });
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');

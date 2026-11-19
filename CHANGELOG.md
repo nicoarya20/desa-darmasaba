@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.329] - 2026-11-19
+### Added
+- **Submenu baru "Indeks Desa" di menu Pemerintahan.** Halaman publik `/pemerintahan/indeks-desa` menampilkan Indeks Desa Membangun (IDM) Desa Darmasaba: skor dan status tahun terbaru, tiga dimensi (Ketahanan Sosial, Ekonomi, Lingkungan), dan riwayat per tahun. Admin mengisi data di Pemerintahan > Indeks Desa. Selama data belum diisi, halaman menampilkan keterangan "data belum tersedia", tanpa angka contoh. Admin yang sudah memegang akses menu Pemerintahan otomatis mendapat submenu ini; admin dengan akses per-submenu perlu dicentang di pengaturan akses menu.
+
+### Changed
+- **Kontak desa kini bisa diedit admin.** Tab baru "Kontak Desa" di Profile Desa (admin) mengatur nama kantor, alamat, telepon, dan email. Footer dan halaman PPID otomatis memakai data ini. Nilai awalnya sama dengan yang tampil sekarang, jadi tampilan publik tidak berubah.
+- Operator: ada 2 migrasi aditif (tabel baru `KontakDesa` dan `IndeksDesa`), dijalankan otomatis saat container naik. Data yang sudah ada tidak disentuh.
+
 ## [0.1.328] - 2026-11-19
 ### Changed
 - **Penanda menu aktif di sidebar admin kini berupa garis lurus berujung bulat di depan teks**, menggantikan border kiri yang ikut melengkung di sudut. Berlaku untuk menu induk (mis. "Ekonomi") dan submenu (mis. "UMKM & Pasar Desa"); latar item tetap membulat penuh dan teks tidak bergeser. Varian tema gelap (biru langit lembut `#60A5FA`, kontras 7:1) sudah disiapkan untuk nanti.

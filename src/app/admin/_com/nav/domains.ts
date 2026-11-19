@@ -56,6 +56,9 @@ export const desaMenu: NavItem = {
     { id: "desa.struktur-perangkat-desa", name: "Struktur Perangkat Desa", path: "/admin/pemerintahan/struktur-perangkat-desa/pegawai", basePath: "/admin/pemerintahan/struktur-perangkat-desa" },
     // Menu baru (aditif): section "Desa" sudah mencakup semua submenu, user dengan ID submenu per-menu perlu dicentang di Menu Access.
     { id: "desa.produk-hukum", name: "Produk Hukum", path: "/admin/pemerintahan/produk-hukum", basePath: "/admin/pemerintahan/produk-hukum" },
+    // Submenu aditif (2026-11-19, temuan lomba T11: IDM Kemendesa). ID "desa.indeks-desa" = kontrak permanen setelah rilis
+    // (tersimpan di UserMenuAccess). Bukan "Indeks Kepuasan Masyarakat" (itu submenu PPID).
+    { id: "desa.indeks-desa", name: "Indeks Desa", path: "/admin/pemerintahan/indeks-desa", basePath: "/admin/pemerintahan/indeks-desa" },
   ],
 }
 
