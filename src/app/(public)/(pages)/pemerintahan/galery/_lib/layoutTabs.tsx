@@ -46,7 +46,7 @@ export default function LayoutTabsGalery({ children }: LayoutTabsGaleryProps) {
   };
 
   return (
-    <Stack pos="relative" bg="var(--c-hero-bg)" py="xl" gap="22" className={g.vars}>
+    <Stack pos="relative" bg="var(--c-bg)" py="xl" gap="22" className={g.vars}>
       {/* 🔙 Header */}
       <Box px={{ base: 'md', md: 100 }}>
         <BackButton />
