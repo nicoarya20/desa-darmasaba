@@ -137,3 +137,37 @@ describe('submenu Arah Kebijakan Pembangunan Desa & Produk Hukum', () => {
     expect(byId.get('desa.produk-hukum')?.basePath).toBe('/admin/pemerintahan/produk-hukum');
   });
 });
+
+// Temuan lomba T11 (2026-11-19): menu top-level baru "Indeks Desa" (IDM Kemendesa). Murni penambahan label/ID; tidak
+// menyentuh "Indeks Kepuasan Masyarakat" (submenu PPID) yang berbeda artinya.
+describe('menu Indeks Desa (IDM)', () => {
+  it('publik: top-level "Indeks Desa" dengan satu submenu IDM, tampil secara default', async () => {
+    const { default: navbarListMenu } = await import('@/con/navbar-list-menu');
+    const menu = navbarListMenu.find((m) => m.name === 'Indeks Desa');
+    expect(menu?.children?.map((c) => [c.name, c.href])).toEqual([['Indeks Desa Membangun (IDM)', '/indeks-desa/idm']]);
+    expect(menu?.children?.[0]).not.toHaveProperty('hidden');
+  });
+
+  it('publik: Indeks Kepuasan Masyarakat tetap di PPID dan tidak tertukar dengan IDM', async () => {
+    const { default: navbarListMenu } = await import('@/con/navbar-list-menu');
+    const ppid = navbarListMenu.find((m) => m.name === 'PPID');
+    const ikm = ppid?.children?.find((c) => c.name === 'Indeks Kepuasan Masyarakat');
+    expect(ikm?.href).toBe('/ppid/indeks-kepuasan-masyarakat');
+    const idm = navbarListMenu.flatMap((m) => m.children ?? []).filter((c) => c.href === '/indeks-desa/idm');
+    expect(idm).toHaveLength(1);
+  });
+
+  it('admin: section "Indeks Desa" dengan ID submenu permanen "indeks-desa.idm"', async () => {
+    const { indeksDesaMenu, ppidMenu } = await import('@/app/admin/_com/nav/domains');
+    expect(indeksDesaMenu.id).toBe('Indeks Desa');
+    expect(indeksDesaMenu.children).toEqual([
+      {
+        id: 'indeks-desa.idm',
+        name: 'Indeks Desa Membangun',
+        path: '/admin/indeks-desa/idm',
+        basePath: '/admin/indeks-desa/idm',
+      },
+    ]);
+    expect(ppidMenu.children?.find((c) => c.id === 'ppid.indeks-kepuasan-masyarakat')?.name).toBe('Indeks Kepuasan Masyarakat');
+  });
+});
