@@ -2,6 +2,8 @@
  * Ubin program tanpa foto (Program Kreatif Desa, Program Penghijauan; Program Inovasi dengan logo) di atas kerangka Kabar (`.section`
  * kabar.module.css + kepala kabar-list). Seluruh ubin = tautan detail. Variabel warna (--brand, --ink, --muted,
  * --tile, --radius) dari kabar.module.css. Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
+ * Varian `.tileLogo` (ubin ber-logo/inisial) hanya dipasang ProgramTiles bila item punya `logo`/`initials`; ubin ikon
+ * dan unit usaha BUMDes (memakai `.tiles`/`.tile` langsung) tidak tersentuh varian itu.
  */
 .tiles {
   display: grid;
@@ -40,9 +42,11 @@
   stroke-width: 1.5;
 }
 
-/* Kotak logo putih (Program Inovasi): logo utuh di tengah, rasio tetap agar baris ubin rata.
-   Gelap: pelat logo pihak ketiga #d9e1ea (logo berlatar transparan dirancang untuk latar terang). */
+/* Kotak logo putih (Program Inovasi): rasio 16:9 terkunci, logo `contain` di tengah. Gambar diposisikan absolut
+   supaya tinggi aslinya tidak ikut melebarkan pelat (img Mantine `width: 100%` + tinggi auto membuat pelat setinggi
+   gambar, mis. gambar cadangan 4:3), jadi semua pelat dalam satu baris rata tinggi. Hanya dirender di `.tileLogo`. */
 .logo {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,12 +54,63 @@
   margin-bottom: 8px;
   padding: 16px;
   border-radius: calc(var(--radius) - 8px);
-  background: light-dark(#fff, #d9e1ea);
+  background: #fff;
+
+  /* Pulau terang `.tileLogo`: pelat menyatu dengan ubin #d9e1ea. */
+  @mixin dark {
+    background: transparent;
+  }
 }
 
-.logoImg {
-  max-width: 100%;
-  max-height: 100%;
+.logo .logoImg {
+  position: absolute;
+  inset: 16px;
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+}
+
+/* Pengganti logo yang tidak ada / gagal dimuat: inisial nama program. */
+.initials {
+  color: var(--brand);
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Pembungkus judul + ringkasan ubin ber-logo: transparan bagi tata letak di desktop/tablet (ubin tetap kolom). */
+.text {
+  display: contents;
+}
+
+/*
+ * Tema gelap ubin ber-logo = varian C (keputusan user, sama dengan rel beranda): seluruh ubin jadi permukaan terang
+ * #d9e1ea dan pelat logo menyatu dengannya (tanpa kotak dalam kotak). Logo pihak ketiga berlatar transparan dirancang
+ * untuk latar terang. Pulau terang: alias lokal berisi nilai polos tema terang, BUKAN light-dark() (di repo ini itu
+ * transform postcss-preset-mantine, bukan fungsi native). Ubin ikon (Program Kreatif, Penghijauan) tidak tersentuh.
+ * Ringkasan pakai #515154 (= --c-ink-2 terang): #6e6e73 di #d9e1ea hanya ±3,9:1, di bawah AA teks 17px.
+ */
+.tileLogo {
+  @mixin dark {
+    --tile: #d9e1ea;
+    --ink: #1d1d1f;
+    --muted: #515154;
+    --brand: #0a4e78;
+  }
+}
+
+/* Sapuan link-reveal di dalam pulau: target warna = nilai terang (judul brand, "Selengkapnya" #1C6EA4), mengalahkan
+   `[data-mantine-color-scheme=dark] .cta` (light-dark) dan `.title` (var(--c-brand)) dari link-reveal.module.css. */
+.tileLogo .title > span {
+  @mixin dark {
+    --reveal-to: #0a4e78;
+  }
+}
+
+.tileLogo .more > span {
+  @mixin dark {
+    --reveal-to: #1c6ea4;
+  }
 }
 
 .title {
@@ -93,6 +148,14 @@
   outline-offset: 3px;
 }
 
+/* Cincin fokus digambar DI LUAR pulau (di atas latar halaman gelap): brand gelap seperti ubin ikon di sebelahnya,
+   bukan --brand pulau (#0a4e78 di hitam hanya 2,4:1). */
+.tileLogo:focus-visible {
+  @mixin dark {
+    outline-color: var(--c-brand);
+  }
+}
+
 /* ---------- Tablet ---------- */
 @media (max-width: 1068px) {
   .tiles {
@@ -117,5 +180,69 @@
 
   .title {
     font-size: 19px;
+  }
+
+  /* Ubin ber-logo jadi baris (pola baris thumbnail Pengumuman): pelat logo 88px persegi kiri, judul + ringkasan
+     maks 2 baris kanan, chevron di ujung; seluruh baris tetap tautan. 8 program ±1.000px, bukan 5.650px kartu. */
+  .tileLogo {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .tileLogo .logo {
+    flex: none;
+    width: 88px;
+    height: 88px;
+    aspect-ratio: auto;
+    margin: 0;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .tileLogo .logo .logoImg {
+    inset: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+  }
+
+  .tileLogo .initials {
+    font-size: 28px;
+  }
+
+  .tileLogo .text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .tileLogo .title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 17px;
+    line-height: 1.29;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .tileLogo .summary {
+    font-size: 14px;
+    line-height: 1.43;
+    -webkit-line-clamp: 2;
+  }
+
+  /* Label "Selengkapnya" disembunyikan di baris; chevron saja, abu seperti baris Pengumuman. */
+  .tileLogo .more {
+    flex: none;
+    margin: 0;
+    padding: 0;
+    color: var(--muted);
+  }
+
+  .tileLogo .more > span {
+    display: none;
   }
 }

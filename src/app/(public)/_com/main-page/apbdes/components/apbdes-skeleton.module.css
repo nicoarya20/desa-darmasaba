@@ -1,0 +1,27 @@
+/*
+ * Kerangka pemuatan APBDes (varian beranda) = tinggi isi akhirnya: keterangan tahun (56,9px, margin dari .years) +
+ * ringkasan + grafik + rincian. Diukur di stg 0.1.312 pada 2026-11-18 (jendela 1440/900/390px). Tinggi total dijaga
+ * `min-height`; blok terakhir (grafik/rincian) mengisi sisanya lewat flex. Breakpoint sama dengan apbdes.module.css.
+ */
+.content {
+  --sk-summary: 249px;
+  min-height: 988px;
+}
+
+.fill {
+  flex: 1;
+}
+
+@media (max-width: 1068px) {
+  .content {
+    --sk-summary: 233px;
+    min-height: 956px;
+  }
+}
+
+@media (max-width: 734px) {
+  .content {
+    --sk-summary: 221px;
+    min-height: 1370px;
+  }
+}

@@ -3,6 +3,8 @@
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import LayananWaktuBiayaFields from '@/components/admin/LayananWaktuBiayaFields';
+import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
+import { uploadPdfFile } from '@/app/admin/_com/upload/pdf-upload';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
 import {
@@ -29,6 +31,7 @@ function CreateSuratKeterangan() {
   const stateSurat = useProxy(stateLayananDesa.suratKeterangan, { sync: true }); // sync: cegah caret jump di controlled input
   const [previewImage2, setPreviewImage2] = useState<{ preview: string; file: File } | null>(null);
   const [previewImage, setPreviewImage] = useState<{ preview: string; file: File } | null>(null);
+  const [sopFile, setSopFile] = useState<File | null>(null);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -56,9 +59,11 @@ function CreateSuratKeterangan() {
       image2Id: '',
       estimasiWaktu: '',
       biaya: '',
+      sopFileId: '',
     };
     setPreviewImage(null);
     setPreviewImage2(null);
+    setSopFile(null);
   };
 
   const handleSubmit = async () => {
@@ -79,6 +84,13 @@ function CreateSuratKeterangan() {
 
     try {
       setIsSubmitting(true);
+      if (sopFile) {
+        // Gagal unggah: toast sudah tampil dari uploadPdfFile, jangan simpan layanan tanpa SOP yang dipilih admin.
+        const sopId = await uploadPdfFile(sopFile);
+        if (!sopId) return;
+        stateSurat.create.form.sopFileId = sopId;
+      }
+
       // Upload gambar utama
       const res1 = await ApiFetch.api.fileStorage.create.post({
         file: previewImage.file,
@@ -303,6 +315,14 @@ function CreateSuratKeterangan() {
               </Text>
             )}
           </Box>
+
+          {/* SOP layanan (PDF, opsional) */}
+          <PdfDropzoneField
+            label="SOP / Petunjuk (PDF)"
+            description='Opsional. Ditampilkan sebagai tautan "Unduh SOP (PDF)" di halaman layanan.'
+            file={sopFile}
+            onChange={setSopFile}
+          />
 
           {/* Tombol Simpan */}
           <Group justify="right">

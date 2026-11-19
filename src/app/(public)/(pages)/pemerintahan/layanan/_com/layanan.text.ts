@@ -13,6 +13,10 @@ export const LAYANAN_TEXT = {
     empty: "Belum ada layanan surat keterangan.",
     noMatch: (query: string) => `Tidak ada surat keterangan yang cocok dengan “${query}”.`,
   },
+  sop: {
+    label: "Unduh SOP (PDF)",
+    linkHint: "Buka di tab baru",
+  },
   oss: {
     title: "Perizinan Berusaha Berbasis Risiko melalui OSS",
     lead: "Pendaftaran Nomor Induk Berusaha (NIB) melalui Online Single Submission (OSS).",

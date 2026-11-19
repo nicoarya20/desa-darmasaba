@@ -9,6 +9,8 @@ import { useProxy } from 'valtio/utils';
 import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirmasiHapus';
 import layananonlineDesa from '@/app/admin/(dashboard)/_state/inovasi/layanan-online-desa';
 import colors from '@/con/colors';
+import { PengaduanStatusBadge } from '../_com/PengaduanStatusBadge';
+import { PengaduanTanggapanForm } from '../_com/PengaduanTanggapanForm';
 
 function DetailPengaduanMasyarakat() {
   const pengaduanState = useProxy(layananonlineDesa);
@@ -108,6 +110,32 @@ function DetailPengaduanMasyarakat() {
               <Box>
                 <Text fz="lg" fw="bold">Jenis Pengaduan</Text>
                 <Text fz="md" c="dimmed">{data?.jenisPengaduan?.nama || '-'}</Text>
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Status</Text>
+                <PengaduanStatusBadge status={data.status} />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold">Tanggapan</Text>
+                <Text fz="md" c="dimmed" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                  {data.tanggapan || 'Belum ada tanggapan'}
+                </Text>
+                {data.tanggapanAt && (
+                  <Text fz="xs" c="dimmed">Ditanggapi {new Date(data.tanggapanAt).toLocaleString('id-ID')}</Text>
+                )}
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Ubah status & tanggapan</Text>
+                {/* key: form memulai ulang dari data tersimpan setelah simpan/muat ulang. */}
+                <PengaduanTanggapanForm
+                  key={`${data.id}-${data.status}-${data.tanggapanAt}`}
+                  initial={{ status: data.status, tanggapan: data.tanggapan }}
+                  saving={pengaduanState.pengaduanMasyarakat.update.loading}
+                  onSave={(form) => pengaduanState.pengaduanMasyarakat.update.save(data.id, form)}
+                />
               </Box>
 
               <Box>

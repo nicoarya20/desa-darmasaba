@@ -1,7 +1,9 @@
 import type { CSSProperties } from 'react';
 import { StrukturCard } from './StrukturCard';
+import { StrukturTierChart } from './StrukturTierChart';
 import { cardsOf, leafSlot, toneForDepth, type OrgNode } from './struktur.logic';
 import { LEAF_COLS } from './struktur.meta';
+import { planTierBands } from './struktur-tiers.logic';
 import s from './struktur-chart.module.css';
 import { STRUKTUR_TEXT } from './struktur.text';
 
@@ -85,13 +87,22 @@ type ChartProps = {
   label: string;
   /** Rute profil pegawai yang dituju kartu. */
   hrefFor: HrefFor;
+  /**
+   * `tree` (bawaan, PPID & BUMDes): bagan pohon. `tiers` (Perangkat Desa): bagan bertingkat ber-batang
+   * (`StrukturTierChart`); bentuk pohon yang tidak cocok (lebih dari satu akar, lihat `planTierBands`) tetap pohon.
+   */
+  layout?: StrukturLayout;
 };
+
+export type StrukturLayout = 'tree' | 'tiers';
 
 /**
  * Bagan struktur organisasi sebagai daftar bersarang; meluber → geser horizontal, ≤1068px → tumpukan.
  * Dipakai Struktur PPID dan Struktur Perangkat Desa (data pegawai yang sama, rute profil berbeda).
  */
-export function StrukturChart({ roots, label, hrefFor }: ChartProps) {
+export function StrukturChart({ roots, label, hrefFor, layout = 'tree' }: ChartProps) {
+  const bands = layout === 'tiers' && roots.length === 1 ? planTierBands(roots[0]) : null;
+  if (bands) return <StrukturTierChart root={roots[0]} bands={bands} label={label} hrefFor={hrefFor} />;
   return (
     <div className={s.chart}>
       <ul className={s.roots} aria-label={label}>

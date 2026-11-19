@@ -6,6 +6,7 @@ import { IconArrowUpRight, IconFileDescription } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 import { LayananSection } from './LayananSection';
+import { SopLink } from './SopLink';
 import { externalHref, type TelunjukSaktiItem } from './layanan.logic';
 import { LAYANAN_LIST_LIMIT } from './layanan.meta';
 import page from './layanan.module.css';
@@ -56,6 +57,12 @@ function PelayananTelunjukSaktiDesa() {
                 <IconArrowUpRight className={s.rowArrow} size={20} aria-hidden />
                 <span className={page.srOnly}>({T.linkHint})</span>
               </a>
+              {/* Di luar <a> baris: tautan tidak boleh bersarang. */}
+              {item.sopFile ? (
+                <div className={s.rowSop}>
+                  <SopLink file={item.sopFile} />
+                </div>
+              ) : null}
             </li>
           ))}
         </ul>

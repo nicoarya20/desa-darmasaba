@@ -16,6 +16,8 @@ const telunjukSaktiDesaForm = {
   link: "",
   estimasiWaktu: "",
   biaya: "",
+  // Id FileStorage PDF SOP (opsional); "" = tanpa SOP.
+  sopFileId: "",
 };
 
 const templateTelunjukSaktiDesaForm = z.object({
@@ -106,6 +108,7 @@ const pelayananTelunjukSaktiDesa = proxy({
   findUnique: {
     data: null as Prisma.PelayananTelunjukSaktiDesaGetPayload<{
       omit: { isActive: true };
+      include: { sopFile: { select: { id: true; link: true; realName: true } } };
     }> | null,
     async load(id: string) {
       try {
@@ -188,6 +191,7 @@ const pelayananTelunjukSaktiDesa = proxy({
             name: data.name,
             deskripsi: data.deskripsi,
             link: data.link,
+            sopFileId: data.sopFileId || "",
             ...toWaktuBiayaForm(data),
           };
           return data;
@@ -227,6 +231,7 @@ const pelayananTelunjukSaktiDesa = proxy({
               name: this.form.name,
               deskripsi: this.form.deskripsi,
               link: this.form.link,
+              sopFileId: this.form.sopFileId || null,
               ...toWaktuBiayaPayload(this.form),
             }),
           }

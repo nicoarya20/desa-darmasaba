@@ -3,13 +3,18 @@ import colors from '@/con/colors';
 import { Box, Button, Group, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
+import { uploadPdfFile } from '@/app/admin/_com/upload/pdf-upload';
 import CreateEditor from '../../../_com/createEditor';
 import daftarInformasiPublik from '../../../_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 
 export default function CreateDaftarInformasi() {
   const daftarInformasi = useProxy(daftarInformasiPublik, { sync: true }); // sync: cegah caret jump di controlled input
   const router = useRouter();
+  // PDF yang dipilih; diunggah saat Simpan.
+  const [file, setFile] = useState<File | null>(null);
 
   // Check if form is valid
   const isFormValid = () => {
@@ -26,6 +31,7 @@ export default function CreateDaftarInformasi() {
       deskripsi: "",
       tanggal: "",
     };
+    setFile(null);
   };
 
   const handleSubmit = async () => {
@@ -40,7 +46,13 @@ export default function CreateDaftarInformasi() {
     }
 
     try {
-      await daftarInformasi.create.create();
+      let fileId: string | undefined;
+      if (file) {
+        const uploadedId = await uploadPdfFile(file);
+        if (!uploadedId) return; // toast galat sudah ditampilkan uploadPdfFile
+        fileId = uploadedId;
+      }
+      await daftarInformasi.create.create(fileId);
       resetForm();
       router.push("/admin/ppid/daftar-informasi-publik");
     } catch (error) {
@@ -110,6 +122,13 @@ export default function CreateDaftarInformasi() {
               required
             />
           </Box>
+
+          <PdfDropzoneField
+            label="Berkas PDF"
+            description="Opsional. Dokumen yang bisa diunduh pengunjung dari baris ini."
+            file={file}
+            onChange={setFile}
+          />
 
           <Group justify="flex-end" mt="md">
             {/* Tombol Reset */}

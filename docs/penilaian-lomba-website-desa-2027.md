@@ -208,7 +208,7 @@ Status: ❌ belum | 🟡 sebagian | ✅ beres
 | T3 | 8, 3 | Tidak ada tim redaksi/pengelola website, alamat fisik, telepon, email kantor desa | `src/app/darmasaba/_com/Footer.tsx` | ❌ |
 | T4 | 8 | Tidak ada header keamanan (HSTS, CSP, X-Frame-Options, nosniff) | `next.config.ts:9` (hanya Cache-Control) | ❌ |
 | T5 | 8 | MFA admin tidak dipaksa aplikasi (bergantung akun Google); tidak ada bukti prosedur backup | `src/lib/auth.ts:25` | ❌ |
-| T6 | 3 | Pengaduan masyarakat & permohonan tidak punya status/tindak lanjut (hanya `LaporanPublik` punya `StatusLaporan` + penanganan) | `prisma/schema.prisma` model `PengaduanMasyarakat`, `AdministrasiOnline`, `AjukanPermohonan`, `PermohonanInformasiPublik` | ❌ |
+| T6 | 3 | Pengaduan masyarakat & permohonan tidak punya status/tindak lanjut (hanya `LaporanPublik` punya `StatusLaporan` + penanganan) | `prisma/schema.prisma` model `PengaduanMasyarakat`, `AdministrasiOnline`, `AjukanPermohonan`, `PermohonanInformasiPublik` | 🟡 Pengaduan: status + tanggapan + rekap publik selesai di `feature/lomba-batch-1` (v belum dirilis); permohonan layanan/informasi (cek status per nomor, juknis 3.5) belum |
 | T7 | 3 | Tidak ada ikon/tautan integrasi instansi lain; "Portal Badung" malah mengarah ke berita internal | `Footer.tsx:51` | ❌ |
 | T8 | 5 | Link footer "Informasi Publik" dan "Transparansi" ke route yang tidak ada (404): `/darmasaba/ppid/daftar-informasi-publik-desa-darmasaba` (route benar: `/darmasaba/ppid/daftar-informasi-publik`) | `Footer.tsx:45`, `Footer.tsx:60` | ❌ |
 | T9 | 5 | Copyright masih "© 2025" | `Footer.tsx:236` | ❌ |

@@ -1,7 +1,7 @@
 import { APBDES_TEXT } from "../apbdes.text";
 import s from "../apbdes.module.css";
 import type { useApbdesData } from "../use-apbdes-data";
-import { ApbdesChart } from "./ApbdesChart";
+import { LazyApbdesChart } from "./ApbdesChart.lazy";
 import { ApbdesDetail, type DetailVariant } from "./ApbdesDetail";
 import { ApbdesDocument } from "./ApbdesDocument";
 import { ApbdesSkeleton } from "./ApbdesSkeleton";
@@ -18,7 +18,7 @@ type Props = {
 export function ApbdesBody({ data, variant }: Props) {
   const { list, year, current, categories, updated, hasItems } = data;
 
-  if (list === null) return <ApbdesSkeleton />;
+  if (list === null) return <ApbdesSkeleton variant={variant} />;
   if (year === null) return <p className={s.empty}>{APBDES_TEXT.emptyAll}</p>;
 
   return (
@@ -28,7 +28,7 @@ export function ApbdesBody({ data, variant }: Props) {
         {hasItems ? (
           <>
             <ApbdesSummary categories={categories} />
-            <ApbdesChart categories={categories} tahun={year} />
+            <LazyApbdesChart categories={categories} tahun={year} />
             <ApbdesDetail categories={categories} variant={variant} />
           </>
         ) : (

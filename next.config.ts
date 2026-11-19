@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
-import { SECURITY_HEADERS } from "./src/con/security-headers";
+// Wajib di src/lib: image Docker (runner) hanya menyalin src/lib + next.config.*, bukan src/con. `next start` memuat
+// next.config.ts saat runtime, jadi impor dari luar src/lib membuat container mati (stg 0.1.307: MODULE_NOT_FOUND).
+import { SECURITY_HEADERS } from "./src/lib/security-headers";
+import { ROOT_STATIC_FILE_SOURCE, STATIC_CACHE_HEADERS } from "./src/lib/static-cache-headers";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@elysiajs/static', 'elysia'],
@@ -47,21 +50,17 @@ const nextConfig: NextConfig = {
       { source: '/admin/desa/:path*', destination: '/admin/pemerintahan/:path*', permanent: true },
       { source: '/admin/pemerintahan/penghargaan', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
       { source: '/admin/pemerintahan/penghargaan/:path*', destination: '/admin/landing-page/prestasi-desa/list-prestasi-desa', permanent: true },
+      // Dokumen Perencanaan pindah dari tab Kegiatan Desa jadi submenu sendiri di Pemerintahan; bookmark lama tetap sampai.
+      { source: '/admin/pemerintahan/kegiatan-desa/dokumen-perencanaan/:path*', destination: '/admin/pemerintahan/dokumen-perencanaan/:path*', permanent: true },
     ];
   },
   async headers() {
     return [
-      // Header keamanan untuk semua route; daftar & alasan nilai di src/con/security-headers.ts.
+      // Header keamanan untuk semua route; daftar & alasan nilai di src/lib/security-headers.ts.
       { source: '/:path*', headers: SECURITY_HEADERS },
-      {
-        source: '/assets/:path*', // Path ke folder gambar
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=3600, stale-while-revalidate=600', // Cache selama 1 jam, validasi ulang setelah 10 menit
-          },
-        ],
-      },
+      // Berkas statis public/: /assets/* dan berkas di akar. Masa cache & risikonya di src/lib/static-cache-headers.ts.
+      { source: '/assets/:path*', headers: STATIC_CACHE_HEADERS },
+      { source: ROOT_STATIC_FILE_SOURCE, headers: STATIC_CACHE_HEADERS },
     ];
   },
 };

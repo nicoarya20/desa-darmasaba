@@ -9,6 +9,7 @@ import { HeroSosmed, HeroStatus } from '@/app/(public)/_com/main-page/landing-pa
 import { HeroProfile } from '@/app/(public)/_com/main-page/landing-page/HeroProfile';
 import { HeroRibbons } from '@/app/(public)/_com/main-page/landing-page/HeroRibbons';
 import { HeroPrograms, type ProgramInovasiItem } from '@/app/(public)/_com/main-page/landing-page/HeroPrograms';
+import programsCss from '@/app/(public)/_com/main-page/landing-page/programs.module.css';
 import {
   getInitialRailState,
   getRailState,
@@ -199,10 +200,13 @@ describe('HeroPrograms', () => {
     expect(html).not.toContain('data-fade-');
   });
 
-  it('program tanpa logo tetap punya ubin (ikon pengganti)', () => {
+  it('program tanpa logo tetap punya ubin (inisial nama, dekoratif)', () => {
     const html = render(<HeroPrograms items={items.slice(4)} loading={false} onOpen={noop} />);
     expect(html.match(/<img/g)).toHaveLength(3);
-    expect(html.match(/<svg/g)).toHaveLength(1);
+    // "Program 8" → "P8"; aria-hidden karena nama program sudah dibaca dari teks ubin.
+    expect(html).toContain(`<span class="${programsCss.tileInitials}" aria-hidden="true">P8</span>`);
+    expect(html.match(new RegExp(`class="${programsCss.tileInitials}"`, 'g'))).toHaveLength(1);
+    expect(html).not.toContain('<svg');
   });
 
   it('kosong → satu kalimat; memuat → placeholder tanpa tautan dan tanpa panah', () => {

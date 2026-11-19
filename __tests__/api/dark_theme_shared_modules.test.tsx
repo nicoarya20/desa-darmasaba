@@ -129,10 +129,14 @@ describe('halaman putih penuh: 404, Peta Informasi, logo program', () => {
     expect(decl(b, '--brand')).toBe('var(--c-brand)');
     expect(decl(b, 'background')).toBe('var(--c-bg)');
   });
-  it('pelat logo program gelap #d9e1ea', () => {
-    expect(decl(blockOf(PUB('_com/program-tiles/program-tiles.module.css'), '.logo'), 'background')).toBe(
-      'light-dark(#fff, #d9e1ea)',
-    );
+  it('ubin ber-logo gelap = pulau terang #d9e1ea (varian C): pelat logo menyatu, terang tetap putih', () => {
+    const css = stripComments(PUB('_com/program-tiles/program-tiles.module.css'));
+    const logo = blockOf(css, '.logo');
+    expect(decl(logo, 'background')).toBe('#fff');
+    expect(logo).toMatch(/@mixin dark \{\s*background: transparent;\s*\}/);
+    const island = blockOf(css, '.tileLogo');
+    expect(island).toContain('@mixin dark');
+    expect(decl(island, '--tile')).toBe('#d9e1ea');
   });
 });
 

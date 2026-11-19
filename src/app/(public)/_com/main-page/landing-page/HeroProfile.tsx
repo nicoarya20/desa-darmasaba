@@ -33,11 +33,12 @@ export function HeroProfile({ data }: { data: PejabatItem }) {
   );
 }
 
-/** Placeholder seukuran foto + kartu nama selama profil dimuat. */
+/** Placeholder seukuran foto + kartu nama selama profil dimuat (kartu nama ikut agar tinggi hero tak bertambah saat data tiba). */
 export function HeroProfileSkeleton() {
   return (
     <div className={s.profile} aria-hidden>
       <div className={`${s.photoSkeleton} ${s.pulse}`} />
+      <div className={`${s.nameCardSkeleton} ${s.pulse}`} />
     </div>
   );
 }

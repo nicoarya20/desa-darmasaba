@@ -20,6 +20,15 @@ export function HeroStatus({ status }: { status: WorkStatus | null }) {
   );
 }
 
+/**
+ * Ruang cadangan deretan ikon media sosial selama datanya dimuat: tinggi ikon (44px) + margin atas (20px) = 64px.
+ * Tanpa ini deretan ikon muncul setelah API selesai dan mendorong foto, kartu nama, dan rel program ±64px ke bawah
+ * (penyebab terbesar CLS hero di PageSpeed mobile, terukur: pita hero 342→400px tepat saat mediasosial/findMany selesai).
+ */
+export function HeroSosmedPlaceholder() {
+  return <div className={s.sosmedPlaceholder} aria-hidden />;
+}
+
 /** Tautan media sosial desa sebagai ikon bulat; entri tanpa tautan valid dilewati. */
 export function HeroSosmed({ data }: { data: SosmedItem[] }) {
   const links = data

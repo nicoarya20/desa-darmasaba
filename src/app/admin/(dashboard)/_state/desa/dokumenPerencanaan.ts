@@ -1,3 +1,4 @@
+import { uploadPdfFile } from "@/app/admin/_com/upload/pdf-upload";
 import ApiFetch from "@/lib/api-fetch";
 import type { JenisDokumen, JenisMusyawarah } from "@/lib/dokumen-perencanaan";
 import { parseDokumenPerencanaanInput } from "@/lib/dokumen-perencanaan";
@@ -49,16 +50,7 @@ const errorMessage = (error: ApiError) => error?.value?.message;
 
 /** Unggah PDF lewat jalur FileStorage yang sudah ada; kembalikan id file atau null bila gagal. */
 export async function uploadDokumenPdf(file: File): Promise<string | null> {
-  try {
-    const res = await ApiFetch.api.fileStorage.create.post({ file, name: file.name });
-    const id = (res?.data as { data?: { id?: string } } | null)?.data?.id;
-    if (!id) toast.error("Gagal mengunggah file PDF");
-    return id ?? null;
-  } catch (error) {
-    console.error("Gagal upload PDF dokumen perencanaan:", error);
-    toast.error("Terjadi kesalahan saat mengunggah file PDF");
-    return null;
-  }
+  return uploadPdfFile(file);
 }
 
 // State admin CRUD Dokumen Perencanaan (/api/desa/dokumenperencanaan).

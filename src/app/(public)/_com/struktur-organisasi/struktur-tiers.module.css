@@ -1,0 +1,305 @@
+/*
+ * Tata letak bagan bertingkat (StrukturTierChart, Perangkat Desa). Dipasang bersama .chart (struktur-chart.module.css:
+ * --line, --rail, --indent, ukuran kartu akar). Mode mengikuti lebar isi bagan (container query):
+ * - ≥1150px  batang tengah: band = grid kiri | batang | kanan, klaster menempel batang, 6 kartu sebaris.
+ * - 600-1149 rel kiri berjajar: batang jadi rel kiri, klaster bertumpuk urut pangkat, kartu klaster sebaris.
+ * - <600     rel kiri bertumpuk: satu kartu per baris, siku ke rel (pola ≤1068px bagan pohon).
+ * Garis: tiap klaster menggambar siku ke batang yang menjulur ke atas (top: -2000px) lalu dipotong di tepi atas
+ * band (clip-path), jadi batang berhenti tepat di sambungan terbawah tanpa garis yatim. Band selain yang terakhir
+ * menggambar batang setinggi band (::after). Palang klaster di y = --tier-bar (0, atau --tier-stem untuk klaster
+ * berkepala & klaster yang diturunkan), tiang ke kartu setinggi --tier-v.
+ */
+.tiers {
+  container: struktur-tiers / inline-size;
+}
+
+/* Bagan bertingkat tidak pernah meluber: lepas overflow-x .chart agar bayangan kartu baris terakhir tidak
+   terpotong. [class] menaikkan spesifisitas di atas .chart (urutan berkas CSS modul tidak dijamin). */
+.tiers[class] {
+  overflow: visible;
+}
+
+.roots,
+.band,
+.cluster {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Bawaan = rel kiri berjajar. Variabel di .roots (turunan kontainer) agar cqi mengacu ke lebar bagan. */
+.roots {
+  --tier-gap: 12px;
+  --tier-v: 22px;
+  --tier-stem: 22px;
+  --tier-band-gap: 36px;
+  --tier-unit-gap: 28px;
+  --tier-trunk: 56px;
+  --tier-w: min(300px, (100cqi - var(--indent) - 2 * var(--tier-gap)) / 3);
+}
+
+.rootCards {
+  display: flex;
+  gap: var(--tier-gap);
+  max-width: 560px;
+}
+
+.band {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--tier-unit-gap);
+  padding: var(--tier-band-gap) 0 0 var(--indent);
+  clip-path: inset(0 -100vw -100vw);
+}
+
+.band:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--rail) - 1px);
+  border-left: 2px solid var(--line);
+}
+
+.unit {
+  --tier-bar: 0px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.unit[data-head] {
+  --tier-bar: var(--tier-stem);
+}
+
+.head {
+  position: relative;
+  display: flex;
+  gap: var(--tier-gap);
+}
+
+.head > * {
+  flex: 0 0 var(--tier-w); /* flex-basis, bukan width: kartu xs sendiri selebar 100% */
+}
+
+.cluster {
+  position: relative;
+  display: flex;
+  flex: 1;
+  gap: var(--tier-gap);
+  padding-top: calc(var(--tier-bar) + var(--tier-v));
+}
+
+.slot {
+  position: relative;
+  display: flex;
+  flex: 0 0 var(--tier-w);
+}
+
+.slot > * {
+  flex: 1;
+}
+
+/* ---- Garis ---- */
+.unit:not([data-head])::before,
+.head::before,
+.unit[data-head] > .cluster::before,
+.slot::before,
+.slot::after {
+  content: "";
+  position: absolute;
+}
+
+/* Siku klaster datar: rel → palang di tengah kartu pertama, menjulur ke atas sampai tepi band. */
+.unit:not([data-head])::before {
+  top: -2000px;
+  left: calc(var(--rail) - var(--indent) - 1px);
+  width: calc(var(--indent) - var(--rail) + var(--tier-w) / 2 + 2px);
+  height: calc(2000px + var(--tier-bar) + 2px);
+  border-bottom: 2px solid var(--line);
+  border-left: 2px solid var(--line);
+  border-bottom-left-radius: 10px;
+}
+
+/* Siku kartu kepala: rel → tengah tinggi kepala. */
+.head::before {
+  top: -2000px;
+  bottom: calc(50% - 1px);
+  left: calc(var(--rail) - var(--indent) - 1px);
+  width: calc(var(--indent) - var(--rail) + 2px);
+  border-bottom: 2px solid var(--line);
+  border-left: 2px solid var(--line);
+  border-bottom-left-radius: 10px;
+}
+
+/* Tiang kepala → palang bawahan (rel kiri: di tengah kartu pertama, yang sejajar kartu kepala). */
+.unit[data-head] > .cluster::before {
+  top: 0;
+  left: calc(var(--tier-w) / 2 - 1px);
+  height: calc(var(--tier-bar) + 2px);
+  border-left: 2px solid var(--line);
+}
+
+/* Palang antarkartu + tiang turun ke tiap kartu. */
+.slot:not(:last-child)::before {
+  top: calc(-1 * var(--tier-v));
+  left: calc(50% - 1px);
+  width: calc(100% + var(--tier-gap) + 2px);
+  border-top: 2px solid var(--line);
+}
+
+.slot::after {
+  top: calc(-1 * var(--tier-v));
+  left: calc(50% - 1px);
+  height: var(--tier-v);
+  border-left: 2px solid var(--line);
+}
+
+/* ---- Lebar sempit: satu kartu per baris, siku tiap kartu ke rel (bawahan kepala: rel sendiri di bawah kepala) ---- */
+@container struktur-tiers (max-width: 599.98px) {
+  .roots {
+    --tier-gap: 10px;
+    --tier-band-gap: 24px;
+    --tier-unit-gap: 10px;
+    --tier-w: 100%;
+  }
+
+  .rootCards {
+    max-width: none;
+  }
+
+  .head,
+  .cluster {
+    flex-direction: column;
+  }
+
+  .head > * {
+    flex: none;
+  }
+
+  .cluster {
+    padding-top: 0;
+    clip-path: inset(0 -100vw -100vw);
+  }
+
+  .unit[data-head] > .cluster {
+    padding: var(--tier-gap) 0 0 var(--indent);
+  }
+
+  .slot {
+    flex-basis: auto;
+  }
+
+  .unit:not([data-head])::before {
+    width: 0;
+    height: 2000px;
+    border-bottom: 0;
+    border-radius: 0;
+  }
+
+  .unit[data-head] > .cluster::before,
+  .slot::after {
+    display: none;
+  }
+
+  .slot:nth-child(n)::before {
+    top: -2000px;
+    bottom: calc(50% - 1px);
+    left: calc(var(--rail) - var(--indent) - 1px);
+    width: calc(var(--indent) - var(--rail) + 2px);
+    border-top: 0;
+    border-bottom: 2px solid var(--line);
+    border-left: 2px solid var(--line);
+    border-bottom-left-radius: 10px;
+  }
+}
+
+/* ---- Lebar penuh: batang di tengah, klaster kiri/kanan menempel batang ---- */
+@container struktur-tiers (min-width: 1150px) {
+  .roots {
+    --tier-w: clamp(150px, (100cqi - var(--tier-trunk) - 4 * var(--tier-gap)) / 6, 220px);
+  }
+
+  .rootCards {
+    justify-content: center;
+    max-width: none;
+  }
+
+  .band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--tier-trunk) minmax(0, 1fr);
+    gap: 0;
+    padding-left: 0;
+  }
+
+  .band:not(:last-child)::after {
+    left: calc(50% - 1px);
+  }
+
+  .unit {
+    grid-row: 1;
+  }
+
+  .unit[data-side="left"] {
+    grid-column: 1;
+    justify-self: end;
+  }
+
+  .unit[data-side="right"] {
+    grid-column: 3;
+    justify-self: start;
+  }
+
+  /* Datar di seberang klaster berkepala: palangnya sejajar palang bawahan kepala. */
+  .unit[data-lower] {
+    --tier-bar: var(--tier-stem);
+    grid-row: 2;
+  }
+
+  .unit[data-head] {
+    display: grid;
+    grid-row: 1 / span 2;
+    grid-template-rows: subgrid;
+  }
+
+  .head,
+  .cluster {
+    justify-content: center;
+  }
+
+  .unit[data-head] > .cluster::before {
+    left: calc(50% - 1px);
+  }
+
+  .unit[data-side="left"]:not([data-head])::before {
+    left: calc(100% - var(--tier-w) / 2 - 1px);
+    right: calc(var(--tier-trunk) / -2 - 1px);
+    width: auto;
+    border-right: 2px solid var(--line);
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .unit[data-side="right"]:not([data-head])::before {
+    left: calc(var(--tier-trunk) / -2 - 1px);
+    width: calc(var(--tier-trunk) / 2 + var(--tier-w) / 2 + 2px);
+    border-radius: 0;
+  }
+
+  .unit[data-side="left"] > .head::before {
+    left: 50%;
+    right: calc(var(--tier-trunk) / -2 - 1px);
+    width: auto;
+    border-right: 2px solid var(--line);
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .unit[data-side="right"] > .head::before {
+    left: calc(var(--tier-trunk) / -2 - 1px);
+    right: 50%;
+    width: auto;
+    border-radius: 0;
+  }
+}

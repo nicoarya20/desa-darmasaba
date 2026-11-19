@@ -39,9 +39,14 @@ const EXPECTED_IDS: Record<string, string[]> = {
     'desa.gallery',
     'desa.layanan',
     'desa.kegiatan-desa',
+    // 2026-11-18: tab Dokumen Perencanaan di Kegiatan Desa jadi submenu sendiri (ID baru, aditif). Pemegang
+    // 'desa.kegiatan-desa' diberi ID ini oleh migrasi 20261118120000_lomba_laporan_penduduk_bulanan.
+    'desa.dokumen-perencanaan',
     'desa.event-budaya',
     'desa.banjar',
     'desa.struktur-perangkat-desa',
+    // 2026-11-18: menu baru Produk Hukum (aditif, tanpa data-migration: pemegang ID submenu dicentang manual di Menu Access).
+    'desa.produk-hukum',
   ],
   'Kesehatan': [
     'kesehatan.posyandu',
@@ -104,6 +109,7 @@ const EXPECTED_IDS: Record<string, string[]> = {
     'kependudukan.distribusi-agama',
     'kependudukan.distribusi-umur',
     'kependudukan.data-banjar',
+    'kependudukan.laporan-bulanan',
     'kependudukan.migrasi-penduduk',
     'kependudukan.dinamika-penduduk',
   ],
