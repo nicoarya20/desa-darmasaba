@@ -16,7 +16,9 @@
    =================================== */
 @font-face {
   font-family: 'San Francisco';
-  src: url('/assets/fonts/font.otf') format('opentype');
+  /* WOFF2 dulu: ±101 KB terkirim vs OTF ±126 KB (gzip CDN); isi glyph sama persis. OTF cadangan untuk browser lama. */
+  src: url('/assets/fonts/font.woff2') format('woff2'),
+    url('/assets/fonts/font.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap; /* ✅ TAMBAHKAN INI - Penting untuk PageSpeed! */
