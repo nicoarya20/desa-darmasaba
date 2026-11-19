@@ -1,5 +1,7 @@
 import { getSosmedHref } from "@/app/admin/(dashboard)/landing-page/profil/_lib/sosmed";
 import { Image } from "@mantine/core";
+import { responsiveImageProps } from "../../responsive-image.logic";
+import { SOSMED_ICON_SIZES, SOSMED_ICON_WIDTHS } from "./hero-image.meta";
 import { describeWorkStatus, getSosmedIconSrc, type WorkStatus } from "./landing.logic";
 import s from "./landing.module.css";
 import { LANDING_TEXT } from "./landing.text";
@@ -51,7 +53,13 @@ export function HeroSosmed({ data }: { data: SosmedItem[] }) {
               title={name}
             >
               {src ? (
-                <Image className={s.sosmedIcon} src={src} alt="" loading="lazy" fit="contain" />
+                <Image
+                  className={s.sosmedIcon}
+                  {...responsiveImageProps(src, SOSMED_ICON_SIZES, SOSMED_ICON_WIDTHS)}
+                  alt=""
+                  loading="lazy"
+                  fit="contain"
+                />
               ) : (
                 <span className={s.sosmedInitial} aria-hidden>
                   {name.charAt(0).toUpperCase()}

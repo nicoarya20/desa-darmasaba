@@ -3,6 +3,8 @@ import { Prisma } from "@prisma/client";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useState, type CSSProperties, type MouseEvent } from "react";
 import { programInitials } from "../../program-tiles/program-initials.logic";
+import { responsiveImageProps } from "../../responsive-image.logic";
+import { PROGRAM_LOGO_SIZES, PROGRAM_LOGO_WIDTHS } from "./hero-image.meta";
 import s from "./landing.module.css";
 import { LANDING_TEXT } from "./landing.text";
 import { isPlainLeftClick, programOverlayHref } from "./program-param.logic";
@@ -94,7 +96,7 @@ export function HeroPrograms({ items, loading, onOpen }: HeroProgramsProps) {
                   {item.image?.link && !brokenLogos.has(item.id) ? (
                     <Image
                       className={p.tileLogo}
-                      src={item.image.link}
+                      {...responsiveImageProps(item.image.link, PROGRAM_LOGO_SIZES, PROGRAM_LOGO_WIDTHS)}
                       alt=""
                       loading="lazy"
                       fit="contain"
