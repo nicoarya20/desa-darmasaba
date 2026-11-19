@@ -285,7 +285,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </Text>
                 }
                 style={{
-                  borderRadius: rem(10),
+                  borderRadius: mounted && isParentActive ? `0 ${rem(10)} ${rem(10)} 0` : rem(10),
                   marginBottom: rem(4),
                   transition: "background 150ms ease",
                   ...(mounted && isParentActive && !isDark && {
@@ -338,7 +338,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       }
                       styles={{
                         root: {
-                          borderRadius: rem(8),
+                          borderRadius: mounted && isChildActive ? `0 ${rem(8)} ${rem(8)} 0` : rem(8),
                           marginBottom: rem(2),
                           transition: 'background 150ms ease',
                           padding: '6px 12px',

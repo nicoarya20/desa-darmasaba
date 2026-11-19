@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.325] - 2026-11-19
+### Fixed
+- **Garis penanda menu aktif di sidebar admin kini lurus.** Border kiri pada menu induk (mis. "Ekonomi") dan submenu (mis. "UMKM & Pasar Desa") tidak lagi melengkung di sudut atas dan bawah; sudut kiri item aktif dibuat siku, sudut kanan tetap membulat.
+
 ## [0.1.324] - 2026-11-19
 ### Fixed
 - **Subjudul halaman SDGs Desa kini terbaca jelas di tema gelap.** Kalimat "Pembangunan berkelanjutan yang inklusif, adil, dan berdaya saing di tingkat desa" sebelumnya berwarna abu tua di atas latar hitam sehingga nyaris tak terbaca (kontras 2,6:1, di bawah standar keterbacaan 4,5:1). Kini di tema gelap warnanya abu terang (kontras 8,2:1). Tema terang tidak berubah.
