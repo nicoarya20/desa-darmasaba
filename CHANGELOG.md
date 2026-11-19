@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.326] - 2026-11-19
+### Changed
+- **Panel percakapan Jenna di tema gelap kini nyaman dipandang.** Sebelumnya panelnya berupa lempeng abu terang yang silau di atas halaman gelap. Kini kaca gelap berlapis kabut tipis dengan teks putih, serasi dengan chat bar di bawahnya, dan tetap mudah dibaca di atas foto maupun latar hitam. Tema terang tidak berubah.
+- **Animasi chat bar Jenna lebih santai.** Bar memanjang lebih pelan dan lembut, dan 3 pertanyaan cepat muncul satu per satu setelah bar hampir terbuka penuh, sehingga gerakannya tidak lagi terasa terburu-buru.
+
+### Fixed
+- Pertanyaan cepat Jenna tidak lagi berubah jadi putih tanpa terbaca saat disentuh kursor di atas halaman berlatar putih. Tombol "Kirim ulang" saat disentuh kursor kini tampak menebal, bukan memudar.
+
 ## [0.1.325] - 2026-11-19
 ### Changed
 - **Jenna kini berupa chat bar di kanan bawah, menggantikan tombol bulat.** Bar menampilkan contoh pertanyaan yang diketik bergantian. Saat diklik, bar memanjang dengan mulus tanpa berkedip dan menampilkan 3 pertanyaan cepat ("Jam pelayanan kantor desa?", "Apa syarat membuat surat keterangan?", "Agenda desa bulan ini?") serta catatan privasi di bawahnya. Pertanyaan cepat langsung terkirim saat diklik.
