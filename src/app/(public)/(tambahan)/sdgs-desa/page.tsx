@@ -3,6 +3,8 @@
 'use client'
 import sdgsDesa from '@/app/admin/(dashboard)/_state/landing-page/sdgs-desa';
 import { BarChart } from '@mantine/charts';
+// CSS grafik diimpor di pemakai, bukan globals.css: tidak lagi render-blocking di halaman tanpa grafik.
+import '@mantine/charts/styles.css';
 import { Box, Center, Container, Image, LoadingOverlay, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { IconMoodSad } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';

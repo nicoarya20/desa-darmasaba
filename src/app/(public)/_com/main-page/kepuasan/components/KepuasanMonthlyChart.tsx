@@ -1,4 +1,6 @@
 import { BarChart } from "@mantine/charts";
+// CSS grafik diimpor di pemakai, bukan globals.css: tidak lagi render-blocking di halaman tanpa grafik.
+import "@mantine/charts/styles.css";
 import type { MonthlyCount } from "../kepuasan.logic";
 import { MONTHLY_BAR_COLOR } from "../kepuasan.meta";
 import s from "../kepuasan.module.css";

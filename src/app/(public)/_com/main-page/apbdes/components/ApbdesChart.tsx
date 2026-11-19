@@ -1,4 +1,6 @@
 import { BarChart } from "@mantine/charts";
+// CSS grafik diimpor di pemakai, bukan globals.css: tidak lagi render-blocking di halaman tanpa grafik.
+import "@mantine/charts/styles.css";
 import { APBDES_TEXT } from "../apbdes.text";
 import { formatRupiah, formatRupiahCompact, type CategorySummary } from "../apbdes.logic";
 import s from "../apbdes.module.css";
