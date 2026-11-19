@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.321] - 2026-11-19
+### Changed
+- **Halaman PUSTU (Puskesmas Pembantu) dirapikan agar sama dengan halaman lain di menu Kesehatan.** Di daftar, kolom cari kini di kanan judul dan jaraknya ke kartu sama dengan Program Kesehatan; kartu berfoto penuh di atas dan seluruh kartu bisa diklik. Tautan "Lihat detail" tidak lagi bergaris bawah, tetapi berubah warna saat disentuh kursor seperti tautan lain di situs. Di halaman detail, tombol panah kembali diganti tautan teks "‹ PUSTU", alamat email tidak lagi bergaris bawah, dan judul bagian (Layanan Unggulan, Prosedur, Tarif, Struktur, Galeri) berukuran sama dengan halaman detail lain.
+
 ## [0.1.320] - 2026-11-19
 ### Changed
 - **Kursor tidak lagi berubah jadi tanda loading saat animasi ganti tema berjalan.** Selama adegan Candi Bentar (3 detik) kursor kini tetap panah biasa. Halaman tetap tidak bisa diklik sampai animasi selesai, sama seperti sebelumnya.
