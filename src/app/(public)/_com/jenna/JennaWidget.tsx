@@ -7,7 +7,7 @@ import { type KeyboardEvent, type MouseEvent, type PointerEvent as ReactPointerE
 import { useSnapshot } from "valtio";
 import { isMusikAppPath } from "../musik-route";
 import bar from "./jenna-bar.module.css";
-import { barMode, canCollapseToIdle, JENNA_DISCLAIMER } from "./jenna-bar.logic";
+import { barMode, canCollapseToIdle, closeToIdle, isConversationReset, JENNA_DISCLAIMER } from "./jenna-bar.logic";
 import jennaState, { type JennaSendContext } from "./jenna.state";
 import voiceState, { bindVoiceContext } from "./jenna-voice.state";
 import { JennaComposer } from "./JennaComposer";
@@ -36,8 +36,9 @@ export default function JennaWidget() {
   const [voiceSupported] = useState(() => isVoiceSupported());
   const dockRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  const discRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  /** Fokus terprogram (setelah Escape/perkecil) tidak boleh membuka room lagi lewat onFocus. */
+  /** Fokus terprogram (setelah "Mulai baru") tidak boleh membuka room lagi lewat onFocus. */
   const silentFocus = useRef(false);
 
   const ctxRef = useRef<() => JennaSendContext>(() => ({}));
@@ -68,32 +69,52 @@ export default function JennaWidget() {
   const messageCount = snap.messages.length;
   const mode = barMode(snap.open, snap.barExpanded);
 
-  // Jarak dasar dock → tepi atas kartu bar (+ celah) untuk posisi room; ikut tinggi bar (autosize, suara) & disclaimer.
+  // Ukuran yang dibaca CSS, ditulis hanya saat berubah (bukan per frame animasi; lebar dock kini tetap):
+  // --jenna-room-bottom = dasar dock → tepi atas kartu bar + celah (posisi room), --jb-disc-h = tinggi
+  // disclaimer (jarak turun dock saat idle). Nilai layout (offset*), bukan rect, agar transform dock tak ikut.
   useEffect(() => {
     const dock = dockRef.current;
     const barEl = barRef.current;
-    if (!dock || !barEl) return;
+    const disc = discRef.current;
+    if (!dock || !barEl || !disc) return;
+    const write = (name: string, px: number) => {
+      const value = `${Math.round(px)}px`;
+      if (dock.style.getPropertyValue(name) !== value) dock.style.setProperty(name, value);
+    };
     const update = () => {
-      const offset = dock.getBoundingClientRect().bottom - barEl.getBoundingClientRect().top + ROOM_GAP_PX;
-      dock.style.setProperty("--jenna-room-bottom", `${Math.round(offset)}px`);
+      write("--jenna-room-bottom", dock.offsetHeight - barEl.offsetTop + ROOM_GAP_PX);
+      write("--jb-disc-h", disc.offsetHeight);
     };
     const ro = new ResizeObserver(update);
     ro.observe(dock);
     ro.observe(barEl);
+    ro.observe(disc);
     update();
-    return () => ro.disconnect();
+    // Transisi baru dinyalakan setelah ukuran pertama terpasang: tak ada geser dari nilai cadangan saat halaman dimuat.
+    const raf = requestAnimationFrame(() => {
+      dock.dataset.ready = "true";
+    });
+    return () => {
+      ro.disconnect();
+      cancelAnimationFrame(raf);
+    };
   }, [snap.status]);
 
-  // "Mulai baru" (atau percakapan dikosongkan) menutup room; bar tetap memanjang dengan quick chat.
-  useEffect(() => {
-    if (jennaState.open && messageCount === 0) jennaState.open = false;
-  }, [messageCount]);
-
+  // "Mulai baru": room ditutup, bar tetap memanjang dengan quick chat, fokus ke input (tanpa menggulir halaman).
   // Giliran suara baru tampil di room: buka room saat jumlah pesan bertambah selama sesi suara.
   const prevCount = useRef(messageCount);
   useEffect(() => {
-    if (voiceOn && messageCount > prevCount.current) jennaState.open = true;
+    const prev = prevCount.current;
     prevCount.current = messageCount;
+    if (isConversationReset(prev, messageCount)) {
+      jennaState.open = false;
+      jennaState.barExpanded = true;
+      requestAnimationFrame(() => {
+        silentFocus.current = true;
+        inputRef.current?.focus({ preventScroll: true });
+        silentFocus.current = false;
+      });
+    } else if (voiceOn && messageCount > prev) jennaState.open = true;
   }, [voiceOn, messageCount]);
 
   const collapse = useCallback(() => {
@@ -115,11 +136,6 @@ export default function JennaWidget() {
 
   if (snap.status !== "enabled") return null;
 
-  const focusInput = () => {
-    silentFocus.current = true;
-    inputRef.current?.focus();
-    silentFocus.current = false;
-  };
   /** Fokus/klik bar: memanjang; bila sudah ada percakapan, room dibuka lagi. */
   const expand = () => {
     jennaState.barExpanded = true;
@@ -134,10 +150,15 @@ export default function JennaWidget() {
     void jennaState.send(message, sendCtx());
     if (fromDraft) setDraft("");
   };
-  const collapseRoom = () => {
-    jennaState.open = false;
-    jennaState.barExpanded = true;
-    requestAnimationFrame(focusInput);
+  /** Perkecil (chevron room) / Escape: tutup penuh ke idle. Fokus pindah ke dock (bukan textarea, yang akan
+      memanjangkan bar lagi) supaya tidak jatuh ke body; preventScroll agar halaman tidak melompat. */
+  const closeAll = () => {
+    if (voice.consentOpen) voiceState.declineConsent();
+    const next = closeToIdle(voiceOn);
+    jennaState.open = next.open;
+    jennaState.barExpanded = next.barExpanded;
+    if (!next.barExpanded) voiceState.dismissNotice();
+    dockRef.current?.focus({ preventScroll: true });
   };
 
   const onBarMouseDown = (e: MouseEvent<HTMLDivElement>) => {
@@ -147,18 +168,15 @@ export default function JennaWidget() {
     expand();
     inputRef.current?.focus();
   };
-  // Klik textarea yang sudah terfokus (mis. setelah Escape) tidak memicu onFocus: buka lagi lewat pointerup.
+  // Klik textarea yang sudah terfokus (mis. setelah "Mulai baru") tidak memicu onFocus: buka lagi lewat pointerup.
   const onTextareaPointer = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.target === inputRef.current) expand();
   };
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== "Escape") return;
-    if (voice.consentOpen) voiceState.declineConsent();
-    else if (jennaState.open) jennaState.open = false;
-    else if (jennaState.barExpanded && !voiceOn) collapse();
-    else return;
+    if (!voice.consentOpen && !jennaState.open && (!jennaState.barExpanded || voiceOn)) return;
     e.stopPropagation();
-    focusInput();
+    closeAll();
   };
 
   const canStartVoice = snap.voiceEnabled && voiceSupported && !voiceBusy;
@@ -173,57 +191,62 @@ export default function JennaWidget() {
       data-musik={isMusikAppPath(pathname)}
       data-hidden={hidden}
       inert={hidden}
+      tabIndex={-1}
       onKeyDown={onKeyDown}
     >
-      <JennaRoom open={snap.open && !hidden} onCollapse={collapseRoom} sendCtx={sendCtx} />
+      <JennaRoom open={snap.open && !hidden} onCollapse={closeAll} sendCtx={sendCtx} />
       {mode === "expanded" && !voiceBusy && <JennaQuickChats onPick={send} disabled={snap.sending} />}
       <div ref={barRef} className={bar.bar} onMouseDown={onBarMouseDown} onPointerUp={onTextareaPointer}>
-        {voice.notice && !voiceOn && mode !== "idle" && (
-          <JennaVoiceNotice text={voice.notice} onClose={voiceState.dismissNotice} />
-        )}
-        {voice.consentOpen && (
-          <JennaVoiceConsent
-            assistantName={snap.assistantName}
-            onAccept={voiceState.acceptConsent}
-            onDecline={voiceState.declineConsent}
-          />
-        )}
-        {voiceOn ? (
-          <JennaVoiceControls
-            assistantName={snap.assistantName}
-            status={voice.status as Exclude<typeof voice.status, "off">}
-            transcript={voice.transcript}
-            micLevel={voice.micLevel}
-            beat={voice.beat}
-            beatAt={voice.beatAt}
-            now={voice.now}
-            onStop={voiceState.stop}
-          />
-        ) : (
-          <JennaComposer
-            draft={draft}
-            onDraftChange={(value) => {
-              setDraft(value);
-              jennaState.barExpanded = true;
-            }}
-            maxChars={snap.maxInputChars}
-            sending={snap.sending}
-            rotate={mode === "idle"}
-            website={website}
-            onWebsiteChange={setWebsite}
-            onSend={(text) => send(text, true)}
-            onStop={jennaState.abort}
-            onFocus={expand}
-            inputRef={inputRef}
-            voiceLabel={VOICE_COPY.start.replace("{name}", snap.assistantName)}
-            onVoice={mode !== "idle" && canStartVoice ? voiceState.requestStart : undefined}
-          />
-        )}
-      </div>
-      <div className={bar.disclaimerWrap} aria-hidden={mode === "idle"}>
-        <div className={bar.disclaimerInner}>
-          <p className={bar.disclaimer}>{JENNA_DISCLAIMER}</p>
+        {/* Kulit pil selebar penuh; saat idle tepi kirinya dipotong clip-path (animasi tanpa layout). */}
+        <div className={bar.skinWrap} aria-hidden="true">
+          <div className={bar.skin} />
         </div>
+        <div className={bar.content}>
+          {voice.notice && !voiceOn && mode !== "idle" && (
+            <JennaVoiceNotice text={voice.notice} onClose={voiceState.dismissNotice} />
+          )}
+          {voice.consentOpen && (
+            <JennaVoiceConsent
+              assistantName={snap.assistantName}
+              onAccept={voiceState.acceptConsent}
+              onDecline={voiceState.declineConsent}
+            />
+          )}
+          {voiceOn ? (
+            <JennaVoiceControls
+              assistantName={snap.assistantName}
+              status={voice.status as Exclude<typeof voice.status, "off">}
+              transcript={voice.transcript}
+              micLevel={voice.micLevel}
+              beat={voice.beat}
+              beatAt={voice.beatAt}
+              now={voice.now}
+              onStop={voiceState.stop}
+            />
+          ) : (
+            <JennaComposer
+              draft={draft}
+              onDraftChange={(value) => {
+                setDraft(value);
+                jennaState.barExpanded = true;
+              }}
+              maxChars={snap.maxInputChars}
+              sending={snap.sending}
+              rotate={mode === "idle"}
+              website={website}
+              onWebsiteChange={setWebsite}
+              onSend={(text) => send(text, true)}
+              onStop={jennaState.abort}
+              onFocus={expand}
+              inputRef={inputRef}
+              voiceLabel={VOICE_COPY.start.replace("{name}", snap.assistantName)}
+              onVoice={mode !== "idle" && canStartVoice ? voiceState.requestStart : undefined}
+            />
+          )}
+        </div>
+      </div>
+      <div ref={discRef} className={bar.disclaimerWrap} aria-hidden={mode === "idle"}>
+        <p className={bar.disclaimer}>{JENNA_DISCLAIMER}</p>
       </div>
     </div>
   );

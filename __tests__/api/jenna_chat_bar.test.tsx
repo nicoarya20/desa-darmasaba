@@ -11,11 +11,14 @@ vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => ({ currentSong: n
 import {
   barMode,
   canCollapseToIdle,
+  closeToIdle,
+  isConversationReset,
   JENNA_DISCLAIMER,
   JENNA_INPUT_PLACEHOLDER,
   JENNA_QUICK_CHATS,
-  nextPlaceholderIndex,
   showCounter,
+  TYPING_TIMING,
+  typingFrame,
 } from '@/app/(public)/_com/jenna/jenna-bar.logic';
 import jennaState from '@/app/(public)/_com/jenna/jenna.state';
 import { JennaComposer } from '@/app/(public)/_com/jenna/JennaComposer';
@@ -53,10 +56,40 @@ describe('jenna-bar.logic', () => {
     expect(JENNA_DISCLAIMER).not.toContain('—');
   });
 
-  it('nextPlaceholderIndex berputar ke awal dan aman untuk daftar kosong', () => {
-    expect(nextPlaceholderIndex(0, 3)).toBe(1);
-    expect(nextPlaceholderIndex(2, 3)).toBe(0);
-    expect(nextPlaceholderIndex(5, 0)).toBe(0);
+  describe('typingFrame: ketik huruf demi huruf → jeda 3 dtk → langsung kosong → teks berikutnya', () => {
+    const t = { typeMs: 50, holdMs: 1000 }; // test-only
+    const texts = ['abc', 'de']; // test-only
+    const segA = 3 * 50 + 1000; // 1150
+
+    it('mulai kosong lalu huruf bertambah tiap typeMs; nextIn = sisa waktu ke huruf berikutnya', () => {
+      expect(typingFrame(texts, 0, t)).toEqual({ index: 0, text: '', phase: 'typing', nextIn: 50 });
+      expect(typingFrame(texts, 49, t)).toMatchObject({ text: '', nextIn: 1 });
+      expect(typingFrame(texts, 50, t)).toMatchObject({ text: 'a', phase: 'typing' });
+      expect(typingFrame(texts, 120, t)).toMatchObject({ text: 'ab', phase: 'typing', nextIn: 30 });
+    });
+
+    it('jeda selama holdMs saat lengkap, tanpa fase hapus mundur', () => {
+      expect(typingFrame(texts, 150, t)).toEqual({ index: 0, text: 'abc', phase: 'hold', nextIn: 1000 });
+      expect(typingFrame(texts, segA - 1, t)).toEqual({ index: 0, text: 'abc', phase: 'hold', nextIn: 1 });
+    });
+
+    it('teks lengkap langsung kosong lalu teks berikutnya diketik, berulang dari awal', () => {
+      expect(typingFrame(texts, segA, t)).toEqual({ index: 1, text: '', phase: 'typing', nextIn: 50 });
+      expect(typingFrame(texts, segA + 50, t)).toMatchObject({ index: 1, text: 'd' });
+      const segB = 2 * 50 + 1000;
+      expect(typingFrame(texts, segA + segB, t)).toMatchObject({ index: 0, text: '', phase: 'typing' });
+      // Tak pernah ada potongan yang memendek di tengah satu teks (bukan hapus mundur).
+      const lens = Array.from({ length: segA }, (_, ms) => typingFrame(texts, ms, t).text.length);
+      expect(lens.every((n, i) => i === 0 || n >= lens[i - 1])).toBe(true);
+    });
+
+    it('tempo bawaan sesuai arahan (ketik 45-60 ms/huruf, jeda 3 dtk) dan daftar kosong aman', () => {
+      expect(TYPING_TIMING.typeMs).toBeGreaterThanOrEqual(45);
+      expect(TYPING_TIMING.typeMs).toBeLessThanOrEqual(60);
+      expect(TYPING_TIMING.holdMs).toBe(3000);
+      expect(typingFrame(JENNA_QUICK_CHATS, TYPING_TIMING.typeMs).text).toBe(JENNA_QUICK_CHATS[0][0]);
+      expect(typingFrame([], 500)).toMatchObject({ text: '' });
+    });
   });
 
   it('showCounter hanya saat draf ≥ 90% batas', () => {
@@ -79,6 +112,18 @@ describe('jenna-bar.logic', () => {
     expect(canCollapseToIdle({ roomOpen: false, draft: 'halo', voiceBusy: false })).toBe(false);
     expect(canCollapseToIdle({ roomOpen: false, draft: '', voiceBusy: true })).toBe(false);
   });
+
+  it('closeToIdle: perkecil/Escape menutup room DAN bar kembali idle; sesi suara menahan bar memanjang', () => {
+    expect(closeToIdle(false)).toEqual({ open: false, barExpanded: false });
+    expect(closeToIdle(true)).toEqual({ open: false, barExpanded: true });
+  });
+
+  it('isConversationReset: hanya saat jumlah pesan turun dari > 0 ke 0', () => {
+    expect(isConversationReset(4, 0)).toBe(true);
+    expect(isConversationReset(0, 0)).toBe(false);
+    expect(isConversationReset(0, 2)).toBe(false);
+    expect(isConversationReset(4, 2)).toBe(false);
+  });
 });
 
 describe('JennaWidget (render statis)', () => {
@@ -88,13 +133,18 @@ describe('JennaWidget (render statis)', () => {
     expect(wrap(<JennaWidget />).replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')).toBe('');
   });
 
-  it('idle: placeholder asli + teks bergilir aria-hidden, kirim nonaktif, tanpa quick chat & counter, honeypot', () => {
+  it('idle: placeholder asli + hiasan ketik aria-hidden, kirim nonaktif, tanpa quick chat & counter, honeypot', () => {
     enable();
     const html = wrap(<JennaWidget />);
     expect(dockMode(html)).toBe('idle');
     expect(html).toContain(`placeholder="${JENNA_INPUT_PLACEHOLDER}"`);
     expect(html).toContain('aria-label="Pertanyaan untuk Jenna"');
-    expect(html).toMatch(new RegExp(`aria-hidden="true"[^>]*><span[^>]*>${esc(JENNA_QUICK_CHATS[0])}</span>`));
+    // Hiasan ketik tampil (teks ditulis timer di klien), petunjuk statis tersembunyi; keduanya aria-hidden.
+    expect(html).toMatch(/<span class="[^"]*typing[^"]*" aria-hidden="true" data-show="true">/);
+    expect(html).toMatch(new RegExp(`<span class="[^"]*hint[^"]*" aria-hidden="true" data-show="false">${esc(JENNA_INPUT_PLACEHOLDER)}</span>`));
+    // Dock tetap selebar mode memanjang; kulit pil (clip-path) terpisah dari isi.
+    expect(html).toMatch(/<div class="[^"]*skinWrap[^"]*" aria-hidden="true"><div class="[^"]*skin[^"]*"><\/div><\/div>/);
+    expect(html).toMatch(/data-mode="idle"[^>]*tabindex="-1"/); // dock bisa menerima fokus terprogram
     expect(html).toMatch(/<button[^>]*type="submit"[^>]*aria-label="Kirim pertanyaan"[^>]*disabled/);
     expect(html).not.toContain('aria-label="Pertanyaan cepat"');
     expect(html).not.toContain('/500');
@@ -103,18 +153,20 @@ describe('JennaWidget (render statis)', () => {
     expect(honeypot).toContain('tabindex="-1"');
     expect(honeypot).toMatch(/autocomplete="off"/i);
     // Disclaimer selalu ter-render (dianimasikan), tapi disembunyikan dari pembaca layar saat idle.
-    expect(html).toMatch(new RegExp(`aria-hidden="true"><div[^>]*><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
+    expect(html).toMatch(new RegExp(`aria-hidden="true"><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
   });
 
-  it('expanded: 3 quick chat sebagai tombol, teks bergilir hilang, disclaimer terbaca', () => {
+  it('expanded: 3 quick chat sebagai tombol, hiasan ketik berganti petunjuk, disclaimer terbaca', () => {
     enable();
     jennaState.barExpanded = true;
     const html = wrap(<JennaWidget />);
     expect(dockMode(html)).toBe('expanded');
     expect(html).toContain('aria-label="Pertanyaan cepat"');
     for (const q of JENNA_QUICK_CHATS) expect(html).toMatch(new RegExp(`<button type="button"[^>]*>${esc(q)}</button>`));
-    expect(html).toMatch(new RegExp(`aria-hidden="false"><div[^>]*><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
-    expect(countOf(html, JENNA_QUICK_CHATS[0])).toBe(1); // hanya pil, bukan placeholder bergilir
+    expect(html).toMatch(new RegExp(`aria-hidden="false"><p[^>]*>${esc(JENNA_DISCLAIMER)}</p>`));
+    expect(countOf(html, JENNA_QUICK_CHATS[0])).toBe(1); // hanya pil
+    expect(html).toMatch(/typing[^"]*" aria-hidden="true" data-show="false">/);
+    expect(html).toMatch(/hint[^"]*" aria-hidden="true" data-show="true">/);
   });
 
   it('room: quick chat disembunyikan saat percakapan terbuka', () => {
@@ -158,6 +210,13 @@ describe('JennaComposer (render statis)', () => {
     expect(html).toContain('aria-label="Hentikan jawaban"');
     expect(html).not.toContain('aria-label="Kirim pertanyaan"');
     expect(html).not.toContain('Bicara dengan Jenna');
+  });
+
+  it('hiasan placeholder hilang saat ada draf', () => {
+    const html = wrap(<JennaComposer {...base} rotate draft="halo" sending={false} />);
+    expect(html).not.toMatch(/typing[^"]*" aria-hidden/);
+    expect(html).not.toMatch(/hint[^"]*" aria-hidden/);
+    expect(html).toContain('data-blank="false"');
   });
 
   it('mikrofon hanya tampil bila onVoice ada', () => {

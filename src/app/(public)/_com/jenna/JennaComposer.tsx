@@ -1,23 +1,18 @@
 import { Textarea } from "@mantine/core";
-import { useReducedMotion } from "@mantine/hooks";
 import { IconArrowUp, IconMicrophone, IconPlayerStopFilled } from "@tabler/icons-react";
-import { type Ref, useEffect, useState } from "react";
+import type { Ref } from "react";
 import classes from "./jenna.module.css";
 import bar from "./jenna-bar.module.css";
-import {
-  JENNA_INPUT_PLACEHOLDER,
-  JENNA_QUICK_CHATS,
-  nextPlaceholderIndex,
-  PLACEHOLDER_ROTATE_MS,
-  showCounter,
-} from "./jenna-bar.logic";
+import { JENNA_INPUT_PLACEHOLDER, showCounter } from "./jenna-bar.logic";
+import typing from "./jenna-typing.module.css";
+import { JennaTypingPlaceholder } from "./JennaTypingPlaceholder";
 
 interface Props {
   draft: string;
   onDraftChange: (value: string) => void;
   maxChars: number;
   sending: boolean;
-  /** Bar diam (idle) dan draf kosong: placeholder bergilir menggantikan placeholder asli. */
+  /** Bar diam (idle): contoh pertanyaan diketik bergantian; selain itu tampil petunjuk "Tanya Jenna…". */
   rotate: boolean;
   /** Nilai honeypot `website`, dipegang induk agar ikut terkirim dari quick chat & kirim ulang di room. */
   website: string;
@@ -29,34 +24,6 @@ interface Props {
   /** Label tombol mikrofon; tombol hanya tampil bila `onVoice` ada. */
   voiceLabel?: string;
   onVoice?: () => void;
-}
-
-/** Teks contoh bergilir (hiasan aria-hidden) dengan crossfade; gerak dikurangi = teks pertama statis. */
-function RotatingPlaceholder() {
-  const reduce = useReducedMotion();
-  const [rot, setRot] = useState<{ idx: number; prev: number | null }>({ idx: 0, prev: null });
-
-  useEffect(() => {
-    if (reduce) return;
-    const id = setInterval(
-      () => setRot((r) => ({ idx: nextPlaceholderIndex(r.idx, JENNA_QUICK_CHATS.length), prev: r.idx })),
-      PLACEHOLDER_ROTATE_MS,
-    );
-    return () => clearInterval(id);
-  }, [reduce]);
-
-  return (
-    <span className={bar.rotator} aria-hidden="true">
-      {rot.prev !== null && (
-        <span key={`out-${rot.prev}-${rot.idx}`} className={bar.rotatorItem} data-out="true">
-          {JENNA_QUICK_CHATS[rot.prev]}
-        </span>
-      )}
-      <span key={`in-${rot.idx}`} className={bar.rotatorItem}>
-        {JENNA_QUICK_CHATS[rot.idx]}
-      </span>
-    </span>
-  );
 }
 
 /** Isi pil chat bar: textarea autosize 1-4 baris, mikrofon (opsional), tombol kirim/berhenti bulat. */
@@ -76,7 +43,7 @@ export function JennaComposer({
   onVoice,
 }: Props) {
   const empty = draft.trim() === "";
-  const rotating = rotate && draft === "";
+  const blank = draft === "";
 
   const submit = () => {
     if (empty || sending) return;
@@ -105,7 +72,7 @@ export function JennaComposer({
           />
         </label>
       </div>
-      <div className={bar.field} data-rotating={rotating}>
+      <div className={bar.field} data-blank={blank}>
         <Textarea
           ref={inputRef}
           variant="unstyled"
@@ -127,7 +94,13 @@ export function JennaComposer({
             submit();
           }}
         />
-        {rotating && <RotatingPlaceholder />}
+        {/* Placeholder asli selalu transparan (tetap dibaca pembaca layar); dua hiasan ini bergantian memudar. */}
+        {blank && <JennaTypingPlaceholder active={rotate} />}
+        {blank && (
+          <span className={typing.hint} aria-hidden="true" data-show={!rotate}>
+            {JENNA_INPUT_PLACEHOLDER}
+          </span>
+        )}
       </div>
       {showCounter(draft.length, maxChars) && (
         <span className={bar.counter} data-full={draft.length >= maxChars}>

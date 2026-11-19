@@ -1,0 +1,40 @@
+/* Hiasan placeholder chat bar Jenna (di dalam .field jenna-bar.module.css; mewarisi --jb-muted & --jb-shift dari dock).
+   Placeholder asli textarea transparan; yang terlihat dua hiasan aria-hidden ini, saling memudar. */
+
+/* Contoh pertanyaan diketik (idle) dan petunjuk statis "Tanya Jenna…" (memanjang). */
+.typing,
+.hint {
+  position: absolute;
+  top: 7px;
+  left: 0;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--jb-muted);
+  font-size: 15px;
+  line-height: 22px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.typing {
+  right: var(--jb-shift); /* lebar terlihat field saat idle */
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+.hint {
+  right: 0;
+}
+
+.typing[data-show="true"],
+.hint[data-show="true"] {
+  opacity: 1;
+  transition: opacity 180ms ease 100ms;
+}
+
+@media (max-width: 47.99em) {
+  .typing,
+  .hint {
+    font-size: 16px;
+  }
+}
