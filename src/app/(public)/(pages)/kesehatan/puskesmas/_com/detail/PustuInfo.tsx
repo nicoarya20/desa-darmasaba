@@ -1,6 +1,7 @@
 import KontakLink from '@/app/(public)/_com/konten-bersama/kontak.link';
 import TombolGoogleMaps from '@/app/(public)/_com/konten-bersama/lokasi.tombol';
 import MediaSosialLinks from '@/app/(public)/_com/konten-bersama/media-sosial.links';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import type { PustuDetail } from '@/lib/pustu/pustu.types';
 import { IconAmbulance, IconClock, IconMapPin, IconPhone, type Icon } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
@@ -52,8 +53,10 @@ export default function PustuInfo({ data }: { data: PustuDetail }) {
         <Tile icon={IconPhone} label={T.kontak}>
           {telepon ? <KontakLink kontak={telepon} /> : null}
           {email ? (
-            <a className={s.emailLink} href={`mailto:${email}`}>
-              {email}
+            <a className={`${s.emailLink} ${r.trigger}`} href={`mailto:${email}`}>
+              <span className={r.cta} data-text={email}>
+                {email}
+              </span>
             </a>
           ) : null}
           {data.mediaSosial.length > 0 ? (
