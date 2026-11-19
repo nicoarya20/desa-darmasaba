@@ -1,4 +1,5 @@
-/* Hiasan placeholder chat bar Jenna (di dalam .field jenna-bar.module.css; mewarisi --jb-muted & --jb-shift dari dock).
+/* Hiasan placeholder chat bar Jenna (di dalam .field jenna-bar.module.css; mewarisi --jb-muted, --jb-shift
+   dan token tempo --jb-dur-fade-* / --jb-fade-delay dari dock).
    Placeholder asli textarea transparan; yang terlihat dua hiasan aria-hidden ini, saling memudar. */
 
 /* Contoh pertanyaan diketik (idle) dan petunjuk statis "Tanya Jenna…" (memanjang). */
@@ -14,7 +15,7 @@
   line-height: 22px;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 140ms ease;
+  transition: opacity var(--jb-dur-fade-out) ease;
 }
 
 .typing {
@@ -29,7 +30,7 @@
 .typing[data-show="true"],
 .hint[data-show="true"] {
   opacity: 1;
-  transition: opacity 180ms ease 100ms;
+  transition: opacity var(--jb-dur-fade-in) ease var(--jb-fade-delay);
 }
 
 @media (max-width: 47.99em) {
