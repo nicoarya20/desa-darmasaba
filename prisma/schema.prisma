@@ -775,6 +775,19 @@ model WilayahDesa {
   isActive     Boolean   @default(true)
 }
 
+// Kontak resmi kantor desa (footer publik & halaman PPID), diedit admin di Profil Desa > Kontak Desa. Singleton: satu
+// baris dengan id tetap "kontak-desa" (src/lib/kontak-desa.ts), di-upsert dari admin. Tanpa isActive/deletedAt karena
+// barisnya tidak pernah dihapus, hanya diperbarui. Baris awal diisi migrasi dari konstanta lama (bukan seeder).
+model KontakDesa {
+  id         String   @id
+  namaKantor String
+  alamat     String
+  telepon    String
+  email      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
 model LambangDesa {
   id        String    @id @default(cuid())
   judul     String
