@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.320] - 2026-11-19
+### Changed
+- **Kursor tidak lagi berubah jadi tanda loading saat animasi ganti tema berjalan.** Selama adegan Candi Bentar (3 detik) kursor kini tetap panah biasa. Halaman tetap tidak bisa diklik sampai animasi selesai, sama seperti sebelumnya.
+
 ## [0.1.319] - 2026-11-19
 ### Changed
 - **Animasi Candi Bentar saat mengganti tema terang/gelap kini 3 detik (sebelumnya 5 detik).** Urutan adegan tetap sama (pilar masuk, langit dan air muncul, tema berganti di balik adegan, lalu menembus celah gerbang); semua tahap dipercepat sebanding sehingga pergantian tema terasa lebih sigap. Pergantian warna halaman tetap tidak pernah terlihat setengah jalan, juga di perangkat lambat.
