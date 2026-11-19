@@ -1,7 +1,8 @@
 // @vitest-environment node
 // Lambang desa, logo Pudak, dan poster hero Prestasi di situs publik memakai WebP seukuran tampil (bukan PNG/JPEG
 // asli 101/48/182 KB yang dimuat dengan prioritas tinggi). Menjaga: path menunjuk berkas WebP yang benar-benar ada,
-// dan navbar tidak kembali ke PNG lama. Markup diuji via renderToStaticMarkup (jsdom rusak di repo ini).
+// dan navbar serta logo splash/transisi tema tidak kembali ke PNG lama. Markup diuji via renderToStaticMarkup
+// (jsdom rusak di repo ini).
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
@@ -29,6 +30,8 @@ import { NavbarMainMenu } from '@/app/(public)/_com/NavbarMainMenu';
 import { NavbarMobile } from '@/app/(public)/_com/NavbarMobile';
 import { PRESTASI_HERO_VIDEO } from '@/app/(public)/_com/main-page/prestasi/prestasi.meta';
 import { LOGO_DESA_SRC } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.meta';
+import GateSplash from '@/app/(public)/_com/splash/GateSplash';
+import ThemeGateTransition from '@/app/(public)/_com/theme-transition/ThemeGateTransition';
 
 const PUBLIC_DIR = path.resolve(__dirname, '../../public');
 
@@ -65,6 +68,19 @@ describe('logo navbar', () => {
   ])('%s memakai logo desa WebP kecil, bukan PNG lama', (_label, el) => {
     const html = render(el());
     expect(html).toContain(`src="${LOGO_DESA_SMALL_SRC}"`);
+    expect(html).not.toContain('darmasaba-icon.png');
+  });
+});
+
+// <link rel="preload"> sengaja TIDAK dibuang: React 19 mem-preload <img> logo, dan justru preload PNG 101 KB
+// itu yang bersaing dengan CSS & foto LCP beranda.
+describe('logo splash & transisi tema', () => {
+  it.each([
+    ['splash gerbang beranda', () => <GateSplash />],
+    ['overlay transisi tema', () => <ThemeGateTransition />],
+  ])('%s memakai logo desa WebP besar, bukan PNG lama', (_label, el) => {
+    const html = render(el());
+    expect(html).toContain(`src="${LOGO_DESA_LARGE_SRC}"`);
     expect(html).not.toContain('darmasaba-icon.png');
   });
 });
