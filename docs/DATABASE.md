@@ -23,6 +23,13 @@ Seluruhnya nullable/tabel baru (baris lama tetap valid, tanpa backfill), migrasi
 - `DokumenPerencanaan.jenis` (teks) kini menerima `APBDES` dan `PELAPORAN_APBDES` selain `RPJM`, `RKP`, `BERITA_ACARA_MUSYAWARAH`; tanpa migrasi. Halaman publik `/pemerintahan/arah-kebijakan-pembangunan-desa` menampilkan 4 kategori (tab Berita Acara hanya bila ada dokumen). Halaman/editor `/apbdes` tidak berubah.
 - Tabel baru `ProdukHukum` (migrasi `20261118140000_lomba_produk_hukum`): judul, nomor, tahun, `kategori` (teks: PERDES, PERATURAN_PERBEKEL, SK_PERBEKEL, LAINNYA), urutan, `fileId` opsional (`ON DELETE SET NULL`). Menu admin `desa.produk-hukum` (ID baru; pemegang ID submenu dicentang manual di Menu Access, tanpa data-migration); label menu `desa.dokumen-perencanaan` diganti jadi "Arah Kebijakan Pembangunan Desa", ID tetap.
 
+### Kontak Desa CMS (2026-11-19)
+
+- Tabel baru `KontakDesa` (migrasi `20261119160000_kontak_desa_cms`): **singleton** (id tetap `'kontak-desa'`, konstanta `KONTAK_DESA_ID` di `src/lib/kontak-desa.ts`) berisi `namaKantor`, `alamat`, `telepon`, `email`. Tanpa `isActive`/`deletedAt` karena barisnya tidak pernah dihapus, hanya di-upsert admin.
+- Migrasi juga menyisipkan satu baris awal berisi nilai konstanta lama `KONTAK_DESA` (`ON CONFLICT DO NOTHING`), supaya footer tidak kosong setelah deploy. Konstanta itu sudah dihapus dari `src/con/kontak-desa.ts` (`PENGELOLA_WEBSITE` tetap); jangan menambah nilai bawaan di kode, perbaiki data lewat admin.
+- API `/api/desa/kontakdesa`: `GET` publik (footer, halaman PPID), `PUT` hanya admin (role 0-4, `guardAdmin`). Aturan isi di `src/lib/kontak-desa.ts` (telepon lewat `phoneInfo`, email berformat, batas panjang). Admin: tab "Kontak Desa" di Profil Desa (`/admin/pemerintahan/profil/kontak-desa`), tanpa ID akses menu baru (di bawah `desa.profil`).
+- Pembaca publik memakai state Valtio bersama (`_state/desa/kontakDesa.ts`, hook `useKontakDesa`): kerangka selama memuat, kosong bila gagal; tanpa fallback ke nilai hardcode.
+
 ## Authentication Flow
 Auth was rewritten to **Better Auth with Google OAuth only** (no more phone OTP). Flow:
 1. User signs in with Google → Better Auth (`src/lib/auth.ts`) creates a session, stored in Postgres (`Session`, `Account`, `Verification`, `RateLimit` models — Better Auth's own schema, not custom).
