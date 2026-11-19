@@ -13,6 +13,7 @@ import {
   libraryReply,
   mount,
   playError,
+  RequestLibrary,
   run,
   song,
 } from './_musik_engine_harness';
@@ -38,6 +39,7 @@ async function start(songs: Musik[] = [A, B, C, D], storage = fakeStorage()) {
   installBrowserStubs([libraryReply(songs)], storage);
   return mount(
     <MusicProvider>
+      <RequestLibrary />
       <Probe />
     </MusicProvider>
   );

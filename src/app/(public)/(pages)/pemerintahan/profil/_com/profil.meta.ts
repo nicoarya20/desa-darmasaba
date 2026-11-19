@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { LOGO_DESA_LARGE_SRC } from '@/app/(public)/_com/logo-desa.meta';
 import { STRUKTUR_VARS } from '@/app/(public)/_com/struktur-organisasi/struktur.meta';
 
 /** ID baris tunggal (singleton) section Profil Desa di CMS — sama dengan yang dipakai form admin. */
@@ -7,7 +8,8 @@ export const PROFIL_CMS_ID = 'edit';
 /** Jumlah perbekel terdahulu yang dimuat sekaligus — default API 10 akan memotong perbekel ke-11 dst. */
 export const RIWAYAT_PERBEKEL_LIMIT = 50;
 
-export const LOGO_DESA_SRC = '/darmasaba-icon.png';
+/** Lambang di kartu Lambang Desa (96–140px): WebP bersama situs publik, bukan PNG 101 KB. */
+export const LOGO_DESA_SRC = LOGO_DESA_LARGE_SRC;
 export const MASKOT_ICON_SRC = '/pudak-icon.png';
 export const PERBEKEL_FALLBACK_SRC = '/perbekel.png';
 

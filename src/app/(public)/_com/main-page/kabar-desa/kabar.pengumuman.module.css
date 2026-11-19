@@ -81,26 +81,6 @@
   outline-offset: 3px;
 }
 
-.rowPlaceholder {
-  height: 22px;
-  margin: 16px 0;
-  border-radius: 6px;
-  background: var(--placeholder);
-  animation: pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  50% {
-    opacity: 0.55;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rowPlaceholder {
-    animation: none;
-  }
-}
-
 /* Mobile: judul boleh 2 baris, tanggal turun ke bawah judul, chevron di kanan. */
 @media (max-width: 734px) {
   .pengumuman {

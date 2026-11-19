@@ -1,5 +1,7 @@
 import { formatJumlah } from '@/app/(public)/_com/stat-bars/stat-bars.logic';
 import { BarChart } from '@mantine/charts';
+// CSS grafik diimpor di pemakai, bukan globals.css: tidak lagi render-blocking di halaman tanpa grafik.
+import '@mantine/charts/styles.css';
 import { useMediaQuery } from '@mantine/hooks';
 import { BULAN, type PengangguranBulan } from './pengangguran.logic';
 import { SERI_WARNA } from './pengangguran.meta';

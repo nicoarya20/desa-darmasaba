@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useNearViewport } from "../lazy-load/use-near-viewport";
 
 type Props = {
   children: ReactNode;
@@ -23,24 +24,10 @@ export const MOUNT_ROOT_MARGIN = "1200px 0px";
 /**
  * Memasang `children` hanya setelah kotak ini mendekati layar (sekali, lalu tetap). Dipakai untuk grafik di bawah lipatan:
  * kode grafik (recharts) baru diunduh saat dibutuhkan sehingga JavaScript awal beranda lebih ringan (TBT, juknis lomba 5.4).
- * Bergantung pada IntersectionObserver (semua browser modern); tanpa itu efeknya tidak jalan dan isi tidak muncul.
+ * Pengamatan memakai `useNearViewport` bersama (browser tanpa IntersectionObserver langsung memasang isi).
  */
 export function MountWhenNear({ children, placeholderClassName, rootMargin = MOUNT_ROOT_MARGIN }: Props) {
-  const boxRef = useRef<HTMLDivElement>(null);
-  const [near, setNear] = useState(false);
-
-  useEffect(() => {
-    const box = boxRef.current;
-    if (!box || near) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) setNear(true);
-      },
-      { rootMargin },
-    );
-    observer.observe(box);
-    return () => observer.disconnect();
-  }, [near, rootMargin]);
+  const [boxRef, near] = useNearViewport<HTMLDivElement>(rootMargin);
 
   return (
     <div ref={boxRef} className={placeholderClassName}>
