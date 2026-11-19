@@ -154,12 +154,10 @@
   opacity: 0.4;
 }
 
-/* Area gulir pesan (kolom flex agar daftar bisa menempel ke dasar): scrollbar tipis sewarna garis kaca; tepi atas memudar di bawah header. */
+/* Area gulir pesan: scrollbar tipis sewarna garis kaca; tepi atas memudar di bawah header. */
 .roomScroll {
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -167,9 +165,8 @@
   mask-image: linear-gradient(to bottom, transparent 0, #000 14px);
 }
 
-/* margin-top auto: percakapan pendek menempel ke dasar (dekat bar), bukan menggantung di bawah header. */
+/* Pesan mengalir dari atas (tepat di bawah header) ke bawah. */
 .roomList {
-  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: 14px;

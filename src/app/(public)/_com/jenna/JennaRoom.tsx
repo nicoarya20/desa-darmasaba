@@ -17,11 +17,6 @@ export function JennaRoom({ open, onCollapse, sendCtx }: Props) {
   const snap = useSnapshot(jennaState);
   const titleId = useId();
 
-  const startOver = () => {
-    jennaState.reset();
-    onCollapse();
-  };
-
   return (
     // Selalu ter-mount agar animasi tutup berjalan; saat tertutup `inert` (tak bisa difokus/diklik) + aria-hidden.
     <section
@@ -50,7 +45,7 @@ export function JennaRoom({ open, onCollapse, sendCtx }: Props) {
           className={classes.roomIconBtn}
           aria-label="Mulai percakapan baru"
           disabled={snap.messages.length === 0}
-          onClick={startOver}
+          onClick={jennaState.reset}
         >
           <IconRefresh size={18} aria-hidden="true" />
         </UnstyledButton>
