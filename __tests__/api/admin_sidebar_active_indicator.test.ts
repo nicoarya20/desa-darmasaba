@@ -18,9 +18,10 @@ describe('indikator aktif sidebar admin', () => {
     expect(LAYOUT).not.toMatch(/`0 \$\{rem\(/);
   });
 
-  it('CSS module: ::before absolut, lebar 3px, ujung bulat 999px', () => {
+  it('CSS module: ::before absolut, lebar 2px, tinggi 76%, ujung bulat 999px', () => {
     expect(CSS).toMatch(/\.parent::before,\s*\.child::before\s*\{[^}]*position:\s*absolute/);
-    expect(CSS).toMatch(/\.parent::before,\s*\.child::before\s*\{[^}]*width:\s*3px/);
+    expect(CSS).toMatch(/\.parent::before,\s*\.child::before\s*\{[^}]*width:\s*2px/);
+    expect(CSS).toMatch(/\.parent::before,\s*\.child::before\s*\{[^}]*height:\s*76%/);
     expect(CSS).toMatch(/\.parent::before,\s*\.child::before\s*\{[^}]*border-radius:\s*999px/);
   });
 

@@ -14,8 +14,8 @@
   content: '';
   position: absolute;
   top: 50%;
-  width: 3px;
-  height: 58%;
+  width: 2px;
+  height: 76%;
   transform: translateY(-50%);
   border-radius: 999px;
   background-color: var(--sidebar-indicator-color);
