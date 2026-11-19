@@ -2,7 +2,7 @@
 
 ## [0.1.328] - 2026-11-19
 ### Added
-- **Menu baru "Indeks Desa".** Halaman publik `/indeks-desa/idm` menampilkan Indeks Desa Membangun (IDM) Desa Darmasaba: skor dan status tahun terbaru, tiga dimensi (Ketahanan Sosial, Ekonomi, Lingkungan), dan riwayat per tahun. Admin mengisi data di menu admin baru "Indeks Desa" > "Indeks Desa Membangun". Selama data belum diisi, halaman menampilkan keterangan "data belum tersedia", tanpa angka contoh. Admin dengan akses menu terbatas perlu diberi akses menu baru ini lewat pengaturan akses menu.
+- **Submenu baru "Indeks Desa" di menu Pemerintahan.** Halaman publik `/pemerintahan/indeks-desa` menampilkan Indeks Desa Membangun (IDM) Desa Darmasaba: skor dan status tahun terbaru, tiga dimensi (Ketahanan Sosial, Ekonomi, Lingkungan), dan riwayat per tahun. Admin mengisi data di Pemerintahan > Indeks Desa. Selama data belum diisi, halaman menampilkan keterangan "data belum tersedia", tanpa angka contoh. Admin yang sudah memegang akses menu Pemerintahan otomatis mendapat submenu ini; admin dengan akses per-submenu perlu dicentang di pengaturan akses menu.
 
 ### Changed
 - **Kontak desa kini bisa diedit admin.** Tab baru "Kontak Desa" di Profile Desa (admin) mengatur nama kantor, alamat, telepon, dan email. Footer dan halaman PPID otomatis memakai data ini. Nilai awalnya sama dengan yang tampil sekarang, jadi tampilan publik tidak berubah.

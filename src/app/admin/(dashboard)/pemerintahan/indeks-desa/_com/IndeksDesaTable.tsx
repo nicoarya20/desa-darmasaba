@@ -1,5 +1,5 @@
 'use client'
-import type { IndeksDesaItem } from '@/app/admin/(dashboard)/_state/indeks-desa/indeksDesa';
+import type { IndeksDesaItem } from '@/app/admin/(dashboard)/_state/desa/indeksDesa';
 import { ActionIcon, Badge, Box, Group, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { INDEKS_DESA_ADMIN_TEXT as T } from './indeks-desa.text';

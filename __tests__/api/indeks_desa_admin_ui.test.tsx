@@ -12,11 +12,11 @@ vi.mock('next/navigation', () => ({
   useParams: () => ({ id: 'idm-1' }),
 }));
 
-import IndeksDesaForm from '@/app/admin/(dashboard)/indeks-desa/idm/_com/IndeksDesaForm';
-import { IndeksDesaList } from '@/app/admin/(dashboard)/indeks-desa/idm/_com/IndeksDesaList';
-import { IndeksDesaTable } from '@/app/admin/(dashboard)/indeks-desa/idm/_com/IndeksDesaTable';
-import { INDEKS_DESA_ADMIN_TEXT as T } from '@/app/admin/(dashboard)/indeks-desa/idm/_com/indeks-desa.text';
-import state, { type IndeksDesaItem } from '@/app/admin/(dashboard)/_state/indeks-desa/indeksDesa';
+import IndeksDesaForm from '@/app/admin/(dashboard)/pemerintahan/indeks-desa/_com/IndeksDesaForm';
+import { IndeksDesaList } from '@/app/admin/(dashboard)/pemerintahan/indeks-desa/_com/IndeksDesaList';
+import { IndeksDesaTable } from '@/app/admin/(dashboard)/pemerintahan/indeks-desa/_com/IndeksDesaTable';
+import { INDEKS_DESA_ADMIN_TEXT as T } from '@/app/admin/(dashboard)/pemerintahan/indeks-desa/_com/indeks-desa.text';
+import state, { type IndeksDesaItem } from '@/app/admin/(dashboard)/_state/desa/indeksDesa';
 import { CATATAN_IDM_MAX } from '@/lib/indeks-desa';
 
 const render = (ui: React.ReactElement) =>

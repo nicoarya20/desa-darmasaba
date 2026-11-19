@@ -51,8 +51,9 @@ describe('route admin grup Pemerintahan', () => {
   it('semua path menu diawali /admin/pemerintahan/ dan tidak ada yang masih di route lama "desa"', () => {
     // 10: menu Penghargaan (dulu Desa_7) dihapus — dikelola di Landing Page > Prestasi dan Penghargaan;
     // Struktur Perangkat Desa (desa.struktur-perangkat-desa) ditambahkan; Dokumen Perencanaan (desa.dokumen-perencanaan)
-    // keluar dari tab Kegiatan Desa jadi menu sendiri (2026-11-18); Produk Hukum (desa.produk-hukum) menu baru.
-    expect(paths).toHaveLength(12);
+    // keluar dari tab Kegiatan Desa jadi menu sendiri (2026-11-18); Produk Hukum (desa.produk-hukum) menu baru;
+    // Indeks Desa (desa.indeks-desa) submenu baru (2026-11-19).
+    expect(paths).toHaveLength(13);
     expect(paths).not.toContain('/admin/pemerintahan/penghargaan');
     for (const p of paths) expect(p, p).toMatch(/^\/admin\/pemerintahan\//);
     expect(paths.filter((p) => /^\/admin\/desa(\/|$)/.test(p))).toEqual([]);
@@ -138,36 +139,35 @@ describe('submenu Arah Kebijakan Pembangunan Desa & Produk Hukum', () => {
   });
 });
 
-// Temuan lomba T11 (2026-11-19): menu top-level baru "Indeks Desa" (IDM Kemendesa). Murni penambahan label/ID; tidak
+// Temuan lomba T11 (2026-11-19): submenu baru "Indeks Desa" di Pemerintahan (IDM Kemendesa). Murni penambahan label/ID; tidak
 // menyentuh "Indeks Kepuasan Masyarakat" (submenu PPID) yang berbeda artinya.
-describe('menu Indeks Desa (IDM)', () => {
-  it('publik: top-level "Indeks Desa" dengan satu submenu IDM, tampil secara default', async () => {
+describe('submenu Indeks Desa (IDM)', () => {
+  it('publik: "Indeks Desa" adalah submenu Pemerintahan (bukan menu top-level), tampil secara default', async () => {
     const { default: navbarListMenu } = await import('@/con/navbar-list-menu');
-    const menu = navbarListMenu.find((m) => m.name === 'Indeks Desa');
-    expect(menu?.children?.map((c) => [c.name, c.href])).toEqual([['Indeks Desa Membangun (IDM)', '/indeks-desa/idm']]);
-    expect(menu?.children?.[0]).not.toHaveProperty('hidden');
+    const pemerintahan = navbarListMenu.find((m) => m.name === 'Pemerintahan');
+    const item = pemerintahan?.children?.find((c) => c.name === 'Indeks Desa');
+    expect(item?.href).toBe('/pemerintahan/indeks-desa');
+    expect(item).not.toHaveProperty('hidden');
+    expect(navbarListMenu.some((m) => m.name === 'Indeks Desa')).toBe(false);
   });
 
-  it('publik: Indeks Kepuasan Masyarakat tetap di PPID dan tidak tertukar dengan IDM', async () => {
+  it('publik: Indeks Kepuasan Masyarakat tetap di PPID dan tidak tertukar dengan Indeks Desa', async () => {
     const { default: navbarListMenu } = await import('@/con/navbar-list-menu');
     const ppid = navbarListMenu.find((m) => m.name === 'PPID');
     const ikm = ppid?.children?.find((c) => c.name === 'Indeks Kepuasan Masyarakat');
     expect(ikm?.href).toBe('/ppid/indeks-kepuasan-masyarakat');
-    const idm = navbarListMenu.flatMap((m) => m.children ?? []).filter((c) => c.href === '/indeks-desa/idm');
+    const idm = navbarListMenu.flatMap((m) => m.children ?? []).filter((c) => c.href === '/pemerintahan/indeks-desa');
     expect(idm).toHaveLength(1);
   });
 
-  it('admin: section "Indeks Desa" dengan ID submenu permanen "indeks-desa.idm"', async () => {
-    const { indeksDesaMenu, ppidMenu } = await import('@/app/admin/_com/nav/domains');
-    expect(indeksDesaMenu.id).toBe('Indeks Desa');
-    expect(indeksDesaMenu.children).toEqual([
-      {
-        id: 'indeks-desa.idm',
-        name: 'Indeks Desa Membangun',
-        path: '/admin/indeks-desa/idm',
-        basePath: '/admin/indeks-desa/idm',
-      },
-    ]);
+  it('admin: submenu "Indeks Desa" di section Desa dengan ID permanen "desa.indeks-desa"', async () => {
+    const { desaMenu, ppidMenu } = await import('@/app/admin/_com/nav/domains');
+    expect(desaMenu.children?.find((c) => c.id === 'desa.indeks-desa')).toEqual({
+      id: 'desa.indeks-desa',
+      name: 'Indeks Desa',
+      path: '/admin/pemerintahan/indeks-desa',
+      basePath: '/admin/pemerintahan/indeks-desa',
+    });
     expect(ppidMenu.children?.find((c) => c.id === 'ppid.indeks-kepuasan-masyarakat')?.name).toBe('Indeks Kepuasan Masyarakat');
   });
 });

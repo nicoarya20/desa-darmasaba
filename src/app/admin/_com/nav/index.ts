@@ -2,7 +2,6 @@ import {
   desaMenu,
   developerMenu,
   ekonomiMenu,
-  indeksDesaMenu,
   inovasiMenu,
   keamananMenu,
   kependudukanMenu,
@@ -29,7 +28,6 @@ const allDomains = [
   lingkunganMenu,
   pendidikanMenu,
   kependudukanMenu,
-  indeksDesaMenu,
   musikMenu,
 ]
 
@@ -46,7 +44,6 @@ export const role1 = [
   inovasiMenu,
   lingkunganMenu,
   kependudukanMenu,
-  indeksDesaMenu,
   musikMenu,
 ]
 

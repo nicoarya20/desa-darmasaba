@@ -30,8 +30,8 @@ export const INDEKS_DESA_DEFAULT_LIMIT = 10;
 export const INDEKS_DESA_MAX_LIMIT = 100;
 
 /** Path halaman publik IDM dan halaman admin daftarnya. */
-export const INDEKS_DESA_PUBLIC_PATH = "/indeks-desa/idm";
-export const INDEKS_DESA_ADMIN_PATH = "/admin/indeks-desa/idm";
+export const INDEKS_DESA_PUBLIC_PATH = "/pemerintahan/indeks-desa";
+export const INDEKS_DESA_ADMIN_PATH = "/admin/pemerintahan/indeks-desa";
 
 /** Pesan galat validasi input Indeks Desa. */
 export const PESAN_INDEKS_DESA = {

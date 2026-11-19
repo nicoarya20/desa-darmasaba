@@ -422,7 +422,6 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 
 ## Indeks Desa Membangun / IDM (2026-11-19, `feature/indeks-desa-idm`; temuan lomba T11)
 
-- [x] **Menu "Indeks Desa" > "Indeks Desa Membangun (IDM)"** — struktur selesai: tabel `IndeksDesa` (migrasi `20261119161000_indeks_desa`), API `/api/desa/indeksdesa`, admin `/admin/indeks-desa/idm`, halaman publik `/indeks-desa/idm`. Halaman publik menampilkan keadaan kosong sampai data diisi.
+- [x] **Submenu "Indeks Desa" di menu Pemerintahan** — struktur selesai: tabel `IndeksDesa` (migrasi `20261119161000_indeks_desa`), API `/api/desa/indeksdesa`, admin `/admin/pemerintahan/indeks-desa`, halaman publik `/pemerintahan/indeks-desa`. Halaman publik menampilkan keadaan kosong sampai data diisi.
 - [ ] **Isi data IDM Desa Darmasaba** (skor IDM/IKS/IKE/IKL + status per tahun, dari dokumen Kemendesa lewat Google Drive pihak desa) lewat admin; setelah terisi, perbarui T11 di `docs/penilaian-lomba-website-desa-2027.md`. Tidak ada seed.
 - [ ] **Verifikasi tahun IDM terawal & jumlah desimal:** batas tahun 2015-2100 (`TAHUN_IDM_MIN`) dan tampilan skor 4 desimal (`SKOR_TAMPIL_DESIMAL`) diasumsikan dari praktik IDM Kemendesa, belum dicek ke dokumen resmi.
-- [ ] **Navbar publik kini 12 menu utama** (ditambah "Indeks Desa"): cek tampilan desktop/ponsel navbar setelah gabung, belum diuji visual.

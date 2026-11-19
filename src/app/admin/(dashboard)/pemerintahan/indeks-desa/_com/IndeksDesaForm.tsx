@@ -1,5 +1,5 @@
 'use client'
-import type { IndeksDesaFormValues } from '@/app/admin/(dashboard)/_state/indeks-desa/indeksDesa';
+import type { IndeksDesaFormValues } from '@/app/admin/(dashboard)/_state/desa/indeksDesa';
 import colors from '@/con/colors';
 import {
   CATATAN_IDM_MAX,

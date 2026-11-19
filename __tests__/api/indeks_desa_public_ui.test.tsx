@@ -10,9 +10,9 @@ vi.mock('next-view-transitions', () => ({
   Link: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-import { IndeksDesaContent, IndeksDesaPage } from '@/app/(public)/(pages)/indeks-desa/idm/_com/IndeksDesaPage';
-import { barStyle, formatSkor } from '@/app/(public)/(pages)/indeks-desa/idm/_com/indeks-desa.logic';
-import { INDEKS_DESA_TEXT as T } from '@/app/(public)/(pages)/indeks-desa/idm/_com/indeks-desa.text';
+import { IndeksDesaContent, IndeksDesaPage } from '@/app/(public)/(pages)/pemerintahan/indeks-desa/_com/IndeksDesaPage';
+import { barStyle, formatSkor } from '@/app/(public)/(pages)/pemerintahan/indeks-desa/_com/indeks-desa.logic';
+import { INDEKS_DESA_TEXT as T } from '@/app/(public)/(pages)/pemerintahan/indeks-desa/_com/indeks-desa.text';
 import type { IndeksDesaRecord } from '@/lib/indeks-desa';
 
 const render = (node: React.ReactElement) =>

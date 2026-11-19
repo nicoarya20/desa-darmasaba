@@ -24,7 +24,7 @@ vi.mock('@/lib/api-fetch', () => ({
   },
 }));
 
-import state, { type IndeksDesaItem } from '@/app/admin/(dashboard)/_state/indeks-desa/indeksDesa';
+import state, { type IndeksDesaItem } from '@/app/admin/(dashboard)/_state/desa/indeksDesa';
 import { PESAN_INDEKS_DESA } from '@/lib/indeks-desa';
 
 // test-only: baris rekaan untuk menguji pemetaan, bukan data IDM Desa Darmasaba.

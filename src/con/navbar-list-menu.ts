@@ -92,6 +92,11 @@ const navbarListMenu = [
                 href: "/pemerintahan/produk-hukum"
             },
             {
+                id: "2.13",
+                name: "Indeks Desa",
+                href: "/pemerintahan/indeks-desa"
+            },
+            {
                 id: "2.7",
                 name: "Prestasi dan Penghargaan",
                 href: "/prestasi-desa"
@@ -342,17 +347,6 @@ const navbarListMenu = [
                 id: "8.1",
                 name: "Dashboard Kependudukan",
                 href: "/kependudukan/dashboard"
-            }
-        ]
-    },
-    {
-        id: "12",
-        name: "Indeks Desa",
-        children: [
-            {
-                id: "12.1",
-                name: "Indeks Desa Membangun (IDM)",
-                href: "/indeks-desa/idm"
             }
         ]
     },

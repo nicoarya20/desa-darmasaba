@@ -56,6 +56,9 @@ export const desaMenu: NavItem = {
     { id: "desa.struktur-perangkat-desa", name: "Struktur Perangkat Desa", path: "/admin/pemerintahan/struktur-perangkat-desa/pegawai", basePath: "/admin/pemerintahan/struktur-perangkat-desa" },
     // Menu baru (aditif): section "Desa" sudah mencakup semua submenu, user dengan ID submenu per-menu perlu dicentang di Menu Access.
     { id: "desa.produk-hukum", name: "Produk Hukum", path: "/admin/pemerintahan/produk-hukum", basePath: "/admin/pemerintahan/produk-hukum" },
+    // Submenu aditif (2026-11-19, temuan lomba T11: IDM Kemendesa). ID "desa.indeks-desa" = kontrak permanen setelah rilis
+    // (tersimpan di UserMenuAccess). Bukan "Indeks Kepuasan Masyarakat" (itu submenu PPID).
+    { id: "desa.indeks-desa", name: "Indeks Desa", path: "/admin/pemerintahan/indeks-desa", basePath: "/admin/pemerintahan/indeks-desa" },
   ],
 }
 
@@ -163,17 +166,6 @@ export const kependudukanMenu: NavItem = {
     { id: "kependudukan.laporan-bulanan", name: "Laporan Bulanan", path: "/admin/kependudukan/laporan-bulanan", basePath: "/admin/kependudukan/laporan-bulanan" },
     { id: "kependudukan.migrasi-penduduk", name: "Migrasi Penduduk", path: "/admin/kependudukan/migrasi-penduduk", basePath: "/admin/kependudukan/migrasi-penduduk" },
     { id: "kependudukan.dinamika-penduduk", name: "Dinamika Penduduk", path: "/admin/kependudukan/dinamika-penduduk", basePath: "/admin/kependudukan/dinamika-penduduk" },
-  ],
-}
-
-// Section baru (2026-11-19, temuan lomba T11). ID section "Indeks Desa" dan ID submenu "indeks-desa.idm" = kontrak permanen
-// (tersimpan di UserMenuAccess). Bukan "Indeks Kepuasan Masyarakat" (itu submenu PPID).
-export const indeksDesaMenu: NavItem = {
-  id: "Indeks Desa",
-  name: "Indeks Desa",
-  path: "",
-  children: [
-    { id: "indeks-desa.idm", name: "Indeks Desa Membangun", path: "/admin/indeks-desa/idm", basePath: "/admin/indeks-desa/idm" },
   ],
 }
 

@@ -1,5 +1,5 @@
 'use client'
-import stateIndeksDesa from '@/app/admin/(dashboard)/_state/indeks-desa/indeksDesa';
+import stateIndeksDesa from '@/app/admin/(dashboard)/_state/desa/indeksDesa';
 import colors from '@/con/colors';
 import { INDEKS_DESA_ADMIN_PATH } from '@/lib/indeks-desa';
 import { Box, Button, Skeleton } from '@mantine/core';
