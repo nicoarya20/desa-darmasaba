@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.324] - 2026-11-19
+### Fixed
+- **Subjudul halaman SDGs Desa kini terbaca jelas di tema gelap.** Kalimat "Pembangunan berkelanjutan yang inklusif, adil, dan berdaya saing di tingkat desa" sebelumnya berwarna abu tua di atas latar hitam sehingga nyaris tak terbaca (kontras 2,6:1, di bawah standar keterbacaan 4,5:1). Kini di tema gelap warnanya abu terang (kontras 8,2:1). Tema terang tidak berubah.
+
 ## [0.1.323] - 2026-11-19
 ### Added
 - **Impor data UMKM lewat CSV.** Di admin Ekonomi > UMKM & Pasar Desa > Data UMKM ada tombol "Impor CSV". Admin bisa mengunduh template, memilih berkas (maks 2 MB, 1000 baris), lalu melihat pratinjau jumlah yang akan ditambah, diperbarui, atau dilewati beserta daftar baris bermasalah sebelum mengimpor. Kolom wajib: nama, pemilik, kategori; opsional: deskripsi, alamat, kontak. Kategori dicocokkan berdasarkan nama dan harus sudah ada.
