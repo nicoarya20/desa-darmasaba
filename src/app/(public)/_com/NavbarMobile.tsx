@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 import { MenuItem } from "../../../../types/menu-item";
+import { LOGO_DESA_SMALL_SRC } from "./logo-desa.meta";
 import { isMenuActive, isPathActive } from "./navbar-menu.logic";
 import { NavbarSpeechToggle } from "./NavbarSpeechToggle";
 import { NavbarThemeToggle } from "./NavbarThemeToggle";
@@ -80,7 +81,7 @@ export function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
     <div className={`${d.root} ${m.mobile}`} data-open={mobileOpen}>
       <div className={m.bar}>
         <Link href="/" aria-label="Beranda Desa Darmasaba" onClick={close}>
-          <Image src="/assets/images/darmasaba-icon.png" alt="" className={m.logo} />
+          <Image src={LOGO_DESA_SMALL_SRC} alt="" className={m.logo} />
         </Link>
         <div className={m.actions}>
           <NavbarSpeechToggle />

@@ -4,6 +4,7 @@ import { Box, Center, Divider, Flex, Image, List, Paper, SimpleGrid, Stack, Text
 import { IconBuildingCommunity, IconTargetArrow, IconTimeline, IconUser } from '@tabler/icons-react';
 import classes from '../profil-ppid.module.css';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
+import { LOGO_DESA_LARGE_SRC } from '@/app/(public)/_com/logo-desa.meta';
 
 /** Satu profil perorangan pimpinan PPID dari `profile.data` (bentuk respons profilePPID). */
 type Props = { item: NonNullable<typeof stateProfilePPID.profile.data> };
@@ -18,7 +19,7 @@ export function ProfilPerorangan({ item }: Props) {
           <Center>
             <Image
               loading="lazy"
-              src="/darmasaba-icon.png"
+              src={LOGO_DESA_LARGE_SRC}
               h={{ base: 70, md: 120 }}
               w={{ base: 70, md: 120 }}
               alt="Logo Desa"
