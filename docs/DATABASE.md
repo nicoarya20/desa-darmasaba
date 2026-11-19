@@ -23,6 +23,12 @@ Seluruhnya nullable/tabel baru (baris lama tetap valid, tanpa backfill), migrasi
 - `DokumenPerencanaan.jenis` (teks) kini menerima `APBDES` dan `PELAPORAN_APBDES` selain `RPJM`, `RKP`, `BERITA_ACARA_MUSYAWARAH`; tanpa migrasi. Halaman publik `/pemerintahan/arah-kebijakan-pembangunan-desa` menampilkan 4 kategori (tab Berita Acara hanya bila ada dokumen). Halaman/editor `/apbdes` tidak berubah.
 - Tabel baru `ProdukHukum` (migrasi `20261118140000_lomba_produk_hukum`): judul, nomor, tahun, `kategori` (teks: PERDES, PERATURAN_PERBEKEL, SK_PERBEKEL, LAINNYA), urutan, `fileId` opsional (`ON DELETE SET NULL`). Menu admin `desa.produk-hukum` (ID baru; pemegang ID submenu dicentang manual di Menu Access, tanpa data-migration); label menu `desa.dokumen-perencanaan` diganti jadi "Arah Kebijakan Pembangunan Desa", ID tetap.
 
+### Indeks Desa Membangun / IDM (2026-11-19, temuan lomba T11)
+
+- Tabel baru `IndeksDesa` (migrasi `20261119161000_indeks_desa`, aditif, idempoten, **tanpa INSERT**): satu baris per tahun (`tahun` unik), `skorIdm`, `skorIks`, `skorIke`, `skorIkl` (Float, 0-1; CHECK di DB + validasi API), `status` (teks, salah satu dari 5 status resmi IDM di `src/lib/indeks-desa.ts`: Sangat Tertinggal, Tertinggal, Berkembang, Maju, Mandiri), `catatan` opsional. Kolom `deletedAt`/`isActive` ada mengikuti konvensi, tetapi hapus lewat CMS = hapus permanen (seperti Produk Hukum), jadi `tahun` unik penuh.
+- Skor dan status **diisi admin apa adanya dari dokumen Kemendesa**; kode tidak menghitung IDM dan tidak menurunkan status dari skor (rumus/ambang belum diverifikasi ke sumber resmi). Angka dari pihak desa menyusul lewat Google Drive; migrasi sengaja tidak mengisi data.
+- API `/api/desa/indeksdesa`: `GET find-many` (publik, paginasi, tahun menurun, `limit` maks 100) dan `GET /:id` publik; `POST create`, `PUT updt/:id`, `DELETE del/:id` admin-only (`guardAdmin`). Tahun ganda = 400 (termasuk balapan indeks unik, P2002). Menu admin `indeks-desa.idm` (section baru `Indeks Desa`, ID permanen di `UserMenuAccess`; pemegang ID section lain tidak otomatis memilikinya, dicentang manual di Menu Access). Publik: `/indeks-desa/idm`. Bukan "Indeks Kepuasan Masyarakat" (menu PPID).
+
 ## Authentication Flow
 Auth was rewritten to **Better Auth with Google OAuth only** (no more phone OTP). Flow:
 1. User signs in with Google → Better Auth (`src/lib/auth.ts`) creates a session, stored in Postgres (`Session`, `Account`, `Verification`, `RateLimit` models — Better Auth's own schema, not custom).
