@@ -1,0 +1,33 @@
+/* Offset posisi Jenna, dipakai dock chat bar (JennaWidget) dan tombol scroll-to-top (scrollToTopButton.tsx).
+   Hanya mendefinisikan --jenna-dock-right/--jenna-dock-bottom; pemakainya yang membaca var ini. */
+
+/* Offset bersama dock & tombol scroll-to-top: naik di atas FixedPlayerBar (±70px desktop, ±96px ponsel)
+   atau NowPlayingBar aplikasi Musik (88px, 72px di ≤734px). data-player = ada lagu (bar mungkin tampil). */
+.dockOffset {
+  --jenna-dock-right: 24px;
+  --jenna-dock-bottom: 24px;
+}
+
+.dockOffset[data-player="true"] {
+  --jenna-dock-bottom: 88px;
+}
+
+@media (max-width: 47.99em) {
+  .dockOffset {
+    --jenna-dock-right: 12px;
+    --jenna-dock-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  .dockOffset[data-player="true"] {
+    --jenna-dock-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.dockOffset[data-musik="true"][data-player="true"] {
+  --jenna-dock-bottom: 100px;
+}
+
+@media (max-width: 734px) {
+  .dockOffset[data-musik="true"][data-player="true"] {
+    --jenna-dock-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+}
