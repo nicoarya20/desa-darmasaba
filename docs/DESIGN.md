@@ -156,7 +156,7 @@ File: `src/app/theme-tokens.css` (diimpor `globals.css`). Terang di `:root` = **
 
 | Token | Terang | Gelap | Pakai untuk |
 |---|---|---|---|
-| `--c-page` | `#f4f5f6` | `#161617` | Latar dasar shell & beranda (= `colors.grey[1]`) |
+| `--c-page` | `#f4f5f6` | `#161617` | Latar dasar shell & beranda (= `colors.grey[1]`); kotak konten shell sendiri berlatar `--c-bg` agar halaman pendek tak memperlihatkan pita abu di atas footer |
 | `--c-bg` / `--c-bg-alt` | `#fff` / `#f5f5f7` | `#000` / `#161617` | Latar section / section selang |
 | `--c-tile` / `--c-tile-alt` | `#f5f5f7` / `#fff` | `#1d1d1f` / `#2a2a2c` | Panel/ubin / ubin di atas bg-alt, kartu putih |
 | `--c-ink` / `--c-ink-2` | `#1d1d1f` / `#515154` | `#f5f5f7` / `#c7c7cc` | Teks utama / teks isi |
