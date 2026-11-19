@@ -346,6 +346,17 @@ const navbarListMenu = [
         ]
     },
     {
+        id: "12",
+        name: "Indeks Desa",
+        children: [
+            {
+                id: "12.1",
+                name: "Indeks Desa Membangun (IDM)",
+                href: "/indeks-desa/idm"
+            }
+        ]
+    },
+    {
         id: "9",
         name: "Pendidikan",
         children: [
