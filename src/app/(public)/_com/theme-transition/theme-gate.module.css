@@ -25,7 +25,7 @@
   inset: 0;
   z-index: 10000;                                           /* di atas navbar (100) & toast (9999), sama dengan splash */
   overflow: hidden;
-  cursor: progress;
+  cursor: default;                                          /* panah biasa, bukan tanda loading (permintaan user 2026-11-19); klik tetap tertahan overlay */
   touch-action: none;
   font-family: inherit;
 }
