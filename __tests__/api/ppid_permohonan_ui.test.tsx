@@ -176,7 +176,7 @@ describe('Tata letak permohonan — CSS', () => {
     expect(desktop?.[1]).toMatch(/top: var\(--permohonan-sticky-top\);/);
   });
 
-  it('tanpa gradasi, tanpa rata tengah/justify, dan satu-satunya latar berwarna adalah kartu putih', () => {
+  it('tanpa gradasi, tanpa rata tengah/justify, dan satu-satunya latar berwarna adalah kartu ubin', () => {
     expect(css).not.toMatch(/gradient|text-align:\s*(center|justify)/);
     const backgrounds = [...css.matchAll(/background:\s*([^;]+);/g)].map((m) => m[1]);
     expect(backgrounds).toEqual(['var(--permohonan-line)', 'var(--permohonan-card)']);

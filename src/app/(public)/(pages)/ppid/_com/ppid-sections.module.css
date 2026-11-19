@@ -1,9 +1,8 @@
 /* Isi teks halaman PPID (Dasar Hukum; cadangan isi kaya Visi Misi): bagian berlabel di kiri dan isi di kanan,
-   dipisah garis tipis, langsung di atas latar halaman — tanpa kartu. Semua rata kiri.
-   Warna = token --c-*; garis light-dark (gelap = putih 16%, sama dengan garis Profil Desa). */
+   dipisah garis tipis, langsung di atas latar halaman (--c-bg) — tanpa kartu. Semua rata kiri.
+   Warna = token --c-*; garis terang = --c-line-strong (solid), gelap = putih 16%. */
 .sections {
-  /* Garis solid di terang: garis transparan tampak berbeda di atas latar biru-abu halaman. */
-  --ppid-rule: light-dark(#b1bdd1, rgb(255 255 255 / 0.16));
+  --ppid-rule: light-dark(var(--c-line-strong), rgb(255 255 255 / 0.16));
   --ppid-text: var(--c-ink);
   --ppid-muted: var(--c-ink-2);
   max-width: var(--ppid-measure);
@@ -109,7 +108,7 @@
   gap: 16px;
   max-width: var(--ppid-measure);
   padding-top: 36px;
-  border-top: 1px solid light-dark(#b1bdd1, rgb(255 255 255 / 0.16));
+  border-top: 1px solid light-dark(var(--c-line-strong), rgb(255 255 255 / 0.16));
 }
 
 @media (max-width: 734px) {

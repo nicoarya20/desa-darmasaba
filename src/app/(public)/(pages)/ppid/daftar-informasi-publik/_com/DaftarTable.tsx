@@ -18,7 +18,7 @@ type Props = {
 };
 
 /**
- * Daftar informasi publik: tabel di kartu putih (desktop), tiap baris jadi kartu bertumpuk di mobile.
+ * Daftar informasi publik: tabel di ubin --c-tile (desktop), tiap baris jadi kartu bertumpuk di mobile.
  * Jenis informasi dan deskripsi ditampilkan utuh, tanpa dipotong.
  */
 export function DaftarTable({ items, page, busy = false }: Props) {

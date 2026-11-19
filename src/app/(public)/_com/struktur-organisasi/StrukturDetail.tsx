@@ -1,6 +1,7 @@
 'use client';
 import { Skeleton, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import s from './struktur-detail.module.css';
 import { StrukturDetailFrame, StrukturDetailView } from './StrukturDetailView';
 import type { StrukturDetailData, StrukturDetailLoader } from './struktur-person.logic';
 import { STRUKTUR_DETAIL_TEXT } from './struktur.text';
@@ -43,7 +44,7 @@ export function StrukturDetail({ id, load, text }: Props) {
   if (state.status === 'ready') return <StrukturDetailView data={state.data} infoTitle={text.infoTitle} />;
   if (state.status === 'loading') {
     return (
-      <Stack py="lg" px={{ base: 'md', md: 100 }} role="status" aria-label={STRUKTUR_DETAIL_TEXT.loading}>
+      <Stack py="lg" px={{ base: 'md', md: 100 }} className={s.page} role="status" aria-label={STRUKTUR_DETAIL_TEXT.loading}>
         <Skeleton height={500} radius="md" />
       </Stack>
     );
