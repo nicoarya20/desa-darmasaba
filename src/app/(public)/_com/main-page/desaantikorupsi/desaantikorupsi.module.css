@@ -265,21 +265,7 @@
   color: var(--subtle);
 }
 
-/* ---------- Loading ---------- */
-.rowPlaceholder {
-  height: 22px;
-  margin: 20px 0;
-  border-radius: 6px;
-  background: var(--c-placeholder);
-  animation: pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  50% {
-    opacity: 0.55;
-  }
-}
-
+/* ---------- Loading: kerangka memakai kelas isi asli + _com/skeleton-text ---------- */
 .srOnly {
   position: absolute;
   width: 1px;
@@ -325,10 +311,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rowPlaceholder {
-    animation: none;
-  }
-
   .itemLink,
   .chevron {
     transition: none;

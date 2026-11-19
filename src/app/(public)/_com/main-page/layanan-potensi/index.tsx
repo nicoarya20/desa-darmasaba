@@ -94,6 +94,8 @@ function LayananPotensi() {
   };
 
   const isEmpty = !layananLoading && !potensiLoading && layanan.length === 0 && potensi.length === 0;
+  // Jumlah titik belum diketahui selama baris penentunya masih memuat (Layanan, atau Potensi bila Layanan ≤ 1).
+  const controlsPending = layanan.length <= 1 && (layananLoading || potensiLoading);
 
   return (
     <section ref={sectionRef} className={s.section} aria-roledescription="carousel" aria-labelledby="layanan-potensi-title">
@@ -129,17 +131,23 @@ function LayananPotensi() {
               />
             ) : null}
           </div>
-          <GalleryControls
-            count={primaryCount}
-            active={primary.active}
-            position={primary.position}
-            progressKey={restartKey}
-            autoplay={canPlay}
-            running={running}
-            onStep={stepAll}
-            onCycleEnd={onCycleEnd}
-            onTogglePause={() => setUserPaused((p) => !p)}
-          />
+          {controlsPending ? (
+            // Cadangkan baris titik selama memuat: tanpa ini section bertambah 56px (min-height 36 + margin 20)
+            // tepat saat data tiba, menggeser section di bawahnya.
+            <div className={s.controls} aria-hidden />
+          ) : (
+            <GalleryControls
+              count={primaryCount}
+              active={primary.active}
+              position={primary.position}
+              progressKey={restartKey}
+              autoplay={canPlay}
+              running={running}
+              onStep={stepAll}
+              onCycleEnd={onCycleEnd}
+              onTogglePause={() => setUserPaused((p) => !p)}
+            />
+          )}
         </>
       )}
     </section>
