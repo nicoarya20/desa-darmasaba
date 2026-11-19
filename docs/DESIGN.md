@@ -1875,7 +1875,7 @@ Tulis `backdrop-filter` **tanpa** `-webkit-backdrop-filter` manual — Lightning
 
 ### Transisi tema Candi Bentar
 
-`src/app/(public)/_com/theme-transition/`: tombol tema navbar memutar adegan Candi Bentar selama 5 dtk, lalu halaman tampil dalam tema baru.
+`src/app/(public)/_com/theme-transition/`: tombol tema navbar memutar adegan Candi Bentar selama 3 dtk, lalu halaman tampil dalam tema baru.
 
 - **Alur 4 tahap** (angka ms di `theme-gate.timeline.ts`):
   1. Pilar kiri dan tembok masuk dari tepi kiri, pilar kanan dari kanan. Belum ada latar, jadi halaman lama terlihat di sekitar pilar.
