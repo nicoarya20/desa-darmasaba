@@ -73,6 +73,14 @@ function isTahunValid(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= TAHUN_IDM_MIN && value <= TAHUN_IDM_MAX;
 }
 
+const SKOR_TEKS = /^\d+([.,]\d+)?$/;
+
+/** Ubah teks isian skor ("0.5" atau "0,5", koma desimal Indonesia) jadi angka; isian kosong/bukan angka → NaN (ditolak validasi). */
+export function parseSkorTeks(teks: string): number {
+  const bersih = teks.trim();
+  return SKOR_TEKS.test(bersih) ? Number(bersih.replace(",", ".")) : Number.NaN;
+}
+
 function parseCatatan(raw: unknown): { ok: true; catatan: string | null } | { ok: false; message: string } {
   if (raw === undefined || raw === null || raw === "") return { ok: true, catatan: null };
   if (typeof raw !== "string") return { ok: false, message: PESAN_INDEKS_DESA.catatanTipe };

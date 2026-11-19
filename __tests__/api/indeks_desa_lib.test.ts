@@ -7,6 +7,7 @@ import {
   STATUS_IDM,
   isStatusIdm,
   parseIndeksDesaInput,
+  parseSkorTeks,
 } from '@/lib/indeks-desa';
 
 const VALID = { tahun: 2030, skorIdm: 0.5, skorIks: 0.4, skorIke: 0.6, skorIkl: 0.7, status: 'Berkembang' }; // test-only
@@ -52,5 +53,17 @@ describe('parseIndeksDesaInput', () => {
 
   it('catatan bukan teks ditolak', () => {
     expect(parseIndeksDesaInput({ ...VALID, catatan: 5 })).toEqual({ ok: false, message: PESAN_INDEKS_DESA.catatanTipe });
+  });
+});
+
+describe('parseSkorTeks', () => {
+  it('titik atau koma desimal, spasi tepi dibuang', () => {
+    expect(parseSkorTeks('0.5')).toBe(0.5);
+    expect(parseSkorTeks(' 0,75 ')).toBe(0.75);
+    expect(parseSkorTeks('1')).toBe(1);
+  });
+
+  it.each(['', ' ', 'abc', '0x1', '1e-1', '-0.5', '.5', '0.', '1,2,3'])('"%s" bukan isian skor → NaN', (teks) => {
+    expect(parseSkorTeks(teks)).toBeNaN();
   });
 });
