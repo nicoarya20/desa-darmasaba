@@ -69,10 +69,11 @@ describe('getNavbar dengan menuIds', () => {
     expect(ids(getNavbar({ roleId: 0, menuIds: ['Kesehatan'] }))).toEqual(['Kesehatan', 'User & Role', 'Pengaturan', 'Developer']);
   });
 
+  // 2026-11-19: 'Indeks Desa' disisipkan setelah 'Kependudukan' (section baru); urutan section lain tidak berubah.
   it('role 1 fallback: urutan sidebar sama dengan sebelumnya', () => {
     expect(ids(getNavbar({ roleId: 1 }))).toEqual([
       'Landing Page', 'PPID', 'Desa', 'Kesehatan', 'Keamanan', 'Ekonomi', 'Inovasi',
-      'Lingkungan', 'Pendidikan', 'Kependudukan', 'Musik', 'User & Role', 'Pengaturan',
+      'Lingkungan', 'Pendidikan', 'Kependudukan', 'Indeks Desa', 'Musik', 'User & Role', 'Pengaturan',
     ]);
   });
 });

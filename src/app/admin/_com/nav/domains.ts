@@ -166,6 +166,17 @@ export const kependudukanMenu: NavItem = {
   ],
 }
 
+// Section baru (2026-11-19, temuan lomba T11). ID section "Indeks Desa" dan ID submenu "indeks-desa.idm" = kontrak permanen
+// (tersimpan di UserMenuAccess). Bukan "Indeks Kepuasan Masyarakat" (itu submenu PPID).
+export const indeksDesaMenu: NavItem = {
+  id: "Indeks Desa",
+  name: "Indeks Desa",
+  path: "",
+  children: [
+    { id: "indeks-desa.idm", name: "Indeks Desa Membangun", path: "/admin/indeks-desa/idm", basePath: "/admin/indeks-desa/idm" },
+  ],
+}
+
 export const musikMenu: NavItem = {
   id: "Musik",
   name: "Musik",
