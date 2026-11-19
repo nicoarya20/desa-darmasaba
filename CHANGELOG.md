@@ -7,6 +7,11 @@
 - Lambang desa, logo Pudak, dan poster video Prestasi kini berformat WebP seukuran tampil. Lambang desa tidak lagi diunduh dua kali; total gambar ini di beranda turun dari 432 KB menjadi sekitar 200 KB.
 - Gaya (CSS) yang wajib dimuat sebelum halaman tampil kini lebih kecil di semua halaman publik: gaya animasi yang tidak terpakai dihapus, dan gaya editor teks, unggah berkas, kalender, grafik, dan notifikasi admin hanya dimuat di halaman yang memakainya.
 - Daftar lagu Musik Desa tidak lagi diunduh di setiap halaman, hanya saat aplikasi Musik dibuka. Lagu yang sedang diputar tetap berlanjut saat pindah halaman.
+- Huruf situs kini dikirim dalam format WOFF2 yang lebih ringkas (sekitar 25 KB lebih hemat pada kunjungan pertama); bentuk hurufnya sama persis.
+- Foto contoh berita bawaan diperkecil ke lebar 1024 piksel (total sekitar 113 KB lebih ringan) tanpa beda yang terlihat.
+
+### Fixed
+- Beranda tidak lagi melompat saat bagian Kabar Desa, Anti Korupsi, SDGs, serta Layanan & Potensi selesai dimuat: kerangka memuatnya kini setinggi isi aslinya, di ponsel maupun desktop, tema terang maupun gelap.
 
 ## [0.1.328] - 2026-11-19
 ### Changed
