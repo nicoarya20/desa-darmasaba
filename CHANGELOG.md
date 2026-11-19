@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.327] - 2026-11-19
+### Changed
+- Perapian internal gaya chat bar Jenna agar lebih mudah dirawat. Tampilan dan perilaku tidak berubah.
+
 ## [0.1.326] - 2026-11-19
 ### Changed
 - **Panel percakapan Jenna di tema gelap kini nyaman dipandang.** Sebelumnya panelnya berupa lempeng abu terang yang silau di atas halaman gelap. Kini kaca gelap berlapis kabut tipis dengan teks putih, serasi dengan chat bar di bawahnya, dan tetap mudah dibaca di atas foto maupun latar hitam. Tema terang tidak berubah.

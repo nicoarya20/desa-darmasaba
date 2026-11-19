@@ -7,6 +7,8 @@ import { type KeyboardEvent, type MouseEvent, type PointerEvent as ReactPointerE
 import { useSnapshot } from "valtio";
 import { isMusikAppPath } from "../musik-route";
 import bar from "./jenna-bar.module.css";
+import disclaimer from "./jenna-disclaimer.module.css";
+import offset from "./jenna-dock-offset.module.css";
 import { barMode, canCollapseToIdle, closeToIdle, isConversationReset, JENNA_DISCLAIMER } from "./jenna-bar.logic";
 import jennaState, { type JennaSendContext } from "./jenna.state";
 import voiceState, { bindVoiceContext } from "./jenna-voice.state";
@@ -185,7 +187,7 @@ export default function JennaWidget() {
   return (
     <div
       ref={dockRef}
-      className={`${bar.dockOffset} ${bar.dock}`}
+      className={`${offset.dockOffset} ${bar.dock}`}
       data-mode={mode}
       data-player={!!currentSong}
       data-musik={isMusikAppPath(pathname)}
@@ -245,8 +247,8 @@ export default function JennaWidget() {
           )}
         </div>
       </div>
-      <div ref={discRef} className={bar.disclaimerWrap} aria-hidden={mode === "idle"}>
-        <p className={bar.disclaimer}>{JENNA_DISCLAIMER}</p>
+      <div ref={discRef} className={disclaimer.disclaimerWrap} data-shown={mode !== "idle"} aria-hidden={mode === "idle"}>
+        <p className={disclaimer.disclaimer}>{JENNA_DISCLAIMER}</p>
       </div>
     </div>
   );

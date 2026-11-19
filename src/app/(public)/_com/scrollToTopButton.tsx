@@ -4,7 +4,8 @@ import { ActionIcon, Transition } from '@mantine/core';
 import { IconArrowUp } from '@tabler/icons-react';
 import { useSnapshot } from 'valtio';
 import { useMusic } from '@/app/context/MusicContext';
-import bar from './jenna/jenna-bar.module.css';
+import offset from './jenna/jenna-dock-offset.module.css';
+import scrollTop from './jenna/jenna-scroll-top.module.css';
 import jennaState from './jenna/jenna.state';
 
 /**
@@ -27,9 +28,9 @@ function ScrollToTopButton() {
     >
       {(styles) =>
         docked ? (
-          <div style={styles} className={`${bar.dockOffset} ${bar.scrollTop}`} data-player={!!currentSong}>
+          <div style={styles} className={`${offset.dockOffset} ${scrollTop.scrollTop}`} data-player={!!currentSong}>
             <ActionIcon
-              className={bar.scrollTopButton}
+              className={scrollTop.scrollTopButton}
               data-hidden={hidden}
               size="xl"
               radius="xl"
