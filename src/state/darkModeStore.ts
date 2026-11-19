@@ -21,9 +21,12 @@ import { proxy, useSnapshot } from 'valtio';
 
 const STORAGE_KEY = 'darmasaba-admin-dark-mode';
 
+// Admin dipaksa terang sampai dark mode menyeluruh; ubah ke true bersama pencabutan forceColorScheme di color-scheme-scope.
+export const DARK_MODE_ADMIN_AKTIF: boolean = false;
+
 // Initialize from localStorage or default to light mode
 const getInitialDarkMode = (): boolean => {
-  if (typeof window === 'undefined') return false;
+  if (!DARK_MODE_ADMIN_AKTIF || typeof window === 'undefined') return false;
 
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored !== null) {
@@ -43,11 +46,13 @@ class DarkModeStore {
   }
 
   public toggle() {
+    if (!DARK_MODE_ADMIN_AKTIF) return;
     this.isDark = !this.isDark;
     this.persist();
   }
 
   public setDarkMode(value: boolean) {
+    if (!DARK_MODE_ADMIN_AKTIF) return;
     this.isDark = value;
     this.persist();
   }
