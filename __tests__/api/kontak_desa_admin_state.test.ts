@@ -58,6 +58,32 @@ describe('findUnique.load', () => {
   });
 });
 
+describe('findUnique.ensureLoaded (pembaca publik)', () => {
+  it('memuat sekali: panggilan berikutnya setelah sukses tidak memanggil API lagi (walau data null)', async () => {
+    fetchMock.mockReturnValue(json(200, { success: true, data: null }));
+    await state.findUnique.ensureLoaded();
+    await state.findUnique.ensureLoaded();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('tidak memuat ganda saat muat sedang berjalan', async () => {
+    fetchMock.mockReturnValue(json(200, { success: true, data: ROW }));
+    const pertama = state.findUnique.ensureLoaded();
+    await state.findUnique.ensureLoaded();
+    await pertama;
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('setelah gagal, panggilan berikutnya mencoba lagi', async () => {
+    fetchMock.mockReturnValueOnce(json(500, { success: false, message: 'gagal' })).mockReturnValueOnce(json(200, { success: true, data: ROW }));
+    await state.findUnique.ensureLoaded();
+    expect(state.findUnique.error).toBe('gagal');
+    await state.findUnique.ensureLoaded();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(state.findUnique).toMatchObject({ data: ROW, error: null, loaded: true });
+  });
+});
+
 describe('toKontakFormValues / fillForm', () => {
   it('data tersimpan → empat field form; null → form kosong', () => {
     expect(toKontakFormValues(ROW)).toEqual({ namaKantor: ROW.namaKantor, alamat: ROW.alamat, telepon: ROW.telepon, email: ROW.email });

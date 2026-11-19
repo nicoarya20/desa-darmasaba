@@ -53,6 +53,12 @@ const stateKontakDesa = proxy({
         s.loading = false;
       }
     },
+
+    /** Muat hanya bila belum pernah sukses dan tidak sedang memuat: footer di tiap halaman tidak memanggil API berulang. */
+    async ensureLoaded(): Promise<void> {
+      const s = stateKontakDesa.findUnique;
+      if (!s.loaded && !s.loading) await s.load();
+    },
   },
 
   form: defaultForm(),
