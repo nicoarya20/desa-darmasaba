@@ -1,0 +1,169 @@
+/*
+ * Modal pratinjau galeri foto bersama (galeri-foto.lightbox.tsx): panggung foto bertinggi tetap (foto tidak
+ * meloncat saat berganti), tombol sebelumnya/berikutnya bulat, strip thumbnail yang bisa digeser.
+ * Tinggi panggung = 90dvh (batas tinggi dialog Mantine) dikurangi kepala, strip, dan keterangan, agar foto + strip
+ * muat tanpa scroll di 1440x900 dan 1920x1080. Warna dari token --c-* (theme-tokens.css), terang & gelap.
+ */
+
+/* Mantine 9: prop radius tidak mengenai kotak dialog (Paper 4px), jadi sudut dipasang di sini. */
+.content {
+  border-radius: 18px;
+}
+
+.stage {
+  position: relative;
+  height: min(560px, calc(90dvh - 240px));
+  min-height: 200px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--c-tile);
+}
+
+.stageImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c-tile-alt);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 18%);
+  color: var(--c-ink);
+  cursor: pointer;
+  translate: 0 -50%;
+  transition: opacity 200ms ease, color 200ms ease;
+}
+
+.navPrev {
+  left: 12px;
+}
+
+.navNext {
+  right: 12px;
+}
+
+.nav[aria-disabled="true"] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Padding 6px: ruang cincin aktif/fokus (outline di luar kotak) agar tidak terpotong overflow strip. */
+.strip {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 6px;
+  scrollbar-width: thin;
+}
+
+/* Margin auto di kedua ujung = rata tengah bila sedikit, tetap bisa digeser dari awal bila meluap. */
+.thumb:first-child {
+  margin-inline-start: auto;
+}
+
+.thumb:last-child {
+  margin-inline-end: auto;
+}
+
+.thumb {
+  flex: none;
+  width: 72px;
+  height: 54px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 8px;
+  background: var(--c-tile);
+  opacity: 0.55;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transition: opacity 150ms ease;
+}
+
+.thumb[aria-current="true"] {
+  opacity: 1;
+  outline: 2px solid var(--c-brand);
+  outline-offset: 2px;
+}
+
+.thumbImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.caption {
+  margin-top: 10px;
+  white-space: pre-line;
+}
+
+.nav:focus-visible,
+.thumb:focus-visible {
+  opacity: 1;
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .thumb:hover {
+    opacity: 1;
+  }
+
+  .nav:not([aria-disabled="true"]):hover {
+    color: var(--c-brand);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .thumb {
+    transition: none;
+  }
+}
+
+/* Ponsel: panggung mendekati persegi (lebar dialog), thumbnail & tombol lebih kecil. */
+@media (max-width: 734px) {
+  .stage {
+    height: min(80vw, calc(90dvh - 230px));
+  }
+
+  .nav {
+    width: 36px;
+    height: 36px;
+  }
+
+  .navPrev {
+    left: 8px;
+  }
+
+  .navNext {
+    right: 8px;
+  }
+
+  .thumb {
+    width: 60px;
+    height: 45px;
+  }
+}
+
+/*
+ * Grid galeri (galeri-foto.grid.tsx). Sel grid default `align-items: stretch` meregangkan tiap tombol setinggi
+ * item tertinggi di barisnya, lalu <button> menaruh isinya di tengah vertikal; foto tanpa keterangan jadi turun.
+ * Tombol dirapatkan ke atas sel dan setinggi isinya sendiri: foto sebaris rata atas, cincin fokus memeluk isi.
+ */
+.item {
+  align-self: start;
+}

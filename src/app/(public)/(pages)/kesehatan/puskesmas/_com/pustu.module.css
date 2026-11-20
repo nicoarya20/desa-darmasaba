@@ -122,8 +122,9 @@
   list-style: none;
 }
 
+/* Padding sama untuk kartu Layanan Unggulan dan Tarif agar dua blok seragam. */
 .card {
-  padding: 20px 22px;
+  padding: 24px 28px;
   border-radius: var(--radius);
   background: var(--tile);
 }
@@ -143,12 +144,19 @@
 }
 
 .tarifLabel {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   font-size: 13px;
   font-weight: 600;
   color: var(--brand);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/* 17px di semua lebar: sama dengan isi .content di ponsel, lebih ringan dari 19px desktop untuk kolom kartu yang
+   sempit. .card + .tarifBody agar menang atas .content (19px/1.6, ≤734px 17px/1.53) tanpa bergantung urutan muat CSS. */
+.card .tarifBody {
+  font-size: 17px;
+  line-height: 1.5;
 }
 
 /* ---------- Daftar: tautan aksi di dasar kartu (kartu sebaris sama tinggi → CTA sejajar) ---------- */
@@ -172,5 +180,9 @@
 
   .tile {
     padding: 18px;
+  }
+
+  .card {
+    padding: 20px 22px;
   }
 }

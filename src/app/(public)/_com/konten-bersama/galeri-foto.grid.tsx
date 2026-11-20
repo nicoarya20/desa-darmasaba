@@ -1,7 +1,11 @@
 'use client'
 import type { FotoGaleriItem } from '@/lib/konten-bersama/konten-bersama.types'
-import { Box, Image, Modal, SimpleGrid, Text, Title, UnstyledButton } from '@mantine/core'
+import { Box, Image, SimpleGrid, Text, Title, UnstyledButton } from '@mantine/core'
 import { useState } from 'react'
+import GaleriFotoLightbox from './galeri-foto.lightbox'
+import { altFoto } from './galeri-foto.logic'
+import s from './galeri-foto.module.css'
+import { GALERI_FOTO_TEXT as T } from './galeri-foto.text'
 
 type Props = {
   foto: readonly FotoGaleriItem[]
@@ -16,17 +20,16 @@ type Props = {
   onPreviewChange?: (terbuka: boolean) => void
 }
 
-/** Galeri foto publik: grid 2/3/4 kolom, klik foto → modal ukuran penuh + keterangan; kosong → tidak dirender. */
+/** Galeri foto publik: grid 2/3/4 kolom, klik foto → modal ukuran penuh + strip thumbnail; kosong → tidak dirender. */
 export default function GaleriFoto({ foto, namaPemilik, judul = 'Galeri Foto', ariaLabel, testId = 'galeri-foto', onPreviewChange }: Props) {
-  const [aktif, setAktifState] = useState<FotoGaleriItem | null>(null)
-  const setAktif = (f: FotoGaleriItem | null) => {
-    setAktifState(f)
-    onPreviewChange?.(f !== null)
+  const [aktif, setAktifState] = useState<number | null>(null)
+  const setAktif = (i: number | null) => {
+    // Pindah foto di dalam modal tidak mengubah status buka/tutup, jadi induk hanya diberi tahu saat berubah.
+    if ((i === null) !== (aktif === null)) onPreviewChange?.(i !== null)
+    setAktifState(i)
   }
 
   if (foto.length === 0) return null
-
-  const altFoto = (f: FotoGaleriItem, i: number) => f.keterangan ?? `Foto ${namaPemilik} ${i + 1}`
 
   return (
     <Box component="section" aria-label={ariaLabel} data-testid={testId}>
@@ -39,12 +42,13 @@ export default function GaleriFoto({ foto, namaPemilik, judul = 'Galeri Foto', a
         {foto.map((f, i) => (
           <UnstyledButton
             key={f.id}
-            onClick={() => setAktif(f)}
+            className={s.item}
+            onClick={() => setAktif(i)}
             aria-haspopup="dialog"
-            aria-label={`Lihat ${altFoto(f, i)}`}
+            aria-label={T.lihat(altFoto(f, i, namaPemilik))}
             data-testid="galeri-foto-item"
           >
-            <Image src={f.image.link} alt={altFoto(f, i)} h={{ base: 130, md: 170 }} radius="md" fit="cover" loading="lazy" />
+            <Image src={f.image.link} alt={altFoto(f, i, namaPemilik)} h={{ base: 130, md: 170 }} radius="md" fit="cover" loading="lazy" />
             {f.keterangan && (
               <Text fz="xs" c="dimmed" mt={4} lineClamp={2}>
                 {f.keterangan}
@@ -54,25 +58,7 @@ export default function GaleriFoto({ foto, namaPemilik, judul = 'Galeri Foto', a
         ))}
       </SimpleGrid>
 
-      <Modal
-        opened={aktif !== null}
-        onClose={() => setAktif(null)}
-        size="xl"
-        centered
-        radius="lg"
-        title={<Text fw={600}>{aktif?.keterangan ?? namaPemilik}</Text>}
-      >
-        {aktif && (
-          <>
-            <Image src={aktif.image.link} alt={aktif.keterangan ?? namaPemilik} fit="contain" mah="75vh" radius="md" />
-            {aktif.keterangan && (
-              <Text mt="sm" fz="sm" style={{ whiteSpace: 'pre-line' }}>
-                {aktif.keterangan}
-              </Text>
-            )}
-          </>
-        )}
-      </Modal>
+      <GaleriFotoLightbox foto={foto} index={aktif} onIndexChange={setAktif} namaPemilik={namaPemilik} />
     </Box>
   )
 }
