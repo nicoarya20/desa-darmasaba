@@ -1514,6 +1514,14 @@ Kerangka Kabar Desa: `.section` + `KabarListHeader` `tabs=[]` `searchable={false
 - **Angka**: skor tampil 4 desimal berkoma (`formatSkor`); status ditampilkan apa adanya dari admin (tidak dihitung dari skor). Ponsel (≤734px): baris riwayat jadi blok bertumpuk berlabel (`data-label`), tanpa geser horizontal.
 - Test: `__tests__/api/indeks_desa_{public_ui,menu}.test.ts(x)`.
 
+### Lembaga & Komunitas (`/pemerintahan/lembaga-komunitas`)
+
+Kerangka Kabar Desa: `.section` + `KabarListHeader` `tabs=[]` `searchable={false}`, lalu isi per keadaan (`LembagaKomunitasContent`, diekspor untuk test). Folder `(pages)/pemerintahan/lembaga-komunitas/`: `page.tsx` → `_com/LembagaKomunitasPage.tsx`, `LembagaKomunitasKartu.tsx` (kartu), `LembagaDeskripsi.tsx` (satu-satunya komponen klien: "Selengkapnya"), `lembaga-komunitas.{source,logic,text}.ts`, `lembaga-komunitas.module.css`.
+- **Data**: `ApiFetch` `desa/lembagakomunitas/find-many` (limit 100) lewat `useLoadOnce`, memuat halaman berikutnya sampai habis (maks 5 halaman). `kelompokkanPerJenis` mengelompokkan per `jenis` tanpa beda huruf besar-kecil, kelompok A-Z, isi urut `urutan` lalu nama.
+- **Kartu**: foto 4:3 opsional lewat `/api/img` dengan `responsiveImageProps` + `sizes` (100vw / 50vw / 33vw), `loading="lazy"`, `width`/`height` + `aspect-ratio` (tanpa CLS); nama (h3), ketua, deskripsi (teks biasa, ringkas 160 karakter + "Selengkapnya"), kontak (`tel:`/`mailto:` hanya bila bentuknya cocok). Tanpa HTML mentah (tidak ada `dangerouslySetInnerHTML`, jadi tidak perlu `rt.root`). Warna lewat token `--c-*` dari `.section` (ikut tema gelap).
+- **Keadaan**: memuat = `StatBarsSkeleton`; galat = `StatBarsError` (`role="alert"`); tanpa data = `StatBarsEmpty` "Belum ada lembaga atau komunitas".
+- Test: `__tests__/api/lembaga_komunitas_{public_ui,source,menu}.test.ts(x)`.
+
 ## 6. Layout Admin (`/admin/`)
 
 File: `src/app/admin/layout.tsx`

@@ -426,6 +426,14 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - [ ] **Isi data IDM Desa Darmasaba** (skor IDM/IKS/IKE/IKL + status per tahun, dari dokumen Kemendesa lewat Google Drive pihak desa) lewat admin; setelah terisi, perbarui T11 di `docs/penilaian-lomba-website-desa-2027.md`. Tidak ada seed.
 - [ ] **Verifikasi tahun IDM terawal & jumlah desimal:** batas tahun 2015-2100 (`TAHUN_IDM_MIN`) dan tampilan skor 4 desimal (`SKOR_TAMPIL_DESIMAL`) diasumsikan dari praktik IDM Kemendesa, belum dicek ke dokumen resmi.
 
+## Lembaga & Komunitas (2026-11-20, `feature/lembaga-komunitas`; juknis lomba butir 7.4)
+
+- [x] **Submenu "Lembaga & Komunitas" di menu Pemerintahan** — struktur selesai: tabel `LembagaKomunitas` (migrasi `20261120140000_lembaga_komunitas`), API `/api/desa/lembagakomunitas`, admin `/admin/pemerintahan/lembaga-komunitas` (cari, filter jenis, paginasi, foto), halaman publik `/pemerintahan/lembaga-komunitas` (dikelompokkan per jenis; keadaan kosong sampai data diisi).
+- [ ] **Isi data lembaga & komunitas Desa Darmasaba** (PPL, STT, PKK, dll beserta ketua, kontak lembaga, foto) lewat admin; tidak ada seed.
+- [ ] **Hapus = soft-delete tanpa panel Sampah:** baris yang dihapus lewat CMS hanya tersembunyi (`isActive=false`) dan belum ada UI pemulihan (pemulihan lewat DB). Pilih: tambah panel Sampah seperti 4 fitur koleksi, atau ganti jadi hapus permanen seperti Produk Hukum/Indeks Desa.
+- [ ] **Urutan hanya angka di form:** belum ada UI seret-urut (`PUT reorder` seperti Produk Hukum tidak dibuat); pemutus seri dalam satu jenis diisi manual lewat kolom Urutan.
+- [ ] **Pembantu `positiveInt` ganda:** `find-many.ts` Lembaga & Komunitas memakai salinan lokal yang sama dengan Produk Hukum dan Indeks Desa (tiga salinan); layak diekstrak ke satu util API bersama.
+
 ## Performa beranda (2026-11-19, v0.1.329 `tasks/performance/beranda-quick-wins`)
 
 Dari PageSpeed prod (mobile 68, LCP 6,6 s). Bagian frontend sudah dikerjakan di v0.1.329 (gambar seukuran tampil, logo WebP, CSS global dirampingkan, fetch section beranda menunggu viewport, musik on-demand). Butir di bawah ini butuh API, DB, atau infra. Rencana lengkap ada di `MIND/PLAN/plan-performance.md` (lokal).
