@@ -1,6 +1,6 @@
 "use client";
 
-import images from "@/con/images";
+import { LOGO_DESA_LARGE_SRC } from "@/app/(public)/_com/logo-desa.meta";
 import { Image } from "@mantine/core";
 import { useLayoutEffect, useRef } from "react";
 import { GATE_PATH_D, GATE_PATH_TRANSFORM, GATE_VIEWBOX } from "./gate-splash.path";
@@ -72,7 +72,7 @@ export default function GateSplash() {
         </div>
         <div className={s.brand} data-part="brand">
           {/* Lebar lewat prop `w` (inline) agar mengalahkan width:100% bawaan Mantine Image. */}
-          <Image src={images["darmasaba-icon"]} alt={LABEL.logoAlt} w="calc(var(--gap) * 0.36)" h="auto" fit="contain" className={s.logo} />
+          <Image src={LOGO_DESA_LARGE_SRC} alt={LABEL.logoAlt} w="calc(var(--gap) * 0.36)" h="auto" fit="contain" className={s.logo} />
           <div className={s.sub}>{LABEL.sub}</div>
           <div className={s.name}>{LABEL.name}</div>
         </div>
