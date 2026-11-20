@@ -4,6 +4,7 @@ import { Box, Image, SimpleGrid, Text, Title, UnstyledButton } from '@mantine/co
 import { useState } from 'react'
 import GaleriFotoLightbox from './galeri-foto.lightbox'
 import { altFoto } from './galeri-foto.logic'
+import s from './galeri-foto.module.css'
 import { GALERI_FOTO_TEXT as T } from './galeri-foto.text'
 
 type Props = {
@@ -41,6 +42,7 @@ export default function GaleriFoto({ foto, namaPemilik, judul = 'Galeri Foto', a
         {foto.map((f, i) => (
           <UnstyledButton
             key={f.id}
+            className={s.item}
             onClick={() => setAktif(i)}
             aria-haspopup="dialog"
             aria-label={T.lihat(altFoto(f, i, namaPemilik))}

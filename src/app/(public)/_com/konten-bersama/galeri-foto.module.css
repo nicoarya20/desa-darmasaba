@@ -158,3 +158,12 @@
     height: 45px;
   }
 }
+
+/*
+ * Grid galeri (galeri-foto.grid.tsx). Sel grid default `align-items: stretch` meregangkan tiap tombol setinggi
+ * item tertinggi di barisnya, lalu <button> menaruh isinya di tengah vertikal; foto tanpa keterangan jadi turun.
+ * Tombol dirapatkan ke atas sel dan setinggi isinya sendiri: foto sebaris rata atas, cincin fokus memeluk isi.
+ */
+.item {
+  align-self: start;
+}
