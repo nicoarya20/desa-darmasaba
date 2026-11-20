@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.339] - 2026-11-20
+### Added
+- **Pratinjau foto galeri kini bisa berpindah foto tanpa ditutup.** Saat foto di galeri dibuka, deretan foto kecil tampil di bawah foto besar; klik salah satunya, tombol ‹ ›, atau tombol panah kiri/kanan di keyboard untuk melihat foto lain. Berlaku di galeri PUSTU, Posyandu, detail sekolah, dan Bank Sampah.
+
+### Fixed
+- Kartu Tarif Layanan di halaman PUSTU tidak lagi terlalu mepet: titik daftar dan teks kini berjarak lega dari tepi kartu, dan jarak atas dan bawah kartu sama.
+
 ## [0.1.338] - 2026-11-20
 ### Added
 - **Nomor WhatsApp kantor desa (opsional) di Kontak Desa.** Admin bisa mengisinya di Profile Desa > Kontak Desa; field boleh dikosongkan karena desa belum memberikan nomornya, dan hanya nomor seluler yang diterima. Setelah diisi, nomor tampil di footer (bertaut langsung ke WhatsApp) dan di halaman PPID. Selama kosong, tampilan publik tidak berubah dan tidak ada baris WhatsApp.
