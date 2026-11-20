@@ -8,7 +8,13 @@ export type AnggotaRedaksi = { nama: string; jabatan: string };
  * Pengelola website (juknis Lomba Website Desa 2027, aspek 8.3: tim redaksi/pengelola + alamat kantor).
  * `timRedaksi` diisi sesuai SK Tim Pengelola Website setelah diterima dari desa; kosong = hanya nama lembaga.
  */
-export const PENGELOLA_WEBSITE: { lembaga: string; timRedaksi: readonly AnggotaRedaksi[] } = {
+export const PENGELOLA_WEBSITE: {
+  lembaga: string;
+  /** Awalan `lembaga` yang ditautkan ke situs tim pengelola (permintaan user, 2026-11-20). */
+  tautan: { teks: string; href: string };
+  timRedaksi: readonly AnggotaRedaksi[];
+} = {
   lembaga: 'Tim Pengelola Website Pemerintah Desa Darmasaba',
+  tautan: { teks: 'Tim Pengelola', href: 'https://cogniti.id/' },
   timRedaksi: [],
 };

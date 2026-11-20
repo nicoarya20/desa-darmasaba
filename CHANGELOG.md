@@ -1,17 +1,43 @@
 # Changelog
 
-## [0.1.332] - 2026-11-20
+## [0.1.337] - 2026-11-20
 ### Added
 - **Nomor WhatsApp kantor desa (opsional) di Kontak Desa.** Admin bisa mengisinya di Profile Desa > Kontak Desa; field boleh dikosongkan karena desa belum memberikan nomornya, dan hanya nomor seluler yang diterima. Setelah diisi, nomor tampil di footer (bertaut langsung ke WhatsApp) dan di halaman PPID. Selama kosong, tampilan publik tidak berubah dan tidak ada baris WhatsApp.
 - Operator: ada 1 migrasi aditif (kolom `whatsapp` yang boleh kosong di tabel `KontakDesa`), dijalankan otomatis saat container naik. Data yang sudah ada tidak disentuh.
 
-## [0.1.331] - 2026-11-19
+## [0.1.336] - 2026-11-19
 ### Added
 - **Submenu baru "Indeks Desa" di menu Pemerintahan.** Halaman publik `/pemerintahan/indeks-desa` menampilkan Indeks Desa Membangun (IDM) Desa Darmasaba: skor dan status tahun terbaru, tiga dimensi (Ketahanan Sosial, Ekonomi, Lingkungan), dan riwayat per tahun. Admin mengisi data di Pemerintahan > Indeks Desa. Selama data belum diisi, halaman menampilkan keterangan "data belum tersedia", tanpa angka contoh. Admin yang sudah memegang akses menu Pemerintahan otomatis mendapat submenu ini; admin dengan akses per-submenu perlu dicentang di pengaturan akses menu.
 
 ### Changed
 - **Kontak desa kini bisa diedit admin.** Tab baru "Kontak Desa" di Profile Desa (admin) mengatur nama kantor, alamat, telepon, dan email. Footer dan halaman PPID otomatis memakai data ini. Nilai awalnya sama dengan yang tampil sekarang, jadi tampilan publik tidak berubah.
 - Operator: ada 2 migrasi aditif (tabel baru `KontakDesa` dan `IndeksDesa`), dijalankan otomatis saat container naik. Data yang sudah ada tidak disentuh.
+
+## [0.1.335] - 2026-11-20
+### Fixed
+- Pindah tab atau meminimalkan browser saat halaman masih dimuat tidak lagi memunculkan error "Transition was aborted because of invalid state. Document hidden". Halaman tetap terbuka seperti biasa, hanya tanpa animasi perpindahan.
+
+## [0.1.334] - 2026-11-20
+### Changed
+- Bagan Struktur Organisasi PPID kini memakai tata letak yang sama dengan bagan Struktur Perangkat Desa di Profil Desa: kartu ringkas (jabatan di atas, foto bulat + nama di bawah), satu batang tegak di tengah, dan bawahan dikelompokkan maksimal 3 kartu di kiri/kanan batang. Sekretaris Desa duduk di batang itu sendiri, dengan bawahannya menggantung di bawahnya, sehingga bagan tidak lagi melebar ke samping. Di layar sedang dan ponsel bagan menjadi rel kiri seperti bagan Perangkat Desa.
+
+## [0.1.333] - 2026-11-20
+### Changed
+- Di footer, kata "Tim Pengelola" pada baris "Pengelola website" kini menjadi tautan ke situs tim pengelola (cogniti.id), terbuka di tab baru. Tautan ini ditulis tebal dan putih agar menonjol dari teks kontak di sekitarnya.
+
+## [0.1.332] - 2026-11-20
+### Changed
+- Di tema gelap, ubin Program Inovasi di beranda kini gelap, senada dengan ubin logo Kabupaten Badung dan desa di sebelahnya (sebelumnya ubin terang). Logo program tampil langsung di atas ubin, tanpa kotak terang di dalamnya.
+- Ubin daftar di halaman Program Inovasi ikut gelap di tema gelap, sama dengan ubin halaman Program Kreatif dan Penghijauan. Tampilan tema terang tidak berubah.
+
+## [0.1.331] - 2026-11-20
+### Changed
+- Ikon situs (ikon di tab browser, ikon layar utama iPhone/iPad, dan ikon saat situs dipasang sebagai aplikasi) kini dibuat seukuran pakainya: 48, 180, dan 192 piksel. Sebelumnya ketiganya memakai lambang 101 KB yang sama. Unduhan ikon per kunjungan pertama turun dari sekitar 204 KB menjadi 76 KB, dan ikon di tab browser kini hanya 6 KB.
+- Ikon layar utama iPhone/iPad kini berlatar putih penuh sehingga sudutnya tidak lagi tampil hitam.
+- Warna bilah judul saat situs dipasang sebagai aplikasi kini putih, sama dengan warna bilah browser di tema terang (sebelumnya biru).
+
+### Removed
+- Label ikon 512 piksel di manifest dihapus karena berkas aslinya hanya 238 piksel. Ikon ini akan ditambahkan lagi bila lambang beresolusi tinggi tersedia.
 
 ## [0.1.330] - 2026-11-19
 ### Changed

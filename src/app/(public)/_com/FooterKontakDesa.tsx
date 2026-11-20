@@ -11,6 +11,8 @@ export function FooterKontakDesa() {
   const { kontak, error } = useKontakDesa();
   const telepon = kontak ? phoneInfo(kontak.telepon) : null;
   const whatsapp = kontak?.whatsapp ? phoneInfo(kontak.whatsapp) : null;
+  const { lembaga, tautan } = PENGELOLA_WEBSITE;
+  const sisaLembaga = lembaga.startsWith(tautan.teks) ? lembaga.slice(tautan.teks.length) : null;
   return (
     <Stack gap={4}>
       <Text c="white" fz="sm" fw={600}>Kontak Kantor Desa</Text>
@@ -44,7 +46,17 @@ export function FooterKontakDesa() {
         !error && SKELETON_LINES.map((width) => <Skeleton key={width} h={12} w={width} maw="100%" aria-hidden />)
       )}
       <Text fz="xs" c="#F3F2EC" mt={4}>
-        Pengelola website: {PENGELOLA_WEBSITE.lembaga}
+        Pengelola website:{' '}
+        {sisaLembaga !== null ? (
+          <>
+            <Anchor c="white" fz="xs" fw={700} href={tautan.href} target="_blank" rel="noopener noreferrer">
+              {tautan.teks}
+            </Anchor>
+            {sisaLembaga}
+          </>
+        ) : (
+          lembaga
+        )}
         {PENGELOLA_WEBSITE.timRedaksi.length > 0
           ? ` (${PENGELOLA_WEBSITE.timRedaksi.map((a) => `${a.nama} – ${a.jabatan}`).join('; ')})`
           : ''}
