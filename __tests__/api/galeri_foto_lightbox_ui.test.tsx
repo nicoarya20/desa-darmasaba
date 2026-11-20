@@ -63,6 +63,8 @@ describe('GaleriFotoLightbox: strip thumbnail', () => {
     const fotoBesar = html.match(/<img[^>]*alt="Kegiatan 3"[^>]*>/)?.[0] ?? '';
     expect(fotoBesar).toContain('src="/foto-3.jpg"');
     expect(count(html, 'Kegiatan 3')).toBeGreaterThanOrEqual(3); // judul + alt + keterangan
+    // Judul dipotong 1 baris; teks penuh tetap di atribut title.
+    expect(html).toContain('title="Kegiatan 3"');
     // Foto tanpa keterangan: judul = nama pemilik, alt bernomor.
     const tanpa = lightbox(buatFoto(4), 1);
     expect(tanpa).toContain('alt="Foto PUSTU Banjar Bersih 2"');

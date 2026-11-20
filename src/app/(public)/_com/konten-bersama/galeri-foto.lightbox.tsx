@@ -18,6 +18,16 @@ type Props = {
   namaPemilik: string
 }
 
+// Jarak atas modal tetap (tidak centered) agar foto & judul diam saat keterangan berganti panjang. Nilainya menaruh modal
+// berketerangan 1 baris kira-kira di tengah: (tinggi layar − tinggi panggung − ±180px kepala+strip+1 baris) / 2, min 5dvh.
+// Tinggi panggung = rumus .stage di galeri-foto.module.css (80vw mewakili tinggi panggung ponsel).
+const MODAL_Y_OFFSET = 'clamp(5dvh, calc((100dvh - min(560px, 80vw, 90dvh - 240px) - 180px) / 2), 50dvh)'
+// Bawaan Mantine max-height = 100dvh − 2×offset; ganti jadi offset atas + 5dvh bawah agar keterangan panjang tidak memaksa scroll.
+const MODAL_STYLES = {
+  inner: { paddingBottom: '5dvh' },
+  content: { '--modal-content-max-height': 'calc(100dvh - var(--modal-y-offset) - 5dvh)' },
+}
+
 /** Modal pratinjau galeri: foto besar bertinggi tetap, strip thumbnail untuk pindah foto, ←/→ di keyboard (tanpa wrap). */
 export default function GaleriFotoLightbox({ foto, index, onIndexChange, namaPemilik }: Props) {
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([])
@@ -30,6 +40,7 @@ export default function GaleriFotoLightbox({ foto, index, onIndexChange, namaPem
   if (terbuka && index !== terakhir) setTerakhir(index)
   const tampil = terbuka ? index : terakhir
   const aktif = tampil === null ? null : (foto[tampil] ?? null)
+  const judul = aktif?.keterangan ?? namaPemilik
 
   // Thumbnail aktif digeser ke tengah strip (sejalan dengan scroll-snap center; 'nearest' ditarik balik oleh snap
   // sehingga thumbnail di tepi terpotong). Saat modal baru dibuka langsung lompat (tanpa animasi).
@@ -64,10 +75,16 @@ export default function GaleriFotoLightbox({ foto, index, onIndexChange, namaPem
       opened={terbuka}
       onClose={() => onIndexChange(null)}
       size="xl"
-      centered
+      yOffset={MODAL_Y_OFFSET}
       radius="lg"
       classNames={{ content: s.content }}
-      title={<Text fw={600}>{aktif?.keterangan ?? namaPemilik}</Text>}
+      styles={MODAL_STYLES}
+      // Judul 1 baris agar tinggi kepala tetap saat pindah foto; teks penuh di atribut title + keterangan di bawah strip.
+      title={
+        <Text fw={600} lineClamp={1} pr="xs" title={judul}>
+          {judul}
+        </Text>
+      }
     >
       {aktif && tampil !== null && (
         <>
