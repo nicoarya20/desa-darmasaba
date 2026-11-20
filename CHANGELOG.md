@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.334] - 2026-11-20
+### Changed
+- Bagan Struktur Organisasi PPID kini memakai tata letak yang sama dengan bagan Struktur Perangkat Desa di Profil Desa: kartu ringkas (jabatan di atas, foto bulat + nama di bawah), satu batang tegak di tengah, dan bawahan dikelompokkan maksimal 3 kartu di kiri/kanan batang. Sekretaris Desa duduk di batang itu sendiri, dengan bawahannya menggantung di bawahnya, sehingga bagan tidak lagi melebar ke samping. Di layar sedang dan ponsel bagan menjadi rel kiri seperti bagan Perangkat Desa.
+
 ## [0.1.333] - 2026-11-20
 ### Changed
 - Di footer, kata "Tim Pengelola" pada baris "Pengelola website" kini menjadi tautan ke situs tim pengelola (cogniti.id), terbuka di tab baru. Tautan ini ditulis tebal dan putih agar menonjol dari teks kontak di sekitarnya.

@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Bagan bertingkat Struktur Perangkat Desa: pengelompokan bawahan akar per hierarki → klaster ≤3 kiri/kanan batang.
+// Bagan bertingkat Struktur Perangkat Desa & PPID: pengelompokan bawahan akar per hierarki → klaster ≤3 kiri/kanan batang.
 import { describe, expect, it } from 'vitest';
 import { buildOrgTree, filterOrgTree, type OrgNode, type PegawaiItem } from '@/app/(public)/_com/struktur-organisasi/struktur.logic';
 import { planTierBands, splitBalanced, type TierBand } from '@/app/(public)/_com/struktur-organisasi/struktur-tiers.logic';
@@ -41,7 +41,7 @@ const tree = buildOrgTree(PROD, []);
 /** Ringkasan band: `sisi[turun]:kepala>kartu,kartu` per klaster, urut pangkat. */
 const summary = (bands: readonly TierBand[] | null) =>
   bands?.map((band) =>
-    band.units.map(({ unit, side, lower }) => {
+    band.kind === 'trunk' ? [`batang:${band.cards.map((card) => card.title).join('+')}`] : band.units.map(({ unit, side, lower }) => {
       const titles = unit.cards.map((card) => card.title.replace(/^(Kepala (Urusan|Seksi)|Kelian Banjar) /, ''));
       const head = unit.head.map((card) => card.title).join('+');
       return `${side}${lower ? '[turun]' : ''}:${head ? `${head}>` : ''}${titles.join(',')}`;
@@ -95,8 +95,12 @@ describe('planTierBands — data prod Perangkat Desa', () => {
     ]);
   });
 
+  it('tanpa kartu di batang: semua bawahan akar muat klaster', () => {
+    expect(bands?.every((band) => band.kind === 'units')).toBe(true);
+  });
+
   it('semua 31 bawahan tampil tepat sekali, tidak ada klaster > 3 kartu', () => {
-    const units = bands?.flatMap((band) => band.units.map((p) => p.unit)) ?? [];
+    const units = bands?.flatMap((band) => (band.kind === 'units' ? band.units.map((p) => p.unit) : [])) ?? [];
     const cards = units.flatMap((unit) => [...unit.head, ...unit.cards]);
     expect(cards).toHaveLength(31);
     expect(new Set(cards.map((card) => card.key)).size).toBe(31);
@@ -136,7 +140,7 @@ describe('planTierBands — aturan generik', () => {
     const leaves = Array.from({ length: 7 }, (_, i) => node(`a${i}`, 2));
     const root = node('akar', 1, [...leaves, node('b0', 3)]);
     const bands = planTierBands(root) ?? [];
-    expect(bands.map((band) => band.units.map((p) => `${p.side}:${p.unit.cards.length}`))).toEqual([
+    expect(bands.map((band) => (band.kind === 'units' ? band.units.map((p) => `${p.side}:${p.unit.cards.length}`) : []))).toEqual([
       ['left:3', 'right:2'],
       ['left:2', 'right:1'],
     ]);
@@ -144,7 +148,8 @@ describe('planTierBands — aturan generik', () => {
 
   it('dua klaster berkepala setingkat → yang lebih dulu di kiri, tanpa diturunkan', () => {
     const root = node('akar', 1, [node('x', 2, [node('x1', 3)]), node('y', 2, [node('y1', 3)])]);
-    expect(planTierBands(root)?.[0].units.map((p) => [p.unit.key, p.side, p.lower])).toEqual([
+    const [band] = planTierBands(root) ?? [];
+    expect(band.kind === 'units' && band.units.map((p) => [p.unit.key, p.side, p.lower])).toEqual([
       ['x', 'left', false],
       ['y', 'right', false],
     ]);
@@ -152,20 +157,84 @@ describe('planTierBands — aturan generik', () => {
 
   it('tingkat berkepala sendirian lalu tingkat berklaster dua → band terpisah, kepala di kanan', () => {
     const root = node('akar', 1, [node('x', 2, [node('x1', 3)]), ...Array.from({ length: 6 }, (_, i) => node(`k${i}`, 4))]);
-    expect(planTierBands(root)?.map((band) => band.units.map((p) => p.side))).toEqual([['right'], ['left', 'right']]);
+    expect(planTierBands(root)?.map((band) => (band.kind === 'units' ? band.units.map((p) => p.side) : []))).toEqual([
+      ['right'],
+      ['left', 'right'],
+    ]);
   });
 
   it('jabatan berisi beberapa pegawai → tiap pegawai satu kartu, ikut dibagi klaster', () => {
     const root = node('akar', 1, [node('staf', 2, [], 4)]);
-    expect(planTierBands(root)?.[0].units.map((p) => p.unit.cards.length)).toEqual([2, 2]);
+    const [band] = planTierBands(root) ?? [];
+    expect(band.kind === 'units' && band.units.map((p) => p.unit.cards.length)).toEqual([2, 2]);
+  });
+
+  it('kepala > 3 bawahan → kartu di batang, bawahannya disusun di bawahnya', () => {
+    const wideHead = node('akar', 1, [node('x', 2, Array.from({ length: 4 }, (_, i) => node(`x${i}`, 3)))]);
+    expect(summary(planTierBands(wideHead))).toEqual([['batang:x'], ['left:x0,x1', 'right:x2,x3']]);
+  });
+
+  it('cucu berbawahan → kartu di batang, cucu jadi klaster berkepala di bawahnya', () => {
+    const deep = node('akar', 1, [node('x', 2, [node('x1', 3, [node('x2', 4)])])]);
+    expect(summary(planTierBands(deep))).toEqual([['batang:x'], ['right:x1>x2']]);
+  });
+
+  it('saudara kartu di batang tetap di atasnya (menempel batang milik akar)', () => {
+    const root = node('akar', 1, [node('x', 2, Array.from({ length: 4 }, (_, i) => node(`x${i}`, 3))), node('k', 3)]);
+    expect(summary(planTierBands(root))).toEqual([['left:k'], ['batang:x'], ['left:x0,x1', 'right:x2,x3']]);
   });
 
   it('bentuk tak cocok → null (pemakai kembali ke bagan pohon)', () => {
-    const deep = node('akar', 1, [node('x', 2, [node('x1', 3, [node('x2', 4)])])]);
-    const wideHead = node('akar', 1, [node('x', 2, Array.from({ length: 4 }, (_, i) => node(`x${i}`, 3)))]);
+    const wide = (p: string) => Array.from({ length: 4 }, (_, i) => node(`${p}${i}`, 3));
+    const twoTrunks = node('akar', 1, [node('x', 2, wide('x')), node('y', 2, wide('y'))]);
     const crowdedHead = node('akar', 1, [node('x', 2, [node('x1', 3)], 4)]);
-    expect(planTierBands(deep)).toBeNull();
-    expect(planTierBands(wideHead)).toBeNull();
+    const crowdedTrunk = node('akar', 1, [node('x', 2, wide('x'), 4)]);
+    expect(planTierBands(twoTrunks)).toBeNull();
     expect(planTierBands(crowdedHead)).toBeNull();
+    expect(planTierBands(crowdedTrunk)).toBeNull();
+  });
+});
+
+// test-only: bentuk data Struktur PPID 2026-11-20 (nama disingkat). Prod: Kepala Desa → Sekdes → 6 staf (hierarki
+// 3-5). Stg: Kepala Desa → Kaur Umum & TU (kosong, → Kaur Keuangan) + Sekdes (→ 5 Kepala Dusun).
+describe('planTierBands — Struktur PPID', () => {
+  const staf = (id: string, nama: string, hierarki: number) => pegawai(id, nama, hierarki, 'sekretaris_desa');
+  const KADES = pegawai('kepala_desa', 'Kepala Desa', 1, null);
+  const SEKDES = pegawai('sekretaris_desa', 'Sekretaris Desa', 2, 'kepala_desa');
+
+  it('prod: Sekdes di batang, 6 staf dikelompokkan per hierarki di bawahnya', () => {
+    const [root] = buildOrgTree(
+      [
+        KADES,
+        SEKDES,
+        staf('it', 'Staf IT', 3),
+        staf('kaur-tu', 'Kaur TU dan Umum', 3),
+        staf('staf-tu', 'Staff TU dan Umum', 4),
+        staf('kaur-ren', 'Kaur Perencanaan', 4),
+        staf('kasi-pel', 'Kasi Pelayanan', 5),
+        staf('kasi-pem', 'Kasi Pemerintahan', 5),
+      ],
+      [],
+    );
+    expect(summary(planTierBands(root))).toEqual([
+      ['batang:Sekretaris Desa'],
+      ['left:Kaur TU dan Umum,Staf IT', 'right:Kaur Perencanaan,Staff TU dan Umum'],
+      ['left:Kasi Pelayanan,Kasi Pemerintahan'],
+    ]);
+  });
+
+  it('stg: Kaur Umum & TU (kosong) berkepala di atas, Sekdes di batang, 5 Kepala Dusun 3+2 di bawahnya', () => {
+    const kadus = ['Taman', 'Gulingan', 'Menesa', 'Darmasaba', 'Bucu'].map((n) => staf(`kadus-${n}`, `Kadus ${n}`, 3));
+    const posisi = [
+      { id: 'kepala_desa', nama: 'Kepala Desa', hierarki: 1, parentId: null },
+      { id: 'kaur_umum', nama: 'Kaur Umum & TU', hierarki: 2, parentId: 'kepala_desa' },
+      { id: 'sekretaris_desa', nama: 'Sekretaris Desa', hierarki: 2, parentId: 'kepala_desa' },
+    ];
+    const [root] = buildOrgTree([KADES, SEKDES, ...kadus, pegawai('kaur_keu', 'Kaur Keuangan', 3, 'kaur_umum')], posisi);
+    expect(summary(planTierBands(root))).toEqual([
+      ['right:Kaur Umum & TU>Kaur Keuangan'],
+      ['batang:Sekretaris Desa'],
+      ['left:Kadus Bucu,Kadus Darmasaba,Kadus Gulingan', 'right:Kadus Menesa,Kadus Taman'],
+    ]);
   });
 });
