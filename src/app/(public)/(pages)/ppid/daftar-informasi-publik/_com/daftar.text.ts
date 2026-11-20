@@ -24,6 +24,7 @@ export const DAFTAR_TEXT = {
   kontakEmailLabel: 'Email:',
   kontakTeleponLabel: 'Telepon:',
   kontakWhatsappLabel: 'WhatsApp:',
+  kontakJamLayananLabel: 'Jam layanan:',
   detailTitle: 'Detail Informasi Publik',
   detailLead: 'Jenis, tanggal publikasi, dan deskripsi lengkap informasi publik.',
   detailBerkas: 'Berkas',

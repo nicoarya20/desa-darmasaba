@@ -11,6 +11,7 @@ export const KONTAK_DESA_SELECT = {
   telepon: true,
   email: true,
   whatsapp: true,
+  jamLayanan: true,
   updatedAt: true,
 } as const;
 

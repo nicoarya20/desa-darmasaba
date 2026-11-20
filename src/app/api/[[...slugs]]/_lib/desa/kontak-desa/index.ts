@@ -11,6 +11,7 @@ const kontakDesaBody = t.Object(
     telepon: t.Optional(t.Unknown()),
     email: t.Optional(t.Unknown()),
     whatsapp: t.Optional(t.Unknown()),
+    jamLayanan: t.Optional(t.Unknown()),
   },
   { additionalProperties: true },
 );

@@ -1,4 +1,5 @@
 'use client';
+import { useKontakDesa } from '@/app/(public)/_com/use-kontak-desa';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import LayananWaktuBiayaBadge from '@/components/LayananWaktuBiayaBadge';
@@ -13,19 +14,23 @@ import page from '../layanan.module.css';
 import { AjukanPermohonanModal } from './AjukanPermohonanModal';
 import s from './layanan-detail.module.css';
 import { LAYANAN_DETAIL_TEXT as T } from './layanan-detail.text';
+import { hasPetugasWa } from './permohonan-whatsapp.logic';
 import { useLayananDetail, type LayananDetailData } from './use-layanan-detail';
 
 /** Halaman detail satu surat keterangan: judul, persyaratan, gambar alur, lalu tombol ajukan permohonan. */
 export function LayananDetail({ id }: { id: string }) {
   const state = useLayananDetail(id);
   const [opened, { open, close }] = useDisclosure(false);
+  // Info "tindak lanjut lewat WhatsApp" hanya tampil bila Kontak Desa punya nomor valid (tidak menjanjikan kanal yang tidak ada).
+  const { kontak } = useKontakDesa();
+  const waTersedia = hasPetugasWa(kontak?.whatsapp);
 
   return (
     <div className={page.page}>
       <article className={s.wrap} aria-busy={state.status === 'loading' || undefined}>
         <BackButton />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
-        {state.status === 'ready' ? <LayananDetailBody data={state.data} onAjukan={open} /> : null}
+        {state.status === 'ready' ? <LayananDetailBody data={state.data} onAjukan={open} waTersedia={waTersedia} /> : null}
         {state.status === 'notfound' ? (
           <div className={page.empty}>
             <p className={s.emptyText}>{T.notFound}</p>
@@ -44,7 +49,16 @@ export function LayananDetail({ id }: { id: string }) {
 }
 
 /** Isi detail yang sudah dimuat: kategori, judul, tombol ajukan + badge, persyaratan, gambar alur, penutup. */
-export function LayananDetailBody({ data, onAjukan }: { data: LayananDetailData; onAjukan: () => void }) {
+export function LayananDetailBody({
+  data,
+  onAjukan,
+  waTersedia,
+}: {
+  data: LayananDetailData;
+  onAjukan: () => void;
+  /** Kontak Desa punya nomor WhatsApp valid → tampilkan info tindak lanjut lewat WhatsApp. */
+  waTersedia: boolean;
+}) {
   const ajukan = (
     <button type="button" className={s.cta} onClick={onAjukan} aria-haspopup="dialog">
       {T.ajukan}
@@ -65,7 +79,7 @@ export function LayananDetailBody({ data, onAjukan }: { data: LayananDetailData;
           <LayananWaktuBiayaBadge estimasiWaktu={data.estimasiWaktu} biaya={data.biaya} />
           {data.sopFile ? <SopLink file={data.sopFile} /> : null}
         </div>
-        <p className={s.waInfo}>{T.waInfo}</p>
+        {waTersedia ? <p className={s.waInfo}>{T.waInfo}</p> : null}
       </header>
 
       {/* Persyaratan & alur dari editor admin (HTML tepercaya), sama seperti halaman sebelumnya. */}
@@ -83,7 +97,7 @@ export function LayananDetailBody({ data, onAjukan }: { data: LayananDetailData;
         <div className={s.closingText}>
           <h2 className={s.closingTitle}>{T.closingTitle}</h2>
           <p>{T.closingText}</p>
-          <p>{T.waInfo}</p>
+          {waTersedia ? <p>{T.waInfo}</p> : null}
         </div>
         {ajukan}
       </section>
