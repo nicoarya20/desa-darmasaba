@@ -784,6 +784,8 @@ model KontakDesa {
   alamat     String
   telepon    String
   email      String
+  // Opsional: desa belum memberi nomor WhatsApp. null = tidak ditampilkan di footer/PPID; bila diisi harus nomor seluler.
+  whatsapp   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
