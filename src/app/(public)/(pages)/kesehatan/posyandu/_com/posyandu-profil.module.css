@@ -7,12 +7,6 @@
   max-width: 72ch;
 }
 
-.richText ul,
-.richText ol {
-  margin: 0 0 1em;
-  padding-left: 1.25em;
-}
-
 .subTitle {
   margin: 24px 0 10px;
   font-size: 19px;

@@ -79,6 +79,40 @@
   margin: 0 0 1em;
 }
 
+/*
+ * Daftar dari editor admin. Reset global `* { margin: 0; padding: 0 }` (globals.css) ikut menolkan indentasi bawaan
+ * browser untuk ul/ol, padahal penanda daftar (list-style-position: outside) digambar di ruang padding itu: tanpa
+ * padding, bullet dan angka menggantung di luar kolom baca. Indentasi dipulihkan di sini, bukan di reset global,
+ * supaya daftar navigasi/menu tetap nol. Angka sama dengan layanan-detail .content.
+ * :where() menahan spesifisitas di (0,1,0)/(0,1,1) supaya aturan daftar lokal halaman (.x ul, .x li > p) selalu
+ * menang tanpa bergantung urutan muat CSS.
+ */
+.content :where(ul, ol) {
+  margin: 0 0 1em;
+  padding-left: 1.25em;
+}
+
+/* Angka dua digit ("10.") lebih lebar dari 1.25em; tanpa ini penandanya menggantung lagi. */
+.content :where(ol:has(> li:nth-child(10))) {
+  padding-left: 1.75em;
+}
+
+/* <p> di dalam <li> (bawaan editor) membawa margin 1em dari `.content p` → antarbutir renggang. Spesifisitas sama
+   dengan `.content p`, menang karena ditulis sesudahnya. */
+.content :where(li) > p {
+  margin: 0;
+}
+
+.content :where(li) > p + p,
+.content :where(li + li),
+.content :where(li) > :where(ul, ol) {
+  margin-top: 0.6em;
+}
+
+.content :where(li) > :where(ul, ol) {
+  margin-bottom: 0;
+}
+
 .content a {
   color: var(--brand);
   text-underline-offset: 3px;
