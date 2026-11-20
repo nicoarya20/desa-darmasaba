@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { phoneDigits, phoneInfo } from "@/app/(public)/_com/kontak-darurat/kontak-phone.logic";
 
-// Aturan Kontak Desa (kantor, alamat, telepon, email, WhatsApp opsional): konstanta, tipe, dan validasi murni tanpa I/O, dipakai bersama
+// Aturan Kontak Desa (kantor, alamat, telepon, email, WhatsApp dan jam layanan opsional): konstanta, tipe, dan validasi murni tanpa I/O, dipakai bersama
 // oleh API (Elysia), form admin Profil Desa > Kontak Desa, dan pembaca publik (footer, PPID).
 
 /** ID tetap baris singleton KontakDesa (upsert atomik, tak mungkin ada baris ganda). Sama dengan id di migrasi awal. */
@@ -13,6 +13,8 @@ export const ALAMAT_MAX_LENGTH = 300;
 export const TELEPON_MAX_LENGTH = 40;
 /** Panjang teks nomor WhatsApp sebagaimana diketik admin; sama dengan telepon. */
 export const WHATSAPP_MAX_LENGTH = TELEPON_MAX_LENGTH;
+/** Panjang teks jam layanan sebagaimana diketik admin, mis. "Senin–Jumat 07.30–15.30" (teks bebas). */
+export const JAM_LAYANAN_MAX_LENGTH = 120;
 /** Batas digit nomor telepon internasional (E.164). */
 export const TELEPON_MAX_DIGITS = 15;
 /** Batas alamat email menurut RFC 5321. */
@@ -31,12 +33,15 @@ export type KontakDesaRecord = {
   email: string;
   /** Opsional: null = desa belum memberi nomor WhatsApp (tidak ditampilkan di publik). */
   whatsapp: string | null;
+  /** Opsional: null = jam layanan belum diisi (tidak ditampilkan di publik). */
+  jamLayanan: string | null;
   updatedAt: string;
 };
 
-/** Isian form admin (tanpa id dan tanggal); WhatsApp kosong ("") = belum ada nomor. */
+/** Isian form admin (tanpa id dan tanggal); WhatsApp dan jam layanan kosong ("") = belum diisi. */
 export type KontakDesaFormValues = Pick<KontakDesaRecord, "namaKantor" | "alamat" | "telepon" | "email"> & {
   whatsapp: string;
+  jamLayanan: string;
 };
 
 /** Apakah teks telepon nomor Indonesia yang dikenali (seluler atau telepon tetap, bukan nomor layanan pendek). */
@@ -52,8 +57,8 @@ export function isWhatsappKontakValid(raw: string): boolean {
   return phoneInfo(raw)?.kind === "mobile";
 }
 
-/** Teks wajib: spasi berulang dirapikan, tidak boleh kosong, dan maksimal `max` karakter. */
-const requiredText = (label: string, max: number) =>
+/** Teks wajib: spasi berulang dirapikan, tidak boleh kosong, dan maksimal `max` karakter (dipakai juga oleh Tim Pengelola). */
+export const requiredText = (label: string, max: number) =>
   z
     .string({ required_error: `${label} wajib diisi`, invalid_type_error: `${label} harus berupa teks` })
     .transform((value) => value.replace(/\s+/g, " ").trim())
@@ -80,7 +85,18 @@ const optionalWhatsapp = z
   )
   .transform((value) => (value === "" ? null : value));
 
-/** Skema input upsert Kontak Desa (dipakai API dan form admin); kunci di luar kelima field dibuang. */
+/**
+ * Jam layanan opsional (teks bebas): tidak dikirim, null, atau kosong = null; bila diisi, spasi berulang dirapikan dan
+ * panjangnya dibatasi. Format jam sengaja tidak diparse karena desa menuliskannya bebas (mis. beda jam per hari).
+ */
+const optionalJamLayanan = z
+  .string({ invalid_type_error: "Jam layanan harus berupa teks" })
+  .nullish()
+  .transform((value) => (value ?? "").replace(/\s+/g, " ").trim())
+  .pipe(z.string().max(JAM_LAYANAN_MAX_LENGTH, `Jam layanan maksimal ${JAM_LAYANAN_MAX_LENGTH} karakter`))
+  .transform((value) => (value === "" ? null : value));
+
+/** Skema input upsert Kontak Desa (dipakai API dan form admin); kunci di luar field berikut dibuang. */
 export const kontakDesaSchema = z.object({
   namaKantor: requiredText("Nama kantor", NAMA_KANTOR_MAX_LENGTH),
   alamat: requiredText("Alamat", ALAMAT_MAX_LENGTH),
@@ -93,6 +109,7 @@ export const kontakDesaSchema = z.object({
     "Format email tidak valid, mis. nama@desa.id",
   ),
   whatsapp: optionalWhatsapp,
+  jamLayanan: optionalJamLayanan,
 });
 
 export type KontakDesaInput = z.output<typeof kontakDesaSchema>;

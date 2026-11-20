@@ -23,6 +23,7 @@ import { isPathAllowed } from '@/app/admin/_com/nav/menu-access.logic';
 import {
   ALAMAT_MAX_LENGTH,
   EMAIL_MAX_LENGTH,
+  JAM_LAYANAN_MAX_LENGTH,
   NAMA_KANTOR_MAX_LENGTH,
   TELEPON_MAX_LENGTH,
   WHATSAPP_MAX_LENGTH,
@@ -32,7 +33,7 @@ const render = (ui: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
 
 // test-only: isian rekaan.
-const FORM = { namaKantor: 'Kantor Uji', alamat: 'Jl. Uji No. 1', telepon: '(0361) 8441518', email: 'uji@example.com', whatsapp: '' };
+const FORM = { namaKantor: 'Kantor Uji', alamat: 'Jl. Uji No. 1', telepon: '(0361) 8441518', email: 'uji@example.com', whatsapp: '', jamLayanan: '' };
 const KONTAK_PATH = '/admin/pemerintahan/profil/kontak-desa';
 
 beforeEach(() => {
@@ -47,10 +48,11 @@ describe('KontakDesaForm', () => {
 
   it('lima field berlabel, petunjuk telepon dan WhatsApp, batas panjang, dan tombol simpan', () => {
     const html = form();
-    for (const label of [T.namaKantor, T.alamat, T.telepon, T.email, T.whatsapp, T.submit]) expect(html).toContain(label);
+    for (const label of [T.namaKantor, T.alamat, T.telepon, T.email, T.whatsapp, T.jamLayanan, T.submit]) expect(html).toContain(label);
     expect(html).toContain(T.teleponHint);
     expect(html).toContain(T.whatsappHint);
-    for (const max of [NAMA_KANTOR_MAX_LENGTH, ALAMAT_MAX_LENGTH, TELEPON_MAX_LENGTH, EMAIL_MAX_LENGTH, WHATSAPP_MAX_LENGTH]) {
+    expect(html).toContain(T.jamLayananHint);
+    for (const max of [NAMA_KANTOR_MAX_LENGTH, ALAMAT_MAX_LENGTH, TELEPON_MAX_LENGTH, EMAIL_MAX_LENGTH, WHATSAPP_MAX_LENGTH, JAM_LAYANAN_MAX_LENGTH]) {
       expect(html).toContain(`maxLength="${max}"`);
     }
     expect(html).toContain('type="email"');
@@ -66,15 +68,19 @@ describe('KontakDesaForm', () => {
     expect(inputOf(T.whatsapp)).not.toBe('');
     expect(inputOf(T.whatsapp)).not.toContain('required');
     expect(T.whatsapp).toContain('opsional');
+    expect(inputOf(T.jamLayanan)).not.toBe('');
+    expect(inputOf(T.jamLayanan)).not.toContain('required');
+    expect(T.jamLayanan).toContain('opsional');
   });
 
   it('nilai terkontrol dari proxy form', () => {
-    Object.assign(state.form, { ...FORM, whatsapp: '0812 3958 0000' });
+    Object.assign(state.form, { ...FORM, whatsapp: '0812 3958 0000', jamLayanan: 'Senin–Jumat 07.30–15.30' });
     const html = form();
     expect(html).toContain('value="0812 3958 0000"');
     expect(html).toContain('value="Kantor Uji"');
     expect(html).toContain('value="(0361) 8441518"');
     expect(html).toContain('value="uji@example.com"');
+    expect(html).toContain('value="Senin–Jumat 07.30–15.30"');
     expect(html).toMatch(/<textarea[^>]*>Jl\. Uji No\. 1<\/textarea>/);
   });
 

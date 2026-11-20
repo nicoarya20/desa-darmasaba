@@ -10,6 +10,9 @@ export const KONTAK_DESA_ADMIN_TEXT = {
   whatsapp: 'WhatsApp (opsional)',
   whatsappHint:
     'Nomor seluler Indonesia. Kosongkan bila desa belum memiliki nomor WhatsApp; barisnya baru tampil di footer dan halaman PPID setelah diisi.',
+  jamLayanan: 'Jam Layanan (opsional)',
+  jamLayananHint:
+    'Teks bebas, mis. Senin–Jumat 07.30–15.30. Kosongkan bila belum ada; barisnya baru tampil di footer dan halaman PPID setelah diisi.',
   submit: 'Simpan',
   loadError: 'Gagal memuat kontak desa',
   retry: 'Coba Lagi',
