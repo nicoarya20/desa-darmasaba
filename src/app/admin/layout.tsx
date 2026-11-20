@@ -1,5 +1,13 @@
 'use client'
 
+// CSS paket ekstensi Mantine + toast yang dipakai admin. Dulu di globals.css (render-blocking di semua halaman publik).
+// Layout ini dimuat sesudah layout root, jadi tetap SETELAH @mantine/core/styles.css sesuai urutan wajib docs Mantine.
+import "@mantine/dropzone/styles.css";
+import "@mantine/charts/styles.css";
+import "@mantine/dates/styles.css";
+import "@mantine/tiptap/styles.css";
+import "react-simple-toasts/dist/style.css";
+import "react-simple-toasts/dist/theme/dark.css";
 import { DarkModeToggle } from "@/components/admin/DarkModeToggle";
 import { logoutAndRedirect } from "@/lib/client-logout";
 import { useDarkMode } from "@/state/darkModeStore";

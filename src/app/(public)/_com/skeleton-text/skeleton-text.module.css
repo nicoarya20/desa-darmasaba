@@ -1,0 +1,39 @@
+/*
+ * Pita kerangka teks: teks contoh dari atribut data-sample (::before) berhuruf transparan, latar pita per baris
+ * (box-decoration-break: clone = tiap baris mendapat ujung membulat sendiri). Latar hanya setinggi huruf, bukan
+ * setinggi baris, jadi antarbaris tampak celah seperti kerangka biasa. Warna: --skeleton-bg dari section
+ * (mis. SDGs gelap) atau token --c-placeholder.
+ */
+.text {
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.text::before {
+  content: attr(data-sample);
+  color: transparent;
+  background: var(--skeleton-bg, var(--c-placeholder));
+  border-radius: 6px;
+  box-decoration-break: clone;
+}
+
+/*
+ * Slot pembungkus (judul/ringkasan ber-line-clamp) melukis elipsis "…" dengan warna teksnya sendiri saat teks contoh
+ * melewati batas clamp, jadi titik-titik itu tetap terlihat walau huruf contohnya transparan. Warna slot yang langsung
+ * membungkus kerangka ikut dibuat transparan; `span.text` (0,1,1) mengalahkan warna kelas slot (0,1,0) apa pun urutan
+ * modul CSS-nya. Hanya induk langsung yang kena, jadi ikon di sebelahnya (chevron baris pengumuman) tetap berwarna.
+ */
+:global(*):has(> span.text) {
+  color: transparent;
+}
+
+@keyframes skeletonPulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text {
+    animation: none;
+  }
+}

@@ -13,11 +13,15 @@ type KabarState = {
 
 const INITIAL: KabarState = { berita: [], pengumuman: [], loading: true, failed: false };
 
-/** Berita + pengumuman terbaru untuk section Kabar Desa; tiap sumber berdiri sendiri. */
-export function useKabarData(): KabarState {
+/**
+ * Berita + pengumuman terbaru untuk section Kabar Desa; tiap sumber berdiri sendiri. Fetch baru dimulai saat
+ * `enabled` menyala (section mendekati layar); sebelum itu `loading` tetap true sehingga kerangka yang tampil.
+ */
+export function useKabarData(enabled: boolean): KabarState {
   const [state, setState] = useState<KabarState>(INITIAL);
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
     Promise.allSettled([loadBeritaTerbaru(KABAR_BERITA_LIMIT), loadPengumumanTerbaru(KABAR_PENGUMUMAN_LIMIT)]).then(
       ([berita, pengumuman]) => {
@@ -35,7 +39,7 @@ export function useKabarData(): KabarState {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [enabled]);
 
   return state;
 }

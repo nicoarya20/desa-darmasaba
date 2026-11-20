@@ -1,6 +1,7 @@
 "use client";
 import { IconChevronRight } from "@tabler/icons-react";
 import Link from "next/link";
+import { FETCH_ROOT_MARGIN, useNearViewport } from "../../lazy-load/use-near-viewport";
 import { AntiKorupsiGroups } from "./AntiKorupsiGroups";
 import { ANTIKORUPSI_DETAIL_HREF } from "./desaantikorupsi.meta";
 import s from "./desaantikorupsi.module.css";
@@ -11,11 +12,13 @@ const TITLE_ID = "desa-anti-korupsi-title";
 
 /** Section beranda Desa Anti Korupsi: indikator terpilih dikelompokkan per kategori + tautan ke halaman detail. */
 function DesaAntiKorupsi() {
-  const { groups, loading } = useAntiKorupsiData();
+  // Fetch ditunda sampai section mendekati layar agar tidak berebut jaringan dengan foto hero (LCP).
+  const [sectionRef, near] = useNearViewport<HTMLElement>(FETCH_ROOT_MARGIN);
+  const { groups, loading } = useAntiKorupsiData(near);
   const empty = !loading && groups.length === 0;
 
   return (
-    <section className={s.section} aria-labelledby={TITLE_ID}>
+    <section ref={sectionRef} className={s.section} aria-labelledby={TITLE_ID}>
       <div className={s.inner}>
         <header className={s.header}>
           <h2 id={TITLE_ID} className={s.title}>

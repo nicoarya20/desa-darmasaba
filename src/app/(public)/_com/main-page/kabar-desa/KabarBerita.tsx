@@ -4,8 +4,9 @@ import { Link } from "next-view-transitions";
 import { imageLoadingAttrs } from "../../image-loading.logic";
 import r from "../../link-reveal/link-reveal.module.css";
 import { responsiveImageProps } from "../../responsive-image.logic";
+import { SkeletonText } from "../../skeleton-text/SkeletonText";
 import { formatTanggalKabar, splitFeatured, type KabarItem } from "./kabar.logic";
-import { KABAR_BERITA_LIMIT } from "./kabar.meta";
+import { KABAR_BERITA_LIMIT, KABAR_SKELETON_CHARS as SK } from "./kabar.meta";
 import s from "./kabar.module.css";
 import { KABAR_TEXT } from "./kabar.text";
 
@@ -78,12 +79,39 @@ export function KabarBerita({
   const railClass = layout === "grid" ? `${s.rail} ${s.railGrid}` : s.rail;
 
   if (loading) {
+    // Kerangka = struktur & kelas kartu asli (foto, meta, judul, ringkasan) dengan teks contoh tak terlihat: tinggi
+    // kartu mengikuti rasio foto, padding, dan line-clamp yang sama di tiap lebar layar, jadi tidak melompat saat data tiba.
     return (
       <div className={s.berita} aria-busy="true" aria-label={loadingLabel}>
-        <div className={`${s.featured} ${s.placeholder}`} aria-hidden />
+        <div className={s.featured} aria-hidden>
+          <span className={s.featuredPhoto} />
+          <span className={s.featuredBody}>
+            <span className={s.meta}>
+              <SkeletonText chars={SK.meta} />
+            </span>
+            <span className={s.featuredTitle}>
+              <SkeletonText chars={SK.beritaTitle} />
+            </span>
+            <span className={s.featuredSummary}>
+              <SkeletonText chars={SK.beritaSummary} />
+            </span>
+          </span>
+        </div>
         <ul className={railClass}>
           {Array.from({ length: placeholderCards }, (_, i) => (
-            <li key={i} className={`${s.card} ${s.placeholder}`} aria-hidden />
+            <li key={i} aria-hidden>
+              <div className={s.card}>
+                <span className={s.cardPhoto} />
+                <span className={s.cardBody}>
+                  <span className={s.meta}>
+                    <SkeletonText chars={SK.meta} />
+                  </span>
+                  <span className={s.cardTitle}>
+                    <SkeletonText chars={SK.beritaTitle} />
+                  </span>
+                </span>
+              </div>
+            </li>
           ))}
         </ul>
       </div>

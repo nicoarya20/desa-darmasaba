@@ -3,7 +3,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MusicProvider, useMusic, useMusicTime } from '@/app/context/MusicContext';
 import { createMusicTimeStore } from '@/app/context/music/musicTime';
-import { fire, installBrowserStubs, lastAudio, libraryReply, mount, run, song } from './_musik_engine_harness';
+import { fire, installBrowserStubs, lastAudio, libraryReply, mount, RequestLibrary, run, song } from './_musik_engine_harness';
 
 vi.mock('react-toastify', () => ({ toast: { info: vi.fn(), error: vi.fn() } }));
 
@@ -27,6 +27,7 @@ async function start() {
   installBrowserStubs([libraryReply(SONGS)]);
   await mount(
     <MusicProvider>
+      <RequestLibrary />
       <MusicProbe />
       <TimeProbe />
     </MusicProvider>

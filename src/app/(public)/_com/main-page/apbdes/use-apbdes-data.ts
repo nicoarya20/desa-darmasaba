@@ -5,14 +5,18 @@ import { useSnapshot } from 'valtio'
 import { latestUpdate, pickLatestApbdes, summarizeApbdes } from './apbdes.logic'
 import type { APBDes } from './types/apbdes'
 
-/** Data APBDes publik (beranda & halaman detail): hanya tahun terbaru yang punya rincian, ringkasan kategori, tanggal update. */
-export function useApbdesData() {
+/**
+ * Data APBDes publik (beranda & halaman detail): hanya tahun terbaru yang punya rincian, ringkasan kategori, tanggal update.
+ * `enabled` false menunda fetch (beranda: sampai section mendekati layar); halaman detail memakai bawaan true.
+ */
+export function useApbdesData(enabled = true) {
   const snap = useSnapshot(apbdesState.findMany)
 
   useEffect(() => {
+    if (!enabled) return;
     // load() menangani error sendiri (data → [] + toast), jadi tidak perlu catch di sini.
     void apbdesState.findMany.load()
-  }, [])
+  }, [enabled])
 
   // Payload Prisma (include items + realisasiItems) berbentuk sama dengan tipe APBDes lokal.
   const list = snap.data as unknown as readonly APBDes[] | null

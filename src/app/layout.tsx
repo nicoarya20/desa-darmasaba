@@ -1,7 +1,6 @@
 import "@mantine/core/styles.css";
 import "./globals.css"; // Sisanya import di globals.css
 
-import LoadDataFirstClient from "@/app/(public)/_com/LoadDataFirstClient";
 import { GATE_SPLASH_HEAD_SCRIPT } from "@/app/(public)/_com/splash/gate-splash.session";
 import { SiteMantineProvider } from "@/app/_com/SiteMantineProvider";
 import { MusicProvider } from "@/app/context/MusicContext";
@@ -126,7 +125,6 @@ export default function RootLayout({
           <MusicProvider>
             <SiteMantineProvider theme={theme}>
               {children}
-              <LoadDataFirstClient />
               <ToastContainer
                 position="bottom-center"
                 hideProgressBar

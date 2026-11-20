@@ -1,8 +1,9 @@
 import Link from "next/link";
 import r from "../../link-reveal/link-reveal.module.css";
+import { SkeletonText } from "../../skeleton-text/SkeletonText";
 import { AntiKorupsiItem } from "./AntiKorupsiItem";
 import type { AntiKorupsiGroup, AntiKorupsiIndicator } from "./desaantikorupsi.logic";
-import { ANTIKORUPSI_LIMIT } from "./desaantikorupsi.meta";
+import { ANTIKORUPSI_SKELETON_CHARS, ANTIKORUPSI_SKELETON_GROUPS } from "./desaantikorupsi.meta";
 import s from "./desaantikorupsi.module.css";
 import { ANTIKORUPSI_TEXT } from "./desaantikorupsi.text";
 
@@ -43,17 +44,40 @@ function GroupTitle({ group, headingId, href }: { group: AntiKorupsiGroup; headi
   );
 }
 
+/**
+ * Kerangka panel selama memuat: grup, judul kategori, dan butir bernomor memakai kelas yang sama dengan isi asli
+ * (teks contoh tak terlihat di slot teks), jadi tingginya mengikuti isi di tiap lebar layar dan section di bawahnya
+ * tidak bergeser saat data tiba.
+ */
+function AntiKorupsiGroupsSkeleton() {
+  return (
+    <div className={s.panel} aria-hidden>
+      {ANTIKORUPSI_SKELETON_GROUPS.map((itemChars, g) => (
+        <div key={g} className={s.group}>
+          <div className={s.groupTitle}>
+            <SkeletonText chars={ANTIKORUPSI_SKELETON_CHARS.kategori} />
+          </div>
+          <ul className={s.list}>
+            {itemChars.map((chars, i) => (
+              <li key={i} className={s.item}>
+                <span className={s.number}>
+                  <SkeletonText chars={ANTIKORUPSI_SKELETON_CHARS.number} />
+                </span>
+                <span className={s.itemText}>
+                  <SkeletonText chars={chars} />
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /** Panel indikator desa anti korupsi: nama kategori sekali per grup, butir bernomor di bawahnya. */
 export function AntiKorupsiGroups({ groups, loading, itemHref, kategoriHref }: AntiKorupsiGroupsProps) {
-  if (loading) {
-    return (
-      <div className={s.panel} aria-hidden>
-        {Array.from({ length: ANTIKORUPSI_LIMIT }, (_, i) => (
-          <div key={i} className={s.rowPlaceholder} />
-        ))}
-      </div>
-    );
-  }
+  if (loading) return <AntiKorupsiGroupsSkeleton />;
 
   return (
     <div className={s.panel}>

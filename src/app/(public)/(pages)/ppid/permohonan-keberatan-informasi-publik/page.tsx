@@ -1,6 +1,8 @@
 'use client'
 import permohonanKeberatanInformasi from '@/app/admin/(dashboard)/_state/ppid/permohonan_keberatan_informasi_publik/permohonanKeberatanInformasi';
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
+// CSS editor (@mantine/tiptap) diimpor di pemakai publik, bukan globals.css (render-blocking di semua halaman).
+import '@mantine/tiptap/styles.css';
 import {
   ALASAN_KEBERATAN_MAX_LENGTH,
   richTextLength,

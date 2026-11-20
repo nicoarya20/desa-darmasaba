@@ -58,7 +58,7 @@ describe('Visi dan Misi PPID', () => {
   it('lambang desa di atas judul moto, dengan teks alternatif', () => {
     const html = render(<VisiMisiPage />);
     expect(count(html, '<img')).toBe(1);
-    expect(html).toMatch(/<img[^>]*src="\/darmasaba-icon\.png"[^>]*alt="Logo Desa Darmasaba"/);
+    expect(html).toMatch(/<img[^>]*src="\/assets\/images\/logo-desa-238\.webp"[^>]*alt="Logo Desa Darmasaba"/);
     expect(html.indexOf('<img')).toBeLessThan(html.indexOf('>Moto PPID Desa Darmasaba</h2>'));
   });
 

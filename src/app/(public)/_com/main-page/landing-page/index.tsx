@@ -4,6 +4,7 @@ import { Image } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { Suspense } from "react";
 import { useProxy } from "valtio/utils";
+import { LOGO_DESA_SMALL_SRC, LOGO_PUDAK_SMALL_SRC } from "@/app/(public)/_com/logo-desa.meta";
 import { HeroSosmed, HeroSosmedPlaceholder, HeroStatus } from "./HeroInfo";
 import { HeroProfile, HeroProfileSkeleton } from "./HeroProfile";
 import { HeroRibbons } from "./HeroRibbons";
@@ -33,10 +34,10 @@ function LandingPage() {
       <div className={s.copy}>
         <div className={s.identity}>
           <span className={s.logo}>
-            <Image src="/darmasaba-icon.png" alt={LANDING_TEXT.logoDesa} fit="contain" />
+            <Image src={LOGO_DESA_SMALL_SRC} alt={LANDING_TEXT.logoDesa} fit="contain" />
           </span>
           <span className={s.logo}>
-            <Image src="/pudak-icon.png" alt={LANDING_TEXT.logoPudak} fit="contain" />
+            <Image src={LOGO_PUDAK_SMALL_SRC} alt={LANDING_TEXT.logoPudak} fit="contain" />
           </span>
           <p className={s.identityText}>
             <span className={s.org}>{LANDING_TEXT.org}</span>

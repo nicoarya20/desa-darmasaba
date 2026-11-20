@@ -1,8 +1,9 @@
 import { IconChevronRight } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
 import r from "../../link-reveal/link-reveal.module.css";
+import { SkeletonText } from "../../skeleton-text/SkeletonText";
 import { formatTanggalKabar, type KabarItem } from "./kabar.logic";
-import { KABAR_PENGUMUMAN_LIMIT, PENGUMUMAN_BASE_HREF } from "./kabar.meta";
+import { KABAR_PENGUMUMAN_LIMIT, KABAR_SKELETON_CHARS, PENGUMUMAN_BASE_HREF } from "./kabar.meta";
 import s from "./kabar.pengumuman.module.css";
 import { KABAR_TEXT } from "./kabar.text";
 
@@ -27,8 +28,20 @@ export function KabarPengumuman({ items, loading }: { items: readonly KabarItem[
       </div>
       <ul className={s.list} aria-busy={loading || undefined}>
         {loading
-          ? Array.from({ length: KABAR_PENGUMUMAN_LIMIT }, (_, i) => (
-              <li key={i} className={s.rowPlaceholder} aria-hidden />
+          ? // Kerangka baris = grid baris asli (judul, tanggal, chevron) dengan teks contoh: di ponsel judul 2 baris
+            // + tanggal di bawahnya, di desktop satu baris, sama seperti isi.
+            Array.from({ length: KABAR_PENGUMUMAN_LIMIT }, (_, i) => (
+              <li key={i} aria-hidden>
+                <div className={s.row}>
+                  <span className={s.rowTitle}>
+                    <SkeletonText chars={KABAR_SKELETON_CHARS.pengumumanTitle} />
+                  </span>
+                  <span className={s.rowDate}>
+                    <SkeletonText chars={KABAR_SKELETON_CHARS.date} />
+                  </span>
+                  <IconChevronRight className={s.rowChevron} size={18} stroke={1.75} aria-hidden />
+                </div>
+              </li>
             ))
           : items.map((item) => (
               <li key={item.id}>

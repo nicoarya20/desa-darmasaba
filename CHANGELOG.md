@@ -1,12 +1,29 @@
 # Changelog
 
-## [0.1.329] - 2026-11-19
+## [0.1.331] - 2026-11-19
 ### Added
 - **Submenu baru "Indeks Desa" di menu Pemerintahan.** Halaman publik `/pemerintahan/indeks-desa` menampilkan Indeks Desa Membangun (IDM) Desa Darmasaba: skor dan status tahun terbaru, tiga dimensi (Ketahanan Sosial, Ekonomi, Lingkungan), dan riwayat per tahun. Admin mengisi data di Pemerintahan > Indeks Desa. Selama data belum diisi, halaman menampilkan keterangan "data belum tersedia", tanpa angka contoh. Admin yang sudah memegang akses menu Pemerintahan otomatis mendapat submenu ini; admin dengan akses per-submenu perlu dicentang di pengaturan akses menu.
 
 ### Changed
 - **Kontak desa kini bisa diedit admin.** Tab baru "Kontak Desa" di Profile Desa (admin) mengatur nama kantor, alamat, telepon, dan email. Footer dan halaman PPID otomatis memakai data ini. Nilai awalnya sama dengan yang tampil sekarang, jadi tampilan publik tidak berubah.
 - Operator: ada 2 migrasi aditif (tabel baru `KontakDesa` dan `IndeksDesa`), dijalankan otomatis saat container naik. Data yang sudah ada tidak disentuh.
+
+## [0.1.330] - 2026-11-19
+### Changed
+- Lambang desa di animasi pembuka gerbang Candi Bentar dan di transisi ganti tema kini memakai berkas WebP 25 KB, menggantikan PNG 101 KB yang ikut dimuat di awal setiap halaman publik (sekitar 76 KB lebih ringan pada kunjungan pertama). Tampilan, ukuran, dan ketajaman lambang sama.
+
+## [0.1.329] - 2026-11-19
+### Changed
+- **Beranda lebih ringan dan cepat dimuat, terutama di ponsel.** Data bagian beranda di bawah layar (Kabar Desa, APBDes, Prestasi, Layanan & Potensi, Anti Korupsi, SDGs, Indeks Kepuasan) kini baru diambil saat pengunjung menggulir mendekatinya, sehingga foto Perbekel di bagian atas tidak lagi berebut jaringan dengan belasan permintaan sekaligus. Tampilan tiap bagian tidak berubah.
+- Ikon media sosial dan logo Program Inovasi di beranda kini diunduh seukuran tampilnya, bukan berkas asli 720 sampai 1920 piksel (logo terbesar 216 KB menjadi sekitar 14 sampai 33 KB).
+- Lambang desa, logo Pudak, dan poster video Prestasi kini berformat WebP seukuran tampil. Lambang desa tidak lagi diunduh dua kali; total gambar ini di beranda turun dari 432 KB menjadi sekitar 200 KB.
+- Gaya (CSS) yang wajib dimuat sebelum halaman tampil kini lebih kecil di semua halaman publik: gaya animasi yang tidak terpakai dihapus, dan gaya editor teks, unggah berkas, kalender, grafik, dan notifikasi admin hanya dimuat di halaman yang memakainya.
+- Daftar lagu Musik Desa tidak lagi diunduh di setiap halaman, hanya saat aplikasi Musik dibuka. Lagu yang sedang diputar tetap berlanjut saat pindah halaman.
+- Huruf situs kini dikirim dalam format WOFF2 yang lebih ringkas (sekitar 25 KB lebih hemat pada kunjungan pertama); bentuk hurufnya sama persis.
+- Foto contoh berita bawaan diperkecil ke lebar 1024 piksel (total sekitar 113 KB lebih ringan) tanpa beda yang terlihat.
+
+### Fixed
+- Beranda tidak lagi melompat saat bagian Kabar Desa, Anti Korupsi, SDGs, serta Layanan & Potensi selesai dimuat: kerangka memuatnya kini setinggi isi aslinya, di ponsel maupun desktop, tema terang maupun gelap.
 
 ## [0.1.328] - 2026-11-19
 ### Changed

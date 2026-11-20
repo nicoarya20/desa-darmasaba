@@ -19,6 +19,7 @@ interface MusicContextType {
   /** Ada lagu berikutnya yang bisa diputar (ulang mati di ujung urutan → false). */
   hasNext: boolean;
   isShuffle: boolean;
+  /** Pustaka belum siap: true sejak awal (sebelum diminta) sampai muat pertama/ulang selesai. */
   isLoading: boolean;
   /** Muat pustaka terakhir gagal (HTTP/`success:false`/jaringan). Coba lagi lewat `loadMusikData()`. */
   loadError: boolean;
@@ -39,6 +40,11 @@ interface MusicContextType {
   toggleShuffle: () => void;
   /** Muat (ulang) pustaka: isLoading true & loadError false selama memuat. */
   loadMusikData: () => Promise<void>;
+  /**
+   * Minta pustaka bila belum pernah dimuat (aman dipanggil berulang; tidak fetch ulang). Pustaka tidak dimuat saat
+   * mount supaya halaman selain Musik tidak membayar fetch-nya; dipanggil oleh aplikasi Musik Desa saat dibuka.
+   */
+  ensureMusikData: () => void;
 }
 
 interface MusicTimeContextType {

@@ -1,6 +1,7 @@
-import { Image, Skeleton } from "@mantine/core";
+import { Image } from "@mantine/core";
+import { SkeletonText } from "../../skeleton-text/SkeletonText";
 import type { SdgsItem } from "./sdgs.logic";
-import { SDGS_TOP_LIMIT } from "./sdgs.meta";
+import { SDGS_SKELETON_NAME_CHARS, SDGS_SKELETON_SCORE_CHARS } from "./sdgs.meta";
 import s from "./sdgs.module.css";
 import { SDGS_TEXT } from "./sdgs.text";
 
@@ -26,12 +27,28 @@ export function SdgsCards({ items }: { items: readonly SdgsItem[] }) {
   );
 }
 
-/** Placeholder kartu selama data SDGs dimuat. */
+/**
+ * Kerangka kartu selama data SDGs dimuat: struktur & kelas kartu asli (ikon, nama, skor) dengan teks contoh tak
+ * terlihat, jadi tinggi kerangka mengikuti tata letak kartu di tiap breakpoint (ponsel: baris, desktop: 4 kolom).
+ */
 export function SdgsCardsSkeleton() {
   return (
     <div className={s.grid} role="status" aria-label={SDGS_TEXT.loading}>
-      {Array.from({ length: SDGS_TOP_LIMIT }, (_, i) => (
-        <Skeleton key={i} h={248} radius={18} />
+      {SDGS_SKELETON_NAME_CHARS.map((chars, i) => (
+        <div key={i} className={s.card} aria-hidden>
+          <span className={s.iconEmpty} />
+          <div className={s.name}>
+            <SkeletonText chars={chars} />
+          </div>
+          <p className={s.score}>
+            <span className={s.scoreLabel}>
+              <SkeletonText chars={SDGS_SKELETON_SCORE_CHARS.label} />
+            </span>
+            <span className={s.scoreValue}>
+              <SkeletonText chars={SDGS_SKELETON_SCORE_CHARS.value} />
+            </span>
+          </p>
+        </div>
       ))}
     </div>
   );

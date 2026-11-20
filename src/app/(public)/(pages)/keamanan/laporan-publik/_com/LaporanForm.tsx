@@ -3,6 +3,9 @@ import laporanPublikState from '@/app/admin/(dashboard)/_state/keamanan/laporan-
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
 import { Button, Input, Modal, TextInput } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
+// CSS DateTimePicker + editor (PPIDTextEditor = @mantine/tiptap) diimpor di pemakai, bukan globals.css (render-blocking).
+import '@mantine/dates/styles.css';
+import '@mantine/tiptap/styles.css';
 import { IconCalendarEvent } from '@tabler/icons-react';
 import 'dayjs/locale/id';
 import { useState } from 'react';

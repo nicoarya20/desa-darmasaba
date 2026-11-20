@@ -2,7 +2,7 @@
 
 import { Drawer } from '@mantine/core';
 import { useMediaQuery, useReducedMotion } from '@mantine/hooks';
-import { Suspense, type ReactNode } from 'react';
+import { Suspense, useEffect, type ReactNode } from 'react';
 import { useMusic } from '@/app/context/MusicContext';
 import { NowPlayingBar } from '../player/NowPlayingBar';
 import { QueuePanel } from '../player/QueuePanel';
@@ -25,8 +25,14 @@ export function MusikApp({ children }: { children: ReactNode }) {
 /** Grid aplikasi; dipisah dari provider supaya bisa membaca `useMusikUi()`. */
 export function MusikAppFrame({ children }: { children: ReactNode }) {
   const { queueOpen, closeQueue, queuePanelId } = useMusikUi();
+  const { currentSong, ensureMusikData } = useMusic();
   // Predikat sama dengan NowPlayingBar (`currentSong != null`): bar belum dirender → tanpa ruang bar.
-  const barOn = useMusic().currentSong != null;
+  const barOn = currentSong != null;
+  // Pustaka lagu baru diminta saat aplikasi Musik dibuka (provider di root layout tidak memuatnya saat mount).
+  // Di layout Musik, jadi pindah Musik/Jelajahi/Playlist tidak memicu fetch ulang; muat kedua dst. = no-op.
+  useEffect(() => {
+    ensureMusikData();
+  }, [ensureMusikData]);
   // Nilai awal false (SSR & render pertama), dibaca ulang setelah mount bersama status antrean.
   const isColumn = useMediaQuery(MUSIK_QUEUE_COLUMN_QUERY, false);
   // ≤1068px antrean jadi lembar dari bawah; 1069–1279px Drawer kanan.

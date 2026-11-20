@@ -9,6 +9,7 @@ import { MenuItem } from "../../../../types/menu-item"
 import { NavbarFlyout } from "./NavbarFlyout"
 import { NavbarSpeechToggle } from "./NavbarSpeechToggle"
 import { NavbarThemeToggle } from "./NavbarThemeToggle"
+import { LOGO_DESA_SMALL_SRC } from "./logo-desa.meta"
 import { isAdminRole, isMenuActive } from "./navbar-menu.logic"
 import s from "./navbar.module.css"
 import { SEARCH_VIEW_ID, useNavbarFlyout } from "./useNavbarFlyout"
@@ -40,7 +41,7 @@ export function NavbarMainMenu({ listNavbar }: { listNavbar: MenuItem[] }) {
                 aria-label="Beranda Desa Darmasaba"
                 onMouseEnter={() => !nav.isSearch && nav.close()}
               >
-                <Image src="/assets/images/darmasaba-icon.png" alt="" className={s.logo} />
+                <Image src={LOGO_DESA_SMALL_SRC} alt="" className={s.logo} />
               </Link>
             </Tooltip>
 

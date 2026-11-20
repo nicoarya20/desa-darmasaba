@@ -1,6 +1,7 @@
 "use client";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
+import { FETCH_ROOT_MARGIN, useNearViewport } from "../../lazy-load/use-near-viewport";
 import r from "../../link-reveal/link-reveal.module.css";
 import { KabarBerita } from "./KabarBerita";
 import { KabarPengumuman } from "./KabarPengumuman";
@@ -13,11 +14,14 @@ const TITLE_ID = "kabar-desa-title";
 
 /** Section beranda Kabar Desa: berita terbaru (foto) + pengumuman terbaru (teks). */
 function KabarDesa() {
-  const { berita, pengumuman, loading, failed } = useKabarData();
+  // Tepat di bawah hero: dengan jarak FETCH_ROOT_MARGIN biasanya langsung dekat saat dibuka, tapi tetap digerbang agar
+  // layar pendek (ponsel mendatar) tidak ikut berebut jaringan dengan foto hero.
+  const [sectionRef, near] = useNearViewport<HTMLElement>(FETCH_ROOT_MARGIN);
+  const { berita, pengumuman, loading, failed } = useKabarData(near);
   const empty = !loading && berita.length === 0 && pengumuman.length === 0;
 
   return (
-    <section className={s.section} aria-labelledby={TITLE_ID}>
+    <section ref={sectionRef} className={s.section} aria-labelledby={TITLE_ID}>
       <header className={s.header}>
         <h2 id={TITLE_ID} className={s.title}>
           {KABAR_TEXT.title}

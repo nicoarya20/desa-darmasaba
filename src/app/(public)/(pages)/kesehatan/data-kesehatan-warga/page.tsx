@@ -1,6 +1,8 @@
 'use client'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BarChart as MantineBarChart } from '@mantine/charts';
+// CSS grafik diimpor di pemakai, bukan globals.css: tidak lagi render-blocking di halaman tanpa grafik.
+import '@mantine/charts/styles.css';
 import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
 import { Box, Center, ColorSwatch, Flex, Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useEffect, useState } from 'react';
