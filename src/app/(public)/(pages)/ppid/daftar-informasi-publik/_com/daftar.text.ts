@@ -23,6 +23,7 @@ export const DAFTAR_TEXT = {
   kontakTitle: 'Kontak PPID',
   kontakEmailLabel: 'Email:',
   kontakTeleponLabel: 'Telepon:',
+  kontakWhatsappLabel: 'WhatsApp:',
   detailTitle: 'Detail Informasi Publik',
   detailLead: 'Jenis, tanggal publikasi, dan deskripsi lengkap informasi publik.',
   detailBerkas: 'Berkas',

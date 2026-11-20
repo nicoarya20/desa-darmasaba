@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Kontak Desa (pembaca publik): footer dan kontak PPID membaca state CMS, bukan konstanta kode. Diuji per keadaan:
-// berisi (alamat, tautan tel:/mailto:), memuat (kerangka, TANPA nilai bawaan), gagal (kosong, tanpa kerangka abadi),
-// dan data berubah setelah admin menyimpan. jsdom rusak → renderToStaticMarkup (efek tidak berjalan).
+// berisi (alamat, tautan tel:/mailto:), WhatsApp opsional (baris hanya ada bila terisi), memuat (kerangka, TANPA nilai
+// bawaan), gagal (kosong, tanpa kerangka abadi), dan data berubah setelah admin menyimpan. jsdom rusak → renderToStaticMarkup (efek tidak berjalan).
 import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -22,8 +22,11 @@ const KONTAK: KontakDesaRecord = {
   alamat: 'Jl. Uji No. 1, Desa Uji',
   telepon: '(0361) 8441518',
   email: 'kontak-uji@example.com',
+  whatsapp: null,
   updatedAt: '2026-11-19T00:00:00.000Z',
 };
+// test-only: nomor seluler rekaan untuk keadaan WhatsApp terisi.
+const WA = '0812 3958 0000';
 // Nilai produksi lama: tidak boleh muncul sebagai nilai bawaan saat data belum ada.
 const NILAI_LAMA = ['8441518', 'ddarmasaba@gmail.com', 'Kantor Perbekel Desa Darmasaba', 'Lukluk'];
 const skeletons = (html: string) => html.match(/mantine-Skeleton-root/g)?.length ?? 0;
@@ -78,6 +81,39 @@ describe('FooterKontakDesa', () => {
   });
 });
 
+describe('FooterKontakDesa: WhatsApp opsional', () => {
+  it('belum diisi (null): tidak ada baris WhatsApp dan tidak ada tautan wa.me', () => {
+    state.findUnique.data = KONTAK;
+    const html = render(<FooterKontakDesa />);
+    expect(html).not.toContain('WhatsApp');
+    expect(html).not.toContain('wa.me');
+    expect(html).toContain('href="tel:+623618441518"');
+  });
+
+  it('terisi: baris WhatsApp bertautan wa.me (tab baru, rel aman), di antara telepon dan email', () => {
+    state.findUnique.data = { ...KONTAK, whatsapp: WA };
+    const html = render(<FooterKontakDesa />);
+    expect(html).toMatch(/WhatsApp:\s*<a[^>]*href="https:\/\/wa\.me\/6281239580000"[^>]*>0812 3958 0000<\/a>/);
+    expect(html).toMatch(/href="https:\/\/wa\.me\/[^"]*"[^>]*target="_blank"/);
+    expect(html).toMatch(/rel="noopener noreferrer"/);
+    expect(html.indexOf('Telepon:')).toBeLessThan(html.indexOf('WhatsApp:'));
+    expect(html.indexOf('WhatsApp:')).toBeLessThan(html.indexOf('Email:'));
+  });
+
+  it('data di luar aturan API (bukan seluler) tampil sebagai teks biasa tanpa tautan wa.me', () => {
+    state.findUnique.data = { ...KONTAK, whatsapp: '(0361) 8441518' };
+    const html = render(<FooterKontakDesa />);
+    expect(html).toContain('WhatsApp: (0361) 8441518');
+    expect(html).not.toContain('wa.me');
+  });
+
+  it('memuat atau gagal dimuat: tidak ada baris WhatsApp (tidak ada label tanpa nilai)', () => {
+    expect(render(<FooterKontakDesa />)).not.toContain('WhatsApp');
+    state.findUnique.error = 'HTTP error! status: 500';
+    expect(render(<FooterKontakDesa />)).not.toContain('WhatsApp');
+  });
+});
+
 describe('KontakDesaValue & kontak PPID', () => {
   it('berisi: email dan telepon dari state', () => {
     state.findUnique.data = KONTAK;
@@ -87,6 +123,24 @@ describe('KontakDesaValue & kontak PPID', () => {
     expect(html).toContain('kontak-uji@example.com');
     expect(html).toContain('(0361) 8441518');
     expect(skeletons(html)).toBe(0);
+  });
+
+  it('PPID: baris WhatsApp hanya ada bila terisi; tanpa nomor tidak ada label WhatsApp', () => {
+    state.findUnique.data = KONTAK;
+    expect(render(<DaftarKontak />)).not.toContain('WhatsApp');
+    expect(render(<KontakDesaValue field="whatsapp" />)).toBe('');
+
+    state.findUnique.data = { ...KONTAK, whatsapp: WA };
+    const html = render(<DaftarKontak />);
+    expect(html).toContain('WhatsApp:');
+    expect(html).toContain(WA);
+    expect(render(<KontakDesaValue field="whatsapp" />)).toBe(WA);
+  });
+
+  it('PPID memuat: baris WhatsApp tidak ikut kerangka (tetap dua kerangka: email dan telepon)', () => {
+    const html = render(<DaftarKontak />);
+    expect(html).not.toContain('WhatsApp');
+    expect(skeletons(html)).toBe(2);
   });
 
   it('memuat: kerangka per nilai, tanpa nilai lama', () => {
