@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.331] - 2026-11-20
+### Changed
+- Ikon situs (ikon di tab browser, ikon layar utama iPhone/iPad, dan ikon saat situs dipasang sebagai aplikasi) kini dibuat seukuran pakainya: 48, 180, dan 192 piksel. Sebelumnya ketiganya memakai lambang 101 KB yang sama. Unduhan ikon per kunjungan pertama turun dari sekitar 204 KB menjadi 76 KB, dan ikon di tab browser kini hanya 6 KB.
+- Ikon layar utama iPhone/iPad kini berlatar putih penuh sehingga sudutnya tidak lagi tampil hitam.
+- Warna bilah judul saat situs dipasang sebagai aplikasi kini putih, sama dengan warna bilah browser di tema terang (sebelumnya biru).
+
+### Removed
+- Label ikon 512 piksel di manifest dihapus karena berkas aslinya hanya 238 piksel. Ikon ini akan ditambahkan lagi bila lambang beresolusi tinggi tersedia.
+
 ## [0.1.330] - 2026-11-19
 ### Changed
 - Lambang desa di animasi pembuka gerbang Candi Bentar dan di transisi ganti tema kini memakai berkas WebP 25 KB, menggantikan PNG 101 KB yang ikut dimuat di awal setiap halaman publik (sekitar 76 KB lebih ringan pada kunjungan pertama). Tampilan, ukuran, dan ketajaman lambang sama.
