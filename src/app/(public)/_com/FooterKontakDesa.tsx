@@ -28,7 +28,7 @@ export function FooterKontakDesa() {
         Pengelola website:{' '}
         {sisaLembaga !== null ? (
           <>
-            <Anchor c="#F3F2EC" fz="xs" href={tautan.href} target="_blank" rel="noopener noreferrer">
+            <Anchor c="white" fz="xs" fw={700} href={tautan.href} target="_blank" rel="noopener noreferrer">
               {tautan.teks}
             </Anchor>
             {sisaLembaga}

@@ -45,6 +45,9 @@ describe('Footer: tautan "Tim Pengelola" ke situs tim pengelola', () => {
     expect(anchor?.[1]).toBe('Tim Pengelola');
     expect(anchor?.[0]).toContain('target="_blank"');
     expect(anchor?.[0]).toContain('rel="noopener noreferrer"');
+    // Tebal putih agar menonjol dari teks kontak #F3F2EC di sekitarnya (permintaan user).
+    expect(anchor?.[0]).toMatch(/color:\s*(white|#fff|var\(--mantine-color-white\))/i);
+    expect(anchor?.[0]).toMatch(/font-weight:\s*700/);
     expect(html).toContain('</a> Website Pemerintah Desa Darmasaba');
   });
 
