@@ -1,0 +1,152 @@
+/*
+ * Halaman publik Lembaga & Komunitas: kelompok per jenis (judul h2) berisi grid kartu (foto 4:3 opsional, nama, ketua,
+ * deskripsi ringkas dengan "Selengkapnya", kontak). Variabel warna (--brand, --ink, --muted, --line, --tile,
+ * --placeholder, --radius) diwarisi dari `.section` Kabar Desa yang membungkus halaman, jadi halaman ikut tema gelap
+ * tanpa warna literal. Deskripsi teks biasa (bukan HTML), jadi tidak butuh penetral rich text.
+ * Breakpoint mengikuti DESIGN.md: ≤1068px (tablet) dan ≤734px (ponsel).
+ */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-gap);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+.groupTitle {
+  margin: 0 0 24px;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--tile);
+  color: var(--ink);
+}
+
+/* Rasio 4:3 dicadangkan lewat aspect-ratio (plus width/height di markup), jadi foto yang telat tiba tidak menggeser tata letak. */
+.photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--placeholder);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+}
+
+.nama {
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.19;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  margin: 0;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.kontak {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.deskripsi {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.deskripsiRingkas,
+.deskripsiUtuh {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* Teks utuh menjaga paragraf yang diketik admin (baris baru), tanpa merender HTML. */
+.deskripsiUtuh {
+  white-space: pre-line;
+}
+
+.lebih {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--brand);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lebih:focus-visible,
+.kontak:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (max-width: 1068px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 734px) {
+  .groupTitle {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .body {
+    padding: 20px;
+  }
+}
