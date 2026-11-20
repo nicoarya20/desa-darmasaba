@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.336] - 2026-11-20
+### Changed
+- Di jendela percakapan Jenna, gelembung pesan yang Anda kirim kini berwarna biru dengan teks putih, seperti iMessage, sehingga lebih mudah dibedakan dari jawaban Jenna. Warnanya sama di tema terang dan gelap.
+
 ## [0.1.335] - 2026-11-20
 ### Fixed
 - Pindah tab atau meminimalkan browser saat halaman masih dimuat tidak lagi memunculkan error "Transition was aborted because of invalid state. Document hidden". Halaman tetap terbuka seperti biasa, hanya tanpa animasi perpindahan.
