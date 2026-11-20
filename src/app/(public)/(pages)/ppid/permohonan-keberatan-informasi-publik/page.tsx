@@ -12,7 +12,7 @@ import { Button, Input, Text, TextInput, Tooltip } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { KontakDesaIfWhatsapp, KontakDesaValue } from '@/app/(public)/_com/KontakDesaValue';
+import { KontakDesaIfJamLayanan, KontakDesaIfWhatsapp, KontakDesaValue } from '@/app/(public)/_com/KontakDesaValue';
 import { PermohonanFormCard, PermohonanLayout } from '../_com/PermohonanLayout';
 import { PermohonanSteps } from '../_com/PermohonanSteps';
 import { PpidPage } from '../_com/PpidPage';
@@ -26,6 +26,7 @@ const TEXT = {
   formTitle: 'Formulir Keberatan',
   contactTitle: 'Kontak PPID',
   contactWhatsapp: 'WhatsApp',
+  contactJamLayanan: 'Jam Layanan',
 } as const;
 
 const steps: PermohonanStep[] = [
@@ -47,7 +48,7 @@ const steps: PermohonanStep[] = [
   },
 ];
 
-// Kontak resmi kantor desa dari CMS (Profil Desa > Kontak Desa). Baris WhatsApp terpisah (opsional): tampil hanya bila admin mengisi nomornya.
+// Kontak resmi kantor desa dari CMS (Profil Desa > Kontak Desa). Baris WhatsApp dan jam layanan terpisah (opsional): tampil hanya bila admin mengisinya.
 const contacts = [
   { label: 'Email', field: 'email' },
   { label: 'Telepon', field: 'telepon' },
@@ -230,6 +231,12 @@ function Page() {
                 <dd><KontakDesaValue field="whatsapp" /></dd>
               </div>
             </KontakDesaIfWhatsapp>
+            <KontakDesaIfJamLayanan>
+              <div className={s.contactRow}>
+                <dt>{TEXT.contactJamLayanan}</dt>
+                <dd><KontakDesaValue field="jamLayanan" /></dd>
+              </div>
+            </KontakDesaIfJamLayanan>
           </dl>
         </section>
       </PermohonanLayout>
