@@ -1,11 +1,12 @@
 // @vitest-environment node
 // Kontak Desa: aturan validasi bersama API dan form admin (src/lib/kontak-desa.ts): field wajib, batas panjang,
 // telepon (nomor tetap/seluler Indonesia saja), format email, WhatsApp opsional (seluler saja), dan pembuangan kunci
-// di luar kelima field.
+// di luar field yang dikenal, serta jam layanan opsional (teks bebas, null bila kosong).
 import { describe, expect, it } from 'vitest';
 import {
   ALAMAT_MAX_LENGTH,
   EMAIL_MAX_LENGTH,
+  JAM_LAYANAN_MAX_LENGTH,
   NAMA_KANTOR_MAX_LENGTH,
   TELEPON_MAX_DIGITS,
   WHATSAPP_MAX_LENGTH,
@@ -39,13 +40,13 @@ describe('parseKontakDesaInput', () => {
     const result = parse({ namaKantor: '  Kantor   Uji  ', alamat: ' Jl.  Uji ', email: ' uji@example.com ' });
     expect(result).toEqual({
       ok: true,
-      data: { namaKantor: 'Kantor Uji', alamat: 'Jl. Uji', telepon: '(0361) 8441518', email: 'uji@example.com', whatsapp: null },
+      data: { namaKantor: 'Kantor Uji', alamat: 'Jl. Uji', telepon: '(0361) 8441518', email: 'uji@example.com', whatsapp: null, jamLayanan: null },
     });
   });
 
-  it('membuang kunci di luar kelima field (id, isActive, dst. tidak ikut tersimpan)', () => {
+  it('membuang kunci di luar field yang dikenal (id, isActive, dst. tidak ikut tersimpan)', () => {
     const result = parse({ id: 'lain', isActive: false });
-    expect(result.ok && Object.keys(result.data).sort()).toEqual(['alamat', 'email', 'namaKantor', 'telepon', 'whatsapp']);
+    expect(result.ok && Object.keys(result.data).sort()).toEqual(['alamat', 'email', 'jamLayanan', 'namaKantor', 'telepon', 'whatsapp']);
   });
 
   it.each([
@@ -137,5 +138,32 @@ describe('parseKontakDesaInput: WhatsApp opsional', () => {
 
   it('WhatsApp kosong tidak menggagalkan field wajib lain (tetap ditolak bila field lain salah)', () => {
     expect(parse({ whatsapp: '', email: 'salah' }).ok).toBe(false);
+  });
+});
+
+describe('parseKontakDesaInput: jam layanan opsional', () => {
+  it.each([
+    ['tidak dikirim', undefined],
+    ['null', null],
+    ['string kosong', ''],
+    ['hanya spasi', '   '],
+  ])('%s → null (desa belum mengisi jam; bukan galat)', (_label, jamLayanan) => {
+    const input = jamLayanan === undefined ? { ...VALID } : { ...VALID, jamLayanan };
+    const result = parseKontakDesaInput(input);
+    expect(result.ok && result.data.jamLayanan).toBeNull();
+  });
+
+  it('teks bebas disimpan setelah spasi dirapikan (format jam tidak diparse)', () => {
+    const result = parse({ jamLayanan: '  Senin–Jumat   07.30–15.30 ' });
+    expect(result.ok && result.data.jamLayanan).toBe('Senin–Jumat 07.30–15.30');
+  });
+
+  it('menolak nilai bukan teks dan teks melebihi batas panjang; tepat di batas diterima', () => {
+    expect(parse({ jamLayanan: 730 })).toEqual({ ok: false, message: 'Jam layanan harus berupa teks' });
+    expect(parse({ jamLayanan: 'x'.repeat(JAM_LAYANAN_MAX_LENGTH + 1) })).toEqual({
+      ok: false,
+      message: `Jam layanan maksimal ${JAM_LAYANAN_MAX_LENGTH} karakter`,
+    });
+    expect(parse({ jamLayanan: 'x'.repeat(JAM_LAYANAN_MAX_LENGTH) }).ok).toBe(true);
   });
 });

@@ -79,6 +79,7 @@ model FileStorage {
   ProfilePPID                    ProfilePPID[]
   DokumenDasarHukumPPID          DokumenDasarHukumPPID[]
   ProdukHukum                    ProdukHukum[]
+  TimPengelolaWebsite            TimPengelolaWebsite[]
   DaftarInformasiPublik          DaftarInformasiPublik[]
   ProfilLembagaPPID              ProfilLembagaPPID[]
   ProfilPerbekel                 ProfilPerbekel[]
@@ -786,6 +787,8 @@ model KontakDesa {
   email      String
   // Opsional: desa belum memberi nomor WhatsApp. null = tidak ditampilkan di footer/PPID; bila diisi harus nomor seluler.
   whatsapp   String?
+  // Opsional: jam layanan kantor sebagai teks bebas (mis. "Senin–Jumat 07.30–15.30"). null = tidak ditampilkan di footer/PPID.
+  jamLayanan String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -3513,4 +3516,34 @@ model LoginLog {
 
   @@index([createdAt])
   @@index([userId, createdAt])
+}
+
+// Tim Pengelola Website Desa (juknis lomba 2027 butir 8.3): singleton (id tetap "tim-pengelola-website", upsert admin; tanpa
+// baris awal). Publik hanya melihat nomor SK + tautan PDF; daftar anggota hanya lewat endpoint admin. SetNull: menghapus
+// berkas SK lewat /api/fileStorage/delete tidak boleh gagal ataupun ikut menghapus data tim.
+model TimPengelolaWebsite {
+  id        String                @id
+  nomorSk   String // mis. "181 Tahun 2026"
+  tanggalSk DateTime?             @db.Date
+  skFile    FileStorage?          @relation(fields: [skFileId], references: [id], onDelete: SetNull)
+  skFileId  String?
+  anggota   AnggotaTimPengelola[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  @@index([skFileId])
+}
+
+// Anggota tim pengelola: daftar diganti utuh (hapus semua + isi ulang dalam satu transaksi) sehingga `urutan` selalu rapat
+// 0..n-1. Jabatan teks bebas karena SK memuat banyak peran. Ikut terhapus bila tim dihapus (Cascade).
+model AnggotaTimPengelola {
+  id        String              @id @default(cuid())
+  timId     String
+  tim       TimPengelolaWebsite @relation(fields: [timId], references: [id], onDelete: Cascade)
+  nama      String
+  jabatan   String
+  urutan    Int
+  createdAt DateTime            @default(now())
+
+  @@index([timId, urutan])
 }
