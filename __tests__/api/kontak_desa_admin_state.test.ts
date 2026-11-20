@@ -20,6 +20,7 @@ const ROW: KontakDesaRecord = {
   telepon: '(0361) 8441518',
   email: 'uji@example.com',
   whatsapp: null,
+  jamLayanan: null,
   updatedAt: '2026-11-19T00:00:00.000Z',
 };
 const json = (status: number, body: unknown) => Promise.resolve(new Response(JSON.stringify(body), { status }));
@@ -86,19 +87,24 @@ describe('findUnique.ensureLoaded (pembaca publik)', () => {
 });
 
 describe('toKontakFormValues / fillForm', () => {
-  it('data tersimpan → kelima field form (WhatsApp null jadi ""); null → form kosong', () => {
+  it('data tersimpan → semua field form (WhatsApp dan jam layanan null jadi ""); null → form kosong', () => {
     expect(toKontakFormValues(ROW)).toEqual({
       namaKantor: ROW.namaKantor,
       alamat: ROW.alamat,
       telepon: ROW.telepon,
       email: ROW.email,
       whatsapp: '',
+      jamLayanan: '',
     });
-    expect(toKontakFormValues(null)).toEqual({ namaKantor: '', alamat: '', telepon: '', email: '', whatsapp: '' });
+    expect(toKontakFormValues(null)).toEqual({ namaKantor: '', alamat: '', telepon: '', email: '', whatsapp: '', jamLayanan: '' });
   });
 
   it('WhatsApp yang sudah tersimpan masuk ke form apa adanya', () => {
     expect(toKontakFormValues({ ...ROW, whatsapp: '0812 3958 0000' }).whatsapp).toBe('0812 3958 0000');
+  });
+
+  it('jam layanan yang sudah tersimpan masuk ke form apa adanya', () => {
+    expect(toKontakFormValues({ ...ROW, jamLayanan: 'Senin–Jumat 07.30–15.30' }).jamLayanan).toBe('Senin–Jumat 07.30–15.30');
   });
 
   it('fillForm mengisi proxy form in-place (identitas objek form tetap)', () => {
@@ -130,6 +136,7 @@ describe('update.submit', () => {
       telepon: ROW.telepon,
       email: ROW.email,
       whatsapp: null,
+      jamLayanan: null,
     });
     expect(state.findUnique).toMatchObject({ loaded: true, data: { namaKantor: 'Kantor Baru' } });
     expect(state.form.namaKantor).toBe('Kantor Baru');

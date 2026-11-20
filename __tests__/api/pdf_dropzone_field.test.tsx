@@ -40,7 +40,7 @@ describe('PdfDropzoneField', () => {
     expect(render({ description: 'Opsional' })).toContain('Opsional');
   });
 
-  it('batas unggah 20 MB agar PDF pindaian desa (12 MB) tidak ditolak', () => {
-    expect(PDF_MAX_SIZE_MB).toBe(20);
+  it('batas unggah 60 MB agar dokumen resmi desa (RPJMDes 55,7 MB) tidak ditolak', () => {
+    expect(PDF_MAX_SIZE_MB).toBe(60);
   });
 });

@@ -41,10 +41,11 @@ describe('Footer: kontak kantor desa & pengelola website', () => {
     expect(html).toContain(`href="mailto:${KONTAK_DESA.email}"`);
   });
 
-  it('mencantumkan pengelola website; tanpa nama redaksi selama SK belum diterima', () => {
+  it('mencantumkan pengelola website; tanpa daftar anggota redaksi di publik dan tanpa baris SK selama admin belum mengisi', () => {
     expect(html.replace(/<[^>]+>/g, '')).toContain(`Pengelola website: ${PENGELOLA_WEBSITE.lembaga}`);
-    expect(PENGELOLA_WEBSITE.timRedaksi).toHaveLength(0);
+    expect('timRedaksi' in PENGELOLA_WEBSITE).toBe(false);
     expect(html).not.toContain(' (');
+    expect(html).not.toContain('SK Perbekel');
   });
 });
 

@@ -194,12 +194,12 @@ describe('SSR publik — tautan SOP', () => {
 
   it('detail Surat Keterangan: tautan SOP hanya bila ada berkas', () => {
     const base: LayananDetailData = { id: 's1', name: 'Surat Usaha', deskripsi: '<p>isi</p>', estimasiWaktu: null, biaya: null };
-    const dengan = render(<LayananDetailBody data={{ ...base, sopFile: sop }} onAjukan={() => {}} />);
+    const dengan = render(<LayananDetailBody data={{ ...base, sopFile: sop }} onAjukan={() => {}} waTersedia />);
     expect(dengan).toContain(`href="${sop.link}"`);
     expect(count(dengan, `data-text="${SOP_LABEL}"`)).toBe(1);
 
-    const tanpa = render(<LayananDetailBody data={base} onAjukan={() => {}} />);
+    const tanpa = render(<LayananDetailBody data={base} onAjukan={() => {}} waTersedia />);
     expect(tanpa).not.toContain(SOP_LABEL);
-    expect(render(<LayananDetailBody data={{ ...base, sopFile: null }} onAjukan={() => {}} />)).not.toContain(SOP_LABEL);
+    expect(render(<LayananDetailBody data={{ ...base, sopFile: null }} onAjukan={() => {}} waTersedia />)).not.toContain(SOP_LABEL);
   });
 });

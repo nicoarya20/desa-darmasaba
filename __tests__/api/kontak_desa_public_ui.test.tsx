@@ -23,8 +23,11 @@ const KONTAK: KontakDesaRecord = {
   telepon: '(0361) 8441518',
   email: 'kontak-uji@example.com',
   whatsapp: null,
+  jamLayanan: null,
   updatedAt: '2026-11-19T00:00:00.000Z',
 };
+// test-only: jam layanan rekaan untuk keadaan terisi (teks bebas).
+const JAM = 'Senin–Jumat 07.30–15.30';
 // test-only: nomor seluler rekaan untuk keadaan WhatsApp terisi.
 const WA = '0812 3958 0000';
 // Nilai produksi lama: tidak boleh muncul sebagai nilai bawaan saat data belum ada.
@@ -111,6 +114,46 @@ describe('FooterKontakDesa: WhatsApp opsional', () => {
     expect(render(<FooterKontakDesa />)).not.toContain('WhatsApp');
     state.findUnique.error = 'HTTP error! status: 500';
     expect(render(<FooterKontakDesa />)).not.toContain('WhatsApp');
+  });
+});
+
+describe('FooterKontakDesa: jam layanan opsional', () => {
+  it('belum diisi (null): tidak ada baris jam layanan', () => {
+    state.findUnique.data = KONTAK;
+    expect(render(<FooterKontakDesa />)).not.toContain('Jam layanan');
+  });
+
+  it('terisi: baris jam layanan tampil apa adanya, setelah email', () => {
+    state.findUnique.data = { ...KONTAK, jamLayanan: JAM };
+    const html = render(<FooterKontakDesa />);
+    expect(html).toContain(`Jam layanan: ${JAM}`);
+    expect(html.indexOf('Email:')).toBeLessThan(html.indexOf('Jam layanan:'));
+  });
+
+  it('memuat atau gagal dimuat: tidak ada baris jam layanan', () => {
+    expect(render(<FooterKontakDesa />)).not.toContain('Jam layanan');
+    state.findUnique.error = 'HTTP error! status: 500';
+    expect(render(<FooterKontakDesa />)).not.toContain('Jam layanan');
+  });
+});
+
+describe('kontak PPID: jam layanan opsional', () => {
+  it('hanya ada bila terisi; selebihnya tidak ada label tanpa nilai', () => {
+    state.findUnique.data = KONTAK;
+    expect(render(<DaftarKontak />)).not.toContain('Jam layanan');
+    expect(render(<KontakDesaValue field="jamLayanan" />)).toBe('');
+
+    state.findUnique.data = { ...KONTAK, jamLayanan: JAM };
+    const html = render(<DaftarKontak />);
+    expect(html).toContain('Jam layanan:');
+    expect(html).toContain(JAM);
+    expect(render(<KontakDesaValue field="jamLayanan" />)).toBe(JAM);
+  });
+
+  it('memuat: baris jam layanan tidak ikut kerangka (tetap dua kerangka: email dan telepon)', () => {
+    const html = render(<DaftarKontak />);
+    expect(html).not.toContain('Jam layanan');
+    expect(skeletons(html)).toBe(2);
   });
 });
 

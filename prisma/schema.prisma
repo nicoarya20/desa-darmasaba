@@ -79,6 +79,8 @@ model FileStorage {
   ProfilePPID                    ProfilePPID[]
   DokumenDasarHukumPPID          DokumenDasarHukumPPID[]
   ProdukHukum                    ProdukHukum[]
+  TimPengelolaWebsite            TimPengelolaWebsite[]
+  LembagaKomunitas               LembagaKomunitas[]
   DaftarInformasiPublik          DaftarInformasiPublik[]
   ProfilLembagaPPID              ProfilLembagaPPID[]
   ProfilPerbekel                 ProfilPerbekel[]
@@ -786,6 +788,8 @@ model KontakDesa {
   email      String
   // Opsional: desa belum memberi nomor WhatsApp. null = tidak ditampilkan di footer/PPID; bila diisi harus nomor seluler.
   whatsapp   String?
+  // Opsional: jam layanan kantor sebagai teks bebas (mis. "Senin–Jumat 07.30–15.30"). null = tidak ditampilkan di footer/PPID.
+  jamLayanan String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -2498,6 +2502,28 @@ model IndeksDesa {
   isActive  Boolean   @default(true)
 }
 
+// Lembaga & Komunitas desa (PPL, STT, PKK, dll; juknis lomba butir 7.4). BUKAN model `Lembaga` di atas (itu sekolah PAUD).
+// `jenis` teks bebas (bukan enum) supaya desa menambah jenis baru tanpa migrasi; panjang & isi dijaga src/lib/lembaga-komunitas.ts.
+// `kontak` = kontak lembaga (telepon/email), bukan nomor pribadi. Hapus lewat CMS = soft-delete (`isActive` false + `deletedAt`).
+model LembagaKomunitas {
+  id        String       @id @default(cuid())
+  nama      String
+  jenis     String
+  deskripsi String?      @db.Text
+  ketua     String?
+  kontak    String?
+  foto      FileStorage? @relation(fields: [fotoId], references: [id], onDelete: SetNull)
+  fotoId    String?
+  urutan    Int          @default(0) // pemutus seri dalam satu jenis (kecil dulu)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean      @default(true)
+
+  @@index([isActive, jenis, urutan])
+  @@index([fotoId])
+}
+
 model KategoriKegiatan {
   id           String         @id @default(cuid())
   nama         String
@@ -3513,4 +3539,34 @@ model LoginLog {
 
   @@index([createdAt])
   @@index([userId, createdAt])
+}
+
+// Tim Pengelola Website Desa (juknis lomba 2027 butir 8.3): singleton (id tetap "tim-pengelola-website", upsert admin; tanpa
+// baris awal). Publik hanya melihat nomor SK + tautan PDF; daftar anggota hanya lewat endpoint admin. SetNull: menghapus
+// berkas SK lewat /api/fileStorage/delete tidak boleh gagal ataupun ikut menghapus data tim.
+model TimPengelolaWebsite {
+  id        String                @id
+  nomorSk   String // mis. "181 Tahun 2026"
+  tanggalSk DateTime?             @db.Date
+  skFile    FileStorage?          @relation(fields: [skFileId], references: [id], onDelete: SetNull)
+  skFileId  String?
+  anggota   AnggotaTimPengelola[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  @@index([skFileId])
+}
+
+// Anggota tim pengelola: daftar diganti utuh (hapus semua + isi ulang dalam satu transaksi) sehingga `urutan` selalu rapat
+// 0..n-1. Jabatan teks bebas karena SK memuat banyak peran. Ikut terhapus bila tim dihapus (Cascade).
+model AnggotaTimPengelola {
+  id        String              @id @default(cuid())
+  timId     String
+  tim       TimPengelolaWebsite @relation(fields: [timId], references: [id], onDelete: Cascade)
+  nama      String
+  jabatan   String
+  urutan    Int
+  createdAt DateTime            @default(now())
+
+  @@index([timId, urutan])
 }

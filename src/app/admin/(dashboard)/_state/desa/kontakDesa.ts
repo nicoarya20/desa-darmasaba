@@ -8,13 +8,20 @@ import { proxy } from "valtio";
 
 const KONTAK_DESA_ENDPOINT = "/api/desa/kontakdesa";
 
-const defaultForm = (): KontakDesaFormValues => ({ namaKantor: "", alamat: "", telepon: "", email: "", whatsapp: "" });
+const defaultForm = (): KontakDesaFormValues => ({ namaKantor: "", alamat: "", telepon: "", email: "", whatsapp: "", jamLayanan: "" });
 
 /** Nilai form dari data tersimpan; data null (baris belum ada) → form kosong. */
 export function toKontakFormValues(data: KontakDesaRecord | null): KontakDesaFormValues {
   if (!data) return defaultForm();
-  // WhatsApp opsional: null (belum diisi) menjadi "" agar input terkontrol tidak menerima null.
-  return { namaKantor: data.namaKantor, alamat: data.alamat, telepon: data.telepon, email: data.email, whatsapp: data.whatsapp ?? "" };
+  // WhatsApp dan jam layanan opsional: null (belum diisi) menjadi "" agar input terkontrol tidak menerima null.
+  return {
+    namaKantor: data.namaKantor,
+    alamat: data.alamat,
+    telepon: data.telepon,
+    email: data.email,
+    whatsapp: data.whatsapp ?? "",
+    jamLayanan: data.jamLayanan ?? "",
+  };
 }
 
 type ApiBody = { success?: boolean; message?: string; data?: KontakDesaRecord | null };

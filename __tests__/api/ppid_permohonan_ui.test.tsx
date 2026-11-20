@@ -167,6 +167,18 @@ describe('Permohonan Keberatan — editor alasan & kontak', () => {
     expect(keberatan).toMatch(/<dt>Telepon<\/dt><dd>\(0361\) 8441518<\/dd>/);
     expect(keberatan).not.toContain('081-xxx');
   });
+
+  it('baris Jam Layanan hanya ada bila admin mengisinya (tanpa label tanpa nilai)', () => {
+    expect(keberatan).not.toContain('Jam Layanan');
+    const semula = stateKontakDesa.findUnique.data;
+    // test-only: jam layanan rekaan (teks bebas).
+    stateKontakDesa.findUnique.data = { ...semula!, jamLayanan: 'Senin–Jumat 07.30–15.30' };
+    try {
+      expect(render(<KeberatanPage />)).toMatch(/<dt>Jam Layanan<\/dt><dd>Senin–Jumat 07\.30–15\.30<\/dd>/);
+    } finally {
+      stateKontakDesa.findUnique.data = semula;
+    }
+  });
 });
 
 describe('Tata letak permohonan — CSS', () => {
