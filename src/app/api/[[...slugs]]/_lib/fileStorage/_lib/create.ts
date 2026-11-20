@@ -3,6 +3,7 @@ import { Context } from "elysia";
 import { nanoid } from "nanoid";
 import zlib from "zlib";
 import minio, { MINIO_BUCKET } from "@/lib/minio";
+import { PDF_MAX_SIZE_BYTES, PDF_TOO_LARGE_MESSAGE } from "@/lib/pdf-upload.limits";
 import { storeImageAsWebp } from "./storeImage";
 
 const fileStorageCreate = async (context: Context) => {
@@ -16,6 +17,12 @@ const fileStorageCreate = async (context: Context) => {
 
   if (!file) return { status: 400, body: "No file uploaded" };
   if (!name) return { status: 400, body: "No name provided" };
+
+  // Tolak PDF terlalu besar sebelum dibaca ke memori (file.size sudah diketahui dari multipart).
+  if (file.type === "application/pdf" && file.size > PDF_MAX_SIZE_BYTES) {
+    context.set.status = 413;
+    return { success: false, message: PDF_TOO_LARGE_MESSAGE };
+  }
 
   const isImage = file.type.startsWith("image/");
   const isAudio = file.type.startsWith("audio/");
