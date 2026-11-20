@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.335] - 2026-11-20
+### Fixed
+- Pindah tab atau meminimalkan browser saat halaman masih dimuat tidak lagi memunculkan error "Transition was aborted because of invalid state. Document hidden". Halaman tetap terbuka seperti biasa, hanya tanpa animasi perpindahan.
+
 ## [0.1.334] - 2026-11-20
 ### Changed
 - Bagan Struktur Organisasi PPID kini memakai tata letak yang sama dengan bagan Struktur Perangkat Desa di Profil Desa: kartu ringkas (jabatan di atas, foto bulat + nama di bawah), satu batang tegak di tengah, dan bawahan dikelompokkan maksimal 3 kartu di kiri/kanan batang. Sekretaris Desa duduk di batang itu sendiri, dengan bawahannya menggantung di bawahnya, sehingga bagan tidak lagi melebar ke samping. Di layar sedang dan ponsel bagan menjadi rel kiri seperti bagan Perangkat Desa.
