@@ -122,8 +122,9 @@
   list-style: none;
 }
 
+/* Padding sama untuk kartu Layanan Unggulan dan Tarif agar dua blok seragam. */
 .card {
-  padding: 20px 22px;
+  padding: 24px 28px;
   border-radius: var(--radius);
   background: var(--tile);
 }
@@ -143,12 +144,31 @@
 }
 
 .tarifLabel {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   font-size: 13px;
   font-weight: 600;
   color: var(--brand);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/*
+ * Isi tarif (rich text CMS, mis. ul > li > p) di atas kabar-detail .content: daftar diberi indentasi supaya titik
+ * bullet berada di dalam padding kartu, bukan menempel tepi; jarak antarbutir rapat dan margin <p> di dalam <li>
+ * dinolkan supaya jarak bawah kartu = padding (simetris dengan atas). Lokal di sini: .content dipakai bersama.
+ */
+.tarifBody ul,
+.tarifBody ol {
+  margin: 0 0 0.75em;
+  padding-left: 1.25em;
+}
+
+.tarifBody li > p {
+  margin: 0;
+}
+
+.tarifBody li + li {
+  margin-top: 0.6em;
 }
 
 /* ---------- Daftar: tautan aksi di dasar kartu (kartu sebaris sama tinggi → CTA sejajar) ---------- */
@@ -172,5 +192,9 @@
 
   .tile {
     padding: 18px;
+  }
+
+  .card {
+    padding: 20px 22px;
   }
 }

@@ -25,13 +25,13 @@ export function TarifGrid({ bpjs, umum }: { bpjs: string; umum: string }) {
       {bpjs ? (
         <section className={s.card} aria-label={T.tarifBpjs}>
           <p className={s.tarifLabel}>{T.tarifBpjs}</p>
-          <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: bpjs }} />
+          <div className={`${d.content} ${rt.root} ${s.tarifBody}`} dangerouslySetInnerHTML={{ __html: bpjs }} />
         </section>
       ) : null}
       {umum ? (
         <section className={s.card} aria-label={T.tarifUmum}>
           <p className={s.tarifLabel}>{T.tarifUmum}</p>
-          <div className={`${d.content} ${rt.root}`} dangerouslySetInnerHTML={{ __html: umum }} />
+          <div className={`${d.content} ${rt.root} ${s.tarifBody}`} dangerouslySetInnerHTML={{ __html: umum }} />
         </section>
       ) : null}
     </div>
