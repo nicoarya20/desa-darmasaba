@@ -13,7 +13,7 @@ vi.mock('next-view-transitions', () => ({
 
 import { LayananDetailBody } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/LayananDetail';
 import { LAYANAN_DETAIL_TEXT as T } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/layanan-detail.text';
-import { buildPermohonanWaUrl } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/permohonan-whatsapp.logic';
+import { buildPermohonanWaUrl, teleponKantor } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/permohonan-whatsapp.logic';
 import { PermohonanTersimpan } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/PermohonanTersimpan';
 import type { LayananDetailData } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/detail/use-layanan-detail';
 
@@ -32,38 +32,71 @@ const data: LayananDetailData = {
   biaya: 0,
 };
 
-describe('PermohonanTersimpan', () => {
-  const waHref = buildPermohonanWaUrl({ nama: 'Made Wirawan', kategoriNama: 'Surat Keterangan Domisili' }) as string;
+// test-only: nomor fiktif; di produksi nomor petugas dan telepon kantor datang dari Kontak Desa (CMS).
+const WA_PETUGAS = '0812 0000 0001';
+const TELEPON_KANTOR = '(0361) 555 0100';
+const telepon = teleponKantor(TELEPON_KANTOR);
 
-  it('tautan "Lanjutkan ke WhatsApp" = <a> wa.me nomor petugas, target _blank, rel noopener noreferrer', () => {
-    const html = render(<PermohonanTersimpan waHref={waHref} onClose={() => {}} />);
+describe('PermohonanTersimpan', () => {
+  const waHref = buildPermohonanWaUrl({ nama: 'Made Wirawan', kategoriNama: 'Surat Keterangan Domisili' }, WA_PETUGAS) as string;
+
+  it('tautan "Lanjutkan ke WhatsApp" = <a> wa.me nomor Kontak Desa, target _blank, rel noopener noreferrer', () => {
+    const html = render(<PermohonanTersimpan waHref={waHref} telepon={telepon} onClose={() => {}} />);
     const anchor = html.match(/<a [^>]*>/)?.[0] ?? '';
     expect(anchor).toContain(`href="${waHref.replace(/&/g, '&amp;')}"`);
-    expect(anchor).toContain('href="https://wa.me/6289674970658?text=');
+    expect(anchor).toContain('href="https://wa.me/6281200000001?text=');
     expect(anchor).toContain('target="_blank"');
     expect(anchor).toContain('rel="noopener noreferrer"');
     expect(html).toMatch(new RegExp(`<a [^>]*>[\\s\\S]*${T.lanjutWa}`));
   });
 
-  it('menampilkan penjelasan sukses dan tombol Tutup', () => {
-    const html = render(<PermohonanTersimpan waHref={waHref} onClose={() => {}} />);
+  it('dengan WhatsApp: penjelasan sukses, tombol Tutup, dan tanpa saran telepon', () => {
+    const html = render(<PermohonanTersimpan waHref={waHref} telepon={telepon} onClose={() => {}} />);
     expect(html).toContain(T.tersimpanTitle);
     expect(html).toContain(T.tersimpanText);
     expect(html).toMatch(/<button[^>]*>[\s\S]*Tutup/);
+    expect(html).not.toContain(T.hubungiKantor);
+    expect(html).not.toContain('href="tel:');
   });
 
-  it('tanpa tautan WhatsApp valid → tombol lanjut tidak dirender, tombol Tutup tetap ada', () => {
-    const html = render(<PermohonanTersimpan waHref={null} onClose={() => {}} />);
-    expect(html).not.toContain('<a ');
+  it('tanpa WhatsApp valid → tidak ada tautan wa.me; permohonan dinyatakan tercatat + saran telepon kantor (tel:)', () => {
+    const html = render(<PermohonanTersimpan waHref={null} telepon={telepon} onClose={() => {}} />);
+    expect(html).not.toContain('wa.me');
     expect(html).not.toContain(T.lanjutWa);
+    expect(html).not.toContain(T.tersimpanText);
+    expect(html).toContain(T.tersimpanTitle);
+    expect(html).toContain(T.tersimpanTextTanpaWa);
+    expect(html).toContain(T.hubungiKantor);
+    expect(html).toContain('href="tel:+623615550100"');
+    expect(html).toContain('(0361) 555 0100');
+    expect(html).toContain('Tutup');
+  });
+
+  it('fallback tidak menyiratkan permohonan gagal', () => {
+    const html = render(<PermohonanTersimpan waHref={null} telepon={telepon} onClose={() => {}} />);
+    expect(T.tersimpanTextTanpaWa).toMatch(/sudah kami terima dan tercatat/);
+    expect(html).not.toMatch(/gagal|tidak berhasil|coba lagi/i);
+  });
+
+  it('tanpa WhatsApp dan tanpa telepon → hanya kabar tercatat dan tombol Tutup, tanpa tautan', () => {
+    const html = render(<PermohonanTersimpan waHref={null} telepon={null} onClose={() => {}} />);
+    expect(html).not.toContain('<a ');
+    expect(html).not.toContain(T.hubungiKantor);
+    expect(html).toContain(T.tersimpanTextTanpaWa);
     expect(html).toContain('Tutup');
   });
 });
 
 describe('info tindak lanjut WhatsApp di halaman detail', () => {
-  it('muncul di kepala (dekat tombol ajukan) dan di panel penutup, tanpa janji jam/waktu', () => {
-    const html = render(<LayananDetailBody data={data} onAjukan={() => {}} />);
+  it('nomor WhatsApp tersedia: muncul di kepala (dekat tombol ajukan) dan di panel penutup, tanpa janji jam/waktu', () => {
+    const html = render(<LayananDetailBody data={data} onAjukan={() => {}} waTersedia />);
     expect(count(html, T.waInfo)).toBe(2);
     expect(T.waInfo).not.toMatch(/\d/);
+  });
+
+  it('nomor WhatsApp belum ada/tidak valid: info WhatsApp tidak dirender (tidak menjanjikan kanal yang tidak ada)', () => {
+    const html = render(<LayananDetailBody data={data} onAjukan={() => {}} waTersedia={false} />);
+    expect(html).not.toContain(T.waInfo);
+    expect(html).toContain(T.closingText);
   });
 });
