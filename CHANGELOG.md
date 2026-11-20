@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.332] - 2026-11-20
+### Changed
+- Di tema gelap, ubin Program Inovasi di beranda kini gelap, senada dengan ubin logo Kabupaten Badung dan desa di sebelahnya (sebelumnya ubin terang). Logo program tampil langsung di atas ubin, tanpa kotak terang di dalamnya.
+- Ubin daftar di halaman Program Inovasi ikut gelap di tema gelap, sama dengan ubin halaman Program Kreatif dan Penghijauan. Tampilan tema terang tidak berubah.
+
 ## [0.1.331] - 2026-11-20
 ### Changed
 - Ikon situs (ikon di tab browser, ikon layar utama iPhone/iPad, dan ikon saat situs dipasang sebagai aplikasi) kini dibuat seukuran pakainya: 48, 180, dan 192 piksel. Sebelumnya ketiganya memakai lambang 101 KB yang sama. Unduhan ikon per kunjungan pertama turun dari sekitar 204 KB menjadi 76 KB, dan ikon di tab browser kini hanya 6 KB.
