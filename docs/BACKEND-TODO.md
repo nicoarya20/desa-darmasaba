@@ -426,6 +426,13 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - [ ] **Isi data IDM Desa Darmasaba** (skor IDM/IKS/IKE/IKL + status per tahun, dari dokumen Kemendesa lewat Google Drive pihak desa) lewat admin; setelah terisi, perbarui T11 di `docs/penilaian-lomba-website-desa-2027.md`. Tidak ada seed.
 - [ ] **Verifikasi tahun IDM terawal & jumlah desimal:** batas tahun 2015-2100 (`TAHUN_IDM_MIN`) dan tampilan skor 4 desimal (`SKOR_TAMPIL_DESIMAL`) diasumsikan dari praktik IDM Kemendesa, belum dicek ke dokumen resmi.
 
+## Tim Pengelola Website & Jam Layanan (2026-11-20, `feature/tim-pengelola-jam-layanan`)
+
+- [x] **Tim Redaksi (juknis 8.3) & `KontakDesa.jamLayanan` (juknis 3.4)** — struktur selesai: migrasi `20261120130000_tim_pengelola_jam_layanan`, API `/api/desa/timpengelola`, tab admin "Tim Redaksi", footer menampilkan nomor SK + tautan PDF; lihat `docs/DATABASE.md`.
+- [ ] **Isi data (admin):** nomor SK, tanggal, PDF SK, dan daftar anggota dari Keputusan Perbekel No. 181 Tahun 2026 (12 Januari 2026) lewat tab Tim Redaksi; isi Jam Layanan di tab Kontak Desa. Tidak ada seed.
+- [ ] **Penempatan daftar anggota di publik** menunggu keputusan user: endpoint publik sengaja tidak memuat anggota, jadi menampilkannya butuh keputusan penempatan + perubahan kontrak publik (field baru, bukan membuka endpoint admin).
+- [ ] **Jam kantor di beranda masih hardcoded di kode** (terverifikasi 2026-11-20): `landing.logic.ts` memuat `FULL_DAY_HOURS` (07:30–15:30, Senin–Kamis) dan `FRIDAY_HOURS` (07:30–12:00) yang dipakai `getWorkStatus`/`HeroInfo`, **bukan** data DB. Belum disambungkan ke `KontakDesa.jamLayanan` (teks bebas, tak bisa diparse jadi jam buka/tutup); usul: kolom jam terstruktur bila status Buka/Tutup ingin dikelola admin, atau minimal samakan teks agar tidak saling bertentangan.
+
 ## Performa beranda (2026-11-19, v0.1.329 `tasks/performance/beranda-quick-wins`)
 
 Dari PageSpeed prod (mobile 68, LCP 6,6 s). Bagian frontend sudah dikerjakan di v0.1.329 (gambar seukuran tampil, logo WebP, CSS global dirampingkan, fetch section beranda menunggu viewport, musik on-demand). Butir di bawah ini butuh API, DB, atau infra. Rencana lengkap ada di `MIND/PLAN/plan-performance.md` (lokal).
