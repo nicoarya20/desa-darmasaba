@@ -1,30 +1,39 @@
 diff --git a/dist/index.js b/dist/index.js
-index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..6403abe872e6d5b05a7676ab18c2223e79f1faf5 100644
+index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..abdf88b84ddebf6a81708e011eb7ed94f999eb29 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -4,6 +4,31 @@ import NextLink from 'next/link';
+@@ -4,6 +4,40 @@ import NextLink from 'next/link';
  import { usePathname, useRouter } from 'next/navigation';
  import { useSyncExternalStore, useRef, useState, useEffect, use, createContext, useCallback, startTransition, useMemo } from 'react';
  
 +// PATCH(desa-darmasaba): browser bisa melewati (skip) transisi dan menolak
 +// promise `ready`-nya; spec CSS View Transitions 1 TIDAK menandai `ready`
 +// marked-as-handled, dan library ini tak pernah menangani `ready`, jadi skip
-+// berubah jadi unhandledrejection. Dua skip yang wajar (navigasi tetap selesai,
++// berubah jadi unhandledrejection. Skip yang wajar (navigasi tetap selesai,
 +// hanya animasinya hilang):
 +// - AbortError "Transition was skipped": startViewTransition() baru membatalkan
 +//   transisi aktif (klik/back cepat saat route masih dimuat).
 +// - TimeoutError "timeout in DOM update": callback menunggu route baru commit,
 +//   dan Chrome membatasi DOM update ~4 detik (kompilasi route pertama di dev,
 +//   atau jaringan/server lambat di prod).
++// - InvalidStateError "Document hidden": tab disembunyikan (pindah tab/minimize)
++//   saat navigasi berjalan; spec melewati transisi di dokumen tersembunyi.
++//   Hanya diabaikan bila dokumen memang hidden, karena InvalidStateError lain
++//   (mis. view-transition-name ganda) adalah bug yang harus terlihat.
 +// Error lain dilempar ulang agar tetap terlihat.
 +// Hapus patch ini bila upstream menangani `ready` sendiri.
 +const EXPECTED_SKIP_ERRORS = [
 +    'AbortError',
 +    'TimeoutError'
 +];
++function isExpectedSkip(error) {
++    if (!error) return false;
++    if (EXPECTED_SKIP_ERRORS.includes(error.name)) return true;
++    return error.name === 'InvalidStateError' && document.visibilityState === 'hidden';
++}
 +function handleSkippedTransition(transition) {
 +    transition.ready.catch((error)=>{
-+        if (error && EXPECTED_SKIP_ERRORS.includes(error.name)) {
++        if (isExpectedSkip(error)) {
 +            return;
 +        }
 +        throw error;
@@ -34,7 +43,7 @@ index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..6403abe872e6d5b05a7676ab18c2223e
  function useHash() {
      return useSyncExternalStore(subscribeHash, getHashSnapshot, getServerHashSnapshot);
  }
-@@ -24,6 +49,8 @@ function subscribeHash(onStoreChange) {
+@@ -24,6 +58,8 @@ function subscribeHash(onStoreChange) {
  function useBrowserNativeTransitions() {
      const pathname = usePathname();
      const currentPathname = useRef(pathname);
@@ -43,7 +52,7 @@ index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..6403abe872e6d5b05a7676ab18c2223e
      // This is a global state to keep track of the view transition state.
      const [currentViewTransition, setCurrentViewTransition] = useState(null);
      useEffect(()=>{
-@@ -31,16 +58,25 @@ function useBrowserNativeTransitions() {
+@@ -31,16 +67,25 @@ function useBrowserNativeTransitions() {
              return ()=>{};
          }
          const onPopState = ()=>{
@@ -70,7 +79,7 @@ index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..6403abe872e6d5b05a7676ab18c2223e
              });
              setCurrentViewTransition([
                  pendingStartViewTransition,
-@@ -69,6 +105,7 @@ function useBrowserNativeTransitions() {
+@@ -69,6 +114,7 @@ function useBrowserNativeTransitions() {
          // When the new route component is actually mounted, we finish the view
          // transition.
          currentPathname.current = pathname;
@@ -78,7 +87,7 @@ index 41ba06885ed234bc14ef6790ae9f023e3ee4886e..6403abe872e6d5b05a7676ab18c2223e
          if (transitionRef.current) {
              transitionRef.current[1]();
              transitionRef.current = null;
-@@ -142,8 +179,11 @@ function useTransitionRouter() {
+@@ -142,8 +188,11 @@ function useTransitionRouter() {
                          finishViewTransition(()=>resolve);
                      });
                  }));
