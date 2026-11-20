@@ -1,17 +1,21 @@
 # Changelog
 
-## [0.1.337] - 2026-11-20
+## [0.1.338] - 2026-11-20
 ### Added
 - **Nomor WhatsApp kantor desa (opsional) di Kontak Desa.** Admin bisa mengisinya di Profile Desa > Kontak Desa; field boleh dikosongkan karena desa belum memberikan nomornya, dan hanya nomor seluler yang diterima. Setelah diisi, nomor tampil di footer (bertaut langsung ke WhatsApp) dan di halaman PPID. Selama kosong, tampilan publik tidak berubah dan tidak ada baris WhatsApp.
 - Operator: ada 1 migrasi aditif (kolom `whatsapp` yang boleh kosong di tabel `KontakDesa`), dijalankan otomatis saat container naik. Data yang sudah ada tidak disentuh.
 
-## [0.1.336] - 2026-11-19
+## [0.1.337] - 2026-11-19
 ### Added
 - **Submenu baru "Indeks Desa" di menu Pemerintahan.** Halaman publik `/pemerintahan/indeks-desa` menampilkan Indeks Desa Membangun (IDM) Desa Darmasaba: skor dan status tahun terbaru, tiga dimensi (Ketahanan Sosial, Ekonomi, Lingkungan), dan riwayat per tahun. Admin mengisi data di Pemerintahan > Indeks Desa. Selama data belum diisi, halaman menampilkan keterangan "data belum tersedia", tanpa angka contoh. Admin yang sudah memegang akses menu Pemerintahan otomatis mendapat submenu ini; admin dengan akses per-submenu perlu dicentang di pengaturan akses menu.
 
 ### Changed
 - **Kontak desa kini bisa diedit admin.** Tab baru "Kontak Desa" di Profile Desa (admin) mengatur nama kantor, alamat, telepon, dan email. Footer dan halaman PPID otomatis memakai data ini. Nilai awalnya sama dengan yang tampil sekarang, jadi tampilan publik tidak berubah.
 - Operator: ada 2 migrasi aditif (tabel baru `KontakDesa` dan `IndeksDesa`), dijalankan otomatis saat container naik. Data yang sudah ada tidak disentuh.
+
+## [0.1.336] - 2026-11-20
+### Changed
+- Di jendela percakapan Jenna, gelembung pesan yang Anda kirim kini berwarna biru dengan teks putih, seperti iMessage, sehingga lebih mudah dibedakan dari jawaban Jenna. Warnanya sama di tema terang dan gelap.
 
 ## [0.1.335] - 2026-11-20
 ### Fixed
