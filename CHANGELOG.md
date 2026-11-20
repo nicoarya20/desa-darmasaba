@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.339] - 2026-11-20
+## [0.1.340] - 2026-11-20
 ### Added
 - **Pratinjau foto galeri kini bisa berpindah foto tanpa ditutup.** Saat foto di galeri dibuka, deretan foto kecil tampil di bawah foto besar; klik salah satunya, tombol ‹ ›, atau tombol panah kiri/kanan di keyboard untuk melihat foto lain. Jendela pratinjau tetap diam saat berpindah foto, walau panjang keterangannya berbeda. Berlaku di galeri PUSTU, Posyandu, detail sekolah, dan Bank Sampah.
 
@@ -8,6 +8,17 @@
 - Kartu Tarif Layanan di halaman PUSTU tidak lagi terlalu mepet: titik daftar dan teks kini berjarak lega dari tepi kartu, ukuran teksnya lebih ringan, dan jarak atas dan bawah kartu sama.
 - Titik dan nomor daftar di isi halaman detail (misalnya Prosedur Pendaftaran PUSTU, Pengumuman, profil Posyandu) tidak lagi keluar dari kolom teks atau terpotong di tepi layar; jarak antarbutir daftar juga lebih rapat.
 - Foto di grid galeri kini sejajar rata atas, baik yang memiliki keterangan maupun tidak.
+
+## [0.1.339] - 2026-11-20
+### Added
+- **Tab "Tim Redaksi" di Profile Desa (admin).** Admin mengisi nomor SK, tanggal SK, unggahan PDF SK Tim Pengelola Website, dan daftar anggota tim (nama dan jabatan). Footer publik menampilkan "SK Perbekel Nomor ..." yang bertaut ke PDF SK setelah nomornya diisi; selama kosong, baris itu tidak muncul. Daftar anggota belum ditampilkan di publik.
+- **Jam layanan di Kontak Desa.** Kolom opsional di tab Kontak Desa; tampil di footer dan halaman PPID (Daftar Informasi Publik dan Permohonan/Keberatan) hanya bila diisi. Jam yang tampil di beranda belum ikut berubah.
+- **Submenu baru "Lembaga & Komunitas" di menu Pemerintahan.** Halaman publik `/pemerintahan/lembaga-komunitas` menampilkan lembaga dan komunitas desa (PPL, STT, PKK, dan sebagainya) per jenis, lengkap dengan ketua, kontak lembaga, dan foto. Admin mengisi di Pemerintahan > Lembaga & Komunitas. Selama belum ada data, halaman menampilkan keadaan kosong. Admin yang sudah memegang akses menu Pemerintahan otomatis mendapat submenu ini; admin dengan akses per-submenu perlu dicentang di pengaturan akses menu.
+
+### Changed
+- **Nomor WhatsApp petugas layanan kini diambil dari Kontak Desa**, tidak lagi tertulis di kode. Bila nomor di Kontak Desa kosong atau bukan nomor seluler, tombol "Lanjutkan ke WhatsApp" setelah mengajukan permohonan tidak ditampilkan; warga melihat kabar bahwa permohonannya sudah tercatat beserta nomor telepon kantor bila ada. Operator: isi nomor WhatsApp di Kontak Desa sebelum rilis agar tombol tetap muncul.
+- **Batas unggah PDF dinaikkan dari 20 MB menjadi 60 MB**, dan kini juga dicek di server (PDF lebih besar ditolak dengan pesan yang jelas). Operator: pastikan proxy atau Cloudflare di depan aplikasi mengizinkan unggahan sebesar itu.
+- Operator: ada 2 migrasi aditif (`TimPengelolaWebsite`, `AnggotaTimPengelola`, kolom `jamLayanan` di `KontakDesa`; dan tabel `LembagaKomunitas`), dijalankan otomatis saat container naik. Data yang sudah ada tidak disentuh.
 
 ## [0.1.338] - 2026-11-20
 ### Added

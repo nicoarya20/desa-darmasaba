@@ -50,6 +50,9 @@ const EXPECTED_IDS: Record<string, string[]> = {
     // 2026-11-19: submenu Indeks Desa (temuan lomba T11; IDM Kemendesa). Murni penambahan ID di section Desa; tidak ada ID
     // lama yang berubah/dihapus, jadi snapshot diperbarui karena menu baru (bukan untuk menghijaukan regresi), tanpa migrasi data.
     'desa.indeks-desa',
+    // 2026-11-20: submenu Lembaga & Komunitas (juknis lomba butir 7.4). Murni penambahan ID di section Desa; tidak ada ID
+    // lama yang berubah/dihapus, jadi snapshot diperbarui karena menu baru (bukan untuk menghijaukan regresi), tanpa migrasi data.
+    'desa.lembaga-komunitas',
   ],
   'Kesehatan': [
     'kesehatan.posyandu',

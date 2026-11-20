@@ -51,7 +51,7 @@ describe('ProdukHukumForm', () => {
     expect(html).toContain('value="Peraturan Desa (Perdes)"');
     expect(html).toContain(`maxLength="${JUDUL_PRODUK_HUKUM_MAX}"`);
     expect(html).toContain(`maxLength="${NOMOR_PRODUK_HUKUM_MAX}"`);
-    expect(html).toContain('Opsional, maksimal 20 MB');
+    expect(html).toContain('Opsional, maksimal 60 MB');
     expect(html).toContain(T.submitCreate);
   });
 

@@ -3,6 +3,7 @@ import colors from '@/con/colors';
 import {
   ALAMAT_MAX_LENGTH,
   EMAIL_MAX_LENGTH,
+  JAM_LAYANAN_MAX_LENGTH,
   NAMA_KANTOR_MAX_LENGTH,
   TELEPON_MAX_LENGTH,
   WHATSAPP_MAX_LENGTH,
@@ -19,7 +20,7 @@ type Props = {
   onSubmit: () => void;
 };
 
-/** Form Kontak Desa: nama kantor, alamat, telepon, email, dan WhatsApp (opsional). */
+/** Form Kontak Desa: nama kantor, alamat, telepon, email, serta WhatsApp dan jam layanan (opsional). */
 export default function KontakDesaForm({ form, loading, onSubmit }: Props) {
   // sync: true agar input terkontrol tidak loncat caret (snapshot Valtio default dibatch async).
   const snap = useSnapshot(form, { sync: true });
@@ -71,6 +72,13 @@ export default function KontakDesaForm({ form, loading, onSubmit }: Props) {
           maxLength={WHATSAPP_MAX_LENGTH}
           value={snap.whatsapp}
           onChange={(e) => (form.whatsapp = e.currentTarget.value)}
+        />
+        <TextInput
+          label={T.jamLayanan}
+          description={T.jamLayananHint}
+          maxLength={JAM_LAYANAN_MAX_LENGTH}
+          value={snap.jamLayanan}
+          onChange={(e) => (form.jamLayanan = e.currentTarget.value)}
         />
         <Group justify="flex-end">
           <Button bg={colors['blue-button']} loading={loading} onClick={onSubmit}>

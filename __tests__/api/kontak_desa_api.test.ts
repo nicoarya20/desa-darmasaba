@@ -49,11 +49,12 @@ const ROW = {
   telepon: '(0361) 8441518',
   email: 'uji@example.com',
   whatsapp: null,
+  jamLayanan: null,
   updatedAt: new Date('2026-11-19T00:00:00.000Z'),
 };
 const BODY = { namaKantor: ROW.namaKantor, alamat: ROW.alamat, telepon: ROW.telepon, email: ROW.email };
-// Yang diteruskan ke database: WhatsApp opsional selalu ada di data hasil validasi (null bila tidak diisi).
-const DATA = { ...BODY, whatsapp: null };
+// Yang diteruskan ke database: WhatsApp dan jam layanan opsional selalu ada di data hasil validasi (null bila tidak diisi).
+const DATA = { ...BODY, whatsapp: null, jamLayanan: null };
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -73,7 +74,7 @@ describe('GET /desa/kontakdesa (publik)', () => {
     });
     expect(requireAuthMock).not.toHaveBeenCalled();
     expect(kontak.findUnique).toHaveBeenCalledWith({ where: { id: KONTAK_DESA_ID }, select: KONTAK_DESA_SELECT });
-    expect(Object.keys(KONTAK_DESA_SELECT)).toEqual(['id', 'namaKantor', 'alamat', 'telepon', 'email', 'whatsapp', 'updatedAt']);
+    expect(Object.keys(KONTAK_DESA_SELECT)).toEqual(['id', 'namaKantor', 'alamat', 'telepon', 'email', 'whatsapp', 'jamLayanan', 'updatedAt']);
   });
 
   it('baris belum ada → 200 dengan data null (bukan 404, agar footer tidak dianggap galat)', async () => {
@@ -111,7 +112,7 @@ describe('PUT /desa/kontakdesa (admin)', () => {
     });
   });
 
-  it('kunci di luar kelima field (id, createdAt) tidak diteruskan ke database', async () => {
+  it('kunci di luar field yang dikenal (id, createdAt) tidak diteruskan ke database', async () => {
     kontak.upsert.mockResolvedValue(ROW);
     await send('PUT', { ...BODY, id: 'lain', createdAt: '2000-01-01' });
     const arg = kontak.upsert.mock.calls[0][0];
@@ -170,6 +171,27 @@ describe('PUT /desa/kontakdesa (admin)', () => {
       expect(res.status, whatsapp).toBe(400);
       expect((await res.json()).message).toMatch(/^WhatsApp tidak valid/);
     }
+    expect(kontak.upsert).not.toHaveBeenCalled();
+  });
+
+  it('jam layanan opsional: tanpa field tetap 200 dan null; terisi diteruskan rapi; dikosongkan = null', async () => {
+    kontak.upsert.mockResolvedValue(ROW);
+    expect((await send('PUT', BODY)).status).toBe(200);
+    expect(kontak.upsert.mock.calls[0][0].update.jamLayanan).toBeNull();
+
+    kontak.upsert.mockResolvedValue({ ...ROW, jamLayanan: 'Senin–Jumat 07.30–15.30' });
+    const res = await send('PUT', { ...BODY, jamLayanan: ' Senin–Jumat  07.30–15.30 ' });
+    expect(await res.json()).toMatchObject({ data: { jamLayanan: 'Senin–Jumat 07.30–15.30' } });
+    expect(kontak.upsert.mock.calls[1][0].update.jamLayanan).toBe('Senin–Jumat 07.30–15.30');
+
+    await send('PUT', { ...BODY, jamLayanan: '' });
+    expect(kontak.upsert.mock.calls[2][0].update.jamLayanan).toBeNull();
+  });
+
+  it('400 bila jam layanan melebihi batas panjang, database tidak disentuh', async () => {
+    const res = await send('PUT', { ...BODY, jamLayanan: 'x'.repeat(121) });
+    expect(res.status).toBe(400);
+    expect((await res.json()).message).toBe('Jam layanan maksimal 120 karakter');
     expect(kontak.upsert).not.toHaveBeenCalled();
   });
 

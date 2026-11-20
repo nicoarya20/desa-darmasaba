@@ -37,7 +37,7 @@ const data: LayananDetailData = {
 
 describe('LayananDetailBody', () => {
   it('kategori (tautan ke daftar), h1 nama, badge, persyaratan, gambar alur; tanpa foto utama', () => {
-    const html = render(<LayananDetailBody data={data} onAjukan={() => {}} />);
+    const html = render(<LayananDetailBody data={data} onAjukan={() => {}} waTersedia />);
     expect(html).toContain(`href="/pemerintahan/layanan"`);
     expect(html).toContain(T.kategori);
     expect(html).toMatch(/<h1[^>]*>Surat Keterangan Kelakuan Baik<\/h1>/);
@@ -49,13 +49,13 @@ describe('LayananDetailBody', () => {
   });
 
   it('tombol ajukan di kepala dan di panel penutup', () => {
-    const html = render(<LayananDetailBody data={data} onAjukan={() => {}} />);
+    const html = render(<LayananDetailBody data={data} onAjukan={() => {}} waTersedia />);
     expect(count(html, `aria-haspopup="dialog">${T.ajukan}</button>`)).toBe(2);
     expect(html).toContain(T.closingTitle);
   });
 
   it('tanpa gambar alur → figure tidak dirender', () => {
-    const html = render(<LayananDetailBody data={{ ...data, image2: null }} onAjukan={() => {}} />);
+    const html = render(<LayananDetailBody data={{ ...data, image2: null }} onAjukan={() => {}} waTersedia />);
     expect(html).not.toContain('<figure');
   });
 });
