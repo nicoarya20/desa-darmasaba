@@ -19,6 +19,7 @@ const ROW: KontakDesaRecord = {
   alamat: 'Jl. Uji No. 1',
   telepon: '(0361) 8441518',
   email: 'uji@example.com',
+  whatsapp: null,
   updatedAt: '2026-11-19T00:00:00.000Z',
 };
 const json = (status: number, body: unknown) => Promise.resolve(new Response(JSON.stringify(body), { status }));
@@ -85,9 +86,19 @@ describe('findUnique.ensureLoaded (pembaca publik)', () => {
 });
 
 describe('toKontakFormValues / fillForm', () => {
-  it('data tersimpan → empat field form; null → form kosong', () => {
-    expect(toKontakFormValues(ROW)).toEqual({ namaKantor: ROW.namaKantor, alamat: ROW.alamat, telepon: ROW.telepon, email: ROW.email });
-    expect(toKontakFormValues(null)).toEqual({ namaKantor: '', alamat: '', telepon: '', email: '' });
+  it('data tersimpan → kelima field form (WhatsApp null jadi ""); null → form kosong', () => {
+    expect(toKontakFormValues(ROW)).toEqual({
+      namaKantor: ROW.namaKantor,
+      alamat: ROW.alamat,
+      telepon: ROW.telepon,
+      email: ROW.email,
+      whatsapp: '',
+    });
+    expect(toKontakFormValues(null)).toEqual({ namaKantor: '', alamat: '', telepon: '', email: '', whatsapp: '' });
+  });
+
+  it('WhatsApp yang sudah tersimpan masuk ke form apa adanya', () => {
+    expect(toKontakFormValues({ ...ROW, whatsapp: '0812 3958 0000' }).whatsapp).toBe('0812 3958 0000');
   });
 
   it('fillForm mengisi proxy form in-place (identitas objek form tetap)', () => {
@@ -113,11 +124,40 @@ describe('update.submit', () => {
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe('/api/desa/kontakdesa');
     expect(init.method).toBe('PUT');
-    expect(JSON.parse(init.body)).toEqual({ namaKantor: 'Kantor Baru', alamat: ROW.alamat, telepon: ROW.telepon, email: ROW.email });
+    expect(JSON.parse(init.body)).toEqual({
+      namaKantor: 'Kantor Baru',
+      alamat: ROW.alamat,
+      telepon: ROW.telepon,
+      email: ROW.email,
+      whatsapp: null,
+    });
     expect(state.findUnique).toMatchObject({ loaded: true, data: { namaKantor: 'Kantor Baru' } });
     expect(state.form.namaKantor).toBe('Kantor Baru');
     expect(state.update.loading).toBe(false);
     expect(toast.success).toHaveBeenCalledWith('Kontak desa berhasil disimpan');
+  });
+
+  it('WhatsApp dikosongkan di form → dikirim null (opsional, bukan galat)', async () => {
+    state.fillForm({ ...ROW, whatsapp: '   ' });
+    fetchMock.mockReturnValue(json(200, { success: true, data: ROW }));
+    expect(await state.update.submit()).toBe(true);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).whatsapp).toBeNull();
+  });
+
+  it('WhatsApp seluler terisi → dikirim rapi dan tersimpan ke data bersama + form', async () => {
+    state.fillForm({ ...ROW, whatsapp: ' 0812  3958 0000 ' });
+    fetchMock.mockReturnValue(json(200, { success: true, data: { ...ROW, whatsapp: '0812 3958 0000' } }));
+    expect(await state.update.submit()).toBe(true);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).whatsapp).toBe('0812 3958 0000');
+    expect(state.findUnique.data?.whatsapp).toBe('0812 3958 0000');
+    expect(state.form.whatsapp).toBe('0812 3958 0000');
+  });
+
+  it('WhatsApp berupa telepon tetap: toast galat menunjuk WhatsApp, tidak ada request', async () => {
+    state.fillForm({ ...ROW, whatsapp: '(0361) 8441518' });
+    expect(await state.update.submit()).toBe(false);
+    expect(toast.error).toHaveBeenCalledWith(expect.stringMatching(/^WhatsApp tidak valid/));
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('ditolak server (403): toast pesan server, data bersama tidak berubah', async () => {

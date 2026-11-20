@@ -5,6 +5,7 @@ import {
   EMAIL_MAX_LENGTH,
   NAMA_KANTOR_MAX_LENGTH,
   TELEPON_MAX_LENGTH,
+  WHATSAPP_MAX_LENGTH,
   type KontakDesaFormValues,
 } from '@/lib/kontak-desa';
 import { Button, Group, Paper, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
@@ -18,7 +19,7 @@ type Props = {
   onSubmit: () => void;
 };
 
-/** Form Kontak Desa: nama kantor, alamat, telepon, email. */
+/** Form Kontak Desa: nama kantor, alamat, telepon, email, dan WhatsApp (opsional). */
 export default function KontakDesaForm({ form, loading, onSubmit }: Props) {
   // sync: true agar input terkontrol tidak loncat caret (snapshot Valtio default dibatch async).
   const snap = useSnapshot(form, { sync: true });
@@ -62,6 +63,14 @@ export default function KontakDesaForm({ form, loading, onSubmit }: Props) {
           value={snap.email}
           onChange={(e) => (form.email = e.currentTarget.value)}
           required
+        />
+        <TextInput
+          label={T.whatsapp}
+          description={T.whatsappHint}
+          inputMode="tel"
+          maxLength={WHATSAPP_MAX_LENGTH}
+          value={snap.whatsapp}
+          onChange={(e) => (form.whatsapp = e.currentTarget.value)}
         />
         <Group justify="flex-end">
           <Button bg={colors['blue-button']} loading={loading} onClick={onSubmit}>

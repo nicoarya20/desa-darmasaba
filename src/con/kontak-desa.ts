@@ -1,4 +1,4 @@
-// Identitas pengelola website untuk footer publik. Kontak resmi kantor desa (nama, alamat, telepon, email) bukan lagi
+// Identitas pengelola website untuk footer publik. Kontak resmi kantor desa (nama, alamat, telepon, email, WhatsApp opsional) bukan lagi
 // konstanta: diedit admin di Profil Desa > Kontak Desa dan dibaca dari API (src/lib/kontak-desa.ts).
 
 /** Satu anggota tim redaksi website (nama & jabatan saja, tanpa kontak pribadi). */

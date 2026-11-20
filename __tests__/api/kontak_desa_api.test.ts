@@ -48,9 +48,12 @@ const ROW = {
   alamat: 'Jl. Uji No. 1',
   telepon: '(0361) 8441518',
   email: 'uji@example.com',
+  whatsapp: null,
   updatedAt: new Date('2026-11-19T00:00:00.000Z'),
 };
 const BODY = { namaKantor: ROW.namaKantor, alamat: ROW.alamat, telepon: ROW.telepon, email: ROW.email };
+// Yang diteruskan ke database: WhatsApp opsional selalu ada di data hasil validasi (null bila tidak diisi).
+const DATA = { ...BODY, whatsapp: null };
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -70,7 +73,7 @@ describe('GET /desa/kontakdesa (publik)', () => {
     });
     expect(requireAuthMock).not.toHaveBeenCalled();
     expect(kontak.findUnique).toHaveBeenCalledWith({ where: { id: KONTAK_DESA_ID }, select: KONTAK_DESA_SELECT });
-    expect(Object.keys(KONTAK_DESA_SELECT)).toEqual(['id', 'namaKantor', 'alamat', 'telepon', 'email', 'updatedAt']);
+    expect(Object.keys(KONTAK_DESA_SELECT)).toEqual(['id', 'namaKantor', 'alamat', 'telepon', 'email', 'whatsapp', 'updatedAt']);
   });
 
   it('baris belum ada → 200 dengan data null (bukan 404, agar footer tidak dianggap galat)', async () => {
@@ -102,18 +105,18 @@ describe('PUT /desa/kontakdesa (admin)', () => {
     expect(await res.json()).toMatchObject({ success: true, message: 'Kontak desa berhasil disimpan', data: { email: ROW.email } });
     expect(kontak.upsert).toHaveBeenCalledWith({
       where: { id: KONTAK_DESA_ID },
-      create: { id: KONTAK_DESA_ID, ...BODY },
-      update: BODY,
+      create: { id: KONTAK_DESA_ID, ...DATA },
+      update: DATA,
       select: KONTAK_DESA_SELECT,
     });
   });
 
-  it('kunci di luar empat field (id, createdAt) tidak diteruskan ke database', async () => {
+  it('kunci di luar kelima field (id, createdAt) tidak diteruskan ke database', async () => {
     kontak.upsert.mockResolvedValue(ROW);
     await send('PUT', { ...BODY, id: 'lain', createdAt: '2000-01-01' });
     const arg = kontak.upsert.mock.calls[0][0];
-    expect(arg.update).toEqual(BODY);
-    expect(arg.create).toEqual({ id: KONTAK_DESA_ID, ...BODY });
+    expect(arg.update).toEqual(DATA);
+    expect(arg.create).toEqual({ id: KONTAK_DESA_ID, ...DATA });
   });
 
   it('tanpa sesi → 401, akun non-admin (role 5) → 403, database tidak disentuh', async () => {
@@ -140,6 +143,33 @@ describe('PUT /desa/kontakdesa (admin)', () => {
     const body = await res.json();
     expect(body.success).toBe(false);
     expect(body.message).toMatch(message instanceof RegExp ? message : new RegExp(`^${message}$`));
+    expect(kontak.upsert).not.toHaveBeenCalled();
+  });
+
+  it('WhatsApp opsional: tanpa field WhatsApp tetap 200 dan tersimpan null', async () => {
+    kontak.upsert.mockResolvedValue(ROW);
+    expect((await send('PUT', BODY)).status).toBe(200);
+    expect(kontak.upsert.mock.calls[0][0].update.whatsapp).toBeNull();
+  });
+
+  it('WhatsApp seluler valid diteruskan dan muncul di respons; dikosongkan kembali = null (nomor dihapus)', async () => {
+    kontak.upsert.mockResolvedValue({ ...ROW, whatsapp: '0812 3958 0000' });
+    const res = await send('PUT', { ...BODY, whatsapp: ' 0812  3958 0000 ' });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ data: { whatsapp: '0812 3958 0000' } });
+    expect(kontak.upsert.mock.calls[0][0].update.whatsapp).toBe('0812 3958 0000');
+
+    kontak.upsert.mockResolvedValue(ROW);
+    await send('PUT', { ...BODY, whatsapp: '' });
+    expect(kontak.upsert.mock.calls[1][0].update.whatsapp).toBeNull();
+  });
+
+  it('400 bila WhatsApp diisi tetapi bukan nomor seluler (telepon tetap/teks), database tidak disentuh', async () => {
+    for (const whatsapp of ['(0361) 8441518', 'abc']) {
+      const res = await send('PUT', { ...BODY, whatsapp });
+      expect(res.status, whatsapp).toBe(400);
+      expect((await res.json()).message).toMatch(/^WhatsApp tidak valid/);
+    }
     expect(kontak.upsert).not.toHaveBeenCalled();
   });
 
