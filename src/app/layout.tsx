@@ -58,8 +58,8 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/assets/images/darmasaba-icon.png",
-    apple: "/assets/images/darmasaba-icon.png",
+    icon: { url: "/assets/images/icons/icon-48.png", sizes: "48x48", type: "image/png" },
+    apple: { url: "/assets/images/icons/apple-touch-icon-180.png", sizes: "180x180" },
   },
   manifest: "/manifest.json",
   openGraph: {
