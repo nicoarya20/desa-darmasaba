@@ -2,7 +2,7 @@
 // Mode ulang mesin Musik Desa: mati berhenti setelah lagu terakhir, semua melingkar, satu mengulang lagu.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MusicProvider, useMusic } from '@/app/context/MusicContext';
-import { fire, installBrowserStubs, lastAudio, libraryReply, mount, run, song } from './_musik_engine_harness';
+import { fire, installBrowserStubs, lastAudio, libraryReply, mount, RequestLibrary, run, song } from './_musik_engine_harness';
 
 const toast = vi.hoisted(() => ({ info: vi.fn(), error: vi.fn() }));
 vi.mock('react-toastify', () => ({ toast }));
@@ -19,6 +19,7 @@ async function start() {
   installBrowserStubs([libraryReply([A, B, C])]);
   await mount(
     <MusicProvider>
+      <RequestLibrary />
       <Probe />
     </MusicProvider>
   );

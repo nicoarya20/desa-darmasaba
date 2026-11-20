@@ -37,7 +37,7 @@ const NOOP_HANDLERS: AudioHandlers = {
  * plus waktu pemutaran terpisah (`time`) supaya 'timeupdate' tidak me-render semua konsumen useMusic().
  */
 export function useAudioEngine() {
-  const { musikData, isLoading, loadError, loadMusikData } = useMusicLibraryLoader();
+  const { musikData, isLoading, loadError, loadMusikData, ensureMusikData } = useMusicLibraryLoader();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState<Musik | null>(null);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
@@ -182,6 +182,7 @@ export function useAudioEngine() {
       cycleRepeat,
       toggleShuffle,
       loadMusikData,
+      ensureMusikData,
     }),
     [
       isPlaying,
@@ -205,6 +206,7 @@ export function useAudioEngine() {
       cycleRepeat,
       toggleShuffle,
       loadMusikData,
+      ensureMusikData,
     ]
   );
 

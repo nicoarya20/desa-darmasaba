@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MusicProvider, useMusic } from '@/app/context/MusicContext';
 import { DEFAULT_VOLUME } from '@/app/context/music/useVolume';
 import { RECENT_STORAGE_KEY } from '@/app/context/music/recentlyPlayed';
-import { fakeStorage, fire, installBrowserStubs, lastAudio, libraryReply, mount, run, song } from './_musik_engine_harness';
+import { fakeStorage, fire, installBrowserStubs, lastAudio, libraryReply, mount, RequestLibrary, run, song } from './_musik_engine_harness';
 
 vi.mock('react-toastify', () => ({ toast: { info: vi.fn(), error: vi.fn() } }));
 
@@ -20,6 +20,7 @@ async function start(storage = fakeStorage()) {
   const stubs = installBrowserStubs([libraryReply(SONGS)], storage);
   await mount(
     <MusicProvider>
+      <RequestLibrary />
       <Probe />
     </MusicProvider>
   );

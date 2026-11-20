@@ -1,5 +1,5 @@
 /*
- * Tata letak bagan bertingkat (StrukturTierChart, Perangkat Desa). Dipasang bersama .chart (struktur-chart.module.css:
+ * Tata letak bagan bertingkat (StrukturTierChart, Perangkat Desa & PPID). Dipasang bersama .chart (struktur-chart.module.css:
  * --line, --rail, --indent, ukuran kartu akar). Mode mengikuti lebar isi bagan (container query):
  * - ≥1150px  batang tengah: band = grid kiri | batang | kanan, klaster menempel batang, 6 kartu sebaris.
  * - 600-1149 rel kiri berjajar: batang jadi rel kiri, klaster bertumpuk urut pangkat, kartu klaster sebaris.
@@ -8,6 +8,8 @@
  * band (clip-path), jadi batang berhenti tepat di sambungan terbawah tanpa garis yatim. Band selain yang terakhir
  * menggambar batang setinggi band (::after). Palang klaster di y = --tier-bar (0, atau --tier-stem untuk klaster
  * berkepala & klaster yang diturunkan), tiang ke kartu setinggi --tier-v.
+ * Band kartu di batang (data-trunk): kartu duduk di batang (tengah / di rel kiri seperti kartu akar), garis masuk
+ * dari tepi atas band; batang di bawahnya digambar siku band berikutnya.
  */
 .tiers {
   container: struktur-tiers / inline-size;
@@ -59,6 +61,35 @@
   top: 0;
   bottom: 0;
   left: calc(var(--rail) - 1px);
+  border-left: 2px solid var(--line);
+}
+
+/* Band kartu di batang: tanpa ::after (batang setinggi band akan menimpa kartu). */
+.band[data-trunk] {
+  display: block;
+  padding-left: 0;
+}
+
+.band[data-trunk]::after {
+  content: none;
+}
+
+.trunk {
+  position: relative;
+  display: flex;
+  gap: var(--tier-gap);
+}
+
+.trunk > * {
+  flex: 0 0 min(100%, var(--tier-w) * 1.5);
+}
+
+.trunk::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--tier-band-gap));
+  left: calc(var(--rail) - 1px);
+  height: var(--tier-band-gap);
   border-left: 2px solid var(--line);
 }
 
@@ -234,6 +265,14 @@
   }
 
   .band:not(:last-child)::after {
+    left: calc(50% - 1px);
+  }
+
+  .trunk {
+    justify-content: center;
+  }
+
+  .trunk::before {
     left: calc(50% - 1px);
   }
 

@@ -27,6 +27,7 @@ vi.mock('@/app/admin/(dashboard)/_state/ppid/permohonan_keberatan_informasi_publ
   default: { create: { form: {}, create: vi.fn() } },
 }));
 
+import stateKontakDesa from '@/app/admin/(dashboard)/_state/desa/kontakDesa';
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
 import { PermohonanSteps } from '@/app/(public)/(pages)/ppid/_com/PermohonanSteps';
 import InformasiPage from '@/app/(public)/(pages)/ppid/permohonan-informasi-publik/page';
@@ -38,6 +39,19 @@ const css = readFileSync(
   path.join(process.cwd(), 'src/app/(public)/(pages)/ppid/_com/permohonan.module.css'),
   'utf8',
 );
+
+// test-only: kontak desa seperti dikirim API (kontak PPID dibaca dari state CMS, bukan konstanta kode).
+Object.assign(stateKontakDesa.findUnique, {
+  data: {
+    id: 'kontak-desa',
+    namaKantor: 'Kantor Perbekel Desa Darmasaba',
+    alamat: 'Jl. Raya Darmasaba – Lukluk, Desa Darmasaba, Kec. Abiansemal, Kab. Badung, Bali 80352',
+    telepon: '(0361) 8441518',
+    email: 'ddarmasaba@gmail.com',
+    updatedAt: '2026-11-19T00:00:00.000Z',
+  },
+  loaded: true,
+});
 
 const informasi = render(<InformasiPage />);
 const keberatan = render(<KeberatanPage />);
@@ -152,6 +166,18 @@ describe('Permohonan Keberatan — editor alasan & kontak', () => {
     expect(keberatan).toMatch(/<dt>Email<\/dt><dd>ddarmasaba@gmail\.com<\/dd>/);
     expect(keberatan).toMatch(/<dt>Telepon<\/dt><dd>\(0361\) 8441518<\/dd>/);
     expect(keberatan).not.toContain('081-xxx');
+  });
+
+  it('baris Jam Layanan hanya ada bila admin mengisinya (tanpa label tanpa nilai)', () => {
+    expect(keberatan).not.toContain('Jam Layanan');
+    const semula = stateKontakDesa.findUnique.data;
+    // test-only: jam layanan rekaan (teks bebas).
+    stateKontakDesa.findUnique.data = { ...semula!, jamLayanan: 'Senin–Jumat 07.30–15.30' };
+    try {
+      expect(render(<KeberatanPage />)).toMatch(/<dt>Jam Layanan<\/dt><dd>Senin–Jumat 07\.30–15\.30<\/dd>/);
+    } finally {
+      stateKontakDesa.findUnique.data = semula;
+    }
   });
 });
 

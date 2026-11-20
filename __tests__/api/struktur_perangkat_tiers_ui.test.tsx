@@ -72,7 +72,23 @@ describe('StrukturChart layout="tiers"', () => {
   });
 });
 
-describe('StrukturChart bawaan (PPID, BUMDes) tidak berubah', () => {
+describe('StrukturChart layout="tiers" — kartu di batang (Struktur PPID)', () => {
+  // test-only: Kepala Desa → Sekdes → 4 staf (lebih dari 3 → Sekdes duduk di batang).
+  const staf = Array.from({ length: 4 }, (_, i) => node(`staf${i}`, `Staf ${i}`, 3));
+  const html = render(
+    <StrukturChart roots={[node('kades', 'Kepala Desa', 1, [node('sek', 'Sekretaris Desa', 2, staf)])]} label={LABEL} hrefFor={hrefFor} layout="tiers" />,
+  );
+
+  it('Sekdes = band batang berkartu xs tone 1, stafnya klaster 2+2 di bawahnya', () => {
+    expect(count(html, 'data-trunk="true"')).toBe(1);
+    expect(html).toMatch(/data-trunk="true"><li[^>]*><a[^>]*data-tone="1" data-size="xs"[^>]*aria-label="Nama Sekretaris Desa/);
+    expect(count(html, 'data-side=')).toBe(2);
+    expect(html.indexOf('Nama Sekretaris Desa')).toBeLessThan(html.indexOf('Nama Staf 0'));
+    expect(count(html, '<a ')).toBe(6);
+  });
+});
+
+describe('StrukturChart bawaan (BUMDes) tidak berubah', () => {
   it('tanpa layout → bagan pohon, tanpa kartu ringkas maupun band', () => {
     const html = render(<StrukturChart roots={TREE} label={LABEL} hrefFor={hrefFor} />);
     expect(count(html, 'data-side=')).toBe(0);

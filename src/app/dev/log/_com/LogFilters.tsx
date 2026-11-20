@@ -1,6 +1,8 @@
 'use client';
 import { Button, Group, TextInput } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
+// CSS dates diimpor di pemakai, bukan globals.css (render-blocking); /dev/log di luar layout admin.
+import '@mantine/dates/styles.css';
 import { useDebouncedCallback } from '@mantine/hooks';
 import { IconCalendar, IconSearch, IconX } from '@tabler/icons-react';
 import { useState } from 'react';

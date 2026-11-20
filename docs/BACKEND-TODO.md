@@ -419,3 +419,43 @@ Konteks: `docs/decisions/2026-11-13-jenna-public-chat.md`.
 - [x] **Navbar publik: submenu Arah Kebijakan Pembangunan Desa & Produk Hukum** — selesai Batch 2 (2026-11-18, `feature/lomba-batch-2`): dua entri di `src/con/navbar-list-menu.ts` tepat setelah Layanan (tampil default). Dokumen perencanaan pindah dari Monev ke `/pemerintahan/arah-kebijakan-pembangunan-desa` (jenis RPJM, RKP, APBDES, PELAPORAN_APBDES; Berita Acara hanya bila ada dokumen); Monev menyisakan kartu tautan. `BERITA_ACARA_MUSYAWARAH` tetap sah di DB/admin (juknis tidak memintanya).
 
 - [ ] **Arah Kebijakan & Produk Hukum (Batch 2):** komentar `jenis` di `prisma/schema.prisma` (model `DokumenPerencanaan`) masih menyebut 3 nilai; `PUT /api/desa/produkhukum/reorder` ada tetapi belum punya UI admin (urutan hanya pemutus seri tahun sama); tab publik berlabel "RKPDes" sementara label lib/admin "RKP Desa"; link lama `/pemerintahan/monev-pembangunan#dokumen-perencanaan` kini hanya membuka puncak Monev.
+
+## Indeks Desa Membangun / IDM (2026-11-19, `feature/indeks-desa-idm`; temuan lomba T11)
+
+- [x] **Submenu "Indeks Desa" di menu Pemerintahan** — struktur selesai: tabel `IndeksDesa` (migrasi `20261119161000_indeks_desa`), API `/api/desa/indeksdesa`, admin `/admin/pemerintahan/indeks-desa`, halaman publik `/pemerintahan/indeks-desa`. Halaman publik menampilkan keadaan kosong sampai data diisi.
+- [ ] **Isi data IDM Desa Darmasaba** (skor IDM/IKS/IKE/IKL + status per tahun, dari dokumen Kemendesa lewat Google Drive pihak desa) lewat admin; setelah terisi, perbarui T11 di `docs/penilaian-lomba-website-desa-2027.md`. Tidak ada seed.
+- [ ] **Verifikasi tahun IDM terawal & jumlah desimal:** batas tahun 2015-2100 (`TAHUN_IDM_MIN`) dan tampilan skor 4 desimal (`SKOR_TAMPIL_DESIMAL`) diasumsikan dari praktik IDM Kemendesa, belum dicek ke dokumen resmi.
+
+## Tim Pengelola Website & Jam Layanan (2026-11-20, `feature/tim-pengelola-jam-layanan`)
+
+- [x] **Tim Redaksi (juknis 8.3) & `KontakDesa.jamLayanan` (juknis 3.4)** — struktur selesai: migrasi `20261120130000_tim_pengelola_jam_layanan`, API `/api/desa/timpengelola`, tab admin "Tim Redaksi", footer menampilkan nomor SK + tautan PDF; lihat `docs/DATABASE.md`.
+- [ ] **Isi data (admin):** nomor SK, tanggal, PDF SK, dan daftar anggota dari Keputusan Perbekel No. 181 Tahun 2026 (12 Januari 2026) lewat tab Tim Redaksi; isi Jam Layanan di tab Kontak Desa. Tidak ada seed.
+- [ ] **Penempatan daftar anggota di publik** menunggu keputusan user: endpoint publik sengaja tidak memuat anggota, jadi menampilkannya butuh keputusan penempatan + perubahan kontrak publik (field baru, bukan membuka endpoint admin).
+- [ ] **Jam kantor di beranda masih hardcoded di kode** (terverifikasi 2026-11-20): `landing.logic.ts` memuat `FULL_DAY_HOURS` (07:30–15:30, Senin–Kamis) dan `FRIDAY_HOURS` (07:30–12:00) yang dipakai `getWorkStatus`/`HeroInfo`, **bukan** data DB. Belum disambungkan ke `KontakDesa.jamLayanan` (teks bebas, tak bisa diparse jadi jam buka/tutup); usul: kolom jam terstruktur bila status Buka/Tutup ingin dikelola admin, atau minimal samakan teks agar tidak saling bertentangan.
+
+## Lembaga & Komunitas (2026-11-20, `feature/lembaga-komunitas`; juknis lomba butir 7.4)
+
+- [x] **Submenu "Lembaga & Komunitas" di menu Pemerintahan** — struktur selesai: tabel `LembagaKomunitas` (migrasi `20261120140000_lembaga_komunitas`), API `/api/desa/lembagakomunitas`, admin `/admin/pemerintahan/lembaga-komunitas` (cari, filter jenis, paginasi, foto), halaman publik `/pemerintahan/lembaga-komunitas` (dikelompokkan per jenis; keadaan kosong sampai data diisi).
+- [ ] **Isi data lembaga & komunitas Desa Darmasaba** (PPL, STT, PKK, dll beserta ketua, kontak lembaga, foto) lewat admin; tidak ada seed.
+- [ ] **Hapus = soft-delete tanpa panel Sampah:** baris yang dihapus lewat CMS hanya tersembunyi (`isActive=false`) dan belum ada UI pemulihan (pemulihan lewat DB). Pilih: tambah panel Sampah seperti 4 fitur koleksi, atau ganti jadi hapus permanen seperti Produk Hukum/Indeks Desa.
+- [ ] **Urutan hanya angka di form:** belum ada UI seret-urut (`PUT reorder` seperti Produk Hukum tidak dibuat); pemutus seri dalam satu jenis diisi manual lewat kolom Urutan.
+- [ ] **Pembantu `positiveInt` ganda:** `find-many.ts` Lembaga & Komunitas memakai salinan lokal yang sama dengan Produk Hukum dan Indeks Desa (tiga salinan); layak diekstrak ke satu util API bersama.
+
+## Performa beranda (2026-11-19, v0.1.329 `tasks/performance/beranda-quick-wins`)
+
+Dari PageSpeed prod (mobile 68, LCP 6,6 s). Bagian frontend sudah dikerjakan di v0.1.329 (gambar seukuran tampil, logo WebP, CSS global dirampingkan, fetch section beranda menunggu viewport, musik on-demand). Butir di bawah ini butuh API, DB, atau infra. Rencana lengkap ada di `MIND/PLAN/plan-performance.md` (lokal).
+
+- [ ] **Data hero dirender di server (dampak LCP terbesar)** (terverifikasi).
+  - Masalah: foto Perbekel (elemen LCP) baru muncul setelah JS → hydrate → `GET /api/landingpage/pejabatdesa/edit`. Lighthouse: tidak ditemukan di HTML awal; 70% LCP (±6 s) adalah "load delay".
+  - Lokasi: `src/app/(public)/page.tsx` (`'use client'`), `landing-page/use-landing-data.ts:35-45`, handler `_lib/landing_page/profile/pejabat-desa/findUnique.ts` (id baris memang literal `"edit"`).
+  - Usul: helper server `src/lib/pejabat-desa.server.ts` (pola `menu-visibility.server.ts`: `unstable_cache` + tag, `revalidateTag` di `pejabat-desa/updt.ts`) yang membaca `pejabatDesa` + `image` (dan media sosial hero). Frontend lalu mengoper hasilnya sebagai `initialProfile` ke `LandingPage`, sehingga `<img fetchpriority="high">` ada di HTML awal. Pakai query yang sama dengan handler API, jangan diduplikasi.
+- [ ] **`/api/img/:name?size=` me-resize ulang di setiap cache miss Cloudflare** (terverifikasi).
+  - Lokasi: `_lib/img.ts:58-90`. Tiap miss = `minio.getObject` penuh + `sharp`; `IMAGE_CACHE_CONTROL` `s-maxage=86400`, jadi edge kedaluwarsa tiap hari. Respons cold ±2 s, terasa pada gambar di atas lipatan.
+  - Usul: simpan varian hasil resize (mis. `image/<size>/<name>` di MinIO) dan layani dari sana, atau naikkan `s-maxage` bila nama berkas gambar dijamin tidak pernah ditimpa (cek dulu di alur upload admin).
+- [ ] **HTML publik `no-store`, TTFB ±470 ms** (perlu dicek ulang).
+  - Lokasi: `src/app/(public)/layout.tsx:14` `await connection()` (sejak `63a19b82`, visibilitas menu) membuat setiap halaman publik dirender dinamis per request, padahal `getMenuVisibilityOverrides` sudah di-cache dengan tag.
+  - Usul: evaluasi apakah `connection()` masih perlu. Dugaan alasannya: build Docker tanpa DB. Kalau bisa diganti render statis/ISR yang dibuang lewat `revalidateTag(MENU_VISIBILITY_TAG)`, TTFB dan FCP turun di semua halaman.
+- [ ] **Indeks Kepuasan beranda menarik 1.000 baris responden** (terverifikasi).
+  - Lokasi: `kepuasan.source.ts:22` (`responden/ringkasan?limit=RESPONDEN_CHART_LIMIT`, `kepuasan.meta.ts:45` = 1000), dan grafik dihitung di browser.
+  - Usul: endpoint agregat (hitungan per bulan/kategori) dari server. Kini fetch-nya sudah menunggu section dekat viewport, tapi payload tetap membesar seiring jumlah responden.
+- [ ] **Cloudflare (dashboard, bukan kode)**: Email Obfuscation menyisipkan `email-decode.min.js` dan beacon Web Analytics di setiap halaman, dan Lighthouse menandai cache-nya pendek. Matikan Email Obfuscation bila tidak dibutuhkan.

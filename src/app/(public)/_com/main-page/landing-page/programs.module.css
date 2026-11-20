@@ -3,9 +3,8 @@
  * sisanya digeser dengan scroll bawaan browser (scroll-snap) — seret, trackpad, atau tombol panah.
  * Tanpa putar otomatis: galeri Layanan & Potensi di bawahnya sudah bergerak sendiri.
  * Variabel --gutter, --ink, --muted, --brand, --tile, --skeleton, --shadow-tint diwarisi dari .section (landing.module.css).
- * Tema gelap (keputusan user, varian C): ubin jadi permukaan terang penuh #D9E1EA (= pita putih gelap --ribbon-9)
- * dengan teks gelap, supaya logo transparan berteks gelap tetap terbaca tanpa kotak di dalam kotak.
- * Ubin itu pulau terang: nilainya polos di @mixin dark, bukan light-dark() (itu transform postcss, bukan native).
+ * Tema gelap (keputusan user): ubin gelap --tile, sama dengan ubin logo Badung/desa di hero; logo langsung
+ * di atas ubin tanpa pelat terang (pelat di dalam ubin gelap terlihat kotak dalam kotak).
  */
 
 /* Terdaftar sebagai <length> supaya lebar gradasi tepi bisa bertransisi (tanpa ini berganti seketika). */
@@ -140,8 +139,7 @@
 }
 
 .tileSkeleton {
-  /* Gelap: semburat warna ubin terang, redup supaya kerangka tidak silau sebelum ubin asli muncul. */
-  background: light-dark(rgb(255 255 255 / 55%), rgb(217 225 234 / 14%));
+  background: light-dark(rgb(255 255 255 / 55%), rgb(255 255 255 / 8%));
 }
 
 .tile {
@@ -156,12 +154,6 @@
   transition:
     transform 200ms ease,
     box-shadow 200ms ease;
-
-  /* Pulau terang di tema gelap: logo transparan langsung di atas ubin, tanpa pelat terpisah. */
-  @mixin dark {
-    background: #d9e1ea;
-    color: #1d1d1f;
-  }
 }
 
 .tile .tileLogo,
@@ -171,8 +163,7 @@
   height: 72px;
 }
 
-/* Pengganti logo yang tidak ada / gagal dimuat: inisial nama program. Gelap memakai brand terang polos
-   karena ubinnya terang (var(--brand) di gelap adalah biru muda untuk latar gelap). */
+/* Pengganti logo yang tidak ada / gagal dimuat: inisial nama program. */
 .tileInitials {
   display: flex;
   align-items: center;
@@ -182,10 +173,6 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--brand);
-
-  @mixin dark {
-    color: #0a4e78;
-  }
 }
 
 .tileName {

@@ -11,6 +11,8 @@
   --muted: var(--c-muted);
   --tile: var(--c-tile-alt);
   --placeholder: var(--c-placeholder);
+  /* Pita kerangka teks (_com/skeleton-text) ikut warna placeholder ikon, termasuk penggantinya di tema gelap. */
+  --skeleton-bg: var(--placeholder);
   --brand: var(--c-brand);
   --radius: 18px;
   background: var(--c-bg-alt);

@@ -1,6 +1,6 @@
 /** Logika murni tautan WhatsApp tindak lanjut permohonan surat keterangan (pesan hanya nama & jenis surat). */
 import { buildWaUrl, normalizeWaNumber } from '@/app/(public)/(pages)/ekonomi/umkm/_lib/pesanan';
-import { PETUGAS_LAYANAN_WA } from '@/con/layanan-whatsapp';
+import { phoneInfo, type PhoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic';
 import { LAYANAN_DETAIL_TEXT as T } from './layanan-detail.text';
 
 // Batas panjang bagian pesan: nama/kategori bisa sampai ribuan karakter di API, tautan wa.me harus tetap wajar.
@@ -17,8 +17,19 @@ export function buildPermohonanWaMessage({ nama, kategoriNama }: PermohonanWaInp
   return T.waPesan(cleanPart(nama), cleanPart(kategoriNama) || T.waKategoriDefault);
 }
 
-/** URL wa.me ke Petugas Layanan Desa dengan pesan awal; null bila nomor petugas tidak valid. */
-export function buildPermohonanWaUrl(input: PermohonanWaInput): string | null {
-  const waNumber = normalizeWaNumber(PETUGAS_LAYANAN_WA.nomor);
+/** Apakah `KontakDesa.whatsapp` (sumber tunggal nomor petugas) berupa nomor seluler yang bisa dipakai wa.me. */
+export function hasPetugasWa(whatsapp?: string | null): boolean {
+  return normalizeWaNumber(whatsapp) !== null;
+}
+
+/** URL wa.me ke Petugas Layanan Desa dengan pesan awal; null bila `whatsapp` kosong atau bukan nomor seluler valid. */
+export function buildPermohonanWaUrl(input: PermohonanWaInput, whatsapp?: string | null): string | null {
+  const waNumber = normalizeWaNumber(whatsapp);
   return waNumber ? buildWaUrl(waNumber, buildPermohonanWaMessage(input)) : null;
+}
+
+/** Nomor telepon kantor desa (`KontakDesa.telepon`) untuk fallback tanpa WhatsApp; null bila kosong atau bukan nomor yang bisa ditelepon. */
+export function teleponKantor(telepon?: string | null): PhoneInfo | null {
+  const info = phoneInfo(telepon);
+  return info && info.kind !== 'service' ? info : null;
 }

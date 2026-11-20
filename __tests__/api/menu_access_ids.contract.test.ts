@@ -47,6 +47,12 @@ const EXPECTED_IDS: Record<string, string[]> = {
     'desa.struktur-perangkat-desa',
     // 2026-11-18: menu baru Produk Hukum (aditif, tanpa data-migration: pemegang ID submenu dicentang manual di Menu Access).
     'desa.produk-hukum',
+    // 2026-11-19: submenu Indeks Desa (temuan lomba T11; IDM Kemendesa). Murni penambahan ID di section Desa; tidak ada ID
+    // lama yang berubah/dihapus, jadi snapshot diperbarui karena menu baru (bukan untuk menghijaukan regresi), tanpa migrasi data.
+    'desa.indeks-desa',
+    // 2026-11-20: submenu Lembaga & Komunitas (juknis lomba butir 7.4). Murni penambahan ID di section Desa; tidak ada ID
+    // lama yang berubah/dihapus, jadi snapshot diperbarui karena menu baru (bukan untuk menghijaukan regresi), tanpa migrasi data.
+    'desa.lembaga-komunitas',
   ],
   'Kesehatan': [
     'kesehatan.posyandu',

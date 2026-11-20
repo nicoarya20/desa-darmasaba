@@ -2,7 +2,7 @@
 'use client'
 import colors from '@/con/colors';
 import { Box, ScrollArea, Stack, Tabs, TabsList, TabsPanel, TabsTab, Title } from '@mantine/core';
-import { IconCalendar, IconMapPin, IconUser, IconUsers } from '@tabler/icons-react';
+import { IconCalendar, IconMapPin, IconPhone, IconUser, IconUsers, IconUsersGroup } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -33,6 +33,18 @@ function LayoutTabsDetail({ children }: { children: React.ReactNode }) {
             value: "wilayahdesa",
             href: "/admin/pemerintahan/profil/wilayah-desa",
             icon: <IconMapPin size={18} stroke={1.8} />
+        },
+        {
+            label: "Kontak Desa",
+            value: "kontakdesa",
+            href: "/admin/pemerintahan/profil/kontak-desa",
+            icon: <IconPhone size={18} stroke={1.8} />
+        },
+        {
+            label: "Tim Redaksi",
+            value: "timredaksi",
+            href: "/admin/pemerintahan/profil/tim-redaksi",
+            icon: <IconUsersGroup size={18} stroke={1.8} />
         }
     ];
 

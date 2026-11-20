@@ -33,8 +33,8 @@ type TilesProps = {
 
 /**
  * Ubin program `#f5f5f7` (3/2/1 kolom), seluruh ubin = tautan detail: ikon garis, judul, ringkasan, "Selengkapnya ›".
- * Ubin ber-logo (`.tileLogo`): pelat logo bertinggi tetap; ponsel jadi baris (pelat kiri, teks kanan); gelap = pulau
- * terang #d9e1ea. Ubin ikon tidak terpengaruh varian ini.
+ * Ubin ber-logo (`.tileLogo`): pelat logo bertinggi tetap; ponsel jadi baris (pelat kiri, teks kanan); gelap = ubin
+ * gelap --tile dengan logo tanpa pelat. Ubin ikon tidak terpengaruh varian ini.
  */
 export function ProgramTiles({ items, label, moreLabel }: TilesProps) {
   return (

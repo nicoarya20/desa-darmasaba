@@ -4,6 +4,10 @@ import layananonlineDesa from '@/app/admin/(dashboard)/_state/inovasi/layanan-on
 import ApiFetch from '@/lib/api-fetch';
 import { Box, Button, Center, Group, Image, Modal, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
+// CSS Dropzone + editor (CreateEditor = @mantine/tiptap) diimpor di sini, bukan globals.css: modal ini dimuat dynamic,
+// jadi CSS-nya ikut chunk modal dan tidak render-blocking di semua halaman.
+import '@mantine/dropzone/styles.css';
+import '@mantine/tiptap/styles.css';
 import { IconImageInPicture, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';

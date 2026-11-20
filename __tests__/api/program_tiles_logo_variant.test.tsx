@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Ubin program bersama, varian ber-logo (Program Inovasi): kelas `.tileLogo` hanya untuk item ber-logo/inisial
-// (ubin ikon Program Kreatif & Penghijauan tidak berubah), pelat logo/inisial, dan CSS pulau terang gelap (varian C)
-// tanpa light-dark(). jsdom rusak di repo ini, jadi renderToStaticMarkup + baca CSS sumber.
+// (ubin ikon Program Kreatif & Penghijauan tidak berubah), pelat logo/inisial, dan tema gelap = ubin gelap --tile
+// dengan logo tanpa pelat (keputusan user 2026-11-20). jsdom rusak di repo ini, jadi renderToStaticMarkup + baca CSS sumber.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { MantineProvider } from '@mantine/core';
@@ -63,22 +63,17 @@ describe('ProgramTiles: varian ber-logo', () => {
   });
 });
 
-describe('program-tiles.module.css: pelat rata tinggi, gelap varian C, baris ponsel', () => {
+describe('program-tiles.module.css: pelat rata tinggi, gelap tanpa pelat, baris ponsel', () => {
   it('pelat logo 16:9 dengan gambar absolut (tinggi asli gambar tidak melebarkan pelat)', () => {
     expect(CSS).toMatch(/\.logo \{[^}]*position: relative;[^}]*aspect-ratio: 16 \/ 9;/);
     expect(CSS).toMatch(/\.logo \.logoImg \{\s*position: absolute;/);
   });
 
-  it('pulau terang tanpa light-dark(); alias nilai polos terang di @mixin dark .tileLogo', () => {
-    expect(CSS).not.toContain('light-dark(');
-    const island = CSS.slice(CSS.indexOf('.tileLogo {'), CSS.indexOf('\n}', CSS.indexOf('.tileLogo {')));
-    expect(island).toMatch(/@mixin dark \{\s*--tile: #d9e1ea;\s*--ink: #1d1d1f;\s*--muted: #515154;\s*--brand: #0a4e78;\s*\}/);
-    expect(CSS).toMatch(/\.tileLogo \.title > span \{\s*@mixin dark \{\s*--reveal-to: #0a4e78;/);
-    expect(CSS).toMatch(/\.tileLogo \.more > span \{\s*@mixin dark \{\s*--reveal-to: #1c6ea4;/);
-  });
-
-  it('cincin fokus ubin ber-logo di gelap memakai brand tema (digambar di atas latar halaman, bukan di pulau)', () => {
-    expect(CSS).toMatch(/\.tileLogo:focus-visible \{\s*@mixin dark \{\s*outline-color: var\(--c-brand\);/);
+  it('gelap: ubin ber-logo memakai token ubin halaman (tanpa pulau terang), pelat logo transparan', () => {
+    expect(CSS).not.toMatch(/#d9e1ea/i);
+    expect(CSS).not.toMatch(/\.tileLogo \{\s*@mixin dark/);
+    expect(CSS).not.toMatch(/--reveal-to/);
+    expect(CSS).toMatch(/\.logo \{[^}]*background: #fff;\s*@mixin dark \{\s*background: transparent;/);
   });
 
   it('ponsel ≤734px: hanya .tileLogo yang jadi baris dengan pelat 88px; aturan .tile ponsel tetap', () => {

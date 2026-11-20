@@ -1,4 +1,6 @@
 import { DonutChart } from "@mantine/charts";
+// CSS grafik diimpor di pemakai, bukan globals.css: tidak lagi render-blocking di halaman tanpa grafik.
+import "@mantine/charts/styles.css";
 import { donutSlices, donutStrokeWidth, formatShare, sumValues, type ChartSlice } from "../kepuasan.logic";
 import s from "../kepuasan.module.css";
 import { KEPUASAN_TEXT } from "../kepuasan.text";

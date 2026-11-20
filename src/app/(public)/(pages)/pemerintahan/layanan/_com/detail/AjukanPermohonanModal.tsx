@@ -1,4 +1,5 @@
 'use client';
+import { useKontakDesa } from '@/app/(public)/_com/use-kontak-desa';
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import { Button, Modal, Select, Stack, TextInput } from '@mantine/core';
 import { useEffect, useState } from 'react';
@@ -6,7 +7,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import s from './layanan-detail.module.css';
 import { LAYANAN_DETAIL_TEXT as T } from './layanan-detail.text';
-import { buildPermohonanWaUrl } from './permohonan-whatsapp.logic';
+import { buildPermohonanWaUrl, teleponKantor, type PermohonanWaInput } from './permohonan-whatsapp.logic';
 import { PermohonanTersimpan } from './PermohonanTersimpan';
 
 type Props = { opened: boolean; onClose: () => void };
@@ -21,8 +22,10 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
   // Tandai field yang sudah disentuh (blur) agar pesan error tidak langsung
   // merah saat modal pertama kali dibuka.
   const [touched, setTouched] = useState(UNTOUCHED);
-  // Tautan WhatsApp setelah simpan sukses; non-null = modal menampilkan keadaan sukses, bukan form.
-  const [tersimpan, setTersimpan] = useState<{ waHref: string | null } | null>(null);
+  // Nama & jenis surat setelah simpan sukses; non-null = modal menampilkan keadaan sukses, bukan form.
+  const [tersimpan, setTersimpan] = useState<PermohonanWaInput | null>(null);
+  // Nomor petugas hanya dari Kontak Desa (CMS); dibaca saat render agar kontak yang baru selesai dimuat ikut terpakai.
+  const { kontak } = useKontakDesa();
 
   useEffect(() => {
     void stateLayananDesa.suratKeterangan.findManyAll.load();
@@ -100,7 +103,7 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
     // Gagal (toast sudah tampil di create()) → biarkan modal terbuka berisi input warga agar bisa dikirim ulang.
     if (!saved) return;
     const kategoriNama = state.suratKeterangan.findManyAll.data?.find((item) => item.id === kategoriId)?.name;
-    setTersimpan({ waHref: buildPermohonanWaUrl({ nama, kategoriNama }) });
+    setTersimpan({ nama, kategoriNama });
     resetForm();
   };
 
@@ -122,7 +125,11 @@ export function AjukanPermohonanModal({ opened, onClose }: Props) {
       classNames={{ title: s.modalTitle }}
     >
       {tersimpan ? (
-        <PermohonanTersimpan waHref={tersimpan.waHref} onClose={handleClose} />
+        <PermohonanTersimpan
+          waHref={buildPermohonanWaUrl(tersimpan, kontak?.whatsapp)}
+          telepon={teleponKantor(kontak?.telepon)}
+          onClose={handleClose}
+        />
       ) : (
         <Stack gap="sm">
           <TextInput

@@ -92,6 +92,16 @@ const navbarListMenu = [
                 href: "/pemerintahan/produk-hukum"
             },
             {
+                id: "2.13",
+                name: "Indeks Desa",
+                href: "/pemerintahan/indeks-desa"
+            },
+            {
+                id: "2.14",
+                name: "Lembaga & Komunitas",
+                href: "/pemerintahan/lembaga-komunitas"
+            },
+            {
                 id: "2.7",
                 name: "Prestasi dan Penghargaan",
                 href: "/prestasi-desa"

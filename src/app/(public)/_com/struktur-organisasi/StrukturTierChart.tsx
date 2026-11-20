@@ -1,6 +1,6 @@
 import { StrukturCard } from './StrukturCard';
 import { cardsOf, toneForDepth, type OrgNode } from './struktur.logic';
-import type { TierBand, TierPlacement } from './struktur-tiers.logic';
+import type { TierBand, TierPlacement, TierTrunkBand } from './struktur-tiers.logic';
 import c from './struktur-chart.module.css';
 import s from './struktur-tiers.module.css';
 
@@ -30,6 +30,19 @@ function TierUnitItem({ placement, hrefFor }: { placement: TierPlacement; hrefFo
   );
 }
 
+/** Kartu jabatan di batang (band `trunk`): band-band sesudahnya menggantung di bawahnya. */
+function TierTrunkItem({ band, hrefFor }: { band: TierTrunkBand; hrefFor: HrefFor }) {
+  return (
+    <ul className={s.band} data-trunk>
+      <li className={s.trunk}>
+        {band.cards.map((item) => (
+          <StrukturCard key={item.key} item={item} tone={toneForDepth(1)} size="xs" hrefFor={hrefFor} />
+        ))}
+      </li>
+    </ul>
+  );
+}
+
 type Props = {
   root: OrgNode;
   /** Rencana band dari `planTierBands(root)`. */
@@ -39,9 +52,10 @@ type Props = {
 };
 
 /**
- * Bagan bertingkat (Perangkat Desa): kartu akar, lalu satu batang tegak dengan klaster ≤3 kartu di kiri/kanan
- * per band (aturan susun di `struktur-tiers.logic.ts`). Lebar isi menentukan mode (struktur-tiers.module.css):
- * batang tengah dua sisi, rel kiri klaster berjajar, atau rel kiri bertumpuk; tanpa geser horizontal.
+ * Bagan bertingkat (Perangkat Desa & PPID): kartu akar, lalu satu batang tegak dengan klaster ≤3 kartu di kiri/kanan
+ * per band, atau kartu jabatan di batang itu sendiri (band `trunk`); aturan susun di `struktur-tiers.logic.ts`.
+ * Lebar isi menentukan mode (struktur-tiers.module.css): batang tengah dua sisi, rel kiri klaster berjajar, atau
+ * rel kiri bertumpuk; tanpa geser horizontal.
  * Tiap band = satu daftar klaster (urut pangkat) agar pembaca layar membaca dari atas ke bawah.
  */
 export function StrukturTierChart({ root, bands, label, hrefFor }: Props) {
@@ -54,13 +68,17 @@ export function StrukturTierChart({ root, bands, label, hrefFor }: Props) {
               <StrukturCard key={item.key} item={item} tone={toneForDepth(0)} size="lg" hrefFor={hrefFor} fullName />
             ))}
           </div>
-          {bands.map((band) => (
-            <ul key={band.key} className={s.band}>
-              {band.units.map((placement) => (
-                <TierUnitItem key={placement.unit.key} placement={placement} hrefFor={hrefFor} />
-              ))}
-            </ul>
-          ))}
+          {bands.map((band) =>
+            band.kind === 'trunk' ? (
+              <TierTrunkItem key={band.key} band={band} hrefFor={hrefFor} />
+            ) : (
+              <ul key={band.key} className={s.band}>
+                {band.units.map((placement) => (
+                  <TierUnitItem key={placement.unit.key} placement={placement} hrefFor={hrefFor} />
+                ))}
+              </ul>
+            ),
+          )}
         </li>
       </ul>
     </div>

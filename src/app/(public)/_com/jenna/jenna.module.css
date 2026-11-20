@@ -3,8 +3,8 @@
    (gradien 12%) di atas kaca gelap 80%, teks putih. Kaca terang di tema gelap dulu menjadi lempeng abu
    besar yang menyilaukan di atas halaman hitam (keluhan user 2026-11-19), jadi diganti varian A ini.
    Kontras teks diukur di latar terburuk: terang (kaca di atas putih) ink 6,7:1 · ink-2 4,9:1;
-   gelap (di atas putih / hitam) ink 6,4:1 / 12,7:1 · ink-2 4,6:1 / 8,4:1 · teks di pil pengunjung
-   4,6:1 / 8,2:1. --jenna-glass-bg boleh berlapis (gradien + warna): semua pemakainya `background:`.
+   gelap (di atas putih / hitam) ink 6,4:1 / 12,7:1 · ink-2 4,6:1 / 8,4:1. Pil pengunjung biru pekat
+   (bukan kaca) jadi kontrasnya tetap 4,7:1 di kedua tema. --jenna-glass-bg boleh berlapis (gradien + warna): semua pemakainya `background:`.
    Hanya `backdrop-filter` (Lightning CSS menambah prefix -webkit-). */
 .glass {
   --jenna-glass-bg: rgba(28, 28, 30, 0.72);
@@ -176,14 +176,17 @@
   padding: 8px 18px 18px;
 }
 
-/* Pesan pengunjung: pil translusen lebih gelap dari kaca, rata kanan. */
+/* Pesan pengunjung: gelembung biru gaya iMessage, rata kanan (masukan pengguna 2026-11-20). Biru pekat
+   #0071e3, bukan #007aff/#0a84ff iMessage: teks putih 14px di atas biru iOS hanya 4,0:1 / 3,6:1, di bawah
+   AA 4,5:1; #0071e3 = 4,7:1. Pekat (tidak translusen), jadi nilainya sama di kedua tema. */
 .msgUser {
+  --jenna-user-bubble: #0071e3; /* tema-tetap: biru gelembung pengunjung, kontras 4,7:1 dgn putih */
   align-self: flex-end;
   max-width: 85%;
   padding: 8px 14px;
   border-radius: 20px;
-  background: var(--jenna-glass-fill);
-  color: var(--jenna-glass-ink);
+  background: var(--jenna-user-bubble);
+  color: #fff; /* tema-tetap: teks putih di atas biru pekat */
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }

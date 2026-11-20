@@ -1,8 +1,9 @@
 // @vitest-environment node
 // next-view-transitions di-patch (patches/next-view-transitions@0.3.5.patch): `ready` milik
 // transisi yang di-skip browser — dibatalkan transisi baru (AbortError "Transition was skipped")
-// atau DOM update melewati batas waktu (TimeoutError) — tidak boleh jadi unhandledrejection;
-// error lain tetap harus terlihat.
+// atau DOM update melewati batas waktu (TimeoutError), atau tab disembunyikan saat navigasi
+// (InvalidStateError + document hidden) — tidak boleh jadi unhandledrejection; error lain tetap
+// harus terlihat.
 // Patch kedua: popstate yang hanya mengubah query (menutup overlay `/?program=x` → `/`) tidak
 // memulai transisi, karena transisi hanya dilepas saat pathname/hash berubah (layar beku ~4 dtk).
 // Catatan: jsdom gagal start di repo ini, jadi router diambil lewat renderToStaticMarkup dan
@@ -67,14 +68,14 @@ function domException(name: string, message: string): Error {
 }
 
 // Pasang stub startViewTransition yang `ready`-nya ditolak dengan `reason`.
-function stubStartViewTransition(reason: Error) {
+function stubStartViewTransition(reason: Error, visibilityState: DocumentVisibilityState = 'visible') {
   const startViewTransition = vi.fn(() => ({
     ready: Promise.reject(reason),
     finished: Promise.resolve(),
     updateCallbackDone: Promise.resolve(),
     skipTransition: vi.fn(),
   }));
-  vi.stubGlobal('document', { startViewTransition });
+  vi.stubGlobal('document', { startViewTransition, visibilityState });
   return startViewTransition;
 }
 
@@ -143,9 +144,25 @@ describe('next-view-transitions: transisi yang dilewati', () => {
     expect(unhandled).toEqual([]);
   });
 
-  it('error selain AbortError/TimeoutError tetap dilaporkan sebagai unhandled rejection', async () => {
+  it('transisi yang di-skip karena tab disembunyikan (InvalidStateError, hidden) tidak menghasilkan unhandled rejection', async () => {
+    // Pindah tab/minimize saat navigasi masih berjalan (mis. kompilasi route di dev): spec
+    // melewati transisi di dokumen tersembunyi. Navigasi tetap selesai tanpa animasi.
+    const startViewTransition = stubStartViewTransition(
+      domException('InvalidStateError', 'Transition was aborted because of invalid state. Document hidden'),
+      'hidden',
+    );
+    const router = captureRouter();
+
+    router.push('/berita');
+    await flushRejections();
+
+    expect(startViewTransition).toHaveBeenCalledTimes(1);
+    expect(unhandled).toEqual([]);
+  });
+
+  it('InvalidStateError saat dokumen terlihat (mis. view-transition-name ganda) tetap dilaporkan', async () => {
     const invalidState = domException('InvalidStateError', 'Transition was aborted because of invalid state');
-    stubStartViewTransition(invalidState);
+    stubStartViewTransition(invalidState, 'visible');
     const router = captureRouter();
 
     router.replace('/berita');

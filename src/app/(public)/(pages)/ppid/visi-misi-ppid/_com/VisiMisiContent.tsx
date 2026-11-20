@@ -5,9 +5,7 @@ import { parsePlainListItems } from '../../_com/cms-list.logic';
 import shared from '../../_com/ppid-sections.module.css';
 import s from './visi-misi.module.css';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
-
-/** Lambang desa di kepala kartu. */
-const LOGO_SRC = '/darmasaba-icon.png';
+import { LOGO_DESA_LARGE_SRC } from '@/app/(public)/_com/logo-desa.meta';
 
 type Props = {
   /** HTML visi dari editor admin. */
@@ -37,7 +35,7 @@ export function VisiMisiContent({ visi, misi, labels, moto }: Props) {
   const id = useId();
   // Isi yang bukan satu daftar teks polos (null) dirender apa adanya agar tidak ada yang hilang.
   const misiItems = parsePlainListItems(misi);
-  const logo = <Image className={s.logo} src={LOGO_SRC} alt={labels.logoAlt} />;
+  const logo = <Image className={s.logo} src={LOGO_DESA_LARGE_SRC} alt={labels.logoAlt} />;
 
   return (
     <div className={s.card}>
