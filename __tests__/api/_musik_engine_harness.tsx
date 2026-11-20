@@ -1,11 +1,9 @@
 // Harness test mesin pemutar Musik Desa (bukan file test; dipakai musik_engine_*.test.tsx).
-// jsdom rusak di repo ini (cssstyle TLA), jadi MusicProvider dipasang lewat react-dom/client di
-// environment node dengan wadah tiruan minimal. Komponen uji hanya me-render `null`, jadi React tidak
-// pernah membuat elemen DOM; yang diuji = state & efek mesin yang sebenarnya, bukan markup.
-import { act, type ReactNode } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
+// MusicProvider dipasang lewat helpers/node-react-root (react-dom/client di environment node, jsdom rusak).
+import { act, useEffect } from 'react';
 import { vi } from 'vitest';
-import type { Musik } from '@/app/context/MusicContext';
+import { flush, installMinimalDom, mount, run } from '../helpers/node-react-root';
+import { useMusic, type Musik } from '@/app/context/MusicContext';
 
 /** Elemen audio tiruan: event dikirim manual oleh test, panggilan dicatat. test-only */
 export class FakeAudio extends EventTarget {
@@ -104,73 +102,31 @@ export const libraryReply = (songs: Musik[]): FetchReply => ({ body: { success: 
 /** Pasang global browser minimal (window, document, Audio, fetch, localStorage). */
 export function installBrowserStubs(replies: FetchReply[], storage = fakeStorage()) {
   FakeAudio.instances = [];
-  const win = Object.assign(new EventTarget(), {
-    HTMLIFrameElement: class {},
-    localStorage: storage,
-  });
-  vi.stubGlobal('window', win);
-  vi.stubGlobal('HTMLIFrameElement', win.HTMLIFrameElement);
-  vi.stubGlobal('document', {
-    nodeType: 9,
-    activeElement: null,
-    addEventListener() {},
-    removeEventListener() {},
-    defaultView: win,
-  });
+  const win = installMinimalDom({ localStorage: storage });
   vi.stubGlobal('Audio', FakeAudio);
   const queue = [...replies];
   const fetchMock = vi.fn(() => respond(queue.length > 1 ? queue.shift()! : queue[0]));
   vi.stubGlobal('fetch', fetchMock);
-  (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   return { win, storage, fetchMock };
 }
 
-/** Wadah tiruan untuk createRoot; tidak pernah diisi elemen karena komponen uji me-render null. */
-function fakeContainer() {
-  const container: Record<string, unknown> = {
-    nodeType: 1,
-    nodeName: 'DIV',
-    tagName: 'DIV',
-    childNodes: [],
-    firstChild: null,
-    addEventListener() {},
-    removeEventListener() {},
-    appendChild() {},
-    insertBefore() {},
-    removeChild() {},
-  };
-  container.ownerDocument = { ...(globalThis.document as object), documentElement: container };
-  return container as unknown as Element;
-}
+export { flush, mount, run };
 
-/** Render pohon React di wadah tiruan; `flush` menunggu promise (fetch, play) selesai di dalam act. */
-export async function mount(node: ReactNode) {
-  const root: Root = createRoot(fakeContainer());
-  await act(async () => root.render(node));
-  await flush();
-  return {
-    rerender: (next: ReactNode) => act(async () => root.render(next)),
-    unmount: () => act(async () => root.unmount()),
-  };
-}
-
-export async function flush() {
-  for (let i = 0; i < 5; i += 1) {
-    await act(async () => {
-      await Promise.resolve();
-    });
-  }
+/**
+ * Meniru MusikApp: minta pustaka setelah mount. Mesin sengaja tidak memuat pustaka sendiri (provider ada di root
+ * layout, muat saat mount = fetch di setiap halaman), jadi test yang butuh pustaka memasang ini di dalam provider.
+ */
+export function RequestLibrary() {
+  const { ensureMusikData } = useMusic();
+  useEffect(() => {
+    ensureMusikData();
+  }, [ensureMusikData]);
+  return null;
 }
 
 /** Kirim event audio di dalam act lalu tunggu promise turunan. */
 export async function fire(audio: FakeAudio, type: string) {
   await act(async () => audio.emit(type));
-  await flush();
-}
-
-/** Jalankan aksi mesin (playSong, playNext, ...) di dalam act. */
-export async function run(action: () => void) {
-  await act(async () => action());
   await flush();
 }
 

@@ -1,6 +1,7 @@
 "use client";
 import { IconChevronRight } from "@tabler/icons-react";
 import Link from "next/link";
+import { FETCH_ROOT_MARGIN, useNearViewport } from "../../lazy-load/use-near-viewport";
 import { SdgsCards, SdgsCardsSkeleton } from "./SdgsCards";
 import { SDGS_DETAIL_HREF } from "./sdgs.meta";
 import s from "./sdgs.module.css";
@@ -11,11 +12,13 @@ const TITLE_ID = "sdgs-desa-title";
 
 /** Section beranda SDGs Desa: empat tujuan berskor tertinggi + tautan ke halaman lengkap. */
 function SDGS() {
-  const { items, loading, failed } = useSdgsData();
+  // Fetch ditunda sampai section mendekati layar agar tidak berebut jaringan dengan foto hero (LCP).
+  const [sectionRef, near] = useNearViewport<HTMLElement>(FETCH_ROOT_MARGIN);
+  const { items, loading, failed } = useSdgsData(near);
   const empty = !loading && items.length === 0;
 
   return (
-    <section className={s.section} aria-labelledby={TITLE_ID}>
+    <section ref={sectionRef} className={s.section} aria-labelledby={TITLE_ID}>
       <div className={s.inner}>
         <header className={s.header}>
           <h2 id={TITLE_ID} className={s.title}>

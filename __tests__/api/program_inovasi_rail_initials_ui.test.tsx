@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Rel Program Inovasi di hero beranda: ubin tanpa logo menampilkan inisial nama (bukan ikon foto),
-// dan tema gelap memakai varian C (ubin terang penuh, tanpa pelat logo di dalam ubin).
+// dan tema gelap memakai ubin gelap --tile seperti ubin logo hero (logo tanpa pelat terang, keputusan user 2026-11-20).
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup; onError (logo gagal muat) dicek manual.
 import { MantineProvider } from '@mantine/core';
 import { readFileSync } from 'node:fs';
@@ -42,7 +42,7 @@ describe('HeroPrograms: pengganti logo', () => {
   });
 });
 
-describe('programs.module.css: tema gelap varian C', () => {
+describe('programs.module.css: tema gelap ubin gelap', () => {
   const css = readFileSync(
     path.resolve(__dirname, '../../src/app/(public)/_com/main-page/landing-page/programs.module.css'),
     'utf8',
@@ -60,12 +60,12 @@ describe('programs.module.css: tema gelap varian C', () => {
     throw new Error(`blok ${selector} tidak tertutup`);
   };
 
-  it('ubin gelap = permukaan terang polos dengan teks gelap (pulau terang, tanpa light-dark)', () => {
+  it('ubin gelap = --tile hero (sama dengan ubin logo Badung/desa), tanpa pulau terang', () => {
+    expect(css).toMatch(/\.tile,\s*\n\.tileSkeleton \{[^}]*background:\s*var\(--tile\)/);
     const tile = block('.tile');
-    const dark = tile.slice(tile.indexOf('@mixin dark'));
-    expect(dark).toMatch(/background:\s*#d9e1ea/i);
-    expect(dark).toMatch(/color:\s*#1d1d1f/i);
-    expect(dark).not.toContain('light-dark(');
+    expect(tile).not.toContain('@mixin dark');
+    expect(tile).toMatch(/color:\s*var\(--ink\)/);
+    expect(css).not.toMatch(/#d9e1ea|217 225 234/i);
   });
 
   it('pelat logo di dalam ubin sudah dihapus (tidak ada kotak dalam kotak)', () => {
@@ -73,12 +73,12 @@ describe('programs.module.css: tema gelap varian C', () => {
     expect(css).not.toContain('tileLogoEmpty');
   });
 
-  it('inisial: 72px, 600, brand; gelap brand terang polos karena ubin terang', () => {
+  it('inisial: 72px, 600, brand tema (biru muda di ubin gelap)', () => {
     const initials = block('.tileInitials');
     expect(initials).toMatch(/font-size:\s*28px/);
     expect(initials).toMatch(/font-weight:\s*600/);
     expect(initials).toMatch(/color:\s*var\(--brand\)/);
-    expect(initials.slice(initials.indexOf('@mixin dark'))).toMatch(/color:\s*#0a4e78/i);
+    expect(initials).not.toContain('@mixin dark');
     expect(css).toMatch(/\.tile \.tileLogo,\s*\n\.tileInitials \{[^}]*height:\s*72px/);
   });
 });

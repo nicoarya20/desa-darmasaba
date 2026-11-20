@@ -13,6 +13,7 @@ import { GotongRoyongBody } from '@/app/(public)/(pages)/lingkungan/gotong-royon
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import { KEGIATAN_PAGE_LIMIT } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan.meta';
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider>{node}</MantineProvider>).replace(/<style[\s\S]*?<\/style>/g, '');
@@ -36,7 +37,10 @@ describe('GotongRoyongBody', () => {
     const html = body({ status: 'loading' });
     expect(html).toContain('aria-busy="true"');
     expect(html).toContain('aria-label="Memuat kegiatan gotong royong"');
-    expect(html).toContain(kabar.placeholder);
+    // Kerangka KabarBerita = struktur kartu asli: 1 kartu utama + kartu kecil sebanyak sisa satu halaman.
+    expect(html.split(`class="${kabar.featured}"`).length - 1).toBe(1);
+    expect(html.split(`class="${kabar.card}"`).length - 1).toBe(KEGIATAN_PAGE_LIMIT - 1);
+    expect(html).not.toContain('href=');
   });
 
   it('siap (3 kegiatan stg): kartu utama + 2 kartu grid ke detail Gotong Royong, tanpa paginasi', () => {

@@ -14,7 +14,7 @@ export const STRUKTUR_SEARCH_DEBOUNCE = 300;
 export const LEAF_COLS = { base: 2, wide: 4 } as const;
 
 /**
- * Kartu maksimal satu klaster bagan bertingkat (Perangkat Desa, `layout="tiers"`): tingkat berisi 6 jabatan →
+ * Kartu maksimal satu klaster bagan bertingkat (Perangkat Desa & PPID, `layout="tiers"`): tingkat berisi 6 jabatan →
  * dua klaster 3 kartu di kiri & kanan batang. Lihat `struktur-tiers.logic.ts`.
  */
 export const TIER_CLUSTER_MAX = 3;

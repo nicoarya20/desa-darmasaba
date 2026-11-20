@@ -2,14 +2,11 @@
 
 /* ===================================
    1. IMPORT CSS LIBRARIES
-   =================================== */
-@import "@mantine/dropzone/styles.css";
-@import "@mantine/charts/styles.css";
-@import "@mantine/dates/styles.css";
-@import "@mantine/tiptap/styles.css";
-@import "animate.css";
-@import "react-simple-toasts/dist/style.css";
-@import "react-simple-toasts/dist/theme/dark.css";
+   ===================================
+   Sengaja TIDAK ada CSS paket ekstensi di sini: globals.css render-blocking di SEMUA halaman (PageSpeed
+   mobile −1,07 s). @mantine/charts|dates|dropzone|tiptap diimpor di komponen pemakainya; khusus admin
+   (+ react-simple-toasts) di src/app/admin/layout.tsx. animate.css dihapus: 0 kelas animate__ di src/.
+   Dijaga __tests__/api/global_css_slim_guard.test.ts. */
 
 /* Token warna terang/gelap situs publik (--c-*), lihat theme-tokens.css */
 @import "./theme-tokens.css";
@@ -19,7 +16,9 @@
    =================================== */
 @font-face {
   font-family: 'San Francisco';
-  src: url('/assets/fonts/font.otf') format('opentype');
+  /* WOFF2 dulu: ±101 KB terkirim vs OTF ±126 KB (gzip CDN); isi glyph sama persis. OTF cadangan untuk browser lama. */
+  src: url('/assets/fonts/font.woff2') format('woff2'),
+    url('/assets/fonts/font.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap; /* ✅ TAMBAHKAN INI - Penting untuk PageSpeed! */

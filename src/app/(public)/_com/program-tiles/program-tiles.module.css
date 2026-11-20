@@ -56,7 +56,8 @@
   border-radius: calc(var(--radius) - 8px);
   background: #fff;
 
-  /* Pulau terang `.tileLogo`: pelat menyatu dengan ubin #d9e1ea. */
+  /* Gelap (keputusan user): tanpa pelat, logo langsung di atas ubin gelap --tile (pelat terang di ubin gelap
+     terlihat kotak dalam kotak). */
   @mixin dark {
     background: transparent;
   }
@@ -81,36 +82,6 @@
 /* Pembungkus judul + ringkasan ubin ber-logo: transparan bagi tata letak di desktop/tablet (ubin tetap kolom). */
 .text {
   display: contents;
-}
-
-/*
- * Tema gelap ubin ber-logo = varian C (keputusan user, sama dengan rel beranda): seluruh ubin jadi permukaan terang
- * #d9e1ea dan pelat logo menyatu dengannya (tanpa kotak dalam kotak). Logo pihak ketiga berlatar transparan dirancang
- * untuk latar terang. Pulau terang: alias lokal berisi nilai polos tema terang, BUKAN light-dark() (di repo ini itu
- * transform postcss-preset-mantine, bukan fungsi native). Ubin ikon (Program Kreatif, Penghijauan) tidak tersentuh.
- * Ringkasan pakai #515154 (= --c-ink-2 terang): #6e6e73 di #d9e1ea hanya ±3,9:1, di bawah AA teks 17px.
- */
-.tileLogo {
-  @mixin dark {
-    --tile: #d9e1ea;
-    --ink: #1d1d1f;
-    --muted: #515154;
-    --brand: #0a4e78;
-  }
-}
-
-/* Sapuan link-reveal di dalam pulau: target warna = nilai terang (judul brand, "Selengkapnya" #1C6EA4), mengalahkan
-   `[data-mantine-color-scheme=dark] .cta` (light-dark) dan `.title` (var(--c-brand)) dari link-reveal.module.css. */
-.tileLogo .title > span {
-  @mixin dark {
-    --reveal-to: #0a4e78;
-  }
-}
-
-.tileLogo .more > span {
-  @mixin dark {
-    --reveal-to: #1c6ea4;
-  }
 }
 
 .title {
@@ -146,14 +117,6 @@
 .tile:focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 3px;
-}
-
-/* Cincin fokus digambar DI LUAR pulau (di atas latar halaman gelap): brand gelap seperti ubin ikon di sebelahnya,
-   bukan --brand pulau (#0a4e78 di hitam hanya 2,4:1). */
-.tileLogo:focus-visible {
-  @mixin dark {
-    outline-color: var(--c-brand);
-  }
 }
 
 /* ---------- Tablet ---------- */

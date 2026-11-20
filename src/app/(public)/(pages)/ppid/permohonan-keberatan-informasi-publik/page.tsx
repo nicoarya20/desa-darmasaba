@@ -1,7 +1,8 @@
 'use client'
 import permohonanKeberatanInformasi from '@/app/admin/(dashboard)/_state/ppid/permohonan_keberatan_informasi_publik/permohonanKeberatanInformasi';
 import { PPIDTextEditor } from '@/app/admin/(dashboard)/ppid/_com/PPIDTextEditor';
-import { KONTAK_DESA } from '@/con/kontak-desa';
+// CSS editor (@mantine/tiptap) diimpor di pemakai publik, bukan globals.css (render-blocking di semua halaman).
+import '@mantine/tiptap/styles.css';
 import {
   ALASAN_KEBERATAN_MAX_LENGTH,
   richTextLength,
@@ -11,6 +12,7 @@ import { Button, Input, Text, TextInput, Tooltip } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
+import { KontakDesaIfWhatsapp, KontakDesaValue } from '@/app/(public)/_com/KontakDesaValue';
 import { PermohonanFormCard, PermohonanLayout } from '../_com/PermohonanLayout';
 import { PermohonanSteps } from '../_com/PermohonanSteps';
 import { PpidPage } from '../_com/PpidPage';
@@ -23,6 +25,7 @@ const TEXT = {
   stepsTitle: 'Alur Pengajuan Keberatan',
   formTitle: 'Formulir Keberatan',
   contactTitle: 'Kontak PPID',
+  contactWhatsapp: 'WhatsApp',
 } as const;
 
 const steps: PermohonanStep[] = [
@@ -44,11 +47,11 @@ const steps: PermohonanStep[] = [
   },
 ];
 
-// Kontak resmi kantor desa (src/con/kontak-desa.ts). Nomor WhatsApp PPID belum diberikan desa, jadi tidak dicantumkan.
+// Kontak resmi kantor desa dari CMS (Profil Desa > Kontak Desa). Baris WhatsApp terpisah (opsional): tampil hanya bila admin mengisi nomornya.
 const contacts = [
-  { label: 'Email', value: KONTAK_DESA.email },
-  { label: 'Telepon', value: KONTAK_DESA.telepon },
-];
+  { label: 'Email', field: 'email' },
+  { label: 'Telepon', field: 'telepon' },
+] as const;
 
 function Page() {
   const stateKeberatan = useProxy(permohonanKeberatanInformasi, { sync: true });
@@ -218,9 +221,15 @@ function Page() {
             {contacts.map((contact) => (
               <div key={contact.label} className={s.contactRow}>
                 <dt>{contact.label}</dt>
-                <dd>{contact.value}</dd>
+                <dd><KontakDesaValue field={contact.field} /></dd>
               </div>
             ))}
+            <KontakDesaIfWhatsapp>
+              <div className={s.contactRow}>
+                <dt>{TEXT.contactWhatsapp}</dt>
+                <dd><KontakDesaValue field="whatsapp" /></dd>
+              </div>
+            </KontakDesaIfWhatsapp>
           </dl>
         </section>
       </PermohonanLayout>

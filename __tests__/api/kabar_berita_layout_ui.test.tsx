@@ -46,7 +46,7 @@ describe('KabarBerita layout', () => {
   it('memuat: jumlah kerangka kartu kecil mengikuti placeholderCards', () => {
     const html = render(<KabarBerita items={[]} loading layout="grid" placeholderCards={6} />);
     expect(html).toContain('aria-busy="true"');
-    expect(count(html, `${s.card} ${s.placeholder}`)).toBe(6);
+    expect(count(html, `class="${s.card}"`)).toBe(6);
   });
 });
 

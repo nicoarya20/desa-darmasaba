@@ -775,6 +775,21 @@ model WilayahDesa {
   isActive     Boolean   @default(true)
 }
 
+// Kontak resmi kantor desa (footer publik & halaman PPID), diedit admin di Profil Desa > Kontak Desa. Singleton: satu
+// baris dengan id tetap "kontak-desa" (src/lib/kontak-desa.ts), di-upsert dari admin. Tanpa isActive/deletedAt karena
+// barisnya tidak pernah dihapus, hanya diperbarui. Baris awal diisi migrasi dari konstanta lama (bukan seeder).
+model KontakDesa {
+  id         String   @id
+  namaKantor String
+  alamat     String
+  telepon    String
+  email      String
+  // Opsional: desa belum memberi nomor WhatsApp. null = tidak ditampilkan di footer/PPID; bila diisi harus nomor seluler.
+  whatsapp   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
 model LambangDesa {
   id        String    @id @default(cuid())
   judul     String
@@ -2464,6 +2479,23 @@ model ProdukHukum {
 
   @@index([isActive, kategori, urutan])
   @@index([fileId])
+}
+
+// Indeks Desa Membangun (IDM, Kemendesa PDTT): satu baris per tahun, skor dan status diisi admin apa adanya dari dokumen
+// Kemendesa (tidak dihitung di kode). Skor 0-1; `status` = salah satu dari 5 status resmi IDM (dijaga API, lihat src/lib/indeks-desa.ts).
+model IndeksDesa {
+  id        String    @id @default(cuid())
+  tahun     Int       @unique
+  skorIdm   Float
+  skorIks   Float // Indeks Ketahanan Sosial
+  skorIke   Float // Indeks Ketahanan Ekonomi
+  skorIkl   Float // Indeks Ketahanan Lingkungan
+  status    String // "Sangat Tertinggal" | "Tertinggal" | "Berkembang" | "Maju" | "Mandiri"
+  catatan   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean   @default(true)
 }
 
 model KategoriKegiatan {

@@ -88,7 +88,7 @@ type ChartProps = {
   /** Rute profil pegawai yang dituju kartu. */
   hrefFor: HrefFor;
   /**
-   * `tree` (bawaan, PPID & BUMDes): bagan pohon. `tiers` (Perangkat Desa): bagan bertingkat ber-batang
+   * `tree` (bawaan, BUMDes): bagan pohon. `tiers` (Perangkat Desa & PPID): bagan bertingkat ber-batang
    * (`StrukturTierChart`); bentuk pohon yang tidak cocok (lebih dari satu akar, lihat `planTierBands`) tetap pohon.
    */
   layout?: StrukturLayout;

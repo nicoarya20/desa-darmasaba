@@ -1,0 +1,45 @@
+/*
+ * Indikator aktif sidebar admin: batang vertikal lurus berujung bulat (pill) di dalam item, sebelum teks.
+ * Selalu dirender (opacity 0 saat tidak aktif) agar tidak ada layout shift; posisinya absolut di dalam
+ * padding kiri item sehingga teks tidak bergeser. Warna dari --sidebar-indicator-color (token primary
+ * sesuai tema, disetel inline di layout.tsx).
+ */
+.parent,
+.child {
+  position: relative;
+}
+
+.parent::before,
+.child::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 76%;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background-color: var(--sidebar-indicator-color);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.parent::before {
+  left: 6px;
+}
+
+.child::before {
+  left: 5px;
+}
+
+.parent[data-active]::before,
+.child[data-active]::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parent::before,
+  .child::before {
+    transition: none;
+  }
+}
