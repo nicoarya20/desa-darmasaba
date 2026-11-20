@@ -1,5 +1,6 @@
 import type { PhoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic';
 import { Anchor, Button, Stack, Text } from '@mantine/core';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import { LAYANAN_DETAIL_TEXT as T } from './layanan-detail.text';
 
 type Props = {
@@ -38,8 +39,10 @@ export function PermohonanTersimpan({ waHref, telepon, onClose }: Props) {
       ) : telepon ? (
         <Text>
           {T.hubungiKantor}{' '}
-          <Anchor href={telepon.telHref} c="inherit" fw={700} underline="always">
-            {telepon.display}
+          <Anchor href={telepon.telHref} c="inherit" underline="never" className={r.trigger}>
+            <span className={r.cta} data-text={telepon.display}>
+              {telepon.display}
+            </span>
           </Anchor>
           .
         </Text>
