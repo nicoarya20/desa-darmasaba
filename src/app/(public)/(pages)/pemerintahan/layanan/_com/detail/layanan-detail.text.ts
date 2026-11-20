@@ -14,6 +14,9 @@ export const LAYANAN_DETAIL_TEXT = {
   tersimpanText:
     "Permohonan Anda sudah kami terima. Lanjutkan lewat WhatsApp ke Petugas Layanan Desa untuk proses selanjutnya.",
   lanjutWa: "Lanjutkan ke WhatsApp",
+  /** Tanpa nomor WhatsApp petugas: permohonan tetap tercatat, jangan menyiratkan gagal. */
+  tersimpanTextTanpaWa: "Permohonan Anda sudah kami terima dan tercatat. Petugas desa akan memprosesnya.",
+  hubungiKantor: "Untuk menanyakan kelanjutannya, hubungi kantor desa lewat telepon",
   tutup: "Tutup",
   waKategoriDefault: "surat keterangan",
   /** Pesan awal WhatsApp: hanya nama & jenis surat, tanpa NIK/nomor KK/alamat (privasi warga). */
