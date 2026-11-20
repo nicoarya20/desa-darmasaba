@@ -152,23 +152,11 @@
   letter-spacing: 0.02em;
 }
 
-/*
- * Isi tarif (rich text CMS, mis. ul > li > p) di atas kabar-detail .content: daftar diberi indentasi supaya titik
- * bullet berada di dalam padding kartu, bukan menempel tepi; jarak antarbutir rapat dan margin <p> di dalam <li>
- * dinolkan supaya jarak bawah kartu = padding (simetris dengan atas). Lokal di sini: .content dipakai bersama.
- */
-.tarifBody ul,
-.tarifBody ol {
-  margin: 0 0 0.75em;
-  padding-left: 1.25em;
-}
-
-.tarifBody li > p {
-  margin: 0;
-}
-
-.tarifBody li + li {
-  margin-top: 0.6em;
+/* 17px di semua lebar: sama dengan isi .content di ponsel, lebih ringan dari 19px desktop untuk kolom kartu yang
+   sempit. .card + .tarifBody agar menang atas .content (19px/1.6, ≤734px 17px/1.53) tanpa bergantung urutan muat CSS. */
+.card .tarifBody {
+  font-size: 17px;
+  line-height: 1.5;
 }
 
 /* ---------- Daftar: tautan aksi di dasar kartu (kartu sebaris sama tinggi → CTA sejajar) ---------- */

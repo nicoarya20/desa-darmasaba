@@ -148,7 +148,7 @@ describe('detail publik PUSTU', () => {
     expect(html).not.toContain('<figure');
   });
 
-  it('isi tarif memakai kelas lokal .tarifBody (indentasi bullet + jarak simetris) di atas .content bersama', () => {
+  it('isi tarif memakai kelas lokal .tarifBody (17px) di atas .content bersama (indentasi daftar dari .content)', () => {
     const html = render(<PustuDetailBody data={lengkap} />);
     const kelas = `class="${d.content} ${rt.root} ${s.tarifBody}"`;
     expect(s.tarifBody).toBeTruthy();
