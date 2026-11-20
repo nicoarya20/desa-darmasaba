@@ -36,7 +36,9 @@ import PustuDetail from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/detail/
 import PustuDetailBody from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/detail/PustuDetailBody';
 import { PUSTU_TEXT as T } from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/pustu.text';
 import s from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/pustu.module.css';
+import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { PustuCard } from '@/app/(public)/(pages)/kesehatan/puskesmas/_com/PustuListPage';
 import type { PustuDetail as PustuDetailData } from '@/lib/pustu/pustu.types';
@@ -144,6 +146,13 @@ describe('detail publik PUSTU', () => {
     }
     expect(html).not.toContain('Buka di Google Maps');
     expect(html).not.toContain('<figure');
+  });
+
+  it('isi tarif memakai kelas lokal .tarifBody (17px) di atas .content bersama (indentasi daftar dari .content)', () => {
+    const html = render(<PustuDetailBody data={lengkap} />);
+    const kelas = `class="${d.content} ${rt.root} ${s.tarifBody}"`;
+    expect(s.tarifBody).toBeTruthy();
+    expect(html.split(kelas)).toHaveLength(3);
   });
 
   it('tarif hanya umum terisi → kolom BPJS tidak dirender', () => {
