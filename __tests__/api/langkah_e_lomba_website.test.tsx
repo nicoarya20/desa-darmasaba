@@ -30,9 +30,26 @@ describe('Footer: kontak kantor desa & pengelola website', () => {
   });
 
   it('mencantumkan pengelola website; tanpa nama redaksi selama SK belum diterima', () => {
-    expect(html).toContain(`Pengelola website: ${PENGELOLA_WEBSITE.lembaga}`);
+    expect(html.replace(/<[^>]+>/g, '')).toContain(`Pengelola website: ${PENGELOLA_WEBSITE.lembaga}`);
     expect(PENGELOLA_WEBSITE.timRedaksi).toHaveLength(0);
     expect(html).not.toContain(' (');
+  });
+});
+
+describe('Footer: tautan "Tim Pengelola" ke situs tim pengelola', () => {
+  const html = render(<FooterKontakDesa />);
+
+  it('hanya kata "Tim Pengelola" yang ditautkan, membuka cogniti.id di tab baru', () => {
+    const anchor = html.match(/<a[^>]*href="https:\/\/cogniti\.id\/"[^>]*>([^<]*)<\/a>/);
+    expect(anchor).not.toBeNull();
+    expect(anchor?.[1]).toBe('Tim Pengelola');
+    expect(anchor?.[0]).toContain('target="_blank"');
+    expect(anchor?.[0]).toContain('rel="noopener noreferrer"');
+    expect(html).toContain('</a> Website Pemerintah Desa Darmasaba');
+  });
+
+  it('awalan tautan selaras dengan nama lembaga (bila tidak, nama tampil tanpa tautan)', () => {
+    expect(PENGELOLA_WEBSITE.lembaga.startsWith(PENGELOLA_WEBSITE.tautan.teks)).toBe(true);
   });
 });
 

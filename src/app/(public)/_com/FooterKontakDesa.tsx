@@ -6,6 +6,8 @@ import { Anchor, Stack, Text } from '@mantine/core';
 /** Blok kontak kantor desa + pengelola website di footer publik (alamat, telepon, email, tim redaksi). */
 export function FooterKontakDesa() {
   const telepon = phoneInfo(KONTAK_DESA.telepon);
+  const { lembaga, tautan } = PENGELOLA_WEBSITE;
+  const sisaLembaga = lembaga.startsWith(tautan.teks) ? lembaga.slice(tautan.teks.length) : null;
   return (
     <Stack gap={4}>
       <Text c="white" fz="sm" fw={600}>Kontak Kantor Desa</Text>
@@ -23,7 +25,17 @@ export function FooterKontakDesa() {
         Email: <Anchor c="#F3F2EC" fz="xs" href={`mailto:${KONTAK_DESA.email}`}>{KONTAK_DESA.email}</Anchor>
       </Text>
       <Text fz="xs" c="#F3F2EC" mt={4}>
-        Pengelola website: {PENGELOLA_WEBSITE.lembaga}
+        Pengelola website:{' '}
+        {sisaLembaga !== null ? (
+          <>
+            <Anchor c="#F3F2EC" fz="xs" href={tautan.href} target="_blank" rel="noopener noreferrer">
+              {tautan.teks}
+            </Anchor>
+            {sisaLembaga}
+          </>
+        ) : (
+          lembaga
+        )}
         {PENGELOLA_WEBSITE.timRedaksi.length > 0
           ? ` (${PENGELOLA_WEBSITE.timRedaksi.map((a) => `${a.nama} – ${a.jabatan}`).join('; ')})`
           : ''}
