@@ -108,7 +108,7 @@ describe('TimRedaksiForm', () => {
   });
 
   it('PDF SK tersimpan tampil sebagai tautan berkas saat ini', () => {
-    const html = form({ currentFile: { link: '/api/img/sk-uji.pdf', realName: 'sk-uji.pdf' } });
+    const html = form({ currentFile: { id: 'file-sk-uji', link: '/api/img/sk-uji.pdf', realName: 'sk-uji.pdf' } });
     expect(html).toContain('Berkas saat ini');
     expect(html).toContain('href="/api/img/sk-uji.pdf"');
     expect(html).toContain('sk-uji.pdf');
