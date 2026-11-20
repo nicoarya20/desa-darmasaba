@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { phoneDigits, phoneInfo } from "@/app/(public)/_com/kontak-darurat/kontak-phone.logic";
 
-// Aturan Kontak Desa (kantor, alamat, telepon, email): konstanta, tipe, dan validasi murni tanpa I/O, dipakai bersama
+// Aturan Kontak Desa (kantor, alamat, telepon, email, WhatsApp opsional): konstanta, tipe, dan validasi murni tanpa I/O, dipakai bersama
 // oleh API (Elysia), form admin Profil Desa > Kontak Desa, dan pembaca publik (footer, PPID).
 
 /** ID tetap baris singleton KontakDesa (upsert atomik, tak mungkin ada baris ganda). Sama dengan id di migrasi awal. */
@@ -11,6 +11,8 @@ export const NAMA_KANTOR_MAX_LENGTH = 150;
 export const ALAMAT_MAX_LENGTH = 300;
 /** Panjang teks telepon sebagaimana diketik admin (termasuk spasi, kurung, tanda hubung). */
 export const TELEPON_MAX_LENGTH = 40;
+/** Panjang teks nomor WhatsApp sebagaimana diketik admin; sama dengan telepon. */
+export const WHATSAPP_MAX_LENGTH = TELEPON_MAX_LENGTH;
 /** Batas digit nomor telepon internasional (E.164). */
 export const TELEPON_MAX_DIGITS = 15;
 /** Batas alamat email menurut RFC 5321. */
@@ -27,17 +29,27 @@ export type KontakDesaRecord = {
   alamat: string;
   telepon: string;
   email: string;
+  /** Opsional: null = desa belum memberi nomor WhatsApp (tidak ditampilkan di publik). */
+  whatsapp: string | null;
   updatedAt: string;
 };
 
-/** Isian form admin (tanpa id dan tanggal). */
-export type KontakDesaFormValues = Pick<KontakDesaRecord, "namaKantor" | "alamat" | "telepon" | "email">;
+/** Isian form admin (tanpa id dan tanggal); WhatsApp kosong ("") = belum ada nomor. */
+export type KontakDesaFormValues = Pick<KontakDesaRecord, "namaKantor" | "alamat" | "telepon" | "email"> & {
+  whatsapp: string;
+};
 
 /** Apakah teks telepon nomor Indonesia yang dikenali (seluler atau telepon tetap, bukan nomor layanan pendek). */
 export function isTeleponKontakValid(raw: string): boolean {
   if (!TELEPON_CHARS.test(raw) || phoneDigits(raw).length > TELEPON_MAX_DIGITS) return false;
   const kind = phoneInfo(raw)?.kind;
   return kind === "mobile" || kind === "landline";
+}
+
+/** Apakah teks nomor WhatsApp yang dikenali: harus seluler Indonesia (telepon tetap dan nomor layanan pendek tidak bisa WhatsApp). */
+export function isWhatsappKontakValid(raw: string): boolean {
+  if (!TELEPON_CHARS.test(raw) || phoneDigits(raw).length > TELEPON_MAX_DIGITS) return false;
+  return phoneInfo(raw)?.kind === "mobile";
 }
 
 /** Teks wajib: spasi berulang dirapikan, tidak boleh kosong, dan maksimal `max` karakter. */
@@ -49,7 +61,26 @@ const requiredText = (label: string, max: number) =>
       z.string().min(1, `${label} wajib diisi`).max(max, `${label} maksimal ${max} karakter`),
     );
 
-/** Skema input upsert Kontak Desa (dipakai API dan form admin); kunci di luar empat field dibuang. */
+/**
+ * WhatsApp opsional: tidak dikirim, null, atau kosong = null (tidak ada nomor); bila diisi harus nomor seluler.
+ * Bukan requiredText karena desa belum memberi nomor dan admin boleh mengosongkannya kembali.
+ */
+const optionalWhatsapp = z
+  .string({ invalid_type_error: "WhatsApp harus berupa teks" })
+  .nullish()
+  .transform((value) => (value ?? "").replace(/\s+/g, " ").trim())
+  .pipe(
+    z
+      .string()
+      .max(WHATSAPP_MAX_LENGTH, `WhatsApp maksimal ${WHATSAPP_MAX_LENGTH} karakter`)
+      .refine(
+        (value) => value === "" || isWhatsappKontakValid(value),
+        "WhatsApp tidak valid: isi nomor seluler Indonesia, mis. 0812 3456 7890, atau kosongkan bila belum ada",
+      ),
+  )
+  .transform((value) => (value === "" ? null : value));
+
+/** Skema input upsert Kontak Desa (dipakai API dan form admin); kunci di luar kelima field dibuang. */
 export const kontakDesaSchema = z.object({
   namaKantor: requiredText("Nama kantor", NAMA_KANTOR_MAX_LENGTH),
   alamat: requiredText("Alamat", ALAMAT_MAX_LENGTH),
@@ -61,6 +92,7 @@ export const kontakDesaSchema = z.object({
     (value) => EMAIL_FORMAT.test(value),
     "Format email tidak valid, mis. nama@desa.id",
   ),
+  whatsapp: optionalWhatsapp,
 });
 
 export type KontakDesaInput = z.output<typeof kontakDesaSchema>;

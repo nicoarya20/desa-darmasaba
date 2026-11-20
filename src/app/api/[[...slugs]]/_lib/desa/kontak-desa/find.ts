@@ -10,6 +10,7 @@ export const KONTAK_DESA_SELECT = {
   alamat: true,
   telepon: true,
   email: true,
+  whatsapp: true,
   updatedAt: true,
 } as const;
 
