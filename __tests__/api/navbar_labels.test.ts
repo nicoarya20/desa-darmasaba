@@ -52,8 +52,8 @@ describe('route admin grup Pemerintahan', () => {
     // 10: menu Penghargaan (dulu Desa_7) dihapus — dikelola di Landing Page > Prestasi dan Penghargaan;
     // Struktur Perangkat Desa (desa.struktur-perangkat-desa) ditambahkan; Dokumen Perencanaan (desa.dokumen-perencanaan)
     // keluar dari tab Kegiatan Desa jadi menu sendiri (2026-11-18); Produk Hukum (desa.produk-hukum) menu baru;
-    // Indeks Desa (desa.indeks-desa) submenu baru (2026-11-19).
-    expect(paths).toHaveLength(13);
+    // Indeks Desa (desa.indeks-desa) submenu baru (2026-11-19); Lembaga & Komunitas (desa.lembaga-komunitas) submenu baru (2026-11-20).
+    expect(paths).toHaveLength(14);
     expect(paths).not.toContain('/admin/pemerintahan/penghargaan');
     for (const p of paths) expect(p, p).toMatch(/^\/admin\/pemerintahan\//);
     expect(paths.filter((p) => /^\/admin\/desa(\/|$)/.test(p))).toEqual([]);
