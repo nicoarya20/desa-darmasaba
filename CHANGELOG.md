@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.333] - 2026-11-20
+### Changed
+- Di footer, kata "Tim Pengelola" pada baris "Pengelola website" kini menjadi tautan ke situs tim pengelola (cogniti.id), terbuka di tab baru. Tautan ini ditulis tebal dan putih agar menonjol dari teks kontak di sekitarnya.
+
 ## [0.1.332] - 2026-11-20
 ### Changed
 - Di tema gelap, ubin Program Inovasi di beranda kini gelap, senada dengan ubin logo Kabupaten Badung dan desa di sebelahnya (sebelumnya ubin terang). Logo program tampil langsung di atas ubin, tanpa kotak terang di dalamnya.
