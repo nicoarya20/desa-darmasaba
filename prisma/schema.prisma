@@ -80,6 +80,7 @@ model FileStorage {
   DokumenDasarHukumPPID          DokumenDasarHukumPPID[]
   ProdukHukum                    ProdukHukum[]
   TimPengelolaWebsite            TimPengelolaWebsite[]
+  LembagaKomunitas               LembagaKomunitas[]
   DaftarInformasiPublik          DaftarInformasiPublik[]
   ProfilLembagaPPID              ProfilLembagaPPID[]
   ProfilPerbekel                 ProfilPerbekel[]
@@ -2499,6 +2500,28 @@ model IndeksDesa {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   isActive  Boolean   @default(true)
+}
+
+// Lembaga & Komunitas desa (PPL, STT, PKK, dll; juknis lomba butir 7.4). BUKAN model `Lembaga` di atas (itu sekolah PAUD).
+// `jenis` teks bebas (bukan enum) supaya desa menambah jenis baru tanpa migrasi; panjang & isi dijaga src/lib/lembaga-komunitas.ts.
+// `kontak` = kontak lembaga (telepon/email), bukan nomor pribadi. Hapus lewat CMS = soft-delete (`isActive` false + `deletedAt`).
+model LembagaKomunitas {
+  id        String       @id @default(cuid())
+  nama      String
+  jenis     String
+  deskripsi String?      @db.Text
+  ketua     String?
+  kontak    String?
+  foto      FileStorage? @relation(fields: [fotoId], references: [id], onDelete: SetNull)
+  fotoId    String?
+  urutan    Int          @default(0) // pemutus seri dalam satu jenis (kecil dulu)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+  isActive  Boolean      @default(true)
+
+  @@index([isActive, jenis, urutan])
+  @@index([fotoId])
 }
 
 model KategoriKegiatan {

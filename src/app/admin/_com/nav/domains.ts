@@ -59,6 +59,9 @@ export const desaMenu: NavItem = {
     // Submenu aditif (2026-11-19, temuan lomba T11: IDM Kemendesa). ID "desa.indeks-desa" = kontrak permanen setelah rilis
     // (tersimpan di UserMenuAccess). Bukan "Indeks Kepuasan Masyarakat" (itu submenu PPID).
     { id: "desa.indeks-desa", name: "Indeks Desa", path: "/admin/pemerintahan/indeks-desa", basePath: "/admin/pemerintahan/indeks-desa" },
+    // Submenu aditif (2026-11-20, juknis lomba butir 7.4: wadah partisipasi PPL/STT/PKK dll). ID "desa.lembaga-komunitas" =
+    // kontrak permanen setelah rilis (tersimpan di UserMenuAccess). Bukan menu "Lembaga" pendidikan (sekolah PAUD).
+    { id: "desa.lembaga-komunitas", name: "Lembaga & Komunitas", path: "/admin/pemerintahan/lembaga-komunitas", basePath: "/admin/pemerintahan/lembaga-komunitas" },
   ],
 }
 
