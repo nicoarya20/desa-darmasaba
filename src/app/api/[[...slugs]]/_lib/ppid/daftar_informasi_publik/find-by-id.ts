@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { PPID_FILE_SELECT } from "../ppid-file";
+import { DAFTAR_INFORMASI_INCLUDE } from "./include";
 
 export default async function handler(request: Request) {
   const url = new URL(request.url);
@@ -23,7 +23,7 @@ export default async function handler(request: Request) {
 
     const data = await prisma.daftarInformasiPublik.findUnique({
       where: { id },
-      include: { file: { select: PPID_FILE_SELECT } },
+      include: DAFTAR_INFORMASI_INCLUDE,
     });
 
     if (!data) {
