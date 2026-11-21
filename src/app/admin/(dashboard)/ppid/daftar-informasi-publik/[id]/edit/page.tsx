@@ -12,6 +12,9 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
 import { uploadPdfFile } from '@/app/admin/_com/upload/pdf-upload';
+import ImageDropzoneField from '@/app/admin/_com/upload/ImageDropzoneField';
+import { uploadImageFile } from '@/app/admin/_com/upload/image-upload';
+import { useGambarPilihan } from '../../_com/useGambarPilihan';
 
 interface FormDaftarInformasi {
   jenisInformasi: string;
@@ -39,6 +42,8 @@ function EditDaftarInformasiPublik() {
 
   // PDF baru yang dipilih; diunggah saat Simpan (berkas lama diganti hanya bila ada pilihan baru).
   const [file, setFile] = useState<File | null>(null);
+  // Gambar pendukung (opsional): ganti dengan pilihan baru, atau lepas; tanpa perubahan gambar lama dibiarkan.
+  const gambar = useGambarPilihan(daftarInformasi.edit.currentGambar?.link ?? null);
 
   // Check if form is valid
   const isFormValid = () => {
@@ -89,6 +94,7 @@ function EditDaftarInformasiPublik() {
   const handleResetForm = () => {
     setFormData(originalData);
     setFile(null);
+    gambar.reset();
     toast.info('Form dikembalikan ke data awal');
   };
 
@@ -100,13 +106,21 @@ function EditDaftarInformasiPublik() {
         if (!uploadedId) return; // toast galat sudah ditampilkan uploadPdfFile
         newFileId = uploadedId;
       }
+      let gambarId: string | null | undefined;
+      if (gambar.baru) {
+        const uploadedGambarId = await uploadImageFile(gambar.baru);
+        if (!uploadedGambarId) return; // toast galat sudah ditampilkan uploadImageFile
+        gambarId = uploadedGambarId;
+      } else if (gambar.dilepas) {
+        gambarId = null;
+      }
       daftarInformasi.edit.form = {
         ...daftarInformasi.edit.form,
         jenisInformasi: formData.jenisInformasi.trim(),
         deskripsi: formData.deskripsi.trim(),
         tanggal: formData.tanggal.trim(),
       };
-      await daftarInformasi.edit.update(newFileId);
+      await daftarInformasi.edit.update(newFileId, gambarId);
       router.push('/admin/ppid/daftar-informasi-publik');
     } catch (error) {
       console.error('Error updating daftar informasi:', error);
@@ -167,6 +181,14 @@ function EditDaftarInformasiPublik() {
             file={file}
             onChange={setFile}
             currentFile={daftarInformasi.edit.currentFile}
+          />
+
+          <ImageDropzoneField
+            label="Gambar"
+            description="Opsional. Gambar pendukung yang ditampilkan di halaman detail informasi."
+            previewUrl={gambar.previewUrl}
+            onPick={gambar.pick}
+            onRemove={gambar.remove}
           />
 
           <Group justify="right" mt="md">
