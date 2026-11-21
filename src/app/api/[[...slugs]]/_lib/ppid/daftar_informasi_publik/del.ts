@@ -32,6 +32,11 @@ const daftarInformasiPublikDelete = async (context: Context) => {
     await removeStoredFile({ id: daftarInformasi.fileId }, "DaftarInformasiPublik");
   }
 
+  // Gambar pendukung diperlakukan sama seperti berkas PDF.
+  if (daftarInformasi.gambarId) {
+    await removeStoredFile({ id: daftarInformasi.gambarId }, "DaftarInformasiPublik");
+  }
+
   return {
     success: true,
     status: 200,

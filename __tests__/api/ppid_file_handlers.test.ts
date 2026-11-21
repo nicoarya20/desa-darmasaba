@@ -126,14 +126,17 @@ describe('GET daftarinformasipublik (find-many & :id)', () => {
     daftar.count.mockResolvedValue(2);
     const json = await (await send('GET', '/daftarinformasipublik/find-many')).json();
     expect(json.data.map((row: { file: unknown }) => row.file)).toEqual([FILE, null]);
-    expect(daftar.findMany.mock.calls[0][0].include).toEqual({ file: { select: PPID_FILE_SELECT } });
+    expect(daftar.findMany.mock.calls[0][0].include).toEqual({ file: { select: PPID_FILE_SELECT }, gambar: { select: PPID_FILE_SELECT } });
   });
 
   it(':id menyertakan file', async () => {
     daftar.findUnique.mockResolvedValue({ id: 'a', ...FORM_DAFTAR, file: FILE });
     const json = await (await send('GET', '/daftarinformasipublik/a')).json();
     expect(json.data.file).toEqual(FILE);
-    expect(daftar.findUnique).toHaveBeenCalledWith({ where: { id: 'a' }, include: { file: { select: PPID_FILE_SELECT } } });
+    expect(daftar.findUnique).toHaveBeenCalledWith({
+      where: { id: 'a' },
+      include: { file: { select: PPID_FILE_SELECT }, gambar: { select: PPID_FILE_SELECT } },
+    });
   });
 });
 
