@@ -11,10 +11,13 @@ const templateDaftarInformasi = z.object({
   tanggal: z.string().min(3, "Tanggal minimal 3 karakter"),
 });
 
-/** Satu baris informasi publik dari API, beserta berkas PDF-nya (null untuk baris lama tanpa berkas). */
+/** Satu baris informasi publik dari API, beserta berkas PDF dan gambar pendukungnya (null bila tidak ada). */
 export type DaftarInformasiRow = Prisma.DaftarInformasiPublikGetPayload<{
   omit: { isActive: true };
-  include: { file: { select: { id: true; link: true; realName: true } } };
+  include: {
+    file: { select: { id: true; link: true; realName: true } };
+    gambar: { select: { id: true; link: true; realName: true } };
+  };
 }>;
 
 const defaultForm = {
@@ -27,8 +30,8 @@ const daftarInformasiPublik = proxy({
   create: {
     form: {...defaultForm},
     loading: false,
-    /** Simpan baris baru; `fileId` (opsional) = id PDF yang sudah diunggah. */
-    async create(fileId?: string) {
+    /** Simpan baris baru; `fileId` / `gambarId` (opsional) = id PDF / gambar yang sudah diunggah. */
+    async create(fileId?: string, gambarId?: string) {
       const cek = templateDaftarInformasi.safeParse(
         daftarInformasiPublik.create.form
       );
@@ -45,6 +48,7 @@ const daftarInformasiPublik = proxy({
         ].post({
           ...daftarInformasiPublik.create.form,
           ...(fileId ? { fileId } : {}),
+          ...(gambarId ? { gambarId } : {}),
         });
         if (res.status === 200) {
           daftarInformasiPublik.findMany.load();
@@ -155,6 +159,8 @@ const daftarInformasiPublik = proxy({
     form: { ...defaultForm },
     /** Berkas PDF yang tersimpan saat ini (null = belum ada); ditampilkan sebagai tautan di form edit. */
     currentFile: null as { link: string; realName: string } | null,
+    /** Gambar pendukung yang tersimpan saat ini (null = belum ada); dipratinjau di form edit. */
+    currentGambar: null as { link: string; realName: string } | null,
     loading: false,
 
     async load(id: string) {
@@ -185,6 +191,7 @@ const daftarInformasiPublik = proxy({
             tanggal: data.tanggal,
           };
           this.currentFile = data.file ?? null;
+          this.currentGambar = data.gambar ?? null;
           return data;
         } else {
           throw new Error(result?.message || "Gagal mengambil data");
@@ -198,8 +205,11 @@ const daftarInformasiPublik = proxy({
       }
     },
 
-    /** Simpan perubahan; `newFileId` (opsional) = id PDF baru yang menggantikan berkas lama. */
-    async update(newFileId?: string) {
+    /**
+     * Simpan perubahan; `newFileId` (opsional) = id PDF baru yang menggantikan berkas lama. `gambarId`: tidak diisi =
+     * gambar dibiarkan, id baru = diganti, null = dilepas.
+     */
+    async update(newFileId?: string, gambarId?: string | null) {
       const cek = templateDaftarInformasi.safeParse(
         daftarInformasiPublik.edit.form
       );
@@ -226,6 +236,7 @@ const daftarInformasiPublik = proxy({
               deskripsi: this.form.deskripsi,
               tanggal: formattedTanggal,
               fileId: newFileId,
+              gambarId,
             }),
           }
         );
@@ -265,6 +276,7 @@ const daftarInformasiPublik = proxy({
       daftarInformasiPublik.edit.id = "";
       daftarInformasiPublik.edit.form = { ...defaultForm };
       daftarInformasiPublik.edit.currentFile = null;
+      daftarInformasiPublik.edit.currentGambar = null;
     },
   },
 });

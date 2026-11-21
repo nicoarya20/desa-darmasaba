@@ -1,6 +1,6 @@
 'use client'
 import colors from '@/con/colors';
-import { Box, Button, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Image, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { IconArrowBack, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -91,6 +91,15 @@ function DetailDaftarInformasiPublik() {
                   dangerouslySetInnerHTML={{ __html: data.deskripsi || '-' }}
                   style={{ wordBreak: "break-word", whiteSpace: "normal" }}
                 />
+              </Box>
+
+              <Box>
+                <Text fz="lg" fw="bold" mb={4}>Gambar</Text>
+                {data.gambar ? (
+                  <Image src={data.gambar.link} alt={`Gambar ${data.jenisInformasi}`} radius="md" mah={360} fit="contain" loading="lazy" />
+                ) : (
+                  <Text fz="md" c="dimmed">-</Text>
+                )}
               </Box>
 
               <Box>

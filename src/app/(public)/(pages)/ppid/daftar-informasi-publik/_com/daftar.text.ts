@@ -28,6 +28,7 @@ export const DAFTAR_TEXT = {
   detailTitle: 'Detail Informasi Publik',
   detailLead: 'Jenis, tanggal publikasi, dan deskripsi lengkap informasi publik.',
   detailBerkas: 'Berkas',
+  detailGambarAlt: (jenis: string) => `Gambar ${jenis}`,
   detailLoading: 'Memuat detail informasi publik',
   notFound: 'Informasi tidak ditemukan',
   backToList: 'Kembali ke Daftar',
