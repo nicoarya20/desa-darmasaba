@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.341] - 2026-11-21
+### Added
+- **Gambar opsional di Daftar Informasi Publik.** Di PPID > Daftar Informasi Publik, form Tambah dan Edit kini punya kolom "Gambar" (maksimal 5 MB, boleh dikosongkan karena tidak semua informasi punya gambar). Saat mengedit, gambar bisa diganti atau dilepas. Gambar tampil di halaman detail admin dan di halaman detail publik hanya bila ada; informasi lama tanpa gambar tidak berubah. Operator: rilis ini menambah satu kolom di database lewat migrasi `20261121090000_daftar_informasi_gambar` (aman diulang, tanpa data yang diubah).
+
 ## [0.1.340] - 2026-11-20
 ### Added
 - **Pratinjau foto galeri kini bisa berpindah foto tanpa ditutup.** Saat foto di galeri dibuka, deretan foto kecil tampil di bawah foto besar; klik salah satunya, tombol ‹ ›, atau tombol panah kiri/kanan di keyboard untuk melihat foto lain. Jendela pratinjau tetap diam saat berpindah foto, walau panjang keterangannya berbeda. Berlaku di galeri PUSTU, Posyandu, detail sekolah, dan Bank Sampah.

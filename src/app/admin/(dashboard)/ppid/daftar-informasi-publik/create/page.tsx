@@ -7,6 +7,9 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import PdfDropzoneField from '@/app/admin/_com/upload/PdfDropzoneField';
 import { uploadPdfFile } from '@/app/admin/_com/upload/pdf-upload';
+import ImageDropzoneField from '@/app/admin/_com/upload/ImageDropzoneField';
+import { uploadImageFile } from '@/app/admin/_com/upload/image-upload';
+import { useGambarPilihan } from '../_com/useGambarPilihan';
 import CreateEditor from '../../../_com/createEditor';
 import daftarInformasiPublik from '../../../_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 
@@ -15,6 +18,8 @@ export default function CreateDaftarInformasi() {
   const router = useRouter();
   // PDF yang dipilih; diunggah saat Simpan.
   const [file, setFile] = useState<File | null>(null);
+  // Gambar pendukung (opsional); diunggah saat Simpan.
+  const gambar = useGambarPilihan();
 
   // Check if form is valid
   const isFormValid = () => {
@@ -32,6 +37,7 @@ export default function CreateDaftarInformasi() {
       tanggal: "",
     };
     setFile(null);
+    gambar.reset();
   };
 
   const handleSubmit = async () => {
@@ -52,7 +58,13 @@ export default function CreateDaftarInformasi() {
         if (!uploadedId) return; // toast galat sudah ditampilkan uploadPdfFile
         fileId = uploadedId;
       }
-      await daftarInformasi.create.create(fileId);
+      let gambarId: string | undefined;
+      if (gambar.baru) {
+        const uploadedGambarId = await uploadImageFile(gambar.baru);
+        if (!uploadedGambarId) return; // toast galat sudah ditampilkan uploadImageFile
+        gambarId = uploadedGambarId;
+      }
+      await daftarInformasi.create.create(fileId, gambarId);
       resetForm();
       router.push("/admin/ppid/daftar-informasi-publik");
     } catch (error) {
@@ -128,6 +140,14 @@ export default function CreateDaftarInformasi() {
             description="Opsional. Dokumen yang bisa diunduh pengunjung dari baris ini."
             file={file}
             onChange={setFile}
+          />
+
+          <ImageDropzoneField
+            label="Gambar"
+            description="Opsional. Gambar pendukung yang ditampilkan di halaman detail informasi."
+            previewUrl={gambar.previewUrl}
+            onPick={gambar.pick}
+            onRemove={gambar.remove}
           />
 
           <Group justify="flex-end" mt="md">

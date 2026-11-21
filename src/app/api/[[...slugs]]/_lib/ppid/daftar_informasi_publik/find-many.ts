@@ -2,7 +2,7 @@
 // /api/berita/findManyPaginated.ts
 import prisma from "@/lib/prisma";
 import { Context } from "elysia";
-import { PPID_FILE_SELECT } from "../ppid-file";
+import { DAFTAR_INFORMASI_INCLUDE } from "./include";
 
 async function daftarInformasiPublikFindMany(context: Context) {
   // Ambil parameter dari query
@@ -27,7 +27,7 @@ async function daftarInformasiPublikFindMany(context: Context) {
     const [data, total] = await Promise.all([
       prisma.daftarInformasiPublik.findMany({
         where,
-        include: { file: { select: PPID_FILE_SELECT } },
+        include: DAFTAR_INFORMASI_INCLUDE,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },

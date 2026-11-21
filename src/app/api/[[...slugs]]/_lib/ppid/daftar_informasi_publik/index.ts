@@ -18,6 +18,7 @@ const DaftarInformasiPublik = new Elysia({
       deskripsi: t.String(),
       tanggal: t.String(),
       fileId: t.Optional(t.String()),
+      gambarId: t.Optional(t.Union([t.String(), t.Null()])),
     }),
   })
   .delete("/del/:id", daftarInformasiPublikDelete)
@@ -32,6 +33,7 @@ const DaftarInformasiPublik = new Elysia({
       deskripsi: t.String(),
       tanggal: t.String(),
       fileId: t.Optional(t.String()),
+      gambarId: t.Optional(t.Union([t.String(), t.Null()])),
     }),
   });
 
