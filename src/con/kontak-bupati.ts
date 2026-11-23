@@ -3,6 +3,6 @@ export const KONTAK_BUPATI = {
   judul: 'Kontak Bupati',
   links: [
     { label: 'Kontak Bupati Badung', href: 'https://kontak-bupati.badungkab.go.id/' },
-    { label: 'LAPOR!', href: 'https://www.lapor.go.id/' },
+    { label: 'SP4N-LAPOR!', href: 'https://www.lapor.go.id/' },
   ],
 } as const;
