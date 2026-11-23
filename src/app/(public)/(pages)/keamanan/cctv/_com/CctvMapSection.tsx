@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { FocusOnSelect, type MapSelection } from "@/app/(public)/_com/map-list/map-focus";
 import { useMemo, useRef } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { MAP_FIT_MAX_ZOOM, MAP_FOCUS_ZOOM, STATUS_META, type CctvStatusKey } from "./cctv.meta";
+import { CCTV_TAMPIL_DESKRIPSI, MAP_FIT_MAX_ZOOM, MAP_FOCUS_ZOOM, STATUS_META, type CctvStatusKey } from "./cctv.meta";
 import type { CctvItem } from "./cctv.source";
 import { CCTV_TEXT as T, STATUS_LABEL } from "./cctv.text";
 import x from "./cctv-explorer.module.css";
@@ -41,7 +41,7 @@ export default function CctvMapSection({ items, selection, onSelect }: Props) {
             position={[item.latitude, item.longitude]}
             icon={markerIcon(item.status, selected)}
             zIndexOffset={selected ? 1000 : 0}
-            title={`${item.nama || item.kode}, ${STATUS_LABEL[item.status]}`}
+            title={`${(CCTV_TAMPIL_DESKRIPSI && item.nama) || item.kode}, ${STATUS_LABEL[item.status]}`}
             eventHandlers={{
               // Ref diperbarui langsung: klik titik lain menutup popup lama sebelum render berikutnya.
               click: () => {
@@ -75,7 +75,7 @@ function CctvPopup({ item }: { item: CctvItem }) {
   return (
     <span className={x.popup}>
       <span className={x.popupKode}>{item.kode}</span>
-      <span className={x.popupName}>{item.nama || item.kode}</span>
+      {CCTV_TAMPIL_DESKRIPSI && item.nama ? <span className={x.popupName}>{item.nama}</span> : null}
       {item.lokasi ? <span className={x.popupLokasi}>{item.lokasi}</span> : null}
       <span className={x.popupStatus} style={{ color: STATUS_META[item.status].accent }}>
         {STATUS_LABEL[item.status]}

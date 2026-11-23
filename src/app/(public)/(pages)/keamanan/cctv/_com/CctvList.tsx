@@ -2,7 +2,7 @@
 import { IconMapPin } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { formatLastActive, hasCoords } from "./cctv.logic";
-import { statusVars, type CctvStatusKey } from "./cctv.meta";
+import { CCTV_TAMPIL_AKTIF_TERAKHIR, CCTV_TAMPIL_DESKRIPSI, statusVars, type CctvStatusKey } from "./cctv.meta";
 import type { CctvItem } from "./cctv.source";
 import { CCTV_TEXT as T, STATUS_LABEL } from "./cctv.text";
 import x from "./cctv-explorer.module.css";
@@ -35,14 +35,14 @@ export function CctvList({ items, selection, onPick }: Props) {
 
 type RowProps = { item: CctvItem; now: Date; selected: boolean; onPick: (id: string) => void };
 
-/** Satu baris: nama + status (titik warna) · lokasi · kode dan aktif terakhir. Tanpa koordinat → bukan tombol. */
+/** Satu baris: [nama] + status (titik warna) · lokasi · kode [dan aktif terakhir]. Nama dan aktif terakhir hanya bila ditampilkan dan terisi. */
 export function CctvRow({ item, now, selected, onPick }: RowProps) {
   const mapped = hasCoords(item);
-  const last = formatLastActive(item.lastActive, now);
+  const last = CCTV_TAMPIL_AKTIF_TERAKHIR ? formatLastActive(item.lastActive, now) : null;
   const content = (
     <>
       <span className={x.top}>
-        <span className={x.name}>{item.nama || item.kode}</span>
+        {CCTV_TAMPIL_DESKRIPSI && item.nama ? <span className={x.name}>{item.nama}</span> : null}
         <StatusLabel status={item.status} />
       </span>
       <span className={`${x.lokasi} ${item.lokasi ? "" : x.kosong}`}>
@@ -58,9 +58,7 @@ export function CctvRow({ item, now, selected, onPick }: RowProps) {
               {last.text}
             </time>
           </span>
-        ) : (
-          <span className={x.kosong}>{T.lastActiveKosong}</span>
-        )}
+        ) : null}
         {mapped ? null : <span className={x.kosong}>{T.notOnMap}</span>}
       </span>
     </>
