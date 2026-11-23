@@ -41,7 +41,7 @@ vi.mock('@/app/(public)/(pages)/pemerintahan/profil/_com/use-load-once', () => (
 import Page from '@/app/(public)/(pages)/pemerintahan/profil/page';
 import StrukturPerangkatPage from '@/app/(public)/(pages)/pemerintahan/profil/struktur-perangkat-desa/page';
 import { KANTOR_MAP_EMBED_URL, PERBEKEL_NAME, strukturPerangkatHref } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.meta';
-import { STRUKTUR_PERANGKAT_TEXT } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.text';
+import { PROFIL_TEXT, STRUKTUR_PERANGKAT_TEXT } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.text';
 import MaskotDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/maskotDesa';
 import MotoDesa from '@/app/(public)/(pages)/pemerintahan/profil/ui/motoDesa';
 import ProfilPerbekel from '@/app/(public)/(pages)/pemerintahan/profil/ui/profilPerbekel';
@@ -77,8 +77,35 @@ describe('Profil Desa — halaman', () => {
     const html = render(<Page />);
     expect(count(html, 'aria-label="Kembali')).toBe(1);
     expect(html).not.toMatch(/Zoom|Fullscreen/);
-    expect(html).toMatch(/<h2[^>]*>Struktur Perangkat Desa<\/h2>/);
+    expect(html).toMatch(/<h2[^>]*>STRUKTUR ORGANISASI PEMERINTAH DESA DARMASABA<\/h2>/);
     expect(html).toContain('aria-label="Cari nama atau jabatan"');
+  });
+});
+
+describe('Profil Desa — tombol navigasi section', () => {
+  const html = render(<Page />);
+  const items = PROFIL_TEXT.nav.items;
+
+  it('sembilan tombol berurutan sesuai daftar section, tiap tombol berupa tautan #id', () => {
+    expect(items.map((item) => item.label)).toEqual([
+      'Sejarah Desa', 'Visi & Misi', 'Letak & Batas Wilayah', 'Lambang Desa', 'Maskot Desa',
+      'Profil Perbekel', 'Struktur Organisasi', 'Moto Desa', 'Perbekel dari Masa ke Masa',
+    ]);
+    const nav = html.match(/<nav[^>]*aria-label="Isi halaman Profil Desa"[\s\S]*?<\/nav>/)?.[0] ?? '';
+    const hrefs = [...nav.matchAll(/<a[^>]*href="#([^"]+)"/g)].map((m) => m[1]);
+    expect(hrefs).toEqual(items.map((item) => item.id));
+  });
+
+  it('tiap tombol punya tujuan: satu pembungkus section ber-id sama, urutannya sama dengan tombol', () => {
+    const ids = [...html.matchAll(/<div id="([^"]+)"[^>]*tabindex="-1"/g)].map((m) => m[1]);
+    expect(ids).toEqual(items.map((item) => item.id));
+    expect(new Set(ids).size).toBe(items.length);
+  });
+
+  it('tombol Struktur Organisasi mengarah ke section bagan struktur', () => {
+    const struktur = items.find((item) => item.label === 'Struktur Organisasi')!;
+    const wrapper = html.match(new RegExp(`<div id="${struktur.id}"[\\s\\S]*?STRUKTUR ORGANISASI PEMERINTAH DESA DARMASABA`));
+    expect(wrapper).not.toBeNull();
   });
 });
 
@@ -266,7 +293,7 @@ describe('Struktur Perangkat Desa — bagan baru', () => {
 
   it('halaman mandiri: h1, kotak cari, kerangka saat memuat, tanpa zoom/fullscreen', () => {
     const html = render(<StrukturPerangkatPage />);
-    expect(html).toMatch(/<h1[^>]*>Struktur Perangkat Desa<\/h1>/);
+    expect(html).toMatch(/<h1[^>]*>STRUKTUR ORGANISASI PEMERINTAH DESA DARMASABA<\/h1>/);
     expect(html).toContain('aria-label="Cari nama atau jabatan"');
     expect(html).toContain('role="status"');
     expect(html).not.toMatch(/Zoom|Fullscreen/);

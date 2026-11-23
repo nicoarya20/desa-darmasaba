@@ -1,8 +1,25 @@
+import { PROFIL_ANCHOR as A } from './profil.meta';
+
 /** Teks halaman Profil Desa (`/pemerintahan/profil`). Isi section (sejarah, visi, dst.) datang dari CMS. */
 export const PROFIL_TEXT = {
   title: 'Profil Desa',
   lead: 'Sejarah, visi dan misi, lambang, maskot, serta pemerintahan Desa Darmasaba dari masa ke masa.',
   logoAlt: 'Lambang Desa Darmasaba',
+  /** Tombol loncat ke section di bawah kepala halaman; urutan = urutan section. */
+  nav: {
+    label: 'Isi halaman Profil Desa',
+    items: [
+      { id: A.sejarah, label: 'Sejarah Desa' },
+      { id: A.visiMisi, label: 'Visi & Misi' },
+      { id: A.wilayah, label: 'Letak & Batas Wilayah' },
+      { id: A.lambang, label: 'Lambang Desa' },
+      { id: A.maskot, label: 'Maskot Desa' },
+      { id: A.perbekel, label: 'Profil Perbekel' },
+      { id: A.struktur, label: 'Struktur Organisasi' },
+      { id: A.moto, label: 'Moto Desa' },
+      { id: A.riwayat, label: 'Perbekel dari Masa ke Masa' },
+    ],
+  },
   sejarah: { title: 'Sejarah Desa', loading: 'Memuat sejarah desa…', empty: 'Sejarah desa belum tersedia.' },
   visiMisi: {
     title: 'Visi dan Misi Desa',
@@ -66,7 +83,7 @@ export const PROFIL_TEXT = {
 
 /** Teks Struktur Perangkat Desa (section di Profil Desa + halaman `/profil/struktur-perangkat-desa`). */
 export const STRUKTUR_PERANGKAT_TEXT = {
-  title: 'Struktur Perangkat Desa',
+  title: 'STRUKTUR ORGANISASI PEMERINTAH DESA DARMASABA',
   lead: 'Susunan perangkat Desa Darmasaba beserta pegawai yang bertugas. Pilih kartu untuk melihat profil lengkap.',
   chartLabel: 'Bagan struktur perangkat desa',
   emptyHint: 'Belum ada perangkat desa aktif yang tercatat.',
