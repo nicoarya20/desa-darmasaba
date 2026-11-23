@@ -93,24 +93,28 @@ describe('Panel peta + daftar', () => {
 describe('Baris CCTV', () => {
   const now = new Date('2026-02-12T16:30:00.000Z');
 
-  it('nama, status, lokasi, kode, dan aktif terakhir relatif dengan tanggal lengkap di <time>', () => {
-    const html = render(<CctvRow item={item('7', { status: 'offline' })} now={now} selected onPick={() => {}} />);
+  it('status, lokasi, dan kode tampil; deskripsi (nama) dan aktif terakhir disembunyikan sementara', () => {
+    const html = render(<CctvRow item={item('7', { status: 'offline', nama: '-' })} now={now} selected onPick={() => {}} />);
     const out = text(html);
     expect(html).toContain('aria-pressed="true"');
-    expect(out).toContain('Titik 7');
     expect(out).toContain(T.offlineLabel);
     expect(out).toContain('Jalan 7');
     expect(out).toContain('CCTV-7');
-    expect(out).toContain(`${T.lastActive} 2 jam yang lalu`);
-    expect(html).toContain('dateTime="2026-02-12T14:30:00.000Z"');
+    expect(out).not.toContain('Titik 7');
+    expect(html).not.toMatch(/>\s*-\s*</); // tidak ada "-" sebagai judul baris
+    expect(out).not.toContain(T.lastActive);
+    expect(html).not.toContain('<time');
   });
 
-  it('kolom kosong ditulis "belum diisi"; tanpa koordinat bukan tombol', () => {
+  it('lokasi kosong ditulis "belum diisi"; tanpa koordinat bukan tombol', () => {
     const html = render(<CctvRow item={item('8', { lokasi: '', lastActive: null, latitude: null, longitude: null })} now={now} selected={false} onPick={() => {}} />);
     const out = text(html);
     expect(html).not.toContain('<button');
     expect(out).toContain(T.lokasiKosong);
-    expect(out).toContain(T.lastActiveKosong);
     expect(out).toContain(T.notOnMap);
+  });
+
+  it('placeholder cari tidak menyebut nama selama nama disembunyikan', () => {
+    expect(T.searchPlaceholder).toBe('Cari kode atau lokasi');
   });
 });

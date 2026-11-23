@@ -70,10 +70,13 @@ describe('summarizeCctv', () => {
 describe('filterCctv', () => {
   const list = [item('01', { nama: 'Balai Desa' }), item('09', { kode: 'CCTV - 09', nama: 'RS Kapal', lokasi: 'Kapal, Mengwi' })];
 
-  it('kata kunci kosong = semua; cocok kode/nama/lokasi tanpa beda huruf', () => {
+  it('kata kunci kosong = semua; cocok kode/lokasi tanpa beda huruf', () => {
     expect(filterCctv(list, '  ')).toHaveLength(2);
-    expect(filterCctv(list, 'balai').map((i) => i.id)).toEqual(['01']);
     expect(filterCctv(list, 'MENGWI').map((i) => i.id)).toEqual(['09']);
+  });
+
+  it('nama (deskripsi) yang disembunyikan di publik tidak ikut dicari', () => {
+    expect(filterCctv(list, 'balai')).toEqual([]);
   });
 
   it('kode dengan spasi/tanda hubung berbeda tetap cocok', () => {
