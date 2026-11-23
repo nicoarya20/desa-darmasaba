@@ -5,6 +5,8 @@ export const PROFIL_TEXT = {
   title: 'Profil Desa',
   lead: 'Sejarah, visi dan misi, lambang, maskot, serta pemerintahan Desa Darmasaba dari masa ke masa.',
   logoAlt: 'Lambang Desa Darmasaba',
+  /** Tombol buka/tutup untuk teks panjang tanpa sub-judul. */
+  prose: { more: 'Baca selengkapnya', less: 'Tampilkan lebih sedikit' },
   /** Tombol loncat ke section di bawah kepala halaman; urutan = urutan section. */
   nav: {
     label: 'Isi halaman Profil Desa',

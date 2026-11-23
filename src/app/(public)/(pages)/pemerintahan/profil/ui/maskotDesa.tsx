@@ -2,7 +2,8 @@
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import { Image } from '@mantine/core';
 import { useProxy } from 'valtio/utils';
-import { ProfilCard, ProfilCardSkeleton, ProfilEmpty, ProfilProse } from '../_com/ProfilCard';
+import { ProfilCard, ProfilCardSkeleton, ProfilEmpty } from '../_com/ProfilCard';
+import { ProfilProseAuto } from '../_com/ProfilProseAuto';
 import { MASKOT_ICON_SRC, PROFIL_CMS_ID } from '../_com/profil.meta';
 import { PROFIL_TEXT } from '../_com/profil.text';
 import { useLoadOnce } from '../_com/use-load-once';
@@ -21,7 +22,7 @@ function MaskotDesa() {
   const images = (data?.images ?? []).filter((img) => !!img.image?.link);
   return (
     <ProfilCard title={T.title} emblem={{ src: MASKOT_ICON_SRC, alt: T.iconAlt }}>
-      {data?.deskripsi ? <ProfilProse html={data.deskripsi} /> : <ProfilEmpty>{T.empty}</ProfilEmpty>}
+      {data?.deskripsi ? <ProfilProseAuto html={data.deskripsi} /> : <ProfilEmpty>{T.empty}</ProfilEmpty>}
       {images.length > 0 ? (
         <ul className={m.gallery}>
           {images.map((img, index) => (
