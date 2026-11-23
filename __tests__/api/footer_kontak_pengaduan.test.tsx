@@ -25,7 +25,7 @@ const anchorsTo = (html: string, href: string) =>
 describe('Footer — Kontak Bupati', () => {
   const LINKS = [
     { label: 'Kontak Bupati Badung', href: 'https://kontak-bupati.badungkab.go.id/' },
-    { label: 'LAPOR!', href: 'https://www.lapor.go.id/' },
+    { label: 'SP4N-LAPOR!', href: 'https://www.lapor.go.id/' },
   ];
 
   it('data blok berisi judul + tepat dua link eksternal', () => {
