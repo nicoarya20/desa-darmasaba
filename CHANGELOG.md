@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.342] - 2026-11-23
+### Changed
+- **Halaman publik CCTV (`/keamanan/cctv`): deskripsi dan "Aktif terakhir" disembunyikan sementara** karena pihak desa belum memberikan datanya. Di daftar dan popup peta tidak lagi muncul judul "-" maupun teks "Aktif terakhir ...", dan kolom cari kini hanya mencari kode dan lokasi. Label status Online/Offline, lokasi, dan kode tetap tampil. Data di admin tidak berubah; saat data dari desa sudah lengkap, dua bagian ini bisa ditampilkan lagi dan hanya muncul bila diisi.
+
 ## [0.1.341] - 2026-11-21
 ### Added
 - **Gambar opsional di Daftar Informasi Publik.** Di PPID > Daftar Informasi Publik, form Tambah dan Edit kini punya kolom "Gambar" (maksimal 5 MB, boleh dikosongkan karena tidak semua informasi punya gambar). Saat mengedit, gambar bisa diganti atau dilepas. Gambar tampil di halaman detail admin dan di halaman detail publik hanya bila ada; informasi lama tanpa gambar tidak berubah. Operator: rilis ini menambah satu kolom di database lewat migrasi `20261121090000_daftar_informasi_gambar` (aman diulang, tanpa data yang diubah).
