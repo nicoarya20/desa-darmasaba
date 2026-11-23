@@ -19,6 +19,14 @@ export const CCTV_TIME_ZONE_LABEL = "WITA";
 export const MAP_FOCUS_ZOOM = 18;
 export const MAP_FIT_MAX_ZOOM = 17;
 
+/**
+ * SEMENTARA disembunyikan di halaman publik karena pihak desa belum memberi datanya: deskripsi (kolom `nama`, di database
+ * masih berisi "-") dan "aktif terakhir" (terisi otomatis saat input, bukan waktu nyata kamera). Ubah ke true setelah data
+ * dari desa lengkap, lalu hapus dua konstanta ini. Saat tampil, kolom yang kosong tidak menampilkan apa pun (tanpa "-").
+ */
+export const CCTV_TAMPIL_DESKRIPSI = false;
+export const CCTV_TAMPIL_AKTIF_TERAKHIR = false;
+
 export type CctvStatusKey = "online" | "offline" | "unknown";
 
 type StatusMeta = { accent: string; tint: string };
