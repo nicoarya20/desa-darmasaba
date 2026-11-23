@@ -1,4 +1,4 @@
-import { CCTV_TIME_ZONE, CCTV_TIME_ZONE_LABEL, RELATIVE_MAX_DAYS } from "./cctv.meta";
+import { CCTV_TAMPIL_DESKRIPSI, CCTV_TIME_ZONE, CCTV_TIME_ZONE_LABEL, RELATIVE_MAX_DAYS } from "./cctv.meta";
 import type { CctvItem } from "./cctv.source";
 import { CCTV_TEXT as T } from "./cctv.text";
 
@@ -25,13 +25,13 @@ const normalize = (value: string) => value.toLocaleLowerCase("id").replace(/\s+/
 // "CCTV - 09" dan "cctv-09" dianggap sama: bandingkan juga tanpa spasi/tanda hubung.
 const compact = (value: string) => normalize(value).replace(/[\s-]+/g, "");
 
-/** Saring kode/nama/lokasi tanpa beda huruf besar/kecil, spasi, atau tanda hubung; kata kunci kosong = semua. */
+/** Saring kode/lokasi (+ nama bila deskripsi ditampilkan) tanpa beda huruf besar/kecil, spasi, atau tanda hubung; kata kunci kosong = semua. */
 export function filterCctv(items: readonly CctvItem[], query: string): CctvItem[] {
   const needle = normalize(query);
   if (!needle) return [...items];
   const needleCompact = compact(query);
   return items.filter((item) =>
-    [item.kode, item.nama, item.lokasi].some(
+    [item.kode, ...(CCTV_TAMPIL_DESKRIPSI ? [item.nama] : []), item.lokasi].some(
       (field) => normalize(field).includes(needle) || (needleCompact !== "" && compact(field).includes(needleCompact)),
     ),
   );

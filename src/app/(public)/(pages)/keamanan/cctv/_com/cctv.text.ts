@@ -1,4 +1,4 @@
-import type { CctvStatusKey } from "./cctv.meta";
+import { CCTV_TAMPIL_DESKRIPSI, type CctvStatusKey } from "./cctv.meta";
 
 /** Teks UI halaman CCTV Keamanan Desa (Bahasa Indonesia, tanpa em dash). */
 export const CCTV_TEXT = {
@@ -25,13 +25,12 @@ export const CCTV_TEXT = {
   mapEmpty: "Koordinat titik CCTV belum diisi, jadi peta belum bisa menampilkan lokasinya.",
   listLabel: "Daftar CCTV",
   searchLabel: "Cari CCTV",
-  searchPlaceholder: "Cari kode, nama, atau lokasi",
+  searchPlaceholder: CCTV_TAMPIL_DESKRIPSI ? "Cari kode, nama, atau lokasi" : "Cari kode atau lokasi",
   noMatch: (q: string) => `Tidak ada CCTV yang cocok dengan "${q}".`,
   showOnMap: "Tampilkan di peta: ",
   lokasiKosong: "Lokasi belum diisi",
   notOnMap: "Belum ada titik di peta",
   lastActive: "Aktif terakhir",
-  lastActiveKosong: "Waktu aktif belum tercatat",
   justNow: "baru saja",
 
   emptyTitle: "Belum ada titik CCTV yang terdata",
