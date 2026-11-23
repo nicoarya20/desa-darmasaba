@@ -212,3 +212,69 @@
     padding-left: 26px;
   }
 }
+
+/* ---------- Tombol navigasi section (ProfilNav) ---------- */
+.nav {
+  max-width: 100%;
+}
+
+.navList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Pil abu --c-tile (pola pil Kabar); hover = ganti latar, bukan garis bawah. */
+.navPill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 18px;
+  border-radius: 980px;
+  background: var(--c-tile);
+  color: var(--c-ink);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.navPill:focus-visible {
+  outline: 2px solid var(--c-brand);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navPill:hover {
+    background: var(--c-brand-fill);
+    color: var(--c-on-brand);
+  }
+}
+
+/* Pembungkus section sebagai tujuan gulir; jarak atas melewati navbar tetap. Fokus programatik tanpa cincin. */
+.anchor {
+  scroll-margin-top: 88px;
+}
+
+.anchor:focus {
+  outline: none;
+}
+
+@media (max-width: 734px) {
+  /* Baris pil bergeser horizontal di dalam relnya sendiri; halaman tidak ikut melebar. */
+  .navList {
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .navList::-webkit-scrollbar {
+    display: none;
+  }
+}

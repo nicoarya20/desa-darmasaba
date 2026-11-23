@@ -27,6 +27,22 @@ export const PERBEKEL_ROLE = 'Perbekel Desa Darmasaba';
 export const KANTOR_MAP_EMBED_URL =
   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15780.3751228292!2d115.19559210934409!3d-8.586981700000006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd23eb932812c81%3A0x5b5ac2759cc5fe4b!2sKantor%20Perbekel%20Darmasaba!5e0!3m2!1sid!2sid!4v1741922475983!5m2!1sid!2sid';
 
+/**
+ * Id penanda (anchor) tiap section Profil Desa — dipakai pembungkus section di page.tsx dan tombol navigasi
+ * `ProfilNav`, sehingga keduanya tidak bisa berbeda. Urutan sama dengan urutan section di halaman.
+ */
+export const PROFIL_ANCHOR = {
+  sejarah: 'sejarah-desa',
+  visiMisi: 'visi-misi',
+  wilayah: 'letak-batas-wilayah',
+  lambang: 'lambang-desa',
+  maskot: 'maskot-desa',
+  perbekel: 'profil-perbekel',
+  struktur: 'struktur-organisasi',
+  moto: 'moto-desa',
+  riwayat: 'perbekel-masa-ke-masa',
+} as const;
+
 /** Rute profil pegawai dari bagan Struktur Perangkat Desa. */
 export const strukturPerangkatHref = (pegawaiId: string) =>
   `/pemerintahan/profil/struktur-perangkat-desa/${pegawaiId}`;
