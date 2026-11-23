@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.343] - 2026-11-23
+### Added
+- **Tombol loncat di halaman Profil Desa (`/pemerintahan/profil`).** Di bawah judul halaman kini ada sembilan tombol (Sejarah Desa, Visi & Misi, Letak & Batas Wilayah, Lambang Desa, Maskot Desa, Profil Perbekel, Struktur Organisasi, Moto Desa, Perbekel dari Masa ke Masa). Klik salah satu untuk langsung menggulir ke bagian itu, sehingga pengunjung tahu isi halaman sejak awal tanpa menggulir panjang. Di ponsel, deretan tombol bisa digeser ke samping.
+
+### Changed
+- Judul bagan di halaman Struktur Perangkat Desa (juga di dalam Profil Desa) kini berbunyi "STRUKTUR ORGANISASI PEMERINTAH DESA DARMASABA".
+- Tautan "LAPOR!" di footer (blok Kontak Bupati) kini bertuliskan "SP4N-LAPOR!"; alamat tujuannya tidak berubah.
+
 ## [0.1.342] - 2026-11-23
 ### Changed
 - **Halaman publik CCTV (`/keamanan/cctv`): deskripsi dan "Aktif terakhir" disembunyikan sementara** karena pihak desa belum memberikan datanya. Di daftar dan popup peta tidak lagi muncul judul "-" maupun teks "Aktif terakhir ...", dan kolom cari kini hanya mencari kode dan lokasi. Label status Online/Offline, lokasi, dan kode tetap tampil. Data di admin tidak berubah; saat data dari desa sudah lengkap, dua bagian ini bisa ditampilkan lagi dan hanya muncul bila diisi.
