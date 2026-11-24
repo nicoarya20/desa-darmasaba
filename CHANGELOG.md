@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.345] - 2026-11-24
+### Changed
+- **Chat bar Jenna menyingkir saat ada jendela terbuka.** Selama modal atau panel apa pun terbuka (misalnya detail Bank Sampah, Potensi Desa, Program Inovasi, pratinjau foto galeri, filter UMKM), juga saat menu desktop, kolom cari, atau menu ponsel terbuka, chat bar Jenna dan tombol kembali ke atas memudar dan tidak bisa diklik. Sebelumnya pil Jenna tetap terlihat samar di celah bawah modal sehingga tampak menempel. Bila percakapan Jenna sedang terbuka, percakapan ikut tersembunyi dan muncul kembali utuh setelah jendela ditutup.
+- **Pilihan pertanyaan cepat Jenna rata kanan di ponsel**, sejajar dengan tombol kirim. Tampilan desktop tidak berubah.
+
+### Fixed
+- **Tombol WhatsApp dan Telepon di detail Lowongan Kerja kini bisa diklik di ponsel.** Bilah kontak yang melayang di bawah layar sebelumnya tertutup chat bar Jenna; kini chat bar dan tombol kembali ke atas naik di atas bilah selama bilah itu tampil.
+- **Chat bar Jenna tidak lagi bergoyang saat beranda digulir di ponsel berlayar sempit** (lebar di bawah sekitar 335px). Penyebabnya tautan "Semua pengumuman" di panel Pengumuman beranda yang keluar dari layar. Di layar yang terlalu sempit untuk satu baris (di bawah sekitar 379px), tautan itu kini turun ke bawah judul "Pengumuman" alih-alih terpotong di tepi panel.
+
 ## [0.1.344] - 2026-11-24
 ### Changed
 - **Kartu Struktur Organisasi kini bergaya bagan Perangkat Desa.** Di detail PUSTU (Kesehatan), detail sekolah (Pendidikan), dan tab Struktur di detail Bank Sampah (Lingkungan), kartu pengurus tidak lagi menampilkan lingkaran berisi huruf depan nama. Kartu kini berlatar gradasi biru dengan jabatan huruf kapital di atas dan nama dalam pil di bawahnya, sama seperti kartu di bagan Struktur Perangkat Desa, di tema terang maupun gelap. Foto pengurus tetap tampil bila diunggah di admin. Susunan grid (3 kolom, 2 kolom di ponsel) dan gambar bagan di atasnya tidak berubah; kartu kini lebih pendek sehingga bagian Struktur lebih ringkas.
