@@ -93,3 +93,34 @@ export function closeToIdle(voiceOn: boolean): CloseState {
 export function isConversationReset(prevCount: number, count: number): boolean {
   return prevCount > 0 && count === 0;
 }
+
+/** Atribut kunci scroll yang dipasang react-remove-scroll (dipakai Modal/Drawer Mantine) di <body> selama overlay
+    terbuka; nilainya penghitung overlay bertumpuk ("2" = modal di dalam modal) dan dihapus saat yang terakhir tutup.
+    Sinyal andal untuk Modal/Drawer: portal Mantine 9 memakai satu node bersama yang menetap di body, jadi
+    childList body tidak berubah saat modal dibuka. */
+export const SCROLL_LOCK_ATTR = "data-scroll-locked";
+
+/** Body memegang kunci scroll dengan penghitung > 0 = ada Modal/Drawer terbuka. */
+export function isScrollLocked(lockValue: string | null): boolean {
+  if (lockValue === null) return false;
+  const count = Number.parseInt(lockValue, 10);
+  return Number.isFinite(count) && count > 0;
+}
+
+/** Sumber overlay halaman: kunci scroll body (Modal/Drawer) + state navbar (stateNav) yang tidak mengunci scroll. */
+export interface PageOverlaySignals {
+  /** Nilai atribut SCROLL_LOCK_ATTR di <body>. */
+  scrollLock: string | null;
+  /** Flyout menu desktop terbuka (stateNav.openMenuId). */
+  navMenuId: string | null;
+  /** Panel cari desktop di flyout terbuka (stateNav.isSearch). */
+  navSearch: boolean;
+  /** Panel menu ponsel terbuka (stateNav.mobileOpen). */
+  mobileMenu: boolean;
+}
+
+/** Overlay apa pun menutupi halaman (Modal/Drawer, flyout/cari desktop dengan lapisan blur, menu ponsel):
+    dock Jenna & scroll-to-top disembunyikan. */
+export function isPageOverlayOpen({ scrollLock, navMenuId, navSearch, mobileMenu }: PageOverlaySignals): boolean {
+  return isScrollLocked(scrollLock) || navMenuId !== null || navSearch || mobileMenu;
+}

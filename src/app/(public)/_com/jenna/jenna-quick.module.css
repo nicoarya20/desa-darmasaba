@@ -45,6 +45,18 @@
   opacity: 0.6;
 }
 
+/* Ponsel: pil rata kanan, sejajar tombol kirim di ujung kanan bar; skala naik (jb-rise) dan tekan (:active)
+   berpangkal di pojok kanan bawah supaya pil terasa tumbuh dari arah bar. Teks di dalam pil tetap rata kiri
+   bila terbungkus (gaya gelembung chat); 3 pil muat 1 baris sampai lebar 320px. Breakpoint = jenna-bar. */
+@media (max-width: 47.99em) {
+  .quickList {
+    align-items: flex-end;
+  }
+  .quick {
+    transform-origin: 100% 100%;
+  }
+}
+
 @keyframes jb-rise {
   from {
     opacity: 0;

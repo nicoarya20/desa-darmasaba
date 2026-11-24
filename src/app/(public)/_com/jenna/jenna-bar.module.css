@@ -92,7 +92,7 @@
   outline: none; /* fokus terprogram setelah perkecil/Escape (tabIndex -1), bukan tujuan Tab */
 }
 
-/* Menu ponsel terbuka: dock disembunyikan (inert dipasang komponen). */
+/* Overlay halaman terbuka (use-page-overlay-open: Modal/Drawer, flyout/cari navbar, menu ponsel): dock disembunyikan (inert dipasang komponen). */
 .dock[data-hidden="true"] {
   opacity: 0;
   visibility: hidden;
