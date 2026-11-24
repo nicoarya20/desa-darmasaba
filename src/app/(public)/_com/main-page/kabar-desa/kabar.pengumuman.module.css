@@ -11,11 +11,18 @@
 
 /* Hover judul baris & "Semua pengumuman": sapuan warna dari _com/link-reveal (bukan garis bawah). */
 
+/*
+ * Wrap: judul + jarak + tautan nowrap butuh ±291px, tak muat di layar < ±379px. Tanpa wrap tautan
+ * mencuat keluar panel, dan di < 335px keluar layar 5px → layout viewport ponsel melebar sehingga
+ * elemen fixed (dock Jenna, scroll-top) ikut bergeser saat scroll. Saat terbungkus tautan sendirian
+ * di baris 2 → space-between menaruhnya di awal (rata kiri, sejajar judul).
+ */
 .head {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
+  gap: 4px 16px;
   margin-bottom: 8px;
 }
 
