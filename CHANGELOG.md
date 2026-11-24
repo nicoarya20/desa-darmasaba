@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.344] - 2026-11-24
+### Changed
+- **Kartu Struktur Organisasi kini bergaya bagan Perangkat Desa.** Di detail PUSTU (Kesehatan), detail sekolah (Pendidikan), dan tab Struktur di detail Bank Sampah (Lingkungan), kartu pengurus tidak lagi menampilkan lingkaran berisi huruf depan nama. Kartu kini berlatar gradasi biru dengan jabatan huruf kapital di atas dan nama dalam pil di bawahnya, sama seperti kartu di bagan Struktur Perangkat Desa, di tema terang maupun gelap. Foto pengurus tetap tampil bila diunggah di admin. Susunan grid (3 kolom, 2 kolom di ponsel) dan gambar bagan di atasnya tidak berubah; kartu kini lebih pendek sehingga bagian Struktur lebih ringkas.
+
 ## [0.1.343] - 2026-11-23
 ### Added
 - **Tombol loncat di halaman Profil Desa (`/pemerintahan/profil`).** Di bawah judul halaman kini ada sembilan tombol (Sejarah Desa, Visi & Misi, Letak & Batas Wilayah, Lambang Desa, Maskot Desa, Profil Perbekel, Struktur Organisasi, Moto Desa, Perbekel dari Masa ke Masa). Klik salah satu untuk langsung menggulir ke bagian itu, sehingga pengunjung tahu isi halaman sejak awal tanpa menggulir panjang. Di ponsel, deretan tombol bisa digeser ke samping.
