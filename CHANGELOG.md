@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.346] - 2026-11-24
+### Changed
+- **Profil perorangan PPID disembunyikan sementara** atas permintaan pihak desa, karena isinya tumpang tindih dengan "Profil Perbekel" di halaman Profil Desa. Di halaman publik `/ppid/profil-ppid`, bagian "Pejabat Pengelola Informasi dan Dokumentasi" (foto, biografi, riwayat karir, pengalaman organisasi, program unggulan) tidak lagi tampil; yang tersisa hanya Profil Lembaga. Di admin, menu PPID > Profil PPID kini langsung menampilkan Profil Lembaga tanpa tab "Profil Perorangan". Tidak ada data yang dihapus: isinya tetap tersimpan dan bagian ini bisa ditampilkan lagi dengan mengubah satu pengaturan di kode (`src/con/profil-ppid.ts`). Selama disembunyikan, halaman publik tidak memuat data perorangan.
+
 ## [0.1.345] - 2026-11-24
 ### Changed
 - **Chat bar Jenna menyingkir saat ada jendela terbuka.** Selama modal atau panel apa pun terbuka (misalnya detail Bank Sampah, Potensi Desa, Program Inovasi, pratinjau foto galeri, filter UMKM), juga saat menu desktop, kolom cari, atau menu ponsel terbuka, chat bar Jenna dan tombol kembali ke atas memudar dan tidak bisa diklik. Sebelumnya pil Jenna tetap terlihat samar di celah bawah modal sehingga tampak menempel. Bila percakapan Jenna sedang terbuka, percakapan ikut tersembunyi dan muncul kembali utuh setelah jendela ditutup.
