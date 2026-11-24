@@ -60,6 +60,18 @@
   color: var(--muted);
 }
 
+/* Gambar sisipan admin (mis. maskot di tengah deskripsi, seperti dokumen program dari desa): di tengah kolom,
+   dibatasi 480px kedua sisi supaya logo/maskot tidak memenuhi kolom artikel; tanpa pelat, PNG transparan duduk
+   langsung di latar halaman. width/height auto + max-* menjaga rasio. */
+.content img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 480px);
+  max-height: 480px;
+  margin: 2em auto;
+}
+
 .empty {
   margin: 0;
   color: var(--muted);

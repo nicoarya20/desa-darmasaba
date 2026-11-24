@@ -7,9 +7,14 @@ import {
 } from "@/lib/program-inovasi";
 import { Context } from "elysia";
 import removeReleasedFiles, { fileIds } from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeReleasedFiles";
+import { idGambarSisipan } from "./gambar-sisipan";
 
-/** Rujukan berkas (logo + galeri) yang dibandingkan sebelum/sesudah update. */
-const GAMBAR_SELECT = { imageId: true, images: { select: { id: true } } } as const;
+/** Rujukan berkas (logo + galeri + gambar sisipan deskripsi) yang dibandingkan sebelum/sesudah update. */
+const GAMBAR_SELECT = {
+  imageId: true,
+  images: { select: { id: true } },
+  gambarSisipan: { select: { id: true } },
+} as const;
 
 export default async function programInovasiUpdate(context: Context) {
   const body = context.body as ProgramInovasiUpdateBody;
@@ -30,22 +35,35 @@ export default async function programInovasiUpdate(context: Context) {
   }
 
   try {
+    // Deskripsi dikirim → daftar gambar sisipan diturunkan ulang dari isinya; tidak dikirim → tidak diubah.
+    let gambarSisipan: { set: { id: string }[] } | undefined;
+    if (body.description !== undefined) {
+      const sisipan = await idGambarSisipan(body.description);
+      if (!sisipan.ok) {
+        context.set.status = 400;
+        return { success: false, message: sisipan.message };
+      }
+      gambarSisipan = { set: sisipan.ids.map((fileId) => ({ id: fileId })) };
+    }
+
     const before = await prisma.programInovasi.findUnique({ where: { id }, select: GAMBAR_SELECT });
     const updated = await prisma.programInovasi.update({
       where: { id },
       data: {
         ...hasil.data,
+        ...(gambarSisipan ? { gambarSisipan } : {}),
         updatedAt: new Date(),
       },
       include: {
         image: true,
         images: true,
+        gambarSisipan: { select: { id: true } },
       },
     });
     await removeReleasedFiles(
       "ProgramInovasi",
-      fileIds(before?.imageId, before?.images ?? []),
-      fileIds(updated.imageId, updated.images),
+      fileIds(before?.imageId, before?.images ?? [], before?.gambarSisipan ?? []),
+      fileIds(updated.imageId, updated.images, updated.gambarSisipan),
     );
 
     return {

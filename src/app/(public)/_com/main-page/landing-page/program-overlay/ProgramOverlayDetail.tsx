@@ -3,7 +3,7 @@ import { IconChevronRight } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
 import r from "@/app/(public)/_com/link-reveal/link-reveal.module.css";
 import rt from "@/app/(public)/_com/rich-text/rich-text.module.css";
-import { sanitizeRichText } from "@/lib/rich-text";
+import { sanitizeRichTextWithImages } from "@/lib/rich-text";
 import l from "../landing.module.css";
 import type { GalleryView, ProgramHead } from "./program-overlay.logic";
 import s from "./program-overlay.module.css";
@@ -20,7 +20,8 @@ type Props = {
 
 /** Isi overlay: ubin logo + label + nama (judul dialog) + tautan halaman lengkap, deskripsi tersanitasi, galeri dokumentasi. */
 export function ProgramOverlayDetail({ head, gallery, onOpenPhoto, detailHref }: Props) {
-  const description = sanitizeRichText(head.description);
+  // Gambar sisipan admin ikut tampil di posisinya (hanya dari penyimpanan sendiri).
+  const description = sanitizeRichTextWithImages(head.description, head.name);
 
   return (
     <div className={s.inner}>

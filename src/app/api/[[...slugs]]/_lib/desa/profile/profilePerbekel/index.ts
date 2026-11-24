@@ -25,6 +25,8 @@ const ProfilPerbekel = new Elysia({
         pengalamanOrganisasi: t.String(),
         programUnggulan: t.String(),
         imageId: t.String(),
+        // Opsional (additive): klien lama yang tidak mengirim field ini tidak mengubah nilai tersimpan.
+        lhkpnUrl: t.Optional(t.Nullable(t.String())),
       }),
     }
   );

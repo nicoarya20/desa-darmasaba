@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import DOMPurify from 'dompurify';
 import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
+import imageCss from '@/app/admin/(dashboard)/_com/editor-image/editor-image.module.css';
 
 function DetailProgramInovasi() {
   const stateProgramInovasi = useProxy(profileLandingPageState.programInovasi)
@@ -92,7 +93,7 @@ function DetailProgramInovasi() {
               <Box>
                 <Text fz="lg" fw="bold">Deskripsi</Text>
                <Box pl={5}>
-                 <Text fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data.description || '-') }}></Text>
+                 <Text className={imageCss.preview} fz="md" c="dimmed" style={{ wordBreak: "break-word", whiteSpace: "normal" }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data.description || '-') }}></Text>
                </Box>
               </Box>
 

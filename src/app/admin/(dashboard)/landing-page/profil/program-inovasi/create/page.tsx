@@ -14,6 +14,7 @@ import { emptyProgramInovasiForm } from '@/app/admin/(dashboard)/_state/landing-
 import { DokumentasiUploader } from '../_com/DokumentasiUploader';
 import { LogoDropzone } from '../_com/LogoDropzone';
 import { UrutanInput } from '../_com/UrutanInput';
+import { useGambarSisipan } from '../_lib/useGambarSisipan';
 import { useProgramInovasiMedia } from '../_lib/useProgramInovasiMedia';
 
 function CreateProgramInovasi() {
@@ -25,6 +26,7 @@ function CreateProgramInovasi() {
   const stateProgramInovasi = profileLandingPageState.programInovasi;
   const snap = useSnapshot(profileLandingPageState.programInovasi, { sync: true });
   const media = useProgramInovasiMedia();
+  const sisipan = useGambarSisipan();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Logo & dokumentasi opsional: cukup nama + deskripsi.
@@ -48,6 +50,8 @@ function CreateProgramInovasi() {
       const { imageId, imageIds } = await media.unggah();
       stateProgramInovasi.create.form.imageId = imageId;
       stateProgramInovasi.create.form.imageIds = imageIds;
+      // Gambar sisipan baru diunggah; HTML-nya disimpan ke form supaya simpan ulang tidak mengunggah dua kali.
+      stateProgramInovasi.create.form.description = await sisipan.unggah(stateProgramInovasi.create.form.description);
       await stateProgramInovasi.create.create();
 
       resetForm();
@@ -100,7 +104,11 @@ function CreateProgramInovasi() {
             <Text fz={'sm'} fw={'bold'}>
               Deskripsi
             </Text>
+            <Text fz="xs" c="dimmed" mb={4}>
+              Untuk menaruh gambar di tengah teks, letakkan kursor lalu klik ikon gambar di toolbar.
+            </Text>
             <CreateEditor
+              onPickImage={sisipan.pilih}
               value={snap.create.form.description || ''}
               onChange={(htmlContent: string) => {
                 stateProgramInovasi.create.form.description = htmlContent;
