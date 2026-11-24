@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.348] - 2026-11-24
+### Added
+- **Gambar di tengah deskripsi Program Inovasi.** Di admin (Landing Page > Profil > Program Inovasi, Tambah maupun Edit), toolbar editor Deskripsi kini punya tombol gambar. Letakkan kursor di antara paragraf, klik tombol itu, lalu pilih gambar (maksimal 5MB, paling banyak 10 gambar per deskripsi). Gambar langsung tampil di tengah editor dan baru diunggah saat Simpan, jadi membatalkan form tidak meninggalkan berkas. Di halaman publik, gambar tampil di tengah teks pada posisi yang sama, baik di halaman detail `/inovasi/program-inovasi/{id}` maupun di jendela program di beranda, sehingga susunannya bisa mengikuti dokumen program dari desa (misalnya maskot DAVEST III setelah paragraf pembuka). Gambar yang dihapus dari teks ikut dibersihkan dari penyimpanan saat disimpan. Perlu migrasi database (tabel penghubung baru, aman untuk data lama).
+
+### Changed
+- **Ubin di halaman daftar Program Inovasi lebih ringkas.** Kotak logo kini setinggi 160px (tablet 140px). Sebelumnya tingginya mengikuti lebar ubin (sekitar 300px di layar lebar), sehingga layar pertama hanya memuat satu baris program. Tampilan ponsel tidak berubah.
+
 ## [0.1.346] - 2026-11-24
 ### Changed
 - **Profil perorangan PPID disembunyikan sementara** atas permintaan pihak desa, karena isinya tumpang tindih dengan "Profil Perbekel" di halaman Profil Desa. Di halaman publik `/ppid/profil-ppid`, bagian "Pejabat Pengelola Informasi dan Dokumentasi" (foto, biografi, riwayat karir, pengalaman organisasi, program unggulan) tidak lagi tampil; yang tersisa hanya Profil Lembaga. Di admin, menu PPID > Profil PPID kini langsung menampilkan Profil Lembaga tanpa tab "Profil Perorangan". Tidak ada data yang dihapus: isinya tetap tersimpan dan bagian ini bisa ditampilkan lagi dengan mengubah satu pengaturan di kode (`src/con/profil-ppid.ts`). Selama disembunyikan, halaman publik tidak memuat data perorangan.
