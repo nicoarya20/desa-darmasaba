@@ -1,10 +1,10 @@
 'use client';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { IconCalendarEvent, IconChevronRight, IconMapPin } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
-import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import { formatTanggalWaktu, type LaporanPublik } from '../laporan.logic';
 import { LAPORAN_LIST_HREF } from '../laporan.meta';
 import { LaporanStatus } from '../LaporanStatus';
@@ -24,7 +24,7 @@ export function LaporanDetailView({ state, onRetry }: { state: LaporanDetailStat
   return (
     <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
-        <BackButton />
+        <DetailBackLink href={LAPORAN_LIST_HREF} label={T.backLink} />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
         {state.status === 'ready' ? <DetailBody data={state.data} /> : null}
         {state.status === 'notfound' ? (

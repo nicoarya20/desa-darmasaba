@@ -1,5 +1,7 @@
 /** Teks UI halaman detail Laporan Publik. */
 export const LAPORAN_DETAIL_TEXT = {
+  /** Nama daftar di tautan kembali "‹ …" (sama dengan judul menu). */
+  backLink: "Laporan Publik",
   kategori: "Laporan Publik",
   lokasi: "Lokasi",
   waktu: "Waktu kejadian",
