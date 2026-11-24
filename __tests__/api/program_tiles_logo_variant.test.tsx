@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Ubin program bersama, varian ber-logo (Program Inovasi): kelas `.tileLogo` hanya untuk item ber-logo/inisial
-// (ubin ikon Program Kreatif & Penghijauan tidak berubah), pelat logo/inisial, dan tema gelap = ubin gelap --tile
-// dengan logo tanpa pelat (keputusan user 2026-11-20). jsdom rusak di repo ini, jadi renderToStaticMarkup + baca CSS sumber.
+// (ubin ikon Program Kreatif & Penghijauan tidak berubah), kotak logo/inisial, dan logo tanpa pelat di kedua tema
+// (gelap sejak 2026-11-20, terang sejak 2026-11-24: varian A dari 3 yang dibandingkan user). jsdom rusak di repo ini, jadi renderToStaticMarkup + baca CSS sumber.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { MantineProvider } from '@mantine/core';
@@ -72,11 +72,14 @@ describe('program-tiles.module.css: pelat rata tinggi, gelap tanpa pelat, baris 
     expect(CSS).toMatch(/\.logo \.logoImg \{\s*position: absolute;/);
   });
 
-  it('gelap: ubin ber-logo memakai token ubin halaman (tanpa pulau terang), pelat logo transparan', () => {
+  it('ubin ber-logo memakai token ubin halaman; kotak logo tanpa latar di kedua tema (tidak ada pelat putih)', () => {
     expect(CSS).not.toMatch(/#d9e1ea/i);
     expect(CSS).not.toMatch(/\.tileLogo \{\s*@mixin dark/);
     expect(CSS).not.toMatch(/--reveal-to/);
-    expect(CSS).toMatch(/\.logo \{[^}]*background: #fff;\s*@mixin dark \{\s*background: transparent;/);
+    const logoRule = CSS.match(/\n\.logo \{[\s\S]*?\n\}/)?.[0] ?? '';
+    expect(logoRule).toContain('height: 160px;');
+    expect(logoRule).not.toMatch(/background/);
+    expect(CSS).not.toMatch(/#fff\b/i);
   });
 
   it('ponsel ≤734px: hanya .tileLogo yang jadi baris dengan pelat 88px; aturan .tile ponsel tetap', () => {
