@@ -1,4 +1,5 @@
 'use client';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import { kategoriSlug, SEMUA_SLUG } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
@@ -8,10 +9,8 @@ import { isKegiatanPembangunan } from '@/lib/kegiatan-pembangunan';
 import { hasPartisipan } from '@/lib/kegiatan-partisipan';
 import { formatTanggalTerbit } from '@/lib/tanggal-terbit';
 import { Image } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight, IconMapPin, IconUsers } from '@tabler/icons-react';
+import { IconChevronRight, IconMapPin, IconUsers } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
-import back from '@/app/(public)/(pages)/ekonomi/umkm/_com/detail-umkm/detail-umkm.module.css';
-import BackButton from '../../../layanan/_com/BackButto';
 import { kegiatanListHref } from '../kegiatan-list.logic';
 import PembangunanInfo from '../PembangunanInfo';
 import DokumentasiPembangunan from './DokumentasiPembangunan';
@@ -25,31 +24,23 @@ export type KegiatanDetailList = { label: string; href: string };
 
 /**
  * Halaman detail kegiatan: kategori · tanggal, judul, ringkasan, lokasi & partisipan (bila > 0), foto, progres pembangunan, isi.
- * `list` (opsional) → tautan teks "‹ {label}" ke `href` menggantikan tombol ikon kembali, tautan "Lihat semua" menuju
- * `href`, dan kategori tidak menaut ke daftar Kegiatan Desa. Tanpa `list` = tampilan Kegiatan Desa.
+ * Tautan kembali teks "‹ Kegiatan Desa" ke daftar Kegiatan Desa. `list` (opsional) → tautan kembali dan "Lihat semua"
+ * menuju `list.href` dengan nama `list.label`, dan kategori tidak menaut ke daftar Kegiatan Desa. Tanpa `list` = tampilan Kegiatan Desa.
  */
 export function KegiatanDetail({ id, list }: { id: string; list?: KegiatanDetailList }) {
   const state = useKegiatanDetail(id);
+  const listHref = list?.href ?? kegiatanListHref(SEMUA_SLUG);
 
   return (
     <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
-        {list ? (
-          <Link href={list.href} className={`${back.back} ${r.trigger}`}>
-            <IconChevronLeft className={r.chevronBack} size={16} stroke={2} aria-hidden />
-            <span className={r.cta} data-text={list.label}>
-              {list.label}
-            </span>
-          </Link>
-        ) : (
-          <BackButton />
-        )}
+        <DetailBackLink href={listHref} label={list?.label ?? T.backLink} />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
         {state.status === 'ready' ? <KegiatanDetailBody data={state.data} linkKategori={!list} /> : null}
         {state.status === 'notfound' || state.status === 'error' ? (
           <div className={kabar.empty}>
             <p className={d.emptyText}>{state.status === 'notfound' ? T.notFound : T.error}</p>
-            <Link href={list?.href ?? kegiatanListHref(SEMUA_SLUG)} className={`${d.emptyLink} ${r.trigger}`}>
+            <Link href={listHref} className={`${d.emptyLink} ${r.trigger}`}>
               <span className={r.cta} data-text={T.backToList}>
                 {T.backToList}
               </span>

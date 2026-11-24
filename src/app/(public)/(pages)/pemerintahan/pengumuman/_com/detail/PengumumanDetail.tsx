@@ -1,5 +1,6 @@
 'use client';
 import { DokumentasiGaleri } from '@/app/(public)/(tambahan)/program-inovasi/[id]/_com/DokumentasiGaleri';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
@@ -9,7 +10,6 @@ import { formatTanggalTerbit, tanggalPengumuman } from '@/lib/pengumuman-tanggal
 import { Image } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
-import BackButton from '../../../layanan/_com/BackButto';
 import { pengumumanListHref } from '../pengumuman-list.logic';
 import { PengumumanDokumenRows } from './PengumumanDokumenRows';
 import s from './pengumuman-detail.module.css';
@@ -23,7 +23,7 @@ export function PengumumanDetail({ id }: { id: string }) {
   return (
     <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
-        <BackButton />
+        <DetailBackLink href={pengumumanListHref('')} label={T.backLink} />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
         {state.status === 'ready' ? <DetailBody data={state.data} /> : null}
         {state.status === 'notfound' || state.status === 'error' ? (
