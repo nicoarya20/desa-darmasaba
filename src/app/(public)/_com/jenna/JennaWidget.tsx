@@ -1,7 +1,6 @@
 "use client";
 
 import { useMusic } from "@/app/context/MusicContext";
-import stateNav from "@/state/state-nav";
 import { usePathname } from "next/navigation";
 import { type KeyboardEvent, type MouseEvent, type PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
@@ -17,6 +16,7 @@ import { JennaQuickChats } from "./JennaQuickChats";
 import { JennaRoom } from "./JennaRoom";
 import { JennaVoiceConsent } from "./JennaVoiceConsent";
 import { JennaVoiceControls, JennaVoiceNotice } from "./JennaVoiceControls";
+import { usePageOverlayOpen } from "./use-page-overlay-open";
 import { isVoiceSupported } from "./voice/voice-devices";
 import { VOICE_COPY } from "./voice/voice-copy";
 
@@ -29,7 +29,7 @@ const INTERACTIVE = "button, a, input, textarea, select, [role='button']";
 export default function JennaWidget() {
   const snap = useSnapshot(jennaState);
   const voice = useSnapshot(voiceState);
-  const { mobileOpen } = useSnapshot(stateNav);
+  const overlayOpen = usePageOverlayOpen();
   const { currentSong } = useMusic();
   const pathname = usePathname();
   const [draft, setDraft] = useState("");
@@ -182,7 +182,9 @@ export default function JennaWidget() {
   };
 
   const canStartVoice = snap.voiceEnabled && voiceSupported && !voiceBusy;
-  const hidden = mobileOpen;
+  // Overlay halaman terbuka (Modal/Drawer, flyout/cari navbar, menu ponsel): dock disingkirkan; room ikut tertutup
+  // tanpa reset state dan kembali sesudahnya.
+  const hidden = overlayOpen;
 
   return (
     <div
