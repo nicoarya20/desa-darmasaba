@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.349] - 2026-11-24
+### Changed
+- **Tautan kembali di halaman detail kini seragam: teks "‹ Nama Daftar"**, sama seperti detail produk UMKM ("‹ Katalog UMKM"), menggantikan tombol kotak berikon panah. Tautan menyebut ke mana pengunjung kembali dan selalu menuju halaman daftarnya (bukan sekadar "halaman sebelumnya"), berwarna biru brand di tema terang maupun gelap, dengan efek sapuan warna saat disorot. Berlaku di 20 halaman detail: Lowongan Kerja Lokal, Inovasi Teknologi Desa, Keamanan Lingkungan, Laporan Publik, Pencegahan Kriminalitas, Kontak Darurat (Kesehatan), Posyandu, Program Kesehatan, detail sekolah (Info Sekolah), Daftar Informasi Publik, profil Struktur PPID dan Struktur Perangkat Desa, program Desa Anti Korupsi, Prestasi dan Penghargaan, Berita, Galeri Video, Kegiatan Desa, Layanan, Pengumuman, dan Potensi. Halaman daftar dan menu tetap memakai tombol panah.
+
 ## [0.1.346] - 2026-11-24
 ### Changed
 - **Profil perorangan PPID disembunyikan sementara** atas permintaan pihak desa, karena isinya tumpang tindih dengan "Profil Perbekel" di halaman Profil Desa. Di halaman publik `/ppid/profil-ppid`, bagian "Pejabat Pengelola Informasi dan Dokumentasi" (foto, biografi, riwayat karir, pengalaman organisasi, program unggulan) tidak lagi tampil; yang tersisa hanya Profil Lembaga. Di admin, menu PPID > Profil PPID kini langsung menampilkan Profil Lembaga tanpa tab "Profil Perorangan". Tidak ada data yang dihapus: isinya tetap tersimpan dan bagian ini bisa ditampilkan lagi dengan mengubah satu pengaturan di kode (`src/con/profil-ppid.ts`). Selama disembunyikan, halaman publik tidak memuat data perorangan.
