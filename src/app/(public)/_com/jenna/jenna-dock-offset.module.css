@@ -1,5 +1,6 @@
 /* Offset posisi Jenna, dipakai dock chat bar (JennaWidget) dan tombol scroll-to-top (scrollToTopButton.tsx).
-   Hanya mendefinisikan --jenna-dock-right/--jenna-dock-bottom; pemakainya yang membaca var ini. */
+   Hanya mendefinisikan --jenna-dock-right/--jenna-dock-bottom; pemakainya yang membaca var ini.
+   Pemicu: data-player/data-musik di elemen .dockOffset, dan bilah kontak melayang di halaman (lihat bawah). */
 
 /* Offset bersama dock & tombol scroll-to-top: naik di atas FixedPlayerBar (±70px desktop, ±96px ponsel)
    atau NowPlayingBar aplikasi Musik (88px, 72px di ≤734px). data-player = ada lagu (bar mungkin tampil). */
@@ -29,5 +30,29 @@
 @media (max-width: 734px) {
   .dockOffset[data-musik="true"][data-player="true"] {
     --jenna-dock-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Bilah kontak melayang detail Lowongan Kerja (KontakBar, kontak-aksi.module.css .bar, z 90) menempel di bawah
+   layar dan tertimpa dock (z 99): tombol WhatsApp/Telepon tak bisa diklik. Selama bilah tampil
+   ([data-kontak-bar][data-visible="true"]) dock + scroll-to-top naik di atasnya; turun lagi saat bilah hilang
+   (transisi bottom 200ms milik pemakai). :has() dipakai agar JennaWidget tidak perlu tahu halaman mana pun.
+   Angka mengikuti ukuran bilah (ubah bersama kontak-aksi.module.css):
+   - >734px kapsul bottom 24 + tinggi 62 (tombol 44 + padding 8×2 + border 2) + jarak 16 = 102px.
+   - ≤734px selebar layar: tinggi 69 (tombol 44 + padding 12×2 + border atas 1) + safe-area + jarak 12.
+   Dengan lagu, ambil yang lebih tinggi: desktop 102 > 88; ponsel offset pemutar 108 > 81, jadi tetap 108. */
+:root:has([data-kontak-bar][data-visible="true"]) .dockOffset {
+  --jenna-dock-bottom: 102px;
+}
+
+@media (max-width: 47.99em) {
+  :root:has([data-kontak-bar][data-visible="true"]) .dockOffset[data-player="true"] {
+    --jenna-dock-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 734px) {
+  :root:has([data-kontak-bar][data-visible="true"]) .dockOffset {
+    --jenna-dock-bottom: calc(81px + env(safe-area-inset-bottom, 0px));
   }
 }

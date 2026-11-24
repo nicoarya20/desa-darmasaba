@@ -7,21 +7,24 @@ import { useMusic } from '@/app/context/MusicContext';
 import offset from './jenna/jenna-dock-offset.module.css';
 import scrollTop from './jenna/jenna-scroll-top.module.css';
 import jennaState from './jenna/jenna.state';
+import { usePageOverlayOpen } from './jenna/use-page-overlay-open';
 
 /**
  * Tombol kembali ke atas. Jenna aktif: duduk tepat di atas chat bar (rata kanan dock, ikut offset pemutar) dan
  * menyingkir saat bar memanjang atau room terbuka. Jenna nonaktif: posisi lama kanan bawah 24px.
+ * Kedua mode menyingkir selama overlay halaman terbuka (Modal/Drawer, flyout/cari navbar, menu ponsel).
  */
 function ScrollToTopButton() {
   const [scroll, scrollTo] = useWindowScroll();
   const jenna = useSnapshot(jennaState);
   const { currentSong } = useMusic();
   const docked = jenna.status === 'enabled';
-  const hidden = docked && (jenna.open || jenna.barExpanded);
+  const overlayOpen = usePageOverlayOpen();
+  const hidden = docked && (jenna.open || jenna.barExpanded || overlayOpen);
 
   return (
     <Transition
-      mounted={scroll.y > 300}
+      mounted={scroll.y > 300 && (docked || !overlayOpen)}
       transition="slide-up"
       duration={300}
       timingFunction="ease"
