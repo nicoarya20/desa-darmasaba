@@ -95,6 +95,47 @@
   margin-top: 14px;
 }
 
+/* Tautan Laporan LHKPN: ubin tautan (pola tombol PDF peta wilayah), hover = sapuan warna link-reveal. */
+.lhkpnLink {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: var(--c-tile-alt);
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.lhkpnLink:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.lhkpnIcon {
+  flex-shrink: 0;
+}
+
+.lhkpnText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lhkpnLabel {
+  font-size: 17px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.lhkpnMeta {
+  color: var(--p-muted);
+  font-size: 14px;
+}
+
 /* 75em = breakpoint lg tema Mantine (sama dengan Profil PPID); sticky hanya di 2 kolom,
    di 1 kolom sticky akan menutupi teks di bawahnya. */
 @media (min-width: 75em) {
@@ -135,5 +176,9 @@
 
   .blockTitle {
     font-size: 20px;
+  }
+
+  .lhkpnLink {
+    padding: 14px 16px;
   }
 }

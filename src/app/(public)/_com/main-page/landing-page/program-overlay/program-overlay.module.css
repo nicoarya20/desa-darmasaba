@@ -169,6 +169,17 @@
   padding-left: 1.4em;
 }
 
+/* Gambar sisipan admin di tengah deskripsi: di tengah kolom teks, maks 400px (lebih kecil dari halaman detail
+   karena kolom overlay lebih sempit), tanpa pelat. */
+.richText img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 400px);
+  max-height: 400px;
+  margin: 1.5em auto;
+}
+
 .muted {
   color: var(--muted);
 }

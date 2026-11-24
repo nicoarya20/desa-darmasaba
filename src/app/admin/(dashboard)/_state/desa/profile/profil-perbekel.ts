@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { proxy } from "valtio";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { lhkpnUrlSchema } from "@/lib/profil-perbekel-lhkpn";
 
 const profilPerbekelForm = z.object({
   biodata: z.string().min(3, "Biodata minimal 3 karakter"),
@@ -9,6 +10,7 @@ const profilPerbekelForm = z.object({
   pengalamanOrganisasi: z.string().min(3, "Pengalaman Organisasi minimal 3 karakter"),
   programUnggulan: z.string().min(3, "Program Unggulan minimal 3 karakter"),
   imageId: z.string().min(1, "Gambar wajib dipilih"),
+  lhkpnUrl: lhkpnUrlSchema,
 });
 
 const profilPerbekelDefaultForm = {
@@ -17,6 +19,7 @@ const profilPerbekelDefaultForm = {
   pengalamanOrganisasi: "",
   programUnggulan: "",
   imageId: "",
+  lhkpnUrl: "",
 };
 
 type ProfilPerbekelForm = Prisma.ProfilPerbekelGetPayload<{
@@ -27,6 +30,7 @@ type ProfilPerbekelForm = Prisma.ProfilPerbekelGetPayload<{
     pengalamanOrganisasi: true;
     programUnggulan: true;
     imageId: true;
+    lhkpnUrl: true;
     image?: {
       select: {
         link: true;
@@ -98,6 +102,7 @@ const profilPerbekel = proxy({
         pengalamanOrganisasi: profilData.pengalamanOrganisasi || "",
         programUnggulan: profilData.programUnggulan || "",
         imageId: profilData.imageId || "",
+        lhkpnUrl: profilData.lhkpnUrl || "",
       };
     },
 
@@ -123,7 +128,8 @@ const profilPerbekel = proxy({
         const response = await fetch(`/api/desa/profile/profileperbekel/${this.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.form),
+          // Kirim hasil validasi: link di-trim, isian kosong jadi null (kolom dikosongkan).
+          body: JSON.stringify(validation.data),
         });
 
         if (!response.ok) {

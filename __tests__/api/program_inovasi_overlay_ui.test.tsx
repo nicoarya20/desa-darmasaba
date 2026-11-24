@@ -76,6 +76,13 @@ describe('ProgramInovasiOverlay', () => {
     expect(html).toMatch(/--overlay-filter:\s*blur\(/);
   });
 
+  it('gambar sisipan di deskripsi tampil di posisinya (alt = nama program); gambar dari luar dibuang', () => {
+    const description = '<p>Satu</p><img src="/api/img/maskot.webp"><p>Dua</p><img src="https://evil.example/x.png">';
+    const html = overlay({ preview: { ...preview(0), description } as ProgramInovasiItem });
+    expect(html).toContain('<p>Satu</p><img src="/api/img/maskot.webp" alt="GALAH MELAH" loading="lazy" decoding="async"><p>Dua</p>');
+    expect(html).not.toContain('evil.example');
+  });
+
   it('detail menautkan halaman lengkap /inovasi/program-inovasi/{id} di bawah nama', () => {
     const html = overlay({ preview: preview(0) });
     expect(html).toMatch(new RegExp(`<a href="/inovasi/program-inovasi/p1"[^>]*><span[^>]*data-text="${T.fullPage}"[^>]*>${T.fullPage}</span><svg`));

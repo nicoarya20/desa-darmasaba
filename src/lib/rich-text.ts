@@ -4,6 +4,7 @@
  * atau bersihkan sebelum dirender sebagai HTML.
  */
 import DOMPurify from "dompurify";
+import { rapikanGambarSisipan } from "./gambar-sisipan";
 
 /** Tag yang diizinkan untuk konten lengkap (format teks dasar: paragraf, tebal/miring/garis bawah, daftar). */
 export const RICH_TEXT_TAGS = ["p", "br", "strong", "em", "u", "ul", "ol", "li"];
@@ -36,4 +37,16 @@ export function sanitizeRichText(html: string | null | undefined): string {
   // Editor menyimpan "<p></p>" untuk isian kosong — anggap tidak ada isi.
   if (htmlToPlainText(html) === "") return "";
   return DOMPurify.sanitize(html, { ALLOWED_TAGS: RICH_TEXT_TAGS, ALLOWED_ATTR: [] });
+}
+
+/**
+ * Seperti `sanitizeRichText`, ditambah gambar sisipan dari penyimpanan sendiri (`/api/img/<nama>`, lihat
+ * `gambar-sisipan.ts`) di posisinya semula; gambar lain dibuang. `imageAlt` mengisi alt yang kosong.
+ * Dipakai overlay Program Inovasi di beranda (hanya dirender di browser, sama seperti `sanitizeRichText`).
+ */
+export function sanitizeRichTextWithImages(html: string | null | undefined, imageAlt = ""): string {
+  if (!html || typeof DOMPurify.sanitize !== "function") return "";
+  if (htmlToPlainText(html) === "") return "";
+  const bersih = DOMPurify.sanitize(html, { ALLOWED_TAGS: [...RICH_TEXT_TAGS, "img"], ALLOWED_ATTR: ["src", "alt"] });
+  return rapikanGambarSisipan(bersih, imageAlt);
 }

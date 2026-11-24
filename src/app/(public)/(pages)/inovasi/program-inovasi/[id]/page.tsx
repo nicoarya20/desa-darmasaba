@@ -19,5 +19,5 @@ export default async function Page({ params }: Props) {
   const { id } = await params;
   const program = await getProgramInovasiPublik(id);
   if (!program) notFound();
-  return <ProgramInovasiDetail data={toProgramInovasiDetailView(program, sanitizeArticleHtml(program.description))} />;
+  return <ProgramInovasiDetail data={toProgramInovasiDetailView(program, sanitizeArticleHtml(program.description, { imageAlt: program.name }))} />;
 }

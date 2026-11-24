@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { Context } from "elysia";
 import removeStoredFile from "@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile";
+import { lhkpnUrlSchema } from "@/lib/profil-perbekel-lhkpn";
 
 type FormUpdate = Prisma.ProfilPerbekelGetPayload<{
   select: {
@@ -11,12 +12,15 @@ type FormUpdate = Prisma.ProfilPerbekelGetPayload<{
     pengalamanOrganisasi: true;
     programUnggulan: true;
     imageId: true;
+    lhkpnUrl: true;
   };
 }>;
 export default async function profilePerbekelUpdate(context: Context) {
   try {
     const id = context.params?.id as string;
-    const body = (await context.body) as Omit<FormUpdate, "id">;
+    const body = (await context.body) as Omit<FormUpdate, "id" | "lhkpnUrl"> & {
+      lhkpnUrl?: string | null;
+    };
 
     const { biodata, pengalaman, pengalamanOrganisasi, programUnggulan, imageId } = body;
 
@@ -33,6 +37,19 @@ export default async function profilePerbekelUpdate(context: Context) {
           },
         }
       );
+    }
+
+    // undefined = klien tidak mengirim field → nilai tersimpan dibiarkan; string kosong/null = dikosongkan.
+    let lhkpnUrl: string | null | undefined;
+    if (body.lhkpnUrl !== undefined) {
+      const parsed = lhkpnUrlSchema.safeParse(body.lhkpnUrl);
+      if (!parsed.success) {
+        return Response.json(
+          { success: false, message: parsed.error.issues[0]?.message ?? "Link LHKPN tidak valid" },
+          { status: 400 }
+        );
+      }
+      lhkpnUrl = parsed.data;
     }
 
     const exisitng = await prisma.profilPerbekel.findUnique({
@@ -67,6 +84,7 @@ export default async function profilePerbekelUpdate(context: Context) {
             pengalamanOrganisasi,
             programUnggulan,
             imageId,
+            lhkpnUrl,
         }
     })
 

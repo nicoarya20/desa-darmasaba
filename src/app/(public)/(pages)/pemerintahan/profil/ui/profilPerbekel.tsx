@@ -1,7 +1,18 @@
 'use client'
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
+import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import { publicLhkpnUrl } from '@/lib/profil-perbekel-lhkpn';
 import { Image } from '@mantine/core';
-import { IconBriefcase, IconTargetArrow, IconUser, IconUsers, type Icon } from '@tabler/icons-react';
+import {
+  IconBrandGoogleDrive,
+  IconBriefcase,
+  IconExternalLink,
+  IconFileCertificate,
+  IconTargetArrow,
+  IconUser,
+  IconUsers,
+  type Icon,
+} from '@tabler/icons-react';
 import { useProxy } from 'valtio/utils';
 import { ProfilCard, ProfilCardSkeleton, ProfilEmpty, ProfilProse } from '../_com/ProfilCard';
 import { PERBEKEL_FALLBACK_SRC, PERBEKEL_NAME, PERBEKEL_ROLE, PROFIL_CMS_ID } from '../_com/profil.meta';
@@ -25,9 +36,33 @@ function InfoBlock({ icon: IconEl, title, html }: { icon: Icon; title: string; h
   );
 }
 
+/** Blok Laporan LHKPN: satu tautan ke berkas Google Drive (tab baru). Tidak dirender bila link kosong/tidak valid. */
+function LhkpnBlock({ url }: { url: string | null | undefined }) {
+  const href = publicLhkpnUrl(url);
+  if (!href) return null;
+  return (
+    <section className={p.block}>
+      <h3 className={p.blockTitle}>
+        <IconFileCertificate size={26} stroke={1.75} aria-hidden />
+        {T.lhkpn}
+      </h3>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={`${p.lhkpnLink} ${r.trigger}`}>
+        <IconBrandGoogleDrive size={30} stroke={1.5} className={p.lhkpnIcon} aria-hidden />
+        <span className={p.lhkpnText}>
+          <span className={`${p.lhkpnLabel} ${r.cta}`} data-text={T.lhkpnLink}>
+            {T.lhkpnLink}
+          </span>
+          <span className={p.lhkpnMeta}>{T.lhkpnMeta}</span>
+        </span>
+        <IconExternalLink size={20} stroke={1.75} className={`${p.lhkpnIcon} ${r.chevron}`} aria-hidden />
+      </a>
+    </section>
+  );
+}
+
 /**
  * Section Profil Perbekel — pola Profil PPID: 2 kolom mulai 1200px, kiri kartu foto + nama (sticky),
- * kanan Biodata, Pengalaman, Pengalaman Organisasi, Program Kerja Unggulan; satu kolom di bawahnya.
+ * kanan Biodata, Pengalaman, Pengalaman Organisasi, Program Kerja Unggulan, Laporan LHKPN; satu kolom di bawahnya.
  */
 function ProfilPerbekel() {
   const state = useProxy(stateProfileDesa.profilPerbekel);
@@ -70,6 +105,7 @@ function ProfilPerbekel() {
           <InfoBlock icon={IconBriefcase} title={T.pengalaman} html={data.pengalaman} />
           <InfoBlock icon={IconUsers} title={T.organisasi} html={data.pengalamanOrganisasi} />
           <InfoBlock icon={IconTargetArrow} title={T.program} html={data.programUnggulan} />
+          <LhkpnBlock url={data.lhkpnUrl} />
         </div>
       </div>
     </ProfilCard>
