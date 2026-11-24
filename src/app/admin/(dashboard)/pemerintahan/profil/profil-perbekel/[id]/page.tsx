@@ -4,7 +4,8 @@ import EditEditor from '@/app/admin/(dashboard)/_com/editEditor';
 import stateProfileDesa from '@/app/admin/(dashboard)/_state/desa/profile';
 import colors from '@/con/colors';
 import ApiFetch from '@/lib/api-fetch';
-import { Box, Button, Center, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
+import { lhkpnUrlError } from '@/lib/profil-perbekel-lhkpn';
+import { Box, Button, Center, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconArrowBack, IconImageInPicture, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -13,7 +14,7 @@ import { toast } from 'react-toastify';
 import { useProxy } from 'valtio/utils';
 
 function ProfilePerbekel() {
-  const perbekelState = useProxy(stateProfileDesa.profilPerbekel)
+  const perbekelState = useProxy(stateProfileDesa.profilPerbekel, { sync: true }) // sync: cegah caret jump di controlled input
   const router = useRouter()
   const params = useParams()
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,6 +27,7 @@ function ProfilePerbekel() {
     programUnggulan: "",
     imageId: "",
     imageUrl: "",
+    lhkpnUrl: "",
   });
 
   useEffect(() => {
@@ -48,6 +50,7 @@ function ProfilePerbekel() {
           programUnggulan: data.programUnggulan || "",
           imageId: data.imageId || "",
           imageUrl: data.image?.link || "",
+          lhkpnUrl: data.lhkpnUrl || "",
         });
         setPreviewImage(data.image?.link || null);
       }
@@ -112,10 +115,13 @@ function ProfilePerbekel() {
     perbekelState.edit.form.pengalamanOrganisasi = originalData.pengalamanOrganisasi;
     perbekelState.edit.form.programUnggulan = originalData.programUnggulan;
     perbekelState.edit.form.imageId = originalData.imageId;
+    perbekelState.edit.form.lhkpnUrl = originalData.lhkpnUrl;
     setPreviewImage(originalData.imageUrl || null);
     setFile(null);
     toast.info("Form dikembalikan ke data awal");
   };
+
+  const lhkpnError = lhkpnUrlError(perbekelState.edit.form.lhkpnUrl);
 
   if (perbekelState.findUnique.loading || perbekelState.edit.loading) {
     return (
@@ -213,6 +219,17 @@ function ProfilePerbekel() {
               />
             </Box>
 
+            {/* Laporan LHKPN (opsional) */}
+            <TextInput
+              label={<Text fz="md" fw="bold" span>Link Laporan LHKPN</Text>}
+              description="Opsional. Tempel link Google Drive berkas LHKPN, pastikan akses berbagi diatur ke siapa saja yang memiliki link."
+              placeholder="https://drive.google.com/file/d/..."
+              inputMode="url"
+              value={perbekelState.edit.form.lhkpnUrl}
+              onChange={(e) => perbekelState.edit.form.lhkpnUrl = e.currentTarget.value}
+              error={lhkpnError}
+            />
+
             {/* Submit */}
             <Group>
               <Button variant="outline" color="gray" onClick={handleResetForm} disabled={isSubmitting || perbekelState.edit.loading}>
@@ -222,7 +239,7 @@ function ProfilePerbekel() {
                 bg={colors['blue-button']}
                 onClick={handleSubmit}
                 loading={isSubmitting || perbekelState.edit.loading}
-                disabled={!perbekelState.edit.form.biodata.trim()}
+                disabled={!perbekelState.edit.form.biodata.trim() || Boolean(lhkpnError)}
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan'}
               </Button>

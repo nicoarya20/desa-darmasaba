@@ -62,6 +62,9 @@ export const PROFIL_TEXT = {
     pengalaman: 'Pengalaman',
     organisasi: 'Pengalaman Organisasi',
     program: 'Program Kerja Unggulan',
+    lhkpn: 'Laporan LHKPN',
+    lhkpnLink: 'Lihat Laporan LHKPN',
+    lhkpnMeta: 'Google Drive, dibuka di tab baru',
   },
   moto: {
     title: 'Moto Desa Darmasaba',
