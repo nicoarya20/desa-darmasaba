@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.350] - 2026-11-24
+### Changed
+- **Logo di halaman daftar Program Inovasi tanpa kotak putih.** Di `/inovasi/program-inovasi`, logo program kini duduk langsung di atas ubin abu, sama seperti di tema gelap, sehingga tidak lagi tampak seperti kotak di dalam kotak. Tampilan ini dipilih dari tiga varian yang dibandingkan. Logo yang berkasnya berlatar putih (misalnya BAJRA) akan tampak sebagai persegi putih; agar menyatu, unggah ulang logonya dengan latar transparan.
+- **Gambar di dalam deskripsi Program Inovasi kini rata kiri**, sejajar dengan teks dan logo di kepala halaman, baik di halaman detail maupun di jendela program di beranda. Sebelumnya gambar di tengah sementara logo dan judul rata kiri, sehingga tampak tidak seragam (di jendela beranda gambar juga tampak sedikit bergeser). Supaya benar-benar sejajar, tepi transparan gambar (misalnya logo atau maskot PNG berkanvas lebar) kini dipotong otomatis saat gambar disisipkan di admin. Gambar yang sudah tersisip sebelumnya belum ikut terpotong: hapus gambar itu di editor lalu sisipkan ulang.
+
 ## [0.1.349] - 2026-11-24
 ### Changed
 - **Tautan kembali di halaman detail kini seragam: teks "‹ Nama Daftar"**, sama seperti detail produk UMKM ("‹ Katalog UMKM"), menggantikan tombol kotak berikon panah. Tautan menyebut ke mana pengunjung kembali dan selalu menuju halaman daftarnya (bukan sekadar "halaman sebelumnya"), berwarna biru brand di tema terang maupun gelap, dengan efek sapuan warna saat disorot. Berlaku di 20 halaman detail: Lowongan Kerja Lokal, Inovasi Teknologi Desa, Keamanan Lingkungan, Laporan Publik, Pencegahan Kriminalitas, Kontak Darurat (Kesehatan), Posyandu, Program Kesehatan, detail sekolah (Info Sekolah), Daftar Informasi Publik, profil Struktur PPID dan Struktur Perangkat Desa, program Desa Anti Korupsi, Prestasi dan Penghargaan, Berita, Galeri Video, Kegiatan Desa, Layanan, Pengumuman, dan Potensi. Halaman daftar dan menu tetap memakai tombol panah.
