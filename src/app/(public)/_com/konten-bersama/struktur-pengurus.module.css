@@ -1,0 +1,20 @@
+/*
+ * Kartu pengurus (PUSTU, lembaga sekolah, Bank Sampah) memakai ulang kartu ringkas bagan Perangkat Desa
+ * (struktur-card.module.css, data-size="xs"); berkas ini hanya menyediakan variabel & penyesuaian yang tidak ada
+ * di bagan. Gradasi --tone-* disuntik lewat STRUKTUR_VARS (struktur.meta.ts) di elemen .root.
+ */
+.root {
+  /* Pil nama memakai --brand (bagan: disediakan kerangka halaman); halaman pemakai komponen ini belum tentu punya. */
+  --brand: var(--c-brand);
+}
+
+/*
+ * Tanpa foto: satu kolom (jabatan lalu pil nama), tanpa sel foto kosong 36px. Selektor bertingkat agar
+ * mengalahkan `.card[data-size="xs"]` milik struktur-card tanpa bergantung urutan muat CSS.
+ */
+.root .card[data-no-photo] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "role"
+    "name";
+}

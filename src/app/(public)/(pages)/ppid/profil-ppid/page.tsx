@@ -4,6 +4,7 @@ import stateProfilePPID from '@/app/admin/(dashboard)/_state/ppid/profile_ppid/p
 import { Box, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
 import { useProxy } from 'valtio/utils';
+import { PROFIL_PERORANGAN_PPID_TAMPIL } from '@/con/profil-ppid';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import ScrollToTopButton from '@/app/(public)/_com/scrollToTopButton';
 import { ProfilLembagaSection } from './_com/ProfilLembagaSection';
@@ -15,15 +16,18 @@ function Page() {
   const lembagaState = useProxy(stateProfilLembagaPPID);
 
   useShallowEffect(() => {
-    allList.profile.load('edit');
+    if (PROFIL_PERORANGAN_PPID_TAMPIL) allList.profile.load('edit');
     lembagaState.find.load();
   }, []);
 
-  // Profil lembaga tampil sebagai bagian utama hanya bila admin sudah mengisinya; tanpa itu halaman seperti semula.
+  // Profil perorangan disembunyikan sementara (src/con/profil-ppid.ts): datanya tidak dimuat dan tidak memengaruhi kerangka/galat.
+  const peroranganState = PROFIL_PERORANGAN_PPID_TAMPIL ? allList.profile : null;
+
+  // Profil lembaga tampil sebagai bagian utama hanya bila admin sudah mengisinya.
   const lembaga = hasProfilLembagaContent(lembagaState.find.data) ? lembagaState.find.data : null;
 
   // LOADING SKELETON
-  if (allList.profile.loading || lembagaState.find.loading)
+  if (peroranganState?.loading || lembagaState.find.loading)
     return (
       <Stack bg="var(--c-bg)" py="xl" gap="22">
         <Box px={{ base: 'md', md: 100 }}>
@@ -43,12 +47,12 @@ function Page() {
     );
 
   // ERROR HANDLING
-  if (!lembaga && allList.profile.error)
+  if (!lembaga && peroranganState?.error)
     return (
       <Stack bg="var(--c-bg)" py="xl" gap="22" justify="center" align="center">
         <Box px={{ base: 'md', md: 100 }}>
           <Paper p="xl" bg="var(--c-tile)" radius="lg">
-            {allList.profile.error === "Belum ada data profil PPID yang aktif" ? (
+            {peroranganState.error === "Belum ada data profil PPID yang aktif" ? (
               <>
                 <Title order={3} ta="center" c={"orange"} fw={700}>
                   Data Profile PPID Belum Tersedia
@@ -62,7 +66,7 @@ function Page() {
                 </Title>
                 <Text ta="center" mt="md">Silakan coba beberapa saat lagi</Text>
                 <Text ta="center" size="sm" c={"gray"} mt="sm">
-                  Error: {allList.profile.error}
+                  Error: {peroranganState.error}
                 </Text>
               </>
             )}
@@ -72,7 +76,7 @@ function Page() {
     );
 
   // NO DATA HANDLING
-  if (!lembaga && !allList.profile.data)
+  if (!lembaga && !peroranganState?.data)
     return (
       <Stack bg="var(--c-bg)" py="xl" gap="22" justify="center" align="center">
         <Box px={{ base: 'md', md: 100 }}>
@@ -87,7 +91,7 @@ function Page() {
     );
 
   // Dengan profil lembaga, profil perorangan yang belum ada/gagal dimuat cukup dilewati (bukan kartu galat).
-  const dataArray = allList.profile.data ? [allList.profile.data] : [];
+  const dataArray = peroranganState?.data ? [peroranganState.data] : [];
 
   return (
     <Box>

@@ -31,12 +31,14 @@ function useLetak(el: HTMLElement | null): LetakAksi {
  * Bilah kapsul melayang di bawah tengah (mobile: selebar layar + safe-area) berisi posisi ringkas + aksi kontak.
  * Tampil hanya setelah aksi kepala tergulir lewat dan sebelum aksi penutup terlihat (lihat kontak-bar.logic.ts).
  * Saat tersembunyi tetap di DOM untuk animasi, tetapi `inert` + `aria-hidden` agar tidak bisa difokus.
+ * `data-kontak-bar` + `data-visible` = kontrak dengan jenna-dock-offset.module.css: selama tampil, dock Jenna naik
+ * di atas bilah (tidak menimpa tombol WhatsApp/Telepon).
  */
 export function KontakBar({ posisi, kontak, kepala, penutup }: Props) {
   const visible = isBarVisible(useLetak(kepala), useLetak(penutup));
 
   return (
-    <div className={s.bar} data-visible={visible} aria-hidden={!visible} inert={!visible}>
+    <div className={s.bar} data-kontak-bar="" data-visible={visible} aria-hidden={!visible} inert={!visible}>
       <p className={s.barPosisi}>{posisi}</p>
       <KontakAksi kontak={kontak} variant="bar" />
     </div>
