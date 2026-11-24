@@ -208,7 +208,8 @@ describe('Tautan kembali "‹ …": sapuan .cta, chevron kiri .chevronBack berge
     '(pages)/ekonomi/kesejahteraan-masyarakat/_com/detail/KesejahteraanDetail.tsx',
     '(pages)/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/_com/detail/PengurusDetail.tsx',
     '(pages)/lingkungan/program-penghijauan/_com/detail/PenghijauanDetail.tsx',
-    '(pages)/pemerintahan/kegiatan-desa/_com/detail/KegiatanDetail.tsx',
+    // Kegiatan Desa (+ Gotong Royong) dan detail lain kini memakai komponen bersama DetailBackLink.
+    '_com/detail-back-link/DetailBackLink.tsx',
     '(pages)/inovasi/program-kreatif-desa/_com/detail/ProgramKreatifDetail.tsx',
     '(pages)/ppid/daftar-informasi-publik/[id]/page.tsx',
   ];

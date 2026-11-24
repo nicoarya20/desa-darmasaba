@@ -25,14 +25,14 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  color: var(--brand);
+  color: var(--brand, var(--c-brand));
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
 }
 
 .back:focus-visible {
-  outline: 2px solid var(--brand);
+  outline: 2px solid var(--brand, var(--c-brand));
   outline-offset: 3px;
   border-radius: 4px;
 }
