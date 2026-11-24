@@ -106,6 +106,7 @@ model FileStorage {
   DokumenPerencanaan             DokumenPerencanaan[]
   ProgramInovasi                 ProgramInovasi[]
   ProgramInovasiImages           ProgramInovasi[]           @relation("ProgramInovasiImages")
+  ProgramInovasiGambarSisipan    ProgramInovasi[]           @relation("ProgramInovasiGambarSisipan")
   PejabatDesa                    PejabatDesa[]
   MediaSosial                    MediaSosial[]
   DokumenDesaAntiKorupsi         DokumenDesaAntiKorupsi[]
@@ -176,6 +177,9 @@ model ProgramInovasi {
   urutan      Int?
   // Galeri dokumentasi kegiatan program (bukti pelaksanaan), terpisah dari logo/cover `image`.
   images      FileStorage[]                  @relation("ProgramInovasiImages")
+  // Gambar yang disisipkan di tengah deskripsi (<img src="/api/img/...">). Diturunkan server dari isi deskripsi
+  // setiap simpan, supaya berkasnya terlindung cek rujukan dan ikut dibersihkan saat dihapus dari teks.
+  gambarSisipan FileStorage[]                @relation("ProgramInovasiGambarSisipan")
   // Bank sampah / TPS yang menjalankan program ini (tab Profil modal bank sampah publik).
   bankSampah  KeteranganBankSampahTerdekat[] @relation("BankSampahProgramInovasi")
   createdAt   DateTime                       @default(now())

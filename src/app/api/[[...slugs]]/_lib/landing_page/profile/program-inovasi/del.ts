@@ -10,16 +10,16 @@ export default async function programInovasiDelete(context: Context) {
     throw new Error("ID tidak ditemukan dalam parameter");
   }
 
-  // Galeri (m2m implisit) dibaca sebelum delete karena baris relasinya ikut terhapus.
+  // Galeri dan gambar sisipan (m2m implisit) dibaca sebelum delete karena baris relasinya ikut terhapus.
   const galeri = await prisma.programInovasi.findUnique({
     where: { id },
-    select: { images: { select: { id: true } } },
+    select: { images: { select: { id: true } }, gambarSisipan: { select: { id: true } } },
   });
 
   const deleted = await prisma.programInovasi.delete({
     where: { id },
   });
-  await removeReleasedFiles("ProgramInovasi", fileIds(deleted.imageId, galeri?.images ?? []));
+  await removeReleasedFiles("ProgramInovasi", fileIds(deleted.imageId, galeri?.images ?? [], galeri?.gambarSisipan ?? []));
 
   return {
     success: true,

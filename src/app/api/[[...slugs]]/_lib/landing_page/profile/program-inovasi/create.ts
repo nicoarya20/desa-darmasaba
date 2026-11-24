@@ -5,6 +5,7 @@ import {
   type ProgramInovasiCreateBody,
 } from "@/lib/program-inovasi";
 import { Context } from "elysia";
+import { idGambarSisipan } from "./gambar-sisipan";
 
 export default async function programInovasiCreate(context: Context) {
   const body = context.body as ProgramInovasiCreateBody;
@@ -20,8 +21,18 @@ export default async function programInovasiCreate(context: Context) {
   }
 
   try {
+    const sisipan = await idGambarSisipan(body.description);
+    if (!sisipan.ok) {
+      context.set.status = 400;
+      return { success: false, message: sisipan.message };
+    }
     const result = await prisma.programInovasi.create({
-      data: hasil.data,
+      data: {
+        ...hasil.data,
+        ...(sisipan.ids.length > 0
+          ? { gambarSisipan: { connect: sisipan.ids.map((id) => ({ id })) } }
+          : {}),
+      },
       include: {
         image: true,
         images: true,
