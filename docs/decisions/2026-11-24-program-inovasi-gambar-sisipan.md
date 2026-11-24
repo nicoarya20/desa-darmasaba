@@ -25,6 +25,16 @@ penyaring render membuang `<img>`. Logo (`imageId`) dan galeri dokumentasi (`ima
   `sanitizeArticleHtml` (server); overlay beranda lewat `sanitizeRichTextWithImages` (DOMPurify +
   `rapikanGambarSisipan`). Alt kosong diisi nama program. Batas: 10 gambar per deskripsi, 5 MB per berkas.
 
+## Pembaruan 2026-11-24: rata kiri + potong tepi transparan
+
+- Gambar sisipan tampil **rata kiri** (bukan di tengah) di detail dan overlay, sejajar teks dan logo kepala yang
+  rata kiri; versi di tengah tampak tidak seragam (keputusan user).
+- PNG berkanvas lebar dengan figur kecil (maskot DAVEST: isi 24% kanvas) tampak menjorok ±150px saat rata kiri, jadi
+  `potongTepiTransparan` memotong tepi transparan **di browser saat gambar dipilih** (sebelum pratinjau & unggah),
+  hasil PNG. Hanya gambar sisipan; unggahan logo/galeri tidak berubah. Gambar yang sudah tersimpan sebelum ini tidak
+  ikut terpotong (admin menyisipkan ulang). Dipilih di klien, bukan di `storeImageAsWebp` server, supaya pratinjau
+  editor sama dengan hasil simpan dan endpoint upload bersama tidak berubah perilaku.
+
 ## Alternatif yang ditolak
 
 - **Pilih dari galeri Dokumentasi (B)**: gambar tampil dua kali (di teks dan galeri) atau galeri harus menyaring.

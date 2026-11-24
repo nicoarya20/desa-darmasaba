@@ -2,6 +2,8 @@
 // Overlay detail Program Inovasi: markup tiap keadaan (preview, kerangka, galat, tidak ditemukan, detail +
 // galeri) dan tampilan besar foto. jsdom rusak di repo ini, jadi renderToStaticMarkup; DOMPurify di-stub,
 // hook muat detail di-mock agar keadaan bisa dipilih tanpa fetch. Interaksi (klik/Esc/geser) dicek manual.
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider, ModalRoot } from '@mantine/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -81,6 +83,15 @@ describe('ProgramInovasiOverlay', () => {
     const html = overlay({ preview: { ...preview(0), description } as ProgramInovasiItem });
     expect(html).toContain('<p>Satu</p><img src="/api/img/maskot.webp" alt="GALAH MELAH" loading="lazy" decoding="async"><p>Dua</p>');
     expect(html).not.toContain('evil.example');
+  });
+
+  it('CSS: gambar sisipan rata kiri sejajar teks & logo kepala (detail dan overlay), ukuran dibatasi', () => {
+    const baca = (p: string) => readFileSync(resolve(process.cwd(), p), 'utf8');
+    const overlay = baca('src/app/(public)/_com/main-page/landing-page/program-overlay/program-overlay.module.css');
+    const detail = baca('src/app/(public)/(pages)/inovasi/program-inovasi/_com/detail/program-inovasi-detail.module.css');
+    expect(overlay).toMatch(/\.richText img \{[^}]*max-width: min\(100%, 400px\);[^}]*margin: 1\.5em 0;/);
+    expect(detail).toMatch(/\.content img \{[^}]*max-width: min\(100%, 480px\);[^}]*margin: 2em 0;/);
+    expect(`${overlay}${detail}`).not.toMatch(/img \{[^}]*margin: [^;]*auto/);
   });
 
   it('detail menautkan halaman lengkap /inovasi/program-inovasi/{id} di bawah nama', () => {

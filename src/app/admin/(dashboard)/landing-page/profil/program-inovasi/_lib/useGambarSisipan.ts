@@ -3,6 +3,7 @@ import ApiFetch from '@/lib/api-fetch';
 import { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { periksaBerkasSisipan, periksaJumlahSisipan, unggahGambarSisipan } from './gambar-sisipan.logic';
+import { potongTepiTransparan } from './potongTepiTransparan';
 
 /** Unggah satu gambar ke FileStorage (disimpan sebagai WebP) dan kembalikan link-nya. */
 async function unggahKeStorage(file: File): Promise<string | null> {
@@ -11,7 +12,7 @@ async function unggahKeStorage(file: File): Promise<string | null> {
 }
 
 /**
- * Gambar sisipan deskripsi Program Inovasi: `pilih` memberi URL preview lokal untuk editor (belum diunggah),
+ * Gambar sisipan deskripsi Program Inovasi: `pilih` memotong tepi transparan lalu memberi URL preview lokal untuk editor (belum diunggah),
  * `unggah` mengunggahnya saat Simpan dan mengembalikan HTML dengan link tersimpan (pola sama dengan logo/galeri).
  */
 export function useGambarSisipan() {
@@ -22,14 +23,15 @@ export function useGambarSisipan() {
     return () => peta.forEach((_, url) => URL.revokeObjectURL(url));
   }, []);
 
-  const pilih = useCallback((file: File): string | null => {
+  const pilih = useCallback(async (file: File): Promise<string | null> => {
     const masalah = periksaBerkasSisipan(file);
     if (masalah) {
       toast.error(masalah);
       return null;
     }
-    const url = URL.createObjectURL(file);
-    berkas.current.set(url, file);
+    const siap = await potongTepiTransparan(file);
+    const url = URL.createObjectURL(siap);
+    berkas.current.set(url, siap);
     return url;
   }, []);
 

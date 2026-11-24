@@ -15,6 +15,7 @@ vi.mock('@/lib/prisma', () => ({ default: prismaMock }));
 vi.mock('@/app/api/[[...slugs]]/_lib/fileStorage/_lib/removeStoredFile', () => ({ default: removeStoredFileMock }));
 
 import {
+  kotakIsiTidakTransparan,
   periksaBerkasSisipan,
   periksaJumlahSisipan,
   unggahGambarSisipan,
@@ -122,6 +123,34 @@ describe('form admin: unggah gambar sisipan saat Simpan', () => {
       unggahGambarSisipan(deskripsi('blob:1'), new Map([['blob:1', file]]), vi.fn().mockResolvedValue(null)),
     ).rejects.toThrow('Gagal mengunggah gambar sisipan "maskot.png"');
     await expect(unggahGambarSisipan(deskripsi('blob:2'), new Map(), vi.fn())).rejects.toThrow(/tidak ditemukan/);
+  });
+});
+
+// test-only: gambar RGBA rekaan; `isi` = kotak piksel tidak transparan (alpha 255), sisanya alpha 0.
+const rgba = (lebar: number, tinggi: number, isi?: { x: number; y: number; w: number; h: number }) => {
+  const data = new Uint8ClampedArray(lebar * tinggi * 4);
+  if (isi) {
+    for (let y = isi.y; y < isi.y + isi.h; y++) for (let x = isi.x; x < isi.x + isi.w; x++) data[(y * lebar + x) * 4 + 3] = 255;
+  }
+  return data;
+};
+
+describe('kotakIsiTidakTransparan (potong tepi transparan gambar sisipan)', () => {
+  it('maskot kecil di kanvas lebar → kotak isi persis (dipakai untuk memotong)', () => {
+    const isi = { x: 30, y: 10, w: 40, h: 50 };
+    expect(kotakIsiTidakTransparan(rgba(100, 80, isi), 100, 80)).toEqual(isi);
+  });
+
+  it('gambar penuh, tepi transparan sangat tipis, atau kosong total → null (berkas asli dipakai)', () => {
+    expect(kotakIsiTidakTransparan(rgba(100, 100, { x: 0, y: 0, w: 100, h: 100 }), 100, 100)).toBeNull();
+    expect(kotakIsiTidakTransparan(rgba(100, 100, { x: 1, y: 0, w: 99, h: 100 }), 100, 100)).toBeNull();
+    expect(kotakIsiTidakTransparan(rgba(100, 100), 100, 100)).toBeNull();
+  });
+
+  it('piksel nyaris transparan (sisa antialias, alpha ≤ 8) tidak memperlebar kotak', () => {
+    const data = rgba(100, 100, { x: 40, y: 40, w: 20, h: 20 });
+    data[(0 * 100 + 0) * 4 + 3] = 8;
+    expect(kotakIsiTidakTransparan(data, 100, 100)).toEqual({ x: 40, y: 40, w: 20, h: 20 });
   });
 });
 
