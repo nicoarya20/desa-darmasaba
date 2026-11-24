@@ -64,7 +64,11 @@ export default function DetailInformasiPublikUser() {
   }
 
   return (
-    <PpidPage title={DAFTAR_TEXT.detailTitle} lead={DAFTAR_TEXT.detailLead}>
+    <PpidPage
+      title={DAFTAR_TEXT.detailTitle}
+      lead={DAFTAR_TEXT.detailLead}
+      backLink={{ href: DAFTAR_LIST_HREF, label: DAFTAR_TEXT.title }}
+    >
       <div className={s.body}>{content}</div>
     </PpidPage>
   );

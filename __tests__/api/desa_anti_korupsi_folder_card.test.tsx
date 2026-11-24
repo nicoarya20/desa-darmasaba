@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Publik DAK: helper halaman program + halaman program (grid folder, ?folder, Umum).
-import { describe, expect, it } from 'vitest';
+import type { AnchorHTMLAttributes } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
 import { ProgramIsi } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
@@ -12,6 +13,11 @@ import {
 } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-folder';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { folderGroups, type DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
+
+// DetailBackLink (tautan kembali ProgramHeader) memakai Link next-view-transitions, yang tak bisa dimuat di env node.
+vi.mock('next-view-transitions', () => ({
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+}));
 
 // MantineProvider menyisipkan <style> global; dibuang agar tersisa markup komponen saja.
 const render = (node: React.ReactElement) =>
@@ -90,9 +96,10 @@ describe('ProgramIsi (halaman /desa-anti-korupsi/program/[id])', () => {
   it('folder terbuka: kembali → daftar folder program; breadcrumb kategori → detail?kategori=<kategori program>', () => {
     const html = render(<ProgramIsi detail={detail} folderParam="fa" urutParam={null} onUrutChange={noop} />);
     expect(html.match(/href="\/desa-anti-korupsi\/detail\?kategori=PENGUATAN%20PENGAWASAN"/g)?.length).toBe(1);
-    const kembali = /<a[^>]*data-testid="program-kembali"[^>]*>/.exec(html)?.[0] ?? '';
+    // Tautan kembali = tautan pertama halaman (di atas breadcrumb): teks "‹ Daftar folder".
+    const kembali = /<a\b(?:(?!<\/a>)[\s\S])*<\/a>/.exec(html)?.[0] ?? '';
     expect(kembali).toContain('href="/desa-anti-korupsi/program/p1"');
-    expect(kembali).toContain('aria-label="Kembali ke daftar folder"');
+    expect(kembali).toContain('>Daftar folder</span>');
     expect(html).toContain('href="/desa-anti-korupsi"');
     // folder aktif = crumb terakhir; nama program jadi tautan kembali ke grid folder
     expect(html).toMatch(/aria-current="page"[^>]*>Laporan Keuangan</);

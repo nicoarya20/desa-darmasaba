@@ -1,5 +1,7 @@
 /** Label UI halaman detail Kegiatan Desa. */
 export const KEGIATAN_DETAIL_TEXT = {
+  /** Nama daftar di tautan kembali "‹ …" (sama dengan judul menu). */
+  backLink: "Kegiatan Desa",
   loading: "Memuat kegiatan",
   notFound: "Kegiatan tidak ditemukan atau sudah tidak ditampilkan.",
   error: "Kegiatan gagal dimuat. Coba muat ulang halaman.",

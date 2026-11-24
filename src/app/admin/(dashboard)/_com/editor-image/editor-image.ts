@@ -1,7 +1,7 @@
 import Image from '@tiptap/extension-image';
 
 /** Ambil berkas gambar dari admin → `src` untuk disisipkan (mis. URL preview lokal), atau null bila ditolak. */
-export type PickEditorImage = (file: File) => string | null;
+export type PickEditorImage = (file: File) => string | null | Promise<string | null>;
 
 /**
  * Ekstensi gambar sisipan editor admin: gambar berdiri sendiri sebagai blok (bukan di dalam paragraf), sehingga

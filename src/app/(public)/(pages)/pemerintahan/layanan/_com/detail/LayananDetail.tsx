@@ -1,4 +1,5 @@
 'use client';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import { useKontakDesa } from '@/app/(public)/_com/use-kontak-desa';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
@@ -7,7 +8,6 @@ import { Image } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
-import BackButton from '../BackButto';
 import { SopLink } from '../SopLink';
 import { LAYANAN_LIST_HREF } from '../layanan.meta';
 import page from '../layanan.module.css';
@@ -28,7 +28,7 @@ export function LayananDetail({ id }: { id: string }) {
   return (
     <div className={page.page}>
       <article className={s.wrap} aria-busy={state.status === 'loading' || undefined}>
-        <BackButton />
+        <DetailBackLink href={LAYANAN_LIST_HREF} label={T.backLink} />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
         {state.status === 'ready' ? <LayananDetailBody data={state.data} onAjukan={open} waTersedia={waTersedia} /> : null}
         {state.status === 'notfound' ? (

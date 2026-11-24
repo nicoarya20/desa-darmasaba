@@ -1,5 +1,5 @@
 'use client';
-import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import { KabarDetailPlaceholder } from '@/app/(public)/_com/kabar-list/KabarDetailPlaceholder';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import { useKabarDetail } from '@/app/(public)/_com/kabar-list/use-kabar-detail';
@@ -22,7 +22,7 @@ export function InovasiDetail({ id }: { id: string }) {
   return (
     <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
-        <BackButton />
+        <DetailBackLink href={inovasiListHref()} label={T.backLink} />
         {state.status === 'loading' ? <KabarDetailPlaceholder label={T.loading} /> : null}
         {state.status === 'ready' ? <InovasiDetailBody data={state.data} /> : null}
         {state.status === 'notfound' || state.status === 'error' ? (

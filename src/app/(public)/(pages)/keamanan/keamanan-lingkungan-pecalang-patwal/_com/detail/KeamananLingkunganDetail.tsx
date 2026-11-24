@@ -1,5 +1,5 @@
 'use client';
-import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
@@ -19,7 +19,7 @@ export function KeamananLingkunganDetail({ id }: { id: string }) {
   return (
     <article className={kabar.section} aria-busy={state.status === 'loading' || undefined}>
       <div className={d.wrap}>
-        <BackButton />
+        <DetailBackLink href={keamananLingkunganListHref()} label={T.backLink} />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
         {state.status === 'ready' ? <KeamananLingkunganDetailBody data={state.data} /> : null}
         {state.status === 'notfound' || state.status === 'error' ? (

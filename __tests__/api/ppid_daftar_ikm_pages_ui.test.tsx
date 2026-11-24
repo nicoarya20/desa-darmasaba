@@ -50,6 +50,7 @@ vi.mock('@/app/(public)/_com/main-page/kepuasan/components/RespondenFormModal', 
 import DaftarPage from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/page';
 import DetailPage from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/[id]/page';
 import { DAFTAR_TEXT } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.text';
+import { DAFTAR_LIST_HREF } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.logic';
 import IkmPage from '@/app/(public)/(pages)/ppid/indeks-kepuasan-masyarakat/page';
 import { IKM_TEXT } from '@/app/(public)/(pages)/ppid/indeks-kepuasan-masyarakat/_com/ikm.text';
 import { KEPUASAN_TEXT } from '@/app/(public)/_com/main-page/kepuasan/kepuasan.text';
@@ -137,6 +138,14 @@ describe('halaman detail Informasi Publik', () => {
     expect(html).toContain('Akses Internet Desa');
     expect(html).toContain('21 Februari 2025');
     expect(html).toContain('<p>Jaringan <strong>desa</strong></p>');
+  });
+
+  it('tautan kembali teks "‹ Daftar Informasi Publik" ke daftar, bukan tombol ikon panah', () => {
+    mocks.store.findUnique.data = ITEMS[0];
+    const html = render(<DetailPage />);
+    expect(html).toMatch(new RegExp(`<a [^>]*href="${DAFTAR_LIST_HREF}"[^>]*>(?:(?!</a>).)*${DAFTAR_TEXT.title}</span></a>`));
+    expect(html.indexOf(`href="${DAFTAR_LIST_HREF}"`)).toBeLessThan(html.indexOf('<h1'));
+    expect(html).not.toContain('aria-label="Kembali ke halaman sebelumnya"');
   });
 
   it('mengabaikan detail basi dari id lain dan menampilkan skeleton', () => {

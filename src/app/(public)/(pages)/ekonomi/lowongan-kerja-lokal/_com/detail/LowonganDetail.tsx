@@ -1,7 +1,8 @@
 'use client';
-import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import { IconBriefcase, IconUserSearch } from '@tabler/icons-react';
 import { useId, useState } from 'react';
+import { LOWONGAN_BASE_HREF } from '../lowongan-filter.meta';
 import l from '../lowongan-layout.module.css';
 import { DetailHeader } from './DetailHeader';
 import { DetailSection } from './DetailSection';
@@ -15,7 +16,7 @@ import type { LowonganDetail as Detail } from './lowongan-detail.types';
 import { useLowonganDetail } from './use-lowongan-detail';
 
 /**
- * Halaman detail lowongan kerja publik gaya Welcome to the Jungle: tombol kembali, satu kartu putih (kepala + aksi
+ * Halaman detail lowongan kerja publik gaya Welcome to the Jungle: tautan kembali, satu kartu putih (kepala + aksi
  * kontak, Deskripsi pekerjaan, Kualifikasi, Tempat kerja, penutup) dan bilah kontak melayang. Data dari
  * `useLowonganDetail`, bukan state admin.
  */
@@ -26,7 +27,7 @@ export function LowonganDetail({ id }: { id: string }) {
     <div className={l.page} aria-busy={state.status === 'loading' || undefined}>
       <div className={s.inner}>
         <div className={s.back}>
-          <BackButton />
+          <DetailBackLink href={LOWONGAN_BASE_HREF} label={T.backLink} />
         </div>
         {state.status === 'ready' ? (
           <LowonganDetailBody data={state.data} />

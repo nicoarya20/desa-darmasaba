@@ -8,6 +8,8 @@ export const LEMBAGA_DETAIL_TEXT = {
   notFoundTitle: "Sekolah tidak ditemukan",
   notFoundBody: "Sekolah ini tidak ada atau sudah tidak ditampilkan. Lihat daftar sekolah di halaman Info Sekolah.",
   backToList: "Ke daftar sekolah",
+  /** Tautan kembali di atas halaman detail (nama menu daftar). */
+  kembali: "Info Sekolah",
   leadFallback: "Lembaga pendidikan di Desa Darmasaba.",
 
   profilTitle: "Profil Sekolah",

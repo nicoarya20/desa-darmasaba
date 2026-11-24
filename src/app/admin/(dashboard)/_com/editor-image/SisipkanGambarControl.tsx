@@ -11,12 +11,12 @@ export function SisipkanGambarControl({ onPick }: { onPick: PickEditorImage }) {
   const { editor } = useRichTextEditorContext();
   const input = useRef<HTMLInputElement>(null);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
     // Kosongkan supaya memilih berkas yang sama dua kali tetap memicu onChange.
     event.currentTarget.value = '';
     if (!file || !editor) return;
-    const src = onPick(file);
+    const src = await onPick(file);
     if (src) editor.chain().focus().setImage({ src, alt: '' }).run();
   };
 

@@ -1,19 +1,22 @@
-import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import colors from '@/con/colors';
 import { Avatar, Box, Divider, Group, Image, Paper, Stack, Text, Title } from '@mantine/core';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import s from './struktur-detail.module.css';
 import { detailRows, displayName, initialsOf, type StrukturDetailData } from './struktur-person.logic';
 import { STRUKTUR_DETAIL_TEXT as T } from './struktur.text';
 
 const AVATAR_SIZE = 160;
 
-/** Kerangka halaman profil: latar halaman, tombol kembali, lalu kartu ubin terpusat. */
-export function StrukturDetailFrame({ children }: { children: ReactNode }) {
+/** Tujuan + teks tautan kembali; tiap konsumen (PPID, Perangkat Desa) memberi daftarnya sendiri. */
+export type StrukturDetailBack = ComponentProps<typeof DetailBackLink>;
+
+/** Kerangka halaman profil: latar halaman, tautan kembali ke daftar, lalu kartu ubin terpusat. */
+export function StrukturDetailFrame({ back, children }: { back: StrukturDetailBack; children: ReactNode }) {
   return (
     <Box px={{ base: 'md', md: 100 }} py="xl" className={s.page}>
       <Group mb="lg">
-        <BackButton />
+        <DetailBackLink href={back.href} label={back.label} />
       </Group>
       <Paper w={{ base: '100%', md: '70%' }} mx="auto" p="xl" radius="lg" className={s.paper}>
         {children}
@@ -39,12 +42,17 @@ function DetailPhoto({ data }: { data: StrukturDetailData }) {
   );
 }
 
-type Props = { data: StrukturDetailData; /** Judul blok info (mis. "Informasi Pegawai"). */ infoTitle: string };
+type Props = {
+  data: StrukturDetailData;
+  /** Judul blok info (mis. "Informasi Pegawai"). */
+  infoTitle: string;
+  back: StrukturDetailBack;
+};
 
 /** Profil pegawai: foto/inisial, nama + gelar, jabatan, lalu baris info yang terisi saja + status. */
-export function StrukturDetailView({ data, infoTitle }: Props) {
+export function StrukturDetailView({ data, infoTitle, back }: Props) {
   return (
-    <StrukturDetailFrame>
+    <StrukturDetailFrame back={back}>
       <Stack align="center" gap="md">
         <DetailPhoto data={data} />
         <Stack align="center" gap={4}>
