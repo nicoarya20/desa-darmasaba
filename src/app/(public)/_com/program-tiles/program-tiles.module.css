@@ -42,15 +42,16 @@
   stroke-width: 1.5;
 }
 
-/* Kotak logo putih (Program Inovasi): rasio 16:9 terkunci, logo `contain` di tengah. Gambar diposisikan absolut
-   supaya tinggi aslinya tidak ikut melebarkan pelat (img Mantine `width: 100%` + tinggi auto membuat pelat setinggi
-   gambar, mis. gambar cadangan 4:3), jadi semua pelat dalam satu baris rata tinggi. Hanya dirender di `.tileLogo`. */
+/* Kotak logo putih (Program Inovasi): tinggi tetap 160px (tablet 140px), logo `contain` di tengah. Dulu rasio 16:9
+   mengikuti lebar ubin, sehingga di layar lebar pelat ±300px dan layar pertama hanya memuat 3 program (keputusan
+   user 2026-11-24). Gambar diposisikan absolut supaya tinggi aslinya tidak ikut melebarkan pelat (img Mantine
+   `width: 100%` + tinggi auto membuat pelat setinggi gambar), jadi semua pelat rata tinggi. Hanya di `.tileLogo`. */
 .logo {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 16 / 9;
+  height: 160px;
   margin-bottom: 8px;
   padding: 16px;
   border-radius: calc(var(--radius) - 8px);
@@ -128,6 +129,10 @@
   .tile {
     padding: 28px;
   }
+
+  .logo {
+    height: 140px;
+  }
 }
 
 /* ---------- Mobile ---------- */
@@ -158,7 +163,6 @@
     flex: none;
     width: 88px;
     height: 88px;
-    aspect-ratio: auto;
     margin: 0;
     padding: 10px;
     border-radius: 12px;

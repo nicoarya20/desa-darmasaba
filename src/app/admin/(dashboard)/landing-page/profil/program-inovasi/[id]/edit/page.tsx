@@ -13,6 +13,7 @@ import { useProxy } from 'valtio/utils';
 import { DokumentasiUploader } from '../../_com/DokumentasiUploader';
 import { LogoDropzone } from '../../_com/LogoDropzone';
 import { UrutanInput } from '../../_com/UrutanInput';
+import { useGambarSisipan } from '../../_lib/useGambarSisipan';
 import { useProgramInovasiMedia, type MediaAwal } from '../../_lib/useProgramInovasiMedia';
 
 type DataAwal = { name: string; description: string; urutan: number | null; media: MediaAwal };
@@ -29,6 +30,7 @@ function EditProgramInovasi() {
   const router = useRouter();
   const params = useParams();
   const media = useProgramInovasiMedia();
+  const sisipan = useGambarSisipan();
 
   const [formData, setFormData] = useState<{ name: string; description: string; urutan: number | null }>({
     name: '',
@@ -80,9 +82,12 @@ function EditProgramInovasi() {
       setIsSubmitting(true);
       // Unggah logo/dokumentasi baru; logo yang dihapus terkirim sebagai null.
       const { imageId, imageIds } = await media.unggah();
+      // Gambar sisipan baru diunggah; HTML-nya disimpan ke form supaya simpan ulang tidak mengunggah dua kali.
+      const description = await sisipan.unggah(formData.description);
+      setFormData((prev) => ({ ...prev, description }));
       stateProgramInovasi.update.form = {
         name: formData.name,
-        description: formData.description,
+        description,
         imageId,
         imageIds,
         urutan: formData.urutan,
@@ -137,7 +142,11 @@ function EditProgramInovasi() {
 
           <Box>
             <Text fz="sm" fw="bold">Deskripsi</Text>
+            <Text fz="xs" c="dimmed" mb={4}>
+              Untuk menaruh gambar di tengah teks, letakkan kursor lalu klik ikon gambar di toolbar.
+            </Text>
             <EditEditor
+              onPickImage={sisipan.pilih}
               value={formData.description}
               onChange={(htmlContent) =>
                 setFormData((prev) => ({ ...prev, description: htmlContent }))

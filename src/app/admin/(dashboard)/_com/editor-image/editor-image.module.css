@@ -1,0 +1,27 @@
+/* Gambar sisipan di dalam editor admin: di tengah, selebar maks 320px (pratinjau, bukan ukuran publik). */
+.content :global(.ProseMirror img) {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 320px);
+  max-height: 320px;
+  margin: 12px auto;
+  border-radius: 8px;
+}
+
+/* Gambar terpilih (klik gambar lalu Delete/Backspace untuk menghapus). */
+.content :global(.ProseMirror img.ProseMirror-selectednode) {
+  outline: 3px solid var(--mantine-color-blue-5);
+  outline-offset: 2px;
+}
+
+/* Pratinjau HTML tersimpan di halaman detail admin: aturan tampilan sama dengan di editor. */
+.preview img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 320px);
+  max-height: 320px;
+  margin: 12px auto;
+  border-radius: 8px;
+}

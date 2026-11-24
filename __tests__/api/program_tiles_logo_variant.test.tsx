@@ -64,8 +64,11 @@ describe('ProgramTiles: varian ber-logo', () => {
 });
 
 describe('program-tiles.module.css: pelat rata tinggi, gelap tanpa pelat, baris ponsel', () => {
-  it('pelat logo 16:9 dengan gambar absolut (tinggi asli gambar tidak melebarkan pelat)', () => {
-    expect(CSS).toMatch(/\.logo \{[^}]*position: relative;[^}]*aspect-ratio: 16 \/ 9;/);
+  it('pelat logo bertinggi tetap 160px (tablet 140px) dengan gambar absolut (tinggi asli gambar tidak melebarkan pelat)', () => {
+    expect(CSS).toMatch(/\.logo \{[^}]*position: relative;[^}]*height: 160px;/);
+    expect(CSS).not.toMatch(/aspect-ratio: 16 \/ 9/);
+    const tablet = CSS.slice(CSS.indexOf('@media (max-width: 1068px)'), CSS.indexOf('@media (max-width: 734px)'));
+    expect(tablet).toMatch(/\.logo \{\s*height: 140px;/);
     expect(CSS).toMatch(/\.logo \.logoImg \{\s*position: absolute;/);
   });
 
