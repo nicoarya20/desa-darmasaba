@@ -3,6 +3,8 @@
 // aksi kontak (WhatsApp/Telepon), penutup, bilah melayang, dan keadaan memuat/tidak ditemukan/galat.
 // jsdom rusak di repo ini → markup diuji via renderToStaticMarkup (efek & observer tidak jalan).
 import { MantineProvider } from '@mantine/core';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type { AnchorHTMLAttributes, ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -166,8 +168,18 @@ describe('LowonganDetailBody: kontak', () => {
 
   it('bilah melayang dirender tersembunyi (inert) sampai observer menyatakan aksi kepala lewat', () => {
     const html = render(<LowonganDetailBody data={detail()} />);
-    expect(html).toMatch(new RegExp(`<div class="${k.bar}" data-visible="false" aria-hidden="true" inert="">`));
+    expect(html).toMatch(
+      new RegExp(`<div class="${k.bar}" data-kontak-bar="" data-visible="false" aria-hidden="true" inert="">`),
+    );
     expect(html).toContain(`<p class="${k.barPosisi}">Barista</p>`);
+  });
+
+  it('kontrak dengan dock Jenna: penanda bilah dipakai selector jenna-dock-offset untuk menaikkan dock', () => {
+    // Bila atribut atau selector berganti sepihak, dock Jenna kembali menimpa tombol WhatsApp/Telepon di ponsel.
+    const css = readFileSync(resolve(process.cwd(), 'src/app/(public)/_com/jenna/jenna-dock-offset.module.css'), 'utf8');
+    const selector = ':root:has([data-kontak-bar][data-visible="true"]) .dockOffset';
+    expect(count(css, selector)).toBe(3);
+    expect(render(<LowonganDetailBody data={detail()} />)).toContain('data-kontak-bar=""');
   });
 
   it('tanpa tombol Simpan', () => {
