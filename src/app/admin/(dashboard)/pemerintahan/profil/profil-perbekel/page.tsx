@@ -1,8 +1,9 @@
 'use client'
 
 import colors from '@/con/colors';
-import { Box, Button, Center, Divider, Grid, GridCol, Group, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import { publicLhkpnUrl } from '@/lib/profil-perbekel-lhkpn';
+import { Anchor, Box, Button, Center, Divider, Grid, GridCol, Group, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
+import { IconEdit, IconExternalLink } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useSnapshot } from 'valtio';
@@ -18,6 +19,7 @@ function Page() {
   }, []);
 
   const perbekel = snap.profilPerbekel.findUnique.data;
+  const lhkpnUrl = publicLhkpnUrl(perbekel?.lhkpnUrl);
 
   if (!perbekel) {
     return (
@@ -137,6 +139,17 @@ function Page() {
               style={{ wordBreak: "break-word", whiteSpace: "normal" }}
               dangerouslySetInnerHTML={{ __html: perbekel.programUnggulan }}
             />
+
+            <Text fz={{ base: 'sm', md: 'md' }} fw="bold" mt="md">Laporan LHKPN</Text>
+            {lhkpnUrl ? (
+              <Anchor href={lhkpnUrl} target="_blank" rel="noopener noreferrer" underline="never" fz={{ base: 'sm', md: 'md' }}>
+                <Group gap={4} component="span" wrap="nowrap">
+                  Lihat Laporan LHKPN <IconExternalLink size={16} stroke={1.75} aria-hidden />
+                </Group>
+              </Anchor>
+            ) : (
+              <Text fz={{ base: 'sm', md: 'md' }} c="dimmed">Belum diisi</Text>
+            )}
           </Box>
         </Paper>
       </Stack>

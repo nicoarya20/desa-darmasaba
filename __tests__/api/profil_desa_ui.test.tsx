@@ -239,6 +239,28 @@ describe('Profil Desa — Profil Perbekel', () => {
     expect(html).toContain(`alt="Foto ${PERBEKEL_NAME}"`);
     const blocks = [...html.matchAll(/<h3[^>]*>(?:<svg[\s\S]*?<\/svg>)?([^<]+)<\/h3>/g)].map((m) => m[1]);
     expect(blocks).toEqual(['Biodata', 'Pengalaman', 'Program Kerja Unggulan']);
+    expect(html).not.toContain('Laporan LHKPN');
+  });
+
+  it('link LHKPN Google Drive → blok "Laporan LHKPN" setelah Program Kerja Unggulan, tautan tab baru', () => {
+    const url = 'https://drive.google.com/file/d/1AbC/view'; // test-only
+    set('profilPerbekel', {
+      image: null, biodata: '<p>Bio</p>', pengalaman: '', pengalamanOrganisasi: '', programUnggulan: '<p>Program</p>', lhkpnUrl: url,
+    });
+    const html = render(<ProfilPerbekel />);
+    const blocks = [...html.matchAll(/<h3[^>]*>(?:<svg[\s\S]*?<\/svg>)?([^<]+)<\/h3>/g)].map((m) => m[1]);
+    expect(blocks).toEqual(['Biodata', 'Program Kerja Unggulan', 'Laporan LHKPN']);
+    expect(html).toMatch(new RegExp(`<a href="${url}" target="_blank" rel="noopener noreferrer"`));
+    expect(html).toContain('Lihat Laporan LHKPN');
+  });
+
+  it('link LHKPN yang bukan Google Drive (data lama/rusak) tidak dirender', () => {
+    set('profilPerbekel', {
+      image: null, biodata: '<p>Bio</p>', pengalaman: '', pengalamanOrganisasi: '', programUnggulan: '', lhkpnUrl: 'javascript:alert(1)',
+    });
+    const html = render(<ProfilPerbekel />);
+    expect(html).not.toContain('Laporan LHKPN');
+    expect(html).not.toContain('javascript:');
   });
 });
 

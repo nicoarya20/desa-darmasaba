@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.347] - 2026-11-24
+### Added
+- **Link laporan LHKPN Perbekel.** Di admin, halaman Edit Profil Perbekel (Pemerintahan > Profil > Profil Perbekel) kini punya isian "Link Laporan LHKPN" di bawah Program Unggulan. Isiannya opsional dan harus berupa link Google Drive (`https://drive.google.com/...` atau `https://docs.google.com/...`); link lain ditolak dengan pesan di bawah isian, dan mengosongkan isian menghapus link-nya. Di halaman publik Profil Desa (`/pemerintahan/profil`), bagian Profil Perbekel menampilkan blok "Laporan LHKPN" setelah Program Kerja Unggulan berisi tombol "Lihat Laporan LHKPN" yang membuka berkas di tab baru. Selama link belum diisi, blok ini tidak tampil, jadi profil yang sudah ada tidak berubah. Pastikan berkas di Google Drive dibagikan ke "siapa saja yang memiliki link" agar warga bisa membukanya. Perlu migrasi database (satu kolom baru opsional, aman untuk data lama).
+
 ## [0.1.346] - 2026-11-24
 ### Changed
 - **Profil perorangan PPID disembunyikan sementara** atas permintaan pihak desa, karena isinya tumpang tindih dengan "Profil Perbekel" di halaman Profil Desa. Di halaman publik `/ppid/profil-ppid`, bagian "Pejabat Pengelola Informasi dan Dokumentasi" (foto, biografi, riwayat karir, pengalaman organisasi, program unggulan) tidak lagi tampil; yang tersisa hanya Profil Lembaga. Di admin, menu PPID > Profil PPID kini langsung menampilkan Profil Lembaga tanpa tab "Profil Perorangan". Tidak ada data yang dihapus: isinya tetap tersimpan dan bagian ini bisa ditampilkan lagi dengan mengubah satu pengaturan di kode (`src/con/profil-ppid.ts`). Selama disembunyikan, halaman publik tidak memuat data perorangan.
