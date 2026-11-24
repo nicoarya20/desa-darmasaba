@@ -21,6 +21,8 @@ export const KONTAK_TEXT = {
   photoAlt: (name: string) => `Foto ${name}`,
   notFound: 'Kontak tidak ditemukan. Mungkin sudah dihapus atau tautannya keliru.',
   backToList: 'Lihat semua kontak',
+  /** Tautan kembali di atas halaman detail (nama menu daftar). */
+  kembali: 'Kontak Darurat',
   detailError: 'Kontak gagal dimuat. Periksa koneksi internet lalu coba lagi.',
 } as const;
 

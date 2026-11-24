@@ -13,4 +13,6 @@ export const PRESTASI_TEXT = {
   empty: "Belum ada prestasi atau penghargaan yang ditampilkan.",
   notFound: (q: string) => `Tidak ada prestasi atau penghargaan yang cocok dengan “${q}”.`,
   error: "Prestasi dan penghargaan gagal dimuat. Coba muat ulang halaman.",
+  /** Tautan kembali di atas halaman detail `/prestasi-desa/[id]` (nama menu daftar). */
+  kembali: "Prestasi dan Penghargaan",
 } as const;

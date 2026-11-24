@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Publik DAK halaman program: ?urut (parse/serialisasi), urut + cari, info dokumen, total ukuran folder, tombol ZIP.
+import type { AnchorHTMLAttributes } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
@@ -26,6 +27,11 @@ import {
 import { jalankanUnduhZip, ZIP_HINT } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-zip';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { folderGroups, type DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
+
+// DetailBackLink (tautan kembali ProgramHeader) memakai Link next-view-transitions, yang tak bisa dimuat di env node.
+vi.mock('next-view-transitions', () => ({
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+}));
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>)

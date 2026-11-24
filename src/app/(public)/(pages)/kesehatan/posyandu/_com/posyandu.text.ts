@@ -83,6 +83,8 @@ export const POSYANDU_TEXT = {
   detailNotFound: "Posyandu tidak ditemukan. Mungkin sudah dihapus atau tautannya salah.",
   detailFailed: "Detail posyandu gagal dimuat. Muat ulang halaman untuk mencoba lagi.",
   backToList: "Lihat semua posyandu",
+  /** Tautan kembali di atas halaman detail (nama menu daftar). */
+  kembali: "Posyandu",
   infoBanjar: "Banjar",
   infoAlamat: "Alamat",
   galeriTitle: "Foto lokasi dan kader",

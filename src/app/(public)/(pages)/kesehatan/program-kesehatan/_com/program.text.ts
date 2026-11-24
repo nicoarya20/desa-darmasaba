@@ -43,6 +43,8 @@ export const PROGRAM_DETAIL_TEXT = {
   notFound: "Program kesehatan tidak ditemukan atau sudah tidak ditampilkan.",
   error: "Program kesehatan gagal dimuat. Coba muat ulang halaman.",
   backToList: "Lihat semua program kesehatan",
+  /** Tautan kembali di atas halaman detail (nama menu daftar). */
+  kembali: "Program Kesehatan",
   indikator: "Indikator kesehatan",
   diperbarui: (tanggal: string) => `Data diperbarui ${tanggal}`,
   fotoLabel: "Lihat foto ukuran penuh",

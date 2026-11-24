@@ -43,9 +43,11 @@ export const PROFIL_ANCHOR = {
   riwayat: 'perbekel-masa-ke-masa',
 } as const;
 
+/** Halaman bagan Struktur Perangkat Desa (tujuan tautan kembali profil pegawai). */
+export const STRUKTUR_PERANGKAT_LIST_HREF = '/pemerintahan/profil/struktur-perangkat-desa';
+
 /** Rute profil pegawai dari bagan Struktur Perangkat Desa. */
-export const strukturPerangkatHref = (pegawaiId: string) =>
-  `/pemerintahan/profil/struktur-perangkat-desa/${pegawaiId}`;
+export const strukturPerangkatHref = (pegawaiId: string) => `${STRUKTUR_PERANGKAT_LIST_HREF}/${pegawaiId}`;
 
 /**
  * Variabel CSS halaman: gradasi kartu bagan. Brand ikut tema, jadi diset di

@@ -3,11 +3,15 @@
 // jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import type { AnchorHTMLAttributes } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('next-view-transitions', () => ({ useTransitionRouter: () => ({ back: vi.fn() }) }));
+vi.mock('next-view-transitions', () => ({
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+  useTransitionRouter: () => ({ back: vi.fn() }),
+}));
 
 import { PpidHeader } from '@/app/(public)/(pages)/ppid/_com/PpidHeader';
 import { PpidPage } from '@/app/(public)/(pages)/ppid/_com/PpidPage';
@@ -74,6 +78,17 @@ describe('PpidPage', () => {
 
   it('kepala halaman tampak secara bawaan', () => {
     expect(html).not.toContain('VisuallyHidden');
+  });
+
+  it('backLink (halaman detail): tautan teks ke daftar menggantikan tombol ikon panah, tetap sebelum kepala', () => {
+    const detail = render(
+      <PpidPage title="Halaman Uji" lead="Pengantar halaman." backLink={{ href: '/uji/daftar', label: 'Daftar Uji' }}>
+        <p>Isi halaman</p>
+      </PpidPage>,
+    );
+    expect(detail).toMatch(/<a [^>]*href="\/uji\/daftar"[^>]*>(?:(?!<\/a>).)*Daftar Uji<\/span><\/a>/);
+    expect(detail.indexOf('href="/uji/daftar"')).toBeLessThan(detail.indexOf('>Halaman Uji</h1>'));
+    expect(detail).not.toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
   });
 
   it('headerHidden: h1 + pengantar tetap ada untuk pembaca layar, isi tetap di luar pembungkus tersembunyi', () => {
