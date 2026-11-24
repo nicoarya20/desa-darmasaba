@@ -5,7 +5,9 @@ import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { Box } from '@mantine/core';
-import BackButton from '../layanan/_com/BackButto';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
+import { BERITA_LIST_HREF } from '@/app/(public)/_com/main-page/kabar-desa/kabar.meta';
+import { BERITA_TEXT } from './_com/berita.text';
 const BeritaShell = dynamic(
   () => import('./_com/BeritaShell'),
   { ssr: false }
@@ -27,11 +29,11 @@ export default function BeritaLayoutClient({
   const isDetailPage = segments.length === 4; // [pemerintahan, berita, kategori, id]
 
   if (isDetailPage) {
-    // Tampilkan tanpa tab menu
+    // Tanpa tab menu; tautan kembali teks "‹ Berita" dengan jarak atas sama dengan detail produk UMKM (40/24px).
     return (
       <Box bg="var(--c-bg)">
-        <Box pt={33} px={{ base: 'md', md: 100 }}>
-          <BackButton />
+        <Box pt={{ base: 24, md: 40 }} pb={24} px={{ base: 'md', md: 100 }}>
+          <DetailBackLink href={BERITA_LIST_HREF} label={BERITA_TEXT.backLink} />
         </Box>
         {children}
       </Box>

@@ -23,7 +23,6 @@ vi.mock('@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/detail/use-low
   useLowonganDetail: () => ({ state: h.state, reload: () => undefined }),
 }));
 
-import { BACK_BUTTON_LABEL } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
 import { DetailStatus } from '@/app/(public)/(pages)/ekonomi/lowongan-kerja-lokal/_com/detail/DetailStatus';
 import {
   LowonganDetail,
@@ -217,9 +216,11 @@ describe('kontak-bar.logic', () => {
 });
 
 describe('LowonganDetail: status', () => {
-  it('memuat → tombol kembali + kerangka role=status, aria-busy', () => {
+  it('memuat → tautan kembali teks ke daftar + kerangka role=status, aria-busy', () => {
     const html = render(<LowonganDetail id="l1" />);
-    expect(html).toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
+    expect(html).toContain('href="/ekonomi/lowongan-kerja-lokal"');
+    expect(html).toContain(`data-text="${T.backLink}"`);
+    expect(html).not.toContain('Kembali ke halaman sebelumnya');
     expect(html).toContain(`role="status" aria-label="${T.memuat}"`);
     expect(html).toContain('aria-busy="true"');
     expect(html).not.toContain('<h1');

@@ -16,6 +16,8 @@ export const KEAMANAN_LINGKUNGAN_TEXT = {
 } as const;
 
 export const KEAMANAN_LINGKUNGAN_DETAIL_TEXT = {
+  /** Nama daftar di tautan kembali "‹ …": judul menu tanpa "(Pecalang / Patwal)" agar tetap ringkas. */
+  backLink: "Keamanan Lingkungan",
   loading: "Memuat keamanan lingkungan",
   notFound: "Informasi keamanan lingkungan tidak ditemukan atau sudah tidak ditampilkan.",
   error: "Keamanan lingkungan gagal dimuat. Coba muat ulang halaman.",

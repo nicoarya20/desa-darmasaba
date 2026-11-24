@@ -1,13 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import potensiDesaState from '@/app/admin/(dashboard)/_state/desa/potensi';
+import { POTENSI_DESA_HREF } from '@/app/(public)/(pages)/ekonomi/sektor-unggulan-desa/_com/sektor-unggulan.meta';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Box, Center, Container, Image, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconMoodSad } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import BackButton from '../../layanan/_com/BackButto';
+import { POTENSI_TEXT } from '../_com/potensi.text';
 
 
 function Page() {
@@ -60,10 +62,11 @@ function Page() {
     );
   }
 
+  // Jarak atas & tautan kembali → kartu sama dengan detail produk UMKM (40/24px, 24px).
   return (
-    <Stack pos="relative" bg="var(--c-bg)" py="xl" gap="xl" px={{ base: 'md', md: 0 }}>
+    <Stack pos="relative" bg="var(--c-bg)" pt={{ base: 24, md: 40 }} pb="xl" gap={24} px={{ base: 'md', md: 0 }}>
       <Box px={{ base: 'md', md: 100 }}>
-        <BackButton />
+        <DetailBackLink href={POTENSI_DESA_HREF} label={POTENSI_TEXT.backLink} />
       </Box>
       <Container w={{ base: '100%', md: '60%' }}>
         <Paper radius="2xl" shadow="lg" p="xl" withBorder>

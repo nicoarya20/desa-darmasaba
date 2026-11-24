@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.349] - 2026-11-24
+### Changed
+- **Tautan kembali di halaman detail kini seragam: teks "‹ Nama Daftar"**, sama seperti detail produk UMKM ("‹ Katalog UMKM"), menggantikan tombol kotak berikon panah. Tautan menyebut ke mana pengunjung kembali dan selalu menuju halaman daftarnya (bukan sekadar "halaman sebelumnya"), berwarna biru brand di tema terang maupun gelap, dengan efek sapuan warna saat disorot. Berlaku di 20 halaman detail: Lowongan Kerja Lokal, Inovasi Teknologi Desa, Keamanan Lingkungan, Laporan Publik, Pencegahan Kriminalitas, Kontak Darurat (Kesehatan), Posyandu, Program Kesehatan, detail sekolah (Info Sekolah), Daftar Informasi Publik, profil Struktur PPID dan Struktur Perangkat Desa, program Desa Anti Korupsi, Prestasi dan Penghargaan, Berita, Galeri Video, Kegiatan Desa, Layanan, Pengumuman, dan Potensi. Halaman daftar dan menu tetap memakai tombol panah.
+
 ## [0.1.348] - 2026-11-24
 ### Added
 - **Gambar di tengah deskripsi Program Inovasi.** Di admin (Landing Page > Profil > Program Inovasi, Tambah maupun Edit), toolbar editor Deskripsi kini punya tombol gambar. Letakkan kursor di antara paragraf, klik tombol itu, lalu pilih gambar (maksimal 5MB, paling banyak 10 gambar per deskripsi). Gambar langsung tampil di tengah editor dan baru diunggah saat Simpan, jadi membatalkan form tidak meninggalkan berkas. Di halaman publik, gambar tampil di tengah teks pada posisi yang sama, baik di halaman detail `/inovasi/program-inovasi/{id}` maupun di jendela program di beranda, sehingga susunannya bisa mengikuti dokumen program dari desa (misalnya maskot DAVEST III setelah paragraf pembuka). Gambar yang dihapus dari teks ikut dibersihkan dari penyimpanan saat disimpan. Perlu migrasi database (tabel penghubung baru, aman untuk data lama).

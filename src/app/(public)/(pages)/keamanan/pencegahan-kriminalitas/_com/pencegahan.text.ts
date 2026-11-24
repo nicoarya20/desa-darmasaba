@@ -22,6 +22,8 @@ export const PENCEGAHAN_TEXT = {
 } as const;
 
 export const PENCEGAHAN_DETAIL_TEXT = {
+  /** Nama daftar di tautan kembali "‹ …" (sama dengan judul menu). */
+  backLink: "Pencegahan Kriminalitas",
   kategori: "Pencegahan Kriminalitas",
   loading: "Memuat program pencegahan kriminalitas",
   notFound: "Program pencegahan kriminalitas tidak ditemukan atau sudah tidak ditampilkan.",

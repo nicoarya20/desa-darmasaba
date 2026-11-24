@@ -1,5 +1,7 @@
 /** Teks UI halaman detail lowongan kerja publik (tanpa em dash). Gaji & pil berbagi teks dengan kartu daftar. */
 export const LOWONGAN_DETAIL_TEXT = {
+  /** Nama daftar di tautan kembali "‹ …" (sama dengan judul menu). */
+  backLink: 'Lowongan Kerja Lokal',
   memuat: 'Memuat lowongan',
   infoLabel: 'Ringkasan lowongan',
   tayangLabel: 'Tanggal tayang',

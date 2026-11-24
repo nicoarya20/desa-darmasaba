@@ -1,5 +1,5 @@
 'use client';
-import BackButton from "@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto";
+import { DetailBackLink } from "@/app/(public)/_com/detail-back-link/DetailBackLink";
 import r from "@/app/(public)/_com/link-reveal/link-reveal.module.css";
 import { useLazyLoad, type LoadState } from "@/app/(public)/_com/lazy-load/use-lazy-load";
 import type { LembagaDetail } from "@/lib/lembaga-pendidikan/lembaga.types";
@@ -16,6 +16,9 @@ import LembagaDetailContent from "./LembagaDetailContent";
 import { LEMBAGA_DETAIL_TEXT as T } from "./lembaga-detail.text";
 import d from "./lembaga-detail.module.css";
 
+/** Daftar sekolah di halaman Info Sekolah (tujuan tautan kembali). */
+const LEMBAGA_LIST_HREF = `${INFO_SEKOLAH_PATH}#${LEMBAGA_ANCHOR}`;
+
 /** Halaman publik detail satu sekolah (Info Sekolah): kerangka Pendidikan, kepala nama sekolah, isi detail. */
 export function LembagaDetailPage({ id }: { id: string }) {
   const load = useCallback(() => loadLembagaDetail(id), [id]);
@@ -24,7 +27,7 @@ export function LembagaDetailPage({ id }: { id: string }) {
     <section className={`${frame.frame} ${s.page}`} aria-label={T.pageLabel}>
       <div className={frame.inner}>
         <div className={s.back}>
-          <BackButton />
+          <DetailBackLink href={LEMBAGA_LIST_HREF} label={T.kembali} />
         </div>
         <LembagaDetailBody state={state} onRetry={retry} />
       </div>
@@ -46,7 +49,7 @@ export function LembagaDetailBody({ state, onRetry }: { state: LoadState<Lembaga
     return (
       <div className={d.notFound}>
         <InfoSekolahEmpty title={T.notFoundTitle} message={T.notFoundBody} />
-        <Link href={`${INFO_SEKOLAH_PATH}#${LEMBAGA_ANCHOR}`} className={`${d.backLink} ${r.trigger}`}>
+        <Link href={LEMBAGA_LIST_HREF} className={`${d.backLink} ${r.trigger}`}>
           <span className={r.cta} data-text={T.backToList}>
             {T.backToList}
           </span>

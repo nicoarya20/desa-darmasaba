@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Publik DAK halaman program: judul sentence case + nomor, deskripsi duplikat, kartu folder (cuplikan, tanggal, Kosong), chip folder.
-import { describe, expect, it } from 'vitest';
+import type { AnchorHTMLAttributes } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
 import { ProgramIsi } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
@@ -12,6 +13,11 @@ import {
 } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-judul';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import type { DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
+
+// DetailBackLink (tautan kembali ProgramHeader) memakai Link next-view-transitions, yang tak bisa dimuat di env node.
+vi.mock('next-view-transitions', () => ({
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+}));
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>)

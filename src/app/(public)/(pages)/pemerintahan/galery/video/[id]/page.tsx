@@ -1,10 +1,10 @@
 'use client';
 
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import g from '../../_lib/galery.module.css';
 import {
-  ActionIcon,
   Alert,
   Box,
   Button,
@@ -18,11 +18,15 @@ import {
   Title,
 } from '@mantine/core';
 import { useShallowEffect } from '@mantine/hooks';
-import { IconArrowBack, IconArrowLeft, IconInfoCircle, IconVideo } from '@tabler/icons-react';
+import { IconArrowBack, IconInfoCircle, IconVideo } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 
+/** Halaman daftar video galeri (tab Video). */
+const GALERI_VIDEO_HREF = '/pemerintahan/galery/video';
+/** Nama daftar di tautan kembali "‹ …" (tab Video menu Galeri). */
+const BACK_LINK_LABEL = 'Galeri Video';
 
 function convertToEmbedUrl(youtubeUrl: string): string {
   try {
@@ -81,7 +85,7 @@ export default function DetailVideoUser() {
         <Button
           leftSection={<IconArrowBack size={16} />}
           mt="md"
-          onClick={() => router.push('/pemerintahan/galery/video')}
+          onClick={() => router.push(GALERI_VIDEO_HREF)}
           variant="outline"
         >
           Kembali ke Galeri
@@ -93,12 +97,10 @@ export default function DetailVideoUser() {
   const embedUrl = data.linkVideo ? convertToEmbedUrl(data.linkVideo) : null;
 
   return (
-    <Box py="xl" px={{ base: 'md', md: 100 }} bg="var(--c-bg)" className={g.vars}>
-      {/* Tombol Kembali */}
-      <Box>
-        <ActionIcon bg="var(--c-brand-fill)" onClick={() => router.push('/pemerintahan/galery/video')}>
-          <IconArrowLeft />
-        </ActionIcon>
+    <Box pt={{ base: 24, md: 40 }} pb="xl" px={{ base: 'md', md: 100 }} bg="var(--c-bg)" className={g.vars}>
+      {/* Tautan kembali teks, jarak atas & ke isi sama dengan detail produk UMKM (40/24px, 24px). */}
+      <Box mb={24}>
+        <DetailBackLink href={GALERI_VIDEO_HREF} label={BACK_LINK_LABEL} />
       </Box>
 
       {/* Header - Dijadikan Title */}

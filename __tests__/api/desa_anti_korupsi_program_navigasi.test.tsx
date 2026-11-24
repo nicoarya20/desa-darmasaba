@@ -1,6 +1,7 @@
 // @vitest-environment node
-// Publik DAK halaman program: folder tunggal langsung dibuka, tujuan tombol Kembali, daftar folder berbentuk panel baris.
-import { describe, expect, it } from 'vitest';
+// Publik DAK halaman program: folder tunggal langsung dibuka, tujuan tautan kembali, daftar folder berbentuk panel baris.
+import type { AnchorHTMLAttributes } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
 import { ProgramIsi } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_com/ProgramIsi';
@@ -10,6 +11,11 @@ import {
 } from '@/app/(public)/(tambahan)/desa-anti-korupsi/_lib/program-folder';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { folderGroups, type DesaAntiKorupsiDetail } from '@/lib/desa-anti-korupsi-view';
+
+// DetailBackLink (tautan kembali ProgramHeader) memakai Link next-view-transitions, yang tak bisa dimuat di env node.
+vi.mock('next-view-transitions', () => ({
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+}));
 
 const render = (node: React.ReactElement) =>
   renderToStaticMarkup(<MantineProvider env="test">{node}</MantineProvider>)
@@ -57,7 +63,8 @@ const banyak: DesaAntiKorupsiDetail = {
 
 const isi = (detail: DesaAntiKorupsiDetail, folderParam: string | null) =>
   render(<ProgramIsi detail={detail} folderParam={folderParam} urutParam={null} onUrutChange={noop} />);
-const kembaliTag = (html: string) => /<a[^>]*data-testid="program-kembali"[^>]*>/.exec(html)?.[0] ?? '';
+// Tautan kembali "‹ Nama Daftar" = tautan pertama halaman (ProgramHeader, di atas breadcrumb).
+const kembaliTag = (html: string) => /<a\b(?:(?!<\/a>)[\s\S])*<\/a>/.exec(html)?.[0] ?? '';
 
 describe('folderTunggalBerisi', () => {
   it('satu-satunya folder berisi dikembalikan; folder kosong tidak dihitung', () => {
@@ -74,13 +81,17 @@ describe('tujuanKembali', () => {
   it('folder dibuka → daftar folder program (urut ikut); selain itu → tab kategori; tanpa kategori → halaman DAK', () => {
     expect(tujuanKembali({ programId: 'p1', kategori: 'X', folderDibuka: true, urut: 'judul-asc' })).toEqual({
       href: '/desa-anti-korupsi/program/p1?urut=judul-asc',
-      label: 'Kembali ke daftar folder',
+      label: 'Daftar folder',
     });
+    // Label = nama kategori sentence case, sama dengan crumb kategori di bawahnya.
     expect(tujuanKembali({ programId: 'p1', kategori: 'PENGUATAN TATA LAKSANA', folderDibuka: false })).toEqual({
       href: '/desa-anti-korupsi/detail?kategori=PENGUATAN%20TATA%20LAKSANA',
-      label: 'Kembali ke daftar indikator',
+      label: 'Penguatan tata laksana',
     });
-    expect(tujuanKembali({ programId: 'p1', kategori: null, folderDibuka: false }).href).toBe('/desa-anti-korupsi');
+    expect(tujuanKembali({ programId: 'p1', kategori: null, folderDibuka: false })).toEqual({
+      href: '/desa-anti-korupsi',
+      label: 'Desa Anti Korupsi',
+    });
   });
 });
 
@@ -91,7 +102,8 @@ describe('ProgramIsi navigasi', () => {
     expect(html).toMatch(/data-testid="folder-aktif"[^>]*>Umum</);
     expect(html).not.toContain('data-folder-key');
     expect(kembaliTag(html)).toContain(KATEGORI_HREF);
-    expect(kembaliTag(html)).toContain('aria-label="Kembali ke daftar indikator"');
+    expect(kembaliTag(html)).toContain('>Penguatan tata laksana</span>');
+    expect(kembaliTag(html)).not.toContain('Kembali ke halaman sebelumnya');
     // Folder dibuka otomatis bukan pilihan pengunjung → tidak jadi crumb terakhir.
     expect(html).not.toMatch(/aria-current="page"[^>]*>Umum</);
     // Chip tetap ada untuk menjangkau folder lain (mis. "2026" yang kosong).
@@ -101,7 +113,7 @@ describe('ProgramIsi navigasi', () => {
   it('folder dipilih lewat ?folder= → Kembali ke daftar folder program, bukan ke halaman detail', () => {
     const html = isi(tunggal, 'f2026');
     expect(kembaliTag(html)).toContain(DAFTAR_FOLDER_HREF);
-    expect(kembaliTag(html)).toContain('aria-label="Kembali ke daftar folder"');
+    expect(kembaliTag(html)).toContain('>Daftar folder</span>');
     expect(kembaliTag(html)).not.toContain('kategori=');
   });
 

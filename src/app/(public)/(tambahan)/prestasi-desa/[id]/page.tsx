@@ -1,8 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import prestasiState from '@/app/admin/(dashboard)/_state/landing-page/prestasi-desa';
-import BackButton from '@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import { PrestasiJuara } from '@/app/(public)/_com/main-page/prestasi/PrestasiJuara';
+import { PRESTASI_LIST_HREF } from '@/app/(public)/_com/main-page/prestasi/prestasi.meta';
+import { PRESTASI_TEXT } from '@/app/(public)/_com/main-page/prestasi/prestasi.text';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { ActionIcon, Box, Container, Divider, Flex, Image, Skeleton, Stack, Text } from '@mantine/core';
 import { IconBrandFacebook, IconBrandInstagram, IconBrandTwitter, IconBrandWhatsapp } from '@tabler/icons-react';
@@ -50,7 +52,9 @@ function Page() {
 
   return (
     <Stack pos={"relative"} bg="var(--c-bg)" py={"xl"} gap={"22"} px={{ base: "md", md: 0 }}>
-      <Box px={{ base: "md", md: 100 }}><BackButton /></Box>
+      <Box px={{ base: "md", md: 100 }}>
+        <DetailBackLink href={PRESTASI_LIST_HREF} label={PRESTASI_TEXT.kembali} />
+      </Box>
       <Container w={{ base: "100%", md: "50%" }}>
         {state.findUnique.data && (
           <>

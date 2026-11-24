@@ -1,5 +1,7 @@
 /** Label UI halaman detail pengumuman publik. */
 export const PENGUMUMAN_DETAIL_TEXT = {
+  /** Nama daftar di tautan kembali "‹ …" (sama dengan judul menu). */
+  backLink: "Pengumuman",
   loading: "Memuat pengumuman",
   notFound: "Pengumuman tidak ditemukan atau sudah tidak ditampilkan.",
   error: "Pengumuman gagal dimuat. Coba muat ulang halaman.",
