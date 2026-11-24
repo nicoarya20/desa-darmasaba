@@ -1,5 +1,6 @@
 // Logika murni halaman program publik Desa Anti Korupsi: URL program/folder, ringkasan isi,
 // folder aktif dari ?folder, pencarian dokumen lintas folder, dan total ukuran folder.
+import { toSentenceCase } from '@/app/(public)/_com/main-page/desaantikorupsi/desaantikorupsi.logic';
 import type { DokumenDesaAntiKorupsiView } from '@/lib/desa-anti-korupsi-dokumen';
 import { filterDokumen } from '@/lib/desa-anti-korupsi-sort';
 import type { FolderGroupView } from '@/lib/desa-anti-korupsi-view';
@@ -65,12 +66,13 @@ export function folderTunggalBerisi(groups: readonly FolderGroupView[]): FolderG
 
 const DAK_ROOT_HREF = '/desa-anti-korupsi';
 
-/** Tujuan tombol Kembali halaman program: URL + nama aksesibel yang menyebut tujuannya. */
+/** Tujuan tautan kembali halaman program: URL + nama daftar tujuannya (teks tautan). */
 export type TujuanKembali = { href: string; label: string };
 
 /**
- * Tujuan tombol Kembali halaman program (bukan `history.back`, agar hasilnya pasti):
- * folder dibuka lewat `?folder=` → daftar folder program; selain itu → tab kategori halaman detail.
+ * Tujuan + teks tautan kembali "‹ Nama Daftar" halaman program (bukan `history.back`, agar hasilnya pasti):
+ * folder dibuka lewat `?folder=` → daftar folder program; selain itu → tab kategori halaman detail (label = nama
+ * kategori, sama dengan crumb-nya); tanpa kategori → halaman Desa Anti Korupsi.
  */
 export function tujuanKembali(opts: {
   programId: string;
@@ -79,8 +81,8 @@ export function tujuanKembali(opts: {
   urut?: UrutValue;
 }): TujuanKembali {
   if (opts.folderDibuka) {
-    return { href: programHref(opts.programId, null, opts.urut), label: 'Kembali ke daftar folder' };
+    return { href: programHref(opts.programId, null, opts.urut), label: 'Daftar folder' };
   }
-  if (opts.kategori) return { href: detailHref(opts.kategori), label: 'Kembali ke daftar indikator' };
-  return { href: DAK_ROOT_HREF, label: 'Kembali ke Desa Anti Korupsi' };
+  if (opts.kategori) return { href: detailHref(opts.kategori), label: toSentenceCase(opts.kategori) };
+  return { href: DAK_ROOT_HREF, label: 'Desa Anti Korupsi' };
 }

@@ -17,6 +17,8 @@ export const INOVASI_TEXT = {
 } as const;
 
 export const INOVASI_DETAIL_TEXT = {
+  /** Nama daftar di tautan kembali "‹ …" (sama dengan judul menu). */
+  backLink: "Inovasi Teknologi Desa",
   loading: "Memuat inovasi teknologi desa",
   notFound: "Inovasi teknologi desa tidak ditemukan atau sudah tidak ditampilkan.",
   error: "Inovasi teknologi desa gagal dimuat. Coba muat ulang halaman.",

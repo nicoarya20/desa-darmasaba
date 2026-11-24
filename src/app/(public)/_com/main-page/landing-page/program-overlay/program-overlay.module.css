@@ -169,7 +169,8 @@
   padding-left: 1.4em;
 }
 
-/* Gambar sisipan admin di tengah deskripsi: di tengah kolom teks, maks 400px (lebih kecil dari halaman detail
+/* Gambar sisipan admin di tengah deskripsi: rata kiri sejajar teks dan logo kepala (keputusan user 2026-11-24;
+   versi di tengah tampak tidak seragam dengan kepala yang rata kiri), maks 400px (lebih kecil dari halaman detail
    karena kolom overlay lebih sempit), tanpa pelat. */
 .richText img {
   display: block;
@@ -177,7 +178,7 @@
   height: auto;
   max-width: min(100%, 400px);
   max-height: 400px;
-  margin: 1.5em auto;
+  margin: 1.5em 0;
 }
 
 .muted {

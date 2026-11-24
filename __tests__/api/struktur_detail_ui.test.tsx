@@ -2,6 +2,8 @@
 // Profil pegawai dari bagan struktur (PPID, Perangkat Desa; BUMDes kini profil sendiri): satu komponen generik, baris kosong disembunyikan,
 // avatar inisial saat tanpa foto; Alamat & Tanggal Masuk tidak lagi ditampilkan (keputusan coordinator, ADR fleksibel). jsdom gagal start di repo ini → markup diuji via renderToStaticMarkup
 // (effect tidak jalan, jadi komponen penampung hanya teruji di keadaan memuat).
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import type { AnchorHTMLAttributes, ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MantineProvider } from '@mantine/core';
@@ -27,10 +29,17 @@ import {
 } from '@/app/(public)/_com/struktur-organisasi/struktur-person.logic';
 import PpidDetailPage from '@/app/(public)/(pages)/ppid/struktur-ppid/[id]/page';
 import { loadPegawaiPpidDetail } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.source';
+import { STRUKTUR_PPID_HREF } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.meta';
+import { STRUKTUR_PPID_TEXT } from '@/app/(public)/(pages)/ppid/struktur-ppid/_com/struktur-ppid.text';
+import { STRUKTUR_PERANGKAT_LIST_HREF } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.meta';
+import { STRUKTUR_PERANGKAT_TEXT } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.text';
 import PerangkatDetailPage from '@/app/(public)/(pages)/pemerintahan/profil/struktur-perangkat-desa/[id]/page';
 import BumdesDetailPage from '@/app/(public)/(pages)/ekonomi/Struktur-Organisasi-Dan-Sk-Pengurus-BumDes/[id]/page';
 
 const render = (ui: ReactElement) => renderToStaticMarkup(<MantineProvider>{ui}</MantineProvider>);
+
+// test-only: tujuan tautan kembali ke daftar asal profil.
+const BACK = { href: '/uji/struktur', label: 'Struktur Uji' };
 
 // test-only: profil minimal (hanya nama + jabatan wajib) dan profil lengkap.
 const MINIMAL: StrukturDetailData = {
@@ -77,7 +86,7 @@ describe('struktur-person.logic', () => {
 
 describe('StrukturDetailView', () => {
   it('profil minimal: field kosong tidak dirender, avatar inisial menggantikan foto', () => {
-    const html = render(<StrukturDetailView data={MINIMAL} infoTitle="Informasi Pegawai" />);
+    const html = render(<StrukturDetailView data={MINIMAL} infoTitle="Informasi Pegawai" back={BACK} />);
     expect(html).toMatch(/<h1[^>]*>Ni Wayan Sari<\/h1>/);
     expect(html).toContain('Kaur Keuangan');
     for (const label of ['Email', 'Telepon', 'Alamat', 'Tanggal Masuk']) expect(html).not.toContain(`>${label}<`);
@@ -89,7 +98,7 @@ describe('StrukturDetailView', () => {
   });
 
   it('profil lengkap: foto, nama + gelar, email/telepon, status tidak aktif; tanpa Alamat & Tanggal Masuk', () => {
-    const html = render(<StrukturDetailView data={FULL} infoTitle="Informasi Pegawai" />);
+    const html = render(<StrukturDetailView data={FULL} infoTitle="Informasi Pegawai" back={BACK} />);
     expect(html).toContain('src="/api/img/sari.webp"');
     expect(html).toContain('alt="Foto Ni Wayan Sari"');
     expect(html).not.toContain('data-initials');
@@ -98,11 +107,18 @@ describe('StrukturDetailView', () => {
     for (const hidden of ['Alamat', 'Tanggal Masuk', 'Banjar Bucu', 'Januari 2024']) expect(html).not.toContain(hidden);
     expect(html).toMatch(/<h2[^>]*>Informasi Pegawai<\/h2>/);
   });
+
+  it('tautan kembali teks "‹ Nama Daftar" ke daftar asal, sebelum kartu profil; tanpa tombol ikon panah', () => {
+    const html = render(<StrukturDetailView data={MINIMAL} infoTitle="Informasi Pegawai" back={BACK} />);
+    expect(html).toMatch(/<a [^>]*href="\/uji\/struktur"[^>]*>(?:(?!<\/a>).)*Struktur Uji<\/span><\/a>/);
+    expect(html.indexOf('href="/uji/struktur"')).toBeLessThan(html.indexOf('<h1'));
+    expect(html).not.toContain('Kembali ke halaman sebelumnya');
+  });
 });
 
 describe('StrukturDetail & halaman pembungkus', () => {
   it('sebelum data tiba menampilkan kerangka berlabel', () => {
-    const html = render(<StrukturDetail id="x" load={() => new Promise(() => {})} text={{ infoTitle: 'I', notFound: 'N' }} />);
+    const html = render(<StrukturDetail id="x" load={() => new Promise(() => {})} text={{ infoTitle: 'I', notFound: 'N' }} back={BACK} />);
     expect(html).toContain('role="status" aria-label="Memuat profil pegawai…"');
   });
 
@@ -110,6 +126,19 @@ describe('StrukturDetail & halaman pembungkus', () => {
     expect(render(<PpidDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
     expect(render(<PerangkatDetailPage />)).toContain('aria-label="Memuat profil pegawai…"');
     expect(render(<BumdesDetailPage />)).toContain('aria-label="Memuat profil pengurus BUMDes"');
+  });
+
+  it('tiap halaman pembungkus memberi tautan kembali ke daftarnya sendiri', () => {
+    expect(STRUKTUR_PPID_HREF).toBe('/ppid/struktur-ppid');
+    expect(STRUKTUR_PPID_TEXT.detail.kembali).toBe('Struktur PPID');
+    expect(STRUKTUR_PERANGKAT_LIST_HREF).toBe('/pemerintahan/profil/struktur-perangkat-desa');
+    expect(STRUKTUR_PERANGKAT_TEXT.detail.kembali).toBe('Struktur Perangkat Desa');
+    // Source-check: effect tidak jalan di renderToStaticMarkup, jadi profil (dan tautannya) tak pernah tergambar.
+    const page = (rel: string) => readFileSync(path.resolve(__dirname, '../../src/app/(public)/(pages)', rel), 'utf8');
+    expect(page('ppid/struktur-ppid/[id]/page.tsx')).toContain('back={{ href: STRUKTUR_PPID_HREF, label: T.detail.kembali }}');
+    expect(page('pemerintahan/profil/struktur-perangkat-desa/[id]/page.tsx')).toContain(
+      'back={{ href: STRUKTUR_PERANGKAT_LIST_HREF, label: T.detail.kembali }}',
+    );
   });
 
   it('pemuat PPID memanggil findUnique.load(id) dan mengembalikan hasilnya (null = tidak ditemukan)', async () => {

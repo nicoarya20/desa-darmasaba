@@ -10,8 +10,9 @@
   margin-inline: auto;
 }
 
+/* Jarak tautan kembali → kartu = 24px, sama dengan detail produk UMKM (.grid margin-top). */
 .back {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 /* Kartu 1080px dengan isi ±860px (padding sisi 110px), seperti kartu WTTJ. */

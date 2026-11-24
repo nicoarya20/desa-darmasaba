@@ -129,11 +129,11 @@ describe('halaman putih penuh: 404, Peta Informasi, logo program', () => {
     expect(decl(b, '--brand')).toBe('var(--c-brand)');
     expect(decl(b, 'background')).toBe('var(--c-bg)');
   });
-  it('ubin ber-logo gelap = ubin gelap halaman, pelat logo transparan; terang tetap putih', () => {
+  it('ubin ber-logo gelap = ubin gelap halaman; kotak logo tanpa pelat di kedua tema (pilihan user 2026-11-24)', () => {
     const css = stripComments(PUB('_com/program-tiles/program-tiles.module.css'));
     const logo = blockOf(css, '.logo');
-    expect(decl(logo, 'background')).toBe('#fff');
-    expect(logo).toMatch(/@mixin dark \{\s*background: transparent;\s*\}/);
+    expect(logo).not.toMatch(/background/);
+    expect(logo).not.toMatch(/@mixin dark/);
     expect(css).not.toMatch(/\.tileLogo \{\s*@mixin dark/);
     expect(css).not.toContain('#d9e1ea');
   });

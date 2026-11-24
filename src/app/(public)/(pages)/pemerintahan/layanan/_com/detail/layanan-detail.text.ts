@@ -1,5 +1,7 @@
 /** Label UI halaman detail layanan surat keterangan (`/pemerintahan/layanan/{id}`). */
 export const LAYANAN_DETAIL_TEXT = {
+  /** Nama daftar di tautan kembali "‹ …" (sama dengan judul menu). */
+  backLink: "Layanan",
   kategori: "Layanan Surat Keterangan",
   loading: "Memuat layanan",
   notFound: "Layanan tidak ditemukan atau sudah tidak ditampilkan.",

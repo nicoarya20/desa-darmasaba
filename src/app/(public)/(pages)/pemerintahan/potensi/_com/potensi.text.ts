@@ -1,6 +1,8 @@
 /** Label UI halaman Potensi Desa (kepala + saring, kartu, overlay detail). */
 export const POTENSI_TEXT = {
   title: "Potensi Desa Darmasaba",
+  /** Nama daftar di tautan kembali "‹ …" halaman detail (sama dengan judul menu). */
+  backLink: "Potensi",
   lead: "Temukan berbagai potensi unggulan, peluang, dan daya tarik yang menjadikan Desa Darmasaba istimewa.",
   filterLabel: "Saring berdasarkan kategori",
   filters: { semua: "Semua", potensi: "Potensi", wisata: "Wisata" },

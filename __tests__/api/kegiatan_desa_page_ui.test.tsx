@@ -111,11 +111,14 @@ describe('KegiatanDetailBody', () => {
 describe('KegiatanDetail prop list (pemakai lain, mis. Gotong Royong)', () => {
   const list = { label: 'Gotong Royong', href: '/lingkungan/gotong-royong' };
 
-  it('tanpa list: tombol ikon kembali, kategori menaut ke daftar Kegiatan Desa (tampilan Kegiatan Desa)', () => {
+  it('tanpa list: tautan teks "‹ Kegiatan Desa" ke daftar Kegiatan Desa, tanpa tombol ikon, kategori menaut', () => {
     detailState.current = { status: 'ready', data: data() };
     const html = render(<KegiatanDetailPage id="k1" />);
-    expect(html).toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
-    expect(html).not.toContain(`class="${back.back} ${r.trigger}"`);
+    expect(html).toContain(
+      `<a href="/pemerintahan/kegiatan-desa/semua" class="${back.back} ${r.trigger}">`,
+    );
+    expect(html).toContain(`<span class="${r.cta}" data-text="Kegiatan Desa">Kegiatan Desa</span></a>`);
+    expect(html).not.toContain(`aria-label="${BACK_BUTTON_LABEL}"`);
     expect(html).toContain('href="/pemerintahan/kegiatan-desa/lingkungan"');
   });
 

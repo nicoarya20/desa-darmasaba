@@ -1,6 +1,8 @@
 /** Label UI halaman daftar berita (`/pemerintahan/berita/*`). */
 export const BERITA_TEXT = {
   title: "Portal Berita Darmasaba",
+  /** Nama daftar di tautan kembali "‹ …" halaman detail (sama dengan judul menu). */
+  backLink: "Berita",
   lead: "Temukan berbagai potensi dan keunggulan yang dimiliki Desa Darmasaba",
   searchLabel: "Cari berita",
   searchPlaceholder: "Cari berita",

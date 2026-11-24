@@ -5,8 +5,8 @@ import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import { Image } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
-import BackButton from '../../../../pemerintahan/layanan/_com/BackButto';
 import page from '../../../../pemerintahan/layanan/_com/layanan.module.css';
+import { DetailBackLink } from '@/app/(public)/_com/detail-back-link/DetailBackLink';
 import { KontakActions } from '@/app/(public)/_com/kontak-darurat/KontakActions';
 import list from '@/app/(public)/_com/kontak-darurat/kontak-darurat.module.css';
 import { phoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic';
@@ -27,7 +27,7 @@ export function KontakDaruratDetailView({ state, onRetry }: { state: KontakDetai
   return (
     <div className={page.page}>
       <article className={detail.wrap} aria-busy={state.status === 'loading' || undefined}>
-        <BackButton />
+        <DetailBackLink href={KONTAK_LIST_HREF} label={T.kembali} />
         {state.status === 'loading' ? <DetailPlaceholder /> : null}
         {state.status === 'ready' ? <KontakDetailBody data={state.data} /> : null}
         {state.status === 'notfound' ? (
