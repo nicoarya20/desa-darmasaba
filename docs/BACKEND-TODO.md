@@ -284,6 +284,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Usul: putuskan sumber rating (ulasan warga + moderasi, atau input admin), lalu kirim `rating` + `jumlahUlasan` di find-many/findUnique produk. Reset nilai seed ke 0 supaya tidak tampil sebagai penilaian asli begitu frontend membacanya.
   - Detail produk `/ekonomi/umkm/produk/[id]` (v0.1.266) sudah punya bagian **Ulasan** gaya Decathlon (nilai rata-rata, jumlah ulasan, bar distribusi 5→1, tombol "Tulis ulasan") yang sengaja kosong dan tombolnya nonaktif (`TODO(umkm-ulasan)`). Bentuk data yang ditunggu frontend: `{ rataRata: number | null, jumlah: number, distribusi: { 1..5: number } }` + daftar ulasan berpaginasi.
   - Usul lanjutan: model `UlasanProduk` (produkId, nama/penanda pengulas, bintang 1–5, teks, status moderasi), endpoint kirim ulasan dengan anti-spam, dan antrean moderasi di admin sebelum tampil.
+  - **Sejak v0.1.353 semua tampilan ulasan di publik disembunyikan** (permintaan user 2026-11-25, fitur belum diterapkan): bagian Ulasan, tautan rating ke `#ulasan`, dan baris "Belum ada ulasan" di kartu produk. Saklar: `ULASAN_PRODUK_UMKM_TAMPIL` di `src/con/umkm-ulasan.ts`; ubah ke `true` setelah backend ulasan siap.
 
 - [ ] **Produk UMKM hanya bisa punya satu foto** (terverifikasi: `PasarDesa.imageId` tunggal di `prisma/schema.prisma`, 2026-11-13)
   - Frontend: galeri detail produk sudah mendukung banyak foto (foto utama + strip thumbnail dengan panah), tapi strip baru muncul bila foto ≥2. Kini selalu satu foto.

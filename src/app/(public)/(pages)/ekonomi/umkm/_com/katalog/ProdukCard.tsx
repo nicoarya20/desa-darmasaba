@@ -1,4 +1,5 @@
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import { ULASAN_PRODUK_UMKM_TAMPIL } from '@/con/umkm-ulasan';
 import { IconPhoto, IconStar } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { fotoSrc, hargaParts, produkHref } from './katalog-card.logic';
@@ -10,7 +11,8 @@ import s from './produk-card.module.css';
 /**
  * Kartu produk gaya Decathlon: seluruh kartu satu tautan ke detail produk.
  * Stok sengaja tidak ditampilkan: pemesanan lewat WhatsApp penjual dan stok tidak dirawat admin (keputusan user 2026-11-13).
- * Baris harga tidak dirender bila admin menyembunyikan harga (`harga` null).
+ * Baris harga tidak dirender bila admin menyembunyikan harga (`harga` null); baris rating sementara disembunyikan
+ * (src/con/umkm-ulasan.ts).
  */
 export function ProdukCard({ produk }: { produk: KatalogProduk }) {
   const harga = hargaParts(produk);
@@ -36,10 +38,12 @@ export function ProdukCard({ produk }: { produk: KatalogProduk }) {
         </h3>
         {produk.umkm && <p className={s.brand}>{produk.umkm.nama}</p>}
         {/* TODO(umkm-rating): rating belum punya sumber data — docs/BACKEND-TODO.md P3 */}
-        <p className={s.rating}>
-          <IconStar size={14} stroke={1.75} aria-hidden="true" />
-          <span>{T.ratingKosong}</span>
-        </p>
+        {ULASAN_PRODUK_UMKM_TAMPIL && (
+          <p className={s.rating}>
+            <IconStar size={14} stroke={1.75} aria-hidden="true" />
+            <span>{T.ratingKosong}</span>
+          </p>
+        )}
       </div>
     </Link>
   );

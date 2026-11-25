@@ -1,5 +1,6 @@
 'use client';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import { ULASAN_PRODUK_UMKM_TAMPIL } from '@/con/umkm-ulasan';
 import { UMKM_PESANAN_TERCATAT } from '@/lib/umkm-pesanan';
 import { IconStar } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
@@ -20,7 +21,7 @@ type Props = {
 };
 
 /**
- * Kolom info detail produk: merek · kategori, nama, rating, harga, CTA WhatsApp (atau alur pesanan website saat
+ * Kolom info detail produk: merek · kategori, nama, rating (sementara disembunyikan, src/con/umkm-ulasan.ts), harga, CTA WhatsApp (atau alur pesanan website saat
  * `UMKM_PESANAN_TERCATAT` true), link toko online, panel Cara memesan dan Penjual. Stok tidak pernah ditampilkan.
  * Bila admin menyembunyikan harga (`harga` null): baris harga tidak dirender dan pesanan website (yang menampilkan
  * total) tidak ditawarkan, warga diarahkan ke WhatsApp penjual.
@@ -45,10 +46,12 @@ export function ProdukInfo({ produk, onTercatat }: Props) {
       {produk.isUnggulan && <span className={s.label}>{T.unggulan}</span>}
       <h1 className={s.title}>{produk.nama}</h1>
       {/* TODO(umkm-rating): rating belum punya sumber data — docs/BACKEND-TODO.md P3 */}
-      <a href="#ulasan" className={`${s.rating} ${r.trigger}`}>
-        <IconStar size={16} stroke={1.75} aria-hidden="true" />
-        <span className={r.title}>{T.ratingKosong}</span>
-      </a>
+      {ULASAN_PRODUK_UMKM_TAMPIL && (
+        <a href="#ulasan" className={`${s.rating} ${r.trigger}`}>
+          <IconStar size={16} stroke={1.75} aria-hidden="true" />
+          <span className={r.title}>{T.ratingKosong}</span>
+        </a>
+      )}
       {harga && (
         <p className={s.price}>
           <span className={s.amount}>{harga.harga}</span>
