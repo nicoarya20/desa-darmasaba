@@ -1,5 +1,5 @@
 /*
- * Tips Keamanan — ubin tips di atas kerangka Kabar (`.section` kabar.module.css + kepala kabar-list).
+ * Tips Keamanan — bagian ubin tips di halaman Pencegahan Kriminalitas (kerangka `.section` kabar.module.css).
  * Ubin --tile bersudut lancip senada kartu Keamanan Lingkungan; desktop 2 kolom (2fr foto/judul | 3fr isi),
  * isi butir HTML dibaca langsung. Variabel warna (--brand, --ink, --muted, --tile) dari kabar.module.css.
  * Breakpoint mengikuti apple.com: ≤1068px (tablet) dan ≤734px (mobile).
@@ -164,4 +164,24 @@
     font-size: 17px;
     line-height: 1.47;
   }
+}
+
+/* ---------- Bagian tips di halaman Pencegahan Kriminalitas ---------- */
+/* Tujuan anchor `#tips-keamanan`: sisakan ruang navbar melayang (sama dengan anchor Profil Desa). */
+.section {
+  scroll-margin-top: 88px;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lead {
+  max-width: 640px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.47;
 }

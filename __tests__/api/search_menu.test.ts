@@ -88,9 +88,10 @@ describe('searchMenu pada config navbar nyata', () => {
     );
   });
 
-  it('nama menu utama "keamanan" mengembalikan ketujuh submenu Keamanan', () => {
+  // 6 sejak Tips Keamanan dilebur ke Pencegahan Kriminalitas (2026-11-24).
+  it('nama menu utama "keamanan" mengembalikan keenam submenu Keamanan', () => {
     const keamanan = submenus.filter((s) => s.menu === 'Keamanan');
-    expect(keamanan).toHaveLength(7);
+    expect(keamanan).toHaveLength(6);
     const hrefs = searchMenu('keamanan').map((r) => r.href);
     for (const s of keamanan) expect(hrefs).toContain(s.href);
   });

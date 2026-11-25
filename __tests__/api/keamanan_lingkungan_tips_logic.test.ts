@@ -20,10 +20,12 @@ const { hasHtmlContent, keamananLingkunganDetailHref, keamananLingkunganListHref
 const { loadKeamananLingkunganDetail, loadKeamananLingkunganPage } = await import(
   '@/app/(public)/(pages)/keamanan/keamanan-lingkungan-pecalang-patwal/_com/keamanan-lingkungan.source'
 );
-const { tipsKeamananListHref, toTip } = await import(
-  '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan.logic'
+const { tipsKeamananHref, toTip } = await import(
+  '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tips/tips-keamanan.logic'
 );
-const { loadTipsKeamananPage } = await import('@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan.source');
+const { loadTipsKeamananPage } = await import(
+  '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tips/tips-keamanan.source'
+);
 
 // test-only: bentuk entri stg 2026-11-12 (dipangkas).
 const entri = {
@@ -148,9 +150,9 @@ describe('Tips Keamanan: pemetaan & URL', () => {
     expect(tip.imageUrl).toBe('/api/img/tipu.webp');
   });
 
-  it('URL daftar', () => {
-    expect(tipsKeamananListHref()).toBe('/keamanan/tips-keamanan');
-    expect(tipsKeamananListHref({ search: 'rumah', page: 1 })).toBe('/keamanan/tips-keamanan?search=rumah');
+  it('alamat bagian tips di Pencegahan Kriminalitas (tujuan redirect menu lama), kata kunci dipertahankan', () => {
+    expect(tipsKeamananHref()).toBe('/keamanan/pencegahan-kriminalitas#tips-keamanan');
+    expect(tipsKeamananHref(' rumah ')).toBe('/keamanan/pencegahan-kriminalitas?search=rumah#tips-keamanan');
   });
 });
 
