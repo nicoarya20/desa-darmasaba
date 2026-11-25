@@ -10,6 +10,7 @@ import { useSnapshot } from "valtio";
 import { MenuItem } from "../../../../types/menu-item";
 import { LOGO_DESA_SMALL_SRC } from "./logo-desa.meta";
 import { isMenuActive, isPathActive } from "./navbar-menu.logic";
+import { NavbarMenuPlayer, NavbarMusicToggle } from "./NavbarMobileMusic";
 import { NavbarSpeechToggle } from "./NavbarSpeechToggle";
 import { NavbarThemeToggle } from "./NavbarThemeToggle";
 import m from "./navbar-mobile.module.css";
@@ -24,6 +25,7 @@ export function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
   const { mobileOpen } = useSnapshot(stateNav);
   const pathname = usePathname();
   const levelRef = useRef<HTMLDivElement>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   // `openCount` mengganti key level saat panel dibuka lagi, supaya animasi reveal diputar ulang.
@@ -42,6 +44,8 @@ export function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
   const close = () => {
     stateNav.mobileOpen = false;
   };
+  // × di kartu pemutar menghapus tombol yang sedang fokus: fokus pindah ke burger, bukan jatuh ke body.
+  const focusBurger = () => burgerRef.current?.focus();
   const goTo = (id: string | null) => {
     setDirection(id ? "forward" : "back");
     setActiveId(id);
@@ -86,7 +90,9 @@ export function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
         <div className={m.actions}>
           <NavbarSpeechToggle />
           <NavbarThemeToggle />
+          <NavbarMusicToggle />
           <Burger
+            ref={burgerRef}
             opened={mobileOpen}
             onClick={() => (stateNav.mobileOpen = !stateNav.mobileOpen)}
             color="var(--nav-accent)"
@@ -159,6 +165,8 @@ export function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
               ))}
             </ul>
           )}
+          {/* Kartu pemutar hanya di menu utama, bukan di level submenu. */}
+          {!activeMenu && <NavbarMenuPlayer onNavigate={close} onStop={focusBurger} revealIndex={listNavbar.length} />}
         </div>
       </nav>
     </div>
