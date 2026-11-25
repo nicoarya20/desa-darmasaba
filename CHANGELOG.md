@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.352] - 2026-11-25
+### Added
+- **Kontrol musik di layar kunci dan notifikasi HP.** Saat lagu Musik Desa diputar, sampul, judul, artis, serta tombol putar/jeda, sebelumnya, berikutnya, dan geser posisi kini muncul di layar kunci dan notifikasi ponsel, seperti aplikasi musik. Tombol media di keyboard dan Control Center macOS juga ikut berfungsi.
+
+### Changed
+- **Pemutar musik di luar halaman Musik kini berupa widget kecil, bukan bar di bawah layar.** Di komputer, lagu yang sedang diputar tampil sebagai kartu ringkas di kanan atas, tepat di bawah menu: sampul, judul, artis, posisi lagu (bisa digeser), serta tombol sebelumnya, putar/jeda, berikutnya, dan tombol × untuk menghentikan lagu. Klik sampul atau judul untuk membuka Musik Desa. Setelah 5 detik tanpa disentuh, saat halaman digulir, atau saat chat Jenna dibuka, kartu mengecil menjadi pil kecil (sampul dan animasi equalizer) supaya tidak menutupi isi halaman; arahkan atau klik pil untuk membukanya lagi. Di ponsel, kartu pemutar ada di bagian bawah menu (ikon garis tiga), dan ikon equalizer di bilah atas bisa diketuk untuk memutar atau menjeda lagu tanpa membuka menu. Bar pemutar lama dan ikon musik melayang di kiri layar dihapus, sehingga bilah kontak di detail Lowongan Kerja tidak lagi menutupi pemutar dan tombol chat Jenna tetap di posisi biasanya. Halaman Musik Desa sendiri tidak berubah.
+
 ## [0.1.351] - 2026-11-24
 ### Changed
 - **Menu Tips Keamanan digabung ke Pencegahan Kriminalitas.** Di menu Keamanan kini hanya ada "Pencegahan Kriminalitas", berisi program pencegahan (video dan halaman detail) lalu bagian baru "Tips keamanan" di bawahnya, karena keduanya bertujuan sama. Isi tidak berubah dan admin tetap mengisi di dua menu seperti sebelumnya (Pencegahan Kriminalitas dan Tips Keamanan). Alamat lama `/keamanan/tips-keamanan` otomatis dialihkan ke bagian tips di halaman Pencegahan Kriminalitas (kata kunci pencarian ikut dibawa), dan hasil pencarian tips di website juga menuju bagian itu, sehingga tautan lama tidak rusak. Kolom cari di halaman ini mencari program dan tips sekaligus, dan baru muncul bila jumlah program dan tips lebih dari 6.
