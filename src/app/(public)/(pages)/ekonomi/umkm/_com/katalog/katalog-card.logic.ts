@@ -9,8 +9,12 @@ export function formatHarga(harga: number): string {
   return `Rp${RUPIAH.format(harga)}`;
 }
 
-/** Harga + akhiran satuan terpisah agar bisa diberi gaya berbeda, mis. { harga: "Rp80.000", satuan: " / ekor" }. */
-export function hargaParts(produk: Pick<KatalogProduk, 'harga' | 'satuan'>) {
+/**
+ * Harga + akhiran satuan terpisah agar bisa diberi gaya berbeda, mis. { harga: "Rp80.000", satuan: " / ekor" };
+ * null bila admin menyembunyikan harga (baris harga tidak dirender).
+ */
+export function hargaParts(produk: Pick<KatalogProduk, 'harga' | 'satuan'>): { harga: string; satuan: string } | null {
+  if (produk.harga === null) return null;
   return { harga: formatHarga(produk.harga), satuan: perSatuanSuffix(produk.satuan) };
 }
 

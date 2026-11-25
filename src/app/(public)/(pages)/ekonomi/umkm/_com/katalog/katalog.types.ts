@@ -4,7 +4,8 @@ export type KatalogRef = { id: string; nama: string };
 export type KatalogProduk = {
   id: string;
   nama: string;
-  harga: number;
+  /** null = admin menyembunyikan harga di website publik (lihat _lib/harga-publik.source.ts). */
+  harga: number | null;
   satuan: string | null;
   stok: number;
   isUnggulan: boolean;

@@ -10,9 +10,10 @@ import s from './produk-card.module.css';
 /**
  * Kartu produk gaya Decathlon: seluruh kartu satu tautan ke detail produk.
  * Stok sengaja tidak ditampilkan: pemesanan lewat WhatsApp penjual dan stok tidak dirawat admin (keputusan user 2026-11-13).
+ * Baris harga tidak dirender bila admin menyembunyikan harga (`harga` null).
  */
 export function ProdukCard({ produk }: { produk: KatalogProduk }) {
-  const { harga, satuan } = hargaParts(produk);
+  const harga = hargaParts(produk);
 
   return (
     <Link href={produkHref(produk.id)} className={`${s.card} ${r.trigger}`}>
@@ -24,10 +25,12 @@ export function ProdukCard({ produk }: { produk: KatalogProduk }) {
         {produk.isUnggulan && <span className={s.label}>{T.unggulan}</span>}
       </KatalogMedia>
       <div className={s.body}>
-        <p className={s.price}>
-          <span className={s.amount}>{harga}</span>
-          {satuan && <span className={s.unit}>{satuan}</span>}
-        </p>
+        {harga && (
+          <p className={s.price}>
+            <span className={s.amount}>{harga.harga}</span>
+            {harga.satuan && <span className={s.unit}>{harga.satuan}</span>}
+          </p>
+        )}
         <h3 className={s.name}>
           <span className={r.title}>{produk.nama}</span>
         </h3>

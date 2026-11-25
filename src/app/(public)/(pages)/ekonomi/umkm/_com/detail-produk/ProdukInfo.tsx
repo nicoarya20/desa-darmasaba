@@ -22,9 +22,11 @@ type Props = {
 /**
  * Kolom info detail produk: merek · kategori, nama, rating, harga, CTA WhatsApp (atau alur pesanan website saat
  * `UMKM_PESANAN_TERCATAT` true), link toko online, panel Cara memesan dan Penjual. Stok tidak pernah ditampilkan.
+ * Bila admin menyembunyikan harga (`harga` null): baris harga tidak dirender dan pesanan website (yang menampilkan
+ * total) tidak ditawarkan, warga diarahkan ke WhatsApp penjual.
  */
 export function ProdukInfo({ produk, onTercatat }: Props) {
-  const { harga, satuan } = hargaParts(produk);
+  const harga = hargaParts(produk);
   const { penjual, kategori } = produk;
 
   return (
@@ -47,14 +49,16 @@ export function ProdukInfo({ produk, onTercatat }: Props) {
         <IconStar size={16} stroke={1.75} aria-hidden="true" />
         <span className={r.title}>{T.ratingKosong}</span>
       </a>
-      <p className={s.price}>
-        <span className={s.amount}>{harga}</span>
-        {satuan && <span className={s.unit}>{satuan}</span>}
-      </p>
+      {harga && (
+        <p className={s.price}>
+          <span className={s.amount}>{harga.harga}</span>
+          {harga.satuan && <span className={s.unit}>{harga.satuan}</span>}
+        </p>
+      )}
 
       <div className={s.actions}>
-        {UMKM_PESANAN_TERCATAT ? (
-          <PesanWebsiteAksi produk={produk} onTercatat={onTercatat} />
+        {UMKM_PESANAN_TERCATAT && produk.harga !== null ? (
+          <PesanWebsiteAksi produk={{ ...produk, harga: produk.harga }} onTercatat={onTercatat} />
         ) : (
           <HubungiPenjualButton kontak={penjual?.kontak} umkmNama={penjual?.nama} produkNama={produk.nama} />
         )}

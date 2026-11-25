@@ -3346,6 +3346,16 @@ model Umkm {
   produk     PasarDesa[]
 }
 
+// Pengaturan tampilan katalog UMKM publik. Satu baris aktif (pola PerpustakaanConfig). Kenapa: desa sementara
+// tidak mau menampilkan harga produk, dan admin tidak perlu menghapus harga satu per satu. Tanpa baris = harga tampil.
+model UmkmConfig {
+  id               String   @id @default(cuid())
+  sembunyikanHarga Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  isActive         Boolean  @default(true)
+}
+
 model KategoriProdukUmkm {
   id        String      @id @default(cuid())
   nama      String

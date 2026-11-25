@@ -19,7 +19,8 @@ export type DetailLinkToko = NonNullable<ComponentProps<typeof LinkTokoOnlineBut
 export type DetailProduk = {
   id: string;
   nama: string;
-  harga: number;
+  /** null = admin menyembunyikan harga di website publik (lihat _lib/harga-publik.source.ts). */
+  harga: number | null;
   satuan: string | null;
   isUnggulan: boolean;
   /** Sudah lewat `sanitizeRichText` (src/lib/rich-text.ts); '' bila kosong. */
@@ -35,6 +36,9 @@ export type DetailProduk = {
   /** HANYA untuk alur pesanan website saat `UMKM_PESANAN_TERCATAT` true; tidak pernah ditampilkan. */
   stok: number;
 };
+
+/** Produk yang harganya tampil: syarat alur pesanan website (pesan WhatsApp memuat harga & total). */
+export type DetailProdukBerharga = DetailProduk & { harga: number };
 
 export type DetailProdukState =
   | { status: 'loading' }

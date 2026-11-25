@@ -2,9 +2,9 @@
 // Katalog UMKM publik: params URL, adapter API → kartu, saring/urut/hitung di klien, gabungan status muat, sumber data.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { produkGet, umkmGet } = vi.hoisted(() => ({ produkGet: vi.fn(), umkmGet: vi.fn() }));
+const { produkGet, umkmGet, hargaGet } = vi.hoisted(() => ({ produkGet: vi.fn(), umkmGet: vi.fn(), hargaGet: vi.fn(async () => ({ status: 200, data: { success: true, data: { sembunyikanHarga: false } } })) }));
 vi.mock('@/lib/api-fetch', () => {
-  const umkm = Object.assign({ 'find-many': { get: umkmGet } }, { produk: { 'find-many': { get: produkGet } } });
+  const umkm = Object.assign({ 'find-many': { get: umkmGet } }, { produk: { 'find-many': { get: produkGet }, pengaturan: { find: { get: hargaGet } } } }); // harga tampil (disembunyikan: umkm_harga_publik_logic)
   return { default: { api: { ekonomi: { umkm } } } };
 });
 

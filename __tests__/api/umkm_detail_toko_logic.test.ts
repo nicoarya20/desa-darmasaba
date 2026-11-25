@@ -18,6 +18,12 @@ vi.mock('@/lib/api-fetch', () => ({
   },
 }));
 
+// Saklar harga dimuat lewat endpoint terpisah; di sini harga dianggap tampil (perilaku disembunyikan: umkm_harga_publik_logic.test.ts).
+vi.mock('@/app/(public)/(pages)/ekonomi/umkm/_lib/harga-publik.source', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/app/(public)/(pages)/ekonomi/umkm/_lib/harga-publik.source')>()),
+  loadHargaTampil: async () => true,
+}));
+
 import {
   readTokoBody,
   toDetailToko,

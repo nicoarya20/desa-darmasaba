@@ -28,6 +28,7 @@ import { ModalKonfirmasiHapus } from '@/app/admin/(dashboard)/_com/modalKonfirma
 import { UnggulanBadge } from '@/app/(public)/(pages)/ekonomi/umkm/_com/UnggulanBadge';
 import { ProdukMobileList } from './_com/ProdukMobileList';
 import { ProdukImportModal } from './_com/ProdukImportModal';
+import { HargaPublikSwitch } from './_com/HargaPublikSwitch';
 
 function ProdukUmkm() {
   const router = useRouter();
@@ -75,6 +76,8 @@ function ProdukUmkm() {
           </Button>
         </Group>
       </Group>
+
+      <HargaPublikSwitch />
 
       <Paper withBorder p="md" radius="md">
         <TextInput

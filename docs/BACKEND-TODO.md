@@ -155,6 +155,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: frontend tidak bisa membedakan gambar asli dari cadangan; `onError` tidak terpicu, jadi pengganti (inisial/ikon) tidak pernah tampil dan pengunjung melihat gambar bertuliskan "No image" (Program Inovasi, Tips Keamanan, sampul Musik).
   - Usul: balas `404` (boleh tetap mengirim gambar cadangan sebagai body, atau tanpa body) dan jangan di-cache. Frontend Program Inovasi sudah menampilkan inisial nama saat logo gagal dimuat (keputusan user: tanpa deteksi gambar cadangan di frontend). Cek pemakai lain `/api/img` yang mengandalkan status 200 sebelum mengubah.
 
+- [ ] **Harga produk UMKM tetap terkirim di API publik walau admin menyembunyikannya** (v0.1.352, `feature/umkm-sembunyikan-harga`)
+  - Lokasi: saklar `UmkmConfig.sembunyikanHarga` (admin Ekonomi > UMKM > tab Produk). Halaman publik mengosongkan harga di klien (`(public)/(pages)/ekonomi/umkm/_lib/harga-publik.source.ts`), tetapi `GET /api/ekonomi/umkm/produk/find-many`, `/produk/:id`, dan `/umkm/:id` (include produk) tetap mengirim `harga` karena endpoint yang sama dipakai admin.
+  - Dampak: harga tidak tampil di halaman, tetapi masih terlihat lewat devtools/permintaan API langsung. Cukup untuk "desa belum mau menampilkan harga"; belum cukup bila harga dianggap rahasia.
+  - Usul: bila perlu benar-benar tersembunyi, endpoint publik membuang `harga` saat saklar aktif dan admin memakai endpoint/param sendiri (sejalan dengan usul pemisahan endpoint publik di butir detail produk di bawah).
+
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
   - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/umkm/produk/findMany.ts` + `_where.ts`. Hanya mendukung `search`, `umkmId`, `kategoriId` (satu nilai), dan `unggulan`. Urutan tetap `createdAt desc`, dan tidak ada jumlah produk per kategori/toko.
   - Mitigasi frontend (MITIGASI SEMENTARA): halaman `/ekonomi/umkm` (rombak gaya katalog, v0.1.264) memuat maks 100 produk sekaligus (`KATALOG_LIST_LIMIT`), lalu menyaring (kategori & toko banyak pilihan, rentang harga, unggulan), mengurutkan, dan menghitung di klien. Ada `console.warn` bila total > 100. Data stg 2026-11-13: 7 produk.

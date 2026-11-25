@@ -9,7 +9,7 @@ import {
   pesanErrorMessage,
 } from '../../_lib/pesanan';
 import type { OrderForm } from '../PesananModal';
-import type { DetailProduk } from './detail-produk.types';
+import type { DetailProdukBerharga } from './detail-produk.types';
 
 const DEFAULT_FORM: OrderForm = { nama: '', jumlah: 1, catatan: '' };
 
@@ -18,7 +18,7 @@ const DEFAULT_FORM: OrderForm = { nama: '', jumlah: 1, catatan: '' };
  * lalu konfirmasi + tautan WhatsApp. Hanya dipakai saat `UMKM_PESANAN_TERCATAT` true.
  * `onTercatat` dipanggil saat modal konfirmasi ditutup agar stok dimuat ulang.
  */
-export function usePesananProduk(produk: DetailProduk, onTercatat: () => void) {
+export function usePesananProduk(produk: DetailProdukBerharga, onTercatat: () => void) {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<OrderForm>(DEFAULT_FORM);

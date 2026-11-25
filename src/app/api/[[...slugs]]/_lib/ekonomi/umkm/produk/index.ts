@@ -5,6 +5,7 @@ import produkUmkmDelete from "./del";
 import produkUmkmFindMany from "./findMany";
 import produkUmkmFindUnique from "./findUnique";
 import produkUmkmImport from "./import";
+import PengaturanHargaProduk from "./pengaturan";
 import produkUmkmUpdate from "./updt";
 
 // Opsional & aditif: tanpa field ini perilaku lama tidak berubah. Aturan isi (https, host, maks 5)
@@ -17,6 +18,7 @@ const ProdukUmkm = new Elysia({
   prefix: "/umkm/produk",
   tags: ["Ekonomi/UMKM Produk"],
 })
+  .use(PengaturanHargaProduk)
   .get("/find-many", produkUmkmFindMany)
   .get("/:id", produkUmkmFindUnique, {
     params: t.Object({
