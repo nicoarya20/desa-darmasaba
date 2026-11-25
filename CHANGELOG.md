@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.351] - 2026-11-24
+### Changed
+- **Menu Tips Keamanan digabung ke Pencegahan Kriminalitas.** Di menu Keamanan kini hanya ada "Pencegahan Kriminalitas", berisi program pencegahan (video dan halaman detail) lalu bagian baru "Tips keamanan" di bawahnya, karena keduanya bertujuan sama. Isi tidak berubah dan admin tetap mengisi di dua menu seperti sebelumnya (Pencegahan Kriminalitas dan Tips Keamanan). Alamat lama `/keamanan/tips-keamanan` otomatis dialihkan ke bagian tips di halaman Pencegahan Kriminalitas (kata kunci pencarian ikut dibawa), dan hasil pencarian tips di website juga menuju bagian itu, sehingga tautan lama tidak rusak. Kolom cari di halaman ini mencari program dan tips sekaligus, dan baru muncul bila jumlah program dan tips lebih dari 6.
+
 ## [0.1.350] - 2026-11-24
 ### Changed
 - **Logo di halaman daftar Program Inovasi tanpa kotak putih.** Di `/inovasi/program-inovasi`, logo program kini duduk langsung di atas ubin abu, sama seperti di tema gelap, sehingga tidak lagi tampak seperti kotak di dalam kotak. Tampilan ini dipilih dari tiga varian yang dibandingkan. Logo yang berkasnya berlatar putih (misalnya BAJRA) akan tampak sebagai persegi putih; agar menyatu, unggah ulang logonya dengan latar transparan.
