@@ -58,7 +58,7 @@ describe('isMusikAppPath', () => {
     expect(isMusikAppPath('/musik/musik-desa-lama')).toBe(false);
   });
 
-  it('halaman lain tetap memakai FixedPlayerBar, termasuk awalan teks mirip', () => {
+  it('halaman lain tetap memakai widget Now Playing situs, termasuk awalan teks mirip', () => {
     expect(isMusikAppPath('/')).toBe(false);
     expect(isMusikAppPath('/musikal')).toBe(false);
     expect(isMusikAppPath('/pendidikan/musik')).toBe(false);

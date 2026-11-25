@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 
 import { Navbar } from "@/app/(public)/_com/Navbar";
 import Footer from "./Footer";
-import FixedPlayerBar from "./FixedPlayerBar";
 import { ImageErrorRetry } from "./ImageErrorRetryMount";
 import { isMusikAppPath } from "./musik-route";
+import { NowPlayingWidget } from "./now-playing/NowPlayingWidget";
 
 /** Tinggi ruang di bawah navbar tetap: bar mobile (--m-bar-h 48px) dan navbar desktop (--nav-h 44px). */
 const NAV_SPACER_HEIGHT = { base: "3rem", md: "2.75rem" } as const;
@@ -34,12 +34,14 @@ const ThemeGateTransition = dynamic(() => import("./theme-transition/ThemeGateTr
 /** Kerangka halaman publik (route group (public)): navbar, konten, footer, pemutar musik, dan asisten Jenna. */
 export function DarmasabaShell({ children }: { children: React.ReactNode }) {
     // Aplikasi Musik Desa (/musik/musik-desa/**) tampil seperti aplikasi: tanpa footer situs, dan bar pemutarnya
-    // sendiri (NowPlayingBar) menggantikan FixedPlayerBar. Ruang bar diurus MusikApp (--m-bar-space).
+    // sendiri (NowPlayingBar) menggantikan widget Now Playing situs. Ruang bar diurus MusikApp (--m-bar-space).
     const isMusikApp = isMusikAppPath(usePathname());
     return (
             <Stack gap={0} bg="var(--c-page)">
                 <ImageErrorRetry />
                 <Navbar />
+                {/* Widget desktop melayang di kanan atas; di DOM tepat setelah navbar supaya urutan Tab ikut posisinya. */}
+                {!isMusikApp && <NowPlayingWidget />}
                 <Space h={NAV_SPACER_HEIGHT} />
                 {/*
                   Aplikasi Musik mengatur tingginya sendiri dan tanpa footer, jadi tidak diberi tinggi minimum.
@@ -50,12 +52,7 @@ export function DarmasabaShell({ children }: { children: React.ReactNode }) {
                 <Box mih={isMusikApp ? undefined : CONTENT_MIN_HEIGHT} bg="var(--c-bg)">
                     {children}
                 </Box>
-                {!isMusikApp && (
-                    <>
-                        <Footer />
-                        <FixedPlayerBar />
-                    </>
-                )}
+                {!isMusikApp && <Footer />}
                 <JennaWidget />
                 <ThemeGateTransition />
             </Stack>

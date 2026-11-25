@@ -177,7 +177,8 @@ describe('LowonganDetailBody: kontak', () => {
     // Bila atribut atau selector berganti sepihak, dock Jenna kembali menimpa tombol WhatsApp/Telepon di ponsel.
     const css = readFileSync(resolve(process.cwd(), 'src/app/(public)/_com/jenna/jenna-dock-offset.module.css'), 'utf8');
     const selector = ':root:has([data-kontak-bar][data-visible="true"]) .dockOffset';
-    expect(count(css, selector)).toBe(3);
+    // Desktop (102px) + ≤734px; aturan ketiga (bilah + FixedPlayerBar ponsel) hilang bersama bar pemutar bawah.
+    expect(count(css, selector)).toBe(2);
     expect(render(<LowonganDetailBody data={detail()} />)).toContain('data-kontak-bar=""');
   });
 

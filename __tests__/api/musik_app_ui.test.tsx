@@ -23,7 +23,9 @@ vi.mock('next-view-transitions', () => ({
 // Shell situs: bagian berat diganti penanda supaya yang diuji hanya pilihan bar pemutar.
 vi.mock('@/app/(public)/_com/Navbar', () => ({ Navbar: () => <nav data-testid="navbar" /> }));
 vi.mock('@/app/(public)/_com/Footer', () => ({ default: () => <footer data-testid="footer" /> }));
-vi.mock('@/app/(public)/_com/FixedPlayerBar', () => ({ default: () => <div data-testid="fixed-player-bar" /> }));
+vi.mock('@/app/(public)/_com/now-playing/NowPlayingWidget', () => ({
+  NowPlayingWidget: () => <div data-testid="now-playing-widget" />,
+}));
 vi.mock('@/app/(public)/_com/ImageErrorRetryMount', () => ({ ImageErrorRetry: () => null }));
 // Pemutar (Sesi C) diganti penanda: yang diuji di sini hanya penempatannya di grid aplikasi.
 vi.mock('@/app/(public)/(pages)/musik/musik-desa/_com/player/NowPlayingBar', () => ({
@@ -113,27 +115,27 @@ describe('MusikTopbar', () => {
 });
 
 describe('DarmasabaShell', () => {
-  it.each(['/musik/musik-desa', '/musik/musik-desa/jelajahi'])('di %s tanpa footer situs & FixedPlayerBar', (path) => {
+  it.each(['/musik/musik-desa', '/musik/musik-desa/jelajahi'])('di %s tanpa footer situs & widget Now Playing', (path) => {
     nav.pathname = path;
     const html = render(<DarmasabaShell>isi</DarmasabaShell>);
     expect(html).toContain('navbar');
     expect(text(html)).toContain('isi');
     expect(html).not.toContain('data-testid="footer"');
-    expect(html).not.toContain('fixed-player-bar');
+    expect(html).not.toContain('now-playing-widget');
   });
 
-  it('halaman lain tetap memakai footer dan FixedPlayerBar', () => {
+  it('halaman lain tetap memakai footer dan widget Now Playing', () => {
     nav.pathname = '/pemerintahan/berita/semua';
     const html = render(<DarmasabaShell>isi</DarmasabaShell>);
     expect(html).toContain('data-testid="footer"');
-    expect(html).toContain('fixed-player-bar');
+    expect(html).toContain('now-playing-widget');
   });
 
-  it.each(['/musikal', '/musik', '/musik/xyz'])('%s bukan aplikasi musik: footer & FixedPlayerBar tetap ada', (path) => {
+  it.each(['/musikal', '/musik', '/musik/xyz'])('%s bukan aplikasi musik: footer & widget Now Playing tetap ada', (path) => {
     nav.pathname = path;
     const html = render(<DarmasabaShell>isi</DarmasabaShell>);
     expect(html).toContain('data-testid="footer"');
-    expect(html).toContain('fixed-player-bar');
+    expect(html).toContain('now-playing-widget');
   });
 });
 
