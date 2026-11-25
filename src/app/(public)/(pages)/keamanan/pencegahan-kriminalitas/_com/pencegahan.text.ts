@@ -1,9 +1,9 @@
-/** Label UI halaman daftar & detail Pencegahan Kriminalitas. */
+/** Label UI halaman daftar & detail Pencegahan Kriminalitas (termasuk bagian tips sejak menu Tips Keamanan dilebur). */
 export const PENCEGAHAN_TEXT = {
   title: "Pencegahan Kriminalitas",
-  lead: "Program keamanan komunitas dan pencegahan kriminal di Desa Darmasaba.",
-  searchLabel: "Cari program pencegahan kriminalitas",
-  searchPlaceholder: "Cari program",
+  lead: "Program keamanan komunitas dan tips praktis untuk mencegah kriminalitas di Desa Darmasaba.",
+  searchLabel: "Cari program atau tips pencegahan kriminalitas",
+  searchPlaceholder: "Cari program atau tips",
   /** Wajib diisi KabarListHeader; pil tidak dirender karena program tidak berkategori. */
   kategoriLabel: "Kategori program pencegahan kriminalitas",
   sorotan: "Sorotan",
@@ -15,6 +15,8 @@ export const PENCEGAHAN_TEXT = {
   paginationLabel: "Halaman daftar program pencegahan kriminalitas",
   empty: "Belum ada program pencegahan kriminalitas.",
   emptySearch: (query: string) => `Tidak ada program yang cocok dengan “${query}”.`,
+  /** Kata kunci tidak cocok dengan program maupun tips: satu pesan, bukan dua kotak kosong. */
+  emptySearchAll: (query: string) => `Tidak ada program atau tips yang cocok dengan “${query}”.`,
   error: "Program pencegahan kriminalitas gagal dimuat. Coba muat ulang halaman.",
   adaVideo: "berisi video",
   putar: (judul: string) => `Putar video: ${judul}`,

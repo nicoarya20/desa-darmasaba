@@ -33,7 +33,7 @@ describe('Keamanan tanpa *_BRAND_VARS inline dan palet @/con/colors', () => {
     'pencegahan-kriminalitas/_com/detail/PencegahanDetail.tsx',
     'keamanan-lingkungan-pecalang-patwal/_com/KeamananLingkunganPage.tsx',
     'keamanan-lingkungan-pecalang-patwal/_com/detail/KeamananLingkunganDetail.tsx',
-    'tips-keamanan/_com/TipsKeamananPage.tsx',
+    'pencegahan-kriminalitas/_com/tips/TipsSection.tsx',
     'laporan-publik/_com/LaporanPublikPage.tsx',
     'laporan-publik/_com/detail/LaporanDetail.tsx',
     'laporan-publik/_com/LaporanForm.tsx',
@@ -60,7 +60,7 @@ describe('Keamanan tanpa *_BRAND_VARS inline dan palet @/con/colors', () => {
     for (const rel of [
       'pencegahan-kriminalitas/_com/detail/PencegahanDetail.tsx',
       'keamanan-lingkungan-pecalang-patwal/_com/detail/KeamananLingkunganDetail.tsx',
-      'tips-keamanan/_com/TipCard.tsx',
+      'pencegahan-kriminalitas/_com/tips/TipCard.tsx',
       'laporan-publik/_com/detail/LaporanLinimasa.tsx',
     ]) {
       const src = KEAMANAN(rel);
@@ -175,6 +175,6 @@ describe('Kerangka gaya Kabar (Pencegahan, Tips): latar placeholder dari token',
     expect(pencegahan).not.toContain('#e8e8ed');
     expect(decl(blockOf(pencegahan, '.video'), 'background')).toBe('var(--c-placeholder)');
     expect(decl(blockOf(pencegahan, '.videoMissing'), 'background')).toBe('var(--c-placeholder)');
-    expect(stripComments(KEAMANAN('tips-keamanan/_com/tips-keamanan.module.css'))).not.toContain('#e8e8ed');
+    expect(stripComments(KEAMANAN('pencegahan-kriminalitas/_com/tips/tips-keamanan.module.css'))).not.toContain('#e8e8ed');
   });
 });

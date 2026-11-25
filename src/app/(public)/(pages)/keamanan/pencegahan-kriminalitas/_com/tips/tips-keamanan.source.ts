@@ -14,5 +14,8 @@ export async function loadTipsKeamananPage({ page, limit, search }: TipsPageQuer
   const body = res.data as (FindManyBody & { totalPages?: number; total?: number }) | null | undefined;
   const tips = readFindMany<TipsKeamananApiItem>("tips keamanan", res.status, body).map(toTip);
   const total = Number(body?.total);
+  if (Number.isFinite(total) && total > tips.length && page === 1) {
+    console.warn(`Tips keamanan: ${total} entri, hanya ${tips.length} pertama yang ditampilkan (batas muat klien).`);
+  }
   return { tips, totalPages: Math.max(1, Number(body?.totalPages) || 1), total: Number.isFinite(total) ? total : tips.length };
 }

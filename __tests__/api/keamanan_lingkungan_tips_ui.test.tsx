@@ -1,5 +1,6 @@
 // @vitest-environment node
-// Keamanan Lingkungan (daftar gaya Kegiatan Desa + detail 860px) & Tips Keamanan (ubin dibaca langsung).
+// Keamanan Lingkungan (daftar gaya Kegiatan Desa + detail 860px) & Tips Keamanan (ubin dibaca langsung), yang sejak
+// 2026-11-24 menjadi bagian halaman Pencegahan Kriminalitas (`#tips-keamanan`).
 import { MantineProvider } from '@mantine/core';
 import type { AnchorHTMLAttributes } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -12,11 +13,13 @@ vi.mock('next-view-transitions', () => ({
 import { KeamananLingkunganDetailBody } from '@/app/(public)/(pages)/keamanan/keamanan-lingkungan-pecalang-patwal/_com/detail/KeamananLingkunganDetail';
 import { KeamananLingkunganBody } from '@/app/(public)/(pages)/keamanan/keamanan-lingkungan-pecalang-patwal/_com/KeamananLingkunganPage';
 import { toKeamananLingkunganItem } from '@/app/(public)/(pages)/keamanan/keamanan-lingkungan-pecalang-patwal/_com/keamanan-lingkungan.logic';
-import { TipCard } from '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/TipCard';
-import { TipsKeamananBody } from '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/TipsKeamananPage';
-import { toTip } from '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan.logic';
-import ts from '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan.module.css';
-import { TIPS_KEAMANAN_TEXT } from '@/app/(public)/(pages)/keamanan/tips-keamanan/_com/tips-keamanan.text';
+import { PencegahanContent } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/PencegahanPage';
+import { toPencegahanItem } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/pencegahan.logic';
+import { TipCard } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tips/TipCard';
+import { TipsSection } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tips/TipsSection';
+import { toTip } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tips/tips-keamanan.logic';
+import ts from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tips/tips-keamanan.module.css';
+import { TIPS_KEAMANAN_TEXT } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tips/tips-keamanan.text';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
@@ -125,45 +128,79 @@ describe('TipCard', () => {
   });
 });
 
-describe('TipsKeamananBody', () => {
-  const body = (state: Parameters<typeof TipsKeamananBody>[0]['state'], search = '', page = 1) =>
-    render(<TipsKeamananBody state={state} search={search} page={page} onPage={() => {}} />);
+// test-only: state siap tips & program Pencegahan (bentuk entri stg, dipangkas).
+const tipsReady = (list: ReturnType<typeof tips>[]) =>
+  ({ status: 'ready', tips: list.map(toTip), totalPages: 1, total: list.length }) as const;
+const program = (i: number) =>
+  toPencegahanItem({
+    id: `pk${i}`,
+    judul: `Program ${i}`,
+    deskripsiSingkat: `<p>Ringkasan ${i}</p>`,
+    deskripsi: `<p>Isi ${i}</p>`,
+    linkVideo: '',
+    createdAt: '2026-07-20T07:54:34.161Z',
+  });
 
-  it('semua tips tampil langsung (tanpa tautan detail); 1 halaman → tanpa paginasi', () => {
-    const html = body({ status: 'ready', tips: [toTip(tips(1)), toTip(tips(2))], totalPages: 1, total: 2 });
+describe('TipsSection (bagian tips di Pencegahan Kriminalitas)', () => {
+  it('h2 "Tips keamanan" + pengantar, anchor #tips-keamanan, semua tips tampil langsung tanpa tautan/paginasi', () => {
+    const html = render(<TipsSection state={tipsReady([tips(1), tips(2)])} />);
+    expect(html).toMatch(/<section id="tips-keamanan"[^>]*aria-labelledby="tips-keamanan-judul"/);
+    expect(html).toMatch(/<h2 id="tips-keamanan-judul"[^>]*>Tips keamanan<\/h2>/);
+    expect(html).toContain(TIPS_KEAMANAN_TEXT.lead);
     expect(html).toContain('>Tips 1</h3>');
     expect(html).toContain('>Tips 2</h3>');
     expect(html).not.toContain('<a ');
-    expect(html).not.toContain(`aria-label="${TIPS_KEAMANAN_TEXT.paginationLabel}"`);
+    expect(html).not.toMatch(/Halaman daftar tips/);
   });
 
-  it('> 1 halaman → paginasi', () => {
-    const html = body({ status: 'ready', tips: [toTip(tips(1))], totalPages: 2, total: 11 });
-    expect(html).toContain(`aria-label="${TIPS_KEAMANAN_TEXT.paginationLabel}"`);
+  it('tidak ada tips (atau tidak cocok kata kunci) → bagian tidak dirender sama sekali', () => {
+    expect(render(<TipsSection state={tipsReady([])} />)).toBe('');
   });
 
-  it('kosong / cari tanpa hasil / galat / memuat', () => {
-    expect(body({ status: 'ready', tips: [], totalPages: 1, total: 0 })).toContain(`<p class="${kabar.empty}">Belum ada tips keamanan.</p>`);
-    expect(body({ status: 'ready', tips: [], totalPages: 1, total: 0 }, 'kunci')).toContain(
-      'Tidak ada tips keamanan yang cocok dengan “kunci”.',
-    );
-    expect(body({ status: 'error' })).toContain('Tips keamanan gagal dimuat. Coba muat ulang halaman.');
-    const loading = body({ status: 'loading' });
+  it('memuat → kerangka berdenyut; galat → pesan role=alert, judul bagian tetap', () => {
+    const loading = render(<TipsSection state={{ status: 'loading' }} />);
     expect(loading).toContain('aria-busy="true"');
     expect(loading).toContain('aria-label="Memuat tips keamanan"');
-  });
-
-  it('?page di luar rentang padahal ada tips → kerangka selama dialihkan; total = 0 → tetap pesan kosong', () => {
-    const html = body({ status: 'ready', tips: [], totalPages: 2, total: 11 }, 'kunci', 99);
-    expect(html).toContain('aria-busy="true"');
-    expect(html).not.toContain('Tidak ada tips keamanan');
-    expect(html).not.toContain(`aria-label="${TIPS_KEAMANAN_TEXT.paginationLabel}"`);
-    expect(body({ status: 'ready', tips: [], totalPages: 1, total: 0 }, '', 99)).toContain('Belum ada tips keamanan.');
+    const error = render(<TipsSection state={{ status: 'error' }} />);
+    expect(error).toContain('role="alert"');
+    expect(error).toContain('Tips keamanan gagal dimuat. Coba muat ulang halaman.');
+    expect(error).toContain('>Tips keamanan</h2>');
   });
 
   it('teks pengantar sesuai konteks tips (bukan salinan Pecalang/Patwal), tanpa em dash', () => {
     expect(TIPS_KEAMANAN_TEXT.lead).not.toMatch(/Pecalang|Patwal/);
     expect(JSON.stringify(TIPS_KEAMANAN_TEXT)).not.toContain('—');
+  });
+});
+
+describe('PencegahanContent (program + tips dalam satu halaman)', () => {
+  const content = (
+    programState: Parameters<typeof PencegahanContent>[0]['state'],
+    tipsState: Parameters<typeof PencegahanContent>[0]['tips'],
+    search = '',
+  ) => render(<PencegahanContent state={programState} tips={tipsState} search={search} page={1} onPage={() => {}} />);
+
+  it('program dulu, lalu bagian tips', () => {
+    const html = content({ status: 'ready', items: [program(1), program(2)] }, tipsReady([tips(1)]));
+    expect(html.indexOf('Program 1')).toBeGreaterThan(-1);
+    expect(html.indexOf('Program 1')).toBeLessThan(html.indexOf('id="tips-keamanan"'));
+  });
+
+  it('cari tanpa hasil di program maupun tips → satu pesan gabungan, tanpa dua kotak kosong', () => {
+    const html = content({ status: 'ready', items: [] }, tipsReady([]), 'maling');
+    expect(html).toBe(`<p class="${kabar.empty}">Tidak ada program atau tips yang cocok dengan “maling”.</p>`);
+  });
+
+  it('cari: program tidak cocok tetapi tips cocok → bagian program disembunyikan, tips tampil', () => {
+    const html = content({ status: 'ready', items: [] }, tipsReady([tips(1)]), 'kunci');
+    expect(html).not.toContain('Tidak ada program');
+    expect(html).toContain('>Tips 1</h3>');
+  });
+
+  it('tanpa kata kunci: belum ada program → pesan program tetap tampil, tips di bawahnya', () => {
+    const html = content({ status: 'ready', items: [] }, tipsReady([tips(1)]));
+    expect(html).toContain('Belum ada program pencegahan kriminalitas.');
+    expect(html).toContain('>Tips 1</h3>');
   });
 });
 

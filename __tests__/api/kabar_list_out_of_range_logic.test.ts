@@ -1,8 +1,6 @@
 // @vitest-environment node
-// `?page` di luar rentang pada daftar ber-paginasi server (Info TTG, Tips Keamanan): alihkan ke halaman terakhir
-// yang valid, pesan "Belum ada" hanya bila total = 0.
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
+// `?page` di luar rentang pada daftar ber-paginasi server (dipakai Produk Hukum; Tips Keamanan kini tanpa paginasi
+// sejak dilebur ke Pencegahan Kriminalitas): alihkan ke halaman terakhir yang valid, "Belum ada" hanya bila total = 0.
 import { describe, expect, it } from 'vitest';
 import { outOfRangePage, paginate } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 
@@ -34,17 +32,5 @@ describe('outOfRangePage', () => {
 
   it('sejalan dengan paginate (klien): halaman di luar jangkauan → halaman terakhir', () => {
     expect(paginate(Array.from({ length: 11 }, (_, i) => i), 99, 10).page).toBe(outOfRangePage(ready(2, 11), 99));
-  });
-});
-
-describe('pemakai: halaman Tips Keamanan mengalihkan lewat router.replace', () => {
-  const pages = [
-    ['src/app/(public)/(pages)/keamanan/tips-keamanan/_com/TipsKeamananPage.tsx', 'tipsKeamananListHref'],
-  ] as const;
-
-  it.each(pages)('%s: replace ke halaman valid dengan kata kunci dipertahankan', (file, hrefFn) => {
-    const src = readFileSync(path.join(process.cwd(), file), 'utf8');
-    expect(src).toContain('const validPage = outOfRangePage(state, page);');
-    expect(src).toContain(`router.replace(${hrefFn}({ search, page: validPage }))`);
   });
 });
