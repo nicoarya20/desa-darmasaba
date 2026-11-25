@@ -20,6 +20,8 @@ vi.mock('next-view-transitions', () => ({
 }));
 // Panel pencarian (GlobalSearch + fetch) tidak relevan untuk logo; diganti stub.
 vi.mock('@/app/(public)/_com/NavBarSearch', () => ({ NavbarSearch: () => null }));
+// Navbar ponsel membaca useMusic() (penanda & kartu pemutar); tanpa lagu keduanya tidak dirender.
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => ({ currentSong: null, isPlaying: false }) }));
 
 import {
   LOGO_DESA_LARGE_SRC,

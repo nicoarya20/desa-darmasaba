@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { errorName, playAudio } from './audioPlayback';
+import { errorName, playAudio, releaseSource } from './audioPlayback';
 import { MUSIC_TEXT } from './music.text';
 import { computeNextIndex, computePrevAction } from './musicNavigation';
 import type { Musik } from './music.types';
 import { hasAudio } from './playable';
 import { nextRepeatMode, wrapsAround, type RepeatMode } from './repeatMode';
 import { useAudioElement, type AudioHandlers } from './useAudioElement';
+import { useMediaSession } from './useMediaSession';
 import { useMusicLibraryLoader } from './useMusicLibraryLoader';
 import { usePlaybackTime } from './usePlaybackTime';
 import { usePlayQueue } from './usePlayQueue';
@@ -124,6 +125,18 @@ export function useAudioEngine() {
 
   const cycleRepeat = useCallback(() => setRepeatMode(nextRepeatMode), []);
 
+  const stop = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio) releaseSource(audio);
+    resetTime();
+    setIsPlaying(false);
+    setCurrentSong(null);
+  }, [audioRef, resetTime]);
+
+  // Kontrol sistem (layar kunci, notifikasi, tombol media keyboard) memakai transport yang sama dengan pemutar situs.
+  const transport = { togglePlayPause, playNext, playPrev, seek: time.seek };
+  useMediaSession({ audioRef, timeStore: time.store, currentSong, isPlaying, hasNext, ...transport });
+
   // Penangan event audio selalu versi terbaru (useAudioElement membacanya lewat ref).
   useEffect(() => {
     handlersRef.current = {
@@ -177,6 +190,7 @@ export function useAudioEngine() {
       togglePlayPause,
       playNext,
       playPrev,
+      stop,
       setVolume,
       toggleMute,
       cycleRepeat,
@@ -201,6 +215,7 @@ export function useAudioEngine() {
       togglePlayPause,
       playNext,
       playPrev,
+      stop,
       setVolume,
       toggleMute,
       cycleRepeat,
