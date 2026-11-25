@@ -61,7 +61,8 @@ const getDetailUrl = (item: SearchItem) => {
     kontakDaruratKeamanan: () => '/keamanan/kontak-darurat',
     pencegahanKriminalitas: () => '/keamanan/pencegahan-kriminalitas',
     laporanPublik: () => '/keamanan/laporan-publik',
-    tipsKeamanan: () => '/keamanan/tips-keamanan',
+    // Menu Tips Keamanan dilebur ke Pencegahan Kriminalitas (2026-11-24): langsung ke bagian tipsnya.
+    tipsKeamanan: () => '/keamanan/pencegahan-kriminalitas#tips-keamanan',
     pasarDesa: (id) => `/ekonomi/umkm/produk/${id}`,
     lowonganKerjaLokal: () => '/ekonomi/lowongan-kerja-lokal',
     // Pegawai BUMDes → profilnya di bawah halaman Struktur Pengurus BUMDes.
@@ -116,6 +117,7 @@ export const normalizeSearchType = (type: unknown) => String(type ?? '').trim();
  * memakai pencocokan per segmen yang sama dengan guard 404.
  */
 export const isSearchResultHidden = (item: SearchItem, hiddenHrefs: readonly string[]) =>
-  isPathHidden(getDetailUrl({ ...item, type: normalizeSearchType(item.type) }), hiddenHrefs);
+  // Bagian `?…`/`#…` diabaikan: `/keamanan/pencegahan-kriminalitas#tips-keamanan` adalah halaman Pencegahan Kriminalitas.
+  isPathHidden(getDetailUrl({ ...item, type: normalizeSearchType(item.type) }).split(/[?#]/, 1)[0], hiddenHrefs);
 
 export default getDetailUrl;

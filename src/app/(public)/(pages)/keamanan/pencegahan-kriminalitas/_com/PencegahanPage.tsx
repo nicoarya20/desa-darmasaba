@@ -1,7 +1,7 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
-import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
@@ -11,13 +11,18 @@ import { arrangePencegahan, pencegahanListHref } from './pencegahan.logic';
 import { PENCEGAHAN_PAGE_SIZE } from './pencegahan.meta';
 import s from './pencegahan.module.css';
 import { PENCEGAHAN_TEXT as T } from './pencegahan.text';
+import { TIPS_FETCH_LIMIT } from './tips/tips-keamanan.meta';
+import { TipsSection } from './tips/TipsSection';
+import { useScrollToTips } from './tips/use-scroll-to-tips';
+import { useTipsKeamanan, type TipsKeamananState } from './tips/use-tips-keamanan';
 import { usePencegahan, type PencegahanState } from './use-pencegahan';
 
 const LIST_TITLE_ID = 'pencegahan-list-title';
 
 /**
- * Halaman Pencegahan Kriminalitas di `.section` Kabar Desa: kepala (kembali, judul, cari `?search=`), sorotan video
- * (program terbaru, hanya halaman 1 tanpa kata kunci), lalu kartu program lainnya (`?page=`, dipaginasi di klien).
+ * Halaman Pencegahan Kriminalitas di `.section` Kabar Desa: kepala (kembali, judul, cari `?search=` bila program + tips
+ * > 6 atau sedang mencari), sorotan video (program terbaru, hanya halaman 1 tanpa kata kunci), kartu program lainnya
+ * (`?page=`, dipaginasi di klien), lalu bagian Tips keamanan (`#tips-keamanan`; menu Tips Keamanan dilebur ke sini).
  */
 export function PencegahanPage() {
   const router = useTransitionRouter();
@@ -25,6 +30,9 @@ export function PencegahanPage() {
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
   const state = usePencegahan(search);
+  const tips = useTipsKeamanan(1, TIPS_FETCH_LIMIT, search);
+  const total = state.status === 'ready' && tips.status === 'ready' ? state.items.length + tips.total : null;
+  useScrollToTips(state.status !== 'loading' && tips.status !== 'loading');
 
   return (
     <div className={kabar.section}>
@@ -37,13 +45,33 @@ export function PencegahanPage() {
         tabs={[]}
         search={search}
         onSearch={(next) => router.replace(pencegahanListHref({ search: next }))}
+        searchable={listSearchable(search, total)}
       />
-      <PencegahanBody
+      <PencegahanContent
         state={state}
+        tips={tips}
         search={search}
         page={page}
         onPage={(next) => router.push(pencegahanListHref({ search, page: next }))}
       />
+    </div>
+  );
+}
+
+/**
+ * Program + tips untuk satu keadaan muat (diekspor untuk test). Saat mencari: tidak cocok di keduanya → satu pesan;
+ * program tidak cocok tetapi tips cocok → bagian program disembunyikan (bukan kotak "tidak ada program").
+ */
+export function PencegahanContent({ tips, ...program }: BodyProps & { tips: TipsKeamananState }) {
+  const { state, search } = program;
+  const programKosong = state.status === 'ready' && state.items.length === 0;
+  const tipsKosong = tips.status === 'ready' && tips.tips.length === 0;
+  if (search && programKosong && tipsKosong) return <p className={kabar.empty}>{T.emptySearchAll(search)}</p>;
+
+  return (
+    <div className={s.stack}>
+      {search && programKosong && !tipsKosong ? null : <PencegahanBody {...program} />}
+      <TipsSection state={tips} />
     </div>
   );
 }

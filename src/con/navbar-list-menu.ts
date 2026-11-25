@@ -199,11 +199,6 @@ const navbarListMenu = [
                 href: "/keamanan/laporan-publik"
             },
             {
-                id: "4.6",
-                name: "Tips Keamanan",
-                href: "/keamanan/tips-keamanan"
-            },
-            {
                 id: "4.7",
                 name: "CCTV",
                 href: "/keamanan/cctv"

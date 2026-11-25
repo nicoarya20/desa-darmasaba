@@ -1,6 +1,6 @@
-import { withListQuery } from "@/app/(public)/_com/kabar-list/kabar-list.logic";
-import { hasHtmlContent } from "../../keamanan-lingkungan-pecalang-patwal/_com/keamanan-lingkungan.logic";
-import { TIPS_KEAMANAN_BASE_HREF } from "./tips-keamanan.meta";
+import { hasHtmlContent } from "@/app/(public)/(pages)/keamanan/keamanan-lingkungan-pecalang-patwal/_com/keamanan-lingkungan.logic";
+import { pencegahanListHref } from "../pencegahan.logic";
+import { TIPS_SECTION_ID } from "./tips-keamanan.meta";
 
 /** Bentuk minimal item tips keamanan (`/api/keamanan/menutipskeamanan/find-many`). */
 export type TipsKeamananApiItem = {
@@ -28,7 +28,10 @@ export function toTip(item: TipsKeamananApiItem): Tip {
   };
 }
 
-/** URL daftar; `search` kosong dan halaman 1 tidak ditulis ke query. */
-export function tipsKeamananListHref(opts: { search?: string; page?: number } = {}): string {
-  return withListQuery(TIPS_KEAMANAN_BASE_HREF, opts);
+/**
+ * Tujuan alamat lama `/keamanan/tips-keamanan[?search=…]`: bagian tips di halaman Pencegahan Kriminalitas,
+ * kata kunci dipertahankan (menu Tips Keamanan dilebur ke Pencegahan Kriminalitas 2026-11-24).
+ */
+export function tipsKeamananHref(search = ""): string {
+  return `${pencegahanListHref({ search: search.trim() })}#${TIPS_SECTION_ID}`;
 }
