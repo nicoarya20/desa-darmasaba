@@ -73,7 +73,7 @@ const navbarListMenu = [
             },
             {
                 id: "2.5",
-                name: "Gallery",
+                name: "Galeri",
                 href: "/pemerintahan/galery/foto"
             },
             {
