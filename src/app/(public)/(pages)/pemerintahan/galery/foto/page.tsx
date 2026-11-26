@@ -15,7 +15,6 @@ import {
   Skeleton,
   Stack,
   Text,
-  Title,
 } from '@mantine/core';
 import { IconPhoto } from '@tabler/icons-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -141,11 +140,6 @@ function FotoCard({ item, aboveFold }: { item: any; aboveFold: boolean }) {
 export default function GaleriFotoUser() {
   return (
     <Box py="xl" px={{ base: 'md', md: 'lg' }}>
-      {/* Header */}
-      <Title order={2} c="var(--c-brand)" mb="lg" ta="center">
-        Galeri Foto Desa Darmasaba
-      </Title>
-
       {/* Daftar Foto */}
       <FotoList />
     </Box>
