@@ -202,7 +202,7 @@ describe('halaman tambahan di luar navbar (search-extra-pages.ts)', () => {
     ['pengaduan', 'Pengaduan Masyarakat', '/inovasi/layanan-online-desa/pengaduan-masyarakat'],
     ['ajukan surat', 'Administrasi Online (Ajukan Surat)', '/inovasi/layanan-online-desa/administrasi-online'],
     ['struktur perangkat', 'Struktur Perangkat Desa', '/pemerintahan/profil/struktur-perangkat-desa'],
-    ['anti korupsi', 'Desa Anti Korupsi', '/desa-anti-korupsi'],
+    ['antikorupsi', 'Desa Antikorupsi', '/desa-anti-korupsi'],
     ['sdgs', 'SDGs Desa', '/sdgs-desa'],
   ])('default searchMenu("%s") → hasil pertama %s', (q, label, href) => {
     expect(searchMenu(q)[0]).toMatchObject({ label, href });

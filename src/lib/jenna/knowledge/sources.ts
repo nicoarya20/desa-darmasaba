@@ -551,7 +551,7 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSource[] = [
     href: (row) => `/keamanan/pencegahan-kriminalitas/${idOf(row)}`, menuHref: "/keamanan/pencegahan-kriminalitas",
   }),
   defineSource({
-    key: "desa_anti_korupsi", domain: "anti_korupsi", tier: "C", label: "Program Desa Anti Korupsi", model: "DesaAntiKorupsi",
+    key: "desa_anti_korupsi", domain: "anti_korupsi", tier: "C", label: "Program Desa Antikorupsi", model: "DesaAntiKorupsi",
     where: ACTIVE, select: { id: true, name: true, deskripsi: true, createdAt: true, kategori: { select: { name: true } } },
     orderBy: [{ createdAt: "desc" }], take: 10, dateField: "createdAt",
     fields: [["Nama", get("name")], ["Kategori", rel("kategori", "name")], ["Deskripsi", html("deskripsi")]],

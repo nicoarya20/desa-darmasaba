@@ -84,5 +84,5 @@ export function tujuanKembali(opts: {
     return { href: programHref(opts.programId, null, opts.urut), label: 'Daftar folder' };
   }
   if (opts.kategori) return { href: detailHref(opts.kategori), label: toSentenceCase(opts.kategori) };
-  return { href: DAK_ROOT_HREF, label: 'Desa Anti Korupsi' };
+  return { href: DAK_ROOT_HREF, label: 'Desa Antikorupsi' };
 }
