@@ -4,7 +4,7 @@ import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { ProgramKemiskinanRows } from './ProgramKemiskinanRows';
 import { ProgramKemiskinanTerkait } from './ProgramKemiskinanTerkait';
@@ -20,7 +20,7 @@ const LIST_TITLE_ID = 'program-kemiskinan-list-title';
  * atau sedang mencari), baris bergaris (muat sekali, saring & paginasi `?page=` di klien), lalu tautan silang.
  */
 export function ProgramKemiskinanPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -37,7 +37,7 @@ export function ProgramKemiskinanPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(programKemiskinanListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(programKemiskinanListHref({ search: next }))}
         searchable={listSearchable(search, total)}
       />
       <div className={s.stack}>
@@ -49,7 +49,7 @@ export function ProgramKemiskinanPage() {
             state={state}
             search={search}
             page={page}
-            onPage={(next) => router.push(programKemiskinanListHref({ search, page: next }))}
+            onPage={(next) => nav.pushPage(programKemiskinanListHref({ search, page: next }), LIST_TITLE_ID)}
           />
         </section>
         <ProgramKemiskinanTerkait />

@@ -31,7 +31,7 @@ const api = (i: number, icon = 'ekonomi') => ({
   icon,
   createdAt: '2026-01-20T03:00:00.000Z',
 });
-const ready = (list: ReturnType<typeof api>[]) => ({ status: 'ready' as const, items: list.map(toProgramKreatifItem) });
+const ready = (list: ReturnType<typeof api>[]) => ({ status: 'ready' as const, items: list.map(toProgramKreatifItem), refreshing: false });
 const body = (state: Parameters<typeof ProgramKreatifBody>[0]['state'], search = '', page = 1) =>
   render(<ProgramKreatifBody state={state} search={search} page={page} onPage={() => {}} />);
 

@@ -90,7 +90,7 @@ describe('tujuanKembali', () => {
     });
     expect(tujuanKembali({ programId: 'p1', kategori: null, folderDibuka: false })).toEqual({
       href: '/desa-anti-korupsi',
-      label: 'Desa Anti Korupsi',
+      label: 'Desa Antikorupsi',
     });
   });
 });

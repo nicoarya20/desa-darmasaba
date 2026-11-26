@@ -54,12 +54,6 @@
   color: var(--c-muted);
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-}
-
 @media (max-width: 1068px) {
   .title {
     font-size: 40px;

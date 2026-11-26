@@ -1,6 +1,6 @@
 /** Teks UI halaman Laporan Publik (daftar + formulir). */
 export const LAPORAN_TEXT = {
-  title: "Laporan Keamanan Lingkungan",
+  title: "Laporan Publik",
   lead: "Laporan warga tentang keamanan dan ketertiban lingkungan desa, beserta perkembangan penanganannya.",
   searchLabel: "Cari laporan publik",
   searchPlaceholder: "Cari judul atau lokasi",

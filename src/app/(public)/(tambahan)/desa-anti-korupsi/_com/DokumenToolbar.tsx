@@ -1,6 +1,7 @@
 'use client';
-import { Group, Select, TextInput } from '@mantine/core';
-import { IconArrowsSort, IconSearch } from '@tabler/icons-react';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
+import { Group, Select } from '@mantine/core';
+import { IconArrowsSort } from '@tabler/icons-react';
 import { parseUrut, URUT_OPTIONS, type UrutValue } from '../_lib/program-urut';
 
 type Props = {
@@ -16,16 +17,15 @@ type Props = {
 export function DokumenToolbar({ query, onQueryChange, urut, onUrutChange, showUrut }: Props) {
   return (
     <Group gap="sm" align="flex-end" wrap="wrap" style={{ flex: '1 1 320px' }}>
-      <TextInput
-        placeholder="Cari judul dokumen di semua folder"
-        aria-label="Cari judul dokumen"
-        leftSection={<IconSearch size={16} />}
-        value={query}
-        onChange={(e) => onQueryChange(e.currentTarget.value)}
-        radius="xl"
-        maw={480}
-        style={{ flex: '1 1 260px' }}
-      />
+      <div style={{ flex: '1 1 260px', maxWidth: 480 }}>
+        <SearchField
+          fullWidth
+          label="Cari judul dokumen"
+          placeholder="Cari judul dokumen di semua folder"
+          value={query}
+          onChange={onQueryChange}
+        />
+      </div>
       {showUrut && (
         <Select
           aria-label="Urutkan dokumen"

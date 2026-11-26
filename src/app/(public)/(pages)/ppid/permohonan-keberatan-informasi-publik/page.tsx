@@ -12,7 +12,7 @@ import { Button, Input, Text, TextInput, Tooltip } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
-import { KontakDesaIfJamLayanan, KontakDesaIfWhatsapp, KontakDesaValue } from '@/app/(public)/_com/KontakDesaValue';
+import { KontakPpid } from '../_com/KontakPpid';
 import { PermohonanFormCard, PermohonanLayout } from '../_com/PermohonanLayout';
 import { PermohonanSteps } from '../_com/PermohonanSteps';
 import { PpidPage } from '../_com/PpidPage';
@@ -24,9 +24,6 @@ const TEXT = {
   lead: 'Jika Anda merasa permohonan informasi tidak ditanggapi dengan baik atau ditolak, Anda berhak mengajukan keberatan melalui formulir berikut.',
   stepsTitle: 'Alur Pengajuan Keberatan',
   formTitle: 'Formulir Keberatan',
-  contactTitle: 'Kontak PPID',
-  contactWhatsapp: 'WhatsApp',
-  contactJamLayanan: 'Jam Layanan',
 } as const;
 
 const steps: PermohonanStep[] = [
@@ -47,12 +44,6 @@ const steps: PermohonanStep[] = [
     desc: 'Hasil keputusan dikirim melalui email atau WhatsApp.',
   },
 ];
-
-// Kontak resmi kantor desa dari CMS (Profil Desa > Kontak Desa). Baris WhatsApp dan jam layanan terpisah (opsional): tampil hanya bila admin mengisinya.
-const contacts = [
-  { label: 'Email', field: 'email' },
-  { label: 'Telepon', field: 'telepon' },
-] as const;
 
 function Page() {
   const stateKeberatan = useProxy(permohonanKeberatanInformasi, { sync: true });
@@ -216,29 +207,7 @@ function Page() {
           </div>
         </PermohonanFormCard>
 
-        <section>
-          <h2 className={s.contactTitle}>{TEXT.contactTitle}</h2>
-          <dl className={s.contactList}>
-            {contacts.map((contact) => (
-              <div key={contact.label} className={s.contactRow}>
-                <dt>{contact.label}</dt>
-                <dd><KontakDesaValue field={contact.field} /></dd>
-              </div>
-            ))}
-            <KontakDesaIfWhatsapp>
-              <div className={s.contactRow}>
-                <dt>{TEXT.contactWhatsapp}</dt>
-                <dd><KontakDesaValue field="whatsapp" /></dd>
-              </div>
-            </KontakDesaIfWhatsapp>
-            <KontakDesaIfJamLayanan>
-              <div className={s.contactRow}>
-                <dt>{TEXT.contactJamLayanan}</dt>
-                <dd><KontakDesaValue field="jamLayanan" /></dd>
-              </div>
-            </KontakDesaIfJamLayanan>
-          </dl>
-        </section>
+        <KontakPpid />
       </PermohonanLayout>
     </PpidPage>
   );

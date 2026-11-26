@@ -162,40 +162,6 @@
   color: var(--muted);
 }
 
-.pagination {
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* ---------- Kontak ---------- */
-.kontak {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.kontakTitle {
-  margin: 0 0 2px;
-  font-size: 21px;
-  line-height: 1.2;
-  font-weight: 600;
-}
-
-.kontakRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--muted);
-}
-
-.kontakValue {
-  font-weight: 600;
-}
-
 /* Sel aksi: "Detail" lalu "Unduh PDF" (bila ada berkas) sejajar satu baris, seperti "Lihat"/"Unduh" di Dasar Hukum.
    Kolom sempit → tautan turun ke baris berikutnya (rata kiri), bukan terpotong. Ukuran huruf Detail disamakan
    dengan PpidFileLink (15px); .detailLink juga dipakai tautan kembali di halaman detail, jadi diatur di sini saja. */
@@ -361,10 +327,6 @@
 
   .aksiRow a {
     min-height: 44px;
-  }
-
-  .pagination {
-    justify-content: center;
   }
 
   .detailJenis {

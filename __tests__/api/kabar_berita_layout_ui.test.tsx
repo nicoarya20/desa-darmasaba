@@ -12,6 +12,7 @@ import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerit
 import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import s from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import { LOGO_DESA_LARGE_SRC } from '@/app/(public)/_com/logo-desa.meta';
 
 // test-only: entri berita siap tampil.
 const item = (id: string): KabarItem => ({
@@ -62,5 +63,26 @@ describe('KabarBerita label pembaca layar', () => {
     expect(list).not.toContain('Berita terbaru');
     const busy = render(<KabarBerita items={[]} loading loadingLabel="Memuat kegiatan desa" />);
     expect(busy).toContain('aria-label="Memuat kegiatan desa"');
+  });
+});
+
+describe('KabarBerita tanpa foto', () => {
+  // item() tidak memiliki imageUrl: kartu utama dan kartu kecil memakai lambang desa sebagai pengganti.
+  const html = render(<KabarBerita items={[item('a'), item('b')]} loading={false} />);
+  const logos = html.match(new RegExp(`<img[^>]*src="${LOGO_DESA_LARGE_SRC}"[^>]*>`, 'g')) ?? [];
+
+  it('memakai lambang desa WebP (bukan PNG), dekoratif, lazy', () => {
+    expect(LOGO_DESA_LARGE_SRC).toMatch(/\.webp$/);
+    expect(logos).toHaveLength(2);
+    for (const tag of logos) {
+      expect(tag).toContain('alt=""');
+      expect(tag).toContain('loading="lazy"');
+      expect(tag).toContain(s.photoFallbackLogo);
+    }
+    expect(count(html, `<span class="${s.photoFallback}" aria-hidden="true">`)).toBe(2);
+  });
+
+  it('tidak lagi merender ikon koran', () => {
+    expect(html).not.toContain('tabler-icon-news');
   });
 });

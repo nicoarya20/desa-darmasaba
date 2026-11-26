@@ -1,13 +1,13 @@
 'use client';
 
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import {
   Box,
   Button,
   Center,
   Group,
-  Pagination,
   Paper,
   SimpleGrid,
   Stack,
@@ -17,6 +17,7 @@ import {
 import { useTransitionRouter } from 'next-view-transitions';
 import { useCallback, useEffect } from 'react';
 import { useSnapshot } from 'valtio';
+import { GALERY_TEXT } from '../_lib/galery.text';
 
 export default function VideoContent() {
   const videoState = useSnapshot(stateGallery.video);
@@ -143,15 +144,14 @@ export default function VideoContent() {
         ))}
       </SimpleGrid>
 
-      <Center>
-        <Pagination
-          value={page}
-          onChange={handlePageChange}
+      <Box mb="md">
+        <KabarListPagination
           total={totalPages}
-          mt="md"
-          mb="md"
+          value={page}
+          label={GALERY_TEXT.videoPaginationLabel}
+          onChange={handlePageChange}
         />
-      </Center>
+      </Box>
     </Box>
   );
 }

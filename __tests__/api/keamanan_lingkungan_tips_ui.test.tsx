@@ -22,6 +22,7 @@ import ts from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tip
 import { TIPS_KEAMANAN_TEXT } from '@/app/(public)/(pages)/keamanan/pencegahan-kriminalitas/_com/tips/tips-keamanan.text';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import d from '@/app/(public)/_com/kabar-list/kabar-detail.module.css';
+import lr from '@/app/(public)/_com/kabar-list/list-refresh.module.css';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
@@ -50,6 +51,7 @@ const klState = (items: ReturnType<typeof entri>[], totalPages = 1) => ({
   items: items.map(toKeamananLingkunganItem),
   totalPages,
   loading: false,
+  refreshing: false,
   failed: false,
 });
 const klBody = (state: Parameters<typeof KeamananLingkunganBody>[0]['state'], search = '') =>
@@ -74,15 +76,23 @@ describe('KeamananLingkunganBody', () => {
   it('kosong / cari tanpa hasil / galat → kotak pesan jujur', () => {
     expect(klBody(klState([]))).toContain(`<p class="${kabar.empty}">Belum ada informasi keamanan lingkungan.</p>`);
     expect(klBody(klState([]), 'ronda')).toContain('Tidak ada informasi keamanan lingkungan yang cocok dengan “ronda”.');
-    expect(klBody({ items: [], totalPages: 1, loading: false, failed: true })).toContain(
+    expect(klBody({ items: [], totalPages: 1, loading: false, refreshing: false, failed: true })).toContain(
       'Keamanan lingkungan gagal dimuat. Coba muat ulang halaman.',
     );
   });
 
   it('memuat → kerangka kartu', () => {
-    const html = klBody({ items: [], totalPages: 1, loading: true, failed: false });
+    const html = klBody({ items: [], totalPages: 1, loading: true, refreshing: false, failed: false });
     expect(html).toContain('aria-busy="true"');
     expect(html).toContain('aria-label="Memuat keamanan lingkungan"');
+  });
+
+  it('menyegarkan (cari/pindah halaman) → kartu lama tetap tampil di wadah aria-busy, bukan kerangka', () => {
+    const html = klBody({ ...klState([entri(1), entri(2)]), refreshing: true });
+    expect(html).toContain(`<div class="${lr.region}" aria-busy="true">`);
+    expect(html).toContain('Kegiatan keamanan 1');
+    expect(html).not.toContain('aria-label="Memuat keamanan lingkungan"');
+    expect(klBody(klState([entri(1)]))).not.toContain('aria-busy');
   });
 });
 
@@ -130,7 +140,7 @@ describe('TipCard', () => {
 
 // test-only: state siap tips & program Pencegahan (bentuk entri stg, dipangkas).
 const tipsReady = (list: ReturnType<typeof tips>[]) =>
-  ({ status: 'ready', tips: list.map(toTip), totalPages: 1, total: list.length }) as const;
+  ({ status: 'ready', tips: list.map(toTip), totalPages: 1, total: list.length, refreshing: false }) as const;
 const program = (i: number) =>
   toPencegahanItem({
     id: `pk${i}`,
@@ -181,24 +191,31 @@ describe('PencegahanContent (program + tips dalam satu halaman)', () => {
   ) => render(<PencegahanContent state={programState} tips={tipsState} search={search} page={1} onPage={() => {}} />);
 
   it('program dulu, lalu bagian tips', () => {
-    const html = content({ status: 'ready', items: [program(1), program(2)] }, tipsReady([tips(1)]));
+    const html = content({ status: 'ready', items: [program(1), program(2)], refreshing: false }, tipsReady([tips(1)]));
     expect(html.indexOf('Program 1')).toBeGreaterThan(-1);
     expect(html.indexOf('Program 1')).toBeLessThan(html.indexOf('id="tips-keamanan"'));
   });
 
   it('cari tanpa hasil di program maupun tips → satu pesan gabungan, tanpa dua kotak kosong', () => {
-    const html = content({ status: 'ready', items: [] }, tipsReady([]), 'maling');
-    expect(html).toBe(`<p class="${kabar.empty}">Tidak ada program atau tips yang cocok dengan “maling”.</p>`);
+    const html = content({ status: 'ready', items: [], refreshing: false }, tipsReady([]), 'maling');
+    expect(html).toBe(`<div class="${lr.region}"><p class="${kabar.empty}">Tidak ada program atau tips yang cocok dengan “maling”.</p></div>`);
+  });
+
+  it('kata kunci baru sedang dimuat → program + tips lama tetap tampil di wadah aria-busy', () => {
+    const html = content({ status: 'ready', items: [program(1)], refreshing: true }, tipsReady([tips(1)]), 'kunci');
+    expect(html.startsWith(`<div class="${lr.region}" aria-busy="true">`)).toBe(true);
+    expect(html).toContain('Program 1');
+    expect(html).toContain('>Tips 1</h3>');
   });
 
   it('cari: program tidak cocok tetapi tips cocok → bagian program disembunyikan, tips tampil', () => {
-    const html = content({ status: 'ready', items: [] }, tipsReady([tips(1)]), 'kunci');
+    const html = content({ status: 'ready', items: [], refreshing: false }, tipsReady([tips(1)]), 'kunci');
     expect(html).not.toContain('Tidak ada program');
     expect(html).toContain('>Tips 1</h3>');
   });
 
   it('tanpa kata kunci: belum ada program → pesan program tetap tampil, tips di bawahnya', () => {
-    const html = content({ status: 'ready', items: [] }, tipsReady([tips(1)]));
+    const html = content({ status: 'ready', items: [], refreshing: false }, tipsReady([tips(1)]));
     expect(html).toContain('Belum ada program pencegahan kriminalitas.');
     expect(html).toContain('>Tips 1</h3>');
   });

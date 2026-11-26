@@ -51,6 +51,7 @@ import DaftarPage from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/page
 import DetailPage from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/[id]/page';
 import { DAFTAR_TEXT } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.text';
 import { DAFTAR_LIST_HREF } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/daftar.logic';
+import { KONTAK_PPID_TEXT } from '@/app/(public)/(pages)/ppid/_com/kontak-ppid.text';
 import IkmPage from '@/app/(public)/(pages)/ppid/indeks-kepuasan-masyarakat/page';
 import { IKM_TEXT } from '@/app/(public)/(pages)/ppid/indeks-kepuasan-masyarakat/_com/ikm.text';
 import { KEPUASAN_TEXT } from '@/app/(public)/_com/main-page/kepuasan/kepuasan.text';
@@ -83,7 +84,7 @@ describe('halaman Daftar Informasi Publik', () => {
     expect(count(html, '<h1')).toBe(1);
     expect(html).toContain(DAFTAR_TEXT.title);
     expect(html).toContain(DAFTAR_TEXT.lead);
-    expect(html).toContain(`aria-label="${DAFTAR_TEXT.searchLabel}"`);
+    expect(html).toContain(`>${DAFTAR_TEXT.searchLabel}</label>`);
     expect(html).toContain(`href="${DOKUMEN_PERENCANAAN_PUBLIC_HREF}"`);
     expect(count(html, 'aria-label="Kembali ke halaman sebelumnya"')).toBe(1);
   });
@@ -125,7 +126,7 @@ describe('halaman Daftar Informasi Publik', () => {
 
   it('kontak PPID tetap tampil apa adanya', () => {
     const html = render(<DaftarPage />);
-    expect(html).toContain(DAFTAR_TEXT.kontakTitle);
+    expect(html).toContain(`>${KONTAK_PPID_TEXT.title}</h2>`);
   });
 });
 
