@@ -4,10 +4,10 @@ import { scrollToListTitle } from './list-page-scroll';
 
 /** Navigasi daftar yang hanya mengubah query pada pathname yang sama. */
 export type ListQueryNav = {
-  /** Ganti `?search=`: riwayat diganti (tidak menumpuk per ketikan), posisi gulir tetap. */
-  replaceSearch: (href: string) => void;
-  /** Ganti `?page=`: riwayat ditambah (Back = halaman sebelumnya), lalu gulir ke judul daftar `listTitleId` bila terlewati. */
-  pushPage: (href: string, listTitleId: string) => void;
+  /** Ganti `?search=` (atau koreksi `?page=` di luar jangkauan): riwayat diganti, tidak menumpuk per ketikan; posisi gulir tetap. */
+  replaceQuery: (href: string) => void;
+  /** Ganti `?page=`: riwayat ditambah (Back = halaman sebelumnya), lalu gulir ke daftar `listId` (judul/wadah) bila terlewati. */
+  pushPage: (href: string, listId: string) => void;
 };
 
 /**
@@ -17,12 +17,12 @@ export type ListQueryNav = {
  */
 export function useListQueryNav(): ListQueryNav {
   const router = useRouter();
-  return useMemo(
+  return useMemo<ListQueryNav>(
     () => ({
-      replaceSearch: (href) => router.replace(href, { scroll: false }),
-      pushPage: (href, listTitleId) => {
+      replaceQuery: (href) => router.replace(href, { scroll: false }),
+      pushPage: (href, listId) => {
         router.push(href, { scroll: false });
-        scrollToListTitle(listTitleId);
+        scrollToListTitle(listId);
       },
     }),
     [router],

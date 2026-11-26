@@ -37,7 +37,7 @@ export function ProgramKesehatanPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => nav.replaceSearch(programListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(programListHref({ search: next }))}
       />
       <ProgramKesehatanBody
         state={state}

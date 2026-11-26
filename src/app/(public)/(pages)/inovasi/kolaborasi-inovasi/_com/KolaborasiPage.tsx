@@ -2,10 +2,11 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { KolaborasiList } from './KolaborasiList';
 import { kolaborasiListHref, parseTahun, tahunTabs, type KolaborasiQuery } from './kolaborasi.logic';
+import { KOLABORASI_LIST_ID } from './kolaborasi.meta';
 import { KOLABORASI_TEXT as T } from './kolaborasi.text';
 import { loadKolaborasi, loadMitra } from './kolaborasi.source';
 import { MitraWall } from './MitraWall';
@@ -16,7 +17,7 @@ import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
  * mencari, pil `?tahun=` bila ≥ 2 tahun), daftar baris per tahun (paginasi klien `?page=`), lalu dinding logo mitra.
  */
 export function KolaborasiPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const query: KolaborasiQuery = {
     tahun: parseTahun(searchParams.get('tahun')),
@@ -37,13 +38,13 @@ export function KolaborasiPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={all ? tahunTabs(all, query) : []}
         search={query.search}
-        onSearch={(next) => router.replace(kolaborasiListHref({ tahun: query.tahun, search: next }))}
+        onSearch={(next) => nav.replaceQuery(kolaborasiListHref({ tahun: query.tahun, search: next }))}
         searchable={listSearchable(query.search, all?.length ?? null)}
       />
       <KolaborasiList
         state={kolaborasi}
         query={query}
-        onPage={(page) => router.push(kolaborasiListHref({ tahun: query.tahun, search: query.search, page }))}
+        onPage={(page) => nav.pushPage(kolaborasiListHref({ tahun: query.tahun, search: query.search, page }), KOLABORASI_LIST_ID)}
       />
       <MitraWall state={mitra} />
     </div>

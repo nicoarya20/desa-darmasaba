@@ -45,7 +45,7 @@ export function PencegahanPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => nav.replaceSearch(pencegahanListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(pencegahanListHref({ search: next }))}
         searchable={listSearchable(search, total)}
       />
       <PencegahanContent

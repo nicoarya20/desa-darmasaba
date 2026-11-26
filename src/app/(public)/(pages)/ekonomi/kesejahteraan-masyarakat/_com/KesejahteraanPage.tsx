@@ -4,7 +4,7 @@ import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPag
 import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import { useLoadOnce, type LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { KesejahteraanCards, KesejahteraanPlaceholder } from './KesejahteraanCards';
 import { KesejahteraanSorotan } from './KesejahteraanSorotan';
@@ -28,7 +28,7 @@ const LIST_TITLE_ID = 'kesejahteraan-list-title';
  * tautan silang ke Program Pengentasan Kemiskinan. Muat sekali; saring & paginasi di klien.
  */
 export function KesejahteraanPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -45,7 +45,7 @@ export function KesejahteraanPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(kesejahteraanListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(kesejahteraanListHref({ search: next }))}
         searchable={listSearchable(search, total)}
       />
       <div className={s.stack}>
@@ -53,7 +53,7 @@ export function KesejahteraanPage() {
           state={state}
           search={search}
           page={page}
-          onPage={(next) => router.push(kesejahteraanListHref({ search, page: next }))}
+          onPage={(next) => nav.pushPage(kesejahteraanListHref({ search, page: next }), LIST_TITLE_ID)}
         />
         <ProgramKemiskinanLink />
       </div>

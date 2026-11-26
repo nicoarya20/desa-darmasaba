@@ -6,7 +6,8 @@ import s from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { useKabarPage } from '@/app/(public)/_com/kabar-list/use-kabar-page';
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { useTransitionRouter } from 'next-view-transitions';
+import { ListRefreshRegion } from '@/app/(public)/_com/kabar-list/ListRefreshRegion';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useProxy } from 'valtio/utils';
 import { beritaListHref } from './berita-list.logic';
@@ -18,7 +19,7 @@ const TITLE_ID = 'berita-list-title';
 
 /** Daftar berita satu halaman (kategori dari URL, `?search`, `?page`): kartu utama + kartu kecil, lalu paginasi. */
 export function BeritaList() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const kategoriState = useProxy(stateDashboardBerita.kategoriBerita);
@@ -27,7 +28,7 @@ export function BeritaList() {
   const kategori = slug === SEMUA_SLUG ? '' : slug;
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
-  const { items, totalPages, loading, failed } = useKabarPage(
+  const { items, totalPages, loading, refreshing, failed } = useKabarPage(
     loadBeritaPage,
     { page, limit: BERITA_PAGE_LIMIT, search, kategori },
     'berita',
@@ -51,14 +52,16 @@ export function BeritaList() {
       {empty ? (
         <p className={kabar.empty}>{emptyText}</p>
       ) : (
-        <KabarBerita items={items} loading={loading} layout="grid" placeholderCards={BERITA_PAGE_LIMIT - 1} />
+        <ListRefreshRegion refreshing={refreshing}>
+          <KabarBerita items={items} loading={loading} layout="grid" placeholderCards={BERITA_PAGE_LIMIT - 1} />
+        </ListRefreshRegion>
       )}
       {!empty ? (
         <KabarListPagination
           total={totalPages}
           value={page}
           label={BERITA_TEXT.paginationLabel}
-          onChange={(next) => router.push(beritaListHref(slug, { search, page: next }))}
+          onChange={(next) => nav.pushPage(beritaListHref(slug, { search, page: next }), TITLE_ID)}
         />
       ) : null}
     </section>

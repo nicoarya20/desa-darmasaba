@@ -8,10 +8,13 @@ export function listScrollDelta(top: number, offset = LIST_SCROLL_OFFSET): numbe
   return top < offset ? top - offset : null;
 }
 
-/** Setelah ganti halaman daftar: gulir ke judul daftar `titleId` hanya bila judul sudah tergulir lewat (paginasi bawah). */
-export function scrollToListTitle(titleId: string): void {
-  const title = document.getElementById(titleId);
-  const target = title?.closest('section') ?? title;
+/**
+ * Setelah ganti halaman daftar: gulir ke daftar hanya bila awalnya sudah tergulir lewat (paginasi bawah). `targetId` =
+ * judul daftar (`h2`, yang dituju `section` pembungkusnya; judul `srOnly` tak punya posisi tampak) atau wadah daftar.
+ */
+export function scrollToListTitle(targetId: string): void {
+  const el = document.getElementById(targetId);
+  const target = el && /^H[1-6]$/.test(el.tagName) ? (el.closest('section') ?? el) : el;
   if (!target) return;
   const delta = listScrollDelta(target.getBoundingClientRect().top);
   if (delta !== null) window.scrollBy({ top: delta, behavior: preferredScrollBehavior() });

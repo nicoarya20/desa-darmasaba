@@ -10,6 +10,9 @@ import {
 } from '@/lib/produk-hukum';
 import { PRODUK_HUKUM_TEXT as T } from './produk-hukum.text';
 
+/** Id wadah tabel daftar: tujuan gulir setelah ganti halaman `?page=`. */
+export const PRODUK_HUKUM_LIST_ID = 'produk-hukum-list';
+
 /** Filter daftar publik: kategori ('' = semua), kata kunci, dan nomor halaman. */
 export type ProdukHukumFilter = { kategori: KategoriProdukHukum | ''; search: string; page: number };
 

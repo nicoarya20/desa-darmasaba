@@ -41,7 +41,7 @@ export function KeamananLingkunganPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => nav.replaceSearch(keamananLingkunganListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(keamananLingkunganListHref({ search: next }))}
       />
       <KeamananLingkunganBody
         state={state}

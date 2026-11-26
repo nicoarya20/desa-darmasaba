@@ -42,7 +42,7 @@ export function LaporanPublikPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => nav.replaceSearch(laporanListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(laporanListHref({ search: next }))}
       />
       <LaporanListBody
         state={state}

@@ -1,34 +1,18 @@
+import { useKeepPrevious } from "@/app/(public)/_com/kabar-list/use-keep-previous";
 import type { ProgramTileItem } from "@/app/(public)/_com/program-tiles/ProgramTiles";
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import { toProgramInovasiTile } from "./program-inovasi.logic";
 import { loadProgramInovasiList } from "./program-inovasi.source";
 
+/** `refreshing` = program kata kunci sebelumnya tetap tampil selama hasil kata kunci baru dimuat. */
 export type ProgramInovasiState =
   | { status: "loading" }
-  | { status: "ready"; items: ProgramTileItem[] }
+  | { status: "ready"; items: ProgramTileItem[]; refreshing: boolean }
   | { status: "error" };
 
-type Loaded = { search: string; state: ProgramInovasiState };
-
-/** Program inovasi untuk satu kata kunci; ganti kata kunci → muat ulang. */
+/** Program inovasi untuk satu kata kunci; ganti kata kunci → muat ulang, program lama tetap tampil. */
 export function useProgramInovasi(search: string): ProgramInovasiState {
-  const [loaded, setLoaded] = useState<Loaded | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadProgramInovasiList(search).then(
-      (items) => {
-        if (!cancelled) setLoaded({ search, state: { status: "ready", items: items.map(toProgramInovasiTile) } });
-      },
-      (error: unknown) => {
-        console.error(`Gagal memuat program inovasi (kata kunci "${search}"):`, error);
-        if (!cancelled) setLoaded({ search, state: { status: "error" } });
-      },
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, [search]);
-
-  return loaded?.search === search ? loaded.state : { status: "loading" };
+  const load = useCallback(() => loadProgramInovasiList(search).then((items) => items.map(toProgramInovasiTile)), [search]);
+  const state = useKeepPrevious(search, load, `program inovasi (kata kunci "${search}")`);
+  return state.status === "ready" ? { status: "ready", items: state.data, refreshing: state.refreshing } : state;
 }

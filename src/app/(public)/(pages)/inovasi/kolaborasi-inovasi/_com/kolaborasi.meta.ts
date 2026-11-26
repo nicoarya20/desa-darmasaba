@@ -12,6 +12,9 @@ export const MITRA_FETCH_LIMIT = 100;
 /** Entri per halaman daftar (paginasi klien). */
 export const KOLABORASI_PAGE_LIMIT = 10;
 
+/** Id wadah daftar kolaborasi: tujuan gulir setelah ganti halaman `?page=`. */
+export const KOLABORASI_LIST_ID = "kolaborasi-list";
+
 /**
  * Deskripsi dengan teks polos lebih panjang dari ini dipotong 4 baris + tombol "Baca selengkapnya" (dibuka di tempat).
  * Deskripsi stg 108–397 karakter (1–3 kalimat) → tampil penuh tanpa tombol.
