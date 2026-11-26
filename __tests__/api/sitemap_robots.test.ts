@@ -4,12 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
+import type { MenuItem } from '../../types/menu-item';
 import { HOME_PATH, REDIRECT_ONLY_PATHS, sitemapPaths } from '@/app/(public)/_com/sitemap.logic';
 import robots from '@/app/robots';
 import { SITE_URL } from '@/lib/site-url';
 import { matchesRealPage, publicRoutes } from '../helpers/darmasaba-routes';
 
-const submenus = navbarListMenu.flatMap((menu) => (menu.children ?? []).filter((c) => c.href));
+const submenus: MenuItem[] = navbarListMenu.flatMap((menu) => (menu.children ?? []).filter((c) => c.href));
 const DEFAULT_HIDDEN = submenus.filter((c) => c.hidden).map((c) => c.href as string);
 const DEFAULT_VISIBLE = submenus.filter((c) => !c.hidden).map((c) => c.href as string);
 
