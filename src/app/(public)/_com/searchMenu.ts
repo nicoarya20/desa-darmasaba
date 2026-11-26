@@ -36,8 +36,15 @@ function matchRank(item: MenuSearchItem, needle: string): number | null {
   const label = item.label.toLowerCase();
   if (label.startsWith(needle)) return 0;
   if (label.includes(needle)) return 1;
+  // Ejaan berspasi/tanpa spasi dianggap sama ("anti korupsi" = "antikorupsi").
+  if (compact(label).includes(compact(needle))) return 1;
   if (item.parent.toLowerCase().includes(needle)) return 2;
   return null;
+}
+
+/** Buang semua spasi agar ejaan berspasi dan rangkai cocok satu sama lain. */
+function compact(text: string): string {
+  return text.replace(/\s+/g, "");
 }
 
 /** Cari submenu navbar (dan halaman tambahan) yang nama submenu atau nama menu utamanya memuat query (tidak peka huruf besar/kecil). */

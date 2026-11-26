@@ -70,7 +70,7 @@ describe('AntiKorupsiUtama — render', () => {
   const html = render(<AntiKorupsiUtama view={buildAntiKorupsiUtamaView(items)} loading={false} />);
 
   it('judul halaman h1 + ringkasan angka di bawah lead', () => {
-    expect(html).toMatch(/<h1[^>]*>Desa Anti Korupsi<\/h1>/);
+    expect(html).toMatch(/<h1[^>]*>Desa Antikorupsi<\/h1>/);
     expect(html).toContain('5 kategori · 8 indikator · 15 dokumen');
   });
 
@@ -99,11 +99,11 @@ describe('AntiKorupsiUtama — render', () => {
   it('loading → skeleton beranda tanpa ringkasan; data kosong → pesan kosong beranda', () => {
     const loadingHtml = render(<AntiKorupsiUtama view={buildAntiKorupsiUtamaView([])} loading />);
     expect(loadingHtml).toContain('aria-busy="true"');
-    expect(loadingHtml).toContain('Memuat indikator desa anti korupsi');
+    expect(loadingHtml).toContain('Memuat indikator desa antikorupsi');
     expect(loadingHtml).not.toContain('kategori ·');
 
     const emptyHtml = render(<AntiKorupsiUtama view={buildAntiKorupsiUtamaView([])} loading={false} />);
-    expect(emptyHtml).toContain('Belum ada indikator desa anti korupsi.');
+    expect(emptyHtml).toContain('Belum ada indikator desa antikorupsi.');
     expect(emptyHtml).not.toContain('kategori ·');
   });
 });

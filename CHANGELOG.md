@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.356] - 2026-11-26
+### Changed
+- **Ejaan "Desa Antikorupsi" diseragamkan** di website publik: judul section beranda, halaman Desa Antikorupsi dan halaman programnya, menu navbar, breadcrumb, tombol kembali, serta label asisten Jenna. Alamat halaman (`/desa-anti-korupsi`) dan menu admin tidak berubah. Pencarian menu kini menganggap "anti korupsi" dan "antikorupsi" sama.
+- **Nama perbekel di halaman Profil Perbekel** (publik dan admin) kini memakai nama baku "Ida Bagus Surya Prabhawa Manuaba, S.H., M.H., NL.P., CPM.", diambil dari satu konstanta. Nama di data admin lain (Struktur PPID, Perbekel dari Masa ke Masa, Struktur Perangkat Desa) tetap perlu disamakan lewat admin.
+- Menu Pemerintahan "Gallery" kini bernama **"Galeri"**, dan judul halaman Laporan Publik kini **"Laporan Publik"** (sebelumnya "Laporan Keamanan Lingkungan").
+
+### Fixed
+- **Menu Pemerintahan tetap tersorot** saat membuka detail Berita, detail Kegiatan Desa, detail Monev (tersorot sebagai Kegiatan Desa), dan tab Galeri Video, di navbar desktop, flyout, dan menu ponsel.
+- Judul ganda "Galeri Foto Desa Darmasaba" di tab Foto Galeri dihapus (tab Video tidak memilikinya).
+- Data awal (seed) Dasar Hukum dan Visi Misi PPID tidak lagi menyebut "Desa Punggul"; hanya berpengaruh bila database diisi ulang dari seed.
+
 ## [0.1.355] - 2026-11-26
 ### Changed
 - **Harga produk UMKM kini boleh dikosongkan**, karena sebagian produk desa harganya tidak tetap (kadang naik). Di admin (Ekonomi > UMKM & Pasar Desa > Produk), isian "Harga Produk (Rp)" pada form Tambah dan Ubah tidak lagi wajib; kosongkan bila harga tidak tetap. Di website publik, produk tanpa harga menampilkan teks "Harga menyesuaikan" di kartu katalog dan halaman detail, sehingga warga tahu harganya perlu ditanyakan ke penjual lewat tombol WhatsApp. Bila saklar "Sembunyikan harga di website publik" aktif, teks ini ikut tidak tampil. Di tabel admin, produk tanpa harga ditandai "-". Produk tanpa harga ikut tampil di katalog tetapi tidak masuk hasil filter rentang harga, dan berada paling akhir saat diurutkan menurut harga.

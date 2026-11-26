@@ -17,9 +17,9 @@ const visible = visibleMenu(navbarListMenu);
 const kesehatanOf = (menus: readonly MenuItem[]) => menus.find((m) => m.name === 'Kesehatan');
 
 describe('visibleMenu pada config navbar nyata', () => {
-  it('memuat menu "DAK" dengan submenu "Desa Anti Korupsi" → /desa-anti-korupsi', () => {
+  it('memuat menu "DAK" dengan submenu "Desa Antikorupsi" → /desa-anti-korupsi', () => {
     expect(visible.find((m) => m.name === 'DAK')?.children).toEqual([
-      { id: '11.1', name: 'Desa Anti Korupsi', href: '/desa-anti-korupsi' },
+      { id: '11.1', name: 'Desa Antikorupsi', href: '/desa-anti-korupsi' },
     ]);
   });
 
