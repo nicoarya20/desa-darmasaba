@@ -2,7 +2,7 @@
 import stateLayananDesa from '@/app/admin/(dashboard)/_state/desa/layananDesa';
 import { useEffect, useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
-import { LayananSearch } from './LayananSearch';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import { LayananSection } from './LayananSection';
 import { SuratKeteranganCard } from './SuratKeteranganCard';
 import { filterByName, type SuratKeteranganItem } from './layanan.logic';
@@ -32,7 +32,7 @@ function PelayananSuratKeterangan() {
     <LayananSection
       title={T.title}
       lead={T.lead}
-      aside={<LayananSearch value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />}
+      aside={<SearchField value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />}
     >
       {loading ? (
         <ul className={s.grid} aria-busy="true" aria-label={T.loading}>

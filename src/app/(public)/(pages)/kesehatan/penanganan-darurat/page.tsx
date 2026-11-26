@@ -1,7 +1,11 @@
 'use client'
 import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penanganan-darurat/penangananDarurat'
+import { daftarMuat } from '@/app/(public)/(pages)/kesehatan/_com/daftar-muat.logic';
+import dm from '@/app/(public)/(pages)/kesehatan/_com/daftar-muat.module.css';
 import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import {
   Box,
   Button,
@@ -9,21 +13,27 @@ import {
   Grid,
   GridCol,
   Image,
-  Pagination,
   Paper,
   SimpleGrid,
   Skeleton,
   Stack,
   Text,
-  TextInput,
   Title,
   Tooltip
 } from '@mantine/core'
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks'
-import { IconSearch } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import BackButton from '../../pemerintahan/layanan/_com/BackButto'
+
+/** Entri per halaman daftar publik. */
+const PAGE_LIMIT = 3
+
+const TEXT = {
+  searchLabel: 'Cari penanganan darurat',
+  searchPlaceholder: 'Cari penanganan darurat...',
+  paginationLabel: 'Halaman daftar penanganan darurat',
+} as const
 
 function Page() {
   const state = useProxy(penangananDarurat)
@@ -31,11 +41,15 @@ function Page() {
   const [debouncedSearch] = useDebouncedValue(search, 1000)
   const { data, page, totalPages, loading, load } = state.findMany
 
-  useShallowEffect(() => {
-    load(page, 3, debouncedSearch)
-  }, [page, debouncedSearch])
+  const muat = daftarMuat(data, loading)
 
-  if (loading || !data) {
+  // Kata kunci baru → halaman 1 (halaman lama bisa di luar jangkauan hasil baru). Paging memuat sendiri lewat onChange.
+  useShallowEffect(() => {
+    load(1, PAGE_LIMIT, debouncedSearch)
+  }, [debouncedSearch])
+
+  // Kerangka penuh hanya saat muatan pertama; muat ulang menahan kepala, kolom cari, dan daftar lama.
+  if (muat.skeleton || !data) {
     return (
       <Box py="xl" px={{ base: 'md', md: 100 }}>
         <Skeleton h={500} radius="lg" />
@@ -68,20 +82,22 @@ function Page() {
           </Text>
         </GridCol>
         <GridCol span={{ base: 12, md: 3 }}>
+          {/* Pembungkus div: Tooltip butuh anak yang menerima ref. */}
           <Tooltip label="Ketik kata kunci untuk mencari penanganan darurat">
-            <TextInput
-              radius="lg"
-              placeholder="Cari penanganan darurat..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              leftSection={<IconSearch size={20} />}
-              w="100%"
-            />
+            <div>
+              <SearchField
+                fullWidth
+                label={TEXT.searchLabel}
+                placeholder={TEXT.searchPlaceholder}
+                value={search}
+                onChange={setSearch}
+              />
+            </div>
           </Tooltip>
         </GridCol>
       </Grid>
 
-      <Box px={{ base: 'md', md: 100 }}>
+      <Box px={{ base: 'md', md: 100 }} className={dm.list} aria-busy={muat.busy}>
         {data.length === 0 ? (
           <Center py={100}>
             <Stack align="center" gap="xs">
@@ -177,22 +193,12 @@ function Page() {
         )}
       </Box>
 
-      <Center mt="xl">
-        <Pagination
-          value={page}
-          onChange={(newPage) => load(newPage, 3, search)}
-          total={totalPages}
-          size="lg"
-          radius="xl"
-          styles={{
-            control: {
-              border: '1px solid var(--c-brand)',
-              transition: 'all 0.3s ease',
-              '&:hover': { backgroundColor: 'var(--c-brand-fill)', color: 'white' },
-            },
-          }}
-        />
-      </Center>
+      <KabarListPagination
+        total={totalPages}
+        value={page}
+        label={TEXT.paginationLabel}
+        onChange={(newPage) => load(newPage, PAGE_LIMIT, debouncedSearch)}
+      />
     </Stack>
   )
 }

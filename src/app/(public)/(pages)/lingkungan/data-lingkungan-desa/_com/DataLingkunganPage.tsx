@@ -4,7 +4,7 @@ import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { useLoadOnce } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { DataLingkunganRows } from './DataLingkunganRows';
 import { dataLingkunganListHref } from './data-lingkungan.logic';
@@ -18,7 +18,7 @@ const LIST_TITLE_ID = 'data-lingkungan-list-title';
  * sedang mencari), lalu daftar baris bergaris (muat sekali, saring & paginasi `?page=` di klien).
  */
 export function DataLingkunganPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -35,7 +35,7 @@ export function DataLingkunganPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(dataLingkunganListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(dataLingkunganListHref({ search: next }))}
         searchable={listSearchable(search, total)}
       />
       <section aria-labelledby={LIST_TITLE_ID}>
@@ -46,7 +46,7 @@ export function DataLingkunganPage() {
           state={state}
           search={search}
           page={page}
-          onPage={(next) => router.push(dataLingkunganListHref({ search, page: next }))}
+          onPage={(next) => nav.pushPage(dataLingkunganListHref({ search, page: next }), LIST_TITLE_ID)}
         />
       </section>
     </div>

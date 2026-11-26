@@ -1,8 +1,11 @@
 'use client';
-import { IconSearch } from '@tabler/icons-react';
-import { Link } from 'next-view-transitions';
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { Link as TransitionLink } from 'next-view-transitions';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto';
+import { SearchField } from '../search-field/SearchField';
+import { isQueryOnlyHref } from './kabar-list.logic';
 import { SEARCH_DEBOUNCE_MS } from './kabar-list.meta';
 import s from './kabar-list.module.css';
 
@@ -39,11 +42,11 @@ export function KabarListHeader({
   onSearch,
   searchable = true,
 }: Props) {
-  const searchId = useId();
   const [value, setValue] = useState(search);
   const [prevSearch, setPrevSearch] = useState(search);
   const timer = useRef<number | null>(null);
   const pillsRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
   const activeKey = tabs.find((tab) => tab.active)?.key ?? '';
 
   // URL berubah dari luar (tombol kembali browser): samakan isi kolom, kecuali URL itu hasil ketikan sendiri.
@@ -75,11 +78,6 @@ export function KabarListHeader({
     timer.current = window.setTimeout(() => commit(next), SEARCH_DEBOUNCE_MS);
   };
 
-  const onSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    commit(value);
-  };
-
   return (
     <header className={s.header}>
       <BackButton />
@@ -89,31 +87,33 @@ export function KabarListHeader({
           <p className={s.lead}>{lead}</p>
         </div>
         {searchable ? (
-          <form role="search" className={s.search} onSubmit={onSubmit}>
-            <label htmlFor={searchId} className={s.srOnly}>
-              {searchLabel}
-            </label>
-            <IconSearch className={s.searchIcon} size={18} stroke={1.75} aria-hidden />
-            <input
-              id={searchId}
-              type="search"
-              className={s.searchInput}
-              placeholder={searchPlaceholder}
-              value={value}
-              onChange={(event) => onChange(event.target.value)}
-              autoComplete="off"
-            />
-          </form>
+          // Enter = kirim segera; tombol "x" = cari kosong segera (tanpa menunggu jeda ketik).
+          <SearchField
+            value={value}
+            onChange={onChange}
+            label={searchLabel}
+            placeholder={searchPlaceholder}
+            onSubmit={commit}
+            onClear={() => commit('')}
+          />
         ) : null}
       </div>
       {/* Halaman tanpa kategori (Program Kesehatan) memberi `tabs=[]`: tanpa <nav> kosong & jarak sisa. */}
       {tabs.length > 0 ? (
         <nav ref={pillsRef} className={s.pills} aria-label={kategoriLabel}>
-          {tabs.map((tab) => (
-            <Link key={tab.key} href={tab.href} className={s.pill} aria-current={tab.active ? 'page' : undefined}>
-              {tab.label}
-            </Link>
-          ))}
+          {tabs.map((tab) => {
+            const props = { href: tab.href, className: s.pill, 'aria-current': tab.active ? ('page' as const) : undefined };
+            // Pil yang hanya mengganti query (?kategori=, ?tahun=): tanpa animasi pindah halaman agar tidak berkedip.
+            return isQueryOnlyHref(pathname, tab.href) ? (
+              <Link key={tab.key} {...props} scroll={false}>
+                {tab.label}
+              </Link>
+            ) : (
+              <TransitionLink key={tab.key} {...props}>
+                {tab.label}
+              </TransitionLink>
+            );
+          })}
         </nav>
       ) : null}
     </header>

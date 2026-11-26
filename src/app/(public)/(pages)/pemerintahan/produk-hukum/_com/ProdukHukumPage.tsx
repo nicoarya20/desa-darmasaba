@@ -4,11 +4,17 @@ import { LIST_SEARCH_THRESHOLD } from '@/app/(public)/_com/kabar-list/kabar-list
 import { outOfRangePage, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { PRODUK_HUKUM_DEFAULT_LIMIT } from '@/lib/produk-hukum';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { ProdukHukumBody } from './ProdukHukumBody';
-import { parseKategoriParam, produkHukumHref, produkHukumTabs, type ProdukHukumFilter } from './produk-hukum.logic';
+import {
+  parseKategoriParam,
+  PRODUK_HUKUM_LIST_ID,
+  produkHukumHref,
+  produkHukumTabs,
+  type ProdukHukumFilter,
+} from './produk-hukum.logic';
 import { PRODUK_HUKUM_TEXT as T } from './produk-hukum.text';
 import { useProdukHukumList } from './use-produk-hukum';
 
@@ -18,7 +24,7 @@ import { useProdukHukumList } from './use-produk-hukum';
  * Tanpa entri sama sekali pil kategori disembunyikan; hanya pesan "Belum ada produk hukum".
  */
 export function ProdukHukumPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const filter: ProdukHukumFilter = {
     kategori: parseKategoriParam(searchParams.get('kategori')),
@@ -27,12 +33,13 @@ export function ProdukHukumPage() {
   };
   const { state, knownTotal } = useProdukHukumList({ ...filter, limit: PRODUK_HUKUM_DEFAULT_LIMIT });
 
-  // ?page melewati halaman terakhir padahal ada entri (tautan lama): pindah ke halaman terakhir yang valid.
-  const lastPage = outOfRangePage(state, filter.page);
+  // ?page melewati halaman terakhir padahal ada entri (tautan lama): pindah ke halaman terakhir yang valid. Baris lama
+  // yang masih tampil selama memuat (refreshing) bukan milik ?page ini, jadi belum dinilai.
+  const lastPage = state.status === 'ready' && state.refreshing ? null : outOfRangePage(state, filter.page);
   const { kategori, search } = filter;
   useEffect(() => {
-    if (lastPage) router.replace(produkHukumHref({ kategori, search, page: lastPage }));
-  }, [lastPage, kategori, search, router]);
+    if (lastPage) nav.replaceQuery(produkHukumHref({ kategori, search, page: lastPage }));
+  }, [lastPage, kategori, search, nav]);
 
   const noEntries = state.status === 'ready' && state.total === 0 && !kategori && !search;
   const searchable = search !== '' || (knownTotal !== null && knownTotal > LIST_SEARCH_THRESHOLD);
@@ -47,14 +54,14 @@ export function ProdukHukumPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={noEntries ? [] : produkHukumTabs(kategori, search)}
         search={search}
-        onSearch={(next) => router.replace(produkHukumHref({ kategori, search: next }))}
+        onSearch={(next) => nav.replaceQuery(produkHukumHref({ kategori, search: next }))}
         searchable={searchable}
       />
       <ProdukHukumBody
         state={state}
         filter={filter}
         limit={PRODUK_HUKUM_DEFAULT_LIMIT}
-        onPage={(page) => router.push(produkHukumHref({ kategori, search, page }))}
+        onPage={(page) => nav.pushPage(produkHukumHref({ kategori, search, page }), PRODUK_HUKUM_LIST_ID)}
       />
     </div>
   );

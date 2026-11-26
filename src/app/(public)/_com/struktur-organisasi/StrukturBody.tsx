@@ -1,6 +1,7 @@
 import colors from '@/con/colors'
-import { Button, Stack, Text, TextInput } from '@mantine/core'
-import { IconRefresh, IconSearch } from '@tabler/icons-react'
+import { Button, Stack, Text } from '@mantine/core'
+import { IconRefresh } from '@tabler/icons-react'
+import { SearchField } from '../search-field/SearchField'
 import { StrukturChart, StrukturChartSkeleton, type StrukturLayout } from './StrukturChart'
 import { STRUKTUR_TEXT } from './struktur.text'
 import type { StrukturData } from './use-struktur-data'
@@ -8,15 +9,12 @@ import type { StrukturData } from './use-struktur-data'
 /** Kotak cari nama/jabatan di atas bagan. */
 export function StrukturSearch({ data }: { data: StrukturData }) {
   return (
-    <TextInput
-      type="search"
-      radius="xl"
-      size="md"
-      aria-label={STRUKTUR_TEXT.searchLabel}
+    <SearchField
+      fullWidth
+      label={STRUKTUR_TEXT.searchLabel}
       placeholder={STRUKTUR_TEXT.searchPlaceholder}
-      leftSection={<IconSearch size={18} aria-hidden />}
       value={data.search}
-      onChange={(event) => data.setSearch(event.currentTarget.value)}
+      onChange={data.setSearch}
     />
   )
 }

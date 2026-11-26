@@ -8,7 +8,7 @@ import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerit
 import type { KabarItem } from '@/app/(public)/_com/main-page/kabar-desa/kabar.logic';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { KEGIATAN_PAGE_LIMIT } from '@/app/(public)/(pages)/pemerintahan/kegiatan-desa/_com/kegiatan.meta';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { gotongRoyongListHref, searchGotongRoyong } from './gotong-royong.logic';
 import { loadGotongRoyongList } from './gotong-royong.source';
@@ -21,7 +21,7 @@ const LIST_TITLE_ID = 'gotong-royong-list-title';
  * mencari, tanpa pil kategori), lalu kartu kegiatan gaya Kegiatan Desa (`?page=`, dipaginasi di klien).
  */
 export function GotongRoyongPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -38,14 +38,14 @@ export function GotongRoyongPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(gotongRoyongListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(gotongRoyongListHref({ search: next }))}
         searchable={listSearchable(search, total)}
       />
       <GotongRoyongBody
         state={state}
         search={search}
         page={page}
-        onPage={(next) => router.push(gotongRoyongListHref({ search, page: next }))}
+        onPage={(next) => nav.pushPage(gotongRoyongListHref({ search, page: next }), LIST_TITLE_ID)}
       />
     </div>
   );

@@ -1,7 +1,11 @@
 'use client'
 import infoWabahPenyakit from '@/app/admin/(dashboard)/_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
+import { daftarMuat } from '@/app/(public)/(pages)/kesehatan/_com/daftar-muat.logic';
+import dm from '@/app/(public)/(pages)/kesehatan/_com/daftar-muat.module.css';
 import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import {
   Badge,
   Box,
@@ -12,21 +16,28 @@ import {
   GridCol,
   Group,
   Image,
-  Pagination,
   Paper,
   SimpleGrid,
   Skeleton,
   Stack,
   Text,
-  TextInput,
   Title
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconInfoCircle, IconSearch } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { useTransitionRouter } from 'next-view-transitions';
+
+/** Entri per halaman daftar publik. */
+const PAGE_LIMIT = 3;
+
+const TEXT = {
+  searchLabel: 'Cari nama penyakit atau wabah',
+  searchPlaceholder: 'Cari nama penyakit atau wabah...',
+  paginationLabel: 'Halaman daftar info wabah dan penyakit',
+} as const;
 
 function Page() {
   const state = useProxy(infoWabahPenyakit);
@@ -35,11 +46,15 @@ function Page() {
   const [debouncedSearch] = useDebouncedValue(search, 1000);
   const { data, page, totalPages, loading, load } = state.findMany;
 
-  useShallowEffect(() => {
-    load(page, 3, debouncedSearch);
-  }, [page, debouncedSearch]);
+  const muat = daftarMuat(data, loading);
 
-  if (loading || !data) {
+  // Kata kunci baru → halaman 1 (halaman lama bisa di luar jangkauan hasil baru). Paging memuat sendiri lewat onChange.
+  useShallowEffect(() => {
+    load(1, PAGE_LIMIT, debouncedSearch);
+  }, [debouncedSearch]);
+
+  // Kerangka penuh hanya saat muatan pertama; muat ulang menahan kepala, kolom cari, dan daftar lama.
+  if (muat.skeleton || !data) {
     return (
       <Box py="xl" px={{ base: 'md', md: 100 }}>
         <Skeleton h={500} radius="lg" />
@@ -73,19 +88,17 @@ function Page() {
           </Text>
         </GridCol>
         <GridCol span={{ base: 12, md: 4 }}>
-          <TextInput
-            radius="xl"
-            placeholder="Cari nama penyakit atau wabah..."
+          <SearchField
+            fullWidth
+            label={TEXT.searchLabel}
+            placeholder={TEXT.searchPlaceholder}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            leftSection={<IconSearch size={20} />}
-            w="100%"
-            size="md"
+            onChange={setSearch}
           />
         </GridCol>
       </Grid>
 
-      <Box px={{ base: 'md', md: 100 }}>
+      <Box px={{ base: 'md', md: 100 }} className={dm.list} aria-busy={muat.busy}>
         {data.length === 0 ? (
           <Center py="6xl">
             <Stack align="center" gap="sm">
@@ -194,16 +207,12 @@ function Page() {
         )}
       </Box>
 
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => load(newPage)}
-          total={totalPages}
-          radius="xl"
-          size="md"
-          mt="lg"
-        />
-      </Center>
+      <KabarListPagination
+        total={totalPages}
+        value={page}
+        label={TEXT.paginationLabel}
+        onChange={(newPage) => load(newPage, PAGE_LIMIT, debouncedSearch)}
+      />
     </Stack>
   );
 }

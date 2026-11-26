@@ -6,7 +6,7 @@ import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { useLoadOnce, type LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { ProgramTiles, ProgramTilesPlaceholder } from '@/app/(public)/_com/program-tiles/ProgramTiles';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { filterPenghijauan, penghijauanEmptyMessage, penghijauanListHref, type Penghijauan } from './penghijauan.logic';
 import { PENGHIJAUAN_PAGE_SIZE } from './penghijauan.meta';
@@ -21,7 +21,7 @@ const PLACEHOLDER_TILES = 6;
  * sedang mencari), lalu ubin program tanpa foto (muat sekali, saring & paginasi `?page=` di klien).
  */
 export function PenghijauanPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -38,14 +38,14 @@ export function PenghijauanPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(penghijauanListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(penghijauanListHref({ search: next }))}
         searchable={listSearchable(search, total)}
       />
       <PenghijauanBody
         state={state}
         search={search}
         page={page}
-        onPage={(next) => router.push(penghijauanListHref({ search, page: next }))}
+        onPage={(next) => nav.pushPage(penghijauanListHref({ search, page: next }), LIST_TITLE_ID)}
       />
     </div>
   );

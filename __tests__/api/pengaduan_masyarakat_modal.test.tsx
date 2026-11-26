@@ -66,6 +66,7 @@ describe('hub layanan online desa — ubin Pengaduan Masyarakat', () => {
     vi.doMock('next/navigation', () => ({
       useRouter: () => ({ replace: vi.fn() }),
       useSearchParams: () => new URLSearchParams(query),
+      usePathname: () => '/inovasi/layanan-online-desa',
     }));
     vi.doMock('next-view-transitions', () => ({
       Link: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,

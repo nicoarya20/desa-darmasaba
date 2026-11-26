@@ -1,7 +1,7 @@
 import { Image } from "@mantine/core";
-import { IconNews } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
 import { imageLoadingAttrs } from "../../image-loading.logic";
+import { LOGO_DESA_LARGE_SRC } from "../../logo-desa.meta";
 import r from "../../link-reveal/link-reveal.module.css";
 import { responsiveImageProps } from "../../responsive-image.logic";
 import { SkeletonText } from "../../skeleton-text/SkeletonText";
@@ -30,12 +30,15 @@ const PHOTO_SIZES = {
   grid: "(max-width: 734px) 111vw, (max-width: 1068px) 56vw, 38vw",
 } as const;
 
-/** `aboveFold`: foto kandidat LCP (berita utama halaman daftar) diunduh langsung, bukan lazy. */
+/**
+ * `aboveFold`: foto kandidat LCP (berita utama halaman daftar) diunduh langsung, bukan lazy.
+ * Tanpa foto → lambang desa (dekoratif) seukuran tetap di tengah kotak, tidak diregangkan: berkasnya hanya 238px.
+ */
 function Photo({ url, sizes, aboveFold = false }: { url?: string; sizes: string; aboveFold?: boolean }) {
   if (!url) {
     return (
       <span className={s.photoFallback} aria-hidden>
-        <IconNews size={40} stroke={1.25} />
+        <Image src={LOGO_DESA_LARGE_SRC} alt="" className={s.photoFallbackLogo} loading="lazy" decoding="async" />
       </span>
     );
   }

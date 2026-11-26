@@ -39,6 +39,7 @@ const ready = (items: ReturnType<typeof apiItem>[]) => ({
   items: items.map(toInovasiItem),
   totalPages: 1,
   loading: false,
+  refreshing: false,
   failed: false,
 });
 const body = (state: ReturnType<typeof ready>, params = PARAMS) =>
@@ -64,8 +65,15 @@ describe('daftar publik (SSR)', () => {
   });
 
   it('gagal muat → pesan galat', () => {
-    const html = body({ items: [], totalPages: 1, loading: false, failed: true });
+    const html = body({ items: [], totalPages: 1, loading: false, refreshing: false, failed: true });
     expect(html).toContain(INOVASI_TEXT.error);
+  });
+
+  it('ganti kategori/kata kunci/halaman sedang dimuat → kartu lama tetap tampil di wadah aria-busy, bukan kerangka', () => {
+    const html = body({ ...ready([apiItem('a1', 'digital')]), refreshing: true }, { ...PARAMS, search: 'pupuk' });
+    expect(html).toMatch(/<div class="[^"]+" aria-busy="true">/);
+    expect(html).toContain('href="/inovasi/inovasi-teknologi-desa/a1"');
+    expect(html).not.toContain(INOVASI_TEXT.emptySearch('pupuk'));
   });
 });
 
