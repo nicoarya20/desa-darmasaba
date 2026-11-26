@@ -9,7 +9,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 import { MenuItem } from "../../../../types/menu-item";
 import { LOGO_DESA_SMALL_SRC } from "./logo-desa.meta";
-import { isMenuActive, isPathActive } from "./navbar-menu.logic";
+import { isChildActive, isMenuActive } from "./navbar-menu.logic";
 import { NavbarMenuPlayer, NavbarMusicToggle } from "./NavbarMobileMusic";
 import { NavbarSpeechToggle } from "./NavbarSpeechToggle";
 import { NavbarThemeToggle } from "./NavbarThemeToggle";
@@ -127,7 +127,7 @@ export function NavbarMobile({ listNavbar }: { listNavbar: MenuItem[] }) {
                       <Link
                         href={child.href}
                         className={m.item}
-                        data-active={isPathActive(pathname, child.href)}
+                        data-active={isChildActive(pathname, child)}
                         onClick={close}
                       >
                         {child.name}

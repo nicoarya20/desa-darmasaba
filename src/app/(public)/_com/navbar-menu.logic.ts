@@ -9,10 +9,15 @@ export function isPathActive(pathname: string, href?: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-/** Menu utama aktif bila href-nya atau salah satu href anaknya cocok dengan path. */
+/** Submenu aktif bila path berada di bawah `activePrefix`-nya (bila ada) atau di bawah `href`-nya. */
+export function isChildActive(pathname: string, child: Pick<MenuItem, "href" | "activePrefix">): boolean {
+  return isPathActive(pathname, child.activePrefix ?? child.href);
+}
+
+/** Menu utama aktif bila href-nya cocok dengan path atau salah satu submenunya aktif (`isChildActive`). */
 export function isMenuActive(item: MenuItem, pathname: string): boolean {
   if (isPathActive(pathname, item.href)) return true;
-  return item.children?.some((child) => isPathActive(pathname, child.href)) ?? false;
+  return item.children?.some((child) => isChildActive(pathname, child)) ?? false;
 }
 
 /** Benar bila user login dengan role admin. */

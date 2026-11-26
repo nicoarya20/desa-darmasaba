@@ -4,7 +4,7 @@ import stateNav from "@/state/state-nav";
 import { Link } from "next-view-transitions";
 import { CSSProperties, RefObject, useLayoutEffect, useRef, useState } from "react";
 import { MenuItem } from "../../../../types/menu-item";
-import { isPathActive } from "./navbar-menu.logic";
+import { isChildActive } from "./navbar-menu.logic";
 import { NavbarSearch } from "./NavBarSearch";
 import s from "./navbar.module.css";
 
@@ -64,7 +64,7 @@ export function NavbarFlyout({
 function FlyoutMenu({ menu, pathname }: { menu: MenuItem; pathname: string }) {
   // Item tanpa href (grup bersarang) belum dipakai di menu publik, jadi tidak dirender.
   const links = (menu.children ?? []).flatMap((child) =>
-    child.href ? [{ id: child.id, name: child.name, href: child.href }] : [],
+    child.href ? [{ id: child.id, name: child.name, href: child.href, activePrefix: child.activePrefix }] : [],
   );
 
   return (
@@ -76,7 +76,7 @@ function FlyoutMenu({ menu, pathname }: { menu: MenuItem; pathname: string }) {
             <Link
               href={link.href}
               className={s.flyoutLink}
-              data-active={isPathActive(pathname, link.href)}
+              data-active={isChildActive(pathname, link)}
               onClick={() => stateNav.clear()}
             >
               {link.name}
