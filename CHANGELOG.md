@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.357] - 2026-11-26
+### Changed
+- **Satu bentuk kolom cari di seluruh website publik.** Semua kolom cari daftar (Berita, Pengumuman, Layanan, Posyandu, Kontak Darurat, CCTV, Bank Sampah, Prestasi, Struktur, Daftar Penerima, PPID, Galeri, Penanganan Darurat, Info Wabah, dokumen Desa Antikorupsi, dan lainnya) kini berbentuk pil yang sama dengan tombol "x" (Hapus pencarian) sendiri yang muncul saat kolom berisi. Tombol "x" bawaan browser disembunyikan, jadi tidak ada lagi dua tombol hapus.
+- **Satu bentuk pagination.** Prestasi, Daftar Penerima program kemiskinan, Daftar Informasi Publik PPID, Galeri Foto dan Video, Penanganan Darurat, dan Info Wabah kini memakai pagination yang sama dengan halaman Berita.
+- **Kartu berita/kegiatan tanpa foto** kini menampilkan lambang desa, bukan ikon koran.
+- **Kontak PPID** di Daftar Informasi Publik dan Permohonan Keberatan kini tampil sama (baris ber-ikon: email, telepon, serta WhatsApp dan jam layanan bila diisi di Profil Desa > Kontak Desa).
+
+### Fixed
+- **Halaman tidak lagi berkedip saat mencari atau pindah halaman daftar** (Program Kesehatan, Keamanan Lingkungan, Laporan Publik, Pencegahan Kriminalitas, Berita, Pengumuman, Kegiatan Desa, Produk Hukum, Ekonomi, Inovasi, Lingkungan, Info Wabah, Penanganan Darurat). Mengetik kata kunci, pindah halaman, atau memilih kategori/tahun yang hanya menyaring daftar tidak lagi memicu animasi seluruh halaman. Selama hasil baru dimuat, daftar lama tetap tampil sedikit redup alih-alih berganti ke kerangka loading, dan kolom cari tidak kehilangan fokus. Animasi perpindahan tetap ada saat membuka halaman lain (detail, kategori Berita/Kegiatan).
+- **Info Wabah: pindah halaman saat mencari tidak lagi menghapus kata kunci.**
+
 ## [0.1.355] - 2026-11-26
 ### Changed
 - **Harga produk UMKM kini boleh dikosongkan**, karena sebagian produk desa harganya tidak tetap (kadang naik). Di admin (Ekonomi > UMKM & Pasar Desa > Produk), isian "Harga Produk (Rp)" pada form Tambah dan Ubah tidak lagi wajib; kosongkan bila harga tidak tetap. Di website publik, produk tanpa harga menampilkan teks "Harga menyesuaikan" di kartu katalog dan halaman detail, sehingga warga tahu harganya perlu ditanyakan ke penjual lewat tombol WhatsApp. Bila saklar "Sembunyikan harga di website publik" aktif, teks ini ikut tidak tampil. Di tabel admin, produk tanpa harga ditandai "-". Produk tanpa harga ikut tampil di katalog tetapi tidak masuk hasil filter rentang harga, dan berada paling akhir saat diurutkan menurut harga.
