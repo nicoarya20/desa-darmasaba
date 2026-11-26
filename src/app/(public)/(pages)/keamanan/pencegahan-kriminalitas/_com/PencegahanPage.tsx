@@ -2,8 +2,9 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { listSearchable, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { ListRefreshRegion } from '@/app/(public)/_com/kabar-list/ListRefreshRegion';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { PencegahanCards, PencegahanPlaceholder } from './PencegahanCards';
 import { PencegahanSorotan } from './PencegahanSorotan';
@@ -25,7 +26,7 @@ const LIST_TITLE_ID = 'pencegahan-list-title';
  * (`?page=`, dipaginasi di klien), lalu bagian Tips keamanan (`#tips-keamanan`; menu Tips Keamanan dilebur ke sini).
  */
 export function PencegahanPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -44,7 +45,7 @@ export function PencegahanPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(pencegahanListHref({ search: next }))}
+        onSearch={(next) => nav.replaceSearch(pencegahanListHref({ search: next }))}
         searchable={listSearchable(search, total)}
       />
       <PencegahanContent
@@ -52,7 +53,7 @@ export function PencegahanPage() {
         tips={tips}
         search={search}
         page={page}
-        onPage={(next) => router.push(pencegahanListHref({ search, page: next }))}
+        onPage={(next) => nav.pushPage(pencegahanListHref({ search, page: next }), LIST_TITLE_ID)}
       />
     </div>
   );
@@ -60,19 +61,26 @@ export function PencegahanPage() {
 
 /**
  * Program + tips untuk satu keadaan muat (diekspor untuk test). Saat mencari: tidak cocok di keduanya → satu pesan;
- * program tidak cocok tetapi tips cocok → bagian program disembunyikan (bukan kotak "tidak ada program").
+ * program tidak cocok tetapi tips cocok → bagian program disembunyikan (bukan kotak "tidak ada program"). Selama
+ * hasil kata kunci baru dimuat, isi lama tetap tampil di wadah `aria-busy`.
  */
 export function PencegahanContent({ tips, ...program }: BodyProps & { tips: TipsKeamananState }) {
   const { state, search } = program;
   const programKosong = state.status === 'ready' && state.items.length === 0;
   const tipsKosong = tips.status === 'ready' && tips.tips.length === 0;
-  if (search && programKosong && tipsKosong) return <p className={kabar.empty}>{T.emptySearchAll(search)}</p>;
+  const refreshing = (state.status === 'ready' && state.refreshing) || (tips.status === 'ready' && tips.refreshing);
 
   return (
-    <div className={s.stack}>
-      {search && programKosong && !tipsKosong ? null : <PencegahanBody {...program} />}
-      <TipsSection state={tips} />
-    </div>
+    <ListRefreshRegion refreshing={refreshing}>
+      {search && programKosong && tipsKosong ? (
+        <p className={kabar.empty}>{T.emptySearchAll(search)}</p>
+      ) : (
+        <div className={s.stack}>
+          {search && programKosong && !tipsKosong ? null : <PencegahanBody {...program} />}
+          <TipsSection state={tips} />
+        </div>
+      )}
+    </ListRefreshRegion>
   );
 }
 
