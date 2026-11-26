@@ -9,7 +9,7 @@ export const MUSIK_SECTION_PATH = '/musik';
 export const MUSIK_BASE_PATH = `${MUSIK_SECTION_PATH}/musik-desa`;
 
 /**
- * Rute yang memakai bar pemutar aplikasi musik (bukan FixedPlayerBar + footer situs): hanya
+ * Rute yang memakai bar pemutar aplikasi musik (bukan widget Now Playing + footer situs): hanya
  * `/musik/musik-desa` dan turunannya. `/musik` dan `/musik/<lain>` (404) tetap memakai shell biasa.
  */
 export function isMusikAppPath(pathname: string | null): boolean {

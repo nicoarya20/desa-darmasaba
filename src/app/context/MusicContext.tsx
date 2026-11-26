@@ -33,6 +33,8 @@ interface MusicContextType {
   togglePlayPause: () => void;
   playNext: () => void;
   playPrev: () => void;
+  /** Hentikan lagu: jeda, posisi ke 0, sumber audio dilepas, currentSong null (pemutar situs hilang). */
+  stop: () => void;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
   /** Siklus mode ulang: mati → semua → satu → mati. */

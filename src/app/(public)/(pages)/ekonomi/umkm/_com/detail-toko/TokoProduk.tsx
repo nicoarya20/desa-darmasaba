@@ -14,7 +14,7 @@ import { TOKO_PRODUK_TEXT as T } from './toko-produk.text';
 export function TokoProduk({ produk }: { produk: KatalogProduk[] }) {
   const titleId = useId();
   const [urut, setUrut] = useState<KatalogUrut>(TOKO_URUT_DEFAULT);
-  const { items, showUrut } = buildTokoProdukView(produk, urut);
+  const view = buildTokoProdukView(produk, urut);
 
   return (
     <section className={s.section} aria-labelledby={titleId}>
@@ -25,14 +25,14 @@ export function TokoProduk({ produk }: { produk: KatalogProduk[] }) {
           </h2>
           {produk.length > 0 && <p className={s.count}>{T.jumlah(produk.length)}</p>}
         </div>
-        {showUrut && (
+        {view.showUrut && (
           <div className={s.urut}>
-            <KatalogUrutSelect tab="produk" value={urut} onChange={setUrut} />
+            <KatalogUrutSelect tab="produk" value={view.urut} onChange={setUrut} denganHarga={view.denganHarga} />
           </div>
         )}
       </div>
       <KatalogGrid variant="produk" empty={<KatalogEmpty title={T.kosong} />}>
-        {items.map((p) => (
+        {view.items.map((p) => (
           <ProdukCard key={p.id} produk={p} />
         ))}
       </KatalogGrid>

@@ -1,16 +1,12 @@
 /* Offset posisi Jenna, dipakai dock chat bar (JennaWidget) dan tombol scroll-to-top (scrollToTopButton.tsx).
    Hanya mendefinisikan --jenna-dock-right/--jenna-dock-bottom; pemakainya yang membaca var ini.
-   Pemicu: data-player/data-musik di elemen .dockOffset, dan bilah kontak melayang di halaman (lihat bawah). */
+   Pemicu: data-player + data-musik di elemen .dockOffset, dan bilah kontak melayang di halaman (lihat bawah). */
 
-/* Offset bersama dock & tombol scroll-to-top: naik di atas FixedPlayerBar (±70px desktop, ±96px ponsel)
-   atau NowPlayingBar aplikasi Musik (88px, 72px di ≤734px). data-player = ada lagu (bar mungkin tampil). */
+/* Di luar aplikasi Musik pemutar situs tidak lagi di bawah layar (widget Now Playing kanan atas di desktop,
+   kartu di panel menu ponsel), jadi dock tetap 24px / 12px walau ada lagu. */
 .dockOffset {
   --jenna-dock-right: 24px;
   --jenna-dock-bottom: 24px;
-}
-
-.dockOffset[data-player="true"] {
-  --jenna-dock-bottom: 88px;
 }
 
 @media (max-width: 47.99em) {
@@ -18,11 +14,10 @@
     --jenna-dock-right: 12px;
     --jenna-dock-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
-  .dockOffset[data-player="true"] {
-    --jenna-dock-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
-  }
 }
 
+/* Aplikasi Musik: naik di atas NowPlayingBar (88px + jarak 12; 72px + 12 di ≤734px).
+   data-player = ada lagu (bar aplikasi tampil). */
 .dockOffset[data-musik="true"][data-player="true"] {
   --jenna-dock-bottom: 100px;
 }
@@ -40,15 +35,9 @@
    Angka mengikuti ukuran bilah (ubah bersama kontak-aksi.module.css):
    - >734px kapsul bottom 24 + tinggi 62 (tombol 44 + padding 8×2 + border 2) + jarak 16 = 102px.
    - ≤734px selebar layar: tinggi 69 (tombol 44 + padding 12×2 + border atas 1) + safe-area + jarak 12.
-   Dengan lagu, ambil yang lebih tinggi: desktop 102 > 88; ponsel offset pemutar 108 > 81, jadi tetap 108. */
+   Bilah kontak hanya di halaman Lowongan (di luar aplikasi Musik), jadi tidak bertemu offset NowPlayingBar. */
 :root:has([data-kontak-bar][data-visible="true"]) .dockOffset {
   --jenna-dock-bottom: 102px;
-}
-
-@media (max-width: 47.99em) {
-  :root:has([data-kontak-bar][data-visible="true"]) .dockOffset[data-player="true"] {
-    --jenna-dock-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
-  }
 }
 
 @media (max-width: 734px) {

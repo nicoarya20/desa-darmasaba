@@ -36,11 +36,12 @@ import { useProxy } from "valtio/utils";
 import umkmState from "../../../../../_state/ekonomi/umkm/umkm";
 import { LinkTokoOnlineField } from "../../_com/LinkTokoOnlineField";
 import type { LinkTokoOnlineInput } from "@/lib/link-toko-online";
+import { HARGA_INPUT_KETERANGAN, hargaDariInput } from "@/lib/umkm/harga-produk";
 
 interface ProdukData {
   id: string;
   nama: string;
-  harga: number;
+  harga: number | null;
   stok: number;
   satuan: string | null;
   umkmId: string | null;
@@ -54,7 +55,7 @@ interface ProdukData {
 
 interface ProdukForm {
   nama: string;
-  harga: number;
+  harga: number | null;
   stok: number;
   satuan: string;
   umkmId: string;
@@ -77,7 +78,7 @@ function EditProdukUmkm() {
 
   const [formData, setFormData] = useState<ProdukForm>({
     nama: "",
-    harga: 0,
+    harga: null,
     stok: 0,
     satuan: "",
     umkmId: "",
@@ -90,7 +91,7 @@ function EditProdukUmkm() {
 
   const [originalData, setOriginalData] = useState<ProdukForm & { imageUrl: string }>({
     nama: "",
-    harga: 0,
+    harga: null,
     stok: 0,
     satuan: "",
     umkmId: "",
@@ -107,7 +108,7 @@ function EditProdukUmkm() {
       formData.nama?.trim() !== '' &&
       formData.umkmId !== '' &&
       formData.kategoriId !== '' &&
-      formData.harga >= 0 &&
+      (formData.harga === null || formData.harga >= 0) &&
       formData.stok >= 0
     );
   };
@@ -124,7 +125,7 @@ function EditProdukUmkm() {
       if (data) {
         const initialForm: ProdukForm = {
           nama: data.nama || "",
-          harga: data.harga || 0,
+          harga: data.harga ?? null,
           stok: data.stok || 0,
           satuan: data.satuan || "",
           umkmId: data.umkmId || "",
@@ -150,7 +151,7 @@ function EditProdukUmkm() {
     init();
   }, [id]);
 
-  const handleChange = (field: keyof ProdukForm, value: string | number | boolean) => {
+  const handleChange = (field: keyof ProdukForm, value: string | number | boolean | null) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -343,13 +344,13 @@ function EditProdukUmkm() {
           <Group grow>
             <NumberInput
               label="Harga Produk (Rp)"
-              placeholder="0"
-              required
+              description={HARGA_INPUT_KETERANGAN}
+              placeholder="Kosongkan bila harga tidak tetap"
               min={0}
               thousandSeparator="."
               decimalSeparator=","
-              value={formData.harga}
-              onChange={(val) => handleChange("harga", Number(val))}
+              value={formData.harga ?? ''}
+              onChange={(val) => handleChange("harga", hargaDariInput(val))}
             />
             <NumberInput
               label="Stok"

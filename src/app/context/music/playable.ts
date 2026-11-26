@@ -6,6 +6,7 @@ export const hasAudio = (song: Musik | null | undefined): song is Musik & { audi
 
 /**
  * Slider posisi boleh digeser: lagu punya audio dan durasinya sudah diketahui. Satu predikat untuk
- * PlayerProgress dan FixedPlayerBar; menggeser lagu tanpa sumber tidak pernah memicu 'seeked'.
+ * PlayerProgress dan NowPlayingProgress (kartu Now Playing situs); menggeser lagu tanpa sumber tidak
+ * pernah memicu 'seeked'.
  */
 export const canSeek = (song: Musik | null | undefined, duration: number): boolean => hasAudio(song) && duration > 0;

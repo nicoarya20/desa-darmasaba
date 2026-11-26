@@ -17,7 +17,6 @@ import { NowPlayingBar } from '@/app/(public)/(pages)/musik/musik-desa/_com/play
 import { QueuePanel } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/QueuePanel';
 import { PLAYER_TEXT } from '@/app/(public)/(pages)/musik/musik-desa/_com/player/player.text';
 import { REPEAT_LABEL } from '@/app/context/music/music.text';
-import FixedPlayerBar from '@/app/(public)/_com/FixedPlayerBar';
 
 // test-only: lagu fiktif berbentuk respons /api/desa/musik/find-many.
 const file = (link: string) => ({ id: link, name: link, realName: link, path: link, mimeType: 'x', link });
@@ -331,30 +330,4 @@ describe('QueuePanel', () => {
   });
 });
 
-describe('FixedPlayerBar (pemutar situs di luar /musik)', () => {
-  // Urutan thumb di markup: posisi (desktop), volume, posisi (ponsel).
-  const thumbs = (html: string) => [...html.matchAll(/<div[^>]*role="slider"[^>]*>/g)].map((m) => m[0]);
-
-  it('lagu tanpa audio: kedua slider posisi nonaktif (seret tidak membekukan progres)', () => {
-    setMusic({ currentSong: B, duration: 0 });
-    const [desktop, volume, mobile] = thumbs(render(<FixedPlayerBar />));
-    expect(desktop).toContain('aria-disabled="true"');
-    expect(mobile).toContain('aria-disabled="true"');
-    expect(volume).not.toContain('aria-disabled="true"');
-  });
-
-  it('lagu dengan audio dan durasi diketahui: slider posisi aktif', () => {
-    setMusic({ currentSong: A, duration: 250, currentTime: 10 });
-    const [desktop, , mobile] = thumbs(render(<FixedPlayerBar />));
-    expect(desktop).not.toContain('aria-disabled="true"');
-    expect(mobile).not.toContain('aria-disabled="true"');
-  });
-
-  it('slider membacakan posisi "m:ss dari m:ss" dan volume dalam persen', () => {
-    setMusic({ currentSong: A, duration: 154, currentTime: 8, volume: 70 });
-    const [desktop, volume, mobile] = thumbs(render(<FixedPlayerBar />));
-    expect(desktop).toContain('aria-valuetext="0:08 dari 2:34"');
-    expect(mobile).toContain('aria-valuetext="0:08 dari 2:34"');
-    expect(volume).toContain('aria-valuetext="70%"');
-  });
-});
+// Pemutar situs di luar /musik (kartu & widget Now Playing): __tests__/api/now_playing_ui.test.tsx.

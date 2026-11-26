@@ -8,7 +8,7 @@ import {
 
 const produkFormSchema = z.object({
   nama: z.string().min(1, "Nama produk minimal 1 karakter"),
-  harga: z.number().min(0, "Harga tidak boleh negatif"),
+  harga: z.number().min(0, "Harga tidak boleh negatif").nullable(), // null = harga tidak tetap
   stok: z.number().min(0, "Stok tidak boleh negatif"),
   satuan: z.string().optional().nullable(),
   umkmId: z.string().min(1, "UMKM wajib dipilih"),
@@ -21,7 +21,7 @@ const produkFormSchema = z.object({
 
 const defaultProdukForm = {
   nama: "",
-  harga: 0,
+  harga: null as number | null,
   stok: 0,
   satuan: "",
   umkmId: "",

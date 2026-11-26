@@ -31,13 +31,13 @@ const KOLOM = {
 };
 
 /**
- * Parse CSV Produk: baris pertama header (wajib `nama`, `umkm`, `kategori`, `harga`; opsional `pemilik`, `stok`,
+ * Parse CSV Produk: baris pertama header (wajib `nama`, `umkm`, `kategori`; opsional `harga`, `pemilik`, `stok`,
  * `satuan`, `deskripsi`, `unggulan`, dan satu kolom link per platform), baris kosong dilewati, baris tak valid ditolak.
  */
 export function parseCsvProduk(teks: string): HasilCsvProduk {
   return parseCsvImpor<keyof typeof KOLOM, ProdukImporInput>(teks, {
     kolom: KOLOM,
-    wajib: ["nama", "umkm", "kategori", "harga"],
+    wajib: ["nama", "umkm", "kategori"],
     maksBaris: IMPOR_UMKM_MAKS_BARIS,
     maksBytes: IMPOR_UMKM_MAKS_BYTES,
     validasi: (sel) =>

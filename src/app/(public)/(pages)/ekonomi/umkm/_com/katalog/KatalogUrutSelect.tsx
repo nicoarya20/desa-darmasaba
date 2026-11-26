@@ -10,12 +10,14 @@ type Props = {
   tab: KatalogTab;
   value: KatalogUrut;
   onChange: (urut: KatalogUrut) => void;
+  /** false = harga disembunyikan admin → tanpa urutan harga. */
+  denganHarga?: boolean;
 };
 
 /** Label "Urutkan" + pilihan urutan per tab; dirender sebagai fragmen agar ikut susunan flex pembungkusnya. */
-export function KatalogUrutSelect({ tab, value, onChange }: Props) {
+export function KatalogUrutSelect({ tab, value, onChange, denganHarga = true }: Props) {
   const id = useId();
-  const options = urutOptions(tab);
+  const options = urutOptions(tab, denganHarga);
   return (
     <>
       <label htmlFor={id} className={s.label}>

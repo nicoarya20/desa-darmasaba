@@ -1,5 +1,6 @@
 'use client';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import { ULASAN_PRODUK_UMKM_TAMPIL } from '@/con/umkm-ulasan';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import f from '../detail-umkm/detail-umkm.module.css';
@@ -17,7 +18,8 @@ import { useDetailProduk } from './use-detail-produk';
 
 /**
  * Halaman detail produk UMKM gaya Decathlon: tautan kembali, grid galeri + info menempel (deskripsi di bawah galeri),
- * lalu Ulasan dan Produk serupa. Pemesanan lewat WhatsApp penjual; stok tidak ditampilkan.
+ * lalu Ulasan (sementara disembunyikan, src/con/umkm-ulasan.ts) dan Produk serupa. Pemesanan lewat WhatsApp penjual;
+ * stok tidak ditampilkan.
  */
 export function DetailProdukView({ id }: { id: string }) {
   const { state, reload } = useDetailProduk(id);
@@ -55,7 +57,7 @@ function DetailBody({ produk, onReload }: { produk: DetailProduk; onReload: () =
           <ProdukDeskripsi html={produk.deskripsiHtml} />
         </div>
       </div>
-      <UlasanSection />
+      {ULASAN_PRODUK_UMKM_TAMPIL && <UlasanSection />}
       <ProdukSerupa
         current={{ id: produk.id, kategoriNama: produk.kategori?.nama ?? null, umkmId: produk.penjual?.id ?? null }}
       />

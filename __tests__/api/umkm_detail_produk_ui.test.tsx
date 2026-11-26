@@ -15,6 +15,8 @@ const h = vi.hoisted(() => ({
   serupa: [] as unknown[],
 }));
 
+// Menguji tampilan saat ulasan dinyalakan lagi; kondisi sekarang (disembunyikan): umkm_ulasan_disembunyikan.test.tsx.
+vi.mock('@/con/umkm-ulasan', () => ({ ULASAN_PRODUK_UMKM_TAMPIL: true }));
 vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
 }));

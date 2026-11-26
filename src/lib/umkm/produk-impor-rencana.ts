@@ -12,7 +12,8 @@ export type ProdukAda = { id: string; umkmId: string; nama: string };
 
 export type ProdukBaru = {
   nama: string;
-  harga: number;
+  /** Tidak ada = tanpa harga (baru) / harga lama tidak ditimpa (perbarui). */
+  harga?: number;
   umkmId: string;
   kategoriProdukId: string;
   stok?: number;
@@ -104,6 +105,7 @@ export function susunRencanaProduk(opts: {
     const link = validasiLinkImpor(r.link);
     const daftarLink = link.ok ? link.value.daftar : [];
     const opsional = {
+      ...(r.harga !== undefined && { harga: r.harga }),
       ...(r.stok !== undefined && { stok: r.stok }),
       ...(r.satuan && { satuan: r.satuan }),
       ...(r.deskripsi && { deskripsi: deskripsiKeHtml(r.deskripsi) }),
@@ -114,14 +116,14 @@ export function susunRencanaProduk(opts: {
       if (ganti) rencana.linkDiganti++;
       rencana.perbarui.push({
         id: idAda,
-        data: { harga: r.harga, kategoriProdukId: kategori.value, ...opsional },
+        data: { kategoriProdukId: kategori.value, ...opsional },
         gantiLink: ganti ? daftarLink : null,
       });
     } else {
-      rencana.tambah.push({ nama: r.nama, harga: r.harga, umkmId: umkm.umkm.id, kategoriProdukId: kategori.value, ...opsional, link: daftarLink });
+      rencana.tambah.push({ nama: r.nama, umkmId: umkm.umkm.id, kategoriProdukId: kategori.value, ...opsional, link: daftarLink });
     }
 
-    const peringatan = peringatanHarga(r.harga);
+    const peringatan = r.harga === undefined ? null : peringatanHarga(r.harga);
     if (peringatan) rencana.peringatan.push({ baris, alasan: peringatan });
   });
 

@@ -56,6 +56,8 @@ export function KatalogBody({ state, params, update, onRetry }: Props) {
               count={view ? { shown: view.items.length, total: view.total } : null}
               urut={p.urut}
               onUrut={(urut) => update((cur) => ({ ...cur, urut }))}
+              // Selama memuat, pilihan harga tetap ada agar urutan dari URL tidak tampil kosong.
+              denganHarga={view?.tab !== 'produk' || view.facets.harga}
               chips={view?.chips ?? []}
               activeCount={view?.activeCount ?? 0}
               onApply={(next) => update(() => next)}

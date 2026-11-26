@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.1.355] - 2026-11-26
+### Changed
+- **Harga produk UMKM kini boleh dikosongkan**, karena sebagian produk desa harganya tidak tetap (kadang naik). Di admin (Ekonomi > UMKM & Pasar Desa > Produk), isian "Harga Produk (Rp)" pada form Tambah dan Ubah tidak lagi wajib; kosongkan bila harga tidak tetap. Di website publik, produk tanpa harga menampilkan teks "Harga menyesuaikan" di kartu katalog dan halaman detail, sehingga warga tahu harganya perlu ditanyakan ke penjual lewat tombol WhatsApp. Bila saklar "Sembunyikan harga di website publik" aktif, teks ini ikut tidak tampil. Di tabel admin, produk tanpa harga ditandai "-". Produk tanpa harga ikut tampil di katalog tetapi tidak masuk hasil filter rentang harga, dan berada paling akhir saat diurutkan menurut harga.
+- **Impor CSV Produk: kolom harga kini opsional.** Sel kosong menambahkan produk tanpa harga. Pada mode "perbarui", sel kosong tetap tidak menimpa harga lama, jadi untuk mengosongkan harga produk yang sudah ada gunakan form Ubah.
+- Asisten Jenna menyebut "Harga menyesuaikan" untuk produk tanpa harga.
+
+### Fixed
+- **Tidak ada lagi produk berharga "Rp0".** Sebelumnya isian harga yang dikosongkan tersimpan sebagai 0 dan tampil "Rp0" di website. Migrasi database mengubah harga 0 yang sudah ada menjadi kosong (tampil "Harga menyesuaikan"); riwayat penjualan tidak berubah. Perlu migrasi database (aman untuk data lama).
+
+## [0.1.354] - 2026-11-25
+### Changed
+- **Ulasan produk UMKM disembunyikan sementara dari website publik**, karena fitur ulasan belum diterapkan (belum ada cara warga menulis ulasan maupun moderasinya). Yang tidak lagi tampil: bagian "Ulasan" (nilai bintang, sebaran 5–1, tombol "Tulis ulasan") di halaman detail produk `/ekonomi/umkm/produk/{id}`, tautan "Belum ada ulasan" di bawah nama produk, dan baris "Belum ada ulasan" di kartu produk (katalog, Produk serupa, dan daftar produk di detail toko). Tampilannya tidak dihapus dari kode: bisa ditampilkan lagi dengan mengubah satu pengaturan di kode (`src/con/umkm-ulasan.ts`) setelah fitur ulasan siap.
+
+## [0.1.353] - 2026-11-25
+### Added
+- **Saklar "Sembunyikan harga di website publik" untuk produk UMKM.** Di admin (Ekonomi > UMKM & Pasar Desa > tab Produk), di atas daftar produk kini ada satu saklar untuk semua produk. Saat diaktifkan, harga tidak lagi tampil di halaman UMKM publik: kartu katalog `/ekonomi/umkm`, halaman detail produk, rel "Produk serupa", dan daftar produk di halaman detail toko. Filter "Harga" serta urutan "Harga terendah/tertinggi" ikut hilang, dan tautan lama yang memakai filter atau urutan harga otomatis kembali ke urutan "Terbaru". Matikan saklar untuk menampilkan harga lagi. Harga yang sudah diisi tidak dihapus dan tetap terlihat di admin, jadi admin tidak perlu mengedit produk satu per satu. Bawaan setelah rilis: harga tetap tampil seperti sebelumnya sampai saklar diaktifkan. Bila pengaturan gagal dimuat di website, harga disembunyikan. Catatan: harga masih terkirim di respons API (lihat `docs/BACKEND-TODO.md`). Perlu migrasi database (satu tabel baru, aman untuk data lama).
+
+## [0.1.352] - 2026-11-25
+### Added
+- **Kontrol musik di layar kunci dan notifikasi HP.** Saat lagu Musik Desa diputar, sampul, judul, artis, serta tombol putar/jeda, sebelumnya, berikutnya, dan geser posisi kini muncul di layar kunci dan notifikasi ponsel, seperti aplikasi musik. Tombol media di keyboard dan Control Center macOS juga ikut berfungsi.
+
+### Changed
+- **Pemutar musik di luar halaman Musik kini berupa widget kecil, bukan bar di bawah layar.** Di komputer, lagu yang sedang diputar tampil sebagai kartu ringkas di kanan atas, tepat di bawah menu: sampul, judul, artis, posisi lagu (bisa digeser), serta tombol sebelumnya, putar/jeda, berikutnya, dan tombol × untuk menghentikan lagu. Klik sampul atau judul untuk membuka Musik Desa. Setelah 5 detik tanpa disentuh, saat halaman digulir, atau saat chat Jenna dibuka, kartu mengecil menjadi pil kecil (sampul dan animasi equalizer) supaya tidak menutupi isi halaman; arahkan atau klik pil untuk membukanya lagi. Di ponsel, kartu pemutar ada di bagian bawah menu (ikon garis tiga), dan ikon equalizer di bilah atas bisa diketuk untuk memutar atau menjeda lagu tanpa membuka menu. Bar pemutar lama dan ikon musik melayang di kiri layar dihapus, sehingga bilah kontak di detail Lowongan Kerja tidak lagi menutupi pemutar dan tombol chat Jenna tetap di posisi biasanya. Halaman Musik Desa sendiri tidak berubah.
+
 ## [0.1.351] - 2026-11-24
 ### Changed
 - **Menu Tips Keamanan digabung ke Pencegahan Kriminalitas.** Di menu Keamanan kini hanya ada "Pencegahan Kriminalitas", berisi program pencegahan (video dan halaman detail) lalu bagian baru "Tips keamanan" di bawahnya, karena keduanya bertujuan sama. Isi tidak berubah dan admin tetap mengisi di dua menu seperti sebelumnya (Pencegahan Kriminalitas dan Tips Keamanan). Alamat lama `/keamanan/tips-keamanan` otomatis dialihkan ke bagian tips di halaman Pencegahan Kriminalitas (kata kunci pencarian ikut dibawa), dan hasil pencarian tips di website juga menuju bagian itu, sehingga tautan lama tidak rusak. Kolom cari di halaman ini mencari program dan tips sekaligus, dan baru muncul bila jumlah program dan tips lebih dari 6.

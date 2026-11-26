@@ -4,7 +4,10 @@ export type KatalogRef = { id: string; nama: string };
 export type KatalogProduk = {
   id: string;
   nama: string;
-  harga: number;
+  /** null = tanpa angka: admin menyembunyikan harga (lihat _lib/harga-publik.source.ts) atau harga produk kosong. */
+  harga: number | null;
+  /** true = harga produk kosong (tidak tetap) dan tidak disembunyikan → tampil "Harga menyesuaikan". */
+  hargaMenyesuaikan?: boolean;
   satuan: string | null;
   stok: number;
   isUnggulan: boolean;
