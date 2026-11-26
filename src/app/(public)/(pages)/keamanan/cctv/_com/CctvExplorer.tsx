@@ -1,6 +1,6 @@
 'use client';
 import apb from "@/app/(public)/_com/main-page/apbdes/apbdes.module.css";
-import { LayananSearch } from "@/app/(public)/(pages)/pemerintahan/layanan/_com/LayananSearch";
+import { SearchField } from "@/app/(public)/_com/search-field/SearchField";
 import { Skeleton } from "@mantine/core";
 import { IconMapPinOff } from "@tabler/icons-react";
 import dynamic from "next/dynamic";
@@ -82,7 +82,7 @@ export function CctvExplorer({ items }: { items: readonly CctvItem[] }) {
         <div className={x.side}>
           {items.length > CCTV_SEARCH_THRESHOLD ? (
             <div className={x.search}>
-              <LayananSearch value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
+              <SearchField value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
             </div>
           ) : null}
           {shown.length === 0 ? (

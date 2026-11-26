@@ -1,8 +1,8 @@
 'use client';
-import { IconSearch } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto';
+import { SearchField } from '../search-field/SearchField';
 import { SEARCH_DEBOUNCE_MS } from './kabar-list.meta';
 import s from './kabar-list.module.css';
 
@@ -39,7 +39,6 @@ export function KabarListHeader({
   onSearch,
   searchable = true,
 }: Props) {
-  const searchId = useId();
   const [value, setValue] = useState(search);
   const [prevSearch, setPrevSearch] = useState(search);
   const timer = useRef<number | null>(null);
@@ -75,11 +74,6 @@ export function KabarListHeader({
     timer.current = window.setTimeout(() => commit(next), SEARCH_DEBOUNCE_MS);
   };
 
-  const onSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    commit(value);
-  };
-
   return (
     <header className={s.header}>
       <BackButton />
@@ -89,21 +83,15 @@ export function KabarListHeader({
           <p className={s.lead}>{lead}</p>
         </div>
         {searchable ? (
-          <form role="search" className={s.search} onSubmit={onSubmit}>
-            <label htmlFor={searchId} className={s.srOnly}>
-              {searchLabel}
-            </label>
-            <IconSearch className={s.searchIcon} size={18} stroke={1.75} aria-hidden />
-            <input
-              id={searchId}
-              type="search"
-              className={s.searchInput}
-              placeholder={searchPlaceholder}
-              value={value}
-              onChange={(event) => onChange(event.target.value)}
-              autoComplete="off"
-            />
-          </form>
+          // Enter = kirim segera; tombol "x" = cari kosong segera (tanpa menunggu jeda ketik).
+          <SearchField
+            value={value}
+            onChange={onChange}
+            label={searchLabel}
+            placeholder={searchPlaceholder}
+            onSubmit={commit}
+            onClear={() => commit('')}
+          />
         ) : null}
       </div>
       {/* Halaman tanpa kategori (Program Kesehatan) memberi `tabs=[]`: tanpa <nav> kosong & jarak sisa. */}
