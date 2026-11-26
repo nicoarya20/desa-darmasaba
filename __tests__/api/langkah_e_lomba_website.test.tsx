@@ -7,7 +7,7 @@ import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { FooterKontakDesa } from '@/app/(public)/_com/FooterKontakDesa';
-import { DaftarKontak } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/DaftarKontak';
+import { KontakPpid } from '@/app/(public)/(pages)/ppid/_com/KontakPpid';
 import {
   POSYANDU_TABS,
   POSYANDU_TABS_TAMPIL,
@@ -70,7 +70,7 @@ describe('Footer: tautan "Tim Pengelola" ke situs tim pengelola', () => {
 });
 
 describe('Kontak PPID (Daftar Informasi Publik)', () => {
-  const html = render(<DaftarKontak />);
+  const html = render(<KontakPpid />);
 
   it('memakai email & telepon resmi kantor desa, tanpa nomor WhatsApp contoh', () => {
     expect(html).toContain(KONTAK_DESA.email);

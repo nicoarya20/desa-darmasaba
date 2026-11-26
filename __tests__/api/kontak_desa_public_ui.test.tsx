@@ -5,7 +5,7 @@
 import { MantineProvider } from '@mantine/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { DaftarKontak } from '@/app/(public)/(pages)/ppid/daftar-informasi-publik/_com/DaftarKontak';
+import { KontakPpid } from '@/app/(public)/(pages)/ppid/_com/KontakPpid';
 import { FooterKontakDesa } from '@/app/(public)/_com/FooterKontakDesa';
 import { KontakDesaValue } from '@/app/(public)/_com/KontakDesaValue';
 import state from '@/app/admin/(dashboard)/_state/desa/kontakDesa';
@@ -140,18 +140,18 @@ describe('FooterKontakDesa: jam layanan opsional', () => {
 describe('kontak PPID: jam layanan opsional', () => {
   it('hanya ada bila terisi; selebihnya tidak ada label tanpa nilai', () => {
     state.findUnique.data = KONTAK;
-    expect(render(<DaftarKontak />)).not.toContain('Jam layanan');
+    expect(render(<KontakPpid />)).not.toContain('Jam layanan');
     expect(render(<KontakDesaValue field="jamLayanan" />)).toBe('');
 
     state.findUnique.data = { ...KONTAK, jamLayanan: JAM };
-    const html = render(<DaftarKontak />);
+    const html = render(<KontakPpid />);
     expect(html).toContain('Jam layanan:');
     expect(html).toContain(JAM);
     expect(render(<KontakDesaValue field="jamLayanan" />)).toBe(JAM);
   });
 
   it('memuat: baris jam layanan tidak ikut kerangka (tetap dua kerangka: email dan telepon)', () => {
-    const html = render(<DaftarKontak />);
+    const html = render(<KontakPpid />);
     expect(html).not.toContain('Jam layanan');
     expect(skeletons(html)).toBe(2);
   });
@@ -162,7 +162,7 @@ describe('KontakDesaValue & kontak PPID', () => {
     state.findUnique.data = KONTAK;
     expect(render(<KontakDesaValue field="email" />)).toBe('kontak-uji@example.com');
     expect(render(<KontakDesaValue field="telepon" />)).toBe('(0361) 8441518');
-    const html = render(<DaftarKontak />);
+    const html = render(<KontakPpid />);
     expect(html).toContain('kontak-uji@example.com');
     expect(html).toContain('(0361) 8441518');
     expect(skeletons(html)).toBe(0);
@@ -170,24 +170,24 @@ describe('KontakDesaValue & kontak PPID', () => {
 
   it('PPID: baris WhatsApp hanya ada bila terisi; tanpa nomor tidak ada label WhatsApp', () => {
     state.findUnique.data = KONTAK;
-    expect(render(<DaftarKontak />)).not.toContain('WhatsApp');
+    expect(render(<KontakPpid />)).not.toContain('WhatsApp');
     expect(render(<KontakDesaValue field="whatsapp" />)).toBe('');
 
     state.findUnique.data = { ...KONTAK, whatsapp: WA };
-    const html = render(<DaftarKontak />);
+    const html = render(<KontakPpid />);
     expect(html).toContain('WhatsApp:');
     expect(html).toContain(WA);
     expect(render(<KontakDesaValue field="whatsapp" />)).toBe(WA);
   });
 
   it('PPID memuat: baris WhatsApp tidak ikut kerangka (tetap dua kerangka: email dan telepon)', () => {
-    const html = render(<DaftarKontak />);
+    const html = render(<KontakPpid />);
     expect(html).not.toContain('WhatsApp');
     expect(skeletons(html)).toBe(2);
   });
 
   it('memuat: kerangka per nilai, tanpa nilai lama', () => {
-    const html = render(<DaftarKontak />);
+    const html = render(<KontakPpid />);
     expect(skeletons(html)).toBe(2);
     for (const lama of NILAI_LAMA) expect(html).not.toContain(lama);
   });
@@ -195,7 +195,7 @@ describe('KontakDesaValue & kontak PPID', () => {
   it('gagal dimuat: nilai kosong tanpa kerangka', () => {
     state.findUnique.error = 'HTTP error! status: 500';
     expect(render(<KontakDesaValue field="email" />)).toBe('');
-    expect(skeletons(render(<DaftarKontak />))).toBe(0);
+    expect(skeletons(render(<KontakPpid />))).toBe(0);
   });
 });
 
@@ -203,5 +203,37 @@ describe('konstanta kode', () => {
   it('KONTAK_DESA sudah dihapus; pengelola website tetap ada', () => {
     expect('KONTAK_DESA' in konstantaKontak).toBe(false);
     expect(konstantaKontak.PENGELOLA_WEBSITE.lembaga).toBeTruthy();
+  });
+});
+
+describe('KontakPpid: komponen bersama halaman PPID', () => {
+  it('judul satu sumber + baris ber-ikon email & telepon dari state', () => {
+    state.findUnique.data = KONTAK;
+    const html = render(<KontakPpid />);
+    expect(html).toMatch(/<h2 id="[^"]+"[^>]*>Kontak PPID<\/h2>/);
+    expect(html).toContain('Email: <span');
+    expect(html).toContain('>kontak-uji@example.com</span>');
+    expect(html).toContain('Telepon: <span');
+    expect(html).toContain('>(0361) 8441518</span>');
+    expect(html).toContain('tabler-icon-mail');
+    expect(html).toContain('tabler-icon-phone');
+  });
+
+  it('section diberi label oleh judulnya sendiri, id unik per pemakaian', () => {
+    state.findUnique.data = KONTAK;
+    const html = render(<><KontakPpid /><KontakPpid /></>);
+    const ids = [...html.matchAll(/<h2 id="([^"]+)"/g)].map((m) => m[1]);
+    expect(ids).toHaveLength(2);
+    expect(new Set(ids).size).toBe(2);
+    for (const id of ids) expect(html).toContain(`aria-labelledby="${id}"`);
+  });
+
+  it('WhatsApp & jam layanan terisi: baris ber-ikon ikut tampil', () => {
+    state.findUnique.data = { ...KONTAK, whatsapp: WA, jamLayanan: JAM };
+    const html = render(<KontakPpid />);
+    expect(html).toContain('tabler-icon-brand-whatsapp');
+    expect(html).toContain('tabler-icon-clock');
+    expect(html).toContain(`>${WA}</span>`);
+    expect(html).toContain(`>${JAM}</span>`);
   });
 });

@@ -1,0 +1,33 @@
+/*
+ * Kontak PPID bersama: judul + baris ber-ikon langsung di atas latar halaman (tanpa kartu).
+ * Warna = token --c-* langsung (bukan alias halaman) karena dipakai beberapa halaman PPID.
+ */
+.kontak {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.title {
+  margin: 0 0 2px;
+  color: var(--c-ink);
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--c-ink-2);
+  overflow-wrap: anywhere;
+}
+
+.value {
+  font-weight: 600;
+}
