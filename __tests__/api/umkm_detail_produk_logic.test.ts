@@ -97,6 +97,7 @@ describe('toDetailProduk', () => {
       id: 'prd-1',
       nama: 'Keripik Pisang',
       harga: 15000,
+      hargaMenyesuaikan: false,
       satuan: 'bungkus',
       isUnggulan: true,
       deskripsiHtml: '[clean]<p>Renyah</p>',

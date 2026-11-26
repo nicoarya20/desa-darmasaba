@@ -14,6 +14,8 @@ type Props = {
   count: { shown: number; total: number } | null;
   urut: KatalogUrut;
   onUrut: (urut: KatalogUrut) => void;
+  /** false = harga disembunyikan admin → Urutkan tanpa pilihan harga. */
+  denganHarga?: boolean;
   chips: readonly FilterChip[];
   activeCount: number;
   onApply: (next: KatalogParams) => void;
@@ -23,7 +25,7 @@ type Props = {
 };
 
 /** Baris alat di atas grid: jumlah hasil, pil Filter (tablet/ponsel), Urutkan, lalu chip saringan aktif. */
-export function KatalogToolbar({ tab, count, urut, onUrut, chips, activeCount, onApply, onClearAll, onOpenSaring }: Props) {
+export function KatalogToolbar({ tab, count, urut, onUrut, denganHarga = true, chips, activeCount, onApply, onClearAll, onOpenSaring }: Props) {
   return (
     <div className={s.toolbar}>
       <div className={s.toolbarRow}>
@@ -40,7 +42,7 @@ export function KatalogToolbar({ tab, count, urut, onUrut, chips, activeCount, o
               </span>
             ) : null}
           </button>
-          <KatalogUrutSelect tab={tab} value={urut} onChange={onUrut} />
+          <KatalogUrutSelect tab={tab} value={urut} onChange={onUrut} denganHarga={denganHarga} />
         </div>
       </div>
       {chips.length > 0 ? (

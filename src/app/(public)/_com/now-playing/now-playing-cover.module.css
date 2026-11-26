@@ -1,0 +1,23 @@
+/* Sampul NowPlayingCover: ukuran & radius dari kelas pemakai; ikon musik di bawah gambar sebagai cadangan. */
+.cover {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12); /* tema-tetap: cadangan sampul di atas kaca gelap Jenna yang sama di dua tema */
+  color: rgba(255, 255, 255, 0.6); /* tema-tetap: ikon cadangan di atas kaca gelap Jenna yang sama di dua tema */
+}
+
+.icon {
+  width: 45%;
+  height: 45%;
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

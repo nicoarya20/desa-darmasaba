@@ -19,7 +19,10 @@ export type DetailLinkToko = NonNullable<ComponentProps<typeof LinkTokoOnlineBut
 export type DetailProduk = {
   id: string;
   nama: string;
-  harga: number;
+  /** null = tanpa angka: admin menyembunyikan harga (lihat _lib/harga-publik.source.ts) atau harga produk kosong. */
+  harga: number | null;
+  /** true = harga produk kosong (tidak tetap) dan tidak disembunyikan → tampil "Harga menyesuaikan". */
+  hargaMenyesuaikan?: boolean;
   satuan: string | null;
   isUnggulan: boolean;
   /** Sudah lewat `sanitizeRichText` (src/lib/rich-text.ts); '' bila kosong. */
@@ -35,6 +38,9 @@ export type DetailProduk = {
   /** HANYA untuk alur pesanan website saat `UMKM_PESANAN_TERCATAT` true; tidak pernah ditampilkan. */
   stok: number;
 };
+
+/** Produk yang harganya tampil: syarat alur pesanan website (pesan WhatsApp memuat harga & total). */
+export type DetailProdukBerharga = DetailProduk & { harga: number };
 
 export type DetailProdukState =
   | { status: 'loading' }

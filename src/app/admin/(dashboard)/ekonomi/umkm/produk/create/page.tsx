@@ -26,6 +26,7 @@ import umkmState from '../../../../_state/ekonomi/umkm/umkm';
 import CreateEditor from '@/app/admin/(dashboard)/_com/createEditor';
 import ApiFetch from '@/lib/api-fetch';
 import { LinkTokoOnlineField } from '../_com/LinkTokoOnlineField';
+import { HARGA_INPUT_KETERANGAN, hargaDariInput } from '@/lib/umkm/harga-produk';
 
 export default function CreateProdukUmkm() {
   const router = useRouter();
@@ -167,13 +168,13 @@ export default function CreateProdukUmkm() {
           <Group grow>
             <NumberInput
               label="Harga Produk (Rp)"
-              placeholder="0"
-              required
+              description={HARGA_INPUT_KETERANGAN}
+              placeholder="Kosongkan bila harga tidak tetap"
               min={0}
               thousandSeparator="."
               decimalSeparator=","
-              value={state.create.form.harga}
-              onChange={(val) => (state.create.form.harga = Number(val))}
+              value={state.create.form.harga ?? ''}
+              onChange={(val) => (state.create.form.harga = hargaDariInput(val))}
             />
             <NumberInput
               label="Stok Awal"

@@ -1,4 +1,4 @@
-import { sortProduk } from '../katalog/katalog-filter.logic';
+import { isUrutHarga, sortProduk } from '../katalog/katalog-filter.logic';
 import type { KatalogUrut } from '../katalog/katalog-filter.meta';
 import type { KatalogProduk } from '../katalog/katalog.types';
 
@@ -8,9 +8,12 @@ export const TOKO_URUT_DEFAULT: KatalogUrut = 'terbaru';
 /** Kontrol Urutkan baru berguna mulai 2 produk. */
 export const TOKO_URUT_MIN_PRODUK = 2;
 
-export type TokoProdukView = { items: KatalogProduk[]; showUrut: boolean };
+/** `urut` = urutan yang benar-benar dipakai; `denganHarga` false (harga disembunyikan) → tanpa urutan harga. */
+export type TokoProdukView = { items: KatalogProduk[]; showUrut: boolean; urut: KatalogUrut; denganHarga: boolean };
 
 /** Susun daftar produk toko: urutkan dengan logika katalog dan tentukan apakah kontrol Urutkan tampil. */
 export function buildTokoProdukView(produk: readonly KatalogProduk[], urut: KatalogUrut): TokoProdukView {
-  return { items: sortProduk(produk, urut), showUrut: produk.length >= TOKO_URUT_MIN_PRODUK };
+  const denganHarga = produk.some((p) => p.harga !== null);
+  const dipakai = !denganHarga && isUrutHarga(urut) ? TOKO_URUT_DEFAULT : urut;
+  return { items: sortProduk(produk, dipakai), showUrut: produk.length >= TOKO_URUT_MIN_PRODUK, urut: dipakai, denganHarga };
 }

@@ -13,6 +13,7 @@ import { inovasiKategoriLabel } from "@/lib/inovasi-teknologi/kategori";
 import { jadwalToText } from "@/lib/jadwal-pelayanan";
 import { LABEL_PUSTU } from "@/lib/pustu/pustu.label";
 import { bacaJadwal, bacaLayananUnggulan } from "@/lib/pustu/pustu.validation";
+import { HARGA_MENYESUAIKAN } from "@/lib/umkm/harga-produk";
 import { htmlToKnowledgeText } from "./html";
 
 // Registry allowlist pengetahuan Jenna — DEFAULT DENY: hanya model + field di sini yang boleh
@@ -520,7 +521,7 @@ export const KNOWLEDGE_SOURCES: readonly KnowledgeSource[] = [
     select: { id: true, nama: true, harga: true, satuan: true, deskripsi: true, createdAt: true, umkm: { select: { nama: true } } },
     orderBy: [{ createdAt: "desc" }], take: 20, dateField: "createdAt",
     fields: [
-      ["Produk", get("nama")], ["UMKM", rel("umkm", "nama")], ["Harga (Rp)", get("harga")],
+      ["Produk", get("nama")], ["UMKM", rel("umkm", "nama")], ["Harga (Rp)", (row) => row.harga ?? HARGA_MENYESUAIKAN],
       ["Satuan", get("satuan")], ["Deskripsi", html("deskripsi")],
     ],
     searchFields: ["nama", "deskripsi"], href: (row) => `/ekonomi/umkm/produk/${idOf(row)}`, menuHref: "/ekonomi/umkm",

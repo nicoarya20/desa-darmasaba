@@ -9,7 +9,8 @@ type ApiRef = { id: string; nama: string } | null | undefined;
 export type ProdukDetailApiItem = {
   id: string;
   nama: string;
-  harga: number;
+  /** null = harga tidak tetap (opsional sejak v0.1.355). */
+  harga: number | null;
   satuan?: string | null;
   deskripsi?: string | null;
   stok: number;
@@ -58,7 +59,8 @@ export function toDetailProduk(item: ProdukDetailApiItem, sanitize: (html: strin
   return {
     id: item.id,
     nama: item.nama,
-    harga: item.harga,
+    harga: item.harga ?? null,
+    hargaMenyesuaikan: item.harga == null,
     satuan: clean(item.satuan),
     isUnggulan: item.isUnggulan === true,
     deskripsiHtml: item.deskripsi ? sanitize(item.deskripsi) : '',

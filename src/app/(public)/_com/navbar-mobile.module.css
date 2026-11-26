@@ -37,6 +37,28 @@
   gap: 4px;
 }
 
+/* Penanda lagu diputar (NavbarMobileMusic): equalizer bergerak saat main, ketuk = putar/jeda. Target 44px. */
+.musicToggle {
+  --eq-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--nav-accent);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.musicToggle:focus-visible {
+  outline: 2px solid var(--nav-accent);
+  outline-offset: -4px;
+}
+
 .logo {
   display: block;
   width: 32px;
@@ -64,7 +86,15 @@
 }
 
 .level {
-  padding: 12px 32px 48px;
+  /* Bawah: ruang home indicator iPhone, supaya kartu pemutar di ujung panel tidak tertutup saat digulir. */
+  padding: 12px 32px calc(48px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Kartu Now Playing di bawah menu utama (NavbarMenuPlayer); latar kaca dibawa kartunya sendiri.
+   Lebar dibatasi supaya di tablet (768) kontrol tidak terpencar jauh dari sampul; rata kiri sejajar menu. */
+.player {
+  max-width: 420px;
+  margin-top: 28px;
 }
 
 .list {

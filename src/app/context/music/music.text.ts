@@ -1,5 +1,5 @@
 /**
- * Teks toast mesin pemutar Musik Desa (dipakai bar pemutar aplikasi musik dan FixedPlayerBar situs).
+ * Teks toast mesin pemutar Musik Desa (dipakai bar pemutar aplikasi musik dan kartu Now Playing situs).
  * Disimpan di samping mesin, bukan di folder rute musik, karena mesin dipasang global untuk semua halaman publik.
  */
 export const MUSIC_TEXT = {

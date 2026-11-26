@@ -7,7 +7,8 @@ type ApiRef = { id: string; nama: string } | null | undefined;
 export type ProdukApiItem = {
   id: string;
   nama: string;
-  harga: number;
+  /** null = harga tidak tetap (opsional sejak v0.1.355). */
+  harga: number | null;
   satuan?: string | null;
   stok: number;
   isUnggulan?: boolean | null;
@@ -38,7 +39,8 @@ export function toKatalogProduk(item: ProdukApiItem): KatalogProduk {
   return {
     id: item.id,
     nama: item.nama,
-    harga: item.harga,
+    harga: item.harga ?? null,
+    hargaMenyesuaikan: item.harga == null,
     satuan: item.satuan ?? null,
     stok: item.stok,
     isUnggulan: item.isUnggulan === true,

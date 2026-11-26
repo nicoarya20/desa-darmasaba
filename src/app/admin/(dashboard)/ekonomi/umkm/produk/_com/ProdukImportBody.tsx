@@ -6,8 +6,8 @@ import { formatRupiah, jumlahLink } from '../_lib/produk-impor.logic';
 const KONFIG: KonfigImporBody<BarisProduk> = {
   petunjuk: (
     <>
-      Baris pertama adalah header. Kolom wajib: <b>nama</b>, <b>umkm</b>, <b>kategori</b>, <b>harga</b>. Kolom opsional:{' '}
-      <b>pemilik</b>, <b>stok</b>, <b>satuan</b>, <b>deskripsi</b>, <b>unggulan</b> (ya/tidak), dan link toko online (
+      Baris pertama adalah header. Kolom wajib: <b>nama</b>, <b>umkm</b>, <b>kategori</b>. Kolom opsional:{' '}
+      <b>harga</b> (kosongkan bila harga tidak tetap), <b>pemilik</b>, <b>stok</b>, <b>satuan</b>, <b>deskripsi</b>, <b>unggulan</b> (ya/tidak), dan link toko online (
       <b>link_shopee</b>, <b>link_tokopedia</b>, <b>link_tiktok_shop</b>, <b>link_blibli</b>, <b>link_lazada</b>,{' '}
       <b>link_lainnya</b>). Nama UMKM dan kategori harus sudah ada; kolom pemilik membedakan UMKM yang namanya sama. Harga dan
       stok berupa angka rupiah tanpa desimal (boleh &quot;15.000&quot; atau &quot;Rp 15.000&quot;). Excel: format kolom
@@ -25,7 +25,7 @@ const KONFIG: KonfigImporBody<BarisProduk> = {
     { judul: 'Nama', sel: (r) => r.nama },
     { judul: 'UMKM', sel: (r) => r.umkm },
     { judul: 'Kategori', sel: (r) => r.kategori },
-    { judul: 'Harga', sel: (r) => formatRupiah(r.harga) },
+    { judul: 'Harga', sel: (r) => (r.harga === undefined ? '-' : formatRupiah(r.harga)) },
     { judul: 'Stok', sel: (r) => r.stok ?? 0 },
     { judul: 'Link', sel: (r) => (jumlahLink(r.link) > 0 ? `${jumlahLink(r.link)} link` : '-') },
   ],

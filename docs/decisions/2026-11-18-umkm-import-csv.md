@@ -97,7 +97,7 @@ mencatat yang berbeda.
 
 ## Keputusan
 - **Kolom.** Wajib: `nama` ("nama produk"), `umkm` ("nama umkm", "toko", "nama toko"), `kategori` ("kategori produk"),
-  `harga`. Opsional: `pemilik` ("pemilik umkm"), `stok` (kosong = 0), `satuan`, `deskripsi`, `unggulan` ("produk
+  `harga` (opsional sejak v0.1.355, lihat bagian akhir). Opsional: `pemilik` ("pemilik umkm"), `stok` (kosong = 0), `satuan`, `deskripsi`, `unggulan` ("produk
   unggulan"; ya/tidak, true/false, 1/0, y/n, tak peka huruf besar/kecil), dan satu kolom link per platform:
   `link_shopee`, `link_tokopedia`, `link_tiktok_shop`, `link_blibli`, `link_lazada`, `link_lainnya` (alias: nama
   platform saja, "link <platform>", "tiktok", "toko online lainnya"). Gambar, rating, dan `isActive` tidak diimpor
@@ -135,7 +135,7 @@ mencatat yang berbeda.
 
 ## Kontrak API
 `POST /api/ekonomi/umkm/produk/import` (aditif; admin role 0-4 lewat `guardAdmin`; bukan path POST publik).
-Body: `{ mode: "lewati" | "perbarui", dryRun?: boolean, rows: [{ nama, umkm, kategori, harga: number, pemilik?, stok?: number, satuan?, deskripsi?, unggulan?: boolean, link?: { shopee?, tokopedia?, tiktok_shop?, blibli?, lazada?, lainnya? } }] }`,
+Body: `{ mode: "lewati" | "perbarui", dryRun?: boolean, rows: [{ nama, umkm, kategori, harga?: number, pemilik?, stok?: number, satuan?, deskripsi?, unggulan?: boolean, link?: { shopee?, tokopedia?, tiktok_shop?, blibli?, lazada?, lainnya? } }] }`,
 `rows` 1..1000; `umkm`/`kategori` dikirim sebagai **nama**, `link` berisi URL per platform (kunci = kode platform huruf
 kecil). Bentuk respons sama dengan impor UMKM; `data` dry-run mendapat field aditif `linkDiganti` (jumlah produk yang
 daftar link tokonya diganti). Pesan sukses `N produk ditambah, N diperbarui, N dilewati`; 500: `Gagal mengimpor data produk`.
@@ -157,3 +157,10 @@ produk dimuat ulang (pencarian dipertahankan).
   diberi peringatan di pratinjau, tetapi tidak ada daftar per produk.
 - **Gambar tidak diimpor**; produk hasil impor tampil tanpa foto sampai diunggah lewat Ubah Produk.
 - **Belum diuji di browser sungguhan**: unduh template, pemilih berkas, dan berkas Excel asli.
+
+## Perubahan 2026-11-26 (v0.1.355): harga opsional
+
+Sebagian produk desa harganya tidak tetap, jadi `PasarDesa.harga` kini nullable dan kolom/sel `harga` di impor CSV
+**opsional** (bukan lagi kolom wajib header). Sel kosong pada produk baru = tanpa harga ("Harga menyesuaikan" di
+publik); pada mode `perbarui` sel kosong tetap tidak menimpa harga lama, jadi mengosongkan harga hanya lewat form Ubah.
+Peringatan "harga < 100" hanya untuk sel yang diisi.

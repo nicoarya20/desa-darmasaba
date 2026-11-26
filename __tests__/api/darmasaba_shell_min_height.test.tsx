@@ -10,7 +10,7 @@ vi.mock('next/navigation', () => ({ usePathname: () => pathname }));
 vi.mock('next/dynamic', () => ({ default: () => () => null }));
 vi.mock('@/app/(public)/_com/Navbar', () => ({ Navbar: () => <nav /> }));
 vi.mock('@/app/(public)/_com/Footer', () => ({ default: () => <footer data-test="footer" /> }));
-vi.mock('@/app/(public)/_com/FixedPlayerBar', () => ({ default: () => null }));
+vi.mock('@/app/(public)/_com/now-playing/NowPlayingWidget', () => ({ NowPlayingWidget: () => null }));
 vi.mock('@/app/(public)/_com/ImageErrorRetryMount', () => ({ ImageErrorRetry: () => null }));
 import { DarmasabaShell } from '@/app/(public)/_com/DarmasabaShell';
 

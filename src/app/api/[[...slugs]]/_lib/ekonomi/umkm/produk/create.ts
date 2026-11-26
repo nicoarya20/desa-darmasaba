@@ -13,7 +13,7 @@ async function produkUmkmCreate(context: Context) {
     const data = await prisma.pasarDesa.create({
       data: {
         nama: body.nama,
-        harga: body.harga,
+        harga: body.harga ?? null,
         stok: body.stok ?? 0,
         satuan: body.satuan || null,
         deskripsi: body.deskripsi,

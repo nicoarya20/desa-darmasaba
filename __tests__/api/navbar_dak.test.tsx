@@ -16,6 +16,8 @@ vi.mock('next-view-transitions', () => ({
 }));
 // Panel pencarian (GlobalSearch + fetch) tidak relevan untuk menu bar; diganti stub.
 vi.mock('@/app/(public)/_com/NavBarSearch', () => ({ NavbarSearch: () => null }));
+// Navbar ponsel membaca useMusic() (penanda & kartu pemutar); tanpa lagu keduanya tidak dirender.
+vi.mock('@/app/context/MusicContext', () => ({ useMusic: () => ({ currentSong: null, isPlaying: false }) }));
 
 import navbarListMenu from '@/con/navbar-list-menu';
 import { NavbarMainMenu } from '@/app/(public)/_com/NavbarMainMenu';
