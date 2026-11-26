@@ -66,3 +66,18 @@ export function activeSlug(pathname: string): string {
 export function kategoriLabel(slug: string, names: readonly string[]): string {
   return names.find((name) => kategoriSlug(name) === slug) ?? slug;
 }
+
+/**
+ * `true` bila `href` hanya mengganti query/hash dari `pathname` (mis. pil `?kategori=`/`?tahun=`); href relatif
+ * diselesaikan terhadap `pathname`. Pil seperti itu tidak perlu animasi pindah halaman; `pathname` kosong → `false`.
+ */
+export function isQueryOnlyHref(pathname: string | null | undefined, href: string): boolean {
+  if (!pathname) return false;
+  const base = new URL(pathname, "http://kabar.local");
+  const target = new URL(href, base);
+  return target.origin === base.origin && trimSlash(target.pathname) === trimSlash(base.pathname);
+}
+
+function trimSlash(path: string): string {
+  return path.length > 1 ? path.replace(/\/+$/, "") : path;
+}

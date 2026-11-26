@@ -146,7 +146,7 @@ describe('Struktur PPID — halaman', () => {
 
   it('kepala halaman: h1, kotak cari berlabel, tanpa kontrol zoom/fullscreen lama', () => {
     expect(page).toMatch(/<h1[^>]*>Struktur Organisasi PPID<\/h1>/);
-    expect(page).toContain('aria-label="Cari nama atau jabatan"');
+    expect(page).toContain('>Cari nama atau jabatan</label>');
     expect(page).not.toMatch(/Zoom|Fullscreen/);
   });
 

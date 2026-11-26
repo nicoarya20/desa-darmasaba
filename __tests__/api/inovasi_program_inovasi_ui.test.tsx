@@ -26,7 +26,7 @@ const render = (node: React.ReactElement) =>
 const api = (id: string, name: string, logo: string | null = `/api/img/${id}`) => ({
   id, name, description: `<p>Tentang ${name}</p>`, image: logo ? { link: logo } : null,
 });
-const ready = (list: ReturnType<typeof api>[]) => ({ status: 'ready' as const, items: list.map(toProgramInovasiTile) });
+const ready = (list: ReturnType<typeof api>[]) => ({ status: 'ready' as const, items: list.map(toProgramInovasiTile), refreshing: false });
 const body = (state: Parameters<typeof ProgramInovasiBody>[0]['state'], search = '', page = 1) =>
   render(<ProgramInovasiBody state={state} search={search} page={page} onPage={() => {}} />);
 

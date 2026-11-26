@@ -2,6 +2,7 @@
 'use client';
 
 import { imageLoadingAttrs } from '@/app/(public)/_com/image-loading.logic';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import stateGallery from '@/app/admin/(dashboard)/_state/desa/gallery';
 import {
   AspectRatio,
@@ -10,17 +11,16 @@ import {
   Grid,
   Image,
   Modal,
-  Pagination,
   Paper,
   Skeleton,
   Stack,
   Text,
-  Title,
 } from '@mantine/core';
 import { IconPhoto } from '@tabler/icons-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
+import { GALERY_TEXT } from '../_lib/galery.text';
 
 // Rasio tampilan thumbnail galeri: semua foto dipotong (cover) ke rasio yang
 // sama agar kartu seragam apa pun orientasi foto aslinya.
@@ -141,11 +141,6 @@ function FotoCard({ item, aboveFold }: { item: any; aboveFold: boolean }) {
 export default function GaleriFotoUser() {
   return (
     <Box py="xl" px={{ base: 'md', md: 'lg' }}>
-      {/* Header */}
-      <Title order={2} c="var(--c-brand)" mb="lg" ta="center">
-        Galeri Foto Desa Darmasaba
-      </Title>
-
       {/* Daftar Foto */}
       <FotoList />
     </Box>
@@ -217,20 +212,16 @@ function FotoList() {
         ))}
       </Grid>
 
-      {/* Pagination */}
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => {
-            const params = new URLSearchParams(window.location.search);
-            loadData(newPage, params.get('search') || '');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          total={totalPages}
-          color="blue"
-          radius="md"
-        />
-      </Center>
+      <KabarListPagination
+        total={totalPages}
+        value={page}
+        label={GALERY_TEXT.fotoPaginationLabel}
+        onChange={(newPage) => {
+          const params = new URLSearchParams(window.location.search);
+          loadData(newPage, params.get('search') || '');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
     </Stack>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { activeKategori, kategoriTerlihat, pengumumanListHref, samaKategori } from './pengumuman-list.logic';
@@ -9,7 +9,7 @@ import { loadPengumumanKategori, usePengumumanKategori } from './use-pengumuman-
 
 /** Kepala halaman daftar pengumuman: pil "Semua" + kategori yang berisi; kategori aktif dari segmen URL. */
 export function PengumumanHeader() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const kategoriList = usePengumumanKategori();
@@ -40,7 +40,7 @@ export function PengumumanHeader() {
       kategoriLabel={PENGUMUMAN_TEXT.kategoriLabel}
       tabs={tabs}
       search={search}
-      onSearch={(next) => router.replace(pengumumanListHref(active, { search: next }))}
+      onSearch={(next) => nav.replaceQuery(pengumumanListHref(active, { search: next }))}
     />
   );
 }

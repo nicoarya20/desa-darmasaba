@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import {
   isAdminRole,
+  isChildActive,
   isMenuActive,
   isPathActive,
 } from '@/app/(public)/_com/navbar-menu.logic';
@@ -42,6 +43,39 @@ describe('isMenuActive', () => {
 
   it('tidak aktif di halaman domain lain', () => {
     expect(isMenuActive(PPID, '/pemerintahan/profil')).toBe(false);
+  });
+});
+
+describe('activePrefix submenu Pemerintahan (halaman detail tetap menyorot menu)', () => {
+  const pemerintahan = navbarListMenu.find((m) => m.name === 'Pemerintahan')!;
+  const child = (name: string) => pemerintahan.children!.find((c) => c.name === name)!;
+  const activeChildren = (pathname: string) =>
+    pemerintahan.children!.filter((c) => isChildActive(pathname, c)).map((c) => c.name);
+
+  it('detail berita: Pemerintahan aktif & hanya submenu Berita yang aktif', () => {
+    expect(isMenuActive(pemerintahan, '/pemerintahan/berita/umum/abc')).toBe(true);
+    expect(activeChildren('/pemerintahan/berita/umum/abc')).toEqual(['Berita']);
+  });
+
+  it('galeri video: submenu Galeri aktif walau href-nya tab foto', () => {
+    expect(child('Galeri').href).toBe('/pemerintahan/galery/foto');
+    expect(isMenuActive(pemerintahan, '/pemerintahan/galery/video')).toBe(true);
+    expect(activeChildren('/pemerintahan/galery/video')).toEqual(['Galeri']);
+  });
+
+  it('detail kegiatan (juga tujuan detail Monev): submenu Kegiatan Desa aktif', () => {
+    expect(isMenuActive(pemerintahan, '/pemerintahan/kegiatan-desa/x/y')).toBe(true);
+    expect(activeChildren('/pemerintahan/kegiatan-desa/pembangunan/abc')).toEqual(['Kegiatan Desa']);
+  });
+
+  it('prefix dicocokkan per segmen path, bukan prefix string', () => {
+    expect(isChildActive('/pemerintahan/beritaX', child('Berita'))).toBe(false);
+    expect(isMenuActive(pemerintahan, '/pemerintahan/beritaX')).toBe(false);
+  });
+
+  it('tanpa activePrefix tetap memakai href', () => {
+    expect(isChildActive('/ppid/struktur-ppid/abc', PPID.children![1])).toBe(true);
+    expect(isChildActive('/ppid/profil-ppid', PPID.children![1])).toBe(false);
   });
 });
 

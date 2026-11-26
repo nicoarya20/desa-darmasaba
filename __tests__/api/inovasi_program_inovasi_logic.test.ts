@@ -20,6 +20,7 @@ import {
 import OldRoute from '@/app/(public)/(tambahan)/program-inovasi/[id]/page';
 import { isKnownMenuKey, menuVisibilityGroups } from '@/app/(public)/_com/menu-visibility.logic';
 import navbarListMenu from '@/con/navbar-list-menu';
+import type { MenuItem } from '../../types/menu-item';
 import type { ProgramInovasiPublik } from '@/lib/program-inovasi.server';
 import { sanitizeArticleHtml } from '@/lib/rich-text-server';
 
@@ -126,7 +127,8 @@ describe('submenu navbar & visibilitas', () => {
   it('Inovasi memuat "Program Inovasi" sebagai submenu pertama', () => {
     const inovasi = navbarListMenu.find((m) => m.name === 'Inovasi');
     expect(inovasi?.children?.[0]).toMatchObject({ name: 'Program Inovasi', href: '/inovasi/program-inovasi' });
-    expect(inovasi?.children?.[0].hidden).toBeFalsy();
+    const first: MenuItem | undefined = inovasi?.children?.[0];
+    expect(first?.hidden).toBeFalsy();
   });
 
   it('terdaftar di Pengaturan › Visibilitas Menu (menuKey = href)', () => {

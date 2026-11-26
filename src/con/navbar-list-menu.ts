@@ -64,7 +64,8 @@ const navbarListMenu = [
             {
                 id: "2.3",
                 name: "Berita",
-                href: "/pemerintahan/berita/semua"
+                href: "/pemerintahan/berita/semua",
+                activePrefix: "/pemerintahan/berita"
             },
             {
                 id: "2.4",
@@ -73,8 +74,9 @@ const navbarListMenu = [
             },
             {
                 id: "2.5",
-                name: "Gallery",
-                href: "/pemerintahan/galery/foto"
+                name: "Galeri",
+                href: "/pemerintahan/galery/foto",
+                activePrefix: "/pemerintahan/galery"
             },
             {
                 id: "2.6",
@@ -109,7 +111,8 @@ const navbarListMenu = [
             {
                 id: "2.8",
                 name: "Kegiatan Desa",
-                href: "/pemerintahan/kegiatan-desa/semua"
+                href: "/pemerintahan/kegiatan-desa/semua",
+                activePrefix: "/pemerintahan/kegiatan-desa"
             },
             {
                 id: "2.9",
@@ -408,7 +411,7 @@ const navbarListMenu = [
         children: [
             {
                 id: "11.1",
-                name: "Desa Anti Korupsi",
+                name: "Desa Antikorupsi",
                 href: "/desa-anti-korupsi"
             }
         ]

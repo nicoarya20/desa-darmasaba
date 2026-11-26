@@ -4,7 +4,8 @@ import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import s from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import { useKabarPage } from '@/app/(public)/_com/kabar-list/use-kabar-page';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { useTransitionRouter } from 'next-view-transitions';
+import { ListRefreshRegion } from '@/app/(public)/_com/kabar-list/ListRefreshRegion';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { PengumumanRows } from './PengumumanRows';
 import { activeKategori, labelKategori, pengumumanListHref } from './pengumuman-list.logic';
@@ -17,7 +18,7 @@ const TITLE_ID = 'pengumuman-list-title';
 
 /** Daftar pengumuman satu halaman (kategori dari URL, `?search`, `?page`): panel baris, lalu paginasi. */
 export function PengumumanList() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const kategoriList = usePengumumanKategori();
@@ -25,7 +26,7 @@ export function PengumumanList() {
   const kategori = activeKategori(pathname);
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
-  const { items, totalPages, loading, failed } = useKabarPage(
+  const { items, totalPages, loading, refreshing, failed } = useKabarPage(
     loadPengumumanPage,
     { page, limit: PENGUMUMAN_PAGE_LIMIT, search, kategori },
     'pengumuman',
@@ -48,20 +49,22 @@ export function PengumumanList() {
       {empty ? (
         <p className={kabar.empty}>{emptyText}</p>
       ) : (
-        <PengumumanRows
-          items={items}
-          loading={loading}
-          placeholderRows={PENGUMUMAN_PAGE_LIMIT}
-          showKategori={kategori === ''}
-          loadingLabel={PENGUMUMAN_TEXT.loading}
-        />
+        <ListRefreshRegion refreshing={refreshing}>
+          <PengumumanRows
+            items={items}
+            loading={loading}
+            placeholderRows={PENGUMUMAN_PAGE_LIMIT}
+            showKategori={kategori === ''}
+            loadingLabel={PENGUMUMAN_TEXT.loading}
+          />
+        </ListRefreshRegion>
       )}
       {!empty ? (
         <KabarListPagination
           total={totalPages}
           value={page}
           label={PENGUMUMAN_TEXT.paginationLabel}
-          onChange={(next) => router.push(pengumumanListHref(kategori, { search, page: next }))}
+          onChange={(next) => nav.pushPage(pengumumanListHref(kategori, { search, page: next }), TITLE_ID)}
         />
       ) : null}
     </section>

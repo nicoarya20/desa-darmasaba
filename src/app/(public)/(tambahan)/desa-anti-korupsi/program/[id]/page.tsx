@@ -47,7 +47,7 @@ function ProgramContent() {
           Program tidak ditemukan
         </Text>
         <Button component={Link} href="/desa-anti-korupsi" variant="light" leftSection={<IconArrowLeft size={16} />}>
-          Kembali ke Desa Anti Korupsi
+          Kembali ke Desa Antikorupsi
         </Button>
       </Stack>
     );

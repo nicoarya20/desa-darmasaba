@@ -1,7 +1,8 @@
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
+import { ListRefreshRegion } from '@/app/(public)/_com/kabar-list/ListRefreshRegion';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { ProdukHukumTable } from './ProdukHukumTable';
-import { produkHukumEmptyMessage, type ProdukHukumFilter } from './produk-hukum.logic';
+import { PRODUK_HUKUM_LIST_ID, produkHukumEmptyMessage, type ProdukHukumFilter } from './produk-hukum.logic';
 import { PRODUK_HUKUM_TEXT as T } from './produk-hukum.text';
 import s from './produk-hukum.module.css';
 import type { ProdukHukumListState } from './use-produk-hukum';
@@ -34,8 +35,10 @@ export function ProdukHukumBody({ state, filter, limit, onPage }: Props) {
     return <p className={kabar.empty}>{produkHukumEmptyMessage(filter)}</p>;
   }
   return (
-    <div className={s.tableWrap}>
-      <ProdukHukumTable items={state.items} page={filter.page} limit={limit} />
+    <div id={PRODUK_HUKUM_LIST_ID} className={s.tableWrap}>
+      <ListRefreshRegion refreshing={state.refreshing}>
+        <ProdukHukumTable items={state.items} page={state.page} limit={limit} />
+      </ListRefreshRegion>
       <KabarListPagination total={state.totalPages} value={filter.page} label={T.paginationLabel} onChange={onPage} />
     </div>
   );

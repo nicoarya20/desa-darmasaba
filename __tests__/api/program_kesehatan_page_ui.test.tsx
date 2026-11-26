@@ -47,7 +47,7 @@ const gizi = {
   image: null,
 };
 
-const ready = (items: unknown[]) => ({ status: 'ready' as const, kegiatan: toKegiatanList(items as never) });
+const ready = (items: unknown[]) => ({ status: 'ready' as const, kegiatan: toKegiatanList(items as never), refreshing: false });
 const body = (state: Parameters<typeof ProgramKesehatanBody>[0]['state'], search = '', page = 1) =>
   render(<ProgramKesehatanBody state={state} search={search} page={page} onPage={() => {}} />);
 
@@ -86,6 +86,13 @@ describe('ProgramKesehatanBody', () => {
     const html = body({ status: 'loading' });
     expect(html).toContain('aria-busy="true"');
     expect(html).toContain('aria-label="Memuat program kesehatan"');
+  });
+
+  it('kata kunci baru sedang dimuat → kartu lama tetap tampil di wadah aria-busy, bukan kerangka', () => {
+    const html = body({ ...ready([kegiatan(1)]), refreshing: true }, 'posyandu');
+    expect(html).toMatch(/<div class="[^"]+" aria-busy="true">/);
+    expect(html).toContain('Kegiatan 1');
+    expect(html).not.toContain('aria-label="Memuat program kesehatan"');
   });
 });
 

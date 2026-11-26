@@ -30,7 +30,7 @@ const api = (i: number, linkVideo = `https://www.youtube.com/embed/RJOv2S0LhJ${i
   linkVideo,
   createdAt: `2026-07-${String(28 - i).padStart(2, '0')}T07:54:34.161Z`,
 });
-const ready = (list: ReturnType<typeof api>[]) => ({ status: 'ready' as const, items: list.map(toPencegahanItem) });
+const ready = (list: ReturnType<typeof api>[]) => ({ status: 'ready' as const, items: list.map(toPencegahanItem), refreshing: false });
 const body = (state: Parameters<typeof PencegahanBody>[0]['state'], search = '', page = 1) =>
   render(<PencegahanBody state={state} search={search} page={page} onPage={() => {}} />);
 

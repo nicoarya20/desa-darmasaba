@@ -11,7 +11,7 @@ vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
   useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn(), replace: vi.fn() }),
 }));
-vi.mock('next/navigation', () => ({ useParams: () => ({ id: 'b1' }) }));
+vi.mock('next/navigation', () => ({ useParams: () => ({ id: 'b1' }), usePathname: () => '/ekonomi/bumdes/b1' }));
 // Pemuat hanya dipanggil di effect (tidak jalan di SSR); ApiFetch tidak boleh tersentuh.
 vi.mock('@/lib/api-fetch', () => ({ default: {} }));
 

@@ -2,10 +2,11 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { ListRefreshRegion } from '@/app/(public)/_com/kabar-list/ListRefreshRegion';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
-import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { laporanListHref } from './laporan.logic';
@@ -23,7 +24,7 @@ const LIST_TITLE_ID = 'laporan-list-title';
  * tombol Tambah Laporan (modal formulir), baris laporan (`?page=`), paginasi bila > 1 halaman.
  */
 export function LaporanPublikPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -41,14 +42,14 @@ export function LaporanPublikPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(laporanListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(laporanListHref({ search: next }))}
       />
       <LaporanListBody
         state={state}
         search={search}
         page={page}
         onAdd={open}
-        onPage={(next) => router.push(laporanListHref({ search, page: next }))}
+        onPage={(next) => nav.pushPage(laporanListHref({ search, page: next }), LIST_TITLE_ID)}
       />
       <LaporanForm opened={opened} onClose={close} onSubmitted={() => setReloadToken((n) => n + 1)} />
     </div>
@@ -82,7 +83,9 @@ export function LaporanListBody({ state, search, page, onAdd, onPage }: BodyProp
       {empty ? (
         <p className={kabar.empty}>{emptyText}</p>
       ) : (
-        <LaporanRows items={state.items} loading={state.loading} placeholderRows={LAPORAN_PAGE_LIMIT} />
+        <ListRefreshRegion refreshing={state.refreshing}>
+          <LaporanRows items={state.items} loading={state.loading} placeholderRows={LAPORAN_PAGE_LIMIT} />
+        </ListRefreshRegion>
       )}
       {!empty ? <KabarListPagination total={state.totalPages} value={page} label={T.paginationLabel} onChange={onPage} /> : null}
     </section>

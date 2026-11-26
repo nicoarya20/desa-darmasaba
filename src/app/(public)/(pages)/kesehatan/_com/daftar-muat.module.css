@@ -1,0 +1,14 @@
+/* Daftar Kesehatan yang sedang dimuat ulang (cari/paging): daftar lama tetap tampil, diredupkan ringan. */
+.list {
+  transition: opacity 200ms ease;
+}
+
+.list[aria-busy="true"] {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list {
+    transition: none;
+  }
+}

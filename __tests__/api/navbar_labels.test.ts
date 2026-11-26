@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import navbarListMenu from '@/con/navbar-list-menu';
+import type { MenuItem } from '../../types/menu-item';
 import { DEFAULT_SEARCH_MENUS, flattenMenu } from '@/app/(public)/_com/searchMenu';
 import { desaMenu, ekonomiMenu } from '@/app/admin/_com/nav/domains';
 
@@ -122,7 +123,7 @@ describe('submenu Arah Kebijakan Pembangunan Desa & Produk Hukum', () => {
     const names = (pemerintahan?.children ?? []).map((c) => c.name);
     const i = names.indexOf('Layanan');
     expect(names.slice(i + 1, i + 3)).toEqual(['Arah Kebijakan Pembangunan Desa', 'Produk Hukum']);
-    const baru = (pemerintahan?.children ?? []).slice(i + 1, i + 3);
+    const baru: MenuItem[] = (pemerintahan?.children ?? []).slice(i + 1, i + 3);
     expect(baru.map((c) => c.href)).toEqual([
       '/pemerintahan/arah-kebijakan-pembangunan-desa',
       '/pemerintahan/produk-hukum',

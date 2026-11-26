@@ -6,7 +6,8 @@ import { useKabarPage, type KabarPageState } from '@/app/(public)/_com/kabar-lis
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { INOVASI_KATEGORI_LABEL } from '@/lib/inovasi-teknologi/kategori';
-import { useTransitionRouter } from 'next-view-transitions';
+import { ListRefreshRegion } from '@/app/(public)/_com/kabar-list/ListRefreshRegion';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { inovasiListHref, inovasiTabs, parseInovasiParams, type InovasiParams } from './inovasi.logic';
 import { INOVASI_PAGE_LIMIT } from './inovasi.meta';
@@ -20,7 +21,7 @@ const TITLE_ID = 'inovasi-list-title';
  * Berita berpaginasi server (`?page=`). Gabungan halaman lama Desa Digital & Info Teknologi Tepat Guna.
  */
 export function InovasiTeknologiPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const params = parseInovasiParams(useSearchParams());
   const { kategori, search, page } = params;
   const state = useKabarPage(loadInovasiPage, { page, limit: INOVASI_PAGE_LIMIT, search, kategori }, 'inovasi teknologi desa');
@@ -35,12 +36,12 @@ export function InovasiTeknologiPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={inovasiTabs(kategori, search)}
         search={search}
-        onSearch={(next) => router.replace(inovasiListHref({ kategori, search: next }))}
+        onSearch={(next) => nav.replaceQuery(inovasiListHref({ kategori, search: next }))}
       />
       <InovasiTeknologiBody
         state={state}
         params={params}
-        onPage={(next) => router.push(inovasiListHref({ kategori, search, page: next }))}
+        onPage={(next) => nav.pushPage(inovasiListHref({ kategori, search, page: next }), TITLE_ID)}
       />
     </div>
   );
@@ -50,7 +51,7 @@ type BodyProps = { state: KabarPageState; params: InovasiParams; onPage: (page: 
 
 /** Daftar kartu untuk satu keadaan muat (diekspor untuk test). */
 export function InovasiTeknologiBody({ state, params, onPage }: BodyProps) {
-  const { items, totalPages, loading, failed } = state;
+  const { items, totalPages, loading, refreshing, failed } = state;
   const empty = !loading && items.length === 0;
   const emptyText = failed
     ? T.error
@@ -68,14 +69,16 @@ export function InovasiTeknologiBody({ state, params, onPage }: BodyProps) {
       {empty ? (
         <p className={kabar.empty}>{emptyText}</p>
       ) : (
-        <KabarBerita
-          items={items}
-          loading={loading}
-          layout="grid"
-          placeholderCards={INOVASI_PAGE_LIMIT - 1}
-          listLabel={T.cardsLabel}
-          loadingLabel={T.loading}
-        />
+        <ListRefreshRegion refreshing={refreshing}>
+          <KabarBerita
+            items={items}
+            loading={loading}
+            layout="grid"
+            placeholderCards={INOVASI_PAGE_LIMIT - 1}
+            listLabel={T.cardsLabel}
+            loadingLabel={T.loading}
+          />
+        </ListRefreshRegion>
       )}
       {!empty ? <KabarListPagination total={totalPages} value={params.page} label={T.paginationLabel} onChange={onPage} /> : null}
     </section>
