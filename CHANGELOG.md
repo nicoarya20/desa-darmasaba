@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.354] - 2026-11-26
+### Changed
+- **Harga produk UMKM kini boleh dikosongkan**, karena sebagian produk desa harganya tidak tetap (kadang naik). Di admin (Ekonomi > UMKM & Pasar Desa > Produk), isian "Harga Produk (Rp)" pada form Tambah dan Ubah tidak lagi wajib; kosongkan bila harga tidak tetap. Di website publik, produk tanpa harga menampilkan teks "Harga menyesuaikan" di kartu katalog dan halaman detail, sehingga warga tahu harganya perlu ditanyakan ke penjual lewat tombol WhatsApp. Bila saklar "Sembunyikan harga di website publik" aktif, teks ini ikut tidak tampil. Di tabel admin, produk tanpa harga ditandai "-". Produk tanpa harga ikut tampil di katalog tetapi tidak masuk hasil filter rentang harga, dan berada paling akhir saat diurutkan menurut harga.
+- **Impor CSV Produk: kolom harga kini opsional.** Sel kosong menambahkan produk tanpa harga. Pada mode "perbarui", sel kosong tetap tidak menimpa harga lama, jadi untuk mengosongkan harga produk yang sudah ada gunakan form Ubah.
+- Asisten Jenna menyebut "Harga menyesuaikan" untuk produk tanpa harga.
+
+### Fixed
+- **Tidak ada lagi produk berharga "Rp0".** Sebelumnya isian harga yang dikosongkan tersimpan sebagai 0 dan tampil "Rp0" di website. Migrasi database mengubah harga 0 yang sudah ada menjadi kosong (tampil "Harga menyesuaikan"); riwayat penjualan tidak berubah. Perlu migrasi database (aman untuk data lama).
+
 ## [0.1.353] - 2026-11-25
 ### Changed
 - **Ulasan produk UMKM disembunyikan sementara dari website publik**, karena fitur ulasan belum diterapkan (belum ada cara warga menulis ulasan maupun moderasinya). Yang tidak lagi tampil: bagian "Ulasan" (nilai bintang, sebaran 5–1, tombol "Tulis ulasan") di halaman detail produk `/ekonomi/umkm/produk/{id}`, tautan "Belum ada ulasan" di bawah nama produk, dan baris "Belum ada ulasan" di kartu produk (katalog, Produk serupa, dan daftar produk di detail toko). Tampilannya tidak dihapus dari kode: bisa ditampilkan lagi dengan mengubah satu pengaturan di kode (`src/con/umkm-ulasan.ts`) setelah fitur ulasan siap.
