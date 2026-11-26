@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import { PpidPage } from '../_com/PpidPage';
-import { DaftarKontak } from './_com/DaftarKontak';
+import { KontakPpid } from '../_com/KontakPpid';
 import { DaftarTable, DaftarTableSkeleton } from './_com/DaftarTable';
 import { DAFTAR_PAGE_SIZE, DAFTAR_SEARCH_DEBOUNCE } from './_com/daftar.logic';
 import s from './_com/daftar.module.css';
@@ -83,7 +83,7 @@ function Page() {
           </div>
         ) : null}
 
-        <DaftarKontak />
+        <KontakPpid />
       </div>
     </PpidPage>
   );
