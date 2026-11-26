@@ -52,7 +52,7 @@ const sampah = { ...pohon, id: 'cmw3b4l9', judul: 'Sampah berserakan', lokasi: '
 const list = (over: Partial<Parameters<typeof LaporanListBody>[0]['state']> = {}, search = '') =>
   render(
     <LaporanListBody
-      state={{ items: [pohon, sampah], totalPages: 1, loading: false, failed: false, ...over }}
+      state={{ items: [pohon, sampah], totalPages: 1, loading: false, refreshing: false, failed: false, ...over }}
       search={search}
       page={1}
       onAdd={() => {}}
@@ -104,6 +104,13 @@ describe('LaporanListBody', () => {
     expect(list({ items: [] })).toContain(`<p class="${kabar.empty}">Belum ada laporan publik.</p>`);
     expect(list({ items: [] }, 'banjir')).toContain('Tidak ada laporan yang cocok dengan “banjir”.');
     expect(list({ items: [], failed: true })).toContain('Laporan publik gagal dimuat. Coba muat ulang halaman.');
+  });
+
+  it('menyegarkan (cari/pindah halaman/kirim laporan) → baris lama tetap tampil di wadah aria-busy', () => {
+    const html = list({ refreshing: true });
+    expect(html).toMatch(/<div class="[^"]+" aria-busy="true">/);
+    expect(html).toContain('Pohon Tumbang Menutupi Akses Jalan Desa');
+    expect(list()).not.toContain('aria-busy');
   });
 });
 

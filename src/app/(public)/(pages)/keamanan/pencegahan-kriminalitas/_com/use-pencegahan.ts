@@ -1,33 +1,17 @@
-import { useEffect, useState } from "react";
+import { useKeepPrevious } from "@/app/(public)/_com/kabar-list/use-keep-previous";
+import { useCallback } from "react";
 import { toPencegahanItem, type PencegahanItem } from "./pencegahan.logic";
 import { loadPencegahanList } from "./pencegahan.source";
 
+/** `refreshing` = program kata kunci sebelumnya tetap tampil selama hasil kata kunci baru dimuat. */
 export type PencegahanState =
   | { status: "loading" }
-  | { status: "ready"; items: PencegahanItem[] }
+  | { status: "ready"; items: PencegahanItem[]; refreshing: boolean }
   | { status: "error" };
 
-type Loaded = { search: string; state: PencegahanState };
-
-/** Program pencegahan kriminalitas untuk satu kata kunci; ganti kata kunci → muat ulang. */
+/** Program pencegahan kriminalitas untuk satu kata kunci; ganti kata kunci → muat ulang, program lama tetap tampil. */
 export function usePencegahan(search: string): PencegahanState {
-  const [loaded, setLoaded] = useState<Loaded | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadPencegahanList(search).then(
-      (items) => {
-        if (!cancelled) setLoaded({ search, state: { status: "ready", items: items.map(toPencegahanItem) } });
-      },
-      (error: unknown) => {
-        console.error(`Gagal memuat pencegahan kriminalitas (kata kunci "${search}"):`, error);
-        if (!cancelled) setLoaded({ search, state: { status: "error" } });
-      },
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, [search]);
-
-  return loaded?.search === search ? loaded.state : { status: "loading" };
+  const load = useCallback(() => loadPencegahanList(search).then((items) => items.map(toPencegahanItem)), [search]);
+  const state = useKeepPrevious(search, load, `pencegahan kriminalitas (kata kunci "${search}")`);
+  return state.status === "ready" ? { status: "ready", items: state.data, refreshing: state.refreshing } : state;
 }

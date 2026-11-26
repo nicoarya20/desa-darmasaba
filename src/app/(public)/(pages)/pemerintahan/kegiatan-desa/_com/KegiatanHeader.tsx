@@ -1,7 +1,7 @@
 'use client';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { activeSlug, kategoriSlug, SEMUA_SLUG } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { KEGIATAN_DESA_SCOPE, type KegiatanScope } from './kegiatan-scope';
@@ -12,7 +12,7 @@ import { loadKegiatanKategori, useKegiatanKategori } from './use-kegiatan-katego
  * segmen URL). Cakupan tanpa kategori (Gotong Royong) tidak memuat kategori dan tidak menampilkan pil.
  */
 export function KegiatanHeader({ scope = KEGIATAN_DESA_SCOPE }: { scope?: KegiatanScope }) {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const kategori = useKegiatanKategori();
@@ -41,7 +41,7 @@ export function KegiatanHeader({ scope = KEGIATAN_DESA_SCOPE }: { scope?: Kegiat
       kategoriLabel={text.kategoriLabel}
       tabs={tabs}
       search={search}
-      onSearch={(next) => router.replace(listHref(slug, { search: next }))}
+      onSearch={(next) => nav.replaceQuery(listHref(slug, { search: next }))}
     />
   );
 }

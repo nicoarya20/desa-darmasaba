@@ -1,5 +1,6 @@
 'use client'
 
+import { PERBEKEL_NAME } from '@/app/(public)/(pages)/pemerintahan/profil/_com/profil.meta';
 import colors from '@/con/colors';
 import { publicLhkpnUrl } from '@/lib/profil-perbekel-lhkpn';
 import { Anchor, Box, Button, Center, Divider, Grid, GridCol, Group, Image, Paper, Skeleton, Stack, Text, Title } from '@mantine/core';
@@ -97,7 +98,7 @@ function Page() {
                 fz={{ base: 'md', md: 'lg' }}
                 lh={{ base: 1.4, md: 1.4 }}
               >
-                I.B. Surya Prabhawa Manuaba, S.H., M.H.
+                {PERBEKEL_NAME}
               </Text>
             </Paper>
           </Stack>

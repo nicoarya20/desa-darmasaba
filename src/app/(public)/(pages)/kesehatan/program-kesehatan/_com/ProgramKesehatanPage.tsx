@@ -2,9 +2,10 @@
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import { paginate, parsePage } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
+import { ListRefreshRegion } from '@/app/(public)/_com/kabar-list/ListRefreshRegion';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { KabarBerita } from '@/app/(public)/_com/main-page/kabar-desa/KabarBerita';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
-import { useTransitionRouter } from 'next-view-transitions';
 import { useSearchParams } from 'next/navigation';
 import { ProgramManfaat } from './ProgramManfaat';
 import { programListHref } from './program.logic';
@@ -20,7 +21,7 @@ const LIST_TITLE_ID = 'program-list-title';
  * Kegiatan Desa (`?page=`, dipaginasi di klien; entri indikator disaring), lalu "Manfaat Program Kesehatan".
  */
 export function ProgramKesehatanPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -36,13 +37,13 @@ export function ProgramKesehatanPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(programListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(programListHref({ search: next }))}
       />
       <ProgramKesehatanBody
         state={state}
         search={search}
         page={page}
-        onPage={(next) => router.push(programListHref({ search, page: next }))}
+        onPage={(next) => nav.pushPage(programListHref({ search, page: next }), LIST_TITLE_ID)}
       />
       <ProgramManfaat />
     </div>
@@ -71,14 +72,16 @@ export function ProgramKesehatanBody({ state, search, page, onPage }: BodyProps)
       {empty ? (
         <p className={kabar.empty}>{emptyText}</p>
       ) : (
-        <KabarBerita
-          items={current.items}
-          loading={loading}
-          layout="grid"
-          placeholderCards={PROGRAM_PAGE_LIMIT - 1}
-          listLabel={T.cardsLabel}
-          loadingLabel={T.loading}
-        />
+        <ListRefreshRegion refreshing={state.status === 'ready' && state.refreshing}>
+          <KabarBerita
+            items={current.items}
+            loading={loading}
+            layout="grid"
+            placeholderCards={PROGRAM_PAGE_LIMIT - 1}
+            listLabel={T.cardsLabel}
+            loadingLabel={T.loading}
+          />
+        </ListRefreshRegion>
       )}
       {!empty ? (
         <KabarListPagination total={current.totalPages} value={current.page} label={T.paginationLabel} onChange={onPage} />

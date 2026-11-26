@@ -35,9 +35,9 @@ const render = (node: React.ReactElement) =>
 describe('menu DAK di config navbar', () => {
   const dak: MenuItem | undefined = navbarListMenu.find((m) => m.name === 'DAK');
 
-  it('punya satu submenu "Desa Anti Korupsi" ke halaman DAK, tanpa href sendiri (seperti Musik)', () => {
+  it('punya satu submenu "Desa Antikorupsi" ke halaman DAK, tanpa href sendiri (seperti Musik)', () => {
     expect(dak?.href).toBeUndefined();
-    expect(dak?.children).toEqual([{ id: '11.1', name: 'Desa Anti Korupsi', href: DAK_HREF }]);
+    expect(dak?.children).toEqual([{ id: '11.1', name: 'Desa Antikorupsi', href: DAK_HREF }]);
   });
 
   it('diletakkan paling akhir, setelah menu "Musik"', () => {
@@ -48,7 +48,7 @@ describe('menu DAK di config navbar', () => {
 
   it('tetap terlihat setelah filter visibilitas, lengkap dengan submenunya', () => {
     const dakVisible = visibleMenu(navbarListMenu).find((m) => m.name === 'DAK');
-    expect(dakVisible?.children?.map((c) => c.name)).toEqual(['Desa Anti Korupsi']);
+    expect(dakVisible?.children?.map((c) => c.name)).toEqual(['Desa Antikorupsi']);
   });
 
   it('submenu Desa Anti Korupsi ikut jadi sumber pencarian menu', () => {

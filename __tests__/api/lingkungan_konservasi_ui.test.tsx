@@ -15,7 +15,10 @@ vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
   useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn(), replace: vi.fn() }),
 }));
-vi.mock('next/navigation', () => ({ useRouter: () => ({ back: vi.fn(), push: vi.fn() }) }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
+  usePathname: () => '/lingkungan/konservasi-adat-bali',
+}));
 // DOMPurify butuh DOM; di node cukup tandai bahwa HTML lewat sanitizer.
 vi.mock('dompurify', () => ({ default: { sanitize: (html: string) => `<!--clean-->${html}` } }));
 vi.mock('@/lib/api-fetch', () => ({ default: { api: { lingkungan: { edukasilingkungan: {}, konservasiadatbali: {} } } } }));

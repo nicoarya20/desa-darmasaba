@@ -1,6 +1,6 @@
 'use client';
 import apb from "@/app/(public)/_com/main-page/apbdes/apbdes.module.css";
-import { LayananSearch } from "@/app/(public)/(pages)/pemerintahan/layanan/_com/LayananSearch";
+import { SearchField } from "@/app/(public)/_com/search-field/SearchField";
 import { filterByName } from "@/app/(public)/(pages)/pemerintahan/layanan/_com/layanan.logic";
 import { useMemo, useState } from "react";
 import s from "./posyandu.module.css";
@@ -31,7 +31,7 @@ export function PosyanduDirectory({ state, onRetry }: { state: LoadState<Posyand
         </div>
         {state.status === "ready" && items.length > 0 ? (
           <div className={s.searchOnTile}>
-            <LayananSearch value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
+            <SearchField value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
           </div>
         ) : null}
       </div>

@@ -1,5 +1,5 @@
 'use client';
-import { LayananSearch } from '@/app/(public)/(pages)/pemerintahan/layanan/_com/LayananSearch';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import { listSearchable } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
@@ -78,9 +78,9 @@ function LokasiExplorer({ items, mapped }: { items: readonly Lokasi[]; mapped: b
     <div className={`${x.explorer} ${mapped ? '' : x.noMap}`}>
       <div className={x.side}>
         {listSearchable(query.trim(), items.length) ? (
-          // Pembungkus flex:none: .search Layanan ber-flex-basis 320px, di kolom flex itu menjadi tinggi.
+          // Pembungkus flex:none: SearchField ber-flex-basis 320px, di kolom flex itu menjadi tinggi.
           <div className={x.search}>
-            <LayananSearch value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
+            <SearchField value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
           </div>
         ) : null}
         {shown.length === 0 ? (

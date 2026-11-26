@@ -1,5 +1,6 @@
 /*
- * Halaman daftar Kabar (Berita, Pengumuman) — kepala (judul brand, pengantar, kolom cari, pil kategori) dan paginasi.
+ * Halaman daftar Kabar (Berita, Pengumuman) — kepala (judul brand, pengantar, pil kategori) dan paginasi; kolom cari
+ * = `_com/search-field` (SearchField).
  * Variabel warna (--brand, --tile, --ink, …) diwarisi dari `.section` Kabar Desa (kabar.module.css) yang
  * membungkus halaman (BeritaShell / PengumumanShell); isian & tombol isi langsung dari token --c-* (tema gelap).
  * Breakpoint mengikuti apple.com: ≤734px (mobile).
@@ -43,45 +44,6 @@
   color: var(--muted);
   font-size: 19px;
   line-height: 1.45;
-}
-
-/* ---------- Kolom cari ---------- */
-.search {
-  position: relative;
-  flex: 0 1 320px;
-  min-width: 240px;
-}
-
-.searchIcon {
-  position: absolute;
-  top: 50%;
-  left: 16px;
-  color: var(--subtle);
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.searchInput {
-  width: 100%;
-  height: 44px;
-  padding: 0 16px 0 42px;
-  border: 1px solid transparent;
-  border-radius: 980px;
-  background: var(--tile);
-  color: var(--ink);
-  font: inherit;
-  font-size: 17px;
-  transition: background-color 200ms ease, border-color 200ms ease;
-}
-
-.searchInput::placeholder {
-  color: var(--subtle);
-}
-
-.searchInput:focus {
-  outline: none;
-  border-color: var(--brand);
-  background: var(--c-tile-alt);
 }
 
 /* ---------- Pil kategori ---------- */
@@ -130,7 +92,7 @@
   border: 0;
   border-radius: 980px;
   background: transparent;
-  color: var(--ink);
+  color: var(--ink, var(--c-ink));
   font-size: 15px;
 }
 
@@ -140,17 +102,17 @@
 }
 
 .pageControl:disabled {
-  color: var(--subtle);
+  color: var(--subtle, var(--c-subtle));
   opacity: 0.5;
 }
 
 .pageControl:focus-visible {
-  outline: 2px solid var(--brand);
+  outline: 2px solid var(--brand, var(--c-brand));
   outline-offset: 2px;
 }
 
 .pageDots {
-  color: var(--subtle);
+  color: var(--subtle, var(--c-subtle));
 }
 
 .srOnly {
@@ -187,11 +149,6 @@
   .lead {
     font-size: 17px;
     line-height: 1.47;
-  }
-
-  .search {
-    flex-basis: 100%;
-    min-width: 0;
   }
 
   /* Pil kategori jadi baris geser sampai tepi layar. */

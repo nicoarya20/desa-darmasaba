@@ -1,5 +1,6 @@
-import { Center, Pagination, Stack, Table, Text, TextInput, Title } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
+import { Stack, Table, Text, Title } from '@mantine/core';
 import { PENERIMA_PUBLIK_LIMIT } from '../program-kemiskinan.source';
 import { PROGRAM_DETAIL_TEXT as T } from '../program-kemiskinan.text';
 import type { HalamanPenerima, MuatState } from '../program-kemiskinan.types';
@@ -20,14 +21,7 @@ export function DaftarPenerimaView({ state, cari, onCari, onHalaman, onRetry }: 
       <Title order={3} fz="lg" c="var(--c-brand)">
         {T.daftarJudul}
       </Title>
-      <TextInput
-        aria-label={T.cariLabel}
-        placeholder={T.cariLabel}
-        leftSection={<IconSearch size={16} />}
-        value={cari}
-        onChange={(e) => onCari(e.currentTarget.value)}
-        radius="lg"
-      />
+      <SearchField fullWidth label={T.cariLabel} placeholder={T.cariLabel} value={cari} onChange={onCari} />
       {state.status !== 'ready' ? (
         <MuatStatus status={state.status} onRetry={onRetry} tinggi={240} />
       ) : state.data.data.length === 0 ? (
@@ -56,11 +50,12 @@ export function DaftarPenerimaView({ state, cari, onCari, onHalaman, onRetry }: 
               </Table.Tbody>
             </Table>
           </Table.ScrollContainer>
-          {state.data.totalPages > 1 && (
-            <Center>
-              <Pagination value={state.data.page} total={state.data.totalPages} onChange={onHalaman} />
-            </Center>
-          )}
+          <KabarListPagination
+            total={state.data.totalPages}
+            value={state.data.page}
+            label={T.daftarPaginationLabel}
+            onChange={onHalaman}
+          />
         </>
       )}
     </Stack>

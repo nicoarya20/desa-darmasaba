@@ -13,7 +13,7 @@ const ROOT_HREF = '/desa-anti-korupsi';
 /** Breadcrumb: Desa Anti Korupsi › kategori › program › folder (teks sentence case; item terakhir bukan tautan). */
 export function ProgramBreadcrumb({ programId, programName, kategori, folderName }: Props) {
   const crumbs = [
-    { label: 'Desa Anti Korupsi', href: ROOT_HREF },
+    { label: 'Desa Antikorupsi', href: ROOT_HREF },
     ...(kategori ? [{ label: toSentenceCase(kategori), href: detailHref(kategori) }] : []),
     { label: judulProgram(programName).lengkap, href: folderName ? programHref(programId) : null },
     ...(folderName ? [{ label: toSentenceCase(folderName), href: null }] : []),

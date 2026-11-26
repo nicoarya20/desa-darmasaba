@@ -7,7 +7,7 @@ import { phoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic
 import { IconMapper, type IconKey } from '@/app/admin/(dashboard)/_com/iconMap';
 import { useMemo, useState } from 'react';
 import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
-import { LayananSearch } from '../../../pemerintahan/layanan/_com/LayananSearch';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import page from '../../../pemerintahan/layanan/_com/layanan.module.css';
 import { countItems, filterGroups, type KontakGroup } from './kontak-keamanan.logic';
 import { KEAMANAN_NATIONAL_ENTRIES } from './kontak-keamanan.meta';
@@ -61,7 +61,7 @@ export function KontakKeamananView({ state, onRetry }: { state: KontakKeamananSt
           </div>
           {/* Cari hanya menyaring kontak wilayah; blok Darurat nasional di atas selalu tampil utuh. */}
           {showSearch ? (
-            <LayananSearch value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
+            <SearchField value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
           ) : null}
         </div>
 

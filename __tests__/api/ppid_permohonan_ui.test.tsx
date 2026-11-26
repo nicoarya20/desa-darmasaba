@@ -161,20 +161,21 @@ describe('Permohonan Keberatan — editor alasan & kontak', () => {
     expect(keberatan).toContain('0/2000 karakter');
   });
 
-  it('kontak PPID tampil sebagai daftar istilah dengan kontak resmi kantor desa (tanpa nomor contoh)', () => {
+  it('kontak PPID memakai komponen bersama (baris ber-ikon) dengan kontak resmi kantor desa (tanpa nomor contoh)', () => {
     expect(keberatan).toContain('>Kontak PPID</h2>');
-    expect(keberatan).toMatch(/<dt>Email<\/dt><dd>ddarmasaba@gmail\.com<\/dd>/);
-    expect(keberatan).toMatch(/<dt>Telepon<\/dt><dd>\(0361\) 8441518<\/dd>/);
+    expect(keberatan).not.toContain('<dl');
+    expect(keberatan).toMatch(/Email: <span[^>]*>ddarmasaba@gmail\.com<\/span>/);
+    expect(keberatan).toMatch(/Telepon: <span[^>]*>\(0361\) 8441518<\/span>/);
     expect(keberatan).not.toContain('081-xxx');
   });
 
   it('baris Jam Layanan hanya ada bila admin mengisinya (tanpa label tanpa nilai)', () => {
-    expect(keberatan).not.toContain('Jam Layanan');
+    expect(keberatan).not.toContain('Jam layanan');
     const semula = stateKontakDesa.findUnique.data;
     // test-only: jam layanan rekaan (teks bebas).
     stateKontakDesa.findUnique.data = { ...semula!, jamLayanan: 'Senin–Jumat 07.30–15.30' };
     try {
-      expect(render(<KeberatanPage />)).toMatch(/<dt>Jam Layanan<\/dt><dd>Senin–Jumat 07\.30–15\.30<\/dd>/);
+      expect(render(<KeberatanPage />)).toMatch(/Jam layanan: <span[^>]*>Senin–Jumat 07\.30–15\.30<\/span>/);
     } finally {
       stateKontakDesa.findUnique.data = semula;
     }

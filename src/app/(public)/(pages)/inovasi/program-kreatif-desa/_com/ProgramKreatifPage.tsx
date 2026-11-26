@@ -5,7 +5,8 @@ import { listSearchable, paginate, parsePage } from '@/app/(public)/_com/kabar-l
 import l from '@/app/(public)/_com/kabar-list/kabar-list.module.css';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { ProgramTiles, ProgramTilesPlaceholder } from '@/app/(public)/_com/program-tiles/ProgramTiles';
-import { useTransitionRouter } from 'next-view-transitions';
+import { ListRefreshRegion } from '@/app/(public)/_com/kabar-list/ListRefreshRegion';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { useSearchParams } from 'next/navigation';
 import { programKreatifListHref } from './program-kreatif.logic';
 import { PROGRAM_KREATIF_PAGE_SIZE } from './program-kreatif.meta';
@@ -20,7 +21,7 @@ const PLACEHOLDER_TILES = 6;
  * sedang mencari), lalu ubin program tanpa foto (`?page=`, dipaginasi di klien).
  */
 export function ProgramKreatifPage() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const searchParams = useSearchParams();
   const search = searchParams.get('search')?.trim() ?? '';
   const page = parsePage(searchParams.get('page'));
@@ -37,14 +38,14 @@ export function ProgramKreatifPage() {
         kategoriLabel={T.kategoriLabel}
         tabs={[]}
         search={search}
-        onSearch={(next) => router.replace(programKreatifListHref({ search: next }))}
+        onSearch={(next) => nav.replaceQuery(programKreatifListHref({ search: next }))}
         searchable={listSearchable(search, total)}
       />
       <ProgramKreatifBody
         state={state}
         search={search}
         page={page}
-        onPage={(next) => router.push(programKreatifListHref({ search, page: next }))}
+        onPage={(next) => nav.pushPage(programKreatifListHref({ search, page: next }), LIST_TITLE_ID)}
       />
     </div>
   );
@@ -72,7 +73,9 @@ export function ProgramKreatifBody({ state, search, page, onPage }: BodyProps) {
       {empty ? <p className={kabar.empty}>{emptyText}</p> : null}
       {current.items.length > 0 ? (
         <>
-          <ProgramTiles items={current.items} label={T.listLabel} moreLabel={T.selengkapnya} />
+          <ListRefreshRegion refreshing={state.status === 'ready' && state.refreshing}>
+            <ProgramTiles items={current.items} label={T.listLabel} moreLabel={T.selengkapnya} />
+          </ListRefreshRegion>
           <KabarListPagination total={current.totalPages} value={current.page} label={T.paginationLabel} onChange={onPage} />
         </>
       ) : null}

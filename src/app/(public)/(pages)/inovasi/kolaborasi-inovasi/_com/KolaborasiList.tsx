@@ -4,7 +4,7 @@ import { paginate } from '@/app/(public)/_com/kabar-list/kabar-list.logic';
 import kabar from '@/app/(public)/_com/main-page/kabar-desa/kabar.module.css';
 import { KolaborasiRow } from './KolaborasiRow';
 import { emptyMessage, filterKolaborasi, groupByYear, type Kolaborasi, type KolaborasiQuery } from './kolaborasi.logic';
-import { KOLABORASI_PAGE_LIMIT } from './kolaborasi.meta';
+import { KOLABORASI_LIST_ID, KOLABORASI_PAGE_LIMIT } from './kolaborasi.meta';
 import s from './kolaborasi.module.css';
 import { KOLABORASI_TEXT as T } from './kolaborasi.text';
 import type { LoadState } from '@/app/(public)/_com/load-once/use-load-once';
@@ -34,7 +34,7 @@ export function KolaborasiList({ state, query, onPage }: Props) {
 
   const { items, page, totalPages } = paginate(matches, query.page, KOLABORASI_PAGE_LIMIT);
   return (
-    <div className={s.list}>
+    <div id={KOLABORASI_LIST_ID} className={s.list}>
       {groupByYear(items).map((group, i) => {
         const headingId = `kolaborasi-tahun-${group.year ?? 'tanpa'}-${i}`;
         return (
