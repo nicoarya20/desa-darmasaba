@@ -78,7 +78,7 @@ describe('Profil Desa — halaman', () => {
     expect(count(html, 'aria-label="Kembali')).toBe(1);
     expect(html).not.toMatch(/Zoom|Fullscreen/);
     expect(html).toMatch(/<h2[^>]*>STRUKTUR ORGANISASI PEMERINTAH DESA DARMASABA<\/h2>/);
-    expect(html).toContain('aria-label="Cari nama atau jabatan"');
+    expect(html).toContain('>Cari nama atau jabatan</label>');
   });
 });
 
@@ -316,7 +316,7 @@ describe('Struktur Perangkat Desa — bagan baru', () => {
   it('halaman mandiri: h1, kotak cari, kerangka saat memuat, tanpa zoom/fullscreen', () => {
     const html = render(<StrukturPerangkatPage />);
     expect(html).toMatch(/<h1[^>]*>STRUKTUR ORGANISASI PEMERINTAH DESA DARMASABA<\/h1>/);
-    expect(html).toContain('aria-label="Cari nama atau jabatan"');
+    expect(html).toContain('>Cari nama atau jabatan</label>');
     expect(html).toContain('role="status"');
     expect(html).not.toMatch(/Zoom|Fullscreen/);
   });

@@ -83,7 +83,7 @@ describe('halaman Daftar Informasi Publik', () => {
     expect(count(html, '<h1')).toBe(1);
     expect(html).toContain(DAFTAR_TEXT.title);
     expect(html).toContain(DAFTAR_TEXT.lead);
-    expect(html).toContain(`aria-label="${DAFTAR_TEXT.searchLabel}"`);
+    expect(html).toContain(`>${DAFTAR_TEXT.searchLabel}</label>`);
     expect(html).toContain(`href="${DOKUMEN_PERENCANAAN_PUBLIC_HREF}"`);
     expect(count(html, 'aria-label="Kembali ke halaman sebelumnya"')).toBe(1);
   });
