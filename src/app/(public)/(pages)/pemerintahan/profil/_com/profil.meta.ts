@@ -17,7 +17,7 @@ export const PERBEKEL_FALLBACK_SRC = '/perbekel.png';
  * Nama & jabatan perbekel aktif. Model `ProfilPerbekel` belum punya kolom nama, jadi masih tertulis di kode.
  * TODO(profil-perbekel): ambil dari CMS setelah backend menambah kolom nama — perlu rekan backend.
  */
-export const PERBEKEL_NAME = 'I.B. Surya Prabhawa Manuaba, S.H., M.H., NL.P.';
+export const PERBEKEL_NAME = 'Ida Bagus Surya Prabhawa Manuaba, S.H., M.H., NL.P., CPM.';
 export const PERBEKEL_ROLE = 'Perbekel Desa Darmasaba';
 
 /**
