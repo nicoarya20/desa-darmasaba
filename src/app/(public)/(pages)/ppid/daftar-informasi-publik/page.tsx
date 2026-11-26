@@ -1,11 +1,12 @@
 'use client'
 
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import daftarInformasiPublik from '@/app/admin/(dashboard)/_state/ppid/daftar_informasi_publik/daftarInformasiPublik';
 import { DOKUMEN_PERENCANAAN_PUBLIC_HREF } from '@/lib/dokumen-perencanaan';
-import { Pagination, TextInput } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconChevronRight, IconFileInfo, IconSearch } from '@tabler/icons-react';
+import { IconChevronRight, IconFileInfo } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -28,15 +29,12 @@ function Page() {
   }, [page, debouncedSearch])
 
   const searchBox = (
-    <TextInput
-      type="search"
-      radius="xl"
-      size="md"
-      aria-label={DAFTAR_TEXT.searchLabel}
+    <SearchField
+      fullWidth
+      label={DAFTAR_TEXT.searchLabel}
       placeholder={DAFTAR_TEXT.searchPlaceholder}
-      leftSection={<IconSearch size={18} aria-hidden />}
       value={search}
-      onChange={(event) => setSearch(event.currentTarget.value)}
+      onChange={setSearch}
     />
   )
 
@@ -69,18 +67,13 @@ function Page() {
 
         {list}
 
-        {data && totalPages > 1 ? (
-          <div className={s.pagination}>
-            <Pagination
-              value={page}
-              onChange={(newPage) => load(newPage, DAFTAR_PAGE_SIZE, search)}
-              total={totalPages}
-              radius="xl"
-              size="md"
-              color="var(--c-brand-fill)"
-              aria-label={DAFTAR_TEXT.paginationLabel}
-            />
-          </div>
+        {data ? (
+          <KabarListPagination
+            total={totalPages}
+            value={page}
+            label={DAFTAR_TEXT.paginationLabel}
+            onChange={(newPage) => load(newPage, DAFTAR_PAGE_SIZE, search)}
+          />
         ) : null}
 
         <KontakPpid />

@@ -15,6 +15,8 @@ vi.mock('next-view-transitions', () => ({
 vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(searchParams.value),
   useRouter: () => ({ back: vi.fn(), push: vi.fn(), replace: vi.fn() }),
+  // KabarListHeader: pil ?kategori= di path yang sama → next/link tanpa transisi.
+  usePathname: () => '/pemerintahan/produk-hukum',
 }));
 vi.mock('@/lib/api-fetch', () => ({
   default: { api: { desa: { produkhukum: { 'find-many': { get: api.findMany } } } } },
@@ -205,7 +207,8 @@ describe('ProdukHukumPage (render awal)', () => {
     const html = render(<ProdukHukumPage />);
     expect(html).toContain('>Produk Hukum</h1>');
     expect(html).toContain('href="/pemerintahan/produk-hukum?kategori=PERDES"');
-    expect(html).toMatch(/href="\/pemerintahan\/produk-hukum\?kategori=SK_PERBEKEL"[^>]*aria-current="page"/);
+    // Urutan atribut tidak dikunci: pil query-saja dirender next/link (aria-current sebelum href).
+    expect(html.match(/<a[^>]*href="\/pemerintahan\/produk-hukum\?kategori=SK_PERBEKEL"[^>]*>/)?.[0]).toContain('aria-current="page"');
     expect(html).not.toContain('role="search"');
     expect(html).toContain('aria-busy="true"');
   });

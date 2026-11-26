@@ -10,6 +10,7 @@ export const PRESTASI_TEXT = {
   pauseVideo: "Jeda video",
   searchLabel: "Cari prestasi atau penghargaan",
   searchPlaceholder: "Cari prestasi atau penghargaan…",
+  paginationLabel: "Halaman daftar prestasi dan penghargaan",
   empty: "Belum ada prestasi atau penghargaan yang ditampilkan.",
   notFound: (q: string) => `Tidak ada prestasi atau penghargaan yang cocok dengan “${q}”.`,
   error: "Prestasi dan penghargaan gagal dimuat. Coba muat ulang halaman.",

@@ -162,11 +162,6 @@
   color: var(--muted);
 }
 
-.pagination {
-  display: flex;
-  justify-content: flex-end;
-}
-
 /* Sel aksi: "Detail" lalu "Unduh PDF" (bila ada berkas) sejajar satu baris, seperti "Lihat"/"Unduh" di Dasar Hukum.
    Kolom sempit → tautan turun ke baris berikutnya (rata kiri), bukan terpotong. Ukuran huruf Detail disamakan
    dengan PpidFileLink (15px); .detailLink juga dipakai tautan kembali di halaman detail, jadi diatur di sini saja. */
@@ -332,10 +327,6 @@
 
   .aksiRow a {
     min-height: 44px;
-  }
-
-  .pagination {
-    justify-content: center;
   }
 
   .detailJenis {

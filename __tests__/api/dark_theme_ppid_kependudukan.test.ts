@@ -89,7 +89,8 @@ describe('PPID mengikuti token tema', () => {
     expect(decl(body, '--line')).toBe('light-dark(var(--c-line-strong), var(--c-placeholder))');
     expect(decl(body, '--card')).toBe('var(--c-tile)');
     expect(css).not.toMatch(/background:\s*#fff/);
-    expect(PPID('daftar-informasi-publik/page.tsx')).toContain('color="var(--c-brand-fill)"');
+    // Paginasi = KabarListPagination (halaman aktif --c-brand-fill di kabar-list.module.css).
+    expect(PPID('daftar-informasi-publik/page.tsx')).toContain('<KabarListPagination');
   });
 
   it('kartu Visi Misi: ubin --c-tile sebagai cadangan --vm-card, tanpa bayangan, nomor misi brand-fill', () => {

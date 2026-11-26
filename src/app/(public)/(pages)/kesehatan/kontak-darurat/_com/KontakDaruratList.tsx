@@ -7,7 +7,7 @@ import { phoneInfo } from '@/app/(public)/_com/kontak-darurat/kontak-phone.logic
 import { IconAmbulance, IconFirstAidKit, IconSos } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import BackButton from '../../../pemerintahan/layanan/_com/BackButto';
-import { LayananSearch } from '../../../pemerintahan/layanan/_com/LayananSearch';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import page from '../../../pemerintahan/layanan/_com/layanan.module.css';
 import { filterKontak, toPlainText } from './kontak-darurat.logic';
 import { NATIONAL_EMERGENCY_NUMBERS, kontakDetailHref, type NationalEmergencyNumber } from './kontak-darurat.meta';
@@ -66,7 +66,7 @@ export function KontakDaruratView({ state, onRetry }: { state: KontakListState; 
           </div>
           {/* Cari hanya menyaring kontak desa; blok Darurat nasional di atas selalu tampil utuh. */}
           {showSearch ? (
-            <LayananSearch value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
+            <SearchField value={query} onChange={setQuery} label={T.searchLabel} placeholder={T.searchPlaceholder} />
           ) : null}
         </div>
 

@@ -13,7 +13,10 @@ vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
   useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn(), replace: vi.fn() }),
 }));
-vi.mock('next/navigation', () => ({ useRouter: () => ({ back: vi.fn(), push: vi.fn() }) }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
+  usePathname: () => '/inovasi/layanan-online-desa',
+}));
 
 // vi.mock di-hoist ke atas → path harus literal. Hanya pembungkus halaman yang diuji di sini; isi formulir & hook data diuji di inovasi_layanan_online_ui.
 vi.mock('@/app/(public)/(pages)/inovasi/layanan-online-desa/_com/administrasi/use-jenis-layanan', () => ({ useJenisLayanan: () => ({ status: 'loading' }) }));
