@@ -1,0 +1,14 @@
+/* Daftar lama yang tetap tampil selama query baru dimuat: diredupkan ringan, bukan diganti kerangka. */
+.region {
+  transition: opacity 160ms ease;
+}
+
+.region[aria-busy="true"] {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .region {
+    transition: none;
+  }
+}

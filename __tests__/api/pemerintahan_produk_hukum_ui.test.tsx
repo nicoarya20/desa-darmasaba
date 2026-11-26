@@ -45,11 +45,16 @@ const ROWS: ProdukHukumRecord[] = [
   { id: 'a', judul: 'Perdes Uji tentang APBDes', nomor: 'Nomor 9 Tahun 2021', tahun: 2021, kategori: 'PERDES', file: FILE },
   { id: 'b', judul: 'SK Perbekel Uji', nomor: null, tahun: null, kategori: 'SK_PERBEKEL', file: null },
 ];
-const ready = (items: ProdukHukumRecord[], extra: Partial<{ total: number; totalPages: number }> = {}): ProdukHukumListState => ({
+const ready = (
+  items: ProdukHukumRecord[],
+  extra: Partial<{ total: number; totalPages: number; page: number; refreshing: boolean }> = {},
+): ProdukHukumListState => ({
   status: 'ready',
   items,
   total: items.length,
   totalPages: 1,
+  page: 1,
+  refreshing: false,
   ...extra,
 });
 const NO_FILTER = { kategori: '', search: '', page: 1 } as const;
@@ -154,8 +159,17 @@ describe('ProdukHukumBody', () => {
   });
 
   it('nomor urut ikut halaman: halaman 3 dimulai dari 21', () => {
-    const html = body(ready([ROWS[0]], { total: 25, totalPages: 3 }), { kategori: '', search: '', page: 3 });
+    const html = body(ready([ROWS[0]], { total: 25, totalPages: 3, page: 3 }), { kategori: '', search: '', page: 3 });
     expect(html).toContain('>21<');
+  });
+
+  it('pindah halaman sedang dimuat → baris lama tetap tampil (aria-busy) dengan nomor urut halaman asalnya', () => {
+    const html = body(ready([ROWS[0]], { total: 25, totalPages: 3, page: 1, refreshing: true }), { kategori: '', search: '', page: 3 });
+    expect(html).toMatch(/<div class="[^"]+" aria-busy="true">/);
+    expect(html).toContain('Perdes Uji tentang APBDes');
+    expect(html).toContain('>1<');
+    expect(html).not.toContain('>21<');
+    expect(html).not.toContain(T.loading);
   });
 
   it('paginasi hanya muncul bila lebih dari satu halaman', () => {

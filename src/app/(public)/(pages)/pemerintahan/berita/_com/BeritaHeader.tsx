@@ -1,7 +1,7 @@
 'use client';
 import stateDashboardBerita from '@/app/admin/(dashboard)/_state/desa/berita';
 import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
-import { useTransitionRouter } from 'next-view-transitions';
+import { useListQueryNav } from '@/app/(public)/_com/kabar-list/use-list-query-nav';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useProxy } from 'valtio/utils';
@@ -11,7 +11,7 @@ import { BERITA_TEXT } from './berita.text';
 
 /** Kepala halaman daftar berita: pil "Semua" + kategori berita; kategori aktif dari segmen URL. */
 export function BeritaHeader() {
-  const router = useTransitionRouter();
+  const nav = useListQueryNav();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const kategoriState = useProxy(stateDashboardBerita.kategoriBerita);
@@ -38,7 +38,7 @@ export function BeritaHeader() {
       kategoriLabel={BERITA_TEXT.kategoriLabel}
       tabs={tabs}
       search={search}
-      onSearch={(next) => router.replace(beritaListHref(slug, { search: next }))}
+      onSearch={(next) => nav.replaceQuery(beritaListHref(slug, { search: next }))}
     />
   );
 }
