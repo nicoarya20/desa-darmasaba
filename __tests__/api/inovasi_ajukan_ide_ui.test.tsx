@@ -12,7 +12,10 @@ vi.mock('next-view-transitions', () => ({
   Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
   useTransitionRouter: () => ({ back: vi.fn(), push: vi.fn(), replace: vi.fn() }),
 }));
-vi.mock('next/navigation', () => ({ useRouter: () => ({ back: vi.fn(), push: vi.fn() }) }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
+  usePathname: () => '/inovasi/ajukan-ide-inovatif',
+}));
 import { AjukanIdePage } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/AjukanIdePage';
 import { IdeFormView, type IdeFormViewProps } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/IdeFormView';
 import { IdeThanks } from '@/app/(public)/(pages)/inovasi/ajukan-ide-inovatif/_com/IdeThanks';

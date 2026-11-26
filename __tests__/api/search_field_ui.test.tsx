@@ -9,11 +9,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next-view-transitions', () => ({
-  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props} />,
+  Link: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => <a data-transition="" {...props} />,
   useTransitionRouter: () => ({ back: vi.fn() }),
 }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/pemerintahan/produk-hukum' }));
 
-import { KabarListHeader } from '@/app/(public)/_com/kabar-list/KabarListHeader';
+import { KabarListHeader, type KabarListTab } from '@/app/(public)/_com/kabar-list/KabarListHeader';
 import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import s from '@/app/(public)/_com/search-field/search-field.module.css';
 import { SEARCH_FIELD_TEXT } from '@/app/(public)/_com/search-field/search-field.text';
@@ -71,7 +72,7 @@ describe('SearchField', () => {
 });
 
 describe('KabarListHeader memakai SearchField', () => {
-  const header = (search: string) =>
+  const header = (search: string, tabs: KabarListTab[] = []) =>
     render(
       <KabarListHeader
         title="Berita"
@@ -79,7 +80,7 @@ describe('KabarListHeader memakai SearchField', () => {
         searchLabel="Cari berita"
         searchPlaceholder="Cari berita"
         kategoriLabel="Kategori"
-        tabs={[]}
+        tabs={tabs}
         search={search}
         onSearch={noop}
       />,
@@ -89,6 +90,20 @@ describe('KabarListHeader memakai SearchField', () => {
     expect(header('')).toContain(`class="${s.input}"`);
     expect(header('')).not.toContain(SEARCH_FIELD_TEXT.clear);
     expect(header('pura')).toContain(`aria-label="${SEARCH_FIELD_TEXT.clear}"`);
+  });
+
+  it('pil query-saja = next/link (tanpa transisi); pil ganti path = Link next-view-transitions', () => {
+    const html = header('', [
+      { key: 'semua', href: '/pemerintahan/produk-hukum', label: 'Semua', active: true },
+      { key: 'perdes', href: '/pemerintahan/produk-hukum?kategori=perdes', label: 'Perdes', active: false },
+      { key: 'lain', href: '/pemerintahan/berita/semua', label: 'Berita', active: false },
+    ]);
+    const anchor = (label: string) => html.match(new RegExp(`<a[^>]*>${label}</a>`))?.[0] ?? '';
+    expect(anchor('Semua')).not.toContain('data-transition');
+    expect(anchor('Semua')).toContain('aria-current="page"');
+    expect(anchor('Perdes')).not.toContain('data-transition');
+    expect(anchor('Perdes')).toContain('href="/pemerintahan/produk-hukum?kategori=perdes"');
+    expect(anchor('Berita')).toContain('data-transition');
   });
 });
 
