@@ -1,8 +1,11 @@
 'use client';
-import { Link } from 'next-view-transitions';
+import { Link as TransitionLink } from 'next-view-transitions';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import BackButton from '../../(pages)/pemerintahan/layanan/_com/BackButto';
 import { SearchField } from '../search-field/SearchField';
+import { isQueryOnlyHref } from './kabar-list.logic';
 import { SEARCH_DEBOUNCE_MS } from './kabar-list.meta';
 import s from './kabar-list.module.css';
 
@@ -43,6 +46,7 @@ export function KabarListHeader({
   const [prevSearch, setPrevSearch] = useState(search);
   const timer = useRef<number | null>(null);
   const pillsRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
   const activeKey = tabs.find((tab) => tab.active)?.key ?? '';
 
   // URL berubah dari luar (tombol kembali browser): samakan isi kolom, kecuali URL itu hasil ketikan sendiri.
@@ -97,11 +101,19 @@ export function KabarListHeader({
       {/* Halaman tanpa kategori (Program Kesehatan) memberi `tabs=[]`: tanpa <nav> kosong & jarak sisa. */}
       {tabs.length > 0 ? (
         <nav ref={pillsRef} className={s.pills} aria-label={kategoriLabel}>
-          {tabs.map((tab) => (
-            <Link key={tab.key} href={tab.href} className={s.pill} aria-current={tab.active ? 'page' : undefined}>
-              {tab.label}
-            </Link>
-          ))}
+          {tabs.map((tab) => {
+            const props = { href: tab.href, className: s.pill, 'aria-current': tab.active ? ('page' as const) : undefined };
+            // Pil yang hanya mengganti query (?kategori=, ?tahun=): tanpa animasi pindah halaman agar tidak berkedip.
+            return isQueryOnlyHref(pathname, tab.href) ? (
+              <Link key={tab.key} {...props} scroll={false}>
+                {tab.label}
+              </Link>
+            ) : (
+              <TransitionLink key={tab.key} {...props}>
+                {tab.label}
+              </TransitionLink>
+            );
+          })}
         </nav>
       ) : null}
     </header>
