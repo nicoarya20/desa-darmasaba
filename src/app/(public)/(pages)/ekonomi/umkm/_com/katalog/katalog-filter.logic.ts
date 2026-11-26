@@ -10,7 +10,8 @@ import type { KatalogProduk, KatalogRef, KatalogToko } from './katalog.types';
  */
 export type FacetOption = { id: string; ids: string[]; label: string; count: number };
 
-export type ProdukFacets = { kategori: FacetOption[]; toko: FacetOption[]; unggulan: number };
+/** `harga` = ada produk yang harganya tampil (false bila admin menyembunyikan harga → saringan & urutan harga hilang). */
+export type ProdukFacets = { kategori: FacetOption[]; toko: FacetOption[]; unggulan: number; harga: boolean };
 export type TokoFacets = { kategori: FacetOption[] };
 
 /** Chip saringan aktif: label + params bila chip dihapus. */
@@ -64,6 +65,7 @@ export function produkFacets(items: readonly KatalogProduk[]): ProdukFacets {
     kategori: facetOf(items, (p) => p.kategori, MERGE_KATEGORI_BY_NAME),
     toko: facetOf(items, (p) => p.umkm),
     unggulan: items.filter((p) => p.isUnggulan).length,
+    harga: items.some((p) => p.harga !== null),
   };
 }
 
@@ -78,10 +80,20 @@ function toRepresentative(ids: readonly string[], options: readonly FacetOption[
   return [...new Set(reps)];
 }
 
-/** Ganti id di URL dengan id wakil pilihan yang ada di data (nilai tak dikenal diabaikan). */
+/** Urutan berdasar harga (tidak bermakna bila harga disembunyikan). */
+export const isUrutHarga = (urut: KatalogUrut) => urut === 'harga-asc' || urut === 'harga-desc';
+
+/**
+ * Ganti id di URL dengan id wakil pilihan yang ada di data (nilai tak dikenal diabaikan). Tanpa harga tampil,
+ * rentang harga & urutan harga dari URL diabaikan (urutan kembali ke bawaan).
+ */
 export function resolveParams(params: KatalogParams, facets: ProdukFacets | TokoFacets): KatalogParams {
-  const toko = 'toko' in facets ? toRepresentative(params.toko, facets.toko) : [];
-  return { ...params, kategori: toRepresentative(params.kategori, facets.kategori), toko };
+  const kategori = toRepresentative(params.kategori, facets.kategori);
+  if (!('toko' in facets)) return { ...params, kategori, toko: [] };
+  const toko = toRepresentative(params.toko, facets.toko);
+  if (facets.harga) return { ...params, kategori, toko };
+  const urut = isUrutHarga(params.urut) ? PRODUK_URUT[0] : params.urut;
+  return { ...params, kategori, toko, min: null, max: null, urut };
 }
 
 /** Semua id anggota dari id wakil terpilih (untuk menyaring data). */
@@ -103,8 +115,8 @@ export function filterProduk(items: readonly KatalogProduk[], p: KatalogParams):
       matchesSearch(p.q, [item.nama, item.umkm?.nama]) &&
       (p.kategori.length === 0 || (item.kategori !== null && p.kategori.includes(item.kategori.id))) &&
       (p.toko.length === 0 || (item.umkm !== null && p.toko.includes(item.umkm.id))) &&
-      (p.min === null || item.harga >= p.min) &&
-      (p.max === null || item.harga <= p.max) &&
+      (p.min === null || (item.harga !== null && item.harga >= p.min)) &&
+      (p.max === null || (item.harga !== null && item.harga <= p.max)) &&
       (!p.unggulan || item.isUnggulan),
   );
 }
@@ -121,11 +133,19 @@ export function filterToko(items: readonly KatalogToko[], p: KatalogParams): Kat
 const byNama = (a: { nama: string }, b: { nama: string }) => a.nama.localeCompare(b.nama, 'id', { sensitivity: 'base' });
 const byTerbaru = (a: { createdAt: string }, b: { createdAt: string }) => Date.parse(b.createdAt) - Date.parse(a.createdAt);
 
+/** Bandingkan harga searah `arah` (1 naik, -1 turun); harga tersembunyi (null) selalu di akhir. */
+function byHarga(arah: 1 | -1) {
+  return (a: KatalogProduk, b: KatalogProduk) => {
+    if (a.harga === null || b.harga === null) return Number(a.harga === null) - Number(b.harga === null);
+    return (a.harga - b.harga) * arah;
+  };
+}
+
 /** Urutkan produk; harga seri → yang terbaru dulu. */
 export function sortProduk(items: readonly KatalogProduk[], urut: KatalogUrut): KatalogProduk[] {
   const list = [...items];
-  if (urut === 'harga-asc') return list.sort((a, b) => a.harga - b.harga || byTerbaru(a, b));
-  if (urut === 'harga-desc') return list.sort((a, b) => b.harga - a.harga || byTerbaru(a, b));
+  if (urut === 'harga-asc') return list.sort((a, b) => byHarga(1)(a, b) || byTerbaru(a, b));
+  if (urut === 'harga-desc') return list.sort((a, b) => byHarga(-1)(a, b) || byTerbaru(a, b));
   if (urut === 'nama') return list.sort(byNama);
   return list.sort(byTerbaru);
 }
@@ -135,9 +155,10 @@ export function sortToko(items: readonly KatalogToko[], urut: KatalogUrut): Kata
   return [...items].sort(urut === 'terbaru' ? byTerbaru : byNama);
 }
 
-/** Pilihan "Urutkan" untuk satu tab. */
-export function urutOptions(tab: KatalogTab): { value: KatalogUrut; label: string }[] {
-  return (tab === 'toko' ? TOKO_URUT : PRODUK_URUT).map((value) => ({ value, label: T.urut[value] }));
+/** Pilihan "Urutkan" untuk satu tab; `denganHarga` false (harga disembunyikan admin) membuang urutan harga. */
+export function urutOptions(tab: KatalogTab, denganHarga = true): { value: KatalogUrut; label: string }[] {
+  const list: readonly KatalogUrut[] = tab === 'toko' ? TOKO_URUT : PRODUK_URUT;
+  return list.filter((value) => denganHarga || !isUrutHarga(value)).map((value) => ({ value, label: T.urut[value] }));
 }
 
 /** Label chip harga: "Rp10.000–Rp50.000", "Mulai Rp10.000", atau "Sampai Rp50.000". */

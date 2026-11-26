@@ -155,6 +155,11 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Dampak: frontend tidak bisa membedakan gambar asli dari cadangan; `onError` tidak terpicu, jadi pengganti (inisial/ikon) tidak pernah tampil dan pengunjung melihat gambar bertuliskan "No image" (Program Inovasi, Tips Keamanan, sampul Musik).
   - Usul: balas `404` (boleh tetap mengirim gambar cadangan sebagai body, atau tanpa body) dan jangan di-cache. Frontend Program Inovasi sudah menampilkan inisial nama saat logo gagal dimuat (keputusan user: tanpa deteksi gambar cadangan di frontend). Cek pemakai lain `/api/img` yang mengandalkan status 200 sebelum mengubah.
 
+- [ ] **Harga produk UMKM tetap terkirim di API publik walau admin menyembunyikannya** (v0.1.353, `feature/umkm-sembunyikan-harga`)
+  - Lokasi: saklar `UmkmConfig.sembunyikanHarga` (admin Ekonomi > UMKM > tab Produk). Halaman publik mengosongkan harga di klien (`(public)/(pages)/ekonomi/umkm/_lib/harga-publik.source.ts`), tetapi `GET /api/ekonomi/umkm/produk/find-many`, `/produk/:id`, dan `/umkm/:id` (include produk) tetap mengirim `harga` karena endpoint yang sama dipakai admin.
+  - Dampak: harga tidak tampil di halaman, tetapi masih terlihat lewat devtools/permintaan API langsung. Cukup untuk "desa belum mau menampilkan harga"; belum cukup bila harga dianggap rahasia.
+  - Usul: bila perlu benar-benar tersembunyi, endpoint publik membuang `harga` saat saklar aktif dan admin memakai endpoint/param sendiri (sejalan dengan usul pemisahan endpoint publik di butir detail produk di bawah).
+
 - [ ] **Katalog produk UMKM belum bisa disaring & diurutkan di server** (terverifikasi, 2026-11-13)
   - Lokasi: `src/app/api/[[...slugs]]/_lib/ekonomi/umkm/produk/findMany.ts` + `_where.ts`. Hanya mendukung `search`, `umkmId`, `kategoriId` (satu nilai), dan `unggulan`. Urutan tetap `createdAt desc`, dan tidak ada jumlah produk per kategori/toko.
   - Mitigasi frontend (MITIGASI SEMENTARA): halaman `/ekonomi/umkm` (rombak gaya katalog, v0.1.264) memuat maks 100 produk sekaligus (`KATALOG_LIST_LIMIT`), lalu menyaring (kategori & toko banyak pilihan, rentang harga, unggulan), mengurutkan, dan menghitung di klien. Ada `console.warn` bila total > 100. Data stg 2026-11-13: 7 produk.
@@ -279,6 +284,7 @@ Ditulis: 2026-11-12 (rombak menu Keamanan v0.1.257, sebagian dari menu Kesehatan
   - Usul: putuskan sumber rating (ulasan warga + moderasi, atau input admin), lalu kirim `rating` + `jumlahUlasan` di find-many/findUnique produk. Reset nilai seed ke 0 supaya tidak tampil sebagai penilaian asli begitu frontend membacanya.
   - Detail produk `/ekonomi/umkm/produk/[id]` (v0.1.266) sudah punya bagian **Ulasan** gaya Decathlon (nilai rata-rata, jumlah ulasan, bar distribusi 5→1, tombol "Tulis ulasan") yang sengaja kosong dan tombolnya nonaktif (`TODO(umkm-ulasan)`). Bentuk data yang ditunggu frontend: `{ rataRata: number | null, jumlah: number, distribusi: { 1..5: number } }` + daftar ulasan berpaginasi.
   - Usul lanjutan: model `UlasanProduk` (produkId, nama/penanda pengulas, bintang 1–5, teks, status moderasi), endpoint kirim ulasan dengan anti-spam, dan antrean moderasi di admin sebelum tampil.
+  - **Sejak v0.1.354 semua tampilan ulasan di publik disembunyikan** (permintaan user 2026-11-25, fitur belum diterapkan): bagian Ulasan, tautan rating ke `#ulasan`, dan baris "Belum ada ulasan" di kartu produk. Saklar: `ULASAN_PRODUK_UMKM_TAMPIL` di `src/con/umkm-ulasan.ts`; ubah ke `true` setelah backend ulasan siap.
 
 - [ ] **Produk UMKM hanya bisa punya satu foto** (terverifikasi: `PasarDesa.imageId` tunggal di `prisma/schema.prisma`, 2026-11-13)
   - Frontend: galeri detail produk sudah mendukung banyak foto (foto utama + strip thumbnail dengan panah), tapi strip baru muncul bila foto ≥2. Kini selalu satu foto.

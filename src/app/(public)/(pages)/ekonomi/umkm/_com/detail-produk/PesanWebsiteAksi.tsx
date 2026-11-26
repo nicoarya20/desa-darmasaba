@@ -2,15 +2,15 @@
 import { Button } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { PesananModal } from '../PesananModal';
-import type { DetailProduk } from './detail-produk.types';
+import type { DetailProdukBerharga } from './detail-produk.types';
 import s from './info.module.css';
 import { usePesananProduk } from './use-pesanan-produk';
 
 /**
  * Tombol "Pesan Sekarang" + modal pesanan lama. Hanya dirender saat `UMKM_PESANAN_TERCATAT` true
- * (src/lib/umkm-pesanan.ts); selama false warga diarahkan ke WhatsApp penjual.
+ * (src/lib/umkm-pesanan.ts) dan harga tidak disembunyikan; selain itu warga diarahkan ke WhatsApp penjual.
  */
-export function PesanWebsiteAksi({ produk, onTercatat }: { produk: DetailProduk; onTercatat: () => void }) {
+export function PesanWebsiteAksi({ produk, onTercatat }: { produk: DetailProdukBerharga; onTercatat: () => void }) {
   const p = usePesananProduk(produk, onTercatat);
 
   return (

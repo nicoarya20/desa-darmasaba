@@ -5,6 +5,7 @@ import produkUmkmDelete from "./del";
 import produkUmkmFindMany from "./findMany";
 import produkUmkmFindUnique from "./findUnique";
 import produkUmkmImport from "./import";
+import PengaturanHargaProduk from "./pengaturan";
 import produkUmkmUpdate from "./updt";
 
 // Opsional & aditif: tanpa field ini perilaku lama tidak berubah. Aturan isi (https, host, maks 5)
@@ -17,6 +18,7 @@ const ProdukUmkm = new Elysia({
   prefix: "/umkm/produk",
   tags: ["Ekonomi/UMKM Produk"],
 })
+  .use(PengaturanHargaProduk)
   .get("/find-many", produkUmkmFindMany)
   .get("/:id", produkUmkmFindUnique, {
     params: t.Object({
@@ -26,7 +28,8 @@ const ProdukUmkm = new Elysia({
   .post("/create", produkUmkmCreate, {
     body: t.Object({
       nama: t.String(),
-      harga: t.Number(),
+      // Opsional sejak v0.1.355: null/tidak dikirim = harga belum tetap ("Harga menyesuaikan" di publik).
+      harga: t.Optional(t.Nullable(t.Number())),
       umkmId: t.String(),
       kategoriId: t.String(), // Added validation
       stok: t.Optional(t.Number()),
@@ -47,7 +50,7 @@ const ProdukUmkm = new Elysia({
           nama: t.String(),
           umkm: t.String(),
           kategori: t.String(),
-          harga: t.Number(),
+          harga: t.Optional(t.Number()),
           pemilik: t.Optional(t.String()),
           stok: t.Optional(t.Number()),
           satuan: t.Optional(t.String()),
@@ -74,7 +77,8 @@ const ProdukUmkm = new Elysia({
     }),
     body: t.Object({
       nama: t.String(),
-      harga: t.Number(),
+      // Tetap wajib dikirim (form Ubah selalu mengirim); null = kosongkan harga.
+      harga: t.Nullable(t.Number()),
       umkmId: t.String(),
       kategoriId: t.String(), // Added validation
       stok: t.Number(),

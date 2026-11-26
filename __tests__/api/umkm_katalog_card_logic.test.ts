@@ -30,8 +30,12 @@ describe('hargaParts', () => {
   });
 
   it('satuan kosong atau null → tanpa akhiran', () => {
-    expect(hargaParts({ harga: 5000, satuan: null }).satuan).toBe('');
-    expect(hargaParts({ harga: 5000, satuan: '  ' }).satuan).toBe('');
+    expect(hargaParts({ harga: 5000, satuan: null })?.satuan).toBe('');
+    expect(hargaParts({ harga: 5000, satuan: '  ' })?.satuan).toBe('');
+  });
+
+  it('harga disembunyikan admin (null) → null, baris harga tidak dirender', () => {
+    expect(hargaParts({ harga: null, satuan: 'ekor' })).toBeNull();
   });
 });
 

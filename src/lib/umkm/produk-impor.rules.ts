@@ -5,7 +5,7 @@ import type { Validasi } from "@/lib/program-kemiskinan/penerima.rules";
 import { parseBilanganImpor, parseYaTidakImpor } from "./nilai-impor";
 import { bersihkanParagraf, bersihkanTeks, normalNama } from "./umkm-impor.rules";
 
-/** Form produk hanya mewajibkan harga/stok ≥ 0; batas atas dan panjang teks di bawah ini adalah batas wajar impor. */
+/** Form produk hanya mewajibkan stok ≥ 0 dan harga (opsional) ≥ 0; batas atas dan panjang teks di bawah ini adalah batas wajar impor. */
 export const PRODUK_NAMA_MAKS = 150;
 export const PRODUK_UMKM_MAKS = 150;
 export const PRODUK_PEMILIK_MAKS = 150;
@@ -27,7 +27,8 @@ export type ProdukImporInput = {
   nama: string;
   umkm: string;
   kategori: string;
-  harga: number;
+  /** Kosong = produk tanpa harga (harga tidak tetap). */
+  harga?: number;
   pemilik?: string;
   stok?: number;
   satuan?: string;
@@ -95,7 +96,6 @@ export function validasiBarisProduk(raw: Partial<BarisMentah>): Validasi<ProdukI
 
   const harga = parseBilanganImpor(raw.harga, "harga", PRODUK_HARGA_MAKS);
   if (!harga.ok) galat.push(harga.alasan);
-  else if (harga.value === null) galat.push("Kolom 'harga' wajib diisi");
   const stok = parseBilanganImpor(raw.stok, "stok", PRODUK_STOK_MAKS);
   if (!stok.ok) galat.push(stok.alasan);
   const unggulan = parseYaTidakImpor(raw.unggulan, "unggulan");
@@ -103,7 +103,7 @@ export function validasiBarisProduk(raw: Partial<BarisMentah>): Validasi<ProdukI
   const link = validasiLinkImpor(raw.link);
   if (!link.ok) galat.push(link.alasan);
 
-  if (galat.length > 0 || !harga.ok || harga.value === null || !stok.ok || !unggulan.ok || !link.ok) {
+  if (galat.length > 0 || !harga.ok || !stok.ok || !unggulan.ok || !link.ok) {
     return { ok: false, alasan: galat.join("; ") };
   }
   return {
@@ -112,7 +112,7 @@ export function validasiBarisProduk(raw: Partial<BarisMentah>): Validasi<ProdukI
       nama,
       umkm,
       kategori,
-      harga: harga.value,
+      ...(harga.value !== null && { harga: harga.value }),
       ...(pemilik && { pemilik }),
       ...(stok.value !== null && { stok: stok.value }),
       ...(satuan && { satuan }),

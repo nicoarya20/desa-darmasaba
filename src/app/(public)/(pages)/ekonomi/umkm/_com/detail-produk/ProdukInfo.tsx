@@ -1,11 +1,13 @@
 'use client';
 import r from '@/app/(public)/_com/link-reveal/link-reveal.module.css';
+import { ULASAN_PRODUK_UMKM_TAMPIL } from '@/con/umkm-ulasan';
 import { UMKM_PESANAN_TERCATAT } from '@/lib/umkm-pesanan';
 import { IconStar } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { HubungiPenjualButton } from '../HubungiPenjualButton';
 import { LinkTokoOnlineButtons } from '../LinkTokoOnlineButtons';
-import { hargaParts, tokoHref } from '../katalog/katalog-card.logic';
+import { HargaProduk } from '../HargaProduk';
+import { tokoHref } from '../katalog/katalog-card.logic';
 import { CaraMemesanPanel } from './CaraMemesanPanel';
 import { DETAIL_PRODUK_TEXT as T } from './detail-produk.text';
 import type { DetailProduk } from './detail-produk.types';
@@ -20,11 +22,12 @@ type Props = {
 };
 
 /**
- * Kolom info detail produk: merek · kategori, nama, rating, harga, CTA WhatsApp (atau alur pesanan website saat
+ * Kolom info detail produk: merek · kategori, nama, rating (sementara disembunyikan, src/con/umkm-ulasan.ts), harga, CTA WhatsApp (atau alur pesanan website saat
  * `UMKM_PESANAN_TERCATAT` true), link toko online, panel Cara memesan dan Penjual. Stok tidak pernah ditampilkan.
+ * Tanpa angka harga (disembunyikan admin atau harga kosong, lihat `HargaProduk`): pesanan website (yang menampilkan
+ * total) tidak ditawarkan, warga diarahkan ke WhatsApp penjual.
  */
 export function ProdukInfo({ produk, onTercatat }: Props) {
-  const { harga, satuan } = hargaParts(produk);
   const { penjual, kategori } = produk;
 
   return (
@@ -43,18 +46,17 @@ export function ProdukInfo({ produk, onTercatat }: Props) {
       {produk.isUnggulan && <span className={s.label}>{T.unggulan}</span>}
       <h1 className={s.title}>{produk.nama}</h1>
       {/* TODO(umkm-rating): rating belum punya sumber data — docs/BACKEND-TODO.md P3 */}
-      <a href="#ulasan" className={`${s.rating} ${r.trigger}`}>
-        <IconStar size={16} stroke={1.75} aria-hidden="true" />
-        <span className={r.title}>{T.ratingKosong}</span>
-      </a>
-      <p className={s.price}>
-        <span className={s.amount}>{harga}</span>
-        {satuan && <span className={s.unit}>{satuan}</span>}
-      </p>
+      {ULASAN_PRODUK_UMKM_TAMPIL && (
+        <a href="#ulasan" className={`${s.rating} ${r.trigger}`}>
+          <IconStar size={16} stroke={1.75} aria-hidden="true" />
+          <span className={r.title}>{T.ratingKosong}</span>
+        </a>
+      )}
+      <HargaProduk produk={produk} classes={{ price: s.price, amount: s.amount, unit: s.unit }} />
 
       <div className={s.actions}>
-        {UMKM_PESANAN_TERCATAT ? (
-          <PesanWebsiteAksi produk={produk} onTercatat={onTercatat} />
+        {UMKM_PESANAN_TERCATAT && produk.harga !== null ? (
+          <PesanWebsiteAksi produk={{ ...produk, harga: produk.harga }} onTercatat={onTercatat} />
         ) : (
           <HubungiPenjualButton kontak={penjual?.kontak} umkmNama={penjual?.nama} produkNama={produk.nama} />
         )}

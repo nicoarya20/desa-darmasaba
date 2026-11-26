@@ -109,7 +109,7 @@ describe("kontrak body", () => {
     for (const body of [
       { mode: "ganti-semua", rows: [baris()] },
       { mode: "lewati", rows: "bukan-array" },
-      { mode: "lewati", rows: [{ nama: "A", umkm: "Warung A", kategori: "Makanan" }] },
+      { mode: "lewati", rows: [{ nama: "A", umkm: "Warung A" }] },
       { mode: "lewati", rows: [baris({ harga: "15000" })] },
     ]) {
       const res = await kirim(body);
