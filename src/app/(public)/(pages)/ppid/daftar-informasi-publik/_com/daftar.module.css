@@ -162,11 +162,6 @@
   color: var(--muted);
 }
 
-.pagination {
-  display: flex;
-  justify-content: flex-end;
-}
-
 /* ---------- Kontak ---------- */
 .kontak {
   display: flex;
@@ -361,10 +356,6 @@
 
   .aksiRow a {
     min-height: 44px;
-  }
-
-  .pagination {
-    justify-content: center;
   }
 
   .detailJenis {

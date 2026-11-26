@@ -1,7 +1,9 @@
 'use client'
 import infoWabahPenyakit from '@/app/admin/(dashboard)/_state/kesehatan/info-wabah-penyakit/infoWabahPenyakit';
 import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import {
   Badge,
   Box,
@@ -12,21 +14,25 @@ import {
   GridCol,
   Group,
   Image,
-  Pagination,
   Paper,
   SimpleGrid,
   Skeleton,
   Stack,
   Text,
-  TextInput,
   Title
 } from '@mantine/core';
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks';
-import { IconInfoCircle, IconSearch } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useProxy } from 'valtio/utils';
 import BackButton from '../../pemerintahan/layanan/_com/BackButto';
 import { useTransitionRouter } from 'next-view-transitions';
+
+const TEXT = {
+  searchLabel: 'Cari nama penyakit atau wabah',
+  searchPlaceholder: 'Cari nama penyakit atau wabah...',
+  paginationLabel: 'Halaman daftar info wabah dan penyakit',
+} as const;
 
 function Page() {
   const state = useProxy(infoWabahPenyakit);
@@ -73,14 +79,12 @@ function Page() {
           </Text>
         </GridCol>
         <GridCol span={{ base: 12, md: 4 }}>
-          <TextInput
-            radius="xl"
-            placeholder="Cari nama penyakit atau wabah..."
+          <SearchField
+            fullWidth
+            label={TEXT.searchLabel}
+            placeholder={TEXT.searchPlaceholder}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            leftSection={<IconSearch size={20} />}
-            w="100%"
-            size="md"
+            onChange={setSearch}
           />
         </GridCol>
       </Grid>
@@ -194,16 +198,12 @@ function Page() {
         )}
       </Box>
 
-      <Center>
-        <Pagination
-          value={page}
-          onChange={(newPage) => load(newPage)}
-          total={totalPages}
-          radius="xl"
-          size="md"
-          mt="lg"
-        />
-      </Center>
+      <KabarListPagination
+        total={totalPages}
+        value={page}
+        label={TEXT.paginationLabel}
+        onChange={(newPage) => load(newPage)}
+      />
     </Stack>
   );
 }

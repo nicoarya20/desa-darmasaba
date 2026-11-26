@@ -1,8 +1,8 @@
 "use client";
 import BackButton from "@/app/(public)/(pages)/pemerintahan/layanan/_com/BackButto";
-import { Pagination, TextInput } from "@mantine/core";
+import { KabarListPagination } from "@/app/(public)/_com/kabar-list/KabarListPagination";
+import { SearchField } from "@/app/(public)/_com/search-field/SearchField";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import { PrestasiGrid } from "./PrestasiGrid";
 import { countPages } from "./prestasi.logic";
@@ -42,19 +42,18 @@ export function PrestasiListPage() {
             </h1>
             <p className={s.lead}>{PRESTASI_TEXT.subtitle}</p>
           </div>
-          <TextInput
-            className={s.search}
-            radius="xl"
-            size="md"
-            aria-label={PRESTASI_TEXT.searchLabel}
-            placeholder={PRESTASI_TEXT.searchPlaceholder}
-            leftSection={<IconSearch size={18} />}
-            value={search}
-            onChange={(e) => {
-              setSearch(e.currentTarget.value);
-              setPage(1);
-            }}
-          />
+          <div className={s.search}>
+            <SearchField
+              fullWidth
+              label={PRESTASI_TEXT.searchLabel}
+              placeholder={PRESTASI_TEXT.searchPlaceholder}
+              value={search}
+              onChange={(next) => {
+                setSearch(next);
+                setPage(1);
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -66,11 +65,7 @@ export function PrestasiListPage() {
         <PrestasiGrid cards={items} loading={loading} placeholderCount={PRESTASI_PAGE_SIZE} />
       )}
 
-      {pages > 1 ? (
-        <div className={s.pagination}>
-          <Pagination value={page} onChange={onPage} total={pages} color="var(--c-brand-fill)" radius="xl" />
-        </div>
-      ) : null}
+      <KabarListPagination total={pages} value={page} label={PRESTASI_TEXT.paginationLabel} onChange={onPage} />
     </section>
   );
 }

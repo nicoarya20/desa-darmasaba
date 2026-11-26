@@ -44,6 +44,7 @@ export const PROGRAM_DETAIL_TEXT = {
   daftarJudul: 'Daftar penerima',
   cariLabel: 'Cari nama atau alamat',
   daftarKosong: 'Tidak ada penerima yang cocok',
+  daftarPaginationLabel: 'Halaman daftar penerima',
   kolomNo: 'No',
   kolomNama: 'Nama',
   kolomAlamat: 'Alamat',

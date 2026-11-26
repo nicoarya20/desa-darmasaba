@@ -2,20 +2,18 @@
 
 'use client';
 
-import { Group, TextInput } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
+import { Box, Group } from '@mantine/core';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { GALERY_TEXT } from './galery.text';
 
 export type SearchBarProps = {
   placeholder?: string;
-  searchIcon?: React.ReactNode;
 };
 
-export function SearchBar({
-  placeholder = "pencarian",
-  searchIcon = <IconSearch size={20} />,
-}: SearchBarProps) {
+/** Kolom cari galeri: tulis `?search=` setelah jeda ketik lalu kabari tab Foto/Video lewat event `searchUpdate`. */
+export function SearchBar({ placeholder = GALERY_TEXT.searchPlaceholder }: SearchBarProps) {
   const searchParams = useSearchParams();
 
   // Get initial search value from URL
@@ -24,8 +22,7 @@ export function SearchBar({
   const pathname = usePathname();
   const typingTimeoutRef = useRef<number | null>(null);
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+  const handleSearchChange = (value: string) => {
     setSearchValue(value);
 
     // Clear previous timeout
@@ -66,14 +63,15 @@ export function SearchBar({
 
   return (
     <Group justify='center'>
-      <TextInput
-      radius="lg"
-      placeholder={placeholder}
-      leftSection={searchIcon}
-      w={{ base: '100%', md: '50%' }}
-      value={searchValue}
-      onChange={handleSearchChange}
-    />
+      <Box w={{ base: '100%', md: '50%' }}>
+        <SearchField
+          fullWidth
+          label={GALERY_TEXT.searchLabel}
+          placeholder={placeholder}
+          value={searchValue}
+          onChange={handleSearchChange}
+        />
+      </Box>
     </Group>
   );
 }

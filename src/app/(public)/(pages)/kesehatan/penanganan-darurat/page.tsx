@@ -1,7 +1,9 @@
 'use client'
 import penangananDarurat from '@/app/admin/(dashboard)/_state/kesehatan/penanganan-darurat/penangananDarurat'
 import t from '@/app/(public)/(pages)/kesehatan/_com/kesehatan-tema.module.css';
+import { KabarListPagination } from '@/app/(public)/_com/kabar-list/KabarListPagination';
 import rt from '@/app/(public)/_com/rich-text/rich-text.module.css';
+import { SearchField } from '@/app/(public)/_com/search-field/SearchField';
 import {
   Box,
   Button,
@@ -9,21 +11,24 @@ import {
   Grid,
   GridCol,
   Image,
-  Pagination,
   Paper,
   SimpleGrid,
   Skeleton,
   Stack,
   Text,
-  TextInput,
   Title,
   Tooltip
 } from '@mantine/core'
 import { useDebouncedValue, useShallowEffect } from '@mantine/hooks'
-import { IconSearch } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useProxy } from 'valtio/utils'
 import BackButton from '../../pemerintahan/layanan/_com/BackButto'
+
+const TEXT = {
+  searchLabel: 'Cari penanganan darurat',
+  searchPlaceholder: 'Cari penanganan darurat...',
+  paginationLabel: 'Halaman daftar penanganan darurat',
+} as const
 
 function Page() {
   const state = useProxy(penangananDarurat)
@@ -68,15 +73,17 @@ function Page() {
           </Text>
         </GridCol>
         <GridCol span={{ base: 12, md: 3 }}>
+          {/* Pembungkus div: Tooltip butuh anak yang menerima ref. */}
           <Tooltip label="Ketik kata kunci untuk mencari penanganan darurat">
-            <TextInput
-              radius="lg"
-              placeholder="Cari penanganan darurat..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              leftSection={<IconSearch size={20} />}
-              w="100%"
-            />
+            <div>
+              <SearchField
+                fullWidth
+                label={TEXT.searchLabel}
+                placeholder={TEXT.searchPlaceholder}
+                value={search}
+                onChange={setSearch}
+              />
+            </div>
           </Tooltip>
         </GridCol>
       </Grid>
@@ -177,22 +184,12 @@ function Page() {
         )}
       </Box>
 
-      <Center mt="xl">
-        <Pagination
-          value={page}
-          onChange={(newPage) => load(newPage, 3, search)}
-          total={totalPages}
-          size="lg"
-          radius="xl"
-          styles={{
-            control: {
-              border: '1px solid var(--c-brand)',
-              transition: 'all 0.3s ease',
-              '&:hover': { backgroundColor: 'var(--c-brand-fill)', color: 'white' },
-            },
-          }}
-        />
-      </Center>
+      <KabarListPagination
+        total={totalPages}
+        value={page}
+        label={TEXT.paginationLabel}
+        onChange={(newPage) => load(newPage, 3, search)}
+      />
     </Stack>
   )
 }
