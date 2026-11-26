@@ -104,6 +104,7 @@ describe('toDetailToko', () => {
           id: 'prd-1',
           nama: 'Bayam',
           harga: 5000,
+          hargaMenyesuaikan: false,
           satuan: 'ikat',
           stok: 10,
           isUnggulan: false,

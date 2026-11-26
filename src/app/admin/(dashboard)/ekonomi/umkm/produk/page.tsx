@@ -29,6 +29,7 @@ import { UnggulanBadge } from '@/app/(public)/(pages)/ekonomi/umkm/_com/Unggulan
 import { ProdukMobileList } from './_com/ProdukMobileList';
 import { ProdukImportModal } from './_com/ProdukImportModal';
 import { HargaPublikSwitch } from './_com/HargaPublikSwitch';
+import { formatHargaAdmin } from '@/lib/umkm/harga-produk';
 
 function ProdukUmkm() {
   const router = useRouter();
@@ -110,7 +111,7 @@ function ProdukUmkm() {
                   <TableTr key={item.id}>
                     <TableTd fw={500}>{item.nama}</TableTd>
                     <TableTd>{item.umkm?.nama || '-'}</TableTd>
-                    <TableTd>Rp {item.harga.toLocaleString()}</TableTd>
+                    <TableTd>{formatHargaAdmin(item.harga)}</TableTd>
                     <TableTd>{item.stok}</TableTd>
                     <TableTd>
                       <Badge color={item.stok < 5 ? 'red' : item.stok < 20 ? 'yellow' : 'green'}>

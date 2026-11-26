@@ -1,11 +1,12 @@
 import { Badge, Box, Button, Group, Paper, Stack, Text } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { UnggulanBadge } from '@/app/(public)/(pages)/ekonomi/umkm/_com/UnggulanBadge';
+import { formatHargaAdmin } from '@/lib/umkm/harga-produk';
 
 type ProdukItem = {
   id: string;
   nama: string;
-  harga: number;
+  harga: number | null;
   stok: number;
   isUnggulan?: boolean;
   umkm?: { nama: string } | null;
@@ -35,7 +36,7 @@ export function ProdukMobileList({ items, onEdit, onDelete }: Props) {
             <Group justify="space-between">
               <Box>
                 <Text size="xs" c="dimmed">Harga</Text>
-                <Text size="sm">Rp {item.harga.toLocaleString()}</Text>
+                <Text size="sm">{formatHargaAdmin(item.harga)}</Text>
               </Box>
               <Box>
                 <Text size="xs" c="dimmed">Stok</Text>

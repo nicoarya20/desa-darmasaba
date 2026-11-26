@@ -6,7 +6,8 @@ import { IconStar } from '@tabler/icons-react';
 import { Link } from 'next-view-transitions';
 import { HubungiPenjualButton } from '../HubungiPenjualButton';
 import { LinkTokoOnlineButtons } from '../LinkTokoOnlineButtons';
-import { hargaParts, tokoHref } from '../katalog/katalog-card.logic';
+import { HargaProduk } from '../HargaProduk';
+import { tokoHref } from '../katalog/katalog-card.logic';
 import { CaraMemesanPanel } from './CaraMemesanPanel';
 import { DETAIL_PRODUK_TEXT as T } from './detail-produk.text';
 import type { DetailProduk } from './detail-produk.types';
@@ -23,11 +24,10 @@ type Props = {
 /**
  * Kolom info detail produk: merek · kategori, nama, rating (sementara disembunyikan, src/con/umkm-ulasan.ts), harga, CTA WhatsApp (atau alur pesanan website saat
  * `UMKM_PESANAN_TERCATAT` true), link toko online, panel Cara memesan dan Penjual. Stok tidak pernah ditampilkan.
- * Bila admin menyembunyikan harga (`harga` null): baris harga tidak dirender dan pesanan website (yang menampilkan
+ * Tanpa angka harga (disembunyikan admin atau harga kosong, lihat `HargaProduk`): pesanan website (yang menampilkan
  * total) tidak ditawarkan, warga diarahkan ke WhatsApp penjual.
  */
 export function ProdukInfo({ produk, onTercatat }: Props) {
-  const harga = hargaParts(produk);
   const { penjual, kategori } = produk;
 
   return (
@@ -52,12 +52,7 @@ export function ProdukInfo({ produk, onTercatat }: Props) {
           <span className={r.title}>{T.ratingKosong}</span>
         </a>
       )}
-      {harga && (
-        <p className={s.price}>
-          <span className={s.amount}>{harga.harga}</span>
-          {harga.satuan && <span className={s.unit}>{harga.satuan}</span>}
-        </p>
-      )}
+      <HargaProduk produk={produk} classes={{ price: s.price, amount: s.amount, unit: s.unit }} />
 
       <div className={s.actions}>
         {UMKM_PESANAN_TERCATAT && produk.harga !== null ? (

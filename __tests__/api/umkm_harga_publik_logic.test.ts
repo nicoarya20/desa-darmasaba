@@ -91,7 +91,9 @@ describe('hargaTampilDari & loadHargaTampil', () => {
 
   it('terapkanHarga mengosongkan harga hanya bila tidak boleh tampil', () => {
     expect(terapkanHarga({ harga: 5000 }, true)).toEqual({ harga: 5000 });
-    expect(terapkanHarga({ harga: 5000 }, false)).toEqual({ harga: null });
+    expect(terapkanHarga({ harga: 5000 }, false)).toEqual({ harga: null, hargaMenyesuaikan: false });
+    // Harga kosong + saklar sembunyikan aktif → teks "Harga menyesuaikan" juga tidak tampil.
+    expect(terapkanHarga({ harga: null, hargaMenyesuaikan: true }, false)).toEqual({ harga: null, hargaMenyesuaikan: false });
   });
 });
 

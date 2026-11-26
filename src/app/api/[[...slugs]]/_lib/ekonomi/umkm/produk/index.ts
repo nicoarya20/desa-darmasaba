@@ -28,7 +28,8 @@ const ProdukUmkm = new Elysia({
   .post("/create", produkUmkmCreate, {
     body: t.Object({
       nama: t.String(),
-      harga: t.Number(),
+      // Opsional sejak v0.1.354: null/tidak dikirim = harga belum tetap ("Harga menyesuaikan" di publik).
+      harga: t.Optional(t.Nullable(t.Number())),
       umkmId: t.String(),
       kategoriId: t.String(), // Added validation
       stok: t.Optional(t.Number()),
@@ -49,7 +50,7 @@ const ProdukUmkm = new Elysia({
           nama: t.String(),
           umkm: t.String(),
           kategori: t.String(),
-          harga: t.Number(),
+          harga: t.Optional(t.Number()),
           pemilik: t.Optional(t.String()),
           stok: t.Optional(t.Number()),
           satuan: t.Optional(t.String()),
@@ -76,7 +77,8 @@ const ProdukUmkm = new Elysia({
     }),
     body: t.Object({
       nama: t.String(),
-      harga: t.Number(),
+      // Tetap wajib dikirim (form Ubah selalu mengirim); null = kosongkan harga.
+      harga: t.Nullable(t.Number()),
       umkmId: t.String(),
       kategoriId: t.String(), // Added validation
       stok: t.Number(),

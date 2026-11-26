@@ -19,8 +19,10 @@ export type DetailLinkToko = NonNullable<ComponentProps<typeof LinkTokoOnlineBut
 export type DetailProduk = {
   id: string;
   nama: string;
-  /** null = admin menyembunyikan harga di website publik (lihat _lib/harga-publik.source.ts). */
+  /** null = tanpa angka: admin menyembunyikan harga (lihat _lib/harga-publik.source.ts) atau harga produk kosong. */
   harga: number | null;
+  /** true = harga produk kosong (tidak tetap) dan tidak disembunyikan → tampil "Harga menyesuaikan". */
+  hargaMenyesuaikan?: boolean;
   satuan: string | null;
   isUnggulan: boolean;
   /** Sudah lewat `sanitizeRichText` (src/lib/rich-text.ts); '' bila kosong. */

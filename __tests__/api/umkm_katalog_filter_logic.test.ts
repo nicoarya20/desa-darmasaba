@@ -157,7 +157,7 @@ describe('adapter API → kartu', () => {
   it('toKatalogProduk memetakan relasi & foto; rating seed tidak dibawa', () => {
     const out = toKatalogProduk(api);
     expect(out).toEqual({
-      id: 'p1', nama: 'Kopi', harga: 80000, satuan: 'kg', stok: 2, isUnggulan: true, createdAt: '2026-11-01T00:00:00.000Z',
+      id: 'p1', nama: 'Kopi', harga: 80000, hargaMenyesuaikan: false, satuan: 'kg', stok: 2, isUnggulan: true, createdAt: '2026-11-01T00:00:00.000Z',
       imageUrl: 'https://cdn/x.jpg', umkm: { id: 'u1', nama: 'Toko' }, kategori: { id: 'k1', nama: 'Minuman' },
     });
     expect(out).not.toHaveProperty('rating');

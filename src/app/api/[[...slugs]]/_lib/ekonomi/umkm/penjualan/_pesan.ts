@@ -11,6 +11,8 @@ export const PESAN_MAX_JUMLAH = 1000;
 
 export type PesanInput = { produkId: string; jumlah: number };
 
+export const PESAN_HARGA_KOSONG = "Harga produk ini menyesuaikan. Silakan hubungi penjual lewat WhatsApp.";
+
 export type PesanTx = Pick<Prisma.TransactionClient, "pasarDesa" | "penjualanProduk">;
 
 export type PesanResult =
@@ -52,6 +54,11 @@ export async function buatPesanan(
   if (!produk) {
     return { ok: false, status: 404, message: "Produk tidak ditemukan atau sudah tidak dijual" };
   }
+  // Harga opsional (tidak tetap): total tidak bisa dihitung, jadi pesanan website ditolak sebelum stok dikurangi.
+  const harga = produk.harga;
+  if (harga === null) {
+    return { ok: false, status: 409, message: PESAN_HARGA_KOSONG };
+  }
 
   const { count } = await tx.pasarDesa.updateMany({
     where: { ...aktif, stok: { gte: input.jumlah } },
@@ -65,8 +72,8 @@ export async function buatPesanan(
     data: {
       produkId: input.produkId,
       jumlah: input.jumlah,
-      hargaSatuan: produk.harga,
-      totalNilai: produk.harga * input.jumlah,
+      hargaSatuan: harga,
+      totalNilai: harga * input.jumlah,
       tanggal: now,
       periode: periodeOf(now),
     },

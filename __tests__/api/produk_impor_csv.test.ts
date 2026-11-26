@@ -97,10 +97,13 @@ describe("validasiBarisProduk", () => {
     });
   });
 
-  it("kolom wajib kosong → galat per kolom, digabung", () => {
+  it("kolom wajib kosong → galat per kolom, digabung (harga opsional sejak v0.1.354)", () => {
     const r = validasiBarisProduk({ nama: "", umkm: "", kategori: "", harga: "" });
     expect(r.ok).toBe(false);
-    if (!r.ok) for (const k of ["nama", "umkm", "kategori", "harga"]) expect(r.alasan).toContain(`'${k}' wajib diisi`);
+    if (!r.ok) {
+      for (const k of ["nama", "umkm", "kategori"]) expect(r.alasan).toContain(`'${k}' wajib diisi`);
+      expect(r.alasan).not.toContain("'harga'");
+    }
   });
 
   it("panjang teks dibatasi", () => {
@@ -216,7 +219,6 @@ describe("parseCsvProduk", () => {
 
   it.each([
     ["umkm", "nama;kategori;harga\nA;C;100"],
-    ["harga", "nama;umkm;kategori\nA;B;C"],
     ["nama", "umkm;kategori;harga\nB;C;100"],
     ["kategori", "nama;umkm;harga\nA;B;100"],
   ])("header tanpa kolom wajib '%s' → galat berkas", (kolom, csv) => {

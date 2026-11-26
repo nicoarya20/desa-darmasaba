@@ -30,7 +30,7 @@ export async function loadHargaTampil(): Promise<boolean> {
   }
 }
 
-/** Kosongkan harga bila tidak boleh tampil. */
-export function terapkanHarga<T extends { harga: number | null }>(item: T, hargaTampil: boolean): T {
-  return hargaTampil ? item : { ...item, harga: null };
+/** Kosongkan harga bila tidak boleh tampil (termasuk teks "Harga menyesuaikan"). */
+export function terapkanHarga<T extends { harga: number | null; hargaMenyesuaikan?: boolean }>(item: T, hargaTampil: boolean): T {
+  return hargaTampil ? item : { ...item, harga: null, hargaMenyesuaikan: false };
 }
